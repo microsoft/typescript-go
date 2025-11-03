@@ -26,7 +26,7 @@ var (
 // all changes have been made.
 type configFileRegistryBuilder struct {
 	fs                  *snapshotFSBuilder
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	sessionOptions      *SessionOptions
 
 	pnpApi *pnp.PnpApi
@@ -39,7 +39,7 @@ type configFileRegistryBuilder struct {
 func newConfigFileRegistryBuilder(
 	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
-	extendedConfigCache *extendedConfigCache,
+	extendedConfigCache *ExtendedConfigCache,
 	sessionOptions *SessionOptions,
 	pnpApi *pnp.PnpApi,
 	logger *logging.LogTree,
@@ -221,7 +221,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	slices.Sort(globs)
-	entry.rootFilesWatch = entry.rootFilesWatch.Clone(patternsAndIgnored{
+	entry.rootFilesWatch = entry.rootFilesWatch.Clone(PatternsAndIgnored{
 		patterns: globs,
 		ignored:  ignored,
 	})
