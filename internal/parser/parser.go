@@ -507,7 +507,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 			if len(p.reparseList) > 0 {
 				for _, e := range p.reparseList {
 					// Propagate @typedef type alias declarations outwards to a context that permits them.
-					if ast.IsJSTypeAliasDeclaration(e) && kind != PCSourceElements && kind != PCBlockStatements {
+					if (ast.IsJSTypeAliasDeclaration(e) || ast.IsJSImportDeclaration(e)) && kind != PCSourceElements && kind != PCBlockStatements {
 						outerReparseList = append(outerReparseList, e)
 					} else {
 						list = append(list, e)
