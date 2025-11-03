@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -73,14 +74,13 @@ func (l *LanguageService) toLSPDiagnostic(clientOptions *lsproto.DiagnosticClien
 		}
 	}
 
-	// We do not check client capabilities for tags; the LSP spec says clients must handle unknown tags.
 	var tags []lsproto.DiagnosticTag
-	if diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated() {
+	if clientOptions != nil && clientOptions.TagSupport != nil && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
 		tags = make([]lsproto.DiagnosticTag, 0, 2)
-		if diagnostic.ReportsUnnecessary() {
+		if diagnostic.ReportsUnnecessary() && slices.Contains(clientOptions.TagSupport.ValueSet, lsproto.DiagnosticTagUnnecessary) {
 			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
 		}
-		if diagnostic.ReportsDeprecated() {
+		if diagnostic.ReportsDeprecated() && slices.Contains(clientOptions.TagSupport.ValueSet, lsproto.DiagnosticTagDeprecated) {
 			tags = append(tags, lsproto.DiagnosticTagDeprecated)
 		}
 	}
