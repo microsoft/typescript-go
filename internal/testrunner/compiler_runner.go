@@ -410,11 +410,6 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 		return
 	}
 
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("output", func(t *testing.T) {
 		if msg, ok := skippedEmitTests[c.basename]; ok {
 			t.Skip(msg)
@@ -442,11 +437,6 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 }
 
 func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isSubmodule bool) {
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("sourcemap", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map output for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -467,11 +457,6 @@ func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isS
 }
 
 func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string, isSubmodule bool) {
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("sourcemap record", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map record for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -606,9 +591,5 @@ func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
 	if c.options.BaseUrl != "" {
 		return true
 	}
-	if c.options.OutFile != "" {
-		return true
-	}
-
 	return false
 }
