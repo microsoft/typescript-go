@@ -144,7 +144,10 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	}
 
 	start := lineMap.LineStarts[line]
-	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
+
+	// Fast path: if we're using UTF-8 encoding or this line is ASCII-only,
+	// character offset equals byte offset
+	if c.positionEncoding == lsproto.PositionEncodingKindUTF8 || lineMap.IsLineAsciiOnly(int(line)) {
 		return start + char
 	}
 
@@ -181,7 +184,10 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	start := lineMap.LineStarts[line]
 
 	var character core.TextPos
-	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
+
+	// Fast path: if we're using UTF-8 encoding or this line is ASCII-only,
+	// character offset equals byte offset
+	if c.positionEncoding == lsproto.PositionEncodingKindUTF8 || lineMap.IsLineAsciiOnly(line) {
 		character = position - start
 	} else {
 		// We need to rescan the text as UTF-16 to find the character offset.

@@ -12,19 +12,22 @@ import (
 type LSPLineStarts []core.TextPos
 
 type LSPLineMap struct {
-	LineStarts LSPLineStarts
-	AsciiOnly  bool // TODO(jakebailey): collect ascii-only info per line
+	LineStarts       LSPLineStarts
+	nonAsciiLineNums []int // Sorted slice of line numbers (0-indexed) that contain non-ASCII characters
 }
 
 func ComputeLSPLineStarts(text string) *LSPLineMap {
 	// This is like core.ComputeLineStarts, but only considers "\n", "\r", and "\r\n" as line breaks,
-	// and reports when the text is ASCII-only.
+	// and records which lines contain non-ASCII characters.
 	lineStarts := make([]core.TextPos, 0, strings.Count(text, "\n")+1)
-	asciiOnly := true
+	var nonAsciiLineNums []int
 
 	textLen := core.TextPos(len(text))
 	var pos core.TextPos
 	var lineStart core.TextPos
+	currentLineNum := 0
+	currentLineHasNonAscii := false
+
 	for pos < textLen {
 		b := text[pos]
 		if b < utf8.RuneSelf {
@@ -37,19 +40,27 @@ func ComputeLSPLineStarts(text string) *LSPLineMap {
 				fallthrough
 			case '\n':
 				lineStarts = append(lineStarts, lineStart)
+				if currentLineHasNonAscii {
+					nonAsciiLineNums = append(nonAsciiLineNums, currentLineNum)
+				}
 				lineStart = pos
+				currentLineNum++
+				currentLineHasNonAscii = false
 			}
 		} else {
 			_, size := utf8.DecodeRuneInString(text[pos:])
 			pos += core.TextPos(size)
-			asciiOnly = false
+			currentLineHasNonAscii = true
 		}
 	}
 	lineStarts = append(lineStarts, lineStart)
+	if currentLineHasNonAscii {
+		nonAsciiLineNums = append(nonAsciiLineNums, currentLineNum)
+	}
 
 	return &LSPLineMap{
-		LineStarts: lineStarts,
-		AsciiOnly:  asciiOnly,
+		LineStarts:       lineStarts,
+		nonAsciiLineNums: nonAsciiLineNums,
 	}
 }
 
@@ -68,4 +79,9 @@ func (lm *LSPLineMap) ComputeIndexOfLineStart(targetPos core.TextPos) int {
 		lineNumber = lineNumber - 1
 	}
 	return lineNumber
+}
+
+func (lm *LSPLineMap) IsLineAsciiOnly(lineNum int) bool {
+	_, found := slices.BinarySearch(lm.nonAsciiLineNums, lineNum)
+	return !found
 }
