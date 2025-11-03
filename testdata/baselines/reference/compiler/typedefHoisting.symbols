@@ -4,9 +4,23 @@
 class C {
 >C : Symbol(C, Decl(x.js, 0, 0))
 
-    /** @typedef {string} Foo */
-    /** @type {Foo} */
-    foo = "abc"
+    /** @import {Bar} from "./y" */
+    /** @typedef {Bar[]} Bars */
+    /** @type {Bars} */
+    foo = ["abc", "def"]
 >foo : Symbol(C.foo, Decl(x.js, 0, 9))
+
+    bar(/** @type {Bar} */ x) {
+>bar : Symbol(C.bar, Decl(x.js, 4, 24))
+>x : Symbol(x, Decl(x.js, 5, 8))
+
+        return x
+>x : Symbol(x, Decl(x.js, 5, 8))
+    }
 }
+
+=== y.js ===
+
+/** @typedef {string} Bar */
+export {}
 
