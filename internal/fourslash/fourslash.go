@@ -270,11 +270,23 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.Diagnostic == nil {
 		capabilitiesWithDefaults.TextDocument.Diagnostic = &lsproto.DiagnosticClientCapabilities{
 			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
 		}
 	}
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
 		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
 			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
 		}
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
