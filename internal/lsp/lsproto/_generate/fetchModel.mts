@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const metaModelPath = path.join(__dirname, "metaModel.json");
 const metaModelSchemaPath = path.join(__dirname, "metaModelSchema.mts");
 
-const hash = "dadd73f7fc283b4d0adb602adadcf4be16ef3a7b";
+const hash = "66a087310eea0d60495ba3578d78f70409c403d9";
 
 const metaModelURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${hash}/protocol/metaModel.json`;
 const metaModelSchemaURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${hash}/tools/src/metaModel.ts`;

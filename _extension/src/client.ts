@@ -15,14 +15,14 @@ import {
 import { getLanguageForUri } from "./util";
 
 export class Client {
-    private outputChannel: vscode.OutputChannel;
-    private traceOutputChannel: vscode.OutputChannel;
+    private outputChannel: vscode.LogOutputChannel;
+    private traceOutputChannel: vscode.LogOutputChannel;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.clientOptions = {
