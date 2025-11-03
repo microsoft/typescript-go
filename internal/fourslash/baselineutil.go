@@ -47,7 +47,7 @@ func getBaselineFileName(t *testing.T, command string) string {
 
 func getBaselineExtension(command string) string {
 	switch command {
-	case "QuickInfo", "SignatureHelp", "Smart Selection":
+	case "QuickInfo", "SignatureHelp", "Smart Selection", "Inlay Hints":
 		return "baseline"
 	case "Auto Imports":
 		return "baseline.md"

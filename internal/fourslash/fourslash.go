@@ -2220,7 +2220,6 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	}
 }
 
-// !!! user preferences
 func (f *FourslashTest) VerifyBaselineInlayHints(
 	t *testing.T,
 	span *lsproto.Range,
@@ -2280,7 +2279,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		annotations = append(annotations, "=== No inlay hints ===")
 	}
 
-	f.addResultToBaseline(t, "InlayHints", strings.Join(annotations, "\n\n"))
+	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
 	// !!! diff submodule
 }
 

@@ -1,0 +1,288 @@
+// === Inlay Hints ===
+ foo1(1, 2);
+      ^
+{
+  "position": {
+    "line": 1,
+    "character": 6
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+ foo1(1, 2);
+         ^
+{
+  "position": {
+    "line": 1,
+    "character": 9
+  },
+  "label": "b:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+ foo2(1, { c: 1 });
+      ^
+{
+  "position": {
+    "line": 3,
+    "character": 6
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo3({}, 1);
+         ^
+{
+  "position": {
+    "line": 5,
+    "character": 9
+  },
+  "label": "b:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+const C1 = class extends foo3(1) { }
+                              ^
+{
+  "position": {
+    "line": 7,
+    "character": 30
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+class C2 extends foo3(1) { }
+                      ^
+{
+  "position": {
+    "line": 8,
+    "character": 22
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo4(1, +1, -1, +"1");
+     ^
+{
+  "position": {
+    "line": 10,
+    "character": 5
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo4(1, +1, -1, +"1");
+        ^
+{
+  "position": {
+    "line": 10,
+    "character": 8
+  },
+  "label": "b:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo4(1, +1, -1, +"1");
+            ^
+{
+  "position": {
+    "line": 10,
+    "character": 12
+  },
+  "label": "c:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+foo4(1, +1, -1, +"1");
+                ^
+{
+  "position": {
+    "line": 10,
+    "character": 16
+  },
+  "label": "d:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    "hello",
+    ^
+{
+  "position": {
+    "line": 25,
+    "character": 4
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    undefined,
+    ^
+{
+  "position": {
+    "line": 26,
+    "character": 4
+  },
+  "label": "b:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    null,
+    ^
+{
+  "position": {
+    "line": 27,
+    "character": 4
+  },
+  "label": "c:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    true,
+    ^
+{
+  "position": {
+    "line": 28,
+    "character": 4
+  },
+  "label": "d:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    false,
+    ^
+{
+  "position": {
+    "line": 29,
+    "character": 4
+  },
+  "label": "e:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    Infinity,
+    ^
+{
+  "position": {
+    "line": 30,
+    "character": 4
+  },
+  "label": "f:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    -Infinity,
+    ^
+{
+  "position": {
+    "line": 31,
+    "character": 4
+  },
+  "label": "g:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    NaN,
+    ^
+{
+  "position": {
+    "line": 32,
+    "character": 4
+  },
+  "label": "h:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    /hello/g,
+    ^
+{
+  "position": {
+    "line": 33,
+    "character": 4
+  },
+  "label": "i:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    123n,
+    ^
+{
+  "position": {
+    "line": 34,
+    "character": 4
+  },
+  "label": "j:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+trace(`${1}`);
+      ^
+{
+  "position": {
+    "line": 39,
+    "character": 6
+  },
+  "label": "message:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+trace(``);
+      ^
+{
+  "position": {
+    "line": 40,
+    "character": 6
+  },
+  "label": "message:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    'foo',
+    ^
+{
+  "position": {
+    "line": 49,
+    "character": 4
+  },
+  "label": "param2:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+    true,
+    ^
+{
+  "position": {
+    "line": 50,
+    "character": 4
+  },
+  "label": "param3:",
+  "kind": 2,
+  "paddingRight": true
+}

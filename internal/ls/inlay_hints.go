@@ -156,8 +156,8 @@ func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression)
 		if ast.IsSpreadElement(arg) {
 			spreadType := s.checker.GetTypeAtLocation(arg.Expression())
 			if spreadType.IsTupleType() {
-				elementFlags := spreadType.AsTupleType().ElementFlags()
-				fixedLength := spreadType.AsTupleType().FixedLength()
+				elementFlags := spreadType.Target().AsTupleType().ElementFlags()
+				fixedLength := spreadType.Target().AsTupleType().FixedLength()
 				if fixedLength == 0 {
 					continue
 				}
@@ -695,7 +695,7 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 				parts = append(
 					parts,
 					&lsproto.InlayHintLabelPart{
-						Value: scanner.TokenToString(node.AsPropertySignatureDeclaration().PostfixToken.Kind),
+						Value: scanner.TokenToString(node.AsMethodSignatureDeclaration().PostfixToken.Kind),
 					})
 			}
 			visitParametersAndTypeParameters(node)
@@ -704,6 +704,13 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 				visitForDisplayParts(node.Type())
 			}
 		case ast.KindCallSignature:
+			visitParametersAndTypeParameters(node)
+			if node.Type() != nil {
+				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
+				visitForDisplayParts(node.Type())
+			}
+		case ast.KindConstructSignature:
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "new "})
 			visitParametersAndTypeParameters(node)
 			if node.Type() != nil {
 				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
@@ -744,6 +751,10 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
 		case ast.KindThisType:
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "this"})
+		case ast.KindComputedPropertyName:
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
+			visitForDisplayParts(node.AsComputedPropertyName().Expression)
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
 		default:
 			debug.FailBadSyntaxKind(node)
 		}
@@ -839,8 +850,8 @@ func (s *inlayHintState) getParameterIdentifierInfoAtPosition(signature *checker
 
 	restType := s.checker.GetTypeOfSymbol(restParameter)
 	if restType.IsTupleType() {
-		associatedNames := make([]*ast.Node, 0, len(restType.AsTupleType().ElementInfos()))
-		for _, elementInfo := range restType.AsTupleType().ElementInfos() {
+		associatedNames := make([]*ast.Node, 0, len(restType.Target().AsTupleType().ElementInfos()))
+		for _, elementInfo := range restType.Target().AsTupleType().ElementInfos() {
 			labeledElement := elementInfo.LabeledDeclaration()
 			associatedNames = append(associatedNames, labeledElement)
 		}
