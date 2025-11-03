@@ -1,4 +1,4 @@
-package pnpvfs_test
+package pnpvfs
 
 import (
 	"archive/zip"
@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
-	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -35,10 +34,10 @@ func createTestZip(t *testing.T, files map[string]string) (string, vfs.FS) {
 		assert.NilError(t, err)
 	}
 
-	fs := pnpvfs.From(osvfs.FS())
+	fs := From(osvfs.FS())
 
 	t.Cleanup(func() {
-		errClear := fs.ClearCache()
+		errClear := fs.(*pnpFS).ClearCache()
 		assert.NilError(t, errClear)
 	})
 
@@ -53,7 +52,7 @@ func TestPnpVfs_BasicFileOperations(t *testing.T) {
 		"/project/package.json": `{"name": "test"}`,
 	}, true)
 
-	fs := pnpvfs.From(underlyingFS)
+	fs := From(underlyingFS)
 	assert.Assert(t, fs.FileExists("/project/src/index.ts"))
 	assert.Assert(t, !fs.FileExists("/project/nonexistent.ts"))
 
@@ -106,7 +105,7 @@ func TestPnpVfs_ZipFileDetection(t *testing.T) {
 func TestPnpVfs_ErrorHandling(t *testing.T) {
 	t.Parallel()
 
-	fs := pnpvfs.From(osvfs.FS())
+	fs := From(osvfs.FS())
 
 	t.Run("NonexistentZipFile", func(t *testing.T) {
 		t.Parallel()
@@ -147,9 +146,9 @@ func TestPnpVfs_ErrorHandling(t *testing.T) {
 func TestPnpVfs_CaseSensitivity(t *testing.T) {
 	t.Parallel()
 
-	sensitiveFS := pnpvfs.From(vfstest.FromMap(map[string]string{}, true))
+	sensitiveFS := From(vfstest.FromMap(map[string]string{}, true))
 	assert.Assert(t, sensitiveFS.UseCaseSensitiveFileNames())
-	insensitiveFS := pnpvfs.From(vfstest.FromMap(map[string]string{}, false))
+	insensitiveFS := From(vfstest.FromMap(map[string]string{}, false))
 	// pnpvfs is always case sensitive
 	assert.Assert(t, insensitiveFS.UseCaseSensitiveFileNames())
 }
@@ -162,7 +161,7 @@ func TestPnpVfs_FallbackToRegularFiles(t *testing.T) {
 	err := os.WriteFile(regularFile, []byte("regular content"), 0o644)
 	assert.NilError(t, err)
 
-	fs := pnpvfs.From(osvfs.FS())
+	fs := From(osvfs.FS())
 
 	assert.Assert(t, fs.FileExists(regularFile))
 
@@ -206,7 +205,7 @@ func TestPnpVfs_VirtualPathHandling(t *testing.T) {
 		"/project/packages/packageB/package.json": `{"name": "packageB"}`,
 	}, true)
 
-	fs := pnpvfs.From(underlyingFS)
+	fs := From(underlyingFS)
 	assert.Assert(t, fs.FileExists("/project/packages/__virtual__/packageA-virtual-123456/0/packageA/package.json"))
 	assert.Assert(t, fs.FileExists("/project/packages/subfolder/__virtual__/packageA-virtual-123456/1/packageA/package.json"))
 

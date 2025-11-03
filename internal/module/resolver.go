@@ -2055,9 +2055,9 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 	}
 
 	var result []string
-	typeRoots, fromConfig := options.GetEffectiveTypeRoots(host.GetCurrentDirectory())
+	typeRoots, _ := options.GetEffectiveTypeRoots(host.GetCurrentDirectory())
 	if pnpApi := host.PnpApi(); pnpApi != nil {
-		typeRoots, fromConfig = pnpApi.AppendPnpTypeRoots(typeRoots, host.GetCurrentDirectory(), options, fromConfig)
+		typeRoots, _ = pnpApi.AppendPnpTypeRoots(typeRoots, host.GetCurrentDirectory(), options, false)
 	}
 	for _, root := range typeRoots {
 		if host.FS().DirectoryExists(root) {

@@ -21,7 +21,7 @@ type pnpFS struct {
 
 var _ vfs.FS = (*pnpFS)(nil)
 
-func From(fs vfs.FS) *pnpFS {
+func From(fs vfs.FS) vfs.FS {
 	pnpFS := &pnpFS{
 		fs:                  fs,
 		cachedZipReadersMap: make(map[string]*zip.ReadCloser),
