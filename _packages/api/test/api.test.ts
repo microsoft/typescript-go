@@ -17,7 +17,6 @@ import {
     isPropertyAccessExpression,
     isIdentifier,
     isStringLiteral,
-    SyntaxKind,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
