@@ -53,11 +53,13 @@
 //                   ^
 // | ----------------------------------------------------------------------
 // | Foo(**value: number**): Foo
+// | This is the constructor.
 // | ----------------------------------------------------------------------
 // Foo.method1();
 //             ^
 // | ----------------------------------------------------------------------
 // | method1(): void
+// | method1 documentation
 // | ----------------------------------------------------------------------
 // foo.method2();
 //             ^
@@ -89,6 +91,10 @@
       "signatures": [
         {
           "label": "Foo(value: number): Foo",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is the constructor."
+          },
           "parameters": [
             {
               "label": "value: number"
@@ -114,6 +120,10 @@
       "signatures": [
         {
           "label": "method1(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "method1 documentation"
+          },
           "parameters": []
         }
       ],

@@ -28,6 +28,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | jsDocSingleLine(): void
+// | this is eg of single line jsdoc style comment
 // | ----------------------------------------------------------------------
 // 
 // 
@@ -40,6 +41,9 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | jsDocMultiLine(): void
+// | this is multiple line jsdoc stule comment
+// | New line1
+// | New Line2
 // | ----------------------------------------------------------------------
 // 
 // /** multiple line jsdoc comments no longer merge
@@ -53,6 +57,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMultiLineMerge(): void
+// | Another this one too
 // | ----------------------------------------------------------------------
 // 
 // 
@@ -64,6 +69,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments1(): void
+// | jsdoc comment
 // | ----------------------------------------------------------------------
 // 
 // /// Triple slash comment
@@ -74,6 +80,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments2(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** jsdoc comment */ /*** triplestar jsDocComment*/
@@ -84,6 +91,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments3(): void
+// | * triplestar jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** jsdoc comment */ /** another jsDocComment*/
@@ -95,6 +103,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments4(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /// Triple slash comment 1
@@ -107,6 +116,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments5(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** another jsDocComment*/
@@ -120,6 +130,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments6(): void
+// | jsdoc comment
 // | ----------------------------------------------------------------------
 // 
 // // This shoulnot be help comment
@@ -158,10 +169,12 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | sum(**a: number**, b: number): number
+// | Adds two integers and returns the result
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
 // | sum(a: number, **b: number**): number
+// | Adds two integers and returns the result
 // | ----------------------------------------------------------------------
 // /** This is multiplication function
 //  * @param 
@@ -176,22 +189,27 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | multiply(**a: number**, b: number, c?: number, d?: any, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //             ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, **b: number**, c?: number, d?: any, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                 ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, **c?: number**, d?: any, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                      ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, c?: number, **d?: any**, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, c?: number, d?: any, **e?: any**): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 // /** fn f1 with number
 // * @param { string} b about b
@@ -206,6 +224,7 @@
 //    ^
 // | ----------------------------------------------------------------------
 // | f1(**a: number**): any
+// | fn f1 with number
 // | ----------------------------------------------------------------------
 // f1("hello");
 //    ^
@@ -227,26 +246,32 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | subtract(**a: number**, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, **b: number**, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                   ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, **c?: () => string**, d?: () => string, e?: () => string, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, **d?: () => string**, e?: () => string, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                                 ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, **e?: () => string**, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                                        ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, **f?: () => string**): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 // /** this is square function
 // @paramTag { number } a this is input number of paramTag
@@ -260,6 +285,7 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | square(**a: number**): number
+// | this is square function
 // | ----------------------------------------------------------------------
 // /** this is divide function
 // @param { number} a this is a
@@ -272,10 +298,12 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | divide(**a: number**, b: number): void
+// | this is divide function
 // | ----------------------------------------------------------------------
 //            ^
 // | ----------------------------------------------------------------------
 // | divide(a: number, **b: number**): void
+// | this is divide function
 // | ----------------------------------------------------------------------
 // /**
 // Function returns string concat of foo and bar
@@ -289,10 +317,12 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | fooBar(**foo: string**, bar: string): string
+// | Function returns string concat of foo and bar
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
 // | fooBar(foo: string, **bar: string**): string
+// | Function returns string concat of foo and bar
 // | ----------------------------------------------------------------------
 // /** This is a comment */
 // var x;
@@ -315,18 +345,22 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(**a: number**, b: number, c: number, d: number): number
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                    ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, **b: number**, c: number, d: number): number
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                        ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, **c: number**, d: number): number
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, c: number, **d: number**): number
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   * And properly aligned comment
@@ -337,6 +371,8 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest1(): void
+// | This is function comment
+// | And properly aligned comment
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   *     And aligned with 4 space char margin
@@ -347,6 +383,8 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest2(): void
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   *     And aligned with 4 space char margin
@@ -365,14 +403,20 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(**a: string**, b: any, c: any): void
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, **b: any**, c: any): void
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 //                                       ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, b: any, **c: any**): void
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 // 
 // ^
@@ -438,6 +482,10 @@
       "signatures": [
         {
           "label": "jsDocSingleLine(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is eg of single line jsdoc style comment"
+          },
           "parameters": []
         }
       ],
@@ -459,6 +507,10 @@
       "signatures": [
         {
           "label": "jsDocMultiLine(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is multiple line jsdoc stule comment\nNew line1\nNew Line2"
+          },
           "parameters": []
         }
       ],
@@ -480,6 +532,10 @@
       "signatures": [
         {
           "label": "jsDocMultiLineMerge(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Another this one too"
+          },
           "parameters": []
         }
       ],
@@ -501,6 +557,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments1(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "jsdoc comment"
+          },
           "parameters": []
         }
       ],
@@ -522,6 +582,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments2(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
@@ -543,6 +607,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments3(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "* triplestar jsDocComment"
+          },
           "parameters": []
         }
       ],
@@ -564,6 +632,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments4(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
@@ -585,6 +657,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments5(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
@@ -606,6 +682,10 @@
       "signatures": [
         {
           "label": "jsDocMixedComments6(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "jsdoc comment"
+          },
           "parameters": []
         }
       ],
@@ -690,6 +770,10 @@
       "signatures": [
         {
           "label": "sum(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Adds two integers and returns the result"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -718,6 +802,10 @@
       "signatures": [
         {
           "label": "sum(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Adds two integers and returns the result"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -746,6 +834,10 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -783,6 +875,10 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -820,6 +916,10 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -857,6 +957,10 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -894,6 +998,10 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -931,6 +1039,10 @@
       "signatures": [
         {
           "label": "f1(a: number): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -964,6 +1076,10 @@
       "signatures": [
         {
           "label": "f1(a: number): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -997,6 +1113,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1037,6 +1157,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1077,6 +1201,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1117,6 +1245,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1157,6 +1289,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1197,6 +1333,10 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1237,6 +1377,10 @@
       "signatures": [
         {
           "label": "square(a: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is square function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1262,6 +1406,10 @@
       "signatures": [
         {
           "label": "divide(a: number, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is divide function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1290,6 +1438,10 @@
       "signatures": [
         {
           "label": "divide(a: number, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is divide function"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1318,6 +1470,10 @@
       "signatures": [
         {
           "label": "fooBar(foo: string, bar: string): string",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Function returns string concat of foo and bar"
+          },
           "parameters": [
             {
               "label": "foo: string"
@@ -1346,6 +1502,10 @@
       "signatures": [
         {
           "label": "fooBar(foo: string, bar: string): string",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Function returns string concat of foo and bar"
+          },
           "parameters": [
             {
               "label": "foo: string"
@@ -1386,6 +1546,10 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1420,6 +1584,10 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1454,6 +1622,10 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1488,6 +1660,10 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -1522,6 +1698,10 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest1(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\nAnd properly aligned comment"
+          },
           "parameters": []
         }
       ],
@@ -1543,6 +1723,10 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest2(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": []
         }
       ],
@@ -1564,6 +1748,10 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -1595,6 +1783,10 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -1626,6 +1818,10 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
               "label": "a: string"

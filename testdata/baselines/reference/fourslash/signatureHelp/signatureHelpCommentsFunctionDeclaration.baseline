@@ -7,6 +7,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | foo(): void
+// | This comment should appear for foo
 // | ----------------------------------------------------------------------
 // /** This is comment for function signature*/
 // function fooWithParameters(/** this is comment about a*/a: string,
@@ -18,10 +19,12 @@
 //                   ^
 // | ----------------------------------------------------------------------
 // | fooWithParameters(**a: string**, b: number): void
+// | This is comment for function signature
 // | ----------------------------------------------------------------------
 //                       ^
 // | ----------------------------------------------------------------------
 // | fooWithParameters(a: string, **b: number**): void
+// | This is comment for function signature
 // | ----------------------------------------------------------------------
 // /**
 // * Does something
@@ -32,6 +35,7 @@
 //    ^
 // | ----------------------------------------------------------------------
 // | fn(**a: string**): any
+// | Does something
 // | ----------------------------------------------------------------------
 [
   {
@@ -48,6 +52,10 @@
       "signatures": [
         {
           "label": "foo(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This comment should appear for foo"
+          },
           "parameters": []
         }
       ],
@@ -69,6 +77,10 @@
       "signatures": [
         {
           "label": "fooWithParameters(a: string, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is comment for function signature"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -97,6 +109,10 @@
       "signatures": [
         {
           "label": "fooWithParameters(a: string, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is comment for function signature"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -125,6 +141,10 @@
       "signatures": [
         {
           "label": "fn(a: string): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Does something"
+          },
           "parameters": [
             {
               "label": "a: string"

@@ -12,21 +12,25 @@
 //   ^
 // | ----------------------------------------------------------------------
 // | f<**T**, U, V, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, ;
 //           ^
 // | ----------------------------------------------------------------------
 // | f<T, **U**, V, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, string, ;
 //                   ^
 // | ----------------------------------------------------------------------
 // | f<T, U, **V**, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, string, boolean, ;
 //                            ^
 // | ----------------------------------------------------------------------
 // | f<T, U, V, **W**>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 [
   {
@@ -43,6 +47,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -77,6 +85,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -111,6 +123,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -145,6 +161,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"

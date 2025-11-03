@@ -15,6 +15,7 @@
 //            ^
 // | ----------------------------------------------------------------------
 // | pathFilter(**basePath: String**, pattern: String, type: String, options: Object): any[]
+// | Filters a path based on a regexp or glob pattern.
 // | ----------------------------------------------------------------------
 [
   {
@@ -31,6 +32,10 @@
       "signatures": [
         {
           "label": "pathFilter(basePath: String, pattern: String, type: String, options: Object): any[]",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Filters a path based on a regexp or glob pattern."
+          },
           "parameters": [
             {
               "label": "basePath: String"

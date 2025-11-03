@@ -7,10 +7,12 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | lambdaFoo(**a: number**, b: number): number
+// | this is lambda comment
 // | ----------------------------------------------------------------------
 //               ^
 // | ----------------------------------------------------------------------
 // | lambdaFoo(a: number, **b: number**): number
+// | this is lambda comment
 // | ----------------------------------------------------------------------
 // function anotherFunc(a: number) {
 //     /** documentation
@@ -37,6 +39,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | assigned(**s: string**): number
+// | Summary on expression
 // | ----------------------------------------------------------------------
 [
   {
@@ -53,6 +56,10 @@
       "signatures": [
         {
           "label": "lambdaFoo(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is lambda comment"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -81,6 +88,10 @@
       "signatures": [
         {
           "label": "lambdaFoo(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is lambda comment"
+          },
           "parameters": [
             {
               "label": "a: number"
@@ -109,6 +120,10 @@
       "signatures": [
         {
           "label": "assigned(s: string): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Summary on expression"
+          },
           "parameters": [
             {
               "label": "s: string"

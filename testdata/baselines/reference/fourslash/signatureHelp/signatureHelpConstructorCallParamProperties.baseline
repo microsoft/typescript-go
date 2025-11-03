@@ -12,6 +12,7 @@
 //                    ^
 // | ----------------------------------------------------------------------
 // | Circle(**radius: number**): Circle
+// | Initialize a circle.
 // | ----------------------------------------------------------------------
 [
   {
@@ -28,6 +29,10 @@
       "signatures": [
         {
           "label": "Circle(radius: number): Circle",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Initialize a circle."
+          },
           "parameters": [
             {
               "label": "radius: number"
