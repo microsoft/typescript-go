@@ -209,8 +209,6 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	compilerTest.verifySourceMapRecord(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyModuleResolution(t, r.testSuitName, r.isSubmodule)
-	// !!! Verify all baselines
-
 	compilerTest.verifyUnionOrdering(t)
 	compilerTest.verifyParentPointers(t)
 }
