@@ -368,9 +368,8 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
-			Subfolder:           suiteName,
-			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptionsForDiagnostics(),
+			Subfolder:   suiteName,
+			IsSubmodule: isSubmodule,
 			DiffFixupOld: func(old string) string {
 				var sb strings.Builder
 				sb.Grow(len(old))
@@ -585,11 +584,4 @@ func (c *compilerTest) verifyParentPointers(t *testing.T) {
 			f.AsNode().ForEachChild(verifier)
 		}
 	})
-}
-
-func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
-	if c.options.BaseUrl != "" {
-		return true
-	}
-	return false
 }
