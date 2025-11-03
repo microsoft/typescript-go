@@ -6782,7 +6782,7 @@ func (c *Checker) reportUnusedVariable(location *ast.Node, diagnostic *ast.Diagn
 
 func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *ast.Diagnostic) {
 	if location.Flags&(ast.NodeFlagsAmbient|ast.NodeFlagsThisNodeOrAnySubNodesHasError) == 0 {
-		isError := c.unusedIsError(kind, location.Flags&ast.NodeFlagsAmbient != 0)
+		isError := c.unusedIsError(kind)
 		if isError {
 			c.diagnostics.Add(diagnostic)
 		} else {
@@ -6793,10 +6793,7 @@ func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *
 	}
 }
 
-func (c *Checker) unusedIsError(kind UnusedKind, isAmbient bool) bool {
-	if isAmbient {
-		return false
-	}
+func (c *Checker) unusedIsError(kind UnusedKind) bool {
 	switch kind {
 	case UnusedKindLocal:
 		return c.compilerOptions.NoUnusedLocals.IsTrue()
