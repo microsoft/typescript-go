@@ -17,7 +17,7 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 	diagnostics := make([][]*ast.Diagnostic, 0, 4)
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, file))
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, file))
-	// !!!  user preference for suggestion diagnostics; keep only unnecessary/deprecated?
+	// !!! user preference for suggestion diagnostics; keep only unnecessary/deprecated?
 	// See: https://github.com/microsoft/vscode/blob/3dbc74129aaae102e5cb485b958fa5360e8d3e7a/extensions/typescript-language-features/src/languageFeatures/diagnostics.ts#L114
 	// TODO: also implement reportStyleCheckAsWarnings to rewrite diags with Warning severity
 	diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, file))
