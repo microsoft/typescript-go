@@ -36,6 +36,9 @@
 // | ----------------------------------------------------------------------
 // | fn(**a: string**): any
 // | Does something
+// | 
+// | *@param* `a` — a string
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -143,7 +146,7 @@
           "label": "fn(a: string): any",
           "documentation": {
             "kind": "markdown",
-            "value": "Does something"
+            "value": "Does something\n\n*@param* `a` — a string\n"
           },
           "parameters": [
             {

@@ -40,6 +40,12 @@
 // | ----------------------------------------------------------------------
 // | assigned(**s: string**): number
 // | Summary on expression
+// | 
+// | *@param* `s` — param on expression
+// | 
+// | 
+// | *@returns* — return on expression
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -122,7 +128,7 @@
           "label": "assigned(s: string): number",
           "documentation": {
             "kind": "markdown",
-            "value": "Summary on expression"
+            "value": "Summary on expression\n\n*@param* `s` — param on expression\n\n\n*@returns* — return on expression\n"
           },
           "parameters": [
             {

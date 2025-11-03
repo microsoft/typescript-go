@@ -73,6 +73,9 @@
 // | ----------------------------------------------------------------------
 // | a(**a: string**): a
 // | constructor for a
+// | 
+// | *@param* `a` — this is my a
+// | 
 // | ----------------------------------------------------------------------
 // module m {
 //     export module m2 {
@@ -219,7 +222,7 @@
           "label": "a(a: string): a",
           "documentation": {
             "kind": "markdown",
-            "value": "constructor for a"
+            "value": "constructor for a\n\n*@param* `a` — this is my a\n"
           },
           "parameters": [
             {

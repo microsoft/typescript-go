@@ -13,24 +13,80 @@
 // | ----------------------------------------------------------------------
 // | f<**T**, U, V, W>(a: number, b: string, c: boolean): void
 // | some documentation
+// | 
+// | *@template* `T` — some documentation 2
+// | 
+// | 
+// | *@template* `W`
+// | 
+// | *@template* `U`, `V` — others
+// | 
+// | 
+// | *@param* `a` — ok
+// | 
+// | 
+// | *@param* `b` — not ok
+// | 
 // | ----------------------------------------------------------------------
 // f<number, ;
 //           ^
 // | ----------------------------------------------------------------------
 // | f<T, **U**, V, W>(a: number, b: string, c: boolean): void
 // | some documentation
+// | 
+// | *@template* `T` — some documentation 2
+// | 
+// | 
+// | *@template* `W`
+// | 
+// | *@template* `U`, `V` — others
+// | 
+// | 
+// | *@param* `a` — ok
+// | 
+// | 
+// | *@param* `b` — not ok
+// | 
 // | ----------------------------------------------------------------------
 // f<number, string, ;
 //                   ^
 // | ----------------------------------------------------------------------
 // | f<T, U, **V**, W>(a: number, b: string, c: boolean): void
 // | some documentation
+// | 
+// | *@template* `T` — some documentation 2
+// | 
+// | 
+// | *@template* `W`
+// | 
+// | *@template* `U`, `V` — others
+// | 
+// | 
+// | *@param* `a` — ok
+// | 
+// | 
+// | *@param* `b` — not ok
+// | 
 // | ----------------------------------------------------------------------
 // f<number, string, boolean, ;
 //                            ^
 // | ----------------------------------------------------------------------
 // | f<T, U, V, **W**>(a: number, b: string, c: boolean): void
 // | some documentation
+// | 
+// | *@template* `T` — some documentation 2
+// | 
+// | 
+// | *@template* `W`
+// | 
+// | *@template* `U`, `V` — others
+// | 
+// | 
+// | *@param* `a` — ok
+// | 
+// | 
+// | *@param* `b` — not ok
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -49,7 +105,7 @@
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
           "documentation": {
             "kind": "markdown",
-            "value": "some documentation"
+            "value": "some documentation\n\n*@template* `T` — some documentation 2\n\n\n*@template* `W`\n\n*@template* `U`, `V` — others\n\n\n*@param* `a` — ok\n\n\n*@param* `b` — not ok\n"
           },
           "parameters": [
             {
@@ -87,7 +143,7 @@
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
           "documentation": {
             "kind": "markdown",
-            "value": "some documentation"
+            "value": "some documentation\n\n*@template* `T` — some documentation 2\n\n\n*@template* `W`\n\n*@template* `U`, `V` — others\n\n\n*@param* `a` — ok\n\n\n*@param* `b` — not ok\n"
           },
           "parameters": [
             {
@@ -125,7 +181,7 @@
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
           "documentation": {
             "kind": "markdown",
-            "value": "some documentation"
+            "value": "some documentation\n\n*@template* `T` — some documentation 2\n\n\n*@template* `W`\n\n*@template* `U`, `V` — others\n\n\n*@param* `a` — ok\n\n\n*@param* `b` — not ok\n"
           },
           "parameters": [
             {
@@ -163,7 +219,7 @@
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
           "documentation": {
             "kind": "markdown",
-            "value": "some documentation"
+            "value": "some documentation\n\n*@template* `T` — some documentation 2\n\n\n*@template* `W`\n\n*@template* `U`, `V` — others\n\n\n*@param* `a` — ok\n\n\n*@param* `b` — not ok\n"
           },
           "parameters": [
             {

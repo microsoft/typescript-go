@@ -316,14 +316,9 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 	// Generate documentation from the signature's declaration
 	var documentation *string
 	if declaration := candidate.Declaration(); declaration != nil {
-		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil {
-			isMarkdown := docFormat == lsproto.MarkupKindMarkdown
-			var b strings.Builder
-			l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
-			if b.Len() > 0 {
-				docString := b.String()
-				documentation = &docString
-			}
+		doc := l.getDocumentationFromDeclaration(c, declaration, docFormat)
+		if doc != "" {
+			documentation = &doc
 		}
 	}
 

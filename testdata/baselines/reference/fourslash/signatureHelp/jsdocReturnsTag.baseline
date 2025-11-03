@@ -14,6 +14,15 @@
 // | ----------------------------------------------------------------------
 // | find(**l: unknown[]**, x: unknown): unknown
 // | Find an item
+// | 
+// | *@template* `T`
+// | 
+// | *@param* `l`
+// | 
+// | *@param* `x`
+// | 
+// | *@returns* — The names of the found item(s).
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -32,7 +41,7 @@
           "label": "find(l: unknown[], x: unknown): unknown",
           "documentation": {
             "kind": "markdown",
-            "value": "Find an item"
+            "value": "Find an item\n\n*@template* `T`\n\n*@param* `l`\n\n*@param* `x`\n\n*@returns* — The names of the found item(s).\n"
           },
           "parameters": [
             {
