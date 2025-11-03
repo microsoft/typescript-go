@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -18,8 +17,9 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 	diagnostics := make([][]*ast.Diagnostic, 0, 4)
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, file))
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, file))
-	// !!! user preference for suggestion diagnostics; keep only unnecessary/deprecated?
+	// !!!  user preference for suggestion diagnostics; keep only unnecessary/deprecated?
 	// See: https://github.com/microsoft/vscode/blob/3dbc74129aaae102e5cb485b958fa5360e8d3e7a/extensions/typescript-language-features/src/languageFeatures/diagnostics.ts#L114
+	// TODO: also implement reportStyleCheckAsWarnings to rewrite diags with Warning severity
 	diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, file))
 	if program.Options().GetEmitDeclarations() {
 		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, file))
@@ -73,13 +73,14 @@ func (l *LanguageService) toLSPDiagnostic(clientOptions *lsproto.DiagnosticClien
 		}
 	}
 
+	// We do not check client capabilities for tags; the LSP spec says clients must handle unknown tags.
 	var tags []lsproto.DiagnosticTag
-	if clientOptions != nil && clientOptions.TagSupport != nil && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
+	if diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated() {
 		tags = make([]lsproto.DiagnosticTag, 0, 2)
-		if diagnostic.ReportsUnnecessary() && slices.Contains(clientOptions.TagSupport.ValueSet, lsproto.DiagnosticTagUnnecessary) {
+		if diagnostic.ReportsUnnecessary() {
 			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
 		}
-		if diagnostic.ReportsDeprecated() && slices.Contains(clientOptions.TagSupport.ValueSet, lsproto.DiagnosticTagDeprecated) {
+		if diagnostic.ReportsDeprecated() {
 			tags = append(tags, lsproto.DiagnosticTagDeprecated)
 		}
 	}
