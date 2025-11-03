@@ -2130,7 +2130,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		}
 		if ctx.Err() == nil {
 			// This relies on the results of other lazy diagnostics, so must be computed after them
-			if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
+			if !sourceFile.IsDeclarationFile {
 				c.checkUnusedIdentifiers(links.identifierCheckNodes)
 			}
 			if !sourceFile.IsDeclarationFile {
@@ -6781,10 +6781,29 @@ func (c *Checker) reportUnusedVariable(location *ast.Node, diagnostic *ast.Diagn
 }
 
 func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *ast.Diagnostic) {
-	if location.Flags&(ast.NodeFlagsAmbient|ast.NodeFlagsThisNodeOrAnySubNodesHasError) == 0 &&
-		(kind == UnusedKindLocal && c.compilerOptions.NoUnusedLocals.IsTrue() ||
-			(kind == UnusedKindParameter && c.compilerOptions.NoUnusedParameters.IsTrue())) {
-		c.diagnostics.Add(diagnostic)
+	if location.Flags&(ast.NodeFlagsAmbient|ast.NodeFlagsThisNodeOrAnySubNodesHasError) == 0 {
+		isError := c.unusedIsError(kind, location.Flags&ast.NodeFlagsAmbient != 0)
+		if isError {
+			c.diagnostics.Add(diagnostic)
+		} else {
+			suggestion := *diagnostic
+			suggestion.SetCategory(diagnostics.CategorySuggestion)
+			c.suggestionDiagnostics.Add(&suggestion)
+		}
+	}
+}
+
+func (c *Checker) unusedIsError(kind UnusedKind, isAmbient bool) bool {
+	if isAmbient {
+		return false
+	}
+	switch kind {
+	case UnusedKindLocal:
+		return c.compilerOptions.NoUnusedLocals.IsTrue()
+	case UnusedKindParameter:
+		return c.compilerOptions.NoUnusedParameters.IsTrue()
+	default:
+		panic("Unhandled case in unusedIsError")
 	}
 }
 

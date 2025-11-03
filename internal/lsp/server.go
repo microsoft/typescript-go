@@ -800,11 +800,7 @@ func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTracePar
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
-	var diagnosticClientCapabilities *lsproto.DiagnosticClientCapabilities
-	if s.initializeParams != nil && s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
-		diagnosticClientCapabilities = s.initializeParams.Capabilities.TextDocument.Diagnostic
-	}
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri, diagnosticClientCapabilities)
+	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri, getDiagnosticClientCapabilities(s.initializeParams))
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
@@ -991,4 +987,42 @@ func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool 
 		return false
 	}
 	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
+}
+
+func getDiagnosticClientCapabilities(params *lsproto.InitializeParams) *lsproto.DiagnosticClientCapabilities {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+
+	diagnosticCaps := params.Capabilities.TextDocument.Diagnostic
+	publishDiagnostics := params.Capabilities.TextDocument.PublishDiagnostics
+
+	// Merge capabilities from publishDiagnostics if needed
+	if diagnosticCaps == nil && publishDiagnostics != nil {
+		// Use publishDiagnostics capabilities directly
+		return &lsproto.DiagnosticClientCapabilities{
+			RelatedInformation:     publishDiagnostics.RelatedInformation,
+			TagSupport:             publishDiagnostics.TagSupport,
+			CodeDescriptionSupport: publishDiagnostics.CodeDescriptionSupport,
+			DataSupport:            publishDiagnostics.DataSupport,
+		}
+	} else if diagnosticCaps != nil && publishDiagnostics != nil {
+		// Fill in missing fields from publishDiagnostics
+		copied := *diagnosticCaps
+		if copied.RelatedInformation == nil {
+			copied.RelatedInformation = publishDiagnostics.RelatedInformation
+		}
+		if copied.TagSupport == nil {
+			copied.TagSupport = publishDiagnostics.TagSupport
+		}
+		if copied.CodeDescriptionSupport == nil {
+			copied.CodeDescriptionSupport = publishDiagnostics.CodeDescriptionSupport
+		}
+		if copied.DataSupport == nil {
+			copied.DataSupport = publishDiagnostics.DataSupport
+		}
+		return &copied
+	}
+
+	return diagnosticCaps
 }
