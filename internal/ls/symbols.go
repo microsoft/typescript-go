@@ -252,7 +252,7 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 	var infos []DeclarationInfo
 	for sourceFile := range sourceFiles.Keys() {
 		if ctx.Err() != nil {
-			return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{}, nil
+			return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{}, ctx.Err()
 		}
 		declarationMap := sourceFile.GetDeclarationMap()
 		for name, declarations := range declarationMap {

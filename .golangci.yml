@@ -36,6 +36,7 @@ linters:
     - modernize
     - musttag
     - nakedret
+    - nilerr
     - nolintlint
     - paralleltest
     - perfsprint
