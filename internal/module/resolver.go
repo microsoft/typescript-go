@@ -2004,6 +2004,11 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 	return result
 }
 
+type ResolvedEntrypoints struct {
+	Entrypoints           []*ResolvedEntrypoint
+	FailedLookupLocations []string
+}
+
 type ResolvedEntrypoint struct {
 	ResolvedFileName  string
 	ModuleSpecifier   string
@@ -2011,24 +2016,43 @@ type ResolvedEntrypoint struct {
 	ExcludeConditions map[string]struct{}
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageDirectory string, packageJson *packagejson.PackageJson) []*ResolvedEntrypoint {
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry) *ResolvedEntrypoints {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
-	packageName := GetTypesPackageName(tspath.GetBaseFileName(packageDirectory))
+	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: &core.CompilerOptions{}}
+	packageName := GetTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
 
-	if packageJson.Exports.IsPresent() {
-		state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: &core.CompilerOptions{}}
-		return state.loadEntrypointsFromExportMap(packageDirectory, packageName, packageJson, packageJson.Exports)
-	} else {
-		// !!!
-		return nil
+	if packageJson.Contents.Exports.IsPresent() {
+		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
+		return &ResolvedEntrypoints{
+			Entrypoints:           entrypoints,
+			FailedLookupLocations: state.failedLookupLocations,
+		}
 	}
+
+	mainResolution := state.loadNodeModuleFromDirectoryWorker(
+		extensions,
+		packageJson.PackageDirectory,
+		false, /*onlyRecordFailures*/
+		packageJson,
+	)
+
+	if mainResolution.isResolved() {
+		return &ResolvedEntrypoints{
+			Entrypoints: []*ResolvedEntrypoint{{
+				ResolvedFileName: mainResolution.path,
+				ModuleSpecifier:  packageName,
+			}},
+			FailedLookupLocations: state.failedLookupLocations,
+		}
+	}
+
+	return nil
 }
 
 func (r *resolutionState) loadEntrypointsFromExportMap(
-	packageDirectory string,
+	packageJson *packagejson.InfoCacheEntry,
 	packageName string,
-	packageJson *packagejson.PackageJson,
 	exports packagejson.ExportsOrImports,
 ) []*ResolvedEntrypoint {
 	var loadEntrypointsFromTargetExports func(subpath string, includeConditions map[string]struct{}, excludeConditions map[string]struct{}, exports packagejson.ExportsOrImports)
@@ -2043,7 +2067,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				files := vfs.ReadDirectory(
 					r.resolver.host.FS(),
 					r.resolver.host.GetCurrentDirectory(),
-					packageDirectory,
+					packageJson.PackageDirectory,
 					r.extensions.Array(),
 					nil,
 					[]string{
@@ -2064,11 +2088,11 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				if slices.Contains(partsAfterFirst, "..") || slices.Contains(partsAfterFirst, ".") || slices.Contains(partsAfterFirst, "node_modules") {
 					return
 				}
-				resolvedTarget := tspath.CombinePaths(packageDirectory, exports.AsString())
+				resolvedTarget := tspath.CombinePaths(packageJson.PackageDirectory, exports.AsString())
 				if result := r.loadFileNameFromPackageJSONField(r.extensions, resolvedTarget, exports.AsString(), false /*onlyRecordFailures*/); result.isResolved() {
 					entrypoints = append(entrypoints, &ResolvedEntrypoint{
 						ResolvedFileName:  result.path,
-						ModuleSpecifier:   packageName + subpath,
+						ModuleSpecifier:   tspath.CombinePaths(packageName, subpath),
 						IncludeConditions: includeConditions,
 						ExcludeConditions: excludeConditions,
 					})

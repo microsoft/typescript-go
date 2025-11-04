@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -34,6 +35,7 @@ type Snapshot struct {
 	fs                                 *snapshotFS
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
+	AutoImports                        *autoimport.Registry
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	config                             Config
 
@@ -139,8 +141,9 @@ type SnapshotChange struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	newConfig                          *Config
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
-	ataChanges map[tspath.Path]*ATAStateChange
-	apiRequest *APISnapshotRequest
+	ataChanges         map[tspath.Path]*ATAStateChange
+	apiRequest         *APISnapshotRequest
+	prepareAutoImports lsproto.DocumentUri
 }
 
 type Config struct {

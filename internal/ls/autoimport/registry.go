@@ -5,11 +5,14 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -22,6 +25,7 @@ type RegistryBucket struct {
 	Paths           map[tspath.Path]struct{}
 	LookupLocations map[tspath.Path]struct{}
 	Dependencies    collections.Set[string]
+	Entrypoints     map[tspath.Path][]*module.ResolvedEntrypoint
 	Index           *Index[*RawExport]
 }
 
@@ -36,7 +40,7 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 }
 
 type directory struct {
-	packageJson    *packagejson.DependencyFields
+	packageJson    *packagejson.InfoCacheEntry
 	hasNodeModules bool
 }
 
@@ -74,16 +78,19 @@ type RegistryChange struct {
 }
 
 type RegistryCloneHost interface {
+	module.ResolutionHost
 	FS() vfs.FS
 	GetDefaultProject(fileName string) (tspath.Path, *compiler.Program)
 	GetProgramForProject(projectPath tspath.Path) *compiler.Program
-	GetPackageJson(fileName string) *packagejson.DependencyFields
+	GetPackageJson(fileName string) *packagejson.InfoCacheEntry
+	GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile
 }
 
 type registryBuilder struct {
 	// exports     *dirty.MapBuilder[tspath.Path, []*RawExport, []*RawExport]
-	host RegistryCloneHost
-	base *Registry
+	host     RegistryCloneHost
+	resolver *module.Resolver
+	base     *Registry
 
 	directories *dirty.Map[tspath.Path, *directory]
 	nodeModules *dirty.Map[tspath.Path, *RegistryBucket]
@@ -93,8 +100,9 @@ type registryBuilder struct {
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
 	return &registryBuilder{
 		// exports:     dirty.NewMapBuilder(registry.exports, slices.Clone, core.Identity),
-		host: host,
-		base: registry,
+		host:     host,
+		resolver: module.NewResolver(host, &core.CompilerOptions{}, "", ""),
+		base:     registry,
 
 		directories: dirty.NewMap(registry.directories),
 		nodeModules: dirty.NewMap(registry.nodeModules),
@@ -329,10 +337,11 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 	}
 
 	// get all package.jsons that have this node_modules directory in their spine
+	// !!! distinguish between no dependencies and no package.jsons
 	var dependencies collections.Set[string]
 	b.directories.Range(func(entry *dirty.MapEntry[tspath.Path, *directory]) bool {
-		if entry.Value().packageJson != nil && dirPath.ContainsPath(entry.Key().GetDirectoryPath()) {
-			entry.Value().packageJson.RangeDependencies(func(name, _, _ string) bool {
+		if entry.Value().packageJson.Exists() && dirPath.ContainsPath(entry.Key().GetDirectoryPath()) {
+			entry.Value().packageJson.Contents.RangeDependencies(func(name, _, _ string) bool {
 				dependencies.Add(name)
 				return true
 			})
@@ -340,13 +349,73 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 		return true
 	})
 
-	for dep := range dependencies.Keys() {
-		packageJson := b.host.GetPackageJson(tspath.CombinePaths(string(dirPath), "node_modules", dep, "package.json"))
-		if packageJson == nil {
-			continue
-		}
+	var exportsMu sync.Mutex
+	exports := make(map[tspath.Path][]*RawExport)
+	var entrypointsMu sync.Mutex
+	var entrypoints []*module.ResolvedEntrypoints
+	wg := core.NewWorkGroup(false)
 
+	for dep := range dependencies.Keys() {
+		wg.Queue(func() {
+			if ctx.Err() != nil {
+				return
+			}
+			packageJson := b.host.GetPackageJson(tspath.CombinePaths(string(dirPath), "node_modules", dep, "package.json"))
+			if !packageJson.Exists() {
+				return
+			}
+			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson)
+			entrypointsMu.Lock()
+			entrypoints = append(entrypoints, packageEntrypoints)
+			entrypointsMu.Unlock()
+			seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
+			for _, entrypoint := range packageEntrypoints.Entrypoints {
+				path := b.base.toPath(entrypoint.ResolvedFileName)
+				if !seenFiles.AddIfAbsent(path) {
+					continue
+				}
+
+				wg.Queue(func() {
+					if ctx.Err() != nil {
+						return
+					}
+					sourceFile := b.host.GetSourceFile(entrypoint.ResolvedFileName, path)
+					binder.BindSourceFile(sourceFile)
+					fileExports := Parse(sourceFile)
+					exportsMu.Lock()
+					exports[path] = fileExports
+					exportsMu.Unlock()
+				})
+			}
+		})
 	}
+
+	wg.RunAndWait()
+	result := &RegistryBucket{
+		Dependencies:    dependencies,
+		Paths:           make(map[tspath.Path]struct{}, len(exports)),
+		Entrypoints:     make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
+		LookupLocations: make(map[tspath.Path]struct{}),
+	}
+	idx := NewIndexBuilder[*RawExport](nil)
+	for path, fileExports := range exports {
+		result.Paths[path] = struct{}{}
+		for _, exp := range fileExports {
+			idx.InsertAsWords(exp)
+		}
+	}
+	result.Index = idx.Index()
+	for _, entrypointSet := range entrypoints {
+		for _, entrypoint := range entrypointSet.Entrypoints {
+			path := b.base.toPath(entrypoint.ResolvedFileName)
+			result.Entrypoints[path] = append(result.Entrypoints[path], entrypoint)
+		}
+		for _, failedLocation := range entrypointSet.FailedLookupLocations {
+			result.LookupLocations[b.base.toPath(failedLocation)] = struct{}{}
+		}
+	}
+
+	return result, nil
 }
 
 func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost) (*Registry, error) {
