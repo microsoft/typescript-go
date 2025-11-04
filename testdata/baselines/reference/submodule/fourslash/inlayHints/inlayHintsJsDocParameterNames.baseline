@@ -1,0 +1,24 @@
+// === Inlay Hints ===
+y.foo(1, 2)
+      ^
+{
+  "position": {
+    "line": 6,
+    "character": 6
+  },
+  "label": "a:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+y.foo(1, 2)
+         ^
+{
+  "position": {
+    "line": 6,
+    "character": 9
+  },
+  "label": "b:",
+  "kind": 2,
+  "paddingRight": true
+}

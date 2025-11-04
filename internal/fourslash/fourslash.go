@@ -2259,8 +2259,8 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	annotations := core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
 		if hint.Label.InlayHintLabelParts != nil {
 			for _, part := range *hint.Label.InlayHintLabelParts {
-				if part.Location != nil && tspath.IsDeclarationFileName(part.Location.Uri.FileName()) {
-					part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0} // !!! here: verify
+				if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
+					part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
 				}
 			}
 		}
@@ -2280,7 +2280,14 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
-	// !!! diff submodule
+}
+
+func isLibFile(fileName string) bool {
+	baseName := tspath.GetBaseFileName(fileName)
+	if strings.HasPrefix(baseName, "lib.") && strings.HasSuffix(baseName, ".d.ts") {
+		return true
+	}
+	return false
 }
 
 var AnyTextEdits *[]*lsproto.TextEdit

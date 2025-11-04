@@ -1,0 +1,24 @@
+// === Inlay Hints ===
+    a = 1
+     ^
+{
+  "position": {
+    "line": 1,
+    "character": 5
+  },
+  "label": ": number",
+  "kind": 1,
+  "paddingLeft": true
+}
+
+    d;
+     ^
+{
+  "position": {
+    "line": 4,
+    "character": 5
+  },
+  "label": ": number | null",
+  "kind": 1,
+  "paddingLeft": true
+}

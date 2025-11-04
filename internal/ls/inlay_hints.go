@@ -476,6 +476,7 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 		case ast.KindIdentifier:
 			identifierText := node.Text()
 			var name *ast.Node
+			// !!! This won't work in Corsa since we don't store symbols on identifiers. We need another strategy for it.
 			if node.Symbol() != nil && len(node.Symbol().Declarations) != 0 {
 				name = ast.GetNameOfDeclaration(node.Symbol().Declarations[0])
 			}
@@ -671,7 +672,6 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 					&lsproto.InlayHintLabelPart{
 						Value: scanner.TokenToString(node.AsPropertySignatureDeclaration().PostfixToken.Kind),
 					})
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "?"})
 			}
 			if node.Type() != nil {
 				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
@@ -867,8 +867,8 @@ func (s *inlayHintState) getParameterIdentifierInfoAtPosition(signature *checker
 					isRestTupleElement = associatedName.AsParameterDeclaration().DotDotDotToken != nil
 				}
 				return &parameterInfo{
-					parameter:       restId,
-					name:            restParameter.Name,
+					parameter:       associatedName.Name(),
+					name:            associatedName.Name().Text(),
 					isRestParameter: isRestTupleElement,
 				}
 			}

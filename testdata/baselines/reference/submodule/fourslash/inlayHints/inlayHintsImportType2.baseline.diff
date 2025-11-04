@@ -1,0 +1,20 @@
+--- old.inlayHintsImportType2.baseline
++++ new.inlayHintsImportType2.baseline
+@@= skipped -1, +1 lines =@@
+ function bar () { return require('./a').a; }
+                ^
+ {
+-  "label": ": 1",
++  "label": ": number",
+   "kind": 1,
+   "paddingLeft": true
+ }
+@@= skipped -8, +8 lines =@@
+ const d = bar()
+        ^
+ {
+-  "label": ": 1",
++  "label": ": number",
+   "kind": 1,
+   "paddingLeft": true
+ }

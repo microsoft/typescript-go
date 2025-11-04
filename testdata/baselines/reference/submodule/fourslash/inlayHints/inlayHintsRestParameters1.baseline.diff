@@ -1,0 +1,20 @@
+--- old.inlayHintsRestParameters1.baseline
++++ new.inlayHintsRestParameters1.baseline
+@@= skipped -25, +25 lines =@@
+ foo2(1, 2, 3)
+         ^
+ {
+-  "label": "a:",
++  "label": "args:",
+   "kind": 2,
+   "paddingRight": true
+ }
+@@= skipped -8, +8 lines =@@
+ foo2(1, 2, 3)
+            ^
+ {
+-  "label": "b:",
++  "label": "args:",
+   "kind": 2,
+   "paddingRight": true
+ }
