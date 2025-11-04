@@ -7,7 +7,6 @@ import (
 
 // isSymlinkOrJunction checks if the given path is a symlink or junction point
 // on Windows by checking the FILE_ATTRIBUTE_REPARSE_POINT attribute.
-// This is more efficient than calling realpath and comparing paths.
 func isSymlinkOrJunction(path string) bool {
 	pathUTF16, err := syscall.UTF16PtrFromString(path)
 	if err != nil {
