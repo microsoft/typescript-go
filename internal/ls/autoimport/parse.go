@@ -15,8 +15,9 @@ type ExportSyntax int
 type ModuleID string
 
 const (
+	ExportSyntaxNone ExportSyntax = iota
 	// export const x = {}
-	ExportSyntaxModifier ExportSyntax = iota
+	ExportSyntaxModifier
 	// export { x }
 	ExportSyntaxNamed
 	// export default function f() {}
@@ -60,22 +61,25 @@ func Parse(file *ast.SourceFile) []*RawExport {
 func parseModule(file *ast.SourceFile) []*RawExport {
 	exports := make([]*RawExport, 0, len(file.Symbol.Exports))
 	for name, symbol := range file.Symbol.Exports {
-		if len(symbol.Declarations) != 1 {
-			// !!! for debugging
-			panic(fmt.Sprintf("unexpected number of declarations at %s: %s", file.Path(), name))
-		}
 		var syntax ExportSyntax
-		switch symbol.Declarations[0].Kind {
-		case ast.KindExportSpecifier:
-			syntax = ExportSyntaxNamed
-		case ast.KindExportAssignment:
-			syntax = core.IfElse(
-				symbol.Declarations[0].AsExportAssignment().IsExportEquals,
-				ExportSyntaxEquals,
-				ExportSyntaxDefaultDeclaration,
-			)
-		default:
-			syntax = ExportSyntaxModifier
+		for _, decl := range symbol.Declarations {
+			var declSyntax ExportSyntax
+			switch decl.Kind {
+			case ast.KindExportSpecifier:
+				declSyntax = ExportSyntaxNamed
+			case ast.KindExportAssignment:
+				declSyntax = core.IfElse(
+					decl.AsExportAssignment().IsExportEquals,
+					ExportSyntaxEquals,
+					ExportSyntaxDefaultDeclaration,
+				)
+			default:
+				declSyntax = ExportSyntaxModifier
+			}
+			if syntax != ExportSyntaxNone && syntax != declSyntax {
+				panic(fmt.Sprintf("mixed export syntaxes for symbol %s: %s", file.FileName(), name))
+			}
+			syntax = declSyntax
 		}
 
 		exports = append(exports, &RawExport{

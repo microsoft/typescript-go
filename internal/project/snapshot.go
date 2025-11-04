@@ -106,6 +106,10 @@ func (s *Snapshot) Converters() *lsconv.Converters {
 	return s.converters
 }
 
+func (s *Snapshot) AutoImportRegistry() *autoimport.Registry {
+	return s.AutoImports
+}
+
 func (s *Snapshot) ID() uint64 {
 	return s.id
 }
@@ -267,7 +271,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
 				for _, project := range projectCollection.Projects() {
-					if project.host.seenFiles.Has(entry.Key()) {
+					if project.host.sourceFS.Seen(entry.Key()) {
 						return true
 					}
 				}
@@ -291,6 +295,33 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	autoImportHost := newAutoImportRegistryCloneHost(
+		projectCollection,
+		session.parseCache,
+		fs,
+		s.sessionOptions.CurrentDirectory,
+		s.toPath,
+	)
+	openFiles := make(map[tspath.Path]string)
+	for path, overlay := range overlays {
+		openFiles[path] = overlay.FileName()
+	}
+	oldAutoImports := s.AutoImports
+	if oldAutoImports == nil {
+		oldAutoImports = autoimport.NewRegistry(s.toPath)
+	}
+	prepareAutoImports := tspath.Path("")
+	if change.prepareAutoImports != "" {
+		prepareAutoImports = change.prepareAutoImports.Path(s.UseCaseSensitiveFileNames())
+	}
+	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
+		RequestedFile: prepareAutoImports,
+		OpenFiles:     openFiles,
+		Changed:       change.fileChanges.Changed,
+		Created:       change.fileChanges.Created,
+		Deleted:       change.fileChanges.Deleted,
+	}, autoImportHost)
+
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
@@ -306,6 +337,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.ConfigFileRegistry = configFileRegistry
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
+	if err == nil {
+		newSnapshot.AutoImports = autoImports
+	}
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)

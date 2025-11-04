@@ -719,7 +719,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	sourceFileCache := map[*ast.SourceFile]packageJsonFilterResult{}
 
 	getNodeModuleRootSpecifier := func(fullSpecifier string) string {
-		components := tspath.GetPathComponents(modulespecifiers.GetPackageNameFromTypesPackageName(fullSpecifier), "")[1:]
+		components := tspath.GetPathComponents(module.GetPackageNameFromTypesPackageName(fullSpecifier), "")[1:]
 		// Scoped packages
 		if strings.HasPrefix(components[0], "@") {
 			return fmt.Sprintf("%s/%s", components[0], components[1])

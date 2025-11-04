@@ -2019,7 +2019,7 @@ type ResolvedEntrypoint struct {
 func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry) *ResolvedEntrypoints {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
-	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: &core.CompilerOptions{}}
+	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
 	packageName := GetTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
 
 	if packageJson.Contents.Exports.IsPresent() {

@@ -3,6 +3,7 @@ package project
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -11,38 +12,86 @@ import (
 
 type autoImportRegistryCloneHost struct {
 	projectCollection *ProjectCollection
-	snapshotFSBuilder *snapshotFSBuilder
 	parseCache        *ParseCache
+	fs                *sourceFS
+	currentDirectory  string
+}
+
+var _ autoimport.RegistryCloneHost = (*autoImportRegistryCloneHost)(nil)
+
+func newAutoImportRegistryCloneHost(
+	projectCollection *ProjectCollection,
+	parseCache *ParseCache,
+	snapshotFSBuilder *snapshotFSBuilder,
+	currentDirectory string,
+	toPath func(fileName string) tspath.Path,
+) *autoImportRegistryCloneHost {
+	return &autoImportRegistryCloneHost{
+		projectCollection: projectCollection,
+		parseCache:        parseCache,
+		fs:                &sourceFS{toPath: toPath, source: snapshotFSBuilder},
+	}
 }
 
 // FS implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) FS() vfs.FS {
-	return a.snapshotFSBuilder
+	return a.fs
 }
 
 // GetCurrentDirectory implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetCurrentDirectory() string {
-	panic("unimplemented")
+	return a.currentDirectory
 }
 
 // GetDefaultProject implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetDefaultProject(fileName string) (tspath.Path, *compiler.Program) {
-	panic("unimplemented")
+	project := a.projectCollection.GetDefaultProject(fileName, a.fs.toPath(fileName))
+	if project == nil {
+		return "", nil
+	}
+	return project.configFilePath, project.GetProgram()
 }
 
 // GetPackageJson implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetPackageJson(fileName string) *packagejson.InfoCacheEntry {
-	panic("unimplemented")
+	// !!! ref-counted cache
+	fh := a.fs.GetFile(fileName)
+	if fh == nil {
+		return nil
+	}
+	fields, err := packagejson.Parse([]byte(fh.Content()))
+	if err != nil {
+		return nil
+	}
+	return &packagejson.InfoCacheEntry{
+		Contents: &packagejson.PackageJson{
+			Fields:    fields,
+			Parseable: true,
+		},
+	}
 }
 
 // GetProgramForProject implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetProgramForProject(projectPath tspath.Path) *compiler.Program {
-	panic("unimplemented")
+	project := a.projectCollection.GetProjectByPath(projectPath)
+	if project == nil {
+		return nil
+	}
+	return project.GetProgram()
 }
 
 // GetSourceFile implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile {
-	panic("unimplemented")
+	fh := a.fs.GetFile(fileName)
+	if fh == nil {
+		return nil
+	}
+	return a.parseCache.Acquire(fh, ast.SourceFileParseOptions{
+		FileName:         fileName,
+		Path:             path,
+		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+		// !!! wrong if we load non-.d.ts files here
+		ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{},
+	}, core.GetScriptKindFromFileName(fileName))
 }
-
-var _ autoimport.RegistryCloneHost = (*autoImportRegistryCloneHost)(nil)

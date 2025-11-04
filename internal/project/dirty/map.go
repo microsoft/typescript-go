@@ -96,10 +96,16 @@ func (m *Map[K, V]) Change(key K, apply func(V)) {
 	}
 }
 
-func (m *Map[K, V]) Delete(key K) {
+func (m *Map[K, V]) TryDelete(key K) bool {
 	if entry, ok := m.Get(key); ok {
 		entry.Delete()
-	} else {
+		return true
+	}
+	return false
+}
+
+func (m *Map[K, V]) Delete(key K) {
+	if !m.TryDelete(key) {
 		panic("tried to delete a non-existent entry")
 	}
 }

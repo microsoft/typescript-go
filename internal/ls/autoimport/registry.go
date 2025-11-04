@@ -52,8 +52,7 @@ func (d *directory) Clone() *directory {
 }
 
 type Registry struct {
-	toPath    func(fileName string) tspath.Path
-	openFiles map[tspath.Path]string
+	toPath func(fileName string) tspath.Path
 
 	// exports      map[tspath.Path][]*RawExport
 	directories map[tspath.Path]*directory
@@ -101,7 +100,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 	return &registryBuilder{
 		// exports:     dirty.NewMapBuilder(registry.exports, slices.Clone, core.Identity),
 		host:     host,
-		resolver: module.NewResolver(host, &core.CompilerOptions{}, "", ""),
+		resolver: module.NewResolver(host, core.EmptyCompilerOptions, "", ""),
 		base:     registry,
 
 		directories: dirty.NewMap(registry.directories),
@@ -112,8 +111,10 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
-		// exports:     b.exports.Build(),
-
+		toPath:      b.base.toPath,
+		directories: core.FirstResult(b.directories.Finalize()),
+		nodeModules: core.FirstResult(b.nodeModules.Finalize()),
+		projects:    core.FirstResult(b.projects.Finalize()),
 	}
 }
 
@@ -165,7 +166,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		if hasNodeModules {
 			b.nodeModules.Add(dirPath, &RegistryBucket{dirty: true})
 		} else {
-			b.nodeModules.Delete(dirPath)
+			b.nodeModules.TryDelete(dirPath)
 		}
 	}
 
@@ -183,7 +184,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		func(dirPath tspath.Path, dir *directory) {
 			// Have and don't need
 			b.directories.Delete(dirPath)
-			b.nodeModules.Delete(dirPath)
+			b.nodeModules.TryDelete(dirPath)
 		},
 		func(dirPath tspath.Path, dir *directory, dirName string) {
 			// package.json may have changed
@@ -321,6 +322,9 @@ func (b *registryBuilder) buildProjectIndex(ctx context.Context, projectPath tsp
 	wg.RunAndWait()
 	idx := NewIndexBuilder[*RawExport](nil)
 	for path, fileExports := range exports {
+		if result.Paths == nil {
+			result.Paths = make(map[tspath.Path]struct{}, len(exports))
+		}
 		result.Paths[path] = struct{}{}
 		for _, exp := range fileExports {
 			idx.InsertAsWords(exp)
@@ -423,5 +427,6 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 	builder.updateBucketAndDirectoryExistence(change)
 	builder.markBucketsDirty(change)
 	builder.updateIndexes(ctx, change)
+	// !!! deref removed source files
 	return builder.Build(), nil
 }

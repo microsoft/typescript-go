@@ -8,16 +8,17 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[ExportSyntaxModifier-0]
-	_ = x[ExportSyntaxNamed-1]
-	_ = x[ExportSyntaxDefaultModifier-2]
-	_ = x[ExportSyntaxDefaultDeclaration-3]
-	_ = x[ExportSyntaxEquals-4]
+	_ = x[ExportSyntaxNone-0]
+	_ = x[ExportSyntaxModifier-1]
+	_ = x[ExportSyntaxNamed-2]
+	_ = x[ExportSyntaxDefaultModifier-3]
+	_ = x[ExportSyntaxDefaultDeclaration-4]
+	_ = x[ExportSyntaxEquals-5]
 }
 
-const _ExportSyntax_name = "ExportSyntaxModifierExportSyntaxNamedExportSyntaxDefaultModifierExportSyntaxDefaultDeclarationExportSyntaxEquals"
+const _ExportSyntax_name = "ExportSyntaxNoneExportSyntaxModifierExportSyntaxNamedExportSyntaxDefaultModifierExportSyntaxDefaultDeclarationExportSyntaxEquals"
 
-var _ExportSyntax_index = [...]uint8{0, 20, 37, 64, 94, 112}
+var _ExportSyntax_index = [...]uint8{0, 16, 36, 53, 80, 110, 128}
 
 func (i ExportSyntax) String() string {
 	if i < 0 || i >= ExportSyntax(len(_ExportSyntax_index)-1) {
