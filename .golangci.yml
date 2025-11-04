@@ -37,6 +37,7 @@ linters:
     - musttag
     - nakedret
     - nilerr
+    - noctx
     - nolintlint
     - paralleltest
     - perfsprint

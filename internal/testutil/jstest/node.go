@@ -72,7 +72,7 @@ func evalNodeScript[T any](t testing.TB, script string, loader string, dir strin
 	execArgs := make([]string, 0, 1+len(args))
 	execArgs = append(execArgs, loaderPath)
 	execArgs = append(execArgs, args...)
-	execCmd := exec.Command(exe, execArgs...)
+	execCmd := exec.CommandContext(t.Context(),exe, execArgs...)
 	execCmd.Dir = dir
 	output, err := execCmd.CombinedOutput()
 	if err != nil {

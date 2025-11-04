@@ -685,8 +685,8 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	}
 }
 
-func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
-	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
+func (s *Session) NpmInstall(ctx context.Context, cwd string, npmInstallArgs []string) ([]byte, error) {
+	return s.npmExecutor.NpmInstall(ctx, cwd, npmInstallArgs)
 }
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {

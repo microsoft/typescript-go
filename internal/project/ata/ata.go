@@ -41,7 +41,7 @@ type TypingsInstallerOptions struct {
 }
 
 type NpmExecutor interface {
-	NpmInstall(cwd string, args []string) ([]byte, error)
+	NpmInstall(ctx context.Context, cwd string, args []string) ([]byte, error)
 }
 
 type TypingsInstallerHost interface {
@@ -266,7 +266,7 @@ func (ti *TypingsInstaller) installWorker(
 		npmArgs = append(npmArgs, "install", "--ignore-scripts")
 		npmArgs = append(npmArgs, packageNames...)
 		npmArgs = append(npmArgs, "--save-dev", "--user-agent=\"typesInstaller/"+core.Version()+"\"")
-		output, err := ti.host.NpmInstall(ti.typingsLocation, npmArgs)
+		output, err := ti.host.NpmInstall(ctx, ti.typingsLocation, npmArgs)
 		if err != nil {
 			logger.Log(fmt.Sprintf("ATA:: Output is: %s", output))
 			return err
@@ -366,7 +366,7 @@ func (ti *TypingsInstaller) init(projectID string, fs vfs.FS, logger logging.Log
 
 		ti.ensureTypingsLocationExists(fs, logger)
 		logger.Log("ATA:: Updating types-registry@latest npm package...")
-		if _, err := ti.host.NpmInstall(ti.typingsLocation, []string{"install", "--ignore-scripts", "types-registry@latest"}); err == nil {
+		if _, err := ti.host.NpmInstall(context.TODO(), ti.typingsLocation, []string{"install", "--ignore-scripts", "types-registry@latest"}); err == nil {
 			logger.Log("ATA:: Updated types-registry npm package")
 		} else {
 			logger.Log(fmt.Sprintf("ATA:: Error updating types-registry package: %v", err))

@@ -28,7 +28,7 @@ func TestSymlinkRealpath(t *testing.T) {
 	linkRealpath := fs.Realpath(tspath.NormalizePath(linkFile))
 
 	if !assert.Check(t, cmp.Equal(targetRealpath, linkRealpath)) {
-		cmd := exec.Command("node", "-e", `console.log({ native: fs.realpathSync.native(process.argv[1]), node: fs.realpathSync(process.argv[1]) })`, linkFile)
+		cmd := exec.CommandContext(t.Context(), "node", "-e", `console.log({ native: fs.realpathSync.native(process.argv[1]), node: fs.realpathSync(process.argv[1]) })`, linkFile)
 		out, err := cmd.CombinedOutput()
 		assert.NilError(t, err)
 		t.Logf("node: %s", out)
@@ -59,7 +59,7 @@ func mklink(tb testing.TB, target, link string, isDir bool) {
 
 	if runtime.GOOS == "windows" && isDir {
 		// Don't use os.Symlink on Windows, as it creates a "real" symlink, not a junction.
-		assert.NilError(tb, exec.Command("cmd", "/c", "mklink", "/J", link, target).Run())
+		assert.NilError(tb, exec.CommandContext(tb.Context(), "cmd", "/c", "mklink", "/J", link, target).Run())
 	} else {
 		err := os.Symlink(target, link)
 		if err != nil && !isDir && runtime.GOOS == "windows" && strings.Contains(err.Error(), "A required privilege is not held by the client") {
