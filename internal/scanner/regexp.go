@@ -1128,8 +1128,12 @@ func (v *RegExpValidator) scanGroupName(isReference bool) {
 	}
 }
 
+// scanSourceCharacter scans and returns a single "character" from the source.
+// In Unicode mode (u or v flags), returns complete Unicode code points.
+// In non-Unicode mode, mimics JavaScript's UTF-16 behavior where literal characters
+// >= U+10000 are returned as individual surrogates (matching TypeScript scanner.ts line 3536).
 func (v *RegExpValidator) scanSourceCharacter() string {
-	// In non-Unicode mode, check if we have a pending low surrogate from a previous scan
+	// Check if we have a pending low surrogate from splitting a previous character
 	if !v.anyUnicodeMode && v.pendingLowSurrogate != 0 {
 		low := v.pendingLowSurrogate
 		size := v.pendingLowSurrogate >> 16 // High 16 bits store the UTF-8 size
@@ -1172,6 +1176,9 @@ func (v *RegExpValidator) scanSourceCharacter() string {
 	return v.text[v.pos-s : v.pos]
 }
 
+// ClassRanges ::= ClassAtom ('-' ClassAtom)?
+// Scans character class content like [a-z] or [^0-9].
+// TypeScript reference: scanner.ts line 2990
 func (v *RegExpValidator) scanClassRanges() {
 	isNegated := v.charAtOffset(0) == '^'
 	if isNegated {
@@ -1244,6 +1251,12 @@ func (v *RegExpValidator) isClassContentExit(ch rune) bool {
 	return ch == ']' || ch == 0 || v.pos >= v.end
 }
 
+// ClassAtom ::=
+//
+//	| SourceCharacter but not one of '\' or ']'
+//	| '\' ClassEscape
+//
+// TypeScript reference: scanner.ts line 3406
 func (v *RegExpValidator) scanClassAtom() string {
 	if v.charAtOffset(0) == '\\' {
 		v.pos++
@@ -1252,6 +1265,14 @@ func (v *RegExpValidator) scanClassAtom() string {
 	return v.scanSourceCharacter()
 }
 
+// ClassEscape ::=
+//
+//	| 'b'
+//	| '-'
+//	| CharacterClassEscape
+//	| CharacterEscape
+//
+// TypeScript reference: scanner.ts line 3406
 func (v *RegExpValidator) scanClassEscape() string {
 	if v.scanCharacterClassEscape() {
 		return ""
