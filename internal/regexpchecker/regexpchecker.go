@@ -2,6 +2,8 @@ package regexpchecker
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -534,15 +536,9 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			canonicalName := nonBinaryUnicodePropertyNames[propertyNameOrValue]
 			var candidates []string
 			if canonicalName == "General_Category" {
-				candidates = make([]string, 0, len(generalCategoryValues))
-				for key := range generalCategoryValues {
-					candidates = append(candidates, key)
-				}
+				candidates = generalCategoryValues.KeysSlice()
 			} else if canonicalName == "Script" || canonicalName == "Script_Extensions" {
-				candidates = make([]string, 0, len(scriptValues))
-				for key := range scriptValues {
-					candidates = append(candidates, key)
-				}
+				candidates = scriptValues.KeysSlice()
 			}
 			if len(candidates) > 0 {
 				suggestion := core.GetSpellingSuggestion(propertyValue, candidates, core.Identity[string])
@@ -555,7 +551,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		// property name alone
 		if v.pos == propertyNameOrValueStart {
 			v.error(diagnostics.Expected_a_Unicode_property_name_or_value, propertyNameOrValueStart, 0)
-		} else if binaryUnicodePropertiesOfStrings[propertyNameOrValue] {
+		} else if binaryUnicodePropertiesOfStrings.Has(propertyNameOrValue) {
 			// Properties that match more than one character (strings)
 			if !v.unicodeSetsMode {
 				v.error(diagnostics.Any_Unicode_property_that_would_possibly_match_more_than_a_single_character_is_only_available_when_the_Unicode_Sets_v_flag_is_set, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
@@ -567,16 +563,10 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		} else if !isValidUnicodePropertyName(propertyNameOrValue) {
 			v.error(diagnostics.Unknown_Unicode_property_name_or_value, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
 			// Provide spelling suggestion from general category values, binary properties, and binary properties of strings
-			candidates := make([]string, 0, len(generalCategoryValues)+len(binaryUnicodeProperties)+len(binaryUnicodePropertiesOfStrings))
-			for key := range generalCategoryValues {
-				candidates = append(candidates, key)
-			}
-			for key := range binaryUnicodeProperties {
-				candidates = append(candidates, key)
-			}
-			for key := range binaryUnicodePropertiesOfStrings {
-				candidates = append(candidates, key)
-			}
+			candidates := make([]string, 0, generalCategoryValues.Len()+binaryUnicodeProperties.Len()+binaryUnicodePropertiesOfStrings.Len())
+			candidates = slices.AppendSeq(candidates, maps.Keys(generalCategoryValues.M))
+			candidates = slices.AppendSeq(candidates, maps.Keys(binaryUnicodeProperties.M))
+			candidates = slices.AppendSeq(candidates, maps.Keys(binaryUnicodePropertiesOfStrings.M))
 			suggestion := core.GetSpellingSuggestion(propertyNameOrValue, candidates, core.Identity)
 			if suggestion != "" {
 				v.error(diagnostics.Did_you_mean_0, propertyNameOrValueStart, v.pos-propertyNameOrValueStart, suggestion)
