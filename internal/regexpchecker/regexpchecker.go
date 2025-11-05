@@ -106,9 +106,6 @@ func Check(
 func (v *regExpValidator) scanRegularExpressionWorker() {
 	// Find the body end (before flags)
 	bodyEnd := v.findRegExpBodyEnd()
-	if bodyEnd < 0 {
-		return // Already unterminated
-	}
 
 	// Parse flags
 	flagsStart := bodyEnd + 1
@@ -164,7 +161,7 @@ func (v *regExpValidator) findRegExpBodyEnd() int {
 		pos++
 	}
 
-	return -1 // Unterminated
+	panic("regexpchecker: unterminated regex should have been caught by scanner")
 }
 
 func (v *regExpValidator) charAndSize() (rune, int) {
