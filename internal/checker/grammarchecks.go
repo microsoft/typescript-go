@@ -57,7 +57,7 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 
 func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressionLiteral) bool {
 	sourceFile := ast.GetSourceFileOfNode(node.AsNode())
-	if !c.hasParseDiagnostics(sourceFile) && node.AsNode().LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated == 0 {
+	if !c.hasParseDiagnostics(sourceFile) && node.TokenFlags&ast.TokenFlagsUnterminated == 0 {
 		var lastError *ast.Diagnostic
 
 		onError := func(message *diagnostics.Message, start int, length int, args ...any) {
