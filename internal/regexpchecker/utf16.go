@@ -1,16 +1,17 @@
 package regexpchecker
 
-import "unicode/utf8"
+import (
+	"unicode/utf16"
+	"unicode/utf8"
+)
 
 // utf16.go contains utilities for handling UTF-16 surrogate pairs and encoding.
 // JavaScript regular expressions use UTF-16 internally, so we need to mimic this
 // behavior when validating regex patterns. This includes handling surrogate pairs
 // and preserving surrogate values that would otherwise be invalid in Go strings.
 
-// UTF-16 surrogate pair constants
+// UTF-16 surrogate pair constants (for cases where we need finer granularity than utf16 package)
 const (
-	surrogateMin     = 0xD800  // Start of surrogate range
-	surrogateMax     = 0xDFFF  // End of surrogate range
 	highSurrogateMin = 0xD800  // Start of high surrogate range
 	highSurrogateMax = 0xDBFF  // End of high surrogate range
 	lowSurrogateMin  = 0xDC00  // Start of low surrogate range
@@ -18,9 +19,10 @@ const (
 	supplementaryMin = 0x10000 // First code point requiring surrogate pair
 )
 
-// isSurrogate returns true if the code point is in the surrogate range
+// isSurrogate returns true if the code point is in the surrogate range.
+// Delegates to stdlib utf16.IsSurrogate.
 func isSurrogate(r rune) bool {
-	return r >= surrogateMin && r <= surrogateMax
+	return utf16.IsSurrogate(r)
 }
 
 // isHighSurrogate returns true if the code point is a high surrogate
@@ -33,17 +35,16 @@ func isLowSurrogate(r rune) bool {
 	return r >= lowSurrogateMin && r <= lowSurrogateMax
 }
 
-// combineSurrogatePair combines a high and low surrogate into a code point
+// combineSurrogatePair combines a high and low surrogate into a code point.
+// Delegates to stdlib utf16.DecodeRune.
 func combineSurrogatePair(high, low rune) rune {
-	return supplementaryMin + ((high - highSurrogateMin) << 10) + (low - lowSurrogateMin)
+	return utf16.DecodeRune(high, low)
 }
 
-// splitToSurrogatePair splits a supplementary code point into high and low surrogates
+// splitToSurrogatePair splits a supplementary code point into high and low surrogates.
+// Delegates to stdlib utf16.EncodeRune.
 func splitToSurrogatePair(r rune) (high, low rune) {
-	r -= supplementaryMin
-	high = highSurrogateMin + ((r >> 10) & 0x3FF)
-	low = lowSurrogateMin + (r & 0x3FF)
-	return high, low
+	return utf16.EncodeRune(r)
 }
 
 // encodeSurrogate encodes a UTF-16 surrogate value as a 2-byte UTF-16BE sequence.
@@ -83,15 +84,16 @@ func decodeCodePoint(s string) rune {
 
 // charSize returns the number of UTF-16 code units needed to represent a code point.
 // This matches JavaScript's internal string representation.
+// Similar to stdlib utf16.RuneLen but handles zero specially.
 func charSize(ch rune) int {
-	if ch >= supplementaryMin {
-		// Code points >= 0x10000 require surrogate pairs in UTF-16 (2 code units)
-		return 2
-	}
 	if ch == 0 {
 		return 0
 	}
-	return 1
+	// Use stdlib for consistency, but it returns -1 for invalid runes
+	if n := utf16.RuneLen(ch); n > 0 {
+		return n
+	}
+	return 1 // fallback for invalid runes
 }
 
 // utf16Length returns the UTF-16 length of a string, matching JavaScript's string.length.
