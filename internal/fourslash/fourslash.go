@@ -240,6 +240,7 @@ var (
 			PreselectSupport:        ptrTrue,
 			LabelDetailsSupport:     ptrTrue,
 			InsertReplaceSupport:    ptrTrue,
+			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
 		CompletionList: &lsproto.CompletionListCapabilities{
 			ItemDefaults: &[]string{"commitCharacters", "editRange"},
@@ -250,6 +251,9 @@ var (
 	}
 	defaultTypeDefinitionCapabilities = &lsproto.TypeDefinitionClientCapabilities{
 		LinkSupport: ptrTrue,
+	}
+	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
+		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 	}
 )
 
@@ -278,6 +282,17 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 			},
 		}
 	}
+	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
+			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
+		}
+	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	}
@@ -289,6 +304,21 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.TextDocument.TypeDefinition == nil {
 		capabilitiesWithDefaults.TextDocument.TypeDefinition = defaultTypeDefinitionCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.Hover == nil {
+		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
+		capabilitiesWithDefaults.TextDocument.SignatureHelp = &lsproto.SignatureHelpClientCapabilities{
+			SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+				DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+				ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+					LabelOffsetSupport: ptrTrue,
+				},
+				ActiveParameterSupport: ptrTrue,
+			},
+			ContextSupport: ptrTrue,
+		}
 	}
 	return &capabilitiesWithDefaults
 }
@@ -851,12 +881,7 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 func ignorePaths(paths ...string) cmp.Option {
 	return cmp.FilterPath(
 		func(p cmp.Path) bool {
-			for _, path := range paths {
-				if p.Last().String() == path {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(paths, p.Last().String())
 		},
 		cmp.Ignore(),
 	)

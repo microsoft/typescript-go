@@ -3895,6 +3895,10 @@ func GetContainingFunction(node *Node) *Node {
 	return FindAncestor(node.Parent, IsFunctionLike)
 }
 
+func IsImplicitlyExportedJSTypeAlias(node *Node) bool {
+	return IsJSTypeAliasDeclaration(node) && IsSourceFile(node.Parent) && IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
+}
+
 func HasContextSensitiveParameters(node *Node) bool {
 	// Functions with type parameters are not context sensitive.
 	if node.TypeParameters() == nil {

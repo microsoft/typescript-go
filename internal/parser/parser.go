@@ -498,12 +498,21 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
+	outerReparseList := p.reparseList
+	p.reparseList = nil
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			elt := parseElement(p, i)
 			if len(p.reparseList) > 0 {
-				list = append(list, p.reparseList...)
+				for _, e := range p.reparseList {
+					// Propagate @typedef type alias declarations outwards to a context that permits them.
+					if (ast.IsJSTypeAliasDeclaration(e) || ast.IsJSImportDeclaration(e)) && kind != PCSourceElements && kind != PCBlockStatements {
+						outerReparseList = append(outerReparseList, e)
+					} else {
+						list = append(list, e)
+					}
+				}
 				p.reparseList = nil
 			}
 			list = append(list, elt)
@@ -513,6 +522,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 			break
 		}
 	}
+	p.reparseList = outerReparseList
 	p.parsingContexts = saveParsingContexts
 	return p.nodeSlicePool.Clone(list)
 }
@@ -611,7 +621,7 @@ func (p *Parser) isInSomeParsingContext() bool {
 	// We should be in at least one parsing context, be it SourceElements while parsing
 	// a SourceFile, or JSDocComment when lazily parsing JSDoc.
 	debug.Assert(p.parsingContexts != 0, "Missing parsing context")
-	for kind := ParsingContext(0); kind < PCCount; kind++ {
+	for kind := range PCCount {
 		if p.parsingContexts&(1<<kind) != 0 {
 			if p.isListElement(kind, true /*inErrorRecovery*/) || p.isListTerminator(kind) {
 				return true
@@ -3109,9 +3119,9 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	if p.parseOptional(ast.KindEqualsToken) {
 		defaultType = p.parseType()
 	}
-	result := p.finishNode(p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType), pos)
+	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
 	result.AsTypeParameter().Expression = expression
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseParameters(flags ParseFlags) *ast.NodeList {
