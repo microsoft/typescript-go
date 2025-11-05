@@ -132,13 +132,3 @@ func makeRegExpChar(codePoint rune) regExpChar {
 		utf16Length: charSize(codePoint),
 	}
 }
-
-// String returns a string representation suitable for comparison.
-// For surrogates, uses UTF-16BE encoding to preserve the surrogate value.
-// For normal code points, uses standard Go string encoding.
-func (c regExpChar) String() string {
-	if isSurrogate(c.codePoint) {
-		return encodeSurrogate(c.codePoint)
-	}
-	return string(c.codePoint)
-}
