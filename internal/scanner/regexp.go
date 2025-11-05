@@ -106,21 +106,15 @@ func ValidateRegularExpressionLiteral(
 	node *ast.RegularExpressionLiteral,
 	sourceFile *ast.SourceFile,
 	languageVersion core.ScriptTarget,
-	languageVariant core.LanguageVariant,
 	onError ErrorCallback,
 ) {
-	// Check if the token has the Unterminated flag
-	if node.AsNode().LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
-		return
-	}
-
 	text := node.Text
 	v := &RegExpValidator{
 		text:            text,
 		pos:             1, // Skip initial '/'
 		end:             len(text),
 		languageVersion: languageVersion,
-		languageVariant: languageVariant,
+		languageVariant: sourceFile.LanguageVariant,
 		onError:         onError,
 	}
 

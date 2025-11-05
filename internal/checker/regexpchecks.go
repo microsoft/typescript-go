@@ -38,5 +38,5 @@ func (c *Checker) validateRegularExpressionLiteralNode(node *ast.RegularExpressi
 	}
 
 	// Perform regexp validation
-	scanner.ValidateRegularExpressionLiteral(node, sourceFile, c.languageVersion, sourceFile.LanguageVariant, onError)
+	scanner.ValidateRegularExpressionLiteral(node, sourceFile, c.languageVersion, onError)
 }
