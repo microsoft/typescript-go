@@ -493,6 +493,10 @@ func (f *FourslashTest) MarkerNames() []string {
 	})
 }
 
+func (f *FourslashTest) MarkerByName(t *testing.T, name string) *Marker {
+	return f.testData.MarkerPositions[name]
+}
+
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
 }

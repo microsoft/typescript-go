@@ -1,0 +1,72 @@
+// === Inlay Hints ===
+function c2 () { foo2(1, 2); }
+                      ^
+{
+  "position": {
+    "line": 8,
+    "character": 22
+  },
+  "label": "c:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+function c2 () { foo2(1, 2); }
+                         ^
+{
+  "position": {
+    "line": 8,
+    "character": 25
+  },
+  "label": "d:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+function c3 () { foo3(1, 2); }
+                      ^
+{
+  "position": {
+    "line": 9,
+    "character": 22
+  },
+  "label": "e:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+function c3 () { foo3(1, 2); }
+                         ^
+{
+  "position": {
+    "line": 9,
+    "character": 25
+  },
+  "label": "f:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+function c4 () { foo4(1, 2); }
+                      ^
+{
+  "position": {
+    "line": 10,
+    "character": 22
+  },
+  "label": "g:",
+  "kind": 2,
+  "paddingRight": true
+}
+
+function c4 () { foo4(1, 2); }
+                         ^
+{
+  "position": {
+    "line": 10,
+    "character": 25
+  },
+  "label": "h:",
+  "kind": 2,
+  "paddingRight": true
+}
