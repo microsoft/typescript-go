@@ -130,38 +130,12 @@ func (v *regExpValidator) scanRegularExpressionWorker() {
 }
 
 func (v *regExpValidator) findRegExpBodyEnd() int {
-	pos := 1 // Skip initial '/'
-	inEscape := false
-	inCharacterClass := false
-
-	for pos < len(v.text) {
-		ch := v.text[pos]
-		if ch == '\\' && !inEscape {
-			inEscape = true
-			pos++
-			continue
-		}
-
-		if inEscape {
-			inEscape = false
-			pos++
-			continue
-		}
-
-		if ch == '/' && !inCharacterClass {
-			return pos
-		}
-
-		if ch == '[' {
-			inCharacterClass = true
-		} else if ch == ']' {
-			inCharacterClass = false
-		}
-
-		pos++
+	// Find the last '/' which closes the pattern
+	pos := strings.LastIndexByte(v.text, '/')
+	if pos <= 0 {
+		panic("regexpchecker: regex must have closing '/' (scanner should have validated)")
 	}
-
-	panic("regexpchecker: unterminated regex should have been caught by scanner")
+	return pos
 }
 
 func (v *regExpValidator) charAndSize() (rune, int) {
