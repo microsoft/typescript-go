@@ -42,6 +42,45 @@ var charCodeToRegExpFlag = map[rune]regExpFlags{
 	'y': regExpFlagsSticky,
 }
 
+// UTF-16 surrogate pair constants
+const (
+	surrogateMin     = 0xD800  // Start of surrogate range
+	surrogateMax     = 0xDFFF  // End of surrogate range
+	highSurrogateMin = 0xD800  // Start of high surrogate range
+	highSurrogateMax = 0xDBFF  // End of high surrogate range
+	lowSurrogateMin  = 0xDC00  // Start of low surrogate range
+	lowSurrogateMax  = 0xDFFF  // End of low surrogate range
+	supplementaryMin = 0x10000 // First code point requiring surrogate pair
+)
+
+// isSurrogate returns true if the code point is in the surrogate range
+func isSurrogate(r rune) bool {
+	return r >= surrogateMin && r <= surrogateMax
+}
+
+// isHighSurrogate returns true if the code point is a high surrogate
+func isHighSurrogate(r rune) bool {
+	return r >= highSurrogateMin && r <= highSurrogateMax
+}
+
+// isLowSurrogate returns true if the code point is a low surrogate
+func isLowSurrogate(r rune) bool {
+	return r >= lowSurrogateMin && r <= lowSurrogateMax
+}
+
+// combineSurrogatePair combines a high and low surrogate into a code point
+func combineSurrogatePair(high, low rune) rune {
+	return supplementaryMin + ((high - highSurrogateMin) << 10) + (low - lowSurrogateMin)
+}
+
+// splitToSurrogatePair splits a supplementary code point into high and low surrogates
+func splitToSurrogatePair(r rune) (high, low rune) {
+	r -= supplementaryMin
+	high = highSurrogateMin + ((r >> 10) & 0x3FF)
+	low = lowSurrogateMin + (r & 0x3FF)
+	return high, low
+}
+
 // regExpValidator is used to validate regular expressions
 type regExpValidator struct {
 	text                           string
@@ -756,14 +795,14 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			// For surrogates, we need to preserve the actual value since string(rune(surrogate))
 			// converts to 0xFFFD. We encode the surrogate as UTF-16BE bytes.
 			var escapedValueString string
-			if code >= 0xD800 && code <= 0xDFFF {
+			if isSurrogate(rune(code)) {
 				// Surrogate - encode as 2-byte sequence (UTF-16BE)
-				escapedValueString = string([]byte{byte(code >> 8), byte(code & 0xFF)})
+				escapedValueString = encodeSurrogate(rune(code))
 			} else {
 				escapedValueString = string(rune(code))
 			}
 			// In Unicode mode, check for surrogate pairs
-			if v.anyUnicodeMode && code >= 0xD800 && code <= 0xDBFF &&
+			if v.anyUnicodeMode && isHighSurrogate(rune(code)) &&
 				v.pos+6 <= v.end && v.text[v.pos:v.pos+2] == "\\u" {
 				// High surrogate followed by potential low surrogate
 				nextStart := v.pos
@@ -780,14 +819,11 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 					// Parse the next escape
 					nextCode := parseHexValue(v.text, nextStart+2, nextPos)
 					// Check if it's a low surrogate
-					if nextCode >= 0xDC00 && nextCode <= 0xDFFF {
+					if isLowSurrogate(rune(nextCode)) {
 						// Combine surrogates into a single code point
-						// Formula: 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00)
-						highSurrogate := code
-						lowSurrogate := nextCode
-						combinedCodePoint := 0x10000 + ((highSurrogate - 0xD800) << 10) + (lowSurrogate - 0xDC00)
+						combinedCodePoint := combineSurrogatePair(rune(code), rune(nextCode))
 						v.pos = nextPos
-						return string(rune(combinedCodePoint))
+						return string(combinedCodePoint)
 					}
 				}
 			}
@@ -831,10 +867,9 @@ func decodeCodePoint(s string) rune {
 	}
 	// Check if this is a UTF-16BE encoded surrogate (2 bytes, first byte in surrogate range)
 	if len(s) == 2 {
-		firstByte := uint16(s[0])
-		if firstByte >= 0xD8 && firstByte <= 0xDF {
-			// This is a surrogate encoded as UTF-16BE
-			return rune((uint16(s[0]) << 8) | uint16(s[1]))
+		code := rune((uint16(s[0]) << 8) | uint16(s[1]))
+		if isSurrogate(code) {
+			return code
 		}
 	}
 	first, _ := utf8.DecodeRuneInString(s)
@@ -844,7 +879,7 @@ func decodeCodePoint(s string) rune {
 // charSize returns the number of UTF-16 code units needed to represent a code point
 // This matches JavaScript's internal string representation
 func charSize(ch rune) int {
-	if ch >= 0x10000 {
+	if ch >= supplementaryMin {
 		// Code points >= 0x10000 require surrogate pairs in UTF-16 (2 code units)
 		return 2
 	}
@@ -861,9 +896,8 @@ func utf16Length(s string) int {
 	// Check if this is a 2-byte UTF-16BE surrogate encoding
 	// These are used to preserve surrogate values in patterns like \uD835
 	if len(s) == 2 {
-		firstByte := uint16(s[0])
-		if firstByte >= 0xD8 && firstByte <= 0xDF {
-			// This is a surrogate encoded as UTF-16BE
+		code := rune((uint16(s[0]) << 8) | uint16(s[1]))
+		if isSurrogate(code) {
 			return 1
 		}
 	}
@@ -871,11 +905,7 @@ func utf16Length(s string) int {
 	// Otherwise, count UTF-16 code units from UTF-8 runes
 	length := 0
 	for _, r := range s {
-		if r >= 0x10000 {
-			length += 2 // Surrogate pair
-		} else {
-			length += 1
-		}
+		length += charSize(r)
 	}
 	return length
 }
@@ -928,7 +958,7 @@ func (v *regExpValidator) scanSourceCharacter() string {
 	// Decode the next UTF-8 character from the source
 	r, s := v.charAndSize()
 
-	if v.anyUnicodeMode || r < 0x10000 {
+	if v.anyUnicodeMode || r < supplementaryMin {
 		// In Unicode mode, or for BMP characters, consume and return normally
 		v.pos += s
 		return v.text[v.pos-s : v.pos]
@@ -937,8 +967,7 @@ func (v *regExpValidator) scanSourceCharacter() string {
 	// In non-Unicode mode with a supplementary character (>= U+10000):
 	// JavaScript represents these as surrogate pairs (two UTF-16 code units).
 	// Return the high surrogate now and save the low surrogate for the next call.
-	high := 0xD800 + ((r-0x10000)>>10)&0x3FF
-	low := 0xDC00 + ((r - 0x10000) & 0x3FF)
+	high, low := splitToSurrogatePair(r)
 
 	v.surrogateState = &surrogatePairState{
 		lowSurrogate: low,
