@@ -40,27 +40,10 @@ var charCodeToRegExpFlag = map[rune]regExpFlags{
 	'y': regExpFlagsSticky,
 }
 
-var regExpFlagToCharCode = map[regExpFlags]rune{
-	regExpFlagsHasIndices:  'd',
-	regExpFlagsGlobal:      'g',
-	regExpFlagsIgnoreCase:  'i',
-	regExpFlagsMultiline:   'm',
-	regExpFlagsDotAll:      's',
-	regExpFlagsUnicode:     'u',
-	regExpFlagsUnicodeSets: 'v',
-	regExpFlagsSticky:      'y',
-}
-
 // characterCodeToRegularExpressionFlag converts a character code to a regexp flag
 func characterCodeToRegularExpressionFlag(ch rune) (regExpFlags, bool) {
 	flag, ok := charCodeToRegExpFlag[ch]
 	return flag, ok
-}
-
-// regularExpressionFlagToCharacterCode converts a regexp flag to a character code
-func regularExpressionFlagToCharacterCode(f regExpFlags) (rune, bool) {
-	ch, ok := regExpFlagToCharCode[f]
-	return ch, ok
 }
 
 // regExpValidator is used to validate regular expressions
@@ -208,10 +191,6 @@ func (v *regExpValidator) findRegExpBodyEnd() int {
 	}
 
 	return -1 // Unterminated
-}
-
-func (v *regExpValidator) textStart() int {
-	return 1 // Offset from node start (which includes the '/')
 }
 
 func (v *regExpValidator) charAndSize() (rune, int) {
@@ -993,43 +972,6 @@ func codePointAt(s string) rune {
 func charSize(ch rune) int {
 	if ch >= 0x10000 {
 		// Code points >= 0x10000 require surrogate pairs in UTF-16 (2 code units)
-		return 2
-	}
-	if ch == 0 {
-		return 0
-	}
-	return 1
-}
-
-// utf16ComparisonValue returns the UTF-16 code unit value to use for range comparison
-// In non-Unicode mode, JavaScript compares the low surrogate for code points >= 0x10000
-func utf16ComparisonValue(s string) rune {
-	if len(s) == 0 {
-		return 0
-	}
-	r, _ := utf8.DecodeRuneInString(s)
-	// For code points >= 0x10000, return the low surrogate value
-	// This matches JavaScript's behavior in non-Unicode mode where surrogate pairs
-	// are treated as separate code units
-	if r >= 0x10000 {
-		return 0xDC00 + ((r - 0x10000) & 0x3FF)
-	}
-	return r
-}
-
-// stringCharSize returns the expected string length for a code point in our representation
-// Surrogate pairs are represented as 2-rune strings, each rune encoded as UTF-8
-func stringCharSize(ch rune) int {
-	if ch >= 0x10000 {
-		// High surrogate (0xD800-0xDBFF): 3 bytes in UTF-8
-		// Low surrogate (0xDC00-0xDFFF): 3 bytes in UTF-8
-		// Total: 6 bytes
-		return 6
-	}
-	if ch >= 0x800 {
-		return 3
-	}
-	if ch >= 0x80 {
 		return 2
 	}
 	if ch == 0 {
