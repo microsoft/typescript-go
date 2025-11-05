@@ -94,22 +94,23 @@ func Check(
 	text := node.Text
 	v := &regExpValidator{
 		text:            text,
-		pos:             1, // Skip initial '/'
-		end:             len(text),
 		languageVersion: languageVersion,
 		languageVariant: sourceFile.LanguageVariant,
 		onError:         onError,
 	}
-	v.scanRegularExpressionWorker()
-}
 
-func (v *regExpValidator) scanRegularExpressionWorker() {
+	// Similar to the original scanRegularExpressionWorker, but since we are outside the scanner,
+	// we need to rescan to find the body end and recalculate flags.
+
 	// Find the body end (before flags)
-	bodyEnd := v.findRegExpBodyEnd()
+	bodyEnd := strings.LastIndexByte(text, '/')
+	if bodyEnd <= 0 {
+		panic("regexpchecker: regex must have closing '/' (scanner should have validated)")
+	}
 
 	// Parse flags
-	flagsStart := bodyEnd + 1
-	v.pos = flagsStart
+	v.pos = bodyEnd + 1
+	v.end = len(text)
 	v.regExpFlags = v.scanFlags(regExpFlagsNone, false)
 
 	// Set up validation parameters
@@ -127,15 +128,6 @@ func (v *regExpValidator) scanRegularExpressionWorker() {
 	// Post-validation checks
 	v.validateGroupReferences()
 	v.validateDecimalEscapes()
-}
-
-func (v *regExpValidator) findRegExpBodyEnd() int {
-	// Find the last '/' which closes the pattern
-	pos := strings.LastIndexByte(v.text, '/')
-	if pos <= 0 {
-		panic("regexpchecker: regex must have closing '/' (scanner should have validated)")
-	}
-	return pos
 }
 
 func (v *regExpValidator) charAndSize() (rune, int) {
@@ -165,9 +157,7 @@ func (v *regExpValidator) charAtOffset(offset int) rune {
 }
 
 func (v *regExpValidator) error(message *diagnostics.Message, start, length int, args ...any) {
-	if v.onError != nil {
-		v.onError(message, start, length, args...)
-	}
+	v.onError(message, start, length, args...)
 }
 
 func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlags, size int) {
