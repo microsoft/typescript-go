@@ -1,8 +1,0 @@
-//// [tests/cases/compiler/regexpTestSimple.ts] ////
-
-=== regexpTestSimple.ts ===
-// Simple test
-const x = /foo/xyz;
->x : RegExp
->/foo/xyz : RegExp
-
