@@ -2020,7 +2020,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
-	packageName := GetTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
+	packageName := GetPackageNameFromTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
 
 	if packageJson.Contents.Exports.IsPresent() {
 		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
@@ -2088,11 +2088,11 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				if slices.Contains(partsAfterFirst, "..") || slices.Contains(partsAfterFirst, ".") || slices.Contains(partsAfterFirst, "node_modules") {
 					return
 				}
-				resolvedTarget := tspath.CombinePaths(packageJson.PackageDirectory, exports.AsString())
+				resolvedTarget := tspath.ResolvePath(packageJson.PackageDirectory, exports.AsString())
 				if result := r.loadFileNameFromPackageJSONField(r.extensions, resolvedTarget, exports.AsString(), false /*onlyRecordFailures*/); result.isResolved() {
 					entrypoints = append(entrypoints, &ResolvedEntrypoint{
 						ResolvedFileName:  result.path,
-						ModuleSpecifier:   tspath.CombinePaths(packageName, subpath),
+						ModuleSpecifier:   tspath.ResolvePath(packageName, subpath),
 						IncludeConditions: includeConditions,
 						ExcludeConditions: excludeConditions,
 					})

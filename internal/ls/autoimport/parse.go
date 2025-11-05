@@ -2,6 +2,7 @@ package autoimport
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -61,6 +62,9 @@ func Parse(file *ast.SourceFile) []*RawExport {
 func parseModule(file *ast.SourceFile) []*RawExport {
 	exports := make([]*RawExport, 0, len(file.Symbol.Exports))
 	for name, symbol := range file.Symbol.Exports {
+		if strings.HasPrefix(name, ast.InternalSymbolNamePrefix) {
+			continue
+		}
 		var syntax ExportSyntax
 		for _, decl := range symbol.Declarations {
 			var declSyntax ExportSyntax

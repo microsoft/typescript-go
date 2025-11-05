@@ -1,9 +1,12 @@
 package autoimport
 
 import (
+	"cmp"
 	"context"
+	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -15,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -68,6 +72,81 @@ func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
 	}
 }
 
+func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path) bool {
+	projectBucket, ok := r.projects[projectPath]
+	if !ok {
+		panic("project bucket missing")
+	}
+	if projectBucket.dirty {
+		return false
+	}
+	path := r.toPath(fileName).GetDirectoryPath()
+	for {
+		if dirBucket, ok := r.nodeModules[path]; ok {
+			if dirBucket.dirty {
+				return false
+			}
+		}
+		parent := path.GetDirectoryPath()
+		if parent == path {
+			break
+		}
+		path = parent
+	}
+	return true
+}
+
+type BucketStats struct {
+	Path        tspath.Path
+	ExportCount int
+	FileCount   int
+	Dirty       bool
+}
+
+type CacheStats struct {
+	ProjectBuckets     []BucketStats
+	NodeModulesBuckets []BucketStats
+}
+
+func (r *Registry) GetCacheStats() *CacheStats {
+	stats := &CacheStats{}
+
+	for path, bucket := range r.projects {
+		exportCount := 0
+		if bucket.Index != nil {
+			exportCount = len(bucket.Index.entries)
+		}
+		stats.ProjectBuckets = append(stats.ProjectBuckets, BucketStats{
+			Path:        path,
+			ExportCount: exportCount,
+			FileCount:   len(bucket.Paths),
+			Dirty:       bucket.dirty,
+		})
+	}
+
+	for path, bucket := range r.nodeModules {
+		exportCount := 0
+		if bucket.Index != nil {
+			exportCount = len(bucket.Index.entries)
+		}
+		stats.NodeModulesBuckets = append(stats.NodeModulesBuckets, BucketStats{
+			Path:        path,
+			ExportCount: exportCount,
+			FileCount:   len(bucket.Paths),
+			Dirty:       bucket.dirty,
+		})
+	}
+
+	slices.SortFunc(stats.ProjectBuckets, func(a, b BucketStats) int {
+		return cmp.Compare(a.Path, b.Path)
+	})
+	slices.SortFunc(stats.NodeModulesBuckets, func(a, b BucketStats) int {
+		return cmp.Compare(a.Path, b.Path)
+	})
+
+	return stats
+}
+
 type RegistryChange struct {
 	RequestedFile tspath.Path
 	OpenFiles     map[tspath.Path]string
@@ -79,7 +158,7 @@ type RegistryChange struct {
 type RegistryCloneHost interface {
 	module.ResolutionHost
 	FS() vfs.FS
-	GetDefaultProject(fileName string) (tspath.Path, *compiler.Program)
+	GetDefaultProject(path tspath.Path) (tspath.Path, *compiler.Program)
 	GetProgramForProject(projectPath tspath.Path) *compiler.Program
 	GetPackageJson(fileName string) *packagejson.InfoCacheEntry
 	GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile
@@ -118,11 +197,12 @@ func (b *registryBuilder) Build() *Registry {
 	}
 }
 
-func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChange) {
+func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChange, logger *logging.LogTree) {
+	start := time.Now()
 	neededProjects := make(map[tspath.Path]struct{})
 	neededDirectories := make(map[tspath.Path]string)
 	for path, fileName := range change.OpenFiles {
-		neededProjects[core.FirstResult(b.host.GetDefaultProject(fileName))] = struct{}{}
+		neededProjects[core.FirstResult(b.host.GetDefaultProject(path))] = struct{}{}
 		dir := fileName
 		for {
 			dir = tspath.GetDirectoryPath(dir)
@@ -138,6 +218,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 	}
 
+	var addedProjects, removedProjects []tspath.Path
 	core.DiffMapsFunc(
 		b.base.projects,
 		neededProjects,
@@ -147,53 +228,108 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		func(projectPath tspath.Path, _ struct{}) {
 			// Need and don't have
 			b.projects.Add(projectPath, &RegistryBucket{dirty: true})
+			addedProjects = append(addedProjects, projectPath)
 		},
 		func(projectPath tspath.Path, _ *RegistryBucket) {
 			// Have and don't need
 			b.projects.Delete(projectPath)
+			removedProjects = append(removedProjects, projectPath)
 		},
 		nil,
 	)
+	if logger != nil {
+		for _, projectPath := range addedProjects {
+			logger.Logf("Added project: %s", projectPath)
+		}
+		for _, projectPath := range removedProjects {
+			logger.Logf("Removed project: %s", projectPath)
+		}
+	}
 
 	updateDirectory := func(dirPath tspath.Path, dirName string) {
 		packageJsonFileName := tspath.CombinePaths(dirName, "package.json")
 		packageJson := b.host.GetPackageJson(packageJsonFileName)
 		hasNodeModules := b.host.FS().DirectoryExists(tspath.CombinePaths(dirName, "node_modules"))
-		b.directories.Add(dirPath, &directory{
-			packageJson:    packageJson,
-			hasNodeModules: hasNodeModules,
-		})
+		if entry, ok := b.directories.Get(dirPath); ok {
+			entry.ChangeIf(func(dir *directory) bool {
+				return dir.packageJson != packageJson || dir.hasNodeModules != hasNodeModules
+			}, func(dir *directory) {
+				dir.packageJson = packageJson
+				dir.hasNodeModules = hasNodeModules
+			})
+		} else {
+			b.directories.Add(dirPath, &directory{
+				packageJson:    packageJson,
+				hasNodeModules: hasNodeModules,
+			})
+		}
 		if hasNodeModules {
-			b.nodeModules.Add(dirPath, &RegistryBucket{dirty: true})
+			if hasNodeModulesEntry, ok := b.nodeModules.Get(dirPath); ok {
+				hasNodeModulesEntry.ChangeIf(func(bucket *RegistryBucket) bool {
+					return !bucket.dirty
+				}, func(bucket *RegistryBucket) {
+					bucket.dirty = true
+				})
+			} else {
+				b.nodeModules.Add(dirPath, &RegistryBucket{dirty: true})
+			}
 		} else {
 			b.nodeModules.TryDelete(dirPath)
 		}
 	}
 
+	var addedNodeModulesDirs, removedNodeModulesDirs []tspath.Path
 	core.DiffMapsFunc(
 		b.base.directories,
 		neededDirectories,
 		func(dir *directory, dirName string) bool {
 			packageJsonUri := lsconv.FileNameToDocumentURI(tspath.CombinePaths(dirName, "package.json"))
-			return change.Changed.Has(packageJsonUri) || change.Deleted.Has(packageJsonUri) || change.Created.Has(packageJsonUri)
+			return !change.Changed.Has(packageJsonUri) && !change.Deleted.Has(packageJsonUri) && !change.Created.Has(packageJsonUri)
 		},
 		func(dirPath tspath.Path, dirName string) {
 			// Need and don't have
+			hadNodeModules := b.base.nodeModules[dirPath] != nil
 			updateDirectory(dirPath, dirName)
+			if logger != nil {
+				logger.Logf("Added directory: %s", dirPath)
+			}
+			if _, hasNow := b.nodeModules.Get(dirPath); hasNow && !hadNodeModules {
+				addedNodeModulesDirs = append(addedNodeModulesDirs, dirPath)
+			}
 		},
 		func(dirPath tspath.Path, dir *directory) {
 			// Have and don't need
+			hadNodeModules := b.base.nodeModules[dirPath] != nil
 			b.directories.Delete(dirPath)
 			b.nodeModules.TryDelete(dirPath)
+			if logger != nil {
+				logger.Logf("Removed directory: %s", dirPath)
+			}
+			if hadNodeModules {
+				removedNodeModulesDirs = append(removedNodeModulesDirs, dirPath)
+			}
 		},
 		func(dirPath tspath.Path, dir *directory, dirName string) {
 			// package.json may have changed
 			updateDirectory(dirPath, dirName)
+			if logger != nil {
+				logger.Logf("Changed directory: %s", dirPath)
+			}
 		},
 	)
+	if logger != nil {
+		for _, dirPath := range addedNodeModulesDirs {
+			logger.Logf("Added node_modules bucket: %s", dirPath)
+		}
+		for _, dirPath := range removedNodeModulesDirs {
+			logger.Logf("Removed node_modules bucket: %s", dirPath)
+		}
+		logger.Logf("Updated buckets and directories in %v", time.Since(start))
+	}
 }
 
-func (b *registryBuilder) markBucketsDirty(change RegistryChange) {
+func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *logging.LogTree) {
+	start := time.Now()
 	cleanNodeModulesBuckets := make(map[tspath.Path]struct{})
 	cleanProjectBuckets := make(map[tspath.Path]struct{})
 	b.nodeModules.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
@@ -245,9 +381,32 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange) {
 	processURIs(change.Created.Keys())
 	processURIs(change.Deleted.Keys())
 	processURIs(change.Changed.Keys())
+
+	if logger != nil {
+		var dirtyNodeModulesPaths, dirtyProjectPaths []tspath.Path
+		b.nodeModules.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
+			if entry.Value().dirty {
+				dirtyNodeModulesPaths = append(dirtyNodeModulesPaths, entry.Key())
+			}
+			return true
+		})
+		b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
+			if entry.Value().dirty {
+				dirtyProjectPaths = append(dirtyProjectPaths, entry.Key())
+			}
+			return true
+		})
+		for _, path := range dirtyNodeModulesPaths {
+			logger.Logf("Dirty node_modules bucket: %s", path)
+		}
+		for _, path := range dirtyProjectPaths {
+			logger.Logf("Dirty project bucket: %s", path)
+		}
+		logger.Logf("Marked buckets dirty in %v", time.Since(start))
+	}
 }
 
-func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChange) {
+func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChange, logger *logging.LogTree) {
 	type task struct {
 		entry  *dirty.MapEntry[tspath.Path, *RegistryBucket]
 		result *RegistryBucket
@@ -255,33 +414,49 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 
 	var tasks []*task
+	var projectTasks, nodeModulesTasks int
 	wg := core.NewWorkGroup(false)
-	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
-		if entry.Value().dirty {
-			task := &task{entry: entry}
+	projectPath, _ := b.host.GetDefaultProject(change.RequestedFile)
+	if projectPath == "" {
+		return
+	}
+	if project, ok := b.projects.Get(projectPath); ok {
+		if project.Value().dirty {
+			task := &task{entry: project}
 			tasks = append(tasks, task)
+			projectTasks++
 			wg.Queue(func() {
-				index, err := b.buildProjectIndex(ctx, entry.Key())
+				index, err := b.buildProjectIndex(ctx, projectPath)
 				task.result = index
 				task.err = err
 			})
 		}
-		return true
-	})
-	b.nodeModules.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
-		if entry.Value().dirty {
-			task := &task{entry: entry}
-			tasks = append(tasks, task)
-			wg.Queue(func() {
-				index, err := b.buildNodeModulesIndex(ctx, entry.Key())
-				task.result = index
-				task.err = err
-			})
+	}
+	tspath.ForEachAncestorDirectoryPath(change.RequestedFile, func(dirPath tspath.Path) (any, bool) {
+		if nodeModulesBucket, ok := b.nodeModules.Get(dirPath); ok {
+			if nodeModulesBucket.Value().dirty {
+				task := &task{entry: nodeModulesBucket}
+				tasks = append(tasks, task)
+				nodeModulesTasks++
+				wg.Queue(func() {
+					index, err := b.buildNodeModulesIndex(ctx, dirPath)
+					task.result = index
+					task.err = err
+				})
+			}
 		}
-		return true
+		return nil, false
 	})
 
+	if logger != nil && len(tasks) > 0 {
+		logger.Logf("Building %d indexes (%d projects, %d node_modules)", len(tasks), projectTasks, nodeModulesTasks)
+	}
+
+	start := time.Now()
 	wg.RunAndWait()
+	if logger != nil && len(tasks) > 0 {
+		logger.Logf("Built %d indexes in %v", len(tasks), time.Since(start))
+	}
 	for _, t := range tasks {
 		if t.err != nil {
 			continue
@@ -344,7 +519,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 	// !!! distinguish between no dependencies and no package.jsons
 	var dependencies collections.Set[string]
 	b.directories.Range(func(entry *dirty.MapEntry[tspath.Path, *directory]) bool {
-		if entry.Value().packageJson.Exists() && dirPath.ContainsPath(entry.Key().GetDirectoryPath()) {
+		if entry.Value().packageJson.Exists() && dirPath.ContainsPath(entry.Key()) {
 			entry.Value().packageJson.Contents.RangeDependencies(func(name, _, _ string) bool {
 				dependencies.Add(name)
 				return true
@@ -369,6 +544,9 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 				return
 			}
 			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson)
+			if packageEntrypoints == nil {
+				return
+			}
 			entrypointsMu.Lock()
 			entrypoints = append(entrypoints, packageEntrypoints)
 			entrypointsMu.Unlock()
@@ -422,11 +600,20 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 	return result, nil
 }
 
-func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost) (*Registry, error) {
+func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost, logger *logging.LogTree) (*Registry, error) {
+	start := time.Now()
+	if logger != nil {
+		logger = logger.Fork("Building autoimport registry")
+	}
 	builder := newRegistryBuilder(r, host)
-	builder.updateBucketAndDirectoryExistence(change)
-	builder.markBucketsDirty(change)
-	builder.updateIndexes(ctx, change)
+	builder.updateBucketAndDirectoryExistence(change, logger)
+	builder.markBucketsDirty(change, logger)
+	if change.RequestedFile != "" {
+		builder.updateIndexes(ctx, change, logger)
+	}
 	// !!! deref removed source files
+	if logger != nil {
+		logger.Logf("Built autoimport registry in %v", time.Since(start))
+	}
 	return builder.Build(), nil
 }

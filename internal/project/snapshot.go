@@ -71,9 +71,7 @@ func NewSnapshot(
 }
 
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
-	fileName := uri.FileName()
-	path := s.toPath(fileName)
-	return s.ProjectCollection.GetDefaultProject(fileName, path)
+	return s.ProjectCollection.GetDefaultProject(uri.Path(s.UseCaseSensitiveFileNames()))
 }
 
 func (s *Snapshot) GetFile(fileName string) FileHandle {
@@ -320,7 +318,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Changed:       change.fileChanges.Changed,
 		Created:       change.fileChanges.Created,
 		Deleted:       change.fileChanges.Deleted,
-	}, autoImportHost)
+	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(

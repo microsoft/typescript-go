@@ -8,9 +8,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type LanguageService struct {
+	projectPath             tspath.Path
 	host                    Host
 	program                 *compiler.Program
 	converters              *lsconv.Converters
@@ -18,10 +20,12 @@ type LanguageService struct {
 }
 
 func NewLanguageService(
+	projectPath tspath.Path,
 	program *compiler.Program,
 	host Host,
 ) *LanguageService {
 	return &LanguageService{
+		projectPath:             projectPath,
 		host:                    host,
 		program:                 program,
 		converters:              host.Converters(),

@@ -31,6 +31,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+var ErrNeedsAutoImports = errors.New("completion list needs auto imports")
+
 func (l *LanguageService) ProvideCompletion(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
@@ -44,13 +46,16 @@ func (l *LanguageService) ProvideCompletion(
 		triggerCharacter = context.TriggerCharacter
 	}
 	position := int(l.converters.LineAndCharacterToPosition(file, LSPPosition))
-	completionList := l.getCompletionsAtPosition(
+	completionList, err := l.getCompletionsAtPosition(
 		ctx,
 		file,
 		position,
 		triggerCharacter,
 		clientOptions,
 	)
+	if err != nil {
+		return lsproto.CompletionItemsOrListOrNull{}, err
+	}
 	completionList = ensureItemData(file.FileName(), position, completionList)
 	return lsproto.CompletionItemsOrListOrNull{List: completionList}, nil
 }
@@ -344,10 +349,10 @@ func (l *LanguageService) getCompletionsAtPosition(
 	position int,
 	triggerCharacter *string,
 	clientOptions *lsproto.CompletionClientCapabilities,
-) *lsproto.CompletionList {
+) (*lsproto.CompletionList, error) {
 	_, previousToken := getRelevantTokens(position, file)
 	if triggerCharacter != nil && !IsInString(file, position, previousToken) && !isValidTrigger(file, *triggerCharacter, previousToken, position) {
-		return nil
+		return nil, nil
 	}
 
 	if triggerCharacter != nil && *triggerCharacter == " " {
@@ -355,9 +360,9 @@ func (l *LanguageService) getCompletionsAtPosition(
 		if l.UserPreferences().IncludeCompletionsForImportStatements.IsTrue() {
 			return &lsproto.CompletionList{
 				IsIncomplete: true,
-			}
+			}, nil
 		}
-		return nil
+		return nil, nil
 	}
 
 	compilerOptions := l.GetProgram().Options()
@@ -373,7 +378,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 		clientOptions,
 	)
 	if stringCompletions != nil {
-		return stringCompletions
+		return stringCompletions, nil
 	}
 
 	if previousToken != nil && (previousToken.Kind == ast.KindBreakKeyword ||
@@ -386,15 +391,18 @@ func (l *LanguageService) getCompletionsAtPosition(
 			file,
 			position,
 			l.getOptionalReplacementSpan(previousToken, file),
-		)
+		), nil
 	}
 
 	checker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
 	preferences := l.UserPreferences()
-	data := l.getCompletionData(ctx, checker, file, position, preferences)
+	data, err := l.getCompletionData(ctx, checker, file, position, preferences)
+	if err != nil {
+		return nil, err
+	}
 	if data == nil {
-		return nil
+		return nil, nil
 	}
 
 	switch data := data.(type) {
@@ -411,7 +419,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 			optionalReplacementSpan,
 		)
 		// !!! check if response is incomplete
-		return response
+		return response, nil
 	case *completionDataKeyword:
 		optionalReplacementSpan := l.getOptionalReplacementSpan(previousToken, file)
 		return l.specificKeywordCompletionInfo(
@@ -421,7 +429,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 			data.keywordCompletions,
 			data.isNewIdentifierLocation,
 			optionalReplacementSpan,
-		)
+		), nil
 	case *completionDataJSDocTagName:
 		// If the current position is a jsDoc tag name, only tag names should be provided for completion
 		items := getJSDocTagNameCompletions()
@@ -434,7 +442,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 			preferences,
 			/*tagNameOnly*/ true,
 		)...)
-		return l.jsDocCompletionInfo(clientOptions, position, file, items)
+		return l.jsDocCompletionInfo(clientOptions, position, file, items), nil
 	case *completionDataJSDocTag:
 		// If the current position is a jsDoc tag, only tags should be provided for completion
 		items := getJSDocTagCompletions()
@@ -447,9 +455,9 @@ func (l *LanguageService) getCompletionsAtPosition(
 			preferences,
 			/*tagNameOnly*/ false,
 		)...)
-		return l.jsDocCompletionInfo(clientOptions, position, file, items)
+		return l.jsDocCompletionInfo(clientOptions, position, file, items), nil
 	case *completionDataJSDocParameterName:
-		return l.jsDocCompletionInfo(clientOptions, position, file, getJSDocParameterNameCompletions(data.tag))
+		return l.jsDocCompletionInfo(clientOptions, position, file, getJSDocParameterNameCompletions(data.tag)), nil
 	default:
 		panic("getCompletionData() returned unexpected type: " + fmt.Sprintf("%T", data))
 	}
@@ -461,7 +469,7 @@ func (l *LanguageService) getCompletionData(
 	file *ast.SourceFile,
 	position int,
 	preferences *lsutil.UserPreferences,
-) completionData {
+) (completionData, error) {
 	inCheckedFile := isCheckedFile(file, l.GetProgram().Options())
 
 	currentToken := astnav.GetTokenAtPosition(file, position)
@@ -476,7 +484,7 @@ func (l *LanguageService) getCompletionData(
 			if file.Text()[position] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
-				return &completionDataJSDocTagName{}
+				return &completionDataJSDocTagName{}, nil
 			} else {
 				// When completion is requested without "@", we will have check to make sure that
 				// there are no comments prefix the request position. We will only allow "*" and space.
@@ -503,7 +511,7 @@ func (l *LanguageService) getCompletionData(
 					}
 				}
 				if noCommentPrefix {
-					return &completionDataJSDocTag{}
+					return &completionDataJSDocTag{}, nil
 				}
 			}
 		}
@@ -513,7 +521,7 @@ func (l *LanguageService) getCompletionData(
 		// Completion should work in the brackets
 		if tag := getJSDocTagAtPosition(currentToken, position); tag != nil {
 			if tag.TagName().Pos() <= position && position <= tag.TagName().End() {
-				return &completionDataJSDocTagName{}
+				return &completionDataJSDocTagName{}, nil
 			}
 			if ast.IsJSDocImportTag(tag) {
 				insideJsDocImportTag = true
@@ -533,7 +541,7 @@ func (l *LanguageService) getCompletionData(
 					(ast.NodeIsMissing(tag.Name()) || tag.Name().Pos() <= position && position <= tag.Name().End()) {
 					return &completionDataJSDocParameterName{
 						tag: tag.AsJSDocParameterOrPropertyTag(),
-					}
+					}, nil
 				}
 			}
 		}
@@ -541,7 +549,7 @@ func (l *LanguageService) getCompletionData(
 		if !insideJSDocTagTypeExpression && !insideJsDocImportTag {
 			// Proceed if the current position is in JSDoc tag expression; otherwise it is a normal
 			// comment or the plain text part of a JSDoc comment, so no completion should be available
-			return nil
+			return nil, nil
 		}
 	}
 
@@ -579,7 +587,7 @@ func (l *LanguageService) getCompletionData(
 						SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
 					}},
 					isNewIdentifierLocation: importStatementCompletionInfo.isNewIdentifierLocation,
-				}
+				}, nil
 			}
 			keywordFilters = keywordFiltersFromSyntaxKind(importStatementCompletionInfo.keywordCompletion)
 		}
@@ -592,9 +600,9 @@ func (l *LanguageService) getCompletionData(
 		if isCompletionListBlocker(contextToken, previousToken, location, file, position, typeChecker) {
 			if keywordFilters != KeywordCompletionFiltersNone {
 				isNewIdentifierLocation, _ := computeCommitCharactersAndIsNewIdentifier(contextToken, file, position)
-				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation)
+				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation), nil
 			}
-			return nil
+			return nil, nil
 		}
 
 		parent := contextToken.Parent
@@ -614,7 +622,7 @@ func (l *LanguageService) getCompletionData(
 					// eg: Math.min(./**/)
 					// const x = function (./**/) {}
 					// ({./**/})
-					return nil
+					return nil, nil
 				}
 			case ast.KindQualifiedName:
 				node = parent.AsQualifiedName().Left
@@ -630,7 +638,7 @@ func (l *LanguageService) getCompletionData(
 			default:
 				// There is nothing that precedes the dot, so this likely just a stray character
 				// or leading into a '...' token. Just bail out instead.
-				return nil
+				return nil, nil
 			}
 		} else { // !!! else if (!importStatementCompletion)
 			// <UI.Test /* completion position */ />
@@ -980,10 +988,10 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	// Aggregates relevant symbols for completion in object literals in type argument positions.
-	tryGetObjectTypeLiteralInTypeArgumentCompletionSymbols := func() globalsSearch {
+	tryGetObjectTypeLiteralInTypeArgumentCompletionSymbols := func() (globalsSearch, error) {
 		typeLiteralNode := tryGetTypeLiteralNode(contextToken)
 		if typeLiteralNode == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		intersectionTypeNode := core.IfElse(
@@ -997,7 +1005,7 @@ func (l *LanguageService) getCompletionData(
 
 		containerExpectedType := getConstraintOfTypeArgumentProperty(containerTypeNode, typeChecker)
 		if containerExpectedType == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		containerActualType := typeChecker.GetTypeFromTypeNode(containerTypeNode)
@@ -1017,18 +1025,18 @@ func (l *LanguageService) getCompletionData(
 		completionKind = CompletionKindObjectPropertyDeclaration
 		isNewIdentifierLocation = true
 
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
 	// Aggregates relevant symbols for completion in object literals and object binding patterns.
 	// Relevant symbols are stored in the captured 'symbols' variable.
-	tryGetObjectLikeCompletionSymbols := func() globalsSearch {
+	tryGetObjectLikeCompletionSymbols := func() (globalsSearch, error) {
 		if contextToken != nil && contextToken.Kind == ast.KindDotDotDotToken {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 		objectLikeContainer := tryGetObjectLikeCompletionContainer(contextToken, position, file)
 		if objectLikeContainer == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		// We're looking up possible property names from contextual/inferred/declared type.
@@ -1043,9 +1051,9 @@ func (l *LanguageService) getCompletionData(
 			// Check completions for Object property value shorthand
 			if instantiatedType == nil {
 				if objectLikeContainer.Flags&ast.NodeFlagsInWithStatement != 0 {
-					return globalsSearchFail
+					return globalsSearchFail, nil
 				}
-				return globalsSearchContinue
+				return globalsSearchContinue, nil
 			}
 			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsCompletions)
 			t := core.IfElse(completionsType != nil, completionsType, instantiatedType)
@@ -1061,7 +1069,7 @@ func (l *LanguageService) getCompletionData(
 			if len(typeMembers) == 0 {
 				// Edge case: If NumberIndexType exists
 				if numberIndexType == nil {
-					return globalsSearchContinue
+					return globalsSearchContinue, nil
 				}
 			}
 		} else {
@@ -1095,7 +1103,7 @@ func (l *LanguageService) getCompletionData(
 			if canGetType {
 				typeForObject := typeChecker.GetTypeAtLocation(objectLikeContainer)
 				if typeForObject == nil {
-					return globalsSearchFail
+					return globalsSearchFail, nil
 				}
 				typeMembers = core.Filter(
 					typeChecker.GetPropertiesOfType(typeForObject),
@@ -1147,7 +1155,7 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
 	shouldOfferImportCompletions := func() bool {
@@ -1164,9 +1172,9 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	// Mutates `symbols`, `symbolToOriginInfoMap`, and `symbolToSortTextMap`
-	collectAutoImports := func() {
+	collectAutoImports := func() error {
 		if !shouldOfferImportCompletions() {
-			return
+			return nil
 		}
 		// !!! CompletionInfoFlags
 
@@ -1261,17 +1269,11 @@ func (l *LanguageService) getCompletionData(
 		// }
 
 		exports, err := l.getExportsForAutoImport(ctx, file)
-		if err == nil {
-			for _, exp := range exports.Search(lowerCaseTokenText) {
-				// 1. Filter out:
-				//    - exports from the same file
-				//    - files not reachable due to preferences filter
-				//    - module specifiers not allowed due to package.json dependency filter
-				//      - with method of discovery, only need to worry about this for ambient modules
-				//    - module specifiers not allowed due to preferences filter
-				autoImports = append(autoImports, exp)
-			}
+		if err != nil {
+			return err
 		}
+
+		autoImports = append(autoImports, exports.Search(lowerCaseTokenText)...)
 
 		// l.searchExportInfosForCompletions(ctx,
 		// 	typeChecker,
@@ -1286,15 +1288,18 @@ func (l *LanguageService) getCompletionData(
 
 		// !!! completionInfoFlags
 		// !!! logging
+		return nil
 	}
 
-	tryGetImportCompletionSymbols := func() globalsSearch {
+	tryGetImportCompletionSymbols := func() (globalsSearch, error) {
 		if importStatementCompletion == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 		isNewIdentifierLocation = true
-		collectAutoImports()
-		return globalsSearchSuccess
+		if err := collectAutoImports(); err != nil {
+			return globalsSearchFail, err
+		}
+		return globalsSearchSuccess, nil
 	}
 
 	// Aggregates relevant symbols for completion in import clauses and export clauses
@@ -1308,9 +1313,9 @@ func (l *LanguageService) getCompletionData(
 	//      export { | };
 	//
 	// Relevant symbols are stored in the captured 'symbols' variable.
-	tryGetImportOrExportClauseCompletionSymbols := func() globalsSearch {
+	tryGetImportOrExportClauseCompletionSymbols := func() (globalsSearch, error) {
 		if contextToken == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		// `import { |` or `import { a as 0, | }` or `import { type | }`
@@ -1326,7 +1331,7 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		if namedImportsOrExports == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		// We can at least offer `type` at `import { |`
@@ -1342,15 +1347,15 @@ func (l *LanguageService) getCompletionData(
 		if moduleSpecifier == nil {
 			isNewIdentifierLocation = true
 			if namedImportsOrExports.Kind == ast.KindNamedImports {
-				return globalsSearchFail
+				return globalsSearchFail, nil
 			}
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		moduleSpecifierSymbol := typeChecker.GetSymbolAtLocation(moduleSpecifier)
 		if moduleSpecifierSymbol == nil {
 			isNewIdentifierLocation = true
-			return globalsSearchFail
+			return globalsSearchFail, nil
 		}
 
 		completionKind = CompletionKindMemberLike
@@ -1373,13 +1378,13 @@ func (l *LanguageService) getCompletionData(
 			// If there's nothing else to import, don't offer `type` either.
 			keywordFilters = KeywordCompletionFiltersNone
 		}
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
 	// import { x } from "foo" with { | }
-	tryGetImportAttributesCompletionSymbols := func() globalsSearch {
+	tryGetImportAttributesCompletionSymbols := func() (globalsSearch, error) {
 		if contextToken == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		var importAttributes *ast.ImportAttributesNode
@@ -1391,7 +1396,7 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		if importAttributes == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		var elements []*ast.Node
@@ -1405,7 +1410,7 @@ func (l *LanguageService) getCompletionData(
 				return !existing.Has(ast.SymbolName(symbol))
 			})
 		symbols = append(symbols, uniques...)
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
 	// Adds local declarations for completions in named exports:
@@ -1413,9 +1418,9 @@ func (l *LanguageService) getCompletionData(
 	// Does not check for the absence of a module specifier (`export {} from "./other"`)
 	// because `tryGetImportOrExportClauseCompletionSymbols` runs first and handles that,
 	// preventing this function from running.
-	tryGetLocalNamedExportCompletionSymbols := func() globalsSearch {
+	tryGetLocalNamedExportCompletionSymbols := func() (globalsSearch, error) {
 		if contextToken == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 		var namedExports *ast.NamedExportsNode
 		if contextToken.Kind == ast.KindOpenBraceToken || contextToken.Kind == ast.KindCommaToken {
@@ -1423,7 +1428,7 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		if namedExports == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		localsContainer := ast.FindAncestor(namedExports, func(node *ast.Node) bool {
@@ -1444,12 +1449,12 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
-	tryGetConstructorCompletion := func() globalsSearch {
+	tryGetConstructorCompletion := func() (globalsSearch, error) {
 		if tryGetConstructorLikeCompletionContainer(contextToken) == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		// no members, only keywords
@@ -1458,15 +1463,15 @@ func (l *LanguageService) getCompletionData(
 		isNewIdentifierLocation = true
 		// Has keywords for constructor parameter
 		keywordFilters = KeywordCompletionFiltersConstructorParameterKeywords
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
 	// Aggregates relevant symbols for completion in class declaration
 	// Relevant symbols are stored in the captured 'symbols' variable.
-	tryGetClassLikeCompletionSymbols := func() globalsSearch {
+	tryGetClassLikeCompletionSymbols := func() (globalsSearch, error) {
 		decl := tryGetObjectTypeDeclarationCompletionContainer(file, contextToken, location, position)
 		if decl == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 
 		// We're looking up possible property names from parent type.
@@ -1483,7 +1488,7 @@ func (l *LanguageService) getCompletionData(
 
 		// If you're in an interface you don't want to repeat things from super-interface. So just stop here.
 		if !ast.IsClassLike(decl) {
-			return globalsSearchSuccess
+			return globalsSearchSuccess, nil
 		}
 
 		var classElement *ast.Node
@@ -1550,18 +1555,18 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
-	tryGetJsxCompletionSymbols := func() globalsSearch {
+	tryGetJsxCompletionSymbols := func() (globalsSearch, error) {
 		jsxContainer := tryGetContainingJsxElement(contextToken, file)
 		if jsxContainer == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 		// Cursor is inside a JSX self-closing element or opening element.
 		attrsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsNone)
 		if attrsType == nil {
-			return globalsSearchContinue
+			return globalsSearchContinue, nil
 		}
 		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsCompletions)
 		filteredSymbols, spreadMemberNames := filterJsxAttributes(
@@ -1589,10 +1594,10 @@ func (l *LanguageService) getCompletionData(
 
 		completionKind = CompletionKindMemberLike
 		isNewIdentifierLocation = false
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
-	getGlobalCompletions := func() globalsSearch {
+	getGlobalCompletions := func() (globalsSearch, error) {
 		if tryGetFunctionLikeBodyCompletionContainer(contextToken) != nil {
 			keywordFilters = KeywordCompletionFiltersFunctionLikeBodyKeywords
 		} else {
@@ -1688,7 +1693,9 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		collectAutoImports()
+		if err := collectAutoImports(); err != nil {
+			return globalsSearchFail, err
+		}
 		if isTypeOnlyLocation {
 			if contextToken != nil && ast.IsAssertionExpression(contextToken.Parent) {
 				keywordFilters = KeywordCompletionFiltersTypeAssertionKeywords
@@ -1697,12 +1704,13 @@ func (l *LanguageService) getCompletionData(
 			}
 		}
 
-		return globalsSearchSuccess
+		return globalsSearchSuccess, nil
 	}
 
-	tryGetGlobalSymbols := func() bool {
+	tryGetGlobalSymbols := func() (bool, error) {
 		var result globalsSearch
-		globalSearchFuncs := []func() globalsSearch{
+		var err error
+		globalSearchFuncs := []func() (globalsSearch, error){
 			tryGetObjectTypeLiteralInTypeArgumentCompletionSymbols,
 			tryGetObjectLikeCompletionSymbols,
 			tryGetImportCompletionSymbols,
@@ -1715,12 +1723,15 @@ func (l *LanguageService) getCompletionData(
 			getGlobalCompletions,
 		}
 		for _, globalSearchFunc := range globalSearchFuncs {
-			result = globalSearchFunc()
+			result, err = globalSearchFunc()
+			if err != nil {
+				return false, err
+			}
 			if result != globalsSearchContinue {
 				break
 			}
 		}
-		return result == globalsSearchSuccess
+		return result == globalsSearchSuccess, nil
 	}
 
 	if isRightOfDot || isRightOfQuestionDot {
@@ -1743,11 +1754,14 @@ func (l *LanguageService) getCompletionData(
 		// For JavaScript or TypeScript, if we're not after a dot, then just try to get the
 		// global symbols in scope.  These results should be valid for either language as
 		// the set of symbols that can be referenced from this location.
-		if !tryGetGlobalSymbols() {
-			if keywordFilters != KeywordCompletionFiltersNone {
-				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation)
+		if ok, err := tryGetGlobalSymbols(); !ok {
+			if err != nil {
+				return nil, err
 			}
-			return nil
+			if keywordFilters != KeywordCompletionFiltersNone {
+				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation), nil
+			}
+			return nil, nil
 		}
 	}
 
@@ -1808,7 +1822,7 @@ func (l *LanguageService) getCompletionData(
 		importStatementCompletion:    importStatementCompletion,
 		hasUnresolvedAutoImports:     hasUnresolvedAutoImports,
 		defaultCommitCharacters:      defaultCommitCharacters,
-	}
+	}, nil
 }
 
 func keywordCompletionData(
@@ -5203,7 +5217,11 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		}
 	}
 
-	completionData := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	completionData, err := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	if err != nil {
+		panic(err)
+	}
+
 	if completionData == nil {
 		return detailsData{}
 	}

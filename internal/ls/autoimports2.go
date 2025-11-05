@@ -9,6 +9,10 @@ import (
 
 func (l *LanguageService) getExportsForAutoImport(ctx context.Context, fromFile *ast.SourceFile) (*autoimport.View, error) {
 	registry := l.host.AutoImportRegistry()
-	view := autoimport.NewView(registry, fromFile, "!!! TODO")
+	if !registry.IsPreparedForImportingFile(fromFile.FileName(), l.projectPath) {
+		return nil, ErrNeedsAutoImports
+	}
+
+	view := autoimport.NewView(registry, fromFile, l.projectPath)
 	return view, nil
 }

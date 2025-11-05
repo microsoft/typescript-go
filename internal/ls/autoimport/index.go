@@ -27,12 +27,11 @@ func (idx *Index[T]) Search(prefix string) []T {
 		return nil
 	}
 
-	prefix = strings.ToLower(prefix)
 	if len(prefix) == 0 {
-		return nil
+		return idx.entries
 	}
 
-	// Get the first rune of the prefix
+	prefix = strings.ToLower(prefix)
 	firstRune, _ := utf8.DecodeRuneInString(prefix)
 	if firstRune == utf8.RuneError {
 		return nil

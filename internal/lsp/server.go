@@ -836,13 +836,30 @@ func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageServi
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
-	return languageService.ProvideCompletion(
+	completions, err := languageService.ProvideCompletion(
 		ctx,
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
 	)
+	if errors.Is(err, ls.ErrNeedsAutoImports) {
+		languageService, err = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocument.Uri)
+		if err != nil {
+			return lsproto.CompletionItemsOrListOrNull{}, err
+		}
+		completions, err = languageService.ProvideCompletion(
+			ctx,
+			params.TextDocument.Uri,
+			params.Position,
+			params.Context,
+			getCompletionClientCapabilities(s.initializeParams),
+		)
+		if errors.Is(err, ls.ErrNeedsAutoImports) {
+			panic("ProvideCompletion returned ErrNeedsAutoImports even after enabling auto imports")
+		}
+	}
+	return completions, err
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {

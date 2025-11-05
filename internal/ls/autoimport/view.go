@@ -27,6 +27,7 @@ func (v *View) Search(prefix string) []*RawExport {
 		results = append(results, bucket.Index.Search(prefix)...)
 	}
 	for directoryPath, nodeModulesBucket := range v.registry.nodeModules {
+		// !!! better to iterate by ancestor directory?
 		if directoryPath.GetDirectoryPath().ContainsPath(v.importingFile.Path()) {
 			results = append(results, nodeModulesBucket.Index.Search(prefix)...)
 		}

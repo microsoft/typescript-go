@@ -44,8 +44,8 @@ func (a *autoImportRegistryCloneHost) GetCurrentDirectory() string {
 }
 
 // GetDefaultProject implements autoimport.RegistryCloneHost.
-func (a *autoImportRegistryCloneHost) GetDefaultProject(fileName string) (tspath.Path, *compiler.Program) {
-	project := a.projectCollection.GetDefaultProject(fileName, a.fs.toPath(fileName))
+func (a *autoImportRegistryCloneHost) GetDefaultProject(path tspath.Path) (tspath.Path, *compiler.Program) {
+	project := a.projectCollection.GetDefaultProject(path)
 	if project == nil {
 		return "", nil
 	}
@@ -64,6 +64,8 @@ func (a *autoImportRegistryCloneHost) GetPackageJson(fileName string) *packagejs
 		return nil
 	}
 	return &packagejson.InfoCacheEntry{
+		DirectoryExists:  true,
+		PackageDirectory: tspath.GetDirectoryPath(fileName),
 		Contents: &packagejson.PackageJson{
 			Fields:    fields,
 			Parseable: true,

@@ -32,6 +32,7 @@ const (
 	UpdateReasonRequestedLanguageServicePendingChanges
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
 	UpdateReasonRequestedLanguageServiceProjectDirty
+	UpdateReasonRequestedLanguageServiceWithAutoImports
 )
 
 // SessionOptions are the immutable initialization options for a session.
@@ -404,7 +405,23 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
+	return ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot), nil
+}
+
+// GetLanguageServiceWithAutoImports clones the current snapshot with a request to
+// prepare auto-imports for the given URI, then returns a LanguageService for the
+// default project of that URI. It should only be called after GetLanguageService.
+// !!! take snapshot that GetLanguageService initially returned
+func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+	snapshot := s.UpdateSnapshot(ctx, s.fs.Overlays(), SnapshotChange{
+		reason:             UpdateReasonRequestedLanguageServiceWithAutoImports,
+		prepareAutoImports: uri,
+	})
+	project := snapshot.GetDefaultProject(uri)
+	if project == nil {
+		return nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+	return ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot), nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
@@ -680,6 +697,25 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 		s.logger.Logf("Parse cache size:           %6d", parseCacheSize)
 		s.logger.Logf("Program count:              %6d", programCount)
 		s.logger.Logf("Extended config cache size: %6d", extendedConfigCount)
+
+		s.logger.Log("Auto Imports:")
+		autoImportStats := snapshot.AutoImportRegistry().GetCacheStats()
+		if len(autoImportStats.ProjectBuckets) > 0 {
+			s.logger.Log("\tProject buckets:")
+			for _, bucket := range autoImportStats.ProjectBuckets {
+				s.logger.Logf("\t\t%s%s:", bucket.Path, core.IfElse(bucket.Dirty, " (dirty)", ""))
+				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
+				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
+			}
+		}
+		if len(autoImportStats.NodeModulesBuckets) > 0 {
+			s.logger.Log("\tnode_modules buckets:")
+			for _, bucket := range autoImportStats.NodeModulesBuckets {
+				s.logger.Logf("\t\t%s%s:", bucket.Path, core.IfElse(bucket.Dirty, " (dirty)", ""))
+				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
+				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
+			}
+		}
 	}
 }
 
