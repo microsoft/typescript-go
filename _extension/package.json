@@ -31,6 +31,11 @@
             {
                 "title": "TypeScript Native Preview",
                 "properties": {
+                    "typescript.native-preview.customConfigFileName": {
+                        "type": "string",
+                        "description": "Custom config file name to use, before defaulting to tsconfig.json/jsconfig.json.",
+                        "tags": ["experimental"]
+                    },
                     "typescript.native-preview.trace.server": {
                         "type": "string",
                         "enum": [

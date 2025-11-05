@@ -42,6 +42,15 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
             }
         }
+        if (event.affectsConfiguration("typescript.native-preview.customConfigFileName")) {
+            // Show prompt to restart to pick up the new initialization options
+            setTimeout(async () => {
+                const selected = await vscode.window.showInformationMessage("TypeScript Native Preview settings have changed. Restart extensions to apply changes.", "Restart Extensions");
+                if (selected) {
+                    vscode.commands.executeCommand("workbench.action.restartExtensionHost");
+                }
+            }, 100);
+        }
     }));
 
     const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
