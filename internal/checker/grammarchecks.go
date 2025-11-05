@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/regexpchecker"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -55,8 +56,28 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 }
 
 func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressionLiteral) bool {
-	// Validate the regular expression during semantic analysis
-	c.validateRegularExpressionLiteralNode(node)
+	sourceFile := ast.GetSourceFileOfNode(node.AsNode())
+	if !c.hasParseDiagnostics(sourceFile) && node.AsNode().LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated == 0 {
+		var lastError *ast.Diagnostic
+
+		onError := func(message *diagnostics.Message, start int, length int, args ...any) {
+			nodeStart := scanner.GetTokenPosOfNode(node.AsNode(), sourceFile, false)
+			adjustedStart := nodeStart + start
+
+			if message.Category() == diagnostics.CategoryMessage && lastError != nil &&
+				adjustedStart == lastError.Pos() && length == lastError.Len() {
+				err := ast.NewDiagnostic(nil, core.NewTextRange(adjustedStart, adjustedStart+length), message, args...)
+				lastError.AddRelatedInfo(err)
+			} else if lastError == nil || adjustedStart != lastError.Pos() {
+				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(adjustedStart, adjustedStart+length), message, args...)
+				c.diagnostics.Add(lastError)
+			}
+		}
+
+		regexpchecker.Check(node, sourceFile, c.languageVersion, onError)
+
+		return lastError != nil
+	}
 	return false
 }
 
