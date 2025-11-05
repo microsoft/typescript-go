@@ -3,7 +3,6 @@ package scanner
 import (
 	"fmt"
 	"strings"
-	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -85,6 +84,7 @@ type RegExpValidator struct {
 	mayContainStrings              bool
 	isCharacterComplement          bool
 	tokenValue                     string
+	pendingLowSurrogate            rune // For non-Unicode mode: pending low surrogate to return
 }
 
 type namedReference struct {
@@ -883,9 +883,6 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				v.error(diagnostics.Unterminated_Unicode_escape_sequence, start, v.pos-start)
 				return v.text[start:v.pos]
 			}
-			if !v.anyUnicodeMode {
-				v.error(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, v.pos-start)
-			}
 			// Parse hex value
 			code := 0
 			for i := hexStart; i < v.pos-1; i++ { // -1 to skip closing brace
@@ -897,6 +894,9 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				} else if digit >= 'A' && digit <= 'F' {
 					code = code*16 + int(digit-'A'+10)
 				}
+			}
+			if !v.anyUnicodeMode {
+				v.error(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, v.pos-start)
 			}
 			return string(rune(code))
 		} else {
@@ -1072,6 +1072,32 @@ func stringCharSize(ch rune) int {
 	return 1
 }
 
+// utf16Length returns the UTF-16 length of a string, matching JavaScript's string.length
+// This counts UTF-16 code units, where surrogate pairs count as 2 units
+// Handles both UTF-8 encoded strings and special 2-byte UTF-16BE surrogate encodings
+func utf16Length(s string) int {
+	// Check if this is a 2-byte UTF-16BE surrogate encoding
+	// These are used to preserve surrogate values in patterns like \uD835
+	if len(s) == 2 {
+		firstByte := uint16(s[0])
+		if firstByte >= 0xD8 && firstByte <= 0xDF {
+			// This is a surrogate encoded as UTF-16BE
+			return 1
+		}
+	}
+
+	// Otherwise, count UTF-16 code units from UTF-8 runes
+	length := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			length += 2 // Surrogate pair
+		} else {
+			length += 1
+		}
+	}
+	return length
+}
+
 func (v *RegExpValidator) scanGroupName(isReference bool) {
 	tokenStart := v.pos
 	v.scanIdentifier(v.charAtOffset(0))
@@ -1103,26 +1129,47 @@ func (v *RegExpValidator) scanGroupName(isReference bool) {
 }
 
 func (v *RegExpValidator) scanSourceCharacter() string {
-	if v.anyUnicodeMode {
-		// In Unicode mode, consume the full character
-		r, s := utf8.DecodeRuneInString(v.text[v.pos:])
-		if r != utf8.RuneError {
-			v.pos += s
-			return v.text[v.pos-s : v.pos]
-		}
+	// In non-Unicode mode, check if we have a pending low surrogate from a previous scan
+	if !v.anyUnicodeMode && v.pendingLowSurrogate != 0 {
+		low := v.pendingLowSurrogate
+		size := v.pendingLowSurrogate >> 16 // High 16 bits store the UTF-8 size
+		v.pendingLowSurrogate = 0
+		// Now advance v.pos to consume the UTF-8 character
+		v.pos += int(size)
+		// Return the low surrogate encoded as UTF-16BE 2-byte sequence
+		return string([]byte{byte(low >> 8), byte(low & 0xFF)})
+	}
+
+	// Decode the next UTF-8 character
+	r, s := utf8.DecodeRuneInString(v.text[v.pos:])
+	if r == utf8.RuneError {
 		v.pos++
 		return v.text[v.pos-1 : v.pos]
 	}
-	// In non-Unicode mode, we still consume full UTF-8 characters
-	// but we need to treat them as UTF-16 code units for range checking.
-	// JavaScript treats code points >= 0x10000 as surrogate pairs in non-Unicode mode.
-	r, s := utf8.DecodeRuneInString(v.text[v.pos:])
-	if r != utf8.RuneError {
+
+	if v.anyUnicodeMode {
+		// In Unicode mode, consume the full character
 		v.pos += s
 		return v.text[v.pos-s : v.pos]
 	}
-	v.pos++
-	return v.text[v.pos-1 : v.pos]
+
+	// In non-Unicode mode, JavaScript treats characters as UTF-16 code units.
+	// For code points >= 0x10000, they are surrogate pairs, and we need to
+	// return them one UTF-16 code unit at a time (like TypeScript does).
+	if r >= 0x10000 {
+		// This character requires a surrogate pair in UTF-16.
+		// Return the high surrogate now, and save the low surrogate for next time.
+		high := 0xD800 + ((r-0x10000)>>10)&0x3FF
+		low := 0xDC00 + ((r - 0x10000) & 0x3FF)
+		// Store the low surrogate in lower 16 bits, and UTF-8 size in upper 16 bits
+		v.pendingLowSurrogate = low | (rune(s) << 16)
+		// Return the high surrogate encoded as UTF-16BE 2-byte sequence
+		return string([]byte{byte(high >> 8), byte(high & 0xFF)})
+	}
+
+	// For code points < 0x10000, consume and return the character normally
+	v.pos += s
+	return v.text[v.pos-s : v.pos]
 }
 
 func (v *RegExpValidator) scanClassRanges() {
@@ -1167,54 +1214,26 @@ func (v *RegExpValidator) scanClassRanges() {
 				maxExpectedSize := charSize(maxCodePoint)
 
 				// Check if both are "complete" characters
-				// A character is complete if it's either:
-				// 1. A single UTF-8 rune (utf8.RuneCountInString == 1), or
-				// 2. A 2-byte surrogate encoding (len == 2 and in surrogate range)
-				minIsComplete := utf8.RuneCountInString(atom) == 1 || (len(atom) == 2 && minCodePoint >= 0xD800 && minCodePoint <= 0xDFFF)
-				maxIsComplete := utf8.RuneCountInString(rangeEnd) == 1 || (len(rangeEnd) == 2 && maxCodePoint >= 0xD800 && maxCodePoint <= 0xDFFF)
+				// TypeScript checks: minCharacter.length === charSize(minCharacterValue)
+				// where .length is the UTF-16 length in JavaScript strings.
+				// We need to calculate the UTF-16 length of our strings.
+				minUTF16Length := utf16Length(atom)
+				maxUTF16Length := utf16Length(rangeEnd)
 
-				if minIsComplete && maxIsComplete {
-					// In non-Unicode mode, TypeScript compares character ranges using UTF-16 code units
-					// For surrogate pairs (code points >= 0x10000), the comparison uses the LAST
-					// UTF-16 code unit (low surrogate for min, high surrogate for max conceptually,
-					// but since we scan sequentially, the actual values compared depend on position)
-					//
-					// The key insight: In `/[𝘈-𝘡]/`, TypeScript parses as `[\uD835\uDE08-\uD835\uDE21]`
-					// This becomes a range from `\uDE08` (after first surrogate pair) to `\uD835`
-					// (the high surrogate of the second pair), and `\uDE08` > `\uD835` triggers the error.
-					//
-					// To emulate this: convert to UTF-16 and use the appropriate code unit
-					minValue, maxValue := minCodePoint, maxCodePoint
+				// A character is complete if its UTF-16 length matches the expected size
+				// TypeScript checks: minCharacter.length === charSize(minCharacterValue)
+				// where .length is the UTF-16 length in JavaScript strings.
+				minIsComplete := minUTF16Length == minExpectedSize
+				maxIsComplete := maxUTF16Length == maxExpectedSize
 
-					if !v.anyUnicodeMode && minExpectedSize == maxExpectedSize {
-						// For surrogates (0xD800-0xDFFF), they are already UTF-16 code units,
-						// so use them directly for comparison
-						if minCodePoint >= 0xD800 && minCodePoint <= 0xDFFF {
-							minValue = minCodePoint
-						} else if minCodePoint >= 0x10000 {
-							// Convert to UTF-16 to get the comparison values
-							// For code points >= 0x10000, utf16.Encode returns [high, low]
-							minUTF16 := utf16.Encode([]rune{minCodePoint})
-							// Use the LAST UTF-16 code unit for comparison
-							// This matches TypeScript's behavior where it compares the trailing unit
-							if len(minUTF16) > 0 {
-								minValue = rune(minUTF16[len(minUTF16)-1])
-							}
-						}
-
-						if maxCodePoint >= 0xD800 && maxCodePoint <= 0xDFFF {
-							maxValue = maxCodePoint
-						} else if maxCodePoint >= 0x10000 {
-							maxUTF16 := utf16.Encode([]rune{maxCodePoint})
-							if len(maxUTF16) > 0 {
-								maxValue = rune(maxUTF16[0]) // First unit of max (high surrogate)
-							}
-						}
-					}
-
-					if minValue > maxValue {
-						v.error(diagnostics.Range_out_of_order_in_character_class, atomStart, v.pos-atomStart)
-					}
+				if minIsComplete && maxIsComplete && minCodePoint > maxCodePoint {
+					// TypeScript compares code points directly. In non-Unicode mode,
+					// literal characters >= 0x10000 are scanned as individual surrogates
+					// by scanSourceCharacter(), so the code points being compared are
+					// already the surrogate values (0xD800-0xDFFF).
+					// Escape sequences like \u{1D608} return the full character, so the
+					// code points are the actual values (>= 0x10000).
+					v.error(diagnostics.Range_out_of_order_in_character_class, atomStart, v.pos-atomStart)
 				}
 			}
 		}
