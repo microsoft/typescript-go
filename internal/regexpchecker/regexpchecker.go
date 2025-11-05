@@ -717,9 +717,18 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 		}
 		return string(ch)
 
-	case 'b', 't', 'n', 'v', 'f', 'r':
-		// Standard escape sequences
-		return string(ch)
+	case 'b':
+		return "\b"
+	case 't':
+		return "\t"
+	case 'n':
+		return "\n"
+	case 'v':
+		return "\v"
+	case 'f':
+		return "\f"
+	case 'r':
+		return "\r"
 
 	case 'x':
 		// Hex escape '\xDD'
@@ -1126,8 +1135,9 @@ func (v *regExpValidator) scanClassSetExpression() {
 				}
 				secondStart := v.pos
 				secondOperand := v.scanClassSetOperand()
-				// Don't report TS1518 for the second operand of a range
-				// expressionMayContainStrings tracking is still needed
+				if isCharacterComplement && v.mayContainStrings {
+					v.error(diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, secondStart, v.pos-secondStart)
+				}
 				expressionMayContainStrings = expressionMayContainStrings || v.mayContainStrings
 				if secondOperand == "" {
 					v.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, secondStart, v.pos-secondStart)
