@@ -1,12 +1,2 @@
 // === Inlay Hints ===
-const client = getClient();
-            ^
-{
-  "position": {
-    "line": 2,
-    "character": 12
-  },
-  "label": ": Client",
-  "kind": 1,
-  "paddingLeft": true
-}
+=== No inlay hints ===
