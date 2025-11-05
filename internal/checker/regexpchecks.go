@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/regexpchecker"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -37,6 +38,5 @@ func (c *Checker) validateRegularExpressionLiteralNode(node *ast.RegularExpressi
 		}
 	}
 
-	// Perform regexp validation
-	scanner.ValidateRegularExpressionLiteral(node, sourceFile, c.languageVersion, onError)
+	regexpchecker.Check(node, sourceFile, c.languageVersion, onError)
 }

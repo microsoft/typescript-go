@@ -1,4 +1,4 @@
-package scanner
+package regexpchecker
 
 import (
 	"fmt"
@@ -8,69 +8,70 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-// RegExpFlags represents regexp flags (e.g., 'g', 'i', 'm', etc.)
-type RegExpFlags uint32
+// regExpFlags represents regexp flags (e.g., 'g', 'i', 'm', etc.)
+type regExpFlags uint32
 
 const (
-	RegExpFlagsNone           RegExpFlags = 0
-	RegExpFlagsGlobal         RegExpFlags = 1 << 0 // g
-	RegExpFlagsIgnoreCase     RegExpFlags = 1 << 1 // i
-	RegExpFlagsMultiline      RegExpFlags = 1 << 2 // m
-	RegExpFlagsDotAll         RegExpFlags = 1 << 3 // s
-	RegExpFlagsUnicode        RegExpFlags = 1 << 4 // u
-	RegExpFlagsSticky         RegExpFlags = 1 << 5 // y
-	RegExpFlagsHasIndices     RegExpFlags = 1 << 6 // d
-	RegExpFlagsUnicodeSets    RegExpFlags = 1 << 7 // v
-	RegExpFlagsModifiers      RegExpFlags = RegExpFlagsIgnoreCase | RegExpFlagsMultiline | RegExpFlagsDotAll
-	RegExpFlagsAnyUnicodeMode RegExpFlags = RegExpFlagsUnicode | RegExpFlagsUnicodeSets
+	regExpFlagsNone           regExpFlags = 0
+	regExpFlagsGlobal         regExpFlags = 1 << 0 // g
+	regExpFlagsIgnoreCase     regExpFlags = 1 << 1 // i
+	regExpFlagsMultiline      regExpFlags = 1 << 2 // m
+	regExpFlagsDotAll         regExpFlags = 1 << 3 // s
+	regExpFlagsUnicode        regExpFlags = 1 << 4 // u
+	regExpFlagsSticky         regExpFlags = 1 << 5 // y
+	regExpFlagsHasIndices     regExpFlags = 1 << 6 // d
+	regExpFlagsUnicodeSets    regExpFlags = 1 << 7 // v
+	regExpFlagsModifiers      regExpFlags = regExpFlagsIgnoreCase | regExpFlagsMultiline | regExpFlagsDotAll
+	regExpFlagsAnyUnicodeMode regExpFlags = regExpFlagsUnicode | regExpFlagsUnicodeSets
 )
 
-var charCodeToRegExpFlag = map[rune]RegExpFlags{
-	'd': RegExpFlagsHasIndices,
-	'g': RegExpFlagsGlobal,
-	'i': RegExpFlagsIgnoreCase,
-	'm': RegExpFlagsMultiline,
-	's': RegExpFlagsDotAll,
-	'u': RegExpFlagsUnicode,
-	'v': RegExpFlagsUnicodeSets,
-	'y': RegExpFlagsSticky,
+var charCodeToRegExpFlag = map[rune]regExpFlags{
+	'd': regExpFlagsHasIndices,
+	'g': regExpFlagsGlobal,
+	'i': regExpFlagsIgnoreCase,
+	'm': regExpFlagsMultiline,
+	's': regExpFlagsDotAll,
+	'u': regExpFlagsUnicode,
+	'v': regExpFlagsUnicodeSets,
+	'y': regExpFlagsSticky,
 }
 
-var regExpFlagToCharCode = map[RegExpFlags]rune{
-	RegExpFlagsHasIndices:  'd',
-	RegExpFlagsGlobal:      'g',
-	RegExpFlagsIgnoreCase:  'i',
-	RegExpFlagsMultiline:   'm',
-	RegExpFlagsDotAll:      's',
-	RegExpFlagsUnicode:     'u',
-	RegExpFlagsUnicodeSets: 'v',
-	RegExpFlagsSticky:      'y',
+var regExpFlagToCharCode = map[regExpFlags]rune{
+	regExpFlagsHasIndices:  'd',
+	regExpFlagsGlobal:      'g',
+	regExpFlagsIgnoreCase:  'i',
+	regExpFlagsMultiline:   'm',
+	regExpFlagsDotAll:      's',
+	regExpFlagsUnicode:     'u',
+	regExpFlagsUnicodeSets: 'v',
+	regExpFlagsSticky:      'y',
 }
 
-// CharacterCodeToRegularExpressionFlag converts a character code to a regexp flag
-func CharacterCodeToRegularExpressionFlag(ch rune) (RegExpFlags, bool) {
+// characterCodeToRegularExpressionFlag converts a character code to a regexp flag
+func characterCodeToRegularExpressionFlag(ch rune) (regExpFlags, bool) {
 	flag, ok := charCodeToRegExpFlag[ch]
 	return flag, ok
 }
 
-// RegularExpressionFlagToCharacterCode converts a regexp flag to a character code
-func RegularExpressionFlagToCharacterCode(f RegExpFlags) (rune, bool) {
+// regularExpressionFlagToCharacterCode converts a regexp flag to a character code
+func regularExpressionFlagToCharacterCode(f regExpFlags) (rune, bool) {
 	ch, ok := regExpFlagToCharCode[f]
 	return ch, ok
 }
 
-// RegExpValidator is used to validate regular expressions
-type RegExpValidator struct {
+// regExpValidator is used to validate regular expressions
+type regExpValidator struct {
 	text                           string
 	pos                            int
 	end                            int
 	languageVersion                core.ScriptTarget
 	languageVariant                core.LanguageVariant
-	onError                        ErrorCallback
-	regExpFlags                    RegExpFlags
+	onError                        scanner.ErrorCallback
+	regExpFlags                    regExpFlags
 	annexB                         bool
 	unicodeSetsMode                bool
 	anyUnicodeMode                 bool
@@ -100,16 +101,14 @@ type decimalEscape struct {
 	value int
 }
 
-// ValidateRegularExpressionLiteral validates a regular expression literal node
-// This is called from the checker package during semantic analysis
-func ValidateRegularExpressionLiteral(
+func Check(
 	node *ast.RegularExpressionLiteral,
 	sourceFile *ast.SourceFile,
 	languageVersion core.ScriptTarget,
-	onError ErrorCallback,
+	onError scanner.ErrorCallback,
 ) {
 	text := node.Text
-	v := &RegExpValidator{
+	v := &regExpValidator{
 		text:            text,
 		pos:             1, // Skip initial '/'
 		end:             len(text),
@@ -117,11 +116,10 @@ func ValidateRegularExpressionLiteral(
 		languageVariant: sourceFile.LanguageVariant,
 		onError:         onError,
 	}
-
 	v.validateRegularExpression()
 }
 
-func (v *RegExpValidator) validateRegularExpression() {
+func (v *regExpValidator) validateRegularExpression() {
 	// Find the body end (before flags)
 	bodyEnd := v.findRegExpBodyEnd()
 	if bodyEnd < 0 {
@@ -131,20 +129,20 @@ func (v *RegExpValidator) validateRegularExpression() {
 	// Parse flags
 	flagsStart := bodyEnd + 1
 	v.pos = flagsStart
-	v.regExpFlags = RegExpFlagsNone
+	v.regExpFlags = regExpFlagsNone
 
 	for v.pos < v.end {
 		ch, size := v.charAndSize()
-		if !IsIdentifierPart(ch) {
+		if !scanner.IsIdentifierPart(ch) {
 			break
 		}
 
-		flag, ok := CharacterCodeToRegularExpressionFlag(ch)
+		flag, ok := characterCodeToRegularExpressionFlag(ch)
 		if !ok {
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if v.regExpFlags&flag != 0 {
 			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if (v.regExpFlags|flag)&RegExpFlagsAnyUnicodeMode == RegExpFlagsAnyUnicodeMode {
+		} else if (v.regExpFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
 			v.error(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, v.pos, size)
 		} else {
 			v.regExpFlags |= flag
@@ -154,8 +152,8 @@ func (v *RegExpValidator) validateRegularExpression() {
 	}
 
 	// Set up validation parameters
-	v.unicodeSetsMode = v.regExpFlags&RegExpFlagsUnicodeSets != 0
-	v.anyUnicodeMode = v.regExpFlags&RegExpFlagsAnyUnicodeMode != 0
+	v.unicodeSetsMode = v.regExpFlags&regExpFlagsUnicodeSets != 0
+	v.anyUnicodeMode = v.regExpFlags&regExpFlagsAnyUnicodeMode != 0
 	// Always validate as if in Annex B mode (matches JavaScript runtime behavior)
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
@@ -170,7 +168,7 @@ func (v *RegExpValidator) validateRegularExpression() {
 	v.validateDecimalEscapes()
 }
 
-func (v *RegExpValidator) findRegExpBodyEnd() int {
+func (v *regExpValidator) findRegExpBodyEnd() int {
 	pos := 1 // Skip initial '/'
 	inEscape := false
 	inCharacterClass := false
@@ -205,11 +203,11 @@ func (v *RegExpValidator) findRegExpBodyEnd() int {
 	return -1 // Unterminated
 }
 
-func (v *RegExpValidator) textStart() int {
+func (v *regExpValidator) textStart() int {
 	return 1 // Offset from node start (which includes the '/')
 }
 
-func (v *RegExpValidator) charAndSize() (rune, int) {
+func (v *regExpValidator) charAndSize() (rune, int) {
 	if v.pos >= v.end {
 		return 0, 0
 	}
@@ -222,7 +220,7 @@ func (v *RegExpValidator) charAndSize() (rune, int) {
 	return r, size
 }
 
-func (v *RegExpValidator) charAtOffset(offset int) rune {
+func (v *regExpValidator) charAtOffset(offset int) rune {
 	if v.pos+offset >= v.end {
 		return 0
 	}
@@ -235,20 +233,20 @@ func (v *RegExpValidator) charAtOffset(offset int) rune {
 	return r
 }
 
-func (v *RegExpValidator) error(message *diagnostics.Message, start, length int, args ...any) {
+func (v *regExpValidator) error(message *diagnostics.Message, start, length int, args ...any) {
 	if v.onError != nil {
 		v.onError(message, start, length, args...)
 	}
 }
 
-func (v *RegExpValidator) checkRegularExpressionFlagAvailability(flag RegExpFlags, size int) {
+func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlags, size int) {
 	var availableFrom core.ScriptTarget
 	switch flag {
-	case RegExpFlagsHasIndices:
+	case regExpFlagsHasIndices:
 		availableFrom = core.ScriptTargetES2022
-	case RegExpFlagsDotAll:
+	case regExpFlagsDotAll:
 		availableFrom = core.ScriptTargetES2018
-	case RegExpFlagsUnicodeSets:
+	case regExpFlagsUnicodeSets:
 		availableFrom = core.ScriptTargetES2024
 	default:
 		return
@@ -260,7 +258,7 @@ func (v *RegExpValidator) checkRegularExpressionFlagAvailability(flag RegExpFlag
 	}
 }
 
-func (v *RegExpValidator) scanDisjunction(isInGroup bool) {
+func (v *regExpValidator) scanDisjunction(isInGroup bool) {
 	for {
 		v.namedCapturingGroupsScopeStack = append(v.namedCapturingGroupsScopeStack, v.topNamedCapturingGroupsScope)
 		v.topNamedCapturingGroupsScope = nil
@@ -275,7 +273,7 @@ func (v *RegExpValidator) scanDisjunction(isInGroup bool) {
 	}
 }
 
-func (v *RegExpValidator) scanAlternative(isInGroup bool) {
+func (v *regExpValidator) scanAlternative(isInGroup bool) {
 	isPreviousTermQuantifiable := false
 	for {
 		start := v.pos
@@ -322,7 +320,7 @@ func (v *RegExpValidator) scanAlternative(isInGroup bool) {
 					}
 				default:
 					start := v.pos
-					setFlags := v.scanPatternModifiers(RegExpFlagsNone)
+					setFlags := v.scanPatternModifiers(regExpFlagsNone)
 					if v.charAtOffset(0) == '-' {
 						v.pos++
 						v.scanPatternModifiers(setFlags)
@@ -431,7 +429,7 @@ func (v *RegExpValidator) scanAlternative(isInGroup bool) {
 	}
 }
 
-func (v *RegExpValidator) validateGroupReferences() {
+func (v *regExpValidator) validateGroupReferences() {
 	for _, ref := range v.groupNameReferences {
 		if !v.groupSpecifiers[ref.name] {
 			v.error(diagnostics.There_is_no_capturing_group_named_0_in_this_regular_expression, ref.pos, ref.end-ref.pos, ref.name)
@@ -451,7 +449,7 @@ func (v *RegExpValidator) validateGroupReferences() {
 	}
 }
 
-func (v *RegExpValidator) validateDecimalEscapes() {
+func (v *regExpValidator) validateDecimalEscapes() {
 	for _, escape := range v.decimalEscapes {
 		if escape.value > v.numberOfCapturingGroups {
 			if v.numberOfCapturingGroups > 0 {
@@ -463,7 +461,7 @@ func (v *RegExpValidator) validateDecimalEscapes() {
 	}
 }
 
-func (v *RegExpValidator) scanDigits() {
+func (v *regExpValidator) scanDigits() {
 	start := v.pos
 	for v.pos < v.end && stringutil.IsDigit(v.charAtOffset(0)) {
 		v.pos++
@@ -471,7 +469,7 @@ func (v *RegExpValidator) scanDigits() {
 	v.tokenValue = v.text[start:v.pos]
 }
 
-func (v *RegExpValidator) scanExpectedChar(expected rune) {
+func (v *regExpValidator) scanExpectedChar(expected rune) {
 	if v.charAtOffset(0) == expected {
 		v.pos++
 	} else {
@@ -479,18 +477,18 @@ func (v *RegExpValidator) scanExpectedChar(expected rune) {
 	}
 }
 
-func (v *RegExpValidator) scanPatternModifiers(currFlags RegExpFlags) RegExpFlags {
+func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlags {
 	for {
 		ch, size := v.charAndSize()
-		if ch == 0 || !IsIdentifierPart(ch) {
+		if ch == 0 || !scanner.IsIdentifierPart(ch) {
 			break
 		}
-		flag, ok := CharacterCodeToRegularExpressionFlag(ch)
+		flag, ok := characterCodeToRegularExpressionFlag(ch)
 		if !ok {
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if currFlags&flag != 0 {
 			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if flag&RegExpFlagsModifiers == 0 {
+		} else if flag&regExpFlagsModifiers == 0 {
 			v.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, v.pos, size)
 		} else {
 			currFlags |= flag
@@ -501,7 +499,7 @@ func (v *RegExpValidator) scanPatternModifiers(currFlags RegExpFlags) RegExpFlag
 	return currFlags
 }
 
-func (v *RegExpValidator) scanAtomEscape() {
+func (v *regExpValidator) scanAtomEscape() {
 	switch v.charAtOffset(0) {
 	case 'k':
 		v.pos++
@@ -526,7 +524,7 @@ func (v *RegExpValidator) scanAtomEscape() {
 	}
 }
 
-func (v *RegExpValidator) scanDecimalEscape() bool {
+func (v *regExpValidator) scanDecimalEscape() bool {
 	ch := v.charAtOffset(0)
 	if ch >= '1' && ch <= '9' {
 		start := v.pos
@@ -541,7 +539,7 @@ func (v *RegExpValidator) scanDecimalEscape() bool {
 	return false
 }
 
-func (v *RegExpValidator) scanCharacterClassEscape() bool {
+func (v *regExpValidator) scanCharacterClassEscape() bool {
 	ch := v.charAtOffset(0)
 	isCharacterComplement := false
 	switch ch {
@@ -568,7 +566,7 @@ func (v *RegExpValidator) scanCharacterClassEscape() bool {
 	return false
 }
 
-func (v *RegExpValidator) scanUnicodePropertyValueExpression(isCharacterComplement bool) {
+func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterComplement bool) {
 	// start is at the first character after '{', so start-3 points to '\' before 'p' or 'P'
 	start := v.pos - 3
 
@@ -698,16 +696,16 @@ var nonBinaryUnicodePropertyNames = map[string]string{
 	"scx":               "Script_Extensions",
 }
 
-func (v *RegExpValidator) isValidUnicodePropertyName(name string) bool {
+func (v *regExpValidator) isValidUnicodePropertyName(name string) bool {
 	return generalCategoryValues[name] || binaryUnicodeProperties[name]
 }
 
-func (v *RegExpValidator) isValidNonBinaryUnicodePropertyName(name string) bool {
+func (v *regExpValidator) isValidNonBinaryUnicodePropertyName(name string) bool {
 	_, ok := nonBinaryUnicodePropertyNames[name]
 	return ok
 }
 
-func (v *RegExpValidator) isValidUnicodeProperty(name, value string) bool {
+func (v *regExpValidator) isValidUnicodeProperty(name, value string) bool {
 	// Get canonical name
 	canonicalName := nonBinaryUnicodePropertyNames[name]
 	if canonicalName == "General_Category" {
@@ -719,13 +717,13 @@ func (v *RegExpValidator) isValidUnicodeProperty(name, value string) bool {
 	return false
 }
 
-func (v *RegExpValidator) scanIdentifier(ch rune) {
+func (v *regExpValidator) scanIdentifier(ch rune) {
 	start := v.pos
-	if ch != 0 && (IsIdentifierStart(ch) || ch == '_' || ch == '$') {
+	if ch != 0 && (scanner.IsIdentifierStart(ch) || ch == '_' || ch == '$') {
 		v.pos++
 		for v.pos < v.end {
 			ch = v.charAtOffset(0)
-			if IsIdentifierPart(ch) || ch == '_' || ch == '$' {
+			if scanner.IsIdentifierPart(ch) || ch == '_' || ch == '$' {
 				v.pos++
 			} else {
 				break
@@ -735,7 +733,7 @@ func (v *RegExpValidator) scanIdentifier(ch rune) {
 	v.tokenValue = v.text[start:v.pos]
 }
 
-func (v *RegExpValidator) scanCharacterEscape(atomEscape bool) string {
+func (v *regExpValidator) scanCharacterEscape(atomEscape bool) string {
 	ch := v.charAtOffset(0)
 	switch ch {
 	case 0:
@@ -763,7 +761,7 @@ func (v *RegExpValidator) scanCharacterEscape(atomEscape bool) string {
 	}
 }
 
-func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
+func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 	// start points to the backslash (before the escape character)
 	start := v.pos - 1
 	ch := v.charAtOffset(0)
@@ -931,7 +929,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 		// Report error if:
 		// - In any Unicode mode, OR
 		// - In regexp mode, not Annex B, and ch is an identifier part
-		if v.anyUnicodeMode || (v.anyUnicodeModeOrNonAnnexB && IsIdentifierPart(ch)) {
+		if v.anyUnicodeMode || (v.anyUnicodeModeOrNonAnnexB && scanner.IsIdentifierPart(ch)) {
 			v.error(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, start, v.pos-start)
 		}
 		return string(ch)
@@ -1059,7 +1057,7 @@ func utf16Length(s string) int {
 	return length
 }
 
-func (v *RegExpValidator) scanGroupName(isReference bool) {
+func (v *regExpValidator) scanGroupName(isReference bool) {
 	tokenStart := v.pos
 	v.scanIdentifier(v.charAtOffset(0))
 	if v.pos == tokenStart {
@@ -1093,7 +1091,7 @@ func (v *RegExpValidator) scanGroupName(isReference bool) {
 // In Unicode mode (u or v flags), returns complete Unicode code points.
 // In non-Unicode mode, mimics JavaScript's UTF-16 behavior where literal characters
 // >= U+10000 are returned as individual surrogates (matching JS regexp semantics).
-func (v *RegExpValidator) scanSourceCharacter() string {
+func (v *regExpValidator) scanSourceCharacter() string {
 	// Check if we have a pending low surrogate from splitting a previous character
 	if !v.anyUnicodeMode && v.pendingLowSurrogate != 0 {
 		low := v.pendingLowSurrogate
@@ -1140,7 +1138,7 @@ func (v *RegExpValidator) scanSourceCharacter() string {
 // ClassRanges ::= ClassAtom ('-' ClassAtom)?
 // Scans character class content like [a-z] or [^0-9].
 // Follows ECMAScript regexp grammar
-func (v *RegExpValidator) scanClassRanges() {
+func (v *regExpValidator) scanClassRanges() {
 	isNegated := v.charAtOffset(0) == '^'
 	if isNegated {
 		v.pos++
@@ -1203,7 +1201,7 @@ func (v *RegExpValidator) scanClassRanges() {
 	}
 }
 
-func (v *RegExpValidator) isClassContentExit(ch rune) bool {
+func (v *regExpValidator) isClassContentExit(ch rune) bool {
 	return ch == ']' || ch == 0 || v.pos >= v.end
 }
 
@@ -1213,7 +1211,7 @@ func (v *RegExpValidator) isClassContentExit(ch rune) bool {
 //	| '\' ClassEscape
 //
 // Follows ECMAScript regexp grammar
-func (v *RegExpValidator) scanClassAtom() string {
+func (v *regExpValidator) scanClassAtom() string {
 	if v.charAtOffset(0) == '\\' {
 		v.pos++
 		return v.scanClassEscape()
@@ -1229,7 +1227,7 @@ func (v *RegExpValidator) scanClassAtom() string {
 //	| CharacterEscape
 //
 // Follows ECMAScript regexp grammar
-func (v *RegExpValidator) scanClassEscape() string {
+func (v *regExpValidator) scanClassEscape() string {
 	if v.scanCharacterClassEscape() {
 		return ""
 	}
@@ -1244,7 +1242,7 @@ const (
 	classSetExpressionIntersection
 )
 
-func (v *RegExpValidator) scanClassSetExpression() {
+func (v *regExpValidator) scanClassSetExpression() {
 	isCharacterComplement := false
 	if v.charAtOffset(0) == '^' {
 		v.pos++
@@ -1385,7 +1383,7 @@ func (v *RegExpValidator) scanClassSetExpression() {
 	v.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 }
 
-func (v *RegExpValidator) scanClassSetSubExpression(expressionType classSetExpressionType) {
+func (v *regExpValidator) scanClassSetSubExpression(expressionType classSetExpressionType) {
 	expressionMayContainStrings := v.mayContainStrings
 	for {
 		ch := v.charAtOffset(0)
@@ -1446,7 +1444,7 @@ func (v *RegExpValidator) scanClassSetSubExpression(expressionType classSetExpre
 //	| '\' CharacterClassEscape
 //	| '\q{' ClassStringDisjunctionContents '}'
 //	| ClassSetCharacter
-func (v *RegExpValidator) scanClassSetOperand() string {
+func (v *regExpValidator) scanClassSetOperand() string {
 	v.mayContainStrings = false
 	switch v.charAtOffset(0) {
 	case 0:
@@ -1479,7 +1477,7 @@ func (v *RegExpValidator) scanClassSetOperand() string {
 }
 
 // ClassStringDisjunctionContents ::= ClassSetCharacter* ('|' ClassSetCharacter*)*
-func (v *RegExpValidator) scanClassStringDisjunctionContents() {
+func (v *regExpValidator) scanClassStringDisjunctionContents() {
 	characterCount := 0
 	for {
 		ch := v.charAtOffset(0)
@@ -1508,7 +1506,7 @@ func (v *RegExpValidator) scanClassStringDisjunctionContents() {
 //
 //	| SourceCharacter -- ClassSetSyntaxCharacter -- ClassSetReservedDoublePunctuator
 //	| '\' (CharacterEscape | ClassSetReservedPunctuator | 'b')
-func (v *RegExpValidator) scanClassSetCharacter() string {
+func (v *regExpValidator) scanClassSetCharacter() string {
 	ch := v.charAtOffset(0)
 	if ch == 0 {
 		return ""
