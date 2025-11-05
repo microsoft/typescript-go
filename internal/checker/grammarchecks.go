@@ -60,16 +60,16 @@ func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressi
 	if !c.hasParseDiagnostics(sourceFile) && node.TokenFlags&ast.TokenFlagsUnterminated == 0 {
 		var lastError *ast.Diagnostic
 
+		nodeStart := scanner.GetTokenPosOfNode(node.AsNode(), sourceFile, false)
 		onError := func(message *diagnostics.Message, start int, length int, args ...any) {
-			nodeStart := scanner.GetTokenPosOfNode(node.AsNode(), sourceFile, false)
-			adjustedStart := nodeStart + start
+			start += nodeStart
 
 			if message.Category() == diagnostics.CategoryMessage && lastError != nil &&
-				adjustedStart == lastError.Pos() && length == lastError.Len() {
-				err := ast.NewDiagnostic(nil, core.NewTextRange(adjustedStart, adjustedStart+length), message, args...)
+				start == lastError.Pos() && length == lastError.Len() {
+				err := ast.NewDiagnostic(nil, core.NewTextRange(start, start+length), message, args...)
 				lastError.AddRelatedInfo(err)
-			} else if lastError == nil || adjustedStart != lastError.Pos() {
-				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(adjustedStart, adjustedStart+length), message, args...)
+			} else if lastError == nil || start != lastError.Pos() {
+				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...)
 				c.diagnostics.Add(lastError)
 			}
 		}
