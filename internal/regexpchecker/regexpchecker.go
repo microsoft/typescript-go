@@ -1002,28 +1002,31 @@ func (v *regExpValidator) isClassContentExit(ch rune) bool {
 //	| SourceCharacter but not one of '\' or ']'
 //	| '\' ClassEscape
 //
-// Follows ECMAScript regexp grammar
-func (v *regExpValidator) scanClassAtom() string {
-	if v.charAtOffset(0) == '\\' {
-		v.pos++
-		return v.scanClassEscape()
-	}
-	return v.scanSourceCharacter()
-}
-
 // ClassEscape ::=
 //
 //	| 'b'
 //	| '-'
 //	| CharacterClassEscape
 //	| CharacterEscape
-//
-// Follows ECMAScript regexp grammar
-func (v *regExpValidator) scanClassEscape() string {
-	if v.scanCharacterClassEscape() {
-		return ""
+func (v *regExpValidator) scanClassAtom() string {
+	if v.charAtOffset(0) == '\\' {
+		v.pos++
+		ch := v.charAtOffset(0)
+		switch ch {
+		case 'b':
+			v.pos++
+			return "\b" // backspace character
+		case '-':
+			v.pos++
+			return string(ch) // hyphen character
+		default:
+			if v.scanCharacterClassEscape() {
+				return ""
+			}
+			return v.scanCharacterEscape(false)
+		}
 	}
-	return v.scanCharacterEscape(false)
+	return v.scanSourceCharacter()
 }
 
 type classSetExpressionType int
