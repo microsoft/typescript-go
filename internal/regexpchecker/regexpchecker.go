@@ -40,12 +40,6 @@ var charCodeToRegExpFlag = map[rune]regExpFlags{
 	'y': regExpFlagsSticky,
 }
 
-// characterCodeToRegularExpressionFlag converts a character code to a regexp flag
-func characterCodeToRegularExpressionFlag(ch rune) (regExpFlags, bool) {
-	flag, ok := charCodeToRegExpFlag[ch]
-	return flag, ok
-}
-
 // regExpValidator is used to validate regular expressions
 type regExpValidator struct {
 	text                           string
@@ -127,7 +121,7 @@ func (v *regExpValidator) validateRegularExpression() {
 			break
 		}
 
-		flag, ok := characterCodeToRegularExpressionFlag(ch)
+		flag, ok := charCodeToRegExpFlag[ch]
 		if !ok {
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if v.regExpFlags&flag != 0 {
@@ -469,7 +463,7 @@ func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlag
 		if ch == 0 || !scanner.IsIdentifierPart(ch) {
 			break
 		}
-		flag, ok := characterCodeToRegularExpressionFlag(ch)
+		flag, ok := charCodeToRegExpFlag[ch]
 		if !ok {
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if currFlags&flag != 0 {
