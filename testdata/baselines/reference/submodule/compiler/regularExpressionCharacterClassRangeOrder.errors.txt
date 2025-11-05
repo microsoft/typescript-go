@@ -23,9 +23,9 @@ regularExpressionCharacterClassRangeOrder.ts(17,31): error TS1517: Range out of 
     // See https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
     const regexes: RegExp[] = [
     	/[𝘈-𝘡][𝘡-𝘈]/,
-    	  ~~
+    	  ~~~
 !!! error TS1517: Range out of order in character class.
-    	       ~~
+    	       ~~~
 !!! error TS1517: Range out of order in character class.
     	/[𝘈-𝘡][𝘡-𝘈]/u,
     	       ~~~

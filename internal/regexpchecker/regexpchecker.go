@@ -1147,7 +1147,15 @@ func (v *regExpValidator) scanClassRanges() {
 					// points being compared are already the surrogate values (0xD800-0xDFFF).
 					// Escape sequences like \u{1D608} return the full character, so the
 					// code points are the actual values (>= 0x10000).
-					v.error(diagnostics.Range_out_of_order_in_character_class, atomStart, v.pos-atomStart)
+
+					// If there's a pending low surrogate from scanning the second atom,
+					// we need to account for its UTF-8 size in the error range.
+					errorEnd := v.pos
+					if v.surrogateState != nil {
+						errorEnd += v.surrogateState.utf8Size
+					}
+					length := errorEnd - atomStart
+					v.error(diagnostics.Range_out_of_order_in_character_class, atomStart, length)
 				}
 			}
 		}
