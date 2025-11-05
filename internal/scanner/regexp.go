@@ -162,7 +162,7 @@ func (v *RegExpValidator) validateRegularExpression() {
 	// Set up validation parameters
 	v.unicodeSetsMode = v.regExpFlags&RegExpFlagsUnicodeSets != 0
 	v.anyUnicodeMode = v.regExpFlags&RegExpFlagsAnyUnicodeMode != 0
-	// TypeScript always uses Annex B mode for regexp validation
+	// Always validate as if in Annex B mode (matches JavaScript runtime behavior)
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
 
@@ -990,7 +990,7 @@ func codePointAt(s string) rune {
 }
 
 // charSize returns the number of UTF-16 code units needed to represent a code point
-// This matches TypeScript's charSize function
+// This matches JavaScript's internal string representation
 func charSize(ch rune) int {
 	if ch >= 0x10000 {
 		// Code points >= 0x10000 require surrogate pairs in UTF-16 (2 code units)
@@ -1098,7 +1098,7 @@ func (v *RegExpValidator) scanGroupName(isReference bool) {
 // scanSourceCharacter scans and returns a single "character" from the source.
 // In Unicode mode (u or v flags), returns complete Unicode code points.
 // In non-Unicode mode, mimics JavaScript's UTF-16 behavior where literal characters
-// >= U+10000 are returned as individual surrogates (matching TypeScript scanner.ts line 3536).
+// >= U+10000 are returned as individual surrogates (matching JS regexp semantics).
 func (v *RegExpValidator) scanSourceCharacter() string {
 	// Check if we have a pending low surrogate from splitting a previous character
 	if !v.anyUnicodeMode && v.pendingLowSurrogate != 0 {
@@ -1126,7 +1126,7 @@ func (v *RegExpValidator) scanSourceCharacter() string {
 
 	// In non-Unicode mode, JavaScript treats characters as UTF-16 code units.
 	// For code points >= 0x10000, they are surrogate pairs, and we need to
-	// return them one UTF-16 code unit at a time (like TypeScript does).
+	// return them one UTF-16 code unit at a time (matching JS runtime behavior).
 	if r >= 0x10000 {
 		// This character requires a surrogate pair in UTF-16.
 		// Return the high surrogate now, and save the low surrogate for next time.
@@ -1145,7 +1145,7 @@ func (v *RegExpValidator) scanSourceCharacter() string {
 
 // ClassRanges ::= ClassAtom ('-' ClassAtom)?
 // Scans character class content like [a-z] or [^0-9].
-// TypeScript reference: scanner.ts line 2990
+// Follows ECMAScript regexp grammar
 func (v *RegExpValidator) scanClassRanges() {
 	isNegated := v.charAtOffset(0) == '^'
 	if isNegated {
@@ -1187,24 +1187,19 @@ func (v *RegExpValidator) scanClassRanges() {
 				minExpectedSize := charSize(minCodePoint)
 				maxExpectedSize := charSize(maxCodePoint)
 
-				// Check if both are "complete" characters
-				// TypeScript checks: minCharacter.length === charSize(minCharacterValue)
-				// where .length is the UTF-16 length in JavaScript strings.
-				// We need to calculate the UTF-16 length of our strings.
+				// Check if both are "complete" characters in JavaScript's UTF-16 representation.
+				// A character is complete if its UTF-16 length matches the expected size.
+				// In JavaScript, string.length returns the UTF-16 code unit count.
 				minUTF16Length := utf16Length(atom)
 				maxUTF16Length := utf16Length(rangeEnd)
 
-				// A character is complete if its UTF-16 length matches the expected size
-				// TypeScript checks: minCharacter.length === charSize(minCharacterValue)
-				// where .length is the UTF-16 length in JavaScript strings.
 				minIsComplete := minUTF16Length == minExpectedSize
 				maxIsComplete := maxUTF16Length == maxExpectedSize
 
 				if minIsComplete && maxIsComplete && minCodePoint > maxCodePoint {
-					// TypeScript compares code points directly. In non-Unicode mode,
-					// literal characters >= 0x10000 are scanned as individual surrogates
-					// by scanSourceCharacter(), so the code points being compared are
-					// already the surrogate values (0xD800-0xDFFF).
+					// In non-Unicode mode, literal characters >= 0x10000 are scanned
+					// as individual surrogates by scanSourceCharacter(), so the code
+					// points being compared are already the surrogate values (0xD800-0xDFFF).
 					// Escape sequences like \u{1D608} return the full character, so the
 					// code points are the actual values (>= 0x10000).
 					v.error(diagnostics.Range_out_of_order_in_character_class, atomStart, v.pos-atomStart)
@@ -1223,7 +1218,7 @@ func (v *RegExpValidator) isClassContentExit(ch rune) bool {
 //	| SourceCharacter but not one of '\' or ']'
 //	| '\' ClassEscape
 //
-// TypeScript reference: scanner.ts line 3406
+// Follows ECMAScript regexp grammar
 func (v *RegExpValidator) scanClassAtom() string {
 	if v.charAtOffset(0) == '\\' {
 		v.pos++
@@ -1239,7 +1234,7 @@ func (v *RegExpValidator) scanClassAtom() string {
 //	| CharacterClassEscape
 //	| CharacterEscape
 //
-// TypeScript reference: scanner.ts line 3406
+// Follows ECMAScript regexp grammar
 func (v *RegExpValidator) scanClassEscape() string {
 	if v.scanCharacterClassEscape() {
 		return ""
