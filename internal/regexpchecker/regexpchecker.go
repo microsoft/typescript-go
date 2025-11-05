@@ -100,10 +100,10 @@ func Check(
 		languageVariant: sourceFile.LanguageVariant,
 		onError:         onError,
 	}
-	v.validateRegularExpression()
+	v.scanRegularExpressionWorker()
 }
 
-func (v *regExpValidator) validateRegularExpression() {
+func (v *regExpValidator) scanRegularExpressionWorker() {
 	// Find the body end (before flags)
 	bodyEnd := v.findRegExpBodyEnd()
 	if bodyEnd < 0 {
@@ -113,27 +113,7 @@ func (v *regExpValidator) validateRegularExpression() {
 	// Parse flags
 	flagsStart := bodyEnd + 1
 	v.pos = flagsStart
-	v.regExpFlags = regExpFlagsNone
-
-	for v.pos < v.end {
-		ch, size := v.charAndSize()
-		if !scanner.IsIdentifierPart(ch) {
-			break
-		}
-
-		flag, ok := charCodeToRegExpFlag[ch]
-		if !ok {
-			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
-		} else if v.regExpFlags&flag != 0 {
-			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if (v.regExpFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
-			v.error(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, v.pos, size)
-		} else {
-			v.regExpFlags |= flag
-			v.checkRegularExpressionFlagAvailability(flag, size)
-		}
-		v.pos += size
-	}
+	v.regExpFlags = v.scanFlags(regExpFlagsNone, false)
 
 	// Set up validation parameters
 	v.unicodeSetsMode = v.regExpFlags&regExpFlagsUnicodeSets != 0
@@ -457,7 +437,9 @@ func (v *regExpValidator) scanExpectedChar(expected rune) {
 	}
 }
 
-func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlags {
+// scanFlags scans regexp flags and validates them.
+// If checkModifiers is true, only allows modifier flags (i, m, s).
+func (v *regExpValidator) scanFlags(currFlags regExpFlags, checkModifiers bool) regExpFlags {
 	for {
 		ch, size := v.charAndSize()
 		if ch == 0 || !scanner.IsIdentifierPart(ch) {
@@ -468,7 +450,9 @@ func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlag
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if currFlags&flag != 0 {
 			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if flag&regExpFlagsModifiers == 0 {
+		} else if (currFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
+			v.error(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, v.pos, size)
+		} else if checkModifiers && flag&regExpFlagsModifiers == 0 {
 			v.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, v.pos, size)
 		} else {
 			currFlags |= flag
@@ -477,6 +461,10 @@ func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlag
 		v.pos += size
 	}
 	return currFlags
+}
+
+func (v *regExpValidator) scanPatternModifiers(currFlags regExpFlags) regExpFlags {
+	return v.scanFlags(currFlags, true)
 }
 
 func (v *regExpValidator) scanAtomEscape() {
