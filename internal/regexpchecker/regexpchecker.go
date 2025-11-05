@@ -837,17 +837,7 @@ func codePointAt(s string) rune {
 			return rune((uint16(s[0]) << 8) | uint16(s[1]))
 		}
 	}
-	first, size := utf8.DecodeRuneInString(s)
-	// Check if it's a high surrogate (0xD800-0xDBFF)
-	if first >= 0xD800 && first <= 0xDBFF && len(s) > size {
-		second, _ := utf8.DecodeRuneInString(s[size:])
-		// Check if it's a low surrogate (0xDC00-0xDFFF)
-		if second >= 0xDC00 && second <= 0xDFFF {
-			// Combine surrogates to get the code point
-			// CodePoint = 0x10000 + ((high & 0x3FF) << 10) | (low & 0x3FF)
-			return 0x10000 + ((first & 0x3FF) << 10) | (second & 0x3FF)
-		}
-	}
+	first, _ := utf8.DecodeRuneInString(s)
 	return first
 }
 
@@ -936,11 +926,7 @@ func (v *regExpValidator) scanSourceCharacter() string {
 	}
 
 	// Decode the next UTF-8 character from the source
-	r, s := utf8.DecodeRuneInString(v.text[v.pos:])
-	if r == utf8.RuneError {
-		v.pos++
-		return v.text[v.pos-1 : v.pos]
-	}
+	r, s := v.charAndSize()
 
 	if v.anyUnicodeMode || r < 0x10000 {
 		// In Unicode mode, or for BMP characters, consume and return normally
