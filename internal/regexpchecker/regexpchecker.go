@@ -86,7 +86,14 @@ type regExpValidator struct {
 	mayContainStrings              bool
 	isCharacterComplement          bool
 	tokenValue                     string
-	pendingLowSurrogate            rune // For non-Unicode mode: pending low surrogate to return
+	surrogateState                 *surrogatePairState // For non-Unicode mode: tracks partial surrogate pair
+}
+
+// surrogatePairState tracks when we're in the middle of emitting a surrogate pair
+// in non-Unicode mode (where literal characters >= U+10000 must be split into two UTF-16 code units)
+type surrogatePairState struct {
+	lowSurrogate rune // The low surrogate value to return next
+	utf8Size     int  // Size of the UTF-8 character to advance past
 }
 
 type namedReference struct {
@@ -1090,49 +1097,49 @@ func (v *regExpValidator) scanGroupName(isReference bool) {
 // scanSourceCharacter scans and returns a single "character" from the source.
 // In Unicode mode (u or v flags), returns complete Unicode code points.
 // In non-Unicode mode, mimics JavaScript's UTF-16 behavior where literal characters
-// >= U+10000 are returned as individual surrogates (matching JS regexp semantics).
+// >= U+10000 are treated as surrogate pairs and consumed across two sequential calls.
 func (v *regExpValidator) scanSourceCharacter() string {
-	// Check if we have a pending low surrogate from splitting a previous character
-	if !v.anyUnicodeMode && v.pendingLowSurrogate != 0 {
-		low := v.pendingLowSurrogate
-		size := v.pendingLowSurrogate >> 16 // High 16 bits store the UTF-8 size
-		v.pendingLowSurrogate = 0
-		// Now advance v.pos to consume the UTF-8 character
-		v.pos += int(size)
-		// Return the low surrogate encoded as UTF-16BE 2-byte sequence
-		return string([]byte{byte(low >> 8), byte(low & 0xFF)})
+	// Check if we have a pending low surrogate from the previous call
+	if v.surrogateState != nil {
+		low := v.surrogateState.lowSurrogate
+		size := v.surrogateState.utf8Size
+		v.surrogateState = nil
+		v.pos += size
+		// Return the low surrogate encoded as UTF-16BE
+		return encodeSurrogate(low)
 	}
 
-	// Decode the next UTF-8 character
+	// Decode the next UTF-8 character from the source
 	r, s := utf8.DecodeRuneInString(v.text[v.pos:])
 	if r == utf8.RuneError {
 		v.pos++
 		return v.text[v.pos-1 : v.pos]
 	}
 
-	if v.anyUnicodeMode {
-		// In Unicode mode, consume the full character
+	if v.anyUnicodeMode || r < 0x10000 {
+		// In Unicode mode, or for BMP characters, consume and return normally
 		v.pos += s
 		return v.text[v.pos-s : v.pos]
 	}
 
-	// In non-Unicode mode, JavaScript treats characters as UTF-16 code units.
-	// For code points >= 0x10000, they are surrogate pairs, and we need to
-	// return them one UTF-16 code unit at a time (matching JS runtime behavior).
-	if r >= 0x10000 {
-		// This character requires a surrogate pair in UTF-16.
-		// Return the high surrogate now, and save the low surrogate for next time.
-		high := 0xD800 + ((r-0x10000)>>10)&0x3FF
-		low := 0xDC00 + ((r - 0x10000) & 0x3FF)
-		// Store the low surrogate in lower 16 bits, and UTF-8 size in upper 16 bits
-		v.pendingLowSurrogate = low | (rune(s) << 16)
-		// Return the high surrogate encoded as UTF-16BE 2-byte sequence
-		return string([]byte{byte(high >> 8), byte(high & 0xFF)})
+	// In non-Unicode mode with a supplementary character (>= U+10000):
+	// JavaScript represents these as surrogate pairs (two UTF-16 code units).
+	// Return the high surrogate now and save the low surrogate for the next call.
+	high := 0xD800 + ((r-0x10000)>>10)&0x3FF
+	low := 0xDC00 + ((r - 0x10000) & 0x3FF)
+
+	v.surrogateState = &surrogatePairState{
+		lowSurrogate: low,
+		utf8Size:     s,
 	}
 
-	// For code points < 0x10000, consume and return the character normally
-	v.pos += s
-	return v.text[v.pos-s : v.pos]
+	return encodeSurrogate(high)
+}
+
+// encodeSurrogate encodes a UTF-16 surrogate value as a 2-byte UTF-16BE sequence.
+// This preserves the surrogate value (which would otherwise be invalid in UTF-8/UTF-32).
+func encodeSurrogate(surrogate rune) string {
+	return string([]byte{byte(surrogate >> 8), byte(surrogate & 0xFF)})
 }
 
 // ClassRanges ::= ClassAtom ('-' ClassAtom)?
