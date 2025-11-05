@@ -471,7 +471,7 @@ func (v *RegExpValidator) validateDecimalEscapes() {
 
 func (v *RegExpValidator) scanDigits() {
 	start := v.pos
-	for v.pos < v.end && v.charAtOffset(0) >= '0' && v.charAtOffset(0) <= '9' {
+	for v.pos < v.end && stringutil.IsDigit(v.charAtOffset(0)) {
 		v.pos++
 	}
 	v.tokenValue = v.text[start:v.pos]
@@ -782,26 +782,26 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 	switch ch {
 	case '0':
 		// '\0' - null character, but check if followed by digit
-		if v.pos >= v.end || !(v.charAtOffset(0) >= '0' && v.charAtOffset(0) <= '9') {
+		if v.pos >= v.end || !stringutil.IsDigit(v.charAtOffset(0)) {
 			return "\x00"
 		}
 		// This is an octal escape starting with \0
 		// falls through to handle as octal
-		if v.charAtOffset(0) >= '0' && v.charAtOffset(0) <= '7' {
+		if stringutil.IsOctalDigit(v.charAtOffset(0)) {
 			v.pos++
 		}
 		fallthrough
 
 	case '1', '2', '3':
 		// Can be up to 3 octal digits
-		if v.pos < v.end && v.charAtOffset(0) >= '0' && v.charAtOffset(0) <= '7' {
+		if v.pos < v.end && stringutil.IsOctalDigit(v.charAtOffset(0)) {
 			v.pos++
 		}
 		fallthrough
 
 	case '4', '5', '6', '7':
 		// Can be 1 or 2 octal digits (already consumed one above for 1-3)
-		if v.pos < v.end && v.charAtOffset(0) >= '0' && v.charAtOffset(0) <= '7' {
+		if v.pos < v.end && stringutil.IsOctalDigit(v.charAtOffset(0)) {
 			v.pos++
 		}
 		// Always report errors for octal escapes in regexp mode
@@ -845,18 +845,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 			v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
 			return v.text[start:v.pos]
 		}
-		// Parse hex value and return the character
-		code := 0
-		for i := hexStart; i < v.pos; i++ {
-			digit := v.text[i]
-			if digit >= '0' && digit <= '9' {
-				code = code*16 + int(digit-'0')
-			} else if digit >= 'a' && digit <= 'f' {
-				code = code*16 + int(digit-'a'+10)
-			} else if digit >= 'A' && digit <= 'F' {
-				code = code*16 + int(digit-'A'+10)
-			}
-		}
+		code := parseHexValue(v.text, hexStart, v.pos)
 		return string(rune(code))
 
 	case 'u':
@@ -880,18 +869,8 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				v.error(diagnostics.Unterminated_Unicode_escape_sequence, start, v.pos-start)
 				return v.text[start:v.pos]
 			}
-			// Parse hex value
-			code := 0
-			for i := hexStart; i < v.pos-1; i++ { // -1 to skip closing brace
-				digit := v.text[i]
-				if digit >= '0' && digit <= '9' {
-					code = code*16 + int(digit-'0')
-				} else if digit >= 'a' && digit <= 'f' {
-					code = code*16 + int(digit-'a'+10)
-				} else if digit >= 'A' && digit <= 'F' {
-					code = code*16 + int(digit-'A'+10)
-				}
-			}
+			// Parse hex value (-1 to skip closing brace)
+			code := parseHexValue(v.text, hexStart, v.pos-1)
 			if !v.anyUnicodeMode {
 				v.error(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, v.pos-start)
 			}
@@ -911,18 +890,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
 				return v.text[start:v.pos]
 			}
-			// Parse hex value
-			code := 0
-			for i := hexStart; i < v.pos; i++ {
-				digit := v.text[i]
-				if digit >= '0' && digit <= '9' {
-					code = code*16 + int(digit-'0')
-				} else if digit >= 'a' && digit <= 'f' {
-					code = code*16 + int(digit-'a'+10)
-				} else if digit >= 'A' && digit <= 'F' {
-					code = code*16 + int(digit-'A'+10)
-				}
-			}
+			code := parseHexValue(v.text, hexStart, v.pos)
 			// For surrogates, we need to preserve the actual value since string(rune(surrogate))
 			// converts to 0xFFFD. We encode the surrogate as UTF-16BE bytes.
 			var escapedValueString string
@@ -948,17 +916,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				}
 				if validNext {
 					// Parse the next escape
-					nextCode := 0
-					for i := nextStart + 2; i < nextPos; i++ {
-						digit := v.text[i]
-						if digit >= '0' && digit <= '9' {
-							nextCode = nextCode*16 + int(digit-'0')
-						} else if digit >= 'a' && digit <= 'f' {
-							nextCode = nextCode*16 + int(digit-'a'+10)
-						} else if digit >= 'A' && digit <= 'F' {
-							nextCode = nextCode*16 + int(digit-'A'+10)
-						}
-					}
+					nextCode := parseHexValue(v.text, nextStart+2, nextPos)
 					// Check if it's a low surrogate
 					if nextCode >= 0xDC00 && nextCode <= 0xDFFF {
 						// Combine surrogates into a single code point
@@ -984,6 +942,22 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 		}
 		return string(ch)
 	}
+}
+
+// parseHexValue parses hexadecimal digits from text and returns the integer value
+func parseHexValue(text string, start, end int) int {
+	code := 0
+	for i := start; i < end; i++ {
+		digit := text[i]
+		if digit >= '0' && digit <= '9' {
+			code = code*16 + int(digit-'0')
+		} else if digit >= 'a' && digit <= 'f' {
+			code = code*16 + int(digit-'a'+10)
+		} else if digit >= 'A' && digit <= 'F' {
+			code = code*16 + int(digit-'A'+10)
+		}
+	}
+	return code
 }
 
 // codePointAt returns the code point value at the start of the string
