@@ -64,7 +64,6 @@ type processedFiles struct {
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
-	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	includeProcessor                     *includeProcessor
 	// if file was included using source file and its output is actually part of program
@@ -152,7 +151,6 @@ func processAllProgramFiles(
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
-	var unsupportedExtensions []string
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
@@ -217,10 +215,6 @@ func processAllProgramFiles(
 			}
 			importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
 		}
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-		}
 		if task.fromExternalLibrary {
 			sourceFilesFoundSearchingNodeModules.Add(path)
 		}
@@ -251,7 +245,6 @@ func processAllProgramFiles(
 		sourceFileMetaDatas:                  sourceFileMetaDatas,
 		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
-		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 		libFiles:                             libFilesMap,
 		missingFiles:                         missingFiles,
@@ -638,16 +631,22 @@ func getLibraryNameFromLibFileName(libFileName string) string {
 	//                      lib.dom.iterable.d.ts -> @typescript/lib-dom/iterable
 	//                      lib.es2015.symbol.wellknown.d.ts -> @typescript/lib-es2015/symbol-wellknown
 	components := strings.Split(libFileName, ".")
-	var path string
+	var path strings.Builder
+	path.WriteString("@typescript/lib-")
 	if len(components) > 1 {
-		path = components[1]
+		path.WriteString(components[1])
 	}
 	i := 2
 	for i < len(components) && components[i] != "" && components[i] != "d" {
-		path += core.IfElse(i == 2, "/", "-") + components[i]
+		if i == 2 {
+			path.WriteByte('/')
+		} else {
+			path.WriteByte('-')
+		}
+		path.WriteString(components[i])
 		i++
 	}
-	return "@typescript/lib-" + path
+	return path.String()
 }
 
 func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDirectory string, libFileName string) string {

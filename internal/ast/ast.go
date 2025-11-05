@@ -24,7 +24,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
+	for _, node := range nodes { //nolint:modernize
 		if v(node) {
 			return true
 		}
@@ -4843,6 +4843,10 @@ func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {
 
 func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
+}
+
+func IsJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportDeclaration
 }
 
 func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
