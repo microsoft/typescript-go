@@ -849,6 +849,10 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			}
 			// Parse hex value (-1 to skip closing brace)
 			code := parseHexValue(v.text, hexStart, v.pos-1)
+			// Validate the code point is within valid Unicode range
+			if code > 0x10FFFF {
+				v.error(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, hexStart, v.pos-1-hexStart)
+			}
 			if !v.anyUnicodeMode {
 				v.error(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, v.pos-start)
 			}
