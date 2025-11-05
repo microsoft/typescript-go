@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 // RegExpFlags represents regexp flags (e.g., 'g', 'i', 'm', etc.)
@@ -749,7 +750,7 @@ func (v *RegExpValidator) scanCharacterEscape(atomEscape bool) string {
 	case 'c':
 		v.pos++
 		ch = v.charAtOffset(0)
-		if isASCIILetter(ch) {
+		if stringutil.IsASCIILetter(ch) {
 			v.pos++
 			return string(ch & 0x1f)
 		}
@@ -766,10 +767,6 @@ func (v *RegExpValidator) scanCharacterEscape(atomEscape bool) string {
 	default:
 		return v.scanEscapeSequence(atomEscape)
 	}
-}
-
-func isASCIILetter(ch rune) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
 }
 
 func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
@@ -838,7 +835,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 		hexStart := v.pos
 		validHex := true
 		for range 2 {
-			if v.pos >= v.end || !isHexDigit(v.charAtOffset(0)) {
+			if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
 				validHex = false
 				break
 			}
@@ -869,7 +866,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 			v.pos++
 			hexStart := v.pos
 			hasDigits := false
-			for v.pos < v.end && isHexDigit(v.charAtOffset(0)) {
+			for v.pos < v.end && stringutil.IsHexDigit(v.charAtOffset(0)) {
 				hasDigits = true
 				v.pos++
 			}
@@ -904,7 +901,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 			hexStart := v.pos
 			validHex := true
 			for range 4 {
-				if v.pos >= v.end || !isHexDigit(v.charAtOffset(0)) {
+				if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
 					validHex = false
 					break
 				}
@@ -943,7 +940,7 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 				nextPos := v.pos + 2
 				validNext := true
 				for range 4 {
-					if nextPos >= v.end || !isHexDigit(rune(v.text[nextPos])) {
+					if nextPos >= v.end || !stringutil.IsHexDigit(rune(v.text[nextPos])) {
 						validNext = false
 						break
 					}
@@ -987,10 +984,6 @@ func (v *RegExpValidator) scanEscapeSequence(atomEscape bool) string {
 		}
 		return string(ch)
 	}
-}
-
-func isHexDigit(ch rune) bool {
-	return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')
 }
 
 // codePointAt returns the code point value at the start of the string
