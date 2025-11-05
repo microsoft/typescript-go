@@ -1,0 +1,12 @@
+regexpTestSimple.ts(2,16): error TS1499: Unknown regular expression flag.
+regexpTestSimple.ts(2,18): error TS1499: Unknown regular expression flag.
+
+
+==== regexpTestSimple.ts (2 errors) ====
+    // Simple test
+    const x = /foo/xyz;
+                   ~
+!!! error TS1499: Unknown regular expression flag.
+                     ~
+!!! error TS1499: Unknown regular expression flag.
+    

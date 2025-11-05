@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/regexpTestSimple.ts] ////
+
+=== regexpTestSimple.ts ===
+// Simple test
+const x = /foo/xyz;
+>x : Symbol(x, Decl(regexpTestSimple.ts, 1, 5))
+
