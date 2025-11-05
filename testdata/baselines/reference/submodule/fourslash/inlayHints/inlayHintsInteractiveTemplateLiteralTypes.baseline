@@ -42,7 +42,7 @@ const lit2 = getTemplateLiteral2();
       "value": ": "
     },
     {
-      "value": "`${${"
+      "value": "`\\${${"
     },
     {
       "value": "string"
@@ -79,7 +79,7 @@ const lit3 = getTemplateLiteral3();
       "value": "string"
     },
     {
-      "value": "}${,$${"
+      "value": "}\\${,$${"
     },
     {
       "value": "string"
@@ -110,7 +110,7 @@ const lit4 = getTemplateLiteral4();
       "value": "string"
     },
     {
-      "value": "}`,${"
+      "value": "}\\`,${"
     },
     {
       "value": "string"

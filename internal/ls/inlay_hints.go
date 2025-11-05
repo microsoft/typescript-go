@@ -804,6 +804,9 @@ func (s *inlayHintState) getLiteralText(node *ast.LiteralLikeNode) string {
 		return `"` + printer.EscapeString(node.Text(), printer.QuoteCharDoubleQuote) + `"`
 	case ast.KindTemplateHead, ast.KindTemplateMiddle, ast.KindTemplateTail:
 		rawText := node.RawText()
+		if rawText == "" {
+			rawText = printer.EscapeString(node.Text(), printer.QuoteCharBacktick)
+		}
 		switch node.Kind {
 		case ast.KindTemplateHead:
 			return "`" + rawText + "${"

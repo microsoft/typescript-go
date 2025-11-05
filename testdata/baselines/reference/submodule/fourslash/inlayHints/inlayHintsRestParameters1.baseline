@@ -42,7 +42,7 @@ foo2(1, 2, 3)
     "line": 4,
     "character": 8
   },
-  "label": "args:",
+  "label": "a:",
   "kind": 2,
   "paddingRight": true
 }
@@ -54,7 +54,7 @@ foo2(1, 2, 3)
     "line": 4,
     "character": 11
   },
-  "label": "args:",
+  "label": "b:",
   "kind": 2,
   "paddingRight": true
 }

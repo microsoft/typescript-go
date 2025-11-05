@@ -104,17 +104,17 @@ foo2(1, 2, 3)
   },
   "label": [
     {
-      "value": "args",
+      "value": "a",
       "location": {
         "uri": "file:///inlayHintsInteractiveRestParameters1.ts",
         "range": {
           "start": {
-            "line": 3,
-            "character": 36
+            "line": 2,
+            "character": 14
           },
           "end": {
-            "line": 3,
-            "character": 40
+            "line": 2,
+            "character": 15
           }
         }
       }
@@ -136,17 +136,17 @@ foo2(1, 2, 3)
   },
   "label": [
     {
-      "value": "args",
+      "value": "b",
       "location": {
         "uri": "file:///inlayHintsInteractiveRestParameters1.ts",
         "range": {
           "start": {
-            "line": 3,
-            "character": 36
+            "line": 2,
+            "character": 24
           },
           "end": {
-            "line": 3,
-            "character": 40
+            "line": 2,
+            "character": 26
           }
         }
       }

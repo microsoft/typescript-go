@@ -38,17 +38,7 @@
      },
      {
        "value": "; "
-@@= skipped -79, +78 lines =@@
-       "value": "?"
-     },
-     {
-+      "value": "?"
-+    },
-+    {
-       "value": ": "
-     },
-     {
-@@= skipped -54, +57 lines =@@
+@@= skipped -133, +132 lines =@@
        "value": "<"
      },
      {
