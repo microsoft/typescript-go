@@ -822,10 +822,10 @@ func parseHexValue(text string, start, end int) int {
 	return code
 }
 
-// codePointAt returns the code point value at the start of the string
-// If the string starts with a high surrogate followed by a low surrogate, they are combined
-// Surrogates from escape sequences are encoded as 2-byte UTF-16BE sequences
-func codePointAt(s string) rune {
+// decodeCodePoint returns the code point value from a character string.
+// The string can be either a UTF-8 encoded character or a UTF-16BE encoded surrogate.
+// Surrogates from escape sequences are encoded as 2-byte UTF-16BE sequences.
+func decodeCodePoint(s string) rune {
 	if len(s) == 0 {
 		return 0
 	}
@@ -991,8 +991,8 @@ func (v *regExpValidator) scanClassRanges() {
 			}
 			// Check range order
 			if atom != "" && rangeEnd != "" {
-				minCodePoint := codePointAt(atom)
-				maxCodePoint := codePointAt(rangeEnd)
+				minCodePoint := decodeCodePoint(atom)
+				maxCodePoint := decodeCodePoint(rangeEnd)
 
 				// Get the expected sizes (in UTF-16 code units)
 				minExpectedSize := charSize(minCodePoint)
