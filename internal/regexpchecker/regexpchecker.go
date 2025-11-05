@@ -102,34 +102,67 @@ func Check(
 	}
 
 	// Similar to the original scanRegularExpressionWorker, but since we are outside the scanner,
-	// we need to rescan to find the body end and recalculate flags.
+	// we need to rescan for some information that the scanner previously calculated.
 
-	// Find the body end (before flags)
 	bodyEnd := strings.LastIndexByte(text, '/')
 	if bodyEnd <= 0 {
 		panic("regexpchecker: regex must have closing '/' (scanner should have validated)")
 	}
 
-	// Parse flags
 	v.pos = bodyEnd + 1
 	v.end = len(text)
 	v.regExpFlags = v.scanFlags(regExpFlagsNone, false)
+	v.pos = 1
+	v.end = bodyEnd
 
-	// Set up validation parameters
 	v.unicodeSetsMode = v.regExpFlags&regExpFlagsUnicodeSets != 0
 	v.anyUnicodeMode = v.regExpFlags&regExpFlagsAnyUnicodeMode != 0
-	// Always validate as if in Annex B mode
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
+	v.namedCaptureGroups = v.detectNamedCaptureGroups()
 
-	// Validate the pattern body
-	v.pos = 1 // Reset to start of pattern (after initial '/')
-	v.end = bodyEnd
 	v.scanDisjunction(false)
-
-	// Post-validation checks
 	v.validateGroupReferences()
 	v.validateDecimalEscapes()
+}
+
+// detectNamedCaptureGroups performs a quick scan of the pattern to detect
+// if it contains any named capture groups (?<name>...). This is needed because
+// the presence of named groups changes the interpretation of \k escapes:
+// - Without named groups: \k is an identity escape (matches literal 'k')
+// - With named groups: \k must be followed by <name> or it's a syntax error
+// This matches the behavior in scanner.ts's reScanSlashToken.
+func (v *regExpValidator) detectNamedCaptureGroups() bool {
+	inEscape := false
+	inCharacterClass := false
+	text := v.text[v.pos:v.end]
+
+	for i, ch := range text {
+		// Only check ASCII characters for the pattern (?<
+		if ch >= 0x80 {
+			continue
+		}
+
+		if inEscape {
+			inEscape = false
+		} else if ch == '\\' {
+			inEscape = true
+		} else if ch == '[' {
+			inCharacterClass = true
+		} else if ch == ']' {
+			inCharacterClass = false
+		} else if !inCharacterClass &&
+			ch == '(' &&
+			i+3 < len(text) &&
+			text[i+1] == '?' &&
+			text[i+2] == '<' &&
+			text[i+3] != '=' &&
+			text[i+3] != '!' {
+			// Found (?< that's not (?<= or (?<! - this is a named capture group
+			return true
+		}
+	}
+	return false
 }
 
 func (v *regExpValidator) charAndSize() (rune, int) {

@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/regularExpressionBackslashK.ts] ////
+
+=== regularExpressionBackslashK.ts ===
+// Test that \k without < is an error when named groups are present
+
+// Valid: \k followed by <name> with named groups
+const validBackref = /(?<foo>a)\k<foo>/;
+>validBackref : RegExp
+>/(?<foo>a)\k<foo>/ : RegExp
+
+// Invalid: \k not followed by < when named groups are present (even in non-Unicode mode)
+const invalidK = /(?<foo>a)\k/;
+>invalidK : RegExp
+>/(?<foo>a)\k/ : RegExp
+
+// Invalid: \k followed by other chars when named groups are present
+const invalidKWithText = /(?<bar>x)\kb/;
+>invalidKWithText : RegExp
+>/(?<bar>x)\kb/ : RegExp
+
+// Valid: \k without < is OK when there are NO named groups (identity escape)
+const validIdentityEscape = /a\kb/;
+>validIdentityEscape : RegExp
+>/a\kb/ : RegExp
+
+// Invalid: \k without < in Unicode mode (regardless of named groups)
+const invalidKUnicode = /a\kb/u;
+>invalidKUnicode : RegExp
+>/a\kb/u : RegExp
+
+// Edge cases
+
+// Multiple named groups, valid backreferences
+const multiGroup = /(?<a>x)(?<b>y)\k<a>\k<b>/;
+>multiGroup : RegExp
+>/(?<a>x)(?<b>y)\k<a>\k<b>/ : RegExp
+
+// Named group in alternation with \k in different branch
+const alternation = /(?<foo>a)|\k<foo>/;
+>alternation : RegExp
+>/(?<foo>a)|\k<foo>/ : RegExp
+
+// Named group with \k in lookahead
+const lookahead = /(?<bar>b)(?=\k<bar>)/;
+>lookahead : RegExp
+>/(?<bar>b)(?=\k<bar>)/ : RegExp
+
+// Named group with bare \k - should error
+const bareKWithGroups = /(?<x>.)(?<y>.)\k/;
+>bareKWithGroups : RegExp
+>/(?<x>.)(?<y>.)\k/ : RegExp
+
+// Bare \k at start when named group comes later - should still error
+const bareKBeforeGroup = /\k(?<name>pattern)/;
+>bareKBeforeGroup : RegExp
+>/\k(?<name>pattern)/ : RegExp
+
+// Identity escape \k is valid when no named groups at all
+const noNamedGroups = /\ka\kb/;
+>noNamedGroups : RegExp
+>/\ka\kb/ : RegExp
+
+// Unicode characters
+
+// Unicode characters before named group
+const unicodeBefore = /😀(?<foo>a)\k<foo>/;
+>unicodeBefore : RegExp
+>/😀(?<foo>a)\k<foo>/ : RegExp
+
+// Unicode characters after named group
+const unicodeAfter = /(?<bar>b)\k<bar>😀/;
+>unicodeAfter : RegExp
+>/(?<bar>b)\k<bar>😀/ : RegExp
+
+// Unicode characters in between
+const unicodeMiddle = /(?<x>.)😀\k<x>/;
+>unicodeMiddle : RegExp
+>/(?<x>.)😀\k<x>/ : RegExp
+
+// Unicode with bare \k - should error
+const unicodeWithBareK = /😀(?<name>.)\k/;
+>unicodeWithBareK : RegExp
+>/😀(?<name>.)\k/ : RegExp
+
+// Unicode without named groups and \k - should be OK
+const unicodeNoGroups = /😀\k😀/;
+>unicodeNoGroups : RegExp
+>/😀\k😀/ : RegExp
+
