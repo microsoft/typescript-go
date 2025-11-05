@@ -116,7 +116,7 @@ func Check(
 	// Set up validation parameters
 	v.unicodeSetsMode = v.regExpFlags&regExpFlagsUnicodeSets != 0
 	v.anyUnicodeMode = v.regExpFlags&regExpFlagsAnyUnicodeMode != 0
-	// Always validate as if in Annex B mode (matches JavaScript runtime behavior)
+	// Always validate as if in Annex B mode
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
 
@@ -174,7 +174,7 @@ func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlag
 	}
 
 	if v.languageVersion < availableFrom {
-		// Workaround: TypeScript uses lowercase ES version names in error messages (e.g., "es2024" not "ES2024")
+		// !!! Old compiler lowercases these names.
 		v.error(diagnostics.This_regular_expression_flag_is_only_available_when_targeting_0_or_later, v.pos, size, strings.ToLower(availableFrom.String()))
 	}
 }
@@ -509,7 +509,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		if v.pos == propertyNameOrValueStart {
 			v.error(diagnostics.Expected_a_Unicode_property_name, propertyNameOrValueStart, 0)
 			propertyNameValid = false
-		} else if !v.isValidNonBinaryUnicodePropertyName(propertyNameOrValue) {
+		} else if !isValidNonBinaryUnicodePropertyName(propertyNameOrValue) {
 			v.error(diagnostics.Unknown_Unicode_property_name, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
 			// Provide spelling suggestion
 			candidates := make([]string, 0, len(nonBinaryUnicodePropertyNames))
@@ -528,7 +528,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		propertyValue := v.tokenValue
 		if v.pos == propertyValueStart {
 			v.error(diagnostics.Expected_a_Unicode_property_value, propertyValueStart, 0)
-		} else if propertyNameValid && !v.isValidUnicodeProperty(propertyNameOrValue, propertyValue) {
+		} else if propertyNameValid && !isValidUnicodeProperty(propertyNameOrValue, propertyValue) {
 			v.error(diagnostics.Unknown_Unicode_property_value, propertyValueStart, v.pos-propertyValueStart)
 			// Provide spelling suggestion based on the property name
 			canonicalName := nonBinaryUnicodePropertyNames[propertyNameOrValue]
@@ -564,7 +564,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			} else {
 				v.mayContainStrings = true
 			}
-		} else if !v.isValidUnicodePropertyName(propertyNameOrValue) {
+		} else if !isValidUnicodePropertyName(propertyNameOrValue) {
 			v.error(diagnostics.Unknown_Unicode_property_name_or_value, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
 			// Provide spelling suggestion from general category values, binary properties, and binary properties of strings
 			candidates := make([]string, 0, len(generalCategoryValues)+len(binaryUnicodeProperties)+len(binaryUnicodePropertiesOfStrings))
@@ -577,7 +577,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			for key := range binaryUnicodePropertiesOfStrings {
 				candidates = append(candidates, key)
 			}
-			suggestion := core.GetSpellingSuggestion(propertyNameOrValue, candidates, core.Identity[string])
+			suggestion := core.GetSpellingSuggestion(propertyNameOrValue, candidates, core.Identity)
 			if suggestion != "" {
 				v.error(diagnostics.Did_you_mean_0, propertyNameOrValueStart, v.pos-propertyNameOrValueStart, suggestion)
 			}
@@ -591,59 +591,6 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 	if !v.anyUnicodeMode {
 		v.error(diagnostics.Unicode_property_value_expressions_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, v.pos-start)
 	}
-}
-
-// Table 67: Binary Unicode property aliases and their canonical property names
-// https://tc39.es/ecma262/#table-binary-unicode-properties
-var binaryUnicodeProperties = map[string]bool{
-	"ASCII": true, "ASCII_Hex_Digit": true, "AHex": true, "Alphabetic": true, "Alpha": true, "Any": true, "Assigned": true, "Bidi_Control": true, "Bidi_C": true, "Bidi_Mirrored": true, "Bidi_M": true, "Case_Ignorable": true, "CI": true, "Cased": true, "Changes_When_Casefolded": true, "CWCF": true, "Changes_When_Casemapped": true, "CWCM": true, "Changes_When_Lowercased": true, "CWL": true, "Changes_When_NFKC_Casefolded": true, "CWKCF": true, "Changes_When_Titlecased": true, "CWT": true, "Changes_When_Uppercased": true, "CWU": true, "Dash": true, "Default_Ignorable_Code_Point": true, "DI": true, "Deprecated": true, "Dep": true, "Diacritic": true, "Dia": true, "Emoji": true, "Emoji_Component": true, "EComp": true, "Emoji_Modifier": true, "EMod": true, "Emoji_Modifier_Base": true, "EBase": true, "Emoji_Presentation": true, "EPres": true, "Extended_Pictographic": true, "ExtPict": true, "Extender": true, "Ext": true, "Grapheme_Base": true, "Gr_Base": true, "Grapheme_Extend": true, "Gr_Ext": true, "Hex_Digit": true, "Hex": true, "IDS_Binary_Operator": true, "IDSB": true, "IDS_Trinary_Operator": true, "IDST": true, "ID_Continue": true, "IDC": true, "ID_Start": true, "IDS": true, "Ideographic": true, "Ideo": true, "Join_Control": true, "Join_C": true, "Logical_Order_Exception": true, "LOE": true, "Lowercase": true, "Lower": true, "Math": true, "Noncharacter_Code_Point": true, "NChar": true, "Pattern_Syntax": true, "Pat_Syn": true, "Pattern_White_Space": true, "Pat_WS": true, "Quotation_Mark": true, "QMark": true, "Radical": true, "Regional_Indicator": true, "RI": true, "Sentence_Terminal": true, "STerm": true, "Soft_Dotted": true, "SD": true, "Terminal_Punctuation": true, "Term": true, "Unified_Ideograph": true, "UIdeo": true, "Uppercase": true, "Upper": true, "Variation_Selector": true, "VS": true, "White_Space": true, "space": true, "XID_Continue": true, "XIDC": true, "XID_Start": true, "XIDS": true,
-}
-
-// Table 68: Binary Unicode properties of strings
-// https://tc39.es/ecma262/#table-binary-unicode-properties-of-strings
-var binaryUnicodePropertiesOfStrings = map[string]bool{
-	"Basic_Emoji": true, "Emoji_Keycap_Sequence": true, "RGI_Emoji_Modifier_Sequence": true, "RGI_Emoji_Flag_Sequence": true, "RGI_Emoji_Tag_Sequence": true, "RGI_Emoji_ZWJ_Sequence": true, "RGI_Emoji": true,
-}
-
-// Unicode 15.1 - General_Category values
-var generalCategoryValues = map[string]bool{
-	"C": true, "Other": true, "Cc": true, "Control": true, "cntrl": true, "Cf": true, "Format": true, "Cn": true, "Unassigned": true, "Co": true, "Private_Use": true, "Cs": true, "Surrogate": true, "L": true, "Letter": true, "LC": true, "Cased_Letter": true, "Ll": true, "Lowercase_Letter": true, "Lm": true, "Modifier_Letter": true, "Lo": true, "Other_Letter": true, "Lt": true, "Titlecase_Letter": true, "Lu": true, "Uppercase_Letter": true, "M": true, "Mark": true, "Combining_Mark": true, "Mc": true, "Spacing_Mark": true, "Me": true, "Enclosing_Mark": true, "Mn": true, "Nonspacing_Mark": true, "N": true, "Number": true, "Nd": true, "Decimal_Number": true, "digit": true, "Nl": true, "Letter_Number": true, "No": true, "Other_Number": true, "P": true, "Punctuation": true, "punct": true, "Pc": true, "Connector_Punctuation": true, "Pd": true, "Dash_Punctuation": true, "Pe": true, "Close_Punctuation": true, "Pf": true, "Final_Punctuation": true, "Pi": true, "Initial_Punctuation": true, "Po": true, "Other_Punctuation": true, "Ps": true, "Open_Punctuation": true, "S": true, "Symbol": true, "Sc": true, "Currency_Symbol": true, "Sk": true, "Modifier_Symbol": true, "Sm": true, "Math_Symbol": true, "So": true, "Other_Symbol": true, "Z": true, "Separator": true, "Zl": true, "Line_Separator": true, "Zp": true, "Paragraph_Separator": true, "Zs": true, "Space_Separator": true,
-}
-
-// Unicode 15.1 - Script values
-var scriptValues = map[string]bool{
-	"Adlm": true, "Adlam": true, "Aghb": true, "Caucasian_Albanian": true, "Ahom": true, "Arab": true, "Arabic": true, "Armi": true, "Imperial_Aramaic": true, "Armn": true, "Armenian": true, "Avst": true, "Avestan": true, "Bali": true, "Balinese": true, "Bamu": true, "Bamum": true, "Bass": true, "Bassa_Vah": true, "Batk": true, "Batak": true, "Beng": true, "Bengali": true, "Bhks": true, "Bhaiksuki": true, "Bopo": true, "Bopomofo": true, "Brah": true, "Brahmi": true, "Brai": true, "Braille": true, "Bugi": true, "Buginese": true, "Buhd": true, "Buhid": true, "Cakm": true, "Chakma": true, "Cans": true, "Canadian_Aboriginal": true, "Cari": true, "Carian": true, "Cham": true, "Cher": true, "Cherokee": true, "Chrs": true, "Chorasmian": true, "Copt": true, "Coptic": true, "Qaac": true, "Cpmn": true, "Cypro_Minoan": true, "Cprt": true, "Cypriot": true, "Cyrl": true, "Cyrillic": true, "Deva": true, "Devanagari": true, "Diak": true, "Dives_Akuru": true, "Dogr": true, "Dogra": true, "Dsrt": true, "Deseret": true, "Dupl": true, "Duployan": true, "Egyp": true, "Egyptian_Hieroglyphs": true, "Elba": true, "Elbasan": true, "Elym": true, "Elymaic": true, "Ethi": true, "Ethiopic": true, "Geor": true, "Georgian": true, "Glag": true, "Glagolitic": true, "Gong": true, "Gunjala_Gondi": true, "Gonm": true, "Masaram_Gondi": true, "Goth": true, "Gothic": true, "Gran": true, "Grantha": true, "Grek": true, "Greek": true, "Gujr": true, "Gujarati": true, "Guru": true, "Gurmukhi": true, "Hang": true, "Hangul": true, "Hani": true, "Han": true, "Hano": true, "Hanunoo": true, "Hatr": true, "Hatran": true, "Hebr": true, "Hebrew": true, "Hira": true, "Hiragana": true, "Hluw": true, "Anatolian_Hieroglyphs": true, "Hmng": true, "Pahawh_Hmong": true, "Hmnp": true, "Nyiakeng_Puachue_Hmong": true, "Hrkt": true, "Katakana_Or_Hiragana": true, "Hung": true, "Old_Hungarian": true, "Ital": true, "Old_Italic": true, "Java": true, "Javanese": true, "Kali": true, "Kayah_Li": true, "Kana": true, "Katakana": true, "Kawi": true, "Khar": true, "Kharoshthi": true, "Khmr": true, "Khmer": true, "Khoj": true, "Khojki": true, "Kits": true, "Khitan_Small_Script": true, "Knda": true, "Kannada": true, "Kthi": true, "Kaithi": true, "Lana": true, "Tai_Tham": true, "Laoo": true, "Lao": true, "Latn": true, "Latin": true, "Lepc": true, "Lepcha": true, "Limb": true, "Limbu": true, "Lina": true, "Linear_A": true, "Linb": true, "Linear_B": true, "Lisu": true, "Lyci": true, "Lycian": true, "Lydi": true, "Lydian": true, "Mahj": true, "Mahajani": true, "Maka": true, "Makasar": true, "Mand": true, "Mandaic": true, "Mani": true, "Manichaean": true, "Marc": true, "Marchen": true, "Medf": true, "Medefaidrin": true, "Mend": true, "Mende_Kikakui": true, "Merc": true, "Meroitic_Cursive": true, "Mero": true, "Meroitic_Hieroglyphs": true, "Mlym": true, "Malayalam": true, "Modi": true, "Mong": true, "Mongolian": true, "Mroo": true, "Mro": true, "Mtei": true, "Meetei_Mayek": true, "Mult": true, "Multani": true, "Mymr": true, "Myanmar": true, "Nagm": true, "Nag_Mundari": true, "Nand": true, "Nandinagari": true, "Narb": true, "Old_North_Arabian": true, "Nbat": true, "Nabataean": true, "Newa": true, "Nkoo": true, "Nko": true, "Nshu": true, "Nushu": true, "Ogam": true, "Ogham": true, "Olck": true, "Ol_Chiki": true, "Orkh": true, "Old_Turkic": true, "Orya": true, "Oriya": true, "Osge": true, "Osage": true, "Osma": true, "Osmanya": true, "Ougr": true, "Old_Uyghur": true, "Palm": true, "Palmyrene": true, "Pauc": true, "Pau_Cin_Hau": true, "Perm": true, "Old_Permic": true, "Phag": true, "Phags_Pa": true, "Phli": true, "Inscriptional_Pahlavi": true, "Phlp": true, "Psalter_Pahlavi": true, "Phnx": true, "Phoenician": true, "Plrd": true, "Miao": true, "Prti": true, "Inscriptional_Parthian": true, "Rjng": true, "Rejang": true, "Rohg": true, "Hanifi_Rohingya": true, "Runr": true, "Runic": true, "Samr": true, "Samaritan": true, "Sarb": true, "Old_South_Arabian": true, "Saur": true, "Saurashtra": true, "Sgnw": true, "SignWriting": true, "Shaw": true, "Shavian": true, "Shrd": true, "Sharada": true, "Sidd": true, "Siddham": true, "Sind": true, "Khudawadi": true, "Sinh": true, "Sinhala": true, "Sogd": true, "Sogdian": true, "Sogo": true, "Old_Sogdian": true, "Sora": true, "Sora_Sompeng": true, "Soyo": true, "Soyombo": true, "Sund": true, "Sundanese": true, "Sylo": true, "Syloti_Nagri": true, "Syrc": true, "Syriac": true, "Tagb": true, "Tagbanwa": true, "Takr": true, "Takri": true, "Tale": true, "Tai_Le": true, "Talu": true, "New_Tai_Lue": true, "Taml": true, "Tamil": true, "Tang": true, "Tangut": true, "Tavt": true, "Tai_Viet": true, "Telu": true, "Telugu": true, "Tfng": true, "Tifinagh": true, "Tglg": true, "Tagalog": true, "Thaa": true, "Thaana": true, "Thai": true, "Tibt": true, "Tibetan": true, "Tirh": true, "Tirhuta": true, "Tnsa": true, "Tangsa": true, "Toto": true, "Ugar": true, "Ugaritic": true, "Vaii": true, "Vai": true, "Vith": true, "Vithkuqi": true, "Wara": true, "Warang_Citi": true, "Wcho": true, "Wancho": true, "Xpeo": true, "Old_Persian": true, "Xsux": true, "Cuneiform": true, "Yezi": true, "Yezidi": true, "Yiii": true, "Yi": true, "Zanb": true, "Zanabazar_Square": true, "Zinh": true, "Inherited": true, "Qaai": true, "Zyyy": true, "Common": true, "Zzzz": true, "Unknown": true,
-}
-
-// Map of non-binary property names to their canonical names
-var nonBinaryUnicodePropertyNames = map[string]string{
-	"General_Category":  "General_Category",
-	"gc":                "General_Category",
-	"Script":            "Script",
-	"sc":                "Script",
-	"Script_Extensions": "Script_Extensions",
-	"scx":               "Script_Extensions",
-}
-
-func (v *regExpValidator) isValidUnicodePropertyName(name string) bool {
-	return generalCategoryValues[name] || binaryUnicodeProperties[name]
-}
-
-func (v *regExpValidator) isValidNonBinaryUnicodePropertyName(name string) bool {
-	_, ok := nonBinaryUnicodePropertyNames[name]
-	return ok
-}
-
-func (v *regExpValidator) isValidUnicodeProperty(name, value string) bool {
-	// Get canonical name
-	canonicalName := nonBinaryUnicodePropertyNames[name]
-	if canonicalName == "General_Category" {
-		return generalCategoryValues[value]
-	}
-	if canonicalName == "Script" || canonicalName == "Script_Extensions" {
-		return scriptValues[value]
-	}
-	return false
 }
 
 func (v *regExpValidator) scanIdentifier(ch rune) {
