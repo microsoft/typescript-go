@@ -3,3 +3,4 @@ conformance/node10Alternateresult_noTypes.errors.txt.diff
 conformance/node10AlternateResult_noResolution.errors.txt.diff
 fourslash/inlayHints/inlayHintsInteractiveParameterNamesWithComments.baseline.diff
 fourslash/inlayHints/inlayHintsImportType2.baseline.diff
+fourslash/inlayHints/inlayHintsInteractiveImportType2.baseline.diff
