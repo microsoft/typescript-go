@@ -96,11 +96,8 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 		if p.manifest.enableTopLevelFallback {
 			excluded := false
 			if exclusion, ok := p.manifest.fallbackExclusionMap[parentLocator.Name]; ok {
-				for _, entry := range exclusion.Entries {
-					if entry == parentLocator.Reference {
-						excluded = true
-						break
-					}
+				if slices.Contains(exclusion.Entries, parentLocator.Reference) {
+					excluded = true
 				}
 			}
 			if !excluded {

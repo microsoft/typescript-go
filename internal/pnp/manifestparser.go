@@ -119,7 +119,7 @@ func extractPnpDataStringFromPath(fs vfs.FS, path string) (string, error) {
 }
 
 func parseManifestFromData(pnpDataString string, manifestDir string) (*PnpManifestData, error) {
-	var rawData map[string]interface{}
+	var rawData map[string]any
 	if err := json.Unmarshal([]byte(pnpDataString), &rawData); err != nil {
 		return nil, fmt.Errorf("failed to parse JSON PnP data: %w", err)
 	}
@@ -133,12 +133,12 @@ func parseManifestFromData(pnpDataString string, manifestDir string) (*PnpManife
 }
 
 // TODO add error handling for corrupted data
-func parsePnpManifest(rawData map[string]interface{}, manifestDir string) (*PnpManifestData, error) {
+func parsePnpManifest(rawData map[string]any, manifestDir string) (*PnpManifestData, error) {
 	data := &PnpManifestData{dirPath: manifestDir}
 
-	if roots, ok := rawData["dependencyTreeRoots"].([]interface{}); ok {
+	if roots, ok := rawData["dependencyTreeRoots"].([]any); ok {
 		for _, root := range roots {
-			if rootMap, ok := root.(map[string]interface{}); ok {
+			if rootMap, ok := root.(map[string]any); ok {
 				data.dependencyTreeRoots = append(data.dependencyTreeRoots, Locator{
 					Name:      getField(rootMap, "name", parseString),
 					Reference: getField(rootMap, "reference", parseString),
@@ -163,9 +163,9 @@ func parsePnpManifest(rawData map[string]interface{}, manifestDir string) (*PnpM
 
 	data.fallbackExclusionMap = make(map[string]*FallbackExclusion)
 
-	if exclusions, ok := rawData["fallbackExclusionList"].([]interface{}); ok {
+	if exclusions, ok := rawData["fallbackExclusionList"].([]any); ok {
 		for _, exclusion := range exclusions {
-			if exclusionArr, ok := exclusion.([]interface{}); ok && len(exclusionArr) == 2 {
+			if exclusionArr, ok := exclusion.([]any); ok && len(exclusionArr) == 2 {
 				name := parseString(exclusionArr[0])
 				entries := parseStringArray(exclusionArr[1])
 				exclusionEntry := &FallbackExclusion{
@@ -179,21 +179,21 @@ func parsePnpManifest(rawData map[string]interface{}, manifestDir string) (*PnpM
 
 	data.packageRegistryMap = make(map[string]map[string]*PackageInfo)
 
-	if registryData, ok := rawData["packageRegistryData"].([]interface{}); ok {
+	if registryData, ok := rawData["packageRegistryData"].([]any); ok {
 		for _, entry := range registryData {
-			if entryArr, ok := entry.([]interface{}); ok && len(entryArr) == 2 {
+			if entryArr, ok := entry.([]any); ok && len(entryArr) == 2 {
 				ident := parseString(entryArr[0])
 
 				if data.packageRegistryMap[ident] == nil {
 					data.packageRegistryMap[ident] = make(map[string]*PackageInfo)
 				}
 
-				if versions, ok := entryArr[1].([]interface{}); ok {
+				if versions, ok := entryArr[1].([]any); ok {
 					for _, version := range versions {
-						if versionArr, ok := version.([]interface{}); ok && len(versionArr) == 2 {
+						if versionArr, ok := version.([]any); ok && len(versionArr) == 2 {
 							reference := parseString(versionArr[0])
 
-							if infoMap, ok := versionArr[1].(map[string]interface{}); ok {
+							if infoMap, ok := versionArr[1].(map[string]any); ok {
 								packageInfo := &PackageInfo{
 									PackageLocation:     getField(infoMap, "packageLocation", parseString),
 									PackageDependencies: getField(infoMap, "packageDependencies", parsePackageDependencies),
@@ -251,22 +251,22 @@ func (data *PnpManifestData) addPackageToTrie(ident string, reference string, pa
 }
 
 // Helper functions for parsing JSON values - following patterns from tsoptions.parseString, etc.
-func parseString(value interface{}) string {
+func parseString(value any) string {
 	if str, ok := value.(string); ok {
 		return str
 	}
 	return ""
 }
 
-func parseBool(value interface{}) bool {
+func parseBool(value any) bool {
 	if val, ok := value.(bool); ok {
 		return val
 	}
 	return false
 }
 
-func parseStringArray(value interface{}) []string {
-	if arr, ok := value.([]interface{}); ok {
+func parseStringArray(value any) []string {
+	if arr, ok := value.([]any); ok {
 		if arr == nil {
 			return nil
 		}
@@ -281,11 +281,11 @@ func parseStringArray(value interface{}) []string {
 	return nil
 }
 
-func parseStringPairs(value interface{}) [][2]string {
+func parseStringPairs(value any) [][2]string {
 	var result [][2]string
-	if arr, ok := value.([]interface{}); ok {
+	if arr, ok := value.([]any); ok {
 		for _, item := range arr {
-			if pair, ok := item.([]interface{}); ok && len(pair) == 2 {
+			if pair, ok := item.([]any); ok && len(pair) == 2 {
 				result = append(result, [2]string{
 					parseString(pair[0]),
 					parseString(pair[1]),
@@ -296,11 +296,11 @@ func parseStringPairs(value interface{}) [][2]string {
 	return result
 }
 
-func parsePackageDependencies(value interface{}) []PackageDependency {
+func parsePackageDependencies(value any) []PackageDependency {
 	var result []PackageDependency
-	if arr, ok := value.([]interface{}); ok {
+	if arr, ok := value.([]any); ok {
 		for _, item := range arr {
-			if pair, ok := item.([]interface{}); ok && len(pair) == 2 {
+			if pair, ok := item.([]any); ok && len(pair) == 2 {
 				ident := parseString(pair[0])
 
 				// Check if second element is string (simple reference) or array (alias)
@@ -310,7 +310,7 @@ func parsePackageDependencies(value interface{}) []PackageDependency {
 						Reference: str,
 						AliasName: "",
 					})
-				} else if aliasPair, ok := pair[1].([]interface{}); ok && len(aliasPair) == 2 {
+				} else if aliasPair, ok := pair[1].([]any); ok && len(aliasPair) == 2 {
 					result = append(result, PackageDependency{
 						Ident:     ident,
 						Reference: parseString(aliasPair[1]),
@@ -323,7 +323,7 @@ func parsePackageDependencies(value interface{}) []PackageDependency {
 	return result
 }
 
-func getField[T any](m map[string]interface{}, key string, parser func(interface{}) T) T {
+func getField[T any](m map[string]any, key string, parser func(any) T) T {
 	if val, exists := m[key]; exists {
 		return parser(val)
 	}
