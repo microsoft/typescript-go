@@ -475,9 +475,10 @@ func (r *resolutionState) resolveNodeLikeWorker() *ResolvedModule {
 	} else {
 		candidate := normalizePathForCJSResolution(r.containingDirectory, r.name)
 		resolved := r.nodeLoadModuleByRelativeName(r.extensions, candidate, false, true)
+
 		return r.createResolvedModule(
 			resolved,
-			resolved != nil && (tspath.IsExternalLibraryImport(resolved.path)),
+			r.isExternalLibraryImport(resolved),
 		)
 	}
 	return r.createResolvedModule(nil, false)
@@ -1089,7 +1090,8 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectoryImpl(ext ext
 }
 
 func (r *resolutionState) createResolvedModuleHandlingSymlink(resolved *resolved) *ResolvedModule {
-	isExternalLibraryImport := resolved != nil && (tspath.IsExternalLibraryImport(resolved.path))
+	isExternalLibraryImport := r.isExternalLibraryImport(resolved)
+
 	if r.compilerOptions.PreserveSymlinks != core.TSTrue &&
 		isExternalLibraryImport &&
 		resolved.originalPath == "" &&
@@ -1137,7 +1139,8 @@ func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolve
 		resolvedTypeReferenceDirective.ResolvedFileName = resolved.path
 		resolvedTypeReferenceDirective.Primary = primary
 		resolvedTypeReferenceDirective.PackageId = resolved.packageId
-		resolvedTypeReferenceDirective.IsExternalLibraryImport = tspath.IsExternalLibraryImport(resolved.path)
+
+		resolvedTypeReferenceDirective.IsExternalLibraryImport = r.isExternalLibraryImport(resolved)
 
 		if r.compilerOptions.PreserveSymlinks != core.TSTrue {
 			originalPath, resolvedFileName := r.getOriginalAndResolvedFileName(resolved.path)
@@ -1883,6 +1886,21 @@ func (r *resolutionState) conditionMatches(condition string) bool {
 		return versionRange.Test(&typeScriptVersion)
 	}
 	return false
+}
+
+func (r *resolutionState) isExternalLibraryImport(resolved *resolved) bool {
+	if resolved == nil {
+		return false
+	}
+
+	isExternalLibraryImport := strings.Contains(resolved.path, "/node_modules/")
+
+	pnpApi := r.resolver.host.PnpApi()
+	if pnpApi != nil && !isExternalLibraryImport {
+		isExternalLibraryImport = pnpApi.IsInPnpModule(resolved.path, r.containingDirectory)
+	}
+
+	return isExternalLibraryImport
 }
 
 func (r *resolutionState) getTraceFunc() func(string) {
