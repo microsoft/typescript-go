@@ -27,6 +27,9 @@ func (l *LanguageService) ProvideInlayHint(
 ) (lsproto.InlayHintResponse, error) {
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
 	quotePreference := getQuotePreference(file, l.UserPreferences())
+	if !isAnyInlayHintEnabled(l.UserPreferences()) {
+		return lsproto.InlayHintsOrNull{InlayHints: nil}, nil
+	}
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -915,4 +918,13 @@ func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclara
 		return closeParenToken.End()
 	}
 	return decl.ParameterList().End()
+}
+
+func isAnyInlayHintEnabled(preferences *lsutil.UserPreferences) bool {
+	return preferences.IncludeInlayParameterNameHints != lsutil.IncludeInlayParameterNameHintsNone ||
+		preferences.IncludeInlayFunctionParameterTypeHints ||
+		preferences.IncludeInlayVariableTypeHints ||
+		preferences.IncludeInlayPropertyDeclarationTypeHints ||
+		preferences.IncludeInlayFunctionLikeReturnTypeHints ||
+		preferences.IncludeInlayEnumMemberValueHints
 }

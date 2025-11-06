@@ -2282,27 +2282,30 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	fileLines := strings.Split(f.getScriptInfo(fileName).content, "\n")
-	slices.SortFunc(*result.InlayHints, func(a, b *lsproto.InlayHint) int {
-		return lsproto.ComparePositions(a.Position, b.Position)
-	})
-	annotations := core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
-		if hint.Label.InlayHintLabelParts != nil {
-			for _, part := range *hint.Label.InlayHintLabelParts {
-				if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
-					part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
+	var annotations []string
+	if result.InlayHints != nil {
+		slices.SortFunc(*result.InlayHints, func(a, b *lsproto.InlayHint) int {
+			return lsproto.ComparePositions(a.Position, b.Position)
+		})
+		annotations = core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
+			if hint.Label.InlayHintLabelParts != nil {
+				for _, part := range *hint.Label.InlayHintLabelParts {
+					if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
+						part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
+					}
 				}
 			}
-		}
 
-		underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
-		hintJson, err := core.StringifyJson(hint, "", "  ")
-		if err != nil {
-			t.Fatalf(prefix+"Failed to stringify inlay hint for baseline: %v", err)
-		}
-		annotation := fileLines[hint.Position.Line]
-		annotation += "\n" + underline + "\n" + hintJson
-		return annotation
-	})
+			underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
+			hintJson, err := core.StringifyJson(hint, "", "  ")
+			if err != nil {
+				t.Fatalf(prefix+"Failed to stringify inlay hint for baseline: %v", err)
+			}
+			annotation := fileLines[hint.Position.Line]
+			annotation += "\n" + underline + "\n" + hintJson
+			return annotation
+		})
+	}
 
 	if len(annotations) == 0 {
 		annotations = append(annotations, "=== No inlay hints ===")
