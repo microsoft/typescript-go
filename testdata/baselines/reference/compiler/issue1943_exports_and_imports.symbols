@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/issue1943_exports_and_imports.ts] ////
+
+=== /node_modules/pkg-test/dist/foo.d.ts ===
+export declare const FOO: string;
+>FOO : Symbol(FOO, Decl(foo.d.ts, 0, 20))
+
+=== /node_modules/pkg-test/dist/bar.d.ts ===
+
+export * from "#pkg-test/foo.ts";
+
+=== /index.ts ===
+// Import through exports path
+import { FOO } from "pkg-test/bar";
+>FOO : Symbol(FOO, Decl(index.ts, 1, 8))
+
+console.log(FOO);
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>FOO : Symbol(FOO, Decl(index.ts, 1, 8))
+

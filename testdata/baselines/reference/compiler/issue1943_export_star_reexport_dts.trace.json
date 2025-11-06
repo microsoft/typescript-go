@@ -1,0 +1,28 @@
+======== Resolving module '#pkg-exporter/dep.ts' from '/node_modules/pkg-exporter/dist/testing.d.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+File '/node_modules/pkg-exporter/dist/package.json' does not exist.
+Found 'package.json' at '/node_modules/pkg-exporter/package.json'.
+Entering conditional exports.
+Matched 'imports' condition 'types'.
+Using 'imports' subpath '#pkg-exporter/*.ts' with target './dist/dep.d.ts'.
+File '/node_modules/pkg-exporter/dist/dep.d.ts' exists - use it as a name resolution result.
+Resolved under condition 'types'.
+Exiting conditional exports.
+Resolving real path for '/node_modules/pkg-exporter/dist/dep.d.ts', result '/node_modules/pkg-exporter/dist/dep.d.ts'.
+======== Module name '#pkg-exporter/dep.ts' was successfully resolved to '/node_modules/pkg-exporter/dist/dep.d.ts'. ========
+======== Resolving module 'pkg-exporter/testing' from '/index.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+File '/package.json' does not exist.
+Loading module 'pkg-exporter/testing' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+File '/node_modules/pkg-exporter/package.json' exists according to earlier cached lookups.
+Entering conditional exports.
+Matched 'exports' condition 'types'.
+Using 'exports' subpath './testing' with target './dist/testing.d.ts'.
+File '/node_modules/pkg-exporter/dist/testing.d.ts' exists - use it as a name resolution result.
+Resolved under condition 'types'.
+Exiting conditional exports.
+Resolving real path for '/node_modules/pkg-exporter/dist/testing.d.ts', result '/node_modules/pkg-exporter/dist/testing.d.ts'.
+======== Module name 'pkg-exporter/testing' was successfully resolved to '/node_modules/pkg-exporter/dist/testing.d.ts'. ========

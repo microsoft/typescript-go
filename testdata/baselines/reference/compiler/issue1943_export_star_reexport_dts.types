@@ -6,23 +6,21 @@ export declare function stubDynamicConfig(): string;
 
 === /node_modules/pkg-exporter/dist/testing.d.ts ===
 
-// Re-export using import map pattern - but now in a .d.ts file
 export * from "#pkg-exporter/dep.ts";
 
 === /index.ts ===
-// This should work but may fail with: "Module has no exported member 'stubDynamicConfig'"
 import { stubDynamicConfig } from "pkg-exporter/testing";
->stubDynamicConfig : any
+>stubDynamicConfig : () => string
 
 const result = stubDynamicConfig();
->result : any
->stubDynamicConfig() : any
->stubDynamicConfig : any
+>result : string
+>stubDynamicConfig() : string
+>stubDynamicConfig : () => string
 
 console.log(result);
 >console.log(result) : void
 >console.log : (...data: any[]) => void
 >console : Console
 >log : (...data: any[]) => void
->result : any
+>result : string
 

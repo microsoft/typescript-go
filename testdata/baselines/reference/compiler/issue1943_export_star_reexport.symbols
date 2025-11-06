@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/issue1943_export_star_reexport.ts] ////
+
+=== /node_modules/pkg-exporter-src/src/dep.ts ===
+export function stubDynamicConfig() {
+>stubDynamicConfig : Symbol(stubDynamicConfig, Decl(dep.ts, 0, 0))
+
+  return "config";
+}
+
+=== /node_modules/pkg-exporter-src/src/testing.ts ===
+
+// Re-export using import map pattern
+export * from "#pkg-exporter-src/dep.ts";
+
+=== /index.ts ===
+// This should work but may fail with: "Module has no exported member 'stubDynamicConfig'"
+import { stubDynamicConfig } from "pkg-exporter-src/testing";
+>stubDynamicConfig : Symbol(stubDynamicConfig, Decl(index.ts, 1, 8))
+
+const result = stubDynamicConfig();
+>result : Symbol(result, Decl(index.ts, 3, 5))
+>stubDynamicConfig : Symbol(stubDynamicConfig, Decl(index.ts, 1, 8))
+
+console.log(result);
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>result : Symbol(result, Decl(index.ts, 3, 5))
+
