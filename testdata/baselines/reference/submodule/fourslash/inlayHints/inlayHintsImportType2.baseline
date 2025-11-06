@@ -6,7 +6,14 @@ function bar () { return require('./a').a; }
     "line": 1,
     "character": 15
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +25,14 @@ const d = bar()
     "line": 3,
     "character": 7
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

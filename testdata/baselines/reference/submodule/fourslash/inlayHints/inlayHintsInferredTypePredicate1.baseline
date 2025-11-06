@@ -6,7 +6,20 @@ function test(x: unknown) {
     "line": 0,
     "character": 25
   },
-  "label": ": x is number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "x"
+    },
+    {
+      "value": " is "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

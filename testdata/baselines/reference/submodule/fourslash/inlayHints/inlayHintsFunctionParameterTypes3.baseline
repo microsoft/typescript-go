@@ -6,7 +6,14 @@
     "line": 5,
     "character": 21
   },
-  "label": ": boolean",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "boolean"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +25,14 @@
     "line": 12,
     "character": 17
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

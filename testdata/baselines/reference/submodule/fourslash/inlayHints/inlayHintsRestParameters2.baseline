@@ -6,7 +6,27 @@
     "line": 2,
     "character": 8
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 13
+          },
+          "end": {
+            "line": 0,
+            "character": 14
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -18,7 +38,27 @@
     "line": 2,
     "character": 14
   },
-  "label": "c:",
+  "label": [
+    {
+      "value": "c",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 36
+          },
+          "end": {
+            "line": 0,
+            "character": 38
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -30,7 +70,27 @@
     "line": 5,
     "character": 14
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 13
+          },
+          "end": {
+            "line": 0,
+            "character": 14
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -42,7 +102,27 @@
     "line": 5,
     "character": 17
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 24
+          },
+          "end": {
+            "line": 0,
+            "character": 26
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -54,7 +134,27 @@
     "line": 5,
     "character": 20
   },
-  "label": "c:",
+  "label": [
+    {
+      "value": "c",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 36
+          },
+          "end": {
+            "line": 0,
+            "character": 38
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -66,7 +166,27 @@
     "line": 8,
     "character": 8
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 13
+          },
+          "end": {
+            "line": 0,
+            "character": 14
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -78,7 +198,27 @@
     "line": 8,
     "character": 11
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 24
+          },
+          "end": {
+            "line": 0,
+            "character": 26
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -90,7 +230,27 @@
     "line": 11,
     "character": 8
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 13
+          },
+          "end": {
+            "line": 0,
+            "character": 14
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -102,7 +262,27 @@
     "line": 11,
     "character": 14
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 24
+          },
+          "end": {
+            "line": 0,
+            "character": 26
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -114,7 +294,27 @@
     "line": 14,
     "character": 8
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 13
+          },
+          "end": {
+            "line": 0,
+            "character": 14
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -126,7 +326,27 @@
     "line": 14,
     "character": 14
   },
-  "label": "c:",
+  "label": [
+    {
+      "value": "c",
+      "location": {
+        "uri": "file:///inlayHintsRestParameters2.ts",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 36
+          },
+          "end": {
+            "line": 0,
+            "character": 38
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }

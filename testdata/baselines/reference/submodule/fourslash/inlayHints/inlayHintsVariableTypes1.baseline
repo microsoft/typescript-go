@@ -6,7 +6,23 @@
     "line": 15,
     "character": 8
   },
-  "label": ": () => number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

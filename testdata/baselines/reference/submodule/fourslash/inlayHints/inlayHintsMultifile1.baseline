@@ -6,7 +6,23 @@ async function foo () {
     "line": 0,
     "character": 21
   },
-  "label": ": Promise<Foo>",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "Promise"
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "Foo"
+    },
+    {
+      "value": ">"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +34,32 @@ function bar () { return import('./a') }
     "line": 3,
     "character": 15
   },
-  "label": ": Promise<typeof import(\"/a\")>",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "Promise"
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "typeof "
+    },
+    {
+      "value": "import("
+    },
+    {
+      "value": "'/a'"
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": ">"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -30,7 +71,23 @@ async function main () {
     "line": 4,
     "character": 22
   },
-  "label": ": Promise<void>",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "Promise"
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "void"
+    },
+    {
+      "value": ">"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -42,7 +99,14 @@ async function main () {
     "line": 5,
     "character": 11
   },
-  "label": ": Foo",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "Foo"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

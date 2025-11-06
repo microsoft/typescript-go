@@ -1,26 +1,26 @@
---- old.inlayHintsImportType2.baseline
-+++ new.inlayHintsImportType2.baseline
+--- old.inlayHintsFunctionParameterTypes3.baseline
++++ new.inlayHintsFunctionParameterTypes3.baseline
 @@= skipped -1, +1 lines =@@
- function bar () { return require('./a').a; }
-                ^
+     bar: function (x?): void {
+                      ^
  {
--  "label": ": 1",
+-  "label": ": boolean",
 +  "label": [
 +    {
 +      "value": ": "
 +    },
 +    {
-+      "value": "number"
++      "value": "boolean"
 +    }
 +  ],
    "kind": 1,
    "paddingLeft": true
  }
 @@= skipped -8, +15 lines =@@
- const d = bar()
-        ^
+     set foo(value) { this.#value = value; }
+                  ^
  {
--  "label": ": 1",
+-  "label": ": number",
 +  "label": [
 +    {
 +      "value": ": "

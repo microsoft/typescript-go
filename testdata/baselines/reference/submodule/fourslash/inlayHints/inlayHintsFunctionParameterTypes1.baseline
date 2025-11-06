@@ -6,7 +6,14 @@ const f1: F1 = (a, b) => { }
     "line": 1,
     "character": 17
   },
-  "label": ": string",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +25,14 @@ const f1: F1 = (a, b) => { }
     "line": 1,
     "character": 20
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -30,7 +44,14 @@ const f2: F1 = (a, b: number) => { }
     "line": 2,
     "character": 17
   },
-  "label": ": string",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -42,7 +63,14 @@ foo1((a) => { })
     "line": 4,
     "character": 7
   },
-  "label": ": string",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -54,7 +82,20 @@ foo2((a) => { })
     "line": 6,
     "character": 7
   },
-  "label": ": 2 | 3",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "2"
+    },
+    {
+      "value": " | "
+    },
+    {
+      "value": "3"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -66,7 +107,56 @@ foo3(a => {
     "line": 8,
     "character": 6
   },
-  "label": ": (c: (d: 2 | 3) => void) => void",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": "c"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": "d"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "2"
+    },
+    {
+      "value": " | "
+    },
+    {
+      "value": "3"
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "void"
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "void"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -78,7 +168,20 @@ foo3(a => {
     "line": 9,
     "character": 7
   },
-  "label": ": 2 | 3",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "2"
+    },
+    {
+      "value": " | "
+    },
+    {
+      "value": "3"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -90,7 +193,14 @@ foo4(1, a => { })
     "line": 12,
     "character": 9
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -102,7 +212,44 @@ const foo5: F2 = (a) => { }
     "line": 17,
     "character": 19
   },
-  "label": ": { a: number; b: string; }",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "{"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "a"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": "; "
+    },
+    {
+      "value": "b"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "}"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

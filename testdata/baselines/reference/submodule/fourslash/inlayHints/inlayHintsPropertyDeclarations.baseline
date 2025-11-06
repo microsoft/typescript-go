@@ -6,7 +6,14 @@
     "line": 1,
     "character": 5
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +25,20 @@
     "line": 4,
     "character": 5
   },
-  "label": ": number | null",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": " | "
+    },
+    {
+      "value": "null"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }

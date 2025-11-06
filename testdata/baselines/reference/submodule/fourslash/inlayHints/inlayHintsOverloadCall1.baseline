@@ -6,7 +6,27 @@ call(1);
     "line": 6,
     "character": 5
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 5
+          },
+          "end": {
+            "line": 1,
+            "character": 6
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -18,7 +38,27 @@ call(1, 2);
     "line": 7,
     "character": 5
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 2,
+            "character": 5
+          },
+          "end": {
+            "line": 2,
+            "character": 6
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -30,7 +70,27 @@ call(1, 2);
     "line": 7,
     "character": 8
   },
-  "label": "c:",
+  "label": [
+    {
+      "value": "c",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 2,
+            "character": 15
+          },
+          "end": {
+            "line": 2,
+            "character": 17
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -42,7 +102,27 @@ new call(1);
     "line": 8,
     "character": 9
   },
-  "label": "d:",
+  "label": [
+    {
+      "value": "d",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 3,
+            "character": 9
+          },
+          "end": {
+            "line": 3,
+            "character": 10
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -54,7 +134,27 @@ foo(1)
     "line": 12,
     "character": 4
   },
-  "label": "w:",
+  "label": [
+    {
+      "value": "w",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 9,
+            "character": 21
+          },
+          "end": {
+            "line": 9,
+            "character": 22
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -66,7 +166,27 @@ foo(1, 2)
     "line": 13,
     "character": 4
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 10,
+            "character": 21
+          },
+          "end": {
+            "line": 10,
+            "character": 22
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -78,7 +198,27 @@ foo(1, 2)
     "line": 13,
     "character": 7
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 10,
+            "character": 31
+          },
+          "end": {
+            "line": 10,
+            "character": 33
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -90,7 +230,27 @@ new Class(1)
     "line": 19,
     "character": 10
   },
-  "label": "a:",
+  "label": [
+    {
+      "value": "a",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 15,
+            "character": 16
+          },
+          "end": {
+            "line": 15,
+            "character": 17
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -102,7 +262,27 @@ new Class(1, 2)
     "line": 20,
     "character": 10
   },
-  "label": "b:",
+  "label": [
+    {
+      "value": "b",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 16,
+            "character": 16
+          },
+          "end": {
+            "line": 16,
+            "character": 17
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }
@@ -114,7 +294,27 @@ new Class(1, 2)
     "line": 20,
     "character": 13
   },
-  "label": "c:",
+  "label": [
+    {
+      "value": "c",
+      "location": {
+        "uri": "file:///inlayHintsOverloadCall1.ts",
+        "range": {
+          "start": {
+            "line": 16,
+            "character": 26
+          },
+          "end": {
+            "line": 16,
+            "character": 28
+          }
+        }
+      }
+    },
+    {
+      "value": ":"
+    }
+  ],
   "kind": 2,
   "paddingRight": true
 }

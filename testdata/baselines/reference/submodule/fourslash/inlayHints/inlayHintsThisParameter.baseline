@@ -6,7 +6,14 @@ fn(function (this, a, b) { });
     "line": 9,
     "character": 17
   },
-  "label": ": any",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "any"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -18,7 +25,14 @@ fn(function (this, a, b) { });
     "line": 9,
     "character": 20
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -30,7 +44,14 @@ fn(function (this, a, b) { });
     "line": 9,
     "character": 23
   },
-  "label": ": string",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -42,7 +63,14 @@ fn(function (this: I, a, b) { });
     "line": 10,
     "character": 23
   },
-  "label": ": number",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
@@ -54,7 +82,14 @@ fn(function (this: I, a, b) { });
     "line": 10,
     "character": 26
   },
-  "label": ": string",
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "string"
+    }
+  ],
   "kind": 1,
   "paddingLeft": true
 }
