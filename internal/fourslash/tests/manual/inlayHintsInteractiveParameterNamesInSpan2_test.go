@@ -30,5 +30,5 @@ foo6(/*k*/1, /*l*/2);`
 	start := f.MarkerByName(t, "c")
 	end := f.MarkerByName(t, "h")
 	span := &lsproto.Range{Start: start.LSPosition, End: end.LSPosition}
-	f.VerifyBaselineInlayHints(t, span, &lsutil.UserPreferences{IncludeInlayParameterNameHints: "literals", InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, span, &lsutil.UserPreferences{IncludeInlayParameterNameHints: "literals"})
 }
