@@ -1193,7 +1193,6 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
 
 function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselineInlayHintsCmd] | undefined {
     let preferences: string | undefined;
-    let span: string | undefined;
     // Parse span
     if (args.length > 0) {
         if (args[0].getText() !== "undefined") {
@@ -1213,7 +1212,7 @@ function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselin
     }
     return [{
         kind: "verifyBaselineInlayHints",
-        span: span ? span : "nil /*span*/",
+        span: "nil /*span*/", // Only supporteed manually
         preferences: preferences ? preferences : "nil /*preferences*/",
     }];
 }
