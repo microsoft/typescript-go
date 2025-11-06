@@ -620,14 +620,6 @@ SemanticDiagnostics::
 Signatures::
 
 
-Diff:: !!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!
---- nonIncremental /user/username/projects/project/other2.js
-+++ incremental /user/username/projects/project/other2.js
-@@ -1,1 +1,2 @@
-+"use strict";
- let k = 0;
-
-
 Edit [3]:: update aplha config
 //// [/user/username/projects/project/alpha.tsconfig.json] *modified* 
 {}
