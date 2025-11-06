@@ -24,7 +24,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
+	for _, node := range nodes { //nolint:modernize
 		if v(node) {
 			return true
 		}
@@ -2281,6 +2281,7 @@ func declarationIsWriteAccess(decl *Node) bool {
 		KindParameter,
 		KindShorthandPropertyAssignment,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeParameter:
 		return true
 
@@ -4844,6 +4845,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportDeclaration
+}
+
 func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
 }
@@ -5139,7 +5144,7 @@ func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression)
+	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression) | core.IfElse(node.IsExportEquals, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
 func IsExportAssignment(node *Node) bool {
