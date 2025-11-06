@@ -324,30 +324,6 @@ func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.Ty
 	}
 }
 
-func (s *inlayHintState) printTypePredicateInSingleLine(typePredicate *checker.TypePredicate) string {
-	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
-		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	p := checker.CreatePrinterWithRemoveComments(nil /*emitContext*/)
-	writer, done := printer.GetSingleLineStringWriter()
-	defer done()
-	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags)
-	debug.AssertIsDefined(typeNode, "should always get typePredicateNode")
-	p.Write(typeNode, s.file, writer, nil /*sourceMapGenerator*/)
-	return writer.String()
-}
-
-func (s *inlayHintState) printTypeInSingleLine(t *checker.Type) string {
-	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
-		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	p := checker.CreatePrinterWithRemoveComments(nil /*emitContext*/)
-	writer, done := printer.GetSingleLineStringWriter()
-	defer done()
-	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
-	debug.AssertIsDefined(typeNode, "should always get typeNode")
-	p.Write(typeNode, s.file, writer, nil /*sourceMapGenerator*/)
-	return writer.String()
-}
-
 func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, position int) {
 	if hint.String != nil {
 		hint.String = ptrTo(": " + *hint.String)
