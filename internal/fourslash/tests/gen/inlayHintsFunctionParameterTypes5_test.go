@@ -20,5 +20,5 @@ declare function test(
 
 test((state) => {});`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayFunctionParameterTypeHints: true, InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayFunctionParameterTypeHints: true})
 }

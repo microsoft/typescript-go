@@ -1281,7 +1281,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                     preferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
                     break;
                 case "interactiveInlayHints":
-                    preferences.push(`InteractiveInlayHints: ${prop.initializer.getText()}`);
+                    // Ignore, deprecated
                     break;
             }
         }

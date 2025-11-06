@@ -26,5 +26,5 @@ export function helperB(bParam: string) {
 export function helperC(cParam: string) {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "./aaa.mts")
-	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsAll, InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsAll})
 }

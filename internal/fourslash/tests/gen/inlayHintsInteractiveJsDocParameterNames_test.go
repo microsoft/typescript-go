@@ -28,5 +28,5 @@ y.foo(1, 2)
 var z = ""`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "/a.js")
-	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals, InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals})
 }

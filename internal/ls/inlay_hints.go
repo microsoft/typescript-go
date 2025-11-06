@@ -302,10 +302,6 @@ func (s *inlayHintState) getParameterDeclarationTypeHints(symbol *ast.Symbol) *l
 }
 
 func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrInlayHintLabelParts {
-	if !shouldUseInteractiveInlayHints(s.preferences) {
-		return lsproto.StringOrInlayHintLabelParts{String: ptrTo(s.printTypeInSingleLine(t))}
-	}
-
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
@@ -316,10 +312,6 @@ func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrI
 }
 
 func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.TypePredicate) lsproto.StringOrInlayHintLabelParts {
-	if !shouldUseInteractiveInlayHints(s.preferences) {
-		return lsproto.StringOrInlayHintLabelParts{String: ptrTo(s.printTypePredicateInSingleLine(typePredicate))}
-	}
-
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags)
@@ -379,18 +371,13 @@ func (s *inlayHintState) addEnumMemberValueHints(text string, position int) {
 
 func (s *inlayHintState) addParameterHints(text string, parameter *ast.IdentifierNode, position int, isFirstVariadicArgument bool) {
 	hintText := core.IfElse(isFirstVariadicArgument, "...", "") + text
-	var labelParts lsproto.StringOrInlayHintLabelParts
-	if shouldUseInteractiveInlayHints(s.preferences) {
-		displayParts := []*lsproto.InlayHintLabelPart{
-			s.getNodeDisplayPart(hintText, parameter),
-			{
-				Value: ":",
-			},
-		}
-		labelParts = lsproto.StringOrInlayHintLabelParts{InlayHintLabelParts: &displayParts}
-	} else {
-		labelParts = lsproto.StringOrInlayHintLabelParts{String: ptrTo(hintText + ":")}
+	displayParts := []*lsproto.InlayHintLabelPart{
+		s.getNodeDisplayPart(hintText, parameter),
+		{
+			Value: ":",
+		},
 	}
+	labelParts := lsproto.StringOrInlayHintLabelParts{InlayHintLabelParts: &displayParts}
 
 	s.result = append(s.result, &lsproto.InlayHint{
 		Label:        labelParts,
@@ -407,10 +394,6 @@ func shouldShowParameterNameHints(preferences *lsutil.UserPreferences) bool {
 
 func shouldShowLiteralParameterNameHintsOnly(preferences *lsutil.UserPreferences) bool {
 	return preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals
-}
-
-func shouldUseInteractiveInlayHints(preferences *lsutil.UserPreferences) bool {
-	return preferences.InteractiveInlayHints
 }
 
 // node is FunctionDeclaration | ArrowFunction | FunctionExpression | MethodDeclaration | GetAccessorDeclaration

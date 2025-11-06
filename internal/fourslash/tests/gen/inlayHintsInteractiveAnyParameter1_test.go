@@ -20,5 +20,5 @@ foo(foo);
 foo((1));
 foo(foo(1));`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals, InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals})
 }

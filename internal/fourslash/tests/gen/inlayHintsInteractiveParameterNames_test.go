@@ -52,5 +52,5 @@ function trace(message: string) {}
 trace(` + "`" + `${1}` + "`" + `);
 trace(` + "`" + `` + "`" + `);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals, InteractiveInlayHints: true})
+	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{IncludeInlayParameterNameHints: lsutil.IncludeInlayParameterNameHintsLiterals})
 }
