@@ -8,4 +8,4 @@ const c = { ...a, ...b };
 
 
 //// [spreadUnion4.js]
-const c = { ...a, ...b };
+const c = Object.assign(Object.assign({}, a), b);

@@ -1,0 +1,11 @@
+--- old.exportDefaultWithJSDoc1.types
++++ new.exportDefaultWithJSDoc1.types
+@@= skipped -6, +6 lines =@@
+  */
+
+ /** @type {NumberLike[]} */export default ([ ]);
+->([ ]) : NumberLike[]
++>([ ]) : undefined[]
+ >[ ] : undefined[]
+
+ === b.ts ===

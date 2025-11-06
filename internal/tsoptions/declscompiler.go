@@ -10,8 +10,8 @@ import (
 
 var OptionsDeclarations = slices.Concat(commonOptionsWithBuild, optionsForCompiler)
 
-var optionsForCompiler = []*CommandLineOption{
-	//******* commandOptionsWithoutBuild *******
+var commonOptionsWithBuild = []*CommandLineOption{
+	//******* commonOptionsWithBuild *******
 	{
 		Name:                     "help",
 		ShortName:                "h",
@@ -233,10 +233,17 @@ var optionsForCompiler = []*CommandLineOption{
 		Category:    diagnostics.Command_line_Options,
 		Description: diagnostics.Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory,
 	},
+	{
+		Name:                    "checkers",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Command_line_Options,
+		Description:             diagnostics.Set_the_number_of_checkers_per_project,
+		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
+	},
 }
 
-var commonOptionsWithBuild = []*CommandLineOption{
-	//******* commandOptionsWithoutBuild *******
+var optionsForCompiler = []*CommandLineOption{
+	//******* compilerOptions not common with --build *******
 
 	// CommandLine only options
 	{
@@ -341,7 +348,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		AffectsBuildInfo:         true,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.JavaScript_Support,
-		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJS_option_to_get_errors_from_these_files,
+		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJs_option_to_get_errors_from_these_files,
 		DefaultValueDescription:  false,
 	},
 	{
@@ -498,7 +505,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		AffectsProgramStructure: true,
 		Category:                diagnostics.Language_and_Environment,
 		Description:             diagnostics.Enable_lib_replacement,
-		DefaultValueDescription: true,
+		DefaultValueDescription: false,
 	},
 
 	// Strict Type Checks
@@ -699,7 +706,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		AffectsModuleResolution: true,
 		Category:                diagnostics.Modules,
 		Description:             diagnostics.Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier,
-		DefaultValueDescription: diagnostics.X_module_AMD_or_UMD_or_System_or_ES6_then_Classic_Otherwise_Node,
+		DefaultValueDescription: diagnostics.X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	},
 	{
 		Name:                    "baseUrl",
@@ -1187,7 +1194,15 @@ func optionsHaveChanges(oldOptions *core.CompilerOptions, newOptions *core.Compi
 	}
 	oldOptionsValue := reflect.ValueOf(oldOptions).Elem()
 	return ForEachCompilerOptionValue(newOptions, declFilter, func(option *CommandLineOption, value reflect.Value, i int) bool {
-		return !reflect.DeepEqual(value.Interface(), oldOptionsValue.Field(i).Interface())
+		newValue := value.Interface()
+		oldValue := oldOptionsValue.Field(i).Interface()
+		if option.strictFlag {
+			return oldOptions.GetStrictOptionValue(oldValue.(core.Tristate)) != newOptions.GetStrictOptionValue(newValue.(core.Tristate))
+		}
+		if option.allowJsFlag {
+			return oldOptions.GetAllowJS() != newOptions.GetAllowJS()
+		}
+		return !reflect.DeepEqual(newValue, oldValue)
 	})
 }
 

@@ -28,5 +28,5 @@ function foo(x, y) {
     x = y; // Mismatched property in source intersection
 }
 function test(value) {
-    return { ...value, hi: true };
+    return Object.assign(Object.assign({}, value), { hi: true });
 }

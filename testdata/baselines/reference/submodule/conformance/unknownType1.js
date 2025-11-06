@@ -186,6 +186,18 @@ function oops<T extends unknown>(arg: T): {} {
 
 
 //// [unknownType1.js]
+// In an intersection everything absorbs unknown
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 // Only equality operators are allowed with unknown
 function f10(x) {
     x == 5;
@@ -257,17 +269,17 @@ function f25() {
 }
 // Spread of unknown causes result to be unknown
 function f26(x, y, z) {
-    let o1 = { a: 42, ...x }; // { a: number }
-    let o2 = { a: 42, ...x, ...y }; // unknown
-    let o3 = { a: 42, ...x, ...y, ...z }; // any
-    let o4 = { a: 42, ...z }; // any
+    let o1 = Object.assign({ a: 42 }, x); // { a: number }
+    let o2 = Object.assign(Object.assign({ a: 42 }, x), y); // unknown
+    let o3 = Object.assign(Object.assign(Object.assign({ a: 42 }, x), y), z); // any
+    let o4 = Object.assign({ a: 42 }, z); // any
 }
 // Functions with unknown return type don't need return expressions
 function f27() {
 }
 // Rest type cannot be created from unknown
 function f28(x) {
-    let { ...a } = x; // Error
+    let a = __rest(x, []); // Error
 }
 // Class properties of type unknown don't need definite assignment
 class C1 {

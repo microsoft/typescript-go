@@ -23,9 +23,10 @@ function f2<T>(a: Item[]) {
 
 
 //// [objectInstantiationFromUnionSpread.js]
+// #40995
 function f1(a) {
-    a.map(item => ({ ...item })).filter(value => { });
+    a.map(item => (Object.assign({}, item))).filter(value => { });
 }
 function f2(a) {
-    a.map(item => ({ ...item })).filter(value => { });
+    a.map(item => (Object.assign({}, item))).filter(value => { });
 }

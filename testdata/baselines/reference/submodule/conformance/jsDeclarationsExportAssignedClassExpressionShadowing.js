@@ -24,11 +24,6 @@ class A {
 class Q {
     x = 42;
 }
-export = class Q {
-    constructor() {
-        this.x = new A();
-    }
-};
 module.exports = class Q {
     constructor() {
         this.x = new A();
@@ -51,4 +46,4 @@ declare const _default: {
     };
 };
 export = _default;
-export var Another = Q;
+export declare var Another: typeof Q;

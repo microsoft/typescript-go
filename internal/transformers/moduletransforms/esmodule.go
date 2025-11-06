@@ -25,12 +25,14 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
-	return tx.NewTransformer(tx.visit, emitContext)
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 // Visits source elements that are not top-level or top-level nested statements.
@@ -213,8 +215,8 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 	importDecl := tx.Factory().NewImportDeclaration(
 		nil, /*modifiers*/
 		tx.Factory().NewImportClause(
-			false, /*isTypeOnly*/
-			nil,   /*name*/
+			ast.KindUnknown, /*phaseModifier*/
+			nil,             /*name*/
 			tx.Factory().NewNamespaceImport(synthName),
 		),
 		updatedModuleSpecifier,
@@ -306,8 +308,8 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 		importStatement := tx.Factory().NewImportDeclaration(
 			nil, /*modifiers*/
 			tx.Factory().NewImportClause(
-				false, /*isTypeOnly*/
-				nil,   /*name*/
+				ast.KindUnknown, /*phaseModifier*/
+				nil,             /*name*/
 				tx.Factory().NewNamedImports(
 					tx.Factory().NewNodeList([]*ast.Node{
 						tx.Factory().NewImportSpecifier(

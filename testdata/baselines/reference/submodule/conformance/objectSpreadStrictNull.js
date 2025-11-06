@@ -49,21 +49,21 @@ function g(fields: Fields, partialFields: Partial<Fields>, nearlyPartialFields: 
 //// [objectSpreadStrictNull.js]
 function f(definiteBoolean, definiteString, optionalString, optionalNumber, undefinedString, undefinedNumber) {
     // optional
-    let optionalUnionStops = { ...definiteBoolean, ...definiteString, ...optionalNumber };
-    let optionalUnionDuplicates = { ...definiteBoolean, ...definiteString, ...optionalString, ...optionalNumber };
-    let allOptional = { ...optionalString, ...optionalNumber };
+    let optionalUnionStops = Object.assign(Object.assign(Object.assign({}, definiteBoolean), definiteString), optionalNumber);
+    let optionalUnionDuplicates = Object.assign(Object.assign(Object.assign(Object.assign({}, definiteBoolean), definiteString), optionalString), optionalNumber);
+    let allOptional = Object.assign(Object.assign({}, optionalString), optionalNumber);
     // undefined
-    let undefinedUnionStops = { ...definiteBoolean, ...definiteString, ...undefinedNumber };
-    let undefinedUnionDuplicates = { ...definiteBoolean, ...definiteString, ...undefinedString, ...undefinedNumber };
-    let allUndefined = { ...undefinedString, ...undefinedNumber };
-    let undefinedWithOptionalContinues = { ...definiteBoolean, ...undefinedString, ...optionalNumber };
+    let undefinedUnionStops = Object.assign(Object.assign(Object.assign({}, definiteBoolean), definiteString), undefinedNumber);
+    let undefinedUnionDuplicates = Object.assign(Object.assign(Object.assign(Object.assign({}, definiteBoolean), definiteString), undefinedString), undefinedNumber);
+    let allUndefined = Object.assign(Object.assign({}, undefinedString), undefinedNumber);
+    let undefinedWithOptionalContinues = Object.assign(Object.assign(Object.assign({}, definiteBoolean), undefinedString), optionalNumber);
 }
 const m = { title: "The Matrix", yearReleased: 1999 };
 // should error here because title: undefined is not assignable to string
-const x = { ...m, title: undefined };
+const x = Object.assign(Object.assign({}, m), { title: undefined });
 function g(fields, partialFields, nearlyPartialFields) {
     // ok, undefined is stripped from optional properties when spread
-    fields = { ...fields, ...partialFields };
+    fields = Object.assign(Object.assign({}, fields), partialFields);
     // error: not optional, undefined remains
-    fields = { ...fields, ...nearlyPartialFields };
+    fields = Object.assign(Object.assign({}, fields), nearlyPartialFields);
 }

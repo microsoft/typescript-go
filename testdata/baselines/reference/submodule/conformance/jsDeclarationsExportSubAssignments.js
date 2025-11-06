@@ -18,7 +18,6 @@ const Strings = {
 };
 class Foo {
 }
-export = Foo;
 module.exports = Foo;
 export var Strings = Strings;
 module.exports.Strings = Strings;
@@ -26,4 +25,7 @@ module.exports.Strings = Strings;
 
 //// [cls.d.ts]
 export = Foo;
-export var Strings = Strings;
+export declare var Strings: {
+    a: string;
+    b: string;
+};

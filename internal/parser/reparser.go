@@ -70,17 +70,11 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node) {
 	switch tag.Kind {
 	case ast.KindJSDocTypedefTag:
-		// !!! Don't mark typedefs as exported if they are not in a module
 		typeExpression := tag.AsJSDocTypedefTag().TypeExpression
 		if typeExpression == nil {
 			break
 		}
-		export := p.factory.NewModifier(ast.KindExportKeyword)
-		export.Loc = tag.Loc
-		export.Flags = p.contextFlags | ast.NodeFlagsReparsed
-		modifiers := p.newModifierList(export.Loc, p.nodeSlicePool.NewSlice1(export))
-
-		typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, p.factory.DeepCloneReparse(tag.AsJSDocTypedefTag().Name()), nil, nil)
+		typeAlias := p.factory.NewJSTypeAliasDeclaration(nil, p.factory.DeepCloneReparse(tag.AsJSDocTypedefTag().Name()), nil, nil)
 		typeAlias.AsTypeAliasDeclaration().TypeParameters = p.gatherTypeParameters(jsDoc, tag)
 		var t *ast.Node
 		switch typeExpression.Kind {
@@ -116,7 +110,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 			break
 		}
 		importClause := p.factory.DeepCloneReparse(importTag.ImportClause)
-		importClause.AsImportClause().IsTypeOnly = true
+		importClause.AsImportClause().PhaseModifier = ast.KindTypeKeyword
 		importDeclaration := p.factory.NewJSImportDeclaration(
 			p.factory.DeepCloneReparseModifiers(importTag.Modifiers()),
 			importClause,
@@ -191,7 +185,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	if jsSignature.Type() != nil && jsSignature.Type().AsJSDocReturnTag().TypeExpression != nil {
 		signature.FunctionLikeData().Type = p.factory.DeepCloneReparse(jsSignature.Type().AsJSDocReturnTag().TypeExpression.Type())
 	}
-	loc := tag
+	loc := jsSignature
 	if tag.Kind == ast.KindJSDocOverloadTag {
 		loc = tag.AsJSDocOverloadTag().TagName
 	}
@@ -213,7 +207,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
 			}
-			property := p.factory.NewPropertySignatureDeclaration(nil, name, p.makeQuestionIfOptional(jsprop), nil, nil)
+			property := p.factory.NewPropertySignatureDeclaration(nil, p.factory.DeepCloneReparse(name), p.makeQuestionIfOptional(jsprop), nil, nil)
 			if jsprop.TypeExpression != nil {
 				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
 			}
@@ -336,7 +330,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		}
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			noTypedParams := core.Every(fun.Parameters(), func(param *ast.Node) bool { return param.Type() == nil })
-			if fun.Type() == nil && noTypedParams && tag.AsJSDocTypeTag().TypeExpression != nil {
+			if fun.TypeParameterList() == nil && fun.Type() == nil && noTypedParams && tag.AsJSDocTypeTag().TypeExpression != nil {
 				fun.FunctionLikeData().FullSignature = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
 				p.finishMutatedNode(fun)
 			}
@@ -357,7 +351,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 			}
 		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport, ast.KindExportAssignment, ast.KindJSExportAssignment,
+			ast.KindCommonJSExport,
 			ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 			if parent.Initializer() != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
 				parent.AsMutable().SetInitializer(p.makeNewCast(
@@ -366,7 +360,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					false /*isAssertion*/))
 				p.finishMutatedNode(parent)
 			}
-		case ast.KindReturnStatement, ast.KindParenthesizedExpression:
+		case ast.KindReturnStatement, ast.KindParenthesizedExpression,
+			ast.KindExportAssignment, ast.KindJSExportAssignment:
 			if parent.Expression() != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.factory.DeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),
@@ -388,7 +383,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		}
 	case ast.KindJSDocTemplateTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
-			if fun.TypeParameters() == nil {
+			if fun.TypeParameters() == nil && fun.FunctionLikeData().FullSignature == nil {
 				fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(jsDoc, nil /*tagWithTypeParameters*/)
 				p.finishMutatedNode(fun)
 			}
@@ -406,7 +401,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			}
 		}
 	case ast.KindJSDocParameterTag:
-		if fun, ok := getFunctionLikeHost(parent); ok {
+		if fun, ok := getFunctionLikeHost(parent); ok && fun.FunctionLikeData().FullSignature == nil {
 			parameterTag := tag.AsJSDocParameterOrPropertyTag()
 			if param, ok := findMatchingParameter(fun, parameterTag, jsDoc); ok {
 				if param.Type == nil && parameterTag.TypeExpression != nil {
@@ -448,7 +443,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			}
 		}
 	case ast.KindJSDocReturnTag:
-		if fun, ok := getFunctionLikeHost(parent); ok {
+		if fun, ok := getFunctionLikeHost(parent); ok && fun.FunctionLikeData().FullSignature == nil {
 			if fun.Type() == nil && tag.AsJSDocReturnTag().TypeExpression != nil {
 				fun.FunctionLikeData().Type = p.factory.DeepCloneReparse(tag.AsJSDocReturnTag().TypeExpression.Type())
 				p.finishMutatedNode(fun)

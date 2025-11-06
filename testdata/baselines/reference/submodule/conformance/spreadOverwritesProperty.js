@@ -17,12 +17,12 @@ function h(obj: { x: number }) {
 
 
 //// [spreadOverwritesProperty.js]
-var unused1 = { b: 1, ...ab };
-var unused2 = { ...ab, ...ab };
-var unused3 = { b: 1, ...abq };
+var unused1 = Object.assign({ b: 1 }, ab);
+var unused2 = Object.assign(Object.assign({}, ab), ab);
+var unused3 = Object.assign({ b: 1 }, abq);
 function g(obj) {
-    return { x: 1, ...obj };
+    return Object.assign({ x: 1 }, obj);
 }
 function h(obj) {
-    return { x: 1, ...obj };
+    return Object.assign({ x: 1 }, obj);
 }

@@ -31,10 +31,20 @@ let id = 0;
 const send = handlers => new Promise((resolve, reject) => {
     handlers[++id] = [resolve, reject];
 });
-export {};
 
 
 //// [foo.d.ts]
-export type ResolveRejectMap = {
+/**
+ * @typedef {{
+ *   [id: string]: [Function, Function];
+ * }} ResolveRejectMap
+ */
+type ResolveRejectMap = {
     [id: string]: [Function, Function];
 };
+declare let id: number;
+/**
+ * @param {ResolveRejectMap} handlers
+ * @returns {Promise<any>}
+ */
+declare const send: (handlers: ResolveRejectMap) => Promise<any>;

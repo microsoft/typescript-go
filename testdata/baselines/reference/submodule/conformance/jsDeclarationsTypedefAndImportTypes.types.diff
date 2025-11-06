@@ -1,0 +1,36 @@
+--- old.jsDeclarationsTypedefAndImportTypes.types
++++ new.jsDeclarationsTypedefAndImportTypes.types
+@@= skipped -19, +19 lines =@@
+ module.exports = Conn;
+ >module.exports = Conn : typeof Conn
+ >module.exports : typeof Conn
+->module : { exports: typeof Conn; }
++>module : { Conn: typeof Conn; }
+ >exports : typeof Conn
+ >Conn : typeof Conn
+
+@@= skipped -30, +30 lines =@@
+         /** @type {import("./conn").Whatever} */
+         this.another = "";
+ >this.another = "" : ""
+->this.another : import("conn").Whatever
++>this.another : any
+ >this : this
+->another : import("conn").Whatever
++>another : any
+ >"" : ""
+     }
+ }
+
+ module.exports = {
+->module.exports = {    Wrap} : typeof module.exports
+->module.exports : typeof module.exports
+->module : { exports: typeof module.exports; }
+->exports : typeof module.exports
++>module.exports = {    Wrap} : { Wrap: typeof Wrap; }
++>module.exports : { Wrap: typeof Wrap; }
++>module : { "export=": { Wrap: typeof Wrap; }; }
++>exports : { Wrap: typeof Wrap; }
+ >{    Wrap} : { Wrap: typeof Wrap; }
+
+     Wrap

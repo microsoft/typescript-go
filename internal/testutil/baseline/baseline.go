@@ -13,9 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/peter-evans/patience"
-	"gotest.tools/v3/assert"
 )
 
 type Options struct {
@@ -23,6 +21,7 @@ type Options struct {
 	IsSubmodule         bool
 	IsSubmoduleAccepted bool
 	DiffFixupOld        func(string) string
+	SkipDiffWithOld     bool
 }
 
 const NoContent = "<no content>"
@@ -42,7 +41,7 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 		writeComparison(t, actual, localPath, referencePath, false)
 	}
 
-	if !opts.IsSubmodule {
+	if !opts.IsSubmodule || opts.SkipDiffWithOld {
 		// Not a submodule, no diffs.
 		return
 	}
@@ -191,24 +190,16 @@ func writeComparison(t *testing.T, actualContent string, local, reference string
 			}
 		}
 
-		relReference, err := filepath.Rel(repo.RootPath, reference)
-		assert.NilError(t, err)
-		relReference = tspath.NormalizeSlashes(relReference)
-
-		relLocal, err := filepath.Rel(repo.RootPath, local)
-		assert.NilError(t, err)
-		relLocal = tspath.NormalizeSlashes(relLocal)
-
 		if _, err := os.Stat(reference); err != nil {
 			if comparingAgainstSubmodule {
-				t.Errorf("the baseline file %s does not exist in the TypeScript submodule", relReference)
+				t.Errorf("the baseline file %s does not exist in the TypeScript submodule", reference)
 			} else {
-				t.Errorf("new baseline created at %s.", relLocal)
+				t.Errorf("new baseline created at %s.", local)
 			}
 		} else if comparingAgainstSubmodule {
-			t.Errorf("the baseline file %s does not match the reference in the TypeScript submodule", relReference)
+			t.Errorf("the baseline file %s does not match the reference in the TypeScript submodule", reference)
 		} else {
-			t.Errorf("the baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", relReference)
+			t.Errorf("the baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", reference)
 		}
 	}
 }

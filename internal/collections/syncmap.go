@@ -1,15 +1,20 @@
 package collections
 
-import "sync"
+import (
+	"iter"
+	"sync"
+)
 
 type SyncMap[K comparable, V any] struct {
+	_ [0]K
+	_ [0]V
 	m sync.Map
 }
 
 func (s *SyncMap[K, V]) Load(key K) (value V, ok bool) {
 	val, ok := s.m.Load(key)
 	if !ok {
-		return
+		return value, ok
 	}
 	return val.(V), true
 }
@@ -56,4 +61,24 @@ func (s *SyncMap[K, V]) ToMap() map[K]V {
 		return true
 	})
 	return m
+}
+
+func (s *SyncMap[K, V]) Keys() iter.Seq[K] {
+	return func(yield func(K) bool) {
+		s.m.Range(func(key, value any) bool {
+			if !yield(key.(K)) {
+				return false
+			}
+			return true
+		})
+	}
+}
+
+func (s *SyncMap[K, V]) Clone() *SyncMap[K, V] {
+	clone := &SyncMap[K, V]{}
+	s.m.Range(func(key, value any) bool {
+		clone.m.Store(key, value)
+		return true
+	})
+	return clone
 }

@@ -24,13 +24,13 @@ var o5 = { ...nullUnion, ...nullUnion };
 
 //// [spreadUnion2.js]
 var o1;
-var o1 = { ...undefinedUnion };
+var o1 = Object.assign({}, undefinedUnion);
 var o2;
-var o2 = { ...nullUnion };
+var o2 = Object.assign({}, nullUnion);
 var o3;
-var o3 = { ...undefinedUnion, ...nullUnion };
-var o3 = { ...nullUnion, ...undefinedUnion };
+var o3 = Object.assign(Object.assign({}, undefinedUnion), nullUnion);
+var o3 = Object.assign(Object.assign({}, nullUnion), undefinedUnion);
 var o4;
-var o4 = { ...undefinedUnion, ...undefinedUnion };
+var o4 = Object.assign(Object.assign({}, undefinedUnion), undefinedUnion);
 var o5;
-var o5 = { ...nullUnion, ...nullUnion };
+var o5 = Object.assign(Object.assign({}, nullUnion), nullUnion);

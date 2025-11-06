@@ -35,6 +35,9 @@ type EmitResolver interface {
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 
+	// const enum inlining
+	GetConstantValue(node *ast.Node) any
+
 	// JSX Emit
 	GetJsxFactoryEntity(location *ast.Node) *ast.Node
 	GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node
@@ -49,6 +52,7 @@ type EmitResolver interface {
 	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
 	IsDeclarationVisible(node *ast.Node) bool
 	IsImportRequiredByAugmentation(decl *ast.ImportDeclaration) bool
+	IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool
 	IsImplementationOfOverload(node *ast.SignatureDeclaration) bool
 	GetEnumMemberValue(node *ast.Node) evaluator.Result
 	IsLateBound(node *ast.Node) bool

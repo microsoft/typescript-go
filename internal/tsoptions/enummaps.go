@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+var LibMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	// JavaScript only
 	{Key: "es5", Value: "lib.es5.d.ts"},
 	{Key: "es6", Value: "lib.es2015.d.ts"},
@@ -108,13 +108,15 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "esnext.iterator", Value: "lib.esnext.iterator.d.ts"},
 	{Key: "esnext.promise", Value: "lib.esnext.promise.d.ts"},
 	{Key: "esnext.float16", Value: "lib.esnext.float16.d.ts"},
+	{Key: "esnext.error", Value: "lib.esnext.error.d.ts"},
+	{Key: "esnext.sharedmemory", Value: "lib.esnext.sharedmemory.d.ts"},
 	{Key: "decorators", Value: "lib.decorators.d.ts"},
 	{Key: "decorators.legacy", Value: "lib.decorators.legacy.d.ts"},
 })
 
 var (
-	Libs        = slices.Collect(libMap.Keys())
-	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(libMap.Values()), func(s any) string { return s.(string) })...)
+	Libs        = slices.Collect(LibMap.Keys())
+	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(LibMap.Values()), func(s any) string { return s.(string) })...)
 )
 
 func GetLibFileName(libName string) (string, bool) {
@@ -123,7 +125,7 @@ func GetLibFileName(libName string) (string, bool) {
 	if LibFilesSet.Has(libName) {
 		return libName, true
 	}
-	lib, ok := libMap.Get(libName)
+	lib, ok := LibMap.Get(libName)
 	if !ok {
 		return "", false
 	}
@@ -134,9 +136,9 @@ var moduleResolutionOptionMap = collections.NewOrderedMapFromList([]collections.
 	{Key: "node16", Value: core.ModuleResolutionKindNode16},
 	{Key: "nodenext", Value: core.ModuleResolutionKindNodeNext},
 	{Key: "bundler", Value: core.ModuleResolutionKindBundler},
-	{Key: "node", Value: core.ModuleResolutionKindBundler},    // TODO: remove when node is fully deprecated -- this is helpful for testing porting
-	{Key: "classic", Value: core.ModuleResolutionKindBundler}, // TODO: remove when fully deprecated
-	{Key: "node10", Value: core.ModuleResolutionKindBundler},  // TODO: remove when fully deprecated
+	{Key: "classic", Value: core.ModuleResolutionKindClassic},
+	{Key: "node", Value: core.ModuleResolutionKindNode10},
+	{Key: "node10", Value: core.ModuleResolutionKindNode10},
 })
 
 var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
@@ -169,6 +171,7 @@ var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "esnext", Value: core.ModuleKindESNext},
 	{Key: "node16", Value: core.ModuleKindNode16},
 	{Key: "node18", Value: core.ModuleKindNode18},
+	{Key: "node20", Value: core.ModuleKindNode20},
 	{Key: "nodenext", Value: core.ModuleKindNodeNext},
 	{Key: "preserve", Value: core.ModuleKindPreserve},
 })
@@ -182,9 +185,9 @@ var moduleDetectionOptionMap = collections.NewOrderedMapFromList([]collections.M
 var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "preserve", Value: core.JsxEmitPreserve},
 	{Key: "react-native", Value: core.JsxEmitReactNative},
-	{Key: "react", Value: core.JsxEmitReact},
 	{Key: "react-jsx", Value: core.JsxEmitReactJSX},
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
+	{Key: "react", Value: core.JsxEmitReact},
 })
 
 var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {

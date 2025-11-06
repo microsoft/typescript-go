@@ -15,8 +15,8 @@ var o5 =  { ...union, ...union };
 //// [spreadUnion.js]
 var union;
 var o3;
-var o3 = { ...union };
+var o3 = Object.assign({}, union);
 var o4;
-var o4 = { ...union, a: false };
+var o4 = Object.assign(Object.assign({}, union), { a: false });
 var o5;
-var o5 = { ...union, ...union };
+var o5 = Object.assign(Object.assign({}, union), union);

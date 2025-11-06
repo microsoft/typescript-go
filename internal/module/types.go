@@ -14,7 +14,6 @@ import (
 type ResolutionHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	Trace(msg string)
 }
 
 type ModeAwareCacheKey struct {
@@ -50,7 +49,7 @@ type PackageId struct {
 }
 
 func (p *PackageId) String() string {
-	return fmt.Sprintf("%s@%s%s", p.Name, p.Version, p.PeerDependencies)
+	return fmt.Sprintf("%s@%s%s", p.PackageName(), p.Version, p.PeerDependencies)
 }
 
 func (p *PackageId) PackageName() string {

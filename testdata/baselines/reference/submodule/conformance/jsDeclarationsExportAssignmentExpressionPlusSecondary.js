@@ -22,13 +22,6 @@ const Strings = {
     a: "A",
     b: "B"
 };
-export = {
-    thing: "ok",
-    also: "ok",
-    desc: {
-        item: "ok"
-    }
-};
 module.exports = {
     thing: "ok",
     also: "ok",
@@ -49,4 +42,7 @@ declare const _default: {
     };
 };
 export = _default;
-export var Strings = Strings;
+export declare var Strings: {
+    a: string;
+    b: string;
+};

@@ -22,8 +22,10 @@ func createPrinterWithRemoveCommentsOmitTrailingSemicolon(emitContext *printer.E
 }
 
 func createPrinterWithRemoveCommentsNeverAsciiEscape(emitContext *printer.EmitContext) *printer.Printer {
-	// TODO: NeverAsciiEscape support
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
+	return printer.NewPrinter(printer.PrinterOptions{
+		RemoveComments:   true,
+		NeverAsciiEscape: true,
+	}, printer.PrintHandlers{}, emitContext)
 }
 
 type semicolonRemoverWriter struct {
@@ -256,6 +258,7 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
 	var printer_ *printer.Printer
+	// add neverAsciiEscape for GH#39027
 	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
 		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape(nodeBuilder.EmitContext())
 	} else {
@@ -368,4 +371,9 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
+}
+
+func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags) *ast.TypeNode {
+	nodeBuilder := c.getNodeBuilder()
+	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }

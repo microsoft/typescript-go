@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -56,6 +57,7 @@ type Parser struct {
 	scriptKind       core.ScriptKind
 	languageVariant  core.LanguageVariant
 	diagnostics      []*ast.Diagnostic
+	jsDiagnostics    []*ast.Diagnostic
 	jsdocDiagnostics []*ast.Diagnostic
 
 	token                       ast.Kind
@@ -182,13 +184,11 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 		} else {
 			expression = expressions.(*ast.Expression)
 		}
-		statement := p.factory.NewExpressionStatement(expression)
-		p.finishNode(statement, pos)
+		statement := p.finishNode(p.factory.NewExpressionStatement(expression), pos)
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{statement})
 		eof = p.parseExpectedToken(ast.KindEndOfFile)
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements, eof)
-	p.finishNode(node, pos)
+	node := p.finishNode(p.factory.NewSourceFile(p.opts, p.sourceText, statements, eof), pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, false)
 	return result
@@ -261,6 +261,7 @@ type ParserState struct {
 	scannerState                scanner.ScannerState
 	contextFlags                ast.NodeFlags
 	diagnosticsLen              int
+	jsDiagnosticsLen            int
 	statementHasAwaitIdentifier bool
 	hasParseError               bool
 }
@@ -270,6 +271,7 @@ func (p *Parser) mark() ParserState {
 		scannerState:                p.scanner.Mark(),
 		contextFlags:                p.contextFlags,
 		diagnosticsLen:              len(p.diagnostics),
+		jsDiagnosticsLen:            len(p.jsDiagnostics),
 		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
 		hasParseError:               p.hasParseError,
 	}
@@ -280,6 +282,7 @@ func (p *Parser) rewind(state ParserState) {
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
+	p.jsDiagnostics = p.jsDiagnostics[0:state.jsDiagnosticsLen]
 	p.statementHasAwaitIdentifier = state.statementHasAwaitIdentifier
 	p.hasParseError = state.hasParseError
 }
@@ -293,7 +296,7 @@ func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
 
 func (p *Parser) nextToken() ast.Kind {
 	// if the keyword had an escape
-	if isKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
+	if ast.IsKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
 		// issue a parse error for the escape
 		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
 	}
@@ -346,19 +349,20 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		statements = append(statements, p.reparseList...)
 		p.reparseList = nil
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), statements), eof)
-	p.finishNode(node, pos)
+	node := p.finishNode(p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), statements), eof), pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
 	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && len(p.possibleAwaitSpans) > 0 {
-		reparse := p.reparseTopLevelAwait(result)
+		reparse := p.finishNode(p.reparseTopLevelAwait(result), pos)
 		if node != reparse {
-			p.finishNode(reparse, pos)
 			result = reparse.AsSourceFile()
 			p.finishSourceFile(result, isDeclarationFile)
 		}
 	}
 	collectExternalModuleReferences(result)
+	if ast.IsInJSFile(node) {
+		result.SetJSDiagnostics(attachFileToDiagnostics(p.jsDiagnostics, result))
+	}
 	return result
 }
 
@@ -494,12 +498,21 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
+	outerReparseList := p.reparseList
+	p.reparseList = nil
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			elt := parseElement(p, i)
 			if len(p.reparseList) > 0 {
-				list = append(list, p.reparseList...)
+				for _, e := range p.reparseList {
+					// Propagate @typedef type alias declarations outwards to a context that permits them.
+					if (ast.IsJSTypeAliasDeclaration(e) || ast.IsJSImportDeclaration(e)) && kind != PCSourceElements && kind != PCBlockStatements {
+						outerReparseList = append(outerReparseList, e)
+					} else {
+						list = append(list, e)
+					}
+				}
 				p.reparseList = nil
 			}
 			list = append(list, elt)
@@ -509,6 +522,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 			break
 		}
 	}
+	p.reparseList = outerReparseList
 	p.parsingContexts = saveParsingContexts
 	return p.nodeSlicePool.Clone(list)
 }
@@ -606,8 +620,8 @@ func (p *Parser) abortParsingListOrMoveToNextToken(kind ParsingContext) bool {
 func (p *Parser) isInSomeParsingContext() bool {
 	// We should be in at least one parsing context, be it SourceElements while parsing
 	// a SourceFile, or JSDocComment when lazily parsing JSDoc.
-	// Debug.assert(parsingContext, "Missing parsing context")
-	for kind := ParsingContext(0); kind < PCCount; kind++ {
+	debug.Assert(p.parsingContexts != 0, "Missing parsing context")
+	for kind := range PCCount {
 		if p.parsingContexts&(1<<kind) != 0 {
 			if p.isListElement(kind, true /*inErrorRecovery*/) || p.isListTerminator(kind) {
 				return true
@@ -640,7 +654,7 @@ func (p *Parser) parsingContextErrors(context ParsingContext) {
 	case PCHeritageClauseElement:
 		p.parseErrorAtCurrentToken(diagnostics.Expression_expected)
 	case PCVariableDeclarations:
-		if isKeyword(p.token) {
+		if ast.IsKeyword(p.token) {
 			p.parseErrorAtCurrentToken(diagnostics.X_0_is_not_allowed_as_a_variable_declaration_name, scanner.TokenToString(p.token))
 		} else {
 			p.parseErrorAtCurrentToken(diagnostics.Variable_declaration_expected)
@@ -658,7 +672,7 @@ func (p *Parser) parsingContextErrors(context ParsingContext) {
 	case PCJSDocParameters:
 		p.parseErrorAtCurrentToken(diagnostics.Parameter_declaration_expected)
 	case PCParameters:
-		if isKeyword(p.token) {
+		if ast.IsKeyword(p.token) {
 			p.parseErrorAtCurrentToken(diagnostics.X_0_is_not_allowed_as_a_parameter_name, scanner.TokenToString(p.token))
 		} else {
 			p.parseErrorAtCurrentToken(diagnostics.Parameter_declaration_expected)
@@ -887,17 +901,14 @@ func (p *Parser) parseTokenNode() *ast.Node {
 	pos := p.nodePos()
 	kind := p.token
 	p.nextToken()
-	result := p.factory.NewToken(kind)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewToken(kind), pos)
 }
 
 func (p *Parser) parseExpectedToken(kind ast.Kind) *ast.Node {
 	token := p.parseOptionalToken(kind)
 	if token == nil {
 		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
-		token = p.factory.NewToken(kind)
-		p.finishNode(token, p.nodePos())
+		token = p.finishNode(p.factory.NewToken(kind), p.nodePos())
 	}
 	return token
 }
@@ -916,8 +927,7 @@ func (p *Parser) parseExpectedTokenJSDoc(kind ast.Kind) *ast.Node {
 			panic("expected keyword or punctuation")
 		}
 		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
-		optional = p.factory.NewToken(kind)
-		p.finishNode(optional, p.nodePos())
+		optional = p.finishNode(p.factory.NewToken(kind), p.nodePos())
 	}
 	return optional
 }
@@ -1050,9 +1060,7 @@ func (p *Parser) parseDeclarationWorker(pos int, hasJSDoc bool, modifiers *ast.M
 		// We reached this point because we encountered decorators and/or modifiers and assumed a declaration
 		// would follow. For recovery and error reporting purposes, return an incomplete declaration.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
-		result := p.factory.NewMissingDeclaration(modifiers)
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewMissingDeclaration(modifiers), pos)
 	}
 	panic("Unhandled case in parseDeclarationWorker")
 }
@@ -1082,8 +1090,7 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 		multiline = p.hasPrecedingLineBreak()
 		statements := p.parseList(PCBlockStatements, (*Parser).parseStatement)
 		p.parseExpectedMatchingBrackets(ast.KindOpenBraceToken, ast.KindCloseBraceToken, openBraceParsed, openBracePosition)
-		result := p.factory.NewBlock(statements, multiline)
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewBlock(statements, multiline), pos)
 		p.withJSDoc(result, hasJSDoc)
 		if p.token == ast.KindEqualsToken {
 			p.parseErrorAtCurrentToken(diagnostics.Declaration_or_statement_expected_This_follows_a_block_of_statements_so_if_you_intended_to_write_a_destructuring_assignment_you_might_need_to_wrap_the_whole_assignment_in_parentheses)
@@ -1091,8 +1098,7 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 		}
 		return result
 	}
-	result := p.factory.NewBlock(p.parseEmptyNodeList(), multiline)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewBlock(p.parseEmptyNodeList(), multiline), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1101,8 +1107,7 @@ func (p *Parser) parseEmptyStatement() *ast.Node {
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	p.parseExpected(ast.KindSemicolonToken)
-	result := p.factory.NewEmptyStatement()
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewEmptyStatement(), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1120,8 +1125,7 @@ func (p *Parser) parseIfStatement() *ast.Node {
 	if p.parseOptional(ast.KindElseKeyword) {
 		elseStatement = p.parseStatement()
 	}
-	result := p.factory.NewIfStatement(expression, thenStatement, elseStatement)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewIfStatement(expression, thenStatement, elseStatement), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1141,8 +1145,7 @@ func (p *Parser) parseDoStatement() *ast.Node {
 	// spec but allowed in consensus reality. Approved -- this is the de-facto standard whereby
 	//  do;while(0)x will have a semicolon inserted before x.
 	p.parseOptional(ast.KindSemicolonToken)
-	result := p.factory.NewDoStatement(statement, expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewDoStatement(statement, expression), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1156,8 +1159,7 @@ func (p *Parser) parseWhileStatement() *ast.Node {
 	expression := p.parseExpressionAllowIn()
 	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
 	statement := p.parseStatement()
-	result := p.factory.NewWhileStatement(expression, statement)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewWhileStatement(expression, statement), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1214,8 +1216,7 @@ func (p *Parser) parseBreakStatement() *ast.Node {
 	p.parseExpected(ast.KindBreakKeyword)
 	label := p.parseIdentifierUnlessAtSemicolon()
 	p.parseSemicolon()
-	result := p.factory.NewBreakStatement(label)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewBreakStatement(label), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1226,8 +1227,7 @@ func (p *Parser) parseContinueStatement() *ast.Node {
 	p.parseExpected(ast.KindContinueKeyword)
 	label := p.parseIdentifierUnlessAtSemicolon()
 	p.parseSemicolon()
-	result := p.factory.NewContinueStatement(label)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewContinueStatement(label), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1248,8 +1248,7 @@ func (p *Parser) parseReturnStatement() *ast.Node {
 		expression = p.parseExpressionAllowIn()
 	}
 	p.parseSemicolon()
-	result := p.factory.NewReturnStatement(expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewReturnStatement(expression), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1263,8 +1262,7 @@ func (p *Parser) parseWithStatement() *ast.Node {
 	expression := p.parseExpressionAllowIn()
 	p.parseExpectedMatchingBrackets(ast.KindOpenParenToken, ast.KindCloseParenToken, openParenParsed, openParenPosition)
 	statement := doInContext(p, ast.NodeFlagsInWithStatement, true, (*Parser).parseStatement)
-	result := p.factory.NewWithStatement(expression, statement)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewWithStatement(expression, statement), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1276,8 +1274,7 @@ func (p *Parser) parseCaseClause() *ast.Node {
 	expression := p.parseExpressionAllowIn()
 	p.parseExpected(ast.KindColonToken)
 	statements := p.parseList(PCSwitchClauseStatements, (*Parser).parseStatement)
-	result := p.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expression, statements)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewCaseOrDefaultClause(ast.KindCaseClause, expression, statements), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1288,8 +1285,7 @@ func (p *Parser) parseDefaultClause() *ast.Node {
 	p.parseExpected(ast.KindDefaultKeyword)
 	p.parseExpected(ast.KindColonToken)
 	statements := p.parseList(PCSwitchClauseStatements, (*Parser).parseStatement)
-	result := p.factory.NewCaseOrDefaultClause(ast.KindDefaultClause, nil /*expression*/, statements)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewCaseOrDefaultClause(ast.KindDefaultClause, nil /*expression*/, statements), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1307,8 +1303,7 @@ func (p *Parser) parseCaseBlock() *ast.Node {
 	p.parseExpected(ast.KindOpenBraceToken)
 	clauses := p.parseList(PCSwitchClauses, (*Parser).parseCaseOrDefaultClause)
 	p.parseExpected(ast.KindCloseBraceToken)
-	result := p.factory.NewCaseBlock(clauses)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewCaseBlock(clauses), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1321,8 +1316,7 @@ func (p *Parser) parseSwitchStatement() *ast.Node {
 	expression := p.parseExpressionAllowIn()
 	p.parseExpected(ast.KindCloseParenToken)
 	caseBlock := p.parseCaseBlock()
-	result := p.factory.NewSwitchStatement(expression, caseBlock)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewSwitchStatement(expression, caseBlock), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1347,8 +1341,7 @@ func (p *Parser) parseThrowStatement() *ast.Node {
 	if !p.tryParseSemicolon() {
 		p.parseErrorForMissingSemicolonAfter(expression)
 	}
-	result := p.factory.NewThrowStatement(expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewThrowStatement(expression), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1370,8 +1363,7 @@ func (p *Parser) parseTryStatement() *ast.Node {
 		p.parseExpectedWithDiagnostic(ast.KindFinallyKeyword, diagnostics.X_catch_or_finally_expected, true /*shouldAdvance*/)
 		finallyBlock = p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
 	}
-	result := p.factory.NewTryStatement(tryBlock, catchClause, finallyBlock)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewTryStatement(tryBlock, catchClause, finallyBlock), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1385,8 +1377,7 @@ func (p *Parser) parseCatchClause() *ast.Node {
 		p.parseExpected(ast.KindCloseParenToken)
 	}
 	block := p.parseBlock(false /*ignoreMissingOpenBrace*/, nil)
-	result := p.factory.NewCatchClause(variableDeclaration, block)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewCatchClause(variableDeclaration, block), pos)
 	return result
 }
 
@@ -1395,8 +1386,7 @@ func (p *Parser) parseDebuggerStatement() *ast.Node {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	p.parseExpected(ast.KindDebuggerKeyword)
 	p.parseSemicolon()
-	result := p.factory.NewDebuggerStatement()
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewDebuggerStatement(), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1411,8 +1401,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	expression := p.parseExpression()
 
 	if expression.Kind == ast.KindIdentifier && p.parseOptional(ast.KindColonToken) {
-		result := p.factory.NewLabeledStatement(expression, p.parseStatement())
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewLabeledStatement(expression, p.parseStatement()), pos)
 		p.withJSDoc(result, hasJSDoc)
 		return result
 	}
@@ -1420,8 +1409,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	if !p.tryParseSemicolon() {
 		p.parseErrorForMissingSemicolonAfter(expression)
 	}
-	result := p.factory.NewExpressionStatement(expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewExpressionStatement(expression), pos)
 	jsdoc := p.withJSDoc(result, hasJSDoc && !hasParen)
 	p.reparseCommonJS(result, jsdoc)
 	return result
@@ -1430,9 +1418,9 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 func (p *Parser) parseVariableStatement(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	declarationList := p.parseVariableDeclarationList(false /*inForStatementInitializer*/)
 	p.parseSemicolon()
-	result := p.factory.NewVariableStatement(modifiers, declarationList)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewVariableStatement(modifiers, declarationList), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1449,7 +1437,7 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 	case ast.KindUsingKeyword:
 		flags = ast.NodeFlagsUsing
 	case ast.KindAwaitKeyword:
-		// Debug.assert(isAwaitUsingDeclaration());
+		debug.Assert(p.isAwaitUsingDeclaration())
 		flags = ast.NodeFlagsAwaitUsing
 		p.nextToken()
 	default:
@@ -1474,8 +1462,7 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 		declarations = p.parseDelimitedList(PCVariableDeclarations, core.IfElse(inForStatementInitializer, (*Parser).parseVariableDeclaration, (*Parser).parseVariableDeclarationAllowExclamation))
 		p.contextFlags = saveContextFlags
 	}
-	result := p.factory.NewVariableDeclarationList(flags, declarations)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewVariableDeclarationList(flags, declarations), pos)
 	return result
 }
 
@@ -1509,9 +1496,9 @@ func (p *Parser) parseVariableDeclarationWorker(allowExclamation bool) *ast.Node
 	if p.token != ast.KindInKeyword && p.token != ast.KindOfKeyword {
 		initializer = p.parseInitializer()
 	}
-	result := p.factory.NewVariableDeclaration(name, exclamationToken, typeNode, initializer)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewVariableDeclaration(name, exclamationToken, typeNode, initializer), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1537,9 +1524,7 @@ func (p *Parser) parseArrayBindingPattern() *ast.Node {
 	elements := p.parseDelimitedList(PCArrayBindingElements, (*Parser).parseArrayBindingElement)
 	p.contextFlags = saveContextFlags
 	p.parseExpected(ast.KindCloseBracketToken)
-	result := p.factory.NewBindingPattern(ast.KindArrayBindingPattern, elements)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewBindingPattern(ast.KindArrayBindingPattern, elements), pos)
 }
 
 func (p *Parser) parseArrayBindingElement() *ast.Node {
@@ -1553,9 +1538,7 @@ func (p *Parser) parseArrayBindingElement() *ast.Node {
 		name = p.parseIdentifierOrPattern()
 		initializer = p.parseInitializer()
 	}
-	result := p.factory.NewBindingElement(dotDotDotToken, nil /*propertyName*/, name, initializer)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewBindingElement(dotDotDotToken, nil /*propertyName*/, name, initializer), pos)
 }
 
 func (p *Parser) parseObjectBindingPattern() *ast.Node {
@@ -1566,9 +1549,7 @@ func (p *Parser) parseObjectBindingPattern() *ast.Node {
 	elements := p.parseDelimitedList(PCObjectBindingElements, (*Parser).parseObjectBindingElement)
 	p.contextFlags = saveContextFlags
 	p.parseExpected(ast.KindCloseBraceToken)
-	result := p.factory.NewBindingPattern(ast.KindObjectBindingPattern, elements)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewBindingPattern(ast.KindObjectBindingPattern, elements), pos)
 }
 
 func (p *Parser) parseObjectBindingElement() *ast.Node {
@@ -1585,9 +1566,7 @@ func (p *Parser) parseObjectBindingElement() *ast.Node {
 		name = p.parseIdentifierOrPattern()
 	}
 	initializer := p.parseInitializer()
-	result := p.factory.NewBindingElement(dotDotDotToken, propertyName, name, initializer)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewBindingElement(dotDotDotToken, propertyName, name, initializer), pos)
 }
 
 func (p *Parser) parseInitializer() *ast.Expression {
@@ -1622,9 +1601,9 @@ func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnostics.X_or_expected)
 	p.contextFlags = saveContextFlags
-	result := p.factory.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1668,6 +1647,18 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 	}
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
+	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
+		p.checkJSSyntax(result)
+		if heritageClauses != nil {
+			for _, clause := range heritageClauses.Nodes {
+				if clause.AsHeritageClause().Token == ast.KindExtendsKeyword {
+					for _, expr := range clause.AsHeritageClause().Types.Nodes {
+						p.checkJSSyntax(expr)
+					}
+				}
+			}
+		}
+	}
 	return result
 }
 
@@ -1712,9 +1703,7 @@ func (p *Parser) parseHeritageClause() *ast.Node {
 	kind := p.token
 	p.nextToken()
 	types := p.parseDelimitedList(PCHeritageClauseElement, (*Parser).parseExpressionWithTypeArguments)
-	result := p.factory.NewHeritageClause(kind, types)
-	p.finishNode(result, pos)
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewHeritageClause(kind, types), pos))
 }
 
 func (p *Parser) parseExpressionWithTypeArguments() *ast.Node {
@@ -1724,9 +1713,7 @@ func (p *Parser) parseExpressionWithTypeArguments() *ast.Node {
 		return expression
 	}
 	typeArguments := p.parseTypeArguments()
-	result := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewExpressionWithTypeArguments(expression, typeArguments), pos)
 }
 
 func (p *Parser) parseClassElement() *ast.Node {
@@ -1734,8 +1721,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	if p.token == ast.KindSemicolonToken {
 		p.nextToken()
-		result := p.factory.NewSemicolonClassElement()
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewSemicolonClassElement(), pos)
 		p.withJSDoc(result, hasJSDoc)
 		return result
 	}
@@ -1756,7 +1742,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 		}
 	}
 	if p.isIndexSignature() {
-		return p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers)
+		return p.checkJSSyntax(p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers))
 	}
 	// It is very important that we check this *after* checking indexers because
 	// the [ token can start an index signature or a computed property name
@@ -1788,8 +1774,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 func (p *Parser) parseClassStaticBlockDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	p.parseExpectedToken(ast.KindStaticKeyword)
 	body := p.parseClassStaticBlockBody()
-	result := p.factory.NewClassStaticBlockDeclaration(modifiers, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewClassStaticBlockDeclaration(modifiers, body), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -1811,9 +1796,9 @@ func (p *Parser) tryParseConstructorDeclaration(pos int, hasJSDoc bool, modifier
 		parameters := p.parseParameters(ParseFlagsNone)
 		returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 		body := p.parseFunctionBlockOrSemicolon(ParseFlagsNone, diagnostics.X_or_expected)
-		result := p.factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 		p.withJSDoc(result, hasJSDoc)
+		p.checkJSSyntax(result)
 		return result
 	}
 	p.rewind(state)
@@ -1842,9 +1827,9 @@ func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	parameters := p.parseParameters(signatureFlags)
 	typeNode := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnosticMessage)
-	result := p.factory.NewMethodDeclaration(modifiers, asteriskToken, name, questionToken, typeParameters, parameters, typeNode, nil /*fullSignature*/, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewMethodDeclaration(modifiers, asteriskToken, name, questionToken, typeParameters, parameters, typeNode, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1860,9 +1845,9 @@ func (p *Parser) parsePropertyDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	typeNode := p.parseTypeAnnotation()
 	initializer := doInContext(p, ast.NodeFlagsYieldContext|ast.NodeFlagsAwaitContext|ast.NodeFlagsDisallowInContext, false, (*Parser).parseInitializer)
 	p.parseSemicolonAfterPropertyName(name, typeNode, initializer)
-	result := p.factory.NewPropertyDeclaration(modifiers, name, postfixToken, typeNode, initializer)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewPropertyDeclaration(modifiers, name, postfixToken, typeNode, initializer), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1973,9 +1958,9 @@ func (p *Parser) parseInterfaceDeclaration(pos int, hasJSDoc bool, modifiers *as
 	typeParameters := p.parseTypeParameters()
 	heritageClauses := p.parseHeritageClauses()
 	members := p.parseObjectTypeMembers()
-	result := p.factory.NewInterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, members)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewInterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, members), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1994,9 +1979,9 @@ func (p *Parser) parseTypeAliasDeclaration(pos int, hasJSDoc bool, modifiers *as
 		typeNode = p.parseType()
 	}
 	p.parseSemicolon()
-	result := p.factory.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2013,8 +1998,7 @@ func (p *Parser) parseEnumMember() *ast.Node {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	name := p.parsePropertyName()
 	initializer := doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseInitializer)
-	result := p.factory.NewEnumMember(name, initializer)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewEnumMember(name, initializer), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -2033,9 +2017,9 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 	} else {
 		members = p.parseEmptyNodeList()
 	}
-	result := p.factory.NewEnumDeclaration(modifiers, name, members)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewEnumDeclaration(modifiers, name, members), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2074,8 +2058,7 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, m
 	} else {
 		p.parseSemicolon()
 	}
-	result := p.factory.NewModuleDeclaration(modifiers, keyword, name, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
 	p.withJSDoc(result, hasJSDoc)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
@@ -2090,9 +2073,7 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 	} else {
 		statements = p.parseEmptyNodeList()
 	}
-	result := p.factory.NewModuleBlock(statements)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewModuleBlock(statements), pos)
 }
 
 func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, nested bool, keyword ast.Kind) *ast.Node {
@@ -2113,9 +2094,9 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	} else {
 		body = p.parseModuleBlock()
 	}
-	result := p.factory.NewModuleDeclaration(modifiers, keyword, name, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2129,29 +2110,43 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 	if p.isIdentifier() {
 		identifier = p.parseIdentifier()
 	}
-	isTypeOnly := false
+	phaseModifier := ast.KindUnknown
 	if identifier != nil && identifier.AsIdentifier().Text == "type" &&
 		(p.token != ast.KindFromKeyword || p.isIdentifier() && p.lookAhead((*Parser).nextTokenIsFromKeywordOrEqualsToken)) &&
 		(p.isIdentifier() || p.tokenAfterImportDefinitelyProducesImportDeclaration()) {
-		isTypeOnly = true
+		phaseModifier = ast.KindTypeKeyword
 		identifier = nil
 		if p.isIdentifier() {
 			identifier = p.parseIdentifier()
 		}
+	} else if identifier != nil && identifier.AsIdentifier().Text == "defer" {
+		var shouldParseAsDeferModifier bool
+		if p.token == ast.KindFromKeyword {
+			shouldParseAsDeferModifier = !p.lookAhead((*Parser).nextTokenIsTokenStringLiteral)
+		} else {
+			shouldParseAsDeferModifier = p.token != ast.KindCommaToken && p.token != ast.KindEqualsToken
+		}
+		if shouldParseAsDeferModifier {
+			phaseModifier = ast.KindDeferKeyword
+			identifier = nil
+			if p.isIdentifier() {
+				identifier = p.parseIdentifier()
+			}
+		}
 	}
-	if identifier != nil && !p.tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() {
-		importEquals := p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, isTypeOnly)
+	if identifier != nil && !p.tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() && phaseModifier != ast.KindDeferKeyword {
+		importEquals := p.checkJSSyntax(p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, phaseModifier == ast.KindTypeKeyword))
 		p.statementHasAwaitIdentifier = saveHasAwaitIdentifier // Import= declaration is always parsed in an Await context, no need to reparse
 		return importEquals
 	}
-	importClause := p.tryParseImportClause(identifier, afterImportPos, isTypeOnly, false /*skipJSDocLeadingAsterisks*/)
+	importClause := p.tryParseImportClause(identifier, afterImportPos, phaseModifier, false /*skipJSDocLeadingAsterisks*/)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier // import clause is always parsed in an Await context
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
 	p.parseSemicolon()
-	result := p.factory.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2174,8 +2169,7 @@ func (p *Parser) parseImportEqualsDeclaration(pos int, hasJSDoc bool, modifiers 
 	p.parseExpected(ast.KindEqualsToken)
 	moduleReference := p.parseModuleReference()
 	p.parseSemicolon()
-	result := p.factory.NewImportEqualsDeclaration(modifiers, isTypeOnly, identifier, moduleReference)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewImportEqualsDeclaration(modifiers, isTypeOnly, identifier, moduleReference), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -2194,8 +2188,7 @@ func (p *Parser) parseExternalModuleReference() *ast.Node {
 	p.parseExpected(ast.KindOpenParenToken)
 	expression := p.parseModuleSpecifier()
 	p.parseExpected(ast.KindCloseParenToken)
-	result := p.factory.NewExternalModuleReference(expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewExternalModuleReference(expression), pos)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2211,19 +2204,19 @@ func (p *Parser) parseModuleSpecifier() *ast.Expression {
 	return p.parseExpression()
 }
 
-func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJSDocLeadingAsterisks bool) *ast.Node {
+func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, phaseModifier ast.Kind, skipJSDocLeadingAsterisks bool) *ast.Node {
 	// ImportDeclaration:
 	//  import ImportClause from ModuleSpecifier ;
 	//  import ModuleSpecifier;
 	if identifier != nil || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken {
-		importClause := p.parseImportClause(identifier, pos, isTypeOnly, skipJSDocLeadingAsterisks)
+		importClause := p.parseImportClause(identifier, pos, phaseModifier, skipJSDocLeadingAsterisks)
 		p.parseExpected(ast.KindFromKeyword)
 		return importClause
 	}
 	return nil
 }
 
-func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJSDocLeadingAsterisks bool) *ast.Node {
+func (p *Parser) parseImportClause(identifier *ast.Node, pos int, phaseModifier ast.Kind, skipJSDocLeadingAsterisks bool) *ast.Node {
 	// ImportClause:
 	//  ImportedDefaultBinding
 	//  NameSpaceImport
@@ -2247,8 +2240,7 @@ func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly boo
 			p.scanner.SetSkipJSDocLeadingAsterisks(false)
 		}
 	}
-	result := p.factory.NewImportClause(isTypeOnly, identifier, namedBindings)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewImportClause(phaseModifier, identifier, namedBindings), pos)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2260,9 +2252,7 @@ func (p *Parser) parseNamespaceImport() *ast.Node {
 	p.parseExpected(ast.KindAsteriskToken)
 	p.parseExpected(ast.KindAsKeyword)
 	name := p.parseIdentifier()
-	result := p.factory.NewNamespaceImport(name)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewNamespaceImport(name), pos)
 }
 
 func (p *Parser) parseNamedImports() *ast.Node {
@@ -2272,9 +2262,7 @@ func (p *Parser) parseNamedImports() *ast.Node {
 	//  { ImportsList }
 	//  { ImportsList, }
 	imports := p.parseBracketedList(PCImportOrExportSpecifiers, (*Parser).parseImportSpecifier, ast.KindOpenBraceToken, ast.KindCloseBraceToken)
-	result := p.factory.NewNamedImports(imports)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewNamedImports(imports), pos)
 }
 
 func (p *Parser) parseImportSpecifier() *ast.Node {
@@ -2288,8 +2276,7 @@ func (p *Parser) parseImportSpecifier() *ast.Node {
 		identifierName = p.newIdentifier("")
 		p.finishNode(identifierName, name.Pos())
 	}
-	result := p.factory.NewImportSpecifier(isTypeOnly, propertyName, identifierName)
-	p.finishNode(result, pos)
+	result := p.checkJSSyntax(p.finishNode(p.factory.NewImportSpecifier(isTypeOnly, propertyName, identifierName), pos))
 	return result
 }
 
@@ -2375,7 +2362,7 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) (node *ast.Node, n
 	if p.token == ast.KindStringLiteral {
 		return p.parseLiteralExpression(false /*intern*/), nameOk
 	}
-	if disallowKeywords && isKeyword(p.token) && !p.isIdentifier() {
+	if disallowKeywords && ast.IsKeyword(p.token) && !p.isIdentifier() {
 		nameOk = false
 	}
 	return p.parseIdentifierName(), nameOk
@@ -2402,9 +2389,9 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
-	result := p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2416,8 +2403,7 @@ func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifie
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	p.parseSemicolon()
 	// NamespaceExportDeclaration nodes cannot have decorators or modifiers, we attach them here so we can report them in the grammar checker
-	result := p.factory.NewNamespaceExportDeclaration(modifiers, name)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewNamespaceExportDeclaration(modifiers, name), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -2453,17 +2439,15 @@ func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
-	result := p.factory.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
 func (p *Parser) parseNamespaceExport(pos int) *ast.Node {
 	exportName, _ := p.parseModuleExportName(false /*disallowKeywords*/)
-	result := p.factory.NewNamespaceExport(exportName)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewNamespaceExport(exportName), pos)
 }
 
 func (p *Parser) parseNamedExports() *ast.Node {
@@ -2473,18 +2457,16 @@ func (p *Parser) parseNamedExports() *ast.Node {
 	//  { ImportsList }
 	//  { ImportsList, }
 	exports := p.parseBracketedList(PCImportOrExportSpecifiers, (*Parser).parseExportSpecifier, ast.KindOpenBraceToken, ast.KindCloseBraceToken)
-	result := p.factory.NewNamedExports(exports)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewNamedExports(exports), pos)
 }
 
 func (p *Parser) parseExportSpecifier() *ast.Node {
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	isTypeOnly, propertyName, name := p.parseImportOrExportSpecifier(ast.KindExportSpecifier)
-	result := p.factory.NewExportSpecifier(isTypeOnly, propertyName, name)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewExportSpecifier(isTypeOnly, propertyName, name), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2570,26 +2552,20 @@ func (p *Parser) parseTypeOperatorOrHigher() *ast.TypeNode {
 func (p *Parser) parseTypeOperator(operator ast.Kind) *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(operator)
-	result := p.factory.NewTypeOperatorNode(operator, p.parseTypeOperatorOrHigher())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeOperatorNode(operator, p.parseTypeOperatorOrHigher()), pos)
 }
 
 func (p *Parser) parseInferType() *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(ast.KindInferKeyword)
-	result := p.factory.NewInferTypeNode(p.parseTypeParameterOfInferType())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewInferTypeNode(p.parseTypeParameterOfInferType()), pos)
 }
 
 func (p *Parser) parseTypeParameterOfInferType() *ast.Node {
 	pos := p.nodePos()
 	name := p.parseIdentifier()
 	constraint := p.tryParseConstraintOfInferType()
-	result := p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*defaultType*/)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, constraint, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) tryParseConstraintOfInferType() *ast.Node {
@@ -2611,27 +2587,23 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 		switch p.token {
 		case ast.KindExclamationToken:
 			p.nextToken()
-			typeNode = p.factory.NewJSDocNonNullableType(typeNode)
-			p.finishNode(typeNode, pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode), pos)
 		case ast.KindQuestionToken:
 			// If next token is start of a type we have a conditional type
 			if p.lookAhead((*Parser).nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
-			typeNode = p.factory.NewJSDocNullableType(typeNode)
-			p.finishNode(typeNode, pos)
+			typeNode = p.finishNode(p.factory.NewJSDocNullableType(typeNode), pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
 				indexType := p.parseType()
 				p.parseExpected(ast.KindCloseBracketToken)
-				typeNode = p.factory.NewIndexedAccessTypeNode(typeNode, indexType)
-				p.finishNode(typeNode, pos)
+				typeNode = p.finishNode(p.factory.NewIndexedAccessTypeNode(typeNode, indexType), pos)
 			} else {
 				p.parseExpected(ast.KindCloseBracketToken)
-				typeNode = p.factory.NewArrayTypeNode(typeNode)
-				p.finishNode(typeNode, pos)
+				typeNode = p.finishNode(p.factory.NewArrayTypeNode(typeNode), pos)
 			}
 		default:
 			return typeNode
@@ -2719,48 +2691,37 @@ func (p *Parser) parseKeywordTypeNode() *ast.Node {
 	pos := p.nodePos()
 	result := p.factory.NewKeywordTypeNode(p.token)
 	p.nextToken()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseThisTypeNode() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewThisTypeNode()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewThisTypeNode(), pos)
 }
 
 func (p *Parser) parseThisTypePredicate(lhs *ast.Node) *ast.Node {
 	p.nextToken()
-	result := p.factory.NewTypePredicateNode(nil /*assertsModifier*/, lhs, p.parseType())
-	p.finishNode(result, lhs.Pos())
-	return result
+	return p.finishNode(p.factory.NewTypePredicateNode(nil /*assertsModifier*/, lhs, p.parseType()), lhs.Pos())
 }
 
 func (p *Parser) parseJSDocAllType() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewJSDocAllType()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJSDocAllType(), pos)
 }
 
 func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewJSDocNonNullableType(p.parseNonArrayType())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType()), pos)
 }
 
 func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
-	result := p.factory.NewJSDocNullableType(p.parseType())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType()), pos)
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {
@@ -2771,14 +2732,11 @@ func (p *Parser) parseJSDocType() *ast.TypeNode {
 	t := p.parseTypeOrTypePredicate()
 	p.scanner.SetSkipJSDocLeadingAsterisks(false)
 	if hasDotDotDot {
-		t = p.factory.NewJSDocVariadicType(t)
-		p.finishNode(t, pos)
+		t = p.finishNode(p.factory.NewJSDocVariadicType(t), pos)
 	}
 	if p.token == ast.KindEqualsToken {
 		p.nextToken()
-		result := p.factory.NewJSDocOptionalType(t)
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewJSDocOptionalType(t), pos)
 	}
 	return t
 }
@@ -2795,19 +2753,14 @@ func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 		expression = p.parseLiteralExpression(false /*intern*/)
 	}
 	if negative {
-		expression = p.factory.NewPrefixUnaryExpression(ast.KindMinusToken, expression)
-		p.finishNode(expression, pos)
+		expression = p.finishNode(p.factory.NewPrefixUnaryExpression(ast.KindMinusToken, expression), pos)
 	}
-	result := p.factory.NewLiteralTypeNode(expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewLiteralTypeNode(expression), pos)
 }
 
 func (p *Parser) parseTypeReference() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewTypeReferenceNode(p.parseEntityNameOfTypeReference(), p.parseTypeArgumentsOfTypeReference())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeReferenceNode(p.parseEntityNameOfTypeReference(), p.parseTypeArgumentsOfTypeReference()), pos)
 }
 
 func (p *Parser) parseEntityNameOfTypeReference() *ast.Node {
@@ -2828,8 +2781,7 @@ func (p *Parser) parseEntityName(allowReservedWords bool, diagnosticMessage *dia
 			// `typeArguments` to report it as a grammar error in the checker.
 			break
 		}
-		entity = p.factory.NewQualifiedName(entity, p.parseRightSideOfDot(allowReservedWords, false /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/))
-		p.finishNode(entity, pos)
+		entity = p.finishNode(p.factory.NewQualifiedName(entity, p.parseRightSideOfDot(allowReservedWords, false /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/)), pos)
 	}
 	return entity
 }
@@ -2891,18 +2843,14 @@ func (p *Parser) newIdentifier(text string) *ast.Node {
 }
 
 func (p *Parser) createMissingIdentifier() *ast.Node {
-	result := p.newIdentifier("")
-	p.finishNode(result, p.nodePos())
-	return result
+	return p.finishNode(p.newIdentifier(""), p.nodePos())
 }
 
 func (p *Parser) parsePrivateIdentifier() *ast.Node {
 	pos := p.nodePos()
 	text := p.scanner.TokenValue()
 	p.nextToken()
-	result := p.factory.NewPrivateIdentifier(p.internIdentifier(text))
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewPrivateIdentifier(p.internIdentifier(text)), pos)
 }
 
 func (p *Parser) reScanLessThanToken() ast.Kind {
@@ -2963,6 +2911,7 @@ func (p *Parser) parseImportType() *ast.Node {
 		}
 		p.parseExpected(ast.KindColonToken)
 		attributes = p.parseImportAttributes(currentToken, true /*skipKeyword*/)
+		p.parseOptional(ast.KindCommaToken)
 		if !p.parseExpected(ast.KindCloseBraceToken) {
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
@@ -2979,9 +2928,7 @@ func (p *Parser) parseImportType() *ast.Node {
 		qualifier = p.parseEntityNameOfTypeReference()
 	}
 	typeArguments := p.parseTypeArgumentsOfTypeReference()
-	result := p.factory.NewImportTypeNode(isTypeOf, typeNode, attributes, qualifier, typeArguments)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewImportTypeNode(isTypeOf, typeNode, attributes, qualifier, typeArguments), pos)
 }
 
 func (p *Parser) parseImportAttribute() *ast.Node {
@@ -2998,9 +2945,7 @@ func (p *Parser) parseImportAttribute() *ast.Node {
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_or_string_literal_expected)
 	}
 	value := p.parseAssignmentExpressionOrHigher()
-	result := p.factory.NewImportAttribute(name, value)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewImportAttribute(name, value), pos)
 }
 
 func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.Node {
@@ -3026,9 +2971,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.No
 	} else {
 		elements = p.parseEmptyNodeList()
 	}
-	result := p.factory.NewImportAttributes(token, elements, multiLine)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewImportAttributes(token, elements, multiLine), pos)
 }
 
 func (p *Parser) parseTypeQuery() *ast.Node {
@@ -3040,9 +2983,7 @@ func (p *Parser) parseTypeQuery() *ast.Node {
 	if !p.hasPrecedingLineBreak() {
 		typeArguments = p.parseTypeArguments()
 	}
-	result := p.factory.NewTypeQueryNode(entityName, typeArguments)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeQueryNode(entityName, typeArguments), pos)
 }
 
 func (p *Parser) nextIsStartOfMappedType() bool {
@@ -3084,9 +3025,7 @@ func (p *Parser) parseMappedType() *ast.Node {
 	p.parseSemicolon()
 	members := p.parseList(PCTypeMembers, (*Parser).parseTypeMember)
 	p.parseExpected(ast.KindCloseBraceToken)
-	result := p.factory.NewMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, typeNode, members)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, typeNode, members), pos)
 }
 
 func (p *Parser) parseMappedTypeParameter() *ast.Node {
@@ -3094,9 +3033,7 @@ func (p *Parser) parseMappedTypeParameter() *ast.Node {
 	name := p.parseIdentifierName()
 	p.parseExpected(ast.KindInKeyword)
 	typeNode := p.parseType()
-	result := p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*defaultType*/)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(nil /*modifiers*/, name, typeNode, nil /*defaultType*/), pos)
 }
 
 func (p *Parser) parseTypeMember() *ast.Node {
@@ -3184,8 +3121,7 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	}
 	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
 	result.AsTypeParameter().Expression = expression
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseParameters(flags ParseFlags) *ast.NodeList {
@@ -3229,7 +3165,11 @@ func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) *a
 	p.setContextFlags(ast.NodeFlagsYieldContext, flags&ParseFlagsYield != 0)
 	p.setContextFlags(ast.NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
 	parameters := p.parseDelimitedList(PCParameters, func(p *Parser) *ast.Node {
-		return p.parseParameterEx(inAwaitContext, allowAmbiguity)
+		parameter := p.parseParameterEx(inAwaitContext, allowAmbiguity)
+		if parameter != nil && flags&ParseFlagsType == 0 {
+			p.checkJSSyntax(parameter)
+		}
+		return parameter
 	})
 	p.contextFlags = saveContextFlags
 	return parameters
@@ -3260,8 +3200,7 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 		if modifiers != nil {
 			p.parseErrorAtRange(modifiers.Nodes[0].Loc, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 		}
-		p.finishNode(result, pos)
-		p.withJSDoc(result, hasJSDoc)
+		p.withJSDoc(p.finishNode(result, pos), hasJSDoc)
 		return result
 	}
 	dotDotDotToken := p.parseOptionalToken(ast.KindDotDotDotToken)
@@ -3275,8 +3214,7 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 		p.parseOptionalToken(ast.KindQuestionToken),
 		p.parseTypeAnnotation(),
 		p.parseInitializer())
-	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc)
+	p.withJSDoc(p.finishNode(result, pos), hasJSDoc)
 	return result
 }
 
@@ -3334,9 +3272,7 @@ func (p *Parser) parseTypeOrTypePredicate() *ast.TypeNode {
 		id := p.parseIdentifier()
 		if p.token == ast.KindIsKeyword && !p.hasPrecedingLineBreak() {
 			p.nextToken()
-			result := p.factory.NewTypePredicateNode(nil /*assertsModifier*/, id, p.parseType())
-			p.finishNode(result, pos)
-			return result
+			return p.finishNode(p.factory.NewTypePredicateNode(nil /*assertsModifier*/, id, p.parseType()), pos)
 		}
 		p.rewind(state)
 	}
@@ -3366,8 +3302,10 @@ func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	} else {
 		result = p.factory.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
 	}
-	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc)
+	p.withJSDoc(p.finishNode(result, pos), hasJSDoc)
+	if flags&ParseFlagsType == 0 {
+		p.checkJSSyntax(result)
+	}
 	return result
 }
 
@@ -3403,9 +3341,7 @@ func (p *Parser) parseComputedPropertyName() *ast.Node {
 	// will error if it sees a comma expression.
 	expression := p.parseExpressionAllowIn()
 	p.parseExpected(ast.KindCloseBracketToken)
-	result := p.factory.NewComputedPropertyName(expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewComputedPropertyName(expression), pos)
 }
 
 func (p *Parser) parseFunctionBlockOrSemicolon(flags ParseFlags, diagnosticMessage *diagnostics.Message) *ast.Node {
@@ -3493,8 +3429,7 @@ func (p *Parser) parseIndexSignatureDeclaration(pos int, hasJSDoc bool, modifier
 	parameters := p.parseBracketedList(PCParameters, (*Parser).parseParameter, ast.KindOpenBracketToken, ast.KindCloseBracketToken)
 	typeNode := p.parseTypeAnnotation()
 	p.parseTypeMemberSemicolon()
-	result := p.factory.NewIndexSignatureDeclaration(modifiers, parameters, typeNode)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewIndexSignatureDeclaration(modifiers, parameters, typeNode), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -3522,15 +3457,13 @@ func (p *Parser) parsePropertyOrMethodSignature(pos int, hasJSDoc bool, modifier
 		result = p.factory.NewPropertySignatureDeclaration(modifiers, name, questionToken, typeNode, initializer)
 	}
 	p.parseTypeMemberSemicolon()
-	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc)
+	p.withJSDoc(p.finishNode(result, pos), hasJSDoc)
 	return result
 }
 
 func (p *Parser) parseTypeLiteral() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewTypeLiteralNode(p.parseObjectTypeMembers())
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewTypeLiteralNode(p.parseObjectTypeMembers()), pos)
 	return result
 }
 
@@ -3545,9 +3478,7 @@ func (p *Parser) parseObjectTypeMembers() *ast.NodeList {
 
 func (p *Parser) parseTupleType() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewTupleTypeNode(p.parseBracketedList(PCTupleElementTypes, (*Parser).parseTupleElementNameOrTupleElementType, ast.KindOpenBracketToken, ast.KindCloseBracketToken))
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTupleTypeNode(p.parseBracketedList(PCTupleElementTypes, (*Parser).parseTupleElementNameOrTupleElementType, ast.KindOpenBracketToken, ast.KindCloseBracketToken)), pos)
 }
 
 func (p *Parser) parseTupleElementNameOrTupleElementType() *ast.Node {
@@ -3559,8 +3490,7 @@ func (p *Parser) parseTupleElementNameOrTupleElementType() *ast.Node {
 		questionToken := p.parseOptionalToken(ast.KindQuestionToken)
 		p.parseExpected(ast.KindColonToken)
 		typeNode := p.parseTupleElementType()
-		result := p.factory.NewNamedTupleMember(dotDotDotToken, name, questionToken, typeNode)
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewNamedTupleMember(dotDotDotToken, name, questionToken, typeNode), pos)
 		p.withJSDoc(result, hasJSDoc)
 		return result
 	}
@@ -3581,9 +3511,7 @@ func (p *Parser) nextTokenIsColonOrQuestionColon() bool {
 func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	pos := p.nodePos()
 	if p.parseOptional(ast.KindDotDotDotToken) {
-		result := p.factory.NewRestTypeNode(p.parseType())
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewRestTypeNode(p.parseType()), pos)
 	}
 	typeNode := p.parseType()
 	if ast.IsJSDocNullableType(typeNode) && typeNode.Pos() == typeNode.Type().Pos() {
@@ -3601,9 +3529,7 @@ func (p *Parser) parseParenthesizedType() *ast.Node {
 	p.parseExpected(ast.KindOpenParenToken)
 	typeNode := p.parseType()
 	p.parseExpected(ast.KindCloseParenToken)
-	result := p.factory.NewParenthesizedTypeNode(typeNode)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewParenthesizedTypeNode(typeNode), pos)
 }
 
 func (p *Parser) parseAssertsTypePredicate() *ast.TypeNode {
@@ -3619,16 +3545,12 @@ func (p *Parser) parseAssertsTypePredicate() *ast.TypeNode {
 	if p.parseOptional(ast.KindIsKeyword) {
 		typeNode = p.parseType()
 	}
-	result := p.factory.NewTypePredicateNode(assertsModifier, parameterName, typeNode)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypePredicateNode(assertsModifier, parameterName, typeNode), pos)
 }
 
 func (p *Parser) parseTemplateType() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewTemplateLiteralTypeNode(p.parseTemplateHead(false /*isTaggedTemplate*/), p.parseTemplateTypeSpans())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTemplateLiteralTypeNode(p.parseTemplateHead(false /*isTaggedTemplate*/), p.parseTemplateTypeSpans()), pos)
 }
 
 func (p *Parser) parseTemplateHead(isTaggedTemplate bool) *ast.Node {
@@ -3638,8 +3560,7 @@ func (p *Parser) parseTemplateHead(isTaggedTemplate bool) *ast.Node {
 	pos := p.nodePos()
 	result := p.factory.NewTemplateHead(p.scanner.TokenValue(), p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.TokenFlags()&ast.TokenFlagsTemplateLiteralLikeFlags)
 	p.nextToken()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) getTemplateLiteralRawText(endLength int) string {
@@ -3665,9 +3586,7 @@ func (p *Parser) parseTemplateTypeSpans() *ast.NodeList {
 
 func (p *Parser) parseTemplateTypeSpan() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewTemplateLiteralTypeSpan(p.parseType(), p.parseLiteralOfTemplateSpan(false /*isTaggedTemplate*/))
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTemplateLiteralTypeSpan(p.parseType(), p.parseLiteralOfTemplateSpan(false /*isTaggedTemplate*/)), pos)
 }
 
 func (p *Parser) parseLiteralOfTemplateSpan(isTaggedTemplate bool) *ast.Node {
@@ -3676,9 +3595,7 @@ func (p *Parser) parseLiteralOfTemplateSpan(isTaggedTemplate bool) *ast.Node {
 		return p.parseTemplateMiddleOrTail()
 	}
 	p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindCloseBraceToken))
-	result := p.factory.NewTemplateTail("", "", ast.TokenFlagsNone)
-	p.finishNode(result, p.nodePos())
-	return result
+	return p.finishNode(p.factory.NewTemplateTail("", "", ast.TokenFlagsNone), p.nodePos())
 }
 
 func (p *Parser) parseTemplateMiddleOrTail() *ast.Node {
@@ -3690,8 +3607,7 @@ func (p *Parser) parseTemplateMiddleOrTail() *ast.Node {
 		result = p.factory.NewTemplateTail(p.scanner.TokenValue(), p.getTemplateLiteralRawText(1 /*endLength*/), p.scanner.TokenFlags()&ast.TokenFlagsTemplateLiteralLikeFlags)
 	}
 	p.nextToken()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseFunctionOrConstructorTypeToError(isInUnionType bool, parseConstituentType func(p *Parser) *ast.TypeNode) *ast.TypeNode {
@@ -3728,7 +3644,7 @@ func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	modifiers := p.parseModifiersForConstructorType()
 	isConstructorType := p.parseOptional(ast.KindNewKeyword)
-	// Debug.assert(!modifiers || isConstructorType, "Per isStartOfFunctionOrConstructorType, a function type cannot have modifiers.")
+	debug.Assert(modifiers == nil || isConstructorType, "Per isStartOfFunctionOrConstructorType, a function type cannot have modifiers.")
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
 	returnType := p.parseReturnType(ast.KindEqualsGreaterThanToken, false /*isType*/)
@@ -3850,9 +3766,7 @@ func (p *Parser) parseDecorator() *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(ast.KindAtToken)
 	expression := doInContext(p, ast.NodeFlagsDecoratorContext, true, (*Parser).parseDecoratorExpression)
-	result := p.factory.NewDecorator(expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewDecorator(expression), pos)
 }
 
 func (p *Parser) parseDecoratorExpression() *ast.Expression {
@@ -3888,9 +3802,7 @@ func (p *Parser) tryParseModifier(hasSeenStaticModifier bool, permitConstAsModif
 			return nil
 		}
 	}
-	result := p.factory.NewModifier(kind)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewModifier(kind), pos)
 }
 
 func (p *Parser) parseContextualModifier(t ast.Kind) bool {
@@ -4143,8 +4055,7 @@ func (p *Parser) parseYieldExpression() *ast.Node {
 		// the start of an expression, then this is just a simple "yield" expression.
 		result = p.factory.NewYieldExpression(nil /*asteriskToken*/, nil /*expression*/)
 	}
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) isParenthesizedArrowFunctionExpression() core.Tristate {
@@ -4239,7 +4150,7 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 		// It is definitely not an arrow function
 		return core.TSFalse
 	} else {
-		// !!! Debug.assert(first == KindLessThanToken)
+		debug.Assert(first == ast.KindLessThanToken)
 		// If we have "<" not followed by an identifier,
 		// then this definitely is not an arrow function.
 		if !p.isIdentifier() && p.token != ast.KindConstKeyword {
@@ -4312,6 +4223,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 		if !allowAmbiguity {
 			return nil
 		}
+		parameters = p.parseEmptyNodeList()
 	} else {
 		if !allowAmbiguity {
 			maybeParameters := p.parseParametersWorker(signatureFlags, allowAmbiguity)
@@ -4384,9 +4296,9 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 			return nil
 		}
 	}
-	result := p.factory.NewArrowFunction(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, equalsGreaterThanToken, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewArrowFunction(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -4394,8 +4306,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 	if p.token == ast.KindAsyncKeyword {
 		pos := p.nodePos()
 		p.nextToken()
-		modifier := p.factory.NewModifier(ast.KindAsyncKeyword)
-		p.finishNode(modifier, pos)
+		modifier := p.finishNode(p.factory.NewModifier(ast.KindAsyncKeyword), pos)
 		return p.newModifierList(modifier.Loc, p.nodeSlicePool.NewSlice1(modifier))
 	}
 	return nil
@@ -4437,6 +4348,7 @@ func (p *Parser) parseArrowFunctionExpressionBody(isAsync bool, allowReturnTypeI
 	}
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, isAsync)
+	p.setContextFlags(ast.NodeFlagsYieldContext, false)
 	node := p.parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowFunction)
 	p.contextFlags = saveContextFlags
 	return node
@@ -4492,14 +4404,12 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 }
 
 func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Node, allowReturnTypeInArrowFunction bool, hasJSDoc bool, asyncModifier *ast.ModifierList) *ast.Node {
-	// Debug.assert(token() == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>");
-	parameter := p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/)
-	p.finishNode(parameter, identifier.Pos())
+	debug.Assert(p.token == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>")
+	parameter := p.finishNode(p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/), identifier.Pos())
 	parameters := p.newNodeList(parameter.Loc, []*ast.Node{parameter})
 	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
 	body := p.parseArrowFunctionExpressionBody(asyncModifier != nil /*isAsync*/, allowReturnTypeInArrowFunction)
-	result := p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*fullSignature*/, equalsGreaterThanToken, body)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -4524,9 +4434,7 @@ func (p *Parser) parseConditionalExpressionRest(leftOperand *ast.Expression, pos
 		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindColonToken))
 		falseExpression = p.createMissingIdentifier()
 	}
-	result := p.factory.NewConditionalExpression(leftOperand, questionToken, trueExpression, colonToken, falseExpression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewConditionalExpression(leftOperand, questionToken, trueExpression, colonToken, falseExpression), pos)
 }
 
 func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence) *ast.Expression {
@@ -4599,21 +4507,15 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 }
 
 func (p *Parser) makeSatisfiesExpression(expression *ast.Expression, typeNode *ast.TypeNode) *ast.Node {
-	result := p.factory.NewSatisfiesExpression(expression, typeNode)
-	p.finishNode(result, expression.Pos())
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewSatisfiesExpression(expression, typeNode), expression.Pos()))
 }
 
 func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *ast.Node {
-	result := p.factory.NewAsExpression(left, right)
-	p.finishNode(result, left.Pos())
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewAsExpression(left, right), left.Pos()))
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
-	result := p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right), pos)
 }
 
 func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
@@ -4648,7 +4550,7 @@ func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 		if simpleUnaryExpression.Kind == ast.KindTypeAssertionExpression {
 			p.parseErrorAt(pos, end, diagnostics.A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses)
 		} else {
-			// Debug.assert(isKeywordOrPunctuation(unaryOperator))
+			debug.Assert(isKeywordOrPunctuation(unaryOperator))
 			p.parseErrorAt(pos, end, diagnostics.An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses, scanner.TokenToString(unaryOperator))
 		}
 	}
@@ -4670,9 +4572,7 @@ func (p *Parser) parseUpdateExpression() *ast.Expression {
 	if p.token == ast.KindPlusPlusToken || p.token == ast.KindMinusMinusToken {
 		operator := p.token
 		p.nextToken()
-		result := p.factory.NewPrefixUnaryExpression(operator, p.parseLeftHandSideExpressionOrHigher())
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, p.parseLeftHandSideExpressionOrHigher()), pos)
 	} else if p.languageVariant == core.LanguageVariantJSX && p.token == ast.KindLessThanToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrGreaterThan) {
 		// JSXElement is part of primaryExpression
 		return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, false /*mustBeUnary*/)
@@ -4681,9 +4581,7 @@ func (p *Parser) parseUpdateExpression() *ast.Expression {
 	if (p.token == ast.KindPlusPlusToken || p.token == ast.KindMinusMinusToken) && !p.hasPrecedingLineBreak() {
 		operator := p.token
 		p.nextToken()
-		result := p.factory.NewPostfixUnaryExpression(expression, operator)
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewPostfixUnaryExpression(expression, operator), pos)
 	}
 	return expression
 }
@@ -4704,12 +4602,13 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 			// restructure (<div>(...<span>...</div>)) --> (<div>(...<span>...</>)</div>)
 			// (no need to error; the parent will error)
 			end := lastChild.AsJsxElement().OpeningElement.End()
-			missingIdentifier := p.newIdentifier("")
-			p.finishNodeWithEnd(missingIdentifier, end, end)
-			newClosingElement := p.factory.NewJsxClosingElement(missingIdentifier)
-			p.finishNodeWithEnd(newClosingElement, end, end)
-			newLast := p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.AsJsxElement().Children, newClosingElement)
-			p.finishNodeWithEnd(newLast, lastChild.AsJsxElement().OpeningElement.Pos(), end)
+			missingIdentifier := p.finishNodeWithEnd(p.newIdentifier(""), end, end)
+			newClosingElement := p.finishNodeWithEnd(p.factory.NewJsxClosingElement(missingIdentifier), end, end)
+			newLast := p.finishNodeWithEnd(
+				p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.AsJsxElement().Children, newClosingElement),
+				lastChild.AsJsxElement().OpeningElement.Pos(),
+				end,
+			)
 			// force reset parent pointers from discarded parse result
 			if lastChild.AsJsxElement().OpeningElement != nil {
 				lastChild.AsJsxElement().OpeningElement.Parent = newLast
@@ -4734,12 +4633,10 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 				}
 			}
 		}
-		result = p.factory.NewJsxElement(opening, children, closingElement)
-		p.finishNode(result, pos)
+		result = p.finishNode(p.factory.NewJsxElement(opening, children, closingElement), pos)
 		closingElement.Parent = result // force reset parent pointers from possibly discarded parse result
 	case ast.KindJsxOpeningFragment:
-		result = p.factory.NewJsxFragment(opening, p.parseJsxChildren(opening), p.parseJsxClosingFragment(inExpressionContext))
-		p.finishNode(result, pos)
+		result = p.finishNode(p.factory.NewJsxFragment(opening, p.parseJsxChildren(opening), p.parseJsxClosingFragment(inExpressionContext)), pos)
 	case ast.KindJsxSelfClosingElement:
 		// Nothing else to do for self-closing elements
 		result = opening
@@ -4764,8 +4661,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		operatorToken := p.factory.NewToken(ast.KindCommaToken)
 		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
 		p.parseErrorAt(scanner.SkipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
-		result = p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement)
-		p.finishNode(result, pos)
+		result = p.finishNode(p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement), pos)
 	}
 	return result
 }
@@ -4825,8 +4721,7 @@ func (p *Parser) parseJsxText() *ast.Node {
 	pos := p.nodePos()
 	result := p.factory.NewJsxText(p.scanner.TokenValue(), p.token == ast.KindJsxTextAllWhiteSpaces)
 	p.scanJsxText()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseJsxExpression(inExpressionContext bool) *ast.Node {
@@ -4850,9 +4745,7 @@ func (p *Parser) parseJsxExpression(inExpressionContext bool) *ast.Node {
 	} else if p.parseExpectedWithoutAdvancing(ast.KindCloseBraceToken) {
 		p.scanJsxText()
 	}
-	result := p.factory.NewJsxExpression(dotDotDotToken, expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxExpression(dotDotDotToken, expression), pos)
 }
 
 func (p *Parser) scanJsxText() ast.Kind {
@@ -4882,9 +4775,7 @@ func (p *Parser) parseJsxClosingElement(open *ast.Node, inExpressionContext bool
 			p.scanJsxText()
 		}
 	}
-	result := p.factory.NewJsxClosingElement(tagName)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxClosingElement(tagName), pos)
 }
 
 func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressionContext bool) *ast.Expression {
@@ -4893,9 +4784,7 @@ func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressi
 	if p.token == ast.KindGreaterThanToken {
 		// See below for explanation of scanJsxText
 		p.scanJsxText()
-		result := p.factory.NewJsxOpeningFragment()
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewJsxOpeningFragment(), pos)
 	}
 	tagName := p.parseJsxElementName()
 	var typeArguments *ast.NodeList
@@ -4921,8 +4810,7 @@ func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressi
 		}
 		result = p.factory.NewJsxSelfClosingElement(tagName, typeArguments, attributes)
 	}
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseJsxElementName() *ast.Expression {
@@ -4938,8 +4826,7 @@ func (p *Parser) parseJsxElementName() *ast.Expression {
 	}
 	expression := initialExpression
 	for p.parseOptional(ast.KindDotToken) {
-		expression = p.factory.NewPropertyAccessExpression(expression, nil, p.parseRightSideOfDot(true /*allowIdentifierNames*/, false /*allowPrivateIdentifiers*/, false /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone)
-		p.finishNode(expression, pos)
+		expression = p.finishNode(p.factory.NewPropertyAccessExpression(expression, nil, p.parseRightSideOfDot(true /*allowIdentifierNames*/, false /*allowPrivateIdentifiers*/, false /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone), pos)
 	}
 	return expression
 }
@@ -4951,23 +4838,18 @@ func (p *Parser) parseJsxTagName() *ast.Expression {
 	tagName := p.parseIdentifierNameErrorOnUnicodeEscapeSequence()
 	if p.parseOptional(ast.KindColonToken) {
 		p.scanJsxIdentifier()
-		result := p.factory.NewJsxNamespacedName(tagName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence())
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewJsxNamespacedName(tagName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence()), pos)
 	}
 	if isThis {
 		result := p.factory.NewKeywordExpression(ast.KindThisKeyword)
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(result, pos)
 	}
 	return tagName
 }
 
 func (p *Parser) parseJsxAttributes() *ast.Node {
 	pos := p.nodePos()
-	result := p.factory.NewJsxAttributes(p.parseList(PCJsxAttributes, (*Parser).parseJsxAttribute))
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxAttributes(p.parseList(PCJsxAttributes, (*Parser).parseJsxAttribute)), pos)
 }
 
 func (p *Parser) parseJsxAttribute() *ast.Node {
@@ -4975,9 +4857,7 @@ func (p *Parser) parseJsxAttribute() *ast.Node {
 		return p.parseJsxSpreadAttribute()
 	}
 	pos := p.nodePos()
-	result := p.factory.NewJsxAttribute(p.parseJsxAttributeName(), p.parseJsxAttributeValue())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxAttribute(p.parseJsxAttributeName(), p.parseJsxAttributeValue()), pos)
 }
 
 func (p *Parser) parseJsxSpreadAttribute() *ast.Node {
@@ -4986,9 +4866,7 @@ func (p *Parser) parseJsxSpreadAttribute() *ast.Node {
 	p.parseExpected(ast.KindDotDotDotToken)
 	expression := p.parseExpression()
 	p.parseExpected(ast.KindCloseBraceToken)
-	result := p.factory.NewJsxSpreadAttribute(expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxSpreadAttribute(expression), pos)
 }
 
 func (p *Parser) parseJsxAttributeName() *ast.Node {
@@ -4997,9 +4875,7 @@ func (p *Parser) parseJsxAttributeName() *ast.Node {
 	attrName := p.parseIdentifierNameErrorOnUnicodeEscapeSequence()
 	if p.parseOptional(ast.KindColonToken) {
 		p.scanJsxIdentifier()
-		result := p.factory.NewJsxNamespacedName(attrName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence())
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewJsxNamespacedName(attrName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence()), pos)
 	}
 	return attrName
 }
@@ -5031,9 +4907,7 @@ func (p *Parser) parseJsxClosingFragment(inExpressionContext bool) *ast.Node {
 			p.scanJsxText()
 		}
 	}
-	result := p.factory.NewJsxClosingFragment()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewJsxClosingFragment(), pos)
 }
 
 func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
@@ -5070,33 +4944,25 @@ func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
 	pos := p.nodePos()
 	operator := p.token
 	p.nextToken()
-	result := p.factory.NewPrefixUnaryExpression(operator, p.parseSimpleUnaryExpression())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseDeleteExpression() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewDeleteExpression(p.parseSimpleUnaryExpression())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewDeleteExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseTypeOfExpression() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewTypeOfExpression(p.parseSimpleUnaryExpression())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeOfExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseVoidExpression() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewVoidExpression(p.parseSimpleUnaryExpression())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewVoidExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) isAwaitExpression() bool {
@@ -5113,21 +4979,17 @@ func (p *Parser) isAwaitExpression() bool {
 func (p *Parser) parseAwaitExpression() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
-	result := p.factory.NewAwaitExpression(p.parseSimpleUnaryExpression())
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewAwaitExpression(p.parseSimpleUnaryExpression()), pos)
 }
 
 func (p *Parser) parseTypeAssertion() *ast.Node {
-	// !!! Debug.assert(languageVariant !== core.LanguageVariant.JSX, "Type assertions should never be parsed in JSX; they should be parsed as comparisons or JSX elements/fragments.");
+	debug.Assert(p.languageVariant != core.LanguageVariantJSX, "Type assertions should never be parsed in JSX; they should be parsed as comparisons or JSX elements/fragments.")
 	pos := p.nodePos()
 	p.parseExpected(ast.KindLessThanToken)
 	typeNode := p.parseType()
 	p.parseExpected(ast.KindGreaterThanToken)
 	expression := p.parseSimpleUnaryExpression()
-	result := p.factory.NewTypeAssertion(typeNode, expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTypeAssertion(typeNode, expression), pos)
 }
 
 func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
@@ -5177,9 +5039,14 @@ func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 			// This is an 'import.*' metaproperty (i.e. 'import.meta')
 			p.nextToken() // advance past the 'import'
 			p.nextToken() // advance past the dot
-			expression = p.factory.NewMetaProperty(ast.KindImportKeyword, p.parseIdentifierName())
-			p.finishNode(expression, pos)
-			p.sourceFlags |= ast.NodeFlagsPossiblyContainsImportMeta
+			expression = p.finishNode(p.factory.NewMetaProperty(ast.KindImportKeyword, p.parseIdentifierName()), pos)
+			if expression.Text() == "defer" {
+				if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
+					p.sourceFlags |= ast.NodeFlagsPossiblyContainsDynamicImport
+				}
+			} else {
+				p.sourceFlags |= ast.NodeFlagsPossiblyContainsImportMeta
+			}
 		} else {
 			expression = p.parseMemberExpressionOrHigher()
 		}
@@ -5207,8 +5074,7 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 		if typeArguments != nil {
 			p.parseErrorAt(startPos, p.nodePos(), diagnostics.X_super_may_not_use_type_arguments)
 			if !p.isTemplateStartOfTaggedTemplate() {
-				expression = p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
-				p.finishNode(expression, pos)
+				expression = p.finishNode(p.factory.NewExpressionWithTypeArguments(expression, typeArguments), pos)
 			}
 		}
 	}
@@ -5219,9 +5085,7 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 	// If it wasn't then just try to parse out a '.' and report an error.
 	p.parseErrorAtCurrentToken(diagnostics.X_super_must_be_followed_by_an_argument_list_or_member_access)
 	// private names will never work with `super` (`super.#foo`), but that's a semantic error, not syntactic
-	result := p.factory.NewPropertyAccessExpression(expression, nil /*questionDotToken*/, p.parseRightSideOfDot(true /*allowIdentifierNames*/, true /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewPropertyAccessExpression(expression, nil /*questionDotToken*/, p.parseRightSideOfDot(true /*allowIdentifierNames*/, true /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone), pos)
 }
 
 func (p *Parser) isTemplateStartOfTaggedTemplate() bool {
@@ -5355,14 +5219,12 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 		if questionDotToken == nil {
 			if p.token == ast.KindExclamationToken && !p.hasPrecedingLineBreak() {
 				p.nextToken()
-				expression = p.factory.NewNonNullExpression(expression, ast.NodeFlagsNone)
-				p.finishNode(expression, pos)
+				expression = p.checkJSSyntax(p.finishNode(p.factory.NewNonNullExpression(expression, ast.NodeFlagsNone), pos))
 				continue
 			}
 			typeArguments := p.tryParseTypeArgumentsInExpression()
 			if typeArguments != nil {
-				expression = p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
-				p.finishNode(expression, pos)
+				expression = p.finishNode(p.factory.NewExpressionWithTypeArguments(expression, typeArguments), pos)
 				continue
 			}
 		}
@@ -5393,8 +5255,7 @@ func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expr
 			p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
 		}
 	}
-	p.finishNode(propertyAccess, pos)
-	return propertyAccess
+	return p.finishNode(propertyAccess, pos)
 }
 
 func (p *Parser) tryReparseOptionalChain(node *ast.Expression) bool {
@@ -5438,9 +5299,7 @@ func (p *Parser) parseElementAccessExpressionRest(pos int, expression *ast.Expre
 	}
 	p.parseExpected(ast.KindCloseBracketToken)
 	isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
-	elementAccess := p.factory.NewElementAccessExpression(expression, questionDotToken, argumentExpression, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone))
-	p.finishNode(elementAccess, pos)
-	return elementAccess
+	return p.finishNode(p.factory.NewElementAccessExpression(expression, questionDotToken, argumentExpression, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos)
 }
 
 func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *ast.Expression {
@@ -5464,8 +5323,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 			inner := expression
 			argumentList := p.parseArgumentList()
 			isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
-			expression = p.factory.NewCallExpression(expression, questionDotToken, typeArguments, argumentList, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone))
-			p.finishNode(expression, pos)
+			expression = p.checkJSSyntax(p.finishNode(p.factory.NewCallExpression(expression, questionDotToken, typeArguments, argumentList, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
 			p.unparseExpressionWithTypeArguments(inner, typeArguments, expression)
 			continue
 		}
@@ -5473,8 +5331,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 			// We parsed `?.` but then failed to parse anything, so report a missing identifier here.
 			p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 			name := p.createMissingIdentifier()
-			expression = p.factory.NewPropertyAccessExpression(expression, questionDotToken, name, ast.NodeFlagsOptionalChain)
-			p.finishNode(expression, pos)
+			expression = p.finishNode(p.factory.NewPropertyAccessExpression(expression, questionDotToken, name, ast.NodeFlagsOptionalChain), pos)
 		}
 		break
 	}
@@ -5497,9 +5354,7 @@ func (p *Parser) parseArgumentOrArrayLiteralElement() *ast.Expression {
 	case ast.KindDotDotDotToken:
 		return p.parseSpreadElement()
 	case ast.KindCommaToken:
-		result := p.factory.NewOmittedExpression()
-		p.finishNode(result, p.nodePos())
-		return result
+		return p.finishNode(p.factory.NewOmittedExpression(), p.nodePos())
 	}
 	return p.parseAssignmentExpressionOrHigher()
 }
@@ -5508,9 +5363,7 @@ func (p *Parser) parseSpreadElement() *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(ast.KindDotDotDotToken)
 	expression := p.parseAssignmentExpressionOrHigher()
-	result := p.factory.NewSpreadElement(expression)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewSpreadElement(expression), pos)
 }
 
 func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionDotToken *ast.Node, typeArguments *ast.NodeList) *ast.Node {
@@ -5522,16 +5375,12 @@ func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionD
 		template = p.parseTemplateExpression(true /*isTaggedTemplate*/)
 	}
 	isOptionalChain := questionDotToken != nil || tag.Flags&ast.NodeFlagsOptionalChain != 0
-	result := p.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone))
-	p.finishNode(result, pos)
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
 }
 
 func (p *Parser) parseTemplateExpression(isTaggedTemplate bool) *ast.Expression {
 	pos := p.nodePos()
-	result := p.factory.NewTemplateExpression(p.parseTemplateHead(isTaggedTemplate), p.parseTemplateSpans(isTaggedTemplate))
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTemplateExpression(p.parseTemplateHead(isTaggedTemplate), p.parseTemplateSpans(isTaggedTemplate)), pos)
 }
 
 func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) *ast.NodeList {
@@ -5551,9 +5400,7 @@ func (p *Parser) parseTemplateSpan(isTaggedTemplate bool) *ast.Node {
 	pos := p.nodePos()
 	expression := p.parseExpressionAllowIn()
 	literal := p.parseLiteralOfTemplateSpan(isTaggedTemplate)
-	result := p.factory.NewTemplateSpan(expression, literal)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewTemplateSpan(expression, literal), pos)
 }
 
 func (p *Parser) parsePrimaryExpression() *ast.Expression {
@@ -5607,8 +5454,7 @@ func (p *Parser) parseParenthesizedExpression() *ast.Expression {
 	p.parseExpected(ast.KindOpenParenToken)
 	expression := p.parseExpressionAllowIn()
 	p.parseExpected(ast.KindCloseParenToken)
-	result := p.factory.NewParenthesizedExpression(expression)
-	p.finishNode(result, pos)
+	result := p.finishNode(p.factory.NewParenthesizedExpression(expression), pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
 }
@@ -5620,9 +5466,7 @@ func (p *Parser) parseArrayLiteralExpression() *ast.Expression {
 	multiLine := p.hasPrecedingLineBreak()
 	elements := p.parseDelimitedList(PCArrayLiteralMembers, (*Parser).parseArgumentOrArrayLiteralElement)
 	p.parseExpectedMatchingBrackets(ast.KindOpenBracketToken, ast.KindCloseBracketToken, openBracketParsed, openBracketPosition)
-	result := p.factory.NewArrayLiteralExpression(elements, multiLine)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewArrayLiteralExpression(elements, multiLine), pos)
 }
 
 func (p *Parser) parseObjectLiteralExpression() *ast.Expression {
@@ -5632,9 +5476,7 @@ func (p *Parser) parseObjectLiteralExpression() *ast.Expression {
 	multiLine := p.hasPrecedingLineBreak()
 	properties := p.parseDelimitedList(PCObjectLiteralMembers, (*Parser).parseObjectLiteralElement)
 	p.parseExpectedMatchingBrackets(ast.KindOpenBraceToken, ast.KindCloseBraceToken, openBraceParsed, openBracePosition)
-	result := p.factory.NewObjectLiteralExpression(properties, multiLine)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewObjectLiteralExpression(properties, multiLine), pos)
 }
 
 func (p *Parser) parseObjectLiteralElement() *ast.Node {
@@ -5642,8 +5484,7 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	if p.parseOptional(ast.KindDotDotDotToken) {
 		expression := p.parseAssignmentExpressionOrHigher()
-		result := p.factory.NewSpreadAssignment(expression)
-		p.finishNode(result, pos)
+		result := p.finishNode(p.factory.NewSpreadAssignment(expression), pos)
 		p.withJSDoc(result, hasJSDoc)
 		return result
 	}
@@ -5725,6 +5566,7 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	result := p.factory.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -5743,9 +5585,7 @@ func (p *Parser) parseDecoratedExpression() *ast.Expression {
 		return p.parseClassDeclarationOrExpression(pos, hasJSDoc, modifiers, ast.KindClassExpression)
 	}
 	p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Expression_expected)
-	result := p.factory.NewMissingDeclaration(modifiers)
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(p.factory.NewMissingDeclaration(modifiers), pos)
 }
 
 func (p *Parser) unparseExpressionWithTypeArguments(expression *ast.Node, typeArguments *ast.NodeList, result *ast.Node) {
@@ -5765,9 +5605,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	p.parseExpected(ast.KindNewKeyword)
 	if p.parseOptional(ast.KindDotToken) {
 		name := p.parseIdentifierName()
-		result := p.factory.NewMetaProperty(ast.KindNewKeyword, name)
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.factory.NewMetaProperty(ast.KindNewKeyword, name), pos)
 	}
 	expressionPos := p.nodePos()
 	expression := p.parseMemberExpressionRest(expressionPos, p.parsePrimaryExpression(), false /*allowOptionalChain*/)
@@ -5784,8 +5622,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	if p.token == ast.KindOpenParenToken {
 		argumentList = p.parseArgumentList()
 	}
-	result := p.factory.NewNewExpression(expression, typeArguments, argumentList)
-	p.finishNode(result, pos)
+	result := p.checkJSSyntax(p.finishNode(p.factory.NewNewExpression(expression, typeArguments, argumentList), pos))
 	p.unparseExpressionWithTypeArguments(expression, typeArguments, result)
 	return result
 }
@@ -5794,8 +5631,7 @@ func (p *Parser) parseKeywordExpression() *ast.Node {
 	pos := p.nodePos()
 	result := p.factory.NewKeywordExpression(p.token)
 	p.nextToken()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
@@ -5826,8 +5662,7 @@ func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
 		panic("Unhandled case in parseLiteralExpression")
 	}
 	p.nextToken()
-	p.finishNode(result, pos)
-	return result
+	return p.finishNode(result, pos)
 }
 
 func (p *Parser) parseIdentifierNameErrorOnUnicodeEscapeSequence() *ast.Node {
@@ -5878,9 +5713,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 		}
 		text := p.scanner.TokenValue()
 		p.nextTokenWithoutCheck()
-		result := p.newIdentifier(p.internIdentifier(text))
-		p.finishNode(result, pos)
-		return result
+		return p.finishNode(p.newIdentifier(p.internIdentifier(text)), pos)
 	}
 	if p.token == ast.KindPrivateIdentifier {
 		if privateIdentifierDiagnosticMessage != nil {
@@ -5924,11 +5757,11 @@ func (p *Parser) newModifierList(loc core.TextRange, nodes []*ast.Node) *ast.Mod
 	return list
 }
 
-func (p *Parser) finishNode(node *ast.Node, pos int) {
-	p.finishNodeWithEnd(node, pos, p.nodePos())
+func (p *Parser) finishNode(node *ast.Node, pos int) *ast.Node {
+	return p.finishNodeWithEnd(node, pos, p.nodePos())
 }
 
-func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
+func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) *ast.Node {
 	node.Loc = core.NewTextRange(pos, end)
 	node.Flags |= p.contextFlags
 	if p.hasParseError {
@@ -5936,6 +5769,7 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		p.hasParseError = false
 	}
 	p.overrideParentInImmediateChildren(node)
+	return node
 }
 
 func (p *Parser) overrideParentInImmediateChildren(node *ast.Node) {
@@ -6011,7 +5845,7 @@ func (p *Parser) scanClassMemberStart() bool {
 	// If we were able to get any potential identifier...
 	if idToken != ast.KindUnknown {
 		// If we have a non-keyword identifier, or if we have an accessor, then it's safe to parse.
-		if !isKeyword(idToken) || idToken == ast.KindSetKeyword || idToken == ast.KindGetKeyword {
+		if !ast.IsKeyword(idToken) || idToken == ast.KindSetKeyword || idToken == ast.KindGetKeyword {
 			return true
 		}
 		// If it *is* a keyword, but not an accessor, check a little farther along
@@ -6075,7 +5909,7 @@ func (p *Parser) isStartOfStatement() bool {
 	case ast.KindConstKeyword, ast.KindExportKeyword:
 		return p.isStartOfDeclaration()
 	case ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindInterfaceKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword,
-		ast.KindTypeKeyword, ast.KindGlobalKeyword:
+		ast.KindTypeKeyword, ast.KindGlobalKeyword, ast.KindDeferKeyword:
 		// When these don't start a declaration, they're an identifier in an expression statement
 		return true
 	case ast.KindAccessorKeyword, ast.KindPublicKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindStaticKeyword,
@@ -6124,7 +5958,7 @@ func (p *Parser) scanStartOfDeclaration() bool {
 		//   I {}
 		//
 		// could be legal, it would add complexity for very little gain.
-		case ast.KindInterfaceKeyword, ast.KindTypeKeyword:
+		case ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword:
 			return p.nextTokenIsIdentifierOnSameLine()
 		case ast.KindModuleKeyword, ast.KindNamespaceKeyword:
 			return p.nextTokenIsIdentifierOrStringLiteralOnSameLine()
@@ -6147,7 +5981,7 @@ func (p *Parser) scanStartOfDeclaration() bool {
 			return p.token == ast.KindOpenBraceToken || p.token == ast.KindIdentifier || p.token == ast.KindExportKeyword
 		case ast.KindImportKeyword:
 			p.nextToken()
-			return p.token == ast.KindStringLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || tokenIsIdentifierOrKeyword(p.token)
+			return p.token == ast.KindDeferKeyword || p.token == ast.KindStringLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || tokenIsIdentifierOrKeyword(p.token)
 		case ast.KindExportKeyword:
 			p.nextToken()
 			if p.token == ast.KindEqualsToken || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken ||
@@ -6411,10 +6245,6 @@ func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
 	return core.NewTextRange(scanner.SkipTrivia(p.sourceText, textRange.Pos()), textRange.End())
 }
 
-func isKeyword(token ast.Kind) bool {
-	return ast.KindFirstKeyword <= token && token <= ast.KindLastKeyword
-}
-
 func isReservedWord(token ast.Kind) bool {
 	return ast.KindFirstReservedWord <= token && token <= ast.KindLastReservedWord
 }
@@ -6622,7 +6452,7 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			case typesOk:
 				var parsed core.ResolutionMode
 				if resolutionModeOk {
-					parsed = parseResolutionMode(resolutionMode.Value, types.Pos(), types.End() /*, reportDiagnostic*/)
+					parsed = parseResolutionMode(resolutionMode.Value, resolutionMode.Pos(), resolutionMode.End() /*, reportDiagnostic*/)
 				}
 				context.TypeReferenceDirectives = append(context.TypeReferenceDirectives, &ast.FileReference{
 					TextRange:      types.TextRange,
@@ -6632,13 +6462,13 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 				})
 			case libOk:
 				context.LibReferenceDirectives = append(context.LibReferenceDirectives, &ast.FileReference{
-					TextRange: types.TextRange,
+					TextRange: lib.TextRange,
 					FileName:  lib.Value,
 					Preserve:  preserveOk && preserve.Value == "true",
 				})
 			case pathOk:
 				context.ReferencedFiles = append(context.ReferencedFiles, &ast.FileReference{
-					TextRange: types.TextRange,
+					TextRange: path.TextRange,
 					FileName:  path.Value,
 					Preserve:  preserveOk && preserve.Value == "true",
 				})
@@ -6673,4 +6503,95 @@ func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: Pragm
 	return resolutionKind
 	// reportDiagnostic(pos, end - pos, Diagnostics.resolution_mode_should_be_either_require_or_import);
 	// return undefined;
+}
+
+func (p *Parser) jsErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) {
+	p.jsDiagnostics = append(p.jsDiagnostics, ast.NewDiagnostic(nil, core.NewTextRange(scanner.SkipTrivia(p.sourceText, loc.Pos()), loc.End()), message, args...))
+}
+
+func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
+	if node.Flags&ast.NodeFlagsJavaScriptFile == 0 || node.Flags&(ast.NodeFlagsJSDoc|ast.NodeFlagsReparsed) != 0 {
+		return node
+	}
+	switch node.Kind {
+	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
+		if token := node.PostfixToken(); token != nil && token.Flags&ast.NodeFlagsReparsed == 0 && ast.IsQuestionToken(token) {
+			p.jsErrorAtRange(token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?")
+		}
+		fallthrough
+	case ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionExpression,
+		ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration, ast.KindIndexSignature:
+		if ast.IsFunctionLike(node) && node.Body() == nil {
+			p.jsErrorAtRange(node.Loc, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files)
+		} else if t := node.Type(); t != nil && t.Flags&ast.NodeFlagsReparsed == 0 {
+			p.jsErrorAtRange(t.Loc, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindImportDeclaration:
+		if clause := node.AsImportDeclaration().ImportClause; clause != nil && clause.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type")
+		}
+	case ast.KindExportDeclaration:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type")
+		}
+	case ast.KindImportSpecifier:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type")
+		}
+	case ast.KindExportSpecifier:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type")
+		}
+	case ast.KindImportEqualsDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.X_import_can_only_be_used_in_TypeScript_files)
+	case ast.KindExportAssignment:
+		if node.AsExportAssignment().IsExportEquals {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_export_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindHeritageClause:
+		if node.AsHeritageClause().Token == ast.KindImplementsKeyword {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindInterfaceDeclaration:
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
+	case ast.KindModuleDeclaration:
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
+	case ast.KindTypeAliasDeclaration:
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
+	case ast.KindEnumDeclaration:
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum")
+	case ast.KindNonNullExpression:
+		p.jsErrorAtRange(node.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files)
+	case ast.KindAsExpression:
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files)
+	case ast.KindSatisfiesExpression:
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files)
+	}
+	// Check absence of type parameters, type arguments and non-JavaScript modifiers
+	switch node.Kind {
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor,
+		ast.KindSetAccessor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction:
+		if list := node.TypeParameterList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
+			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files)
+		}
+		fallthrough
+	case ast.KindVariableStatement, ast.KindPropertyDeclaration:
+		if modifiers := node.Modifiers(); modifiers != nil {
+			for _, modifier := range modifiers.Nodes {
+				if modifier.Flags&ast.NodeFlagsReparsed == 0 && modifier.Kind != ast.KindDecorator && ast.ModifierToFlag(modifier.Kind)&ast.ModifierFlagsJavaScript == 0 {
+					p.jsErrorAtRange(modifier.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind))
+				}
+			}
+		}
+	case ast.KindParameter:
+		if core.Some(node.ModifierNodes(), ast.IsModifier) {
+			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindExpressionWithTypeArguments, ast.KindJsxSelfClosingElement,
+		ast.KindJsxOpeningElement, ast.KindTaggedTemplateExpression:
+		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
+			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files)
+		}
+	}
+	return node
 }
