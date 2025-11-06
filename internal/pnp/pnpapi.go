@@ -346,10 +346,10 @@ func (p *PnpApi) GetPackageLocationAbsolutePath(packageInfo *PackageInfo) string
 	return tspath.ResolvePath(p.manifest.dirPath, packageLocation)
 }
 
+// Checks if fromFileName and toFileName are in different pnp modules
 func (p *PnpApi) IsInPnpModule(fromFileName string, toFileName string) bool {
 	fromLocator, _ := p.FindLocator(fromFileName)
 	toLocator, _ := p.FindLocator(toFileName)
-	// The targeted filename is in a pnp module different from the requesting filename
 	return fromLocator != nil && toLocator != nil && fromLocator.Name != toLocator.Name
 }
 
