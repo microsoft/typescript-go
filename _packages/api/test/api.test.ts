@@ -8,10 +8,10 @@ import {
     cast,
     isImportDeclaration,
     isNamedImports,
+    isStringLiteral,
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
-    isStringLiteral,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
@@ -118,7 +118,7 @@ test("unicode escapes", () => {
     const srcFiles = {
         "/src/1.ts": `"😃"`,
         "/src/2.ts": `"\\ud83d\\ude03"`, // this is "😃"
-    }
+    };
 
     const api = spawnAPI({
         "/tsconfig.json": "{}",
@@ -126,7 +126,7 @@ test("unicode escapes", () => {
     });
     const project = api.loadProject("/tsconfig.json");
 
-    Object.keys(srcFiles).forEach((file) => {
+    Object.keys(srcFiles).forEach(file => {
         const sourceFile = project.getSourceFile(file);
         assert.ok(sourceFile);
 
@@ -136,7 +136,7 @@ test("unicode escapes", () => {
             }
             node.forEachChild(visit);
         });
-    })
+    });
 });
 
 test("Object equality", () => {
