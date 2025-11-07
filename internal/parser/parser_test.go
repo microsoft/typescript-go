@@ -5,6 +5,8 @@ import (
 	"iter"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -95,7 +97,6 @@ func FuzzParser(f *testing.F) {
 		"src",
 		"scripts",
 		"Herebyfile.mjs",
-		// "tests/cases",
 	}
 
 	var extensions collections.Set[string]
@@ -113,6 +114,37 @@ func FuzzParser(f *testing.F) {
 			assert.NilError(f, err)
 			extension := tspath.TryGetExtensionFromPath(file.path)
 			f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), uint8(ast.JSDocParsingModeParseAll))
+		}
+	}
+
+	testDirs := []string{
+		filepath.Join(repo.TypeScriptSubmodulePath, "tests/cases/compiler"),
+		filepath.Join(repo.TypeScriptSubmodulePath, "tests/cases/conformance"),
+		filepath.Join(repo.TestDataPath, "tests/cases/compiler"),
+	}
+
+	for _, testDir := range testDirs {
+		if _, err := os.Stat(testDir); os.IsNotExist(err) {
+			continue
+		}
+
+		for file := range allParsableFiles(f, testDir) {
+			sourceText, err := os.ReadFile(file.path)
+			assert.NilError(f, err)
+
+			testUnits, _, _, _, err := parseTestFilesAndSymlinks(
+				string(sourceText),
+				file.path,
+			)
+			assert.NilError(f, err)
+
+			for _, unit := range testUnits {
+				extension := tspath.TryGetExtensionFromPath(unit.name)
+				if extension == "" {
+					continue
+				}
+				f.Add(extension, unit.content, int32(core.ScriptTargetESNext), uint8(ast.JSDocParsingModeParseAll))
+			}
 		}
 	}
 
@@ -143,4 +175,58 @@ func FuzzParser(f *testing.F) {
 
 		parser.ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
 	})
+}
+
+type testUnit struct {
+	content string
+	name    string
+}
+
+// parseTestFilesAndSymlinks is a simplified version of testrunner.ParseTestFilesAndSymlinks
+// that extracts individual file units from compiler test files.
+func parseTestFilesAndSymlinks(
+	code string,
+	fileName string,
+) (units []testUnit, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
+	var testUnits []testUnit
+	var currentFileContent strings.Builder
+	var currentFileName string
+	symlinks = make(map[string]string)
+	globalOptions = make(map[string]string)
+
+	// Regex for parsing @filename directive
+	filenameRegex := regexp.MustCompile(`(?m)^\/\/\s*@filename\s*:\s*([^\r\n]*)`)
+
+	lines := strings.Split(code, "\n")
+	for _, line := range lines {
+		if match := filenameRegex.FindStringSubmatch(line); match != nil {
+			// New file directive
+			if currentFileName != "" {
+				// Save previous file
+				testUnits = append(testUnits, testUnit{
+					content: currentFileContent.String(),
+					name:    currentFileName,
+				})
+				currentFileContent.Reset()
+			}
+			currentFileName = strings.TrimSpace(match[1])
+		} else {
+			// Content line
+			if currentFileContent.Len() != 0 {
+				currentFileContent.WriteRune('\n')
+			}
+			currentFileContent.WriteString(line)
+		}
+	}
+
+	// Handle single-file case or save last file
+	if currentFileName == "" {
+		currentFileName = filepath.Base(fileName)
+	}
+	testUnits = append(testUnits, testUnit{
+		content: currentFileContent.String(),
+		name:    currentFileName,
+	})
+
+	return testUnits, symlinks, currentDir, globalOptions, nil
 }
