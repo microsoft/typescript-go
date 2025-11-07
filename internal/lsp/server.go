@@ -490,6 +490,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentInlayHintInfo, (*Server).handleInlayHint)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -672,6 +673,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
 				Boolean: ptrTo(true),
 			},
+			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
 		},
 	}
 
@@ -800,15 +804,11 @@ func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTracePar
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
-	var diagnosticClientCapabilities *lsproto.DiagnosticClientCapabilities
-	if s.initializeParams != nil && s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
-		diagnosticClientCapabilities = s.initializeParams.Capabilities.TextDocument.Diagnostic
-	}
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri, diagnosticClientCapabilities)
+	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri, getDiagnosticClientCapabilities(s.initializeParams))
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
-	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
+	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position, getHoverContentFormat(s.initializeParams))
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
@@ -818,6 +818,7 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 		params.Position,
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
+		getSignatureHelpDocumentationFormat(s.initializeParams),
 	)
 }
 
@@ -836,7 +837,7 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params)
+	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.initializeParams))
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -903,7 +904,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
-	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
+	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri, getDocumentSymbolClientSupportsHierarchical(s.initializeParams))
 }
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
@@ -977,6 +978,14 @@ func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.
 	return params.Capabilities.TextDocument.Completion
 }
 
+func (s *Server) handleInlayHint(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.InlayHintParams,
+) (lsproto.InlayHintResponse, error) {
+	return languageService.ProvideInlayHint(ctx, params)
+}
+
 func getDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
 	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
 		params.Capabilities.TextDocument.Definition == nil {
@@ -991,4 +1000,73 @@ func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool 
 		return false
 	}
 	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
+}
+
+func getImplementationClientSupportsLink(params *lsproto.InitializeParams) bool {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
+		params.Capabilities.TextDocument.Implementation == nil {
+		return false
+	}
+	return ptrIsTrue(params.Capabilities.TextDocument.Implementation.LinkSupport)
+}
+
+func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParams) bool {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
+		params.Capabilities.TextDocument.DocumentSymbol == nil {
+		return false
+	}
+	return ptrIsTrue(params.Capabilities.TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport)
+}
+
+func getHoverContentFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.Hover == nil || params.Capabilities.TextDocument.Hover.ContentFormat == nil {
+		// Default to plaintext if no preference specified
+		return lsproto.MarkupKindPlainText
+	}
+	formats := *params.Capabilities.TextDocument.Hover.ContentFormat
+	if len(formats) == 0 {
+		return lsproto.MarkupKindPlainText
+	}
+	// Return the first (most preferred) format
+	return formats[0]
+}
+
+func getSignatureHelpDocumentationFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.SignatureHelp == nil ||
+		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation == nil ||
+		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat == nil {
+		// Default to plaintext if no preference specified
+		return lsproto.MarkupKindPlainText
+	}
+	formats := *params.Capabilities.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat
+	if len(formats) == 0 {
+		return lsproto.MarkupKindPlainText
+	}
+	// Return the first (most preferred) format
+	return formats[0]
+}
+
+func getDiagnosticClientCapabilities(params *lsproto.InitializeParams) *lsproto.DiagnosticClientCapabilities {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+
+	var caps lsproto.DiagnosticClientCapabilities
+	if params.Capabilities.TextDocument.Diagnostic != nil {
+		caps = *params.Capabilities.TextDocument.Diagnostic
+	}
+
+	// Some clients claim that push and pull diagnostics have different capabilities,
+	// including vscode-languageclient v9. Work around this by defaulting any missing
+	// pull diagnostic caps with the pull diagnostic equivalents.
+	//
+	// TODO: remove when we upgrade to vscode-languageclient v10, which fixes this issue.
+	if publish := params.Capabilities.TextDocument.PublishDiagnostics; publish != nil {
+		caps.RelatedInformation = core.Coalesce(caps.RelatedInformation, publish.RelatedInformation)
+		caps.TagSupport = core.Coalesce(caps.TagSupport, publish.TagSupport)
+		caps.CodeDescriptionSupport = core.Coalesce(caps.CodeDescriptionSupport, publish.CodeDescriptionSupport)
+		caps.DataSupport = core.Coalesce(caps.DataSupport, publish.DataSupport)
+	}
+
+	return &caps
 }

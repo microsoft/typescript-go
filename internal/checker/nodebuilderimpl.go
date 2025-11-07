@@ -2034,10 +2034,8 @@ func (b *NodeBuilderImpl) shouldUsePlaceholderForProperty(propertySymbol *ast.Sy
 		return false
 	}
 	// (1)
-	for _, elem := range b.ctx.reverseMappedStack {
-		if elem == propertySymbol {
-			return true
-		}
+	if slices.Contains(b.ctx.reverseMappedStack, propertySymbol) {
+		return true
 	}
 	// (2)
 	if len(b.ctx.reverseMappedStack) > 0 {
@@ -3066,13 +3064,13 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	if t.flags&TypeFlagsTemplateLiteral != 0 {
 		texts := t.AsTemplateLiteralType().texts
 		types := t.AsTemplateLiteralType().types
-		templateHead := b.f.NewTemplateHead(texts[0], texts[0], ast.TokenFlagsNone)
+		templateHead := b.f.NewTemplateHead(texts[0], "", ast.TokenFlagsNone)
 		templateSpans := b.f.NewNodeList(core.MapIndex(types, func(t *Type, i int) *ast.Node {
 			var res *ast.TemplateMiddleOrTail
 			if i < len(types)-1 {
-				res = b.f.NewTemplateMiddle(texts[i+1], texts[i+1], ast.TokenFlagsNone)
+				res = b.f.NewTemplateMiddle(texts[i+1], "", ast.TokenFlagsNone)
 			} else {
-				res = b.f.NewTemplateTail(texts[i+1], texts[i+1], ast.TokenFlagsNone)
+				res = b.f.NewTemplateTail(texts[i+1], "", ast.TokenFlagsNone)
 			}
 			return b.f.NewTemplateLiteralTypeSpan(b.typeToTypeNode(t), res)
 		}))
