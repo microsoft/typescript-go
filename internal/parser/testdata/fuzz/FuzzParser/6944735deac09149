@@ -1,5 +1,4 @@
 go test fuzz v1
 string(".ts")
 string("/*/")
-rune('c')
 byte('\x00')

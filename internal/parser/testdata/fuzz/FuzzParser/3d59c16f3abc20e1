@@ -1,5 +1,4 @@
 go test fuzz v1
 string(".ts")
 string("/**@typedef @type object00")
-rune('\x04')
 byte('\x00')
