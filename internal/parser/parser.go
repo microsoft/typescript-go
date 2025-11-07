@@ -6397,6 +6397,9 @@ func skipNonBlanks(text string, pos int) int {
 }
 
 func skipTo(text string, pos int, s string) int {
+	if pos >= len(text) {
+		return -1
+	}
 	i := strings.Index(text[pos:], s)
 	if i < 0 {
 		return -1
