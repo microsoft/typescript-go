@@ -69,7 +69,7 @@ jobs:
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
-          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
+          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
             name: 'race mode'
             race: true
             skip: ${{ github.event_name == 'merge_group' }}
@@ -243,7 +243,16 @@ jobs:
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/generate.mts
 
       - name: Regenerate fourslash tests and update failing test list
-        run: npm run updatefailing
+        run: |
+          echo "" > ./internal/fourslash/_scripts/failingTests.txt
+          npm run convertfourslash || true
+          npx hereby test || true
+          npx hereby baseline-accept || true
+          npm run updatefailing || true
+          npx hereby baseline-accept || true
+          rm -rf testdata/baselines/reference/fourslash || true
+          npx hereby test || true
+          npx hereby baseline-accept || true
 
       - run: git add .
       - run: git diff --staged --exit-code --stat

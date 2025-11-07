@@ -22,28 +22,28 @@ type FileSource interface {
 
 var (
 	_ FileSource = (*snapshotFSBuilder)(nil)
-	_ FileSource = (*snapshotFS)(nil)
+	_ FileSource = (*SnapshotFS)(nil)
 )
 
-type snapshotFS struct {
+type SnapshotFS struct {
 	toPath    func(fileName string) tspath.Path
 	fs        vfs.FS
-	overlays  map[tspath.Path]*overlay
+	overlays  map[tspath.Path]*Overlay
 	diskFiles map[tspath.Path]*diskFile
 	readFiles collections.SyncMap[tspath.Path, memoizedDiskFile]
 }
 
 type memoizedDiskFile func() FileHandle
 
-func (s *snapshotFS) FS() vfs.FS {
+func (s *SnapshotFS) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *snapshotFS) GetFile(fileName string) FileHandle {
+func (s *SnapshotFS) GetFile(fileName string) FileHandle {
 	return s.GetFileByPath(fileName, s.toPath(fileName))
 }
 
-func (s *snapshotFS) GetFileByPath(fileName string, path tspath.Path) FileHandle {
+func (s *SnapshotFS) GetFileByPath(fileName string, path tspath.Path) FileHandle {
 	if file, ok := s.overlays[path]; ok {
 		return file
 	}
@@ -62,14 +62,14 @@ func (s *snapshotFS) GetFileByPath(fileName string, path tspath.Path) FileHandle
 
 type snapshotFSBuilder struct {
 	fs        vfs.FS
-	overlays  map[tspath.Path]*overlay
+	overlays  map[tspath.Path]*Overlay
 	diskFiles *dirty.SyncMap[tspath.Path, *diskFile]
 	toPath    func(string) tspath.Path
 }
 
 func newSnapshotFSBuilder(
 	fs vfs.FS,
-	overlays map[tspath.Path]*overlay,
+	overlays map[tspath.Path]*Overlay,
 	diskFiles map[tspath.Path]*diskFile,
 	positionEncoding lsproto.PositionEncodingKind,
 	toPath func(fileName string) tspath.Path,
@@ -88,9 +88,9 @@ func (s *snapshotFSBuilder) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool) {
+func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 	diskFiles, changed := s.diskFiles.Finalize()
-	return &snapshotFS{
+	return &SnapshotFS{
 		fs:        s.fs,
 		overlays:  s.overlays,
 		diskFiles: diskFiles,

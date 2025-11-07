@@ -247,7 +247,13 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.SingleThreaded(), 1, 4), p)
+		checkers := 4
+		if p.SingleThreaded() {
+			checkers = 1
+		} else if p.Options().Checkers != nil {
+			checkers = min(max(*p.Options().Checkers, 1), 256)
+		}
+		p.checkerPool = newCheckerPool(checkers, p)
 	}
 }
 
@@ -1538,7 +1544,7 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 }
 
 // Testing only
-func (p *Program) GetIncludeReasons() map[tspath.Path][]*fileIncludeReason {
+func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 	return p.includeProcessor.fileIncludeReasons
 }
 
@@ -1597,12 +1603,6 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 
 func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
-}
-
-// UnsupportedExtensions returns a list of all present "unsupported" extensions,
-// e.g. extensions that are not yet supported by the port.
-func (p *Program) UnsupportedExtensions() []string {
-	return p.unsupportedExtensions
 }
 
 func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {

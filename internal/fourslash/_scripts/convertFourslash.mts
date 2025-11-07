@@ -200,12 +200,13 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
                     //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
                     // LSP doesn't have two separate commands though.
-                    // It's unclear how we would model bound spans though.
                     return parseBaselineGoToDefinitionArgs(func.text, callExpression.arguments);
                 case "baselineRename":
                 case "baselineRenameAtRangesWithText":
                     // `verify.baselineRename...(...)`
                     return parseBaselineRenameArgs(func.text, callExpression.arguments);
+                case "baselineInlayHints":
+                    return parseBaselineInlayHints(callExpression.arguments);
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
@@ -1081,6 +1082,10 @@ function parseBaselineGoToDefinitionArgs(
     funcName: "baselineGoToDefinition" | "baselineGoToType" | "baselineGetDefinitionAtPosition",
     args: readonly ts.Expression[],
 ): [VerifyBaselineGoToDefinitionCmd] | undefined {
+    let boundSpan: true | undefined;
+    if (funcName === "baselineGoToDefinition") {
+        boundSpan = true;
+    }
     let kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     switch (funcName) {
         case "baselineGoToDefinition":
@@ -1105,6 +1110,7 @@ function parseBaselineGoToDefinitionArgs(
                 kind,
                 markers: [],
                 ranges: true,
+                boundSpan,
             }];
         }
         else {
@@ -1116,6 +1122,7 @@ function parseBaselineGoToDefinitionArgs(
     return [{
         kind,
         markers: newArgs,
+        boundSpan,
     }];
 }
 
@@ -1184,6 +1191,32 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
     }];
 }
 
+function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselineInlayHintsCmd] | undefined {
+    let preferences: string | undefined;
+    // Parse span
+    if (args.length > 0) {
+        if (args[0].getText() !== "undefined") {
+            console.error(`Unsupported span argument in verify.baselineInlayHints: ${args[0].getText()}`);
+            return undefined;
+        }
+    }
+    // Parse preferences
+    if (args.length > 1) {
+        if (ts.isObjectLiteralExpression(args[1])) {
+            preferences = parseUserPreferences(args[1]);
+            if (!preferences) {
+                console.error(`Unrecognized user preferences in verify.baselineInlayHints: ${args[1].getText()}`);
+                return undefined;
+            }
+        }
+    }
+    return [{
+        kind: "verifyBaselineInlayHints",
+        span: "nil /*span*/", // Only supporteed manually
+        preferences: preferences ? preferences : "nil /*preferences*/",
+    }];
+}
+
 function stringToTristate(s: string): string {
     switch (s) {
         case "true":
@@ -1206,6 +1239,48 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                     break;
                 case "quotePreference":
                     preferences.push(`QuotePreference: lsutil.QuotePreference(${prop.initializer.getText()})`);
+                    break;
+                case "includeInlayParameterNameHints":
+                    let paramHint;
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    switch (prop.initializer.text) {
+                        case "none":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsNone";
+                            break;
+                        case "literals":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsLiterals";
+                            break;
+                        case "all":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsAll";
+                            break;
+                    }
+                    preferences.push(`IncludeInlayParameterNameHints: ${paramHint}`);
+                    break;
+                case "includeInlayParameterNameHintsWhenArgumentMatchesName":
+                    preferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayFunctionParameterTypeHints":
+                    preferences.push(`IncludeInlayFunctionParameterTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayVariableTypeHints":
+                    preferences.push(`IncludeInlayVariableTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayVariableTypeHintsWhenTypeMatchesName":
+                    preferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayPropertyDeclarationTypeHints":
+                    preferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayFunctionLikeReturnTypeHints":
+                    preferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayEnumMemberValueHints":
+                    preferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
+                    break;
+                case "interactiveInlayHints":
+                    // Ignore, deprecated
                     break;
             }
         }
@@ -1592,6 +1667,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
+    boundSpan?: true;
     ranges?: boolean;
 }
 
@@ -1616,6 +1692,12 @@ interface VerifyBaselineRenameCmd {
 interface VerifyBaselineDocumentHighlightsCmd {
     kind: "verifyBaselineDocumentHighlights";
     args: string[];
+    preferences: string;
+}
+
+interface VerifyBaselineInlayHintsCmd {
+    kind: "verifyBaselineInlayHints";
+    span: string;
     preferences: string;
 }
 
@@ -1656,7 +1738,8 @@ type Cmd =
     | EditCmd
     | VerifyQuickInfoCmd
     | VerifyBaselineRenameCmd
-    | VerifyRenameInfoCmd;
+    | VerifyRenameInfoCmd
+    | VerifyBaselineInlayHintsCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1710,20 +1793,20 @@ function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselin
     return `f.VerifyBaselineDocumentHighlights(t, ${preferences}, ${args.join(", ")})`;
 }
 
-function generateBaselineGoToDefinition({ markers, ranges, kind }: VerifyBaselineGoToDefinitionCmd): string {
-    let goFunc;
+function generateBaselineGoToDefinition({ markers, ranges, kind, boundSpan }: VerifyBaselineGoToDefinitionCmd): string {
+    const originalSelectionRange = boundSpan ? "true" : "false";
     switch (kind) {
         case "verifyBaselineGoToDefinition":
-            goFunc = "VerifyBaselineGoToDefinition";
-            break;
+            if (ranges || markers.length === 0) {
+                return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange})`;
+            }
+            return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange}, ${markers.join(", ")})`;
         case "verifyBaselineGoToType":
-            goFunc = "VerifyBaselineGoToTypeDefinition";
-            break;
+            if (ranges || markers.length === 0) {
+                return `f.VerifyBaselineGoToTypeDefinition(t)`;
+            }
+            return `f.VerifyBaselineGoToTypeDefinition(t, ${markers.join(", ")})`;
     }
-    if (ranges || markers.length === 0) {
-        return `f.${goFunc}(t)`;
-    }
-    return `f.${goFunc}(t, ${markers.join(", ")})`;
 }
 
 function generateGoToCommand({ funcName, args }: GoToCmd): string {
@@ -1751,6 +1834,10 @@ function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenam
         case "verifyBaselineRenameAtRangesWithText":
             return `f.VerifyBaselineRenameAtRangesWithText(t, ${preferences}, ${args.join(", ")})`;
     }
+}
+
+function generateBaselineInlayHints({ span, preferences }: VerifyBaselineInlayHintsCmd): string {
+    return `f.VerifyBaselineInlayHints(t, ${span}, ${preferences})`;
 }
 
 function generateCmd(cmd: Cmd): string {
@@ -1789,6 +1876,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
+        case "verifyBaselineInlayHints":
+            return generateBaselineInlayHints(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

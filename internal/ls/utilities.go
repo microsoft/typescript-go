@@ -1585,18 +1585,22 @@ func getContainingObjectLiteralElementWorker(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral:
 		if node.Parent.Kind == ast.KindComputedPropertyName {
-			if ast.IsObjectLiteralElement(node.Parent.Parent) {
+			if isObjectLiteralOrJsxElement(node.Parent.Parent) {
 				return node.Parent.Parent
 			}
 			return nil
 		}
 		fallthrough
 	case ast.KindIdentifier:
-		if ast.IsObjectLiteralElement(node.Parent) && (node.Parent.Parent.Kind == ast.KindObjectLiteralExpression || node.Parent.Parent.Kind == ast.KindJsxAttributes) && node.Parent.Name() == node {
+		if isObjectLiteralOrJsxElement(node.Parent) && (node.Parent.Parent.Kind == ast.KindObjectLiteralExpression || node.Parent.Parent.Kind == ast.KindJsxAttributes) && node.Parent.Name() == node {
 			return node.Parent
 		}
 	}
 	return nil
+}
+
+func isObjectLiteralOrJsxElement(node *ast.Node) bool {
+	return ast.IsObjectLiteralElement(node) || ast.IsJsxAttribute(node) || ast.IsJsxSpreadAttribute(node)
 }
 
 // Return a function that returns true if the given node has not been seen
@@ -1605,4 +1609,17 @@ func nodeSeenTracker() func(*ast.Node) bool {
 	return func(node *ast.Node) bool {
 		return seen.AddIfAbsent(node)
 	}
+}
+
+// FindAllReferences.toContextSpan
+func toContextRange(textRange *core.TextRange, contextFile *ast.SourceFile, context *ast.Node) *core.TextRange {
+	if context == nil {
+		return textRange
+	}
+	// !!! isContextWithStartAndEndNode
+	contextRange := getRangeOfNode(context, contextFile, nil /*endNode*/)
+	if contextRange.Pos() != textRange.Pos() || contextRange.End() != textRange.End() {
+		return &contextRange
+	}
+	return nil
 }

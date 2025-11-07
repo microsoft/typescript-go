@@ -240,10 +240,20 @@ var (
 			PreselectSupport:        ptrTrue,
 			LabelDetailsSupport:     ptrTrue,
 			InsertReplaceSupport:    ptrTrue,
+			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
 		CompletionList: &lsproto.CompletionListCapabilities{
 			ItemDefaults: &[]string{"commitCharacters", "editRange"},
 		},
+	}
+	defaultDefinitionCapabilities = &lsproto.DefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
+	defaultTypeDefinitionCapabilities = &lsproto.TypeDefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
+	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
+		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 	}
 )
 
@@ -261,11 +271,54 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.Completion == nil {
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
 	}
+	if capabilitiesWithDefaults.TextDocument.Diagnostic == nil {
+		capabilitiesWithDefaults.TextDocument.Diagnostic = &lsproto.DiagnosticClientCapabilities{
+			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
+		}
+	}
+	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
+			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
+		}
+	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	}
 	if capabilitiesWithDefaults.Workspace.Configuration == nil {
 		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
+	}
+	if capabilitiesWithDefaults.TextDocument.Definition == nil {
+		capabilitiesWithDefaults.TextDocument.Definition = defaultDefinitionCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.TypeDefinition == nil {
+		capabilitiesWithDefaults.TextDocument.TypeDefinition = defaultTypeDefinitionCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.Hover == nil {
+		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
+		capabilitiesWithDefaults.TextDocument.SignatureHelp = &lsproto.SignatureHelpClientCapabilities{
+			SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+				DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+				ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+					LabelOffsetSupport: ptrTrue,
+				},
+				ActiveParameterSupport: ptrTrue,
+			},
+			ContextSupport: ptrTrue,
+		}
 	}
 	return &capabilitiesWithDefaults
 }
@@ -468,6 +521,10 @@ func (f *FourslashTest) MarkerNames() []string {
 		}
 		return *marker.Name, true
 	})
+}
+
+func (f *FourslashTest) MarkerByName(t *testing.T, name string) *Marker {
+	return f.testData.MarkerPositions[name]
 }
 
 func (f *FourslashTest) Ranges() []*RangeMarker {
@@ -824,12 +881,7 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 func ignorePaths(paths ...string) cmp.Option {
 	return cmp.FilterPath(
 		func(p cmp.Path) bool {
-			for _, path := range paths {
-				if p.Last().String() == path {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(paths, p.Last().String())
 		},
 		cmp.Ignore(),
 	)
@@ -1021,6 +1073,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	t *testing.T,
+	includeOriginalSelectionRange bool,
 	markers ...string,
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
@@ -1053,17 +1106,35 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		var resultAsLocations []lsproto.Location
+		var additionalLocation *lsproto.Location
 		if result.Locations != nil {
 			resultAsLocations = *result.Locations
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			var originRange *lsproto.Range
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				if originRange != nil && originRange != link.OriginSelectionRange {
+					panic("multiple different origin ranges in definition links")
+				}
+				originRange = link.OriginSelectionRange
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
+			if originRange != nil && includeOriginalSelectionRange {
+				additionalLocation = &lsproto.Location{
+					Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
+					Range: *originRange,
+				}
+			}
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*GOTO DEF*/",
+			marker:             markerOrRange,
+			markerName:         "/*GOTO DEF*/",
+			additionalLocation: additionalLocation,
 		}))
 	}
 }
@@ -1107,7 +1178,12 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
 		}
 
 		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
@@ -2173,6 +2249,77 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	}
 }
 
-type anyTextEdits *[]*lsproto.TextEdit
+func (f *FourslashTest) VerifyBaselineInlayHints(
+	t *testing.T,
+	span *lsproto.Range,
+	userPreferences *lsutil.UserPreferences,
+) {
+	fileName := f.activeFilename
+	var lspRange lsproto.Range
+	if span == nil {
+		lspRange = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
+	} else {
+		lspRange = *span
+	}
 
-var AnyTextEdits = anyTextEdits(nil)
+	params := &lsproto.InlayHintParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: lsconv.FileNameToDocumentURI(fileName)},
+		Range:        lspRange,
+	}
+
+	if userPreferences != nil {
+		reset := f.ConfigureWithReset(t, userPreferences)
+		defer reset()
+	}
+
+	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
+	if resMsg == nil {
+		t.Fatal(prefix + "Nil response received for inlay hints request")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for inlay hints request: %T", resMsg.AsResponse().Result)
+	}
+
+	fileLines := strings.Split(f.getScriptInfo(fileName).content, "\n")
+	var annotations []string
+	if result.InlayHints != nil {
+		slices.SortFunc(*result.InlayHints, func(a, b *lsproto.InlayHint) int {
+			return lsproto.ComparePositions(a.Position, b.Position)
+		})
+		annotations = core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
+			if hint.Label.InlayHintLabelParts != nil {
+				for _, part := range *hint.Label.InlayHintLabelParts {
+					if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
+						part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
+					}
+				}
+			}
+
+			underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
+			hintJson, err := core.StringifyJson(hint, "", "  ")
+			if err != nil {
+				t.Fatalf(prefix+"Failed to stringify inlay hint for baseline: %v", err)
+			}
+			annotation := fileLines[hint.Position.Line]
+			annotation += "\n" + underline + "\n" + hintJson
+			return annotation
+		})
+	}
+
+	if len(annotations) == 0 {
+		annotations = append(annotations, "=== No inlay hints ===")
+	}
+
+	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
+}
+
+func isLibFile(fileName string) bool {
+	baseName := tspath.GetBaseFileName(fileName)
+	if strings.HasPrefix(baseName, "lib.") && strings.HasSuffix(baseName, ".d.ts") {
+		return true
+	}
+	return false
+}
+
+var AnyTextEdits *[]*lsproto.TextEdit
