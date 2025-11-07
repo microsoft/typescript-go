@@ -319,7 +319,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 			}
 		case ast.KindReturnStatement, ast.KindParenthesizedExpression:
-			if tag.AsJSDocTypeTag().TypeExpression != nil {
+			if parent.Expression() != nil && tag.AsJSDocTypeTag().TypeExpression != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type()),
 					p.factory.DeepCloneReparse(parent.Expression()),
