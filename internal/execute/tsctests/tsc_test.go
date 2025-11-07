@@ -37,6 +37,28 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
 		{
+			subScenario:     "init",
+			commandLineArgs: []string{"--init"},
+		},
+		{
+			subScenario:     "init with --lib esnext",
+			commandLineArgs: []string{"--init", "--lib", "esnext"},
+		},
+		{
+			subScenario:     "init with tsconfig.json",
+			commandLineArgs: []string{"--init"},
+			files: FileMap{
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
+			},
+		},
+		{
 			subScenario:     "help",
 			commandLineArgs: []string{"--help"},
 		},

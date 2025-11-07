@@ -113,7 +113,8 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		return tsc.CommandLineResult{Status: tsc.ExitStatusNotImplemented}
+		tsc.WriteConfigFile(sys, reportDiagnostic, commandLine.CompilerOptions())
+		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
