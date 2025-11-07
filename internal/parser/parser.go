@@ -1029,8 +1029,12 @@ func (p *Parser) parseDeclaration() *ast.Statement {
 
 func (p *Parser) parseDeclarationWorker(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Statement {
 	switch p.token {
-	case ast.KindVarKeyword, ast.KindLetKeyword, ast.KindConstKeyword, ast.KindUsingKeyword, ast.KindAwaitKeyword:
+	case ast.KindVarKeyword, ast.KindLetKeyword, ast.KindConstKeyword, ast.KindUsingKeyword:
 		return p.parseVariableStatement(pos, hasJSDoc, modifiers)
+	case ast.KindAwaitKeyword:
+		if p.isAwaitUsingDeclaration() {
+			return p.parseVariableStatement(pos, hasJSDoc, modifiers)
+		}
 	case ast.KindFunctionKeyword:
 		return p.parseFunctionDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindClassKeyword:
