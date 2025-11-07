@@ -549,6 +549,7 @@ Edit [2]:: project 2 extends alpha
 //// [/user/username/projects/project/project2.tsconfig.json] *modified* 
 {
     "extends": "./alpha.tsconfig.json",
+    "files": ["other.ts"]
 }
 
 
@@ -560,63 +561,36 @@ Output::
     * project2.tsconfig.json
     * project3.tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'other2.js' is older than input 'project2.tsconfig.json'
+[[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'project2.tsconfig.tsbuildinfo' is older than input 'project2.tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'project2.tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
-//// [/user/username/projects/project/commonFile1.js] *rewrite with same content*
-//// [/user/username/projects/project/commonFile2.js] *rewrite with same content*
 //// [/user/username/projects/project/other.js] *modified* 
 "use strict";
 let z = 0;
 
-//// [/user/username/projects/project/other2.js] *modified* 
-"use strict";
-let k = 0;
-
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":["./commonFile1.ts","./commonFile2.ts","./other.ts","./other2.ts"]}
+{"version":"FakeTSVersion","root":["./other.ts"]}
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
   "root": [
     {
       "files": [
-        "./commonFile1.ts"
-      ],
-      "original": "./commonFile1.ts"
-    },
-    {
-      "files": [
-        "./commonFile2.ts"
-      ],
-      "original": "./commonFile2.ts"
-    },
-    {
-      "files": [
         "./other.ts"
       ],
       "original": "./other.ts"
-    },
-    {
-      "files": [
-        "./other2.ts"
-      ],
-      "original": "./other2.ts"
     }
   ],
-  "size": 101
+  "size": 49
 }
 
 project2.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /user/username/projects/project/commonFile1.ts
-*refresh*    /user/username/projects/project/commonFile2.ts
 *refresh*    /user/username/projects/project/other.ts
-*refresh*    /user/username/projects/project/other2.ts
 Signatures::
 
 
@@ -651,9 +625,6 @@ let y = 1;
 
 //// [/user/username/projects/project/other.js] *modified* 
 let z = 0;
-
-//// [/user/username/projects/project/other2.js] *modified* 
-let k = 0;
 
 //// [/user/username/projects/project/project1.tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./commonFile1.ts","./commonFile2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1","signature":"0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"06ce815ba25b02847f0b8550f82f5a25-let y = 1","signature":"114cede92fdd1b7222858083021aeba2-declare let y: number;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true},"latestChangedDtsFile":"./commonFile2.d.ts"}
@@ -736,10 +707,7 @@ Signatures::
 project2.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /user/username/projects/project/commonFile1.ts
-*refresh*    /user/username/projects/project/commonFile2.ts
 *refresh*    /user/username/projects/project/other.ts
-*refresh*    /user/username/projects/project/other2.ts
 Signatures::
 
 
