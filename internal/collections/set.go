@@ -68,6 +68,33 @@ func (s *Set[T]) Equals(other *Set[T]) bool {
 	return maps.Equal(s.M, other.M)
 }
 
+func (s *Set[T]) IsSubsetOf(other *Set[T]) bool {
+	if s == nil {
+		return true
+	}
+	if other == nil {
+		return false
+	}
+	for key := range s.M {
+		if !other.Has(key) {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *Set[T]) Intersects(other *Set[T]) bool {
+	if s == nil || other == nil {
+		return false
+	}
+	for key := range s.M {
+		if other.Has(key) {
+			return true
+		}
+	}
+	return false
+}
+
 func NewSetFromItems[T comparable](items ...T) *Set[T] {
 	s := &Set[T]{}
 	for _, item := range items {

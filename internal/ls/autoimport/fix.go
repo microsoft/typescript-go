@@ -457,29 +457,27 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
 }
 
-func GetFixes(
+func (v *View) GetFixes(
 	ctx context.Context,
 	export *RawExport,
-	fromFile *ast.SourceFile,
-	program *compiler.Program,
 	userPreferences modulespecifiers.UserPreferences,
 ) []*Fix {
-	ch, done := program.GetTypeChecker(ctx)
+	ch, done := v.program.GetTypeChecker(ctx)
 	defer done()
 
-	existingImports := getExistingImports(fromFile, ch)
+	existingImports := getExistingImports(v.importingFile, ch)
 	// !!! tryUseExistingNamespaceImport
-	if fix := tryAddToExistingImport(export, fromFile, existingImports, program); fix != nil {
+	if fix := tryAddToExistingImport(export, v.importingFile, existingImports, v.program); fix != nil {
 		return []*Fix{fix}
 	}
 
 	// !!! getNewImportFromExistingSpecifier - even worth it?
 
-	moduleSpecifier := GetModuleSpecifier(fromFile, export, userPreferences, program, program.Options())
+	moduleSpecifier := v.GetModuleSpecifier(export, userPreferences)
 	if moduleSpecifier == "" || modulespecifiers.ContainsNodeModules(moduleSpecifier) {
 		return nil
 	}
-	importKind := getImportKind(fromFile, export, program)
+	importKind := getImportKind(v.importingFile, export, v.program)
 	// !!! JSDoc type import, add as type only
 	return []*Fix{
 		{

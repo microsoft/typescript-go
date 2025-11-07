@@ -82,6 +82,7 @@ type completionData = any
 
 type completionDataData struct {
 	symbols          []*ast.Symbol
+	autoImportView   *autoimport.View
 	autoImports      []*autoimport.RawExport
 	completionKind   CompletionKind
 	isInSnippetScope bool
@@ -717,6 +718,7 @@ func (l *LanguageService) getCompletionData(
 	// This also gets mutated in nested-functions after the return
 	var symbols []*ast.Symbol
 	var autoImports []*autoimport.RawExport
+	var autoImportView *autoimport.View
 	// Keys are indexes of `symbols`.
 	symbolToOriginInfoMap := map[int]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]SortText{}
@@ -1268,12 +1270,13 @@ func (l *LanguageService) getCompletionData(
 		// 	return nil
 		// }
 
-		exports, err := l.getExportsForAutoImport(ctx, file)
+		view, err := l.getAutoImportView(ctx, file, l.GetProgram())
 		if err != nil {
 			return err
 		}
 
-		autoImports = append(autoImports, exports.Search(lowerCaseTokenText)...)
+		autoImports = append(autoImports, view.Search(lowerCaseTokenText)...)
+		autoImportView = view
 
 		// l.searchExportInfosForCompletions(ctx,
 		// 	typeChecker,
@@ -1801,6 +1804,7 @@ func (l *LanguageService) getCompletionData(
 	return &completionDataData{
 		symbols:                      symbols,
 		autoImports:                  autoImports,
+		autoImportView:               autoImportView,
 		completionKind:               completionKind,
 		isInSnippetScope:             isInSnippetScope,
 		propertyAccessToConvert:      propertyAccessToConvert,
@@ -2038,7 +2042,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		// !!! flags filtering similar to shouldIncludeSymbol
 		// !!! check for type-only in JS
 		// !!! deprecation
-		fixes := autoimport.GetFixes(ctx, exp, file, l.GetProgram(), l.UserPreferences().ModuleSpecifierPreferences())
+		fixes := data.autoImportView.GetFixes(ctx, exp, l.UserPreferences().ModuleSpecifierPreferences())
 		if len(fixes) == 0 {
 			continue
 		}

@@ -43,23 +43,24 @@ type RawExport struct {
 	// If the export is from an ambient module declaration, this is the module name.
 	// If the export is from a module augmentation, this is the Path() of the resolved module file.
 	// Otherwise this is the Path() of the exporting source file.
-	ModuleID ModuleID
+	ModuleID             ModuleID
+	NodeModulesDirectory tspath.Path
 }
 
 func (e *RawExport) Name() string {
 	return e.ExportName
 }
 
-func Parse(file *ast.SourceFile) []*RawExport {
+func Parse(file *ast.SourceFile, nodeModulesDirectory tspath.Path) []*RawExport {
 	if file.Symbol != nil {
-		return parseModule(file)
+		return parseModule(file, nodeModulesDirectory)
 	}
 
 	// !!!
 	return nil
 }
 
-func parseModule(file *ast.SourceFile) []*RawExport {
+func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path) []*RawExport {
 	exports := make([]*RawExport, 0, len(file.Symbol.Exports))
 	for name, symbol := range file.Symbol.Exports {
 		if strings.HasPrefix(name, ast.InternalSymbolNamePrefix) {
@@ -87,12 +88,13 @@ func parseModule(file *ast.SourceFile) []*RawExport {
 		}
 
 		exports = append(exports, &RawExport{
-			Syntax:     syntax,
-			ExportName: name,
-			Flags:      symbol.Flags,
-			FileName:   file.FileName(),
-			Path:       file.Path(),
-			ModuleID:   ModuleID(file.Path()),
+			Syntax:               syntax,
+			ExportName:           name,
+			Flags:                symbol.Flags,
+			FileName:             file.FileName(),
+			Path:                 file.Path(),
+			ModuleID:             ModuleID(file.Path()),
+			NodeModulesDirectory: nodeModulesDirectory,
 		})
 	}
 	// !!! handle module augmentations

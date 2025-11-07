@@ -2,19 +2,22 @@ package autoimport
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type View struct {
 	registry      *Registry
 	importingFile *ast.SourceFile
+	program       *compiler.Program
 	projectKey    tspath.Path
 }
 
-func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspath.Path) *View {
+func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspath.Path, program *compiler.Program) *View {
 	return &View{
 		registry:      registry,
 		importingFile: importingFile,
+		program:       program,
 		projectKey:    projectKey,
 	}
 }

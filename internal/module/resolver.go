@@ -2,7 +2,6 @@ package module
 
 import (
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -2012,14 +2011,15 @@ type ResolvedEntrypoints struct {
 type ResolvedEntrypoint struct {
 	ResolvedFileName  string
 	ModuleSpecifier   string
-	IncludeConditions map[string]struct{}
-	ExcludeConditions map[string]struct{}
+	IncludeConditions *collections.Set[string]
+	ExcludeConditions *collections.Set[string]
 }
 
 func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry) *ResolvedEntrypoints {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
+	// !!! scoped package names
 	packageName := GetPackageNameFromTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
 
 	if packageJson.Contents.Exports.IsPresent() {
@@ -2055,10 +2055,10 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 	packageName string,
 	exports packagejson.ExportsOrImports,
 ) []*ResolvedEntrypoint {
-	var loadEntrypointsFromTargetExports func(subpath string, includeConditions map[string]struct{}, excludeConditions map[string]struct{}, exports packagejson.ExportsOrImports)
+	var loadEntrypointsFromTargetExports func(subpath string, includeConditions *collections.Set[string], excludeConditions *collections.Set[string], exports packagejson.ExportsOrImports)
 	var entrypoints []*ResolvedEntrypoint
 
-	loadEntrypointsFromTargetExports = func(subpath string, includeConditions map[string]struct{}, excludeConditions map[string]struct{}, exports packagejson.ExportsOrImports) {
+	loadEntrypointsFromTargetExports = func(subpath string, includeConditions *collections.Set[string], excludeConditions *collections.Set[string], exports packagejson.ExportsOrImports) {
 		if exports.Type == packagejson.JSONValueTypeString && strings.HasPrefix(exports.AsString(), "./") {
 			if strings.ContainsRune(exports.AsString(), '*') {
 				if strings.IndexByte(exports.AsString(), '*') != strings.LastIndexByte(exports.AsString(), '*') {
@@ -2105,28 +2105,29 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 		} else if exports.Type == packagejson.JSONValueTypeObject {
 			var prevConditions []string
 			for condition, export := range exports.AsObject().Entries() {
-				if _, ok := excludeConditions[condition]; ok {
+				if excludeConditions != nil && excludeConditions.Has(condition) {
 					continue
 				}
 
 				conditionAlwaysMatches := condition == "default" || condition == "types" || IsApplicableVersionedTypesKey(condition)
+				newIncludeConditions := includeConditions
 				if !(conditionAlwaysMatches) {
-					includeConditions = maps.Clone(includeConditions)
-					excludeConditions = maps.Clone(excludeConditions)
-					if includeConditions == nil {
-						includeConditions = make(map[string]struct{})
+					newIncludeConditions = includeConditions.Clone()
+					excludeConditions = excludeConditions.Clone()
+					if newIncludeConditions == nil {
+						newIncludeConditions = &collections.Set[string]{}
 					}
-					includeConditions[condition] = struct{}{}
+					newIncludeConditions.Add(condition)
 					for _, prevCondition := range prevConditions {
 						if excludeConditions == nil {
-							excludeConditions = make(map[string]struct{})
+							excludeConditions = &collections.Set[string]{}
 						}
-						excludeConditions[prevCondition] = struct{}{}
+						excludeConditions.Add(prevCondition)
 					}
 				}
 
 				prevConditions = append(prevConditions, condition)
-				loadEntrypointsFromTargetExports(subpath, includeConditions, excludeConditions, export)
+				loadEntrypointsFromTargetExports(subpath, newIncludeConditions, excludeConditions, export)
 				if conditionAlwaysMatches {
 					break
 				}

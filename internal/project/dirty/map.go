@@ -19,6 +19,17 @@ func (e *MapEntry[K, V]) Change(apply func(V)) {
 	apply(e.value)
 }
 
+func (e *MapEntry[K, V]) Replace(newValue V) {
+	if e.delete {
+		panic("tried to change a deleted entry")
+	}
+	if !e.dirty {
+		e.dirty = true
+		e.m.dirty[e.key] = e
+	}
+	e.value = newValue
+}
+
 func (e *MapEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
 	if cond(e.Value()) {
 		e.Change(apply)

@@ -28,7 +28,7 @@ type RegistryBucket struct {
 	dirty           bool
 	Paths           map[tspath.Path]struct{}
 	LookupLocations map[tspath.Path]struct{}
-	Dependencies    collections.Set[string]
+	Dependencies    *collections.Set[string]
 	Entrypoints     map[tspath.Path][]*module.ResolvedEntrypoint
 	Index           *Index[*RawExport]
 }
@@ -39,6 +39,7 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 		Paths:           b.Paths,
 		LookupLocations: b.LookupLocations,
 		Dependencies:    b.Dependencies,
+		Entrypoints:     b.Entrypoints,
 		Index:           b.Index,
 	}
 }
@@ -63,6 +64,9 @@ type Registry struct {
 
 	nodeModules map[tspath.Path]*RegistryBucket
 	projects    map[tspath.Path]*RegistryBucket
+
+	// relativeSpecifierCache maps from importing file to target file to specifier
+	relativeSpecifierCache map[tspath.Path]map[tspath.Path]string
 }
 
 func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
@@ -170,30 +174,32 @@ type registryBuilder struct {
 	resolver *module.Resolver
 	base     *Registry
 
-	directories *dirty.Map[tspath.Path, *directory]
-	nodeModules *dirty.Map[tspath.Path, *RegistryBucket]
-	projects    *dirty.Map[tspath.Path, *RegistryBucket]
+	directories            *dirty.Map[tspath.Path, *directory]
+	nodeModules            *dirty.Map[tspath.Path, *RegistryBucket]
+	projects               *dirty.Map[tspath.Path, *RegistryBucket]
+	relativeSpecifierCache *dirty.MapBuilder[tspath.Path, map[tspath.Path]string, map[tspath.Path]string]
 }
 
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
 	return &registryBuilder{
-		// exports:     dirty.NewMapBuilder(registry.exports, slices.Clone, core.Identity),
 		host:     host,
 		resolver: module.NewResolver(host, core.EmptyCompilerOptions, "", ""),
 		base:     registry,
 
-		directories: dirty.NewMap(registry.directories),
-		nodeModules: dirty.NewMap(registry.nodeModules),
-		projects:    dirty.NewMap(registry.projects),
+		directories:            dirty.NewMap(registry.directories),
+		nodeModules:            dirty.NewMap(registry.nodeModules),
+		projects:               dirty.NewMap(registry.projects),
+		relativeSpecifierCache: dirty.NewMapBuilder(registry.relativeSpecifierCache, core.Identity, core.Identity),
 	}
 }
 
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
-		toPath:      b.base.toPath,
-		directories: core.FirstResult(b.directories.Finalize()),
-		nodeModules: core.FirstResult(b.nodeModules.Finalize()),
-		projects:    core.FirstResult(b.projects.Finalize()),
+		toPath:                 b.base.toPath,
+		directories:            core.FirstResult(b.directories.Finalize()),
+		nodeModules:            core.FirstResult(b.nodeModules.Finalize()),
+		projects:               core.FirstResult(b.projects.Finalize()),
+		relativeSpecifierCache: core.FirstResult(b.relativeSpecifierCache.Build()),
 	}
 }
 
@@ -204,17 +210,28 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 	for path, fileName := range change.OpenFiles {
 		neededProjects[core.FirstResult(b.host.GetDefaultProject(path))] = struct{}{}
 		dir := fileName
+		dirPath := path
 		for {
 			dir = tspath.GetDirectoryPath(dir)
-			dirPath := path.GetDirectoryPath()
-			if path == dirPath {
+			lastDirPath := dirPath
+			dirPath = dirPath.GetDirectoryPath()
+			if dirPath == lastDirPath {
 				break
 			}
 			if _, ok := neededDirectories[dirPath]; ok {
 				break
 			}
 			neededDirectories[dirPath] = dir
-			path = dirPath
+		}
+
+		if _, ok := b.base.relativeSpecifierCache[path]; !ok {
+			b.relativeSpecifierCache.Set(path, make(map[tspath.Path]string))
+		}
+	}
+
+	for path := range b.base.relativeSpecifierCache {
+		if _, ok := change.OpenFiles[path]; !ok {
+			b.relativeSpecifierCache.Delete(path)
 		}
 	}
 
@@ -461,12 +478,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		if t.err != nil {
 			continue
 		}
-		t.entry.Change(func(bucket *RegistryBucket) {
-			bucket.dirty = false
-			bucket.Index = t.result.Index
-			bucket.Paths = t.result.Paths
-			bucket.LookupLocations = t.result.LookupLocations
-		})
+		t.entry.Replace(t.result)
 	}
 }
 
@@ -486,7 +498,7 @@ func (b *registryBuilder) buildProjectIndex(ctx context.Context, projectPath tsp
 		}
 		wg.Queue(func() {
 			if ctx.Err() == nil {
-				fileExports := Parse(file)
+				fileExports := Parse(file, "")
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -539,6 +551,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 			if ctx.Err() != nil {
 				return
 			}
+			// !!! string(dirPath) wrong
 			packageJson := b.host.GetPackageJson(tspath.CombinePaths(string(dirPath), "node_modules", dep, "package.json"))
 			if !packageJson.Exists() {
 				return
@@ -563,7 +576,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 					}
 					sourceFile := b.host.GetSourceFile(entrypoint.ResolvedFileName, path)
 					binder.BindSourceFile(sourceFile)
-					fileExports := Parse(sourceFile)
+					fileExports := Parse(sourceFile, dirPath)
 					exportsMu.Lock()
 					exports[path] = fileExports
 					exportsMu.Unlock()
@@ -574,7 +587,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 
 	wg.RunAndWait()
 	result := &RegistryBucket{
-		Dependencies:    dependencies,
+		Dependencies:    &dependencies,
 		Paths:           make(map[tspath.Path]struct{}, len(exports)),
 		Entrypoints:     make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
 		LookupLocations: make(map[tspath.Path]struct{}),
@@ -597,7 +610,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 		}
 	}
 
-	return result, nil
+	return result, ctx.Err()
 }
 
 func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost, logger *logging.LogTree) (*Registry, error) {
