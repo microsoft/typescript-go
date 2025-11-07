@@ -503,7 +503,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
-			elt := parseElement(p, i)
+			elt := parseElement(p, len(list))
 			if len(p.reparseList) > 0 {
 				for _, e := range p.reparseList {
 					// Propagate @typedef type alias declarations outwards to a context that permits them.
