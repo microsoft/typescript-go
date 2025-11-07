@@ -21,7 +21,7 @@ func WriteConfigFile(sys System, reportDiagnostic DiagnosticReporter, options *c
 	if sys.FS().FileExists(file) {
 		reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.A_tsconfig_json_file_is_already_defined_at_Colon_0, file))
 	} else {
-		sys.FS().WriteFile(file, generateTSConfig(options), false)
+		_ = sys.FS().WriteFile(file, generateTSConfig(options), false)
 		output := []string{"\n"}
 		output = append(output, getHeader(sys, "Created a new tsconfig.json")...)
 		output = append(output, "You can learn more at https://aka.ms/tsconfig", "\n")
@@ -35,7 +35,7 @@ func convertOptionsToMap(options *core.CompilerOptions) *collections.OrderedMap[
 
 	result := collections.NewOrderedMapWithSizeHint[string, any](val.NumField())
 
-	for i := 0; i < val.NumField(); i++ {
+	for i := range val.NumField() {
 		field := typ.Field(i)
 		fieldValue := val.Field(i)
 
@@ -115,7 +115,7 @@ func generateTSConfig(options *core.CompilerOptions) string {
 			}
 
 			var elems []string
-			for i := 0; i < rval.Len(); i++ {
+			for i := range rval.Len() {
 				elems = append(elems, formatSingleValue(rval.Index(i).Interface(), enumMap))
 			}
 			return `[` + strings.Join(elems, ", ") + `]`
