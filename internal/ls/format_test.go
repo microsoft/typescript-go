@@ -129,8 +129,8 @@ func TestGetFormattingEditsForRange_FunctionBody(t *testing.T) {
 				core.NewTextRange(tc.startPos, tc.endPos),
 			)
 
-			// Should not panic and should return some edits or empty array
-			assert.Assert(t, edits != nil || true) // Just ensuring no panic
+			// Should not panic
+			_ = edits // Just ensuring no panic
 		})
 	}
 }
