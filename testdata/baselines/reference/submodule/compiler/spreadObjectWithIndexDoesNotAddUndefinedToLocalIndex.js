@@ -5,4 +5,4 @@ declare const m: { [k: string]: string };
 const x: { [k: string]: string } = { ...m, ["a" + "b"]: "" };
 
 //// [spreadObjectWithIndexDoesNotAddUndefinedToLocalIndex.js]
-const x = { ...m, ["a" + "b"]: "" };
+const x = Object.assign(Object.assign({}, m), { ["a" + "b"]: "" });

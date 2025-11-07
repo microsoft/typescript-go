@@ -1,13 +1,13 @@
-constDeclarations_access_2.ts(2,20): error TS2307: Cannot find module 'constDeclarations_access_1' or its corresponding type declarations.
+constDeclarations_access_2.ts(4,1): error TS2322: Type '1' is not assignable to type '0'.
 
 
 ==== constDeclarations_access_2.ts (1 errors) ====
     ///<reference path='constDeclarations_access_1.ts'/>
-    import m = require('constDeclarations_access_1');
-                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'constDeclarations_access_1' or its corresponding type declarations.
+    import m = require('./constDeclarations_access_1');
     // Errors
     m.x = 1;
+    ~~~
+!!! error TS2322: Type '1' is not assignable to type '0'.
     m.x += 2;
     m.x -= 3;
     m.x *= 4;

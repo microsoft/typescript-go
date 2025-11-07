@@ -5,8 +5,8 @@
 import moduleC = require("moduleC");
 >moduleC : any
 
-import ClassB = require("recursiveExportAssignmentAndFindAliasedType3_moduleB");
->ClassB : any
+import ClassB = require("./recursiveExportAssignmentAndFindAliasedType3_moduleB");
+>ClassB : typeof ClassB
 
 export var b: ClassB; // This should result in type ClassB
 >b : ClassB
@@ -39,4 +39,11 @@ declare module "moduleE" {
     export = self;
 >self : any
 }
+
+=== recursiveExportAssignmentAndFindAliasedType3_moduleB.ts ===
+class ClassB { }
+>ClassB : ClassB
+
+export = ClassB;
+>ClassB : ClassB
 

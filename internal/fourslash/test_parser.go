@@ -1,14 +1,15 @@
 package fourslash
 
 import (
-	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"testing"
 	"unicode/utf8"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testrunner"
@@ -22,17 +23,51 @@ import (
 //
 // is a range with `text in range` "selected".
 type RangeMarker struct {
-	*Marker
-	Range   core.TextRange
-	LSRange lsproto.Range
+	fileName string
+	Range    core.TextRange
+	LSRange  lsproto.Range
+	Marker   *Marker
+}
+
+func (r *RangeMarker) LSPos() lsproto.Position {
+	return r.LSRange.Start
+}
+
+func (r *RangeMarker) FileName() string {
+	return r.fileName
+}
+
+func (r *RangeMarker) GetName() *string {
+	if r.Marker == nil {
+		return nil
+	}
+	return r.Marker.Name
 }
 
 type Marker struct {
-	FileName   string
+	fileName   string
 	Position   int
 	LSPosition lsproto.Position
-	Name       string
-	Data       map[string]interface{}
+	Name       *string // `nil` for anonymous markers such as `{| "foo": "bar" |}`
+	Data       map[string]any
+}
+
+func (m *Marker) LSPos() lsproto.Position {
+	return m.LSPosition
+}
+
+func (m *Marker) FileName() string {
+	return m.fileName
+}
+
+func (m *Marker) GetName() *string {
+	return m.Name
+}
+
+type MarkerOrRange interface {
+	FileName() string
+	LSPos() lsproto.Position
+	GetName() *string
 }
 
 type TestData struct {
@@ -75,10 +110,17 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 		markers = append(markers, file.markers...)
 		ranges = append(ranges, file.ranges...)
 		for _, marker := range file.markers {
-			if _, ok := markerPositions[marker.Name]; ok {
-				t.Fatalf("Duplicate marker name: %s", marker.Name)
+			if marker.Name == nil {
+				if marker.Data != nil {
+					// The marker is an anonymous object marker, which does not need a name. Markers are only set into markerPositions if they have a name
+					continue
+				}
+				t.Fatalf(`Marker at position %v is unnamed`, marker.Position)
 			}
-			markerPositions[marker.Name] = marker
+			if existing, ok := markerPositions[*marker.Name]; ok {
+				t.Fatalf(`Duplicate marker name: "%s" at %v and %v`, *marker.Name, marker.Position, existing.Position)
+			}
+			markerPositions[*marker.Name] = marker
 		}
 
 	}
@@ -121,17 +163,17 @@ type TestFileInfo struct {
 	emit    bool
 }
 
-// FileName implements ls.Script.
+// FileName implements lsconv.Script.
 func (t *TestFileInfo) FileName() string {
 	return t.fileName
 }
 
-// Text implements ls.Script.
+// Text implements lsconv.Script.
 func (t *TestFileInfo) Text() string {
 	return t.Content
 }
 
-var _ ls.Script = (*TestFileInfo)(nil)
+var _ lsconv.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
 
@@ -207,12 +249,10 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 				rangeStart := openRanges[len(openRanges)-1]
 				openRanges = openRanges[:len(openRanges)-1]
 
-				closedRange := &RangeMarker{Range: core.NewTextRange(rangeStart.position, (i-1)-difference)}
-				if rangeStart.marker != nil {
-					closedRange.Marker = rangeStart.marker
-				} else {
-					// RangeMarker is not added to list of markers
-					closedRange.Marker = &Marker{FileName: fileName}
+				closedRange := &RangeMarker{
+					fileName: fileName,
+					Range:    core.NewTextRange(rangeStart.position, (i-1)-difference),
+					Marker:   rangeStart.marker,
 				}
 
 				rangeMarkers = append(rangeMarkers, closedRange)
@@ -269,9 +309,9 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 				// start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
 				markerNameText := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
 				marker := &Marker{
-					FileName: fileName,
+					fileName: fileName,
 					Position: openMarker.position,
-					Name:     markerNameText,
+					Name:     &markerNameText,
 				}
 				if len(openRanges) > 0 {
 					openRanges[len(openRanges)-1].marker = marker
@@ -328,8 +368,8 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 	outputString := output.String()
 	// Set LS positions for markers
-	lineMap := ls.ComputeLineStarts(outputString)
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+	lineMap := lsconv.ComputeLSPLineStarts(outputString)
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -340,6 +380,13 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 		Content:  outputString,
 		emit:     emit,
 	}
+
+	slices.SortStableFunc(rangeMarkers, func(a, b *RangeMarker) int {
+		if a.Range.Pos() != b.Range.Pos() {
+			return a.Range.Pos() - b.Range.Pos()
+		}
+		return b.Range.End() - a.Range.End()
+	})
 
 	for _, marker := range markers {
 		marker.LSPosition = converters.PositionToLineAndCharacter(testFileInfo, core.TextPos(marker.Position))
@@ -360,19 +407,19 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, error) {
 	// Attempt to parse the marker value as JSON
-	var v interface{}
+	var v any
 	e := json.Unmarshal([]byte("{ "+text+" }"), &v)
 
 	if e != nil {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text "+text)
 	}
-	markerValue, ok := v.(map[string]interface{})
+	markerValue, ok := v.(map[string]any)
 	if !ok || len(markerValue) == 0 {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty")
 	}
 
 	marker := &Marker{
-		FileName: fileName,
+		fileName: fileName,
 		Position: location.position,
 		Data:     markerValue,
 	}
@@ -380,7 +427,7 @@ func getObjectMarker(fileName string, location *locationInformation, text string
 	// Object markers can be anonymous
 	if markerValue["name"] != nil {
 		if name, ok := markerValue["name"].(string); ok && name != "" {
-			marker.Name = name
+			marker.Name = &name
 		}
 	}
 

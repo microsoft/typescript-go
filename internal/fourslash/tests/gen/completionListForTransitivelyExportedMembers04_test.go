@@ -4,16 +4,15 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionListForTransitivelyExportedMembers04(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @ModuleResolution: classic
-// @Filename: A.ts
+	const content = `// @Filename: A.ts
 export interface I1 { one: number }
 export interface I2 { two: string }
 export type I1_OR_I2 = I1 | I2;
@@ -35,19 +34,22 @@ export module Inner {
 export var bVar = "bee!";
 // @Filename: C.ts
 export var cVar = "see!";
-export * from "A";
-export * from "B"
+export * from "./A";
+export * from "./B"
 // @Filename: D.ts
-import * as c from "C";
+import * as c from "./C";
 var x: c.Inner./**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"I3"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"I3",
+			},
 		},
 	})
 }

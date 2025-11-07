@@ -19,7 +19,6 @@ type OutputPaths struct {
 	sourceMapFilePath   string
 	declarationFilePath string
 	declarationMapPath  string
-	buildInfoPath       string
 }
 
 // DeclarationFilePath implements declarations.OutputPaths.
@@ -40,10 +39,6 @@ func (o *OutputPaths) DeclarationMapPath() string {
 	return o.declarationMapPath
 }
 
-func (o *OutputPaths) BuildInfoPath() string {
-	return o.buildInfoPath
-}
-
 func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions, host OutputPathsHost, forceDtsEmit bool) *OutputPaths {
 	// !!! bundle not implemented, may be deprecated
 	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), options, host, GetOutputExtension(sourceFile.FileName(), options.Jsx))
@@ -58,7 +53,7 @@ func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions
 	if options.EmitDeclarationOnly != core.TSTrue && !isJsonEmittedToSameLocation {
 		paths.jsFilePath = ownOutputFilePath
 		if !ast.IsJsonSourceFile(sourceFile) {
-			paths.sourceMapFilePath = getSourceMapFilePath(paths.jsFilePath, options)
+			paths.sourceMapFilePath = GetSourceMapFilePath(paths.jsFilePath, options)
 		}
 	}
 	if forceDtsEmit || options.GetEmitDeclarations() && !isJsonFile {
@@ -71,13 +66,27 @@ func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions
 }
 
 func ForEachEmittedFile(host OutputPathsHost, options *core.CompilerOptions, action func(emitFileNames *OutputPaths, sourceFile *ast.SourceFile) bool, sourceFiles []*ast.SourceFile, forceDtsEmit bool) bool {
-	// !!! outFile not yet implemented, may be deprecated
 	for _, sourceFile := range sourceFiles {
 		if action(GetOutputPathsFor(sourceFile, options, host, forceDtsEmit), sourceFile) {
 			return true
 		}
 	}
 	return false
+}
+
+func GetOutputJSFileName(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
+	if options.EmitDeclarationOnly.IsTrue() {
+		return ""
+	}
+	outputFileName := GetOutputJSFileNameWorker(inputFileName, options, host)
+	if !tspath.FileExtensionIs(outputFileName, tspath.ExtensionJson) ||
+		tspath.ComparePaths(inputFileName, outputFileName, tspath.ComparePathsOptions{
+			CurrentDirectory:          host.GetCurrentDirectory(),
+			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+		}) != 0 {
+		return outputFileName
+	}
+	return ""
 }
 
 func GetOutputJSFileNameWorker(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
@@ -182,7 +191,7 @@ func getOwnEmitOutputFilePath(fileName string, options *core.CompilerOptions, ho
 	return emitOutputFilePathWithoutExtension + extension
 }
 
-func getSourceMapFilePath(jsFilePath string, options *core.CompilerOptions) string {
+func GetSourceMapFilePath(jsFilePath string, options *core.CompilerOptions) string {
 	if options.SourceMap.IsTrue() && !options.InlineSourceMap.IsTrue() {
 		return jsFilePath + ".map"
 	}
@@ -198,4 +207,28 @@ func getDeclarationEmitExtensionForPath(fileName string) string {
 		return ".d.json.ts"
 	}
 	return tspath.ExtensionDts
+}
+
+func GetBuildInfoFileName(options *core.CompilerOptions, opts tspath.ComparePathsOptions) string {
+	if !options.IsIncremental() && !options.Build.IsTrue() {
+		return ""
+	}
+	if options.TsBuildInfoFile != "" {
+		return options.TsBuildInfoFile
+	}
+	if options.ConfigFilePath == "" {
+		return ""
+	}
+	configFileExtensionLess := tspath.RemoveFileExtension(options.ConfigFilePath)
+	var buildInfoExtensionLess string
+	if options.OutDir != "" {
+		if options.RootDir != "" {
+			buildInfoExtensionLess = tspath.ResolvePath(options.OutDir, tspath.GetRelativePathFromDirectory(options.RootDir, configFileExtensionLess, opts))
+		} else {
+			buildInfoExtensionLess = tspath.CombinePaths(options.OutDir, tspath.GetBaseFileName(configFileExtensionLess))
+		}
+	} else {
+		buildInfoExtensionLess = configFileExtensionLess
+	}
+	return buildInfoExtensionLess + tspath.ExtensionTsBuildInfo
 }

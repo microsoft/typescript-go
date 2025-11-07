@@ -38,7 +38,6 @@ module.exports = a;
 Object.defineProperty(exports, "__esModule", { value: true });
 // cjs format file
 const a = {};
-export = a;
 module.exports = a;
 //// [index.js]
 // esm format file
@@ -48,21 +47,17 @@ export {};
 // esm format file
 import "fs";
 const a = {};
-export = a;
 module.exports = a;
 
 
 //// [index.d.ts]
-// cjs format file
 declare const a: {};
 export = a;
 //// [file.d.ts]
 export = a;
 //// [index.d.ts]
-// esm format file
 declare const a: {};
 export = a;
 //// [file.d.ts]
-// esm format file
 import "fs";
 export = a;

@@ -38,10 +38,7 @@ export var tests: TestRunner = (function () {
 })();
 
 //// [duplicateLocalVariable2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.tests = exports.TestRunner = exports.TestCase = void 0;
-class TestCase {
+export class TestCase {
     name;
     test;
     errorMessageRegEx;
@@ -51,16 +48,14 @@ class TestCase {
         this.errorMessageRegEx = errorMessageRegEx;
     }
 }
-exports.TestCase = TestCase;
-class TestRunner {
+export class TestRunner {
     static arrayCompare(arg1, arg2) {
         return false;
     }
     addTest(test) {
     }
 }
-exports.TestRunner = TestRunner;
-exports.tests = (function () {
+export var tests = (function () {
     var testRunner = new TestRunner();
     testRunner.addTest(new TestCase("Check UTF8 encoding", function () {
         var fb;

@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -82,13 +83,28 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 	return files
 }
 
-var deprecatedTests = []string{
-	// Test deprecated `importsNotUsedAsValue`
+var skippedTests = []string{
+	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
 	"preserveValueImports_importsNotUsedAsValues.ts",
 	"importsNotUsedAsValues_error.ts",
+	"alwaysStrictNoImplicitUseStrict.ts",
+	"nonPrimitiveIndexingWithForInSupressError.ts",
+	"parameterInitializerBeforeDestructuringEmit.ts",
+	"mappedTypeUnionConstraintInferences.ts",
+	"lateBoundConstraintTypeChecksCorrectly.ts",
+	"keyofDoesntContainSymbols.ts",
+	"isolatedModulesOut.ts",
+	"noStrictGenericChecks.ts",
+	"noImplicitUseStrict_umd.ts",
+	"noImplicitUseStrict_system.ts",
+	"noImplicitUseStrict_es6.ts",
+	"noImplicitUseStrict_commonjs.ts",
+	"noImplicitUseStrict_amd.ts",
+	"noImplicitAnyIndexingSuppressed.ts",
+	"excessPropertyErrorsSuppressed.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
@@ -96,7 +112,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	files := r.EnumerateTestFiles()
 
 	for _, filename := range files {
-		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
+		if slices.Contains(skippedTests, tspath.GetBaseFileName(filename)) {
 			continue
 		}
 		r.runTest(t, filename)
@@ -166,14 +182,35 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
+	switch compilerTest.options.Module {
+	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.Module)
+	}
+	switch compilerTest.options.ModuleResolution {
+	case core.ModuleResolutionKindNode10, core.ModuleResolutionKindClassic:
+		t.Skipf("Skipping test %s with unsupported module resolution kind %d", testName, compilerTest.options.ModuleResolution)
+	}
+	if compilerTest.options.ESModuleInterop.IsFalse() {
+		t.Skipf("Skipping test %s with esModuleInterop=false", testName)
+	}
+	if compilerTest.options.AllowSyntheticDefaultImports.IsFalse() {
+		t.Skipf("Skipping test %s with allowSyntheticDefaultImports=false", testName)
+	}
+	if compilerTest.options.BaseUrl != "" {
+		t.Skipf("Skipping test %s with baseUrl set", testName)
+	}
+	if compilerTest.options.OutFile != "" {
+		t.Skipf("Skipping test %s with outFile set", testName)
+	}
+
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapRecord(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
-	// !!! Verify all baselines
-
+	compilerTest.verifyModuleResolution(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyUnionOrdering(t)
+	compilerTest.verifyParentPointers(t)
 }
 
 type compilerFileBasedTest struct {
@@ -314,11 +351,6 @@ func newCompilerTest(
 }
 
 var concurrentSkippedErrorBaselines = map[string]string{
-	"circular1.ts": "Circular error reported in an extra position.",
-	"circular3.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType1.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType2.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType3.ts": "Circular error reported in an extra position.",
 	"typeOnlyMerge2.ts": "Type-only merging is not detected when files are checked on different checkers.",
 	"typeOnlyMerge3.ts": "Type-only merging is not detected when files are checked on different checkers.",
 }
@@ -334,9 +366,8 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
-			Subfolder:           suiteName,
-			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptions(),
+			Subfolder:   suiteName,
+			IsSubmodule: isSubmodule,
 			DiffFixupOld: func(old string) string {
 				var sb strings.Builder
 				sb.Grow(len(old))
@@ -473,6 +504,21 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string, isS
 	)
 }
 
+func (c *compilerTest) verifyModuleResolution(t *testing.T, suiteName string, isSubmodule bool) {
+	if !c.options.TraceResolution.IsTrue() {
+		return
+	}
+
+	t.Run("module resolution", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating module resolution baseline for test "+c.filename)
+		tsbaseline.DoModuleResolutionBaseline(t, c.configuredName, c.result.Trace, baseline.Options{
+			Subfolder:       suiteName,
+			IsSubmodule:     isSubmodule,
+			SkipDiffWithOld: true,
+		})
+	})
+}
+
 func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil.TestFile {
 	return &harnessutil.TestFile{
 		UnitName: tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
@@ -506,20 +552,34 @@ func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	})
 }
 
-func (c *compilerTest) containsUnsupportedOptions() bool {
-	if len(c.result.Program.UnsupportedExtensions()) != 0 {
-		return true
-	}
-	switch c.options.GetEmitModuleKind() {
-	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
-		return true
-	}
-	if c.options.BaseUrl != "" {
-		return true
-	}
-	if c.options.RootDirs != nil {
-		return true
-	}
-
-	return false
+func (c *compilerTest) verifyParentPointers(t *testing.T) {
+	t.Run("source file parent pointers", func(t *testing.T) {
+		var parent *ast.Node
+		var verifier func(n *ast.Node) bool
+		verifier = func(n *ast.Node) bool {
+			if n == nil {
+				return false
+			}
+			assert.Assert(t, n.Parent != nil, "parent node does not exist")
+			elab := ""
+			if !ast.NodeIsSynthesized(n) {
+				elab += ast.GetSourceFileOfNode(n).Text()[n.Loc.Pos():n.Loc.End()]
+			} else {
+				elab += "!synthetic! no text available"
+			}
+			assert.Assert(t, n.Parent == parent, "parent node does not match traversed parent: "+n.Kind.String()+": "+elab)
+			oldParent := parent
+			parent = n
+			n.ForEachChild(verifier)
+			parent = oldParent
+			return false
+		}
+		for _, f := range c.result.Program.GetSourceFiles() {
+			if c.result.Program.IsSourceFileDefaultLibrary(f.Path()) {
+				continue
+			}
+			parent = f.AsNode()
+			f.AsNode().ForEachChild(verifier)
+		}
+	})
 }

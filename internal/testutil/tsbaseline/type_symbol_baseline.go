@@ -95,7 +95,6 @@ func DoTypeAndSymbolBaseline(
 
 			return sb.String()[:sb.Len()-1]
 		}
-		typesOpts.IsSubmoduleAccepted = len(program.UnsupportedExtensions()) != 0 // TODO(jakebailey): read submoduleAccepted.txt
 
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, typesOpts, false /*isSymbolBaseline*/)
 	})
@@ -327,8 +326,9 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
-		if elem.Flags&ast.NodeFlagsReparsed == 0 || elem.Kind == ast.KindAsExpression || elem.Kind == ast.KindSatisfiesExpression {
-			if elem.Flags&ast.NodeFlagsReparsed == 0 {
+		if elem.Flags&ast.NodeFlagsReparsed == 0 || elem.Kind == ast.KindAsExpression || elem.Kind == ast.KindSatisfiesExpression ||
+			((elem.Parent.Kind == ast.KindSatisfiesExpression || elem.Parent.Kind == ast.KindAsExpression) && elem == elem.Parent.Expression()) {
+			if elem.Flags&ast.NodeFlagsReparsed == 0 || elem.Parent.Kind == ast.KindAsExpression || elem.Parent.Kind == ast.KindSatisfiesExpression {
 				result = append(result, elem)
 			}
 			elem.ForEachChild(addChild)
@@ -342,7 +342,7 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 
 func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk bool) *typeWriterResult {
 	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text(), node.Pos())
-	line, _ := scanner.GetLineAndCharacterOfPosition(walker.currentSourceFile, actualPos)
+	line, _ := scanner.GetECMALineAndCharacterOfPosition(walker.currentSourceFile, actualPos)
 	sourceText := scanner.GetSourceTextOfNodeFromSourceFile(walker.currentSourceFile, node, false /*includeTrivia*/)
 	fileChecker, done := walker.getTypeCheckerForCurrentFile()
 	defer done()
@@ -418,7 +418,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	var symbolString strings.Builder
 	symbolString.Grow(256)
 	symbolString.WriteString("Symbol(")
-	symbolString.WriteString(strings.ReplaceAll(fileChecker.SymbolToString(symbol), ast.InternalSymbolNamePrefix, "__"))
+	symbolString.WriteString(strings.ReplaceAll(fileChecker.SymbolToStringEx(symbol, node.Parent, ast.SymbolFlagsNone, checker.SymbolFormatFlagsAllowAnyNodeKind), ast.InternalSymbolNamePrefix, "__"))
 	count := 0
 	for _, declaration := range symbol.Declarations {
 		if count >= 5 {
@@ -433,7 +433,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		}
 
 		declSourceFile := ast.GetSourceFileOfNode(declaration)
-		declLine, declChar := scanner.GetLineAndCharacterOfPosition(declSourceFile, declaration.Pos())
+		declLine, declChar := scanner.GetECMALineAndCharacterOfPosition(declSourceFile, declaration.Pos())
 		fileName := tspath.GetBaseFileName(declSourceFile.FileName())
 		symbolString.WriteString("Decl(")
 		symbolString.WriteString(fileName)

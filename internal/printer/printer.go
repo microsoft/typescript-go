@@ -24,7 +24,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -45,10 +44,10 @@ type PrinterOptions struct {
 	OmitBraceSourceMapPositions bool
 	// ExtendedDiagnostics           bool
 	OnlyPrintJSDocStyle bool
-	// NeverAsciiEscape              bool
+	NeverAsciiEscape    bool
 	// StripInternal                 bool
-	PreserveSourceNewlines bool
-	// TerminateUnterminatedLiterals bool
+	PreserveSourceNewlines        bool
+	TerminateUnterminatedLiterals bool // !!!
 }
 
 type PrintHandlers struct {
@@ -136,6 +135,8 @@ type Printer struct {
 	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
+	commentStatePool                  core.Pool[commentState]
+	sourceMapStatePool                core.Pool[sourceMapState]
 }
 
 type detachedCommentsInfo struct {
@@ -628,15 +629,19 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 	}
 
 	text := p.currentSourceFile.Text()
-	if comment.Kind == ast.KindMultiLineCommentTrivia {
-		lineMap := p.currentSourceFile.LineMap()
+	lineMap := p.currentSourceFile.ECMALineMap()
+	p.writeCommentRangeWorker(text, lineMap, comment.Kind, comment.TextRange)
+}
+
+func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, kind ast.Kind, loc core.TextRange) {
+	if kind == ast.KindMultiLineCommentTrivia {
 		indentSize := len(getIndentString(1))
-		firstLine := scanner.ComputeLineOfPosition(lineMap, comment.Pos())
+		firstLine := scanner.ComputeLineOfPosition(lineMap, loc.Pos())
 		lineCount := len(lineMap)
 		firstCommentLineIndent := -1
-		pos := comment.Pos()
+		pos := loc.Pos()
 		currentLine := firstLine
-		for ; pos < comment.End(); currentLine++ {
+		for ; pos < loc.End(); currentLine++ {
 			var nextLineStart int
 			if currentLine+1 == lineCount {
 				nextLineStart = len(text) + 1
@@ -644,10 +649,10 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 				nextLineStart = int(lineMap[currentLine+1])
 			}
 
-			if pos != comment.Pos() {
+			if pos != loc.Pos() {
 				// If we are not emitting first line, we need to write the spaces to adjust the alignment
 				if firstCommentLineIndent == -1 {
-					firstCommentLineIndent = calculateIndent(text, int(lineMap[firstLine]), comment.Pos())
+					firstCommentLineIndent = calculateIndent(text, int(lineMap[firstLine]), loc.Pos())
 				}
 
 				// These are number of spaces writer is going to write at current indent
@@ -687,11 +692,11 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 			}
 
 			// Write the comment line text
-			end := min(comment.End(), nextLineStart-1)
+			end := min(loc.End(), nextLineStart-1)
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)
-				if end != comment.End() {
+				if end != loc.End() {
 					p.writeLine()
 				}
 			} else {
@@ -703,18 +708,13 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 		}
 	} else {
 		// Single line comment of style //....
-		p.writeComment(text[comment.Pos():comment.End()])
+		p.writeComment(text[loc.Pos():loc.End()])
 	}
 }
 
 //
 // Custom emit behavior stubs (i.e., from `EmitNode`, `EmitFlags`, etc.)
 //
-
-func (p *Printer) getConstantValue(node *ast.Node) any {
-	// !!! Const-enum inlining (low priority)
-	return nil
-}
 
 func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 	return !p.commentsDisabled &&
@@ -725,7 +725,7 @@ func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 func (p *Printer) shouldWriteComment(comment ast.CommentRange) bool {
 	return !p.Options.OnlyPrintJSDocStyle ||
 		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
-		p.currentSourceFile != nil && isPinnedComment(p.currentSourceFile.Text(), comment)
+		p.currentSourceFile != nil && IsPinnedComment(p.currentSourceFile.Text(), comment)
 }
 
 func (p *Printer) shouldEmitIndented(node *ast.Node) bool {
@@ -783,7 +783,9 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! if startsOnNewLine := getStartsOnNewLine(node); startsOnNewLine != nil { return *startsOnNewLine }
+	if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+		return true
+	}
 	return format&LFPreferNewLine != 0
 }
 
@@ -972,7 +974,11 @@ func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
 func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
-	// !!! Printer option to control whether to escape non-ASCII characters
+	// Add NeverAsciiEscape flag if the printer option is set
+	if p.Options.NeverAsciiEscape {
+		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
 	// !!! Printer option to control source map emit, which causes us to use a different write method on the
@@ -2419,12 +2425,6 @@ func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) boo
 			!strings.Contains(text, scanner.TokenToString(ast.KindDotToken)) &&
 			!strings.Contains(text, "E") &&
 			!strings.Contains(text, "e")
-	} else if ast.IsAccessExpression(expression) {
-		// check if constant enum value is a non-negative integer
-		if constantValue, ok := p.getConstantValue(expression).(jsnum.Number); ok {
-			return !constantValue.IsInf() && constantValue >= 0 && constantValue.Floor() == constantValue
-		}
-		return false
 	}
 	return false
 }
@@ -2715,14 +2715,6 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 	case ast.OperatorPrecedenceAssignment:
 		// assignment is right-associative
 		leftPrec = ast.OperatorPrecedenceLeftHandSide
-	case ast.OperatorPrecedenceCoalesce:
-		// allow coalesce on the left, but short circuit to BitwiseOR
-		if isBinaryOperation(node.Left, ast.KindQuestionQuestionToken) {
-			leftPrec = ast.OperatorPrecedenceCoalesce
-		} else {
-			leftPrec = ast.OperatorPrecedenceBitwiseOR
-		}
-		rightPrec = ast.OperatorPrecedenceBitwiseOR
 	case ast.OperatorPrecedenceLogicalOR:
 		rightPrec = ast.OperatorPrecedenceLogicalAND
 	case ast.OperatorPrecedenceLogicalAND:
@@ -3091,12 +3083,12 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		return
 	case ast.KindPartiallyEmittedExpression:
 		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+	case ast.KindSyntheticReferenceExpression:
+		panic("SyntheticReferenceExpression should not be printed")
 
 	// !!!
 	////case ast.KindCommaListExpression:
 	////	p.emitCommaList(node.AsCommaListExpression())
-	////case ast.KindSyntheticReferenceExpression:
-	////	return Debug.fail("SyntheticReferenceExpression should not be printed")
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
@@ -3660,8 +3652,8 @@ func (p *Printer) emitImportDeclaration(node *ast.ImportDeclaration) {
 
 func (p *Printer) emitImportClause(node *ast.ImportClause) {
 	state := p.enterNode(node.AsNode())
-	if node.IsTypeOnly {
-		p.emitToken(ast.KindTypeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	if node.PhaseModifier != ast.KindUnknown {
+		p.emitToken(node.PhaseModifier, node.Pos(), WriteKindKeyword, node.AsNode())
 		p.writeSpace()
 	}
 	if name := node.Name(); name != nil {
@@ -4106,7 +4098,7 @@ func (p *Printer) emitJsxAttributeLike(node *ast.JsxAttributeLike) {
 func (p *Printer) emitJsxExpression(node *ast.JsxExpression) {
 	state := p.enterNode(node.AsNode())
 	if node.Expression != nil || !p.commentsDisabled && !ast.NodeIsSynthesized(node.AsNode()) && p.hasCommentsAtPosition(node.Pos()) { // preserve empty expressions if they contain comments!
-		indented := p.currentSourceFile != nil && !ast.NodeIsSynthesized(node.AsNode()) && getLinesBetweenPositions(p.currentSourceFile, node.Pos(), node.End()) != 0
+		indented := p.currentSourceFile != nil && !ast.NodeIsSynthesized(node.AsNode()) && GetLinesBetweenPositions(p.currentSourceFile, node.Pos(), node.End()) != 0
 		p.increaseIndentIf(indented)
 		end := p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
 		p.emitTokenNode(node.DotDotDotToken)
@@ -4392,15 +4384,24 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	state := p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
 
 	index := 0
+	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
+		if node.IsDeclarationFile {
+			p.emitTripleSlashDirectives(node)
+		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
@@ -4416,6 +4417,23 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	p.emitDetachedCommentsAfterStatementList(node.AsNode(), node.Statements.Loc, state)
 	p.currentSourceFile = savedCurrentSourceFile
 	p.commentsDisabled = savedCommentsDisabled
+}
+
+func (p *Printer) emitTripleSlashDirectives(node *ast.SourceFile) {
+	p.emitDirective("path", node.ReferencedFiles)
+	p.emitDirective("types", node.TypeReferenceDirectives)
+	p.emitDirective("lib", node.LibReferenceDirectives)
+}
+
+func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
+	for _, ref := range refs {
+		var resolutionMode string
+		if ref.ResolutionMode != core.ResolutionModeNone {
+			resolutionMode = fmt.Sprintf(`resolution-mode="%s" `, core.IfElse(ref.ResolutionMode == core.ResolutionModeESM, "import", "require"))
+		}
+		p.writeComment(fmt.Sprintf("/// <reference %s=\"%s\" %s%s/>", kind, ref.FileName, resolutionMode, core.IfElse(ref.Preserve, `preserve="true" `, "")))
+		p.writeLine()
+	}
 }
 
 //
@@ -4988,12 +5006,14 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) *commentState {
 
 	// Emit leading comments
 	p.emitLeadingCommentsOfNode(node, emitFlags, commentRange)
-	p.emitLeadingSyntheticCommentsOfNode(node)
+	p.emitLeadingSyntheticCommentsOfNode(node, emitFlags)
 	if emitFlags&EFNoNestedComments != 0 {
 		p.commentsDisabled = true
 	}
 
-	return &commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	c := p.commentStatePool.New()
+	*c = commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	return c
 }
 
 func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
@@ -5012,7 +5032,7 @@ func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
 		p.commentsDisabled = false
 	}
 
-	p.emitTrailingSyntheticCommentsOfNode(node)
+	p.emitTrailingSyntheticCommentsOfNode(node, emitFlags)
 	p.emitTrailingCommentsOfNode(node, emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd)
 
 	// !!! Preserve comments from type annotation:
@@ -5046,7 +5066,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 		p.decreaseIndentIf(needsIndent)
 	}
 
-	return &commentState{}, pos
+	return p.commentStatePool.New(), pos
 }
 
 func (p *Printer) emitCommentsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, state *commentState) {
@@ -5069,7 +5089,7 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 	containerPos := p.containerPos
 	containerEnd := p.containerEnd
 	declarationListContainerEnd := p.declarationListContainerEnd
-	skipLeadingComments := emitFlags&EFNoLeadingComments == 0 && !ast.PositionIsSynthesized(detachedRange.Pos())
+	skipLeadingComments := ast.PositionIsSynthesized(detachedRange.Pos()) || emitFlags&EFNoLeadingComments != 0
 
 	if !skipLeadingComments {
 		p.emitDetachedCommentsAndUpdateCommentsInfo(detachedRange)
@@ -5151,12 +5171,62 @@ func (p *Printer) emitTrailingCommentsOfNode(node *ast.Node, emitFlags EmitFlags
 	}
 }
 
-func (p *Printer) emitLeadingSyntheticCommentsOfNode(node *ast.Node) {
-	// !!!
+func (p *Printer) emitLeadingSyntheticCommentsOfNode(node *ast.Node, emitFlags EmitFlags) {
+	if emitFlags&EFNoLeadingComments != 0 {
+		return
+	}
+	synth := p.emitContext.GetSyntheticLeadingComments(node)
+	for _, c := range synth {
+		p.emitLeadingSynthesizedComment(c)
+	}
 }
 
-func (p *Printer) emitTrailingSyntheticCommentsOfNode(node *ast.Node) {
-	// !!!
+func (p *Printer) emitLeadingSynthesizedComment(comment SynthesizedComment) {
+	if comment.HasLeadingNewLine || comment.Kind == ast.KindSingleLineCommentTrivia {
+		p.writer.WriteLine()
+	}
+	p.writeSynthesizedComment(comment)
+	if comment.HasTrailingNewLine || comment.Kind == ast.KindSingleLineCommentTrivia {
+		p.writer.WriteLine()
+	} else {
+		p.writer.WriteSpace(" ")
+	}
+}
+
+func (p *Printer) emitTrailingSyntheticCommentsOfNode(node *ast.Node, emitFlags EmitFlags) {
+	if emitFlags&EFNoTrailingComments != 0 {
+		return
+	}
+	synth := p.emitContext.GetSyntheticTrailingComments(node)
+	for _, c := range synth {
+		p.emitTrailingSynthesizedComment(c)
+	}
+}
+
+func (p *Printer) emitTrailingSynthesizedComment(comment SynthesizedComment) {
+	if !p.writer.IsAtStartOfLine() {
+		p.writer.WriteSpace(" ")
+	}
+	p.writeSynthesizedComment(comment)
+	if comment.HasTrailingNewLine {
+		p.writer.WriteLine()
+	}
+}
+
+func formatSynthesizedComment(comment SynthesizedComment) string {
+	if comment.Kind == ast.KindMultiLineCommentTrivia {
+		return "/*" + comment.Text + "*/"
+	}
+	return "//" + comment.Text
+}
+
+func (p *Printer) writeSynthesizedComment(comment SynthesizedComment) {
+	text := formatSynthesizedComment(comment)
+	var lineMap []core.TextPos
+	if comment.Kind == ast.KindMultiLineCommentTrivia {
+		lineMap = core.ComputeECMALineStarts(text)
+	}
+	p.writeCommentRangeWorker(text, lineMap, comment.Kind, core.NewTextRange(0, len(text)))
 }
 
 func (p *Printer) emitLeadingComments(pos int, elided bool) bool {
@@ -5221,7 +5291,7 @@ func (p *Printer) shouldEmitNewLineBeforeLeadingCommentOfPosition(pos int, comme
 	// If the leading comments start on different line than the start of node, write new line
 	return p.currentSourceFile != nil &&
 		pos != commentPos &&
-		scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), commentPos)
+		scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), commentPos)
 }
 
 func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparator) {
@@ -5256,7 +5326,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 	}
 
 	text := p.currentSourceFile.Text()
-	lineMap := p.currentSourceFile.LineMap()
+	lineMap := p.currentSourceFile.ECMALineMap()
 
 	var leadingComments []ast.CommentRange
 	if p.commentsDisabled {
@@ -5267,7 +5337,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		//      var x = 10;
 		if textRange.Pos() == 0 {
 			for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()) {
-				if isPinnedComment(text, comment) {
+				if IsPinnedComment(text, comment) {
 					leadingComments = append(leadingComments, comment)
 				}
 			}
@@ -5370,7 +5440,7 @@ func (p *Printer) emitComment(comment ast.CommentRange) {
 
 func (p *Printer) isTripleSlashComment(comment ast.CommentRange) bool {
 	return p.currentSourceFile != nil &&
-		isRecognizedTripleSlashComment(p.currentSourceFile.Text(), comment)
+		IsRecognizedTripleSlashComment(p.currentSourceFile.Text(), comment)
 }
 
 //
@@ -5409,7 +5479,7 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
-	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+	sourceLine, sourceCharacter := scanner.GetECMALineAndCharacterOfPosition(p.sourceMapSource, pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
 		p.writer.GetColumn(),
@@ -5486,7 +5556,9 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 		p.sourceMapsDisabled = true
 	}
 
-	return &sourceMapState{emitFlags, loc, false}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, false}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceMapState) {
@@ -5524,7 +5596,9 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 		}
 	}
 
-	return &sourceMapState{emitFlags, loc, hasLoc}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, hasLoc}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, previousState *sourceMapState) {

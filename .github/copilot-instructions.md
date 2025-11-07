@@ -9,22 +9,41 @@ Most of our development takes place in the `internal` directory, and most behavi
 
 Most development on the codebase is in Go.
 Standard Go commands and practices apply, but we primarily use a tool called `hereby` to build, run tests, and other tasks.
-Feel free to install `hereby` globally (`npm install -g hereby`) if it is easier, and run `hereby --list` to see all available commands.
+Run `npx hereby --tasks` to see all available commands.
 
 ```sh
-hereby build  # Build the project
-hereby test   # Run tests
-hereby format # Format the code
-hereby lint   # Run linters
+npx hereby build  # Build the tsgo binary (not required for tests)
+npx hereby test   # Run tests
+npx hereby format # Format the code
+npx hereby lint   # Run linters
+
+# To run a specific compiler test:
+go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For pre-existing "submodule" tests in _submodules/TypeScript
+go test -run='TestLocal/<test name>' ./internal/testrunner      # For new "local" tests created in testdata/tests/cases
 ```
 
 Always make sure code is formatted, linted, and tested before sending a pull request.
+
+<critical>
+YOU MUST RUN THESE COMMANDS AT THE END OF YOUR SESSION!
+IF THESE COMMANDS FAIL, CI WILL FAIL, AND YOUR PR WILL BE REJECTED OUT OF HAND.
+FIXING ERRORS FROM THESE COMMANDS IS YOUR HIGHEST PRIORITY.
+ENSURE YOU DO THE RIGHT THINGS TO MAKE THEM PASS.
+```sh
+npx hereby build  # Build the project
+npx hereby test   # Run tests
+npx hereby lint   # Run linters
+npx hereby format # Format the code
+```
+</critical>
 
 ## Compiler Features, Fixes, and Tests
 
 When fixing a bug or implementing a new feature, at least one minimal test case should always be added in advance to verify the fix.
 This project primarily uses snapshot/baseline/golden tests rather than unit tests.
 New compiler tests are written in `.ts`/`.tsx` files in the directory `testdata/tests/cases/compiler/`, and are written in the following format:
+
+**Note:** Issues with editor features cannot be tested with compiler tests in `testdata/tests/cases/`. Editor functionality requires integration testing with the language server.
 
 ```ts
 // @target: esnext
@@ -51,6 +70,8 @@ function greet(person) {
     console.log(`Hello, ${person.name}!`);
 }
 ```
+
+**New compiler tests should always enable strict mode (`@strict: true`) unless the bug specifically involves non-strict mode behavior.**
 
 Tests don't always need the above `@option`s specified, but they are common to specify or modify.
 Tests can be run with multiple settings for a given option by using a comma-separated list (e.g. `@option: settingA,settingB`).
@@ -79,7 +100,13 @@ It is ideal to implement features and fixes in the following order, and commit c
 
 It is fine to implement more and more of a feature across commits, but be sure to update baselines every time so that reviewers can measure progress.
 
+## Code Porting Reference
+
+The code in `internal` is ported from the code in `_submodules/TypeScript`.
+When implementing features or fixing bugs, those files should be searched for similar functions when code is either missing or potentially wrong.
+The TypeScript submodule serves as the reference implementation for behavior and functionality.
+
 # Other Instructions
 
 - Do not add or change existing dependencies unless asked to.
- 
+- Do not remove any debug assertions or panic calls. Existing assertions are never too strict or incorrect.

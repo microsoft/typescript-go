@@ -5,7 +5,7 @@ export const x = 0;
 
 //// [constDeclarations_access_2.ts]
 ///<reference path='constDeclarations_access_1.ts'/>
-import m = require('constDeclarations_access_1');
+import m = require('./constDeclarations_access_1');
 // Errors
 m.x = 1;
 m.x += 2;
@@ -55,7 +55,7 @@ exports.x = 0;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path='constDeclarations_access_1.ts'/>
-const m = require("constDeclarations_access_1");
+const m = require("./constDeclarations_access_1");
 // Errors
 m.x = 1;
 m.x += 2;

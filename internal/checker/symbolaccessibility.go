@@ -38,7 +38,7 @@ func (ch *Checker) IsAnySymbolAccessible(symbols []*ast.Symbol, enclosingDeclara
 		if len(accessibleSymbolChain) > 0 {
 			hadAccessibleChain = symbol
 			// TODO: going through emit resolver here is weird. Relayer these APIs.
-			hasAccessibleDeclarations := ch.GetEmitResolver(nil, true).hasVisibleDeclarations(accessibleSymbolChain[0], shouldComputeAliasesToMakeVisible)
+			hasAccessibleDeclarations := ch.GetEmitResolver().hasVisibleDeclarations(accessibleSymbolChain[0], shouldComputeAliasesToMakeVisible)
 			if hasAccessibleDeclarations != nil {
 				return hasAccessibleDeclarations
 			}
@@ -105,11 +105,7 @@ func (ch *Checker) IsAnySymbolAccessible(symbols []*ast.Symbol, enclosingDeclara
 }
 
 func hasNonGlobalAugmentationExternalModuleSymbol(declaration *ast.Node) bool {
-	return isModuleWithStringLiteralName(declaration) || (declaration.Kind == ast.KindSourceFile && ast.IsExternalOrCommonJSModule(declaration.AsSourceFile()))
-}
-
-func isModuleWithStringLiteralName(node *ast.Node) bool {
-	return ast.IsModuleDeclaration(node) && node.Name().Kind == ast.KindStringLiteral
+	return ast.IsModuleWithStringLiteralName(declaration) || (declaration.Kind == ast.KindSourceFile && ast.IsExternalOrCommonJSModule(declaration.AsSourceFile()))
 }
 
 func getQualifiedLeftMeaning(rightMeaning ast.SymbolFlags) ast.SymbolFlags {

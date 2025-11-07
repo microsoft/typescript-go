@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -38,14 +39,31 @@ class Gossip extends Secret {
     /*a*/
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "hint", InsertText: ptrTo("protected hint(): string {\n}"), FilterText: ptrTo("hint")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "refuse", InsertText: ptrTo("public refuse(): string {\n}"), FilterText: ptrTo("refuse")}},
-			Excludes: []string{"tell", "#secret"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "hint",
+					InsertText: PtrTo("protected hint(): string {\n}"),
+					FilterText: PtrTo("hint"),
+					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:      "refuse",
+					InsertText: PtrTo("public refuse(): string {\n}"),
+					FilterText: PtrTo("refuse"),
+					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+				},
+			},
+			Excludes: []string{
+				"tell",
+				"#secret",
+			},
 		},
 	})
 }

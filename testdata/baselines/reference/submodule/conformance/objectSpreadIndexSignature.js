@@ -20,12 +20,12 @@ writable.a = 0;  // should be ok.
 
 
 //// [objectSpreadIndexSignature.js]
-let i = { ...indexed1, b: 11 };
+let i = Object.assign(Object.assign({}, indexed1), { b: 11 });
 // only indexed has indexer, so i[101]: any
 i[101];
-let ii = { ...indexed1, ...indexed2 };
+let ii = Object.assign(Object.assign({}, indexed1), indexed2);
 // both have indexer, so i[1001]: number | boolean
 ii[1001];
-indexed3 = { ...b ? indexed3 : undefined };
-var writable = { ...roindex };
+indexed3 = Object.assign({}, b ? indexed3 : undefined);
+var writable = Object.assign({}, roindex);
 writable.a = 0; // should be ok.

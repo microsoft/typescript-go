@@ -25,16 +25,12 @@ export class BuildResult<A, B, C>{
 
 
 //// [genericMemberFunction.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BuildResult = exports.FileWithErrors = exports.BuildError = void 0;
-class BuildError {
+export class BuildError {
     parent() {
         return undefined;
     }
 }
-exports.BuildError = BuildError;
-class FileWithErrors {
+export class FileWithErrors {
     errors() {
         return undefined;
     }
@@ -42,8 +38,7 @@ class FileWithErrors {
         return undefined;
     }
 }
-exports.FileWithErrors = FileWithErrors;
-class BuildResult {
+export class BuildResult {
     merge(other) {
         a.b.c.d.e.f.g = 0;
         removedFiles.forEach((each) => {
@@ -51,4 +46,3 @@ class BuildResult {
         });
     }
 }
-exports.BuildResult = BuildResult;

@@ -29,6 +29,7 @@ breaks.foo()
 
 
 //// [silentNeverPropagation.js]
+// Repro from #45041
 const breaks = convert(createModule({ a: 12 }, { foo() { return true; } }));
 breaks.state.a;
 breaks.state.z;
@@ -36,7 +37,6 @@ breaks.foo();
 
 
 //// [silentNeverPropagation.d.ts]
-// Repro from #45041
 type ModuleWithState<TState> = {
     state: TState;
 };

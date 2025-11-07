@@ -2,10 +2,12 @@ package printer
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 )
 
 type NodeFactory struct {
@@ -219,7 +221,9 @@ func (f *NodeFactory) NewLogicalORExpression(left *ast.Expression, right *ast.Ex
 // func (f *NodeFactory) NewBitwiseORExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
 // func (f *NodeFactory) NewBitwiseXORExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
 // func (f *NodeFactory) NewBitwiseANDExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
-// func (f *NodeFactory) NewStrictEqualityExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
+func (f *NodeFactory) NewStrictEqualityExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindEqualsEqualsEqualsToken), right)
+}
 
 func (f *NodeFactory) NewStrictInequalityExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
 	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindExclamationEqualsEqualsToken), right)
@@ -271,6 +275,56 @@ func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expr
 //
 // Utilities
 //
+
+func (f *NodeFactory) NewTypeCheck(value *ast.Node, tag string) *ast.Node {
+	if tag == "null" {
+		return f.NewStrictEqualityExpression(value, f.NewKeywordExpression(ast.KindNullKeyword))
+	} else if tag == "undefined" {
+		return f.NewStrictEqualityExpression(value, f.NewVoidZeroExpression())
+	} else {
+		return f.NewStrictEqualityExpression(f.NewTypeOfExpression(value), f.NewStringLiteral(tag))
+	}
+}
+
+func (f *NodeFactory) NewMethodCall(object *ast.Node, methodName *ast.Node, argumentsList []*ast.Node) *ast.Node {
+	// Preserve the optionality of `object`.
+	if ast.IsCallExpression(object) && (object.Flags&ast.NodeFlagsOptionalChain != 0) {
+		return f.NewCallExpression(
+			f.NewPropertyAccessExpression(object, nil, methodName, ast.NodeFlagsNone),
+			nil,
+			nil,
+			f.NewNodeList(argumentsList),
+			ast.NodeFlagsOptionalChain,
+		)
+	}
+	return f.NewCallExpression(
+		f.NewPropertyAccessExpression(object, nil, methodName, ast.NodeFlagsNone),
+		nil,
+		nil,
+		f.NewNodeList(argumentsList),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewGlobalMethodCall(globalObjectName string, methodName string, argumentsList []*ast.Node) *ast.Node {
+	return f.NewMethodCall(f.NewIdentifier(globalObjectName), f.NewIdentifier(methodName), argumentsList)
+}
+
+func (f *NodeFactory) NewFunctionCallCall(target *ast.Expression, thisArg *ast.Expression, argumentsList []*ast.Node) *ast.Node {
+	if thisArg == nil {
+		panic("Attempted to construct function call call without this argument expression")
+	}
+	args := append([]*ast.Expression{thisArg}, argumentsList...)
+	return f.NewMethodCall(target, f.NewIdentifier("call"), args)
+}
+
+func (f *NodeFactory) NewArraySliceCall(array *ast.Expression, start int) *ast.Node {
+	var args []*ast.Node
+	if start != 0 {
+		args = append(args, f.NewNumericLiteral(strconv.Itoa(start)))
+	}
+	return f.NewMethodCall(array, f.NewIdentifier("slice"), args)
+}
 
 // Determines whether a node is a parenthesized expression that can be ignored when recreating outer expressions.
 //
@@ -494,20 +548,52 @@ func (f *NodeFactory) NewDisposeResourcesHelper(envBinding *ast.Expression) *ast
 // !!! ES2018 Helpers
 // Chains a sequence of expressions using the __assign helper or Object.assign if available in the target
 func (f *NodeFactory) NewAssignHelper(attributesSegments []*ast.Expression, scriptTarget core.ScriptTarget) *ast.Expression {
-	if scriptTarget >= core.ScriptTargetES2015 {
-		return f.NewCallExpression(f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("assign"), ast.NodeFlagsNone), nil, nil, f.NewNodeList(attributesSegments), ast.NodeFlagsNone)
+	return f.NewCallExpression(f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("assign"), ast.NodeFlagsNone), nil, nil, f.NewNodeList(attributesSegments), ast.NodeFlagsNone)
+}
+
+// ES2018 Destructuring Helpers
+
+func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node, computedTempVariables []*ast.Node, location core.TextRange) *ast.Expression {
+	f.emitContext.RequestEmitHelper(restHelper)
+	var propertyNames []*ast.Node
+	computedTempVariableOffset := 0
+	for i, element := range elements {
+		if i == len(elements)-1 {
+			break
+		}
+		propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
+		if propertyName != nil {
+			if ast.IsComputedPropertyName(propertyName) {
+				debug.AssertIsDefined(computedTempVariables, "Encountered computed property name but 'computedTempVariables' argument was not provided.")
+				temp := computedTempVariables[computedTempVariableOffset]
+				computedTempVariableOffset++
+				// typeof _tmp === "symbol" ? _tmp : _tmp + ""
+				propertyNames = append(propertyNames, f.NewConditionalExpression(
+					f.NewTypeCheck(temp, "symbol"),
+					f.NewToken(ast.KindQuestionToken),
+					temp,
+					f.NewToken(ast.KindColonToken),
+					f.NewBinaryExpression(nil, temp, nil, f.NewToken(ast.KindPlusToken), f.NewStringLiteral("")),
+				))
+			} else {
+				propertyNames = append(propertyNames, f.NewStringLiteralFromNode(propertyName))
+			}
+		}
 	}
-	f.emitContext.RequestEmitHelper(assignHelper)
+	propNames := f.NewArrayLiteralExpression(f.NewNodeList(propertyNames), false)
+	propNames.Loc = location
 	return f.NewCallExpression(
-		f.NewUnscopedHelperName("__assign"),
+		f.NewUnscopedHelperName("__rest"),
 		nil,
 		nil,
-		f.NewNodeList(attributesSegments),
+		f.NewNodeList([]*ast.Node{
+			value,
+			propNames,
+		}),
 		ast.NodeFlagsNone,
 	)
 }
 
-// !!! ES2018 Destructuring Helpers
 // !!! ES2017 Helpers
 
 // ES2015 Helpers

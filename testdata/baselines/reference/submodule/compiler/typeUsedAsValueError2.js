@@ -15,16 +15,20 @@ namespace HelloNamespace {
 export = HelloNamespace;
 
 //// [world.ts]
-import HelloInterface = require("helloInterface");
-import HelloNamespace = require("helloNamespace");
+import HelloInterface = require("./helloInterface");
+import HelloNamespace = require("./helloNamespace");
 
 HelloInterface.world;
 HelloNamespace.world;
 
+//// [helloInterface.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [helloNamespace.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [world.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const HelloInterface = require("helloInterface");
-const HelloNamespace = require("helloNamespace");
 HelloInterface.world;
 HelloNamespace.world;

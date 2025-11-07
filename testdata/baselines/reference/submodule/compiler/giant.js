@@ -916,19 +916,6 @@ var eM;
 
 
 //// [giant.d.ts]
-/*
-    Prefixes
-    p -> public
-    r -> private
-    i -> import
-    e -> export
-    a -> ambient
-    t -> static
-    s -> set
-    g -> get
-
-    MAX DEPTH 3 LEVELS
-*/
 declare const p = "propName";
 export declare var eV: any;
 export declare function eF(): void;
@@ -954,7 +941,6 @@ export declare class eC {
     static get tgF(): any;
 }
 export interface eI {
-    //Call Signature
     (): any;
     (): number;
     (p: any): any;
@@ -963,25 +949,19 @@ export interface eI {
     (...p3: any[]): any;
     (p4: string, p5?: string): any;
     (p6: string, ...p7: any[]): any;
-    //(p8?: string, ...p9: any[]);
-    //(p10:string, p8?: string, ...p9: any[]);
-    //Construct Signature
-    new ();
-    new ();
-    new (p: string);
-    new (p2?: string);
-    new (...p3: any[]);
-    new (p4: string, p5?: string);
-    new (p6: string, ...p7: any[]);
-    //Index Signature
+    new (): any;
+    new (): number;
+    new (p: string): any;
+    new (p2?: string): any;
+    new (...p3: any[]): any;
+    new (p4: string, p5?: string): any;
+    new (p6: string, ...p7: any[]): any;
     [p]: any;
     [p1: string]: any;
     [p2: string, p3: number]: any;
-    //Property Signature
     p: any;
     p1?: any;
     p2?: string;
-    //Function Signature
     p3(): any;
     p4?(): any;
     p5?(): void;
@@ -1014,7 +994,6 @@ export declare namespace eM {
         static get tgF(): any;
     }
     interface eI {
-        //Call Signature
         (): any;
         (): number;
         (p: any): any;
@@ -1023,25 +1002,19 @@ export declare namespace eM {
         (...p3: any[]): any;
         (p4: string, p5?: string): any;
         (p6: string, ...p7: any[]): any;
-        //(p8?: string, ...p9: any[]);
-        //(p10:string, p8?: string, ...p9: any[]);
-        //Construct Signature
-        new ();
-        new ();
-        new (p: string);
-        new (p2?: string);
-        new (...p3: any[]);
-        new (p4: string, p5?: string);
-        new (p6: string, ...p7: any[]);
-        //Index Signature
+        new (): any;
+        new (): number;
+        new (p: string): any;
+        new (p2?: string): any;
+        new (...p3: any[]): any;
+        new (p4: string, p5?: string): any;
+        new (p6: string, ...p7: any[]): any;
         [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
-        //Property Signature
         p: any;
         p1?: any;
         p2?: string;
-        //Function Signature
         p3(): any;
         p4?(): any;
         p5?(): void;
@@ -1138,7 +1111,6 @@ export declare namespace eaM {
         static tF(): void;
     }
     interface I {
-        //Call Signature
         (): any;
         (): number;
         (p: string): any;
@@ -1146,25 +1118,19 @@ export declare namespace eaM {
         (...p3: any[]): any;
         (p4: string, p5?: string): any;
         (p6: string, ...p7: any[]): any;
-        //(p8?: string, ...p9: any[]);
-        //(p10:string, p8?: string, ...p9: any[]);
-        //Construct Signature
-        new ();
-        new ();
-        new (p: string);
-        new (p2?: string);
-        new (...p3: any[]);
-        new (p4: string, p5?: string);
-        new (p6: string, ...p7: any[]);
-        //Index Signature
+        new (): any;
+        new (): number;
+        new (p: string): any;
+        new (p2?: string): any;
+        new (...p3: any[]): any;
+        new (p4: string, p5?: string): any;
+        new (p6: string, ...p7: any[]): any;
         [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
-        //Property Signature
         p: any;
         p1?: any;
         p2?: string;
-        //Function Signature
         p3(): any;
         p4?(): any;
         p5?(): void;
@@ -1204,7 +1170,6 @@ export declare namespace eaM {
         static tF(): void;
     }
     interface eI {
-        //Call Signature
         (): any;
         (): number;
         (p: any): any;
@@ -1213,25 +1178,19 @@ export declare namespace eaM {
         (...p3: any[]): any;
         (p4: string, p5?: string): any;
         (p6: string, ...p7: any[]): any;
-        //(p8?: string, ...p9: any[]);
-        //(p10:string, p8?: string, ...p9: any[]);
-        //Construct Signature
-        new ();
-        new ();
-        new (p: string);
-        new (p2?: string);
-        new (...p3: any[]);
-        new (p4: string, p5?: string);
-        new (p6: string, ...p7: any[]);
-        //Index Signature
+        new (): any;
+        new (): number;
+        new (p: string): any;
+        new (p2?: string): any;
+        new (...p3: any[]): any;
+        new (p4: string, p5?: string): any;
+        new (p6: string, ...p7: any[]): any;
         [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
-        //Property Signature
         p: any;
         p1?: any;
         p2?: string;
-        //Function Signature
         p3(): any;
         p4?(): any;
         p5?(): void;

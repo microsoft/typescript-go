@@ -9,13 +9,13 @@ export default a;
 >a : number
 
 === client.ts ===
-export import defaultBinding from "server";
->defaultBinding : any
+export import defaultBinding from "./server";
+>defaultBinding : number
 
 export var x = defaultBinding;
->x : any
->defaultBinding : any
+>x : number
+>defaultBinding : number
 
-export import defaultBinding2 from "server"; // non referenced
->defaultBinding2 : any
+export import defaultBinding2 from "./server"; // non referenced
+>defaultBinding2 : number
 

@@ -1,17 +1,17 @@
-world.ts(1,33): error TS2307: Cannot find module 'helloInterface' or its corresponding type declarations.
-world.ts(2,33): error TS2307: Cannot find module 'helloNamespace' or its corresponding type declarations.
+world.ts(4,1): error TS2693: 'HelloInterface' only refers to a type, but is being used as a value here.
+world.ts(5,1): error TS2708: Cannot use namespace 'HelloNamespace' as a value.
 
 
 ==== world.ts (2 errors) ====
-    import HelloInterface = require("helloInterface");
-                                    ~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'helloInterface' or its corresponding type declarations.
-    import HelloNamespace = require("helloNamespace");
-                                    ~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'helloNamespace' or its corresponding type declarations.
+    import HelloInterface = require("./helloInterface");
+    import HelloNamespace = require("./helloNamespace");
     
     HelloInterface.world;
+    ~~~~~~~~~~~~~~
+!!! error TS2693: 'HelloInterface' only refers to a type, but is being used as a value here.
     HelloNamespace.world;
+    ~~~~~~~~~~~~~~
+!!! error TS2708: Cannot use namespace 'HelloNamespace' as a value.
 ==== helloInterface.ts (0 errors) ====
     interface HelloInterface {
         world: any;

@@ -173,7 +173,7 @@ let over;
 // these two are still errors despite their doubled up discriminants
 over = { a: 1, b: 1, first: "ok", second: "error" };
 over = { a: 1, b: 1, first: "ok", third: "error" };
-let t2 = { ...t1 };
+let t2 = Object.assign({}, t1);
 t0 = t2;
 const abab = {
     kind: "A",

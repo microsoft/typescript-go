@@ -31,15 +31,8 @@ function billOwner(pet: Animal2) {
 
 //// [spreadIdenticalTypesRemoved.js]
 function clonePet(pet, fullCopy) {
-    return {
-        name: pet.name,
-        kind: pet.kind,
-        ...(fullCopy && pet),
-    };
+    return Object.assign({ name: pet.name, kind: pet.kind }, (fullCopy && pet));
 }
 function billOwner(pet) {
-    return {
-        ...(pet.owner && pet),
-        paid: false
-    };
+    return Object.assign(Object.assign({}, (pet.owner && pet)), { paid: false });
 }

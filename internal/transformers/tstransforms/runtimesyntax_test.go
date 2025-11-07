@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
 
@@ -199,11 +200,7 @@ var E;
     E[E["B"] = 1] = "B";
 })(E || (E = {}));`},
 
-		{title: "const enum", input: "const enum E {A, B}", output: `var E;
-(function (E) {
-    E[E["A"] = 0] = "A";
-    E[E["B"] = 1] = "B";
-})(E || (E = {}));`},
+		{title: "const enum", input: "const enum E {A, B}", output: ""},
 
 		{title: "merged enum", input: "enum E {A} enum E {B=A}", output: `var E;
 (function (E) {
@@ -237,7 +234,7 @@ var E;
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
 }
@@ -249,9 +246,7 @@ func TestNamespaceTransformer(t *testing.T) {
 		input  string
 		output string
 	}{
-		{title: "empty namespace", input: "namespace N {}", output: `var N;
-(function (N) {
-})(N || (N = {}));`},
+		{title: "empty namespace", input: "namespace N {}", output: ``},
 
 		{title: "export var", input: "namespace N { export var x = 1; }", output: `var N;
 (function (N) {
@@ -362,19 +357,9 @@ func TestNamespaceTransformer(t *testing.T) {
     })(E = N.E || (N.E = {}));
 })(N || (N = {}));`},
 
-		{title: "export namespace", input: "namespace N { export namespace N2 {} }", output: `var N;
-(function (N) {
-    let N2;
-    (function (N2) {
-    })(N2 = N.N2 || (N.N2 = {}));
-})(N || (N = {}));`},
+		{title: "export namespace", input: "namespace N { export namespace N2 {} }", output: ``},
 
-		{title: "nested namespace", input: "namespace N.N2 { }", output: `var N;
-(function (N) {
-    let N2;
-    (function (N2) {
-    })(N2 = N.N2 || (N.N2 = {}));
-})(N || (N = {}));`},
+		{title: "nested namespace", input: "namespace N.N2 { }", output: ``},
 
 		{title: "import=", input: "import X = Y.X;", output: `var X = Y.X;`},
 
@@ -415,7 +400,7 @@ func TestNamespaceTransformer(t *testing.T) {
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
 }
@@ -451,8 +436,9 @@ func TestParameterPropertyTransformer(t *testing.T) {
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			file = tstransforms.NewTypeEraserTransformer(emitContext, options).TransformSourceFile(file)
-			file = tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file)
+			opts := &transformers.TransformOptions{Context: emitContext, CompilerOptions: options, Resolver: resolver}
+			file = tstransforms.NewTypeEraserTransformer(opts).TransformSourceFile(file)
+			file = tstransforms.NewRuntimeSyntaxTransformer(opts).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

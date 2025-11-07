@@ -1,23 +1,6 @@
 --- old.jsDeclarationsExportAssignedVisibility.js
 +++ new.jsDeclarationsExportAssignedVisibility.js
-@@= skipped -17, +17 lines =@@
- module.exports = Container;
-
- //// [obj.js]
-+export = class Obj {
-+    constructor() {
-+        this.x = 12;
-+    }
-+};
- module.exports = class Obj {
-     constructor() {
-         this.x = 12;
-@@= skipped -12, +17 lines =@@
-         this.usage = new Obj();
-     }
- }
-+export = Container;
- module.exports = Container;
+@@= skipped -33, +33 lines =@@
 
 
  //// [obj.d.ts]
@@ -26,7 +9,9 @@
 -    x: number;
 -}
 +declare const _default: {
-+    new (): import("./obj");
++    new (): {
++        x: number;
++    };
 +};
 +export = _default;
  //// [index.d.ts]
@@ -50,7 +35,9 @@
 +    
 +==== out/obj.d.ts (0 errors) ====
 +    declare const _default: {
-+        new (): import("./obj");
++        new (): {
++            x: number;
++        };
 +    };
 +    export = _default;
 +    

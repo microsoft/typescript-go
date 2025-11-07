@@ -1,21 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses.js
 +++ new.jsDeclarationsFunctionLikeClasses.js
-@@= skipped -42, +42 lines =@@
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.magnitude = magnitude;
--var source_1 = require("./source");
-+const source_1 = require("./source");
- /**
-  * @param {Point} p
-  */
- function magnitude(p) {
--    return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
-+    return Math.sqrt(p.x ** 2 + p.y ** 2);
- }
-
-
-@@= skipped -14, +14 lines =@@
+@@= skipped -56, +56 lines =@@
   * @param {number} x
   * @param {number} y
   */

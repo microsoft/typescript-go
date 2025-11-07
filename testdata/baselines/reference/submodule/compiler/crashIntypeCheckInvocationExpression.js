@@ -15,14 +15,11 @@ export var compileServer = task<number, number, any>(<P0, P1, P2>() => {
 
 
 //// [crashIntypeCheckInvocationExpression.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.compileServer = void 0;
 var nake;
 function doCompile(fileset, moduleType) {
     return undefined;
 }
-exports.compileServer = task(() => {
+export var compileServer = task(() => {
     var folder = path.join(), fileset = nake.fileSetSync(folder);
     return doCompile(fileset, moduleType);
 });

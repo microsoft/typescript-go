@@ -47,27 +47,31 @@ const onSomeEvent = <T extends keyof TypesMap>(p: P<T>) =>
 
 
 //// [mappedTypeGenericIndexedAccess.js]
+// Repro from #49242
 class Test {
     entries;
     constructor() {
         this.entries = {};
     }
     addEntry(name, entry) {
+        var _a;
         if (!this.entries[name]) {
             this.entries[name] = [];
         }
-        this.entries[name]?.push(entry);
+        (_a = this.entries[name]) === null || _a === void 0 ? void 0 : _a.push(entry);
     }
 }
 const typeHandlers = {
     [0]: (p) => console.log(p.foo),
     [1]: (p) => console.log(p.a),
 };
-const onSomeEvent = (p) => typeHandlers[p.t]?.(p);
+const onSomeEvent = (p) => {
+    var _a;
+    return (_a = typeHandlers[p.t]) === null || _a === void 0 ? void 0 : _a.call(typeHandlers, p);
+};
 
 
 //// [mappedTypeGenericIndexedAccess.d.ts]
-// Repro from #49242
 type Types = {
     first: {
         a1: true;
@@ -86,7 +90,6 @@ declare class Test {
     constructor();
     addEntry<T extends keyof Types>(name: T, entry: Types[T]): void;
 }
-// Repro from #49338
 type TypesMap = {
     [0]: {
         foo: 'bar';

@@ -16,4 +16,4 @@ const { naam, age } = {...bob, ...alice}
 
 //// [spreadContextualTypedBindingPattern.js]
 // [ts] Initializer provides no value for this binding element and the binding element has no default value.
-const { naam, age } = { ...bob, ...alice };
+const { naam, age } = Object.assign(Object.assign({}, bob), alice);

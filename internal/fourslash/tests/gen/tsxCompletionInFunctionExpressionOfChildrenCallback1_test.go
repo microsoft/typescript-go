@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -15,37 +15,40 @@ func TestTsxCompletionInFunctionExpressionOfChildrenCallback1(t *testing.T) {
 	const content = `//@module: commonjs
 //@jsx: preserve
 // @Filename: 1.tsx
- declare module JSX {
-     interface Element { }
-     interface IntrinsicElements {
-     }
-     interface ElementAttributesProperty { props; }
-     interface ElementChildrenAttribute { children; }
- }
- interface IUser {
-     Name: string;
- }
- interface IFetchUserProps {
-     children: (user: IUser) => any;
- }
- function FetchUser(props: IFetchUserProps) { return undefined; }
- function UserName() {
-     return (
-         <FetchUser>
-             { user => (
-                 <h1>{ user./**/ }</h1>
-             )}
-         </FetchUser>
-     );
- }`
+declare module JSX {
+    interface Element { }
+    interface IntrinsicElements {
+    }
+    interface ElementAttributesProperty { props; }
+    interface ElementChildrenAttribute { children; }
+}
+interface IUser {
+    Name: string;
+}
+interface IFetchUserProps {
+    children: (user: IUser) => any;
+}
+function FetchUser(props: IFetchUserProps) { return undefined; }
+function UserName() {
+    return (
+        <FetchUser>
+            { user => (
+                <h1>{ user./**/ }</h1>
+            )}
+        </FetchUser>
+    );
+}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"Name"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"Name",
+			},
 		},
 	})
 }

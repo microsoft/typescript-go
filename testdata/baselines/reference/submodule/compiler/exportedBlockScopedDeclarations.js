@@ -20,11 +20,8 @@ namespace NS1 {
 }
 
 //// [exportedBlockScopedDeclarations.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.bar1 = exports.bar = void 0;
 const foo = foo; // compile error
-exports.bar = exports.bar; // should be compile error
+export const bar = bar; // should be compile error
 function f() {
     const bar = bar; // compile error
 }
@@ -33,7 +30,7 @@ var NS;
     NS.bar = NS.bar; // should be compile error
 })(NS || (NS = {}));
 let foo1 = foo1; // compile error
-exports.bar1 = exports.bar1; // should be compile error
+export let bar1 = bar1; // should be compile error
 function f1() {
     let bar1 = bar1; // compile error
 }

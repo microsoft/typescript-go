@@ -85,13 +85,13 @@ Other.Cls = class {
 >this.method : (p: Host.UserMetrics.Action) => void
 >this : this
 >method : (p: Host.UserMetrics.Action) => void
->Host.UserMetrics.Action.WindowDocked : any
->Host.UserMetrics.Action : any
->Host.UserMetrics : any
->Host : any
->UserMetrics : any
->Action : any
->WindowDocked : any
+>Host.UserMetrics.Action.WindowDocked : number
+>Host.UserMetrics.Action : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
+>Host.UserMetrics : { Action: { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }; Blah: { x: number; }; }
+>Host : { UserMetrics: { Action: { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }; Blah: { x: number; }; }; }
+>UserMetrics : { Action: { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }; Blah: { x: number; }; }
+>Action : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
+>WindowDocked : number
     }
 }
 

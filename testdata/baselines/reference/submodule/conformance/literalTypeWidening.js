@@ -148,11 +148,22 @@ const b: E.A = a;
 
 //// [literalTypeWidening.js]
 "use strict";
+// Widening vs. non-widening literal types
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.langCodes = void 0;
 exports.Set = Set;
 exports.keys = keys;
-// Widening vs. non-widening literal types
 function f1() {
     const c1 = "hello"; // Widening type "hello"
     let v1 = c1; // Type string
@@ -248,8 +259,8 @@ exports.langCodes = keys(langCodeSet);
 const arr = exports.langCodes.map(code => ({ code }));
 // Repro from #29081
 function test(obj) {
-    let { a, ...rest } = obj;
-    return { a: 'hello', ...rest };
+    let { a } = obj, rest = __rest(obj, ["a"]);
+    return Object.assign({ a: 'hello' }, rest);
 }
 var E;
 (function (E) {

@@ -6,4 +6,4 @@ const x: { a: number, b: number } = { a: 1, ...o, b: 2 };
 
 
 //// [spreadNonPrimitive.js]
-const x = { a: 1, ...o, b: 2 };
+const x = Object.assign(Object.assign({ a: 1 }, o), { b: 2 });

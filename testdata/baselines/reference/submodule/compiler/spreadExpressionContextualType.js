@@ -22,17 +22,17 @@ function test2<T extends Apple | Orange>(item: T): T {
 
 
 //// [spreadExpressionContextualType.js]
+// Repro from #43966
 function test(item) {
-    return { ...item };
+    return Object.assign({}, item);
 }
 function test2(item) {
-    const x = { ...item };
+    const x = Object.assign({}, item);
     return x;
 }
 
 
 //// [spreadExpressionContextualType.d.ts]
-// Repro from #43966
 interface Orange {
     name: string;
 }

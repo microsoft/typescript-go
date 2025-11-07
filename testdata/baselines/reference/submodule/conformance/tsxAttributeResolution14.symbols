@@ -11,11 +11,11 @@ declare module JSX {
 >IntrinsicElements : Symbol(IntrinsicElements, Decl(react.d.ts, 1, 22))
 
         div: any;
->div : Symbol(div, Decl(react.d.ts, 2, 30))
+>div : Symbol(IntrinsicElements.div, Decl(react.d.ts, 2, 30))
 	}
     interface ElementAttributesProperty { prop: any }
 >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(react.d.ts, 4, 2))
->prop : Symbol(prop, Decl(react.d.ts, 5, 41))
+>prop : Symbol(ElementAttributesProperty.prop, Decl(react.d.ts, 5, 41))
 }
 
 === file.tsx ===
@@ -23,7 +23,7 @@ interface IProps {
 >IProps : Symbol(IProps, Decl(file.tsx, 0, 0))
 
   primaryText: string,
->primaryText : Symbol(primaryText, Decl(file.tsx, 0, 18))
+>primaryText : Symbol(IProps.primaryText, Decl(file.tsx, 0, 18))
 
   [propName: string]: string | number
 >propName : Symbol(propName, Decl(file.tsx, 2, 3))
@@ -35,8 +35,8 @@ function VerticalNavMenuItem(prop: IProps) {
 >IProps : Symbol(IProps, Decl(file.tsx, 0, 0))
 
   return <div>props.primaryText</div>
->div : Symbol(div, Decl(react.d.ts, 2, 30))
->div : Symbol(div, Decl(react.d.ts, 2, 30))
+>div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2, 30))
+>div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2, 30))
 }
 
 function VerticalNav() {
@@ -44,7 +44,7 @@ function VerticalNav() {
 
   return (
     <div>
->div : Symbol(div, Decl(react.d.ts, 2, 30))
+>div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2, 30))
 
       <VerticalNavMenuItem primaryText={2} />  // error
 >VerticalNavMenuItem : Symbol(VerticalNavMenuItem, Decl(file.tsx, 3, 1))
@@ -61,7 +61,7 @@ function VerticalNav() {
 >primaryText : Symbol(primaryText, Decl(file.tsx, 14, 49))
 
     </div>
->div : Symbol(div, Decl(react.d.ts, 2, 30))
+>div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2, 30))
 
   )
 } 

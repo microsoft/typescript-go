@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -173,7 +174,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 }
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
-	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
+	debug.Assert(isComputedName || !ast.HasDynamicName(node))
 	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
@@ -403,7 +404,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	if node.Kind == ast.KindCommonJSExport {
 		container = b.file.AsNode()
 	}
-	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
+	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0 || ast.IsImplicitlyExportedJSTypeAlias(node)
 	if symbolFlags&ast.SymbolFlagsAlias != 0 {
 		if node.Kind == ast.KindExportSpecifier || (node.Kind == ast.KindImportEqualsDeclaration && hasExportModifier) {
 			return b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
@@ -466,9 +467,9 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 		return b.declareClassMember(node, symbolFlags, symbolExcludes)
 	case ast.KindEnumDeclaration:
 		return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	case ast.KindTypeLiteral, ast.KindJSDocTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
+	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
 		return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature, ast.KindJSDocSignature,
+	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature,
 		ast.KindIndexSignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor,
 		ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
 		ast.KindClassStaticBlockDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
@@ -695,10 +696,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindSetAccessor:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsSetAccessor, ast.SymbolFlagsSetAccessorExcludes)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		// !!! KindJSDocSignature
 		b.bindFunctionOrConstructorType(node)
 	case ast.KindTypeLiteral, ast.KindMappedType:
-		// !!! KindJSDocTypeLiteral
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType)
 	case ast.KindObjectLiteralExpression:
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsObjectLiteral, ast.InternalSymbolNameObject)
@@ -1049,28 +1048,16 @@ func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
 	case ast.IsVariableDeclaration(declaration) &&
 		(declaration.Parent.Flags&ast.NodeFlagsConst != 0 || ast.IsInJSFile(declaration)):
 		initializer := declaration.Initializer()
-		if isExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(initializer) {
 			return initializer.Symbol()
 		}
 	case ast.IsBinaryExpression(declaration) && ast.IsInJSFile(declaration):
 		initializer := declaration.AsBinaryExpression().Right
-		if isExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(initializer) {
 			return initializer.Symbol()
 		}
 	}
 	return nil
-}
-
-func isExpandoInitializer(initializer *ast.Node) bool {
-	if initializer == nil {
-		return false
-	}
-	if ast.IsFunctionExpressionOrArrowFunction(initializer) {
-		return true
-	} else if ast.IsInJSFile(initializer) {
-		return ast.IsClassExpression(initializer) || (ast.IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
-	}
-	return false
 }
 
 func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
@@ -1150,10 +1137,6 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 }
 
 func (b *Binder) bindParameter(node *ast.Node) {
-	// !!!
-	// if node.kind == KindJSDocParameterTag && b.container.kind != KindJSDocSignature {
-	// 	return
-	// }
 	decl := node.AsParameterDeclaration()
 	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
@@ -1219,17 +1202,6 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 }
 
 func (b *Binder) bindTypeParameter(node *ast.Node) {
-	// !!!
-	// if isJSDocTemplateTag(node.parent) {
-	// 	var container *HasLocals = getEffectiveContainerForJSDocTemplateTag(node.parent)
-	// 	if container {
-	// 		Debug.assertNode(container, canHaveLocals)
-	// 		/* TODO(TS-TO-GO) QuestionQuestionEqualsToken BinaryExpression: container.locals ??= createSymbolTable() */ TODO
-	// 		b.declareSymbol(container.locals /*parent*/, nil, node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
-	// 	} else {
-	// 		b.declareSymbolAndAddToSymbolTable(node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
-	// 	}
-	// }
 	if node.Parent.Kind == ast.KindInferType {
 		container := b.getInferTypeContainer(node.Parent)
 		if container != nil {
@@ -1662,13 +1634,10 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindCallExpressionFlow(node)
 	case ast.KindNonNullExpression:
 		b.bindNonNullExpressionFlow(node)
-	// case *JSDocTypedefTag, *JSDocCallbackTag, *JSDocEnumTag:
-	// 	b.bindJSDocTypeAlias(node)
-	// case *JSDocImportTag:
-	// 	b.bindJSDocImportTag(node)
 	case ast.KindSourceFile:
-		b.bindEachStatementFunctionsFirst(node.AsSourceFile().Statements)
-		// b.bind(node.endOfFileToken)
+		sourceFile := node.AsSourceFile()
+		b.bindEachStatementFunctionsFirst(sourceFile.Statements)
+		b.bind(sourceFile.EndOfFileToken)
 	case ast.KindBlock:
 		b.bindEachStatementFunctionsFirst(node.AsBlock().Statements)
 	case ast.KindModuleBlock:
@@ -1680,8 +1649,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindPropertyAssignment, ast.KindSpreadElement:
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
-	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		// Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
@@ -2273,12 +2240,12 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		b.bind(expr.Left)
 		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
-			b.maybeBindExpressionFlowIfCall(node)
+			b.maybeBindExpressionFlowIfCall(expr.Left)
 		}
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
 		if operator == ast.KindCommaToken {
-			b.maybeBindExpressionFlowIfCall(node)
+			b.maybeBindExpressionFlowIfCall(expr.Right)
 		}
 		if ast.IsAssignmentOperator(operator) && !ast.IsAssignmentTarget(node) {
 			b.bindAssignmentTargetFlow(expr.Left)
@@ -2595,7 +2562,7 @@ func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 func GetContainerFlags(node *ast.Node) ContainerFlags {
 	switch node.Kind {
 	case ast.KindClassExpression, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
-		ast.KindJSDocTypeLiteral, ast.KindJsxAttributes:
+		ast.KindJsxAttributes:
 		return ContainerFlagsIsContainer
 	case ast.KindInterfaceDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsInterface
@@ -2610,7 +2577,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		fallthrough
 	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
-	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindJSDocSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
+	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
 	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
@@ -2647,9 +2614,6 @@ func isNarrowingExpression(expr *ast.Node) bool {
 	case ast.KindCallExpression:
 		return hasNarrowableArgument(expr)
 	case ast.KindParenthesizedExpression:
-		// if isJSDocTypeAssertion(expr) {
-		// 	return false
-		// }
 		return isNarrowingExpression(expr.AsParenthesizedExpression().Expression)
 	case ast.KindNonNullExpression:
 		return isNarrowingExpression(expr.AsNonNullExpression().Expression)
@@ -2706,7 +2670,7 @@ func isNarrowableReference(node *ast.Node) bool {
 
 func hasNarrowableArgument(expr *ast.Node) bool {
 	call := expr.AsCallExpression()
-	for _, argument := range call.Arguments.Nodes {
+	for _, argument := range call.Arguments.Nodes { //nolint:modernize
 		if containsNarrowableReference(argument) {
 			return true
 		}
@@ -2787,7 +2751,7 @@ func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, end
 // If so, the node _must_ be in the current file (as that's the only way anything could have traversed to it to yield it as the error node)
 // This version of `createDiagnosticForNode` uses the binder's context to account for this, and always yields correct diagnostics even in these situations.
 func (b *Binder) createDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	return ast.NewDiagnostic(b.file, GetErrorRangeForNode(b.file, node), message, args...)
+	return ast.NewDiagnostic(b.file, scanner.GetErrorRangeForNode(b.file, node), message, args...)
 }
 
 func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
@@ -2883,84 +2847,4 @@ func isAssignmentDeclaration(decl *ast.Node) bool {
 
 func isEffectiveModuleDeclaration(node *ast.Node) bool {
 	return ast.IsModuleDeclaration(node) || ast.IsIdentifier(node)
-}
-
-func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
-	pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
-	body := node.AsArrowFunction().Body
-	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, body.End())
-		if startLine < endLine {
-			// The arrow function spans multiple lines,
-			// make the error span be the first line, inclusive.
-			return core.NewTextRange(pos, scanner.GetEndLinePosition(sourceFile, startLine))
-		}
-	}
-	return core.NewTextRange(pos, node.End())
-}
-
-func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
-	errorNode := node
-	switch node.Kind {
-	case ast.KindSourceFile:
-		pos := scanner.SkipTrivia(sourceFile.Text(), 0)
-		if pos == len(sourceFile.Text()) {
-			return core.NewTextRange(0, 0)
-		}
-		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
-	// This list is a work in progress. Add missing node kinds to improve their error spans
-	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
-		if node.Flags&ast.NodeFlagsReparsed != 0 {
-			errorNode = node
-			break
-		}
-		fallthrough
-	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
-		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
-		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
-		ast.KindPropertySignature, ast.KindNamespaceImport:
-		errorNode = ast.GetNameOfDeclaration(node)
-	case ast.KindArrowFunction:
-		return getErrorRangeForArrowFunction(sourceFile, node)
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		start := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
-		end := node.End()
-		statements := node.AsCaseOrDefaultClause().Statements.Nodes
-		if len(statements) != 0 {
-			end = statements[0].Pos()
-		}
-		return core.NewTextRange(start, end)
-	case ast.KindReturnStatement, ast.KindYieldExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
-		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
-	case ast.KindSatisfiesExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
-		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
-	case ast.KindConstructor:
-		if node.Flags&ast.NodeFlagsReparsed != 0 {
-			errorNode = node
-			break
-		}
-		scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
-		start := scanner.TokenStart()
-		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {
-			scanner.Scan()
-		}
-		return core.NewTextRange(start, scanner.TokenEnd())
-		// !!!
-		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
-		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
-	}
-	if errorNode == nil {
-		// If we don't have a better node, then just set the error on the first token of
-		// construct.
-		return scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
-	}
-	pos := errorNode.Pos()
-	if !ast.NodeIsMissing(errorNode) && !ast.IsJsxText(errorNode) {
-		pos = scanner.SkipTrivia(sourceFile.Text(), pos)
-	}
-	return core.NewTextRange(pos, errorNode.End())
 }

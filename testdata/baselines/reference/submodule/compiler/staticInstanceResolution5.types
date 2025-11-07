@@ -1,8 +1,8 @@
 //// [tests/cases/compiler/staticInstanceResolution5.ts] ////
 
 === staticInstanceResolution5_1.ts ===
-import WinJS = require('staticInstanceResolution5_0');
->WinJS : any
+import WinJS = require('./staticInstanceResolution5_0');
+>WinJS : typeof WinJS
 
 // these 3 should be errors
 var x = (w1: WinJS) => { };
@@ -18,4 +18,16 @@ var y = function (w2: WinJS) { }
 function z(w3: WinJS) { }
 >z : (w3: WinJS) => void
 >w3 : WinJS
+
+=== staticInstanceResolution5_0.ts ===
+export class Promise {
+>Promise : Promise
+
+    static timeout(delay: number): Promise {
+>timeout : (delay: number) => Promise
+>delay : number
+
+        return null;
+    }
+}
 

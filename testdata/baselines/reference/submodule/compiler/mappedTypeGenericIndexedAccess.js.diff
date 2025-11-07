@@ -5,39 +5,21 @@
 
  //// [mappedTypeGenericIndexedAccess.js]
 -"use strict";
--// Repro from #49242
+ // Repro from #49242
  class Test {
 +    entries;
      constructor() {
          this.entries = {};
      }
-     addEntry(name, entry) {
--        var _a;
-         if (!this.entries[name]) {
-             this.entries[name] = [];
-         }
--        (_a = this.entries[name]) === null || _a === void 0 ? void 0 : _a.push(entry);
-+        this.entries[name]?.push(entry);
-     }
- }
- const typeHandlers = {
+@@= skipped -18, +18 lines =@@
      [0]: (p) => console.log(p.foo),
      [1]: (p) => console.log(p.a),
  };
 -const onSomeEvent = (p) => { var _a; return (_a = typeHandlers[p.t]) === null || _a === void 0 ? void 0 : _a.call(typeHandlers, p); };
-+const onSomeEvent = (p) => typeHandlers[p.t]?.(p);
++const onSomeEvent = (p) => {
++    var _a;
++    return (_a = typeHandlers[p.t]) === null || _a === void 0 ? void 0 : _a.call(typeHandlers, p);
++};
 
 
  //// [mappedTypeGenericIndexedAccess.d.ts]
-+// Repro from #49242
- type Types = {
-     first: {
-         a1: true;
-@@= skipped -40, +39 lines =@@
-     constructor();
-     addEntry<T extends keyof Types>(name: T, entry: Types[T]): void;
- }
-+// Repro from #49338
- type TypesMap = {
-     [0]: {
-         foo: 'bar';

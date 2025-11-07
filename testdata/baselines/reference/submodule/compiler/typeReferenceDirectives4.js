@@ -22,6 +22,7 @@ let y = () => x;
 
 
 //// [app.d.ts]
+/// <reference types="lib" preserve="true" />
 declare let x: $;
 declare let y: () => $;
 
@@ -29,17 +30,18 @@ declare let y: () => $;
 //// [DtsFileErrors]
 
 
-/app.d.ts(1,16): error TS2581: Cannot find name '$'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery`.
-/app.d.ts(2,22): error TS2581: Cannot find name '$'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery`.
+/app.d.ts(2,16): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
+/app.d.ts(3,22): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
 
 
 ==== /app.d.ts (2 errors) ====
+    /// <reference types="lib" preserve="true" />
     declare let x: $;
                    ~
-!!! error TS2581: Cannot find name '$'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery`.
+!!! error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
     declare let y: () => $;
                          ~
-!!! error TS2581: Cannot find name '$'. Do you need to install type definitions for jQuery? Try `npm i --save-dev @types/jquery`.
+!!! error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
     
 ==== /ref.d.ts (0 errors) ====
     interface $ { x }

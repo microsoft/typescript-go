@@ -107,7 +107,7 @@ Vec.prototype = {
     magnitude() {
         let sum = 0;
         for (let i = 0; i < this.storage.length; i++) {
-            sum += (this.storage[i] ** 2);
+            sum += (Math.pow(this.storage[i], 2));
         }
         return Math.sqrt(sum);
     }
@@ -159,11 +159,26 @@ exports.origin = new source_1.Point2D(0, 0);
  * @param {number} len
  */
 export declare function Vec(len: number): void;
+export declare namespace Vec {
+    var prototype: {
+        /**
+         * @param {Vec} other
+         */
+        dot(other: Vec): number;
+        magnitude(): number;
+    };
+}
 /**
  * @param {number} x
  * @param {number} y
  */
 export declare function Point2D(x: number, y: number): any;
+export declare namespace Point2D {
+    var prototype: {
+        __proto__: typeof Vec;
+        x: number;
+        y: number;
+    };
+}
 //// [referencer.d.ts]
 export declare const origin: any;
-// export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this

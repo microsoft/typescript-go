@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -25,11 +26,6 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if options.OutFile != "" || options.Out != "" {
-		// Just return, no t.Skip; these options are not going to be supported so noting them is not helpful.
-		return
-	}
-
 	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
 		t.Fatal("Expected at least one js file to be emitted or at least one error to be created.")
 	}
@@ -98,44 +94,40 @@ func DoJSEmitBaseline(
 		))
 	}
 
-	// !!! Enable the following once noCheck is more comprehensive
-	////if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() {
-	////	testConfig := make(map[string]string)
-	////	testConfig["noCheck"] = "true"
-	////	withoutChecking := result.Repeat(testConfig)
-	////	compareResultFileSets := func(a collections.OrderedMap[string, *harnessutil.TestFile], b collections.OrderedMap[string, *harnessutil.TestFile]) {
-	////		for key, doc := range a.Entries() {
-	////			original := b.GetOrZero(key)
-	////			if original == nil {
-	////				jsCode.WriteString("\r\n\r\n!!!! File ")
-	////				jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
-	////				jsCode.WriteString(" missing from original emit, but present in noCheck emit\r\n")
-	////				jsCode.WriteString(fileOutput(doc, harnessSettings))
-	////			} else if original.Content != doc.Content {
-	////				jsCode.WriteString("\r\n\r\n!!!! File ")
-	////				jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
-	////				jsCode.WriteString(" differs from original emit in noCheck emit\r\n")
-	////				var fileName string
-	////				if harnessSettings.FullEmitPaths {
-	////					fileName = removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/)
-	////				} else {
-	////					fileName = tspath.GetBaseFileName(doc.UnitName)
-	////				}
-	////				jsCode.WriteString("//// [")
-	////				jsCode.WriteString(fileName)
-	////				jsCode.WriteString("]\r\n")
-	////				expected := original.Content
-	////				actual := doc.Content
-	////				err := diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &jsCode)
-	////				if err != nil {
-	////					t.Fatal(err)
-	////				}
-	////			}
-	////		}
-	////	}
-	////	compareResultFileSets(withoutChecking.DTS, result.DTS)
-	////	compareResultFileSets(withoutChecking.JS, result.JS)
-	////}
+	if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() {
+		testConfig := make(map[string]string)
+		testConfig["noCheck"] = "true"
+		withoutChecking := result.Repeat(testConfig)
+		compareResultFileSets := func(a *collections.OrderedMap[string, *harnessutil.TestFile], b *collections.OrderedMap[string, *harnessutil.TestFile]) {
+			for key, doc := range a.Entries() {
+				original := b.GetOrZero(key)
+				if original == nil {
+					jsCode.WriteString("\r\n\r\n!!!! File ")
+					jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
+					jsCode.WriteString(" missing from original emit, but present in noCheck emit\r\n")
+					jsCode.WriteString(fileOutput(doc, harnessSettings))
+				} else if original.Content != doc.Content {
+					jsCode.WriteString("\r\n\r\n!!!! File ")
+					jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
+					jsCode.WriteString(" differs from original emit in noCheck emit\r\n")
+					var fileName string
+					if harnessSettings.FullEmitPaths {
+						fileName = removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/)
+					} else {
+						fileName = tspath.GetBaseFileName(doc.UnitName)
+					}
+					jsCode.WriteString("//// [")
+					jsCode.WriteString(fileName)
+					jsCode.WriteString("]\r\n")
+					expected := original.Content
+					actual := doc.Content
+					jsCode.WriteString(baseline.DiffText("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual))
+				}
+			}
+		}
+		compareResultFileSets(&withoutChecking.DTS, &result.DTS)
+		compareResultFileSets(&withoutChecking.JS, &result.JS)
+	}
 
 	if tspath.FileExtensionIsOneOf(baselinePath, []string{tspath.ExtensionTs, tspath.ExtensionTsx}) {
 		baselinePath = tspath.ChangeExtension(baselinePath, tspath.ExtensionJs)
@@ -208,8 +200,6 @@ func prepareDeclarationCompilationContext(
 		// Is this file going to be emitted separately
 		var sourceFileName string
 
-		////outFile := options.OutFile;
-		////if len(outFile) == 0 {
 		if len(options.OutDir) != 0 {
 			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
@@ -217,10 +207,6 @@ func prepareDeclarationCompilationContext(
 		} else {
 			sourceFileName = sourceFile.FileName()
 		}
-		////} else {
-		////	// Goes to single --out file
-		////	sourceFileName = outFile
-		////}
 
 		dTsFileName := tspath.RemoveFileExtension(sourceFileName) + tspath.GetDeclarationEmitExtensionForPath(sourceFileName)
 		return result.DTS.GetOrZero(dTsFileName)

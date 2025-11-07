@@ -1,0 +1,26 @@
+--- old.jsDeclarationsTypedefAndImportTypes.types
++++ new.jsDeclarationsTypedefAndImportTypes.types
+@@= skipped -19, +19 lines =@@
+ module.exports = Conn;
+ >module.exports = Conn : typeof Conn
+ >module.exports : typeof Conn
+->module : { exports: typeof Conn; }
++>module : { Conn: typeof Conn; }
+ >exports : typeof Conn
+ >Conn : typeof Conn
+
+@@= skipped -38, +38 lines =@@
+ }
+
+ module.exports = {
+->module.exports = {    Wrap} : typeof module.exports
+->module.exports : typeof module.exports
+->module : { exports: typeof module.exports; }
+->exports : typeof module.exports
++>module.exports = {    Wrap} : { Wrap: typeof Wrap; }
++>module.exports : { Wrap: typeof Wrap; }
++>module : { "export=": { Wrap: typeof Wrap; }; }
++>exports : { Wrap: typeof Wrap; }
+ >{    Wrap} : { Wrap: typeof Wrap; }
+
+     Wrap

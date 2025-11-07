@@ -10,4 +10,4 @@ i = { ...{ a: "a" } };
 
 //// [contextualTypeObjectSpreadExpression.js]
 let i;
-i = { ...{ a: "a" } };
+i = Object.assign({ a: "a" });

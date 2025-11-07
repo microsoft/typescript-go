@@ -1,11 +1,10 @@
 package tsoptions_test
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -14,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -133,12 +133,9 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				baselineContent.WriteString("Input::\n")
 				baselineContent.WriteString(jsonText + "\n")
 				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
-				if configText, err := jsonToReadableText(parsed); err != nil {
-					t.Fatal(err)
-				} else {
-					baselineContent.WriteString("Config::\n")
-					baselineContent.WriteString(configText)
-				}
+				baselineContent.WriteString("Config::\n")
+				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
+				baselineContent.WriteString("\n")
 				baselineContent.WriteString("Errors::\n")
 				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, errors, &diagnosticwriter.FormattingOptions{
 					NewLine: "\n",
@@ -583,6 +580,155 @@ export {}`,
 			},
 		}},
 	},
+	{
+		title:               "null overrides in extended tsconfig - array fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "typeRoots": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node", "@types/jest"],
+    "lib": ["es2020", "dom"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - string fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": null,
+    "baseUrl": null,
+    "rootDir": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "rootDir": "./src"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - mixed field types",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "outDir": null,
+    "strict": false,
+    "lib": ["es2022"],
+    "allowJs": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020", "dom"],
+    "outDir": "./dist",
+    "strict": true,
+    "allowJs": true,
+    "target": "es2020"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides with multiple extends levels",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": ["jest"],
+    "outDir": "./build"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./dist",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in middle level of extends chain",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "outDir": "./final"
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "outDir": "./middle"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./base",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
@@ -690,9 +836,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		configFileName := tspath.CombinePaths(basePath, config.configFileName)
 		allFileLists := make(map[string]string, len(config.allFileList)+1)
-		for file, content := range config.allFileList {
-			allFileLists[file] = content
-		}
+		maps.Copy(allFileLists, config.allFileList)
 		allFileLists[configFileName] = config.jsonText
 		host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 		parsedConfigFileContent := getParsed(config, host, basePath)
@@ -705,15 +849,14 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		if noSubmoduleBaseline {
 			baselineContent.WriteString("CompilerOptions::\n")
-			enc := json.NewEncoder(&baselineContent)
-			enc.SetIndent("", "  ")
-			enc.SetEscapeHTML(false)
-			assert.NilError(t, enc.Encode(parsedConfigFileContent.CompilerOptions()))
+			assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
+			baselineContent.WriteString("\n")
 			baselineContent.WriteString("\n")
 
 			if parsedConfigFileContent.ParsedConfig.TypeAcquisition != nil {
 				baselineContent.WriteString("TypeAcquisition::\n")
-				assert.NilError(t, enc.Encode(parsedConfigFileContent.ParsedConfig.TypeAcquisition))
+				assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.TypeAcquisition, "", "  "))
+				baselineContent.WriteString("\n")
 				baselineContent.WriteString("\n")
 			}
 		}
@@ -739,15 +882,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 	}
 }
 
-func jsonToReadableText(input any) (string, error) {
-	var buf bytes.Buffer
-	encoder := json.NewEncoder(&buf)
-	encoder.SetIndent("", "  ")
-	encoder.SetEscapeHTML(false)
-	if err := encoder.Encode(input); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+func writeJsonReadableText(output io.Writer, input any) error {
+	return jsonutil.MarshalIndentWrite(output, input, "", "  ")
 }
 
 func TestParseTypeAcquisition(t *testing.T) {
@@ -1071,4 +1207,115 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 			/*extendedConfigCache*/ nil,
 		)
 	}
+}
+
+// memoCache is a minimal memoizing ExtendedConfigCache used by tests to simulate
+// cache hits across multiple parses of configs that extend a common base.
+type memoCache struct {
+	m map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
+}
+
+func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+	if mc.m == nil {
+		mc.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
+	}
+	if e, ok := mc.m[path]; ok {
+		return e
+	}
+	e := parse()
+	mc.m[path] = e
+	return e
+}
+
+var _ tsoptions.ExtendedConfigCache = (*memoCache)(nil)
+
+// TestExtendedConfigErrorsAppearOnCacheHit verifies that diagnostics produced while parsing an
+// extended config are still reported when the extended config comes from the cache.
+func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
+	t.Parallel()
+
+	t.Run("single config parsed twice", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/tsconfig.json": `{
+  "extends": "./base.json"
+}`,
+			// 'excludes' instead of 'exclude' triggers diagnostic
+			"/base.json": `{
+  "excludes": ["**/*.ts"]
+}`,
+			"/app.ts": "export {}",
+		}
+
+		host := tsoptionstest.NewVFSParseConfigHost(files, "/", true /*useCaseSensitiveFileNames*/)
+
+		parseConfig := func(configFileName string, cache tsoptions.ExtendedConfigCache) *tsoptions.ParsedCommandLine {
+			cfgPath := tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+			jsonText, ok := host.FS().ReadFile(configFileName)
+			assert.Assert(t, ok, "missing %s in test fs", configFileName)
+			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
+				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, jsonText, core.ScriptKindJSON),
+			}
+			return tsoptions.ParseJsonSourceFileConfigFileContent(
+				tsConfigSourceFile,
+				host,
+				host.GetCurrentDirectory(),
+				nil,
+				configFileName,
+				nil,
+				nil,
+				cache,
+			)
+		}
+
+		cache := &memoCache{}
+		first := parseConfig("/tsconfig.json", cache)
+		assert.Assert(t, len(first.Errors) > 0, "expected diagnostics on first parse, got 0")
+		second := parseConfig("/tsconfig.json", cache)
+		assert.Assert(t, len(second.Errors) > 0, "expected diagnostics on second parse (cache hit), got 0")
+	})
+
+	t.Run("two configs share same base", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/base.json": `{
+  "excludes": ["**/*.ts"]
+}`,
+			"/projA/tsconfig.json": `{
+  "extends": "../base.json"
+}`,
+			"/projB/tsconfig.json": `{
+  "extends": "../base.json"
+}`,
+			"/projA/app.ts": "export {}",
+			"/projB/app.ts": "export {}",
+		}
+
+		host := tsoptionstest.NewVFSParseConfigHost(files, "/", true /*useCaseSensitiveFileNames*/)
+
+		parseConfig := func(configFileName string, cache tsoptions.ExtendedConfigCache) *tsoptions.ParsedCommandLine {
+			cfgPath := tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+			jsonText, ok := host.FS().ReadFile(configFileName)
+			assert.Assert(t, ok, "missing %s in test fs", configFileName)
+			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
+				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, jsonText, core.ScriptKindJSON),
+			}
+			return tsoptions.ParseJsonSourceFileConfigFileContent(
+				tsConfigSourceFile,
+				host,
+				host.GetCurrentDirectory(),
+				nil,
+				configFileName,
+				nil,
+				nil,
+				cache,
+			)
+		}
+
+		cache := &memoCache{}
+		first := parseConfig("/projA/tsconfig.json", cache)
+		assert.Assert(t, len(first.Errors) > 0, "expected diagnostics for projA parse, got 0")
+		second := parseConfig("/projB/tsconfig.json", cache)
+		assert.Assert(t, len(second.Errors) > 0, "expected diagnostics for projB parse (cache hit on base), got 0")
+	})
 }

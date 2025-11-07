@@ -1,0 +1,49 @@
+--- old.moduleExportAssignment2.types
++++ new.moduleExportAssignment2.types
+@@= skipped -1, +1 lines =@@
+
+ === npm.js ===
+ var npm = module.exports = function (tree) {
+->npm : { (tree: any): void; asReadInstalled: (tree: any) => void; }
+->module.exports = function (tree) {} : { (tree: any): void; asReadInstalled: (tree: any) => void; }
+->module.exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
+->module : { exports: { (tree: any): void; asReadInstalled: (tree: any) => void; }; }
+->exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
++>npm : (tree: any) => void
++>module.exports = function (tree) {} : (tree: any) => void
++>module.exports : typeof import("npm")
++>module : { "\"npm\"": typeof import("npm"); }
++>exports : typeof import("npm")
+ >function (tree) {} : (tree: any) => void
+ >tree : any
+ }
+ module.exports.asReadInstalled = function (tree) {
+ >module.exports.asReadInstalled = function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
+ >module.exports.asReadInstalled : (tree: any) => void
+->module.exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
+->module : { exports: { (tree: any): void; asReadInstalled: (tree: any) => void; }; }
+->exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
++>module.exports : typeof import("npm")
++>module : { "\"npm\"": typeof import("npm"); }
++>exports : typeof import("npm")
+ >asReadInstalled : (tree: any) => void
+ >function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
+ >tree : any
+
+     npm(tree) // both references should be callable
+ >npm(tree) : void
+->npm : { (tree: any): void; asReadInstalled: (tree: any) => void; }
++>npm : (tree: any) => void
+ >tree : any
+
+     module.exports(tree)
+->module.exports(tree) : void
+->module.exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
+->module : { exports: { (tree: any): void; asReadInstalled: (tree: any) => void; }; }
+->exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
++>module.exports(tree) : any
++>module.exports : typeof import("npm")
++>module : { "\"npm\"": typeof import("npm"); }
++>exports : typeof import("npm")
+ >tree : any
+ }

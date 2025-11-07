@@ -172,11 +172,11 @@ interface i1 {
     /** caller comments*/
     (a: number): number;
     /** new comments*/
-    new (b: string);
+    new (b: string): any;
     /**indexer property*/
     [a: number]: string;
     /** function property;*/
-    myFoo(/*param prop*/ a: number): string;
+    myFoo(a: number): string;
     /** prop*/
     prop: string;
 }
@@ -189,9 +189,7 @@ declare namespace m1 {
         x: number;
         constructor(x: number);
     }
-    /// module m2
     namespace m2 {
     }
 }
-/// this is x
 declare var x: any;

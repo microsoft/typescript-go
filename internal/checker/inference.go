@@ -1035,7 +1035,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 	optionalMask := core.IfElse(modifiers&MappedTypeModifiersIncludeOptional != 0, 0, ast.SymbolFlagsOptional)
 	var indexInfos []*IndexInfo
 	if indexInfo != nil {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil, nil)}
 	}
 	members := make(ast.SymbolTable)
 	limitedConstraint := c.getLimitedConstraint(t)
@@ -1174,7 +1174,7 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 	}
 	var indexInfos []*IndexInfo
 	if t.flags&TypeFlagsString != 0 {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil, nil)}
 	}
 	return c.newAnonymousType(nil, members, nil, nil, indexInfos)
 }
@@ -1329,6 +1329,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 			}
 			inference.inferredType = inferredType
 		}
+		c.clearActiveMapperCaches()
 	}
 	return inference.inferredType
 }
@@ -1346,6 +1347,19 @@ func (c *Checker) getMapperFromContext(n *InferenceContext) *TypeMapper {
 		return nil
 	}
 	return n.mapper
+}
+
+// Return a type mapper that combines the context's return mapper with a mapper that erases any additional type parameters
+// to their inferences at the time of creation.
+func (c *Checker) createOuterReturnMapper(context *InferenceContext) *TypeMapper {
+	if context.outerReturnMapper == nil {
+		mapper := c.cloneInferenceContext(context, InferenceFlagsNone).mapper
+		if context.returnMapper != nil {
+			mapper = newMergedTypeMapper(context.returnMapper, mapper)
+		}
+		context.outerReturnMapper = mapper
+	}
+	return context.outerReturnMapper
 }
 
 func (c *Checker) getCovariantInference(inference *InferenceInfo, signature *Signature) *Type {
@@ -1462,17 +1476,34 @@ func (c *Checker) getCommonSupertype(types []*Type) *Type {
 	if c.literalTypesWithSameBaseType(primaryTypes) {
 		supertype = c.getUnionType(primaryTypes)
 	} else {
-		for _, t := range primaryTypes {
-			if supertype == nil || c.isTypeSubtypeOf(supertype, t) {
-				supertype = t
-			}
-		}
+		supertype = c.getSingleCommonSupertype(primaryTypes)
 	}
 	// Add any nullable types that occurred in the candidates back to the result.
 	if core.Same(primaryTypes, types) {
 		return supertype
 	}
 	return c.getNullableType(supertype, c.getCombinedTypeFlags(types)&TypeFlagsNullable)
+}
+
+func (c *Checker) getSingleCommonSupertype(types []*Type) *Type {
+	// First, find the leftmost type for which no type to the right is a strict supertype, and if that
+	// type is a strict supertype of all other candidates, return it. Otherwise, return the leftmost type
+	// for which no type to the right is a (regular) supertype.
+	candidate := c.findLeftmostType(types, (*Checker).isTypeStrictSubtypeOf)
+	if core.Every(types, func(t *Type) bool { return t == candidate || c.isTypeStrictSubtypeOf(t, candidate) }) {
+		return candidate
+	}
+	return c.findLeftmostType(types, (*Checker).isTypeSubtypeOf)
+}
+
+func (c *Checker) findLeftmostType(types []*Type, f func(c *Checker, s *Type, t *Type) bool) *Type {
+	var candidate *Type
+	for _, t := range types {
+		if candidate == nil || f(c, candidate, t) {
+			candidate = t
+		}
+	}
+	return candidate
 }
 
 // Return the leftmost type for which no type to the right is a subtype.

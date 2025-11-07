@@ -123,13 +123,13 @@ export interface CC extends Y {
 
 //// [index.js]
 "use strict";
+// Pretty much all of this should be an error, (since interfaces are forbidden in js),
+// but we should be able to synthesize declarations from the symbols regardless
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JJ = exports.II = exports.H = exports.G = void 0;
 
 
 //// [index.d.ts]
-// Pretty much all of this should be an error, (since interfaces are forbidden in js),
-// but we should be able to synthesize declarations from the symbols regardless
 export interface A {
 }
 export interface B {
@@ -143,9 +143,9 @@ export interface C<T, U> {
     (): number;
     (x: T): U;
     <Q>(x: Q): T & Q;
-    new ();
-    new (x: T);
-    new <Q>(x: Q);
+    new (): string;
+    new (x: T): U;
+    new <Q>(x: Q): T & Q;
     method<Q = number>(): number;
     method<Q>(a: T & Q): Q & number;
     method(a?: number): number;

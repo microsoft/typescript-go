@@ -440,7 +440,8 @@ var Animal;
     Animal[Animal["CAT"] = 1] = "CAT";
 })(Animal || (Animal = {}));
 function expression() {
-    switch (zoo?.animal ?? Animal.DOG) {
+    var _a;
+    switch ((_a = zoo === null || zoo === void 0 ? void 0 : zoo.animal) !== null && _a !== void 0 ? _a : Animal.DOG) {
         case Animal.DOG: return Animal.DOG;
         case Animal.CAT: return Animal.CAT;
     }
@@ -478,14 +479,12 @@ function f35431(a) {
 declare function f1(x: 1 | 2): string;
 declare function f2(x: 1 | 2): void;
 declare function f3(x: 1 | 2): 10 | 20;
-// Repro from #11572
 declare enum E {
     A = 0,
     B = 1
 }
 declare function f(e: E): number;
 declare function g(e: E): number;
-// Repro from #12668
 interface Square {
     kind: "square";
     size: number;
@@ -506,7 +505,6 @@ interface Triangle {
 type Shape = Square | Rectangle | Circle | Triangle;
 declare function area(s: Shape): number;
 declare function areaWrapped(s: Shape): number;
-// Repro from #13241
 declare enum MyEnum {
     A = 0,
     B = 1
@@ -514,13 +512,11 @@ declare enum MyEnum {
 declare function thisGivesError(e: MyEnum): string;
 declare function good1(e: MyEnum): string;
 declare function good2(e: MyEnum): string;
-// Repro from #18362
 declare enum Level {
     One = 0,
     Two = 1
 }
 declare const doSomethingWithLevel: (level: Level) => Level;
-// Repro from #20409
 interface Square2 {
     kind: "square";
     size: number;
@@ -532,9 +528,7 @@ interface Circle2 {
 type Shape2 = Square2 | Circle2;
 declare function withDefault(s1: Shape2, s2: Shape2): string;
 declare function withoutDefault(s1: Shape2, s2: Shape2): string;
-// Repro from #20823
 declare function test4(value: 1 | 2): string;
-// Repro from #34661
 declare enum Animal {
     DOG = 0,
     CAT = 1
@@ -543,16 +537,13 @@ declare const zoo: {
     animal: Animal;
 } | undefined;
 declare function expression(): Animal;
-// Repro from #34840
 declare function foo(): void;
-// Repro from #35070
 type O = {
     a: number;
     b: number;
 };
 type K = keyof O | 'c';
 declare function ff(o: O, k: K): number;
-// Repro from #35431
 type A = {
     kind: "abc";
 } | {

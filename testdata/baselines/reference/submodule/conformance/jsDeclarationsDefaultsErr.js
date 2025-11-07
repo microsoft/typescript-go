@@ -63,26 +63,26 @@ exports.default = x;
 
 
 //// [index1.d.ts]
-// merge type alias and alias (should error, see #32367)
 declare class Cls {
     x: number;
     static y: string;
 }
 export default Cls;
+export type default = string | number;
 /**
  * @typedef {string | number} default
  */
 //// [index2.d.ts]
-// merge type alias and class (error message improvement needed, see #32368)
 export default class C {
 }
+export type default = string | number;
 /**
  * @typedef {string | number} default
  */
 //// [index3.d.ts]
-// merge type alias and variable (behavior is borked, see #32366)
 declare const x = 12;
 export { x as default };
+export type default = string | number;
 /**
  * @typedef {string | number} default
  */

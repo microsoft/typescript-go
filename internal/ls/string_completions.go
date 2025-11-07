@@ -46,8 +46,6 @@ func (l *LanguageService) getStringLiteralCompletions(
 	position int,
 	contextToken *ast.Node,
 	compilerOptions *core.CompilerOptions,
-	program *compiler.Program,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	// !!! reference comment
@@ -59,18 +57,14 @@ func (l *LanguageService) getStringLiteralCompletions(
 			ctx,
 			file,
 			contextToken,
-			position,
-			program,
-			preferences)
+			position)
 		return l.convertStringLiteralCompletions(
 			ctx,
 			entries,
 			contextToken,
 			file,
 			position,
-			program,
 			compilerOptions,
-			preferences,
 			clientOptions,
 		)
 	}
@@ -83,9 +77,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	contextToken *ast.StringLiteralLike,
 	file *ast.SourceFile,
 	position int,
-	program *compiler.Program,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	if completion == nil {
@@ -109,17 +101,21 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		_, items := l.getCompletionEntriesFromSymbols(
 			ctx,
 			data,
-			optionalReplacementRange,
 			contextToken, /*replacementToken*/
 			position,
 			file,
-			program,
-			preferences,
 			options,
 			clientOptions,
 		)
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
-		itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+		itemDefaults := l.setItemDefaults(
+			clientOptions,
+			position,
+			file,
+			items,
+			&defaultCommitCharacters,
+			optionalReplacementRange,
+		)
 		return &lsproto.CompletionList{
 			IsIncomplete: false,
 			ItemDefaults: itemDefaults,
@@ -145,7 +141,6 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				ScriptElementKindString,
 				collections.Set[ScriptElementKindModifier]{},
 				l.getReplacementRangeForContextToken(file, contextToken, position),
-				nil, /*optionalReplacementSpan*/
 				nil, /*commitCharacters*/
 				nil, /*labelDetails*/
 				file,
@@ -156,10 +151,18 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				false, /*hasAction*/
 				false, /*preselect*/
 				"",    /*source*/
+				nil,   /*autoImportEntryData*/
 			)
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
-		itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+		itemDefaults := l.setItemDefaults(
+			clientOptions,
+			position,
+			file,
+			items,
+			&defaultCommitCharacters,
+			nil, /*optionalReplacementSpan*/
+		)
 		return &lsproto.CompletionList{
 			IsIncomplete: false,
 			ItemDefaults: itemDefaults,
@@ -188,7 +191,6 @@ func (l *LanguageService) convertPathCompletions(
 			pathCompletion.kind,
 			*collections.NewSetFromItems(kindModifiersFromExtension(pathCompletion.extension)),
 			replacementSpan,
-			nil, /*optionalReplacementSpan*/
 			nil, /*commitCharacters*/
 			nil, /*labelDetails*/
 			file,
@@ -199,9 +201,17 @@ func (l *LanguageService) convertPathCompletions(
 			false, /*hasAction*/
 			false, /*preselect*/
 			"",    /*source*/
+			nil,   /*autoImportEntryData*/
 		)
 	})
-	itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+	itemDefaults := l.setItemDefaults(
+		clientOptions,
+		position,
+		file,
+		items,
+		&defaultCommitCharacters,
+		nil, /*optionalReplacementSpan*/
+	)
 	return &lsproto.CompletionList{
 		IsIncomplete: false,
 		ItemDefaults: itemDefaults,
@@ -214,10 +224,8 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	file *ast.SourceFile,
 	node *ast.StringLiteralLike,
 	position int,
-	program *compiler.Program,
-	preferences *UserPreferences,
 ) *stringLiteralCompletions {
-	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
@@ -227,8 +235,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return getStringLiteralCompletionsFromModuleNames(
 				file,
 				node,
-				program,
-				preferences,
+				l.GetProgram(),
 			)
 		}
 		return fromUnionableLiteralType(grandparent, parent, position, typeChecker)
@@ -309,7 +316,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		//      import x = require("/*completion position*/");
 		//      var y = require("/*completion position*/");
 		//      export * from "/*completion position*/";
-		return getStringLiteralCompletionsFromModuleNames(file, node, program, preferences)
+		return getStringLiteralCompletionsFromModuleNames(file, node, l.GetProgram())
 	case ast.KindCaseClause:
 		tracker := newCaseClauseTracker(typeChecker, parent.Parent.AsCaseBlock().Clauses.Nodes)
 		contextualTypes := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
@@ -360,6 +367,22 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 				symbols:           uniques,
 				hasIndexSignature: false,
 			},
+		}
+	case ast.KindBinaryExpression:
+		if parent.AsBinaryExpression().OperatorToken.Kind == ast.KindInKeyword {
+			t := typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Right)
+			properties := getPropertiesForCompletion(t, typeChecker)
+			return &stringLiteralCompletions{
+				fromProperties: &completionsFromProperties{
+					symbols: core.Filter(properties, func(s *ast.Symbol) bool {
+						return s.ValueDeclaration == nil || !ast.IsPrivateIdentifierClassElementDeclaration(s.ValueDeclaration)
+					}),
+					hasIndexSignature: false,
+				},
+			}
+		}
+		return &stringLiteralCompletions{
+			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
 		}
 	default:
 		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
@@ -497,7 +520,6 @@ func getStringLiteralCompletionsFromModuleNames(
 	file *ast.SourceFile,
 	node *ast.LiteralExpression,
 	program *compiler.Program,
-	preferences *UserPreferences,
 ) *stringLiteralCompletions {
 	// !!! needs `getModeForUsageLocationWorker`
 	return nil
@@ -638,4 +660,64 @@ func getStringLiteralCompletionsFromSignature(
 		}
 	}
 	return nil
+}
+
+func (l *LanguageService) getStringLiteralCompletionDetails(
+	ctx context.Context,
+	checker *checker.Checker,
+	item *lsproto.CompletionItem,
+	name string,
+	file *ast.SourceFile,
+	position int,
+	contextToken *ast.Node,
+	docFormat lsproto.MarkupKind,
+) *lsproto.CompletionItem {
+	if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
+		return item
+	}
+	completions := l.getStringLiteralCompletionEntries(
+		ctx,
+		file,
+		contextToken,
+		position,
+	)
+	if completions == nil {
+		return item
+	}
+	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker, docFormat)
+}
+
+func (l *LanguageService) stringLiteralCompletionDetails(
+	item *lsproto.CompletionItem,
+	name string,
+	location *ast.Node,
+	completion *stringLiteralCompletions,
+	file *ast.SourceFile,
+	checker *checker.Checker,
+	docFormat lsproto.MarkupKind,
+) *lsproto.CompletionItem {
+	switch {
+	case completion.fromPaths != nil:
+		pathCompletions := completion.fromPaths
+		for _, pathCompletion := range pathCompletions {
+			if pathCompletion.name == name {
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
+			}
+		}
+	case completion.fromProperties != nil:
+		properties := completion.fromProperties
+		for _, symbol := range properties.symbols {
+			if symbol.Name == name {
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/, docFormat)
+			}
+		}
+	case completion.fromTypes != nil:
+		types := completion.fromTypes
+		for _, t := range types.types {
+			if t.AsLiteralType().Value().(string) == name {
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
+			}
+		}
+	}
+	return item
 }

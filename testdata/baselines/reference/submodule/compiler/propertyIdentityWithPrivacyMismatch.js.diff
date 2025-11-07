@@ -1,30 +1,13 @@
 --- old.propertyIdentityWithPrivacyMismatch.js
 +++ new.propertyIdentityWithPrivacyMismatch.js
-@@= skipped -28, +28 lines =@@
-
- //// [propertyIdentityWithPrivacyMismatch_0.js]
- //// [propertyIdentityWithPrivacyMismatch_1.js]
--define(["require", "exports"], function (require, exports) {
--    "use strict";
--    Object.defineProperty(exports, "__esModule", { value: true });
--    var x;
--    var x; // Should be error (mod1.Foo !== mod2.Foo)
--    class Foo1 {
--    }
--    class Foo2 {
--    }
--    var y;
--    var y;
--});
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var x;
-+var x; // Should be error (mod1.Foo !== mod2.Foo)
-+class Foo1 {
+@@= skipped -33, +33 lines =@@
+ var x;
+ var x; // Should be error (mod1.Foo !== mod2.Foo)
+ class Foo1 {
 +    n;
-+}
-+class Foo2 {
+ }
+ class Foo2 {
 +    n;
-+}
-+var y;
-+var y;
+ }
+ var y;
+ var y;

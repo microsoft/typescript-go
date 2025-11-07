@@ -226,7 +226,7 @@ function bar(props) {
     return foo(props); // no error because lack of excess property check by design
 }
 foo({ x: 1, y: 'foo' });
-foo({ ...{ x: 1, y: 'foo' } }); // no error because lack of excess property check by design
+foo(Object.assign({ x: 1, y: 'foo' })); // no error because lack of excess property check by design
 baz({ x: 1 });
 baz({ x: 1, z: 123 });
 baz({ x: 1, y: 'foo' });

@@ -1,33 +1,11 @@
 --- old.jsDeclarationsTypedefPropertyAndExportAssignment.js
 +++ new.jsDeclarationsTypedefPropertyAndExportAssignment.js
-@@= skipped -54, +54 lines =@@
- module.exports = MainThreadTasks;
-
- //// [module.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
- /**
-  * @typedef TaskGroup
-@@= skipped -27, +29 lines =@@
-     taskNameToGroup,
- };
- //// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- const { taskGroups, taskNameToGroup } = require('./module.js');
- /** @typedef {import('./module.js').TaskGroup} TaskGroup */
- /**
-@@= skipped -16, +18 lines =@@
-      */
-     constructor(x, y) { }
- }
-+export = MainThreadTasks;
- module.exports = MainThreadTasks;
+@@= skipped -101, +101 lines =@@
 
 
  //// [module.d.ts]
 -export type TaskGroupIds = "parseHTML" | "styleLayout";
++/** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 +export type TaskGroupIds = 'parseHTML' | 'styleLayout';
  export type TaskGroup = {
      id: TaskGroupIds;

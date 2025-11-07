@@ -84,23 +84,23 @@ function f(p1, p2) {
     var n;
     var a;
     var e;
-    var o1 = { ...p1 }; // OK, generic type paramterre
-    var o2 = { ...p2 }; // OK
-    var o3 = { ...t }; // OK, generic type paramter
-    var o4 = { ...i }; // Error, index access
-    var o5 = { ...k }; // Error, index
-    var o6 = { ...mapped_generic }; // OK, generic mapped object type
-    var o7 = { ...mapped }; // OK, non-generic mapped type
-    var o8 = { ...union_generic }; // OK, union with generic type parameter
-    var o9 = { ...union_primitive }; // Error, union with generic type parameter
-    var o10 = { ...intersection_generic }; // OK, intersection with generic type parameter
-    var o11 = { ...intersection_primitive }; // Error, intersection with generic type parameter
-    var o12 = { ...num }; // Error
-    var o13 = { ...str }; // Error
-    var o14 = { ...u }; // error, undefined-only not allowed
-    var o15 = { ...n }; // error, null-only not allowed
-    var o16 = { ...a }; // OK
-    var o17 = { ...literal_string }; // Error
-    var o18 = { ...literal_number }; // Error
-    var o19 = { ...e }; // Error, enum
+    var o1 = Object.assign({}, p1); // OK, generic type paramterre
+    var o2 = Object.assign({}, p2); // OK
+    var o3 = Object.assign({}, t); // OK, generic type paramter
+    var o4 = Object.assign({}, i); // Error, index access
+    var o5 = Object.assign({}, k); // Error, index
+    var o6 = Object.assign({}, mapped_generic); // OK, generic mapped object type
+    var o7 = Object.assign({}, mapped); // OK, non-generic mapped type
+    var o8 = Object.assign({}, union_generic); // OK, union with generic type parameter
+    var o9 = Object.assign({}, union_primitive); // Error, union with generic type parameter
+    var o10 = Object.assign({}, intersection_generic); // OK, intersection with generic type parameter
+    var o11 = Object.assign({}, intersection_primitive); // Error, intersection with generic type parameter
+    var o12 = Object.assign({}, num); // Error
+    var o13 = Object.assign({}, str); // Error
+    var o14 = Object.assign({}, u); // error, undefined-only not allowed
+    var o15 = Object.assign({}, n); // error, null-only not allowed
+    var o16 = Object.assign({}, a); // OK
+    var o17 = Object.assign({}, literal_string); // Error
+    var o18 = Object.assign({}, literal_number); // Error
+    var o19 = Object.assign({}, e); // Error, enum
 }

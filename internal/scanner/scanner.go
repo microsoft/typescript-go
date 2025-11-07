@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -50,6 +51,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -214,6 +216,10 @@ type Scanner struct {
 	JSDocParsingMode ast.JSDocParsingMode
 	scriptKind       core.ScriptKind
 	ScannerState
+
+	numberCache    map[string]string
+	hexNumberCache map[string]string
+	hexDigitCache  map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -229,7 +235,18 @@ func NewScanner() *Scanner {
 }
 
 func (s *Scanner) Reset() {
+	numberCache := cleared(s.numberCache)
+	hexNumberCache := cleared(s.hexNumberCache)
+	hexDigitCache := cleared(s.hexDigitCache)
 	*s = defaultScanner()
+	s.numberCache = numberCache
+	s.hexNumberCache = hexNumberCache
+	s.hexDigitCache = hexDigitCache
+}
+
+func cleared[M ~map[K]V, K comparable, V any](m M) M {
+	clear(m)
+	return m
 }
 
 func (s *Scanner) Text() string {
@@ -626,13 +643,27 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 		case '0':
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
+				start := s.pos
 				s.pos += 2
 				digits := s.scanHexDigits(1, true, true)
 				if digits == "" {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 					digits = "0"
 				}
-				s.tokenValue = "0x" + digits
+				if s.hexNumberCache == nil {
+					s.hexNumberCache = make(map[string]string)
+				}
+				if cachedValue, ok := s.hexNumberCache[digits]; ok {
+					s.tokenValue = cachedValue
+				} else {
+					rawText := s.text[start:s.pos]
+					if strings.HasPrefix(rawText, "0x") && rawText[2:] == digits {
+						s.tokenValue = rawText
+					} else {
+						s.tokenValue = "0x" + digits
+					}
+					s.hexNumberCache[digits] = s.tokenValue
+				}
 				s.tokenFlags |= ast.TokenFlagsHexSpecifier
 				s.token = s.scanBigIntSuffix()
 				break
@@ -834,12 +865,11 @@ func (s *Scanner) Scan() ast.Kind {
 				}
 				s.pos--
 			}
-			if s.scanIdentifier(1) {
-				s.token = ast.KindPrivateIdentifier
-			} else {
+			if !s.scanIdentifier(1) {
 				s.errorAt(diagnostics.Invalid_character, s.pos-1, 1)
-				s.token = ast.KindUnknown
+				s.tokenValue = "#"
 			}
+			s.token = ast.KindPrivateIdentifier
 		default:
 			if ch < 0 {
 				s.token = ast.KindEndOfFile
@@ -1425,7 +1455,23 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
+	// Fast path for simple strings without escape sequences.
+	strLen := strings.IndexRune(s.text[s.pos:], quote)
+	if strLen == 0 {
+		s.pos++
+		return ""
+	}
+	if strLen > 0 {
+		str := s.text[s.pos : s.pos+strLen]
+		if !jsxAttributeString && !strings.ContainsAny(str, "\r\n\\") {
+			s.pos += strLen + 1
+			return str
+		}
+	}
 	var sb strings.Builder
 	start := s.pos
 	for {
@@ -1462,12 +1508,12 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 	startedWithBacktick := s.char() == '`'
 	s.pos++
 	start := s.pos
-	b := strings.Builder{}
+	parts := make([]string, 0, 4)
 	var token ast.Kind
 	for {
 		ch := s.char()
 		if ch < 0 || ch == '`' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			if ch == '`' {
 				s.pos++
 			} else {
@@ -1478,32 +1524,32 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos += 2
 			token = core.IfElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
-			b.WriteString(s.text[start:s.pos])
-			b.WriteString(s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
+			parts = append(parts, s.text[start:s.pos])
+			parts = append(parts, s.scanEscapeSequence(EscapeSequenceScanningFlagsString|core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
 			start = s.pos
 			continue
 		}
 		// Speculated ECMAScript 6 Spec 11.8.6.1:
 		// <CR><LF> and <CR> LineTerminatorSequences are normalized to <LF> for Template Values
 		if ch == '\r' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos++
 			if s.char() == '\n' {
 				s.pos++
 			}
-			b.WriteString("\n")
+			parts = append(parts, "\n")
 			start = s.pos
 			continue
 		}
 		s.pos++
 	}
-	s.tokenValue = b.String()
+	s.tokenValue = strings.Join(parts, "")
 	return token
 }
 
@@ -1777,7 +1823,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1785,7 +1831,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1810,7 +1856,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -1826,18 +1873,16 @@ func (s *Scanner) scanDigits() (string, bool) {
 }
 
 func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHaveSeparators bool) string {
-	var sb strings.Builder
+	digitCount := 0
+	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	for sb.Len() < minCount || scanAsManyAsPossible {
+	for digitCount < minCount || scanAsManyAsPossible {
 		ch := s.char()
 		if stringutil.IsHexDigit(ch) {
-			if ch >= 'A' && ch <= 'F' {
-				ch += 'a' - 'A' // standardize hex literals to lowercase
-			}
-			sb.WriteByte(byte(ch))
 			allowSeparator = canHaveSeparators
 			isPreviousTokenSeparator = false
+			digitCount++
 		} else if canHaveSeparators && ch == '_' {
 			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
@@ -1856,10 +1901,24 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 	if isPreviousTokenSeparator {
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	if sb.Len() < minCount {
+	if digitCount < minCount {
 		return ""
 	}
-	return sb.String()
+	digits := s.text[start:s.pos]
+	if s.hexDigitCache == nil {
+		s.hexDigitCache = make(map[string]string)
+	}
+	if cached, ok := s.hexDigitCache[digits]; ok {
+		return cached
+	} else {
+		original := digits
+		if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
+			digits = strings.ReplaceAll(digits, "_", "")
+		}
+		digits = strings.ToLower(digits) // standardize hex literals to lowercase
+		s.hexDigitCache[original] = digits
+		return digits
+	}
 }
 
 func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
@@ -1902,7 +1961,19 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		s.pos++
 		return ast.KindBigIntLiteral
 	}
-	s.tokenValue = jsnum.FromString(s.tokenValue).String()
+	if s.numberCache == nil {
+		s.numberCache = make(map[string]string)
+	}
+	if cached, ok := s.numberCache[s.tokenValue]; ok {
+		s.tokenValue = cached
+	} else {
+		tokenValue := jsnum.FromString(s.tokenValue).String()
+		if tokenValue == s.tokenValue {
+			tokenValue = s.tokenValue
+		}
+		s.numberCache[s.tokenValue] = tokenValue
+		s.tokenValue = tokenValue
+	}
 	return ast.KindNumericLiteral
 }
 
@@ -2252,21 +2323,94 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 	if ast.NodeIsMissing(node) {
 		return node.Pos()
 	}
-
 	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
 		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
 		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
-
 	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
 		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJSDoc*/)
 	}
+	return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0})
+}
 
-	return SkipTriviaEx(
-		sourceFile.Text(),
-		node.Pos(),
-		&SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0},
-	)
+func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
+	pos := SkipTrivia(sourceFile.Text(), node.Pos())
+	body := node.AsArrowFunction().Body
+	if body != nil && body.Kind == ast.KindBlock {
+		startLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.Pos())
+		endLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.End())
+		if startLine < endLine {
+			// The arrow function spans multiple lines,
+			// make the error span be the first line, inclusive.
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine))
+		}
+	}
+	return core.NewTextRange(pos, node.End())
+}
+
+func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
+	errorNode := node
+	switch node.Kind {
+	case ast.KindSourceFile:
+		pos := SkipTrivia(sourceFile.Text(), 0)
+		if pos == len(sourceFile.Text()) {
+			return core.NewTextRange(0, 0)
+		}
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	// This list is a work in progress. Add missing node kinds to improve their error spans
+	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		fallthrough
+	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
+		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindPropertySignature, ast.KindNamespaceImport:
+		errorNode = ast.GetNameOfDeclaration(node)
+	case ast.KindArrowFunction:
+		return getErrorRangeForArrowFunction(sourceFile, node)
+	case ast.KindCaseClause, ast.KindDefaultClause:
+		start := SkipTrivia(sourceFile.Text(), node.Pos())
+		end := node.End()
+		statements := node.AsCaseOrDefaultClause().Statements.Nodes
+		if len(statements) != 0 {
+			end = statements[0].Pos()
+		}
+		return core.NewTextRange(start, end)
+	case ast.KindReturnStatement, ast.KindYieldExpression:
+		pos := SkipTrivia(sourceFile.Text(), node.Pos())
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	case ast.KindSatisfiesExpression:
+		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	case ast.KindConstructor:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		scanner := GetScannerForSourceFile(sourceFile, node.Pos())
+		start := scanner.TokenStart()
+		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {
+			scanner.Scan()
+		}
+		return core.NewTextRange(start, scanner.TokenEnd())
+		// !!!
+		// case KindJSDocSatisfiesTag:
+		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
+		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
+	}
+	if errorNode == nil {
+		// If we don't have a better node, then just set the error on the first token of
+		// construct.
+		return GetRangeOfTokenAtPosition(sourceFile, node.Pos())
+	}
+	pos := errorNode.Pos()
+	if !ast.NodeIsMissing(errorNode) && !ast.IsJsxText(errorNode) {
+		pos = SkipTrivia(sourceFile.Text(), pos)
+	}
+	return core.NewTextRange(pos, errorNode.End())
 }
 
 func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
@@ -2286,19 +2430,19 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
-	return sourceFile.LineMap()
+func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
+	return sourceFile.ECMALineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
-	lineMap := GetLineStarts(sourceFile)
+func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
+	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
 	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
-	return
+	return line, character
 }
 
-func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	pos := int(GetLineStarts(sourceFile)[line])
+func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
+	pos := int(GetECMALineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
@@ -2308,36 +2452,47 @@ func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(GetLineStarts(sourceFile), line, character)
+func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
+	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 
 func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
-	/// !!! debugText, allowEdits
+	return ComputePositionOfLineAndCharacterEx(lineStarts, line, character, nil, false)
+}
+
+func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, character int, text *string, allowEdits bool) int {
 	if line < 0 || line >= len(lineStarts) {
-		// if (allowEdits) {
-		//     // Clamp line to nearest allowable value
-		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
-		// }
-		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		if allowEdits {
+			// Clamp line to nearest allowable value
+			if line < 0 {
+				line = 0
+			} else if line >= len(lineStarts) {
+				line = len(lineStarts) - 1
+			}
+		} else {
+			panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		}
 	}
 
 	res := int(lineStarts[line]) + character
 
-	// !!!
-	// if (allowEdits) {
-	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
-	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
-	//     // apply them to the computed position to improve accuracy
-	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
-	// }
+	if allowEdits {
+		// Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
+		// TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
+		// apply them to the computed position to improve accuracy
+		if line+1 < len(lineStarts) && res > int(lineStarts[line+1]) {
+			return int(lineStarts[line+1])
+		}
+		if text != nil && res > len(*text) {
+			return len(*text)
+		}
+		return res
+	}
 	if line < len(lineStarts)-1 && res >= int(lineStarts[line+1]) {
 		panic("Computed position is beyond that of the following line.")
+	} else if text != nil {
+		debug.Assert(res <= len(*text)) // Allow single character overflow for trailing newline
 	}
-	// !!!
-	// else if (debugText !== undefined) {
-	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
-	// }
 	return res
 }
 
