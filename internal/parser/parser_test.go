@@ -1,4 +1,4 @@
-package parser
+package parser_test
 
 import (
 	"io/fs"
@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -46,7 +47,7 @@ func BenchmarkParse(b *testing.B) {
 					}
 
 					for b.Loop() {
-						ParseSourceFile(opts, sourceText, scriptKind)
+						parser.ParseSourceFile(opts, sourceText, scriptKind)
 					}
 				})
 			}
@@ -140,6 +141,6 @@ func FuzzParser(f *testing.F) {
 			JSDocParsingMode: jsdocParsingMode,
 		}
 
-		ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
+		parser.ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
 	})
 }
