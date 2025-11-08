@@ -134,6 +134,10 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 		signature = p.factory.NewFunctionDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil)
 	case ast.KindMethodDeclaration, ast.KindMethodSignature:
 		signature = p.factory.NewMethodDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil, nil)
+	case ast.KindGetAccessor:
+		signature = p.factory.NewGetAccessorDeclaration(clonedModifiers, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil)
+	case ast.KindSetAccessor:
+		signature = p.factory.NewSetAccessorDeclaration(clonedModifiers, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil)
 	case ast.KindConstructor:
 		signature = p.factory.NewConstructorDeclaration(clonedModifiers, nil, nil, nil, nil, nil)
 	case ast.KindJSDocCallbackTag:
