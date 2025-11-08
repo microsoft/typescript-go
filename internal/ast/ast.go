@@ -1068,6 +1068,8 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedExports().Elements
 	case KindObjectBindingPattern, KindArrayBindingPattern:
 		return n.AsBindingPattern().Elements
+	case KindTupleType:
+		return n.AsTupleTypeNode().Elements
 	}
 
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
