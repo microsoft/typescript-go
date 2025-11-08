@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/parser"
-	"gotest.tools/v3/assert"
 )
 
 // Test for issue: Panic Handling textDocument/onTypeFormatting
