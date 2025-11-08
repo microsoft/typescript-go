@@ -59,16 +59,23 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat)
+	return quickInfo, l.getDocumentationFromDeclaration(c, symbol, declaration, contentFormat)
 }
 
-func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind) string {
+func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, contentFormat lsproto.MarkupKind) string {
 	if declaration == nil {
 		return ""
 	}
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
+	jsdoc := getJSDocOrTag(declaration)
+	
+	// If there's no JSDoc on the current declaration, try to find it in base types
+	if jsdoc == nil && symbol != nil && symbol.Parent != nil {
+		jsdoc = l.getJSDocFromBaseTypes(c, symbol)
+	}
+	
+	if jsdoc != nil && !containsTypedefTag(jsdoc) {
 		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
 		if jsdoc.Kind == ast.KindJSDoc {
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
@@ -561,3 +568,52 @@ func writeEntityNameParts(b *strings.Builder, node *ast.Node) {
 		writeEntityNameParts(b, node.Name())
 	}
 }
+
+// getJSDocFromBaseTypes searches for JSDoc comments in base types when the current symbol doesn't have one
+func (l *LanguageService) getJSDocFromBaseTypes(c *checker.Checker, symbol *ast.Symbol) *ast.Node {
+	if symbol == nil || symbol.Parent == nil {
+		return nil
+	}
+	
+	// Get the parent type (the class or interface containing this symbol)
+	parentType := c.GetDeclaredTypeOfSymbol(symbol.Parent)
+	if parentType == nil {
+		return nil
+	}
+	
+	// Only class and interface types have base types
+	if symbol.Parent.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) == 0 {
+		return nil
+	}
+	
+	// Get base types (parent classes or extended interfaces)
+	baseTypes := c.GetBaseTypes(parentType)
+	if len(baseTypes) == 0 {
+		return nil
+	}
+	
+	// Search each base type for a property/method with the same name
+	symbolName := symbol.Name
+	for _, baseType := range baseTypes {
+		// Get the property from the base type
+		baseProp := c.GetPropertyOfType(baseType, symbolName)
+		if baseProp == nil {
+			continue
+		}
+		
+		// Check if the base property has a declaration with JSDoc
+		if baseProp.ValueDeclaration != nil {
+			if jsdoc := getJSDocOrTag(baseProp.ValueDeclaration); jsdoc != nil {
+				return jsdoc
+			}
+		}
+		
+		// If not found in this base, recursively check its bases
+		if jsdoc := l.getJSDocFromBaseTypes(c, baseProp); jsdoc != nil {
+			return jsdoc
+		}
+	}
+	
+	return nil
+}
+

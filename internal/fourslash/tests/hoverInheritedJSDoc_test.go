@@ -31,14 +31,7 @@ b./*3*/bar;
 b./*4*/other;
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	// f.bar should show "base jsdoc"
-	f.VerifyQuickInfoAt(t, "1", "(method) foo.bar(k: string): number", "base jsdoc")
-	// f.other should show "other jsdoc"
-	f.VerifyQuickInfoAt(t, "2", "(property) foo.other: 24", "other jsdoc")
-	// b.bar should inherit "base jsdoc" from foo
-	f.VerifyQuickInfoAt(t, "3", "(method) bar.bar(k: string | symbol): number | 99", "base jsdoc")
-	// b.other should inherit "other jsdoc" from foo
-	f.VerifyQuickInfoAt(t, "4", "(property) bar.other: 24", "other jsdoc")
+	f.VerifyBaselineHover(t)
 }
 
 func TestHoverInheritedJSDocClass(t *testing.T) {
