@@ -193,8 +193,8 @@ func parseTestFilesAndSymlinks(
 	// Regex for parsing @filename directive
 	filenameRegex := regexp.MustCompile(`(?m)^\/\/\s*@filename\s*:\s*([^\r\n]*)`)
 
-	lines := strings.Split(code, "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(code, "\n")
+	for line := range lines {
 		if match := filenameRegex.FindStringSubmatch(line); match != nil {
 			// New file directive
 			if currentFileName != "" {
