@@ -28,7 +28,7 @@ import (
 )
 
 type FourslashTest struct {
-	lsptestutil.TestLspServer
+	lsptestutil.TestLSPServer
 
 	testData     *TestData // !!! consolidate test files from test data and script info
 	baselines    map[string]*strings.Builder
@@ -119,7 +119,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		TestLspServer: *lspTestServer,
+		TestLSPServer: *lspTestServer,
 		testData:      &testData,
 		scriptInfos:   scriptInfos,
 		converters:    converters,
@@ -143,22 +143,22 @@ func getBaseFileNameFromTest(t *testing.T) string {
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
-	return lsptestutil.SendRequest(t, &f.TestLspServer, info, params)
+	return lsptestutil.SendRequest(t, &f.TestLSPServer, info, params)
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	lsptestutil.SendNotification(t, &f.TestLspServer, info, params)
+	lsptestutil.SendNotification(t, &f.TestLSPServer, info, params)
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
-	f.TestLspServer.UserPreferences = config
+	f.TestLSPServer.UserPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: config,
 	})
 }
 
 func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *lsutil.UserPreferences) (reset func()) {
-	originalConfig := f.TestLspServer.UserPreferences.Copy()
+	originalConfig := f.TestLSPServer.UserPreferences.Copy()
 	f.Configure(t, config)
 	return func() {
 		f.Configure(t, originalConfig)
@@ -306,7 +306,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	lsptestutil.SendNotification(t, &f.TestLspServer, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+	lsptestutil.SendNotification(t, &f.TestLSPServer, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        lsconv.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),

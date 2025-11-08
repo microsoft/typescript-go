@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
@@ -433,7 +434,7 @@ func getDeclarationMapTestCasesForRename() []*lspServerTest {
 		openFileAndBaselineRename(server)
 		server.changeFile(&lsproto.DidChangeTextDocumentParams{
 			TextDocument: lsproto.VersionedTextDocumentIdentifier{
-				Uri:     lsproto.DocumentUri("file://" + dependencyTs),
+				Uri:     lsconv.FileNameToDocumentURI(dependencyTs),
 				Version: 2,
 			},
 			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
@@ -461,7 +462,7 @@ func getDeclarationMapTestCasesForRename() []*lspServerTest {
 		openFileAndBaselineRename(server)
 		server.changeFile(&lsproto.DidChangeTextDocumentParams{
 			TextDocument: lsproto.VersionedTextDocumentIdentifier{
-				Uri:     lsproto.DocumentUri("file://" + dependencyTs),
+				Uri:     lsconv.FileNameToDocumentURI(dependencyTs),
 				Version: 2,
 			},
 			ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{

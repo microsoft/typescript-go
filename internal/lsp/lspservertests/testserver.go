@@ -21,7 +21,7 @@ import (
 type testServer struct {
 	t             *testing.T
 	files         map[string]any
-	server        *lsptestutil.TestLspServer
+	server        *lsptestutil.TestLSPServer
 	utils         *projecttestutil.SessionUtils
 	baseline      strings.Builder
 	fsDiffer      *fsbaselineutil.FSDiffer
@@ -64,7 +64,7 @@ func (s *testServer) hoverToWriteProjectStatus(fileName string) {
 	// Do hover so we have snapshot to check things on!!
 	_, _, resultOk := lsptestutil.SendRequest(s.t, s.server, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsproto.DocumentUri("file://" + fileName),
+			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
 		Position: lsproto.Position{
 			Line:      uint32(0),
@@ -173,7 +173,7 @@ func (s *testServer) openFileWithContent(fileName string, content string, langua
 	s.t.Helper()
 	sendNotification(s.t, s, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
-			Uri:        lsproto.DocumentUri("file://" + fileName),
+			Uri:        lsconv.FileNameToDocumentURI(fileName),
 			LanguageId: languageID,
 			Text:       content,
 		},
@@ -185,7 +185,7 @@ func (s *testServer) closeFile(fileName string) {
 	s.t.Helper()
 	sendNotification(s.t, s, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsproto.DocumentUri("file://" + fileName),
+			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
 	})
 	// Skip baselining projects here since updated snapshot is not generated right away after this
@@ -201,7 +201,7 @@ func (s *testServer) baselineReferences(fileName string, position lsproto.Positi
 	s.t.Helper()
 	result := sendRequest(s.t, s, lsproto.TextDocumentReferencesInfo, &lsproto.ReferenceParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsproto.DocumentUri("file://" + fileName),
+			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
 		Position: position,
 		Context:  &lsproto.ReferenceContext{},
@@ -217,7 +217,7 @@ func (s *testServer) baselineRename(fileName string, position lsproto.Position) 
 	s.t.Helper()
 	result := sendRequest(s.t, s, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsproto.DocumentUri("file://" + fileName),
+			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
 		Position: position,
 		NewName:  "?",

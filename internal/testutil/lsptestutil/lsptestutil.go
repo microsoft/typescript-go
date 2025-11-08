@@ -81,7 +81,7 @@ var (
 	}
 )
 
-type TestLspServer struct {
+type TestLSPServer struct {
 	Server          *lsp.Server
 	in              *lspWriter
 	out             *lspReader
@@ -102,7 +102,7 @@ type TestLspServerOptions struct {
 	Capabilities              *lsproto.ClientCapabilities
 }
 
-func NewTestLspServer(t *testing.T, options *TestLspServerOptions) *TestLspServer {
+func NewTestLspServer(t *testing.T, options *TestLspServerOptions) *TestLSPServer {
 	t.Helper()
 
 	inputReader, inputWriter := newLSPPipe()
@@ -142,7 +142,7 @@ func NewTestLspServer(t *testing.T, options *TestLspServerOptions) *TestLspServe
 		}
 	}()
 
-	s := &TestLspServer{
+	s := &TestLSPServer{
 		Server:          server,
 		in:              inputWriter,
 		out:             outputReader,
@@ -164,13 +164,13 @@ func NewTestLspServer(t *testing.T, options *TestLspServerOptions) *TestLspServe
 	return s
 }
 
-func (s *TestLspServer) nextID() int32 {
+func (s *TestLSPServer) nextID() int32 {
 	id := s.id
 	s.id++
 	return id
 }
 
-func (s *TestLspServer) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+func (s *TestLSPServer) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
 		Locale: ptrTo("en-US"),
 	}
@@ -246,7 +246,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func SendRequest[Params, Resp any](t *testing.T, server *TestLspServer, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
+func SendRequest[Params, Resp any](t *testing.T, server *TestLSPServer, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := server.nextID()
 	req := lsproto.NewRequestMessage(
 		info.Method,
@@ -285,7 +285,7 @@ func SendRequest[Params, Resp any](t *testing.T, server *TestLspServer, info lsp
 	return resp, result, ok
 }
 
-func SendNotification[Params any](t *testing.T, server *TestLspServer, info lsproto.NotificationInfo[Params], params Params) {
+func SendNotification[Params any](t *testing.T, server *TestLSPServer, info lsproto.NotificationInfo[Params], params Params) {
 	notification := lsproto.NewNotificationMessage(
 		info.Method,
 		params,
@@ -293,14 +293,14 @@ func SendNotification[Params any](t *testing.T, server *TestLspServer, info lspr
 	server.writeMsg(t, notification.Message())
 }
 
-func (s *TestLspServer) writeMsg(t *testing.T, msg *lsproto.Message) {
+func (s *TestLSPServer) writeMsg(t *testing.T, msg *lsproto.Message) {
 	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	if err := s.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
 }
 
-func (s *TestLspServer) readMsg(t *testing.T) *lsproto.Message {
+func (s *TestLSPServer) readMsg(t *testing.T) *lsproto.Message {
 	// !!! filter out response by id etc
 	msg, err := s.out.Read()
 	if err != nil {
@@ -310,13 +310,13 @@ func (s *TestLspServer) readMsg(t *testing.T) *lsproto.Message {
 	return msg
 }
 
-func (s *TestLspServer) Session() *project.Session { return s.Server.Session() }
+func (s *TestLSPServer) Session() *project.Session { return s.Server.Session() }
 
 func ptrTo[T any](v T) *T {
 	return &v
 }
 
-func Setup(t *testing.T, files map[string]any) (*TestLspServer, *projecttestutil.SessionUtils) {
+func Setup(t *testing.T, files map[string]any) (*TestLSPServer, *projecttestutil.SessionUtils) {
 	initOptions, sessionUtils := projecttestutil.GetSessionInitOptions(files, nil, &projecttestutil.TypingsInstallerOptions{})
 	initOptions.Options.TypingsLocation = "" // Disable ata
 	watchEnabledCapabilities := &lsproto.ClientCapabilities{

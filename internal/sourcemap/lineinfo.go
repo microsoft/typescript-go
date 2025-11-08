@@ -15,9 +15,6 @@ func CreateECMALineInfo(text string, lineStarts core.ECMALineStarts) *ECMALineIn
 }
 
 func (li *ECMALineInfo) LineCount() int {
-	if li == nil {
-		return 0
-	}
 	return len(li.lineStarts)
 }
 
