@@ -2177,11 +2177,36 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 			}
 		}
 	}
-	kind := node.Kind
-	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement {
-		flowNode := node.FlowNodeData().FlowNode
-		if flowNode != nil && !c.isReachableFlowNode(flowNode) {
-			c.errorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, node, diagnostics.Unreachable_code_detected)
+	// Check unreachable code - any node with FlowNodeData can be checked
+	flowNode := node.FlowNodeData()
+	if flowNode != nil && flowNode.FlowNode != nil && !c.isReachableFlowNode(flowNode.FlowNode) {
+		// report errors on all statements except empty ones
+		// report errors on class declarations
+		// report errors on enums with preserved emit
+		// report errors on instantiated modules
+		reportError := ast.IsStatementButNotDeclaration(node) && !ast.IsEmptyStatement(node) ||
+			ast.IsClassDeclaration(node) ||
+			isEnumDeclarationWithPreservedEmit(node, c.compilerOptions) ||
+			ast.IsModuleDeclaration(node) && shouldReportErrorOnModuleDeclaration(node, c.compilerOptions)
+		if reportError && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
+			// unreachable code is reported if
+			// - user has explicitly asked about it AND
+			// - statement is in not ambient context (statements in ambient context is already an error
+			//   so we should not report extras) AND
+			//   - node is not variable statement OR
+			//   - node is block scoped variable statement OR
+			//   - node is not block scoped variable statement and at least one variable declaration has initializer
+			//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
+			//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
+			isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
+				ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
+				core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
+					return d.Initializer() != nil
+				}))
+			sourceFile := ast.GetSourceFileOfNode(node)
+			textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos(), node.End())
+			diagnostic := ast.NewDiagnostic(sourceFile, textRange, diagnostics.Unreachable_code_detected)
+			c.addErrorOrSuggestion(isError, diagnostic)
 		}
 	}
 	switch node.Kind {
@@ -2304,6 +2329,15 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	case ast.KindJSDocNonNullableType, ast.KindJSDocNullableType, ast.KindJSDocAllType, ast.KindJSDocTypeLiteral:
 		c.checkJSDocType(node)
 	}
+}
+
+func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOptions) bool {
+	return ast.IsEnumDeclaration(node) && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums())
+}
+
+func shouldReportErrorOnModuleDeclaration(node *ast.Node, options *core.CompilerOptions) bool {
+	instanceState := ast.GetModuleInstanceState(node)
+	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && options.ShouldPreserveConstEnums())
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
@@ -4019,6 +4053,10 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 				break
 			}
 		}
+	}
+	// Check for unused labels
+	if !labeledStatement.IsReferenced && c.compilerOptions.AllowUnusedLabels != core.TSTrue {
+		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
 	c.checkSourceElement(labeledStatement.Statement)
 }
