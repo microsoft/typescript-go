@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -463,7 +464,7 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 
 		readableContents: &strings.Builder{},
 
-		isLibFile:  regexp.MustCompile(`lib.*\.d\.ts$`).MatchString(fileName),
+		isLibFile:  IsLibFile(fileName),
 		newContent: &strings.Builder{},
 		pos:        lsproto.Position{Line: 0, Character: 0},
 		fileName:   fileName,
@@ -586,4 +587,12 @@ func (t *textWithContext) getIndex(i any) *int {
 		return t.getIndex(t.converters.LineAndCharacterToPosition(t, *i))
 	}
 	panic(fmt.Sprintf("getIndex: unsupported type %T", i))
+}
+
+func IsLibFile(fileName string) bool {
+	baseName := tspath.GetBaseFileName(fileName)
+	if strings.HasPrefix(baseName, "lib.") && strings.HasSuffix(baseName, ".d.ts") {
+		return true
+	}
+	return false
 }
