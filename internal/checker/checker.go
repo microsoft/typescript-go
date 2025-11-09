@@ -774,6 +774,7 @@ type Checker struct {
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
 	flowNodePostSuper                           map[*ast.FlowNode]bool
+	reportedUnreachableStatements               collections.Set[*ast.Node]
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
@@ -2189,24 +2190,24 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 			isEnumDeclarationWithPreservedEmit(node, c.compilerOptions) ||
 			ast.IsModuleDeclaration(node) && shouldReportErrorOnModuleDeclaration(node, c.compilerOptions)
 		if reportError && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
-			// unreachable code is reported if
-			// - user has explicitly asked about it AND
-			// - statement is in not ambient context (statements in ambient context is already an error
-			//   so we should not report extras) AND
-			//   - node is not variable statement OR
-			//   - node is block scoped variable statement OR
-			//   - node is not block scoped variable statement and at least one variable declaration has initializer
-			//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
-			//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
-			isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
-				ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
-				core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-					return d.Initializer() != nil
-				}))
-			sourceFile := ast.GetSourceFileOfNode(node)
-			textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos(), node.End())
-			diagnostic := ast.NewDiagnostic(sourceFile, textRange, diagnostics.Unreachable_code_detected)
-			c.addErrorOrSuggestion(isError, diagnostic)
+			// Only report if we haven't already reported this statement
+			if !c.reportedUnreachableStatements.Has(node) {
+				// unreachable code is reported if
+				// - user has explicitly asked about it AND
+				// - statement is in not ambient context (statements in ambient context is already an error
+				//   so we should not report extras) AND
+				//   - node is not variable statement OR
+				//   - node is block scoped variable statement OR
+				//   - node is not block scoped variable statement and at least one variable declaration has initializer
+				//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
+				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
+				isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
+					ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
+					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
+						return d.Initializer() != nil
+					}))
+				c.errorOnEachUnreachableRange(node, isError)
+			}
 		}
 	}
 	switch node.Kind {
@@ -2338,6 +2339,68 @@ func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOp
 func shouldReportErrorOnModuleDeclaration(node *ast.Node, options *core.CompilerOptions) bool {
 	instanceState := ast.GetModuleInstanceState(node)
 	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && options.ShouldPreserveConstEnums())
+}
+
+func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
+	errorOrSuggestion := func(first *ast.Node, last *ast.Node) {
+		sourceFile := ast.GetSourceFileOfNode(first)
+		textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(sourceFile, first.Pos()).Pos(), last.End())
+		diagnostic := ast.NewDiagnostic(sourceFile, textRange, diagnostics.Unreachable_code_detected)
+		c.addErrorOrSuggestion(isError, diagnostic)
+	}
+
+	markRangeAsReported := func(first *ast.Node, last *ast.Node, statements []*ast.Node) {
+		for _, markedNode := range statements[slices.Index(statements, first) : slices.Index(statements, last)+1] {
+			c.reportedUnreachableStatements.Add(markedNode)
+		}
+	}
+
+	isPurelyTypeDeclaration := func(s *ast.Node) bool {
+		switch s.Kind {
+		case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+			return true
+		case ast.KindModuleDeclaration:
+			return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
+		case ast.KindEnumDeclaration:
+			return ast.HasSyntacticModifier(s, ast.ModifierFlagsConst) && !c.compilerOptions.ShouldPreserveConstEnums()
+		default:
+			return false
+		}
+	}
+
+	isExecutableStatement := func(s *ast.Node) bool {
+		// Don't remove statements that can validly be used before they appear.
+		// This includes function declarations (which are hoisted), type declarations, and uninitialized vars.
+		return !isPurelyTypeDeclaration(s) &&
+			!ast.IsFunctionDeclaration(s) &&
+			!(ast.IsVariableStatement(s) && (ast.GetCombinedNodeFlags(s.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped == 0) &&
+				core.Every(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
+					return d.AsVariableDeclaration().Initializer == nil
+				}))
+	}
+
+	if isExecutableStatement(node) && ast.IsBlock(node.Parent) {
+		statements := node.Parent.AsBlock().Statements.Nodes
+		index := slices.Index(statements, node)
+		var first, last *ast.Node
+		for _, s := range statements[index:] {
+			if isExecutableStatement(s) {
+				if first == nil {
+					first = s
+				}
+				last = s
+			} else {
+				// Stop scanning when we hit a non-executable statement
+				break
+			}
+		}
+		if first != nil {
+			errorOrSuggestion(first, last)
+			markRangeAsReported(first, last, statements)
+		}
+	} else {
+		errorOrSuggestion(node, node)
+	}
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
