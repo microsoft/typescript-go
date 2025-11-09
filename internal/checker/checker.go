@@ -2379,9 +2379,7 @@ func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 				}))
 	}
 
-	if isExecutableStatement(node) && ast.IsBlock(node.Parent) {
-		statements := node.Parent.AsBlock().Statements.Nodes
-		index := slices.Index(statements, node)
+	scanAndReportExecutableStatements := func(statements []*ast.Node, index int) {
 		var first, last *ast.Node
 		for _, s := range statements[index:] {
 			if isExecutableStatement(s) {
@@ -2390,7 +2388,6 @@ func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 				}
 				last = s
 			} else {
-				// Stop scanning when we hit a non-executable statement
 				break
 			}
 		}
@@ -2398,9 +2395,49 @@ func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 			errorOrSuggestion(first, last)
 			markRangeAsReported(first, last, statements)
 		}
-	} else {
-		errorOrSuggestion(node, node)
 	}
+
+	// Report unreachable code in blocks (function bodies, if/else blocks, etc.)
+	// and module blocks (the body of a module declaration).
+	// These scan forward to report ranges of consecutive unreachable statements.
+	if ast.IsBlock(node.Parent) && isExecutableStatement(node) {
+		scanAndReportExecutableStatements(node.Parent.AsBlock().Statements.Nodes, slices.Index(node.Parent.AsBlock().Statements.Nodes, node))
+		return
+	}
+	if ast.IsModuleBlock(node.Parent) && isExecutableStatement(node) {
+		scanAndReportExecutableStatements(node.Parent.AsModuleBlock().Statements.Nodes, slices.Index(node.Parent.AsModuleBlock().Statements.Nodes, node))
+		return
+	}
+
+	// Top-level module declarations are never reported individually.
+	// Their contents are checked when the module body is visited.
+	// However, if there's no other unreachable code before them and no function declarations
+	// (which are hoisted), then report them to avoid silent unreachable modules.
+	if ast.IsModuleDeclaration(node) && ast.IsSourceFile(node.Parent) && shouldReportErrorOnModuleDeclaration(node, c.compilerOptions) {
+		if c.reportedUnreachableStatements.Has(node) {
+			return
+		}
+		statements := node.Parent.AsSourceFile().Statements.Nodes
+		index := slices.Index(statements, node)
+		// Don't report if there's a preceding function (hoisting makes flow complex)
+		// or other unreachable code (which would already be reported).
+		for i := range index {
+			s := statements[i]
+			if ast.IsFunctionDeclaration(s) {
+				return
+			}
+			if isExecutableStatement(s) && !ast.IsModuleDeclaration(s) {
+				if flowData := s.FlowNodeData(); flowData != nil && flowData.FlowNode != nil && !c.isReachableFlowNode(flowData.FlowNode) {
+					return
+				}
+			}
+		}
+		errorOrSuggestion(node, node)
+		return
+	}
+
+	// Default: report the node individually
+	errorOrSuggestion(node, node)
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
