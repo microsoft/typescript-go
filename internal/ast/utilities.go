@@ -3898,3 +3898,12 @@ func GetContainingFunction(node *Node) *Node {
 func IsImplicitlyExportedJSTypeAlias(node *Node) bool {
 	return IsJSTypeAliasDeclaration(node) && IsSourceFile(node.Parent) && IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
 }
+
+func GetFirstConstructorWithBody(node *Node) *Node {
+	for _, member := range node.Members() {
+		if IsConstructorDeclaration(member) && NodeIsPresent(member.Body()) {
+			return member
+		}
+	}
+	return nil
+}
