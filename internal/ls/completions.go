@@ -2057,7 +2057,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			nil,
 			nil,
 			&lsproto.CompletionItemLabelDetails{
-				Detail: ptrTo(fix.ModuleSpecifier),
+				Description: ptrTo(fix.ModuleSpecifier),
 			},
 			file,
 			position,

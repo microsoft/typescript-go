@@ -6,7 +6,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -462,19 +461,15 @@ func (v *View) GetFixes(
 	export *RawExport,
 	userPreferences modulespecifiers.UserPreferences,
 ) []*Fix {
-	ch, done := v.program.GetTypeChecker(ctx)
-	defer done()
-
-	existingImports := getExistingImports(v.importingFile, ch)
 	// !!! tryUseExistingNamespaceImport
-	if fix := tryAddToExistingImport(export, v.importingFile, existingImports, v.program); fix != nil {
+	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
 		return []*Fix{fix}
 	}
 
 	// !!! getNewImportFromExistingSpecifier - even worth it?
 
 	moduleSpecifier := v.GetModuleSpecifier(export, userPreferences)
-	if moduleSpecifier == "" || modulespecifiers.ContainsNodeModules(moduleSpecifier) {
+	if moduleSpecifier == "" {
 		return nil
 	}
 	importKind := getImportKind(v.importingFile, export, v.program)
@@ -489,25 +484,24 @@ func (v *View) GetFixes(
 	}
 }
 
-func tryAddToExistingImport(
+func (v *View) tryAddToExistingImport(
+	ctx context.Context,
 	export *RawExport,
-	fromFile *ast.SourceFile,
-	existingImports collections.MultiMap[ModuleID, existingImport],
-	program *compiler.Program,
 ) *Fix {
+	existingImports := v.getExistingImports(ctx)
 	matchingDeclarations := existingImports.Get(export.ModuleID)
 	if len(matchingDeclarations) == 0 {
 		return nil
 	}
 
 	// Can't use an es6 import for a type in JS.
-	if ast.IsSourceFileJS(fromFile) && export.Flags&ast.SymbolFlagsValue == 0 && !core.Every(matchingDeclarations, func(i existingImport) bool {
+	if ast.IsSourceFileJS(v.importingFile) && export.Flags&ast.SymbolFlagsValue == 0 && !core.Every(matchingDeclarations, func(i existingImport) bool {
 		return ast.IsJSDocImportTag(i.node)
 	}) {
 		return nil
 	}
 
-	importKind := getImportKind(fromFile, export, program)
+	importKind := getImportKind(v.importingFile, export, v.program)
 	if importKind == ImportKindCommonJS || importKind == ImportKindNamespace {
 		return nil
 	}
@@ -581,9 +575,15 @@ type existingImport struct {
 	index           int
 }
 
-func getExistingImports(file *ast.SourceFile, ch *checker.Checker) collections.MultiMap[ModuleID, existingImport] {
-	result := collections.MultiMap[ModuleID, existingImport]{}
-	for i, moduleSpecifier := range file.Imports() {
+func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[ModuleID, existingImport] {
+	if v.existingImports != nil {
+		return v.existingImports
+	}
+
+	result := collections.NewMultiMapWithSizeHint[ModuleID, existingImport](len(v.importingFile.Imports()))
+	ch, done := v.program.GetTypeChecker(ctx)
+	defer done()
+	for i, moduleSpecifier := range v.importingFile.Imports() {
 		node := ast.TryGetImportFromModuleSpecifier(moduleSpecifier)
 		if node == nil {
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
@@ -597,6 +597,7 @@ func getExistingImports(file *ast.SourceFile, ch *checker.Checker) collections.M
 			}
 		}
 	}
+	v.existingImports = result
 	return result
 }
 

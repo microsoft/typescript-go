@@ -2,6 +2,7 @@ package autoimport
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -11,6 +12,8 @@ type View struct {
 	importingFile *ast.SourceFile
 	program       *compiler.Program
 	projectKey    tspath.Path
+
+	existingImports *collections.MultiMap[ModuleID, existingImport]
 }
 
 func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspath.Path, program *compiler.Program) *View {
