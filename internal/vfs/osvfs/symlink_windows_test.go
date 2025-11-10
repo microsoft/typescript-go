@@ -15,18 +15,21 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 	tmp := t.TempDir()
 
 	t.Run("regular file", func(t *testing.T) {
+		t.Parallel()
 		file := filepath.Join(tmp, "regular.txt")
 		assert.NilError(t, os.WriteFile(file, []byte("hello"), 0o666))
 		assert.Equal(t, isSymlinkOrJunction(file), false)
 	})
 
 	t.Run("regular directory", func(t *testing.T) {
+		t.Parallel()
 		dir := filepath.Join(tmp, "regular-dir")
 		assert.NilError(t, os.MkdirAll(dir, 0o777))
 		assert.Equal(t, isSymlinkOrJunction(dir), false)
 	})
 
 	t.Run("junction point", func(t *testing.T) {
+		t.Parallel()
 		target := filepath.Join(tmp, "junction-target")
 		link := filepath.Join(tmp, "junction-link")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
@@ -35,6 +38,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 	})
 
 	t.Run("file symlink", func(t *testing.T) {
+		t.Parallel()
 		target := filepath.Join(tmp, "symlink-target.txt")
 		link := filepath.Join(tmp, "symlink-link.txt")
 		assert.NilError(t, os.WriteFile(target, []byte("hello"), 0o666))
@@ -43,6 +47,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 	})
 
 	t.Run("directory symlink", func(t *testing.T) {
+		t.Parallel()
 		target := filepath.Join(tmp, "dir-symlink-target")
 		link := filepath.Join(tmp, "dir-symlink-link")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
@@ -51,15 +56,18 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 	})
 
 	t.Run("nonexistent path", func(t *testing.T) {
+		t.Parallel()
 		nonexistent := filepath.Join(tmp, "does-not-exist")
 		assert.Equal(t, isSymlinkOrJunction(nonexistent), false)
 	})
 
 	t.Run("empty path", func(t *testing.T) {
+		t.Parallel()
 		assert.Equal(t, isSymlinkOrJunction(""), false)
 	})
 
 	t.Run("invalid path with null byte", func(t *testing.T) {
+		t.Parallel()
 		assert.Equal(t, isSymlinkOrJunction("invalid\x00path"), false)
 	})
 }
@@ -113,17 +121,9 @@ func TestIsSymlinkOrJunctionNestedInSymlink(t *testing.T) {
 	assert.Equal(t, isSymlinkOrJunction(nestedPath), true)
 }
 
-func TestIsSymlinkOrJunctionRelativePath(t *testing.T) {
-	t.Parallel()
-
+func TestIsSymlinkOrJunctionRelativePath(t *testing.T) { //nolint:paralleltest // Cannot use t.Parallel() with t.Chdir()
 	tmp := t.TempDir()
-	originalWd, err := os.Getwd()
-	assert.NilError(t, err)
-	defer func() {
-		assert.NilError(t, os.Chdir(originalWd))
-	}()
-
-	assert.NilError(t, os.Chdir(tmp))
+	t.Chdir(tmp)
 
 	target := "target-rel"
 	link := "link-rel"
