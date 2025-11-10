@@ -214,7 +214,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousDecoratorErrors(node) || c.reportObviousModifierErrors(node) {
 		return true
 	}
-	if ast.IsParameter(node) && ast.IsThisParameter(node) {
+	if ast.IsThisParameter(node) {
 		return c.grammarErrorOnFirstToken(node, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 	}
 	blockScopeKind := ast.NodeFlagsNone
@@ -900,7 +900,7 @@ func (c *Checker) checkGrammarHeritageClause(node *ast.HeritageClause) bool {
 		return c.grammarErrorAtPos(node.AsNode(), types.Pos(), 0, diagnostics.X_0_list_cannot_be_empty, listType)
 	}
 
-	for _, node := range types.Nodes {
+	for _, node := range types.Nodes { //nolint:modernize
 		if c.checkGrammarExpressionWithTypeArguments(node) {
 			return true
 		}

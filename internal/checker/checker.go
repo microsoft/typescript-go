@@ -846,7 +846,7 @@ type Checker struct {
 	couldContainTypeVariables                   func(*Type) bool
 	isStringIndexSignatureOnlyType              func(*Type) bool
 	markNodeAssignments                         func(*ast.Node) bool
-	emitResolver                                *emitResolver
+	emitResolver                                *EmitResolver
 	emitResolverOnce                            sync.Once
 	_jsxNamespace                               string
 	_jsxFactoryEntity                           *ast.Node
@@ -2475,6 +2475,10 @@ func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
 	}
 }
 
+func (c *Checker) shouldCheckErasableSyntax(node *ast.Node) bool {
+	return c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node)
+}
+
 func (c *Checker) checkParameter(node *ast.Node) {
 	// Grammar checking
 	// It is a SyntaxError if the Identifier "eval" or the Identifier "arguments" occurs as the
@@ -2488,7 +2492,7 @@ func (c *Checker) checkParameter(node *ast.Node) {
 		paramName = node.Name().Text()
 	}
 	if ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.shouldCheckErasableSyntax(node) {
 			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 		}
 		if !(ast.IsConstructorDeclaration(fn) && ast.NodeIsPresent(fn.Body())) {
@@ -3256,9 +3260,6 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 	if node.FunctionLikeData().FullSignature != nil {
 		if c.getContextualCallSignature(c.getTypeFromTypeNode(node.FunctionLikeData().FullSignature), node) == nil {
 			c.error(node.FunctionLikeData().FullSignature, diagnostics.A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments)
-		}
-		if node.Type() != nil || core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() != nil }) {
-			c.error(node.FunctionLikeData().FullSignature, diagnostics.A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag)
 		}
 	}
 	if node.Type() == nil {
@@ -4843,7 +4844,7 @@ func (c *Checker) checkEnumDeclaration(node *ast.Node) {
 	c.checkExportsOnMergedDeclarations(node)
 	c.checkSourceElements(node.Members())
 
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.shouldCheckErasableSyntax(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 
@@ -4933,7 +4934,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	// The following checks only apply on a non-ambient instantiated module declaration.
 	if symbol.Flags&ast.SymbolFlagsValueModule != 0 && !inAmbientContext && isInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums()) {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.shouldCheckErasableSyntax(node) {
 			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 		}
 		if c.compilerOptions.GetIsolatedModules() && ast.GetSourceFileOfNode(node).ExternalModuleIndicator == nil {
@@ -5232,7 +5233,7 @@ func (c *Checker) checkImportEqualsDeclaration(node *ast.Node) {
 		return // If we hit an import declaration in an illegal context, just bail out to avoid cascading errors.
 	}
 	c.checkGrammarModifiers(node)
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.shouldCheckErasableSyntax(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 	if ast.IsInternalModuleImportEqualsDeclaration(node) || c.checkExternalImportOrExportDeclaration(node) {
@@ -5334,7 +5335,7 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 	if c.checkGrammarModuleElementContext(node, illegalContextMessage) {
 		return // If we hit an export assignment in an illegal context, just bail out to avoid cascading errors.
 	}
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.AsExportAssignment().IsExportEquals && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.shouldCheckErasableSyntax(node) && node.AsExportAssignment().IsExportEquals && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 	container := node.Parent
@@ -6780,10 +6781,26 @@ func (c *Checker) reportUnusedVariable(location *ast.Node, diagnostic *ast.Diagn
 }
 
 func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *ast.Diagnostic) {
-	if location.Flags&(ast.NodeFlagsAmbient|ast.NodeFlagsThisNodeOrAnySubNodesHasError) == 0 &&
-		(kind == UnusedKindLocal && c.compilerOptions.NoUnusedLocals.IsTrue() ||
-			(kind == UnusedKindParameter && c.compilerOptions.NoUnusedParameters.IsTrue())) {
-		c.diagnostics.Add(diagnostic)
+	if location.Flags&(ast.NodeFlagsAmbient|ast.NodeFlagsThisNodeOrAnySubNodesHasError) == 0 {
+		isError := c.unusedIsError(kind)
+		if isError {
+			c.diagnostics.Add(diagnostic)
+		} else {
+			suggestion := *diagnostic
+			suggestion.SetCategory(diagnostics.CategorySuggestion)
+			c.suggestionDiagnostics.Add(&suggestion)
+		}
+	}
+}
+
+func (c *Checker) unusedIsError(kind UnusedKind) bool {
+	switch kind {
+	case UnusedKindLocal:
+		return c.compilerOptions.NoUnusedLocals.IsTrue()
+	case UnusedKindParameter:
+		return c.compilerOptions.NoUnusedParameters.IsTrue()
+	default:
+		panic("Unhandled case in unusedIsError")
 	}
 }
 
@@ -6804,7 +6821,7 @@ func (c *Checker) checkUnusedClassMembers(node *ast.Node) {
 					c.reportUnused(parameter, UnusedKindLocal, NewDiagnosticForNode(parameter.Name(), diagnostics.Property_0_is_declared_but_its_value_is_never_read, ast.SymbolName(parameter.Symbol())))
 				}
 			}
-		case ast.KindIndexSignature, ast.KindSemicolonClassElement, ast.KindClassStaticBlockDeclaration:
+		case ast.KindIndexSignature, ast.KindSemicolonClassElement, ast.KindClassStaticBlockDeclaration, ast.KindJSTypeAliasDeclaration:
 			// Can't be private
 		default:
 			panic("Unhandled case in checkUnusedClassMembers")
@@ -9804,7 +9821,7 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, c
 	}
 	if checkMode&CheckModeSkipContextSensitive != 0 && c.isContextSensitive(node) {
 		// Skip parameters, return signature with return type that retains noncontextual parts so inferences can still be drawn in an early stage
-		if node.Type() == nil && !hasContextSensitiveParameters(node) {
+		if node.Type() == nil && !ast.HasContextSensitiveParameters(node) {
 			// Return plain anyFunctionType if there is no possibility we'll make inferences from the return type
 			contextualSignature := c.getContextualSignature(node)
 			if contextualSignature != nil && c.couldContainTypeVariables(c.getReturnTypeOfSignature(contextualSignature)) {
@@ -9829,9 +9846,6 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, c
 	if node.FunctionLikeData().FullSignature != nil {
 		if c.getContextualCallSignature(c.getTypeFromTypeNode(node.FunctionLikeData().FullSignature), node) == nil {
 			c.error(node.FunctionLikeData().FullSignature, diagnostics.A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments)
-		}
-		if node.Type() != nil || core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() != nil }) {
-			c.error(node.FunctionLikeData().FullSignature, diagnostics.A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag)
 		}
 	}
 	c.contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node, checkMode)
@@ -11678,12 +11692,11 @@ func (c *Checker) TryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, con
 		container = c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
 	}
 	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || ast.GetThisParameter(container) != nil) {
-		thisType := c.getThisTypeOfDeclaration(container)
-		if thisType == nil && ast.IsInJSFile(container) {
-			if sig := c.getSignatureOfFullSignatureType(container); sig != nil {
-				thisType = c.getThisTypeOfSignature(sig)
-			}
+		sig := c.getSignatureOfFullSignatureType(container)
+		if sig == nil {
+			sig = c.getSignatureFromDeclaration(container)
 		}
+		thisType := c.getThisTypeOfSignature(sig)
 		// Note: a parameter initializer should refer to class-this unless function-this is explicitly annotated.
 		// If this is a function in a JS file, it might be a class method.
 		if thisType == nil {
@@ -11782,10 +11795,6 @@ func (c *Checker) isInParameterInitializerBeforeContainingFunction(node *ast.Nod
 	return false
 }
 
-func (c *Checker) getThisTypeOfDeclaration(declaration *ast.Node) *Type {
-	return c.getThisTypeOfSignature(c.getSignatureFromDeclaration(declaration))
-}
-
 func (c *Checker) checkThisInStaticClassFieldInitializerInDecoratedClass(thisExpression *ast.Node, container *ast.Node) {
 	if ast.IsPropertyDeclaration(container) && ast.HasStaticModifier(container) && c.legacyDecorators {
 		initializer := container.Initializer()
@@ -11821,7 +11830,7 @@ func (c *Checker) classDeclarationExtendsNull(classDecl *ast.Node) bool {
 
 func (c *Checker) checkAssertion(node *ast.Node, checkMode CheckMode) *Type {
 	if node.Kind == ast.KindTypeAssertionExpression {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.shouldCheckErasableSyntax(node) {
 			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), core.NewTextRange(scanner.SkipTrivia(ast.GetSourceFileOfNode(node).Text(), node.Pos()), node.Expression().Pos()), diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled))
 		}
 	}
@@ -13408,18 +13417,30 @@ func (c *Checker) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 
 func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection) []*ast.Diagnostic {
 	c.checkNotCanceled()
+	isSuggestionDiagnostics := collection == &c.suggestionDiagnostics
+
+	files := c.files
 	if sourceFile != nil {
-		c.CheckSourceFile(ctx, sourceFile)
-		if c.wasCanceled {
-			return nil
-		}
-		return collection.GetDiagnosticsForFile(sourceFile.FileName())
+		files = []*ast.SourceFile{sourceFile}
 	}
-	for _, file := range c.files {
+
+	for _, file := range files {
 		c.CheckSourceFile(ctx, file)
 		if c.wasCanceled {
 			return nil
 		}
+
+		// Check unused identifiers as suggestions if we're collecting suggestion diagnostics
+		// and they are not configured as errors
+		if isSuggestionDiagnostics && !file.IsDeclarationFile &&
+			!(c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
+			links := c.sourceFileLinks.Get(file)
+			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		}
+	}
+
+	if sourceFile != nil {
+		return collection.GetDiagnosticsForFile(sourceFile.FileName())
 	}
 	return collection.GetDiagnostics()
 }
@@ -13966,7 +13987,7 @@ func (c *Checker) checkAndReportErrorForResolvingImportAliasToTypeOnlySymbol(nod
 		// TODO: how to get name for export *?
 		name := "*"
 		if !ast.IsExportDeclaration(typeOnlyDeclaration) {
-			name = getNameFromImportDeclaration(typeOnlyDeclaration).Text()
+			name = typeOnlyDeclaration.Name().Text()
 		}
 		c.error(decl.ModuleReference, message).AddRelatedInfo(createDiagnosticForNode(typeOnlyDeclaration, relatedMessage, name))
 	}
@@ -19091,11 +19112,11 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 		}
 		// If this is a function or method declaration, get the signature from the @type tag for the sake of optional parameters.
 		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would suppress checks that the two are compatible.
-		if sig := c.getSignatureOfFullSignatureType(decl); sig != nil {
-			result = append(result, sig)
-			continue
+		sig := c.getSignatureOfFullSignatureType(decl)
+		if sig == nil {
+			sig = c.getSignatureFromDeclaration(decl)
 		}
-		result = append(result, c.getSignatureFromDeclaration(decl))
+		result = append(result, sig)
 	}
 	return result
 }
@@ -19177,14 +19198,12 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 }
 
 func (c *Checker) getTypeParametersFromDeclaration(declaration *ast.Node) []*Type {
+	if sig := c.getSignatureOfFullSignatureType(declaration); sig != nil {
+		return sig.TypeParameters()
+	}
 	var result []*Type
 	for _, node := range declaration.TypeParameters() {
 		result = core.AppendIfUnique(result, c.getDeclaredTypeOfTypeParameter(node.Symbol()))
-	}
-	if len(result) == 0 && ast.IsFunctionDeclaration(declaration) {
-		if sig := c.getSignatureOfFullSignatureType(declaration); sig != nil {
-			return sig.TypeParameters()
-		}
 	}
 	return result
 }
@@ -21364,18 +21383,42 @@ func (c *Checker) getDefaultOrUnknownFromTypeParameter(t *Type) *Type {
 	return core.IfElse(result != nil, result, c.unknownType)
 }
 
-func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
+func (c *Checker) getNamedMembers(members ast.SymbolTable, container *ast.Symbol) []*ast.Symbol {
 	if len(members) == 0 {
 		return nil
 	}
+	// For classes and interfaces, we store explicitly declared members ahead of inherited members. This ensures we process
+	// explicitly declared members first in type relations, which is beneficial because explicitly declared members are more
+	// likely to contain discriminating differences. See for example https://github.com/microsoft/typescript-go/issues/1968.
 	result := make([]*ast.Symbol, 0, len(members))
+	var containedCount int
+	if container != nil && container.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
+		for id, symbol := range members {
+			if c.isNamedMember(symbol, id) && c.isDeclarationContainedBy(symbol, container) {
+				result = append(result, symbol)
+			}
+		}
+		containedCount = len(result)
+	}
 	for id, symbol := range members {
-		if c.isNamedMember(symbol, id) {
+		if c.isNamedMember(symbol, id) && (container == nil || container.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) == 0 || !c.isDeclarationContainedBy(symbol, container)) {
 			result = append(result, symbol)
 		}
 	}
-	c.sortSymbols(result)
+	c.sortSymbols(result[:containedCount])
+	c.sortSymbols(result[containedCount:])
 	return result
+}
+
+func (c *Checker) isDeclarationContainedBy(symbol *ast.Symbol, container *ast.Symbol) bool {
+	if declaration := symbol.ValueDeclaration; declaration != nil {
+		for _, d := range container.Declarations {
+			if declaration.Loc.ContainedBy(d.Loc) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (c *Checker) isNamedMember(symbol *ast.Symbol, id string) bool {
@@ -23186,7 +23229,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 		c.error(member.Name(), diagnostics.An_enum_member_cannot_have_a_numeric_name)
 	} else {
 		text := ast.GetTextOfPropertyName(member.Name())
-		if isNumericLiteralName(text) && !isInfinityOrNaNString(text) {
+		if isNumericLiteralName(text) && !ast.IsInfinityOrNaNString(text) {
 			c.error(member.Name(), diagnostics.An_enum_member_cannot_have_a_numeric_name)
 		}
 	}
@@ -23253,7 +23296,7 @@ func (c *Checker) evaluateEntity(expr *ast.Node, location *ast.Node) evaluator.R
 			return evaluator.NewResult(nil, false, false, false)
 		}
 		if expr.Kind == ast.KindIdentifier {
-			if isInfinityOrNaNString(expr.Text()) && (symbol == c.getGlobalSymbol(expr.Text(), ast.SymbolFlagsValue, nil /*diagnostic*/)) {
+			if ast.IsInfinityOrNaNString(expr.Text()) && (symbol == c.getGlobalSymbol(expr.Text(), ast.SymbolFlagsValue, nil /*diagnostic*/)) {
 				// Technically we resolved a global lib file here, but the decision to treat this as numeric
 				// is more predicated on the fact that the single-file resolution *didn't* resolve to a
 				// different meaning of `Infinity` or `NaN`. Transpilers handle this no problem.
@@ -24351,7 +24394,7 @@ func (c *Checker) setStructuredTypeMembers(t *Type, members ast.SymbolTable, cal
 	t.objectFlags |= ObjectFlagsMembersResolved
 	data := t.AsStructuredType()
 	data.members = members
-	data.properties = c.getNamedMembers(members)
+	data.properties = c.getNamedMembers(members, t.symbol)
 	if len(callSignatures) != 0 {
 		if len(constructSignatures) != 0 {
 			data.signatures = core.Concatenate(callSignatures, constructSignatures)
@@ -29685,7 +29728,7 @@ func (c *Checker) isContextSensitive(node *ast.Node) bool {
 }
 
 func (c *Checker) isContextSensitiveFunctionLikeDeclaration(node *ast.Node) bool {
-	return hasContextSensitiveParameters(node) || c.hasContextSensitiveReturnExpression(node)
+	return ast.HasContextSensitiveParameters(node) || c.hasContextSensitiveReturnExpression(node)
 }
 
 func (c *Checker) hasContextSensitiveReturnExpression(node *ast.Node) bool {
@@ -30398,7 +30441,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		} else if ast.IsJSDocParameterTag(parent) && parent.Name() == node {
 			if fn := ast.GetNodeAtPosition(ast.GetSourceFileOfNode(node), node.Pos(), false); fn != nil && ast.IsFunctionLike(fn) {
 				for _, param := range fn.Parameters() {
-					if param.Name().Text() == node.Text() {
+					if ast.IsIdentifier(param.Name()) && param.Name().Text() == node.Text() {
 						return c.getSymbolOfNode(param)
 					}
 				}
@@ -30908,7 +30951,7 @@ func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver() *emitResolver {
+func (c *Checker) GetEmitResolver() *EmitResolver {
 	c.emitResolverOnce.Do(func() {
 		c.emitResolver = newEmitResolver(c)
 	})

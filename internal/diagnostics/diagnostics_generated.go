@@ -3518,8 +3518,6 @@ var Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear
 
 var A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag = &Message{code: 8039, category: CategoryError, key: "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039", text: "A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag"}
 
-var A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag = &Message{code: 8040, category: CategoryError, key: "A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag_8040", text: "A JSDoc '@type' tag may not occur with a '@param' or '@returns' tag."}
-
 var Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9005, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005", text: "Declaration emit for this file requires using private name '{0}'. An explicit type annotation may unblock declaration emit."}
 
 var Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9006, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotati_9006", text: "Declaration emit for this file requires using private name '{0}' from module '{1}'. An explicit type annotation may unblock declaration emit."}
@@ -4255,3 +4253,7 @@ var Do_not_print_diagnostics = &Message{code: 100000, category: CategoryMessage,
 var Run_in_single_threaded_mode = &Message{code: 100001, category: CategoryMessage, key: "Run_in_single_threaded_mode_100001", text: "Run in single threaded mode."}
 
 var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{code: 100002, category: CategoryMessage, key: "Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory_100002", text: "Generate pprof CPU/memory profiles to the given directory."}
+
+var Set_the_number_of_checkers_per_project = &Message{code: 100003, category: CategoryMessage, key: "Set_the_number_of_checkers_per_project_100003", text: "Set the number of checkers per project."}
+
+var X_4_unless_singleThreaded_is_passed = &Message{code: 100004, category: CategoryMessage, key: "4_unless_singleThreaded_is_passed_100004", text: "4, unless --singleThreaded is passed."}

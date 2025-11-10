@@ -163,6 +163,7 @@ class C13 {
 
 
 //// [strictPropertyInitialization.js]
+"use strict";
 // Properties with non-undefined types require initialization
 class C1 {
     a; // Error
@@ -232,10 +233,6 @@ class C8 {
 }
 // No strict initialization checks for abstract members
 class C9 {
-    a;
-    b;
-    c;
-    d;
 }
 // Properties with non-undefined types must be assigned before they can be accessed
 // within their constructor

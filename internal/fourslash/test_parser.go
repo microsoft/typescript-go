@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testrunner"
@@ -163,17 +163,17 @@ type TestFileInfo struct {
 	emit    bool
 }
 
-// FileName implements ls.Script.
+// FileName implements lsconv.Script.
 func (t *TestFileInfo) FileName() string {
 	return t.fileName
 }
 
-// Text implements ls.Script.
+// Text implements lsconv.Script.
 func (t *TestFileInfo) Text() string {
 	return t.Content
 }
 
-var _ ls.Script = (*TestFileInfo)(nil)
+var _ lsconv.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
 
@@ -368,8 +368,8 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 	outputString := output.String()
 	// Set LS positions for markers
-	lineMap := ls.ComputeLSPLineStarts(outputString)
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
+	lineMap := lsconv.ComputeLSPLineStarts(outputString)
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -407,13 +407,13 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, error) {
 	// Attempt to parse the marker value as JSON
-	var v interface{}
+	var v any
 	e := json.Unmarshal([]byte("{ "+text+" }"), &v)
 
 	if e != nil {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text "+text)
 	}
-	markerValue, ok := v.(map[string]interface{})
+	markerValue, ok := v.(map[string]any)
 	if !ok || len(markerValue) == 0 {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty")
 	}

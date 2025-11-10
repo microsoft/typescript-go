@@ -271,7 +271,7 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 			}
 		}
 	}
-	return c.getNamedMembers(propsByName)
+	return c.getNamedMembers(propsByName, nil)
 }
 
 func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, moduleSymbol *ast.Symbol) *ast.Symbol {
@@ -808,4 +808,8 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 	typeOfArrayLiteral := core.OrElse(c.getTypeOfAssignmentPattern(node), c.errorType)
 	elementType := core.OrElse(c.checkIteratedTypeOrElementType(IterationUseDestructuring, typeOfArrayLiteral, c.undefinedType, expr.Parent), c.errorType)
 	return c.checkArrayLiteralDestructuringElementAssignment(node, typeOfArrayLiteral, slices.Index(node.AsArrayLiteralExpression().Elements.Nodes, expr), elementType, CheckModeNormal)
+}
+
+func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
+	return c.getSignatureFromDeclaration(node)
 }

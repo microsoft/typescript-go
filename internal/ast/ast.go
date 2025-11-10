@@ -24,7 +24,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
+	for _, node := range nodes { //nolint:modernize
 		if v(node) {
 			return true
 		}
@@ -263,10 +263,10 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
-type mutableNode Node
+type MutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
-func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+func (n *Node) AsMutable() *MutableNode                     { return (*MutableNode)(n) }
+func (n *MutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
@@ -414,7 +414,19 @@ func (n *Node) Expression() *Node {
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
-func (m *mutableNode) SetExpression(expr *Node) {
+func (n *Node) RawText() string {
+	switch n.Kind {
+	case KindTemplateHead:
+		return n.AsTemplateHead().RawText
+	case KindTemplateMiddle:
+		return n.AsTemplateMiddle().RawText
+	case KindTemplateTail:
+		return n.AsTemplateTail().RawText
+	}
+	panic("Unhandled case in Node.RawText: " + n.Kind.String())
+}
+
+func (m *MutableNode) SetExpression(expr *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindPropertyAccessExpression:
@@ -695,7 +707,7 @@ func (n *Node) Type() *Node {
 	return nil
 }
 
-func (m *mutableNode) SetType(t *Node) {
+func (m *MutableNode) SetType(t *Node) {
 	n := (*Node)(m)
 	switch m.Kind {
 	case KindVariableDeclaration:
@@ -787,7 +799,7 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
-func (m *mutableNode) SetInitializer(initializer *Node) {
+func (m *MutableNode) SetInitializer(initializer *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindVariableDeclaration:
@@ -2059,59 +2071,63 @@ type NodeBase struct {
 // Aliases for Node unions
 
 type (
-	Statement                   = Node // Node with StatementBase
-	Declaration                 = Node // Node with DeclarationBase
-	Expression                  = Node // Node with ExpressionBase
-	TypeNode                    = Node // Node with TypeNodeBase
-	TypeElement                 = Node // Node with TypeElementBase
-	ClassElement                = Node // Node with ClassElementBase
-	NamedMember                 = Node // Node with NamedMemberBase
-	ObjectLiteralElement        = Node // Node with ObjectLiteralElementBase
-	BlockOrExpression           = Node // Block | Expression
-	AccessExpression            = Node // PropertyAccessExpression | ElementAccessExpression
-	DeclarationName             = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
-	ModuleName                  = Node // Identifier | StringLiteral
-	ModuleExportName            = Node // Identifier | StringLiteral
-	PropertyName                = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
-	ModuleBody                  = Node // ModuleBlock | ModuleDeclaration
-	ForInitializer              = Node // Expression | MissingDeclaration | VariableDeclarationList
-	ModuleReference             = Node // Identifier | QualifiedName | ExternalModuleReference
-	NamedImportBindings         = Node // NamespaceImport | NamedImports
-	NamedExportBindings         = Node // NamespaceExport | NamedExports
-	MemberName                  = Node // Identifier | PrivateIdentifier
-	EntityName                  = Node // Identifier | QualifiedName
-	BindingName                 = Node // Identifier | BindingPattern
-	ModifierLike                = Node // Modifier | Decorator
-	JsxChild                    = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxAttributeLike            = Node // JsxAttribute | JsxSpreadAttribute
-	JsxAttributeName            = Node // Identifier | JsxNamespacedName
-	JsxAttributeValue           = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression        = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
-	ClassLikeDeclaration        = Node // ClassDeclaration | ClassExpression
-	AccessorDeclaration         = Node // GetAccessorDeclaration | SetAccessorDeclaration
-	LiteralLikeNode             = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
-	LiteralExpression           = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
-	UnionOrIntersectionTypeNode = Node // UnionTypeNode | IntersectionTypeNode
-	TemplateLiteralLikeNode     = Node // TemplateHead | TemplateMiddle | TemplateTail
-	TemplateMiddleOrTail        = Node // TemplateMiddle | TemplateTail
-	TemplateLiteral             = Node // TemplateExpression | NoSubstitutionTemplateLiteral
-	TypePredicateParameterName  = Node // Identifier | ThisTypeNode
-	ImportAttributeName         = Node // Identifier | StringLiteral
-	LeftHandSideExpression      = Node // subset of Expression
-	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
-	JSDocTag                    = Node // Node with JSDocTagBase
-	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
-	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
-	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
-	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
-	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
-	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
-	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
-	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
-	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
-	NamedImportsOrExports       = Node // NamedImports | NamedExports
-	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
-	CallLikeExpression          = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	Statement                      = Node // Node with StatementBase
+	Declaration                    = Node // Node with DeclarationBase
+	Expression                     = Node // Node with ExpressionBase
+	TypeNode                       = Node // Node with TypeNodeBase
+	TypeElement                    = Node // Node with TypeElementBase
+	ClassElement                   = Node // Node with ClassElementBase
+	NamedMember                    = Node // Node with NamedMemberBase
+	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
+	BlockOrExpression              = Node // Block | Expression
+	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
+	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
+	ModuleName                     = Node // Identifier | StringLiteral
+	ModuleExportName               = Node // Identifier | StringLiteral
+	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
+	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
+	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
+	NamedImportBindings            = Node // NamespaceImport | NamedImports
+	NamedExportBindings            = Node // NamespaceExport | NamedExports
+	MemberName                     = Node // Identifier | PrivateIdentifier
+	EntityName                     = Node // Identifier | QualifiedName
+	BindingName                    = Node // Identifier | BindingPattern
+	ModifierLike                   = Node // Modifier | Decorator
+	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
+	JsxAttributeName               = Node // Identifier | JsxNamespacedName
+	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxTagNameExpression           = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
+	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
+	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralExpression              = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
+	TemplateLiteralLikeNode        = Node // TemplateHead | TemplateMiddle | TemplateTail
+	TemplateMiddleOrTail           = Node // TemplateMiddle | TemplateTail
+	TemplateLiteral                = Node // TemplateExpression | NoSubstitutionTemplateLiteral
+	TypePredicateParameterName     = Node // Identifier | ThisTypeNode
+	ImportAttributeName            = Node // Identifier | StringLiteral
+	LeftHandSideExpression         = Node // subset of Expression
+	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
+	JSDocTag                       = Node // Node with JSDocTagBase
+	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike              = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport       = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode            = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral     = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration      = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike              = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration          = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports          = Node // NamedImports | NamedExports
+	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
+	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	FunctionLikeDeclaration        = Node // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | FunctionExpression | ArrowFunction
+	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
+	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
+	CallOrNewExpression            = Node // CallExpression | NewExpression
 )
 
 // Aliases for node singletons
@@ -2162,6 +2178,7 @@ type (
 	LiteralType                     = Node
 	JSDocNode                       = Node
 	BindingPatternNode              = Node
+	TypePredicateNodeNode           = Node
 )
 
 type (
@@ -2281,6 +2298,7 @@ func declarationIsWriteAccess(decl *Node) bool {
 		KindParameter,
 		KindShorthandPropertyAssignment,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeParameter:
 		return true
 
@@ -4844,6 +4862,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportDeclaration
+}
+
 func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
 }
@@ -5139,7 +5161,7 @@ func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression)
+	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression) | core.IfElse(node.IsExportEquals, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
 func IsExportAssignment(node *Node) bool {

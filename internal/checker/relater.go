@@ -1994,19 +1994,11 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			if sig.declaration != nil {
 				typeNode := sig.declaration.Type()
-				var jsdocTypePredicate *TypePredicate
-				if typeNode == nil {
-					if jsdocSignature := c.getSignatureOfFullSignatureType(sig.declaration); jsdocSignature != nil {
-						jsdocTypePredicate = c.getTypePredicateOfSignature(jsdocSignature)
-					}
-				}
 				switch {
 				case typeNode != nil:
 					if ast.IsTypePredicateNode(typeNode) {
 						sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
 					}
-				case jsdocTypePredicate != nil:
-					sig.resolvedTypePredicate = jsdocTypePredicate
 				case ast.IsFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
 					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
 					sig.resolvedTypePredicate = c.getTypePredicateFromBody(sig.declaration)
@@ -3878,26 +3870,32 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 				} else {
 					related = r.c.compareTypesIdentical(s, t)
 				}
-			} else if variance == VarianceFlagsCovariant {
-				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-			} else if variance == VarianceFlagsContravariant {
-				related = r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-			} else if variance == VarianceFlagsBivariant {
-				// In the bivariant case we first compare contravariantly without reporting
-				// errors. Then, if that doesn't succeed, we compare covariantly with error
-				// reporting. Thus, error elaboration will be based on the covariant check,
-				// which is generally easier to reason about.
-				related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
-				if related == TernaryFalse {
-					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-				}
 			} else {
-				// In the invariant case we first compare covariantly, and only when that
-				// succeeds do we proceed to compare contravariantly. Thus, error elaboration
-				// will typically be based on the covariant check.
-				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-				if related != TernaryFalse {
-					related &= r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				// Propagate unreliable variance flag
+				if r.c.inVarianceComputation && varianceFlags&VarianceFlagsUnreliable != 0 {
+					r.c.instantiateType(s, r.c.reportUnreliableMapper)
+				}
+				if variance == VarianceFlagsCovariant {
+					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				} else if variance == VarianceFlagsContravariant {
+					related = r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				} else if variance == VarianceFlagsBivariant {
+					// In the bivariant case we first compare contravariantly without reporting
+					// errors. Then, if that doesn't succeed, we compare covariantly with error
+					// reporting. Thus, error elaboration will be based on the covariant check,
+					// which is generally easier to reason about.
+					related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
+					if related == TernaryFalse {
+						related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					}
+				} else {
+					// In the invariant case we first compare covariantly, and only when that
+					// succeeds do we proceed to compare contravariantly. Thus, error elaboration
+					// will typically be based on the covariant check.
+					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					if related != TernaryFalse {
+						related &= r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					}
 				}
 			}
 			if related == TernaryFalse {

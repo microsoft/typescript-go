@@ -37,6 +37,7 @@ abstract class B {
 
 
 //// [privateNamesIncompatibleModifiers.js]
+"use strict";
 class A {
     #foo = 3; // Error
     #bar = 3; // Error
@@ -61,5 +62,4 @@ class A {
     async set #asyncProp(value) { } // Error
 }
 class B {
-    #quux = 3; // Error
 }
