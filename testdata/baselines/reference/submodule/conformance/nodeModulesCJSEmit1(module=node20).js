@@ -22,7 +22,6 @@ three.foo;
 
 //// [1.cjs]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = {};
 //// [2.cjs]
 "use strict";
