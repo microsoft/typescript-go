@@ -3,7 +3,7 @@ description: Setup Go
 
 inputs:
   go-version:
-    description: Go version range to set up.
+    description: Go version to set up in go-install.ps1 format
     default: 'go1.25'
   create:
     description: Create the cache
