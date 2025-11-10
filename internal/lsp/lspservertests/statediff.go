@@ -143,67 +143,45 @@ func printPathIterSeqWithDiffTable(w io.Writer, header string, newIterSeq iter.S
 	)
 }
 
-type stateDiff struct {
-	server   *testServer
-	snapshot *project.Snapshot
-
-	currentProjects map[string]projectInfo
-	projectDiffs    *diffTableWriter
-
-	currentOpenFiles map[string]*openFileInfo
-	filesDiff        *diffTableWriter
-
-	configFileRegistry   *project.ConfigFileRegistry
-	configDiffs          *diffTableWriter
-	configFileNamesDiffs *diffTableWriter
-}
-
 func printStateDiff(server *testServer, w io.Writer) {
 	if !server.isInitialized {
 		return
 	}
-	snapshot, release := server.server.Session().Snapshot()
+	session := server.server.Session()
+	snapshot, release := session.Snapshot()
 	defer release()
 
-	stateDiff := &stateDiff{
-		server:               server,
-		snapshot:             snapshot,
-		configFileRegistry:   snapshot.ProjectCollection.ConfigFileRegistry(),
-		currentProjects:      make(map[string]projectInfo),
-		currentOpenFiles:     make(map[string]*openFileInfo),
-		projectDiffs:         newDiffTableWriter("Projects"),
-		filesDiff:            newDiffTableWriter("Open Files"),
-		configDiffs:          newDiffTableWriter("Config"),
-		configFileNamesDiffs: newDiffTableWriter("Config File Names"),
-	}
-	stateDiff.checkProjects()
-	stateDiff.checkOpenFiles()
-	stateDiff.checkConfigFileRegistry()
-	stateDiff.print(w)
+	printProjectsDiff(server, snapshot, w)
+	printOpenFilesDiff(server, snapshot, w)
+	printConfigFileRegistryDiff(server, snapshot, w)
 }
 
-func (d *stateDiff) checkProjects() {
-	d.server.t.Helper()
+func printProjectsDiff(server *testServer, snapshot *project.Snapshot, w io.Writer) {
+	server.t.Helper()
+
+	currentProjects := make(map[string]projectInfo)
 	options := diffTableOptions{indent: "  "}
-	for _, project := range d.snapshot.ProjectCollection.Projects() {
+	projectsDiffTable := newDiffTableWriter("Projects")
+
+	for _, project := range snapshot.ProjectCollection.Projects() {
 		program := project.GetProgram()
 		var oldProgram *compiler.Program
-		d.currentProjects[project.Name()] = program
+		currentProjects[project.Name()] = program
 		projectChange := ""
-		if existing, ok := d.server.serializedProjects[project.Name()]; ok {
+		if existing, ok := server.serializedProjects[project.Name()]; ok {
 			oldProgram = existing
 			if oldProgram != program {
 				projectChange = "*modified*"
-				d.projectDiffs.setHasChange()
+				projectsDiffTable.setHasChange()
 			} else {
 				projectChange = ""
 			}
 		} else {
 			projectChange = "*new*"
-			d.projectDiffs.setHasChange()
+			projectsDiffTable.setHasChange()
 		}
 
-		d.projectDiffs.add(project.Name(), func(w io.Writer) {
+		projectsDiffTable.add(project.Name(), func(w io.Writer) {
 			fmt.Fprintf(w, "  [%s] %s\n", project.Name(), projectChange)
 			subDiff := diffTable{options: options}
 			if program != nil {
@@ -213,7 +191,7 @@ func (d *stateDiff) checkProjects() {
 					fileName := file.FileName()
 					if projectChange == "*modified*" {
 						if oldProgram == nil {
-							if !d.server.isLibFile(fileName) {
+							if !server.isLibFile(fileName) {
 								fileDiff = "*new*"
 							}
 						} else if oldFile := oldProgram.GetSourceFileByPath(file.Path()); oldFile == nil {
@@ -222,7 +200,7 @@ func (d *stateDiff) checkProjects() {
 							fileDiff = "*modified*"
 						}
 					}
-					if fileDiff != "" || !d.server.isLibFile(fileName) {
+					if fileDiff != "" || !server.isLibFile(fileName) {
 						subDiff.add(fileName, fileDiff)
 					}
 				}
@@ -238,15 +216,15 @@ func (d *stateDiff) checkProjects() {
 		})
 	}
 
-	for projectName, info := range d.server.serializedProjects {
-		if _, found := d.currentProjects[projectName]; !found {
-			d.projectDiffs.setHasChange()
-			d.projectDiffs.add(projectName, func(w io.Writer) {
+	for projectName, info := range server.serializedProjects {
+		if _, found := currentProjects[projectName]; !found {
+			projectsDiffTable.setHasChange()
+			projectsDiffTable.add(projectName, func(w io.Writer) {
 				fmt.Fprintf(w, "  [%s] *deleted*\n", projectName)
 				subDiff := diffTable{options: options}
 				if info != nil {
 					for _, file := range info.GetSourceFiles() {
-						if fileName := file.FileName(); !d.server.isLibFile(fileName) {
+						if fileName := file.FileName(); !server.isLibFile(fileName) {
 							subDiff.add(fileName, "")
 						}
 					}
@@ -255,42 +233,46 @@ func (d *stateDiff) checkProjects() {
 			})
 		}
 	}
-	d.server.serializedProjects = d.currentProjects
+	server.serializedProjects = currentProjects
+	projectsDiffTable.print(w)
 }
 
-func (d *stateDiff) checkOpenFiles() {
-	d.server.t.Helper()
+func printOpenFilesDiff(server *testServer, snapshot *project.Snapshot, w io.Writer) {
+	server.t.Helper()
+
+	currentOpenFiles := make(map[string]*openFileInfo)
+	filesDiffTable := newDiffTableWriter("Open Files")
 	options := diffTableOptions{indent: "  ", sortKeys: true}
-	for fileName := range d.server.openFiles {
-		path := tspath.ToPath(fileName, "/", d.server.server.FS.UseCaseSensitiveFileNames())
-		defaultProject := d.snapshot.ProjectCollection.GetDefaultProject(fileName, path)
+	for fileName := range server.openFiles {
+		path := tspath.ToPath(fileName, "/", server.server.FS.UseCaseSensitiveFileNames())
+		defaultProject := snapshot.ProjectCollection.GetDefaultProject(fileName, path)
 		newFileInfo := &openFileInfo{}
 		if defaultProject != nil {
 			newFileInfo.defaultProjectName = defaultProject.Name()
 		}
-		for _, project := range d.snapshot.ProjectCollection.Projects() {
+		for _, project := range snapshot.ProjectCollection.Projects() {
 			if program := project.GetProgram(); program != nil && program.GetSourceFileByPath(path) != nil {
 				newFileInfo.allProjects = append(newFileInfo.allProjects, project.Name())
 			}
 		}
 		slices.Sort(newFileInfo.allProjects)
-		d.currentOpenFiles[fileName] = newFileInfo
+		currentOpenFiles[fileName] = newFileInfo
 		openFileChange := ""
 		var oldFileInfo *openFileInfo
-		if existing, ok := d.server.serializedOpenFiles[fileName]; ok {
+		if existing, ok := server.serializedOpenFiles[fileName]; ok {
 			oldFileInfo = existing
 			if existing.defaultProjectName != newFileInfo.defaultProjectName || !slices.Equal(existing.allProjects, newFileInfo.allProjects) {
 				openFileChange = "*modified*"
-				d.filesDiff.setHasChange()
+				filesDiffTable.setHasChange()
 			} else {
 				openFileChange = ""
 			}
 		} else {
 			openFileChange = "*new*"
-			d.filesDiff.setHasChange()
+			filesDiffTable.setHasChange()
 		}
 
-		d.filesDiff.add(fileName, func(w io.Writer) {
+		filesDiffTable.add(fileName, func(w io.Writer) {
 			fmt.Fprintf(w, "  [%s] %s\n", fileName, openFileChange)
 			printSlicesWithDiffTable(
 				w,
@@ -303,37 +285,44 @@ func (d *stateDiff) checkOpenFiles() {
 			)
 		})
 	}
-	for fileName := range d.server.serializedOpenFiles {
-		if _, found := d.currentOpenFiles[fileName]; !found {
-			d.filesDiff.setHasChange()
-			d.filesDiff.add(fileName, func(w io.Writer) {
+	for fileName := range server.serializedOpenFiles {
+		if _, found := currentOpenFiles[fileName]; !found {
+			filesDiffTable.setHasChange()
+			filesDiffTable.add(fileName, func(w io.Writer) {
 				fmt.Fprintf(w, "  [%s] *closed*\n", fileName)
 			})
 		}
 	}
-	d.server.serializedOpenFiles = d.currentOpenFiles
+	server.serializedOpenFiles = currentOpenFiles
+	filesDiffTable.print(w)
 }
 
-func (d *stateDiff) checkConfigFileRegistry() {
-	if d.server.serializedConfigFileRegistry == d.configFileRegistry {
+func printConfigFileRegistryDiff(server *testServer, snapshot *project.Snapshot, w io.Writer) {
+	server.t.Helper()
+	configFileRegistry := snapshot.ProjectCollection.ConfigFileRegistry()
+
+	configDiffsTable := newDiffTableWriter("Config")
+	configFileNamesDiffsTable := newDiffTableWriter("Config File Names")
+
+	if server.serializedConfigFileRegistry == configFileRegistry {
 		return
 	}
 	options := diffTableOptions{indent: "    ", sortKeys: true}
-	d.configFileRegistry.ForEachTestConfigEntry(func(path tspath.Path, entry *project.TestConfigEntry) {
+	configFileRegistry.ForEachTestConfigEntry(func(path tspath.Path, entry *project.TestConfigEntry) {
 		configChange := ""
-		oldEntry := d.server.serializedConfigFileRegistry.GetTestConfigEntry(path)
+		oldEntry := server.serializedConfigFileRegistry.GetTestConfigEntry(path)
 		if oldEntry == nil {
 			configChange = "*new*"
-			d.configDiffs.setHasChange()
+			configDiffsTable.setHasChange()
 		} else if oldEntry != entry {
 			if !areIterSeqEqual(oldEntry.RetainingProjects, entry.RetainingProjects) ||
 				!areIterSeqEqual(oldEntry.RetainingOpenFiles, entry.RetainingOpenFiles) ||
 				!areIterSeqEqual(oldEntry.RetainingConfigs, entry.RetainingConfigs) {
 				configChange = "*modified*"
-				d.configDiffs.setHasChange()
+				configDiffsTable.setHasChange()
 			}
 		}
-		d.configDiffs.add(string(path), func(w io.Writer) {
+		configDiffsTable.add(string(path), func(w io.Writer) {
 			fmt.Fprintf(w, "  [%s] %s\n", entry.FileName, configChange)
 			// Print the details of the config entry
 			var retainingProjectsModified string
@@ -355,18 +344,18 @@ func (d *stateDiff) checkConfigFileRegistry() {
 			printPathIterSeqWithDiffTable(w, "RetainingConfigs:"+retainingConfigsModified, entry.RetainingConfigs, func() iter.Seq[tspath.Path] { return oldEntry.RetainingConfigs }, options, configChange)
 		})
 	})
-	d.configFileRegistry.ForEachTestConfigFileNamesEntry(func(path tspath.Path, entry *project.TestConfigFileNamesEntry) {
+	configFileRegistry.ForEachTestConfigFileNamesEntry(func(path tspath.Path, entry *project.TestConfigFileNamesEntry) {
 		configFileNamesChange := ""
-		oldEntry := d.server.serializedConfigFileRegistry.GetTestConfigFileNamesEntry(path)
+		oldEntry := server.serializedConfigFileRegistry.GetTestConfigFileNamesEntry(path)
 		if oldEntry == nil {
 			configFileNamesChange = "*new*"
-			d.configFileNamesDiffs.setHasChange()
+			configFileNamesDiffsTable.setHasChange()
 		} else if oldEntry.NearestConfigFileName != entry.NearestConfigFileName ||
 			!maps.Equal(oldEntry.Ancestors, entry.Ancestors) {
 			configFileNamesChange = "*modified*"
-			d.configFileNamesDiffs.setHasChange()
+			configFileNamesDiffsTable.setHasChange()
 		}
-		d.configFileNamesDiffs.add(string(path), func(w io.Writer) {
+		configFileNamesDiffsTable.add(string(path), func(w io.Writer) {
 			fmt.Fprintf(w, "  [%s] %s\n", path, configFileNamesChange)
 			var nearestConfigFileNameModified string
 			var ancestorDiffModified string
@@ -404,28 +393,23 @@ func (d *stateDiff) checkConfigFileRegistry() {
 		})
 	})
 
-	d.server.serializedConfigFileRegistry.ForEachTestConfigEntry(func(path tspath.Path, entry *project.TestConfigEntry) {
-		if d.configFileRegistry.GetTestConfigEntry(path) == nil {
-			d.configDiffs.setHasChange()
-			d.configDiffs.add(string(path), func(w io.Writer) {
+	server.serializedConfigFileRegistry.ForEachTestConfigEntry(func(path tspath.Path, entry *project.TestConfigEntry) {
+		if configFileRegistry.GetTestConfigEntry(path) == nil {
+			configDiffsTable.setHasChange()
+			configDiffsTable.add(string(path), func(w io.Writer) {
 				fmt.Fprintf(w, "  [%s] *deleted*\n", entry.FileName)
 			})
 		}
 	})
-	d.server.serializedConfigFileRegistry.ForEachTestConfigFileNamesEntry(func(path tspath.Path, entry *project.TestConfigFileNamesEntry) {
-		if d.configFileRegistry.GetTestConfigFileNamesEntry(path) == nil {
-			d.configFileNamesDiffs.setHasChange()
-			d.configFileNamesDiffs.add(string(path), func(w io.Writer) {
+	server.serializedConfigFileRegistry.ForEachTestConfigFileNamesEntry(func(path tspath.Path, entry *project.TestConfigFileNamesEntry) {
+		if configFileRegistry.GetTestConfigFileNamesEntry(path) == nil {
+			configFileNamesDiffsTable.setHasChange()
+			configFileNamesDiffsTable.add(string(path), func(w io.Writer) {
 				fmt.Fprintf(w, "  [%s] *deleted*\n", path)
 			})
 		}
 	})
-	d.server.serializedConfigFileRegistry = d.configFileRegistry
-}
-
-func (d *stateDiff) print(w io.Writer) {
-	d.projectDiffs.print(w)
-	d.filesDiff.print(w)
-	d.configDiffs.print(w)
-	d.configFileNamesDiffs.print(w)
+	server.serializedConfigFileRegistry = configFileRegistry
+	configDiffsTable.print(w)
+	configFileNamesDiffsTable.print(w)
 }
