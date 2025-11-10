@@ -1437,6 +1437,7 @@ func CombineEmitResults(results []*EmitResult) *EmitResult {
 
 type ProgramLike interface {
 	Options() *core.CompilerOptions
+	GetSourceFile(path string) *ast.SourceFile
 	GetSourceFiles() []*ast.SourceFile
 	GetConfigFileParsingDiagnostics() []*ast.Diagnostic
 	GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
@@ -1446,7 +1447,10 @@ type ProgramLike interface {
 	GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic
 	GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	GetSuggestionDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	Emit(ctx context.Context, options EmitOptions) *EmitResult
+	CommonSourceDirectory() string
+	IsSourceFileDefaultLibrary(path tspath.Path) bool
 }
 
 func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {

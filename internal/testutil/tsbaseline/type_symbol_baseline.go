@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -31,7 +32,7 @@ func DoTypeAndSymbolBaseline(
 	t *testing.T,
 	baselinePath string,
 	header string,
-	program *compiler.Program,
+	program compiler.ProgramLike,
 	allFiles []*harnessutil.TestFile,
 	opts baseline.Options,
 	skipTypeBaselines bool,
@@ -259,13 +260,13 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 }
 
 type typeWriterWalker struct {
-	program              *compiler.Program
+	program              compiler.ProgramLike
 	hadErrorBaseline     bool
 	currentSourceFile    *ast.SourceFile
 	declarationTextCache map[*ast.Node]string
 }
 
-func newTypeWriterWalker(program *compiler.Program, hadErrorBaseline bool) *typeWriterWalker {
+func newTypeWriterWalker(program compiler.ProgramLike, hadErrorBaseline bool) *typeWriterWalker {
 	return &typeWriterWalker{
 		program:              program,
 		hadErrorBaseline:     hadErrorBaseline,
@@ -276,7 +277,13 @@ func newTypeWriterWalker(program *compiler.Program, hadErrorBaseline bool) *type
 func (walker *typeWriterWalker) getTypeCheckerForCurrentFile() (*checker.Checker, func()) {
 	// If we don't use the right checker for the file, its contents won't be up to date
 	// since the types/symbols baselines appear to depend on files having been checked.
-	return walker.program.GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
+	switch p := walker.program.(type) {
+	case *compiler.Program:
+		return p.GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
+	case *incremental.Program:
+		return p.GetProgram().GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
+	}
+	panic("unknown program kind, cannot get checker for file")
 }
 
 type typeWriterResult struct {
