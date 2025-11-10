@@ -18,7 +18,6 @@ require (
 require (
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/matryer/moq v0.6.0 // indirect
-	github.com/microsoft/go-infra/goinstallscript v1.0.0 // indirect
 	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/tools v0.36.0 // indirect
 	mvdan.cc/gofumpt v0.9.1 // indirect
@@ -26,7 +25,6 @@ require (
 
 tool (
 	github.com/matryer/moq
-	github.com/microsoft/go-infra/goinstallscript
 	golang.org/x/tools/cmd/stringer
 	mvdan.cc/gofumpt
 )

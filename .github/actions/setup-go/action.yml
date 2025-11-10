@@ -20,7 +20,7 @@ runs:
       id: install-go
       shell: pwsh
       run: |
-        ${{ github.action_path }}/go-install.ps1 -Version ${{ inputs.go-version }}
+        ${{ github.action_path }}/go-install.ps1 -Version ${{ inputs.go-version }} -GitHubActionsPath
 
         $goVersionOutput = go version
         Write-Host $goVersionOutput
@@ -33,13 +33,6 @@ runs:
           Write-Error "Failed to parse Go version from: $goVersionOutput"
           exit 1
         }
-
-        # Add Go bin directory to PATH for subsequent steps
-        # TODO: remove once go-install.ps1 supports GITHUB_PATH
-        $goRoot = go env GOROOT
-        $goBinPath = Join-Path $goRoot "bin"
-        Write-Host "Adding to GITHUB_PATH: $goBinPath"
-        $goBinPath >> $env:GITHUB_PATH
 
     - name: Verify Microsoft Go
       shell: pwsh
@@ -57,9 +50,9 @@ runs:
       shell: bash
       id: cache-info
       env:
-        MODULES_KEY: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
-        LINT_KEY: golangci-lint-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
-        BUILD_KEY: go-build-cache-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
+        MODULES_KEY: go-modules-${{ runner.os }}-msft-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
+        LINT_KEY: golangci-lint-${{ runner.os }}-msft-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
+        BUILD_KEY: go-build-cache-${{ runner.os }}-msft-${{ steps.install-go.outputs.go-version }}
       run: |
         echo "modules-key=$MODULES_KEY" >> $GITHUB_OUTPUT
         echo "lint-key=$LINT_KEY" >> $GITHUB_OUTPUT

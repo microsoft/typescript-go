@@ -53,6 +53,9 @@
 .PARAMETER AzurePipelinePath
     If set, it will print an Azure DevOps logging command that causes the Azure DevOps to update the
     PATH environment variable of subsequent build steps to include the binaries folder.
+.PARAMETER GitHubActionsPath
+    If set, it will append the binaries folder to the GITHUB_PATH environment file, causing GitHub Actions
+    to update the PATH environment variable of subsequent build steps to include the binaries folder.
 .PARAMETER ProxyAddress
     If set, it will use the proxy when making web requests
 .PARAMETER ProxyUseDefaultCredentials
@@ -89,6 +92,7 @@ param(
     [switch]$DryRun,
     [switch]$NoPath,
     [switch]$AzurePipelinePath,
+    [switch]$GitHubActionsPath,
     [string]$ProxyAddress,
     [switch]$ProxyUseDefaultCredentials,
     [string[]]$ProxyBypassList=@(),
@@ -685,6 +689,11 @@ function Prepend-ToolsetPathEnv([string]$InstallRoot, [string]$SpecificVersion) 
     if ($AzurePipelinePath) {
         Say "Running an Azure Pipelines logging command to prepend `"$BinPath`" to the PATH."
         Say "##vso[task.prependpath]$BinPath"
+    }
+
+    if ($GitHubActionsPath) {
+        Say "Appending `"$BinPath`" to the GITHUB_PATH file."
+        $BinPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     }
 }
 
