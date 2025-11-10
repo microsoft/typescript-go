@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"slices"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -20,6 +21,7 @@ type CheckerPool struct {
 	cond                *sync.Cond
 	createCheckersOnce  sync.Once
 	checkers            []*checker.Checker
+	locks               []sync.Mutex
 	inUse               map[*checker.Checker]bool
 	fileAssociations    map[*ast.SourceFile]int
 	requestAssociations map[string]int
@@ -33,6 +35,7 @@ func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg str
 		program:             program,
 		maxCheckers:         maxCheckers,
 		checkers:            make([]*checker.Checker, maxCheckers),
+		locks:               make([]sync.Mutex, maxCheckers),
 		inUse:               make(map[*checker.Checker]bool),
 		requestAssociations: make(map[string]int),
 		log:                 log,
@@ -73,6 +76,23 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 	checker, index := p.getCheckerLocked(requestID)
 	p.fileAssociations[file] = index
 	return checker, p.createRelease(requestID, index, checker)
+}
+
+// GetCheckerForFileExclusive is the same as GetCheckerForFile but also locks a mutex associated with the checker.
+// Call `done` to free the lock.
+func (p *CheckerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	c, done := p.GetCheckerForFile(ctx, file)
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	idx := slices.Index(p.checkers, c)
+	p.locks[idx].Lock()
+	return c, sync.OnceFunc(func() {
+		done()
+		p.mu.Lock()
+		defer p.mu.Unlock()
+		p.locks[idx].Unlock()
+	})
 }
 
 func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {

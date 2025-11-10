@@ -919,6 +919,23 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 	return sourceMapRecorder.String()
 }
 
+type testBuildInfoReader struct {
+	inner incremental.BuildInfoReader
+}
+
+func (t *testBuildInfoReader) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {
+	r := t.inner.ReadBuildInfo(config)
+	if r == nil {
+		return nil
+	}
+	r.Version = core.Version()
+	return r
+}
+
+func getTestBuildInfoReader(host compiler.CompilerHost) *testBuildInfoReader {
+	return &testBuildInfoReader{inner: incremental.NewBuildInfoReader(host)}
+}
+
 func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) compiler.ProgramLike {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
@@ -932,7 +949,7 @@ func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLi
 	}
 	program := compiler.NewProgram(programOptions)
 	if config.CompilerOptions().Incremental.IsTrue() {
-		oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
+		oldProgram := incremental.ReadBuildInfoProgram(config, getTestBuildInfoReader(host), host)
 		incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), false)
 		return incrementalProgram
 	}
