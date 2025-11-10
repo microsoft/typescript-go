@@ -247,7 +247,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
 		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
-		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
+		(tx.currentSourceFile.ExternalModuleIndicator == nil || tx.currentSourceFile.ExternalModuleIndicator.Kind == ast.KindSourceFile) {
 		return false
 	}
 	if tx.currentModuleInfo.exportEquals == nil && ast.IsExternalModule(tx.currentSourceFile) {
@@ -296,12 +296,6 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	// emit standard prologue directives (e.g. "use strict")
 	prologue, rest := tx.Factory().SplitStandardPrologue(node.Statements.Nodes)
 	statements := slices.Clone(prologue)
-
-	// ensure "use strict" if not present
-	if ast.IsExternalModule(tx.currentSourceFile) ||
-		tx.compilerOptions.AlwaysStrict.DefaultIfUnknown(tx.compilerOptions.Strict).IsTrue() {
-		statements = tx.Factory().EnsureUseStrict(statements)
-	}
 
 	// emit custom prologues from other transformations
 	custom, rest := tx.Factory().SplitCustomPrologue(rest)

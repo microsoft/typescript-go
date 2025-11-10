@@ -189,20 +189,6 @@ func IsInTypeQuery(node *ast.Node) bool {
 	}) != nil
 }
 
-func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().Name()
-	case ast.KindNamespaceImport:
-		return node.AsNamespaceImport().Name()
-	case ast.KindImportClause:
-		return node.AsImportClause().Name()
-	case ast.KindImportEqualsDeclaration:
-		return node.AsImportEqualsDeclaration().Name()
-	}
-	return nil
-}
-
 func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
 	// private names cannot be used with decorators yet
 	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
@@ -1131,25 +1117,6 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	return node.Name()
 }
 
-func hasContextSensitiveParameters(node *ast.Node) bool {
-	// Functions with type parameters are not context sensitive.
-	if node.TypeParameters() == nil {
-		// Functions with any parameters that lack type annotations are context sensitive.
-		if core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() == nil }) {
-			return true
-		}
-		if !ast.IsArrowFunction(node) {
-			// If the first parameter is not an explicit 'this' parameter, then the function has
-			// an implicit 'this' parameter which is subject to contextual typing.
-			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !ast.IsThisParameter(parameter) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func isCallChain(node *ast.Node) bool {
 	return ast.IsCallExpression(node) && node.Flags&ast.NodeFlagsOptionalChain != 0
 }
@@ -1855,6 +1822,95 @@ func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
 	case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction,
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindModuleDeclaration, ast.KindSourceFile:
 		return true
+	}
+	return false
+}
+
+// Determines whether a did-you-mean error should be a suggestion in an unchecked JS file.
+// Only applies to unchecked JS files without checkJS, // @ts-check or // @ts-nocheck
+// It does not suggest when the suggestion:
+// - Is from a global file that is different from the reference file, or
+// - (optionally) Is a class, or is a this.x property access expression
+func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol, excludeClasses bool) bool {
+	file := ast.GetSourceFileOfNode(node)
+	if file != nil {
+		if c.compilerOptions.CheckJs.IsUnknown() && file.CheckJsDirective == nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) {
+			var declarationFile *ast.SourceFile
+			if suggestion != nil {
+				if firstDeclaration := core.FirstOrNil(suggestion.Declarations); firstDeclaration != nil {
+					declarationFile = ast.GetSourceFileOfNode(firstDeclaration)
+				}
+			}
+			suggestionHasNoExtendsOrDecorators := suggestion == nil ||
+				suggestion.ValueDeclaration == nil ||
+				!ast.IsClassLike(suggestion.ValueDeclaration) ||
+				len(ast.GetExtendsHeritageClauseElements(suggestion.ValueDeclaration)) != 0 ||
+				classOrConstructorParameterIsDecorated(suggestion.ValueDeclaration)
+			return !(file != declarationFile && declarationFile != nil && ast.IsGlobalSourceFile(declarationFile.AsNode())) &&
+				!(excludeClasses && suggestion != nil && suggestion.Flags&ast.SymbolFlagsClass != 0 && suggestionHasNoExtendsOrDecorators) &&
+				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && suggestionHasNoExtendsOrDecorators)
+		}
+	}
+	return false
+}
+
+func classOrConstructorParameterIsDecorated(node *ast.Node) bool {
+	if nodeIsDecorated(node, nil, nil) {
+		return true
+	}
+	constructor := ast.GetFirstConstructorWithBody(node)
+	return constructor != nil && childIsDecorated(constructor, node)
+}
+
+func nodeIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
+	return ast.HasDecorators(node) && nodeCanBeDecorated(false, node, parent, grandparent)
+}
+
+func nodeOrChildIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
+	return nodeIsDecorated(node, parent, grandparent) || childIsDecorated(node, parent)
+}
+
+func childIsDecorated(node *ast.Node, parent *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindClassDeclaration, ast.KindClassExpression:
+		return core.Some(node.Members(), func(m *ast.Node) bool {
+			return nodeOrChildIsDecorated(m, node, parent)
+		})
+	case ast.KindMethodDeclaration,
+		ast.KindSetAccessor,
+		ast.KindConstructor:
+		return core.Some(node.Parameters(), func(p *ast.Node) bool {
+			return nodeIsDecorated(p, node, parent)
+		})
+	default:
+		return false
+	}
+}
+
+// Returns if a type is or consists of a JSLiteral object type
+// In addition to objects which are directly literals,
+// * unions where every element is a jsliteral
+// * intersections where at least one element is a jsliteral
+// * and instantiable types constrained to a jsliteral
+// Should all count as literals and not print errors on access or assignment of possibly existing properties.
+// This mirrors the behavior of the index signature propagation, to which this behaves similarly (but doesn't affect assignability or inference).
+func (c *Checker) isJSLiteralType(t *Type) bool {
+	if c.noImplicitAny {
+		return false
+		// Flag is meaningless under `noImplicitAny` mode
+	}
+	if t.objectFlags&ObjectFlagsJSLiteral != 0 {
+		return true
+	}
+	if t.flags&TypeFlagsUnion != 0 {
+		return core.Every(t.AsUnionType().types, c.isJSLiteralType)
+	}
+	if t.flags&TypeFlagsIntersection != 0 {
+		return core.Some(t.AsIntersectionType().types, c.isJSLiteralType)
+	}
+	if t.flags&TypeFlagsInstantiable != 0 {
+		constraint := c.getResolvedBaseConstraint(t, nil)
+		return constraint != t && c.isJSLiteralType(constraint)
 	}
 	return false
 }
