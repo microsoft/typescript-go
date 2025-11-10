@@ -5,9 +5,9 @@ import (
 	"unsafe"
 )
 
-// isSymlinkOrJunction checks if the given path is a symlink or junction point
+// isReparsePoint checks if the given path is a symlink or junction point
 // on Windows by checking the FILE_ATTRIBUTE_REPARSE_POINT attribute.
-func isSymlinkOrJunction(path string) bool {
+func isReparsePoint(path string) bool {
 	if len(path) >= 248 {
 		path = `\\?\` + path
 	}

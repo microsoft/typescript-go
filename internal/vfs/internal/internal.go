@@ -13,8 +13,8 @@ import (
 )
 
 type Common struct {
-	RootFor             func(root string) fs.FS
-	IsSymlinkOrJunction func(path string) bool
+	RootFor        func(root string) fs.FS
+	IsReparsePoint func(path string) bool
 }
 
 func RootLength(p string) int {
@@ -93,11 +93,11 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 			continue
 		}
 
-		if entryType&fs.ModeIrregular != 0 && vfs.IsSymlinkOrJunction != nil {
+		if entryType&fs.ModeIrregular != 0 && vfs.IsReparsePoint != nil {
 			// Could be a Windows junction or other reparse point.
 			// Check using the OS-specific helper.
 			fullPath := path + "/" + entry.Name()
-			if vfs.IsSymlinkOrJunction(fullPath) {
+			if vfs.IsReparsePoint(fullPath) {
 				if stat := vfs.Stat(fullPath); stat != nil {
 					addToResult(entry.Name(), stat.Mode())
 				}

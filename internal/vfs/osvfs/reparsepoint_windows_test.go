@@ -9,7 +9,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func TestIsSymlinkOrJunction(t *testing.T) {
+func TestIsReparsePoint(t *testing.T) {
 	t.Parallel()
 
 	tmp := t.TempDir()
@@ -18,14 +18,14 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		t.Parallel()
 		file := filepath.Join(tmp, "regular.txt")
 		assert.NilError(t, os.WriteFile(file, []byte("hello"), 0o666))
-		assert.Equal(t, isSymlinkOrJunction(file), false)
+		assert.Equal(t, isReparsePoint(file), false)
 	})
 
 	t.Run("regular directory", func(t *testing.T) {
 		t.Parallel()
 		dir := filepath.Join(tmp, "regular-dir")
 		assert.NilError(t, os.MkdirAll(dir, 0o777))
-		assert.Equal(t, isSymlinkOrJunction(dir), false)
+		assert.Equal(t, isReparsePoint(dir), false)
 	})
 
 	t.Run("junction point", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		link := filepath.Join(tmp, "junction-link")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
 		mklink(t, target, link, true)
-		assert.Equal(t, isSymlinkOrJunction(link), true)
+		assert.Equal(t, isReparsePoint(link), true)
 	})
 
 	t.Run("file symlink", func(t *testing.T) {
@@ -43,7 +43,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		link := filepath.Join(tmp, "symlink-link.txt")
 		assert.NilError(t, os.WriteFile(target, []byte("hello"), 0o666))
 		mklink(t, target, link, false)
-		assert.Equal(t, isSymlinkOrJunction(link), true)
+		assert.Equal(t, isReparsePoint(link), true)
 	})
 
 	t.Run("directory symlink", func(t *testing.T) {
@@ -52,27 +52,27 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		link := filepath.Join(tmp, "dir-symlink-link")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
 		mklink(t, target, link, false)
-		assert.Equal(t, isSymlinkOrJunction(link), true)
+		assert.Equal(t, isReparsePoint(link), true)
 	})
 
 	t.Run("nonexistent path", func(t *testing.T) {
 		t.Parallel()
 		nonexistent := filepath.Join(tmp, "does-not-exist")
-		assert.Equal(t, isSymlinkOrJunction(nonexistent), false)
+		assert.Equal(t, isReparsePoint(nonexistent), false)
 	})
 
 	t.Run("empty path", func(t *testing.T) {
 		t.Parallel()
-		assert.Equal(t, isSymlinkOrJunction(""), false)
+		assert.Equal(t, isReparsePoint(""), false)
 	})
 
 	t.Run("invalid path with null byte", func(t *testing.T) {
 		t.Parallel()
-		assert.Equal(t, isSymlinkOrJunction("invalid\x00path"), false)
+		assert.Equal(t, isReparsePoint("invalid\x00path"), false)
 	})
 }
 
-func TestIsSymlinkOrJunctionLongPath(t *testing.T) {
+func TestIsReparsePointLongPath(t *testing.T) {
 	t.Parallel()
 
 	tmp := t.TempDir()
@@ -96,10 +96,10 @@ func TestIsSymlinkOrJunctionLongPath(t *testing.T) {
 	assert.NilError(t, exec.Command("cmd", "/c", "mklink", "/J", longLink, longTarget).Run())
 
 	// With long path support enabled, this should work even for paths >= 248 chars
-	assert.Equal(t, isSymlinkOrJunction(link), true)
+	assert.Equal(t, isReparsePoint(link), true)
 }
 
-func TestIsSymlinkOrJunctionNestedInSymlink(t *testing.T) {
+func TestIsReparsePointNestedInSymlink(t *testing.T) {
 	t.Parallel()
 
 	tmp := t.TempDir()
@@ -118,10 +118,10 @@ func TestIsSymlinkOrJunctionNestedInSymlink(t *testing.T) {
 
 	// Check the junction through the symlink path
 	nestedPath := filepath.Join(link, "inner-link")
-	assert.Equal(t, isSymlinkOrJunction(nestedPath), true)
+	assert.Equal(t, isReparsePoint(nestedPath), true)
 }
 
-func TestIsSymlinkOrJunctionRelativePath(t *testing.T) { //nolint:paralleltest // Cannot use t.Parallel() with t.Chdir()
+func TestIsReparsePointRelativePath(t *testing.T) { //nolint:paralleltest // Cannot use t.Parallel() with t.Chdir()
 	tmp := t.TempDir()
 	t.Chdir(tmp)
 
@@ -130,8 +130,8 @@ func TestIsSymlinkOrJunctionRelativePath(t *testing.T) { //nolint:paralleltest /
 	assert.NilError(t, os.MkdirAll(target, 0o777))
 	mklink(t, target, link, true)
 
-	assert.Equal(t, isSymlinkOrJunction(link), true)
-	assert.Equal(t, isSymlinkOrJunction(target), false)
+	assert.Equal(t, isReparsePoint(link), true)
+	assert.Equal(t, isReparsePoint(target), false)
 }
 
 func BenchmarkIsSymlinkOrJunction(b *testing.B) {
@@ -148,14 +148,14 @@ func BenchmarkIsSymlinkOrJunction(b *testing.B) {
 	b.Run("regular file", func(b *testing.B) {
 		b.ReportAllocs()
 		for b.Loop() {
-			isSymlinkOrJunction(regularFile)
+			isReparsePoint(regularFile)
 		}
 	})
 
 	b.Run("junction", func(b *testing.B) {
 		b.ReportAllocs()
 		for b.Loop() {
-			isSymlinkOrJunction(link)
+			isReparsePoint(link)
 		}
 	})
 
@@ -163,7 +163,7 @@ func BenchmarkIsSymlinkOrJunction(b *testing.B) {
 		b.ReportAllocs()
 		nonexistent := filepath.Join(tmp, "does-not-exist")
 		for b.Loop() {
-			isSymlinkOrJunction(nonexistent)
+			isReparsePoint(nonexistent)
 		}
 	})
 }
