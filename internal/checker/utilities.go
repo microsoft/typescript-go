@@ -189,20 +189,6 @@ func IsInTypeQuery(node *ast.Node) bool {
 	}) != nil
 }
 
-func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().Name()
-	case ast.KindNamespaceImport:
-		return node.AsNamespaceImport().Name()
-	case ast.KindImportClause:
-		return node.AsImportClause().Name()
-	case ast.KindImportEqualsDeclaration:
-		return node.AsImportEqualsDeclaration().Name()
-	}
-	return nil
-}
-
 func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
 	// private names cannot be used with decorators yet
 	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
@@ -1129,25 +1115,6 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 		return name
 	}
 	return node.Name()
-}
-
-func hasContextSensitiveParameters(node *ast.Node) bool {
-	// Functions with type parameters are not context sensitive.
-	if node.TypeParameters() == nil {
-		// Functions with any parameters that lack type annotations are context sensitive.
-		if core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() == nil }) {
-			return true
-		}
-		if !ast.IsArrowFunction(node) {
-			// If the first parameter is not an explicit 'this' parameter, then the function has
-			// an implicit 'this' parameter which is subject to contextual typing.
-			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !ast.IsThisParameter(parameter) {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 func isCallChain(node *ast.Node) bool {
