@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -39,13 +38,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		target := filepath.Join(tmp, "symlink-target.txt")
 		link := filepath.Join(tmp, "symlink-link.txt")
 		assert.NilError(t, os.WriteFile(target, []byte("hello"), 0o666))
-
-		err := os.Symlink(target, link)
-		if err != nil && strings.Contains(err.Error(), "A required privilege is not held by the client") {
-			t.Log(err)
-			t.Skip("file symlink support is not enabled without elevation or developer mode")
-		}
-		assert.NilError(t, err)
+		mklink(t, target, link, false)
 		assert.Equal(t, isSymlinkOrJunction(link), true)
 	})
 
@@ -53,7 +46,7 @@ func TestIsSymlinkOrJunction(t *testing.T) {
 		target := filepath.Join(tmp, "dir-symlink-target")
 		link := filepath.Join(tmp, "dir-symlink-link")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
-		assert.NilError(t, os.Symlink(target, link))
+		mklink(t, target, link, false)
 		assert.Equal(t, isSymlinkOrJunction(link), true)
 	})
 
