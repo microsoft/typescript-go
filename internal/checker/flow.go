@@ -2179,7 +2179,7 @@ func (c *Checker) hasTypePredicateOrNeverReturnType(sig *Signature) bool {
 
 func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
 	container := ast.GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
-	if ast.IsFunctionLike(container) {
+	if container != nil && ast.IsFunctionLike(container) {
 		signature := c.getSignatureFromDeclaration(container)
 		if signature.thisParameter != nil {
 			return c.getExplicitTypeOfSymbol(signature.thisParameter, nil)

@@ -5736,7 +5736,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 				}
 				// names of block-scoped and function scoped variables can collide only
 				// if block scoped variable is defined in the function\module\source file scope (because of variable hoisting)
-				namesShareScope := container != nil && (ast.IsBlock(container) && ast.IsFunctionLike(container.Parent) ||
+				namesShareScope := container != nil && (ast.IsBlock(container) && container.Parent != nil && ast.IsFunctionLike(container.Parent) ||
 					ast.IsModuleBlock(container) || ast.IsModuleDeclaration(container) || ast.IsSourceFile(container))
 				// here we know that function scoped variable is "shadowed" by block scoped one
 				// a var declaration can't hoist past a lexical declaration and it results in a SyntaxError at runtime
@@ -7731,7 +7731,7 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 
 func (c *Checker) isInConstructorArgumentInitializer(node *ast.Node, constructorDecl *ast.Node) bool {
 	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
-		if ast.IsFunctionLikeDeclaration(n) {
+		if n != nil && ast.IsFunctionLikeDeclaration(n) {
 			return ast.FindAncestorQuit
 		}
 		if ast.IsParameter(n) && n.Parent == constructorDecl {
@@ -11259,7 +11259,7 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 			return ast.IsCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
-			return !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
+			return d == nil || !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
 		})
 	}
 	return true
@@ -11517,7 +11517,7 @@ func (c *Checker) isNodeUsedDuringClassInitialization(node *ast.Node) bool {
 	return ast.FindAncestorOrQuit(node, func(element *ast.Node) ast.FindAncestorResult {
 		if ast.IsConstructorDeclaration(element) && ast.NodeIsPresent(element.Body()) || ast.IsPropertyDeclaration(element) {
 			return ast.FindAncestorTrue
-		} else if ast.IsClassLike(element) || ast.IsFunctionLikeDeclaration(element) {
+		} else if ast.IsClassLike(element) || (element != nil && ast.IsFunctionLikeDeclaration(element)) {
 			return ast.FindAncestorQuit
 		}
 		return ast.FindAncestorFalse
@@ -19111,7 +19111,7 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 	}
 	var result []*Signature
 	for i, decl := range symbol.Declarations {
-		if !ast.IsFunctionLike(decl) {
+		if decl == nil || !ast.IsFunctionLike(decl) {
 			continue
 		}
 		// Don't include signature if node is the implementation of an overloaded function. A node is considered
@@ -19752,7 +19752,7 @@ func (c *Checker) createGeneratorType(yieldType *Type, returnType *Type, nextTyp
 
 func (c *Checker) reportErrorsFromWidening(declaration *ast.Node, t *Type, wideningKind WideningKind) {
 	if c.noImplicitAny && t.objectFlags&ObjectFlagsContainsWideningType != 0 {
-		if wideningKind == WideningKindNormal || ast.IsFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
+		if wideningKind == WideningKindNormal || declaration != nil && ast.IsFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
 			// Report implicit any error within type if possible, otherwise report error on declaration
 			if !c.reportWideningErrorsInType(t) {
 				c.reportImplicitAny(declaration, t, wideningKind)
@@ -30477,7 +30477,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		fallthrough
 	case ast.KindThisKeyword:
 		container := c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
-		if ast.IsFunctionLike(container) {
+		if container != nil && ast.IsFunctionLike(container) {
 			sig := c.getSignatureFromDeclaration(container)
 			if sig.thisParameter != nil {
 				return sig.thisParameter

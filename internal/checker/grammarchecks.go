@@ -307,7 +307,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				parent := node.Parent
 
 				if node.Kind == ast.KindTypeParameter {
-					if !(ast.IsFunctionLikeDeclaration(parent) || ast.IsClassLike(parent) ||
+					if !((parent != nil && ast.IsFunctionLikeDeclaration(parent)) || ast.IsClassLike(parent) ||
 						ast.IsFunctionTypeNode(parent) || ast.IsConstructorTypeNode(parent) ||
 						ast.IsCallSignatureDeclaration(parent) || ast.IsConstructSignatureDeclaration(parent) ||
 						ast.IsMethodSignatureDeclaration(parent)) {
@@ -2085,7 +2085,7 @@ func (c *Checker) checkGrammarStatementInAmbientContext(node *ast.Node) bool {
 	if node.Flags&ast.NodeFlagsAmbient != 0 {
 		// Find containing block which is either Block, ModuleBlock, SourceFile
 		links := c.nodeLinks.Get(node)
-		if !links.hasReportedStatementInAmbientContext && (ast.IsFunctionLike(node.Parent) || ast.IsAccessor(node.Parent)) {
+		if !links.hasReportedStatementInAmbientContext && (node.Parent != nil && ast.IsFunctionLike(node.Parent) || ast.IsAccessor(node.Parent)) {
 			links.hasReportedStatementInAmbientContext = c.grammarErrorOnFirstToken(node, diagnostics.An_implementation_cannot_be_declared_in_ambient_contexts)
 			return links.hasReportedStatementInAmbientContext
 		}
