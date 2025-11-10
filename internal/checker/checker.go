@@ -12721,6 +12721,9 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		}
 		result := c.newAnonymousType(node.Symbol(), propertiesTable, nil, nil, indexInfos)
 		result.objectFlags |= objectFlags | ObjectFlagsObjectLiteral | ObjectFlagsContainsObjectOrArrayLiteral
+		if contextualType == nil && ast.IsInJSFile(node) && !ast.IsInJsonFile(node) {
+			result.objectFlags |= ObjectFlagsJSLiteral
+		}
 		if patternWithComputedProperties {
 			result.objectFlags |= ObjectFlagsObjectLiteralPatternWithComputedProperties
 		}
@@ -26332,6 +26335,9 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		if indexType.flags&TypeFlagsNever != 0 {
 			return c.neverType
 		}
+		if c.isJSLiteralType(objectType) {
+			return c.anyType
+		}
 		if accessExpression != nil && !isConstEnumObjectType(objectType) {
 			if isObjectLiteralType(objectType) {
 				if c.noImplicitAny && indexType.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
@@ -26388,6 +26394,9 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 	}
 	if accessFlags&AccessFlagsAllowMissing != 0 && isObjectLiteralType(objectType) {
 		return c.undefinedType
+	}
+	if c.isJSLiteralType(objectType) {
+		return c.anyType
 	}
 	if accessNode != nil {
 		indexNode := getIndexNodeForAccessExpression(accessNode)
