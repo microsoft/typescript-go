@@ -907,7 +907,7 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 }
 
 func (s *Server) handleRename(ctx context.Context, languageServer *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
-	return languageServer.ProvideRename(ctx, params, &ls.UserPreferences{})
+	return languageServer.ProvideRename(ctx, params, lsutil.NewDefaultUserPreferences())
 }
 
 func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {

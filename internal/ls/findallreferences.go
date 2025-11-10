@@ -15,8 +15,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -454,7 +454,7 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 }
 
-func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, prefs *ls.UserPreferences) (lsproto.WorkspaceEditOrNull, error) {
+func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, prefs *lsutil.UserPreferences) (lsproto.WorkspaceEditOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
