@@ -283,7 +283,6 @@ TestIndirectClassInstantiation
 TestInstanceTypesForGenericType1
 TestJavascriptModules20
 TestJavascriptModules21
-TestJavascriptModulesTypeImport
 TestJsDocAugments
 TestJsDocExtends
 TestJsDocFunctionSignatures10
