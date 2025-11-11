@@ -147,6 +147,23 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
 
+	// Skip tests with deprecated/removed compiler options
+	if compilerOptions.BaseUrl != "" {
+		t.Skipf("Test uses deprecated 'baseUrl' option")
+	}
+	if compilerOptions.OutFile != "" {
+		t.Skipf("Test uses deprecated 'outFile' option")
+	}
+	if compilerOptions.Module == core.ModuleKindAMD {
+		t.Skipf("Test uses deprecated 'module: AMD' option")
+	}
+	if compilerOptions.Module == core.ModuleKindSystem {
+		t.Skipf("Test uses deprecated 'module: System' option")
+	}
+	if compilerOptions.Module == core.ModuleKindUMD {
+		t.Skipf("Test uses deprecated 'module: UMD' option")
+	}
+
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
 	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
