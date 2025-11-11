@@ -237,7 +237,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 		exportInfosMap := getExportInfos(
 			ctx,
 			symbolName,
-			isJSXTagName(symbolToken),
+			ast.IsJsxTagName(symbolToken),
 			getMeaningFromLocation(symbolToken),
 			fixContext.SourceFile,
 			fixContext.Program,
@@ -421,17 +421,6 @@ func getExportInfos(
 	)
 
 	return originalSymbolToExportInfos
-}
-
-func isJSXTagName(node *ast.Node) bool {
-	parent := node.Parent
-	if parent == nil {
-		return false
-	}
-	if ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent) {
-		return parent.TagName() == node
-	}
-	return false
 }
 
 func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
