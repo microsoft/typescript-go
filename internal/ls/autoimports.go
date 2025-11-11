@@ -356,7 +356,7 @@ func (l *LanguageService) getImportCompletionAction(
 	sourceFile *ast.SourceFile,
 	position int,
 	exportMapKey ExportInfoMapKey,
-	symbolName string, // !!! needs *string ?
+	symbolName string,
 	isJsxTagName bool,
 	// formatContext *formattingContext,
 ) (string, codeAction) {
@@ -482,7 +482,7 @@ func fileContainsPackageImport(sourceFile *ast.SourceFile, packageName string) b
 }
 
 func isImportableSymbol(symbol *ast.Symbol, ch *checker.Checker) bool {
-	return !ch.IsUndefinedSymbol(symbol) && !ch.IsUnknownSymbol(symbol) && !checker.IsKnownSymbol(symbol) // !!! && !checker.IsPrivateIdentifierSymbol(symbol);
+	return !ch.IsUndefinedSymbol(symbol) && !ch.IsUnknownSymbol(symbol) && !checker.IsKnownSymbol(symbol) && !checker.IsPrivateIdentifierSymbol(symbol)
 }
 
 func getDefaultLikeExportInfo(moduleSymbol *ast.Symbol, ch *checker.Checker) *ExportInfo {

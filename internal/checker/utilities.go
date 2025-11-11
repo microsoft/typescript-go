@@ -1007,6 +1007,13 @@ func IsKnownSymbol(symbol *ast.Symbol) bool {
 	return isLateBoundName(symbol.Name)
 }
 
+func IsPrivateIdentifierSymbol(symbol *ast.Symbol) bool {
+	if symbol == nil {
+		return false
+	}
+	return strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#")
+}
+
 func isLateBoundName(name string) bool {
 	return len(name) >= 2 && name[0] == '\xfe' && name[1] == '@'
 }
