@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -233,7 +234,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 
 		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
 		useRequire := shouldUseRequire(fixContext.SourceFile, fixContext.Program)
-		exportInfos := getExportInfos(
+		exportInfosMap := getExportInfos(
 			ctx,
 			symbolName,
 			isJSXTagName(symbolToken),
@@ -242,28 +243,39 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 			fixContext.Program,
 			fixContext.LS,
 		)
-		for exportInfoList := range exportInfos.Values() {
-			for _, exportInfo := range exportInfoList {
-				usagePos := scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)
-				lspPos := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(usagePos))
-				_, fixes := fixContext.LS.getImportFixes(
-					ch,
-					[]*SymbolExportInfo{exportInfo},
-					&lspPos,
-					&isValidTypeOnlyUseSite,
-					&useRequire,
-					fixContext.SourceFile,
-					false, // fromCacheOnly
-				)
 
-				for _, fix := range fixes {
-					allInfo = append(allInfo, &fixInfo{
-						fix:                 fix,
-						symbolName:          symbolName,
-						errorIdentifierText: symbolToken.Text(),
-						isJsxNamespaceFix:   symbolName != symbolToken.Text(),
-					})
-				}
+		// Flatten all export infos from the map into a single slice
+		var allExportInfos []*SymbolExportInfo
+		for exportInfoList := range exportInfosMap.Values() {
+			allExportInfos = append(allExportInfos, exportInfoList...)
+		}
+
+		// Sort by moduleFileName to ensure deterministic iteration order
+		// TODO: This might not work 100% of the time; need to revisit this
+		slices.SortStableFunc(allExportInfos, func(a, b *SymbolExportInfo) int {
+			return strings.Compare(a.moduleFileName, b.moduleFileName)
+		})
+
+		if len(allExportInfos) > 0 {
+			usagePos := scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)
+			lspPos := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(usagePos))
+			_, fixes := fixContext.LS.getImportFixes(
+				ch,
+				allExportInfos,
+				&lspPos,
+				&isValidTypeOnlyUseSite,
+				&useRequire,
+				fixContext.SourceFile,
+				false, // fromCacheOnly
+			)
+
+			for _, fix := range fixes {
+				allInfo = append(allInfo, &fixInfo{
+					fix:                 fix,
+					symbolName:          symbolName,
+					errorIdentifierText: symbolToken.Text(),
+					isJsxNamespaceFix:   symbolName != symbolToken.Text(),
+				})
 			}
 		}
 	}
