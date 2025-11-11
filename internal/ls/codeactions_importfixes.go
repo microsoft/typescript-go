@@ -994,26 +994,33 @@ func promoteImportClause(
 
 // deleteTypeKeywordFromImportClause deletes the 'type' keyword from an import clause
 func deleteTypeKeywordFromImportClause(changes *change.Tracker, sourceFile *ast.SourceFile, importClause *ast.ImportClause) {
-	// The type keyword is at the start of the import clause
+	// The type keyword is the first token in the import clause
 	// import type { foo } from "bar"
 	//        ^^^^^ - this keyword
+	// We need to find and delete "type " (including trailing space)
 
-	// Find the position of the 'type' keyword and the space after it
-	clauseStart := importClause.Pos()
+	// The import clause starts at the position of the "type" keyword
+	// Use the scanner to get the token at that position
+	scan := scanner.GetScannerForSourceFile(sourceFile, importClause.Pos())
+	token := scan.Token()
 
-	// The 'type' keyword should be the first token in the import clause
-	// We want to delete "type " (including the trailing space)
-	typeKeywordEnd := clauseStart + 4 // length of "type"
+	if token != ast.KindTypeKeyword {
+		panic(fmt.Sprintf("Expected type keyword at import clause start, got %v at pos %d", token, importClause.Pos()))
+	}
 
-	// Skip whitespace after 'type' to find the actual end position
+	// Use TokenStart (not TokenFullStart) to avoid including leading whitespace
+	typeStart := scan.TokenStart()
+	typeEnd := scan.TokenEnd()
+
+	// Skip whitespace after 'type' to include it in the deletion
 	text := sourceFile.Text()
-	endPos := typeKeywordEnd
+	endPos := typeEnd
 	for endPos < len(text) && (text[endPos] == ' ' || text[endPos] == '\t') {
 		endPos++
 	}
 
 	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, clauseStart)
+	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeStart)
 	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, endPos)
 
 	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
