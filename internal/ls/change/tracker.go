@@ -110,11 +110,6 @@ func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, form
 	}
 }
 
-// Converters returns the position converters for converting between text positions and LSP positions
-func (t *Tracker) Converters() *lsconv.Converters {
-	return t.converters
-}
-
 // GetChanges returns the accumulated text edits.
 // Note: after calling this, the Tracker object must be discarded!
 func (t *Tracker) GetChanges() map[string][]*lsproto.TextEdit {
@@ -191,6 +186,12 @@ func (t *Tracker) InsertModifierBefore(sourceFile *ast.SourceFile, modifier ast.
 // The actual deletion happens in finishDeleteDeclarations during GetChanges.
 func (t *Tracker) Delete(sourceFile *ast.SourceFile, node *ast.Node) {
 	t.deletedNodes = append(t.deletedNodes, deletedNode{sourceFile: sourceFile, node: node})
+}
+
+// DeleteRange deletes a text range from the source file.
+func (t *Tracker) DeleteRange(sourceFile *ast.SourceFile, textRange core.TextRange) {
+	lspRange := t.converters.ToLSPRange(sourceFile, textRange)
+	t.ReplaceRangeWithText(sourceFile, lspRange, "")
 }
 
 // DeleteNode deletes a node immediately with specified trivia options.

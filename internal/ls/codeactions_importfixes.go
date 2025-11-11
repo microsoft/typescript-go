@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ls/change"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -528,23 +529,20 @@ func promoteFromTypeOnly(
 	case ast.KindImportSpecifier:
 		spec := aliasDeclaration.AsImportSpecifier()
 		if spec.IsTypeOnly {
-			// TODO: TypeScript creates a new specifier with isTypeOnly=false, computes insertion index,
-			// and if different from current position, deletes and re-inserts at new position.
-			// We just delete the type keyword which may result in incorrectly ordered imports.
-			// Also, TypeScript uses changes.deleteRange with getTokenPosOfNode for more precise range,
-			// we use a simpler approach.
-
-			// If there are multiple specifiers, we might need to move this one
 			if spec.Parent != nil && spec.Parent.Kind == ast.KindNamedImports {
-				namedImports := spec.Parent.AsNamedImports()
-				if len(namedImports.Elements.Nodes) > 1 {
-					// For now, just remove the 'type' keyword from this specifier
-					// Full implementation would handle reordering
-					deleteTypeKeywordFromSpecifier(changes, sourceFile, spec)
+				// TypeScript creates a new specifier with isTypeOnly=false, computes insertion index,
+				// and if different from current position, deletes and re-inserts at new position.
+				// For now, we just delete the range from the first token (type keyword) to the property name or name.
+				firstToken := lsutil.GetFirstToken(aliasDeclaration, sourceFile)
+				typeKeywordPos := scanner.GetTokenPosOfNode(firstToken, sourceFile, false)
+				var targetNode *ast.DeclarationName
+				if spec.PropertyName != nil {
+					targetNode = spec.PropertyName
 				} else {
-					// Single specifier - just remove the 'type' keyword
-					deleteTypeKeywordFromSpecifier(changes, sourceFile, spec)
+					targetNode = spec.Name()
 				}
+				targetPos := scanner.GetTokenPosOfNode(targetNode.AsNode(), sourceFile, false)
+				changes.DeleteRange(sourceFile, core.NewTextRange(typeKeywordPos, targetPos))
 			}
 			return aliasDeclaration
 		} else {
@@ -572,8 +570,13 @@ func promoteFromTypeOnly(
 		return aliasDeclaration.Parent
 
 	case ast.KindImportEqualsDeclaration:
-		// Remove the 'type' keyword (which is the second child: 'import' 'type' name '=' ...)
-		deleteTypeKeywordFromImportEquals(changes, sourceFile, aliasDeclaration.AsImportEqualsDeclaration())
+		// Remove the 'type' keyword (which is the second token: 'import' 'type' name '=' ...)
+		importEqDecl := aliasDeclaration.AsImportEqualsDeclaration()
+		// The type keyword is after 'import' and before the name
+		scan := scanner.GetScannerForSourceFile(sourceFile, importEqDecl.Pos())
+		// Skip 'import' keyword to get to 'type'
+		scan.Scan()
+		deleteTypeKeyword(changes, sourceFile, scan.TokenStart())
 		return aliasDeclaration
 	default:
 		panic(fmt.Sprintf("Unexpected alias declaration kind: %v", aliasDeclaration.Kind))
@@ -592,7 +595,7 @@ func promoteImportClause(
 ) {
 	// Delete the 'type' keyword
 	if importClause.PhaseModifier == ast.KindTypeKeyword {
-		deleteTypeKeywordFromImportClause(changes, sourceFile, importClause)
+		deleteTypeKeyword(changes, sourceFile, importClause.Pos())
 	}
 
 	// Handle .ts extension conversion to .js if necessary
@@ -608,8 +611,8 @@ func promoteImportClause(
 					outputpaths.GetOutputExtension(moduleText, compilerOptions.Jsx),
 				)
 				// Replace the module specifier with the new extension
-				// We need to update the string literal, keeping the quotes
-				replaceStringLiteral(changes, sourceFile, moduleSpecifier, changedExtension)
+				newStringLiteral := changes.NewStringLiteral(changedExtension)
+				changes.ReplaceNode(sourceFile, moduleSpecifier, newStringLiteral, nil)
 			}
 		}
 	}
@@ -645,7 +648,7 @@ func promoteImportClause(
 					// If not already at index 0, move it there
 					if aliasIndex > 0 {
 						// Delete the specifier from its current position
-						deleteNode(changes, sourceFile, aliasDeclaration, namedImportsData.Elements.Nodes)
+						changes.Delete(sourceFile, aliasDeclaration)
 						// Insert it at index 0
 						changes.InsertImportSpecifierAtIndex(sourceFile, aliasDeclaration, namedImports, 0)
 					}
@@ -662,7 +665,7 @@ func promoteImportClause(
 					}
 					// Skip if already type-only
 					if !spec.IsTypeOnly {
-						insertTypeModifierBefore(changes, sourceFile, element)
+						changes.InsertModifierBefore(sourceFile, ast.KindTypeKeyword, element)
 					}
 				}
 			}
@@ -670,183 +673,19 @@ func promoteImportClause(
 	}
 }
 
-// The below helpers are a workaround for missing Tracker functionality.
-// TODO: remove these.
-
-// deleteTypeKeywordFromImportClause deletes the 'type' keyword from an import clause
-func deleteTypeKeywordFromImportClause(changes *change.Tracker, sourceFile *ast.SourceFile, importClause *ast.ImportClause) {
-	// The type keyword is the first token in the import clause
-	// import type { foo } from "bar"
-	//        ^^^^^ - this keyword
-	// We need to find and delete "type " (including trailing space)
-
-	// The import clause starts at the position of the "type" keyword
-	// Use the scanner to get the token at that position
-	scan := scanner.GetScannerForSourceFile(sourceFile, importClause.Pos())
-	token := scan.Token()
-
-	if token != ast.KindTypeKeyword {
-		panic(fmt.Sprintf("Expected type keyword at import clause start, got %v at pos %d", token, importClause.Pos()))
+// deleteTypeKeyword deletes the 'type' keyword token starting at the given position,
+// including any trailing whitespace.
+func deleteTypeKeyword(changes *change.Tracker, sourceFile *ast.SourceFile, startPos int) {
+	scan := scanner.GetScannerForSourceFile(sourceFile, startPos)
+	if scan.Token() != ast.KindTypeKeyword {
+		return
 	}
-
-	// Use TokenStart (not TokenFullStart) to avoid including leading whitespace
 	typeStart := scan.TokenStart()
 	typeEnd := scan.TokenEnd()
-
-	// Skip whitespace after 'type' to include it in the deletion
+	// Skip trailing whitespace
 	text := sourceFile.Text()
-	endPos := typeEnd
-	for endPos < len(text) && (text[endPos] == ' ' || text[endPos] == '\t') {
-		endPos++
-	}
-
-	// Convert text positions to LSP positions
-	// Note: changes.Converters() provides access to the converters
-	conv := changes.Converters()
-	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(typeStart, endPos))
-
-	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
-}
-
-// deleteTypeKeywordFromSpecifier deletes the 'type' keyword from an import specifier
-func deleteTypeKeywordFromSpecifier(changes *change.Tracker, sourceFile *ast.SourceFile, spec *ast.ImportSpecifier) {
-	// import { type foo } from "bar"
-	//          ^^^^^ - this keyword and space after
-
-	specStart := spec.Pos()
-
-	// The 'type' keyword is at the start of the specifier
-	// We want to delete "type " (including the trailing space)
-	typeKeywordEnd := specStart + 4 // length of "type"
-
-	// Skip whitespace after 'type'
-	text := sourceFile.Text()
-	endPos := typeKeywordEnd
-	for endPos < len(text) && (text[endPos] == ' ' || text[endPos] == '\t') {
-		endPos++
-	}
-
-	// Convert text positions to LSP positions
-	conv := changes.Converters()
-	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(specStart, endPos))
-
-	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
-}
-
-// deleteTypeKeywordFromImportEquals deletes the 'type' keyword from an import equals declaration
-func deleteTypeKeywordFromImportEquals(changes *change.Tracker, sourceFile *ast.SourceFile, decl *ast.ImportEqualsDeclaration) {
-	// import type Foo = require("bar")
-	//        ^^^^^ - this keyword and space after
-
-	// The 'type' keyword comes after 'import' and before the name
-	// We need to find it by looking at the text
-	declStart := decl.Pos()
-	text := sourceFile.Text()
-
-	// Skip 'import' keyword and whitespace
-	pos := declStart + 6 // length of "import"
-	for pos < len(text) && (text[pos] == ' ' || text[pos] == '\t') {
-		pos++
-	}
-
-	// Now we should be at 'type'
-	typeStart := pos
-	typeEnd := pos + 4 // length of "type"
-
-	// Skip whitespace after 'type'
 	for typeEnd < len(text) && (text[typeEnd] == ' ' || text[typeEnd] == '\t') {
 		typeEnd++
 	}
-
-	// Convert text positions to LSP positions
-	conv := changes.Converters()
-	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(typeStart, typeEnd))
-
-	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
-}
-
-func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, stringLiteral *ast.Node, newText string) {
-	// Get the position of the string literal content (excluding quotes)
-	literalStart := stringLiteral.Pos()
-	literalEnd := stringLiteral.End()
-
-	// Determine the quote character used
-	text := sourceFile.Text()
-	quoteChar := text[literalStart]
-
-	// Create the new string literal with quotes
-	newLiteral := string(quoteChar) + newText + string(quoteChar)
-
-	// Convert text positions to LSP positions
-	conv := changes.Converters()
-	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(literalStart, literalEnd))
-
-	changes.ReplaceRangeWithText(sourceFile, lspRange, newLiteral)
-}
-
-func insertTypeModifierBefore(changes *change.Tracker, sourceFile *ast.SourceFile, specifier *ast.Node) {
-	// Insert "type " before the specifier
-	// import { foo } => import { type foo }
-	specStart := specifier.Pos()
-
-	// Convert text position to LSP position
-	conv := changes.Converters()
-	lspPos := conv.PositionToLineAndCharacter(sourceFile, core.TextPos(specStart))
-
-	// Insert "type " at the beginning of the specifier
-	changes.InsertText(sourceFile, lspPos, "type ")
-}
-
-func deleteNode(changes *change.Tracker, sourceFile *ast.SourceFile, node *ast.Node, containingList []*ast.Node) {
-	// Find the node in the list to determine if we need to delete a comma
-	nodeIndex := -1
-	for i, n := range containingList {
-		if n == node {
-			nodeIndex = i
-			break
-		}
-	}
-
-	if nodeIndex == -1 {
-		return // Node not found in list
-	}
-
-	// Determine the range to delete
-	start := node.Pos()
-	end := node.End()
-
-	// If this is not the last element, we need to include the comma after it
-	if nodeIndex < len(containingList)-1 {
-		// Find and include the comma after this element
-		text := sourceFile.Text()
-		pos := end
-		// Skip whitespace to find the comma
-		for pos < len(text) && (text[pos] == ' ' || text[pos] == '\t' || text[pos] == '\n' || text[pos] == '\r') {
-			pos++
-		}
-		if pos < len(text) && text[pos] == ',' {
-			end = pos + 1
-			// Also skip trailing whitespace after comma
-			for end < len(text) && (text[end] == ' ' || text[end] == '\t') {
-				end++
-			}
-		}
-	} else if nodeIndex > 0 {
-		// This is the last element - include the comma before it
-		text := sourceFile.Text()
-		pos := start - 1
-		// Skip whitespace backwards to find the comma
-		for pos >= 0 && (text[pos] == ' ' || text[pos] == '\t' || text[pos] == '\n' || text[pos] == '\r') {
-			pos--
-		}
-		if pos >= 0 && text[pos] == ',' {
-			start = pos
-		}
-	}
-
-	// Convert text positions to LSP positions
-	conv := changes.Converters()
-	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(start, end))
-
-	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
+	changes.DeleteRange(sourceFile, core.NewTextRange(typeStart, typeEnd))
 }
