@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -116,23 +118,33 @@ func (ls *LanguageService) doAddExistingFix(
 			//     );
 			//
 			if len(existingSpecifiers) > 0 && isSorted != core.TSFalse {
-				// 	The sorting preference computed earlier may or may not have validated that these particular
-				// 	import specifiers are sorted. If they aren't, `getImportSpecifierInsertionIndex` will return
-				// 	nonsense. So if there are existing specifiers, even if we know the sorting preference, we
-				// 	need to ensure that the existing specifiers are sorted according to the preference in order
-				// 	to do a sorted insertion.
-				//     if we're promoting the clause from type-only, we need to transform the existing imports before attempting to insert the new named imports
-				//     transformedExistingSpecifiers := existingSpecifiers
-				// 	if promoteFromTypeOnly && existingSpecifiers {
-				// 		transformedExistingSpecifiers = ct.NodeFactory.updateNamedImports(
-				// 			importClause.NamedBindings.AsNamedImports(),
-				// 			core.SameMap(existingSpecifiers, func(e *ast.ImportSpecifier) *ast.ImportSpecifier {
-				// 				return ct.NodeFactory.updateImportSpecifier(e, /*isTypeOnly*/ true, e.propertyName, e.name)
-				// 			}),
-				// 		).elements
-				// 	}
+				// The sorting preference computed earlier may or may not have validated that these particular
+				// import specifiers are sorted. If they aren't, `getImportSpecifierInsertionIndex` will return
+				// nonsense. So if there are existing specifiers, even if we know the sorting preference, we
+				// need to ensure that the existing specifiers are sorted according to the preference in order
+				// to do a sorted insertion.
+
+				// If we're promoting the clause from type-only, we need to transform the existing imports
+				// before attempting to insert the new named imports (for comparison purposes only)
+				specsToCompareAgainst := existingSpecifiers
+				if promoteFromTypeOnly && len(existingSpecifiers) > 0 {
+					specsToCompareAgainst = core.Map(existingSpecifiers, func(e *ast.Node) *ast.Node {
+						spec := e.AsImportSpecifier()
+						var propertyName *ast.Node
+						if spec.PropertyName != nil {
+							propertyName = spec.PropertyName
+						}
+						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
+							true, // isTypeOnly
+							propertyName,
+							spec.Name(),
+						)
+						return syntheticSpec
+					})
+				}
+
 				for _, spec := range newSpecifiers {
-					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(sourceFile, spec, importClause.NamedBindings, insertionIndex)
 				}
 			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
@@ -168,18 +180,19 @@ func (ls *LanguageService) doAddExistingFix(
 		}
 
 		if promoteFromTypeOnly {
-			// !!! promote type-only imports not implemented
+			// Delete the 'type' keyword from the import clause
+			deleteTypeKeywordOfImportClause(ct, sourceFile, importClause)
 
-			// ct.delete(sourceFile, getTypeKeywordOfTypeOnlyImport(clause, sourceFile));
-			// if (existingSpecifiers) {
-			//     // We used to convert existing specifiers to type-only only if compiler options indicated that
-			//     // would be meaningful (see the `importNameElisionDisabled` utility function), but user
-			//     // feedback indicated a preference for preserving the type-onlyness of existing specifiers
-			//     // regardless of whether it would make a difference in emit.
-			//     for _, specifier := range existingSpecifiers {
-			//         ct.insertModifierBefore(sourceFile, SyntaxKind.TypeKeyword, specifier);
-			//     }
-			// }
+			// Add 'type' modifier to existing specifiers (not newly added ones)
+			// We preserve the type-onlyness of existing specifiers regardless of whether
+			// it would make a difference in emit (user preference).
+			if len(existingSpecifiers) > 0 {
+				for _, specifier := range existingSpecifiers {
+					if !specifier.AsImportSpecifier().IsTypeOnly {
+						insertTypeModifierBefore(ct, sourceFile, specifier)
+					}
+				}
+			}
 		}
 	default:
 		panic("Unsupported clause kind: " + clause.Kind.String() + "for doAddExistingFix")
@@ -342,4 +355,49 @@ func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
 
 func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
+}
+
+// deleteTypeKeywordOfImportClause deletes the 'type' keyword from an import clause.
+//
+// This is a workaround for the fact that the change tracker doesn't yet have a Delete method.
+// In TypeScript, this would be: changes.delete(sourceFile, getTypeKeywordOfTypeOnlyImport(clause, sourceFile))
+// where getTypeKeywordOfTypeOnlyImport returns the first child token (the 'type' keyword).
+// TODO: Implement change.Tracker.Delete() to handle node deletion with proper list/comma handling.
+func deleteTypeKeywordOfImportClause(ct *change.Tracker, sourceFile *ast.SourceFile, importClause *ast.ImportClause) {
+	// import type { foo } from "bar"
+	//        ^^^^^ - this keyword
+	// We need to find and delete "type " (including trailing space)
+
+	if !importClause.IsTypeOnly() {
+		return // Nothing to delete
+	}
+
+	// Use the scanner to get the token at the import clause position
+	scan := scanner.GetScannerForSourceFile(sourceFile, importClause.Pos())
+	token := scan.Token()
+
+	if token != ast.KindTypeKeyword {
+		// Not a type keyword at this position, nothing to delete
+		return
+	}
+
+	// Use TokenStart (not TokenFullStart) to avoid including leading whitespace
+	typeStart := scan.TokenStart()
+	typeEnd := scan.TokenEnd()
+
+	// Skip whitespace after 'type' to include it in the deletion
+	text := sourceFile.Text()
+	endPos := typeEnd
+	for endPos < len(text) && (text[endPos] == ' ' || text[endPos] == '\t') {
+		endPos++
+	}
+
+	// Convert text positions to LSP positions
+	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeStart)
+	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, endPos)
+
+	ct.ReplaceRangeWithText(sourceFile, lsproto.Range{
+		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
+		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
+	}, "")
 }

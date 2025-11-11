@@ -287,7 +287,11 @@ func (t *Tracker) InsertImportSpecifierAtIndex(sourceFile *ast.SourceFile, newSp
 	namedImportsNode := namedImports.AsNamedImports()
 	elements := namedImportsNode.Elements.Nodes
 
-	if index > 0 && len(elements) > index {
+	if index >= len(elements) {
+		// Insert at the end (after the last element)
+		t.InsertNodeInListAfter(sourceFile, elements[len(elements)-1], newSpecifier, elements)
+	} else if index > 0 {
+		// Insert after the element at index-1
 		t.InsertNodeInListAfter(sourceFile, elements[index-1], newSpecifier, elements)
 	} else {
 		// Insert before the first element
