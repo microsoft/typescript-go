@@ -292,7 +292,7 @@ func getTypeOnlyPromotionFix(ctx context.Context, sourceFile *ast.SourceFile, sy
 func getSymbolNamesToImport(sourceFile *ast.SourceFile, ch *checker.Checker, symbolToken *ast.Node, compilerOptions *core.CompilerOptions) []string {
 	parent := symbolToken.Parent
 	if (ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent)) &&
-		parent.AsJsxOpeningElement().TagName == symbolToken &&
+		ast.GetTagNameOfNode(parent) == symbolToken &&
 		jsxModeNeedsExplicitImport(compilerOptions.Jsx) {
 		jsxNamespace := ch.GetJsxNamespace(sourceFile.AsNode())
 		if needsJsxNamespaceFix(jsxNamespace, symbolToken, ch) {
@@ -685,8 +685,8 @@ func isJSXTagName(node *ast.Node) bool {
 	if parent == nil {
 		return false
 	}
-	if ast.IsJsxOpeningElement(parent) || ast.IsJsxClosingElement(parent) {
-		return parent.AsJsxOpeningElement().TagName == node
+	if ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent) {
+		return ast.GetTagNameOfNode(parent) == node
 	}
 	return false
 }

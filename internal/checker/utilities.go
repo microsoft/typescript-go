@@ -1097,18 +1097,6 @@ func isNonNullAccess(node *ast.Node) bool {
 	return ast.IsAccessExpression(node) && ast.IsNonNullExpression(node.Expression())
 }
 
-func getTagNameOfNode(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindJsxOpeningElement:
-		return node.AsJsxOpeningElement().TagName
-	case ast.KindJsxClosingElement:
-		return node.AsJsxClosingElement().TagName
-	case ast.KindJsxSelfClosingElement:
-		return node.AsJsxSelfClosingElement().TagName
-	}
-	panic("Unhandled case in getTagNameOfNode")
-}
-
 func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	name := node.AsBindingElement().PropertyName
 	if name != nil {
