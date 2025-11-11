@@ -23,7 +23,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// Import fix diagnostic codes (from importFixes.ts errorCodes)
 var importFixErrorCodes = []int32{
 	diagnostics.Cannot_find_name_0.Code(),
 	diagnostics.Cannot_find_name_0_Did_you_mean_1.Code(),
@@ -52,14 +51,13 @@ const (
 	importFixID = "fixMissingImport"
 )
 
-// ImportFixProvider is the CodeFixProvider for import-related fixes (registerCodeFix in importFixes.ts)
+// ImportFixProvider is the CodeFixProvider for import-related fixes
 var ImportFixProvider = &CodeFixProvider{
 	ErrorCodes:     importFixErrorCodes,
 	GetCodeActions: getImportCodeActions,
 	FixIds:         []string{importFixID},
 }
 
-// fixInfo represents information about a single fix (from importFixes.ts)
 type fixInfo struct {
 	fix                 *ImportFix
 	symbolName          string
@@ -67,7 +65,6 @@ type fixInfo struct {
 	isJsxNamespaceFix   bool
 }
 
-// getImportCodeActions generates import code actions (from registerCodeFix getCodeActions in importFixes.ts)
 func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) []CodeAction {
 	info := getFixInfos(ctx, fixContext, fixContext.ErrorCode, fixContext.Span.Pos(), true /* useAutoImportProvider */)
 	if len(info) == 0 {
@@ -84,7 +81,6 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) []Cod
 	return actions
 }
 
-// getFixInfos gets all fix information for the given context (from importFixes.ts)
 func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int32, pos int, useAutoImportProvider bool) []*fixInfo {
 	symbolToken := astnav.GetTokenAtPosition(fixContext.SourceFile, pos)
 
@@ -117,7 +113,6 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 	return sortFixInfo(info, fixContext)
 }
 
-// getFixesInfoForUMDImport gets fixes for UMD imports (from importFixes.ts)
 func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, token *ast.Node) []*fixInfo {
 	ch, done := fixContext.Program.GetTypeChecker(ctx)
 	defer done()
@@ -171,7 +166,6 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	return result
 }
 
-// getUmdSymbol tries to get the UMD symbol from a token (from importFixes.ts)
 func getUmdSymbol(token *ast.Node, ch *checker.Checker) *ast.Symbol {
 	// try the identifier to see if it is the umd symbol
 	var umdSymbol *ast.Symbol
@@ -201,14 +195,12 @@ func getUmdSymbol(token *ast.Node, ch *checker.Checker) *ast.Symbol {
 	return nil
 }
 
-// isUMDExportSymbol checks if a symbol is a UMD export (from checker/symbolaccessibility.go)
 func isUMDExportSymbol(symbol *ast.Symbol) bool {
 	return symbol != nil && len(symbol.Declarations) > 0 &&
 		symbol.Declarations[0] != nil &&
 		ast.IsNamespaceExportDeclaration(symbol.Declarations[0])
 }
 
-// getFixesInfoForNonUMDImport gets fixes for non-UMD imports (from importFixes.ts)
 func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext, symbolToken *ast.Node, useAutoImportProvider bool) []*fixInfo {
 	ch, done := fixContext.Program.GetTypeChecker(ctx)
 	defer done()
@@ -265,7 +257,6 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 	return allInfo
 }
 
-// getTypeOnlyPromotionFix gets a fix for promoting a type-only import (from importFixes.ts)
 func getTypeOnlyPromotionFix(ctx context.Context, sourceFile *ast.SourceFile, symbolToken *ast.Node, symbolName string, program *compiler.Program) *ImportFix {
 	ch, done := program.GetTypeChecker(ctx)
 	defer done()
@@ -288,7 +279,6 @@ func getTypeOnlyPromotionFix(ctx context.Context, sourceFile *ast.SourceFile, sy
 	}
 }
 
-// getSymbolNamesToImport gets the symbol names to import (from importFixes.ts)
 func getSymbolNamesToImport(sourceFile *ast.SourceFile, ch *checker.Checker, symbolToken *ast.Node, compilerOptions *core.CompilerOptions) []string {
 	parent := symbolToken.Parent
 	if (ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent)) &&
@@ -307,7 +297,6 @@ func getSymbolNamesToImport(sourceFile *ast.SourceFile, ch *checker.Checker, sym
 	return []string{symbolToken.Text()}
 }
 
-// needsJsxNamespaceFix checks if JSX namespace fix is needed (from importFixes.ts)
 func needsJsxNamespaceFix(jsxNamespace string, symbolToken *ast.Node, ch *checker.Checker) bool {
 	if scanner.IsIntrinsicJsxName(symbolToken.Text()) {
 		return true
@@ -323,12 +312,10 @@ func needsJsxNamespaceFix(jsxNamespace string, symbolToken *ast.Node, ch *checke
 	return false
 }
 
-// jsxModeNeedsExplicitImport checks if JSX mode needs explicit import (from importFixes.ts)
 func jsxModeNeedsExplicitImport(jsx core.JsxEmit) bool {
 	return jsx == core.JsxEmitReact || jsx == core.JsxEmitReactNative
 }
 
-// getExportInfos searches for exports (from importFixes.ts)
 func getExportInfos(
 	ctx context.Context,
 	symbolName string,
@@ -410,9 +397,6 @@ func getExportInfos(
 	return originalSymbolToExportInfos
 }
 
-// symbolFlagsHaveMeaning already exists in utilities.go
-
-// getImportFixes gets import fixes for export infos (from importFixes.ts getImportFixes)
 type importFixesResult struct {
 	fixes                     []*ImportFix
 	computedWithoutCacheCount int
@@ -499,13 +483,11 @@ func getImportFixes(
 	}
 }
 
-// shouldUseRequire determines if require should be used (from importFixes.ts)
 func shouldUseRequire(sourceFile *ast.SourceFile, program *compiler.Program) bool {
 	// Delegate to the existing implementation in autoimports.go
 	return getShouldUseRequire(sourceFile, program)
 }
 
-// codeActionForFix creates a code action for a fix (from importFixes.ts codeActionForFix)
 func codeActionForFix(ctx context.Context, fixContext *CodeFixContext, info *fixInfo) *CodeAction {
 	// Create a tracker with format options and converters from LanguageService
 	tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
@@ -538,7 +520,6 @@ func codeActionForFix(ctx context.Context, fixContext *CodeFixContext, info *fix
 	}
 }
 
-// codeActionForFixWorker generates changes for a fix (from importFixes.ts codeActionForFixWorker)
 func codeActionForFixWorker(
 	ctx context.Context,
 	changes *change.Tracker,
@@ -677,9 +658,6 @@ func codeActionForFixWorker(
 	}
 }
 
-// getMeaningFromLocation already exists in utilities.go
-
-// isJSXTagName checks if a node is a JSX tag name
 func isJSXTagName(node *ast.Node) bool {
 	parent := node.Parent
 	if parent == nil {
@@ -738,7 +716,6 @@ func getImportClauseOfSpecifier(spec *ast.ImportSpecifier) *ast.ImportClause {
 	return nil
 }
 
-// sortFixInfo sorts fixes by preference (from importFixes.ts sortFixInfo)
 func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
 	if len(fixes) == 0 {
 		return fixes
@@ -773,7 +750,6 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
 	return sorted
 }
 
-// compareModuleSpecifiers compares two import fixes by their module specifiers (from importFixes.ts)
 func compareModuleSpecifiers(
 	a, b *ImportFix,
 	sourceFile *ast.SourceFile,
@@ -834,7 +810,6 @@ func compareModuleSpecifiers(
 	return strings.Compare(a.moduleSpecifier, b.moduleSpecifier)
 }
 
-// promoteFromTypeOnly promotes a type-only import to a regular import (from importFixes.ts)
 func promoteFromTypeOnly(
 	changes *change.Tracker,
 	aliasDeclaration *ast.Declaration,
@@ -1116,7 +1091,6 @@ func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
 	return nil
 }
 
-// replaceStringLiteral replaces a string literal with a new text value (from importFixes.ts)
 func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, stringLiteral *ast.Node, newText string) {
 	// Get the position of the string literal content (excluding quotes)
 	literalStart := stringLiteral.Pos()
@@ -1139,7 +1113,6 @@ func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, s
 	}, newLiteral)
 }
 
-// insertTypeModifierBefore inserts the 'type' keyword before an import specifier (from importFixes.ts)
 func insertTypeModifierBefore(changes *change.Tracker, sourceFile *ast.SourceFile, specifier *ast.Node) {
 	// Insert "type " before the specifier
 	// import { foo } => import { type foo }
@@ -1152,7 +1125,6 @@ func insertTypeModifierBefore(changes *change.Tracker, sourceFile *ast.SourceFil
 	changes.InsertText(sourceFile, lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)}, "type ")
 }
 
-// deleteNode deletes a node from a list (from importFixes.ts)
 func deleteNode(changes *change.Tracker, sourceFile *ast.SourceFile, node *ast.Node, containingList []*ast.Node) {
 	// Find the node in the list to determine if we need to delete a comma
 	nodeIndex := -1
