@@ -41,7 +41,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	}
 
 	if len(actions) == 0 {
-		return lsproto.CommandOrCodeActionArrayOrNull{}, nil
+		return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &[]lsproto.CommandOrCodeAction{}}, nil
 	}
 
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil

@@ -1030,6 +1030,141 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 	}
 }
 
+func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []string, preferences *lsutil.UserPreferences) {
+	fileName := f.activeFilename
+	ranges := f.Ranges()
+	var filteredRanges []*RangeMarker
+	for _, r := range ranges {
+		if r.FileName() == fileName {
+			filteredRanges = append(filteredRanges, r)
+		}
+	}
+	if len(filteredRanges) > 1 {
+		t.Fatalf("Exactly one range should be specified in the testfile.")
+	}
+	var rangeMarker *RangeMarker
+	if len(filteredRanges) == 1 {
+		rangeMarker = filteredRanges[0]
+	}
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	// Get diagnostics at the current position to find errors that need import fixes
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	_, diagResult, diagOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+	if !diagOk {
+		t.Fatalf("Failed to get diagnostics")
+	}
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for code action request at pos %v", f.currentCaretPosition)
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected code action response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+	}
+
+	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
+	var importActions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				importActions = append(importActions, item.CodeAction)
+			}
+		}
+	}
+
+	if len(importActions) == 0 {
+		if len(expectedTexts) != 0 {
+			t.Fatalf("No codefixes returned.")
+		}
+		return
+	}
+
+	// Save the original content before any edits
+	script := f.getScriptInfo(f.activeFilename)
+	originalContent := script.content
+
+	// For each import action, apply it and check the result
+	actualTextArray := make([]string, 0, len(importActions))
+	for _, action := range importActions {
+		// Apply the code action
+		var edits []*lsproto.TextEdit
+		if action.Edit != nil && action.Edit.Changes != nil {
+			if len(*action.Edit.Changes) != 1 {
+				t.Fatalf("Expected exactly 1 change, got %d", len(*action.Edit.Changes))
+			}
+			for uri, changeEdits := range *action.Edit.Changes {
+				if uri != lsconv.FileNameToDocumentURI(f.activeFilename) {
+					t.Fatalf("Expected change to file %s, got %s", f.activeFilename, uri)
+				}
+				edits = changeEdits
+				f.applyTextEdits(t, changeEdits)
+			}
+		}
+
+		// Get the result text
+		var text string
+		if rangeMarker != nil {
+			text = f.getRangeText(rangeMarker)
+		} else {
+			text = f.getScriptInfo(f.activeFilename).content
+		}
+		actualTextArray = append(actualTextArray, text)
+
+		// Undo changes to perform next fix
+		for _, textChange := range edits {
+			start := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.Start))
+			end := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.End))
+			deletedText := originalContent[start:end]
+			insertedText := textChange.NewText
+			f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+len(insertedText), deletedText)
+		}
+	}
+
+	// Compare results
+	if len(expectedTexts) != len(actualTextArray) {
+		var actualJoined strings.Builder
+		for i, actual := range actualTextArray {
+			if i > 0 {
+				actualJoined.WriteString("\n\n" + strings.Repeat("-", 20) + "\n\n")
+			}
+			actualJoined.WriteString(actual)
+		}
+		t.Fatalf("Expected %d import fixes, got %d:\n\n%s", len(expectedTexts), len(actualTextArray), actualJoined.String())
+	}
+	for i, expected := range expectedTexts {
+		actual := actualTextArray[i]
+		if expected != actual {
+			t.Fatalf("Import fix at index %d doesn't match.\nExpected:\n%s\n\nActual:\n%s", i, expected, actual)
+		}
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	t *testing.T,
 	markers ...string,
