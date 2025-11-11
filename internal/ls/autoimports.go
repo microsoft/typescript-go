@@ -936,9 +936,9 @@ func getNamespaceLikeImportText(declaration *ast.Statement) string {
 	case ast.KindImportEqualsDeclaration:
 		return declaration.Name().Text()
 	case ast.KindJSDocImportTag, ast.KindImportDeclaration:
-		importClause := ast.GetImportClauseOfDeclaration(declaration)
-		if importClause != nil && importClause.NamedBindings != nil && importClause.NamedBindings.Kind == ast.KindNamespaceImport {
-			return importClause.NamedBindings.Name().Text()
+		importClause := declaration.ImportClause()
+		if importClause != nil && importClause.AsImportClause().NamedBindings != nil && importClause.AsImportClause().NamedBindings.Kind == ast.KindNamespaceImport {
+			return importClause.AsImportClause().NamedBindings.Name().Text()
 		}
 		return ""
 	default:
@@ -992,11 +992,11 @@ func (info *FixAddToExistingImportInfo) getAddToExistingImportFix(isValidTypeOnl
 		return nil
 	}
 
-	importClause := ast.GetImportClauseOfDeclaration(info.declaration)
+	importClause := info.declaration.ImportClause()
 	if importClause == nil || !ast.IsStringLiteralLike(info.declaration.ModuleSpecifier()) {
 		return nil
 	}
-	namedBindings := importClause.NamedBindings
+	namedBindings := importClause.AsImportClause().NamedBindings
 	// A type-only import may not have both a default and named imports, so the only way a name can
 	// be added to an existing type-only import is adding a named import to existing named bindings.
 	if importClause.IsTypeOnly() && !(info.importKind == ImportKindNamed && namedBindings != nil) {
