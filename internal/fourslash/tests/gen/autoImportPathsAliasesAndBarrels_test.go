@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -50,7 +51,7 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label: "Thing2A",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./thing2A",
 						},
 					})),
@@ -60,7 +61,7 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label: "Thing1B",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "~/dirB",
 						},
 					})),
@@ -70,7 +71,7 @@ func TestAutoImportPathsAliasesAndBarrels(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label: "Thing2B",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "~/dirB",
 						},
 					})),

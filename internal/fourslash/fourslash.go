@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp"
@@ -656,10 +657,10 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 					return false
 				}
 				data, ok := (*item.Data).(*ls.CompletionItemData)
-				if !ok || data.AutoImport == nil {
+				if !ok || data.AutoImportFix == nil {
 					return false
 				}
-				return data.AutoImport.ModuleSpecifier == expectedAction.Source
+				return data.AutoImportFix.ModuleSpecifier == expectedAction.Source
 			})
 			if item == nil {
 				t.Fatalf("Code action '%s' from source '%s' not found in completions.", expectedAction.Name, expectedAction.Source)
@@ -893,26 +894,26 @@ var (
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
-	var actualAutoImportData, expectedAutoImportData *ls.AutoImportData
+	var actualAutoImportFix, expectedAutoImportFix *autoimport.Fix
 	if actual.Data != nil {
 		if data, ok := (*actual.Data).(*ls.CompletionItemData); ok {
-			actualAutoImportData = data.AutoImport
+			actualAutoImportFix = data.AutoImportFix
 		}
 	}
 	if expected.Data != nil {
 		if data, ok := (*expected.Data).(*ls.CompletionItemData); ok {
-			expectedAutoImportData = data.AutoImport
+			expectedAutoImportFix = data.AutoImportFix
 		}
 	}
-	if (actualAutoImportData == nil) != (expectedAutoImportData == nil) {
+	if (actualAutoImportFix == nil) != (expectedAutoImportFix == nil) {
 		t.Fatal(prefix + "Mismatch in auto-import data presence")
 	}
 
-	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportData != nil {
+	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportFix != nil {
 		actual = f.resolveCompletionItem(t, actual)
 	}
 
-	if actualAutoImportData != nil {
+	if actualAutoImportFix != nil {
 		assertDeepEqual(t, actual, expected, prefix, autoImportIgnoreOpts)
 		if expected.AdditionalTextEdits == AnyTextEdits {
 			assert.Check(t, actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0, prefix+" Expected non-nil AdditionalTextEdits for auto-import completion item")
@@ -921,7 +922,7 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			assertDeepEqual(t, actual.LabelDetails, expected.LabelDetails, prefix+" LabelDetails mismatch")
 		}
 
-		assert.Equal(t, actualAutoImportData.ModuleSpecifier, expectedAutoImportData.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
+		assert.Equal(t, actualAutoImportFix.ModuleSpecifier, expectedAutoImportFix.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
 	} else {
 		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
 	}
@@ -971,7 +972,7 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 type ApplyCodeActionFromCompletionOptions struct {
 	Name            string
 	Source          string
-	AutoImportData  *ls.AutoImportData
+	AutoImportFix   *autoimport.Fix
 	Description     string
 	NewFileContent  *string
 	NewRangeContent *string
@@ -999,17 +1000,14 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		if !ok {
 			return false
 		}
-		if options.AutoImportData != nil {
-			return data.AutoImport != nil && ((data.AutoImport.FileName == options.AutoImportData.FileName) &&
-				(options.AutoImportData.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier) &&
-				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
-				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
-				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport))
+		if options.AutoImportFix != nil {
+			return data.AutoImportFix != nil &&
+				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImportFix.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
 		}
-		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
+		if data.AutoImportFix == nil && data.Source != "" && data.Source == options.Source {
 			return true
 		}
-		if data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.Source {
+		if data.AutoImportFix != nil && data.AutoImportFix.ModuleSpecifier == options.Source {
 			return true
 		}
 		return false

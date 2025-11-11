@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -46,7 +47,7 @@ import /**/`
 					Label:      "TestClassBaseline",
 					InsertText: PtrTo("import { TestClassBaseline } from \"./baseline\";"),
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./baseline",
 						},
 					})),
@@ -55,7 +56,7 @@ import /**/`
 					Label:      "TestClassExportList",
 					InsertText: PtrTo("import { TestClassExportList } from \"./exportList\";"),
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./exportList",
 						},
 					})),
@@ -64,7 +65,7 @@ import /**/`
 					Label:      "TestClassReExport",
 					InsertText: PtrTo("import { TestClassReExport } from \"./reExport\";"),
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./reExport",
 						},
 					})),
@@ -73,7 +74,7 @@ import /**/`
 					Label:      "TestDefaultClass",
 					InsertText: PtrTo("import TestDefaultClass from \"./default\";"),
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./default",
 						},
 					})),

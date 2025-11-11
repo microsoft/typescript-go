@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -40,7 +41,7 @@ access/**/`
 				&lsproto.CompletionItem{
 					Label: "accessSync",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "fs",
 						},
 					})),
@@ -50,7 +51,7 @@ access/**/`
 				&lsproto.CompletionItem{
 					Label: "accessSync",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "fs-extra",
 						},
 					})),
@@ -67,9 +68,7 @@ access/**/`
 		NewFileContent: PtrTo(`import { accessSync } from "fs-extra";
 
 access`),
-		AutoImportData: &ls.AutoImportData{
-			ExportName:      "accessSync",
-			FileName:        "/home/src/workspaces/project/node_modules/@types/fs-extra/index.d.ts",
+		AutoImportFix: &autoimport.Fix{
 			ModuleSpecifier: "fs-extra",
 		},
 	})

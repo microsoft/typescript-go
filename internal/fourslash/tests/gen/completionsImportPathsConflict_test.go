@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -43,7 +44,7 @@ import {} from "@reduxjs/toolkit";
 				&lsproto.CompletionItem{
 					Label: "configureStore",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "@reduxjs/toolkit",
 						},
 					})),
@@ -56,9 +57,7 @@ import {} from "@reduxjs/toolkit";
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "configureStore",
 		Source: "@reduxjs/toolkit",
-		AutoImportData: &ls.AutoImportData{
-			ExportName:      "configureStore",
-			FileName:        "/src/configureStore.ts",
+		AutoImportFix: &autoimport.Fix{
 			ModuleSpecifier: "@reduxjs/toolkit",
 		},
 		Description: "Update import from \"@reduxjs/toolkit\"",

@@ -472,28 +472,9 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined 
                             }
                             dataProps.push(`ModuleSpecifier: ${getGoStringLiteral(moduleSpecifierInit.text)},`);
                             break;
-                        case "exportName":
-                            const exportNameInit = getStringLiteralLike(dataProp.initializer);
-                            if (!exportNameInit) {
-                                console.error(`Expected string literal for exportName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
-                                return undefined;
-                            }
-                            dataProps.push(`ExportName: ${getGoStringLiteral(exportNameInit.text)},`);
-                            break;
-                        case "fileName":
-                            const fileNameInit = getStringLiteralLike(dataProp.initializer);
-                            if (!fileNameInit) {
-                                console.error(`Expected string literal for fileName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
-                                return undefined;
-                            }
-                            dataProps.push(`FileName: ${getGoStringLiteral(fileNameInit.text)},`);
-                            break;
-                        default:
-                            console.error(`Unrecognized property in verify.applyCodeActionFromCompletion data: ${dataProp.getText()}`);
-                            return undefined;
                     }
                 }
-                props.push(`AutoImportData: &ls.AutoImportData{\n${dataProps.join("\n")}\n},`);
+                props.push(`AutoImportFix: &autoimport.Fix{\n${dataProps.join("\n")}\n},`);
                 break;
             case "description":
                 descInit = getStringLiteralLike(init);
@@ -897,7 +878,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                             break;
                         }
                         itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
-                            AutoImport: &ls.AutoImportData{
+                            AutoImportFix: &autoimport.Fix{
                                 ModuleSpecifier: ${getGoStringLiteral(sourceInit.text)},
                             },
                         })),`);
@@ -1904,6 +1885,9 @@ function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     }
     if (commands.includes("lsutil.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls/lsutil"`);
+    }
+    if (commands.includes("autoimport.")) {
+        imports.push(`"github.com/microsoft/typescript-go/internal/ls/autoimport"`);
     }
     if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);

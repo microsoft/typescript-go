@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -44,7 +45,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),
@@ -65,7 +66,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),
@@ -86,7 +87,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),
@@ -107,7 +108,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),
@@ -128,7 +129,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),
@@ -149,7 +150,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./a",
 						},
 					})),

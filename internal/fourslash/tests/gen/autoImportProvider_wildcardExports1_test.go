@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -66,7 +67,7 @@ export const d1: number;
 				&lsproto.CompletionItem{
 					Label: "a1",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "pkg/a1",
 						},
 					})),
@@ -76,7 +77,7 @@ export const d1: number;
 				&lsproto.CompletionItem{
 					Label: "b1",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "pkg/b/b1.js",
 						},
 					})),
@@ -86,7 +87,7 @@ export const d1: number;
 				&lsproto.CompletionItem{
 					Label: "c1",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "pkg/c/c1.js",
 						},
 					})),
@@ -96,7 +97,7 @@ export const d1: number;
 				&lsproto.CompletionItem{
 					Label: "c2",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "pkg/c/subfolder/c2.mjs",
 						},
 					})),
@@ -106,7 +107,7 @@ export const d1: number;
 				&lsproto.CompletionItem{
 					Label: "d1",
 					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "pkg/d/d1",
 						},
 					})),

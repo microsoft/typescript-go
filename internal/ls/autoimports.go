@@ -348,34 +348,6 @@ type packageJsonFilterResult struct {
 	packageName string
 }
 
-func (l *LanguageService) getImportCompletionAction(
-	ctx context.Context,
-	ch *checker.Checker,
-	targetSymbol *ast.Symbol,
-	moduleSymbol *ast.Symbol,
-	sourceFile *ast.SourceFile,
-	position int,
-	exportMapKey ExportInfoMapKey,
-	symbolName string, // !!! needs *string ?
-	isJsxTagName bool,
-	// formatContext *formattingContext,
-) (string, codeAction) {
-	var exportInfos []*SymbolExportInfo
-	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
-	exportInfos = l.getExportInfos(ctx, ch, sourceFile, exportMapKey)
-	if len(exportInfos) == 0 {
-		panic("Some exportInfo should match the specified exportMapKey")
-	}
-
-	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position))
-	fix := l.getImportFixForSymbol(ch, sourceFile, exportInfos, position, ptrTo(isValidTypeOnlyUseSite))
-	if fix == nil {
-		lineAndChar := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))
-		panic(fmt.Sprintf("expected importFix at %s: (%v,%v)", sourceFile.FileName(), lineAndChar.Line, lineAndChar.Character))
-	}
-	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false)
-}
-
 func NewExportInfoMap(globalsTypingCacheLocation string) *ExportInfoMap {
 	return &ExportInfoMap{
 		packages:                   map[string]string{},

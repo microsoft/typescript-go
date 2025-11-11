@@ -13,7 +13,6 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -211,16 +210,12 @@ type symbolOriginInfoKind int
 const (
 	symbolOriginInfoKindThisType symbolOriginInfoKind = 1 << iota
 	symbolOriginInfoKindSymbolMember
-	symbolOriginInfoKindExport
 	symbolOriginInfoKindPromise
 	symbolOriginInfoKindNullable
 	symbolOriginInfoKindTypeOnlyAlias
 	symbolOriginInfoKindObjectLiteralMethod
 	symbolOriginInfoKindIgnore
 	symbolOriginInfoKindComputedPropertyName
-
-	symbolOriginInfoKindSymbolMemberNoExport symbolOriginInfoKind = symbolOriginInfoKindSymbolMember
-	symbolOriginInfoKindSymbolMemberExport                        = symbolOriginInfoKindSymbolMember | symbolOriginInfoKindExport
 )
 
 type symbolOriginInfo struct {
@@ -233,56 +228,11 @@ type symbolOriginInfo struct {
 
 func (origin *symbolOriginInfo) symbolName() string {
 	switch origin.data.(type) {
-	case *symbolOriginInfoExport:
-		return origin.data.(*symbolOriginInfoExport).symbolName
 	case *symbolOriginInfoComputedPropertyName:
 		return origin.data.(*symbolOriginInfoComputedPropertyName).symbolName
 	default:
 		panic(fmt.Sprintf("symbolOriginInfo: unknown data type for symbolName(): %T", origin.data))
 	}
-}
-
-func (origin *symbolOriginInfo) moduleSymbol() *ast.Symbol {
-	switch origin.data.(type) {
-	case *symbolOriginInfoExport:
-		return origin.data.(*symbolOriginInfoExport).moduleSymbol
-	default:
-		panic(fmt.Sprintf("symbolOriginInfo: unknown data type for moduleSymbol(): %T", origin.data))
-	}
-}
-
-func (origin *symbolOriginInfo) toCompletionEntryData() *AutoImportData {
-	debug.Assert(origin.kind&symbolOriginInfoKindExport != 0, fmt.Sprintf("completionEntryData is not generated for symbolOriginInfo of type %T", origin.data))
-	var ambientModuleName *string
-	if origin.fileName == "" {
-		ambientModuleName = strPtrTo(stringutil.StripQuotes(origin.moduleSymbol().Name))
-	}
-	var isPackageJsonImport core.Tristate
-	if origin.isFromPackageJson {
-		isPackageJsonImport = core.TSTrue
-	}
-
-	data := origin.data.(*symbolOriginInfoExport)
-	return &AutoImportData{
-		ExportName:          data.exportName,
-		ExportMapKey:        data.exportMapKey,
-		ModuleSpecifier:     data.moduleSpecifier,
-		AmbientModuleName:   ambientModuleName,
-		FileName:            origin.fileName,
-		IsPackageJsonImport: isPackageJsonImport,
-	}
-}
-
-type symbolOriginInfoExport struct {
-	symbolName      string
-	moduleSymbol    *ast.Symbol
-	exportName      string
-	exportMapKey    ExportInfoMapKey
-	moduleSpecifier string
-}
-
-func (s *symbolOriginInfo) asExport() *symbolOriginInfoExport {
-	return s.data.(*symbolOriginInfoExport)
 }
 
 type symbolOriginInfoObjectLiteralMethod struct {
@@ -723,7 +673,6 @@ func (l *LanguageService) getCompletionData(
 	symbolToOriginInfoMap := map[int]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]SortText{}
 	var seenPropertySymbols collections.Set[ast.SymbolId]
-	importSpecifierResolver := &importSpecifierResolverForCompletions{SourceFile: file, UserPreferences: preferences, l: l}
 	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
 		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
 		!isContextTokenValueLocation(contextToken) &&
@@ -781,39 +730,40 @@ func (l *LanguageService) getCompletionData(
 				if moduleSymbol == nil ||
 					!checker.IsExternalModuleSymbol(moduleSymbol) ||
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
-					symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
+					symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMember, insertQuestionDot)}
 				} else {
-					var fileName string
-					if tspath.IsExternalModuleNameRelative(stringutil.StripQuotes(moduleSymbol.Name)) {
-						fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
-					}
-					result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(
-						typeChecker,
-						[]*SymbolExportInfo{{
-							exportKind:        ExportKindNamed,
-							moduleFileName:    fileName,
-							isFromPackageJson: false,
-							moduleSymbol:      moduleSymbol,
-							symbol:            firstAccessibleSymbol,
-							targetFlags:       typeChecker.SkipAlias(firstAccessibleSymbol).Flags,
-						}},
-						position,
-						ast.IsValidTypeOnlyAliasUseSite(location),
-					)
+					// !!! andrewbranch/autoimport
+					// var fileName string
+					// if tspath.IsExternalModuleNameRelative(stringutil.StripQuotes(moduleSymbol.Name)) {
+					// 	fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
+					// }
+					// result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(
+					// 	typeChecker,
+					// 	[]*SymbolExportInfo{{
+					// 		exportKind:        ExportKindNamed,
+					// 		moduleFileName:    fileName,
+					// 		isFromPackageJson: false,
+					// 		moduleSymbol:      moduleSymbol,
+					// 		symbol:            firstAccessibleSymbol,
+					// 		targetFlags:       typeChecker.SkipAlias(firstAccessibleSymbol).Flags,
+					// 	}},
+					// 	position,
+					// 	ast.IsValidTypeOnlyAliasUseSite(location),
+					// )
 
-					if result != nil {
-						symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{
-							kind:            getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberExport, insertQuestionDot),
-							isDefaultExport: false,
-							fileName:        fileName,
-							data: &symbolOriginInfoExport{
-								moduleSymbol:    moduleSymbol,
-								symbolName:      firstAccessibleSymbol.Name,
-								exportName:      firstAccessibleSymbol.Name,
-								moduleSpecifier: result.moduleSpecifier,
-							},
-						}
-					}
+					// if result != nil {
+					// 	symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{
+					// 		kind:            getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberExport, insertQuestionDot),
+					// 		isDefaultExport: false,
+					// 		fileName:        fileName,
+					// 		data: &symbolOriginInfoExport{
+					// 			moduleSymbol:    moduleSymbol,
+					// 			symbolName:      firstAccessibleSymbol.Name,
+					// 			exportName:      firstAccessibleSymbol.Name,
+					// 			moduleSpecifier: result.moduleSpecifier,
+					// 		},
+					// 	}
+					// }
 				}
 			} else if firstAccessibleSymbolId == 0 || !seenPropertySymbols.Has(firstAccessibleSymbolId) {
 				symbols = append(symbols, symbol)
@@ -2042,6 +1992,47 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		// !!! flags filtering similar to shouldIncludeSymbol
 		// !!! check for type-only in JS
 		// !!! deprecation
+
+		if data.importStatementCompletion != nil {
+			/// !!! andrewbranch/autoimport
+			// resolvedOrigin := origin.asExport()
+			// labelDetails = &lsproto.CompletionItemLabelDetails{
+			// 	Description: &resolvedOrigin.moduleSpecifier, // !!! vscode @link support
+			// }
+			// quotedModuleSpecifier := escapeSnippetText(quote(file, preferences, resolvedOrigin.moduleSpecifier))
+			// exportKind := ExportKindNamed
+			// if origin.isDefaultExport {
+			// 	exportKind = ExportKindDefault
+			// } else if resolvedOrigin.exportName == ast.InternalSymbolNameExportEquals {
+			// 	exportKind = ExportKindExportEquals
+			// }
+
+			// insertText = "import "
+			// typeOnlyText := scanner.TokenToString(ast.KindTypeKeyword) + " "
+			// if data.importStatementCompletion.isTopLevelTypeOnly {
+			// 	insertText += typeOnlyText
+			// }
+			// tabStop := core.IfElse(ptrIsTrue(clientOptions.CompletionItem.SnippetSupport), "$1", "")
+			// importKind := getImportKind(file, exportKind, l.GetProgram(), true /*forceImportKeyword*/)
+			// escapedSnippet := escapeSnippetText(name)
+			// suffix := core.IfElse(useSemicolons, ";", "")
+			// switch importKind {
+			// case ImportKindCommonJS:
+			// 	insertText += fmt.Sprintf(`%s%s = require(%s)%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			// case ImportKindDefault:
+			// 	insertText += fmt.Sprintf(`%s%s from %s%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			// case ImportKindNamespace:
+			// 	insertText += fmt.Sprintf(`* as %s from %s%s`, escapedSnippet, quotedModuleSpecifier, suffix)
+			// case ImportKindNamed:
+			// 	importSpecifierTypeOnlyText := core.IfElse(data.importStatementCompletion.couldBeTypeOnlyImportSpecifier, typeOnlyText, "")
+			// 	insertText += fmt.Sprintf(`{ %s%s%s } from %s%s`, importSpecifierTypeOnlyText, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			// }
+
+			// replacementSpan = data.importStatementCompletion.replacementSpan
+			// isSnippet = ptrIsTrue(clientOptions.CompletionItem.SnippetSupport)
+			continue
+		}
+
 		fixes := data.autoImportView.GetFixes(ctx, exp, l.UserPreferences().ModuleSpecifierPreferences())
 		if len(fixes) == 0 {
 			continue
@@ -2222,46 +2213,6 @@ func (l *LanguageService) createCompletionItem(
 			astnav.GetStartOfNode(wrapNode, file, false /*includeJSDoc*/),
 			data.propertyAccessToConvert.End(),
 			file)
-	}
-
-	if originIsExport(origin) {
-		resolvedOrigin := origin.asExport()
-		labelDetails = &lsproto.CompletionItemLabelDetails{
-			Description: &resolvedOrigin.moduleSpecifier, // !!! vscode @link support
-		}
-		if data.importStatementCompletion != nil {
-			quotedModuleSpecifier := escapeSnippetText(quote(file, preferences, resolvedOrigin.moduleSpecifier))
-			exportKind := ExportKindNamed
-			if origin.isDefaultExport {
-				exportKind = ExportKindDefault
-			} else if resolvedOrigin.exportName == ast.InternalSymbolNameExportEquals {
-				exportKind = ExportKindExportEquals
-			}
-
-			insertText = "import "
-			typeOnlyText := scanner.TokenToString(ast.KindTypeKeyword) + " "
-			if data.importStatementCompletion.isTopLevelTypeOnly {
-				insertText += typeOnlyText
-			}
-			tabStop := core.IfElse(ptrIsTrue(clientOptions.CompletionItem.SnippetSupport), "$1", "")
-			importKind := getImportKind(file, exportKind, l.GetProgram(), true /*forceImportKeyword*/)
-			escapedSnippet := escapeSnippetText(name)
-			suffix := core.IfElse(useSemicolons, ";", "")
-			switch importKind {
-			case ImportKindCommonJS:
-				insertText += fmt.Sprintf(`%s%s = require(%s)%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			case ImportKindDefault:
-				insertText += fmt.Sprintf(`%s%s from %s%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			case ImportKindNamespace:
-				insertText += fmt.Sprintf(`* as %s from %s%s`, escapedSnippet, quotedModuleSpecifier, suffix)
-			case ImportKindNamed:
-				importSpecifierTypeOnlyText := core.IfElse(data.importStatementCompletion.couldBeTypeOnlyImportSpecifier, typeOnlyText, "")
-				insertText += fmt.Sprintf(`{ %s%s%s } from %s%s`, importSpecifierTypeOnlyText, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			}
-
-			replacementSpan = data.importStatementCompletion.replacementSpan
-			isSnippet = ptrIsTrue(clientOptions.CompletionItem.SnippetSupport)
-		}
 	}
 
 	if originIsTypeOnlyAlias(origin) {
@@ -2769,11 +2720,7 @@ func originIsIgnore(origin *symbolOriginInfo) bool {
 }
 
 func originIncludesSymbolName(origin *symbolOriginInfo) bool {
-	return originIsExport(origin) || originIsComputedPropertyName(origin)
-}
-
-func originIsExport(origin *symbolOriginInfo) bool {
-	return origin != nil && origin.kind&symbolOriginInfoKindExport != 0
+	return originIsComputedPropertyName(origin)
 }
 
 func originIsComputedPropertyName(origin *symbolOriginInfo) bool {
@@ -2805,14 +2752,6 @@ func originIsPromise(origin *symbolOriginInfo) bool {
 }
 
 func getSourceFromOrigin(origin *symbolOriginInfo) string {
-	if originIsExport(origin) {
-		return stringutil.StripQuotes(ast.SymbolName(origin.asExport().moduleSymbol))
-	}
-
-	if originIsExport(origin) {
-		return origin.asExport().moduleSpecifier
-	}
-
 	if originIsThisType(origin) {
 		return string(completionSourceThisProperty)
 	}
@@ -3348,17 +3287,17 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 		sliceEntryData, ok1 := (*entryInSlice.Data).(*CompletionItemData)
 		insertEntryData, ok2 := (*entryToInsert.Data).(*CompletionItemData)
 		if ok1 && ok2 &&
-			sliceEntryData.AutoImport != nil && sliceEntryData.AutoImport.ModuleSpecifier != "" &&
-			insertEntryData.AutoImport != nil && insertEntryData.AutoImport.ModuleSpecifier != "" {
+			sliceEntryData.AutoImportFix != nil && sliceEntryData.AutoImportFix.ModuleSpecifier != "" &&
+			insertEntryData.AutoImportFix != nil && insertEntryData.AutoImportFix.ModuleSpecifier != "" {
 			// Sort same-named auto-imports by module specifier
 			result = tspath.CompareNumberOfDirectorySeparators(
-				sliceEntryData.AutoImport.ModuleSpecifier,
-				insertEntryData.AutoImport.ModuleSpecifier,
+				sliceEntryData.AutoImportFix.ModuleSpecifier,
+				insertEntryData.AutoImportFix.ModuleSpecifier,
 			)
 			if result == stringutil.ComparisonEqual {
 				result = compareStrings(
-					sliceEntryData.AutoImport.ModuleSpecifier,
-					insertEntryData.AutoImport.ModuleSpecifier,
+					sliceEntryData.AutoImportFix.ModuleSpecifier,
+					insertEntryData.AutoImportFix.ModuleSpecifier,
 				)
 			}
 		}
@@ -4571,11 +4510,11 @@ func (l *LanguageService) createLSPCompletionItem(
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	var data any = &CompletionItemData{
-		FileName:    file.FileName(),
-		Position:    position,
-		Source:      source,
-		Name:        name,
-		AutoImport2: autoImportFix,
+		FileName:      file.FileName(),
+		Position:      position,
+		Source:        source,
+		Name:          name,
+		AutoImportFix: autoImportFix,
 	}
 
 	// Text edit
@@ -5003,40 +4942,11 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 }
 
 type CompletionItemData struct {
-	FileName    string          `json:"fileName"`
-	Position    int             `json:"position"`
-	Source      string          `json:"source,omitempty"`
-	Name        string          `json:"name,omitempty"`
-	AutoImport  *AutoImportData `json:"autoImport,omitempty"`
-	AutoImport2 *autoimport.Fix `json:"autoImport2,omitempty"`
-}
-
-type AutoImportData struct {
-	/**
-	 * The name of the property or export in the module's symbol table. Differs from the completion name
-	 * in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
-	 */
-	ExportName      string           `json:"exportName"`
-	ExportMapKey    ExportInfoMapKey `json:"exportMapKey"`
-	ModuleSpecifier string           `json:"moduleSpecifier"`
-
-	/** The file name declaring the export's module symbol, if it was an external module */
-	FileName string `json:"fileName"`
-	/** The module name (with quotes stripped) of the export's module symbol, if it was an ambient module */
-	AmbientModuleName *string `json:"ambientModuleName"`
-
-	/** True if the export was found in the package.json AutoImportProvider */
-	IsPackageJsonImport core.Tristate `json:"isPackageJsonImport"`
-}
-
-func (d *AutoImportData) toSymbolOriginExport(symbolName string, moduleSymbol *ast.Symbol, isDefaultExport bool) *symbolOriginInfoExport {
-	return &symbolOriginInfoExport{
-		symbolName:      symbolName,
-		moduleSymbol:    moduleSymbol,
-		exportName:      d.ExportName,
-		exportMapKey:    d.ExportMapKey,
-		moduleSpecifier: d.ModuleSpecifier,
-	}
+	FileName      string          `json:"fileName"`
+	Position      int             `json:"position"`
+	Source        string          `json:"source,omitempty"`
+	Name          string          `json:"name,omitempty"`
+	AutoImportFix *autoimport.Fix `json:"autoImportFix,omitempty"`
 }
 
 // Special values for `CompletionInfo['source']` used to disambiguate
@@ -5132,8 +5042,8 @@ func (l *LanguageService) getCompletionItemDetails(
 		)
 	}
 
-	if itemData.AutoImport2 != nil {
-		edits, description := itemData.AutoImport2.Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
+	if itemData.AutoImportFix != nil {
+		edits, description := itemData.AutoImportFix.Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
 		item.AdditionalTextEdits = &edits
 		item.Detail = strPtrTo(description)
 		return item
@@ -5172,13 +5082,12 @@ func (l *LanguageService) getCompletionItemDetails(
 		}
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
-		actions := l.getCompletionItemActions(ctx, checker, file, position, itemData, symbolDetails)
 		return l.createCompletionDetailsForSymbol(
 			item,
 			symbolDetails.symbol,
 			checker,
 			symbolDetails.location,
-			actions,
+			nil,
 			docFormat,
 		)
 	case symbolCompletion.literal != nil:
@@ -5226,15 +5135,6 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	if itemData.Source == SourceSwitchCases {
 		return detailsData{
 			cases: &struct{}{},
-		}
-	}
-	if itemData.AutoImport != nil {
-		if autoImportSymbolData := l.getAutoImportSymbolFromCompletionEntryData(ch, itemData.AutoImport.ExportName, itemData.AutoImport); autoImportSymbolData != nil {
-			autoImportSymbolData.contextToken, autoImportSymbolData.previousToken = getRelevantTokens(position, file)
-			autoImportSymbolData.location = astnav.GetTouchingPropertyName(file, position)
-			autoImportSymbolData.jsxInitializer = jsxInitializer{false, nil}
-			autoImportSymbolData.isTypeOnlyLocation = false
-			return detailsData{symbol: autoImportSymbolData}
 		}
 	}
 
@@ -5297,49 +5197,6 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	return detailsData{}
 }
 
-func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker.Checker, name string, autoImportData *AutoImportData) *symbolDetails {
-	containingProgram := l.GetProgram() // !!! isPackageJson ? packageJsonAutoimportProvider : program
-	var moduleSymbol *ast.Symbol
-	if autoImportData.AmbientModuleName != nil {
-		moduleSymbol = ch.TryFindAmbientModule(*autoImportData.AmbientModuleName)
-	} else if autoImportData.FileName != "" {
-		moduleSymbolSourceFile := containingProgram.GetSourceFile(autoImportData.FileName)
-		if moduleSymbolSourceFile == nil {
-			panic("module sourceFile not found: " + autoImportData.FileName)
-		}
-		moduleSymbol = ch.GetMergedSymbol(moduleSymbolSourceFile.Symbol)
-	}
-	if moduleSymbol == nil {
-		return nil
-	}
-
-	var symbol *ast.Symbol
-	if autoImportData.ExportName == ast.InternalSymbolNameExportEquals {
-		symbol = ch.ResolveExternalModuleSymbol(moduleSymbol)
-	} else {
-		symbol = ch.TryGetMemberInModuleExportsAndProperties(autoImportData.ExportName, moduleSymbol)
-	}
-	if symbol == nil {
-		return nil
-	}
-
-	isDefaultExport := autoImportData.ExportName == ast.InternalSymbolNameDefault
-	if isDefaultExport {
-		if localSymbol := binder.GetLocalSymbolForExportDefault(symbol); localSymbol != nil {
-			symbol = localSymbol
-		}
-	}
-	origin := &symbolOriginInfo{
-		kind:              symbolOriginInfoKindExport,
-		fileName:          autoImportData.FileName,
-		isFromPackageJson: autoImportData.IsPackageJsonImport.IsTrue(),
-		isDefaultExport:   isDefaultExport,
-		data:              autoImportData.toSymbolOriginExport(name, moduleSymbol, isDefaultExport),
-	}
-
-	return &symbolDetails{symbol: symbol, origin: origin}
-}
-
 func createSimpleDetails(
 	item *lsproto.CompletionItem,
 	name string,
@@ -5396,60 +5253,6 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 		item.AdditionalTextEdits = &edits
 	}
 	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
-}
-
-// !!! snippets
-func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *CompletionItemData, symbolDetails *symbolDetails) []codeAction {
-	if itemData.AutoImport != nil && itemData.AutoImport.ModuleSpecifier != "" && symbolDetails.previousToken != nil {
-		// Import statement completion: 'import c|'
-		if symbolDetails.contextToken != nil && l.getImportStatementCompletionInfo(symbolDetails.contextToken, file).replacementSpan != nil {
-			return nil
-		} else if l.getImportStatementCompletionInfo(symbolDetails.previousToken, file).replacementSpan != nil {
-			return nil // !!! sourceDisplay [textPart(data.moduleSpecifier)]
-		}
-	}
-	// !!! CompletionSource.ClassMemberSnippet
-	// !!! origin.isTypeOnlyAlias
-	// entryId.source == CompletionSourceObjectLiteralMemberWithComma && contextToken
-
-	if symbolDetails.origin == nil || symbolDetails.origin.data == nil {
-		return nil
-	}
-
-	symbol := symbolDetails.symbol
-	if symbol.ExportSymbol != nil {
-		symbol = symbol.ExportSymbol
-	}
-	targetSymbol := ch.GetMergedSymbol(ch.SkipAlias(symbol))
-	isJsxOpeningTagName := symbolDetails.contextToken != nil && symbolDetails.contextToken.Kind == ast.KindLessThanToken && ast.IsJsxOpeningLikeElement(symbolDetails.contextToken.Parent)
-	if symbolDetails.previousToken != nil && ast.IsIdentifier(symbolDetails.previousToken) {
-		// If the previous token is an identifier, we can use its start position.
-		position = astnav.GetStartOfNode(symbolDetails.previousToken, file, false)
-	}
-
-	moduleSymbol := symbolDetails.origin.moduleSymbol()
-
-	var exportMapkey ExportInfoMapKey
-	if itemData.AutoImport != nil {
-		exportMapkey = itemData.AutoImport.ExportMapKey
-	}
-	moduleSpecifier, importCompletionAction := l.getImportCompletionAction(
-		ctx,
-		ch,
-		targetSymbol,
-		moduleSymbol,
-		file,
-		position,
-		exportMapkey,
-		itemData.Name,
-		isJsxOpeningTagName,
-		// formatContext,
-	)
-
-	if !(moduleSpecifier == itemData.AutoImport.ModuleSpecifier || itemData.AutoImport.ModuleSpecifier == "") {
-		panic("")
-	}
-	return []codeAction{importCompletionAction}
 }
 
 func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Node, sourceFile *ast.SourceFile) importStatementCompletionInfo {

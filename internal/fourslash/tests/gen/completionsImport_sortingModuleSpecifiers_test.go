@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -41,7 +42,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+							AutoImportFix: &autoimport.Fix{
 								ModuleSpecifier: "path",
 							},
 						})),
@@ -51,7 +52,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+							AutoImportFix: &autoimport.Fix{
 								ModuleSpecifier: "path/posix",
 							},
 						})),
@@ -61,7 +62,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+							AutoImportFix: &autoimport.Fix{
 								ModuleSpecifier: "path/win32",
 							},
 						})),
