@@ -239,7 +239,6 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 			getMeaningFromLocation(symbolToken),
 			fixContext.SourceFile,
 			fixContext.Program,
-			useAutoImportProvider,
 			fixContext.LS,
 		)
 		for exportInfoList := range exportInfos.Values() {
@@ -338,7 +337,6 @@ func getExportInfos(
 	currentTokenMeaning ast.SemanticMeaning,
 	fromFile *ast.SourceFile,
 	program *compiler.Program,
-	useAutoImportProvider bool,
 	ls *LanguageService,
 ) *collections.MultiMap[ast.SymbolId, *SymbolExportInfo] {
 	// For each original symbol, keep all re-exports of that symbol together
@@ -401,7 +399,8 @@ func getExportInfos(
 					return ""
 				}) != "" {
 				addSymbol(moduleSymbol, sourceFile, defaultInfo.exportingModuleSymbol, defaultInfo.exportKind, isFromPackageJson)
-			} // Check for named export with identical name
+			}
+			// Check for named export with identical name
 			exportSymbol := checker.TryGetMemberInModuleExportsAndProperties(symbolName, moduleSymbol)
 			if exportSymbol != nil && symbolFlagsHaveMeaning(checker.GetSymbolFlags(exportSymbol), currentTokenMeaning) {
 				addSymbol(moduleSymbol, sourceFile, exportSymbol, ExportKindNamed, isFromPackageJson)
