@@ -3938,15 +3938,3 @@ func GetFirstConstructorWithBody(node *Node) *Node {
 	}
 	return nil
 }
-
-func GetTagNameOfNode(node *Node) *Node {
-	switch node.Kind {
-	case KindJsxOpeningElement:
-		return node.AsJsxOpeningElement().TagName
-	case KindJsxClosingElement:
-		return node.AsJsxClosingElement().TagName
-	case KindJsxSelfClosingElement:
-		return node.AsJsxSelfClosingElement().TagName
-	}
-	panic("Unhandled case in GetTagNameOfNode")
-}

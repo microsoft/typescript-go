@@ -184,7 +184,7 @@ func getUmdSymbol(token *ast.Node, ch *checker.Checker) *ast.Symbol {
 
 	// The error wasn't for the symbolAtLocation, it was for the JSX tag itself, which needs access to e.g. `React`.
 	parent := token.Parent
-	if (ast.IsJsxOpeningLikeElement(parent) && ast.GetTagNameOfNode(parent) == token) ||
+	if (ast.IsJsxOpeningLikeElement(parent) && parent.TagName() == token) ||
 		ast.IsJsxOpeningFragment(parent) {
 		var location *ast.Node
 		if ast.IsJsxOpeningLikeElement(parent) {
@@ -292,7 +292,7 @@ func getTypeOnlyPromotionFix(ctx context.Context, sourceFile *ast.SourceFile, sy
 func getSymbolNamesToImport(sourceFile *ast.SourceFile, ch *checker.Checker, symbolToken *ast.Node, compilerOptions *core.CompilerOptions) []string {
 	parent := symbolToken.Parent
 	if (ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent)) &&
-		ast.GetTagNameOfNode(parent) == symbolToken &&
+		parent.TagName() == symbolToken &&
 		jsxModeNeedsExplicitImport(compilerOptions.Jsx) {
 		jsxNamespace := ch.GetJsxNamespace(sourceFile.AsNode())
 		if needsJsxNamespaceFix(jsxNamespace, symbolToken, ch) {
@@ -686,7 +686,7 @@ func isJSXTagName(node *ast.Node) bool {
 		return false
 	}
 	if ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent) {
-		return ast.GetTagNameOfNode(parent) == node
+		return parent.TagName() == node
 	}
 	return false
 }
