@@ -35,7 +35,7 @@ type BaselineLocationsOptions struct {
 
 	AdditionalLocation *lsproto.Location
 
-	OpenFiles map[string]string
+	OpenFileText func(string) (string, bool)
 }
 
 func GetBaselineForRename(
@@ -79,7 +79,7 @@ func GetBaselineForRename(
 				}
 				return nil
 			},
-			OpenFiles: options.OpenFiles,
+			OpenFileText: options.OpenFileText,
 		},
 	)
 }
@@ -167,7 +167,7 @@ func GetBaselineForWorkspaceSymbol(
 				symbol := locationToText[span]
 				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbolKindToString(symbol.Kind))
 			},
-			OpenFiles: options.OpenFiles,
+			OpenFileText: options.OpenFileText,
 		},
 	)
 }
@@ -269,8 +269,10 @@ func getBaselineForGroupedLocationsWithFileContents(
 }
 
 func readFile(f vfs.FS, fileName string, options BaselineLocationsOptions) (string, bool) {
-	if content, ok := options.OpenFiles[fileName]; ok {
-		return content, ok
+	if options.OpenFileText != nil {
+		if content, ok := options.OpenFileText(fileName); ok {
+			return content, ok
+		}
 	}
 	return f.ReadFile(fileName)
 }

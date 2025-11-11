@@ -17,8 +17,13 @@ import (
 )
 
 func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual string) {
-	b, ok := f.baselines[command]
-	if !ok {
+	var b *strings.Builder
+	if f.testData.isStateBaseliningEnabled() {
+		// Single baseline for all commands
+		b = &f.stateBaseline.baseline
+	} else if builder, ok := f.baselines[command]; ok {
+		b = builder
+	} else {
 		f.baselines[command] = &strings.Builder{}
 		b = f.baselines[command]
 	}
@@ -231,7 +236,15 @@ func normalizeCommandName(command string) string {
 	return stringutil.LowerFirstChar(command)
 }
 
+func (f *FourslashTest) openFileText(fileName string) (string, bool) {
+	if _, ok := f.openFiles[fileName]; ok {
+		return f.getScriptInfo(fileName).content, true
+	}
+	return "", false
+}
+
 func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.Location, options lsptestutil.BaselineLocationsOptions) string {
+	options.OpenFileText = f.openFileText
 	return lsptestutil.GetBaselineForLocationsWithFileContents(f.FS, spans, options)
 }
 

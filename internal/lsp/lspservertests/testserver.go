@@ -197,6 +197,12 @@ func (s *testServer) changeFile(params *lsproto.DidChangeTextDocumentParams) {
 	// Skip baselining projects here since updated snapshot is not generated right away after this
 }
 
+func (s *testServer) openFileText(fileName string) (string, bool) {
+	s.t.Helper()
+	text, ok := s.openFiles[fileName]
+	return text, ok
+}
+
 func (s *testServer) baselineReferences(fileName string, position lsproto.Position) {
 	s.t.Helper()
 	result := sendRequest(s.t, s, lsproto.TextDocumentReferencesInfo, &lsproto.ReferenceParams{
@@ -207,9 +213,9 @@ func (s *testServer) baselineReferences(fileName string, position lsproto.Positi
 		Context:  &lsproto.ReferenceContext{},
 	})
 	s.baseline.WriteString(lsptestutil.GetBaselineForLocationsWithFileContents(s.server.FS, *result.Locations, lsptestutil.BaselineLocationsOptions{
-		Marker:     &marker{fileName, position},
-		MarkerName: "/*FIND ALL REFS*/",
-		OpenFiles:  s.openFiles,
+		Marker:       &marker{fileName, position},
+		MarkerName:   "/*FIND ALL REFS*/",
+		OpenFileText: s.openFileText,
 	}) + "\n")
 }
 
@@ -223,8 +229,8 @@ func (s *testServer) baselineRename(fileName string, position lsproto.Position) 
 		NewName:  "?",
 	})
 	s.baseline.WriteString(lsptestutil.GetBaselineForRename(s.server.FS, result, lsptestutil.BaselineLocationsOptions{
-		Marker:    &marker{fileName, position},
-		OpenFiles: s.openFiles,
+		Marker:       &marker{fileName, position},
+		OpenFileText: s.openFileText,
 	}) + "\n")
 }
 
@@ -234,7 +240,7 @@ func (s *testServer) baselineWorkspaceSymbol(query string) {
 		Query: query,
 	})
 	s.baseline.WriteString(lsptestutil.GetBaselineForWorkspaceSymbol(s.server.FS, result, lsptestutil.BaselineLocationsOptions{
-		OpenFiles: s.openFiles,
+		OpenFileText: s.openFileText,
 	}) + "\n")
 }
 
