@@ -581,26 +581,25 @@ func (l *LanguageService) compareModuleSpecifiers(
 	allowsImportingSpecifier func(specifier string) bool,
 	toPath func(fileName string) tspath.Path,
 ) int {
-	if a.kind == ImportFixKindUseNamespace || b.kind == ImportFixKindUseNamespace {
-		return 0
-	}
-	if comparison := core.CompareBooleans(
-		b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.moduleSpecifier),
-		a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.moduleSpecifier),
-	); comparison != 0 {
-		return comparison
-	}
-	if comparison := compareModuleSpecifierRelativity(a, b, l.UserPreferences()); comparison != 0 {
-		return comparison
-	}
-	if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, l.GetProgram()); comparison != 0 {
-		return comparison
-	}
-	if comparison := core.CompareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
-		return comparison
-	}
-	if comparison := tspath.CompareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); comparison != 0 {
-		return comparison
+	if a.kind != ImportFixKindUseNamespace && b.kind != ImportFixKindUseNamespace {
+		if comparison := core.CompareBooleans(
+			b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.moduleSpecifier),
+			a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.moduleSpecifier),
+		); comparison != 0 {
+			return comparison
+		}
+		if comparison := compareModuleSpecifierRelativity(a, b, l.UserPreferences()); comparison != 0 {
+			return comparison
+		}
+		if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, l.GetProgram()); comparison != 0 {
+			return comparison
+		}
+		if comparison := core.CompareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
+			return comparison
+		}
+		if comparison := tspath.CompareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); comparison != 0 {
+			return comparison
+		}
 	}
 	return 0
 }

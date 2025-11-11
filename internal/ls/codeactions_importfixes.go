@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -700,72 +699,16 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
 		}
 
 		// Compare module specifiers
-		return compareModuleSpecifiersForCodeFixes(a.fix, b.fix, fixContext.SourceFile, fixContext.Program, packageJsonFilter, fixContext.LS)
+		return fixContext.LS.compareModuleSpecifiers(
+			a.fix,
+			b.fix,
+			fixContext.SourceFile,
+			packageJsonFilter.allowsImportingSpecifier,
+			func(fileName string) tspath.Path { return tspath.Path(fileName) },
+		)
 	})
 
 	return sorted
-}
-
-// compareModuleSpecifiersForCodeFixes compares module specifiers specifically for code fix actions.
-// This is similar to but distinct from (*LanguageService).compareModuleSpecifiers used in auto-imports.
-func compareModuleSpecifiersForCodeFixes(
-	a, b *ImportFix,
-	sourceFile *ast.SourceFile,
-	program *compiler.Program,
-	packageJsonFilter *packageJsonImportFilter,
-	ls *LanguageService,
-) int {
-	// For UseNamespace and AddToExisting, no further comparison needed
-	if a.kind == ImportFixKindUseNamespace || a.kind == ImportFixKindAddToExisting {
-		return 0
-	}
-	if b.kind == ImportFixKindUseNamespace || b.kind == ImportFixKindAddToExisting {
-		return 0
-	}
-
-	// Compare package.json filtering - prefer imports allowed by package.json
-	if cmp := core.CompareBooleans(
-		b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || packageJsonFilter.allowsImportingSpecifier(b.moduleSpecifier),
-		a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || packageJsonFilter.allowsImportingSpecifier(a.moduleSpecifier),
-	); cmp != 0 {
-		return cmp
-	}
-
-	// Compare relativity based on user preferences
-	preferences := ls.UserPreferences()
-	switch preferences.ImportModuleSpecifierPreference {
-	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
-		if cmp := core.CompareBooleans(
-			a.moduleSpecifierKind == modulespecifiers.ResultKindRelative,
-			b.moduleSpecifierKind == modulespecifiers.ResultKindRelative,
-		); cmp != 0 {
-			return cmp
-		}
-	}
-
-	// Compare node: prefix - prefer based on shouldUseUriStyleNodeCoreModules
-	if cmp := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, sourceFile, program); cmp != 0 {
-		return cmp
-	}
-
-	// Compare re-export detection - avoid potential import cycles from barrel re-exports
-	toPath := func(fileName string) tspath.Path {
-		// Simple conversion - in real implementation this would use proper path resolution
-		return tspath.Path(fileName)
-	}
-	aIsReExport := isFixPossiblyReExportingImportingFile(a, sourceFile.Path(), toPath)
-	bIsReExport := isFixPossiblyReExportingImportingFile(b, sourceFile.Path(), toPath)
-	if cmp := core.CompareBooleans(aIsReExport, bIsReExport); cmp != 0 {
-		return cmp
-	}
-
-	// Compare number of directory separators - prefer shorter paths
-	if cmp := tspath.CompareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); cmp != 0 {
-		return cmp
-	}
-
-	// Final tiebreaker: lexicographic comparison
-	return strings.Compare(a.moduleSpecifier, b.moduleSpecifier)
 }
 
 func promoteFromTypeOnly(
