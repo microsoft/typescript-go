@@ -71,9 +71,27 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) []Cod
 
 	var actions []CodeAction
 	for _, fixInfo := range info {
-		action := codeActionForFix(ctx, fixContext, fixInfo)
-		if action != nil {
-			actions = append(actions, *action)
+		tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+		msg := fixContext.LS.codeActionForFixWorker(
+			tracker,
+			fixContext.SourceFile,
+			fixInfo.symbolName,
+			fixInfo.fix,
+			fixInfo.symbolName != fixInfo.errorIdentifierText,
+		)
+
+		if msg != nil {
+			// Convert changes to LSP edits
+			changes := tracker.GetChanges()
+			var edits []*lsproto.TextEdit
+			for _, fileChanges := range changes {
+				edits = append(edits, fileChanges...)
+			}
+
+			actions = append(actions, CodeAction{
+				Description: msg.Message(),
+				Changes:     edits,
+			})
 		}
 	}
 	return actions
@@ -397,35 +415,6 @@ func getExportInfos(
 func shouldUseRequire(sourceFile *ast.SourceFile, program *compiler.Program) bool {
 	// Delegate to the existing implementation in autoimports.go
 	return getShouldUseRequire(sourceFile, program)
-}
-
-func codeActionForFix(ctx context.Context, fixContext *CodeFixContext, info *fixInfo) *CodeAction {
-	// Create a tracker with format options and converters from LanguageService
-	tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
-
-	msg := fixContext.LS.codeActionForFixWorker(
-		tracker,
-		fixContext.SourceFile,
-		info.symbolName,
-		info.fix,
-		info.symbolName != info.errorIdentifierText,
-	)
-
-	if msg == nil {
-		return nil
-	}
-
-	// Convert changes to LSP edits
-	changes := tracker.GetChanges()
-	var edits []*lsproto.TextEdit
-	for _, fileChanges := range changes {
-		edits = append(edits, fileChanges...)
-	}
-
-	return &CodeAction{
-		Description: msg.Message(),
-		Changes:     edits,
-	}
 }
 
 func isJSXTagName(node *ast.Node) bool {
