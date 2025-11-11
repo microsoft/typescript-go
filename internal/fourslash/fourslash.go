@@ -1888,6 +1888,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 		ImportModuleSpecifierEnding:           f.userPreferences.ImportModuleSpecifierEnding,
+		ImportModuleSpecifierPreference:       f.userPreferences.ImportModuleSpecifierPreference,
 	})
 	defer reset()
 

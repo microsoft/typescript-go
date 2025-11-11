@@ -11,19 +11,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestImportModuleSpecifierEndingAuto(t *testing.T) {
+func TestImportModuleSpecifierPreferenceShortest(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /project/helper/index.ts
+	const content = `// @Filename: /project/src/utils/helper.ts
 export const helperFunc = () => {};
-// @Filename: /project/index.ts
+// @Filename: /project/src/index.ts
 helper/**/`
 
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           modulespecifiers.ImportModuleSpecifierEndingPreferenceAuto,
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceShortest,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -37,19 +37,19 @@ helper/**/`
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
 
-func TestImportModuleSpecifierEndingMinimal(t *testing.T) {
+func TestImportModuleSpecifierPreferenceProjectRelative(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /project/helper/index.ts
+	const content = `// @Filename: /project/src/utils/helper.ts
 export const helperFunc = () => {};
-// @Filename: /project/index.ts
+// @Filename: /project/tests/index.ts
 helper/**/`
 
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal,
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -63,19 +63,19 @@ helper/**/`
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
 
-func TestImportModuleSpecifierEndingIndex(t *testing.T) {
+func TestImportModuleSpecifierPreferenceRelative(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /project/helper/index.ts
+	const content = `// @Filename: /project/src/utils/helper.ts
 export const helperFunc = () => {};
-// @Filename: /project/index.ts
+// @Filename: /project/src/index.ts
 helper/**/`
 
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           modulespecifiers.ImportModuleSpecifierEndingPreferenceIndex,
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -89,19 +89,28 @@ helper/**/`
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
 
-func TestImportModuleSpecifierEndingJs(t *testing.T) {
+func TestImportModuleSpecifierPreferenceNonRelative(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /project/helper/index.ts
+	const content = `// @Filename: /project/tsconfig.json
+{
+ "compilerOptions": {
+   "baseUrl": "./src",
+   "paths": {
+     "*": ["*", "utils/*"]
+   }
+ }
+}
+// @Filename: /project/src/utils/helper.ts
 export const helperFunc = () => {};
-// @Filename: /project/index.ts
+// @Filename: /project/src/index.ts
 helper/**/`
 
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           modulespecifiers.ImportModuleSpecifierEndingPreferenceJs,
+		ImportModuleSpecifierPreference:       modulespecifiers.ImportModuleSpecifierPreferenceNonRelative,
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
