@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"iter"
-	"slices"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -81,18 +80,7 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 // GetCheckerForFileExclusive is the same as GetCheckerForFile but also locks a mutex associated with the checker.
 // Call `done` to free the lock.
 func (p *CheckerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	c, done := p.GetCheckerForFile(ctx, file)
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	idx := slices.Index(p.checkers, c)
-	p.locks[idx].Lock()
-	return c, sync.OnceFunc(func() {
-		done()
-		p.mu.Lock()
-		defer p.mu.Unlock()
-		p.locks[idx].Unlock()
-	})
+	panic("unimplemented") // implement if used by LS
 }
 
 func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {

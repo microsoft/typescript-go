@@ -90,6 +90,12 @@ func (p *Program) CommonSourceDirectory() string {
 	return p.program.CommonSourceDirectory()
 }
 
+// Program implements compiler.AnyProgram interface.
+func (p *Program) Program() *compiler.Program {
+	p.panicIfNoProgram("Program")
+	return p.program
+}
+
 // IsSourceFileDefaultLibrary implements compiler.AnyProgram interface.
 func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	p.panicIfNoProgram("IsSourceFileDefaultLibrary")

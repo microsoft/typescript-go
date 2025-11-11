@@ -1279,6 +1279,10 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
+func (p *Program) Program() *Program {
+	return p
+}
+
 func (p *Program) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
 	return p.sourceFileMetaDatas[path]
 }
@@ -1457,6 +1461,7 @@ type ProgramLike interface {
 	Emit(ctx context.Context, options EmitOptions) *EmitResult
 	CommonSourceDirectory() string
 	IsSourceFileDefaultLibrary(path tspath.Path) bool
+	Program() *Program
 }
 
 func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {

@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -277,13 +276,7 @@ func newTypeWriterWalker(program compiler.ProgramLike, hadErrorBaseline bool) *t
 func (walker *typeWriterWalker) getTypeCheckerForCurrentFile() (*checker.Checker, func()) {
 	// If we don't use the right checker for the file, its contents won't be up to date
 	// since the types/symbols baselines appear to depend on files having been checked.
-	switch p := walker.program.(type) {
-	case *compiler.Program:
-		return p.GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
-	case *incremental.Program:
-		return p.GetProgram().GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
-	}
-	panic("unknown program kind, cannot get checker for file")
+	return walker.program.Program().GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
 }
 
 type typeWriterResult struct {

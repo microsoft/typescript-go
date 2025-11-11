@@ -12,9 +12,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -530,17 +528,7 @@ func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil
 
 func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	t.Run("union ordering", func(t *testing.T) {
-		var p *compiler.Program
-		switch desugared := c.result.Program.(type) {
-		case *compiler.Program:
-			{
-				p = desugared
-			}
-		case *incremental.Program:
-			{
-				p = desugared.GetProgram()
-			}
-		}
+		p := c.result.Program.Program()
 		checkers, done := p.GetTypeCheckers(t.Context())
 		defer done()
 		for _, c := range checkers {
