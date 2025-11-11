@@ -244,8 +244,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 		for exportInfoList := range exportInfos.Values() {
 			for _, exportInfo := range exportInfoList {
 				usagePos := scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)
-				line, character := scanner.GetECMALineAndCharacterOfPosition(fixContext.SourceFile, usagePos)
-				lspPos := lsproto.Position{Line: uint32(line), Character: uint32(character)}
+				lspPos := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(usagePos))
 				_, fixes := fixContext.LS.getImportFixes(
 					ch,
 					[]*SymbolExportInfo{exportInfo},
@@ -699,13 +698,11 @@ func deleteTypeKeywordFromImportClause(changes *change.Tracker, sourceFile *ast.
 	}
 
 	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeStart)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, endPos)
+	// Note: changes.Converters() provides access to the converters
+	conv := changes.Converters()
+	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(typeStart, endPos))
 
-	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, "")
+	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
 }
 
 // deleteTypeKeywordFromSpecifier deletes the 'type' keyword from an import specifier
@@ -727,13 +724,10 @@ func deleteTypeKeywordFromSpecifier(changes *change.Tracker, sourceFile *ast.Sou
 	}
 
 	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, specStart)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, endPos)
+	conv := changes.Converters()
+	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(specStart, endPos))
 
-	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, "")
+	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
 }
 
 // deleteTypeKeywordFromImportEquals deletes the 'type' keyword from an import equals declaration
@@ -762,23 +756,16 @@ func deleteTypeKeywordFromImportEquals(changes *change.Tracker, sourceFile *ast.
 	}
 
 	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeStart)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeEnd)
+	conv := changes.Converters()
+	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(typeStart, typeEnd))
 
-	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, "")
+	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
 }
 
 func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, stringLiteral *ast.Node, newText string) {
 	// Get the position of the string literal content (excluding quotes)
 	literalStart := stringLiteral.Pos()
 	literalEnd := stringLiteral.End()
-
-	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, literalStart)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, literalEnd)
 
 	// Determine the quote character used
 	text := sourceFile.Text()
@@ -787,10 +774,11 @@ func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, s
 	// Create the new string literal with quotes
 	newLiteral := string(quoteChar) + newText + string(quoteChar)
 
-	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, newLiteral)
+	// Convert text positions to LSP positions
+	conv := changes.Converters()
+	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(literalStart, literalEnd))
+
+	changes.ReplaceRangeWithText(sourceFile, lspRange, newLiteral)
 }
 
 func insertTypeModifierBefore(changes *change.Tracker, sourceFile *ast.SourceFile, specifier *ast.Node) {
@@ -799,10 +787,11 @@ func insertTypeModifierBefore(changes *change.Tracker, sourceFile *ast.SourceFil
 	specStart := specifier.Pos()
 
 	// Convert text position to LSP position
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, specStart)
+	conv := changes.Converters()
+	lspPos := conv.PositionToLineAndCharacter(sourceFile, core.TextPos(specStart))
 
 	// Insert "type " at the beginning of the specifier
-	changes.InsertText(sourceFile, lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)}, "type ")
+	changes.InsertText(sourceFile, lspPos, "type ")
 }
 
 func deleteNode(changes *change.Tracker, sourceFile *ast.SourceFile, node *ast.Node, containingList []*ast.Node) {
@@ -853,11 +842,8 @@ func deleteNode(changes *change.Tracker, sourceFile *ast.SourceFile, node *ast.N
 	}
 
 	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, start)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, end)
+	conv := changes.Converters()
+	lspRange := conv.ToLSPRange(sourceFile, core.NewTextRange(start, end))
 
-	changes.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, "")
+	changes.ReplaceRangeWithText(sourceFile, lspRange, "")
 }

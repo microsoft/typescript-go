@@ -110,6 +110,11 @@ func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, form
 	}
 }
 
+// Converters returns the position converters for converting between text positions and LSP positions
+func (t *Tracker) Converters() *lsconv.Converters {
+	return t.converters
+}
+
 // GetChanges returns the accumulated text edits.
 // Note: after calling this, the Tracker object must be discarded!
 func (t *Tracker) GetChanges() map[string][]*lsproto.TextEdit {
