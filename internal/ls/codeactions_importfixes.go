@@ -386,32 +386,22 @@ func getExportInfos(
 
 			// Check default export
 			defaultInfo := getDefaultLikeExportInfo(moduleSymbol, checker)
-			if defaultInfo != nil {
-				// Resolve alias to get the actual symbol flags
-				resolvedSymbol := checker.SkipAlias(defaultInfo.exportingModuleSymbol)
-				resolvedFlags := resolvedSymbol.Flags
-				if symbolFlagsHaveMeaning(resolvedFlags, currentTokenMeaning) {
-					// For JSX tags, we need to check if the capitalized name matches
-					scriptTarget := compilerOptions.GetEmitScriptTarget()
-					matchesName := forEachNameOfDefaultExport(defaultInfo.exportingModuleSymbol, checker, scriptTarget, func(name, capitalizedName string) string {
-						actualName := name
-						if isJsxTagName && capitalizedName != "" {
-							actualName = capitalizedName
-						}
-						if actualName == symbolName {
-							return actualName
-						}
-						return ""
-					})
-					if matchesName != "" {
-						addSymbol(moduleSymbol, sourceFile, defaultInfo.exportingModuleSymbol, defaultInfo.exportKind, isFromPackageJson)
+			if defaultInfo != nil &&
+				symbolFlagsHaveMeaning(checker.GetSymbolFlags(defaultInfo.exportingModuleSymbol), currentTokenMeaning) &&
+				forEachNameOfDefaultExport(defaultInfo.exportingModuleSymbol, checker, compilerOptions.GetEmitScriptTarget(), func(name, capitalizedName string) string {
+					actualName := name
+					if isJsxTagName && capitalizedName != "" {
+						actualName = capitalizedName
 					}
-				}
-			}
-
-			// Check for named export with identical name
+					if actualName == symbolName {
+						return actualName
+					}
+					return ""
+				}) != "" {
+				addSymbol(moduleSymbol, sourceFile, defaultInfo.exportingModuleSymbol, defaultInfo.exportKind, isFromPackageJson)
+			} // Check for named export with identical name
 			exportSymbol := checker.TryGetMemberInModuleExportsAndProperties(symbolName, moduleSymbol)
-			if exportSymbol != nil && symbolFlagsHaveMeaning(exportSymbol.Flags, currentTokenMeaning) {
+			if exportSymbol != nil && symbolFlagsHaveMeaning(checker.GetSymbolFlags(exportSymbol), currentTokenMeaning) {
 				addSymbol(moduleSymbol, sourceFile, exportSymbol, ExportKindNamed, isFromPackageJson)
 			}
 		},
