@@ -1414,9 +1414,17 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 func GetImportClauseOfDeclaration(declaration *Declaration) *ImportClause {
 	switch declaration.Kind {
 	case KindImportDeclaration:
-		return declaration.AsImportDeclaration().ImportClause.AsImportClause()
+		importDecl := declaration.AsImportDeclaration()
+		if importDecl.ImportClause == nil {
+			return nil
+		}
+		return importDecl.ImportClause.AsImportClause()
 	case KindJSDocImportTag:
-		return declaration.AsJSDocImportTag().ImportClause.AsImportClause()
+		jsDocImport := declaration.AsJSDocImportTag()
+		if jsDocImport.ImportClause == nil {
+			return nil
+		}
+		return jsDocImport.ImportClause.AsImportClause()
 	}
 	return nil
 }
