@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -139,19 +138,18 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	// before a named import, like converting `writeFile` to `fs.writeFile` (whether `fs` is already imported or
 	// not), and this function will only be called for UMD symbols, which are necessarily an `export =`, not a
 	// named export.
-	fixes := getImportFixes(
-		ctx,
+	_, fixes := fixContext.LS.getImportFixes(
+		ch,
 		exportInfo,
 		nil, // usagePosition undefined for UMD
-		false,
-		useRequire,
-		fixContext.Program,
+		ptrTo(false),
+		&useRequire,
 		fixContext.SourceFile,
-		fixContext.LS,
+		false, // fromCacheOnly
 	)
 
 	var result []*fixInfo
-	for _, fix := range fixes.fixes {
+	for _, fix := range fixes {
 		errorIdentifierText := ""
 		if ast.IsIdentifier(token) {
 			errorIdentifierText = token.Text()
@@ -226,22 +224,22 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 			useAutoImportProvider,
 			fixContext.LS,
 		)
-
 		for exportInfoList := range exportInfos.Values() {
 			for _, exportInfo := range exportInfoList {
 				usagePos := scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)
-				fixes := getImportFixes(
-					ctx,
+				line, character := scanner.GetECMALineAndCharacterOfPosition(fixContext.SourceFile, usagePos)
+				lspPos := lsproto.Position{Line: uint32(line), Character: uint32(character)}
+				_, fixes := fixContext.LS.getImportFixes(
+					ch,
 					[]*SymbolExportInfo{exportInfo},
-					&usagePos,
-					isValidTypeOnlyUseSite,
-					useRequire,
-					fixContext.Program,
+					&lspPos,
+					&isValidTypeOnlyUseSite,
+					&useRequire,
 					fixContext.SourceFile,
-					fixContext.LS,
+					false, // fromCacheOnly
 				)
 
-				for _, fix := range fixes.fixes {
+				for _, fix := range fixes {
 					allInfo = append(allInfo, &fixInfo{
 						fix:                 fix,
 						symbolName:          symbolName,
@@ -396,48 +394,6 @@ func getExportInfos(
 	return originalSymbolToExportInfos
 }
 
-type importFixesResult struct {
-	fixes                     []*ImportFix
-	computedWithoutCacheCount int
-}
-
-func getImportFixes(
-	ctx context.Context,
-	exportInfos []*SymbolExportInfo,
-	usagePosition *int,
-	isValidTypeOnlyUseSite bool,
-	useRequire bool,
-	program *compiler.Program,
-	sourceFile *ast.SourceFile,
-	ls *LanguageService,
-) *importFixesResult {
-	ch, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	// Convert text position to LSP position if provided
-	var usagePos *lsproto.Position
-	if usagePosition != nil {
-		line, character := scanner.GetECMALineAndCharacterOfPosition(sourceFile, *usagePosition)
-		usagePos = &lsproto.Position{Line: uint32(line), Character: uint32(character)}
-	}
-
-	// Call the existing LanguageService method
-	computedWithoutCacheCount, fixes := ls.getImportFixes(
-		ch,
-		exportInfos,
-		usagePos,
-		&isValidTypeOnlyUseSite,
-		&useRequire,
-		sourceFile,
-		false, // fromCacheOnly
-	)
-
-	return &importFixesResult{
-		fixes:                     fixes,
-		computedWithoutCacheCount: computedWithoutCacheCount,
-	}
-}
-
 func shouldUseRequire(sourceFile *ast.SourceFile, program *compiler.Program) bool {
 	// Delegate to the existing implementation in autoimports.go
 	return getShouldUseRequire(sourceFile, program)
@@ -447,18 +403,15 @@ func codeActionForFix(ctx context.Context, fixContext *CodeFixContext, info *fix
 	// Create a tracker with format options and converters from LanguageService
 	tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 
-	description := codeActionForFixWorker(
-		ctx,
+	msg := fixContext.LS.codeActionForFixWorker(
 		tracker,
 		fixContext.SourceFile,
 		info.symbolName,
 		info.fix,
 		info.symbolName != info.errorIdentifierText,
-		fixContext.Program,
-		fixContext.LS,
 	)
 
-	if description == "" {
+	if msg == nil {
 		return nil
 	}
 
@@ -470,146 +423,8 @@ func codeActionForFix(ctx context.Context, fixContext *CodeFixContext, info *fix
 	}
 
 	return &CodeAction{
-		Description: description,
+		Description: msg.Message(),
 		Changes:     edits,
-	}
-}
-
-func codeActionForFixWorker(
-	ctx context.Context,
-	changes *change.Tracker,
-	sourceFile *ast.SourceFile,
-	symbolName string,
-	fix *ImportFix,
-	includeSymbolNameInDescription bool,
-	program *compiler.Program,
-	ls *LanguageService,
-) string {
-	switch fix.kind {
-	case ImportFixKindUseNamespace:
-		addNamespaceQualifier(changes, sourceFile, fix.qualification())
-		return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, fmt.Sprintf("%s.%s", *fix.namespacePrefix, symbolName)).Message()
-
-	case ImportFixKindJsdocTypeImport:
-		// Insert import() type annotation at usage position
-		if fix.usagePosition == nil {
-			return ""
-		}
-		quotePreference := getQuotePreference(sourceFile, ls.UserPreferences())
-		quoteChar := "\""
-		if quotePreference == quotePreferenceSingle {
-			quoteChar = "'"
-		}
-		importTypePrefix := fmt.Sprintf("import(%s%s%s).", quoteChar, fix.moduleSpecifier, quoteChar)
-
-		changes.InsertText(sourceFile, *fix.usagePosition, importTypePrefix)
-
-		return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, importTypePrefix+symbolName).Message()
-
-	case ImportFixKindAddToExisting:
-		// Call doAddExistingFix from autoimportfixes.go
-		var defaultImport *Import
-		var namedImports []*Import
-
-		if fix.importKind == ImportKindDefault {
-			defaultImport = &Import{
-				name:          symbolName,
-				addAsTypeOnly: fix.addAsTypeOnly,
-			}
-		} else if fix.importKind == ImportKindNamed {
-			namedImports = []*Import{
-				{
-					name:          symbolName,
-					addAsTypeOnly: fix.addAsTypeOnly,
-					propertyName:  fix.propertyName,
-				},
-			}
-		}
-
-		ls.doAddExistingFix(
-			changes,
-			sourceFile,
-			fix.importClauseOrBindingPattern,
-			defaultImport,
-			namedImports,
-		)
-
-		moduleSpecifierWithoutQuotes := strings.Trim(fix.moduleSpecifier, "\"'")
-		if includeSymbolNameInDescription {
-			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, moduleSpecifierWithoutQuotes).Message()
-		}
-		return diagnostics.FormatMessage(diagnostics.Update_import_from_0, moduleSpecifierWithoutQuotes).Message()
-
-	case ImportFixKindAddNew:
-		// Generate new import statement
-		var defaultImport *Import
-		var namedImports []*Import
-		var namespaceLikeImport *Import
-
-		if fix.importKind == ImportKindDefault {
-			defaultImport = &Import{
-				name:          symbolName,
-				addAsTypeOnly: fix.addAsTypeOnly,
-			}
-		} else if fix.importKind == ImportKindNamed {
-			namedImports = []*Import{
-				{
-					name:          symbolName,
-					addAsTypeOnly: fix.addAsTypeOnly,
-					propertyName:  fix.propertyName,
-				},
-			}
-		} else if fix.importKind == ImportKindNamespace || fix.importKind == ImportKindCommonJS {
-			// For namespace/CommonJS imports, use qualification if available
-			name := symbolName
-			if fix.qualification() != nil {
-				name = fix.qualification().namespacePrefix
-			}
-			namespaceLikeImport = &Import{
-				name:          name,
-				kind:          fix.importKind,
-				addAsTypeOnly: fix.addAsTypeOnly,
-			}
-		}
-
-		// Create the import declarations
-		var statements []*ast.Statement
-		if fix.useRequire {
-			statements = getNewRequires(changes, fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, program.Options())
-		} else {
-			quotePreference := getQuotePreference(sourceFile, ls.UserPreferences())
-			statements = ls.getNewImports(changes, fix.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, program.Options())
-		}
-
-		// Insert the import statements
-		ls.insertImports(changes, sourceFile, statements, true /* blankLineBetween */)
-
-		// Add namespace qualification if needed
-		if fix.qualification() != nil {
-			addNamespaceQualifier(changes, sourceFile, fix.qualification())
-		}
-
-		if includeSymbolNameInDescription {
-			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, fix.moduleSpecifier).Message()
-		}
-		return diagnostics.FormatMessage(diagnostics.Add_import_from_0, fix.moduleSpecifier).Message()
-
-	case ImportFixKindPromoteTypeOnly:
-		// Promote type-only import to regular import
-		promotedDeclaration := promoteFromTypeOnly(changes, fix.typeOnlyAliasDeclaration, program, sourceFile, ls)
-
-		// Use the promoted declaration to get the module specifier for better diagnostics
-		if promotedDeclaration.Kind == ast.KindImportSpecifier {
-			// ImportSpecifier: get module specifier from parent.parent (ImportClause.parent = ImportDeclaration)
-			moduleSpec := getModuleSpecifierFromDeclaration(promotedDeclaration.Parent.Parent)
-			return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_of_0_from_1, symbolName, moduleSpec).Message()
-		}
-		// ImportClause or ImportEqualsDeclaration: get module specifier directly
-		moduleSpec := getModuleSpecifierFromDeclaration(promotedDeclaration)
-		return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_declaration_from_0, moduleSpec).Message()
-
-	default:
-		return ""
 	}
 }
 

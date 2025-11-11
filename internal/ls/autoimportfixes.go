@@ -208,7 +208,6 @@ func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *
 	return typeKeyword
 }
 
-
 func addElementToBindingPattern(ct *change.Tracker, sourceFile *ast.SourceFile, bindingPattern *ast.Node, name string, propertyName *string) {
 	element := newBindingElementFromNameAndPropertyName(ct, name, propertyName)
 	if len(bindingPattern.Elements()) > 0 {
