@@ -26,7 +26,7 @@ func (l *LanguageService) ProvideDefinition(
 	}
 	originSelectionRange := l.createLspRangeFromNode(node, file)
 
-	c, done := program.GetTypeCheckerForFile(ctx, file)
+	c, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 
 	if node.Kind == ast.KindOverrideKeyword {
@@ -77,7 +77,7 @@ func (l *LanguageService) ProvideTypeDefinition(
 	}
 	originSelectionRange := l.createLspRangeFromNode(node, file)
 
-	c, done := program.GetTypeCheckerForFile(ctx, file)
+	c, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 
 	node = getDeclarationNameForKeyword(node)

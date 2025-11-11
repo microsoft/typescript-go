@@ -276,7 +276,7 @@ func newTypeWriterWalker(program compiler.ProgramLike, hadErrorBaseline bool) *t
 func (walker *typeWriterWalker) getTypeCheckerForCurrentFile() (*checker.Checker, func()) {
 	// If we don't use the right checker for the file, its contents won't be up to date
 	// since the types/symbols baselines appear to depend on files having been checked.
-	return walker.program.Program().GetTypeCheckerForFile(context.Background(), walker.currentSourceFile)
+	return walker.program.Program().GetTypeCheckerForFileNonexclusive(context.Background(), walker.currentSourceFile)
 }
 
 type typeWriterResult struct {

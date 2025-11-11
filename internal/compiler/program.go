@@ -379,8 +379,8 @@ func (p *Program) GetTypeCheckers(ctx context.Context) ([]*checker.Checker, func
 // method returns the checker that was tasked with checking the file. Note that it isn't possible to mix
 // types obtained from different checkers, so only non-type data (such as diagnostics or string
 // representations of types) should be obtained from checkers returned by this method.
-func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	return p.checkerPool.GetCheckerForFile(ctx, file)
+func (p *Program) GetTypeCheckerForFileNonexclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	return p.checkerPool.GetCheckerForFileNonexclusive(ctx, file)
 }
 
 // Return a checker for the given file, locked to the current thread to prevent data races from multiple threads
@@ -1029,7 +1029,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 	var fileChecker *checker.Checker
 	var done func()
 	if sourceFile != nil {
-		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+		fileChecker, done = p.checkerPool.GetCheckerForFileNonexclusive(ctx, sourceFile)
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
@@ -1134,7 +1134,7 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 	var fileChecker *checker.Checker
 	var done func()
 	if sourceFile != nil {
-		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+		fileChecker, done = p.checkerPool.GetCheckerForFileNonexclusive(ctx, sourceFile)
 		defer done()
 	}
 

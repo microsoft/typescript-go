@@ -25,7 +25,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 		// Avoid giving quickInfo for the sourceFile as a whole.
 		return lsproto.HoverOrNull{}, nil
 	}
-	c, done := program.GetTypeCheckerForFile(ctx, file)
+	c, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	rangeNode := getNodeForQuickInfo(node)
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode, contentFormat)

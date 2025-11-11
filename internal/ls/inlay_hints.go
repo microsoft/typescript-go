@@ -31,7 +31,7 @@ func (l *LanguageService) ProvideInlayHint(
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
 	quotePreference := getQuotePreference(file, l.UserPreferences())
 
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	checker, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	inlayHintState := &inlayHintState{
 		ctx:             ctx,

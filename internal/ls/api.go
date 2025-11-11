@@ -24,14 +24,14 @@ func (l *LanguageService) GetSymbolAtPosition(ctx context.Context, fileName stri
 	if node == nil {
 		return nil, fmt.Errorf("%w: %s:%d", ErrNoTokenAtPosition, fileName, position)
 	}
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	checker, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	return checker.GetSymbolAtLocation(node), nil
 }
 
 func (l *LanguageService) GetSymbolAtLocation(ctx context.Context, node *ast.Node) *ast.Symbol {
 	program := l.GetProgram()
-	checker, done := program.GetTypeCheckerForFile(ctx, ast.GetSourceFileOfNode(node))
+	checker, done := program.GetTypeCheckerForFileNonexclusive(ctx, ast.GetSourceFileOfNode(node))
 	defer done()
 	return checker.GetSymbolAtLocation(node)
 }

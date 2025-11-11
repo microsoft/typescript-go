@@ -35,7 +35,7 @@ type emitHost struct {
 }
 
 func newEmitHost(ctx context.Context, program *Program, file *ast.SourceFile) (*emitHost, func()) {
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	checker, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	return &emitHost{
 		program:      program,
 		emitResolver: checker.GetEmitResolver(),

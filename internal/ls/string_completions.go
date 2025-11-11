@@ -225,7 +225,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	node *ast.StringLiteralLike,
 	position int,
 ) *stringLiteralCompletions {
-	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
+	typeChecker, done := l.GetProgram().GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {

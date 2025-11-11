@@ -388,7 +388,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 		)
 	}
 
-	checker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
+	checker, done := l.GetProgram().GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	preferences := l.UserPreferences()
 	data := l.getCompletionData(ctx, checker, file, position, preferences)
@@ -1941,7 +1941,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 ) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
-	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
+	typeChecker, done := l.GetProgram().GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
 	// Tracks unique names.
@@ -5056,7 +5056,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	itemData *CompletionItemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionItem {
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	checker, done := program.GetTypeCheckerForFileNonexclusive(ctx, file)
 	defer done()
 	docFormat := getCompletionDocumentationFormat(clientOptions)
 	contextToken, previousToken := getRelevantTokens(position, file)
