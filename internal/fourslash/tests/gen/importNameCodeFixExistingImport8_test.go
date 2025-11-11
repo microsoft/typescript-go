@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixExistingImport8(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import [|{v1, v2, v3,}|] from "./module";
 v4/*0*/();

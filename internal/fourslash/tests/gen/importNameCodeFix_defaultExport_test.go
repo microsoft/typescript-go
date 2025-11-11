@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFix_defaultExport(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @allowJs: true

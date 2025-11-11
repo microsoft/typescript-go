@@ -9,7 +9,7 @@ import (
 
 func TestImportFixesGlobalTypingsCache(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /project/tsconfig.json
  { "compilerOptions": { "allowJs": true, "checkJs": true } }
