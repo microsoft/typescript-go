@@ -536,7 +536,7 @@ func (l *LanguageService) getImportFixForSymbol(
 	if isValidTypeOnlySite == nil {
 		isValidTypeOnlySite = ptrTo(ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position)))
 	}
-	useRequire := getShouldUseRequire(sourceFile, l.GetProgram())
+	useRequire := shouldUseRequire(sourceFile, l.GetProgram())
 	packageJsonImportFilter := l.createPackageJsonImportFilter(sourceFile)
 	_, fixes := l.getImportFixes(ch, exportInfos, ptrTo(l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))), isValidTypeOnlySite, &useRequire, sourceFile, false /* fromCacheOnly */)
 	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier)
@@ -1162,7 +1162,7 @@ func getAddAsTypeOnly(
 	return AddAsTypeOnlyAllowed
 }
 
-func getShouldUseRequire(
+func shouldUseRequire(
 	sourceFile *ast.SourceFile, // !!! | FutureSourceFile
 	program *compiler.Program,
 ) bool {

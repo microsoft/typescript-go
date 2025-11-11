@@ -423,11 +423,6 @@ func getExportInfos(
 	return originalSymbolToExportInfos
 }
 
-func shouldUseRequire(sourceFile *ast.SourceFile, program *compiler.Program) bool {
-	// Delegate to the existing implementation in autoimports.go
-	return getShouldUseRequire(sourceFile, program)
-}
-
 func isJSXTagName(node *ast.Node) bool {
 	parent := node.Parent
 	if parent == nil {
