@@ -646,7 +646,7 @@ func codeActionForFixWorker(
 		}
 
 		// Insert the import statements
-		changes.InsertAtTopOfFile(sourceFile, statements, true)
+		insertImports(changes, sourceFile, statements, program, ls)
 
 		// Add namespace qualification if needed
 		if fix.qualification() != nil {
@@ -1208,4 +1208,71 @@ func deleteNode(changes *change.Tracker, sourceFile *ast.SourceFile, node *ast.N
 		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
 		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
 	}, "")
+}
+
+// insertImports inserts new import statements in the correct position relative to existing imports
+// (from utilities.ts insertImports)
+func insertImports(
+	changes *change.Tracker,
+	sourceFile *ast.SourceFile,
+	imports []*ast.Statement,
+	program *compiler.Program,
+	ls *LanguageService,
+) {
+	if len(imports) == 0 {
+		return
+	}
+
+	// Find existing import statements
+	var existingImportStatements []*ast.Statement
+	for _, stmt := range sourceFile.Statements.Nodes {
+		if ast.IsAnyImportSyntax(stmt) || ast.IsRequireVariableStatement(stmt) {
+			existingImportStatements = append(existingImportStatements, stmt)
+		}
+	}
+
+	// If no existing imports, insert at top of file
+	if len(existingImportStatements) == 0 {
+		changes.InsertAtTopOfFile(sourceFile, imports, true /* blankLineBetween */)
+		return
+	}
+
+	// Get comparer and check if imports are sorted
+	comparer, isSorted := organizeimports.GetOrganizeImportsStringComparerWithDetection(
+		existingImportStatements,
+		ls.UserPreferences(),
+	)
+
+	// Sort the new imports
+	sortedNewImports := make([]*ast.Statement, len(imports))
+	copy(sortedNewImports, imports)
+	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
+		return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+	})
+
+	// If existing imports are sorted, insert each new import in the correct position
+	if isSorted {
+		for _, newImport := range sortedNewImports {
+			insertionIndex := organizeimports.GetImportDeclarationInsertIndex(
+				existingImportStatements,
+				newImport,
+				func(a, b *ast.Statement) int {
+					return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+				},
+			)
+
+			if insertionIndex == 0 {
+				// Insert before the first import
+				changes.InsertNodeBefore(sourceFile, existingImportStatements[0], newImport, false /* blankLineBetween */)
+			} else {
+				// Insert after the previous import
+				prevImport := existingImportStatements[insertionIndex-1]
+				changes.InsertNodeAfter(sourceFile, prevImport, newImport)
+			}
+		}
+	} else {
+		// Imports are not sorted, insert after the last existing import
+		lastImport := existingImportStatements[len(existingImportStatements)-1]
+		changes.InsertNodesAfter(sourceFile, lastImport, sortedNewImports)
+	}
 }
