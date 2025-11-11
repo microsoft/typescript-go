@@ -179,8 +179,9 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 
 			// New metadata statement after having collected some code to go with the previous metadata
 			if currentFileName != "" {
-				if currentFileContent.Len() != 0 {
-					// Store result file
+				// Store result file - always save for regular tests, but skip empty implicit first file for fourslash
+				shouldSaveFile := currentFileContent.Len() != 0 || !options.AllowImplicitFirstFile
+				if shouldSaveFile {
 					newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
 					if e != nil {
 						parseError = e
