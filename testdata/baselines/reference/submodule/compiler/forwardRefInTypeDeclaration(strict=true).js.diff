@@ -1,22 +1,10 @@
 --- old.forwardRefInTypeDeclaration(strict=true).js
 +++ new.forwardRefInTypeDeclaration(strict=true).js
-@@= skipped -29, +29 lines =@@
-
-
- //// [forwardRefInTypeDeclaration.js]
--"use strict";
- const s1 = "x";
- const s2 = "x";
- const s3 = "x";
+@@= skipped -36, +36 lines =@@
  const s4 = "x";
  const s5 = "x";
--let Cls2 = (() => {
--    class Cls2 {
--    }
--    Cls2.b = "b";
--    return Cls2;
--})();
-+class Cls2 {
+ class Cls2 {
 +    static b = "b";
-+}
+ }
+-Cls2.b = "b";
  const obj2 = { d: 'd' };

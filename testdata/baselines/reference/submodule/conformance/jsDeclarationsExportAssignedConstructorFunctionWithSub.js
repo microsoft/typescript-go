@@ -14,14 +14,6 @@ module.exports.Sub.prototype = { }
 
 
 //// [jsDeclarationsExportAssignedConstructorFunctionWithSub.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @param {number} p
- */
-export = function (p) {
-    this.t = 12 + p;
-};
 /**
  * @param {number} p
  */
@@ -40,4 +32,4 @@ module.exports.Sub.prototype = {};
 //// [jsDeclarationsExportAssignedConstructorFunctionWithSub.d.ts]
 declare const _default: (p: any) => void;
 export = _default;
-export var Sub = function ();;
+export declare var Sub: () => void;

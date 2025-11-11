@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 
@@ -56,21 +56,20 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 	if referenceEntries == nil {
 		return nil
 	}
+
 	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
-			if ref.node != nil {
-				fileName, highlight := l.toDocumentHighlight(ref)
-				if fileName == sourceFile.FileName() {
-					highlights = append(highlights, highlight)
-				}
+			fileName, highlight := l.toDocumentHighlight(ref)
+			if fileName == sourceFile.FileName() {
+				highlights = append(highlights, highlight)
 			}
 		}
 	}
 	return highlights
 }
 
-func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *lsproto.DocumentHighlight) {
+func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *lsproto.DocumentHighlight) {
 	entry = l.resolveEntry(entry)
 
 	kind := lsproto.DocumentHighlightKindRead
@@ -557,12 +556,9 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 
 	var keywords []*ast.Node
 
-	modifiers := fun.Modifiers()
-	if modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == ast.KindAsyncKeyword {
-				keywords = append(keywords, modifier)
-			}
+	for _, modifier := range fun.ModifierNodes() {
+		if modifier.Kind == ast.KindAsyncKeyword {
+			keywords = append(keywords, modifier)
 		}
 	}
 
@@ -679,11 +675,9 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 }
 
 func findModifier(node *ast.Node, kind ast.Kind) *ast.Node {
-	if modifiers := node.Modifiers(); modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == kind {
-				return modifier
-			}
+	for _, modifier := range node.ModifierNodes() {
+		if modifier.Kind == kind {
+			return modifier
 		}
 	}
 	return nil

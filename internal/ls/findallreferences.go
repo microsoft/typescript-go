@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -51,10 +52,10 @@ type refInfo struct {
 
 type SymbolAndEntries struct {
 	definition *Definition
-	references []*referenceEntry
+	references []*ReferenceEntry
 }
 
-func NewSymbolAndEntries(kind definitionKind, node *ast.Node, symbol *ast.Symbol, references []*referenceEntry) *SymbolAndEntries {
+func NewSymbolAndEntries(kind DefinitionKind, node *ast.Node, symbol *ast.Symbol, references []*ReferenceEntry) *SymbolAndEntries {
 	return &SymbolAndEntries{
 		&Definition{
 			Kind:   kind,
@@ -65,19 +66,19 @@ func NewSymbolAndEntries(kind definitionKind, node *ast.Node, symbol *ast.Symbol
 	}
 }
 
-type definitionKind int
+type DefinitionKind int
 
 const (
-	definitionKindSymbol               definitionKind = 0
-	definitionKindLabel                definitionKind = 1
-	definitionKindKeyword              definitionKind = 2
-	definitionKindThis                 definitionKind = 3
-	definitionKindString               definitionKind = 4
-	definitionKindTripleSlashReference definitionKind = 5
+	definitionKindSymbol               DefinitionKind = 0
+	definitionKindLabel                DefinitionKind = 1
+	definitionKindKeyword              DefinitionKind = 2
+	definitionKindThis                 DefinitionKind = 3
+	definitionKindString               DefinitionKind = 4
+	definitionKindTripleSlashReference DefinitionKind = 5
 )
 
 type Definition struct {
-	Kind               definitionKind
+	Kind               DefinitionKind
 	symbol             *ast.Symbol
 	node               *ast.Node
 	tripleSlashFileRef *tripleSlashDefinition
@@ -98,7 +99,7 @@ const (
 	entryKindSearchedPropertyFoundLocal entryKind = 5
 )
 
-type referenceEntry struct {
+type ReferenceEntry struct {
 	kind      entryKind
 	node      *ast.Node
 	context   *ast.Node // !!! ContextWithStartAndEndNode, optional
@@ -106,41 +107,41 @@ type referenceEntry struct {
 	textRange *lsproto.Range
 }
 
-func (l *LanguageService) getRangeOfEntry(entry *referenceEntry) *lsproto.Range {
+func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) *lsproto.Range {
 	return l.resolveEntry(entry).textRange
 }
 
-func (l *LanguageService) getFileNameOfEntry(entry *referenceEntry) string {
+func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) string {
 	return l.resolveEntry(entry).fileName
 }
 
-func (l *LanguageService) resolveEntry(entry *referenceEntry) *referenceEntry {
+func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
 	if entry.textRange == nil {
 		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = l.getLspRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
 		entry.fileName = sourceFile.FileName()
 	}
 	return entry
 }
 
-func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *referenceEntry {
+func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *ReferenceEntry {
 	// !!! used in not-yet implemented features
-	return &referenceEntry{
+	return &ReferenceEntry{
 		kind:      entryKindRange,
 		fileName:  file.FileName(),
 		textRange: l.createLspRangeFromBounds(start, end, file),
 	}
 }
 
-func newNodeEntryWithKind(node *ast.Node, kind entryKind) *referenceEntry {
+func newNodeEntryWithKind(node *ast.Node, kind entryKind) *ReferenceEntry {
 	e := newNodeEntry(node)
 	e.kind = kind
 	return e
 }
 
-func newNodeEntry(node *ast.Node) *referenceEntry {
+func newNodeEntry(node *ast.Node) *ReferenceEntry {
 	// creates nodeEntry with `kind == entryKindNode`
-	return &referenceEntry{
+	return &ReferenceEntry{
 		kind:    entryKindNode,
 		node:    core.OrElse(node.Name(), node),
 		context: getContextNodeForNodeEntry(node),
@@ -260,7 +261,16 @@ func getContextNode(node *ast.Node) *ast.Node {
 }
 
 // utils
-func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+	if sourceFile == nil {
+		sourceFile = ast.GetSourceFileOfNode(node)
+	}
+	textRange := getRangeOfNode(node, sourceFile, endNode)
+	return l.createLspRangeFromRange(textRange, sourceFile)
+}
+
+// `getTextSpan`
+func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
@@ -276,7 +286,7 @@ func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceF
 	if endNode != nil && endNode.Kind == ast.KindCaseBlock {
 		end = endNode.Pos()
 	}
-	return l.createLspRangeFromBounds(start, end, sourceFile)
+	return core.NewTextRange(start, end)
 }
 
 func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
@@ -420,13 +430,13 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
+func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams, clientSupportsLink bool) (lsproto.ImplementationResponse, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	var seenNodes collections.Set[*ast.Node]
-	var entries []*referenceEntry
+	var entries []*ReferenceEntry
 	queue := l.getImplementationReferenceEntries(ctx, program, node, position)
 	for len(queue) != 0 {
 		if ctx.Err() != nil {
@@ -442,14 +452,18 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 		}
 	}
 
+	if clientSupportsLink {
+		links := l.convertEntriesToLocationLinks(entries)
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
+	}
 	locations := l.convertEntriesToLocations(entries)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context, program *compiler.Program, node *ast.Node, position int) []*referenceEntry {
+func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context, program *compiler.Program, node *ast.Node, position int) []*ReferenceEntry {
 	options := refOptions{use: referenceUseReferences, implementations: true}
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
-	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
+	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 }
 
 func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams) (lsproto.WorkspaceEditOrNull, error) {
@@ -461,12 +475,12 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	}
 	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
-	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
+	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 	for _, entry := range entries {
-		uri := FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
 			NewText: l.getTextForRename(node, entry, params.NewName, checker),
@@ -480,7 +494,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	}, nil
 }
 
-func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *referenceEntry, newText string, checker *checker.Checker) string {
+func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, checker *checker.Checker) string {
 	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
 		node := entry.node
 		kind := entry.kind
@@ -533,20 +547,58 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 	return l.convertEntriesToLocations(s.references)
 }
 
-func (l *LanguageService) convertEntriesToLocations(entries []*referenceEntry) []lsproto.Location {
+func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
 		locations[i] = lsproto.Location{
-			Uri:   FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
+			Uri:   lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
 			Range: *l.getRangeOfEntry(entry),
 		}
 	}
 	return locations
 }
 
+func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
+	links := make([]*lsproto.LocationLink, len(entries))
+	for i, entry := range entries {
+		var targetSelectionRange, targetRange *lsproto.Range
+
+		// For entries with nodes, compute ranges directly from the node
+		if entry.node != nil {
+			sourceFile := ast.GetSourceFileOfNode(entry.node)
+			entry.fileName = sourceFile.FileName()
+
+			// Get the selection range (the actual reference)
+			selectionTextRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+			targetSelectionRange = l.createLspRangeFromRange(selectionTextRange, sourceFile)
+
+			// Get the context range (broader scope including declaration context)
+			contextNode := core.OrElse(getContextNode(entry.node), entry.node)
+			contextTextRange := toContextRange(&selectionTextRange, sourceFile, contextNode)
+			if contextTextRange != nil {
+				targetRange = l.createLspRangeFromRange(*contextTextRange, sourceFile)
+			} else {
+				targetRange = targetSelectionRange
+			}
+		} else {
+			// For range entries, use the pre-computed range
+			l.resolveEntry(entry)
+			targetSelectionRange = entry.textRange
+			targetRange = targetSelectionRange
+		}
+
+		links[i] = &lsproto.LocationLink{
+			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
+			TargetRange:          *targetRange,
+			TargetSelectionRange: *targetSelectionRange,
+		}
+	}
+	return links
+}
+
 func (l *LanguageService) mergeReferences(program *compiler.Program, referencesToMerge ...[]*SymbolAndEntries) []*SymbolAndEntries {
 	result := []*SymbolAndEntries{}
-	getSourceFileIndexOfEntry := func(program *compiler.Program, entry *referenceEntry) int {
+	getSourceFileIndexOfEntry := func(program *compiler.Program, entry *ReferenceEntry) int {
 		var sourceFile *ast.SourceFile
 		if entry.kind == entryKindRange {
 			sourceFile = program.GetSourceFile(entry.fileName)
@@ -582,14 +634,14 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 
 			reference := result[refIndex]
 			sortedRefs := append(reference.references, entry.references...)
-			slices.SortStableFunc(sortedRefs, func(entry1, entry2 *referenceEntry) int {
+			slices.SortStableFunc(sortedRefs, func(entry1, entry2 *ReferenceEntry) int {
 				entry1File := getSourceFileIndexOfEntry(program, entry1)
 				entry2File := getSourceFileIndexOfEntry(program, entry2)
 				if entry1File != entry2File {
 					return cmp.Compare(entry1File, entry2File)
 				}
 
-				return CompareRanges(l.getRangeOfEntry(entry1), l.getRangeOfEntry(entry2))
+				return lsproto.CompareRanges(l.getRangeOfEntry(entry1), l.getRangeOfEntry(entry2))
 			})
 			result[refIndex] = &SymbolAndEntries{
 				definition: reference.definition,
@@ -625,7 +677,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		}
 
 		if moduleSymbol := checker.GetMergedSymbol(resolvedRef.file.Symbol); moduleSymbol != nil {
-			return getReferencedSymbolsForModule(ctx, program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
+			return l.getReferencedSymbolsForModule(ctx, program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
 		}
 
 		// !!! not implemented
@@ -673,7 +725,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
-		return getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
+		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
 	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
@@ -700,7 +752,7 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ct
 	}
 	exportEquals := symbol.Exports[ast.InternalSymbolNameExportEquals]
 	// If exportEquals != nil, we're about to add references to `import("mod")` anyway, so don't double-count them.
-	moduleReferences := getReferencedSymbolsForModule(ctx, program, symbol, exportEquals != nil, sourceFiles, sourceFilesSet)
+	moduleReferences := l.getReferencedSymbolsForModule(ctx, program, symbol, exportEquals != nil, sourceFiles, sourceFilesSet)
 	if exportEquals == nil || !sourceFilesSet.Has(moduleSourceFileName) {
 		return moduleReferences
 	}
@@ -735,7 +787,7 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 	}
 
 	if node.Kind == ast.KindStaticKeyword && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
-		return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: node}, references: []*referenceEntry{newNodeEntry(node)}}}
+		return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: node}, references: []*ReferenceEntry{newNodeEntry(node)}}}
 	}
 
 	// Labels
@@ -767,7 +819,7 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Node) []*SymbolAndEntries {
 	sourceFile := ast.GetSourceFileOfNode(container)
 	labelName := targetLabel.Text()
-	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, labelName, container), func(node *ast.Node) *referenceEntry {
+	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, labelName, container), func(node *ast.Node) *ReferenceEntry {
 		// Only pick labels that are either the target label, or have a target that is the target label
 		if node == targetLabel.AsNode() || (isJumpStatementTarget(node) && getTargetLabel(node, labelName) == targetLabel) {
 			return newNodeEntry(node)
@@ -839,10 +891,10 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 					return false
 				})
 		}),
-		func(n *ast.Node) *referenceEntry { return newNodeEntry(n) },
+		func(n *ast.Node) *ReferenceEntry { return newNodeEntry(n) },
 	)
 
-	thisParameter := core.FirstNonNil(references, func(ref *referenceEntry) *ast.Node {
+	thisParameter := core.FirstNonNil(references, func(ref *ReferenceEntry) *ast.Node {
 		if ref.node.Parent.Kind == ast.KindParameter {
 			return ref.node
 		}
@@ -871,7 +923,7 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 	}
 
 	sourceFile := ast.GetSourceFileOfNode(searchSpaceNode)
-	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "super", searchSpaceNode), func(node *ast.Node) *referenceEntry {
+	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "super", searchSpaceNode), func(node *ast.Node) *ReferenceEntry {
 		if node.Kind != ast.KindSuperKeyword {
 			return nil
 		}
@@ -891,8 +943,8 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 }
 
 func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
-	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*referenceEntry {
-		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "meta", sourceFile.AsNode()), func(node *ast.Node) *referenceEntry {
+	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*ReferenceEntry {
+		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "meta", sourceFile.AsNode()), func(node *ast.Node) *ReferenceEntry {
 			parent := node.Parent
 			if ast.IsImportMeta(parent) {
 				return newNodeEntry(parent)
@@ -908,9 +960,9 @@ func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEn
 
 func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.Kind, filterReadOnlyTypeOperator bool) []*SymbolAndEntries {
 	// references is a list of NodeEntry
-	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*referenceEntry {
+	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*ReferenceEntry {
 		// cancellationToken.throwIfCancellationRequested();
-		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, scanner.TokenToString(keywordKind), sourceFile.AsNode()), func(referenceLocation *ast.Node) *referenceEntry {
+		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, scanner.TokenToString(keywordKind), sourceFile.AsNode()), func(referenceLocation *ast.Node) *ReferenceEntry {
 			if referenceLocation.Kind == keywordKind && (!filterReadOnlyTypeOperator || isReadonlyTypeOperator(referenceLocation)) {
 				return newNodeEntry(referenceLocation)
 			}
@@ -1004,9 +1056,9 @@ func findFirstJsxNode(root *ast.Node) *ast.Node {
 	return visit(root)
 }
 
-func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*referenceEntry {
+func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*ReferenceEntry {
 	// !!! not implemented
-	return []*referenceEntry{}
+	return []*ReferenceEntry{}
 }
 
 func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *ast.Symbol, checker *checker.Checker) *ast.Symbol {
@@ -1021,14 +1073,14 @@ func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *
 	return nil
 }
 
-func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
+func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
 	debug.Assert(symbol.ValueDeclaration != nil)
 
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 
 	moduleRefs := findModuleReferences(program, sourceFiles, symbol, checker)
-	references := core.MapNonNil(moduleRefs, func(reference ModuleReference) *referenceEntry {
+	references := core.MapNonNil(moduleRefs, func(reference ModuleReference) *ReferenceEntry {
 		switch reference.kind {
 		case ModuleReferenceKindImport:
 			parent := reference.literal.Parent
@@ -1062,10 +1114,11 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 			}
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:
-			// <reference path> or <reference types>
-			// We can't easily create a proper range entry here without access to LanguageService,
-			// but we can create a node-based entry pointing to the source file which will be resolved later
-			return newNodeEntry(reference.referencingFile.AsNode())
+			return &ReferenceEntry{
+				kind:      entryKindRange,
+				fileName:  reference.referencingFile.FileName(),
+				textRange: l.createLspRangeFromBounds(reference.ref.Pos(), reference.ref.End(), reference.referencingFile),
+			}
 		}
 		return nil
 	})
@@ -1097,7 +1150,7 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 				var node *ast.Node
 				// At `module.exports = ...`, reference node is `module`
 				if ast.IsBinaryExpression(decl) && ast.IsPropertyAccessExpression(decl.AsBinaryExpression().Left) {
-					node = decl.AsBinaryExpression().Left.AsPropertyAccessExpression().Expression
+					node = decl.AsBinaryExpression().Left.Expression()
 				} else if ast.IsExportAssignment(decl) {
 					// Find the export keyword
 					node = findChildOfKind(decl, ast.KindExportKeyword, sourceFile)
@@ -1119,7 +1172,7 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 			references: references,
 		}}
 	}
-	return nil
+	return []*SymbolAndEntries{}
 }
 
 func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
@@ -1357,7 +1410,7 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 	shorthandSymbol := checker.GetShorthandAssignmentValueSymbol(refSymbol.ValueDeclaration)
 	if shorthandSymbol != nil && len(shorthandSymbol.Declarations) > 0 {
 		for _, declaration := range shorthandSymbol.Declarations {
-			if getMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
+			if ast.GetMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
 				addReference(declaration)
 			}
 		}
@@ -1365,7 +1418,7 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 }
 
 func climbPastPropertyAccess(node *ast.Node) *ast.Node {
-	if isRightSideOfPropertyAccess(node) {
+	if ast.IsRightSideOfPropertyAccess(node) {
 		return node.Parent
 	}
 	return node
@@ -1375,14 +1428,14 @@ func isNewExpressionTarget(node *ast.Node) bool {
 	if node.Parent == nil {
 		return false
 	}
-	return node.Parent.Kind == ast.KindNewExpression && node.Parent.AsNewExpression().Expression == node
+	return node.Parent.Kind == ast.KindNewExpression && node.Parent.Expression() == node
 }
 
 func isCallExpressionTarget(node *ast.Node) bool {
 	if node.Parent == nil {
 		return false
 	}
-	return node.Parent.Kind == ast.KindCallExpression && node.Parent.AsCallExpression().Expression == node
+	return node.Parent.Kind == ast.KindCallExpression && node.Parent.Expression() == node
 }
 
 func isMethodOrAccessor(node *ast.Node) bool {

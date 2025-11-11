@@ -182,9 +182,25 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
-	switch compilerTest.options.GetEmitModuleKind() {
+	switch compilerTest.options.Module {
 	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
-		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.GetEmitModuleKind())
+		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.Module)
+	}
+	switch compilerTest.options.ModuleResolution {
+	case core.ModuleResolutionKindNode10, core.ModuleResolutionKindClassic:
+		t.Skipf("Skipping test %s with unsupported module resolution kind %d", testName, compilerTest.options.ModuleResolution)
+	}
+	if compilerTest.options.ESModuleInterop.IsFalse() {
+		t.Skipf("Skipping test %s with esModuleInterop=false", testName)
+	}
+	if compilerTest.options.AllowSyntheticDefaultImports.IsFalse() {
+		t.Skipf("Skipping test %s with allowSyntheticDefaultImports=false", testName)
+	}
+	if compilerTest.options.BaseUrl != "" {
+		t.Skipf("Skipping test %s with baseUrl set", testName)
+	}
+	if compilerTest.options.OutFile != "" {
+		t.Skipf("Skipping test %s with outFile set", testName)
 	}
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
@@ -193,8 +209,6 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	compilerTest.verifySourceMapRecord(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyModuleResolution(t, r.testSuitName, r.isSubmodule)
-	// !!! Verify all baselines
-
 	compilerTest.verifyUnionOrdering(t)
 	compilerTest.verifyParentPointers(t)
 }
@@ -352,9 +366,8 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
-			Subfolder:           suiteName,
-			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptionsForDiagnostics(),
+			Subfolder:   suiteName,
+			IsSubmodule: isSubmodule,
 			DiffFixupOld: func(old string) string {
 				var sb strings.Builder
 				sb.Grow(len(old))
@@ -394,11 +407,6 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 		return
 	}
 
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("output", func(t *testing.T) {
 		if msg, ok := skippedEmitTests[c.basename]; ok {
 			t.Skip(msg)
@@ -426,11 +434,6 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 }
 
 func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isSubmodule bool) {
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("sourcemap", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map output for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -451,11 +454,6 @@ func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isS
 }
 
 func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string, isSubmodule bool) {
-	if c.options.OutFile != "" {
-		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
-		return
-	}
-
 	t.Run("sourcemap record", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map record for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -530,7 +528,8 @@ func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil
 
 func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	t.Run("union ordering", func(t *testing.T) {
-		checkers, done := c.result.Program.GetTypeCheckers(t.Context())
+		p := c.result.Program.Program()
+		checkers, done := p.GetTypeCheckers(t.Context())
 		defer done()
 		for _, c := range checkers {
 			for union := range c.UnionTypes() {
@@ -584,18 +583,4 @@ func (c *compilerTest) verifyParentPointers(t *testing.T) {
 			f.AsNode().ForEachChild(verifier)
 		}
 	})
-}
-
-func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
-	if len(c.result.Program.UnsupportedExtensions()) != 0 {
-		return true
-	}
-	if c.options.BaseUrl != "" {
-		return true
-	}
-	if c.options.OutFile != "" {
-		return true
-	}
-
-	return false
 }

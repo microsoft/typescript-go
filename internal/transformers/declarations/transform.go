@@ -120,7 +120,8 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
 		ast.KindJSExportAssignment,
-		ast.KindExportAssignment:
+		ast.KindExportAssignment,
+		ast.KindCommonJSExport:
 		return tx.visitDeclarationStatements(node)
 	// statements we elide
 	case ast.KindBreakStatement,
@@ -403,7 +404,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 						return nil
 					}
 				}
-			} else if !tx.resolver.IsLateBound(tx.EmitContext().ParseNode(input)) || !ast.IsEntityNameExpression(input.Name().AsComputedPropertyName().Expression) {
+			} else if !tx.resolver.IsLateBound(tx.EmitContext().ParseNode(input)) || !ast.IsEntityNameExpression(input.Name().Expression()) {
 				return nil
 			}
 		}
@@ -528,7 +529,7 @@ func (tx *DeclarationTransformer) checkName(node *ast.Node) {
 	}
 	tx.state.errorNameNode = node.Name()
 	debug.Assert(ast.HasDynamicName(node)) // Should only be called with dynamic names
-	entityName := node.Name().AsComputedPropertyName().Expression
+	entityName := node.Name().Expression()
 	tx.checkEntityNameVisibility(entityName, tx.enclosingDeclaration)
 	if !tx.suppressNewDiagnosticContexts {
 		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
@@ -921,15 +922,89 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			input.Modifiers(),
 			input.IsTypeOnly(),
 			input.AsExportDeclaration().ExportClause,
-			tx.rewriteModuleSpecifier(input, input.AsExportDeclaration().ModuleSpecifier),
+			tx.rewriteModuleSpecifier(input, input.ModuleSpecifier()),
 			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
 		)
+	case ast.KindCommonJSExport:
+		if ast.IsSourceFile(input.Parent) {
+			tx.resultHasExternalModuleIndicator = true
+		}
+		tx.resultHasScopeMarker = true
+		name := input.AsCommonJSExport().Name()
+		if ast.IsIdentifier(name) {
+			if name.Text() == "default" {
+				// const _default: Type; export default _default;
+				newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+				tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+					return &SymbolAccessibilityDiagnostic{
+						diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+						errorNode:         input,
+					}
+				}
+				tx.tracker.PushErrorFallbackNode(input)
+				type_ := tx.ensureType(input, false)
+				varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+				tx.tracker.PopErrorFallbackNode()
+				var modList *ast.ModifierList
+				if tx.needsDeclare {
+					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+				} else {
+					modList = tx.Factory().NewModifierList([]*ast.Node{})
+				}
+				statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+
+				assignment := tx.Factory().NewExportAssignment(input.Modifiers(), false, nil, newId)
+				// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+				tx.preserveJsDoc(statement, input)
+				tx.removeAllComments(assignment)
+				return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+			} else {
+				// export var name: Type
+				tx.tracker.PushErrorFallbackNode(input)
+				type_ := tx.ensureType(input, false)
+				varDecl := tx.Factory().NewVariableDeclaration(name, nil, type_, nil)
+				tx.tracker.PopErrorFallbackNode()
+				var modList *ast.ModifierList
+				if tx.needsDeclare {
+					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword), tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+				} else {
+					modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
+				}
+				return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+			}
+		} else {
+			// const _exported: Type; export {_exported as "name"};
+			newId := tx.Factory().NewUniqueNameEx("_exported", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+			tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+				return &SymbolAccessibilityDiagnostic{
+					diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+					errorNode:         input,
+				}
+			}
+			tx.tracker.PushErrorFallbackNode(input)
+			type_ := tx.ensureType(input, false)
+			varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+			tx.tracker.PopErrorFallbackNode()
+			var modList *ast.ModifierList
+			if tx.needsDeclare {
+				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+			} else {
+				modList = tx.Factory().NewModifierList([]*ast.Node{})
+			}
+			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+
+			assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
+			// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+			tx.preserveJsDoc(statement, input)
+			tx.removeAllComments(assignment)
+			return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+		}
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if ast.IsSourceFile(input.Parent) {
 			tx.resultHasExternalModuleIndicator = true
 		}
 		tx.resultHasScopeMarker = true
-		if input.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+		if input.Expression().Kind == ast.KindIdentifier {
 			return input
 		}
 		// expression is non-identifier, create _default typed variable to reference
@@ -1187,7 +1262,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		oldHasScopeFix := tx.resultHasScopeMarker
 		tx.resultHasScopeMarker = false
 		tx.needsScopeFixMarker = false
-		statements := tx.Visitor().VisitNodes(inner.AsModuleBlock().Statements)
+		statements := tx.Visitor().VisitNodes(inner.StatementList())
 		lateStatements := tx.transformAndReplaceLatePaintedStatements(statements)
 		if input.Flags&ast.NodeFlagsAmbient != 0 {
 			tx.needsScopeFixMarker = false // If it was `declare`'d everything is implicitly exported already, ignore late printed "privates"
@@ -1268,7 +1343,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 
 	modifiers := tx.ensureModifiers(input.AsNode())
 	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
-	ctor := getFirstConstructorWithBody(input.AsNode())
+	ctor := ast.GetFirstConstructorWithBody(input.AsNode())
 	var parameterProperties []*ast.Node
 	if ctor != nil {
 		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
@@ -1283,7 +1358,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 				updated := tx.Factory().NewPropertyDeclaration(
 					tx.ensureModifiers(param),
 					param.Name(),
-					param.AsParameterDeclaration().QuestionToken,
+					param.QuestionToken(),
 					tx.ensureType(param, false),
 					tx.ensureNoInitializer(param),
 				)
@@ -1335,8 +1410,8 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
 		oldId := "default"
-		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().AsIdentifier().Text) > 0 {
-			oldId = input.Name().AsIdentifier().Text
+		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().Text()) > 0 {
+			oldId = input.Name().Text()
 		}
 		newId := tx.Factory().NewUniqueNameEx(oldId+"_base", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
@@ -1507,6 +1582,9 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
+	if ast.IsImplicitlyExportedJSTypeAlias(node) {
+		additions |= ast.ModifierFlagsExport
+	}
 	return maskModifierFlags(tx.host, node, mask, additions)
 }
 
@@ -1597,8 +1675,8 @@ func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Nod
 		return node
 	} else {
 		// TODO: visitor to avoid always making new nodes?
-		elements := make([]*ast.Node, 0, len(node.AsBindingPattern().Elements.Nodes))
-		for _, elem := range node.AsBindingPattern().Elements.Nodes {
+		elements := make([]*ast.Node, 0, len(node.Elements()))
+		for _, elem := range node.Elements() {
 			if elem.Kind == ast.KindOmittedExpression {
 				elements = append(elements, elem)
 				continue
@@ -1709,7 +1787,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 	}
 	// Named imports (optionally with visible default)
 	bindingList := core.Filter(
-		decl.ImportClause.AsImportClause().NamedBindings.AsNamedImports().Elements.Nodes,
+		decl.ImportClause.AsImportClause().NamedBindings.Elements(),
 		func(b *ast.Node) bool {
 			return tx.resolver.IsDeclarationVisible(b)
 		},

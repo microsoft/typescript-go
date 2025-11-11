@@ -1141,3 +1141,7 @@ func StartsWithDirectory(fileName string, directoryName string, useCaseSensitive
 	return strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"/") ||
 		strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"\\")
 }
+
+func CompareNumberOfDirectorySeparators(path1, path2 string) int {
+	return cmp.Compare(strings.Count(path1, "/"), strings.Count(path2, "/"))
+}

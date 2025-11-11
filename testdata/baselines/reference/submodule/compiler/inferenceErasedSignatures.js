@@ -56,6 +56,8 @@ type T2 = GetT1<StructuralVersion>; // number
 
 
 //// [inferenceErasedSignatures.js]
+"use strict";
+// Repro from #37163
 class SomeAbstractClass extends SomeBaseClass {
     foo;
     bar;

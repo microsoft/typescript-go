@@ -17,6 +17,9 @@ Show all compiler options.
 [94m--build, -b[39m
 Build one or more projects and their dependencies, if out of date
 
+[94m--checkers[39m
+Set the number of checkers per project.
+
 [94m--help, -h[39m
 Print this message.
 
@@ -84,7 +87,7 @@ default: undefined
 [94m--moduleResolution[39m
 Specify how TypeScript looks up a file from a given module specifier.
 one of: node16, nodenext, bundler
-default: module === `AMD` or `UMD` or `System` or `ES6`, then `Classic`, Otherwise `Node`
+default: `nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`.
 
 [94m--moduleSuffixes[39m
 List of file name suffixes to search when resolving a module.

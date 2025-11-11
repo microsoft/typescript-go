@@ -69,7 +69,7 @@ jobs:
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
-          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
+          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=azure-linux-3']
             name: 'race mode'
             race: true
             skip: ${{ github.event_name == 'merge_group' }}
@@ -157,7 +157,7 @@ jobs:
           npx hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
           name: ${{ matrix.config.os }}-${{ (matrix.config.race && 'race') || 'norace' }}-new-baselines-artifact
@@ -243,7 +243,16 @@ jobs:
       - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/generate.mts
 
       - name: Regenerate fourslash tests and update failing test list
-        run: npm run updatefailing
+        run: |
+          echo "" > ./internal/fourslash/_scripts/failingTests.txt
+          npm run convertfourslash || true
+          npx hereby test || true
+          npx hereby baseline-accept || true
+          npm run updatefailing || true
+          npx hereby baseline-accept || true
+          rm -rf testdata/baselines/reference/fourslash || true
+          npx hereby test || true
+          npx hereby baseline-accept || true
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
@@ -339,7 +348,7 @@ jobs:
 
       - name: Upload baseline diff artifact
         if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: fix_baselines.patch
           path: fix_baselines.patch

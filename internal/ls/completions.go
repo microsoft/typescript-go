@@ -22,8 +22,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -86,7 +86,7 @@ type completionDataData struct {
 	keywordFilters               KeywordCompletionFilters
 	literals                     []literalValue
 	symbolToOriginInfoMap        map[int]*symbolOriginInfo
-	symbolToSortTextMap          map[ast.SymbolId]sortText
+	symbolToSortTextMap          map[ast.SymbolId]SortText
 	recommendedCompletion        *ast.Symbol
 	previousToken                *ast.Node
 	contextToken                 *ast.Node
@@ -177,25 +177,25 @@ var noCommaCommitCharacters = []string{".", ";"}
 
 var emptyCommitCharacters = []string{}
 
-type sortText string
+type SortText string
 
 const (
-	SortTextLocalDeclarationPriority         sortText = "10"
-	SortTextLocationPriority                 sortText = "11"
-	SortTextOptionalMember                   sortText = "12"
-	SortTextMemberDeclaredBySpreadAssignment sortText = "13"
-	SortTextSuggestedClassMembers            sortText = "14"
-	SortTextGlobalsOrKeywords                sortText = "15"
-	SortTextAutoImportSuggestions            sortText = "16"
-	SortTextClassMemberSnippets              sortText = "17"
-	SortTextJavascriptIdentifiers            sortText = "18"
+	SortTextLocalDeclarationPriority         SortText = "10"
+	SortTextLocationPriority                 SortText = "11"
+	SortTextOptionalMember                   SortText = "12"
+	SortTextMemberDeclaredBySpreadAssignment SortText = "13"
+	SortTextSuggestedClassMembers            SortText = "14"
+	SortTextGlobalsOrKeywords                SortText = "15"
+	SortTextAutoImportSuggestions            SortText = "16"
+	SortTextClassMemberSnippets              SortText = "17"
+	SortTextJavascriptIdentifiers            SortText = "18"
 )
 
-func DeprecateSortText(original sortText) sortText {
+func DeprecateSortText(original SortText) SortText {
 	return "z" + original
 }
 
-func sortBelow(original sortText) sortText {
+func sortBelow(original SortText) SortText {
 	return original + "1"
 }
 
@@ -459,7 +459,7 @@ func (l *LanguageService) getCompletionData(
 	typeChecker *checker.Checker,
 	file *ast.SourceFile,
 	position int,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 ) completionData {
 	inCheckedFile := isCheckedFile(file, l.GetProgram().Options())
 
@@ -709,7 +709,7 @@ func (l *LanguageService) getCompletionData(
 	var symbols []*ast.Symbol
 	// Keys are indexes of `symbols`.
 	symbolToOriginInfoMap := map[int]*symbolOriginInfo{}
-	symbolToSortTextMap := map[ast.SymbolId]sortText{}
+	symbolToSortTextMap := map[ast.SymbolId]SortText{}
 	var seenPropertySymbols collections.Set[ast.SymbolId]
 	importSpecifierResolver := &importSpecifierResolverForCompletions{SourceFile: file, UserPreferences: preferences, l: l}
 	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
@@ -794,7 +794,7 @@ func (l *LanguageService) getCompletionData(
 							kind:            getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberExport, insertQuestionDot),
 							isDefaultExport: false,
 							fileName:        fileName,
-							data: symbolOriginInfoExport{
+							data: &symbolOriginInfoExport{
 								moduleSymbol:    moduleSymbol,
 								symbolName:      firstAccessibleSymbol.Name,
 								exportName:      firstAccessibleSymbol.Name,
@@ -1051,10 +1051,7 @@ func (l *LanguageService) getCompletionData(
 			numberIndexType := typeChecker.GetNumberIndexType(t)
 			isNewIdentifierLocation = stringIndexType != nil || numberIndexType != nil
 			typeMembers = getPropertiesForObjectExpression(instantiatedType, completionsType, objectLikeContainer, typeChecker)
-			properties := objectLikeContainer.AsObjectLiteralExpression().Properties
-			if properties != nil {
-				existingMembers = properties.Nodes
-			}
+			existingMembers = objectLikeContainer.Properties()
 
 			if len(typeMembers) == 0 {
 				// Edge case: If NumberIndexType exists
@@ -1107,10 +1104,7 @@ func (l *LanguageService) getCompletionData(
 						)
 					},
 				)
-				elements := objectLikeContainer.AsBindingPattern().Elements
-				if elements != nil {
-					existingMembers = elements.Nodes
-				}
+				existingMembers = objectLikeContainer.Elements()
 			}
 		}
 
@@ -1940,7 +1934,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
-	useSemicolons := probablyUsesSemicolons(file)
+	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
 	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
@@ -1974,7 +1968,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			originalSortText = SortTextLocationPriority
 		}
 
-		var sortText sortText
+		var sortText SortText
 		if isDeprecated(symbol, typeChecker) {
 			sortText = DeprecateSortText(originalSortText)
 		} else {
@@ -2018,7 +2012,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 
 func completionNameForLiteral(
 	file *ast.SourceFile,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	literal literalValue,
 ) string {
 	switch literal := literal.(type) {
@@ -2035,7 +2029,7 @@ func completionNameForLiteral(
 
 func createCompletionItemForLiteral(
 	file *ast.SourceFile,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	literal literalValue,
 ) *lsproto.CompletionItem {
 	return &lsproto.CompletionItem{
@@ -2050,7 +2044,7 @@ func (l *LanguageService) createCompletionItem(
 	ctx context.Context,
 	typeChecker *checker.Checker,
 	symbol *ast.Symbol,
-	sortText sortText,
+	sortText SortText,
 	replacementToken *ast.Node,
 	data *completionDataData,
 	position int,
@@ -2098,7 +2092,7 @@ func (l *LanguageService) createCompletionItem(
 			insertText = name
 		}
 
-		if insertQuestionDot || data.propertyAccessToConvert.AsPropertyAccessExpression().QuestionDotToken != nil {
+		if insertQuestionDot || data.propertyAccessToConvert.QuestionDotToken() != nil {
 			insertText = "?." + insertText
 		}
 
@@ -2251,13 +2245,13 @@ func (l *LanguageService) createCompletionItem(
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
 		clientSupportsItemSnippet(clientOptions) &&
-		preferences.JsxAttributeCompletionStyle != JsxAttributeCompletionStyleNone &&
+		preferences.JsxAttributeCompletionStyle != lsutil.JsxAttributeCompletionStyleNone &&
 		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
-		useBraces := preferences.JsxAttributeCompletionStyle == JsxAttributeCompletionStyleBraces
+		useBraces := preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleBraces
 		t := typeChecker.GetTypeOfSymbolAtLocation(symbol, data.location)
 
 		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
-		if preferences.JsxAttributeCompletionStyle == JsxAttributeCompletionStyleAuto &&
+		if preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleAuto &&
 			!t.IsBooleanLike() &&
 			!(t.IsUnion() && core.Some(t.Types(), (*checker.Type).IsBooleanLike)) {
 			if t.IsStringLike() ||
@@ -2409,9 +2403,9 @@ func getFilterText(
 	dotAccessor string,
 ) string {
 	// Private field completion, e.g. label `#bar`.
-	if strings.HasPrefix(label, "#") {
+	if after, ok := strings.CutPrefix(label, "#"); ok {
 		if insertText != "" {
-			if strings.HasPrefix(insertText, "this.#") {
+			if after, ok := strings.CutPrefix(insertText, "this.#"); ok {
 				if wordStart == '#' {
 					// `method() { this.#| }`
 					// `method() { #| }`
@@ -2419,7 +2413,7 @@ func getFilterText(
 				} else {
 					// `method() { this.| }`
 					// `method() { | }`
-					return strings.TrimPrefix(insertText, "this.#")
+					return after
 				}
 			}
 		} else {
@@ -2429,7 +2423,7 @@ func getFilterText(
 			} else {
 				// `method() { this.| }`
 				// `method() { | }`
-				return strings.TrimPrefix(label, "#")
+				return after
 			}
 		}
 	}
@@ -3152,7 +3146,7 @@ func (l *LanguageService) createRangeFromStringLiteralLikeContent(file *ast.Sour
 	return l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file)
 }
 
-func quotePropertyName(file *ast.SourceFile, preferences *UserPreferences, name string) string {
+func quotePropertyName(file *ast.SourceFile, preferences *lsutil.UserPreferences, name string) string {
 	r, _ := utf8.DecodeRuneInString(name)
 	if unicode.IsDigit(r) {
 		return name
@@ -3187,7 +3181,7 @@ func isNamedImportsOrExports(node *ast.Node) bool {
 
 func generateIdentifierForArbitraryString(text string) string {
 	needsUnderscore := false
-	identifier := ""
+	var identifier strings.Builder
 	var ch rune
 	var size int
 
@@ -3202,9 +3196,9 @@ func generateIdentifierForArbitraryString(text string) string {
 		}
 		if size > 0 && validChar {
 			if needsUnderscore {
-				identifier += "_"
+				identifier.WriteRune('_')
 			}
-			identifier += string(ch)
+			identifier.WriteRune(ch)
 			needsUnderscore = false
 		} else {
 			needsUnderscore = true
@@ -3212,15 +3206,16 @@ func generateIdentifierForArbitraryString(text string) string {
 	}
 
 	if needsUnderscore {
-		identifier += "_"
+		identifier.WriteRune('_')
 	}
 
 	// Default to "_" if the provided text was empty
-	if identifier == "" {
+	id := identifier.String()
+	if id == "" {
 		return "_"
 	}
 
-	return identifier
+	return id
 }
 
 // Copied from vscode TS extension.
@@ -3292,7 +3287,7 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 			sliceEntryData.AutoImport != nil && sliceEntryData.AutoImport.ModuleSpecifier != "" &&
 			insertEntryData.AutoImport != nil && insertEntryData.AutoImport.ModuleSpecifier != "" {
 			// Sort same-named auto-imports by module specifier
-			result = compareNumberOfDirectorySeparators(
+			result = tspath.CompareNumberOfDirectorySeparators(
 				sliceEntryData.AutoImport.ModuleSpecifier,
 				insertEntryData.AutoImport.ModuleSpecifier,
 			)
@@ -3523,7 +3518,7 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 		tokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, contextToken.End())
 		currentLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, position)
 		if (ast.IsImportDeclaration(parent) ||
-			ast.IsExportDeclaration(parent) && parent.AsExportDeclaration().ModuleSpecifier != nil) &&
+			ast.IsExportDeclaration(parent) && parent.ModuleSpecifier() != nil) &&
 			contextToken == parent.ModuleSpecifier() &&
 			tokenLine == currentLine {
 			entries = append(entries, &lsproto.CompletionItem{
@@ -4000,10 +3995,10 @@ func filterObjectMembersList(
 
 		if ast.IsSpreadAssignment(member) {
 			setMemberDeclaredBySpreadAssignment(member, &membersDeclaredBySpreadAssignment, typeChecker)
-		} else if ast.IsBindingElement(member) && member.AsBindingElement().PropertyName != nil {
+		} else if ast.IsBindingElement(member) && member.PropertyName() != nil {
 			// include only identifiers in completion list
-			if member.AsBindingElement().PropertyName.Kind == ast.KindIdentifier {
-				existingName = member.AsBindingElement().PropertyName.Text()
+			if member.PropertyName().Kind == ast.KindIdentifier {
+				existingName = member.PropertyName().Text()
 			}
 		} else {
 			// TODO: Account for computed property name
@@ -4091,7 +4086,7 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 		}
 		return nil
 	case ast.KindEndOfFile:
-		stmtList := location.Parent.AsSourceFile().Statements
+		stmtList := location.Parent.StatementList()
 		if stmtList != nil && len(stmtList.Nodes) > 0 && ast.IsObjectTypeDeclaration(stmtList.Nodes[len(stmtList.Nodes)-1]) {
 			cls := stmtList.Nodes[len(stmtList.Nodes)-1]
 			if findChildOfKind(cls, ast.KindCloseBraceToken, file) == nil {
@@ -4494,7 +4489,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	name string,
 	insertText string,
 	filterText string,
-	sortText sortText,
+	sortText SortText,
 	elementKind ScriptElementKind,
 	kindModifiers collections.Set[ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
@@ -5033,6 +5028,19 @@ func GetCompletionItemData(item *lsproto.CompletionItem) (*CompletionItemData, e
 	return &itemData, nil
 }
 
+func getCompletionDocumentationFormat(clientOptions *lsproto.CompletionClientCapabilities) lsproto.MarkupKind {
+	if clientOptions == nil || clientOptions.CompletionItem == nil || clientOptions.CompletionItem.DocumentationFormat == nil {
+		// Default to plaintext if no preference specified
+		return lsproto.MarkupKindPlainText
+	}
+	formats := *clientOptions.CompletionItem.DocumentationFormat
+	if len(formats) == 0 {
+		return lsproto.MarkupKindPlainText
+	}
+	// Return the first (most preferred) format
+	return formats[0]
+}
+
 func (l *LanguageService) getCompletionItemDetails(
 	ctx context.Context,
 	program *compiler.Program,
@@ -5044,6 +5052,7 @@ func (l *LanguageService) getCompletionItemDetails(
 ) *lsproto.CompletionItem {
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
+	docFormat := getCompletionDocumentationFormat(clientOptions)
 	contextToken, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {
 		return l.getStringLiteralCompletionDetails(
@@ -5054,6 +5063,7 @@ func (l *LanguageService) getCompletionItemDetails(
 			file,
 			position,
 			contextToken,
+			docFormat,
 		)
 	}
 
@@ -5073,16 +5083,16 @@ func (l *LanguageService) getCompletionItemDetails(
 		request := *symbolCompletion.request
 		switch request := request.(type) {
 		case *completionDataJSDocTagName:
-			return createSimpleDetails(item, itemData.Name)
+			return createSimpleDetails(item, itemData.Name, docFormat)
 		case *completionDataJSDocTag:
-			return createSimpleDetails(item, itemData.Name)
+			return createSimpleDetails(item, itemData.Name, docFormat)
 		case *completionDataJSDocParameterName:
-			return createSimpleDetails(item, itemData.Name)
+			return createSimpleDetails(item, itemData.Name, docFormat)
 		case *completionDataKeyword:
 			if core.Some(request.keywordCompletions, func(c *lsproto.CompletionItem) bool {
 				return c.Label == itemData.Name
 			}) {
-				return createSimpleDetails(item, itemData.Name)
+				return createSimpleDetails(item, itemData.Name, docFormat)
 			}
 			return item
 		default:
@@ -5097,10 +5107,11 @@ func (l *LanguageService) getCompletionItemDetails(
 			checker,
 			symbolDetails.location,
 			actions,
+			docFormat,
 		)
 	case symbolCompletion.literal != nil:
 		literal := symbolCompletion.literal
-		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal))
+		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat)
 	case symbolCompletion.cases != nil:
 		// !!! exhaustive case completions
 		return item
@@ -5109,7 +5120,7 @@ func (l *LanguageService) getCompletionItemDetails(
 		if core.Some(allKeywordCompletions(), func(c *lsproto.CompletionItem) bool {
 			return c.Label == itemData.Name
 		}) {
-			return createSimpleDetails(item, itemData.Name)
+			return createSimpleDetails(item, itemData.Name, docFormat)
 		}
 		return item
 	}
@@ -5155,7 +5166,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		}
 	}
 
-	completionData := l.getCompletionData(ctx, ch, file, position, &UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	completionData := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
 	if completionData == nil {
 		return detailsData{}
 	}
@@ -5256,14 +5267,16 @@ func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker
 func createSimpleDetails(
 	item *lsproto.CompletionItem,
 	name string,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	return createCompletionDetails(item, name, "" /*documentation*/)
+	return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 }
 
 func createCompletionDetails(
 	item *lsproto.CompletionItem,
 	detail string,
 	documentation string,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	// !!! fill in additionalTextEdits from code actions
 	if item.Detail == nil && detail != "" {
@@ -5272,7 +5285,7 @@ func createCompletionDetails(
 	if documentation != "" {
 		item.Documentation = &lsproto.StringOrMarkupContent{
 			MarkupContent: &lsproto.MarkupContent{
-				Kind:  lsproto.MarkupKindMarkdown,
+				Kind:  docFormat,
 				Value: documentation,
 			},
 		}
@@ -5293,6 +5306,7 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	checker *checker.Checker,
 	location *ast.Node,
 	actions []codeAction,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	details := make([]string, 0, len(actions)+1)
 	edits := make([]*lsproto.TextEdit, 0, len(actions))
@@ -5300,12 +5314,12 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 		details = append(details, action.description)
 		edits = append(edits, action.changes...)
 	}
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat)
 	details = append(details, quickInfo)
 	if len(edits) != 0 {
 		item.AdditionalTextEdits = &edits
 	}
-	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation)
+	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation, docFormat)
 }
 
 // !!! snippets
@@ -5322,7 +5336,7 @@ func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *chec
 	// !!! origin.isTypeOnlyAlias
 	// entryId.source == CompletionSourceObjectLiteralMemberWithComma && contextToken
 
-	if symbolDetails.origin == nil {
+	if symbolDetails.origin == nil || symbolDetails.origin.data == nil {
 		return nil
 	}
 
@@ -5425,7 +5439,7 @@ func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Nod
 		result.replacementSpan = l.getSingleLineReplacementSpanForImportCompletionNode(candidate)
 		result.couldBeTypeOnlyImportSpecifier = couldBeTypeOnlyImportSpecifier(candidate, contextToken)
 		if ast.IsImportDeclaration(candidate) {
-			result.isTopLevelTypeOnly = candidate.AsImportDeclaration().ImportClause.IsTypeOnly()
+			result.isTopLevelTypeOnly = candidate.ImportClause().IsTypeOnly()
 		} else if candidate.Kind == ast.KindImportEqualsDeclaration {
 			result.isTopLevelTypeOnly = candidate.IsTypeOnly()
 		}
@@ -5735,7 +5749,7 @@ func getJSDocParameterCompletions(
 	position int,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	tagNameOnly bool,
 ) []*lsproto.CompletionItem {
 	currentToken := astnav.GetTokenAtPosition(file, position)
@@ -5877,7 +5891,7 @@ func getJSDocParamAnnotation(
 	isSnippet bool,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	tabstopCounter *int,
 ) string {
 	if isSnippet {
@@ -5963,7 +5977,7 @@ func generateJSDocParamTagsForDestructuring(
 	isSnippet bool,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 ) []string {
 	tabstopCounter := 1
 	if !isJS {
@@ -6003,7 +6017,7 @@ func jsDocParamPatternWorker(
 	isSnippet bool,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	counter *int,
 ) []string {
 	if ast.IsObjectBindingPattern(pattern) && dotDotDotToken == nil {
@@ -6072,7 +6086,7 @@ func jsDocParamElementWorker(
 	isSnippet bool,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	counter *int,
 ) []string {
 	if ast.IsIdentifier(element.Name()) { // `{ b }` or `{ b: newB }`
