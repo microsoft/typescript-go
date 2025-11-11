@@ -357,10 +357,15 @@ func getExportInfos(
 		// Get unique ID for the exported symbol
 		symbolID := ast.GetSymbolId(exportedSymbol)
 
+		moduleFileName := ""
+		if toFile != nil {
+			moduleFileName = toFile.FileName()
+		}
+
 		originalSymbolToExportInfos.Add(symbolID, &SymbolExportInfo{
 			symbol:            exportedSymbol,
 			moduleSymbol:      moduleSymbol,
-			moduleFileName:    core.IfElse(toFile != nil, toFile.FileName(), ""),
+			moduleFileName:    moduleFileName,
 			exportKind:        exportKind,
 			targetFlags:       ch.SkipAlias(exportedSymbol).Flags,
 			isFromPackageJson: isFromPackageJson,
