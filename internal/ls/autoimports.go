@@ -911,29 +911,9 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 		if existingImport.importKind != ImportKindNamed {
 			continue
 		}
-		var namespacePrefix string
-		declaration := existingImport.declaration
-		switch declaration.Kind {
-		case ast.KindVariableDeclaration, ast.KindImportEqualsDeclaration:
-			name := declaration.Name()
-			if declaration.Kind == ast.KindVariableDeclaration && (name == nil || name.Kind != ast.KindIdentifier) {
-				continue
-			}
-			namespacePrefix = name.Text()
-		case ast.KindJSDocImportTag, ast.KindImportDeclaration:
-			importClause := ast.GetImportClauseOfDeclaration(declaration)
-			if importClause == nil || importClause.NamedBindings == nil || importClause.NamedBindings.Kind != ast.KindNamespaceImport {
-				continue
-			}
-			namespacePrefix = importClause.NamedBindings.Name().Text()
-		default:
-			debug.AssertNever(declaration)
-		}
-		if namespacePrefix == "" {
-			continue
-		}
-		moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(declaration)
-		if moduleSpecifier != nil && moduleSpecifier.Text() != "" {
+		namespacePrefix := getNamespaceLikeImportText(existingImport.declaration)
+		moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(existingImport.declaration)
+		if namespacePrefix != "" && moduleSpecifier != nil && moduleSpecifier.Text() != "" {
 			return getUseNamespaceImport(
 				moduleSpecifier.Text(),
 				modulespecifiers.ResultKindNone,
@@ -943,6 +923,28 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 		}
 	}
 	return nil
+}
+
+func getNamespaceLikeImportText(declaration *ast.Statement) string {
+	switch declaration.Kind {
+	case ast.KindVariableDeclaration:
+		name := declaration.Name()
+		if name != nil && name.Kind == ast.KindIdentifier {
+			return name.Text()
+		}
+		return ""
+	case ast.KindImportEqualsDeclaration:
+		return declaration.Name().Text()
+	case ast.KindJSDocImportTag, ast.KindImportDeclaration:
+		importClause := ast.GetImportClauseOfDeclaration(declaration)
+		if importClause != nil && importClause.NamedBindings != nil && importClause.NamedBindings.Kind == ast.KindNamespaceImport {
+			return importClause.NamedBindings.Name().Text()
+		}
+		return ""
+	default:
+		debug.AssertNever(declaration)
+		return ""
+	}
 }
 
 func tryAddToExistingImport(existingImports []*FixAddToExistingImportInfo, isValidTypeOnlyUseSite *bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *ImportFix {
