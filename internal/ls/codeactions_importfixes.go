@@ -968,30 +968,6 @@ func deleteTypeKeywordFromImportEquals(changes *change.Tracker, sourceFile *ast.
 	}, "")
 }
 
-// tryGetModuleSpecifierFromDeclaration tries to get the module specifier from a declaration (from utilities.ts)
-func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
-	if node == nil {
-		return nil
-	}
-
-	switch node.Kind {
-	case ast.KindImportDeclaration:
-		importDecl := node.AsImportDeclaration()
-		if ast.IsStringLiteral(importDecl.ModuleSpecifier) {
-			return importDecl.ModuleSpecifier
-		}
-	case ast.KindImportEqualsDeclaration:
-		importEqDecl := node.AsImportEqualsDeclaration()
-		if importEqDecl.ModuleReference != nil && importEqDecl.ModuleReference.Kind == ast.KindExternalModuleReference {
-			extModRef := importEqDecl.ModuleReference.AsExternalModuleReference()
-			if extModRef.Expression != nil && ast.IsStringLiteral(extModRef.Expression) {
-				return extModRef.Expression
-			}
-		}
-	}
-	return nil
-}
-
 func replaceStringLiteral(changes *change.Tracker, sourceFile *ast.SourceFile, stringLiteral *ast.Node, newText string) {
 	// Get the position of the string literal content (excluding quotes)
 	literalStart := stringLiteral.Pos()
