@@ -179,7 +179,7 @@ func (ls *LanguageService) doAddExistingFix(
 
 		if promoteFromTypeOnly {
 			// Delete the 'type' keyword from the import clause
-			typeKeyword := lsutil.GetTypeKeywordOfTypeOnlyImport(importClause, sourceFile)
+			typeKeyword := getTypeKeywordOfTypeOnlyImport(importClause, sourceFile)
 			ct.Delete(sourceFile, typeKeyword)
 
 			// Add 'type' modifier to existing specifiers (not newly added ones)
@@ -197,6 +197,17 @@ func (ls *LanguageService) doAddExistingFix(
 		panic("Unsupported clause kind: " + clause.Kind.String() + "for doAddExistingFix")
 	}
 }
+
+func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *ast.SourceFile) *ast.Node {
+	debug.Assert(importClause.IsTypeOnly(), "import clause must be type-only")
+	// The first child of a type-only import clause is the 'type' keyword
+	// import type { foo } from './bar'
+	//        ^^^^
+	typeKeyword := astnav.FindChildOfKind(importClause.AsNode(), ast.KindTypeKeyword, sourceFile)
+	debug.Assert(typeKeyword != nil, "type-only import clause should have a type keyword")
+	return typeKeyword
+}
+
 
 func addElementToBindingPattern(ct *change.Tracker, sourceFile *ast.SourceFile, bindingPattern *ast.Node, name string, propertyName *string) {
 	element := newBindingElementFromNameAndPropertyName(ct, name, propertyName)
