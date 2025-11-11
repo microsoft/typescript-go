@@ -434,53 +434,6 @@ func isJSXTagName(node *ast.Node) bool {
 	return false
 }
 
-// getModuleSpecifierFromDeclaration gets the module specifier string from a declaration
-func getModuleSpecifierFromDeclaration(decl *ast.Declaration) string {
-	var moduleSpec *ast.Node
-
-	switch decl.Kind {
-	case ast.KindImportDeclaration:
-		moduleSpec = decl.AsImportDeclaration().ModuleSpecifier
-	case ast.KindImportEqualsDeclaration:
-		importEq := decl.AsImportEqualsDeclaration()
-		if importEq.ModuleReference != nil && importEq.ModuleReference.Kind == ast.KindExternalModuleReference {
-			moduleSpec = importEq.ModuleReference.AsExternalModuleReference().Expression
-		}
-	case ast.KindImportSpecifier:
-		// Walk up to find the import declaration
-		if clause := getImportClauseOfSpecifier(decl.AsImportSpecifier()); clause != nil {
-			if clause.Parent != nil && clause.Parent.Kind == ast.KindImportDeclaration {
-				moduleSpec = clause.Parent.AsImportDeclaration().ModuleSpecifier
-			}
-		}
-	case ast.KindImportClause:
-		if decl.Parent != nil && decl.Parent.Kind == ast.KindImportDeclaration {
-			moduleSpec = decl.Parent.AsImportDeclaration().ModuleSpecifier
-		}
-	case ast.KindNamespaceImport:
-		if decl.Parent != nil && decl.Parent.Kind == ast.KindImportClause {
-			if decl.Parent.Parent != nil && decl.Parent.Parent.Kind == ast.KindImportDeclaration {
-				moduleSpec = decl.Parent.Parent.AsImportDeclaration().ModuleSpecifier
-			}
-		}
-	}
-
-	if moduleSpec != nil && ast.IsStringLiteral(moduleSpec) {
-		return moduleSpec.AsStringLiteral().Text
-	}
-	return ""
-}
-
-// getImportClauseOfSpecifier gets the import clause containing a specifier
-func getImportClauseOfSpecifier(spec *ast.ImportSpecifier) *ast.ImportClause {
-	if spec.Parent != nil && spec.Parent.Kind == ast.KindNamedImports {
-		if spec.Parent.Parent != nil && spec.Parent.Parent.Kind == ast.KindImportClause {
-			return spec.Parent.Parent.AsImportClause()
-		}
-	}
-	return nil
-}
-
 func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
 	if len(fixes) == 0 {
 		return fixes

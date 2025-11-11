@@ -1534,10 +1534,10 @@ func (l *LanguageService) codeActionForFixWorker(
 	case ImportFixKindPromoteTypeOnly:
 		promotedDeclaration := promoteFromTypeOnly(changeTracker, fix.typeOnlyAliasDeclaration, l.GetProgram(), sourceFile, l)
 		if promotedDeclaration.Kind == ast.KindImportSpecifier {
-			moduleSpec := getModuleSpecifierFromDeclaration(promotedDeclaration.Parent.Parent)
+			moduleSpec := getModuleSpecifierText(promotedDeclaration.Parent.Parent)
 			return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_of_0_from_1, symbolName, moduleSpec)
 		}
-		moduleSpec := getModuleSpecifierFromDeclaration(promotedDeclaration)
+		moduleSpec := getModuleSpecifierText(promotedDeclaration)
 		return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_declaration_from_0, moduleSpec)
 	default:
 		panic(fmt.Sprintf(`Unexpected fix kind %v`, fix.kind))
@@ -1628,7 +1628,7 @@ func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *as
 	)
 }
 
-func getModuleSpecifierText(promotedDeclaration *ast.ImportDeclaration) string {
+func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
 	if promotedDeclaration.Kind == ast.KindImportEqualsDeclaration {
 		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
 		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
