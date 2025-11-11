@@ -670,6 +670,9 @@ func promoteImportClause(
 	}
 }
 
+// The below helpers are a workaround for missing Tracker functionality.
+// TODO: remove these.
+
 // deleteTypeKeywordFromImportClause deletes the 'type' keyword from an import clause
 func deleteTypeKeywordFromImportClause(changes *change.Tracker, sourceFile *ast.SourceFile, importClause *ast.ImportClause) {
 	// The type keyword is the first token in the import clause
