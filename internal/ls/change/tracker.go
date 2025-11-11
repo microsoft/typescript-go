@@ -82,11 +82,17 @@ type Tracker struct {
 	*printer.EmitContext
 
 	*ast.NodeFactory
-	changes *collections.MultiMap[*ast.SourceFile, *trackerEdit]
+	changes      *collections.MultiMap[*ast.SourceFile, *trackerEdit]
+	deletedNodes []deletedNode
 
 	// created during call to getChanges
 	writer *printer.ChangeTrackerWriter
 	// printer
+}
+
+type deletedNode struct {
+	sourceFile *ast.SourceFile
+	node       *ast.Node
 }
 
 func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *format.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
@@ -104,10 +110,10 @@ func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, form
 	}
 }
 
-// !!! address strada note
-//   - Note: after calling this, the TextChanges object must be discarded!
+// GetChanges returns the accumulated text edits.
+// Note: after calling this, the Tracker object must be discarded!
 func (t *Tracker) GetChanges() map[string][]*lsproto.TextEdit {
-	// !!! finishDeleteDeclarations
+	t.finishDeleteDeclarations()
 	// !!! finishClassesWithNodesInsertedAtStart
 	changes := t.getTextChangesFromChanges()
 	// !!! changes for new files
@@ -167,6 +173,73 @@ func (t *Tracker) InsertNodesAfter(sourceFile *ast.SourceFile, after *ast.Node, 
 
 func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool) {
 	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, leadingTriviaOptionNone, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+}
+
+// Delete queues a node for deletion with smart handling of list items, imports, etc.
+// The actual deletion happens in finishDeleteDeclarations during GetChanges.
+func (t *Tracker) Delete(sourceFile *ast.SourceFile, node *ast.Node) {
+	t.deletedNodes = append(t.deletedNodes, deletedNode{sourceFile: sourceFile, node: node})
+}
+
+// DeleteNode deletes a node immediately with specified trivia options.
+// Stop! Consider using Delete instead, which has logic for deleting nodes from delimited lists.
+func (t *Tracker) DeleteNode(sourceFile *ast.SourceFile, node *ast.Node, leadingTrivia leadingTriviaOption, trailingTrivia trailingTriviaOption) {
+	rng := t.getAdjustedRange(sourceFile, node, node, leadingTrivia, trailingTrivia)
+	t.ReplaceRangeWithText(sourceFile, rng, "")
+}
+
+// DeleteNodeRange deletes a range of nodes with specified trivia options.
+func (t *Tracker) DeleteNodeRange(sourceFile *ast.SourceFile, startNode *ast.Node, endNode *ast.Node, leadingTrivia leadingTriviaOption, trailingTrivia trailingTriviaOption) {
+	startPosition := t.getAdjustedStartPosition(sourceFile, startNode, leadingTrivia, false)
+	endPosition := t.getAdjustedEndPosition(sourceFile, endNode, trailingTrivia)
+	startPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startPosition))
+	endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(endPosition))
+	t.ReplaceRangeWithText(sourceFile, lsproto.Range{Start: startPos, End: endPos}, "")
+}
+
+// finishDeleteDeclarations processes all queued deletions with smart handling for lists and trailing commas.
+func (t *Tracker) finishDeleteDeclarations() {
+	deletedNodesInLists := make(map[*ast.Node]bool)
+
+	for _, deleted := range t.deletedNodes {
+		// Skip if this node is contained within another deleted node
+		isContained := false
+		for _, other := range t.deletedNodes {
+			if other.sourceFile == deleted.sourceFile && other.node != deleted.node &&
+				rangeContainsRangeExclusive(other.node, deleted.node) {
+				isContained = true
+				break
+			}
+		}
+		if isContained {
+			continue
+		}
+
+		deleteDeclaration(t, deletedNodesInLists, deleted.sourceFile, deleted.node)
+	}
+
+	// Handle trailing commas for last elements in lists
+	for node := range deletedNodesInLists {
+		sourceFile := ast.GetSourceFileOfNode(node)
+		list := format.GetContainingList(node, sourceFile)
+		if list == nil || node != list.Nodes[len(list.Nodes)-1] {
+			continue
+		}
+
+		lastNonDeletedIndex := -1
+		for i := len(list.Nodes) - 2; i >= 0; i-- {
+			if !deletedNodesInLists[list.Nodes[i]] {
+				lastNonDeletedIndex = i
+				break
+			}
+		}
+
+		if lastNonDeletedIndex != -1 {
+			startPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(list.Nodes[lastNonDeletedIndex].End()))
+			endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(t.startPositionToDeleteNodeInList(sourceFile, list.Nodes[lastNonDeletedIndex+1])))
+			t.ReplaceRangeWithText(sourceFile, lsproto.Range{Start: startPos, End: endPos}, "")
+		}
+	}
 }
 
 func (t *Tracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, after *ast.Node, newNode *ast.Node) core.TextPos {
@@ -389,6 +462,10 @@ func (t *Tracker) getOptionsForInsertNodeBefore(before *ast.Node, inserted *ast.
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+func rangeContainsRangeExclusive(outer *ast.Node, inner *ast.Node) bool {
+	return outer.Pos() < inner.Pos() && inner.End() < outer.End()
 }
 
 func isSeparator(node *ast.Node, candidate *ast.Node) bool {

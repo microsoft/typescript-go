@@ -10,8 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -181,7 +179,8 @@ func (ls *LanguageService) doAddExistingFix(
 
 		if promoteFromTypeOnly {
 			// Delete the 'type' keyword from the import clause
-			deleteTypeKeywordOfImportClause(ct, sourceFile, importClause)
+			typeKeyword := lsutil.GetTypeKeywordOfTypeOnlyImport(importClause, sourceFile)
+			ct.Delete(sourceFile, typeKeyword)
 
 			// Add 'type' modifier to existing specifiers (not newly added ones)
 			// We preserve the type-onlyness of existing specifiers regardless of whether
@@ -355,49 +354,4 @@ func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
 
 func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
-}
-
-// deleteTypeKeywordOfImportClause deletes the 'type' keyword from an import clause.
-//
-// This is a workaround for the fact that the change tracker doesn't yet have a Delete method.
-// In TypeScript, this would be: changes.delete(sourceFile, getTypeKeywordOfTypeOnlyImport(clause, sourceFile))
-// where getTypeKeywordOfTypeOnlyImport returns the first child token (the 'type' keyword).
-// TODO: Implement change.Tracker.Delete() to handle node deletion with proper list/comma handling.
-func deleteTypeKeywordOfImportClause(ct *change.Tracker, sourceFile *ast.SourceFile, importClause *ast.ImportClause) {
-	// import type { foo } from "bar"
-	//        ^^^^^ - this keyword
-	// We need to find and delete "type " (including trailing space)
-
-	if !importClause.IsTypeOnly() {
-		return // Nothing to delete
-	}
-
-	// Use the scanner to get the token at the import clause position
-	scan := scanner.GetScannerForSourceFile(sourceFile, importClause.Pos())
-	token := scan.Token()
-
-	if token != ast.KindTypeKeyword {
-		// Not a type keyword at this position, nothing to delete
-		return
-	}
-
-	// Use TokenStart (not TokenFullStart) to avoid including leading whitespace
-	typeStart := scan.TokenStart()
-	typeEnd := scan.TokenEnd()
-
-	// Skip whitespace after 'type' to include it in the deletion
-	text := sourceFile.Text()
-	endPos := typeEnd
-	for endPos < len(text) && (text[endPos] == ' ' || text[endPos] == '\t') {
-		endPos++
-	}
-
-	// Convert text positions to LSP positions
-	startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, typeStart)
-	endLine, endChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, endPos)
-
-	ct.ReplaceRangeWithText(sourceFile, lsproto.Range{
-		Start: lsproto.Position{Line: uint32(startLine), Character: uint32(startChar)},
-		End:   lsproto.Position{Line: uint32(endLine), Character: uint32(endChar)},
-	}, "")
 }
