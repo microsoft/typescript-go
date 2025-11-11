@@ -166,6 +166,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	if compilerOptions.ModuleResolution == core.ModuleResolutionKindClassic {
 		t.Skipf("Test uses deprecated 'moduleResolution: Classic' option")
 	}
+	if compilerOptions.AllowSyntheticDefaultImports == core.TSFalse {
+		t.Skipf("Test uses unsupported 'allowSyntheticDefaultImports: false' option")
+	}
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
