@@ -64,7 +64,6 @@ type ModuleSpecifierGenerationHost interface {
 	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
 	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
 	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode
-	ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule
 }
 
 type ImportModuleSpecifierPreference string

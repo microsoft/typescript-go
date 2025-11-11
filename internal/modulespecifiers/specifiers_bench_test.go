@@ -1,13 +1,108 @@
 package modulespecifiers
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/symlinks"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+func populateSymlinkCacheFromResolutions(importingFileName string, host *benchHost, compilerOptions *core.CompilerOptions, options ModuleSpecifierOptions, links *symlinks.KnownSymlinks) {
+	packageJsonDir := host.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(importingFileName))
+	if packageJsonDir == "" {
+		return
+	}
+
+	packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
+
+	// Check if we've already populated symlinks for this package.json
+	if links.IsPackagePopulated(packageJsonPath) {
+		return
+	}
+
+	pkgJsonInfo := host.GetPackageJsonInfo(packageJsonPath)
+	if pkgJsonInfo == nil {
+		return
+	}
+
+	pkgJson := pkgJsonInfo.GetContents()
+	if pkgJson == nil {
+		return
+	}
+
+	// Mark this package as being processed to avoid redundant work
+	links.MarkPackageAsPopulated(packageJsonPath)
+
+	cwd := host.GetCurrentDirectory()
+	caseSensitive := host.UseCaseSensitiveFileNames()
+
+	// Helper to resolve dependencies without creating intermediate slices
+	resolveDeps := func(deps map[string]string) {
+		for depName := range deps {
+			resolved := host.ResolveModuleName(depName, packageJsonPath, options.OverrideImportMode)
+			if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
+				processResolution(links, resolved.OriginalPath, resolved.ResolvedFileName, cwd, caseSensitive)
+			}
+		}
+	}
+
+	if deps, ok := pkgJson.Dependencies.GetValue(); ok {
+		resolveDeps(deps)
+	}
+	if peerDeps, ok := pkgJson.PeerDependencies.GetValue(); ok {
+		resolveDeps(peerDeps)
+	}
+	if optionalDeps, ok := pkgJson.OptionalDependencies.GetValue(); ok {
+		resolveDeps(optionalDeps)
+	}
+}
+
+func processResolution(links *symlinks.KnownSymlinks, originalPath string, resolvedFileName string, cwd string, caseSensitive bool) {
+	originalPathKey := tspath.ToPath(originalPath, cwd, caseSensitive)
+	links.SetFile(originalPathKey, resolvedFileName)
+
+	commonResolved, commonOriginal := guessDirectorySymlink(originalPath, resolvedFileName, cwd, caseSensitive)
+	if commonResolved != "" && commonOriginal != "" {
+		symlinkPath := tspath.ToPath(commonOriginal, cwd, caseSensitive)
+		if !tspath.ContainsIgnoredPath(string(symlinkPath)) {
+			realPath := tspath.ToPath(commonResolved, cwd, caseSensitive)
+			links.SetDirectory(
+				commonOriginal,
+				symlinkPath.EnsureTrailingDirectorySeparator(),
+				&symlinks.KnownDirectoryLink{
+					Real:     tspath.EnsureTrailingDirectorySeparator(commonResolved),
+					RealPath: realPath.EnsureTrailingDirectorySeparator(),
+				},
+			)
+		}
+	}
+}
+
+func guessDirectorySymlink(originalPath string, resolvedFileName string, cwd string, caseSensitive bool) (string, string) {
+	aParts := tspath.GetPathComponents(tspath.GetNormalizedAbsolutePath(resolvedFileName, cwd), "")
+	bParts := tspath.GetPathComponents(tspath.GetNormalizedAbsolutePath(originalPath, cwd), "")
+	isDirectory := false
+	for len(aParts) >= 2 && len(bParts) >= 2 &&
+		!isNodeModulesOrScopedPackageDirectory(aParts[len(aParts)-2], caseSensitive) &&
+		!isNodeModulesOrScopedPackageDirectory(bParts[len(bParts)-2], caseSensitive) &&
+		tspath.GetCanonicalFileName(aParts[len(aParts)-1], caseSensitive) == tspath.GetCanonicalFileName(bParts[len(bParts)-1], caseSensitive) {
+		aParts = aParts[:len(aParts)-1]
+		bParts = bParts[:len(bParts)-1]
+		isDirectory = true
+	}
+	if isDirectory {
+		return tspath.GetPathFromPathComponents(aParts), tspath.GetPathFromPathComponents(bParts)
+	}
+	return "", ""
+}
+
+func isNodeModulesOrScopedPackageDirectory(s string, caseSensitive bool) bool {
+	return s != "" && (tspath.GetCanonicalFileName(s, caseSensitive) == "node_modules" || strings.HasPrefix(s, "@"))
+}
 
 type benchHost struct {
 	mockModuleSpecifierGenerationHost

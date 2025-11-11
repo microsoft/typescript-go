@@ -26,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
@@ -216,6 +217,7 @@ func NewProgram(opts ProgramOptions) *Program {
 	if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
 		p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
 	}
+	p.populateSymlinkCacheFromResolutions()
 	return p
 }
 
@@ -250,6 +252,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	if len(result.resolvedModules) > 0 || len(result.typeResolutionsInFile) > 0 {
 		result.knownSymlinks.SetSymlinksFromResolutions(result.ForEachResolvedModule, result.ForEachResolvedTypeReferenceDirective)
 	}
+	p.populateSymlinkCacheFromResolutions()
 	return result, true
 }
 
@@ -1651,8 +1654,44 @@ func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
 		if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
 			p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
 		}
+		p.populateSymlinkCacheFromResolutions()
 	}
 	return p.knownSymlinks
+}
+
+func (p *Program) populateSymlinkCacheFromResolutions() {
+	p.Host().FS().WalkDir(
+		p.GetCurrentDirectory(),
+		func(path string, d vfs.DirEntry, e error) error {
+			if e != nil {
+				return e
+			}
+			if !d.IsDir() {
+				return nil
+			}
+
+			packageJsonDir := p.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(path))
+			if packageJsonDir == "" {
+				return nil
+			}
+
+			packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
+			// Check if we've already populated symlinks for this package.json
+			if p.knownSymlinks.IsPackagePopulated(packageJsonPath) {
+				return nil
+			}
+			pkgJsonInfo := p.GetPackageJsonInfo(packageJsonPath)
+			if pkgJsonInfo == nil {
+				return nil
+			}
+			pkgJson := pkgJsonInfo.GetContents()
+			if pkgJson == nil {
+				return nil
+			}
+			p.knownSymlinks.PopulateFromResolutions(packageJsonPath, pkgJson, p.ResolveModuleName)
+			return nil
+		},
+	)
 }
 
 func (p *Program) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {

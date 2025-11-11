@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -133,4 +134,31 @@ func (cache *KnownSymlinks) IsPackagePopulated(packageJsonPath string) bool {
 
 func (cache *KnownSymlinks) MarkPackageAsPopulated(packageJsonPath string) {
 	cache.populatedPackages.Store(packageJsonPath, struct{}{})
+}
+
+func (cache *KnownSymlinks) PopulateFromResolutions(
+	packageJsonPath string,
+	packageJson *packagejson.PackageJson,
+	resolveModuleName func(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule,
+) {
+	cache.MarkPackageAsPopulated(packageJsonPath)
+	// Helper to resolve dependencies without creating intermediate slices
+	resolveDeps := func(deps map[string]string) {
+		for depName := range deps {
+			resolved := resolveModuleName(depName, packageJsonPath, core.ResolutionModeNone)
+			if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
+				cache.processResolution(resolved.OriginalPath, resolved.ResolvedFileName)
+			}
+		}
+	}
+
+	if deps, ok := packageJson.Dependencies.GetValue(); ok {
+		resolveDeps(deps)
+	}
+	if peerDeps, ok := packageJson.PeerDependencies.GetValue(); ok {
+		resolveDeps(peerDeps)
+	}
+	if optionalDeps, ok := packageJson.OptionalDependencies.GetValue(); ok {
+		resolveDeps(optionalDeps)
+	}
 }
