@@ -381,7 +381,7 @@ func (f *NodeFactory) RestoreOuterExpressions(outerExpression *ast.Expression, i
 // Ensures `"use strict"` is the first statement of a slice of statements.
 func (f *NodeFactory) EnsureUseStrict(statements []*ast.Statement) []*ast.Statement {
 	for _, statement := range statements {
-		if ast.IsPrologueDirective(statement) && statement.AsExpressionStatement().Expression.Text() == "use strict" {
+		if ast.IsPrologueDirective(statement) && statement.Expression().Text() == "use strict" {
 			return statements
 		} else {
 			break
@@ -399,7 +399,7 @@ func (f *NodeFactory) SplitStandardPrologue(source []*ast.Statement) (prologue [
 			return source[:i], source[i:]
 		}
 	}
-	return nil, source
+	return source, nil
 }
 
 // Splits a slice of statements into two parts: custom prologue statements (e.g., with `EFCustomPrologue` set) and the rest of the statements

@@ -18,10 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function validate() { }
 exports.default = validate;
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const m = require("./exporter");
-export = m.default;
 module.exports = m.default;
 export var memberName = "thing";
 module.exports.memberName = "thing";

@@ -66,8 +66,11 @@ func getIndentationForNodeWorker(
 			// }, {                  itself contributes nothing.
 			//   prop: 1        L3 - The indentation of the second object literal is best understood by
 			// })                    looking at the relationship between the list and *first* list item.
-			listLine, _ := getStartLineAndCharacterForNode(firstListChild, sourceFile)
-			listIndentsChild := firstListChild != nil && listLine > containingListOrParentStartLine
+			var listIndentsChild bool
+			if firstListChild != nil {
+				listLine, _ := getStartLineAndCharacterForNode(firstListChild, sourceFile)
+				listIndentsChild = listLine > containingListOrParentStartLine
+			}
 			actualIndentation := getActualIndentationForListItem(current, sourceFile, options, listIndentsChild)
 			if actualIndentation != -1 {
 				return actualIndentation + indentationDelta
@@ -127,7 +130,7 @@ func getActualIndentationForNode(current *ast.Node, parent *ast.Node, cuurentLin
 }
 
 func isArgumentAndStartLineOverlapsExpressionBeingCalled(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
-	if !(ast.IsCallExpression(parent) && slices.Contains(parent.AsCallExpression().Arguments.Nodes, child)) {
+	if !(ast.IsCallExpression(parent) && slices.Contains(parent.Arguments(), child)) {
 		return false
 	}
 	expressionOfCallExpressionEnd := parent.Expression().End()
@@ -268,13 +271,13 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 	r := core.NewTextRange(start, end)
 	switch node.Kind {
 	case ast.KindTypeReference:
-		return getList(node.AsTypeReferenceNode().TypeArguments, r, node, sourceFile)
+		return getList(node.TypeArgumentList(), r, node, sourceFile)
 	case ast.KindObjectLiteralExpression:
-		return getList(node.AsObjectLiteralExpression().Properties, r, node, sourceFile)
+		return getList(node.PropertyList(), r, node, sourceFile)
 	case ast.KindArrayLiteralExpression:
-		return getList(node.AsArrayLiteralExpression().Elements, r, node, sourceFile)
+		return getList(node.ElementList(), r, node, sourceFile)
 	case ast.KindTypeLiteral:
-		return getList(node.AsTypeLiteralNode().Members, r, node, sourceFile)
+		return getList(node.MemberList(), r, node, sourceFile)
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
@@ -305,12 +308,8 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 		return getList(node.ArgumentList(), r, node, sourceFile)
 	case ast.KindVariableDeclarationList:
 		return getList(node.AsVariableDeclarationList().Declarations, r, node, sourceFile)
-	case ast.KindNamedImports:
-		return getList(node.AsNamedImports().Elements, r, node, sourceFile)
-	case ast.KindNamedExports:
-		return getList(node.AsNamedExports().Elements, r, node, sourceFile)
-	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		return getList(node.AsBindingPattern().Elements, r, node, sourceFile)
+	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindNamedImports, ast.KindNamedExports:
+		return getList(node.ElementList(), r, node, sourceFile)
 	}
 	return nil // TODO: should this be a panic? It isn't in strada.
 }

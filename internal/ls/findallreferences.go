@@ -119,7 +119,7 @@ func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) string {
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
 	if entry.textRange == nil {
 		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = l.getLspRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
 		entry.fileName = sourceFile.FileName()
 	}
 	return entry
@@ -262,7 +262,16 @@ func getContextNode(node *ast.Node) *ast.Node {
 }
 
 // utils
-func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+	if sourceFile == nil {
+		sourceFile = ast.GetSourceFileOfNode(node)
+	}
+	textRange := getRangeOfNode(node, sourceFile, endNode)
+	return l.createLspRangeFromRange(textRange, sourceFile)
+}
+
+// `getTextSpan`
+func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
@@ -278,7 +287,7 @@ func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceF
 	if endNode != nil && endNode.Kind == ast.KindCaseBlock {
 		end = endNode.Pos()
 	}
-	return l.createLspRangeFromBounds(start, end, sourceFile)
+	return core.NewTextRange(start, end)
 }
 
 func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
@@ -422,7 +431,7 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
+func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams, clientSupportsLink bool) (lsproto.ImplementationResponse, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
@@ -444,6 +453,10 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 		}
 	}
 
+	if clientSupportsLink {
+		links := l.convertEntriesToLocationLinks(entries)
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
+	}
 	locations := l.convertEntriesToLocations(entries)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
@@ -547,6 +560,44 @@ func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) [
 		}
 	}
 	return locations
+}
+
+func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
+	links := make([]*lsproto.LocationLink, len(entries))
+	for i, entry := range entries {
+		var targetSelectionRange, targetRange *lsproto.Range
+
+		// For entries with nodes, compute ranges directly from the node
+		if entry.node != nil {
+			sourceFile := ast.GetSourceFileOfNode(entry.node)
+			entry.fileName = sourceFile.FileName()
+
+			// Get the selection range (the actual reference)
+			selectionTextRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+			targetSelectionRange = l.createLspRangeFromRange(selectionTextRange, sourceFile)
+
+			// Get the context range (broader scope including declaration context)
+			contextNode := core.OrElse(getContextNode(entry.node), entry.node)
+			contextTextRange := toContextRange(&selectionTextRange, sourceFile, contextNode)
+			if contextTextRange != nil {
+				targetRange = l.createLspRangeFromRange(*contextTextRange, sourceFile)
+			} else {
+				targetRange = targetSelectionRange
+			}
+		} else {
+			// For range entries, use the pre-computed range
+			l.resolveEntry(entry)
+			targetSelectionRange = entry.textRange
+			targetRange = targetSelectionRange
+		}
+
+		links[i] = &lsproto.LocationLink{
+			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
+			TargetRange:          *targetRange,
+			TargetSelectionRange: *targetSelectionRange,
+		}
+	}
+	return links
 }
 
 func (l *LanguageService) mergeReferences(program *compiler.Program, referencesToMerge ...[]*SymbolAndEntries) []*SymbolAndEntries {
@@ -1103,7 +1154,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 				var node *ast.Node
 				// At `module.exports = ...`, reference node is `module`
 				if ast.IsBinaryExpression(decl) && ast.IsPropertyAccessExpression(decl.AsBinaryExpression().Left) {
-					node = decl.AsBinaryExpression().Left.AsPropertyAccessExpression().Expression
+					node = decl.AsBinaryExpression().Left.Expression()
 				} else if ast.IsExportAssignment(decl) {
 					// Find the export keyword
 					node = findChildOfKind(decl, ast.KindExportKeyword, sourceFile)
@@ -1125,7 +1176,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			references: references,
 		}}
 	}
-	return nil
+	return []*SymbolAndEntries{}
 }
 
 func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
@@ -1381,14 +1432,14 @@ func isNewExpressionTarget(node *ast.Node) bool {
 	if node.Parent == nil {
 		return false
 	}
-	return node.Parent.Kind == ast.KindNewExpression && node.Parent.AsNewExpression().Expression == node
+	return node.Parent.Kind == ast.KindNewExpression && node.Parent.Expression() == node
 }
 
 func isCallExpressionTarget(node *ast.Node) bool {
 	if node.Parent == nil {
 		return false
 	}
-	return node.Parent.Kind == ast.KindCallExpression && node.Parent.AsCallExpression().Expression == node
+	return node.Parent.Kind == ast.KindCallExpression && node.Parent.Expression() == node
 }
 
 func isMethodOrAccessor(node *ast.Node) bool {

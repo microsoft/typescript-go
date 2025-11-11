@@ -1823,7 +1823,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1831,7 +1831,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1856,7 +1856,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -2334,7 +2335,7 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
-	body := node.AsArrowFunction().Body
+	body := node.Body()
 	if body != nil && body.Kind == ast.KindBlock {
 		startLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.Pos())
 		endLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.End())
@@ -2373,7 +2374,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindCaseClause, ast.KindDefaultClause:
 		start := SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
-		statements := node.AsCaseOrDefaultClause().Statements.Nodes
+		statements := node.Statements()
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
