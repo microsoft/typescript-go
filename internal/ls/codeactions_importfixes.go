@@ -387,7 +387,10 @@ func getExportInfos(
 			// Check default export
 			defaultInfo := getDefaultLikeExportInfo(moduleSymbol, checker)
 			if defaultInfo != nil {
-				if symbolFlagsHaveMeaning(defaultInfo.exportingModuleSymbol.Flags, currentTokenMeaning) {
+				// Resolve alias to get the actual symbol flags
+				resolvedSymbol := checker.SkipAlias(defaultInfo.exportingModuleSymbol)
+				resolvedFlags := resolvedSymbol.Flags
+				if symbolFlagsHaveMeaning(resolvedFlags, currentTokenMeaning) {
 					// For JSX tags, we need to check if the capitalized name matches
 					scriptTarget := compilerOptions.GetEmitScriptTarget()
 					matchesName := forEachNameOfDefaultExport(defaultInfo.exportingModuleSymbol, checker, scriptTarget, func(name, capitalizedName string) string {
