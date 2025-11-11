@@ -8,6 +8,8 @@ import (
 )
 
 func TestSyncMapWithNil(t *testing.T) {
+	t.Parallel()
+
 	var m collections.SyncMap[string, any]
 
 	got1, ok := m.Load("foo")
