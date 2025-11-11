@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportAmbient3(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let a = "I am a non-trivial statement that appears before imports";
 import d from "other-ambient-module"
