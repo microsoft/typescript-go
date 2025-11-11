@@ -1,6 +1,6 @@
-//// [tests/cases/compiler/unicodeEscapes.tsx] ////
+//// [tests/cases/compiler/unicodeSurrogatesInStringLiterals.ts] ////
 
-=== unicodeEscapes.tsx ===
+=== unicodeSurrogatesInStringLiterals.ts ===
 // low-high surrogate pair - the "correct" case
 export const highLow = "\ud83d\ude03" as const;
 >highLow : "😃"

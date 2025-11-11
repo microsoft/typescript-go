@@ -1,6 +1,6 @@
-//// [tests/cases/compiler/unicodeEscapes.tsx] ////
+//// [tests/cases/compiler/unicodeSurrogatesInStringLiterals.ts] ////
 
-//// [unicodeEscapes.tsx]
+//// [unicodeSurrogatesInStringLiterals.ts]
 // low-high surrogate pair - the "correct" case
 export const highLow = "\ud83d\ude03" as const;
 
@@ -20,7 +20,7 @@ export const lowLow = "\ude03\ude03" as const;
 export const lowHigh = "\ude03\ud83d" as const;
 
 
-//// [unicodeEscapes.js]
+//// [unicodeSurrogatesInStringLiterals.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lowHigh = exports.lowLow = exports.highHigh = exports.low = exports.high = exports.highLow = void 0;
@@ -38,7 +38,7 @@ exports.lowLow = "\ude03\ude03";
 exports.lowHigh = "\ude03\ud83d";
 
 
-//// [unicodeEscapes.d.ts]
+//// [unicodeSurrogatesInStringLiterals.d.ts]
 export declare const highLow: "😃";
 export declare const high: "�";
 export declare const low: "�";
