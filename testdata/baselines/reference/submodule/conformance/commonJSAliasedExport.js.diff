@@ -1,6 +1,13 @@
 --- old.commonJSAliasedExport.js
 +++ new.commonJSAliasedExport.js
-@@= skipped -22, +22 lines =@@
+@@= skipped -17, +17 lines =@@
+
+
+ //// [commonJSAliasedExport.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ const donkey = (ast) => ast;
+ function funky(declaration) {
      return false;
  }
  module.exports = donkey;
@@ -8,7 +15,7 @@
  module.exports.funky = funky;
  //// [bug43713.js]
  const { funky } = require('./commonJSAliasedExport');
-@@= skipped -9, +10 lines =@@
+@@= skipped -14, +17 lines =@@
 
 
  //// [commonJSAliasedExport.d.ts]

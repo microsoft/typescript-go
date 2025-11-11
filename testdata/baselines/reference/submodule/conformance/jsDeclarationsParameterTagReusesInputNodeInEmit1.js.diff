@@ -1,6 +1,10 @@
 --- old.jsDeclarationsParameterTagReusesInputNodeInEmit1.js
 +++ new.jsDeclarationsParameterTagReusesInputNodeInEmit1.js
-@@= skipped -59, +59 lines =@@
+@@= skipped -56, +56 lines =@@
+ const test = (base) => {
+     return base;
+ };
++export {};
 
 
  //// [base.d.ts]
@@ -24,15 +28,18 @@
 -        new (): {};
 -    };
 -};
-+type BaseFactory = import('./base');
-+export type BaseFactoryFactory = (factory: import('./base')) ;
- /** @typedef {import('./base')} BaseFactory */
- /**
-  * @callback BaseFactoryFactory
-@@= skipped -26, +23 lines =@@
-  * @param {InstanceType<BaseFactory["Base"]>} base
-  * @returns {InstanceType<BaseFactory["Base"]>}
-  */
+-/** @typedef {import('./base')} BaseFactory */
+-/**
+- * @callback BaseFactoryFactory
+- * @param {import('./base')} factory
+- */
+-/** @enum {import('./base')} */
+-declare const couldntThinkOfAny: {};
+-/**
+- *
+- * @param {InstanceType<BaseFactory["Base"]>} base
+- * @returns {InstanceType<BaseFactory["Base"]>}
+- */
 -declare function test(base: InstanceType<BaseFactory["Base"]>): InstanceType<BaseFactory["Base"]>;
 -type BaseFactory = {
 -    (): {};
@@ -46,4 +53,5 @@
 -        new (): {};
 -    };
 -}) => any;
-+declare const test: (base: any) => any;
++export type BaseFactory = import('./base');
++export type BaseFactoryFactory = (factory: import('./base')) ;

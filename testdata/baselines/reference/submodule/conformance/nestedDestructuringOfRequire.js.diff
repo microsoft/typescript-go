@@ -1,6 +1,11 @@
 --- old.nestedDestructuringOfRequire.js
 +++ new.nestedDestructuringOfRequire.js
-@@= skipped -17, +17 lines =@@
+@@= skipped -14, +14 lines =@@
+
+
+ //// [mod1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  const chalk = {
      grey: {}
  };
@@ -8,7 +13,7 @@
  module.exports.chalk = chalk;
  //// [main.js]
  const { chalk: { grey } } = require('./mod1');
-@@= skipped -8, +9 lines =@@
+@@= skipped -11, +14 lines =@@
 
 
  //// [mod1.d.ts]

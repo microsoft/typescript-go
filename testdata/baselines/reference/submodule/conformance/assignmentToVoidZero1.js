@@ -8,6 +8,8 @@ exports.y = 2;
 
 
 //// [assignmentToVoidZero1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // #38552
 export var y = exports.x = void 0;
 // #38552

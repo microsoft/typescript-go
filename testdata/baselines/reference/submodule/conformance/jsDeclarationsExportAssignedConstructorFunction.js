@@ -12,6 +12,8 @@ module.exports.MyClass.prototype = {
 
 
 //// [jsDeclarationsExportAssignedConstructorFunction.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /** @constructor */
 export var MyClass = function () {
     this.x = 1;

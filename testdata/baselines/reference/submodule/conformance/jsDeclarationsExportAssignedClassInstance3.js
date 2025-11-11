@@ -11,6 +11,8 @@ module.exports = new Foo();
 module.exports.additional = 20;
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Foo {
     static stat = 10;
     member = 10;

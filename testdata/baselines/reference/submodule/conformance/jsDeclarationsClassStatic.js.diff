@@ -1,6 +1,15 @@
 --- old.jsDeclarationsClassStatic.js
 +++ new.jsDeclarationsClassStatic.js
-@@= skipped -38, +38 lines =@@
+@@= skipped -25, +25 lines =@@
+
+
+ //// [source.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ class Handler {
+     static get OPTIONS() {
+         return 1;
+@@= skipped -13, +15 lines =@@
      b: "B"
  };
  module.exports = Handler;

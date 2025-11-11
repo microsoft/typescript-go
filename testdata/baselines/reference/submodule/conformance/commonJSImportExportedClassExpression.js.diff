@@ -4,6 +4,7 @@
 
  //// [mod1.js]
  "use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
 +export var K = class K {
 +    values() {
 +    }
@@ -11,7 +12,7 @@
  exports.K = class K {
      values() {
      }
-@@= skipped -14, +18 lines =@@
+@@= skipped -14, +19 lines =@@
 
 
  //// [mod1.d.ts]

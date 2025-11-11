@@ -16,6 +16,8 @@ module.exports.Another = Q;
 
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class A {
     member = new Q();
 }

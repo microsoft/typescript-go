@@ -8,6 +8,8 @@ exports["Does not work yet"] = D;
 
 
 //// [moduleExportAliasElementAccessExpression.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function D() { }
 export var D = D;
 exports["D"] = D;

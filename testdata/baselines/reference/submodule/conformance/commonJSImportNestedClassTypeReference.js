@@ -19,6 +19,7 @@ exports.K = NS.K;
 
 //// [mod1.js]
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = {};
 NS.K = class {
     values() {
