@@ -184,7 +184,7 @@ func getUmdSymbol(token *ast.Node, ch *checker.Checker) *ast.Symbol {
 
 	// The error wasn't for the symbolAtLocation, it was for the JSX tag itself, which needs access to e.g. `React`.
 	parent := token.Parent
-	if (ast.IsJsxOpeningLikeElement(parent) && parent.AsJsxOpeningElement().TagName == token) ||
+	if (ast.IsJsxOpeningLikeElement(parent) && ast.GetTagNameOfNode(parent) == token) ||
 		ast.IsJsxOpeningFragment(parent) {
 		var location *ast.Node
 		if ast.IsJsxOpeningLikeElement(parent) {
