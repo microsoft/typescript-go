@@ -188,7 +188,7 @@ func (ls *LanguageService) doAddExistingFix(
 			if len(existingSpecifiers) > 0 {
 				for _, specifier := range existingSpecifiers {
 					if !specifier.AsImportSpecifier().IsTypeOnly {
-						insertTypeModifierBefore(ct, sourceFile, specifier)
+						ct.InsertModifierBefore(sourceFile, ast.KindTypeKeyword, specifier)
 					}
 				}
 			}
