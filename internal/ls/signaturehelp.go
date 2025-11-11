@@ -67,7 +67,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 	clientOptions *lsproto.SignatureHelpClientCapabilities,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.SignatureHelp {
-	typeChecker, done := program.GetTypeCheckerForFileNonexclusive(ctx, sourceFile)
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
 	defer done()
 
 	// Decide whether to show signature help

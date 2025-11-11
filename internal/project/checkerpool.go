@@ -44,7 +44,7 @@ func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg str
 	return pool
 }
 
-func (p *CheckerPool) GetCheckerForFileNonexclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
