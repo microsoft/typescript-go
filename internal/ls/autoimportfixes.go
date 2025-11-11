@@ -299,7 +299,8 @@ func (ls *LanguageService) getNewImports(
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *Import) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
 			(compilerOptions.VerbatimModuleSyntax.IsTrue() || ls.UserPreferences().PreferTypeOnlyAutoImports) &&
-				defaultImport != nil && defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *Import) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
+				(defaultImport == nil || defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed) &&
+				!core.Some(namedImports, func(i *Import) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
