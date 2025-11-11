@@ -163,6 +163,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	if compilerOptions.Module == core.ModuleKindUMD {
 		t.Skipf("Test uses deprecated 'module: UMD' option")
 	}
+	if compilerOptions.ModuleResolution == core.ModuleResolutionKindClassic {
+		t.Skipf("Test uses deprecated 'moduleResolution: Classic' option")
+	}
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
