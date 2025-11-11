@@ -1,0 +1,129 @@
+name: "SBOM Trivy: Scan"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # -----------------------------------------------------
+  # GO BUILD JOB
+  # -----------------------------------------------------
+  # go-build:
+  #   name: Build Go Backend
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code (with submodules)
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v5
+  #       with:
+  #         go-version: "1.24"
+
+  #     - name: Cache Go modules
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           ~/go/pkg/mod
+  #           ~/.cache/go-build
+  #         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-go-
+
+  #     - name: Download Go modules
+  #       run: go mod download
+
+  #     - name: Build Go project
+  #       run: go build -v -o bin/app ./...
+
+  #     - name: Upload Go build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: go-binary
+  #         path: bin/app
+
+  # -----------------------------------------------------
+  # NODE / TYPESCRIPT BUILD JOB
+  # -----------------------------------------------------
+  # node-build:
+  #   name: Build TypeScript Frontend
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code (with submodules)
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "25"
+  #         cache: "npm"
+
+  #     - name: Install Node dependencies
+  #       run: npm ci
+
+  #     - name: Build TypeScript project
+  #       run: |
+  #         # Prefer the hereby build task if available
+  #         npx hereby build || npm run build --if-present
+
+  #     - name: Upload Node build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: node-build
+  #         path: dist/ # adjust if your build outputs elsewhere
+
+  # -----------------------------------------------------
+  # TRIVY SCAN JOB (runs after both builds)
+  # -----------------------------------------------------
+  trivy-scan:
+    name: Trivy SBOM + Vulnerability Scan
+    runs-on: ubuntu-latest
+    # needs: [go-build, node-build]
+
+    steps:
+      - name: Checkout code (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      # - name: Download build artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     path: ./build-artifacts
+
+      - name: Manual Trivy Setup
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          cache: true
+          version: v0.65.0
+
+      - name: Generate Trivy Vulnerability Report
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          output: cyclonedx.json
+          format: cyclonedx
+          scan-ref: .
+          exit-code: 0
+          list-all-pkgs: true
+          scanners: vuln,secret,misconfig,license
+          skip-setup-trivy: true
+
+      - name: Upload Vulnerability Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyclonedx
+          path: cyclonedx.json
+          retention-days: 1
