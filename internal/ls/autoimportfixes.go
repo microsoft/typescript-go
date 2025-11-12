@@ -132,7 +132,7 @@ func (ls *LanguageService) doAddExistingFix(
 						if spec.PropertyName != nil {
 							propertyName = spec.PropertyName
 						}
-						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
+						syntheticSpec := ct.NewImportSpecifier(
 							true, // isTypeOnly
 							propertyName,
 							spec.Name(),
