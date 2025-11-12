@@ -305,7 +305,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			if parent == nil {
 				parent = w.previousParent
 			}
-			line:= scanner.GetECMALineOfPosition(w.sourceFile, tokenInfo.Loc.Pos())
+			line := scanner.GetECMALineOfPosition(w.sourceFile, tokenInfo.Loc.Pos())
 			w.processPair(
 				tokenInfo,
 				line,
