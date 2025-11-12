@@ -2142,6 +2142,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		} else {
 			c.wasCanceled = true
 		}
+		c.reportedUnreachableStatements.Clear()
 		c.ctx = nil
 		links.typeChecked = true
 	}
@@ -2357,7 +2358,7 @@ func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 
 	isPurelyTypeDeclaration := func(s *ast.Node) bool {
 		switch s.Kind {
-		case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+		case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 			return true
 		case ast.KindModuleDeclaration:
 			return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
