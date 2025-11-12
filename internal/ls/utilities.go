@@ -50,7 +50,7 @@ func isModuleSpecifierLike(node *ast.Node) bool {
 	}
 
 	if ast.IsRequireCall(node.Parent, false /*requireStringLiteralLikeArgument*/) || ast.IsImportCall(node.Parent) {
-		return node.Parent.AsCallExpression().Arguments.Nodes[0] == node
+		return node.Parent.Arguments()[0] == node
 	}
 
 	return node.Parent.Kind == ast.KindExternalModuleReference ||
@@ -126,7 +126,7 @@ func isExportSpecifierAlias(referenceLocation *ast.Identifier, exportSpecifier *
 	} else {
 		// `export { foo } from "foo"` is a re-export.
 		// `export { foo };` is not a re-export, it creates an alias for the local variable `foo`.
-		return exportSpecifier.Parent.Parent.AsExportDeclaration().ModuleSpecifier == nil
+		return exportSpecifier.Parent.Parent.ModuleSpecifier() == nil
 	}
 }
 
@@ -337,7 +337,7 @@ func isThis(node *ast.Node) bool {
 		return true
 	case ast.KindIdentifier:
 		// 'this' as a parameter
-		return node.AsIdentifier().Text == "this" && node.Parent.Kind == ast.KindParameter
+		return node.Text() == "this" && node.Parent.Kind == ast.KindParameter
 	default:
 		return false
 	}
@@ -610,7 +610,7 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		return isCompletedNode(n.AsCatchClause().Block, sourceFile)
 
 	case ast.KindNewExpression:
-		if n.AsNewExpression().Arguments == nil {
+		if n.ArgumentList() == nil {
 			return true
 		}
 		fallthrough
@@ -645,7 +645,7 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		return hasChildOfKind(n, ast.KindCloseParenToken, sourceFile)
 
 	case ast.KindModuleDeclaration:
-		return n.AsModuleDeclaration().Body != nil && isCompletedNode(n.AsModuleDeclaration().Body, sourceFile)
+		return n.Body() != nil && isCompletedNode(n.Body(), sourceFile)
 
 	case ast.KindIfStatement:
 		if n.AsIfStatement().ElseStatement != nil {
@@ -654,7 +654,7 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		return isCompletedNode(n.AsIfStatement().ThenStatement, sourceFile)
 
 	case ast.KindExpressionStatement:
-		return isCompletedNode(n.AsExpressionStatement().Expression, sourceFile) ||
+		return isCompletedNode(n.Expression(), sourceFile) ||
 			hasChildOfKind(n, ast.KindSemicolonToken, sourceFile)
 
 	case ast.KindArrayLiteralExpression,
@@ -685,7 +685,7 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 		if hasChildOfKind(n, ast.KindWhileKeyword, sourceFile) {
 			return nodeEndsWith(n, ast.KindCloseParenToken, sourceFile)
 		}
-		return isCompletedNode(n.AsDoStatement().Statement, sourceFile)
+		return isCompletedNode(n.Statement(), sourceFile)
 
 	case ast.KindTypeQuery:
 		return isCompletedNode(n.AsTypeQueryNode().ExprName, sourceFile)
@@ -796,7 +796,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// specially by `getSymbolAtLocation`.
 	isModifier := func(node *ast.Node) bool {
 		if ast.IsModifier(node) && (forRename || node.Kind != ast.KindDefaultKeyword) {
-			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
+			return ast.CanHaveModifiers(parent) && slices.Contains(parent.ModifierNodes(), node)
 		}
 		switch node.Kind {
 		case ast.KindClassKeyword:
@@ -863,8 +863,8 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// export { propertyName /**/as [|name|] } ...
 	// export * /**/as [|name|] ...
 	if node.Kind == ast.KindAsKeyword {
-		if parent.Kind == ast.KindImportSpecifier && parent.AsImportSpecifier().PropertyName != nil ||
-			parent.Kind == ast.KindExportSpecifier && parent.AsExportSpecifier().PropertyName != nil ||
+		if parent.Kind == ast.KindImportSpecifier && parent.PropertyName() != nil ||
+			parent.Kind == ast.KindExportSpecifier && parent.PropertyName() != nil ||
 			parent.Kind == ast.KindNamespaceImport ||
 			parent.Kind == ast.KindNamespaceExport {
 			return parent.Name()
@@ -901,21 +901,18 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// /**/export default [|name|];
 		// /**/export = [|name|];
 		if parent.Kind == ast.KindExportAssignment {
-			return ast.SkipOuterExpressions(parent.AsExportAssignment().Expression, ast.OEKAll)
+			return ast.SkipOuterExpressions(parent.Expression(), ast.OEKAll)
 		}
 	}
 	// import name = /**/require("[|module|]");
 	if node.Kind == ast.KindRequireKeyword && parent.Kind == ast.KindExternalModuleReference {
-		return parent.AsExternalModuleReference().Expression
+		return parent.Expression()
 	}
 	// import ... /**/from "[|module|]";
 	// export ... /**/from "[|module|]";
 	if node.Kind == ast.KindFromKeyword {
-		if parent.Kind == ast.KindImportDeclaration && parent.AsImportDeclaration().ModuleSpecifier != nil {
-			return parent.AsImportDeclaration().ModuleSpecifier
-		}
-		if parent.Kind == ast.KindImportDeclaration && parent.AsExportDeclaration().ModuleSpecifier != nil {
-			return parent.AsExportDeclaration().ModuleSpecifier
+		if (parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.ModuleSpecifier() != nil {
+			return parent.ModuleSpecifier()
 		}
 	}
 	// class ... /**/extends [|name|] ...
@@ -1015,7 +1012,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// for (... /**/of [|name|])
 		if node.Kind == ast.KindInKeyword && parent.Kind == ast.KindForInStatement ||
 			node.Kind == ast.KindOfKeyword && parent.Kind == ast.KindForOfStatement {
-			return ast.SkipOuterExpressions(parent.AsForInOrOfStatement().Expression, ast.OEKAll)
+			return ast.SkipOuterExpressions(parent.Expression(), ast.OEKAll)
 		}
 	}
 
@@ -1033,9 +1030,7 @@ func getAdjustedLocationForDeclaration(node *ast.Node, forRename bool, sourceFil
 	case ast.KindClassDeclaration, ast.KindFunctionDeclaration:
 		// for class and function declarations, use the `default` modifier
 		// when the declaration is unnamed.
-		if node.Modifiers() != nil {
-			return core.Find(node.Modifiers().NodeList.Nodes, func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
-		}
+		return core.Find(node.ModifierNodes(), func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
 	case ast.KindClassExpression:
 		// for class expressions, use the `class` keyword when the class is unnamed
 		return findChildOfKind(node, ast.KindClassKeyword, sourceFile)
@@ -1070,11 +1065,11 @@ func getAdjustedLocationForImportDeclaration(node *ast.ImportDeclaration, forRen
 			switch namedBindings.Kind {
 			case ast.KindNamedImports:
 				// do nothing if there is more than one binding
-				elements := namedBindings.AsNamedImports().Elements
-				if len(elements.Nodes) != 1 {
+				elements := namedBindings.Elements()
+				if len(elements) != 1 {
 					return nil
 				}
-				return elements.Nodes[0].Name()
+				return elements[0].Name()
 
 			case ast.KindNamespaceImport:
 				return namedBindings.Name()
@@ -1102,11 +1097,11 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 		switch node.ExportClause.Kind {
 		case ast.KindNamedExports:
 			// do nothing if there is more than one binding
-			elements := node.ExportClause.AsNamedExports().Elements
-			if len(elements.Nodes) != 1 {
+			elements := node.ExportClause.Elements()
+			if len(elements) != 1 {
 				return nil
 			}
-			return elements.Nodes[0].Name()
+			return elements[0].Name()
 		case ast.KindNamespaceExport:
 			return node.ExportClause.Name()
 		}
@@ -1326,8 +1321,8 @@ func getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol *ast.Symb
 func getTargetLabel(referenceNode *ast.Node, labelName string) *ast.Node {
 	// todo: rewrite as `ast.FindAncestor`
 	for referenceNode != nil {
-		if referenceNode.Kind == ast.KindLabeledStatement && referenceNode.AsLabeledStatement().Label.Text() == labelName {
-			return referenceNode.AsLabeledStatement().Label
+		if referenceNode.Kind == ast.KindLabeledStatement && referenceNode.Label().Text() == labelName {
+			return referenceNode.Label()
 		}
 		referenceNode = referenceNode.Parent
 	}
