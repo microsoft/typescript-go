@@ -210,6 +210,10 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
+                case "getSemanticDiagnostics":
+                case "getSuggestionDiagnostics":
+                case "getSyntacticDiagnostics":
+                    return parseVerifyDiagnostics(func.text, callExpression.arguments);
             }
         }
         // `goTo....`
@@ -1217,6 +1221,103 @@ function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselin
     }];
 }
 
+function parseVerifyDiagnostics(funcName: string, args: readonly ts.Expression[]): [VerifyDiagnosticsCmd] | undefined {
+    if (!args[0] || !ts.isArrayLiteralExpression(args[0])) {
+        console.error(`Expected an array literal argument in verify.${funcName}`);
+        return undefined;
+    }
+    const goArgs: string[] = [];
+    for (const expr of args[0].elements) {
+        const diag = parseExpectedDiagnostic(expr);
+        if (diag === undefined) {
+            return undefined;
+        }
+        goArgs.push(diag);
+    }
+    return [{
+        kind: "verifyDiagnostics",
+        arg: goArgs.length > 0 ? `[]*lsproto.Diagnostic{\n${goArgs.join(",\n")},\n}` : "nil",
+    }];
+}
+
+function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
+    if (!ts.isObjectLiteralExpression(expr)) {
+        console.error(`Expected object literal expression for expected diagnostic, got ${expr.getText()}`);
+        return undefined;
+    }
+
+    const diagnosticProps: string[] = [];
+
+    for (const prop of expr.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            console.error(`Expected property assignment with identifier name for expected diagnostic, got ${prop.getText()}`);
+            return undefined;
+        }
+
+        const propName = prop.name.text;
+        const init = prop.initializer;
+
+        switch (propName) {
+            case "message": {
+                let messageInit;
+                if (messageInit = getStringLiteralLike(init)) {
+                    diagnosticProps.push(`Message: ${getGoStringLiteral(messageInit.text)},`);
+                }
+                else {
+                    console.error(`Expected string literal for diagnostic message, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "code": {
+                let codeInit;
+                if (codeInit = getNumericLiteral(init)) {
+                    diagnosticProps.push(`Code: &lsproto.IntegerOrString{Integer: PtrTo[int32](${codeInit.text})},`);
+                }
+                else {
+                    console.error(`Expected numeric literal for diagnostic code, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "range": {
+                // Handle range references like ranges[0]
+                const rangeArg = parseBaselineMarkerOrRangeArg(init);
+                if (rangeArg) {
+                    diagnosticProps.push(`Range: ${rangeArg}.LSRange,`);
+                }
+                else {
+                    console.error(`Expected range reference for diagnostic range, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "reportsDeprecated": {
+                if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                    diagnosticProps.push(`Tags: &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},`);
+                }
+                break;
+            }
+            case "reportsUnnecessary": {
+                if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                    diagnosticProps.push(`Tags: &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagUnnecessary},`);
+                }
+                break;
+            }
+            default:
+                console.error(`Unrecognized property in expected diagnostic: ${propName}`);
+                return undefined;
+        }
+    }
+
+    if (diagnosticProps.length === 0) {
+        console.error(`No valid properties found in diagnostic object`);
+        return undefined;
+    }
+
+    return `&lsproto.Diagnostic{\n${diagnosticProps.join("\n")}\n}`;
+}
+
 function stringToTristate(s: string): string {
     switch (s) {
         case "true":
@@ -1337,7 +1438,7 @@ function parseBaselineMarkerOrRangeArg(arg: ts.Expression): string | undefined {
             return result;
         }
     }
-    console.error(`Unrecognized argument in verify.baselineRename: ${arg.getText()}`);
+    console.error(`Unrecognized range argument: ${arg.getText()}`);
     return undefined;
 }
 
@@ -1658,12 +1759,6 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
-interface VerifyBaselineFindAllReferencesCmd {
-    kind: "verifyBaselineFindAllReferences";
-    markers: string[];
-    ranges?: boolean;
-}
-
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
@@ -1725,6 +1820,11 @@ interface VerifyRenameInfoCmd {
     preferences: string;
 }
 
+interface VerifyDiagnosticsCmd {
+    kind: "verifyDiagnostics";
+    arg: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -1739,7 +1839,8 @@ type Cmd =
     | VerifyQuickInfoCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
-    | VerifyBaselineInlayHintsCmd;
+    | VerifyBaselineInlayHintsCmd
+    | VerifyDiagnosticsCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1878,6 +1979,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
         case "verifyBaselineInlayHints":
             return generateBaselineInlayHints(cmd);
+        case "verifyDiagnostics":
+            return `f.VerifyDiagnostics(t, ${cmd.arg})`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

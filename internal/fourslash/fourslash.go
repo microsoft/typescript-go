@@ -2314,6 +2314,30 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
 }
 
+func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	var actualDiagnostics []*lsproto.Diagnostic
+	for fileName := range f.scriptInfos {
+		params := &lsproto.DocumentDiagnosticParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(fileName),
+			},
+		}
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
+		if resMsg == nil {
+			t.Fatal("Nil response received for diagnostics request")
+		}
+		if !resultOk {
+			t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
+		}
+
+		if result.FullDocumentDiagnosticReport != nil {
+			actualDiagnostics = append(actualDiagnostics, result.FullDocumentDiagnosticReport.Items...)
+		}
+	}
+	// !!! HERE
+	assertDeepEqual(t, actualDiagnostics, expected, "Diagnostics do not match expected")
+}
+
 func isLibFile(fileName string) bool {
 	baseName := tspath.GetBaseFileName(fileName)
 	if strings.HasPrefix(baseName, "lib.") && strings.HasSuffix(baseName, ".d.ts") {
