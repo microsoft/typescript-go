@@ -10,6 +10,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -492,13 +493,15 @@ func (b *registryBuilder) buildProjectIndex(ctx context.Context, projectPath tsp
 	program := b.host.GetProgramForProject(projectPath)
 	exports := make(map[tspath.Path][]*RawExport)
 	wg := core.NewWorkGroup(false)
+	getChecker, closePool := b.createCheckerPool(program)
+	defer closePool()
 	for _, file := range program.GetSourceFiles() {
 		if strings.Contains(file.FileName(), "/node_modules/") {
 			continue
 		}
 		wg.Queue(func() {
 			if ctx.Err() == nil {
-				fileExports := Parse(file, "")
+				fileExports := Parse(file, "", getChecker)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -522,6 +525,25 @@ func (b *registryBuilder) buildProjectIndex(ctx context.Context, projectPath tsp
 	return result, nil
 }
 
+func (b *registryBuilder) createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func()) {
+	pool := make(chan *checker.Checker, 4)
+	for range 4 {
+		pool <- checker.NewChecker(&resolver{
+			host:           b.host,
+			toPath:         b.base.toPath,
+			moduleResolver: b.resolver,
+		})
+	}
+	return func() (*checker.Checker, func()) {
+			checker := <-pool
+			return checker, func() {
+				pool <- checker
+			}
+		}, func() {
+			close(pool)
+		}
+}
+
 func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tspath.Path) (*RegistryBucket, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
@@ -539,6 +561,13 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 		}
 		return true
 	})
+
+	getChecker, closePool := b.createCheckerPool(&resolver{
+		host:           b.host,
+		toPath:         b.base.toPath,
+		moduleResolver: b.resolver,
+	})
+	defer closePool()
 
 	var exportsMu sync.Mutex
 	exports := make(map[tspath.Path][]*RawExport)
@@ -576,7 +605,7 @@ func (b *registryBuilder) buildNodeModulesIndex(ctx context.Context, dirPath tsp
 					}
 					sourceFile := b.host.GetSourceFile(entrypoint.ResolvedFileName, path)
 					binder.BindSourceFile(sourceFile)
-					fileExports := Parse(sourceFile, dirPath)
+					fileExports := Parse(sourceFile, dirPath, getChecker)
 					exportsMu.Lock()
 					exports[path] = fileExports
 					exportsMu.Unlock()

@@ -2038,7 +2038,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			"",
 			SortTextAutoImportSuggestions,
 			exp.ScriptElementKind,
-			collections.Set[lsutil.ScriptElementKindModifier]{}, // !!!
+			exp.ScriptElementKindModifiers, // !!!
 			nil,
 			nil,
 			&lsproto.CompletionItemLabelDetails{

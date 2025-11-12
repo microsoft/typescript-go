@@ -125,9 +125,11 @@ var FileExtensionKindModifiers = []ScriptElementKindModifier{
 }
 
 func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
-	result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
-	if result != ScriptElementKindUnknown {
-		return result
+	if typeChecker != nil {
+		result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
+		if result != ScriptElementKindUnknown {
+			return result
+		}
 	}
 	return GetSymbolKindSimple(symbol)
 }
@@ -140,6 +142,9 @@ func GetSymbolKindSimple(symbol *ast.Symbol) ScriptElementKind {
 			return ScriptElementKindLocalClassElement
 		}
 		return ScriptElementKindClassElement
+	}
+	if flags&ast.SymbolFlagsFunction != 0 {
+		return ScriptElementKindFunctionElement
 	}
 	if flags&ast.SymbolFlagsEnum != 0 {
 		return ScriptElementKindEnumElement
@@ -314,7 +319,7 @@ func GetSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) collec
 	}
 
 	modifiers := getNormalizedSymbolModifiers(typeChecker, symbol)
-	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+	if symbol.Flags&ast.SymbolFlagsAlias != 0 && typeChecker != nil {
 		resolvedSymbol := typeChecker.GetAliasedSymbol(symbol)
 		if resolvedSymbol != symbol {
 			aliasModifiers := getNormalizedSymbolModifiers(typeChecker, resolvedSymbol)
@@ -338,8 +343,8 @@ func getNormalizedSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symb
 		// omit deprecated flag if some declarations are not deprecated
 		var excludeFlags ast.ModifierFlags
 		if len(declarations) > 0 &&
-			typeChecker.IsDeprecatedDeclaration(declaration) && // !!! include jsdoc node flags
-			core.Some(declarations, func(d *ast.Node) bool { return !typeChecker.IsDeprecatedDeclaration(d) }) {
+			isDeprecatedDeclaration(typeChecker, declaration) && // !!! include jsdoc node flags
+			core.Some(declarations, func(d *ast.Node) bool { return !isDeprecatedDeclaration(typeChecker, d) }) {
 			excludeFlags = ast.ModifierFlagsDeprecated
 		} else {
 			excludeFlags = ast.ModifierFlagsNone
@@ -348,6 +353,13 @@ func getNormalizedSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symb
 	}
 
 	return modifierSet
+}
+
+func isDeprecatedDeclaration(typeChecker *checker.Checker, declaration *ast.Node) bool {
+	if typeChecker != nil {
+		return typeChecker.IsDeprecatedDeclaration(declaration)
+	}
+	return ast.GetCombinedNodeFlags(declaration)&ast.NodeFlagsDeprecated != 0
 }
 
 func getNodeModifiers(node *ast.Node, excludeFlags ast.ModifierFlags) collections.Set[ScriptElementKindModifier] {

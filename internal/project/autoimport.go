@@ -88,6 +88,7 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 	if fh == nil {
 		return nil
 	}
+	// !!! andrewbranch/autoimport: this should usually/always be a peek instead of an acquire
 	return a.parseCache.Acquire(fh, ast.SourceFileParseOptions{
 		FileName:         fileName,
 		Path:             path,
