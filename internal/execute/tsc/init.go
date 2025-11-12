@@ -15,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func WriteConfigFile(sys System, reportDiagnostic DiagnosticReporter, options *core.CompilerOptions) {
+func WriteConfigFile(sys System, reportDiagnostic DiagnosticReporter, options *collections.OrderedMap[string, any]) {
 	getCurrentDirectory := sys.GetCurrentDirectory()
 	file := tspath.NormalizePath(tspath.CombinePaths(getCurrentDirectory, "tsconfig.json"))
 	if sys.FS().FileExists(file) {
@@ -29,39 +29,16 @@ func WriteConfigFile(sys System, reportDiagnostic DiagnosticReporter, options *c
 	}
 }
 
-func convertOptionsToMap(options *core.CompilerOptions) *collections.OrderedMap[string, any] {
-	val := reflect.ValueOf(options).Elem()
-	typ := val.Type()
-
-	result := collections.NewOrderedMapWithSizeHint[string, any](val.NumField())
-
-	for i := range val.NumField() {
-		field := typ.Field(i)
-		fieldValue := val.Field(i)
-
-		if fieldValue.IsZero() {
-			continue
-		}
-
-		// Get the field name, considering 'json' tag if present
-		fieldName := field.Name
-		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
-			fieldName, _, _ = strings.Cut(jsonTag, ",")
-		}
-
-		if fieldName != "" && fieldName != "init" && fieldName != "help" && fieldName != "watch" {
-			result.Set(fieldName, fieldValue.Interface())
-		}
-	}
-	return result
-}
-
-func generateTSConfig(options *core.CompilerOptions) string {
+func generateTSConfig(options *collections.OrderedMap[string, any]) string {
 	const tab = "  "
 	var result []string
 
-	optionsMap := convertOptionsToMap(options)
-	allSetOptions := slices.Collect(optionsMap.Keys())
+	allSetOptions := make([]string, 0, options.Size())
+	for k := range options.Keys() {
+		if k != "init" && k != "help" && k != "watch" {
+			allSetOptions = append(allSetOptions, k)
+		}
+	}
 
 	// !!! locale getLocaleSpecificMessage
 	emitHeader := func(header *diagnostics.Message) {
@@ -127,12 +104,13 @@ func generateTSConfig(options *core.CompilerOptions) string {
 	// commentedNever': Never comment this out
 	// commentedAlways': Always comment this out, even if it's on commandline
 	// commentedOptional': Comment out unless it's on commandline
+	type commented int
 	const (
-		commentedNever    = 0
-		commentedAlways   = 1
-		commentedOptional = 2
+		commentedNever commented = iota
+		commentedAlways
+		commentedOptional
 	)
-	emitOption := func(setting string, defaultValue any, commented int) {
+	emitOption := func(setting string, defaultValue any, commented commented) {
 		if commented > 2 {
 			panic("should not happen: invalid `commented`, must be a bug.")
 		}
@@ -149,10 +127,10 @@ func generateTSConfig(options *core.CompilerOptions) string {
 		case commentedNever:
 			comment = false
 		default:
-			comment = !optionsMap.Has(setting)
+			comment = !options.Has(setting)
 		}
 
-		value, ok := optionsMap.Get(setting)
+		value, ok := options.Get(setting)
 		if !ok {
 			value = defaultValue
 		}
@@ -180,8 +158,8 @@ func generateTSConfig(options *core.CompilerOptions) string {
 	emitOption("module", core.ModuleKindNodeNext, commentedNever)
 	emitOption("target", core.ScriptTargetESNext, commentedNever)
 	emitOption("types", []any{}, commentedNever)
-	if len(options.Lib) != 0 {
-		emitOption("lib", options.Lib, commentedNever)
+	if lib, ok := options.Get("lib"); ok {
+		emitOption("lib", lib, commentedNever)
 	}
 	emitHeader(diagnostics.For_nodejs_Colon)
 	push(tab + tab + `// "lib": ["esnext"],`)
@@ -226,7 +204,7 @@ func generateTSConfig(options *core.CompilerOptions) string {
 	if len(allSetOptions) > 0 {
 		newline()
 		for len(allSetOptions) > 0 {
-			emitOption(allSetOptions[0], optionsMap.GetOrZero(allSetOptions[0]), commentedNever)
+			emitOption(allSetOptions[0], options.GetOrZero(allSetOptions[0]), commentedNever)
 		}
 	}
 

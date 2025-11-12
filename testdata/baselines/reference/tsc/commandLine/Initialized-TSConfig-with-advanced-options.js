@@ -53,7 +53,7 @@ You can learn more at https://aka.ms/tsconfig
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "declarationDir": "/home/src/workspaces/project/lib",
+    "declarationDir": "lib",
     "noErrorTruncation": true,
   }
 }

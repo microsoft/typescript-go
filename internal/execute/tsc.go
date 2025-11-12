@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -113,7 +114,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		tsc.WriteConfigFile(sys, reportDiagnostic, commandLine.CompilerOptions())
+		tsc.WriteConfigFile(sys, reportDiagnostic, commandLine.Raw.(*collections.OrderedMap[string, any]))
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
