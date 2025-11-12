@@ -711,7 +711,7 @@ func isObjectOrObjectArrayTypeReference(node *ast.TypeNode) bool {
 	default:
 		if ast.IsTypeReferenceNode(node) {
 			ref := node.AsTypeReferenceNode()
-			return ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "Object" && ref.TypeArguments == nil
+			return ast.IsIdentifier(ref.TypeName) && ref.TypeName.Text() == "Object" && ref.TypeArguments == nil
 		}
 		return false
 	}
@@ -759,7 +759,7 @@ func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.Enti
 			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
 				children = append(children, child)
 			} else if child.Kind == ast.KindJSDocTemplateTag {
-				p.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
 		if children != nil {
@@ -918,8 +918,14 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 			if childTypeTag != nil && childTypeTag.TypeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.TypeExpression.Type()) {
 				typeExpression = childTypeTag.TypeExpression
 			} else {
-				typeExpression = p.finishNode(jsdocTypeLiteral, jsdocPropertyTags[0].Pos())
+				// !!! This differs from Strada but prevents a crash
+				pos := start
+				if len(jsdocPropertyTags) > 0 {
+					pos = jsdocPropertyTags[0].Pos()
+				}
+				typeExpression = p.finishNode(jsdocTypeLiteral, pos)
 			}
+			end = typeExpression.End()
 		}
 	}
 
@@ -961,7 +967,7 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 			break
 		}
 		if child.Kind == ast.KindJSDocTemplateTag {
-			p.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			break
 		}
 		parameters = append(parameters, child)
@@ -1027,7 +1033,7 @@ func textsEqual(a *ast.EntityName, b *ast.EntityName) bool {
 			return false
 		}
 	}
-	return a.AsIdentifier().Text == b.AsIdentifier().Text
+	return a.Text() == b.Text()
 }
 
 func (p *Parser) parseChildPropertyTag(indent int) *ast.Node {
