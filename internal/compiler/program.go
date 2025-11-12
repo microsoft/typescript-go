@@ -383,6 +383,12 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
+// Return a checker for the given file, locked to the current thread to prevent data races from multiple threads
+// accessing the same checker. The lock will be released when the `done` function is called.
+func (p *Program) GetTypeCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	return p.checkerPool.GetCheckerForFileExclusive(ctx, file)
+}
+
 func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
 		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}]; ok {
@@ -664,7 +670,7 @@ func (p *Program) verifyCompilerOptions() {
 				return tsoptions.ForEachPropertyAssignment(pathProp.Initializer.AsObjectLiteralExpression(), key, func(keyProps *ast.PropertyAssignment) *ast.Diagnostic {
 					initializer := keyProps.Initializer
 					if ast.IsArrayLiteralExpression(initializer) {
-						elements := initializer.AsArrayLiteralExpression().Elements
+						elements := initializer.ElementList()
 						if elements != nil && len(elements.Nodes) > valueIndex {
 							diag := tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), elements.Nodes[valueIndex], message, args...)
 							p.programDiagnostics = append(p.programDiagnostics, diag)
@@ -1076,7 +1082,7 @@ func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFi
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
 	for _, directive := range sourceFile.CommentDirectives {
-		line, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, directive.Loc.Pos())
+		line := scanner.GetECMALineOfPosition(sourceFile, directive.Loc.Pos())
 		directivesByLine[line] = directive
 	}
 	lineStarts := scanner.GetECMALineStarts(sourceFile)
@@ -1273,6 +1279,10 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
+func (p *Program) Program() *Program {
+	return p
+}
+
 func (p *Program) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
 	return p.sourceFileMetaDatas[path]
 }
@@ -1437,6 +1447,7 @@ func CombineEmitResults(results []*EmitResult) *EmitResult {
 
 type ProgramLike interface {
 	Options() *core.CompilerOptions
+	GetSourceFile(path string) *ast.SourceFile
 	GetSourceFiles() []*ast.SourceFile
 	GetConfigFileParsingDiagnostics() []*ast.Diagnostic
 	GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
@@ -1446,7 +1457,11 @@ type ProgramLike interface {
 	GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic
 	GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	GetSuggestionDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	Emit(ctx context.Context, options EmitOptions) *EmitResult
+	CommonSourceDirectory() string
+	IsSourceFileDefaultLibrary(path tspath.Path) bool
+	Program() *Program
 }
 
 func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
@@ -1603,12 +1618,6 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 
 func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
-}
-
-// UnsupportedExtensions returns a list of all present "unsupported" extensions,
-// e.g. extensions that are not yet supported by the port.
-func (p *Program) UnsupportedExtensions() []string {
-	return p.unsupportedExtensions
 }
 
 func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {

@@ -16,19 +16,12 @@ module.exports.Another = Q;
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class A {
     member = new Q();
 }
 class Q {
     x = 42;
 }
-export = class Q {
-    constructor() {
-        this.x = new A();
-    }
-};
 module.exports = class Q {
     constructor() {
         this.x = new A();

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -824,9 +825,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, input []test
 		}
 		configFileName := tspath.CombinePaths(basePath, config.configFileName)
 		allFileLists := make(map[string]string, len(config.allFileList)+1)
-		for file, content := range config.allFileList {
-			allFileLists[file] = content
-		}
+		maps.Copy(allFileLists, config.allFileList)
 		allFileLists[configFileName] = config.jsonText
 		host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 		parsedConfigFileContent := getParsed(config, host, basePath)

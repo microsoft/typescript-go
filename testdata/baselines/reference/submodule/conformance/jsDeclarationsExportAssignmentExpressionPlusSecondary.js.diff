@@ -1,26 +1,6 @@
 --- old.jsDeclarationsExportAssignmentExpressionPlusSecondary.js
 +++ new.jsDeclarationsExportAssignmentExpressionPlusSecondary.js
-@@= skipped -15, +15 lines =@@
-
-
- //// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- const Strings = {
-     a: "A",
-     b: "B"
- };
-+export = {
-+    thing: "ok",
-+    also: "ok",
-+    desc: {
-+        item: "ok"
-+    }
-+};
- module.exports = {
-     thing: "ok",
-     also: "ok",
-@@= skipped -11, +20 lines =@@
+@@= skipped -26, +26 lines =@@
          item: "ok"
      }
  };
