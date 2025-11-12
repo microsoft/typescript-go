@@ -95,8 +95,8 @@ func (p *checkerPool) ForEachCheckerParallel(ctx context.Context, cb func(idx in
 	for idx, checker := range p.checkers {
 		wg.Queue(func() {
 			p.locks[idx].Lock()
+			defer p.locks[idx].Unlock()
 			cb(idx, checker)
-			p.locks[idx].Unlock()
 		})
 	}
 	wg.RunAndWait()
