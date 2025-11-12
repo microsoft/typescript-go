@@ -2337,8 +2337,8 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.End())
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
@@ -2432,6 +2432,11 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 
 func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.ECMALineMap()
+}
+
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
 }
 
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
