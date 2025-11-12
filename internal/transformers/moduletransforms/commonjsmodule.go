@@ -247,7 +247,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
 		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
-		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
+		(tx.currentSourceFile.ExternalModuleIndicator == nil || tx.currentSourceFile.ExternalModuleIndicator.Kind == ast.KindSourceFile) {
 		return false
 	}
 	if tx.currentModuleInfo.exportEquals == nil && ast.IsExternalModule(tx.currentSourceFile) {
@@ -431,7 +431,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfImportDeclaration(statements
 			statements = tx.appendExportsOfDeclaration(statements, namedBindings, seen, false /*liveBinding*/)
 
 		case ast.KindNamedImports:
-			for _, importBinding := range namedBindings.AsNamedImports().Elements.Nodes {
+			for _, importBinding := range namedBindings.Elements() {
 				statements = tx.appendExportsOfDeclaration(statements, importBinding, seen, true /*liveBinding*/)
 			}
 		}
@@ -474,7 +474,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfBindingElement(statements []
 	}
 
 	if ast.IsBindingPattern(decl.Name()) {
-		for _, element := range decl.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range decl.Name().Elements() {
 			e := element.AsBindingElement()
 			if e.DotDotDotToken == nil && e.Name() == nil {
 				statements = tx.appendExportsOfBindingElement(statements, element, isForInOrOfInitializer)
@@ -844,7 +844,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		tx.EmitContext().AssignCommentAndSourceMapRanges(varStatement, node.AsNode())
 		statements = append(statements, varStatement)
 
-		for _, specifier := range node.ExportClause.AsNamedExports().Elements.Nodes {
+		for _, specifier := range node.ExportClause.Elements() {
 			specifierName := specifier.PropertyNameOrName()
 			exportNeedsImportDefault := tx.compilerOptions.GetESModuleInterop() &&
 				tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper == 0 &&

@@ -111,7 +111,7 @@ func getBindingNameVisible(resolver printer.EmitResolver, elem *ast.Node) bool {
 	}
 	if ast.IsBindingPattern(elem.Name()) {
 		// If any child binding pattern element has been marked visible (usually by collect linked aliases), then this is visible
-		for _, elem := range elem.Name().AsBindingPattern().Elements.Nodes {
+		for _, elem := range elem.Name().Elements() {
 			if getBindingNameVisible(resolver, elem) {
 				return true
 			}
@@ -201,15 +201,6 @@ func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
 	})
 
 	return len(overloadSignatures) == 0 || overloadSignatures[len(overloadSignatures)-1] == input.AsNode()
-}
-
-func getFirstConstructorWithBody(node *ast.Node) *ast.Node {
-	for _, member := range node.Members() {
-		if ast.IsConstructorDeclaration(member) && ast.NodeIsPresent(member.Body()) {
-			return member
-		}
-	}
-	return nil
 }
 
 func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
