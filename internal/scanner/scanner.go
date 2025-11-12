@@ -2442,6 +2442,7 @@ func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
+	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
 	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return line, character
 }
