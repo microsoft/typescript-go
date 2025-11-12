@@ -177,6 +177,10 @@ func (p *PnpApi) GetPackage(locator *Locator) *PackageInfo {
 }
 
 func (p *PnpApi) FindLocator(parentPath string) (*Locator, error) {
+	if parentPath == "" {
+		return nil, nil
+	}
+
 	relativePath := tspath.GetRelativePathFromDirectory(p.manifest.dirPath, parentPath,
 		tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true})
 
