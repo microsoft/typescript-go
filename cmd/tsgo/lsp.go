@@ -18,7 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
-func runLSP(args []string) int {
+func runLSP(ctx context.Context, args []string) int {
 	flag := flag.NewFlagSet("lsp", flag.ContinueOnError)
 	stdio := flag.Bool("stdio", false, "use stdio for communication")
 	pprofDir := flag.String("pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")

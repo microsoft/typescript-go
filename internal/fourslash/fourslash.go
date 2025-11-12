@@ -132,6 +132,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]string)
 	scriptInfos := make(map[string]*scriptInfo)
@@ -151,11 +152,11 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	outputReader, outputWriter := newLSPPipe()
 	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
 
-	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
-		Err: &err,
+		Err: io.Discard, // TODO: use t.Output() behind a flag
+		// Err: t.Output(),
 
 		Cwd:                "/",
 		FS:                 fs,
@@ -164,14 +165,15 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParseCache: &parseCache,
 	})
 
+	lspCtx, lspCancel := context.WithCancel(t.Context())
+	lspErrChan := make(chan error, 1)
+
 	go func() {
 		defer func() {
 			outputWriter.Close()
 		}()
-		err := server.Run(context.TODO())
-		if err != nil {
-			t.Error("server error:", err)
-		}
+		lspErrChan <- server.Run(lspCtx)
+		t.Log("LSP server exited")
 	}()
 
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
@@ -204,7 +206,13 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	f.activeFilename = f.testData.Files[0].fileName
 
 	t.Cleanup(func() {
+		lspCancel()
 		inputWriter.Close()
+
+		t.Log("Waiting for LSP server to exit")
+		if err := <-lspErrChan; err != nil && lspCtx.Err() == nil {
+			t.Errorf("LSP server exited with error: %v", err)
+		}
 		f.verifyBaselines(t)
 	})
 	return f
