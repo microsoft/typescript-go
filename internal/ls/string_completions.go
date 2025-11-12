@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -28,8 +29,8 @@ type completionsFromProperties struct {
 
 type pathCompletion struct {
 	name string
-	// ScriptElementKindScriptElement | ScriptElementKindDirectory | ScriptElementKindExternalModuleName
-	kind      ScriptElementKind
+	// lsutil.ScriptElementKindScriptElement | lsutil.ScriptElementKindDirectory | lsutil.ScriptElementKindExternalModuleName
+	kind      lsutil.ScriptElementKind
 	extension string
 	textRange *core.TextRange
 }
@@ -138,8 +139,8 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				"", /*insertText*/
 				"", /*filterText*/
 				SortTextLocationPriority,
-				ScriptElementKindString,
-				collections.Set[ScriptElementKindModifier]{},
+				lsutil.ScriptElementKindString,
+				collections.Set[lsutil.ScriptElementKindModifier]{},
 				l.getReplacementRangeForContextToken(file, contextToken, position),
 				nil, /*commitCharacters*/
 				nil, /*labelDetails*/
@@ -585,36 +586,36 @@ func isRequireCallArgument(node *ast.Node) bool {
 		ast.IsIdentifier(node.Parent.Expression()) && node.Parent.Expression().Text() == "require"
 }
 
-func kindModifiersFromExtension(extension string) ScriptElementKindModifier {
+func kindModifiersFromExtension(extension string) lsutil.ScriptElementKindModifier {
 	switch extension {
 	case tspath.ExtensionDts:
-		return ScriptElementKindModifierDts
+		return lsutil.ScriptElementKindModifierDts
 	case tspath.ExtensionJs:
-		return ScriptElementKindModifierJs
+		return lsutil.ScriptElementKindModifierJs
 	case tspath.ExtensionJson:
-		return ScriptElementKindModifierJson
+		return lsutil.ScriptElementKindModifierJson
 	case tspath.ExtensionJsx:
-		return ScriptElementKindModifierJsx
+		return lsutil.ScriptElementKindModifierJsx
 	case tspath.ExtensionTs:
-		return ScriptElementKindModifierTs
+		return lsutil.ScriptElementKindModifierTs
 	case tspath.ExtensionTsx:
-		return ScriptElementKindModifierTsx
+		return lsutil.ScriptElementKindModifierTsx
 	case tspath.ExtensionDmts:
-		return ScriptElementKindModifierDmts
+		return lsutil.ScriptElementKindModifierDmts
 	case tspath.ExtensionMjs:
-		return ScriptElementKindModifierMjs
+		return lsutil.ScriptElementKindModifierMjs
 	case tspath.ExtensionMts:
-		return ScriptElementKindModifierMts
+		return lsutil.ScriptElementKindModifierMts
 	case tspath.ExtensionDcts:
-		return ScriptElementKindModifierDcts
+		return lsutil.ScriptElementKindModifierDcts
 	case tspath.ExtensionCjs:
-		return ScriptElementKindModifierCjs
+		return lsutil.ScriptElementKindModifierCjs
 	case tspath.ExtensionCts:
-		return ScriptElementKindModifierCts
+		return lsutil.ScriptElementKindModifierCts
 	case tspath.ExtensionTsBuildInfo:
 		panic(fmt.Sprintf("Extension %v is unsupported.", tspath.ExtensionTsBuildInfo))
 	case "":
-		return ScriptElementKindModifierNone
+		return lsutil.ScriptElementKindModifierNone
 	default:
 		panic(fmt.Sprintf("Unexpected extension: %v", extension))
 	}

@@ -701,7 +701,7 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
 	}
 	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
+		t.Fatalf(prefix+"Unexpected response type for completion request: %T, error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
 	}
 	return result.List
 }

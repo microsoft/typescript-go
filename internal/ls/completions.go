@@ -2043,8 +2043,8 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			"",
 			"",
 			SortTextAutoImportSuggestions,
-			ScriptElementKindAlias, // !!!
-			collections.Set[ScriptElementKindModifier]{}, // !!!
+			exp.ScriptElementKind,
+			collections.Set[lsutil.ScriptElementKindModifier]{}, // !!!
 			nil,
 			nil,
 			&lsproto.CompletionItemLabelDetails{
@@ -2324,10 +2324,10 @@ func (l *LanguageService) createCompletionItem(
 
 	// Commit characters
 
-	elementKind := getSymbolKind(typeChecker, symbol, data.location)
+	elementKind := lsutil.GetSymbolKind(typeChecker, symbol, data.location)
 	var commitCharacters *[]string
 	if clientSupportsItemCommitCharacters(clientOptions) {
-		if elementKind == ScriptElementKindWarning || elementKind == ScriptElementKindString {
+		if elementKind == lsutil.ScriptElementKindWarning || elementKind == lsutil.ScriptElementKindString {
 			commitCharacters = &[]string{}
 		} else if !clientSupportsDefaultCommitCharacters(clientOptions) {
 			commitCharacters = ptrTo(data.defaultCommitCharacters)
@@ -2336,7 +2336,7 @@ func (l *LanguageService) createCompletionItem(
 	}
 
 	preselect := isRecommendedCompletionMatch(symbol, data.recommendedCompletion, typeChecker)
-	kindModifiers := getSymbolModifiers(typeChecker, symbol)
+	kindModifiers := lsutil.GetSymbolModifiers(typeChecker, symbol)
 
 	return l.createLSPCompletionItem(
 		name,
@@ -2559,7 +2559,7 @@ func isClassLikeMemberCompletion(symbol *ast.Symbol, location *ast.Node, file *a
 }
 
 func symbolAppearsToBeTypeOnly(symbol *ast.Symbol, typeChecker *checker.Checker) bool {
-	flags := checker.GetCombinedLocalAndExportSymbolFlags(checker.SkipAlias(symbol, typeChecker))
+	flags := checker.SkipAlias(symbol, typeChecker).CombinedLocalAndExportSymbolFlags()
 	return flags&ast.SymbolFlagsValue == 0 &&
 		(len(symbol.Declarations) == 0 || !ast.IsInJSFile(symbol.Declarations[0]) || flags&ast.SymbolFlagsType != 0)
 }
@@ -2637,7 +2637,7 @@ func shouldIncludeSymbol(
 		return false
 	}
 
-	allFlags = allFlags | checker.GetCombinedLocalAndExportSymbolFlags(symbolOrigin)
+	allFlags = allFlags | symbolOrigin.CombinedLocalAndExportSymbolFlags()
 
 	// import m = /**/ <-- It can only access namespace (if typing import = x. this would get member symbols and not namespace)
 	if isInRightSideOfInternalImportEqualsDeclaration(data.location) {
@@ -3222,50 +3222,50 @@ func generateIdentifierForArbitraryString(text string) string {
 }
 
 // Copied from vscode TS extension.
-func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind {
+func getCompletionsSymbolKind(kind lsutil.ScriptElementKind) lsproto.CompletionItemKind {
 	switch kind {
-	case ScriptElementKindPrimitiveType, ScriptElementKindKeyword:
+	case lsutil.ScriptElementKindPrimitiveType, lsutil.ScriptElementKindKeyword:
 		return lsproto.CompletionItemKindKeyword
-	case ScriptElementKindConstElement, ScriptElementKindLetElement, ScriptElementKindVariableElement,
-		ScriptElementKindLocalVariableElement, ScriptElementKindAlias, ScriptElementKindParameterElement:
+	case lsutil.ScriptElementKindConstElement, lsutil.ScriptElementKindLetElement, lsutil.ScriptElementKindVariableElement,
+		lsutil.ScriptElementKindLocalVariableElement, lsutil.ScriptElementKindAlias, lsutil.ScriptElementKindParameterElement:
 		return lsproto.CompletionItemKindVariable
 
-	case ScriptElementKindMemberVariableElement, ScriptElementKindMemberGetAccessorElement,
-		ScriptElementKindMemberSetAccessorElement:
+	case lsutil.ScriptElementKindMemberVariableElement, lsutil.ScriptElementKindMemberGetAccessorElement,
+		lsutil.ScriptElementKindMemberSetAccessorElement:
 		return lsproto.CompletionItemKindField
 
-	case ScriptElementKindFunctionElement, ScriptElementKindLocalFunctionElement:
+	case lsutil.ScriptElementKindFunctionElement, lsutil.ScriptElementKindLocalFunctionElement:
 		return lsproto.CompletionItemKindFunction
 
-	case ScriptElementKindMemberFunctionElement, ScriptElementKindConstructSignatureElement,
-		ScriptElementKindCallSignatureElement, ScriptElementKindIndexSignatureElement:
+	case lsutil.ScriptElementKindMemberFunctionElement, lsutil.ScriptElementKindConstructSignatureElement,
+		lsutil.ScriptElementKindCallSignatureElement, lsutil.ScriptElementKindIndexSignatureElement:
 		return lsproto.CompletionItemKindMethod
 
-	case ScriptElementKindEnumElement:
+	case lsutil.ScriptElementKindEnumElement:
 		return lsproto.CompletionItemKindEnum
 
-	case ScriptElementKindEnumMemberElement:
+	case lsutil.ScriptElementKindEnumMemberElement:
 		return lsproto.CompletionItemKindEnumMember
 
-	case ScriptElementKindModuleElement, ScriptElementKindExternalModuleName:
+	case lsutil.ScriptElementKindModuleElement, lsutil.ScriptElementKindExternalModuleName:
 		return lsproto.CompletionItemKindModule
 
-	case ScriptElementKindClassElement, ScriptElementKindTypeElement:
+	case lsutil.ScriptElementKindClassElement, lsutil.ScriptElementKindTypeElement:
 		return lsproto.CompletionItemKindClass
 
-	case ScriptElementKindInterfaceElement:
+	case lsutil.ScriptElementKindInterfaceElement:
 		return lsproto.CompletionItemKindInterface
 
-	case ScriptElementKindWarning:
+	case lsutil.ScriptElementKindWarning:
 		return lsproto.CompletionItemKindText
 
-	case ScriptElementKindScriptElement:
+	case lsutil.ScriptElementKindScriptElement:
 		return lsproto.CompletionItemKindFile
 
-	case ScriptElementKindDirectory:
+	case lsutil.ScriptElementKindDirectory:
 		return lsproto.CompletionItemKindFolder
 
-	case ScriptElementKindString:
+	case lsutil.ScriptElementKindString:
 		return lsproto.CompletionItemKindConstant
 
 	default:
@@ -4456,8 +4456,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*insertText*/
 		"",             /*filterText*/
 		SortTextLocationPriority,
-		ScriptElementKindClassElement,
-		collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+		lsutil.ScriptElementKindClassElement,
+		collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
 		nil, /*replacementSpan*/
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
@@ -4493,8 +4493,8 @@ func (l *LanguageService) createLSPCompletionItem(
 	insertText string,
 	filterText string,
 	sortText SortText,
-	elementKind ScriptElementKind,
-	kindModifiers collections.Set[ScriptElementKindModifier],
+	elementKind lsutil.ScriptElementKind,
+	kindModifiers collections.Set[lsutil.ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
@@ -4541,7 +4541,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	var tags *[]lsproto.CompletionItemTag
 	var detail *string
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
-	if kindModifiers.Has(ScriptElementKindModifierOptional) {
+	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
 		if insertText == "" {
 			insertText = name
 		}
@@ -4550,11 +4550,11 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 		name = name + "?"
 	}
-	if kindModifiers.Has(ScriptElementKindModifierDeprecated) {
+	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
 	}
 	if kind == lsproto.CompletionItemKindFile {
-		for _, extensionModifier := range fileExtensionKindModifiers {
+		for _, extensionModifier := range lsutil.FileExtensionKindModifiers {
 			if kindModifiers.Has(extensionModifier) {
 				if strings.HasSuffix(name, string(extensionModifier)) {
 					detail = ptrTo(name)
@@ -4642,8 +4642,8 @@ func (l *LanguageService) getLabelStatementCompletions(
 					"", /*insertText*/
 					"", /*filterText*/
 					SortTextLocationPriority,
-					ScriptElementKindLabel,
-					collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+					lsutil.ScriptElementKindLabel,
+					collections.Set[lsutil.ScriptElementKindModifier]{}, /*kindModifiers*/
 					nil, /*replacementSpan*/
 					nil, /*commitCharacters*/
 					nil, /*labelDetails*/

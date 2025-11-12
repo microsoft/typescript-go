@@ -405,7 +405,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot), nil
 }
 
 // GetLanguageServiceWithAutoImports clones the current snapshot with a request to
@@ -421,7 +421,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsp
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot), nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -30,9 +31,10 @@ const (
 )
 
 type RawExport struct {
-	Syntax     ExportSyntax
-	ExportName string
-	Flags      ast.SymbolFlags
+	Syntax            ExportSyntax
+	ExportName        string
+	Flags             ast.SymbolFlags
+	ScriptElementKind lsutil.ScriptElementKind
 	// !!! other kinds of names
 
 	// The file where the export was found.
@@ -91,6 +93,7 @@ func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path) []*RawE
 			Syntax:               syntax,
 			ExportName:           name,
 			Flags:                symbol.Flags,
+			ScriptElementKind:    lsutil.GetSymbolKindSimple(symbol),
 			FileName:             file.FileName(),
 			Path:                 file.Path(),
 			ModuleID:             ModuleID(file.Path()),

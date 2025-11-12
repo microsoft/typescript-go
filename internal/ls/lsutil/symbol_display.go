@@ -1,4 +1,4 @@
-package ls
+package lsutil
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -109,7 +109,7 @@ const (
 	ScriptElementKindModifierCjs        ScriptElementKindModifier = ".cjs"
 )
 
-var fileExtensionKindModifiers = []ScriptElementKindModifier{
+var FileExtensionKindModifiers = []ScriptElementKindModifier{
 	ScriptElementKindModifierDts,
 	ScriptElementKindModifierTs,
 	ScriptElementKindModifierTsx,
@@ -124,13 +124,16 @@ var fileExtensionKindModifiers = []ScriptElementKindModifier{
 	ScriptElementKindModifierCjs,
 }
 
-func getSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
+func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
 	result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
 	if result != ScriptElementKindUnknown {
 		return result
 	}
+	return GetSymbolKindSimple(symbol)
+}
 
-	flags := checker.GetCombinedLocalAndExportSymbolFlags(symbol)
+func GetSymbolKindSimple(symbol *ast.Symbol) ScriptElementKind {
+	flags := symbol.CombinedLocalAndExportSymbolFlags()
 	if flags&ast.SymbolFlagsClass != 0 {
 		decl := ast.GetDeclarationOfKind(symbol, ast.KindClassExpression)
 		if decl != nil {
@@ -184,7 +187,7 @@ func getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker *
 		return ScriptElementKindParameterElement
 	}
 
-	flags := checker.GetCombinedLocalAndExportSymbolFlags(symbol)
+	flags := symbol.CombinedLocalAndExportSymbolFlags()
 	if flags&ast.SymbolFlagsVariable != 0 {
 		if isFirstDeclarationOfSymbolParameter(symbol) {
 			return ScriptElementKindParameterElement
@@ -305,7 +308,7 @@ func isLocalVariableOrFunction(symbol *ast.Symbol) bool {
 	return false
 }
 
-func getSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) collections.Set[ScriptElementKindModifier] {
+func GetSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symbol) collections.Set[ScriptElementKindModifier] {
 	if symbol == nil {
 		return collections.Set[ScriptElementKindModifier]{}
 	}
