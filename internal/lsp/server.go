@@ -490,6 +490,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentInlayHintInfo, (*Server).handleInlayHint)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -671,6 +673,16 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
 				Boolean: ptrTo(true),
+			},
+			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
+			CodeActionProvider: &lsproto.BooleanOrCodeActionOptions{
+				CodeActionOptions: &lsproto.CodeActionOptions{
+					CodeActionKinds: &[]lsproto.CodeActionKind{
+						lsproto.CodeActionKindQuickFix,
+					},
+				},
 			},
 		},
 	}
@@ -915,6 +927,10 @@ func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideSelectionRanges(ctx, params)
 }
 
+func (s *Server) handleCodeAction(ctx context.Context, ls *ls.LanguageService, params *lsproto.CodeActionParams) (lsproto.CodeActionResponse, error) {
+	return ls.ProvideCodeActions(ctx, params)
+}
+
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
 }
@@ -972,6 +988,14 @@ func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.
 		return nil
 	}
 	return params.Capabilities.TextDocument.Completion
+}
+
+func (s *Server) handleInlayHint(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.InlayHintParams,
+) (lsproto.InlayHintResponse, error) {
+	return languageService.ProvideInlayHint(ctx, params)
 }
 
 func getDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
