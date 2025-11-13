@@ -14,8 +14,8 @@ module.exports = f;
 >f : () => void
 
 === use.js ===
-/** @typedef {import('./controlFlowJSClassProperty').C} C */
+/** @typedef {import('./typedefModuleExportsIndirect2').C} C */
 /** @type {C} */
 var c
->c : any
+>c : import("typedefModuleExportsIndirect2").C
 

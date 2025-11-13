@@ -7,6 +7,6 @@
 const o = {};
 module.exports = o;
 // @filename: use.js
-/** @typedef {import('./controlFlowJSClassProperty').C} C */
+/** @typedef {import('./typedefModuleExportsIndirect3').C} C */
 /** @type {C} */
 var c

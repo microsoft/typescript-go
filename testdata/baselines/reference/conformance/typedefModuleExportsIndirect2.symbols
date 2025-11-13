@@ -12,7 +12,7 @@ module.exports = f;
 >f : Symbol(f, Decl(typedefModuleExportsIndirect2.js, 1, 5))
 
 === use.js ===
-/** @typedef {import('./controlFlowJSClassProperty').C} C */
+/** @typedef {import('./typedefModuleExportsIndirect2').C} C */
 /** @type {C} */
 var c
 >c : Symbol(c, Decl(use.js, 2, 3))
