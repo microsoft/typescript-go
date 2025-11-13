@@ -1535,6 +1535,9 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	b.inAssignmentPattern = false
 
 	if b.currentFlow == b.unreachableFlow {
+		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
+			flowNodeData.FlowNode = nil
+		}
 		if ast.IsPotentiallyExecutableNode(node) {
 			node.Flags |= ast.NodeFlagsUnreachable
 		}
