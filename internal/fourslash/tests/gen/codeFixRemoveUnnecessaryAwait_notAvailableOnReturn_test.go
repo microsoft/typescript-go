@@ -16,5 +16,5 @@ async function fn(): Promise<number> {
   return 0;
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

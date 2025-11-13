@@ -20,11 +20,11 @@ f
 // @Filename: node_modules/m/index.js
 module.exports.f = function (x) { return x }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
-	f.VerifyDiagnostics(t, []*lsproto.Diagnostic{
+	f.VerifyNonSuggestionDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Code:    &lsproto.IntegerOrString{Integer: PtrTo[int32](7016)},
-			Message: "Could not find a declaration file for module 'm'. '/tests/cases/fourslash/node_modules/m/index.js' implicitly has an 'any' type.",
+			Message: "Could not find a declaration file for module 'm'. '/node_modules/m/index.js' implicitly has an 'any' type.",
 		},
 	})
 }

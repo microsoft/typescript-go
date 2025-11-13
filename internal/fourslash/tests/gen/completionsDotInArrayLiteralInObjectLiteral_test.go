@@ -15,7 +15,7 @@ func TestCompletionsDotInArrayLiteralInObjectLiteral(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const o = { x: [[|.|][||]/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, []*lsproto.Diagnostic{
+	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Code:    &lsproto.IntegerOrString{Integer: PtrTo[int32](1109)},
 			Message: "Expression expected.",

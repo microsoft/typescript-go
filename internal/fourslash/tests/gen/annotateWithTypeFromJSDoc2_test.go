@@ -15,5 +15,5 @@ func TestAnnotateWithTypeFromJSDoc2(t *testing.T) {
 /** @type {number} */
 var [|x|]: string;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

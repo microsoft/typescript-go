@@ -21,5 +21,5 @@ const x = 1
 type x = string
 var y: x = 'hi'`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

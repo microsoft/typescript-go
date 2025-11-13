@@ -15,5 +15,5 @@ func TestRefactorConvertToEsModule_notInCommonjsProject(t *testing.T) {
 // @Filename: /a.js
 exports.x = 0;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

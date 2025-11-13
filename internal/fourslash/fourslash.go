@@ -531,6 +531,16 @@ func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
 }
 
+func (f *FourslashTest) getRangesInFile(fileName string) []*RangeMarker {
+	var rangesInFile []*RangeMarker
+	for _, rangeMarker := range f.testData.Ranges {
+		if rangeMarker.FileName() == fileName {
+			rangesInFile = append(rangesInFile, rangeMarker)
+		}
+	}
+	return rangesInFile
+}
+
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 	if f.activeFilename != filename {
 		f.openFile(t, filename)
@@ -888,8 +898,9 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
-	autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
@@ -1655,7 +1666,12 @@ func (f *FourslashTest) ReplaceLine(t *testing.T, lineIndex int, text string) {
 func (f *FourslashTest) selectLine(t *testing.T, lineIndex int) {
 	script := f.getScriptInfo(f.activeFilename)
 	start := script.lineMap.LineStarts[lineIndex]
-	end := script.lineMap.LineStarts[lineIndex+1] - 1
+	var end core.TextPos
+	if lineIndex+1 >= len(script.lineMap.LineStarts) {
+		end = core.TextPos(len(script.content))
+	} else {
+		end = script.lineMap.LineStarts[lineIndex+1] - 1
+	}
 	f.selectRange(t, core.NewTextRange(int(start), int(end)))
 }
 
@@ -2315,27 +2331,57 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
-	var actualDiagnostics []*lsproto.Diagnostic
-	for fileName := range f.scriptInfos {
-		params := &lsproto.DocumentDiagnosticParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(fileName),
-			},
-		}
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
-		if resMsg == nil {
-			t.Fatal("Nil response received for diagnostics request")
-		}
-		if !resultOk {
-			t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
-		}
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return true })
+}
 
-		if result.FullDocumentDiagnosticReport != nil {
-			actualDiagnostics = append(actualDiagnostics, result.FullDocumentDiagnosticReport.Items...)
+// Similar to `VerifyDiagnostics`, but excludes suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifyNonSuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) })
+}
+
+// Similar to `VerifyDiagnostics`, but includes only suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifySuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, isSuggestionDiagnostic)
+}
+
+func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic, filterDiagnostics func(*lsproto.Diagnostic) bool) {
+	params := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for diagnostics request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
+	}
+
+	var actualDiagnostics []*lsproto.Diagnostic
+	if result.FullDocumentDiagnosticReport != nil {
+		actualDiagnostics = append(actualDiagnostics, result.FullDocumentDiagnosticReport.Items...)
+	}
+	actualDiagnostics = core.Filter(actualDiagnostics, filterDiagnostics)
+	emptyRange := lsproto.Range{}
+	for _, diag := range expected {
+		if diag.Range == emptyRange {
+			rangesInFile := f.getRangesInFile(f.activeFilename)
+			if len(rangesInFile) == 0 {
+				t.Fatalf("No ranges found in file %s to assign to diagnostic with empty range", f.activeFilename)
+			}
+			diag.Range = rangesInFile[0].LSRange
 		}
 	}
-	// !!! HERE
-	assertDeepEqual(t, actualDiagnostics, expected, "Diagnostics do not match expected")
+	if len(actualDiagnostics) == 0 {
+		actualDiagnostics = nil
+	}
+	assertDeepEqual(t, actualDiagnostics, expected, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
+}
+
+func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
+	return diag.Tags != nil && len(*diag.Tags) > 0 ||
+		(diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityHint)
 }
 
 func isLibFile(fileName string) bool {

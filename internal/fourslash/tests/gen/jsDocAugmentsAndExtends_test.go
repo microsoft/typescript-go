@@ -34,7 +34,7 @@ declare class Thing<T> {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
 	f.VerifyQuickInfoIs(t, "(local var) x: number", "")
-	f.VerifyDiagnostics(t, []*lsproto.Diagnostic{
+	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Message: "Class declarations cannot have more than one '@augments' or '@extends' tag.",
 			Code:    &lsproto.IntegerOrString{Integer: PtrTo[int32](8025)},

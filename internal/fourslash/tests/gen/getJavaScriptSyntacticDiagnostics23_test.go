@@ -21,6 +21,6 @@ function Person(age) {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }

@@ -14,5 +14,5 @@ func TestModuleDeclarationDeprecated_suggestion2(t *testing.T) {
 	const content = `// @Filename: a.ts
 declare module`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

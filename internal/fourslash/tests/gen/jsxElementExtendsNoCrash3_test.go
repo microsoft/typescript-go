@@ -14,5 +14,5 @@ func TestJsxElementExtendsNoCrash3(t *testing.T) {
 	const content = `// @filename: index.tsx
 <T extends /=>`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

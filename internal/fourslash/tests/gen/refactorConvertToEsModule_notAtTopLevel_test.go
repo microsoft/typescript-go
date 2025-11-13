@@ -18,5 +18,5 @@ func TestRefactorConvertToEsModule_notAtTopLevel(t *testing.T) {
     module.exports = 0;
 })();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

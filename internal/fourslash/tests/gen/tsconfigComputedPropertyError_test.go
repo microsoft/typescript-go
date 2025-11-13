@@ -20,5 +20,5 @@ func TestTsconfigComputedPropertyError(t *testing.T) {
     "compileOnSave": true
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }

@@ -24,5 +24,5 @@ class C {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "$")
 	f.Insert(t, "()")
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }

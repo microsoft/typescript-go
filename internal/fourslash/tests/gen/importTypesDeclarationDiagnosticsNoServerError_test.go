@@ -22,5 +22,5 @@ import { f } from "foo";
 export const x = f();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFileNumber(t, 1)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }

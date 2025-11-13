@@ -26,9 +26,9 @@ func TestSuggestionOfUnusedVariableWithExternalModule(t *testing.T) {
 require("./mymodule");`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "/app.js")
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 	f.GoToFile(t, "/mymodule.js")
-	f.VerifyDiagnostics(t, []*lsproto.Diagnostic{
+	f.VerifySuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Message: "'root' is declared but its value is never read.",
 			Code:    &lsproto.IntegerOrString{Integer: PtrTo[int32](6133)},

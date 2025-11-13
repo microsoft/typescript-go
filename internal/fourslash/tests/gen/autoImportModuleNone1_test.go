@@ -33,5 +33,5 @@ export const x: number;
 		},
 	})
 	f.ReplaceLine(t, 0, "import { x } from 'dep'; x;")
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }

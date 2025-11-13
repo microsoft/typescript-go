@@ -20,5 +20,5 @@ async function fn2<T extends Promise<void> | void>(a: T) {
   await a;
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

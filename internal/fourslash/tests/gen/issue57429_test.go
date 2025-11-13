@@ -32,7 +32,7 @@ Builder<IThing>({
 })`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyQuickInfoAt(t, "1", "const value: any", "")
-	f.VerifyDiagnostics(t, []*lsproto.Diagnostic{
+	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Message: "Property 'args' does not exist on type 'IThing'.",
 			Code:    &lsproto.IntegerOrString{Integer: PtrTo[int32](2339)},

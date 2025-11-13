@@ -24,5 +24,5 @@ var a = 10;
 exports.a = 10;
 c = 10;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifySuggestionDiagnostics(t, nil)
 }

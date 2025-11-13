@@ -1237,6 +1237,7 @@ function parseVerifyDiagnostics(funcName: string, args: readonly ts.Expression[]
     return [{
         kind: "verifyDiagnostics",
         arg: goArgs.length > 0 ? `[]*lsproto.Diagnostic{\n${goArgs.join(",\n")},\n}` : "nil",
+        isSuggestion: funcName === "getSuggestionDiagnostics",
     }];
 }
 
@@ -1261,6 +1262,7 @@ function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
             case "message": {
                 let messageInit;
                 if (messageInit = getStringLiteralLike(init)) {
+                    messageInit.text = messageInit.text.replace("/tests/cases/fourslash", "");
                     diagnosticProps.push(`Message: ${getGoStringLiteral(messageInit.text)},`);
                 }
                 else {
@@ -1823,6 +1825,7 @@ interface VerifyRenameInfoCmd {
 interface VerifyDiagnosticsCmd {
     kind: "verifyDiagnostics";
     arg: string;
+    isSuggestion: boolean;
 }
 
 type Cmd =
@@ -1980,7 +1983,8 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineInlayHints":
             return generateBaselineInlayHints(cmd);
         case "verifyDiagnostics":
-            return `f.VerifyDiagnostics(t, ${cmd.arg})`;
+            const funcName = cmd.isSuggestion ? "VerifySuggestionDiagnostics" : "VerifyNonSuggestionDiagnostics";
+            return `f.${funcName}(t, ${cmd.arg})`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

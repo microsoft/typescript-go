@@ -16,5 +16,5 @@ func TestGetJavaScriptSyntacticDiagnostics21(t *testing.T) {
 // @Filename: a.js
 @internal class C {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyDiagnostics(t, nil)
+	f.VerifyNonSuggestionDiagnostics(t, nil)
 }
