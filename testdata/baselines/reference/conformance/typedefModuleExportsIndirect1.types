@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/salsa/typedefModuleExportsIndirect1.ts] ////
+
+=== controlFlowJSClassProperty.js ===
+/** @typedef {{ a: 1, m: 1 }} C */
+const dummy = 0;
+>dummy : 0
+>0 : 0
+
+module.exports = dummy;
+>module.exports = dummy : 0
+>module.exports : 0
+>module : { readonly dummy: 0; }
+>exports : 0
+>dummy : 0
+
+=== use.js ===
+/** @typedef {import('./controlFlowJSClassProperty').C} C */
+/** @type {C} */
+var c
+>c : import("controlFlowJSClassProperty").C
+

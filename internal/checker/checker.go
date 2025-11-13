@@ -5448,7 +5448,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	links := c.moduleSymbolLinks.Get(moduleSymbol)
 	if !links.exportsChecked {
 		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
-		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol) {
+		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol, exportEqualsSymbol.ValueDeclaration.Kind == ast.KindJSExportAssignment) {
 			declaration := core.OrElse(c.getDeclarationOfAliasSymbol(exportEqualsSymbol), exportEqualsSymbol.ValueDeclaration)
 			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) {
 				c.error(declaration, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
@@ -5484,10 +5484,17 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	}
 }
 
-func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol) bool {
+func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol, isCommonJS bool) bool {
 	for id := range moduleSymbol.Exports {
 		if id != ast.InternalSymbolNameExportEquals {
-			return true
+			if !isCommonJS {
+				return true
+			}
+			for _, declaration := range moduleSymbol.Exports[id].Declarations {
+				if declaration.Kind != ast.KindJSTypeAliasDeclaration {
+					return true
+				}
+			}
 		}
 	}
 	return false
@@ -15271,21 +15278,15 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, dontResolveAlias bool, location *ast.Node) *ast.Symbol {
 	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, true /*ignoreErrors*/, false /*dontResolveAlias*/, location)
 	if namespace == nil || ast.NodeIsMissing(right) {
-		var immediate *ast.Symbol
 		alias := c.resolveEntityName(left, ast.SymbolFlagsAlias, true /*ignoreErrors*/, true /*dontResolveAlias*/, location)
-		if alias != nil {
-			immediate = c.getImmediateAliasedSymbol(alias)
-			if immediate != nil && !core.Some(immediate.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
-				immediate = nil
-			}
+		if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
+			namespace = alias.Parent
 		}
-		if immediate == nil {
+		if namespace == nil {
 			if !ignoreErrors {
 				c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
 			}
 			return nil
-		} else {
-			namespace = immediate
 		}
 	}
 	if namespace == c.unknownSymbol {
@@ -15639,11 +15640,25 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		}
 		return symbols
 	}
+	var originalModule *ast.Symbol
+	if moduleSymbol != nil {
+		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+			originalModule = moduleSymbol
+		}
+	}
 	// A module defined by an 'export=' consists of one export that needs to be resolved
 	moduleSymbol = c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
 	exports = visit(moduleSymbol, nil, false)
 	if exports == nil {
 		exports = make(ast.SymbolTable)
+	}
+	// A CommonJS module defined by an 'export=' might also export JSTypeAliasDeclarations with
+	if originalModule != nil && len(originalModule.Exports) > 1 {
+		for _, symbol := range originalModule.Exports {
+			if symbol.Flags&ast.SymbolFlagsType != 0 && symbol.Name != ast.InternalSymbolNameExportEquals {
+				exports[symbol.Name] = symbol
+			}
+		}
 	}
 	for name := range nonTypeOnlyNames.Keys() {
 		delete(typeOnlyExportStarMap, name)
@@ -23902,23 +23917,18 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), false /*skipObjectFunctionPropertyAugment*/, true /*includeTypeOnlyMembers*/)
 				} else {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
+					if symbolFromModule == nil {
+						immediateModuleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, true /*dontResolveAlias*/)
+						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
+							symbolFromModule = c.getSymbol(c.getExportsOfSymbol(immediateModuleSymbol.Parent), current.Text(), meaning)
+						}
+					}
 				}
 				next := core.OrElse(symbolFromModule, symbolFromVariable)
 				if next == nil {
-					var symbolFromImmediateModule *ast.Symbol
-					if currentNamespace == moduleSymbol {
-						immediateModuleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, true /*dontResolveAlias*/)
-						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
-							symbolFromImmediateModule = c.getSymbol(c.getExportsOfSymbol(immediateModuleSymbol), current.Text(), meaning)
-						}
-					}
-					if symbolFromImmediateModule != nil {
-						next = symbolFromImmediateModule
-					} else {
-						c.error(current, diagnostics.Namespace_0_has_no_exported_member_1, c.getFullyQualifiedName(currentNamespace, nil), scanner.DeclarationNameToString(current))
-						links.resolvedType = c.errorType
-						return links.resolvedType
-					}
+					c.error(current, diagnostics.Namespace_0_has_no_exported_member_1, c.getFullyQualifiedName(currentNamespace, nil), scanner.DeclarationNameToString(current))
+					links.resolvedType = c.errorType
+					return links.resolvedType
 				}
 				c.symbolNodeLinks.Get(current).resolvedSymbol = next
 				c.symbolNodeLinks.Get(current.Parent).resolvedSymbol = next

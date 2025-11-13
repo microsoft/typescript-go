@@ -11,7 +11,14 @@
  >require : any
  >'./mod1.js' : "./mod1.js"
 
-@@= skipped -17, +17 lines =@@
+@@= skipped -11, +11 lines =@@
+
+ /** @type {mod.Baz} */
+ var bb;
+->bb : number
++>bb : mod.Baz
+
+ var bbb = new mod.Baz();
  >bbb : Baz
  >new mod.Baz() : Baz
  >mod.Baz : typeof Baz
@@ -20,16 +27,13 @@
  >Baz : typeof Baz
 
  === mod1.js ===
-@@= skipped -13, +13 lines =@@
- /** @typedef {number} Bar */
+@@= skipped -20, +20 lines =@@
  exports.Bar = class { }
  >exports.Bar = class { } : typeof Bar
-->exports.Bar : typeof Bar
+ >exports.Bar : typeof Bar
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-->Bar : typeof Bar
-+>exports.Bar : any
 +>exports : typeof import("mod1")
-+>Bar : any
+ >Bar : typeof Bar
  >class { } : typeof Bar
 
  /** @typedef {number} Baz */
@@ -46,15 +50,12 @@
 
      Baz: class { }
 @@= skipped -28, +28 lines =@@
- /** @typedef {number} Quid */
  exports.Quid = 2;
  >exports.Quid = 2 : 2
-->exports.Quid : 2
+ >exports.Quid : 2
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-->Quid : 2
-+>exports.Quid : any
 +>exports : typeof import("mod1")
-+>Quid : any
+ >Quid : 2
  >2 : 2
 
  /** @typedef {number} Quack */

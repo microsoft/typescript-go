@@ -73,7 +73,6 @@ type Binder struct {
 	flowNodePool           core.Pool[ast.FlowNode]
 	flowListPool           core.Pool[ast.FlowList]
 	singleDeclarationsPool core.Pool[*ast.Node]
-	delayedTypeAliases     []*ast.Node
 }
 
 func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
@@ -127,30 +126,7 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.bind(file.AsNode())
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
-		b.delayedBindJSDocTypedefTag()
 	})
-}
-
-// top-level typedef binding is delayed because it changes based on whether `module.exports = x` is bound
-func (b *Binder) delayedBindJSDocTypedefTag() {
-	if b.delayedTypeAliases == nil {
-		return
-	}
-	if b.file.Symbol != nil {
-		if exportEq := b.file.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEq != nil && b.file.CommonJSModuleIndicator != nil {
-			for _, node := range b.delayedTypeAliases {
-				b.declareSymbol(ast.GetSymbolTable(&exportEq.Exports), exportEq /*parent*/, node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
-				b.declareSymbol(ast.GetLocals(b.file.AsNode()), b.file.Symbol, node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
-			}
-			return
-		}
-	}
-	// bind normally
-	b.container = b.file.AsNode()
-	b.blockScopeContainer = b.file.AsNode()
-	for _, node := range b.delayedTypeAliases {
-		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
-	}
 }
 
 func (b *Binder) newSymbol(flags ast.SymbolFlags, name string) *ast.Symbol {
@@ -710,14 +686,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
 	case ast.KindCallExpression:
 		b.bindCallExpression(node)
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
-	case ast.KindJSTypeAliasDeclaration:
-		if b.file.AsNode() == b.container {
-			b.delayedTypeAliases = append(b.delayedTypeAliases, node)
-		} else {
-			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
-		}
 	case ast.KindEnumDeclaration:
 		b.bindEnumDeclaration(node)
 	case ast.KindModuleDeclaration:
