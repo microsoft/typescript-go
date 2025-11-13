@@ -2859,7 +2859,7 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	case ast.KindTaggedTemplateExpression:
 		return c.getDeprecatedSuggestionNode(node.AsTaggedTemplateExpression().Tag)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return c.getDeprecatedSuggestionNode(getTagNameOfNode(node))
+		return c.getDeprecatedSuggestionNode(node.TagName())
 	case ast.KindElementAccessExpression:
 		return node.AsElementAccessExpression().ArgumentExpression
 	case ast.KindPropertyAccessExpression:
@@ -30342,7 +30342,7 @@ func (c *Checker) hasContextualTypeWithNoGenericTypes(node *ast.Node, checkMode 
 	// If check mode has `CheckMode.RestBindingElement`, we skip binding pattern contextual types,
 	// as we want the type of a rest element to be generic when possible.
 	if (ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
-		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && getTagNameOfNode(node.Parent) == node) {
+		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && node.Parent.TagName() == node) {
 		contextualType := c.getContextualType(node, core.IfElse(checkMode&CheckModeRestBindingElement != 0, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
 		if contextualType != nil {
 			return !c.isGenericType(contextualType)
@@ -30518,7 +30518,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
-		return c.getSymbolOfNode(node)
+		return c.getSymbolOfNode(node.Parent)
 	case ast.KindImportType:
 		if ast.IsLiteralImportTypeNode(node) {
 			return c.getSymbolAtLocation(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal, ignoreErrors)
