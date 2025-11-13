@@ -1,8 +1,11 @@
 package core
 
 import (
+	"context"
 	"sync"
 	"sync/atomic"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type WorkGroup interface {
@@ -33,11 +36,9 @@ func (w *parallelWorkGroup) Queue(fn func()) {
 		panic("Queue called after RunAndWait returned")
 	}
 
-	w.wg.Add(1)
-	go func() {
-		defer w.wg.Done()
+	w.wg.Go(func() {
 		fn()
-	}()
+	})
 }
 
 func (w *parallelWorkGroup) RunAndWait() {
@@ -85,4 +86,38 @@ func (w *singleThreadedWorkGroup) pop() func() {
 	w.fns[end] = nil // Allow GC
 	w.fns = w.fns[:end]
 	return fn
+}
+
+// ThrottleGroup is like errgroup.Group but with global concurrency limiting via a semaphore.
+type ThrottleGroup struct {
+	semaphore chan struct{}
+	group     *errgroup.Group
+}
+
+// NewThrottleGroup creates a new ThrottleGroup with the given context and semaphore for concurrency limiting.
+func NewThrottleGroup(ctx context.Context, semaphore chan struct{}) *ThrottleGroup {
+	g, _ := errgroup.WithContext(ctx)
+	return &ThrottleGroup{
+		semaphore: semaphore,
+		group:     g,
+	}
+}
+
+// Go runs the given function in a new goroutine, but first acquires a slot from the semaphore.
+// The semaphore slot is released when the function completes.
+func (tg *ThrottleGroup) Go(fn func() error) {
+	tg.group.Go(func() error {
+		// Acquire semaphore slot - this will block until a slot is available
+		tg.semaphore <- struct{}{}
+		defer func() {
+			// Release semaphore slot when done
+			<-tg.semaphore
+		}()
+		return fn()
+	})
+}
+
+// Wait waits for all goroutines to complete and returns the first error encountered, if any.
+func (tg *ThrottleGroup) Wait() error {
+	return tg.group.Wait()
 }

@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionForStringLiteralNonrelativeImport7(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @baseUrl: tests/cases/fourslash/modules
 // @Filename: tests/test0.ts
@@ -27,7 +28,7 @@ export var x = 5;
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{

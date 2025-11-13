@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -266,7 +267,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		return discriminated
 	}
 	jsxChildrenPropertyName := c.getJsxElementChildrenPropertyName(c.getJsxNamespaceAt(node))
-	discriminantProperties := core.Filter(node.AsJsxAttributes().Properties.Nodes, func(p *ast.Node) bool {
+	discriminantProperties := core.Filter(node.Properties(), func(p *ast.Node) bool {
 		symbol := p.Symbol()
 		if symbol == nil || !ast.IsJsxAttribute(p) {
 			return false
@@ -292,7 +293,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 
 func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *Type, relation *Relation, diagnosticOutput *[]*ast.Diagnostic) bool {
 	reportedError := false
-	for _, prop := range node.AsJsxAttributes().Properties.Nodes {
+	for _, prop := range node.Properties() {
 		if !ast.IsJsxSpreadAttribute(prop) && !isHyphenatedJsxName(prop.Name().Text()) {
 			nameType := c.getStringLiteralType(prop.Name().Text())
 			if nameType != nil && nameType.flags&TypeFlagsNever == 0 {
@@ -516,14 +517,13 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 	if jsxFactorySymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		resolvedAlias = c.resolveAlias(jsxFactorySymbol)
 	}
-	if jsxFactorySymbol != nil {
-		reactExports := c.getExportsOfSymbol(resolvedAlias)
-		typeSymbol := c.getSymbol(reactExports, ReactNames.Fragment, ast.SymbolFlagsBlockScopedVariable)
-		if typeSymbol != nil {
-			links.jsxFragmentType = c.getTypeOfSymbol(typeSymbol)
-		} else {
-			links.jsxFragmentType = c.errorType
-		}
+
+	reactExports := c.getExportsOfSymbol(resolvedAlias)
+	typeSymbol := c.getSymbol(reactExports, ReactNames.Fragment, ast.SymbolFlagsBlockScopedVariable)
+	if typeSymbol != nil {
+		links.jsxFragmentType = c.getTypeOfSymbol(typeSymbol)
+	} else {
+		links.jsxFragmentType = c.errorType
 	}
 	return links.jsxFragmentType
 }
@@ -719,7 +719,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		// Create anonymous type from given attributes symbol table.
 		// @param symbol a symbol of JsxAttributes containing attributes corresponding to attributesTable
 		// @param attributesTable a symbol table of attributes property
-		for _, attributeDecl := range attributes.AsJsxAttributes().Properties.Nodes {
+		for _, attributeDecl := range attributes.Properties() {
 			member := attributeDecl.Symbol()
 			if ast.IsJsxAttribute(attributeDecl) {
 				exprType := c.checkJsxAttribute(attributeDecl, checkMode)
@@ -748,13 +748,13 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)
-					// Debug.assert(inferenceContext)
+					debug.AssertIsDefined(inferenceContext)
 					// In CheckMode.Inferential we should always have an inference context
 					inferenceNode := attributeDecl.Initializer().Expression()
 					c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, exprType)
 				}
 			} else {
-				// Debug.assert(attributeDecl.Kind == ast.KindJsxSpreadAttribute)
+				debug.Assert(attributeDecl.Kind == ast.KindJsxSpreadAttribute)
 				if len(attributesTable) != 0 {
 					spread = c.getSpreadType(spread, createJsxAttributesType(), attributesSymbol, objectFlags, false /*readonly*/)
 					attributesTable = make(ast.SymbolTable)
@@ -796,11 +796,11 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		case ast.IsJsxElement(parent):
 			// We have to check that openingElement of the parent is the one we are visiting as this may not be true for selfClosingElement
 			if parent.AsJsxElement().OpeningElement == openingLikeElement {
-				children = parent.AsJsxElement().Children.Nodes
+				children = parent.Children().Nodes
 			}
 		case ast.IsJsxFragment(parent):
 			if parent.AsJsxFragment().OpeningFragment == openingLikeElement {
-				children = parent.AsJsxFragment().Children.Nodes
+				children = parent.Children().Nodes
 			}
 		}
 		return len(ast.GetSemanticJsxChildren(children)) != 0
@@ -939,7 +939,7 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 		attributesType = c.getReturnTypeOfSignature(sig)
 	default:
 		attributesType = c.getJsxPropsTypeForSignatureFromMember(sig, forcedLookupLocation)
-		if attributesType == nil && len(context.Attributes().AsJsxAttributes().Properties.Nodes) != 0 {
+		if attributesType == nil && len(context.Attributes().Properties()) != 0 {
 			// There is no property named 'props' on this instance type
 			c.error(context, diagnostics.JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property, forcedLookupLocation)
 		}
@@ -1107,7 +1107,7 @@ func (c *Checker) getStaticTypeOfReferencedJsxConstructor(context *ast.Node) *Ty
 	if isJsxIntrinsicTagName(context.TagName()) {
 		result := c.getIntrinsicAttributesTypeFromJsxOpeningLikeElement(context)
 		fakeSignature := c.createSignatureForJSXIntrinsic(context, result)
-		return c.getOrCreateTypeFromSignature(fakeSignature, nil)
+		return c.getOrCreateTypeFromSignature(fakeSignature)
 	}
 	tagType := c.checkExpressionCached(context.TagName())
 	if tagType.flags&TypeFlagsStringLiteral != 0 {
@@ -1116,7 +1116,7 @@ func (c *Checker) getStaticTypeOfReferencedJsxConstructor(context *ast.Node) *Ty
 			return c.errorType
 		}
 		fakeSignature := c.createSignatureForJSXIntrinsic(context, result)
-		return c.getOrCreateTypeFromSignature(fakeSignature, nil)
+		return c.getOrCreateTypeFromSignature(fakeSignature)
 	}
 	return tagType
 }
@@ -1175,7 +1175,7 @@ func (c *Checker) createSignatureForJSXIntrinsic(node *ast.Node, result *Type) *
 // The function is intended to be called from a function which has checked that the opening element is an intrinsic element.
 // @param node an intrinsic JSX opening-like element
 func (c *Checker) getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node *ast.Node) *Type {
-	// Debug.assert(c.isJsxIntrinsicTagName(node.TagName()))
+	debug.Assert(isJsxIntrinsicTagName(node.TagName()))
 	links := c.jsxElementLinks.Get(node)
 	if links.resolvedJsxElementAttributesType != nil {
 		return links.resolvedJsxElementAttributesType

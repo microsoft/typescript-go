@@ -25,6 +25,8 @@ function ListItem(_data: IListItemData) {
 
 
 //// [discriminatedUnionJsxElement.jsx]
+"use strict";
+// Repro from #46021
 function Menu(data) {
     var _a;
     const listItemVariant = (_a = data.menuItemsVariant) !== null && _a !== void 0 ? _a : ListItemVariant.OneLine;
@@ -41,7 +43,6 @@ function ListItem(_data) {
 
 
 //// [discriminatedUnionJsxElement.d.ts]
-// Repro from #46021
 interface IData<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine> {
     menuItemsVariant?: MenuItemVariant;
 }

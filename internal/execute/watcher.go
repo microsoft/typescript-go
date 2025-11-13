@@ -1,33 +1,50 @@
 package execute
 
 import (
+	"fmt"
 	"reflect"
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type watcher struct {
-	sys              System
-	configFileName   string
-	options          *tsoptions.ParsedCommandLine
-	reportDiagnostic diagnosticReporter
+type Watcher struct {
+	sys                            tsc.System
+	configFileName                 string
+	config                         *tsoptions.ParsedCommandLine
+	compilerOptionsFromCommandLine *core.CompilerOptions
+	reportDiagnostic               tsc.DiagnosticReporter
+	reportErrorSummary             tsc.DiagnosticsReporter
+	testing                        tsc.CommandLineTesting
 
 	host           compiler.CompilerHost
-	program        *compiler.Program
+	program        *incremental.Program
 	prevModified   map[string]time.Time
 	configModified bool
 }
 
-func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) *watcher {
-	w := &watcher{
-		sys:              sys,
-		options:          configParseResult,
-		reportDiagnostic: reportDiagnostic,
+var _ tsc.Watcher = (*Watcher)(nil)
+
+func createWatcher(
+	sys tsc.System,
+	configParseResult *tsoptions.ParsedCommandLine,
+	compilerOptionsFromCommandLine *core.CompilerOptions,
+	reportDiagnostic tsc.DiagnosticReporter,
+	reportErrorSummary tsc.DiagnosticsReporter,
+	testing tsc.CommandLineTesting,
+) *Watcher {
+	w := &Watcher{
+		sys:                            sys,
+		config:                         configParseResult,
+		compilerOptionsFromCommandLine: compilerOptionsFromCommandLine,
+		reportDiagnostic:               reportDiagnostic,
+		reportErrorSummary:             reportErrorSummary,
+		testing:                        testing,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
 	if configParseResult.ConfigFile != nil {
@@ -36,18 +53,71 @@ func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, r
 	return w
 }
 
-func (w *watcher) compileAndEmit() {
-	// !!! output/error reporting is currently the same as non-watch mode
-	// diagnostics, emitResult, exitStatus :=
-	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic)
+func (w *Watcher) start() {
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing))
+	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(w.host), w.host)
+
+	if w.testing == nil {
+		watchInterval := w.config.ParsedConfig.WatchOptions.WatchInterval()
+		for {
+			w.DoCycle()
+			time.Sleep(watchInterval)
+		}
+	} else {
+		// Initial compilation in test mode
+		w.DoCycle()
+	}
 }
 
-func (w *watcher) hasErrorsInTsConfig() bool {
+func (w *Watcher) DoCycle() {
+	// if this function is updated, make sure to update `RunWatchCycle` in export_test.go as needed
+
+	if w.hasErrorsInTsConfig() {
+		// these are unrecoverable errors--report them and do not build
+		return
+	}
+	// updateProgram()
+	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
+		Config:           w.config,
+		Host:             w.host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	}), w.program, nil, w.testing != nil)
+
+	if w.hasBeenModified(w.program.GetProgram()) {
+		fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
+		timeStart := w.sys.Now()
+		w.compileAndEmit()
+		fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
+	} else {
+		// print something???
+		// fmt.Fprintln(w.sys.Writer(), "no changes detected at ", w.sys.Now())
+	}
+	if w.testing != nil {
+		w.testing.OnProgram(w.program)
+	}
+}
+
+func (w *Watcher) compileAndEmit() {
+	// !!! output/error reporting is currently the same as non-watch mode
+	// diagnostics, emitResult, exitStatus :=
+	tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+		Sys:                w.sys,
+		ProgramLike:        w.program,
+		Program:            w.program.GetProgram(),
+		ReportDiagnostic:   w.reportDiagnostic,
+		ReportErrorSummary: w.reportErrorSummary,
+		Writer:             w.sys.Writer(),
+		CompileTimes:       &tsc.CompileTimes{},
+		Testing:            w.testing,
+	})
+}
+
+func (w *Watcher) hasErrorsInTsConfig() bool {
 	// only need to check and reparse tsconfig options/update host if we are watching a config file
+	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	if w.configFileName != "" {
-		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
 		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, &core.CompilerOptions{}, w.sys, &extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, w.sys, extendedConfigCache)
 		if len(errors) > 0 {
 			for _, e := range errors {
 				w.reportDiagnostic(e)
@@ -55,17 +125,17 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 			return true
 		}
 		// CompilerOptions contain fields which should not be compared; clone to get a copy without those set.
-		if !reflect.DeepEqual(w.options.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) {
+		if !reflect.DeepEqual(w.config.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) {
 			// fmt.Fprintln(w.sys.Writer(), "build triggered due to config change")
 			w.configModified = true
 		}
-		w.options = configParseResult
-		w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		w.config = configParseResult
 	}
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.testing))
 	return false
 }
 
-func (w *watcher) hasBeenModified(program *compiler.Program) bool {
+func (w *Watcher) hasBeenModified(program *compiler.Program) bool {
 	// checks watcher's snapshot against program file modified times
 	currState := map[string]time.Time{}
 	filesModified := w.configModified

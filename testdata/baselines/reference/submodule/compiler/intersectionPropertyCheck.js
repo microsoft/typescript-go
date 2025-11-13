@@ -22,11 +22,12 @@ function test<T extends object>(value: T): Test {
 
 
 //// [intersectionPropertyCheck.js]
+"use strict";
 let obj = { a: { x: 'hello', y: 2 }, c: 5 }; // Nested excess property
 let weak = wrong; // Nested weak object type
 function foo(x, y) {
     x = y; // Mismatched property in source intersection
 }
 function test(value) {
-    return { ...value, hi: true };
+    return Object.assign(Object.assign({}, value), { hi: true });
 }

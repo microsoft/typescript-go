@@ -29,11 +29,14 @@ type CommonJSModuleTransformer struct {
 	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+func NewCommonJSModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	emitContext := opts.Context
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -48,7 +51,7 @@ func (tx *CommonJSModuleTransformer) pushNode(node *ast.Node) (grandparentNode *
 	grandparentNode = tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
-	return
+	return grandparentNode
 }
 
 // Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
@@ -244,7 +247,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
 		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
-		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
+		(tx.currentSourceFile.ExternalModuleIndicator == nil || tx.currentSourceFile.ExternalModuleIndicator.Kind == ast.KindSourceFile) {
 		return false
 	}
 	if tx.currentModuleInfo.exportEquals == nil && ast.IsExternalModule(tx.currentSourceFile) {
@@ -293,12 +296,6 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	// emit standard prologue directives (e.g. "use strict")
 	prologue, rest := tx.Factory().SplitStandardPrologue(node.Statements.Nodes)
 	statements := slices.Clone(prologue)
-
-	// ensure "use strict" if not present
-	if ast.IsExternalModule(tx.currentSourceFile) ||
-		tx.compilerOptions.AlwaysStrict.DefaultIfUnknown(tx.compilerOptions.Strict).IsTrue() {
-		statements = tx.Factory().EnsureUseStrict(statements)
-	}
 
 	// emit custom prologues from other transformations
 	custom, rest := tx.Factory().SplitCustomPrologue(rest)
@@ -434,7 +431,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfImportDeclaration(statements
 			statements = tx.appendExportsOfDeclaration(statements, namedBindings, seen, false /*liveBinding*/)
 
 		case ast.KindNamedImports:
-			for _, importBinding := range namedBindings.AsNamedImports().Elements.Nodes {
+			for _, importBinding := range namedBindings.Elements() {
 				statements = tx.appendExportsOfDeclaration(statements, importBinding, seen, true /*liveBinding*/)
 			}
 		}
@@ -477,7 +474,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfBindingElement(statements []
 	}
 
 	if ast.IsBindingPattern(decl.Name()) {
-		for _, element := range decl.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range decl.Name().Elements() {
 			e := element.AsBindingElement()
 			if e.DotDotDotToken == nil && e.Name() == nil {
 				statements = tx.appendExportsOfBindingElement(statements, element, isForInOrOfInitializer)
@@ -626,6 +623,7 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 								nil, /*typeParameters*/
 								tx.Factory().NewNodeList([]*ast.Node{}),
 								nil, /*type*/
+								nil, /*fullSignature*/
 								tx.Factory().NewBlock(
 									tx.Factory().NewNodeList([]*ast.Node{
 										tx.Factory().NewReturnStatement(value),
@@ -846,7 +844,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		tx.EmitContext().AssignCommentAndSourceMapRanges(varStatement, node.AsNode())
 		statements = append(statements, varStatement)
 
-		for _, specifier := range node.ExportClause.AsNamedExports().Elements.Nodes {
+		for _, specifier := range node.ExportClause.Elements() {
 			specifierName := specifier.PropertyNameOrName()
 			exportNeedsImportDefault := tx.compilerOptions.GetESModuleInterop() &&
 				tx.EmitContext().EmitFlags(node.AsNode())&printer.EFNeverApplyImportHelper == 0 &&
@@ -946,6 +944,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelFunctionDeclaration(node *ast.
 			nil, /*typeParameters*/
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil, /*type*/
+			nil, /*fullSignature*/
 			tx.Visitor().VisitNode(node.Body),
 		)
 	} else {
@@ -1512,6 +1511,7 @@ func (tx *CommonJSModuleTransformer) visitDestructuringAssignmentTargetNoStack(n
 				nil, /*typeParameters*/
 				tx.Factory().NewNodeList([]*ast.Node{param}),
 				nil, /*returnType*/
+				nil, /*fullSignature*/
 				tx.Factory().NewBlock(statementList, false /*multiLine*/),
 			)
 			propertyList := tx.Factory().NewNodeList([]*ast.Node{valueSetter})
@@ -1785,6 +1785,7 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 		nil, /*typeParameters*/
 		tx.Factory().NewNodeList(parameters),
 		nil, /*type*/
+		nil, /*fullSignature*/
 		tx.Factory().NewToken(ast.KindEqualsGreaterThanToken), /*equalsGreaterThanToken*/
 		requireCall,
 	)

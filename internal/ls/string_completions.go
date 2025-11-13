@@ -46,8 +46,6 @@ func (l *LanguageService) getStringLiteralCompletions(
 	position int,
 	contextToken *ast.Node,
 	compilerOptions *core.CompilerOptions,
-	program *compiler.Program,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	// !!! reference comment
@@ -59,18 +57,14 @@ func (l *LanguageService) getStringLiteralCompletions(
 			ctx,
 			file,
 			contextToken,
-			position,
-			program,
-			preferences)
+			position)
 		return l.convertStringLiteralCompletions(
 			ctx,
 			entries,
 			contextToken,
 			file,
 			position,
-			program,
 			compilerOptions,
-			preferences,
 			clientOptions,
 		)
 	}
@@ -83,9 +77,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	contextToken *ast.StringLiteralLike,
 	file *ast.SourceFile,
 	position int,
-	program *compiler.Program,
 	options *core.CompilerOptions,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	if completion == nil {
@@ -112,8 +104,6 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			contextToken, /*replacementToken*/
 			position,
 			file,
-			program,
-			preferences,
 			options,
 			clientOptions,
 		)
@@ -161,6 +151,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				false, /*hasAction*/
 				false, /*preselect*/
 				"",    /*source*/
+				nil,   /*autoImportEntryData*/
 			)
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
@@ -210,6 +201,7 @@ func (l *LanguageService) convertPathCompletions(
 			false, /*hasAction*/
 			false, /*preselect*/
 			"",    /*source*/
+			nil,   /*autoImportEntryData*/
 		)
 	})
 	itemDefaults := l.setItemDefaults(
@@ -232,10 +224,8 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	file *ast.SourceFile,
 	node *ast.StringLiteralLike,
 	position int,
-	program *compiler.Program,
-	preferences *UserPreferences,
 ) *stringLiteralCompletions {
-	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
@@ -245,8 +235,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return getStringLiteralCompletionsFromModuleNames(
 				file,
 				node,
-				program,
-				preferences,
+				l.GetProgram(),
 			)
 		}
 		return fromUnionableLiteralType(grandparent, parent, position, typeChecker)
@@ -327,7 +316,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		//      import x = require("/*completion position*/");
 		//      var y = require("/*completion position*/");
 		//      export * from "/*completion position*/";
-		return getStringLiteralCompletionsFromModuleNames(file, node, program, preferences)
+		return getStringLiteralCompletionsFromModuleNames(file, node, l.GetProgram())
 	case ast.KindCaseClause:
 		tracker := newCaseClauseTracker(typeChecker, parent.Parent.AsCaseBlock().Clauses.Nodes)
 		contextualTypes := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
@@ -365,10 +354,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		}
 		exports := typeChecker.GetExportsAndPropertiesOfModule(moduleSpecifierSymbol)
 		existing := collections.NewSetFromItems(core.Map(namedImportsOrExports.Elements(), func(n *ast.Node) string {
-			if n.PropertyName() != nil {
-				return n.PropertyName().Text()
-			}
-			return n.Name().Text()
+			return n.PropertyNameOrName().Text()
 		})...)
 		uniques := core.Filter(exports, func(e *ast.Symbol) bool {
 			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(e.Name)
@@ -378,6 +364,22 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 				symbols:           uniques,
 				hasIndexSignature: false,
 			},
+		}
+	case ast.KindBinaryExpression:
+		if parent.AsBinaryExpression().OperatorToken.Kind == ast.KindInKeyword {
+			t := typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Right)
+			properties := getPropertiesForCompletion(t, typeChecker)
+			return &stringLiteralCompletions{
+				fromProperties: &completionsFromProperties{
+					symbols: core.Filter(properties, func(s *ast.Symbol) bool {
+						return s.ValueDeclaration == nil || !ast.IsPrivateIdentifierClassElementDeclaration(s.ValueDeclaration)
+					}),
+					hasIndexSignature: false,
+				},
+			}
+		}
+		return &stringLiteralCompletions{
+			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
 		}
 	default:
 		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
@@ -515,7 +517,6 @@ func getStringLiteralCompletionsFromModuleNames(
 	file *ast.SourceFile,
 	node *ast.LiteralExpression,
 	program *compiler.Program,
-	preferences *UserPreferences,
 ) *stringLiteralCompletions {
 	// !!! needs `getModeForUsageLocationWorker`
 	return nil
@@ -660,63 +661,60 @@ func getStringLiteralCompletionsFromSignature(
 
 func (l *LanguageService) getStringLiteralCompletionDetails(
 	ctx context.Context,
+	checker *checker.Checker,
 	item *lsproto.CompletionItem,
 	name string,
 	file *ast.SourceFile,
 	position int,
 	contextToken *ast.Node,
-	program *compiler.Program,
-	preferences *UserPreferences,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
-		return nil
+		return item
 	}
 	completions := l.getStringLiteralCompletionEntries(
 		ctx,
 		file,
 		contextToken,
 		position,
-		program,
-		preferences,
 	)
 	if completions == nil {
-		return nil
+		return item
 	}
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
-	defer done()
-	return stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker)
+	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker, docFormat)
 }
 
-func stringLiteralCompletionDetails(
+func (l *LanguageService) stringLiteralCompletionDetails(
 	item *lsproto.CompletionItem,
 	name string,
 	location *ast.Node,
 	completion *stringLiteralCompletions,
 	file *ast.SourceFile,
 	checker *checker.Checker,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	switch {
 	case completion.fromPaths != nil:
 		pathCompletions := completion.fromPaths
 		for _, pathCompletion := range pathCompletions {
 			if pathCompletion.name == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:
 		types := completion.fromTypes
 		for _, t := range types.types {
 			if t.AsLiteralType().Value().(string) == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}
 	}
-	return nil
+	return item
 }

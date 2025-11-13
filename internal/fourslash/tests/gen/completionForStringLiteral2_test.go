@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionForStringLiteral2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var o = {
     foo() { },
@@ -26,19 +27,37 @@ p["[|/*3*/|]"];`
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "bar",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "bar",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "foo",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "foo",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "some other name",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "some other name",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},
@@ -46,8 +65,8 @@ p["[|/*3*/|]"];`
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
@@ -61,12 +80,18 @@ p["[|/*3*/|]"];`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 			},
 		},

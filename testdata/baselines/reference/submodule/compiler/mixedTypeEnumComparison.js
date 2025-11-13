@@ -42,21 +42,15 @@ someNumber > E2.C1;
 
 
 //// [mixedTypeEnumComparison.js]
-var E;
-(function (E) {
-    E["S1"] = "foo";
-    E["S2"] = "bar";
-    E[E["N1"] = 1000] = "N1";
-    E[E["N2"] = 25] = "N2";
-})(E || (E = {}));
-if (someNumber > E.N2) {
-    someNumber = E.N2;
+"use strict";
+if (someNumber > 25 /* E.N2 */) {
+    someNumber = 25 /* E.N2 */;
 }
 if (someNumber > unionOfEnum) {
-    someNumber = E.N2;
+    someNumber = 25 /* E.N2 */;
 }
-if (someString > E.S1) {
-    someString = E.S2;
+if (someString > "foo" /* E.S1 */) {
+    someString = "bar" /* E.S2 */;
 }
 var E2;
 (function (E2) {

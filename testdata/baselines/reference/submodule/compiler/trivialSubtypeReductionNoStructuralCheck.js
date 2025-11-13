@@ -21,10 +21,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wizard = void 0;
 class Wizard {
     get steps() {
-        return {
-            wizard: this,
-            ...props,
-        };
+        return Object.assign({ wizard: this }, props);
     }
 }
 exports.Wizard = Wizard;

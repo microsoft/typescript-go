@@ -24,7 +24,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
+	for _, node := range nodes { //nolint:modernize
 		if v(node) {
 			return true
 		}
@@ -183,11 +183,11 @@ func (list *NodeList) Pos() int { return list.Loc.Pos() }
 func (list *NodeList) End() int { return list.Loc.End() }
 
 func (list *NodeList) HasTrailingComma() bool {
-	if len(list.Nodes) == 0 || PositionIsSynthesized(list.End()) {
+	if len(list.Nodes) == 0 {
 		return false
 	}
 	last := list.Nodes[len(list.Nodes)-1]
-	return !PositionIsSynthesized(last.End()) && last.End() < list.End()
+	return last.End() < list.End()
 }
 
 func (list *NodeList) Clone(f NodeFactoryCoercible) *NodeList {
@@ -260,11 +260,13 @@ func (n *Node) LiteralLikeData() *LiteralLikeBase         { return n.data.Litera
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 	return n.data.TemplateLiteralLikeData()
 }
+func (n *Node) KindString() string { return n.Kind.String() }
+func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
-type mutableNode Node
+type MutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
-func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+func (n *Node) AsMutable() *MutableNode                     { return (*MutableNode)(n) }
+func (n *MutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
@@ -310,6 +312,8 @@ func (n *Node) Text() string {
 		return n.AsNumericLiteral().Text
 	case KindBigIntLiteral:
 		return n.AsBigIntLiteral().Text
+	case KindMetaProperty:
+		return n.AsMetaProperty().Name().Text()
 	case KindNoSubstitutionTemplateLiteral:
 		return n.AsNoSubstitutionTemplateLiteral().Text
 	case KindTemplateHead:
@@ -408,6 +412,96 @@ func (n *Node) Expression() *Node {
 		return n.AsJsxSpreadAttribute().Expression
 	}
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
+}
+
+func (n *Node) RawText() string {
+	switch n.Kind {
+	case KindTemplateHead:
+		return n.AsTemplateHead().RawText
+	case KindTemplateMiddle:
+		return n.AsTemplateMiddle().RawText
+	case KindTemplateTail:
+		return n.AsTemplateTail().RawText
+	}
+	panic("Unhandled case in Node.RawText: " + n.Kind.String())
+}
+
+func (m *MutableNode) SetExpression(expr *Node) {
+	n := (*Node)(m)
+	switch n.Kind {
+	case KindPropertyAccessExpression:
+		n.AsPropertyAccessExpression().Expression = expr
+	case KindElementAccessExpression:
+		n.AsElementAccessExpression().Expression = expr
+	case KindParenthesizedExpression:
+		n.AsParenthesizedExpression().Expression = expr
+	case KindCallExpression:
+		n.AsCallExpression().Expression = expr
+	case KindNewExpression:
+		n.AsNewExpression().Expression = expr
+	case KindExpressionWithTypeArguments:
+		n.AsExpressionWithTypeArguments().Expression = expr
+	case KindComputedPropertyName:
+		n.AsComputedPropertyName().Expression = expr
+	case KindNonNullExpression:
+		n.AsNonNullExpression().Expression = expr
+	case KindTypeAssertionExpression:
+		n.AsTypeAssertion().Expression = expr
+	case KindAsExpression:
+		n.AsAsExpression().Expression = expr
+	case KindSatisfiesExpression:
+		n.AsSatisfiesExpression().Expression = expr
+	case KindTypeOfExpression:
+		n.AsTypeOfExpression().Expression = expr
+	case KindSpreadAssignment:
+		n.AsSpreadAssignment().Expression = expr
+	case KindSpreadElement:
+		n.AsSpreadElement().Expression = expr
+	case KindTemplateSpan:
+		n.AsTemplateSpan().Expression = expr
+	case KindDeleteExpression:
+		n.AsDeleteExpression().Expression = expr
+	case KindVoidExpression:
+		n.AsVoidExpression().Expression = expr
+	case KindAwaitExpression:
+		n.AsAwaitExpression().Expression = expr
+	case KindYieldExpression:
+		n.AsYieldExpression().Expression = expr
+	case KindPartiallyEmittedExpression:
+		n.AsPartiallyEmittedExpression().Expression = expr
+	case KindIfStatement:
+		n.AsIfStatement().Expression = expr
+	case KindDoStatement:
+		n.AsDoStatement().Expression = expr
+	case KindWhileStatement:
+		n.AsWhileStatement().Expression = expr
+	case KindWithStatement:
+		n.AsWithStatement().Expression = expr
+	case KindForInStatement, KindForOfStatement:
+		n.AsForInOrOfStatement().Expression = expr
+	case KindSwitchStatement:
+		n.AsSwitchStatement().Expression = expr
+	case KindCaseClause:
+		n.AsCaseOrDefaultClause().Expression = expr
+	case KindExpressionStatement:
+		n.AsExpressionStatement().Expression = expr
+	case KindReturnStatement:
+		n.AsReturnStatement().Expression = expr
+	case KindThrowStatement:
+		n.AsThrowStatement().Expression = expr
+	case KindExternalModuleReference:
+		n.AsExternalModuleReference().Expression = expr
+	case KindExportAssignment, KindJSExportAssignment:
+		n.AsExportAssignment().Expression = expr
+	case KindDecorator:
+		n.AsDecorator().Expression = expr
+	case KindJsxExpression:
+		n.AsJsxExpression().Expression = expr
+	case KindJsxSpreadAttribute:
+		n.AsJsxSpreadAttribute().Expression = expr
+	default:
+		panic("Unhandled case in mutableNode.SetExpression: " + n.Kind.String())
+	}
 }
 
 func (n *Node) ArgumentList() *NodeList {
@@ -523,6 +617,8 @@ func (n *Node) StatementList() *NodeList {
 		return n.AsBlock().Statements
 	case KindModuleBlock:
 		return n.AsModuleBlock().Statements
+	case KindCaseClause, KindDefaultClause:
+		return n.AsCaseOrDefaultClause().Statements
 	}
 	panic("Unhandled case in Node.StatementList: " + n.Kind.String())
 }
@@ -606,12 +702,75 @@ func (n *Node) Type() *Node {
 	case KindBinaryExpression:
 		return n.AsBinaryExpression().Type
 	default:
-		funcLike := n.FunctionLikeData()
-		if funcLike != nil {
+		if funcLike := n.FunctionLikeData(); funcLike != nil {
 			return funcLike.Type
 		}
 	}
 	return nil
+}
+
+func (m *MutableNode) SetType(t *Node) {
+	n := (*Node)(m)
+	switch m.Kind {
+	case KindVariableDeclaration:
+		n.AsVariableDeclaration().Type = t
+	case KindParameter:
+		n.AsParameterDeclaration().Type = t
+	case KindPropertySignature:
+		n.AsPropertySignatureDeclaration().Type = t
+	case KindPropertyDeclaration:
+		n.AsPropertyDeclaration().Type = t
+	case KindPropertyAssignment:
+		n.AsPropertyAssignment().Type = t
+	case KindShorthandPropertyAssignment:
+		n.AsShorthandPropertyAssignment().Type = t
+	case KindTypePredicate:
+		n.AsTypePredicateNode().Type = t
+	case KindParenthesizedType:
+		n.AsParenthesizedTypeNode().Type = t
+	case KindTypeOperator:
+		n.AsTypeOperatorNode().Type = t
+	case KindMappedType:
+		n.AsMappedTypeNode().Type = t
+	case KindTypeAssertionExpression:
+		n.AsTypeAssertion().Type = t
+	case KindAsExpression:
+		n.AsAsExpression().Type = t
+	case KindSatisfiesExpression:
+		n.AsSatisfiesExpression().Type = t
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
+		n.AsTypeAliasDeclaration().Type = t
+	case KindNamedTupleMember:
+		n.AsNamedTupleMember().Type = t
+	case KindOptionalType:
+		n.AsOptionalTypeNode().Type = t
+	case KindRestType:
+		n.AsRestTypeNode().Type = t
+	case KindTemplateLiteralTypeSpan:
+		n.AsTemplateLiteralTypeSpan().Type = t
+	case KindJSDocTypeExpression:
+		n.AsJSDocTypeExpression().Type = t
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		n.AsJSDocParameterOrPropertyTag().TypeExpression = t
+	case KindJSDocNullableType:
+		n.AsJSDocNullableType().Type = t
+	case KindJSDocNonNullableType:
+		n.AsJSDocNonNullableType().Type = t
+	case KindJSDocOptionalType:
+		n.AsJSDocOptionalType().Type = t
+	case KindExportAssignment, KindJSExportAssignment:
+		n.AsExportAssignment().Type = t
+	case KindCommonJSExport:
+		n.AsCommonJSExport().Type = t
+	case KindBinaryExpression:
+		n.AsBinaryExpression().Type = t
+	default:
+		if funcLike := n.FunctionLikeData(); funcLike != nil {
+			funcLike.Type = t
+		} else {
+			panic("Unhandled case in mutableNode.SetType: " + n.Kind.String())
+		}
+	}
 }
 
 func (n *Node) Initializer() *Node {
@@ -636,8 +795,40 @@ func (n *Node) Initializer() *Node {
 		return n.AsForInOrOfStatement().Initializer
 	case KindJsxAttribute:
 		return n.AsJsxAttribute().Initializer
+	case KindCommonJSExport:
+		return n.AsCommonJSExport().Initializer
 	}
 	panic("Unhandled case in Node.Initializer")
+}
+
+func (m *MutableNode) SetInitializer(initializer *Node) {
+	n := (*Node)(m)
+	switch n.Kind {
+	case KindVariableDeclaration:
+		n.AsVariableDeclaration().Initializer = initializer
+	case KindParameter:
+		n.AsParameterDeclaration().Initializer = initializer
+	case KindBindingElement:
+		n.AsBindingElement().Initializer = initializer
+	case KindPropertyDeclaration:
+		n.AsPropertyDeclaration().Initializer = initializer
+	case KindPropertySignature:
+		n.AsPropertySignatureDeclaration().Initializer = initializer
+	case KindPropertyAssignment:
+		n.AsPropertyAssignment().Initializer = initializer
+	case KindEnumMember:
+		n.AsEnumMember().Initializer = initializer
+	case KindForStatement:
+		n.AsForStatement().Initializer = initializer
+	case KindForInStatement, KindForOfStatement:
+		n.AsForInOrOfStatement().Initializer = initializer
+	case KindJsxAttribute:
+		n.AsJsxAttribute().Initializer = initializer
+	case KindCommonJSExport:
+		n.AsCommonJSExport().Initializer = initializer
+	default:
+		panic("Unhandled case in mutableNode.SetInitializer")
+	}
 }
 
 func (n *Node) TagName() *Node {
@@ -719,7 +910,7 @@ func (n *Node) IsTypeOnly() bool {
 	case KindImportSpecifier:
 		return n.AsImportSpecifier().IsTypeOnly
 	case KindImportClause:
-		return n.AsImportClause().IsTypeOnly
+		return n.AsImportClause().PhaseModifier == KindTypeKeyword
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().IsTypeOnly
 	case KindExportSpecifier:
@@ -728,6 +919,7 @@ func (n *Node) IsTypeOnly() bool {
 	return false
 }
 
+// If updating this function, also update `hasComment`.
 func (n *Node) CommentList() *NodeList {
 	switch n.Kind {
 	case KindJSDoc:
@@ -822,8 +1014,20 @@ func (n *Node) ModuleSpecifier() *Expression {
 		return n.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().ModuleSpecifier
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ModuleSpecifier
 	}
 	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
+}
+
+func (n *Node) ImportClause() *Node {
+	switch n.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return n.AsImportDeclaration().ImportClause
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ImportClause
+	}
+	panic("Unhandled case in Node.ImportClause: " + n.Kind.String())
 }
 
 func (n *Node) Statement() *Statement {
@@ -836,6 +1040,10 @@ func (n *Node) Statement() *Statement {
 		return n.AsForStatement().Statement
 	case KindForInStatement, KindForOfStatement:
 		return n.AsForInOrOfStatement().Statement
+	case KindWithStatement:
+		return n.AsWithStatement().Statement
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -864,8 +1072,13 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedImports().Elements
 	case KindNamedExports:
 		return n.AsNamedExports().Elements
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return n.AsBindingPattern().Elements
+	case KindArrayLiteralExpression:
+		return n.AsArrayLiteralExpression().Elements
+	case KindTupleType:
+		return n.AsTupleTypeNode().Elements
 	}
-
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
 
@@ -873,6 +1086,48 @@ func (n *Node) Elements() []*Node {
 	list := n.ElementList()
 	if list != nil {
 		return list.Nodes
+	}
+	return nil
+}
+
+func (n *Node) PostfixToken() *Node {
+	switch n.Kind {
+	case KindMethodDeclaration:
+		return n.AsMethodDeclaration().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	case KindEnumMember:
+		return n.AsEnumMember().PostfixToken
+	case KindGetAccessor:
+		return n.AsGetAccessorDeclaration().PostfixToken
+	case KindSetAccessor:
+		return n.AsSetAccessorDeclaration().PostfixToken
+	}
+	return nil
+}
+
+func (n *Node) QuestionToken() *TokenNode {
+	switch n.Kind {
+	case KindParameter:
+		return n.AsParameterDeclaration().QuestionToken
+	case KindConditionalExpression:
+		return n.AsConditionalExpression().QuestionToken
+	case KindMappedType:
+		return n.AsMappedTypeNode().QuestionToken
+	case KindNamedTupleMember:
+		return n.AsNamedTupleMember().QuestionToken
+	}
+	postfix := n.PostfixToken()
+	if postfix != nil && postfix.Kind == KindQuestionToken {
+		return postfix
 	}
 	return nil
 }
@@ -889,6 +1144,32 @@ func (n *Node) QuestionDotToken() *Node {
 		return n.AsTaggedTemplateExpression().QuestionDotToken
 	}
 	panic("Unhandled case in Node.QuestionDotToken: " + n.Kind.String())
+}
+
+func (n *Node) TypeExpression() *Node {
+	switch n.Kind {
+	case KindJSDocPropertyTag, KindJSDocParameterTag:
+		return n.AsJSDocParameterOrPropertyTag().TypeExpression
+	case KindJSDocReturnTag:
+		return n.AsJSDocReturnTag().TypeExpression
+	case KindJSDocTypeTag:
+		return n.AsJSDocTypeTag().TypeExpression
+	case KindJSDocTypedefTag:
+		return n.AsJSDocTypedefTag().TypeExpression
+	case KindJSDocSatisfiesTag:
+		return n.AsJSDocSatisfiesTag().TypeExpression
+	}
+	panic("Unhandled case in Node.TypeExpression: " + n.Kind.String())
+}
+
+func (n *Node) ClassName() *Node {
+	switch n.Kind {
+	case KindJSDocAugmentsTag:
+		return n.AsJSDocAugmentsTag().ClassName
+	case KindJSDocImplementsTag:
+		return n.AsJSDocImplementsTag().ClassName
+	}
+	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -1779,59 +2060,63 @@ type NodeBase struct {
 // Aliases for Node unions
 
 type (
-	Statement                   = Node // Node with StatementBase
-	Declaration                 = Node // Node with DeclarationBase
-	Expression                  = Node // Node with ExpressionBase
-	TypeNode                    = Node // Node with TypeNodeBase
-	TypeElement                 = Node // Node with TypeElementBase
-	ClassElement                = Node // Node with ClassElementBase
-	NamedMember                 = Node // Node with NamedMemberBase
-	ObjectLiteralElement        = Node // Node with ObjectLiteralElementBase
-	BlockOrExpression           = Node // Block | Expression
-	AccessExpression            = Node // PropertyAccessExpression | ElementAccessExpression
-	DeclarationName             = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
-	ModuleName                  = Node // Identifier | StringLiteral
-	ModuleExportName            = Node // Identifier | StringLiteral
-	PropertyName                = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
-	ModuleBody                  = Node // ModuleBlock | ModuleDeclaration
-	ForInitializer              = Node // Expression | MissingDeclaration | VariableDeclarationList
-	ModuleReference             = Node // Identifier | QualifiedName | ExternalModuleReference
-	NamedImportBindings         = Node // NamespaceImport | NamedImports
-	NamedExportBindings         = Node // NamespaceExport | NamedExports
-	MemberName                  = Node // Identifier | PrivateIdentifier
-	EntityName                  = Node // Identifier | QualifiedName
-	BindingName                 = Node // Identifier | BindingPattern
-	ModifierLike                = Node // Modifier | Decorator
-	JsxChild                    = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxAttributeLike            = Node // JsxAttribute | JsxSpreadAttribute
-	JsxAttributeName            = Node // Identifier | JsxNamespacedName
-	JsxAttributeValue           = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression        = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
-	ClassLikeDeclaration        = Node // ClassDeclaration | ClassExpression
-	AccessorDeclaration         = Node // GetAccessorDeclaration | SetAccessorDeclaration
-	LiteralLikeNode             = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
-	LiteralExpression           = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
-	UnionOrIntersectionTypeNode = Node // UnionTypeNode | IntersectionTypeNode
-	TemplateLiteralLikeNode     = Node // TemplateHead | TemplateMiddle | TemplateTail
-	TemplateMiddleOrTail        = Node // TemplateMiddle | TemplateTail
-	TemplateLiteral             = Node // TemplateExpression | NoSubstitutionTemplateLiteral
-	TypePredicateParameterName  = Node // Identifier | ThisTypeNode
-	ImportAttributeName         = Node // Identifier | StringLiteral
-	LeftHandSideExpression      = Node // subset of Expression
-	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
-	JSDocTag                    = Node // Node with JSDocTagBase
-	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
-	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
-	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
-	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
-	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
-	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
-	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
-	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
-	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
-	NamedImportsOrExports       = Node // NamedImports | NamedExports
-	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
-	CallLikeExpression          = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	Statement                      = Node // Node with StatementBase
+	Declaration                    = Node // Node with DeclarationBase
+	Expression                     = Node // Node with ExpressionBase
+	TypeNode                       = Node // Node with TypeNodeBase
+	TypeElement                    = Node // Node with TypeElementBase
+	ClassElement                   = Node // Node with ClassElementBase
+	NamedMember                    = Node // Node with NamedMemberBase
+	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
+	BlockOrExpression              = Node // Block | Expression
+	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
+	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
+	ModuleName                     = Node // Identifier | StringLiteral
+	ModuleExportName               = Node // Identifier | StringLiteral
+	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
+	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
+	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
+	NamedImportBindings            = Node // NamespaceImport | NamedImports
+	NamedExportBindings            = Node // NamespaceExport | NamedExports
+	MemberName                     = Node // Identifier | PrivateIdentifier
+	EntityName                     = Node // Identifier | QualifiedName
+	BindingName                    = Node // Identifier | BindingPattern
+	ModifierLike                   = Node // Modifier | Decorator
+	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
+	JsxAttributeName               = Node // Identifier | JsxNamespacedName
+	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxTagNameExpression           = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
+	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
+	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralExpression              = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
+	TemplateLiteralLikeNode        = Node // TemplateHead | TemplateMiddle | TemplateTail
+	TemplateMiddleOrTail           = Node // TemplateMiddle | TemplateTail
+	TemplateLiteral                = Node // TemplateExpression | NoSubstitutionTemplateLiteral
+	TypePredicateParameterName     = Node // Identifier | ThisTypeNode
+	ImportAttributeName            = Node // Identifier | StringLiteral
+	LeftHandSideExpression         = Node // subset of Expression
+	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
+	JSDocTag                       = Node // Node with JSDocTagBase
+	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike              = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport       = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode            = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral     = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration      = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike              = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration          = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports          = Node // NamedImports | NamedExports
+	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
+	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	FunctionLikeDeclaration        = Node // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | FunctionExpression | ArrowFunction
+	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
+	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
+	CallOrNewExpression            = Node // CallExpression | NewExpression
 )
 
 // Aliases for node singletons
@@ -1880,6 +2165,9 @@ type (
 	NamedExportsNode                = Node
 	UnionType                       = Node
 	LiteralType                     = Node
+	JSDocNode                       = Node
+	BindingPatternNode              = Node
+	TypePredicateNodeNode           = Node
 )
 
 type (
@@ -1906,6 +2194,249 @@ type (
 	TemplateLiteralTypeSpanList     = NodeList // NodeList[*TemplateLiteralTypeSpan]
 	JsxChildList                    = NodeList // NodeList[*JsxChild]
 	JsxAttributeList                = NodeList // NodeList[*JsxAttributeLike]
+)
+
+func IsWriteOnlyAccess(node *Node) bool {
+	return accessKind(node) == AccessKindWrite
+}
+
+func IsWriteAccess(node *Node) bool {
+	return accessKind(node) != AccessKindRead
+}
+
+func IsWriteAccessForReference(node *Node) bool {
+	decl := getDeclarationFromName(node)
+	return (decl != nil && declarationIsWriteAccess(decl)) || node.Kind == KindDefaultKeyword || IsWriteAccess(node)
+}
+
+func getDeclarationFromName(name *Node) *Declaration {
+	if name == nil || name.Parent == nil {
+		return nil
+	}
+	parent := name.Parent
+	switch name.Kind {
+	case KindStringLiteral, KindNoSubstitutionTemplateLiteral, KindNumericLiteral:
+		if IsComputedPropertyName(parent) {
+			return parent.Parent
+		}
+		fallthrough
+	case KindIdentifier:
+		if IsDeclaration(parent) {
+			if parent.Name() == name {
+				return parent
+			}
+			return nil
+		}
+		if IsQualifiedName(parent) {
+			tag := parent.Parent
+			if IsJSDocParameterTag(tag) && tag.Name() == parent {
+				return tag
+			}
+			return nil
+		}
+		binExp := parent.Parent
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
+			leftHasSymbol := false
+			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
+				leftHasSymbol = true
+			}
+			if leftHasSymbol || binExp.Symbol() != nil {
+				if GetNameOfDeclaration(binExp.AsNode()) == name {
+					return binExp.AsNode()
+				}
+			}
+		}
+	case KindPrivateIdentifier:
+		if IsDeclaration(parent) && parent.Name() == name {
+			return parent
+		}
+	}
+	return nil
+}
+
+func declarationIsWriteAccess(decl *Node) bool {
+	if decl == nil {
+		return false
+	}
+	// Consider anything in an ambient declaration to be a write access since it may be coming from JS.
+	if decl.Flags&NodeFlagsAmbient != 0 {
+		return true
+	}
+
+	switch decl.Kind {
+	case KindBinaryExpression,
+		KindBindingElement,
+		KindClassDeclaration,
+		KindClassExpression,
+		KindDefaultKeyword,
+		KindEnumDeclaration,
+		KindEnumMember,
+		KindExportSpecifier,
+		KindImportClause, // default import
+		KindImportEqualsDeclaration,
+		KindImportSpecifier,
+		KindInterfaceDeclaration,
+		KindJSDocCallbackTag,
+		KindJSDocTypedefTag,
+		KindJsxAttribute,
+		KindModuleDeclaration,
+		KindNamespaceExportDeclaration,
+		KindNamespaceImport,
+		KindNamespaceExport,
+		KindParameter,
+		KindShorthandPropertyAssignment,
+		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
+		KindTypeParameter:
+		return true
+
+	case KindPropertyAssignment:
+		// In `({ x: y } = 0);`, `x` is not a write access.
+		return !IsArrayLiteralOrObjectLiteralDestructuringPattern(decl.Parent)
+
+	case KindFunctionDeclaration, KindFunctionExpression, KindConstructor, KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
+		// functions considered write if they provide a value (have a body)
+		switch decl.Kind {
+		case KindFunctionDeclaration:
+			return decl.AsFunctionDeclaration().Body != nil
+		case KindFunctionExpression:
+			return decl.AsFunctionExpression().Body != nil
+		case KindConstructor:
+			// constructor node stores body on the parent? treat same as others
+			return decl.AsConstructorDeclaration().Body != nil
+		case KindMethodDeclaration:
+			return decl.AsMethodDeclaration().Body != nil
+		case KindGetAccessor:
+			return decl.AsGetAccessorDeclaration().Body != nil
+		case KindSetAccessor:
+			return decl.AsSetAccessorDeclaration().Body != nil
+		}
+		return false
+
+	case KindVariableDeclaration, KindPropertyDeclaration:
+		// variable/property write if initializer present or is in catch clause
+		var hasInit bool
+		switch decl.Kind {
+		case KindVariableDeclaration:
+			hasInit = decl.AsVariableDeclaration().Initializer != nil
+		case KindPropertyDeclaration:
+			hasInit = decl.AsPropertyDeclaration().Initializer != nil
+		}
+		return hasInit || IsCatchClause(decl.Parent)
+
+	case KindMethodSignature, KindPropertySignature, KindJSDocPropertyTag, KindJSDocParameterTag:
+		return false
+
+	default:
+		// preserve TS behavior: crash on unexpected kinds
+		panic("Unhandled case in declarationIsWriteAccess")
+	}
+}
+
+func IsArrayLiteralOrObjectLiteralDestructuringPattern(node *Node) bool {
+	if !(IsArrayLiteralExpression(node) || IsObjectLiteralExpression(node)) {
+		return false
+	}
+	parent := node.Parent
+	// [a,b,c] from:
+	// [a, b, c] = someExpression;
+	if IsBinaryExpression(parent) && parent.AsBinaryExpression().Left == node && parent.AsBinaryExpression().OperatorToken.Kind == KindEqualsToken {
+		return true
+	}
+	// [a, b, c] from:
+	// for([a, b, c] of expression)
+	if IsForOfStatement(parent) && parent.Initializer() == node {
+		return true
+	}
+	// {x, a: {a, b, c} } = someExpression
+	if IsPropertyAssignment(parent) {
+		return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent.Parent)
+	}
+	// [a, b, c] of
+	// [x, [a, b, c] ] = someExpression
+	return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent)
+}
+
+func accessKind(node *Node) AccessKind {
+	parent := node.Parent
+	if parent == nil {
+		return AccessKindRead
+	}
+	switch parent.Kind {
+	case KindParenthesizedExpression:
+		return accessKind(parent)
+	case KindPrefixUnaryExpression:
+		operator := parent.AsPrefixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindPostfixUnaryExpression:
+		operator := parent.AsPostfixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindBinaryExpression:
+		if parent.AsBinaryExpression().Left == node {
+			operator := parent.AsBinaryExpression().OperatorToken
+			if IsAssignmentOperator(operator.Kind) {
+				if operator.Kind == KindEqualsToken {
+					return AccessKindWrite
+				}
+				return AccessKindReadWrite
+			}
+		}
+		return AccessKindRead
+	case KindPropertyAccessExpression:
+		if parent.AsPropertyAccessExpression().Name() != node {
+			return AccessKindRead
+		}
+		return accessKind(parent)
+	case KindPropertyAssignment:
+		parentAccess := accessKind(parent.Parent)
+		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
+		if node == parent.AsPropertyAssignment().Name() {
+			return reverseAccessKind(parentAccess)
+		}
+		return parentAccess
+	case KindShorthandPropertyAssignment:
+		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
+		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
+			return AccessKindRead
+		}
+		return accessKind(parent.Parent)
+	case KindArrayLiteralExpression:
+		return accessKind(parent)
+	case KindForInStatement, KindForOfStatement:
+		if node == parent.AsForInOrOfStatement().Initializer {
+			return AccessKindWrite
+		}
+		return AccessKindRead
+	default:
+		return AccessKindRead
+	}
+}
+
+func reverseAccessKind(a AccessKind) AccessKind {
+	switch a {
+	case AccessKindRead:
+		return AccessKindWrite
+	case AccessKindWrite:
+		return AccessKindRead
+	case AccessKindReadWrite:
+		return AccessKindReadWrite
+	}
+	panic("Unhandled case in reverseAccessKind")
+}
+
+type AccessKind int32
+
+const (
+	AccessKindRead      AccessKind = iota // Only reads from a variable
+	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
+	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
 )
 
 // DeclarationBase
@@ -1956,6 +2487,7 @@ type FunctionLikeBase struct {
 	TypeParameters *NodeList // NodeList[*TypeParameterDeclarationNode]. Optional
 	Parameters     *NodeList // NodeList[*ParameterDeclarationNode]
 	Type           *TypeNode // Optional
+	FullSignature  *TypeNode // Type that applies to the whole function; should not be set if Type is set or if Parameters have types set.
 }
 
 func (node *FunctionLikeBase) LocalsContainerData() *LocalsContainerBase {
@@ -2584,7 +3116,7 @@ func (node *ForInOrOfStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Initializer) |
 		propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.Statement) |
-		core.IfElse(node.AwaitModifier != nil, SubtreeContainsES2018, SubtreeFactsNone)
+		core.IfElse(node.AwaitModifier != nil, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone)
 }
 
 func IsForInStatement(node *Node) bool {
@@ -2908,6 +3440,10 @@ func (node *ThrowStatement) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
+}
+
+func IsThrowStatement(node *Node) bool {
+	return node.Kind == KindThrowStatement
 }
 
 // TryStatement
@@ -3481,7 +4017,7 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.PropertyName) |
 		propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Initializer) |
-		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest, SubtreeFactsNone)
+		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRestOrSpread, SubtreeFactsNone)
 }
 
 func IsBindingElement(node *Node) bool {
@@ -3534,7 +4070,7 @@ type FunctionDeclaration struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := f.functionDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -3542,28 +4078,29 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskTo
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindFunctionDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *FunctionDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
-		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.Body)
 }
 
 func (node *FunctionDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateFunctionDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateFunctionDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *FunctionDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionDeclaration) Name() *DeclarationName {
@@ -3582,6 +4119,7 @@ func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 			propagateSubtreeFacts(node.Body) |
 			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
@@ -4313,6 +4851,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportDeclaration
+}
+
 func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
 }
@@ -4420,22 +4962,22 @@ type ImportClause struct {
 	DeclarationBase
 	ExportableBase
 	compositeNodeBase
-	IsTypeOnly    bool
+	PhaseModifier Kind                 // KindTypeKeyword | KindDeferKeyword
 	NamedBindings *NamedImportBindings // NamedImportBindings. Optional, named bindings
 	name          *IdentifierNode      // IdentifierNode. Optional, default binding
 }
 
-func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
 	data := &ImportClause{}
-	data.IsTypeOnly = isTypeOnly
+	data.PhaseModifier = phaseModifier
 	data.name = name
 	data.NamedBindings = namedBindings
 	return f.newNode(KindImportClause, data)
 }
 
-func (f *NodeFactory) UpdateImportClause(node *ImportClause, isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
-	if isTypeOnly != node.IsTypeOnly || name != node.name || namedBindings != node.NamedBindings {
-		return updateNode(f.NewImportClause(isTypeOnly, name, namedBindings), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateImportClause(node *ImportClause, phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+	if phaseModifier != node.PhaseModifier || name != node.name || namedBindings != node.NamedBindings {
+		return updateNode(f.NewImportClause(phaseModifier, name, namedBindings), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4445,11 +4987,11 @@ func (node *ImportClause) ForEachChild(v Visitor) bool {
 }
 
 func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateImportClause(node, node.IsTypeOnly, v.visitNode(node.name), v.visitNode(node.NamedBindings))
+	return v.Factory.UpdateImportClause(node, node.PhaseModifier, v.visitNode(node.name), v.visitNode(node.NamedBindings))
 }
 
 func (node *ImportClause) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewImportClause(node.IsTypeOnly, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewImportClause(node.PhaseModifier, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportClause) Name() *DeclarationName {
@@ -4457,7 +4999,7 @@ func (node *ImportClause) Name() *DeclarationName {
 }
 
 func (node *ImportClause) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
+	if node.PhaseModifier == KindTypeKeyword {
 		return SubtreeContainsTypeScript
 	} else {
 		return propagateSubtreeFacts(node.name) |
@@ -4608,7 +5150,7 @@ func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression)
+	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression) | core.IfElse(node.IsExportEquals, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
 func IsExportAssignment(node *Node) bool {
@@ -5027,33 +5569,34 @@ type ConstructorDeclaration struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := &ConstructorDeclaration{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindConstructor, data)
 }
 
-func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *ConstructorDeclaration) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.Body)
 }
 
 func (node *ConstructorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConstructorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateConstructorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *ConstructorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5064,6 +5607,7 @@ func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 			propagateSubtreeFacts(node.Body)
 	}
 }
@@ -5091,7 +5635,7 @@ type AccessorDeclarationBase struct {
 
 func (node *AccessorDeclarationBase) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) ||
-		visit(v, node.Type) || visit(v, node.Body)
+		visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.Body)
 }
 
 func (node *AccessorDeclarationBase) IsAccessorDeclaration() {}
@@ -5105,6 +5649,7 @@ func (node *AccessorDeclarationBase) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 			propagateSubtreeFacts(node.Body)
 	}
 }
@@ -5120,30 +5665,31 @@ type GetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := &GetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindGetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *GetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateGetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateGetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *GetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
@@ -5156,30 +5702,31 @@ type SetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := &SetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindSetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *SetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateSetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateSetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *SetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
@@ -5286,7 +5833,7 @@ type MethodDeclaration struct {
 	compositeNodeBase
 }
 
-func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := &MethodDeclaration{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -5295,28 +5842,29 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToke
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindMethodDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *MethodDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visit(v, node.PostfixToken) ||
-		visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.Body)
 }
 
 func (node *MethodDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateMethodDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateMethodDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *MethodDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5333,6 +5881,7 @@ func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateSubtreeFacts(node.Body) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
 	}
@@ -5860,7 +6409,11 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
+}
+
+func IsYieldExpression(node *Node) bool {
+	return node.Kind == KindYieldExpression
 }
 
 // ArrowFunction
@@ -5875,35 +6428,36 @@ type ArrowFunction struct {
 	EqualsGreaterThanToken *TokenNode // TokenNode
 }
 
-func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
 	data := &ArrowFunction{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.EqualsGreaterThanToken = equalsGreaterThanToken
 	data.Body = body
 	return f.newNode(KindArrowFunction, data)
 }
 
-func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
-		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, returnType, equalsGreaterThanToken, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
+		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, returnType, fullSignature, equalsGreaterThanToken, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *ArrowFunction) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) ||
-		visit(v, node.Type) || visit(v, node.EqualsGreaterThanToken) || visit(v, node.Body)
+		visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.EqualsGreaterThanToken) || visit(v, node.Body)
 }
 
 func (node *ArrowFunction) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateArrowFunction(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitToken(node.EqualsGreaterThanToken), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateArrowFunction(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitToken(node.EqualsGreaterThanToken), v.visitFunctionBody(node.Body))
 }
 
 func (node *ArrowFunction) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ArrowFunction) Name() *DeclarationName {
@@ -5915,6 +6469,7 @@ func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
+		propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 		propagateSubtreeFacts(node.Body) |
 		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
 }
@@ -5940,7 +6495,7 @@ type FunctionExpression struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
 	data := &FunctionExpression{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -5948,28 +6503,29 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskTok
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.FullSignature = fullSignature
 	data.Body = body
 	return f.newNode(KindFunctionExpression, data)
 }
 
-func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, fullSignature *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || fullSignature != node.FullSignature || body != node.Body {
+		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, fullSignature, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *FunctionExpression) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
-		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.FullSignature) || visit(v, node.Body)
 }
 
 func (node *FunctionExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateFunctionExpression(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateFunctionExpression(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.FullSignature), v.visitFunctionBody(node.Body))
 }
 
 func (node *FunctionExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.FullSignature, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionExpression) Name() *DeclarationName {
@@ -5985,6 +6541,7 @@ func (node *FunctionExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
+		propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 		propagateSubtreeFacts(node.Body) |
 		core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 		core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
@@ -6478,7 +7035,7 @@ func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
 }
 
 func IsSpreadElement(node *Node) bool {
@@ -6801,7 +7358,7 @@ func (node *SpreadAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018 | SubtreeContainsObjectRestOrSpread
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsESObjectRestOrSpread | SubtreeContainsObjectRestOrSpread
 }
 
 func IsSpreadAssignment(node *Node) bool {
@@ -8164,6 +8721,10 @@ func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateHead(node *Node) bool {
+	return node.Kind == KindTemplateHead
+}
+
 // TemplateMiddle
 
 type TemplateMiddle struct {
@@ -8184,6 +8745,10 @@ func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateMiddle(node *Node) bool {
+	return node.Kind == KindTemplateMiddle
+}
+
 // TemplateTail
 
 type TemplateTail struct {
@@ -8202,6 +8767,10 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsTemplateTail(node *Node) bool {
+	return node.Kind == KindTemplateTail
 }
 
 // TemplateLiteralTypeNode
@@ -9093,6 +9662,10 @@ func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeExpression(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTypeExpression(node *Node) bool {
+	return node.Kind == KindJSDocTypeExpression
+}
+
 // JSDocNonNullableType
 
 type JSDocNonNullableType struct {
@@ -9352,6 +9925,10 @@ func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTemplateTag(n *Node) bool {
+	return n.Kind == KindJSDocTemplateTag
+}
+
 // JSDocParameterOrPropertyTag
 type JSDocParameterOrPropertyTag struct {
 	JSDocTagBase
@@ -9416,6 +9993,14 @@ func (node *JSDocParameterOrPropertyTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *JSDocParameterOrPropertyTag) Name() *EntityName { return node.name }
+
+func IsJSDocParameterTag(node *Node) bool {
+	return node.Kind == KindJSDocParameterTag
+}
+
+func IsJSDocPropertyTag(node *Node) bool {
+	return node.Kind == KindJSDocPropertyTag
+}
 
 // JSDocReturnTag
 type JSDocReturnTag struct {
@@ -9710,6 +10295,10 @@ func (node *JSDocImplementsTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocImplementsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocImplementsTag(node *Node) bool {
+	return node.Kind == KindJSDocImplementsTag
+}
+
 // JSDocAugmentsTag
 type JSDocAugmentsTag struct {
 	JSDocTagBase
@@ -9889,6 +10478,12 @@ func (node *JSDocCallbackTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func (node *JSDocCallbackTag) Name() *DeclarationName { return node.FullName }
+
+func IsJSDocCallbackTag(node *Node) bool {
+	return node.Kind == KindJSDocCallbackTag
+}
+
 // JSDocOverloadTag
 type JSDocOverloadTag struct {
 	JSDocTagBase
@@ -9962,6 +10557,10 @@ func (node *JSDocTypedefTag) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
 
+func IsJSDocTypedefTag(node *Node) bool {
+	return node.Kind == KindJSDocTypedefTag
+}
+
 // JSDocTypeLiteral
 type JSDocTypeLiteral struct {
 	TypeNodeBase
@@ -9997,6 +10596,10 @@ func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTypeLiteral(node *Node) bool {
+	return node.Kind == KindJSDocTypeLiteral
+}
+
 // JSDocSignature
 type JSDocSignature struct {
 	TypeNodeBase
@@ -10028,6 +10631,10 @@ func (node *JSDocSignature) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocSignature) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocSignature(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocSignature(node *Node) bool {
+	return node.Kind == KindJSDocSignature
 }
 
 // JSDocNameReference
@@ -10062,6 +10669,10 @@ func (node *JSDocNameReference) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *JSDocNameReference) Name() *EntityName { return node.name }
+
+func IsJSDocNameReference(node *Node) bool {
+	return node.Kind == KindJSDocNameReference
+}
 
 // PatternAmbientModule
 
@@ -10116,6 +10727,7 @@ type SourceFile struct {
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
+	jsDiagnostics               []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
@@ -10149,10 +10761,10 @@ type SourceFile struct {
 	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
 
-	// Fields set by LineMap
+	// Fields set by ECMALineMap
 
-	lineMapMu sync.RWMutex
-	lineMap   []core.TextPos
+	ecmaLineMapMu sync.RWMutex
+	ecmaLineMap   []core.TextPos
 
 	// Fields set by language service
 
@@ -10191,10 +10803,6 @@ func (node *SourceFile) Path() tspath.Path {
 	return node.parseOptions.Path
 }
 
-func (node *SourceFile) OriginalFileName() string {
-	return node.FileName() // !!! redirect source files
-}
-
 func (node *SourceFile) Imports() []*LiteralLikeNode {
 	return node.imports
 }
@@ -10205,6 +10813,14 @@ func (node *SourceFile) Diagnostics() []*Diagnostic {
 
 func (node *SourceFile) SetDiagnostics(diags []*Diagnostic) {
 	node.diagnostics = diags
+}
+
+func (node *SourceFile) JSDiagnostics() []*Diagnostic {
+	return node.jsDiagnostics
+}
+
+func (node *SourceFile) SetJSDiagnostics(diags []*Diagnostic) {
+	node.jsDiagnostics = diags
 }
 
 func (node *SourceFile) JSDocDiagnostics() []*Diagnostic {
@@ -10283,17 +10899,17 @@ func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementLi
 	return node.AsNode()
 }
 
-func (node *SourceFile) LineMap() []core.TextPos {
-	node.lineMapMu.RLock()
-	lineMap := node.lineMap
-	node.lineMapMu.RUnlock()
+func (node *SourceFile) ECMALineMap() []core.TextPos {
+	node.ecmaLineMapMu.RLock()
+	lineMap := node.ecmaLineMap
+	node.ecmaLineMapMu.RUnlock()
 	if lineMap == nil {
-		node.lineMapMu.Lock()
-		defer node.lineMapMu.Unlock()
-		lineMap = node.lineMap
+		node.ecmaLineMapMu.Lock()
+		defer node.ecmaLineMapMu.Unlock()
+		lineMap = node.ecmaLineMap
 		if lineMap == nil {
-			lineMap = core.ComputeLineStarts(node.Text())
-			node.lineMap = lineMap
+			lineMap = core.ComputeECMALineStarts(node.Text())
+			node.ecmaLineMap = lineMap
 		}
 	}
 	return lineMap
@@ -10418,7 +11034,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 			exportClause := node.AsExportDeclaration().ExportClause
 			if exportClause != nil {
 				if IsNamedExports(exportClause) {
-					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+					for _, element := range exportClause.Elements() {
 						visit(element)
 					}
 				} else {
@@ -10441,7 +11057,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					if namedBindings.Kind == KindNamespaceImport {
 						addDeclaration(namedBindings)
 					} else {
-						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+						for _, element := range namedBindings.Elements() {
 							visit(element)
 						}
 					}
@@ -10475,7 +11091,7 @@ func getDeclarationName(declaration *Node) string {
 
 type SourceFileLike interface {
 	Text() string
-	LineMap() []core.TextPos
+	ECMALineMap() []core.TextPos
 }
 
 type CommentRange struct {

@@ -23,15 +23,15 @@ var y = { ...nullAndUndefinedUnion };
 
 //// [spreadUnion3.js]
 function f(x) {
-    return { y: 123, ...x }; // y: string | number
+    return Object.assign({ y: 123 }, x); // y: string | number
 }
 f(undefined);
 function g(t) {
-    let b = { ...t };
+    let b = Object.assign({}, t);
     let c = b.a; // might not have 'a'
 }
 g();
 g(undefined);
 g(null);
-var x = { ...nullAndUndefinedUnion, ...nullAndUndefinedUnion };
-var y = { ...nullAndUndefinedUnion };
+var x = Object.assign(Object.assign({}, nullAndUndefinedUnion), nullAndUndefinedUnion);
+var y = Object.assign({}, nullAndUndefinedUnion);

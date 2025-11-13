@@ -89,14 +89,15 @@ function func5() {
 
 
 //// [unreachableDeclarations.js]
+"use strict";
 function func1() {
     aFunc();
     console.log(EnumA.Value);
-    console.log(EnumB.Value);
+    console.log(0 /* EnumB.Value */);
     return;
     function aFunc() {
         console.log(EnumA.Value);
-        console.log(EnumB.Value);
+        console.log(0 /* EnumB.Value */);
     }
     let EnumA;
     (function (EnumA) {
@@ -121,10 +122,10 @@ function func2() {
 }
 function func3() {
     aFunc();
-    console.log(EnumB.Value);
+    console.log(0 /* EnumB.Value */);
     return;
     function aFunc() {
-        console.log(EnumB.Value);
+        console.log(0 /* EnumB.Value */);
     }
     let EnumB;
     (function (EnumB) {

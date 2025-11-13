@@ -24,15 +24,15 @@ type FileMatcherPatterns struct {
 	basePaths               []string
 }
 
-type usage string
+type Usage string
 
 const (
-	usageFiles       usage = "files"
-	usageDirectories usage = "directories"
-	usageExclude     usage = "exclude"
+	usageFiles       Usage = "files"
+	usageDirectories Usage = "directories"
+	usageExclude     Usage = "exclude"
 )
 
-func GetRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
+func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
 	if len(specs) == 0 {
 		return nil
 	}
@@ -41,7 +41,7 @@ func GetRegularExpressionsForWildcards(specs []string, basePath string, usage us
 	})
 }
 
-func GetRegularExpressionForWildcard(specs []string, basePath string, usage usage) string {
+func GetRegularExpressionForWildcard(specs []string, basePath string, usage Usage) string {
 	patterns := GetRegularExpressionsForWildcards(specs, basePath, usage)
 	if len(patterns) == 0 {
 		return ""
@@ -75,16 +75,10 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 	}
 }
 
-var isImplicitGlobRegex = regexp2.MustCompile(`[.*?]`, regexp2.None)
-
 // An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
 // and does not contain any glob characters itself.
 func IsImplicitGlob(lastPathComponent string) bool {
-	match, err := isImplicitGlobRegex.MatchString(lastPathComponent)
-	if err != nil {
-		return false
-	}
-	return !match
+	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
 // Reserved characters, forces escaping of any non-word (or digit), non-whitespace character.
@@ -144,7 +138,7 @@ var excludeMatcher = WildcardMatcher{
 	},
 }
 
-var wildcardMatchers = map[usage]WildcardMatcher{
+var wildcardMatchers = map[Usage]WildcardMatcher{
 	usageFiles:       filesMatcher,
 	usageDirectories: directoriesMatcher,
 	usageExclude:     excludeMatcher,
@@ -153,7 +147,7 @@ var wildcardMatchers = map[usage]WildcardMatcher{
 func GetPatternFromSpec(
 	spec string,
 	basePath string,
-	usage usage,
+	usage Usage,
 ) string {
 	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	if pattern == "" {
@@ -166,7 +160,7 @@ func GetPatternFromSpec(
 func getSubPatternFromSpec(
 	spec string,
 	basePath string,
-	usage usage,
+	usage Usage,
 	matcher WildcardMatcher,
 ) string {
 	matcher = wildcardMatchers[usage]
@@ -320,11 +314,10 @@ var (
 )
 
 func GetRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
-	flags := regexp2.ECMAScript
+	opts := regexp2.RegexOptions(regexp2.ECMAScript)
 	if !useCaseSensitiveFileNames {
-		flags |= regexp2.IgnoreCase
+		opts |= regexp2.IgnoreCase
 	}
-	opts := regexp2.RegexOptions(flags)
 
 	key := regexp2CacheKey{pattern, opts}
 

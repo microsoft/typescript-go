@@ -29,10 +29,12 @@ type JSXTransformer struct {
 	currentSourceFile *ast.SourceFile
 }
 
-func NewJSXTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, emitResolver printer.EmitResolver) *transformers.Transformer {
+func NewJSXTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	emitContext := opts.Context
 	tx := &JSXTransformer{
 		compilerOptions: compilerOptions,
-		emitResolver:    emitResolver,
+		emitResolver:    opts.EmitResolver,
 	}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
@@ -47,7 +49,7 @@ func (tx *JSXTransformer) getCurrentFileNameExpression() *ast.Node {
 		}),
 		nil,
 		nil,
-		tx.Factory().NewStringLiteral(tx.currentSourceFile.OriginalFileName()),
+		tx.Factory().NewStringLiteral(tx.currentSourceFile.FileName()),
 	)
 	tx.filenameDeclaration = d
 	return d.AsVariableDeclaration().Name()
@@ -144,7 +146,7 @@ func hasKeyAfterPropsSpread(node *ast.Node) bool {
 	for _, elem := range opener.Attributes().Properties() {
 		if ast.IsJsxSpreadAttribute(elem) && (!ast.IsObjectLiteralExpression(elem.Expression()) || core.Some(elem.Expression().Properties(), ast.IsSpreadAssignment)) {
 			spread = true
-		} else if spread && ast.IsJsxAttribute(elem) && ast.IsIdentifier(elem.Name()) && elem.Name().AsIdentifier().Text == "key" {
+		} else if spread && ast.IsJsxAttribute(elem) && ast.IsIdentifier(elem.Name()) && elem.Name().Text() == "key" {
 			return true
 		}
 	}
@@ -178,11 +180,11 @@ func (tx *JSXTransformer) insertStatementAfterCustomPrologue(to []*ast.Node, sta
 }
 
 func sortByImportDeclarationSource(a *ast.Node, b *ast.Node) int {
-	return stringutil.CompareStringsCaseSensitive(a.AsImportDeclaration().ModuleSpecifier.AsStringLiteral().Text, b.AsImportDeclaration().ModuleSpecifier.AsStringLiteral().Text)
+	return stringutil.CompareStringsCaseSensitive(a.ModuleSpecifier().Text(), b.ModuleSpecifier().Text())
 }
 
 func getSpecifierOfRequireCall(s *ast.Node) string {
-	return s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration().Initializer.AsCallExpression().Arguments.Nodes[0].AsStringLiteral().Text
+	return s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Initializer().Arguments()[0].Text()
 }
 
 func sortByRequireSource(a *ast.Node, b *ast.Node) int {
@@ -190,11 +192,11 @@ func sortByRequireSource(a *ast.Node, b *ast.Node) int {
 }
 
 func sortImportSpecifiers(a *ast.Node, b *ast.Node) int {
-	res := stringutil.CompareStringsCaseSensitive(a.AsImportSpecifier().PropertyName.Text(), b.AsImportSpecifier().PropertyName.Text())
+	res := stringutil.CompareStringsCaseSensitive(a.PropertyName().Text(), b.PropertyName().Text())
 	if res != 0 {
 		return res
 	}
-	return stringutil.CompareStringsCaseSensitive(a.AsImportSpecifier().Name().AsIdentifier().Text, b.AsImportSpecifier().Name().AsIdentifier().Text)
+	return stringutil.CompareStringsCaseSensitive(a.AsImportSpecifier().Name().Text(), b.AsImportSpecifier().Name().Text())
 }
 
 func getSortedSpecifiers(m map[string]*ast.Node) []*ast.Node {
@@ -233,7 +235,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 			for importSource, importSpecifiersMap := range tx.utilizedImplicitRuntimeImports {
 				s := tx.Factory().NewImportDeclaration(
 					nil,
-					tx.Factory().NewImportClause(false, nil, tx.Factory().NewNamedImports(tx.Factory().NewNodeList(getSortedSpecifiers(importSpecifiersMap)))),
+					tx.Factory().NewImportClause(ast.KindUnknown, nil, tx.Factory().NewNamedImports(tx.Factory().NewNodeList(getSortedSpecifiers(importSpecifiersMap)))),
 					tx.Factory().NewStringLiteral(importSource),
 					nil,
 				)
@@ -252,7 +254,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				sorted := getSortedSpecifiers(importSpecifiersMap)
 				asBindingElems := make([]*ast.Node, 0, len(sorted))
 				for _, elem := range sorted {
-					asBindingElems = append(asBindingElems, tx.Factory().NewBindingElement(nil, elem.AsImportSpecifier().PropertyName, elem.AsImportSpecifier().Name(), nil))
+					asBindingElems = append(asBindingElems, tx.Factory().NewBindingElement(nil, elem.PropertyName(), elem.AsImportSpecifier().Name(), nil))
 				}
 				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
 					tx.Factory().NewBindingPattern(ast.KindObjectBindingPattern, tx.Factory().NewNodeList(asBindingElems)),
@@ -317,8 +319,9 @@ func (tx *JSXTransformer) convertJsxChildrenToChildrenPropObject(children []*ast
 }
 
 func (tx *JSXTransformer) transformJsxChildToExpression(node *ast.Node) *ast.Node {
+	prev := tx.inJsxChild
 	tx.setInChild(true)
-	defer tx.setInChild(false)
+	defer tx.setInChild(prev)
 	return tx.Visitor().Visit(node)
 }
 
@@ -369,9 +372,9 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementJSX(element *ast.Node, child
 		childrenProp = tx.convertJsxChildrenToChildrenPropAssignment(children.Nodes)
 	}
 	var keyAttr *ast.Node
-	attrs := element.Attributes().AsJsxAttributes().Properties.Nodes
+	attrs := element.Attributes().Properties()
 	for i, p := range attrs {
-		if p.Kind == ast.KindJsxAttribute && p.AsJsxAttribute().Name() != nil && ast.IsIdentifier(p.AsJsxAttribute().Name()) && p.AsJsxAttribute().Name().AsIdentifier().Text == "key" {
+		if p.Kind == ast.KindJsxAttribute && p.AsJsxAttribute().Name() != nil && ast.IsIdentifier(p.AsJsxAttribute().Name()) && p.AsJsxAttribute().Name().Text() == "key" {
 			keyAttr = p
 			attrs = slices.Clone(attrs)
 			attrs = slices.Delete(attrs, i, i+1)
@@ -529,10 +532,10 @@ func (tx *JSXTransformer) transformJsxAttributeInitializer(node *ast.Node) *ast.
 		return res
 	}
 	if node.Kind == ast.KindJsxExpression {
-		if node.AsJsxExpression().Expression == nil {
+		if node.Expression() == nil {
 			return tx.Factory().NewTrueExpression()
 		}
-		return tx.Visitor().Visit(node.AsJsxExpression().Expression)
+		return tx.Visitor().Visit(node.Expression())
 	}
 	if ast.IsJsxElement(node) || ast.IsJsxSelfClosingElement(node) || ast.IsJsxFragment(node) {
 		tx.setInChild(false)
@@ -575,7 +578,7 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementOrFragmentJSX(
 				args = append(args, tx.Factory().NewFalseExpression())
 			}
 			// __source development flag
-			line, col := scanner.GetLineAndCharacterOfPosition(originalFile.AsSourceFile(), location.Pos())
+			line, col := scanner.GetECMALineAndCharacterOfPosition(originalFile.AsSourceFile(), location.Pos())
 			args = append(args, tx.Factory().NewObjectLiteralExpression(tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewPropertyAssignment(nil, tx.Factory().NewIdentifier("fileName"), nil, nil, tx.getCurrentFileNameExpression()),
 				tx.Factory().NewPropertyAssignment(nil, tx.Factory().NewIdentifier("lineNumber"), nil, nil, tx.Factory().NewNumericLiteral(strconv.FormatInt(int64(line+1), 10))),
@@ -639,7 +642,7 @@ func (tx *JSXTransformer) createJsxFactoryExpressionFromEntityName(e *ast.Node, 
 		right := tx.Factory().NewIdentifier(e.AsQualifiedName().Right.Text())
 		return tx.Factory().NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
 	}
-	return tx.createReactNamespace(e.AsIdentifier().Text, parent)
+	return tx.createReactNamespace(e.Text(), parent)
 }
 
 func (tx *JSXTransformer) createJsxPsuedoFactoryExpression(parent *ast.Node, e *ast.Node, target string) *ast.Node {
@@ -686,11 +689,15 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementCreateElement(element *ast.N
 		for _, c := range children.Nodes {
 			res := tx.transformJsxChildToExpression(c)
 			if res != nil {
-				if len(children.Nodes) > 1 {
-					tx.EmitContext().AddEmitFlags(res, printer.EFStartOnNewLine)
-				}
 				newChildren = append(newChildren, res)
 			}
+		}
+	}
+
+	// Add StartOnNewLine flag only if there are multiple actual children (after filtering)
+	if len(newChildren) > 1 {
+		for _, child := range newChildren {
+			tx.EmitContext().AddEmitFlags(child, printer.EFStartOnNewLine)
 		}
 	}
 
@@ -723,11 +730,15 @@ func (tx *JSXTransformer) visitJsxOpeningFragmentCreateElement(fragment *ast.Jsx
 		for _, c := range children.Nodes {
 			res := tx.transformJsxChildToExpression(c)
 			if res != nil {
-				if len(children.Nodes) > 1 {
-					tx.EmitContext().AddEmitFlags(res, printer.EFStartOnNewLine)
-				}
 				newChildren = append(newChildren, res)
 			}
+		}
+	}
+
+	// Add StartOnNewLine flag only if there are multiple actual children (after filtering)
+	if len(newChildren) > 1 {
+		for _, child := range newChildren {
+			tx.EmitContext().AddEmitFlags(child, printer.EFStartOnNewLine)
 		}
 	}
 
@@ -789,26 +800,26 @@ func fixupWhitespaceAndDecodeEntities(text string) string {
 	initial := true
 	// First non-whitespace character on this line.
 	firstNonWhitespace := 0
-	// Last non-whitespace character on this line.
-	lastNonWhitespace := -1
+	// End byte position of the last non-whitespace character on this line.
+	lastNonWhitespaceEnd := -1
 	// These initial values are special because the first line is:
-	// firstNonWhitespace = 0 to indicate that we want leading whitsepace,
-	// but lastNonWhitespace = -1 as a special flag to indicate that we *don't* include the line if it's all whitespace.
+	// firstNonWhitespace = 0 to indicate that we want leading whitespace,
+	// but lastNonWhitespaceEnd = -1 as a special flag to indicate that we *don't* include the line if it's all whitespace.
 	for i := 0; i < len(text); i++ {
 		c, size := utf8.DecodeRuneInString(text[i:])
 		if stringutil.IsLineBreak(c) {
 			// If we've seen any non-whitespace characters on this line, add the 'trim' of the line.
-			// (lastNonWhitespace === -1 is a special flag to detect whether the first line is all whitespace.)
-			if firstNonWhitespace != -1 && lastNonWhitespace != -1 {
-				addLineOfJsxText(acc, text[firstNonWhitespace:lastNonWhitespace], initial)
+			// (lastNonWhitespaceEnd === -1 is a special flag to detect whether the first line is all whitespace.)
+			if firstNonWhitespace != -1 && lastNonWhitespaceEnd != -1 {
+				addLineOfJsxText(acc, text[firstNonWhitespace:lastNonWhitespaceEnd+1], initial)
 				initial = false
 			}
 
 			// Reset firstNonWhitespace for the next line.
-			// Don't bother to reset lastNonWhitespace because we ignore it if firstNonWhitespace = -1.
+			// Don't bother to reset lastNonWhitespaceEnd because we ignore it if firstNonWhitespace = -1.
 			firstNonWhitespace = -1
 		} else if !stringutil.IsWhiteSpaceSingleLine(c) {
-			lastNonWhitespace = i
+			lastNonWhitespaceEnd = i + size - 1 // Store the end byte position of the character
 			if firstNonWhitespace == -1 {
 				firstNonWhitespace = i
 			}
@@ -837,23 +848,22 @@ func (tx *JSXTransformer) visitJsxExpression(expression *ast.JsxExpression) *ast
 var htmlEntityMatcher = regexp2.MustCompile(`&((#((\d+)|x([\da-fA-F]+)))|(\w+));`, regexp2.ECMAScript)
 
 func htmlEntityReplacer(m regexp2.Match) string {
-	decimal := m.GroupByNumber(3)
-	if decimal != nil {
+	decimal := m.GroupByNumber(4)
+	if decimal != nil && decimal.Capture.String() != "" {
 		parsed, err := strconv.ParseInt(decimal.Capture.String(), 10, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
 	}
-	hex := m.GroupByNumber(4)
-	if hex != nil {
+	hex := m.GroupByNumber(5)
+	if hex != nil && hex.Capture.String() != "" {
 		parsed, err := strconv.ParseInt(hex.Capture.String(), 16, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
 	}
-	word := m.GroupByNumber(5)
-	if word != nil {
-		// If this is not a valid entity, then just use `match` (replace it with itself, i.e. don't replace)
+	word := m.GroupByNumber(6)
+	if word != nil && word.Capture.String() != "" {
 		res, ok := entities[word.Capture.String()]
 		if ok {
 			return string(res)

@@ -1,0 +1,48 @@
+--- old.moduleExportDuplicateAlias.types
++++ new.moduleExportDuplicateAlias.types
+@@= skipped -1, +1 lines =@@
+
+ === test.js ===
+ const { apply } = require('./moduleExportAliasDuplicateAlias')
+->apply : () => void
++>apply : undefined
+ >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
+ >require : any
+ >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
+
+ apply()
+->apply() : void
+->apply : () => void
++>apply() : any
++>apply : undefined
+
+ === moduleExportAliasDuplicateAlias.js ===
+ exports.apply = undefined;
+ >exports.apply = undefined : undefined
+->exports.apply : any
++>exports.apply : undefined
+ >exports : typeof import("moduleExportAliasDuplicateAlias")
+->apply : any
++>apply : undefined
+ >undefined : undefined
+
+ function a() { }
+@@= skipped -28, +28 lines =@@
+
+ exports.apply = a;
+ >exports.apply = a : () => void
+->exports.apply : any
++>exports.apply : undefined
+ >exports : typeof import("moduleExportAliasDuplicateAlias")
+->apply : any
++>apply : undefined
+ >a : () => void
+
+ exports.apply()
+->exports.apply() : void
+->exports.apply : () => void
++>exports.apply() : any
++>exports.apply : undefined
+ >exports : typeof import("moduleExportAliasDuplicateAlias")
+->apply : () => void
++>apply : undefined

@@ -66,8 +66,11 @@ exports.Bar = Foo;
 exports.X = Foo;
 //// [index4.js]
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const index3_1 = require("./index3");
+const index3_1 = __importDefault(require("./index3"));
 class Bar extends index3_1.default {
     x = /** @type {Bar} */ null;
 }
@@ -77,6 +80,9 @@ exports.default = Bar;
 Object.defineProperty(exports, "__esModule", { value: true });
 // merge type alias and const (OK)
 exports.default = 12;
+/**
+ * @typedef {string | number} default
+ */
 //// [index6.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -84,6 +90,9 @@ exports.default = func;
 // merge type alias and function (OK)
 function func() { }
 ;
+/**
+ * @typedef {string | number} default
+ */
 
 
 //// [index1.d.ts]
@@ -109,10 +118,15 @@ export default Bar;
 declare const _default: number;
 export default _default;
 export type default = string | number;
+/**
+ * @typedef {string | number} default
+ */
 //// [index6.d.ts]
-// merge type alias and function (OK)
 export default function func(): void;
 export type default = string | number;
+/**
+ * @typedef {string | number} default
+ */
 
 
 //// [DtsFileErrors]
@@ -124,12 +138,12 @@ out/index5.d.ts(3,13): error TS2457: Type alias name cannot be 'default'.
 out/index5.d.ts(3,21): error TS1128: Declaration or statement expected.
 out/index5.d.ts(3,23): error TS2693: 'string' only refers to a type, but is being used as a value here.
 out/index5.d.ts(3,32): error TS2693: 'number' only refers to a type, but is being used as a value here.
-out/index6.d.ts(3,1): error TS1128: Declaration or statement expected.
-out/index6.d.ts(3,8): error TS2304: Cannot find name 'type'.
-out/index6.d.ts(3,13): error TS2457: Type alias name cannot be 'default'.
-out/index6.d.ts(3,21): error TS1128: Declaration or statement expected.
-out/index6.d.ts(3,23): error TS2693: 'string' only refers to a type, but is being used as a value here.
-out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is being used as a value here.
+out/index6.d.ts(2,1): error TS1128: Declaration or statement expected.
+out/index6.d.ts(2,8): error TS2304: Cannot find name 'type'.
+out/index6.d.ts(2,13): error TS2457: Type alias name cannot be 'default'.
+out/index6.d.ts(2,21): error TS1128: Declaration or statement expected.
+out/index6.d.ts(2,23): error TS2693: 'string' only refers to a type, but is being used as a value here.
+out/index6.d.ts(2,32): error TS2693: 'number' only refers to a type, but is being used as a value here.
 
 
 ==== out/index1.d.ts (0 errors) ====
@@ -171,9 +185,11 @@ out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is bein
 !!! error TS2693: 'string' only refers to a type, but is being used as a value here.
                                    ~~~~~~
 !!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    /**
+     * @typedef {string | number} default
+     */
     
 ==== out/index6.d.ts (6 errors) ====
-    // merge type alias and function (OK)
     export default function func(): void;
     export type default = string | number;
     ~~~~~~
@@ -188,4 +204,7 @@ out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is bein
 !!! error TS2693: 'string' only refers to a type, but is being used as a value here.
                                    ~~~~~~
 !!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    /**
+     * @typedef {string | number} default
+     */
     

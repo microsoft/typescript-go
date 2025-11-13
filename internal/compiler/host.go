@@ -22,28 +22,39 @@ type CompilerHost interface {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory   string
-	fs                 vfs.FS
-	defaultLibraryPath string
+	currentDirectory    string
+	fs                  vfs.FS
+	defaultLibraryPath  string
+	extendedConfigCache tsoptions.ExtendedConfigCache
+	trace               func(msg string)
 }
 
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
+	extendedConfigCache tsoptions.ExtendedConfigCache,
+	trace func(msg string),
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
 }
 
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
+	extendedConfigCache tsoptions.ExtendedConfigCache,
+	trace func(msg string),
 ) CompilerHost {
+	if trace == nil {
+		trace = func(msg string) {}
+	}
 	return &compilerHost{
-		currentDirectory:   currentDirectory,
-		fs:                 fs,
-		defaultLibraryPath: defaultLibraryPath,
+		currentDirectory:    currentDirectory,
+		fs:                  fs,
+		defaultLibraryPath:  defaultLibraryPath,
+		extendedConfigCache: extendedConfigCache,
+		trace:               trace,
 	}
 }
 
@@ -60,7 +71,7 @@ func (h *compilerHost) GetCurrentDirectory() string {
 }
 
 func (h *compilerHost) Trace(msg string) {
-	//!!! TODO: implement
+	h.trace(msg)
 }
 
 func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
@@ -72,6 +83,6 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, nil)
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }

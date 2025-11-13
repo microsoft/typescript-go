@@ -36,7 +36,7 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
 
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
@@ -51,7 +51,7 @@ foo.bar;`
 	file := p.GetSourceFile("/foo.ts")
 	interfaceId := file.Statements.Nodes[0].Name()
 	varId := file.Statements.Nodes[1].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Name()
-	propAccess := file.Statements.Nodes[2].AsExpressionStatement().Expression
+	propAccess := file.Statements.Nodes[2].Expression()
 	nodes := []*ast.Node{interfaceId, varId, propAccess}
 	for _, node := range nodes {
 		symbol := c.GetSymbolAtLocation(node)
@@ -70,14 +70,14 @@ func TestCheckSrcCompiler(t *testing.T) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{
 		Config: parsed,
 		Host:   host,
 	})
-	p.CheckSourceFiles(t.Context())
+	p.CheckSourceFiles(t.Context(), nil)
 }
 
 func BenchmarkNewChecker(b *testing.B) {
@@ -87,7 +87,7 @@ func BenchmarkNewChecker(b *testing.B) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{

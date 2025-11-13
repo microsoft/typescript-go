@@ -105,11 +105,7 @@ func (ch *Checker) IsAnySymbolAccessible(symbols []*ast.Symbol, enclosingDeclara
 }
 
 func hasNonGlobalAugmentationExternalModuleSymbol(declaration *ast.Node) bool {
-	return isModuleWithStringLiteralName(declaration) || (declaration.Kind == ast.KindSourceFile && ast.IsExternalOrCommonJSModule(declaration.AsSourceFile()))
-}
-
-func isModuleWithStringLiteralName(node *ast.Node) bool {
-	return ast.IsModuleDeclaration(node) && node.Name().Kind == ast.KindStringLiteral
+	return ast.IsModuleWithStringLiteralName(declaration) || (declaration.Kind == ast.KindSourceFile && ast.IsExternalOrCommonJSModule(declaration.AsSourceFile()))
 }
 
 func getQualifiedLeftMeaning(rightMeaning ast.SymbolFlags) ast.SymbolFlags {
@@ -538,7 +534,7 @@ func isUMDExportSymbol(symbol *ast.Symbol) bool {
 }
 
 func isNamespaceReexportDeclaration(node *ast.Node) bool {
-	return ast.IsNamespaceExport(node) && node.Parent.AsExportDeclaration().ModuleSpecifier != nil
+	return ast.IsNamespaceExport(node) && node.Parent.ModuleSpecifier() != nil
 }
 
 func (ch *Checker) getCandidateListForSymbol(

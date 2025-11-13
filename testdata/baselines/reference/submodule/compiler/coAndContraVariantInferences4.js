@@ -27,11 +27,7 @@ function foo() {
 
 
 //// [coAndContraVariantInferences4.js]
-var SyntaxKind;
-(function (SyntaxKind) {
-    SyntaxKind[SyntaxKind["Modifier"] = 0] = "Modifier";
-    SyntaxKind[SyntaxKind["Decorator"] = 1] = "Decorator";
-})(SyntaxKind || (SyntaxKind = {}));
+"use strict";
 function foo() {
     every(modifiers, isModifier);
     every(modifiers, isDecorator);

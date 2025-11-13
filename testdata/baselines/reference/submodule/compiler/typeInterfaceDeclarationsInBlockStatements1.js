@@ -34,9 +34,11 @@ function f4() {
 
 
 //// [typeInterfaceDeclarationsInBlockStatements1.js]
+"use strict";
 // https://github.com/microsoft/TypeScript/issues/60175
 function f1() {
     if (true)
+        ;
     console.log("");
 }
 function f2() {
@@ -46,6 +48,7 @@ function f2() {
 }
 function f3() {
     if (true)
+        ;
     console.log("");
 }
 function f4() {
@@ -56,7 +59,6 @@ function f4() {
 
 
 //// [typeInterfaceDeclarationsInBlockStatements1.d.ts]
-// https://github.com/microsoft/TypeScript/issues/60175
 declare function f1(): void;
 declare function f2(): void;
 declare function f3(): void;

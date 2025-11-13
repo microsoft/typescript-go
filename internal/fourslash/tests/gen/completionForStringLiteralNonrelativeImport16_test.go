@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -15,6 +16,7 @@ func TestCompletionForStringLiteralNonrelativeImport16(t *testing.T) {
 	const content = `// @Filename: tsconfig.json
 {
     "compilerOptions": {
+        "resolveJsonModule": false,
         "baseUrl": "./",
         "paths": {
             "module1/path1": ["some/path/whatever.ts"],
@@ -31,7 +33,7 @@ export var x = 9;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
@@ -47,7 +49,7 @@ export var x = 9;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{

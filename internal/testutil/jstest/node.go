@@ -1,7 +1,6 @@
 package jstest
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,6 +8,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )

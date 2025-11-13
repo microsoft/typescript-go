@@ -1,0 +1,109 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsInterface.ts ===
+// interface i {
+//           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | interface i
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// var iInstance: i;
+//     ^^^^^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var iInstance: i
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | interface i
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 10,
+      "LSPosition": {
+        "line": 0,
+        "character": 10
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ninterface i\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 11
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 20,
+      "LSPosition": {
+        "line": 2,
+        "character": 4
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nvar iInstance: i\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 4
+        },
+        "end": {
+          "line": 2,
+          "character": 13
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 31,
+      "LSPosition": {
+        "line": 2,
+        "character": 15
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ninterface i\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 15
+        },
+        "end": {
+          "line": 2,
+          "character": 16
+        }
+      }
+    }
+  }
+]

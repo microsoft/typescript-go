@@ -11,24 +11,69 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri) ([]*lsproto.DocumentSymbol, error) {
+func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri, hierarchicalSupport bool) (lsproto.DocumentSymbolResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
-	symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
-	return symbols, nil
+	if hierarchicalSupport {
+		symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
+		return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{DocumentSymbols: &symbols}, nil
+	}
+	// Client doesn't support hierarchical document symbols, return flat SymbolInformation array
+	symbolInfos := l.getDocumentSymbolInformations(ctx, file, documentURI)
+	symbolInfoPtrs := make([]*lsproto.SymbolInformation, len(symbolInfos))
+	for i := range symbolInfos {
+		symbolInfoPtrs[i] = &symbolInfos[i]
+	}
+	return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{SymbolInformations: &symbolInfoPtrs}, nil
+}
+
+// getDocumentSymbolInformations converts hierarchical DocumentSymbols to a flat SymbolInformation array
+func (l *LanguageService) getDocumentSymbolInformations(ctx context.Context, file *ast.SourceFile, documentURI lsproto.DocumentUri) []lsproto.SymbolInformation {
+	// First get hierarchical symbols
+	docSymbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
+
+	// Flatten the hierarchy
+	var result []lsproto.SymbolInformation
+	var flatten func(symbols []*lsproto.DocumentSymbol, containerName *string)
+	flatten = func(symbols []*lsproto.DocumentSymbol, containerName *string) {
+		for _, symbol := range symbols {
+			info := lsproto.SymbolInformation{
+				Name: symbol.Name,
+				Kind: symbol.Kind,
+				Location: lsproto.Location{
+					Uri:   documentURI,
+					Range: symbol.Range,
+				},
+				ContainerName: containerName,
+				Tags:          symbol.Tags,
+				Deprecated:    symbol.Deprecated,
+			}
+			result = append(result, info)
+
+			// Recursively flatten children with this symbol as container
+			if symbol.Children != nil && len(*symbol.Children) > 0 {
+				flatten(*symbol.Children, &symbol.Name)
+			}
+		}
+	}
+	flatten(docSymbols, nil)
+	return result
 }
 
 func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, node *ast.Node) []*lsproto.DocumentSymbol {
 	var symbols []*lsproto.DocumentSymbol
 	addSymbolForNode := func(node *ast.Node, children []*lsproto.DocumentSymbol) {
-		symbol := l.newDocumentSymbol(node, children)
-		if symbol != nil {
-			symbols = append(symbols, symbol)
+		if node.Flags&ast.NodeFlagsReparsed == 0 {
+			symbol := l.newDocumentSymbol(node, children)
+			if symbol != nil {
+				symbols = append(symbols, symbol)
+			}
 		}
 	}
 	var visit func(*ast.Node) bool
@@ -44,7 +89,7 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 		return result
 	}
 	visit = func(node *ast.Node) bool {
-		if ctx != nil && ctx.Err() != nil {
+		if ctx.Err() != nil {
 			return true
 		}
 		switch node.Kind {
@@ -193,7 +238,7 @@ type DeclarationInfo struct {
 	matchScore  int
 }
 
-func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, converters *Converters, query string) ([]lsproto.SymbolInformation, error) {
+func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, converters *lsconv.Converters, query string) (lsproto.WorkspaceSymbolResponse, error) {
 	// Obtain set of non-declaration source files from all active programs.
 	var sourceFiles collections.Set[*ast.SourceFile]
 	for _, program := range programs {
@@ -206,8 +251,8 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 	// Create DeclarationInfos for all declarations in the source files.
 	var infos []DeclarationInfo
 	for sourceFile := range sourceFiles.Keys() {
-		if ctx != nil && ctx.Err() != nil {
-			return []lsproto.SymbolInformation{}, nil
+		if ctx.Err() != nil {
+			return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{}, nil
 		}
 		declarationMap := sourceFile.GetDeclarationMap()
 		for name, declarations := range declarationMap {
@@ -222,7 +267,7 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 	// Sort the DeclarationInfos and return the top 256 matches.
 	slices.SortFunc(infos, compareDeclarationInfos)
 	count := min(len(infos), 256)
-	symbols := make([]lsproto.SymbolInformation, count)
+	symbols := make([]*lsproto.SymbolInformation, count)
 	for i, info := range infos[0:count] {
 		node := core.OrElse(ast.GetNameOfDeclaration(info.declaration), info.declaration)
 		sourceFile := ast.GetSourceFileOfNode(node)
@@ -231,9 +276,9 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 		symbol.Name = info.name
 		symbol.Kind = getSymbolKindFromNode(info.declaration)
 		symbol.Location = converters.ToLSPLocation(sourceFile, core.NewTextRange(pos, node.End()))
-		symbols[i] = symbol
+		symbols[i] = &symbol
 	}
-	return symbols, nil
+	return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{SymbolInformations: &symbols}, nil
 }
 
 // Return a score for matching `s` against `pattern`. In order to match, `s` must contain each of the characters in

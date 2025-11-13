@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func IsGeneratedIdentifier(emitContext *printer.EmitContext, name *ast.IdentifierNode) bool {
@@ -78,36 +79,30 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		// only an `Initializer()` child that can be `Identifier` would be an instance of `IdentifierReference`
 		return parent.Initializer() == name
 	case ast.KindForStatement:
-		return parent.AsForStatement().Initializer == name ||
+		return parent.Initializer() == name ||
 			parent.AsForStatement().Condition == name ||
 			parent.AsForStatement().Incrementor == name
 	case ast.KindForInStatement,
 		ast.KindForOfStatement:
-		return parent.AsForInOrOfStatement().Initializer == name ||
-			parent.AsForInOrOfStatement().Expression == name
+		return parent.Initializer() == name ||
+			parent.Expression() == name
 	case ast.KindImportEqualsDeclaration:
 		return parent.AsImportEqualsDeclaration().ModuleReference == name
 	case ast.KindArrowFunction:
-		return parent.AsArrowFunction().Body == name
+		return parent.Body() == name
 	case ast.KindConditionalExpression:
 		return parent.AsConditionalExpression().Condition == name ||
 			parent.AsConditionalExpression().WhenTrue == name ||
 			parent.AsConditionalExpression().WhenFalse == name
-	case ast.KindCallExpression:
-		return parent.AsCallExpression().Expression == name ||
-			slices.Contains(parent.AsCallExpression().Arguments.Nodes, name)
-	case ast.KindNewExpression:
-		return parent.AsNewExpression().Expression == name ||
-			parent.AsNewExpression().Arguments.Nodes != nil &&
-				slices.Contains(parent.AsNewExpression().Arguments.Nodes, name)
+	case ast.KindCallExpression, ast.KindNewExpression:
+		return parent.Expression() == name ||
+			slices.Contains(parent.Arguments(), name)
 	case ast.KindTaggedTemplateExpression:
 		return parent.AsTaggedTemplateExpression().Tag == name
 	case ast.KindImportAttribute:
 		return parent.AsImportAttribute().Value == name
-	case ast.KindJsxOpeningElement:
-		return parent.AsJsxOpeningElement().TagName == name
-	case ast.KindJsxClosingElement:
-		return parent.AsJsxClosingElement().TagName == name
+	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
+		return parent.TagName() == name
 	default:
 		return false
 	}
@@ -244,4 +239,30 @@ func IsSimpleCopiableExpression(expression *ast.Expression) bool {
 		ast.IsNumericLiteral(expression) ||
 		ast.IsKeywordKind(expression.Kind) ||
 		ast.IsIdentifier(expression)
+}
+
+func IsOriginalNodeSingleLine(emitContext *printer.EmitContext, node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	original := emitContext.MostOriginal(node)
+	if original == nil {
+		return false
+	}
+	source := ast.GetSourceFileOfNode(original)
+	if source == nil {
+		return false
+	}
+	startLine := scanner.GetECMALineOfPosition(source, original.Loc.Pos())
+	endLine := scanner.GetECMALineOfPosition(source, original.Loc.End())
+	return startLine == endLine
+}
+
+/**
+ * A simple inlinable expression is an expression which can be copied into multiple locations
+ * without risk of repeating any sideeffects and whose value could not possibly change between
+ * any such locations
+ */
+func IsSimpleInlineableExpression(expression *ast.Expression) bool {
+	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
 }

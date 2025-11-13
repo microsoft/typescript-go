@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionsJsdocTag(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @typedef {object} T
@@ -20,15 +21,15 @@ func TestCompletionsJsdocTag(t *testing.T) {
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "@property",
-					Detail: ptrTo("@property"),
-					Kind:   ptrTo(lsproto.CompletionItemKindKeyword),
+					Detail: PtrTo("@property"),
+					Kind:   PtrTo(lsproto.CompletionItemKindKeyword),
 				},
 			},
 		},

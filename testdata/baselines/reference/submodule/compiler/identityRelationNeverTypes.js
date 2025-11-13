@@ -21,6 +21,8 @@ function f1(state: State<{ foo: number }>) {
 
 
 //// [identityRelationNeverTypes.js]
+"use strict";
+// Repro from #47996
 function f1(state) {
     if (state.matches('a') && state.matches('a.b')) {
         state; // never
@@ -29,7 +31,6 @@ function f1(state) {
 
 
 //// [identityRelationNeverTypes.d.ts]
-// Repro from #47996
 type Equals<A, B> = (<T>() => T extends B ? 1 : 0) extends (<T>() => T extends A ? 1 : 0) ? true : false;
 declare class State<TContext> {
     _context: TContext;

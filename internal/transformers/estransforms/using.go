@@ -19,9 +19,9 @@ type usingDeclarationTransformer struct {
 	exportEqualsBinding  *ast.IdentifierNode
 }
 
-func newUsingDeclarationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newUsingDeclarationTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &usingDeclarationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 type usingKind uint
@@ -264,9 +264,9 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 		usingVarStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, usingVarList)
 		var statement *ast.Statement
 		if ast.IsBlock(node.Statement) {
-			statements := make([]*ast.Statement, 0, len(node.Statement.AsBlock().Statements.Nodes)+1)
+			statements := make([]*ast.Statement, 0, len(node.Statement.Statements())+1)
 			statements = append(statements, usingVarStatement)
-			statements = append(statements, node.Statement.AsBlock().Statements.Nodes...)
+			statements = append(statements, node.Statement.Statements()...)
 			statement = tx.Factory().UpdateBlock(
 				node.Statement.AsBlock(),
 				tx.Factory().NewNodeList(statements),
@@ -659,7 +659,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 func (tx *usingDeclarationTransformer) hoistBindingElement(node *ast.Node /*VariableDeclaration|BindingElement*/, isExportedDeclaration bool, original *ast.Node) {
 	// NOTE: `node` has already been visited
 	if ast.IsBindingPattern(node.Name()) {
-		for _, element := range node.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range node.Name().Elements() {
 			if element.Name() != nil {
 				tx.hoistBindingElement(element, isExportedDeclaration, original)
 			}
@@ -855,7 +855,7 @@ func getUsingKindOfStatements(statements []*ast.Node) usingKind {
 func getUsingKindOfCaseOrDefaultClauses(clauses []*ast.CaseOrDefaultClauseNode) usingKind {
 	result := usingKindNone
 	for _, clause := range clauses {
-		usingKind := getUsingKindOfStatements(clause.AsCaseOrDefaultClause().Statements.Nodes)
+		usingKind := getUsingKindOfStatements(clause.Statements())
 		if usingKind == usingKindAsync {
 			return usingKindAsync
 		}

@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionListObjectMembersInTypeLocationWithTypeof(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 const languageService = { getCompletions() {} }
@@ -22,14 +23,14 @@ type B = Parameters<typeof obj./*2*/>`
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "getCompletions",
-					Detail: ptrTo("(method) getCompletions(): void"),
+					Detail: PtrTo("(method) getCompletions(): void"),
 				},
 			},
 		},
@@ -37,14 +38,14 @@ type B = Parameters<typeof obj./*2*/>`
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "dance",
-					Detail: ptrTo("(property) dance: () => {}"),
+					Detail: PtrTo("(property) dance: () => {}"),
 				},
 			},
 		},

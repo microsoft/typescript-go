@@ -1,17 +1,14 @@
 --- old.mappedTypeGenericIndexedAccess.js
 +++ new.mappedTypeGenericIndexedAccess.js
-@@= skipped -46, +46 lines =@@
-
-
- //// [mappedTypeGenericIndexedAccess.js]
--"use strict";
--// Repro from #49242
+@@= skipped -49, +49 lines =@@
+ "use strict";
+ // Repro from #49242
  class Test {
 +    entries;
      constructor() {
          this.entries = {};
      }
-@@= skipped -18, +17 lines =@@
+@@= skipped -15, +16 lines =@@
      [0]: (p) => console.log(p.foo),
      [1]: (p) => console.log(p.a),
  };
@@ -23,15 +20,3 @@
 
 
  //// [mappedTypeGenericIndexedAccess.d.ts]
-+// Repro from #49242
- type Types = {
-     first: {
-         a1: true;
-@@= skipped -22, +26 lines =@@
-     constructor();
-     addEntry<T extends keyof Types>(name: T, entry: Types[T]): void;
- }
-+// Repro from #49338
- type TypesMap = {
-     [0]: {
-         foo: 'bar';

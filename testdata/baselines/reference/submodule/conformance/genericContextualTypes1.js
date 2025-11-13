@@ -53,6 +53,7 @@ const fn: fn = a => a;
 
 
 //// [genericContextualTypes1.js]
+"use strict";
 const f00 = list;
 const f01 = x => [x];
 const f02 = wrap(list);
@@ -104,6 +105,5 @@ declare const f23: <A>(a: A[]) => Box<A>[];
 declare const f30: (a: string[]) => string[];
 declare const f31: <T extends Box<number>>(a: T[]) => T[];
 declare const f40: <A, B>(b: B, a: A) => [A, B];
-// Repro from #16293
 type fn = <A>(a: A) => A;
 declare const fn: fn;

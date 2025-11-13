@@ -1,55 +1,43 @@
 --- old.jsDeclarationsTypedefDescriptionsPreserved.js
 +++ new.jsDeclarationsTypedefDescriptionsPreserved.js
-@@= skipped -18, +18 lines =@@
-
-
- //// [index.js]
--/**
-- * Options for Foo <------------
-- * @typedef {Object} FooOptions
-- * @property {boolean} bar - Marvin K Mooney
-- * @property {string} baz - Sylvester McMonkey McBean
-- */
--/**
-- * Multiline
-- * Options
-- * for Foo <------------
-- * @typedef {Object} BarOptions
-- * @property {boolean} bar - Marvin K Mooney
-- * @property {string} baz - Sylvester McMonkey McBean
-- */
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-
-
+@@= skipped -37, +37 lines =@@
  //// [index.d.ts]
--/**
-- * Options for Foo <------------
-- */
--type FooOptions = {
+ /**
+  * Options for Foo <------------
++ * @typedef {Object} FooOptions
++ * @property {boolean} bar - Marvin K Mooney
++ * @property {string} baz - Sylvester McMonkey McBean
+  */
+ type FooOptions = {
 -    /**
 -     * - Marvin K Mooney
 -     */
-+export type FooOptions = {
-     bar: boolean;
+-    bar: boolean;
 -    /**
 -     * - Sylvester McMonkey McBean
 -     */
++    bar: boolean;
++    baz: string;
++};
++type BarOptions = {
++    bar: boolean;
      baz: string;
  };
--/**
-- * Multiline
-- * Options
-- * for Foo <------------
-- */
+ /**
+  * Multiline
+  * Options
+  * for Foo <------------
++ * @typedef {Object} BarOptions
++ * @property {boolean} bar - Marvin K Mooney
++ * @property {string} baz - Sylvester McMonkey McBean
+  */
 -type BarOptions = {
 -    /**
 -     * - Marvin K Mooney
 -     */
-+export type BarOptions = {
-     bar: boolean;
+-    bar: boolean;
 -    /**
 -     * - Sylvester McMonkey McBean
 -     */
-     baz: string;
- };
+-    baz: string;
+-};

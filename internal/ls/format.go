@@ -12,8 +12,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func toFormatCodeSettings(opt *lsproto.FormattingOptions) *format.FormatCodeSettings {
-	initial := format.GetDefaultFormatCodeSettings("\n")
+func toFormatCodeSettings(opt *lsproto.FormattingOptions, newLine string) *format.FormatCodeSettings {
+	initial := format.GetDefaultFormatCodeSettings(newLine)
 	initial.TabSize = int(opt.TabSize)
 	initial.IndentSize = int(opt.TabSize)
 	initial.ConvertTabsToSpaces = opt.InsertSpaces
@@ -41,13 +41,14 @@ func (l *LanguageService) ProvideFormatDocument(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
 	options *lsproto.FormattingOptions,
-) ([]*lsproto.TextEdit, error) {
+) (lsproto.DocumentFormattingResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
-	return l.toLSProtoTextEdits(file, l.getFormattingEditsForDocument(
+	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForDocument(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
-	)), nil
+		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
+	))
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) ProvideFormatDocumentRange(
@@ -55,14 +56,15 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	documentURI lsproto.DocumentUri,
 	options *lsproto.FormattingOptions,
 	r lsproto.Range,
-) ([]*lsproto.TextEdit, error) {
+) (lsproto.DocumentRangeFormattingResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
-	return l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
+	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
+		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
 		l.converters.FromLSPRange(file, r),
-	)), nil
+	))
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) ProvideFormatDocumentOnType(
@@ -71,15 +73,16 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	options *lsproto.FormattingOptions,
 	position lsproto.Position,
 	character string,
-) ([]*lsproto.TextEdit, error) {
+) (lsproto.DocumentOnTypeFormattingResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
-	return l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
+	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
+		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
 		int(l.converters.LineAndCharacterToPosition(file, position)),
 		character,
-	)), nil
+	))
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) getFormattingEditsForRange(
@@ -110,7 +113,8 @@ func (l *LanguageService) getFormattingEditsAfterKeystroke(
 ) []core.TextChange {
 	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 
-	if isInComment(file, position, nil) == nil {
+	tokenAtPosition := astnav.GetTokenAtPosition(file, position)
+	if isInComment(file, position, tokenAtPosition) == nil {
 		switch key {
 		case "{":
 			return format.FormatOnOpeningCurly(ctx, file, position)
@@ -150,7 +154,7 @@ func getRangeOfEnclosingComment(
 	// or leading on the latter (and none are in both lists).
 	var trailingRangesOfPreviousToken iter.Seq[ast.CommentRange]
 	if precedingToken != nil {
-		trailingRangesOfPreviousToken = scanner.GetTrailingCommentRanges(&ast.NodeFactory{}, file.Text(), position)
+		trailingRangesOfPreviousToken = scanner.GetTrailingCommentRanges(&ast.NodeFactory{}, file.Text(), precedingToken.End())
 	}
 	leadingRangesOfNextToken := getLeadingCommentRangesOfNode(tokenAtPosition, file)
 	commentRanges := core.ConcatenateSeq(trailingRangesOfPreviousToken, leadingRangesOfNextToken)

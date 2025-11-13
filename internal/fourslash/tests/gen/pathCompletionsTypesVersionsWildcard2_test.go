@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -12,6 +13,7 @@ func TestPathCompletionsTypesVersionsWildcard2(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
+// @resolveJsonModule: false
 // @Filename: /node_modules/foo/package.json
 {
   "types": "index.d.ts",
@@ -36,7 +38,7 @@ import { } from "foo//**/";`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{

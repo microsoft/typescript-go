@@ -20,5 +20,5 @@ f({ a: 1, ...l, ...r });
 
 
 //// [excessPropertyCheckWithSpread.js]
-f({ a: 1, ...i });
-f({ a: 1, ...l, ...r });
+f(Object.assign({ a: 1 }, i));
+f(Object.assign(Object.assign({ a: 1 }, l), r));
