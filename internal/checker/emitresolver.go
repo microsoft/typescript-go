@@ -47,7 +47,7 @@ func newEmitResolver(checker *Checker) *EmitResolver {
 	e := &EmitResolver{checker: checker}
 	e.isValueAliasDeclaration = e.isValueAliasDeclarationWorker
 	e.aliasMarkingVisitor = e.aliasMarkingVisitorWorker
-	e.checkerMu = checker.lock
+	e.checkerMu = &checker.mu
 	return e
 }
 
