@@ -284,17 +284,13 @@ func getNodeForQuickInfo(node *ast.Node) *ast.Node {
 }
 
 func getSymbolAtLocationForQuickInfo(c *checker.Checker, node *ast.Node) *ast.Symbol {
-	objectElement := getContainingObjectLiteralElement(node)
-	if objectElement != nil {
-		contextualType := c.GetContextualType(objectElement.Parent, checker.ContextFlagsNone)
-		if contextualType != nil {
-			properties := c.GetPropertySymbolsFromContextualType(objectElement, contextualType, false /*unionSymbolOk*/)
-			if len(properties) == 1 {
+	if objectElement := getContainingObjectLiteralElement(node); objectElement != nil {
+		if contextualType := c.GetContextualType(objectElement.Parent, checker.ContextFlagsNone); contextualType != nil {
+			if properties := c.GetPropertySymbolsFromContextualType(objectElement, contextualType, false /*unionSymbolOk*/); len(properties) == 1 {
 				return properties[0]
 			}
 		}
 	}
-
 	return c.GetSymbolAtLocation(node)
 }
 
