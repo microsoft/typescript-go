@@ -2524,19 +2524,24 @@ func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diag
 	}
 	actualDiagnostics = core.Filter(actualDiagnostics, filterDiagnostics)
 	emptyRange := lsproto.Range{}
-	for _, diag := range expected {
+	expectedWithRanges := make([]*lsproto.Diagnostic, len(expected))
+	for i, diag := range expected {
 		if diag.Range == emptyRange {
 			rangesInFile := f.getRangesInFile(f.activeFilename)
 			if len(rangesInFile) == 0 {
 				t.Fatalf("No ranges found in file %s to assign to diagnostic with empty range", f.activeFilename)
 			}
-			diag.Range = rangesInFile[0].LSRange
+			diagWithRange := *diag
+			diagWithRange.Range = rangesInFile[0].LSRange
+			expectedWithRanges[i] = &diagWithRange
+		} else {
+			expectedWithRanges[i] = diag
 		}
 	}
-	if len(actualDiagnostics) == 0 {
-		actualDiagnostics = nil
+	if len(actualDiagnostics) == 0 && len(expectedWithRanges) == 0 {
+		return
 	}
-	assertDeepEqual(t, actualDiagnostics, expected, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
+	assertDeepEqual(t, actualDiagnostics, expectedWithRanges, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
 }
 
 func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
