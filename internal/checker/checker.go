@@ -2161,10 +2161,12 @@ func (c *Checker) checkSourceElements(nodes []*ast.Node) {
 func (c *Checker) checkSourceElement(node *ast.Node) bool {
 	if node != nil {
 		saveCurrentNode := c.currentNode
+		saveWithinUnreachableCode := c.withinUnreachableCode
 		c.currentNode = node
 		c.instantiationCount = 0
 		c.checkSourceElementWorker(node)
 		c.currentNode = saveCurrentNode
+		c.withinUnreachableCode = saveWithinUnreachableCode
 	}
 	return false
 }
@@ -2184,7 +2186,6 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	if !c.withinUnreachableCode {
 		if c.checkSourceElementUnreachable(node) {
 			c.withinUnreachableCode = true
-			defer func() { c.withinUnreachableCode = false }()
 		}
 	}
 
