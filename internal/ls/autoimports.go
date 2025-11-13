@@ -1066,7 +1066,6 @@ func (l *LanguageService) getNewImportFixes(
 	isJs := tspath.HasJSFileExtension(sourceFile.FileName())
 	compilerOptions := l.GetProgram().Options()
 	// !!! packagejsonAutoimportProvider
-
 	// getChecker := createGetChecker(program, host)// memoized typechecker based on `isFromPackageJson` bool
 
 	getModuleSpecifiers := func(moduleSymbol *ast.Symbol, checker *checker.Checker) ([]string, modulespecifiers.ResultKind) {
