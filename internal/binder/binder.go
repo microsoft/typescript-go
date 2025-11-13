@@ -1534,22 +1534,24 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 
-	kind := node.Kind
-	// Set the flow node so the checker can determine reachability
-	// Set flow node data BEFORE checking unreachability, because we return early for unreachable nodes
-	// Set on: statements, class/enum/module declarations (but not function declarations which are hoisted)
-	if (ast.KindFirstStatement <= kind && kind <= ast.KindLastStatement) || ast.IsClassDeclaration(node) || ast.IsEnumDeclaration(node) || ast.IsModuleDeclaration(node) {
-		hasFlowNodeData := node.FlowNodeData()
-		if hasFlowNodeData != nil {
-			hasFlowNodeData.FlowNode = b.currentFlow
+	isPotentiallyExecutableStatement := ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement ||
+		ast.IsClassDeclaration(node) || ast.IsEnumDeclaration(node) || ast.IsModuleDeclaration(node)
+
+	if isPotentiallyExecutableStatement {
+		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
+			flowNodeData.FlowNode = b.currentFlow
 		}
 	}
 
-	if b.currentFlow.Flags&ast.FlowFlagsUnreachable != 0 {
+	if b.currentFlow == b.unreachableFlow {
+		if isPotentiallyExecutableStatement {
+			node.Flags |= ast.NodeFlagsUnreachable
+		}
 		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
+
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1658,6 +1660,20 @@ func (b *Binder) bindEachStatementFunctionsFirst(statements *ast.NodeList) {
 			b.bind(node)
 		}
 	}
+}
+
+func (b *Binder) isNotVarWithoutInitializer(node *ast.Node) bool {
+	if !ast.IsVariableStatement(node) {
+		return true
+	}
+	declarationList := node.AsVariableStatement().DeclarationList
+	if ast.GetCombinedNodeFlags(declarationList)&ast.NodeFlagsBlockScoped != 0 {
+		return true
+	}
+	declarations := declarationList.AsVariableDeclarationList().Declarations.Nodes
+	return core.Some(declarations, func(d *ast.Node) bool {
+		return d.Initializer() != nil
+	})
 }
 
 func (b *Binder) setContinueTarget(node *ast.Node, target *ast.FlowLabel) *ast.FlowLabel {
@@ -2046,8 +2062,10 @@ func (b *Binder) bindLabeledStatement(node *ast.Node) {
 	}
 	b.bind(stmt.Label)
 	b.bind(stmt.Statement)
-	// Store whether the label was referenced so the checker can report unused labels later
-	stmt.IsReferenced = b.activeLabelList.referenced
+	if !b.activeLabelList.referenced {
+		// Mark the label as unused; the checker will decide whether to report it
+		stmt.Label.Flags |= ast.NodeFlagsUnreachable
+	}
 	b.activeLabelList = b.activeLabelList.next
 	b.addAntecedent(postStatementLabel, b.currentFlow)
 	b.currentFlow = b.finishFlowLabel(postStatementLabel)

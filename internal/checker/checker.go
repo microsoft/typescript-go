@@ -774,7 +774,6 @@ type Checker struct {
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
 	flowNodePostSuper                           map[*ast.FlowNode]bool
-	reportedUnreachableStatements               collections.Set[*ast.Node]
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
@@ -858,6 +857,8 @@ type Checker struct {
 	activeTypeMappersCaches                     []map[string]*Type
 	ambientModulesOnce                          sync.Once
 	ambientModules                              []*ast.Symbol
+	withinUnreachableCode                       bool
+	reportedUnreachableNodes                    collections.Set[*ast.Node]
 }
 
 func NewChecker(program Program) *Checker {
@@ -2142,8 +2143,8 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		} else {
 			c.wasCanceled = true
 		}
-		c.reportedUnreachableStatements.Clear()
 		c.ctx = nil
+		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
 }
@@ -2179,38 +2180,14 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 			}
 		}
 	}
-	// Check unreachable code - any node with FlowNodeData can be checked
-	flowNode := node.FlowNodeData()
-	if flowNode != nil && flowNode.FlowNode != nil && !c.isReachableFlowNode(flowNode.FlowNode) {
-		// report errors on all statements except empty ones
-		// report errors on class declarations
-		// report errors on enums with preserved emit
-		// report errors on instantiated modules
-		reportError := ast.IsStatementButNotDeclaration(node) && !ast.IsEmptyStatement(node) ||
-			ast.IsClassDeclaration(node) ||
-			isEnumDeclarationWithPreservedEmit(node, c.compilerOptions) ||
-			ast.IsModuleDeclaration(node) && shouldReportErrorOnModuleDeclaration(node, c.compilerOptions)
-		if reportError && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
-			// Only report if we haven't already reported this statement
-			if !c.reportedUnreachableStatements.Has(node) {
-				// unreachable code is reported if
-				// - user has explicitly asked about it AND
-				// - statement is in not ambient context (statements in ambient context is already an error
-				//   so we should not report extras) AND
-				//   - node is not variable statement OR
-				//   - node is block scoped variable statement OR
-				//   - node is not block scoped variable statement and at least one variable declaration has initializer
-				//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
-				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
-				isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
-					ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
-					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-						return d.Initializer() != nil
-					}))
-				c.errorOnEachUnreachableRange(node, isError)
-			}
+
+	if !c.withinUnreachableCode {
+		if c.checkSourceElementUnreachable(node) {
+			c.withinUnreachableCode = true
+			defer func() { c.withinUnreachableCode = false }()
 		}
 	}
+
 	switch node.Kind {
 	case ast.KindTypeParameter:
 		c.checkTypeParameter(node)
@@ -2333,112 +2310,58 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	}
 }
 
-func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOptions) bool {
-	return ast.IsEnumDeclaration(node) && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums())
-}
-
-func shouldReportErrorOnModuleDeclaration(node *ast.Node, options *core.CompilerOptions) bool {
-	instanceState := ast.GetModuleInstanceState(node)
-	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && options.ShouldPreserveConstEnums())
-}
-
-func (c *Checker) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
-	errorOrSuggestion := func(first *ast.Node, last *ast.Node) {
-		sourceFile := ast.GetSourceFileOfNode(first)
-		textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(sourceFile, first.Pos()).Pos(), last.End())
-		diagnostic := ast.NewDiagnostic(sourceFile, textRange, diagnostics.Unreachable_code_detected)
-		c.addErrorOrSuggestion(isError, diagnostic)
+func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
+	if c.reportedUnreachableNodes.Has(node) {
+		return true
 	}
 
-	markRangeAsReported := func(first *ast.Node, last *ast.Node, statements []*ast.Node) {
-		for _, markedNode := range statements[slices.Index(statements, first) : slices.Index(statements, last)+1] {
-			c.reportedUnreachableStatements.Add(markedNode)
+	if !c.isSourceElementUnreachable(node) {
+		return false
+	}
+
+	c.reportedUnreachableNodes.Add(node)
+
+	isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse
+	sourceFile := ast.GetSourceFileOfNode(node)
+
+	start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
+	end := node.End()
+
+	parent := node.Parent
+	if parent.CanHaveStatements() {
+		statements := parent.Statements()
+		if offset := slices.Index(statements, node); offset >= 0 {
+			for _, nextNode := range statements[offset+1:] {
+				if !c.isSourceElementUnreachable(nextNode) {
+					break
+				}
+				end = nextNode.End()
+				c.reportedUnreachableNodes.Add(nextNode)
+			}
 		}
 	}
 
-	isPurelyTypeDeclaration := func(s *ast.Node) bool {
-		switch s.Kind {
-		case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
-			return true
-		case ast.KindModuleDeclaration:
-			return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
+	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
+	c.addErrorOrSuggestion(isError, diagnostic)
+
+	return true
+}
+
+func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
+	if node.Flags&ast.NodeFlagsUnreachable != 0 {
+		switch node.Kind {
 		case ast.KindEnumDeclaration:
-			return ast.HasSyntacticModifier(s, ast.ModifierFlagsConst) && !c.compilerOptions.ShouldPreserveConstEnums()
+			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
+		case ast.KindModuleDeclaration:
+			return ast.IsInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums())
 		default:
-			return false
+			return true
 		}
+	} else if ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement {
+		flowNode := node.FlowNodeData().FlowNode
+		return flowNode != nil && !c.isReachableFlowNode(flowNode)
 	}
-
-	isExecutableStatement := func(s *ast.Node) bool {
-		// Don't remove statements that can validly be used before they appear.
-		// This includes function declarations (which are hoisted), type declarations, and uninitialized vars.
-		return !isPurelyTypeDeclaration(s) &&
-			!ast.IsFunctionDeclaration(s) &&
-			!(ast.IsVariableStatement(s) && (ast.GetCombinedNodeFlags(s.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped == 0) &&
-				core.Every(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-					return d.AsVariableDeclaration().Initializer == nil
-				}))
-	}
-
-	scanAndReportExecutableStatements := func(statements []*ast.Node, index int) {
-		var first, last *ast.Node
-		for _, s := range statements[index:] {
-			if isExecutableStatement(s) {
-				if first == nil {
-					first = s
-				}
-				last = s
-			} else {
-				break
-			}
-		}
-		if first != nil {
-			errorOrSuggestion(first, last)
-			markRangeAsReported(first, last, statements)
-		}
-	}
-
-	// Report unreachable code in blocks (function bodies, if/else blocks, etc.)
-	// and module blocks (the body of a module declaration).
-	// These scan forward to report ranges of consecutive unreachable statements.
-	if ast.IsBlock(node.Parent) && isExecutableStatement(node) {
-		scanAndReportExecutableStatements(node.Parent.AsBlock().Statements.Nodes, slices.Index(node.Parent.AsBlock().Statements.Nodes, node))
-		return
-	}
-	if ast.IsModuleBlock(node.Parent) && isExecutableStatement(node) {
-		scanAndReportExecutableStatements(node.Parent.AsModuleBlock().Statements.Nodes, slices.Index(node.Parent.AsModuleBlock().Statements.Nodes, node))
-		return
-	}
-
-	// Top-level module declarations are never reported individually.
-	// Their contents are checked when the module body is visited.
-	// However, if there's no other unreachable code before them and no function declarations
-	// (which are hoisted), then report them to avoid silent unreachable modules.
-	if ast.IsModuleDeclaration(node) && ast.IsSourceFile(node.Parent) && shouldReportErrorOnModuleDeclaration(node, c.compilerOptions) {
-		if c.reportedUnreachableStatements.Has(node) {
-			return
-		}
-		statements := node.Parent.AsSourceFile().Statements.Nodes
-		index := slices.Index(statements, node)
-		// Don't report if there's a preceding function (hoisting makes flow complex)
-		// or other unreachable code (which would already be reported).
-		for i := range index {
-			s := statements[i]
-			if ast.IsFunctionDeclaration(s) {
-				return
-			}
-			if isExecutableStatement(s) && !ast.IsModuleDeclaration(s) {
-				if flowData := s.FlowNodeData(); flowData != nil && flowData.FlowNode != nil && !c.isReachableFlowNode(flowData.FlowNode) {
-					return
-				}
-			}
-		}
-		errorOrSuggestion(node, node)
-		return
-	}
-
-	// Default: report the node individually
-	errorOrSuggestion(node, node)
+	return false
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
@@ -4155,8 +4078,8 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 			}
 		}
 	}
-	// Check for unused labels
-	if !labeledStatement.IsReferenced && c.compilerOptions.AllowUnusedLabels != core.TSTrue {
+	// Check for unused label marked by the binder
+	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 {
 		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
 	c.checkSourceElement(labeledStatement.Statement)

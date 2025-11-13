@@ -631,6 +631,15 @@ func (n *Node) Statements() []*Node {
 	return nil
 }
 
+func (n *Node) CanHaveStatements() bool {
+	switch n.Kind {
+	case KindSourceFile, KindBlock, KindModuleBlock, KindCaseClause, KindDefaultClause:
+		return true
+	default:
+		return false
+	}
+}
+
 func (n *Node) ModifierFlags() ModifierFlags {
 	modifiers := n.Modifiers()
 	if modifiers != nil {
@@ -3564,9 +3573,8 @@ func (node *DebuggerStatement) Clone(f NodeFactoryCoercible) *Node {
 
 type LabeledStatement struct {
 	StatementBase
-	Label        *IdentifierNode // IdentifierNode
-	Statement    *Statement      // Statement
-	IsReferenced bool            // Set by binder to indicate if the label is used by a break or continue statement
+	Label     *IdentifierNode // IdentifierNode
+	Statement *Statement      // Statement
 }
 
 func (f *NodeFactory) NewLabeledStatement(label *IdentifierNode, statement *Statement) *Node {

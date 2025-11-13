@@ -2336,6 +2336,12 @@ func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited
 	return ModuleInstanceStateInstantiated
 }
 
+func IsInstantiatedModule(node *Node, preserveConstEnums bool) bool {
+	moduleState := GetModuleInstanceState(node)
+	return moduleState == ModuleInstanceStateInstantiated ||
+		(preserveConstEnums && moduleState == ModuleInstanceStateConstEnumOnly)
+}
+
 func NodeHasName(statement *Node, id *Node) bool {
 	name := statement.Name()
 	if name != nil {
