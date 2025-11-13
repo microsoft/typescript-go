@@ -1065,9 +1065,8 @@ func (l *LanguageService) getNewImportFixes(
 ) []*ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */ {
 	isJs := tspath.HasJSFileExtension(sourceFile.FileName())
 	compilerOptions := l.GetProgram().Options()
-	// !!! if preferences.IncludePackageJsonAutoImports != "off" {
-	// 		!!! packagejsonAutoimportProvider
-	// !!! }
+	// !!! packagejsonAutoimportProvider
+
 	// getChecker := createGetChecker(program, host)// memoized typechecker based on `isFromPackageJson` bool
 
 	getModuleSpecifiers := func(moduleSymbol *ast.Symbol, checker *checker.Checker) ([]string, modulespecifiers.ResultKind) {
@@ -1400,10 +1399,6 @@ func forEachExternalModuleToImportFrom(
 			cb(module, file, ch, false)
 		},
 	)
-
-	// if preferences.IncludePackageJsonAutoImports == "off" {
-	//     return;
-	// }
 
 	// !!! autoImportProvider
 	// if  autoImportProvider := useAutoImportProvider && l.getPackageJsonAutoImportProvider(); autoImportProvider != nil {
