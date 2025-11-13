@@ -1662,20 +1662,6 @@ func (b *Binder) bindEachStatementFunctionsFirst(statements *ast.NodeList) {
 	}
 }
 
-func (b *Binder) isNotVarWithoutInitializer(node *ast.Node) bool {
-	if !ast.IsVariableStatement(node) {
-		return true
-	}
-	declarationList := node.AsVariableStatement().DeclarationList
-	if ast.GetCombinedNodeFlags(declarationList)&ast.NodeFlagsBlockScoped != 0 {
-		return true
-	}
-	declarations := declarationList.AsVariableDeclarationList().Declarations.Nodes
-	return core.Some(declarations, func(d *ast.Node) bool {
-		return d.Initializer() != nil
-	})
-}
-
 func (b *Binder) setContinueTarget(node *ast.Node, target *ast.FlowLabel) *ast.FlowLabel {
 	label := b.activeLabelList
 	for label != nil && node.Parent.Kind == ast.KindLabeledStatement {
