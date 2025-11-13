@@ -4078,7 +4078,6 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 			}
 		}
 	}
-	// Check for unused label marked by the binder
 	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 {
 		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
