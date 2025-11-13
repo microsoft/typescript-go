@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
-	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"gotest.tools/v3/assert"
@@ -68,7 +67,7 @@ func (f *FourslashTest) baselineProjectsAfterNotification(t *testing.T, fileName
 		return
 	}
 	// Do hover so we have snapshot to check things on!!
-	_, _, resultOk := lsptestutil.SendRequest(t, &f.TestLSPServer, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
+	_, _, resultOk := sendRequestWorker(t, f, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(fileName),
 		},
@@ -242,7 +241,7 @@ func (f *FourslashTest) printStateDiff(t *testing.T, w io.Writer) {
 	if !f.stateBaseline.isInitialized {
 		return
 	}
-	session := f.Server.Session()
+	session := f.server.Session()
 	snapshot, release := session.Snapshot()
 	defer release()
 
@@ -286,7 +285,7 @@ func (f *FourslashTest) printProjectsDiff(t *testing.T, snapshot *project.Snapsh
 					fileName := file.FileName()
 					if projectChange == "*modified*" {
 						if oldProgram == nil {
-							if !lsptestutil.IsLibFile(fileName) {
+							if !isLibFile(fileName) {
 								fileDiff = "*new*"
 							}
 						} else if oldFile := oldProgram.GetSourceFileByPath(file.Path()); oldFile == nil {
@@ -295,7 +294,7 @@ func (f *FourslashTest) printProjectsDiff(t *testing.T, snapshot *project.Snapsh
 							fileDiff = "*modified*"
 						}
 					}
-					if fileDiff != "" || !lsptestutil.IsLibFile(fileName) {
+					if fileDiff != "" || !isLibFile(fileName) {
 						subDiff.add(fileName, fileDiff)
 					}
 				}
@@ -319,7 +318,7 @@ func (f *FourslashTest) printProjectsDiff(t *testing.T, snapshot *project.Snapsh
 				subDiff := diffTable{options: options}
 				if info != nil {
 					for _, file := range info.GetSourceFiles() {
-						if fileName := file.FileName(); !lsptestutil.IsLibFile(fileName) {
+						if fileName := file.FileName(); !isLibFile(fileName) {
 							subDiff.add(fileName, "")
 						}
 					}
@@ -339,7 +338,7 @@ func (f *FourslashTest) printOpenFilesDiff(t *testing.T, snapshot *project.Snaps
 	filesDiffTable := newDiffTableWriter("Open Files")
 	options := diffTableOptions{indent: "  ", sortKeys: true}
 	for fileName := range f.openFiles {
-		path := tspath.ToPath(fileName, "/", f.FS.UseCaseSensitiveFileNames())
+		path := tspath.ToPath(fileName, "/", f.vfs.UseCaseSensitiveFileNames())
 		defaultProject := snapshot.ProjectCollection.GetDefaultProject(fileName, path)
 		newFileInfo := &openFileInfo{}
 		if defaultProject != nil {
