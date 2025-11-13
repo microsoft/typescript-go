@@ -2328,25 +2328,43 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 
 	sourceFile := ast.GetSourceFileOfNode(node)
 
-	start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
+	start := node.Pos()
 	end := node.End()
 
-	// TODO: if we are doing range diagnostics, it's possible we _haven't_
-	// reported nodes before us in the same statement list. We should walk backwards
-	// and extend the range to include any prior unreachable unreported nodes as well.
 	parent := node.Parent
 	if parent.CanHaveStatements() {
 		statements := parent.Statements()
 		if offset := slices.Index(statements, node); offset >= 0 {
-			for _, nextNode := range statements[offset+1:] {
+			// Scan backwards to find the first unreachable unreported node;
+			// this may happen when producing region diagnostics where not all nodes
+			// will have been visited.
+			// TODO: enable this code once we support region diagnostics again.
+			first := offset
+			// for i := offset - 1; i >= 0; i-- {
+			// 	prevNode := statements[i]
+			// 	if !ast.IsPotentiallyExecutableNode(prevNode) || c.reportedUnreachableNodes.Has(prevNode) || !c.isSourceElementUnreachable(prevNode) {
+			// 		break
+			// 	}
+			// 	firstUnreachableIndex = i
+			// 	c.reportedUnreachableNodes.Add(prevNode)
+			// }
+
+			last := offset
+			for i := offset + 1; i < len(statements); i++ {
+				nextNode := statements[i]
 				if !ast.IsPotentiallyExecutableNode(nextNode) || !c.isSourceElementUnreachable(nextNode) {
 					break
 				}
-				end = nextNode.End()
+				last = i
 				c.reportedUnreachableNodes.Add(nextNode)
 			}
+
+			start = statements[first].Pos()
+			end = statements[last].End()
 		}
 	}
+
+	start = scanner.GetRangeOfTokenAtPosition(sourceFile, start).Pos()
 
 	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
 	c.addErrorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, diagnostic)
