@@ -859,9 +859,11 @@ type Checker struct {
 	ambientModules                              []*ast.Symbol
 	withinUnreachableCode                       bool
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
+
+	mu sync.Mutex
 }
 
-func NewChecker(program Program) *Checker {
+func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
@@ -1073,7 +1075,7 @@ func NewChecker(program Program) *Checker {
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
-	return c
+	return c, &c.mu
 }
 
 func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
@@ -30604,7 +30606,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
-		return c.getSymbolOfNode(node)
+		return c.getSymbolOfNode(node.Parent)
 	case ast.KindImportType:
 		if ast.IsLiteralImportTypeNode(node) {
 			return c.getSymbolAtLocation(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal, ignoreErrors)
