@@ -2183,7 +2183,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		}
 	}
 
-	if !c.withinUnreachableCode {
+	if !c.withinUnreachableCode && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
 		if c.checkSourceElementUnreachable(node) {
 			c.withinUnreachableCode = true
 		}
@@ -2326,7 +2326,6 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 
 	c.reportedUnreachableNodes.Add(node)
 
-	isError := c.compilerOptions.AllowUnreachableCode == core.TSFalse
 	sourceFile := ast.GetSourceFileOfNode(node)
 
 	start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
@@ -2347,7 +2346,7 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 	}
 
 	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
-	c.addErrorOrSuggestion(isError, diagnostic)
+	c.addErrorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, diagnostic)
 
 	return true
 }
@@ -4083,7 +4082,7 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 			}
 		}
 	}
-	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 {
+	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 && c.compilerOptions.AllowUnusedLabels != core.TSTrue {
 		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
 	c.checkSourceElement(labeledStatement.Statement)
