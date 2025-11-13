@@ -15251,7 +15251,21 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		if resolveLocation == nil {
 			resolveLocation = name
 		}
-		symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.AsIdentifier().Text, meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		if meaning == ast.SymbolFlagsNamespace {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.AsIdentifier().Text, meaning, nil, true /*isUse*/, false /*excludeGlobals*/))
+			if symbol == nil {
+				alias := c.getMergedSymbol(c.resolveName(resolveLocation, name.AsIdentifier().Text, ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/))
+				if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
+					// resolve typedefs exported from commonjs, stored on the module symbol
+					symbol = alias.Parent
+				}
+			}
+			if symbol == nil && message != nil {
+				c.resolveName(resolveLocation, name.AsIdentifier().Text, meaning, message, true /*isUse*/, false /*excludeGlobals*/)
+			}
+		} else {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.AsIdentifier().Text, meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		}
 	case ast.KindQualifiedName:
 		qualified := name.AsQualifiedName()
 		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, location)
@@ -15276,19 +15290,9 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 }
 
 func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, location *ast.Node) *ast.Symbol {
-	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, true /*ignoreErrors*/, false /*dontResolveAlias*/, location)
+	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
 	if namespace == nil || ast.NodeIsMissing(right) {
-		alias := c.resolveEntityName(left, ast.SymbolFlagsAlias, true /*ignoreErrors*/, true /*dontResolveAlias*/, location)
-		if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
-			// resolve typedefs exported from commonjs, stored on the module symbol
-			namespace = alias.Parent
-		}
-		if namespace == nil {
-			if !ignoreErrors {
-				c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
-			}
-			return nil
-		}
+		return nil
 	}
 	if namespace == c.unknownSymbol {
 		return namespace
