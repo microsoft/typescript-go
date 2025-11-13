@@ -2354,6 +2354,11 @@ func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
 			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
 		case ast.KindModuleDeclaration:
 			return ast.IsInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums())
+		case ast.KindVariableStatement:
+			declarationList := node.AsVariableStatement().DeclarationList
+			return ast.GetCombinedNodeFlags(declarationList)&ast.NodeFlagsBlockScoped != 0 || core.Some(declarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
+				return d.Initializer() != nil
+			})
 		default:
 			return true
 		}

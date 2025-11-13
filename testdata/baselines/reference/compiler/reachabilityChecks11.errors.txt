@@ -1,13 +1,12 @@
 reachabilityChecks11.ts(6,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(18,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(30,5): error TS7027: Unreachable code detected.
-reachabilityChecks11.ts(42,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(47,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(60,5): error TS7027: Unreachable code detected.
 reachabilityChecks11.ts(69,5): error TS7027: Unreachable code detected.
 
 
-==== reachabilityChecks11.ts (7 errors) ====
+==== reachabilityChecks11.ts (6 errors) ====
     // while (true);
     var x = 1;
     
@@ -60,8 +59,6 @@ reachabilityChecks11.ts(69,5): error TS7027: Unreachable code detected.
             throw new Error("123");
         }
         var x;
-        ~~~~~~
-!!! error TS7027: Unreachable code detected.
     }
     
     function f2() {
