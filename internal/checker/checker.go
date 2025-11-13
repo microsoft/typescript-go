@@ -2312,6 +2312,10 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 }
 
 func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
+	if !ast.IsPotentiallyExecutableNode(node) {
+		return false
+	}
+
 	if c.reportedUnreachableNodes.Has(node) {
 		return true
 	}
@@ -2333,7 +2337,7 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 		statements := parent.Statements()
 		if offset := slices.Index(statements, node); offset >= 0 {
 			for _, nextNode := range statements[offset+1:] {
-				if !c.isSourceElementUnreachable(nextNode) {
+				if !ast.IsPotentiallyExecutableNode(nextNode) || !c.isSourceElementUnreachable(nextNode) {
 					break
 				}
 				end = nextNode.End()
@@ -2349,23 +2353,18 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 }
 
 func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
+	// Precondition: ast.IsPotentiallyExecutableNode is true
 	if node.Flags&ast.NodeFlagsUnreachable != 0 {
 		switch node.Kind {
 		case ast.KindEnumDeclaration:
 			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
 		case ast.KindModuleDeclaration:
 			return ast.IsInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums())
-		case ast.KindVariableStatement:
-			declarationList := node.AsVariableStatement().DeclarationList
-			return ast.GetCombinedNodeFlags(declarationList)&ast.NodeFlagsBlockScoped != 0 || core.Some(declarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-				return d.Initializer() != nil
-			})
 		default:
 			return true
 		}
-	} else if ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement {
-		flowNode := node.FlowNodeData().FlowNode
-		return flowNode != nil && !c.isReachableFlowNode(flowNode)
+	} else if flowNode := node.FlowNodeData().FlowNode; flowNode != nil {
+		return !c.isReachableFlowNode(flowNode)
 	}
 	return false
 }

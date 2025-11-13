@@ -1534,22 +1534,19 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 
-	isPotentiallyExecutableStatement := ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement ||
-		ast.IsClassDeclaration(node) || ast.IsEnumDeclaration(node) || ast.IsModuleDeclaration(node)
-
-	if isPotentiallyExecutableStatement {
-		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
-			flowNodeData.FlowNode = b.currentFlow
-		}
-	}
-
 	if b.currentFlow == b.unreachableFlow {
-		if isPotentiallyExecutableStatement {
+		if ast.IsPotentiallyExecutableNode(node) {
 			node.Flags |= ast.NodeFlagsUnreachable
 		}
 		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
+	}
+
+	if ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement {
+		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
+			flowNodeData.FlowNode = b.currentFlow
+		}
 	}
 
 	switch node.Kind {
