@@ -2331,6 +2331,9 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 	start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
 	end := node.End()
 
+	// TODO: if we are doing range diagnostics, it's possible we _haven't_
+	// reported nodes before us in the same statement list. We should walk backwards
+	// and extend the range to include any prior unreachable unreported nodes as well.
 	parent := node.Parent
 	if parent.CanHaveStatements() {
 		statements := parent.Statements()
