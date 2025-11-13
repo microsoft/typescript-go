@@ -1,4 +1,4 @@
-// @filename: controlFlowJSClassProperty.js
+// @filename: typedefModuleExportsIndirect3.js
 // @checkJs: true
 // @strict: true
 // @outdir: dist
