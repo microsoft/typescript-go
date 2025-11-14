@@ -1,3 +1,4 @@
+moduleInTypePosition1_0.ts(1,14): error TS2529: Duplicate identifier 'Promise'. Compiler reserves name 'Promise' in top level scope of a module containing async functions.
 moduleInTypePosition1_1.ts(3,14): error TS2709: Cannot use namespace 'WinJS' as a type.
 
 
@@ -8,8 +9,10 @@ moduleInTypePosition1_1.ts(3,14): error TS2709: Cannot use namespace 'WinJS' as 
                  ~~~~~
 !!! error TS2709: Cannot use namespace 'WinJS' as a type.
     
-==== moduleInTypePosition1_0.ts (0 errors) ====
+==== moduleInTypePosition1_0.ts (1 errors) ====
     export class Promise {
+                 ~~~~~~~
+!!! error TS2529: Duplicate identifier 'Promise'. Compiler reserves name 'Promise' in top level scope of a module containing async functions.
         foo: string;
     }
     

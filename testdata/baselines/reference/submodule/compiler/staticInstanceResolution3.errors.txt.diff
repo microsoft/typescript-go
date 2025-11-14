@@ -1,0 +1,20 @@
+--- old.staticInstanceResolution3.errors.txt
++++ new.staticInstanceResolution3.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++staticInstanceResolution3_0.ts(1,14): error TS2529: Duplicate identifier 'Promise'. Compiler reserves name 'Promise' in top level scope of a module containing async functions.
++
++
++==== staticInstanceResolution3_1.ts (0 errors) ====
++    ///<reference path='staticInstanceResolution3_0.ts'/>
++    import WinJS = require('./staticInstanceResolution3_0');
++    WinJS.Promise.timeout(10);
++==== staticInstanceResolution3_0.ts (1 errors) ====
++    export class Promise {
++                 ~~~~~~~
++!!! error TS2529: Duplicate identifier 'Promise'. Compiler reserves name 'Promise' in top level scope of a module containing async functions.
++        static timeout(delay: number): Promise {
++            return null;
++        }
++    }
++    
