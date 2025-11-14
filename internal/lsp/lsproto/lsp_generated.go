@@ -25725,3 +25725,1347 @@ func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 	return nil
 }
+
+// Helper function for dereferencing pointers with zero value fallback
+func derefOr[T any](v *T) T {
+	if v != nil {
+		return *v
+	}
+	var zero T
+	return zero
+}
+
+type FinalizedChangeAnnotationsSupportOptions struct {
+	GroupsOnLabel bool
+}
+
+func finalizeChangeAnnotationsSupportOptions(v *ChangeAnnotationsSupportOptions) FinalizedChangeAnnotationsSupportOptions {
+	if v == nil {
+		return FinalizedChangeAnnotationsSupportOptions{}
+	}
+	return FinalizedChangeAnnotationsSupportOptions{
+		GroupsOnLabel: derefOr(v.GroupsOnLabel),
+	}
+}
+
+type FinalizedWorkspaceEditClientCapabilities struct {
+	DocumentChanges         bool
+	ResourceOperations      []ResourceOperationKind
+	FailureHandling         FailureHandlingKind
+	NormalizesLineEndings   bool
+	ChangeAnnotationSupport FinalizedChangeAnnotationsSupportOptions
+	MetadataSupport         bool
+	SnippetEditSupport      bool
+}
+
+func finalizeWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) FinalizedWorkspaceEditClientCapabilities {
+	if v == nil {
+		return FinalizedWorkspaceEditClientCapabilities{}
+	}
+	return FinalizedWorkspaceEditClientCapabilities{
+		DocumentChanges:         derefOr(v.DocumentChanges),
+		ResourceOperations:      derefOr(v.ResourceOperations),
+		FailureHandling:         derefOr(v.FailureHandling),
+		NormalizesLineEndings:   derefOr(v.NormalizesLineEndings),
+		ChangeAnnotationSupport: finalizeChangeAnnotationsSupportOptions(v.ChangeAnnotationSupport),
+		MetadataSupport:         derefOr(v.MetadataSupport),
+		SnippetEditSupport:      derefOr(v.SnippetEditSupport),
+	}
+}
+
+type FinalizedDidChangeConfigurationClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeDidChangeConfigurationClientCapabilities(v *DidChangeConfigurationClientCapabilities) FinalizedDidChangeConfigurationClientCapabilities {
+	if v == nil {
+		return FinalizedDidChangeConfigurationClientCapabilities{}
+	}
+	return FinalizedDidChangeConfigurationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedDidChangeWatchedFilesClientCapabilities struct {
+	DynamicRegistration    bool
+	RelativePatternSupport bool
+}
+
+func finalizeDidChangeWatchedFilesClientCapabilities(v *DidChangeWatchedFilesClientCapabilities) FinalizedDidChangeWatchedFilesClientCapabilities {
+	if v == nil {
+		return FinalizedDidChangeWatchedFilesClientCapabilities{}
+	}
+	return FinalizedDidChangeWatchedFilesClientCapabilities{
+		DynamicRegistration:    derefOr(v.DynamicRegistration),
+		RelativePatternSupport: derefOr(v.RelativePatternSupport),
+	}
+}
+
+type FinalizedClientSymbolKindOptions struct {
+	ValueSet []SymbolKind
+}
+
+func finalizeClientSymbolKindOptions(v *ClientSymbolKindOptions) FinalizedClientSymbolKindOptions {
+	if v == nil {
+		return FinalizedClientSymbolKindOptions{}
+	}
+	return FinalizedClientSymbolKindOptions{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+type FinalizedClientSymbolTagOptions struct {
+	ValueSet []SymbolTag
+}
+
+func finalizeClientSymbolTagOptions(v *ClientSymbolTagOptions) FinalizedClientSymbolTagOptions {
+	if v == nil {
+		return FinalizedClientSymbolTagOptions{}
+	}
+	return FinalizedClientSymbolTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedClientSymbolResolveOptions struct {
+	Properties []string
+}
+
+func finalizeClientSymbolResolveOptions(v *ClientSymbolResolveOptions) FinalizedClientSymbolResolveOptions {
+	if v == nil {
+		return FinalizedClientSymbolResolveOptions{}
+	}
+	return FinalizedClientSymbolResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+type FinalizedWorkspaceSymbolClientCapabilities struct {
+	DynamicRegistration bool
+	SymbolKind          FinalizedClientSymbolKindOptions
+	TagSupport          FinalizedClientSymbolTagOptions
+	ResolveSupport      FinalizedClientSymbolResolveOptions
+}
+
+func finalizeWorkspaceSymbolClientCapabilities(v *WorkspaceSymbolClientCapabilities) FinalizedWorkspaceSymbolClientCapabilities {
+	if v == nil {
+		return FinalizedWorkspaceSymbolClientCapabilities{}
+	}
+	return FinalizedWorkspaceSymbolClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		SymbolKind:          finalizeClientSymbolKindOptions(v.SymbolKind),
+		TagSupport:          finalizeClientSymbolTagOptions(v.TagSupport),
+		ResolveSupport:      finalizeClientSymbolResolveOptions(v.ResolveSupport),
+	}
+}
+
+type FinalizedExecuteCommandClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeExecuteCommandClientCapabilities(v *ExecuteCommandClientCapabilities) FinalizedExecuteCommandClientCapabilities {
+	if v == nil {
+		return FinalizedExecuteCommandClientCapabilities{}
+	}
+	return FinalizedExecuteCommandClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedSemanticTokensWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeSemanticTokensWorkspaceClientCapabilities(v *SemanticTokensWorkspaceClientCapabilities) FinalizedSemanticTokensWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedSemanticTokensWorkspaceClientCapabilities{}
+	}
+	return FinalizedSemanticTokensWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedCodeLensWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeCodeLensWorkspaceClientCapabilities(v *CodeLensWorkspaceClientCapabilities) FinalizedCodeLensWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedCodeLensWorkspaceClientCapabilities{}
+	}
+	return FinalizedCodeLensWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedFileOperationClientCapabilities struct {
+	DynamicRegistration bool
+	DidCreate           bool
+	WillCreate          bool
+	DidRename           bool
+	WillRename          bool
+	DidDelete           bool
+	WillDelete          bool
+}
+
+func finalizeFileOperationClientCapabilities(v *FileOperationClientCapabilities) FinalizedFileOperationClientCapabilities {
+	if v == nil {
+		return FinalizedFileOperationClientCapabilities{}
+	}
+	return FinalizedFileOperationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		DidCreate:           derefOr(v.DidCreate),
+		WillCreate:          derefOr(v.WillCreate),
+		DidRename:           derefOr(v.DidRename),
+		WillRename:          derefOr(v.WillRename),
+		DidDelete:           derefOr(v.DidDelete),
+		WillDelete:          derefOr(v.WillDelete),
+	}
+}
+
+type FinalizedInlineValueWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeInlineValueWorkspaceClientCapabilities(v *InlineValueWorkspaceClientCapabilities) FinalizedInlineValueWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedInlineValueWorkspaceClientCapabilities{}
+	}
+	return FinalizedInlineValueWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedInlayHintWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeInlayHintWorkspaceClientCapabilities(v *InlayHintWorkspaceClientCapabilities) FinalizedInlayHintWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedInlayHintWorkspaceClientCapabilities{}
+	}
+	return FinalizedInlayHintWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedDiagnosticWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeDiagnosticWorkspaceClientCapabilities(v *DiagnosticWorkspaceClientCapabilities) FinalizedDiagnosticWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedDiagnosticWorkspaceClientCapabilities{}
+	}
+	return FinalizedDiagnosticWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedFoldingRangeWorkspaceClientCapabilities struct {
+	RefreshSupport bool
+}
+
+func finalizeFoldingRangeWorkspaceClientCapabilities(v *FoldingRangeWorkspaceClientCapabilities) FinalizedFoldingRangeWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedFoldingRangeWorkspaceClientCapabilities{}
+	}
+	return FinalizedFoldingRangeWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+type FinalizedTextDocumentContentClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeTextDocumentContentClientCapabilities(v *TextDocumentContentClientCapabilities) FinalizedTextDocumentContentClientCapabilities {
+	if v == nil {
+		return FinalizedTextDocumentContentClientCapabilities{}
+	}
+	return FinalizedTextDocumentContentClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedWorkspaceClientCapabilities struct {
+	ApplyEdit              bool
+	WorkspaceEdit          FinalizedWorkspaceEditClientCapabilities
+	DidChangeConfiguration FinalizedDidChangeConfigurationClientCapabilities
+	DidChangeWatchedFiles  FinalizedDidChangeWatchedFilesClientCapabilities
+	Symbol                 FinalizedWorkspaceSymbolClientCapabilities
+	ExecuteCommand         FinalizedExecuteCommandClientCapabilities
+	WorkspaceFolders       bool
+	Configuration          bool
+	SemanticTokens         FinalizedSemanticTokensWorkspaceClientCapabilities
+	CodeLens               FinalizedCodeLensWorkspaceClientCapabilities
+	FileOperations         FinalizedFileOperationClientCapabilities
+	InlineValue            FinalizedInlineValueWorkspaceClientCapabilities
+	InlayHint              FinalizedInlayHintWorkspaceClientCapabilities
+	Diagnostics            FinalizedDiagnosticWorkspaceClientCapabilities
+	FoldingRange           FinalizedFoldingRangeWorkspaceClientCapabilities
+	TextDocumentContent    FinalizedTextDocumentContentClientCapabilities
+}
+
+func finalizeWorkspaceClientCapabilities(v *WorkspaceClientCapabilities) FinalizedWorkspaceClientCapabilities {
+	if v == nil {
+		return FinalizedWorkspaceClientCapabilities{}
+	}
+	return FinalizedWorkspaceClientCapabilities{
+		ApplyEdit:              derefOr(v.ApplyEdit),
+		WorkspaceEdit:          finalizeWorkspaceEditClientCapabilities(v.WorkspaceEdit),
+		DidChangeConfiguration: finalizeDidChangeConfigurationClientCapabilities(v.DidChangeConfiguration),
+		DidChangeWatchedFiles:  finalizeDidChangeWatchedFilesClientCapabilities(v.DidChangeWatchedFiles),
+		Symbol:                 finalizeWorkspaceSymbolClientCapabilities(v.Symbol),
+		ExecuteCommand:         finalizeExecuteCommandClientCapabilities(v.ExecuteCommand),
+		WorkspaceFolders:       derefOr(v.WorkspaceFolders),
+		Configuration:          derefOr(v.Configuration),
+		SemanticTokens:         finalizeSemanticTokensWorkspaceClientCapabilities(v.SemanticTokens),
+		CodeLens:               finalizeCodeLensWorkspaceClientCapabilities(v.CodeLens),
+		FileOperations:         finalizeFileOperationClientCapabilities(v.FileOperations),
+		InlineValue:            finalizeInlineValueWorkspaceClientCapabilities(v.InlineValue),
+		InlayHint:              finalizeInlayHintWorkspaceClientCapabilities(v.InlayHint),
+		Diagnostics:            finalizeDiagnosticWorkspaceClientCapabilities(v.Diagnostics),
+		FoldingRange:           finalizeFoldingRangeWorkspaceClientCapabilities(v.FoldingRange),
+		TextDocumentContent:    finalizeTextDocumentContentClientCapabilities(v.TextDocumentContent),
+	}
+}
+
+type FinalizedTextDocumentSyncClientCapabilities struct {
+	DynamicRegistration bool
+	WillSave            bool
+	WillSaveWaitUntil   bool
+	DidSave             bool
+}
+
+func finalizeTextDocumentSyncClientCapabilities(v *TextDocumentSyncClientCapabilities) FinalizedTextDocumentSyncClientCapabilities {
+	if v == nil {
+		return FinalizedTextDocumentSyncClientCapabilities{}
+	}
+	return FinalizedTextDocumentSyncClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		WillSave:            derefOr(v.WillSave),
+		WillSaveWaitUntil:   derefOr(v.WillSaveWaitUntil),
+		DidSave:             derefOr(v.DidSave),
+	}
+}
+
+type FinalizedTextDocumentFilterClientCapabilities struct {
+	RelativePatternSupport bool
+}
+
+func finalizeTextDocumentFilterClientCapabilities(v *TextDocumentFilterClientCapabilities) FinalizedTextDocumentFilterClientCapabilities {
+	if v == nil {
+		return FinalizedTextDocumentFilterClientCapabilities{}
+	}
+	return FinalizedTextDocumentFilterClientCapabilities{
+		RelativePatternSupport: derefOr(v.RelativePatternSupport),
+	}
+}
+
+type FinalizedCompletionItemTagOptions struct {
+	ValueSet []CompletionItemTag
+}
+
+func finalizeCompletionItemTagOptions(v *CompletionItemTagOptions) FinalizedCompletionItemTagOptions {
+	if v == nil {
+		return FinalizedCompletionItemTagOptions{}
+	}
+	return FinalizedCompletionItemTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedClientCompletionItemResolveOptions struct {
+	Properties []string
+}
+
+func finalizeClientCompletionItemResolveOptions(v *ClientCompletionItemResolveOptions) FinalizedClientCompletionItemResolveOptions {
+	if v == nil {
+		return FinalizedClientCompletionItemResolveOptions{}
+	}
+	return FinalizedClientCompletionItemResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+type FinalizedClientCompletionItemInsertTextModeOptions struct {
+	ValueSet []InsertTextMode
+}
+
+func finalizeClientCompletionItemInsertTextModeOptions(v *ClientCompletionItemInsertTextModeOptions) FinalizedClientCompletionItemInsertTextModeOptions {
+	if v == nil {
+		return FinalizedClientCompletionItemInsertTextModeOptions{}
+	}
+	return FinalizedClientCompletionItemInsertTextModeOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedClientCompletionItemOptions struct {
+	SnippetSupport          bool
+	CommitCharactersSupport bool
+	DocumentationFormat     []MarkupKind
+	DeprecatedSupport       bool
+	PreselectSupport        bool
+	TagSupport              FinalizedCompletionItemTagOptions
+	InsertReplaceSupport    bool
+	ResolveSupport          FinalizedClientCompletionItemResolveOptions
+	InsertTextModeSupport   FinalizedClientCompletionItemInsertTextModeOptions
+	LabelDetailsSupport     bool
+}
+
+func finalizeClientCompletionItemOptions(v *ClientCompletionItemOptions) FinalizedClientCompletionItemOptions {
+	if v == nil {
+		return FinalizedClientCompletionItemOptions{}
+	}
+	return FinalizedClientCompletionItemOptions{
+		SnippetSupport:          derefOr(v.SnippetSupport),
+		CommitCharactersSupport: derefOr(v.CommitCharactersSupport),
+		DocumentationFormat:     derefOr(v.DocumentationFormat),
+		DeprecatedSupport:       derefOr(v.DeprecatedSupport),
+		PreselectSupport:        derefOr(v.PreselectSupport),
+		TagSupport:              finalizeCompletionItemTagOptions(v.TagSupport),
+		InsertReplaceSupport:    derefOr(v.InsertReplaceSupport),
+		ResolveSupport:          finalizeClientCompletionItemResolveOptions(v.ResolveSupport),
+		InsertTextModeSupport:   finalizeClientCompletionItemInsertTextModeOptions(v.InsertTextModeSupport),
+		LabelDetailsSupport:     derefOr(v.LabelDetailsSupport),
+	}
+}
+
+type FinalizedClientCompletionItemOptionsKind struct {
+	ValueSet []CompletionItemKind
+}
+
+func finalizeClientCompletionItemOptionsKind(v *ClientCompletionItemOptionsKind) FinalizedClientCompletionItemOptionsKind {
+	if v == nil {
+		return FinalizedClientCompletionItemOptionsKind{}
+	}
+	return FinalizedClientCompletionItemOptionsKind{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+type FinalizedCompletionListCapabilities struct {
+	ItemDefaults     []string
+	ApplyKindSupport bool
+}
+
+func finalizeCompletionListCapabilities(v *CompletionListCapabilities) FinalizedCompletionListCapabilities {
+	if v == nil {
+		return FinalizedCompletionListCapabilities{}
+	}
+	return FinalizedCompletionListCapabilities{
+		ItemDefaults:     derefOr(v.ItemDefaults),
+		ApplyKindSupport: derefOr(v.ApplyKindSupport),
+	}
+}
+
+type FinalizedCompletionClientCapabilities struct {
+	DynamicRegistration bool
+	CompletionItem      FinalizedClientCompletionItemOptions
+	CompletionItemKind  FinalizedClientCompletionItemOptionsKind
+	InsertTextMode      InsertTextMode
+	ContextSupport      bool
+	CompletionList      FinalizedCompletionListCapabilities
+}
+
+func finalizeCompletionClientCapabilities(v *CompletionClientCapabilities) FinalizedCompletionClientCapabilities {
+	if v == nil {
+		return FinalizedCompletionClientCapabilities{}
+	}
+	return FinalizedCompletionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		CompletionItem:      finalizeClientCompletionItemOptions(v.CompletionItem),
+		CompletionItemKind:  finalizeClientCompletionItemOptionsKind(v.CompletionItemKind),
+		InsertTextMode:      derefOr(v.InsertTextMode),
+		ContextSupport:      derefOr(v.ContextSupport),
+		CompletionList:      finalizeCompletionListCapabilities(v.CompletionList),
+	}
+}
+
+type FinalizedHoverClientCapabilities struct {
+	DynamicRegistration bool
+	ContentFormat       []MarkupKind
+}
+
+func finalizeHoverClientCapabilities(v *HoverClientCapabilities) FinalizedHoverClientCapabilities {
+	if v == nil {
+		return FinalizedHoverClientCapabilities{}
+	}
+	return FinalizedHoverClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ContentFormat:       derefOr(v.ContentFormat),
+	}
+}
+
+type FinalizedClientSignatureParameterInformationOptions struct {
+	LabelOffsetSupport bool
+}
+
+func finalizeClientSignatureParameterInformationOptions(v *ClientSignatureParameterInformationOptions) FinalizedClientSignatureParameterInformationOptions {
+	if v == nil {
+		return FinalizedClientSignatureParameterInformationOptions{}
+	}
+	return FinalizedClientSignatureParameterInformationOptions{
+		LabelOffsetSupport: derefOr(v.LabelOffsetSupport),
+	}
+}
+
+type FinalizedClientSignatureInformationOptions struct {
+	DocumentationFormat      []MarkupKind
+	ParameterInformation     FinalizedClientSignatureParameterInformationOptions
+	ActiveParameterSupport   bool
+	NoActiveParameterSupport bool
+}
+
+func finalizeClientSignatureInformationOptions(v *ClientSignatureInformationOptions) FinalizedClientSignatureInformationOptions {
+	if v == nil {
+		return FinalizedClientSignatureInformationOptions{}
+	}
+	return FinalizedClientSignatureInformationOptions{
+		DocumentationFormat:      derefOr(v.DocumentationFormat),
+		ParameterInformation:     finalizeClientSignatureParameterInformationOptions(v.ParameterInformation),
+		ActiveParameterSupport:   derefOr(v.ActiveParameterSupport),
+		NoActiveParameterSupport: derefOr(v.NoActiveParameterSupport),
+	}
+}
+
+type FinalizedSignatureHelpClientCapabilities struct {
+	DynamicRegistration  bool
+	SignatureInformation FinalizedClientSignatureInformationOptions
+	ContextSupport       bool
+}
+
+func finalizeSignatureHelpClientCapabilities(v *SignatureHelpClientCapabilities) FinalizedSignatureHelpClientCapabilities {
+	if v == nil {
+		return FinalizedSignatureHelpClientCapabilities{}
+	}
+	return FinalizedSignatureHelpClientCapabilities{
+		DynamicRegistration:  derefOr(v.DynamicRegistration),
+		SignatureInformation: finalizeClientSignatureInformationOptions(v.SignatureInformation),
+		ContextSupport:       derefOr(v.ContextSupport),
+	}
+}
+
+type FinalizedDeclarationClientCapabilities struct {
+	DynamicRegistration bool
+	LinkSupport         bool
+}
+
+func finalizeDeclarationClientCapabilities(v *DeclarationClientCapabilities) FinalizedDeclarationClientCapabilities {
+	if v == nil {
+		return FinalizedDeclarationClientCapabilities{}
+	}
+	return FinalizedDeclarationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+type FinalizedDefinitionClientCapabilities struct {
+	DynamicRegistration bool
+	LinkSupport         bool
+}
+
+func finalizeDefinitionClientCapabilities(v *DefinitionClientCapabilities) FinalizedDefinitionClientCapabilities {
+	if v == nil {
+		return FinalizedDefinitionClientCapabilities{}
+	}
+	return FinalizedDefinitionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+type FinalizedTypeDefinitionClientCapabilities struct {
+	DynamicRegistration bool
+	LinkSupport         bool
+}
+
+func finalizeTypeDefinitionClientCapabilities(v *TypeDefinitionClientCapabilities) FinalizedTypeDefinitionClientCapabilities {
+	if v == nil {
+		return FinalizedTypeDefinitionClientCapabilities{}
+	}
+	return FinalizedTypeDefinitionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+type FinalizedImplementationClientCapabilities struct {
+	DynamicRegistration bool
+	LinkSupport         bool
+}
+
+func finalizeImplementationClientCapabilities(v *ImplementationClientCapabilities) FinalizedImplementationClientCapabilities {
+	if v == nil {
+		return FinalizedImplementationClientCapabilities{}
+	}
+	return FinalizedImplementationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+type FinalizedReferenceClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeReferenceClientCapabilities(v *ReferenceClientCapabilities) FinalizedReferenceClientCapabilities {
+	if v == nil {
+		return FinalizedReferenceClientCapabilities{}
+	}
+	return FinalizedReferenceClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedDocumentHighlightClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeDocumentHighlightClientCapabilities(v *DocumentHighlightClientCapabilities) FinalizedDocumentHighlightClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentHighlightClientCapabilities{}
+	}
+	return FinalizedDocumentHighlightClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedDocumentSymbolClientCapabilities struct {
+	DynamicRegistration               bool
+	SymbolKind                        FinalizedClientSymbolKindOptions
+	HierarchicalDocumentSymbolSupport bool
+	TagSupport                        FinalizedClientSymbolTagOptions
+	LabelSupport                      bool
+}
+
+func finalizeDocumentSymbolClientCapabilities(v *DocumentSymbolClientCapabilities) FinalizedDocumentSymbolClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentSymbolClientCapabilities{}
+	}
+	return FinalizedDocumentSymbolClientCapabilities{
+		DynamicRegistration:               derefOr(v.DynamicRegistration),
+		SymbolKind:                        finalizeClientSymbolKindOptions(v.SymbolKind),
+		HierarchicalDocumentSymbolSupport: derefOr(v.HierarchicalDocumentSymbolSupport),
+		TagSupport:                        finalizeClientSymbolTagOptions(v.TagSupport),
+		LabelSupport:                      derefOr(v.LabelSupport),
+	}
+}
+
+type FinalizedClientCodeActionKindOptions struct {
+	ValueSet []CodeActionKind
+}
+
+func finalizeClientCodeActionKindOptions(v *ClientCodeActionKindOptions) FinalizedClientCodeActionKindOptions {
+	if v == nil {
+		return FinalizedClientCodeActionKindOptions{}
+	}
+	return FinalizedClientCodeActionKindOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedClientCodeActionLiteralOptions struct {
+	CodeActionKind FinalizedClientCodeActionKindOptions
+}
+
+func finalizeClientCodeActionLiteralOptions(v *ClientCodeActionLiteralOptions) FinalizedClientCodeActionLiteralOptions {
+	if v == nil {
+		return FinalizedClientCodeActionLiteralOptions{}
+	}
+	return FinalizedClientCodeActionLiteralOptions{
+		CodeActionKind: finalizeClientCodeActionKindOptions(v.CodeActionKind),
+	}
+}
+
+type FinalizedClientCodeActionResolveOptions struct {
+	Properties []string
+}
+
+func finalizeClientCodeActionResolveOptions(v *ClientCodeActionResolveOptions) FinalizedClientCodeActionResolveOptions {
+	if v == nil {
+		return FinalizedClientCodeActionResolveOptions{}
+	}
+	return FinalizedClientCodeActionResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+type FinalizedCodeActionTagOptions struct {
+	ValueSet []CodeActionTag
+}
+
+func finalizeCodeActionTagOptions(v *CodeActionTagOptions) FinalizedCodeActionTagOptions {
+	if v == nil {
+		return FinalizedCodeActionTagOptions{}
+	}
+	return FinalizedCodeActionTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedCodeActionClientCapabilities struct {
+	DynamicRegistration      bool
+	CodeActionLiteralSupport FinalizedClientCodeActionLiteralOptions
+	IsPreferredSupport       bool
+	DisabledSupport          bool
+	DataSupport              bool
+	ResolveSupport           FinalizedClientCodeActionResolveOptions
+	HonorsChangeAnnotations  bool
+	DocumentationSupport     bool
+	TagSupport               FinalizedCodeActionTagOptions
+}
+
+func finalizeCodeActionClientCapabilities(v *CodeActionClientCapabilities) FinalizedCodeActionClientCapabilities {
+	if v == nil {
+		return FinalizedCodeActionClientCapabilities{}
+	}
+	return FinalizedCodeActionClientCapabilities{
+		DynamicRegistration:      derefOr(v.DynamicRegistration),
+		CodeActionLiteralSupport: finalizeClientCodeActionLiteralOptions(v.CodeActionLiteralSupport),
+		IsPreferredSupport:       derefOr(v.IsPreferredSupport),
+		DisabledSupport:          derefOr(v.DisabledSupport),
+		DataSupport:              derefOr(v.DataSupport),
+		ResolveSupport:           finalizeClientCodeActionResolveOptions(v.ResolveSupport),
+		HonorsChangeAnnotations:  derefOr(v.HonorsChangeAnnotations),
+		DocumentationSupport:     derefOr(v.DocumentationSupport),
+		TagSupport:               finalizeCodeActionTagOptions(v.TagSupport),
+	}
+}
+
+type FinalizedClientCodeLensResolveOptions struct {
+	Properties []string
+}
+
+func finalizeClientCodeLensResolveOptions(v *ClientCodeLensResolveOptions) FinalizedClientCodeLensResolveOptions {
+	if v == nil {
+		return FinalizedClientCodeLensResolveOptions{}
+	}
+	return FinalizedClientCodeLensResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+type FinalizedCodeLensClientCapabilities struct {
+	DynamicRegistration bool
+	ResolveSupport      FinalizedClientCodeLensResolveOptions
+}
+
+func finalizeCodeLensClientCapabilities(v *CodeLensClientCapabilities) FinalizedCodeLensClientCapabilities {
+	if v == nil {
+		return FinalizedCodeLensClientCapabilities{}
+	}
+	return FinalizedCodeLensClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ResolveSupport:      finalizeClientCodeLensResolveOptions(v.ResolveSupport),
+	}
+}
+
+type FinalizedDocumentLinkClientCapabilities struct {
+	DynamicRegistration bool
+	TooltipSupport      bool
+}
+
+func finalizeDocumentLinkClientCapabilities(v *DocumentLinkClientCapabilities) FinalizedDocumentLinkClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentLinkClientCapabilities{}
+	}
+	return FinalizedDocumentLinkClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		TooltipSupport:      derefOr(v.TooltipSupport),
+	}
+}
+
+type FinalizedDocumentColorClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeDocumentColorClientCapabilities(v *DocumentColorClientCapabilities) FinalizedDocumentColorClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentColorClientCapabilities{}
+	}
+	return FinalizedDocumentColorClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedDocumentFormattingClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeDocumentFormattingClientCapabilities(v *DocumentFormattingClientCapabilities) FinalizedDocumentFormattingClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentFormattingClientCapabilities{}
+	}
+	return FinalizedDocumentFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedDocumentRangeFormattingClientCapabilities struct {
+	DynamicRegistration bool
+	RangesSupport       bool
+}
+
+func finalizeDocumentRangeFormattingClientCapabilities(v *DocumentRangeFormattingClientCapabilities) FinalizedDocumentRangeFormattingClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentRangeFormattingClientCapabilities{}
+	}
+	return FinalizedDocumentRangeFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		RangesSupport:       derefOr(v.RangesSupport),
+	}
+}
+
+type FinalizedDocumentOnTypeFormattingClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeDocumentOnTypeFormattingClientCapabilities(v *DocumentOnTypeFormattingClientCapabilities) FinalizedDocumentOnTypeFormattingClientCapabilities {
+	if v == nil {
+		return FinalizedDocumentOnTypeFormattingClientCapabilities{}
+	}
+	return FinalizedDocumentOnTypeFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedRenameClientCapabilities struct {
+	DynamicRegistration           bool
+	PrepareSupport                bool
+	PrepareSupportDefaultBehavior PrepareSupportDefaultBehavior
+	HonorsChangeAnnotations       bool
+}
+
+func finalizeRenameClientCapabilities(v *RenameClientCapabilities) FinalizedRenameClientCapabilities {
+	if v == nil {
+		return FinalizedRenameClientCapabilities{}
+	}
+	return FinalizedRenameClientCapabilities{
+		DynamicRegistration:           derefOr(v.DynamicRegistration),
+		PrepareSupport:                derefOr(v.PrepareSupport),
+		PrepareSupportDefaultBehavior: derefOr(v.PrepareSupportDefaultBehavior),
+		HonorsChangeAnnotations:       derefOr(v.HonorsChangeAnnotations),
+	}
+}
+
+type FinalizedClientFoldingRangeKindOptions struct {
+	ValueSet []FoldingRangeKind
+}
+
+func finalizeClientFoldingRangeKindOptions(v *ClientFoldingRangeKindOptions) FinalizedClientFoldingRangeKindOptions {
+	if v == nil {
+		return FinalizedClientFoldingRangeKindOptions{}
+	}
+	return FinalizedClientFoldingRangeKindOptions{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+type FinalizedClientFoldingRangeOptions struct {
+	CollapsedText bool
+}
+
+func finalizeClientFoldingRangeOptions(v *ClientFoldingRangeOptions) FinalizedClientFoldingRangeOptions {
+	if v == nil {
+		return FinalizedClientFoldingRangeOptions{}
+	}
+	return FinalizedClientFoldingRangeOptions{
+		CollapsedText: derefOr(v.CollapsedText),
+	}
+}
+
+type FinalizedFoldingRangeClientCapabilities struct {
+	DynamicRegistration bool
+	RangeLimit          uint32
+	LineFoldingOnly     bool
+	FoldingRangeKind    FinalizedClientFoldingRangeKindOptions
+	FoldingRange        FinalizedClientFoldingRangeOptions
+}
+
+func finalizeFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) FinalizedFoldingRangeClientCapabilities {
+	if v == nil {
+		return FinalizedFoldingRangeClientCapabilities{}
+	}
+	return FinalizedFoldingRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		RangeLimit:          derefOr(v.RangeLimit),
+		LineFoldingOnly:     derefOr(v.LineFoldingOnly),
+		FoldingRangeKind:    finalizeClientFoldingRangeKindOptions(v.FoldingRangeKind),
+		FoldingRange:        finalizeClientFoldingRangeOptions(v.FoldingRange),
+	}
+}
+
+type FinalizedSelectionRangeClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeSelectionRangeClientCapabilities(v *SelectionRangeClientCapabilities) FinalizedSelectionRangeClientCapabilities {
+	if v == nil {
+		return FinalizedSelectionRangeClientCapabilities{}
+	}
+	return FinalizedSelectionRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedClientDiagnosticsTagOptions struct {
+	ValueSet []DiagnosticTag
+}
+
+func finalizeClientDiagnosticsTagOptions(v *ClientDiagnosticsTagOptions) FinalizedClientDiagnosticsTagOptions {
+	if v == nil {
+		return FinalizedClientDiagnosticsTagOptions{}
+	}
+	return FinalizedClientDiagnosticsTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+type FinalizedPublishDiagnosticsClientCapabilities struct {
+	RelatedInformation     bool
+	TagSupport             FinalizedClientDiagnosticsTagOptions
+	CodeDescriptionSupport bool
+	DataSupport            bool
+	VersionSupport         bool
+}
+
+func finalizePublishDiagnosticsClientCapabilities(v *PublishDiagnosticsClientCapabilities) FinalizedPublishDiagnosticsClientCapabilities {
+	if v == nil {
+		return FinalizedPublishDiagnosticsClientCapabilities{}
+	}
+	return FinalizedPublishDiagnosticsClientCapabilities{
+		RelatedInformation:     derefOr(v.RelatedInformation),
+		TagSupport:             finalizeClientDiagnosticsTagOptions(v.TagSupport),
+		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
+		DataSupport:            derefOr(v.DataSupport),
+		VersionSupport:         derefOr(v.VersionSupport),
+	}
+}
+
+type FinalizedCallHierarchyClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeCallHierarchyClientCapabilities(v *CallHierarchyClientCapabilities) FinalizedCallHierarchyClientCapabilities {
+	if v == nil {
+		return FinalizedCallHierarchyClientCapabilities{}
+	}
+	return FinalizedCallHierarchyClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedClientSemanticTokensRequestOptions struct {
+	Range BooleanOrEmptyObject
+	Full  BooleanOrClientSemanticTokensRequestFullDelta
+}
+
+func finalizeClientSemanticTokensRequestOptions(v *ClientSemanticTokensRequestOptions) FinalizedClientSemanticTokensRequestOptions {
+	if v == nil {
+		return FinalizedClientSemanticTokensRequestOptions{}
+	}
+	return FinalizedClientSemanticTokensRequestOptions{
+		Range: derefOr(v.Range),
+		Full:  derefOr(v.Full),
+	}
+}
+
+type FinalizedSemanticTokensClientCapabilities struct {
+	DynamicRegistration     bool
+	Requests                FinalizedClientSemanticTokensRequestOptions
+	TokenTypes              []string
+	TokenModifiers          []string
+	Formats                 []TokenFormat
+	OverlappingTokenSupport bool
+	MultilineTokenSupport   bool
+	ServerCancelSupport     bool
+	AugmentsSyntaxTokens    bool
+}
+
+func finalizeSemanticTokensClientCapabilities(v *SemanticTokensClientCapabilities) FinalizedSemanticTokensClientCapabilities {
+	if v == nil {
+		return FinalizedSemanticTokensClientCapabilities{}
+	}
+	return FinalizedSemanticTokensClientCapabilities{
+		DynamicRegistration:     derefOr(v.DynamicRegistration),
+		Requests:                finalizeClientSemanticTokensRequestOptions(v.Requests),
+		TokenTypes:              v.TokenTypes,
+		TokenModifiers:          v.TokenModifiers,
+		Formats:                 v.Formats,
+		OverlappingTokenSupport: derefOr(v.OverlappingTokenSupport),
+		MultilineTokenSupport:   derefOr(v.MultilineTokenSupport),
+		ServerCancelSupport:     derefOr(v.ServerCancelSupport),
+		AugmentsSyntaxTokens:    derefOr(v.AugmentsSyntaxTokens),
+	}
+}
+
+type FinalizedLinkedEditingRangeClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeLinkedEditingRangeClientCapabilities(v *LinkedEditingRangeClientCapabilities) FinalizedLinkedEditingRangeClientCapabilities {
+	if v == nil {
+		return FinalizedLinkedEditingRangeClientCapabilities{}
+	}
+	return FinalizedLinkedEditingRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedMonikerClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeMonikerClientCapabilities(v *MonikerClientCapabilities) FinalizedMonikerClientCapabilities {
+	if v == nil {
+		return FinalizedMonikerClientCapabilities{}
+	}
+	return FinalizedMonikerClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedTypeHierarchyClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeTypeHierarchyClientCapabilities(v *TypeHierarchyClientCapabilities) FinalizedTypeHierarchyClientCapabilities {
+	if v == nil {
+		return FinalizedTypeHierarchyClientCapabilities{}
+	}
+	return FinalizedTypeHierarchyClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedInlineValueClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeInlineValueClientCapabilities(v *InlineValueClientCapabilities) FinalizedInlineValueClientCapabilities {
+	if v == nil {
+		return FinalizedInlineValueClientCapabilities{}
+	}
+	return FinalizedInlineValueClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedClientInlayHintResolveOptions struct {
+	Properties []string
+}
+
+func finalizeClientInlayHintResolveOptions(v *ClientInlayHintResolveOptions) FinalizedClientInlayHintResolveOptions {
+	if v == nil {
+		return FinalizedClientInlayHintResolveOptions{}
+	}
+	return FinalizedClientInlayHintResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+type FinalizedInlayHintClientCapabilities struct {
+	DynamicRegistration bool
+	ResolveSupport      FinalizedClientInlayHintResolveOptions
+}
+
+func finalizeInlayHintClientCapabilities(v *InlayHintClientCapabilities) FinalizedInlayHintClientCapabilities {
+	if v == nil {
+		return FinalizedInlayHintClientCapabilities{}
+	}
+	return FinalizedInlayHintClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ResolveSupport:      finalizeClientInlayHintResolveOptions(v.ResolveSupport),
+	}
+}
+
+type FinalizedDiagnosticClientCapabilities struct {
+	RelatedInformation     bool
+	TagSupport             FinalizedClientDiagnosticsTagOptions
+	CodeDescriptionSupport bool
+	DataSupport            bool
+	DynamicRegistration    bool
+	RelatedDocumentSupport bool
+}
+
+func finalizeDiagnosticClientCapabilities(v *DiagnosticClientCapabilities) FinalizedDiagnosticClientCapabilities {
+	if v == nil {
+		return FinalizedDiagnosticClientCapabilities{}
+	}
+	return FinalizedDiagnosticClientCapabilities{
+		RelatedInformation:     derefOr(v.RelatedInformation),
+		TagSupport:             finalizeClientDiagnosticsTagOptions(v.TagSupport),
+		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
+		DataSupport:            derefOr(v.DataSupport),
+		DynamicRegistration:    derefOr(v.DynamicRegistration),
+		RelatedDocumentSupport: derefOr(v.RelatedDocumentSupport),
+	}
+}
+
+type FinalizedInlineCompletionClientCapabilities struct {
+	DynamicRegistration bool
+}
+
+func finalizeInlineCompletionClientCapabilities(v *InlineCompletionClientCapabilities) FinalizedInlineCompletionClientCapabilities {
+	if v == nil {
+		return FinalizedInlineCompletionClientCapabilities{}
+	}
+	return FinalizedInlineCompletionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+type FinalizedTextDocumentClientCapabilities struct {
+	Synchronization    FinalizedTextDocumentSyncClientCapabilities
+	Filters            FinalizedTextDocumentFilterClientCapabilities
+	Completion         FinalizedCompletionClientCapabilities
+	Hover              FinalizedHoverClientCapabilities
+	SignatureHelp      FinalizedSignatureHelpClientCapabilities
+	Declaration        FinalizedDeclarationClientCapabilities
+	Definition         FinalizedDefinitionClientCapabilities
+	TypeDefinition     FinalizedTypeDefinitionClientCapabilities
+	Implementation     FinalizedImplementationClientCapabilities
+	References         FinalizedReferenceClientCapabilities
+	DocumentHighlight  FinalizedDocumentHighlightClientCapabilities
+	DocumentSymbol     FinalizedDocumentSymbolClientCapabilities
+	CodeAction         FinalizedCodeActionClientCapabilities
+	CodeLens           FinalizedCodeLensClientCapabilities
+	DocumentLink       FinalizedDocumentLinkClientCapabilities
+	ColorProvider      FinalizedDocumentColorClientCapabilities
+	Formatting         FinalizedDocumentFormattingClientCapabilities
+	RangeFormatting    FinalizedDocumentRangeFormattingClientCapabilities
+	OnTypeFormatting   FinalizedDocumentOnTypeFormattingClientCapabilities
+	Rename             FinalizedRenameClientCapabilities
+	FoldingRange       FinalizedFoldingRangeClientCapabilities
+	SelectionRange     FinalizedSelectionRangeClientCapabilities
+	PublishDiagnostics FinalizedPublishDiagnosticsClientCapabilities
+	CallHierarchy      FinalizedCallHierarchyClientCapabilities
+	SemanticTokens     FinalizedSemanticTokensClientCapabilities
+	LinkedEditingRange FinalizedLinkedEditingRangeClientCapabilities
+	Moniker            FinalizedMonikerClientCapabilities
+	TypeHierarchy      FinalizedTypeHierarchyClientCapabilities
+	InlineValue        FinalizedInlineValueClientCapabilities
+	InlayHint          FinalizedInlayHintClientCapabilities
+	Diagnostic         FinalizedDiagnosticClientCapabilities
+	InlineCompletion   FinalizedInlineCompletionClientCapabilities
+}
+
+func finalizeTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) FinalizedTextDocumentClientCapabilities {
+	if v == nil {
+		return FinalizedTextDocumentClientCapabilities{}
+	}
+	return FinalizedTextDocumentClientCapabilities{
+		Synchronization:    finalizeTextDocumentSyncClientCapabilities(v.Synchronization),
+		Filters:            finalizeTextDocumentFilterClientCapabilities(v.Filters),
+		Completion:         finalizeCompletionClientCapabilities(v.Completion),
+		Hover:              finalizeHoverClientCapabilities(v.Hover),
+		SignatureHelp:      finalizeSignatureHelpClientCapabilities(v.SignatureHelp),
+		Declaration:        finalizeDeclarationClientCapabilities(v.Declaration),
+		Definition:         finalizeDefinitionClientCapabilities(v.Definition),
+		TypeDefinition:     finalizeTypeDefinitionClientCapabilities(v.TypeDefinition),
+		Implementation:     finalizeImplementationClientCapabilities(v.Implementation),
+		References:         finalizeReferenceClientCapabilities(v.References),
+		DocumentHighlight:  finalizeDocumentHighlightClientCapabilities(v.DocumentHighlight),
+		DocumentSymbol:     finalizeDocumentSymbolClientCapabilities(v.DocumentSymbol),
+		CodeAction:         finalizeCodeActionClientCapabilities(v.CodeAction),
+		CodeLens:           finalizeCodeLensClientCapabilities(v.CodeLens),
+		DocumentLink:       finalizeDocumentLinkClientCapabilities(v.DocumentLink),
+		ColorProvider:      finalizeDocumentColorClientCapabilities(v.ColorProvider),
+		Formatting:         finalizeDocumentFormattingClientCapabilities(v.Formatting),
+		RangeFormatting:    finalizeDocumentRangeFormattingClientCapabilities(v.RangeFormatting),
+		OnTypeFormatting:   finalizeDocumentOnTypeFormattingClientCapabilities(v.OnTypeFormatting),
+		Rename:             finalizeRenameClientCapabilities(v.Rename),
+		FoldingRange:       finalizeFoldingRangeClientCapabilities(v.FoldingRange),
+		SelectionRange:     finalizeSelectionRangeClientCapabilities(v.SelectionRange),
+		PublishDiagnostics: finalizePublishDiagnosticsClientCapabilities(v.PublishDiagnostics),
+		CallHierarchy:      finalizeCallHierarchyClientCapabilities(v.CallHierarchy),
+		SemanticTokens:     finalizeSemanticTokensClientCapabilities(v.SemanticTokens),
+		LinkedEditingRange: finalizeLinkedEditingRangeClientCapabilities(v.LinkedEditingRange),
+		Moniker:            finalizeMonikerClientCapabilities(v.Moniker),
+		TypeHierarchy:      finalizeTypeHierarchyClientCapabilities(v.TypeHierarchy),
+		InlineValue:        finalizeInlineValueClientCapabilities(v.InlineValue),
+		InlayHint:          finalizeInlayHintClientCapabilities(v.InlayHint),
+		Diagnostic:         finalizeDiagnosticClientCapabilities(v.Diagnostic),
+		InlineCompletion:   finalizeInlineCompletionClientCapabilities(v.InlineCompletion),
+	}
+}
+
+type FinalizedNotebookDocumentSyncClientCapabilities struct {
+	DynamicRegistration     bool
+	ExecutionSummarySupport bool
+}
+
+func finalizeNotebookDocumentSyncClientCapabilities(v *NotebookDocumentSyncClientCapabilities) FinalizedNotebookDocumentSyncClientCapabilities {
+	if v == nil {
+		return FinalizedNotebookDocumentSyncClientCapabilities{}
+	}
+	return FinalizedNotebookDocumentSyncClientCapabilities{
+		DynamicRegistration:     derefOr(v.DynamicRegistration),
+		ExecutionSummarySupport: derefOr(v.ExecutionSummarySupport),
+	}
+}
+
+type FinalizedNotebookDocumentClientCapabilities struct {
+	Synchronization FinalizedNotebookDocumentSyncClientCapabilities
+}
+
+func finalizeNotebookDocumentClientCapabilities(v *NotebookDocumentClientCapabilities) FinalizedNotebookDocumentClientCapabilities {
+	if v == nil {
+		return FinalizedNotebookDocumentClientCapabilities{}
+	}
+	return FinalizedNotebookDocumentClientCapabilities{
+		Synchronization: finalizeNotebookDocumentSyncClientCapabilities(v.Synchronization),
+	}
+}
+
+type FinalizedClientShowMessageActionItemOptions struct {
+	AdditionalPropertiesSupport bool
+}
+
+func finalizeClientShowMessageActionItemOptions(v *ClientShowMessageActionItemOptions) FinalizedClientShowMessageActionItemOptions {
+	if v == nil {
+		return FinalizedClientShowMessageActionItemOptions{}
+	}
+	return FinalizedClientShowMessageActionItemOptions{
+		AdditionalPropertiesSupport: derefOr(v.AdditionalPropertiesSupport),
+	}
+}
+
+type FinalizedShowMessageRequestClientCapabilities struct {
+	MessageActionItem FinalizedClientShowMessageActionItemOptions
+}
+
+func finalizeShowMessageRequestClientCapabilities(v *ShowMessageRequestClientCapabilities) FinalizedShowMessageRequestClientCapabilities {
+	if v == nil {
+		return FinalizedShowMessageRequestClientCapabilities{}
+	}
+	return FinalizedShowMessageRequestClientCapabilities{
+		MessageActionItem: finalizeClientShowMessageActionItemOptions(v.MessageActionItem),
+	}
+}
+
+type FinalizedShowDocumentClientCapabilities struct {
+	Support bool
+}
+
+func finalizeShowDocumentClientCapabilities(v *ShowDocumentClientCapabilities) FinalizedShowDocumentClientCapabilities {
+	if v == nil {
+		return FinalizedShowDocumentClientCapabilities{}
+	}
+	return FinalizedShowDocumentClientCapabilities{
+		Support: v.Support,
+	}
+}
+
+type FinalizedWindowClientCapabilities struct {
+	WorkDoneProgress bool
+	ShowMessage      FinalizedShowMessageRequestClientCapabilities
+	ShowDocument     FinalizedShowDocumentClientCapabilities
+}
+
+func finalizeWindowClientCapabilities(v *WindowClientCapabilities) FinalizedWindowClientCapabilities {
+	if v == nil {
+		return FinalizedWindowClientCapabilities{}
+	}
+	return FinalizedWindowClientCapabilities{
+		WorkDoneProgress: derefOr(v.WorkDoneProgress),
+		ShowMessage:      finalizeShowMessageRequestClientCapabilities(v.ShowMessage),
+		ShowDocument:     finalizeShowDocumentClientCapabilities(v.ShowDocument),
+	}
+}
+
+type FinalizedStaleRequestSupportOptions struct {
+	Cancel                 bool
+	RetryOnContentModified []string
+}
+
+func finalizeStaleRequestSupportOptions(v *StaleRequestSupportOptions) FinalizedStaleRequestSupportOptions {
+	if v == nil {
+		return FinalizedStaleRequestSupportOptions{}
+	}
+	return FinalizedStaleRequestSupportOptions{
+		Cancel:                 v.Cancel,
+		RetryOnContentModified: v.RetryOnContentModified,
+	}
+}
+
+type FinalizedRegularExpressionsClientCapabilities struct {
+	Engine  string
+	Version string
+}
+
+func finalizeRegularExpressionsClientCapabilities(v *RegularExpressionsClientCapabilities) FinalizedRegularExpressionsClientCapabilities {
+	if v == nil {
+		return FinalizedRegularExpressionsClientCapabilities{}
+	}
+	return FinalizedRegularExpressionsClientCapabilities{
+		Engine:  v.Engine,
+		Version: derefOr(v.Version),
+	}
+}
+
+type FinalizedMarkdownClientCapabilities struct {
+	Parser      string
+	Version     string
+	AllowedTags []string
+}
+
+func finalizeMarkdownClientCapabilities(v *MarkdownClientCapabilities) FinalizedMarkdownClientCapabilities {
+	if v == nil {
+		return FinalizedMarkdownClientCapabilities{}
+	}
+	return FinalizedMarkdownClientCapabilities{
+		Parser:      v.Parser,
+		Version:     derefOr(v.Version),
+		AllowedTags: derefOr(v.AllowedTags),
+	}
+}
+
+type FinalizedGeneralClientCapabilities struct {
+	StaleRequestSupport FinalizedStaleRequestSupportOptions
+	RegularExpressions  FinalizedRegularExpressionsClientCapabilities
+	Markdown            FinalizedMarkdownClientCapabilities
+	PositionEncodings   []PositionEncodingKind
+}
+
+func finalizeGeneralClientCapabilities(v *GeneralClientCapabilities) FinalizedGeneralClientCapabilities {
+	if v == nil {
+		return FinalizedGeneralClientCapabilities{}
+	}
+	return FinalizedGeneralClientCapabilities{
+		StaleRequestSupport: finalizeStaleRequestSupportOptions(v.StaleRequestSupport),
+		RegularExpressions:  finalizeRegularExpressionsClientCapabilities(v.RegularExpressions),
+		Markdown:            finalizeMarkdownClientCapabilities(v.Markdown),
+		PositionEncodings:   derefOr(v.PositionEncodings),
+	}
+}
+
+// FinalizedClientCapabilities is a version of ClientCapabilities where all nested
+// fields are values (not pointers), making it easier to access deeply nested capabilities.
+// Use FinalizeClientCapabilities to convert from ClientCapabilities.
+type FinalizedClientCapabilities struct {
+	Workspace        FinalizedWorkspaceClientCapabilities
+	TextDocument     FinalizedTextDocumentClientCapabilities
+	NotebookDocument FinalizedNotebookDocumentClientCapabilities
+	Window           FinalizedWindowClientCapabilities
+	General          FinalizedGeneralClientCapabilities
+	Experimental     any
+}
+
+func FinalizeClientCapabilities(v *ClientCapabilities) FinalizedClientCapabilities {
+	if v == nil {
+		return FinalizedClientCapabilities{}
+	}
+	return FinalizedClientCapabilities{
+		Workspace:        finalizeWorkspaceClientCapabilities(v.Workspace),
+		TextDocument:     finalizeTextDocumentClientCapabilities(v.TextDocument),
+		NotebookDocument: finalizeNotebookDocumentClientCapabilities(v.NotebookDocument),
+		Window:           finalizeWindowClientCapabilities(v.Window),
+		General:          finalizeGeneralClientCapabilities(v.General),
+		Experimental:     derefOr(v.Experimental),
+	}
+}

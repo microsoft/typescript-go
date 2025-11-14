@@ -690,6 +690,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	return response, nil
 }
 
+func (s *Server) FinalizedClientCapabilities() lsproto.FinalizedClientCapabilities {
+	return lsproto.FinalizeClientCapabilities(s.initializeParams.Capabilities)
+}
+
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
 	if shouldEnableWatch(s.initializeParams) {
 		s.watchEnabled = true
@@ -831,11 +835,11 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
-	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientSupportsLink(s.initializeParams))
+	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientSupportsLink(s.FinalizedClientCapabilities()))
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
-	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.initializeParams))
+	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.FinalizedClientCapabilities()))
 }
 
 func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
@@ -845,7 +849,7 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.initializeParams))
+	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.FinalizedClientCapabilities()))
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -998,28 +1002,16 @@ func (s *Server) handleInlayHint(
 	return languageService.ProvideInlayHint(ctx, params)
 }
 
-func getDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.Definition == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.Definition.LinkSupport)
+func getDefinitionClientSupportsLink(caps lsproto.FinalizedClientCapabilities) bool {
+	return caps.TextDocument.Definition.LinkSupport
 }
 
-func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.TypeDefinition == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
+func getTypeDefinitionClientSupportsLink(caps lsproto.FinalizedClientCapabilities) bool {
+	return caps.TextDocument.TypeDefinition.LinkSupport
 }
 
-func getImplementationClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.Implementation == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.Implementation.LinkSupport)
+func getImplementationClientSupportsLink(caps lsproto.FinalizedClientCapabilities) bool {
+	return caps.TextDocument.Implementation.LinkSupport
 }
 
 func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParams) bool {
