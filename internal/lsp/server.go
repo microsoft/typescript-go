@@ -756,23 +756,39 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				})
 
 				// Load more projects based on default definition found
-				if errFromLoadingTree := s.session.ForEachProjectLocationLoadingProjectTree(
-					ctx,
-					requestedProjectTrees,
-					defaultDefinition,
+				for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+					if ctx.Err() != nil {
+						return ctx.Err()
+					}
+
 					// Can loop forever without this (enqueue here, dequeue above, repeat)
-					canSearchProject,
-					func(project *project.Project, uri lsproto.DocumentUri, position lsproto.Position) {
-						// Enqueue the project and location for further processing
+					if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
+						continue
+					}
+
+					// Enqueue the project and location for further processing
+					if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
 						enqueueItem(projectAndTextDocumentPosition{
-							project:  project,
-							Uri:      uri,
-							Position: position,
+							project:  loadedProject,
+							Uri:      defaultDefinition.TextDocumentURI(),
+							Position: defaultDefinition.TextDocumentPosition(),
 						})
 						hasMoreWork = true
-					},
-				); errFromLoadingTree != nil {
-					return errFromLoadingTree
+					} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
+						enqueueItem(projectAndTextDocumentPosition{
+							project:  loadedProject,
+							Uri:      sourcePos.TextDocumentURI(),
+							Position: sourcePos.TextDocumentPosition(),
+						})
+						hasMoreWork = true
+					} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
+						enqueueItem(projectAndTextDocumentPosition{
+							project:  loadedProject,
+							Uri:      generatedPos.TextDocumentURI(),
+							Position: generatedPos.TextDocumentPosition(),
+						})
+						hasMoreWork = true
+					}
 				}
 			}
 			if !hasMoreWork {

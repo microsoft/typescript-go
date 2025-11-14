@@ -203,6 +203,10 @@ func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
 }
 
+func (p *Project) HasFile(fileName string) bool {
+	return p.containsFile(p.toPath(fileName))
+}
+
 func (p *Project) containsFile(path tspath.Path) bool {
 	return p.Program != nil && p.Program.GetSourceFileByPath(path) != nil
 }
