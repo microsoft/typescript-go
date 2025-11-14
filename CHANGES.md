@@ -1,5 +1,85 @@
 CHANGES.md lists intentional changes between the Strada (Typescript) and Corsa (Go) compilers.
 
+# Feature-Level Description
+
+At a high level, Javascript support in Corsa is intended to expose Typescript features in a .js file, working exactly as they do in Typescript with different syntax.
+This differs from Strada, which has many Javascript features that do not exist in Typescript at all, and quite a few differences in features that overlap.
+For example, Corsa uses the same rule for checking calls in both Typescript and Javascript; Strada lets you skip parameters with type `any`.
+And because Corsa uses the same rule for optional parameters, it fixes subtle Strada bugs with `"strict": true` in Javascript.
+
+We primarily want to support people writing modern Javascript, using things like ES modules, classes, destructuring, etc.
+Not CommonJS modules and constructor functions, although those do still work.
+However, we have trimmed a lot of unused or underused features.
+
+The biggest single removed area is support for Closure header files--any Closure-specific features, in fact.
+The tables below list removed Closure features along with the other removed features.
+
+Reminder: Javascript support in Typescript falls into three main categories:
+
+- JSDoc Tags
+- Expando declarations
+- CommonJS syntax
+
+An expando declaration is when you declare a property just by assigning to it, on a function, class or empty object literal:
+
+```js
+function f() {}
+f.called = false;
+```
+
+
+## JSDoc Tags and Types
+
+| Name | Example | Substitute | Note  |
+| ---- | ------- | ---------- | ----- |
+| UnknownType  | `?`              | `any`               |                                     |
+| NamepathType | `Module:file~id` | `import("file").id` | TS has never had semantics for this |
+| `@class`     | `/** @class \*/`<br/>`function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.p = 1`<br/>`}` |  | Only inference from `this.p=` or `C.prototype.m=` is supported. |
+|`@throws`     |`/** @throws {E} */` | Keep the same    | TS never had semantics for this     |
+|`@enum` | `/** @enum {number} */`<br/> `const E = { A: 1, B: 2 }`  |`/** @typedef {number} E */`<br/>`/** @type {Record<string, E>}`<br/>`const E = { A: 1, B: 2 }` | Closure feature.  |
+| `@author`    | `/** @author Finn <finn@treehouse.com> */` | Keep the same  | `@treehouse` parses as a new tag in Corsa. |
+| Postfix optional type      | `T?` | `T \| undefined`  | This was legacy in *Closure*  |
+| Postfix definite type      | `T!` | `T`               | This was legacy in *Closure*  |
+| Uppercase synonyms         | `String`, `Void`, `array`| `string`, `void`, `Array`  | |
+| JSDoc index signatures     | `Object.<K,V>`           | `{ [x: K]: V }`  |  |
+| Identifier-named typedefs  | `/** @typedef {T} */ typeName;` | `/** @typedef {T} typeName */`  | Closure feature.   |
+| Closure function syntax    | `function(string): void` | `(s: string) => void` |  |
+| Automatic typeof insertion | `const o = { a: 1 }`<br/>`/** @type {o} */ var o2 = { a: 1 }` | `const o = { a: 1 }`<br/>`/** @type {typeof o} */ var o2 = { a: 1 }` |  |
+| `@typedef` nested names    | `/** @typedef {1} NS.T */` | Translate to .d.ts  | Also applies to `@callback` |
+
+## Expando declarations
+
+| Name | Example | Substitute | Note  |
+| ---- | ------- | ---------- | ----- |
+| Fallback initialisers                           | `f.x = f.x \| init` | `if (!f.x) f.x = init` | |
+| Nested, undeclared expandos                     | `var N = {};`<br/>`N.X.Y = {}` | `var N = {};`<br/>`N.X = {};`<br/>`N.X.Y = {}` | All intermediate expandos have to be assigned. Closure feature.  |
+| Constructor function whole-prototype assignment | `C.prototype = {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`m: function() { }`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`n: function() { }`<br/>`}` | `C.prototype.m = function() { }`<br/>`C.prototype.n = function() { }`                                    | Constructor function feature. See note at end.                     |
+| Identifier declarations                         | `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`constructor() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/** @type {T} */`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`identifier;`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`}`<br/>`}` | `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/** @type {T} */`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`identifier;`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`constructor() { }`<br/>`}`                                 | Closure feature. |
+| `this` aliases                                  | `function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`var that = this`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`that.x = 12`<br/>`}` | `function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.x = 12`<br/>`}` | even better:<br/> `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.x = 12 `<br/>`}` |                                                                    |
+| `this` alias for `globalThis`                   | `this.globby = true` | `globalThis.globby = true` | When used at the top level of a script |
+
+## CommonJS syntax
+
+| Name | Example | Substitute | Note  |
+| ---- | ------- | ---------- | ----- |
+| Nested, undeclared exports                   | `exports.N.X.p = 1`   | `exports.N = {}`<br/>`exports.N.X = {}`<br/>`exports.N.X.p = 1` | Same as expando rules. |
+| Ignored empty module.exports assignment      | `module.exports = {}` | Delete this line   | People used to write in this in case module.exports was not defined. |
+| `this` alias for `module.exports`            | `this.p = 1`          | `exports.p = 1`    | When used at the top level of a CommonJS module. |
+| Multiple assignments narrow with control flow| `if (isWindows) {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`exports.platform = 'win32'`<br/>`} else {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`exports.platform = 'posix'`<br/>`}` | Keep the same in most cases | This now unions instead; most uses have the same type in both branches. |
+| Single-property access `require`             | `var readFile = require('fs').readFile`    | `var { readFile } = require('fs')` | |
+| Aliasing of `module.exports`                 | `var mod = module.exports`<br/>`mod.x = 1` | `module.exports.x = 1` | |
+
+## Features yet to be implemented
+
+Object.defineProperty for CommonJS exports and expandos. The compiler treats this as an alternate to the usual assignment syntax:
+
+```js
+function f() { }
+Object.defineProperty(f, "p", { value: 1, writable: true })
+````
+
+# Component-Level Description
+
 ## Scanner
 
 1. Node positions use UTF8 offsets from the beginning of the file, not UTF16 offsets. Node positions in files with non-ASCII characters will be greater than before.
@@ -32,12 +112,14 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 ## Checker
 
 ### Miscellaneous
-#### When `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
+#### When `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
 ```js
 /** @param {unknown} x */
-function f(x) { return x; }
+function f(x) {
+  return x;
+}
 f(); // Previously allowed, now an error
 ```
 
@@ -45,7 +127,9 @@ f(); // Previously allowed, now an error
 
 ```js
 /** @param {void} x */
-function f(x) { return x; }
+function f(x) {
+  return x;
+}
 f(); // Still allowed
 ```
 
@@ -58,6 +142,7 @@ Inferred type arguments may change. For example:
 var x = { a: 1, b: 2 };
 var entries = Object.entries(x);
 ```
+
 In Strada, `entries: Array<[string, any]>`.
 In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
 
@@ -65,14 +150,16 @@ In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
 
 ```js
 /** @typedef {FORWARD | BACKWARD} Direction */
-const FORWARD = 1, BACKWARD = 2;
+const FORWARD = 1,
+  BACKWARD = 2;
 ```
 
 Must now use `typeof` the same way TS does:
 
 ```js
 /** @typedef {typeof FORWARD | typeof BACKWARD} Direction */
-const FORWARD = 1, BACKWARD = 2;
+const FORWARD = 1,
+  BACKWARD = 2;
 ```
 
 ### JSDoc Types
@@ -86,14 +173,12 @@ function sum(...ns) {}
 
 is equivalent to
 
-
 ```js
 /** @param {number[]} ns */
 function sum(...ns) {}
 ```
 
 They have no other semantics.
-
 
 #### A variadic type on a parameter no longer makes it a rest parameter. The parameter must use standard rest syntax.
 
@@ -117,23 +202,21 @@ This bug is fixed in Corsa.
 ```js
 /** @param {number=} x */
 function f(x) {
-    return x;
+  return x;
 }
 ```
 
 will now have `x?: number` not `x?: number | undefined` with `strictNullChecks` off.
 Regardless of strictness, it still makes parameters optional when used in a `@param` tag.
 
-
 ### JSDoc Tags
 
 #### `@type` tags no longer apply to function declarations, and now contextually type function expressions instead of applying directly. So this annotation no longer does anything:
 
 ```js
-
 /** @type {(x: unknown) => asserts x is string } */
 function assertIsString(x) {
-    if (!(typeof x === "string")) throw new Error();
+  if (!(typeof x === "string")) throw new Error();
 }
 ```
 
@@ -143,9 +226,9 @@ Although this one still works via contextual typing:
 /** @typedef {(check: boolean) => asserts check} AssertFunc */
 
 /** @type {AssertFunc} */
-const assert = check => {
-    if (!check) throw new Error();
-}
+const assert = (check) => {
+  if (!check) throw new Error();
+};
 ```
 
 A number of things change slightly because of differences between type annotation and contextual typing.
@@ -158,8 +241,8 @@ A number of things change slightly because of differences between type annotatio
  * @returns { asserts a is B }
  */
 const foo = (a) => {
-    if (/** @type { B } */ (a).y !== 0) throw TypeError();
-    return undefined;
+  if (/** @type { B } */ (a).y !== 0) throw TypeError();
+  return undefined;
 };
 ```
 
@@ -170,8 +253,8 @@ And must be written like this:
  * @type {(a: A) => asserts a is B}
  */
 const foo = (a) => {
-    if (/** @type { B } */ (a).y !== 0) throw TypeError();
-    return undefined;
+  if (/** @type { B } */ (a).y !== 0) throw TypeError();
+  return undefined;
 };
 ```
 
@@ -179,7 +262,8 @@ This is identical to the Typescript rule.
 
 #### Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
 
-#### `@typedef` and `@callback` in a class body are no longer accessible outside the class. 
+#### `@typedef` and `@callback` in a class body are no longer accessible outside the class.
+
 They must be moved outside the class to use them outside the class.
 
 #### `@class` or `@constructor` does not make a function into a constructor function.
@@ -194,7 +278,8 @@ If you have `"strict": true`, you will see a noImplicitAny error on the now-unty
 
 ```js
 /** @param {number} x */
-var f = x => x, g = x => x;
+var f = (x) => x,
+  g = (x) => x;
 ```
 
 #### Optional marking on parameter names now makes the parameter both optional and undefined:
@@ -202,11 +287,11 @@ var f = x => x, g = x => x;
 ```js
 /** @param {number} [x] */
 function f(x) {
-    return x;
+  return x;
 }
 ```
 
-This behaves the same as Typescript's `x?: number` syntax. 
+This behaves the same as Typescript's `x?: number` syntax.
 Strada makes the parameter optional but does not add `undefined` to the type.
 
 #### Type assertions with `@type` tags now prevent narrowing of the type.
@@ -214,9 +299,9 @@ Strada makes the parameter optional but does not add `undefined` to the type.
 ```js
 /** @param {C | undefined} cu */
 function f(cu) {
-    if (/** @type {any} */ (cu).undeclaredProperty) {
-        cu // still has type C | undefined
-    }
+  if (/** @type {any} */ (cu).undeclaredProperty) {
+    cu; // still has type C | undefined
+  }
 }
 ```
 
@@ -228,8 +313,8 @@ In Corsa, the behaviour is the same between TS and JS.
 #### Expando assignments of `void 0` are no longer ignored as a special case:
 
 ```js
-var o = {}
-o.y = void 0
+var o = {};
+o.y = void 0;
 ```
 
 creates a property `y: undefined` on `o` (which will widen to `y: any` if strictNullChecks is off).
@@ -238,10 +323,10 @@ creates a property `y: undefined` on `o` (which will widen to `y: any` if strict
 
 ```js
 class SharedClass {
-    constructor() {
-        /** @type {SharedId} */
-        this.id;
-    }
+  constructor() {
+    /** @type {SharedId} */
+    this.id;
+  }
 }
 ```
 
@@ -249,14 +334,14 @@ Provide an initializer or use a property declaration in the class body:
 
 ```js
 class SharedClass1 {
-    /** @type {SharedId} */
-    id;
+  /** @type {SharedId} */
+  id;
 }
 class SharedClass2 {
-    constructor() {
-        /** @type {SharedId} */
-        this.id = 1;
-    }
+  constructor() {
+    /** @type {SharedId} */
+    this.id = 1;
+  }
 }
 ```
 
@@ -265,10 +350,10 @@ class SharedClass2 {
 ```js
 function Foo() {}
 Foo.prototype = {
-    /** @param {number} x */
-    bar(x) {
-        return x;
-    }
+  /** @param {number} x */
+  bar(x) {
+    return x;
+  },
 };
 ```
 
@@ -276,9 +361,9 @@ If you still need to use constructor functions instead of classes, you should de
 
 ```js
 function Foo() {}
-/** @param {number} x */ 
-Foo.prototype.bar = function(x) {
-    return x;
+/** @param {number} x */
+Foo.prototype.bar = function (x) {
+  return x;
 };
 ```
 
@@ -289,7 +374,7 @@ Although classes are a much better way to write this code.
 #### Chained exports no longer work:
 
 ```js
-exports.x = exports.y = 12
+exports.x = exports.y = 12;
 ```
 
 Now only exports `x`, not `y` as well.
@@ -297,9 +382,9 @@ Now only exports `x`, not `y` as well.
 #### Exporting `void 0` is no longer ignored as a special case:
 
 ```js
-exports.x = void 0
+exports.x = void 0;
 // several lines later...
-exports.x = theRealExport
+exports.x = theRealExport;
 ```
 
 This exports `x: undefined` not `x: typeof theRealExport`.
@@ -307,7 +392,7 @@ This exports `x: undefined` not `x: typeof theRealExport`.
 #### Hover for `module` shows a property with name of the export instead of `exports`:
 
 ```js
-module.exports = singleIdentifier
+module.exports = singleIdentifier;
 ```
 
 shows a hover type like `module: { singleIdentifier: any }`
@@ -315,19 +400,19 @@ shows a hover type like `module: { singleIdentifier: any }`
 #### Property access on `require` no longer imports a single property from a module:
 
 ```js
-const x = require("y").x
+const x = require("y").x;
 ```
 
 If you can't configure your package to use ESM syntax, you can use destructuring instead:
 
 ```js
-const { x } = require("y")
+const { x } = require("y");
 ```
 
 #### `Object.defineProperty` on `exports` no longer creates an export:
 
 ```js
-Object.defineProperty(exports, "x", { value: 12 })
+Object.defineProperty(exports, "x", { value: 12 });
 ```
 
 This applies to `module.exports` as well.
