@@ -1445,7 +1445,7 @@ func forEachExternalModule(
 	excludePatterns []*regexp2.Regexp,
 	cb func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile),
 ) {
-	var isExcluded func(*ast.SourceFile) bool
+	var isExcluded func(*ast.SourceFile) bool = func(_ *ast.SourceFile) bool { return false }
 	if excludePatterns != nil {
 		isExcluded = getIsExcluded(excludePatterns)
 	}
