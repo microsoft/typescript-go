@@ -2366,7 +2366,7 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 		}
 	}
 
-	start = scanner.GetRangeOfTokenAtPosition(sourceFile, start).Pos()
+	start = scanner.SkipTrivia(sourceFile.Text(), start)
 
 	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
 	c.addErrorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, diagnostic)
