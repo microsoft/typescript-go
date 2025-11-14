@@ -2569,7 +2569,7 @@ func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
 }
 
 func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
-	var diagnostics []*Diagnostic
+	var diagnostics []*fourslashDiagnostic
 	var files []*harnessutil.TestFile
 	for fileName, scriptInfo := range f.scriptInfos {
 		if tspath.HasJSONFileExtension(fileName) {
@@ -2580,7 +2580,7 @@ func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
 			f.getDiagnostics(t, fileName),
 			func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) },
 		)
-		diagnostics = append(diagnostics, core.Map(lspDiagnostics, func(d *lsproto.Diagnostic) *Diagnostic {
+		diagnostics = append(diagnostics, core.Map(lspDiagnostics, func(d *lsproto.Diagnostic) *fourslashDiagnostic {
 			return f.toDiagnostic(scriptInfo, d)
 		})...)
 	}
@@ -2591,74 +2591,74 @@ func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
 	f.addResultToBaseline(t, "Syntax and Semantic Diagnostics", result)
 }
 
-type Diagnostic struct {
-	file               *DiagnosticFile
+type fourslashDiagnostic struct {
+	file               *fourslashDiagnosticFile
 	loc                core.TextRange
 	code               int32
 	category           diagnostics.Category
 	message            string
-	relatedDiagnostics []*Diagnostic
+	relatedDiagnostics []*fourslashDiagnostic
 	reportsUnnecessary bool
 	reportsDeprecated  bool
 }
 
-type DiagnosticFile struct {
+type fourslashDiagnosticFile struct {
 	file        *harnessutil.TestFile
 	ecmaLineMap []core.TextPos
 }
 
-var _ diagnosticwriter.FileLike = (*DiagnosticFile)(nil)
+var _ diagnosticwriter.FileLike = (*fourslashDiagnosticFile)(nil)
 
-func (f *DiagnosticFile) FileName() string {
+func (f *fourslashDiagnosticFile) FileName() string {
 	return f.file.UnitName
 }
 
-func (f *DiagnosticFile) Text() string {
+func (f *fourslashDiagnosticFile) Text() string {
 	return f.file.Content
 }
 
-func (f *DiagnosticFile) ECMALineMap() []core.TextPos {
+func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
 	if f.ecmaLineMap == nil {
 		f.ecmaLineMap = core.ComputeECMALineStarts(f.file.Content)
 	}
 	return f.ecmaLineMap
 }
 
-var _ diagnosticwriter.Diagnostic = (*Diagnostic)(nil)
+var _ diagnosticwriter.Diagnostic = (*fourslashDiagnostic)(nil)
 
-func (d *Diagnostic) File() diagnosticwriter.FileLike {
+func (d *fourslashDiagnostic) File() diagnosticwriter.FileLike {
 	return d.file
 }
 
-func (d *Diagnostic) Pos() int {
+func (d *fourslashDiagnostic) Pos() int {
 	return d.loc.Pos()
 }
 
-func (d *Diagnostic) End() int {
+func (d *fourslashDiagnostic) End() int {
 	return d.loc.End()
 }
 
-func (d *Diagnostic) Len() int {
+func (d *fourslashDiagnostic) Len() int {
 	return d.loc.Len()
 }
 
-func (d *Diagnostic) Code() int32 {
+func (d *fourslashDiagnostic) Code() int32 {
 	return d.code
 }
 
-func (d *Diagnostic) Category() diagnostics.Category {
+func (d *fourslashDiagnostic) Category() diagnostics.Category {
 	return d.category
 }
 
-func (d *Diagnostic) Message() string {
+func (d *fourslashDiagnostic) Message() string {
 	return d.message
 }
 
-func (d *Diagnostic) MessageChain() []diagnosticwriter.Diagnostic {
+func (d *fourslashDiagnostic) MessageChain() []diagnosticwriter.Diagnostic {
 	return nil
 }
 
-func (d *Diagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
+func (d *fourslashDiagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
 	relatedInfo := make([]diagnosticwriter.Diagnostic, 0, len(d.relatedDiagnostics))
 	for _, relDiag := range d.relatedDiagnostics {
 		relatedInfo = append(relatedInfo, relDiag)
@@ -2666,7 +2666,7 @@ func (d *Diagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
 	return relatedInfo
 }
 
-func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *Diagnostic {
+func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *fourslashDiagnostic {
 	var category diagnostics.Category
 	switch *lspDiagnostic.Severity {
 	case lsproto.DiagnosticSeverityError:
@@ -2682,15 +2682,15 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 	}
 	code := *lspDiagnostic.Code.Integer
 
-	var relatedDiagnostics []*Diagnostic
+	var relatedDiagnostics []*fourslashDiagnostic
 	if lspDiagnostic.RelatedInformation != nil {
 		for _, info := range *lspDiagnostic.RelatedInformation {
 			relatedScriptInfo := f.getScriptInfo(info.Location.Uri.FileName())
 			if relatedScriptInfo == nil {
 				continue
 			}
-			relatedDiagnostic := &Diagnostic{
-				file:     &DiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
+			relatedDiagnostic := &fourslashDiagnostic{
+				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
 				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
 				code:     code,
 				category: category,
@@ -2700,8 +2700,8 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 		}
 	}
 
-	diagnostic := &Diagnostic{
-		file: &DiagnosticFile{
+	diagnostic := &fourslashDiagnostic{
+		file: &fourslashDiagnosticFile{
 			file: &harnessutil.TestFile{
 				UnitName: scriptInfo.fileName,
 				Content:  scriptInfo.content,
@@ -2716,7 +2716,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 	return diagnostic
 }
 
-func compareDiagnostics(d1, d2 *Diagnostic) int {
+func compareDiagnostics(d1, d2 *fourslashDiagnostic) int {
 	c := strings.Compare(d1.file.FileName(), d2.file.FileName())
 	if c != 0 {
 		return c
@@ -2740,7 +2740,7 @@ func compareDiagnostics(d1, d2 *Diagnostic) int {
 	return compareRelatedDiagnostics(d1.relatedDiagnostics, d2.relatedDiagnostics)
 }
 
-func compareRelatedDiagnostics(d1, d2 []*Diagnostic) int {
+func compareRelatedDiagnostics(d1, d2 []*fourslashDiagnostic) int {
 	c := len(d2) - len(d1)
 	if c != 0 {
 		return c
