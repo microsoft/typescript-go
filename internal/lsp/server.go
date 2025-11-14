@@ -144,7 +144,7 @@ type Server struct {
 	typingsLocation    string
 
 	initializeParams   *lsproto.InitializeParams
-	clientCapabilities lsproto.FinalizedClientCapabilities
+	clientCapabilities lsproto.ResolvedClientCapabilities
 	positionEncoding   lsproto.PositionEncodingKind
 	locale             language.Tag
 
@@ -585,7 +585,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	s.initializeParams = params
-	s.clientCapabilities = finalizeClientCapabilities(params.Capabilities)
+	s.clientCapabilities = resolveClientCapabilities(params.Capabilities)
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if slices.Contains(s.clientCapabilities.General.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
@@ -968,16 +968,16 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
-func finalizeClientCapabilities(caps *lsproto.ClientCapabilities) lsproto.FinalizedClientCapabilities {
-	finalized := lsproto.FinalizeClientCapabilities(caps)
+func resolveClientCapabilities(caps *lsproto.ClientCapabilities) lsproto.ResolvedClientCapabilities {
+	resolved := lsproto.ResolveClientCapabilities(caps)
 
 	// Some clients claim that push and pull diagnostics have different capabilities,
 	// including vscode-languageclient v9. Work around this by defaulting any missing
 	// pull diagnostic caps with the pull diagnostic equivalents.
 	//
 	// TODO: remove when we upgrade to vscode-languageclient v10, which fixes this issue.
-	publish := finalized.TextDocument.PublishDiagnostics
-	diagnostic := &finalized.TextDocument.Diagnostic
+	publish := resolved.TextDocument.PublishDiagnostics
+	diagnostic := &resolved.TextDocument.Diagnostic
 	if !diagnostic.RelatedInformation && publish.RelatedInformation {
 		diagnostic.RelatedInformation = true
 	}
@@ -991,5 +991,5 @@ func finalizeClientCapabilities(caps *lsproto.ClientCapabilities) lsproto.Finali
 		diagnostic.TagSupport.ValueSet = publish.TagSupport.ValueSet
 	}
 
-	return finalized
+	return resolved
 }

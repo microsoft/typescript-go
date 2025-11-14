@@ -153,15 +153,15 @@ func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
 
 type clientCapabilitiesKey struct{}
 
-func WithClientCapabilities(ctx context.Context, caps *FinalizedClientCapabilities) context.Context {
+func WithClientCapabilities(ctx context.Context, caps *ResolvedClientCapabilities) context.Context {
 	return context.WithValue(ctx, clientCapabilitiesKey{}, caps)
 }
 
-func GetClientCapabilities(ctx context.Context) *FinalizedClientCapabilities {
-	if caps, _ := ctx.Value(clientCapabilitiesKey{}).(*FinalizedClientCapabilities); caps != nil {
+func GetClientCapabilities(ctx context.Context) *ResolvedClientCapabilities {
+	if caps, _ := ctx.Value(clientCapabilitiesKey{}).(*ResolvedClientCapabilities); caps != nil {
 		return caps
 	}
-	return &FinalizedClientCapabilities{}
+	return &ResolvedClientCapabilities{}
 }
 
 // PreferredMarkupKind returns the first (most preferred) markup kind from the given formats,

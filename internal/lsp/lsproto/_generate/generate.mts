@@ -472,18 +472,18 @@ function generateCode() {
         parts.push(s + "\n");
     }
 
-    function generateFinalizedStruct(structure: Structure, indent: string = "\t"): string[] {
+    function generateResolvedStruct(structure: Structure, indent: string = "\t"): string[] {
         const lines: string[] = [];
 
         for (const prop of structure.properties) {
             const type = resolveType(prop.type);
 
-            // For reference types that are structures, use a named finalized type
+            // For reference types that are structures, use a named resolved type
             if (prop.type.kind === "reference") {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
-                    // Use a named type for the finalized version
-                    lines.push(`${indent}${titleCase(prop.name)} Finalized${type.name}`);
+                    // Use a named type for the resolved version
+                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name}`);
                     continue;
                 }
             }
@@ -496,7 +496,7 @@ function generateCode() {
         return lines;
     }
 
-    function generateFinalizeConversion(structure: Structure, varName: string, indent: string): string[] {
+    function generateResolveConversion(structure: Structure, varName: string, indent: string): string[] {
         const lines: string[] = [];
 
         for (const prop of structure.properties) {
@@ -504,12 +504,12 @@ function generateCode() {
             const fieldName = titleCase(prop.name);
             const accessPath = `${varName}.${fieldName}`;
 
-            // For reference types that are structures, call the finalize function
+            // For reference types that are structures, call the resolve function
             if (prop.type.kind === "reference") {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
                     // Use lowercase (unexported) function name for helper functions
-                    lines.push(`${indent}${fieldName}: finalize${type.name}(${accessPath}),`);
+                    lines.push(`${indent}${fieldName}: resolve${type.name}(${accessPath}),`);
                     continue;
                 }
             }
@@ -547,15 +547,15 @@ function generateCode() {
         return deps;
     }
 
-    function generateFinalizedTypeAndHelper(structure: Structure, isMain: boolean = false): string[] {
+    function generateResolvedTypeAndHelper(structure: Structure, isMain: boolean = false): string[] {
         const lines: string[] = [];
-        const typeName = `Finalized${structure.name}`;
+        const typeName = `Resolved${structure.name}`;
         // Main function is exported, helpers are unexported
-        const funcName = isMain ? `Finalize${structure.name}` : `finalize${structure.name}`;
+        const funcName = isMain ? `Resolve${structure.name}` : `resolve${structure.name}`;
 
-        // Generate the finalized type
+        // Generate the resolved type
         lines.push(`type ${typeName} struct {`);
-        lines.push(...generateFinalizedStruct(structure, "\t"));
+        lines.push(...generateResolvedStruct(structure, "\t"));
         lines.push(`}`);
         lines.push(``);
 
@@ -565,7 +565,7 @@ function generateCode() {
         lines.push(`\t\treturn ${typeName}{}`);
         lines.push(`\t}`);
         lines.push(`\treturn ${typeName}{`);
-        lines.push(...generateFinalizeConversion(structure, "v", "\t\t"));
+        lines.push(...generateResolveConversion(structure, "v", "\t\t"));
         lines.push(`\t}`);
         lines.push(`}`);
         lines.push(``);
@@ -979,7 +979,7 @@ function generateCode() {
         writeLine("");
     }
 
-    // Generate finalized capabilities
+    // Generate resolved capabilities
     const clientCapsStructure = model.structures.find(s => s.name === "ClientCapabilities");
     if (clientCapsStructure) {
         writeLine("// Helper function for dereferencing pointers with zero value fallback");
@@ -992,22 +992,22 @@ function generateCode() {
         writeLine("}");
         writeLine("");
 
-        // Collect all dependent structures and generate their finalized types
+        // Collect all dependent structures and generate their resolved types
         const deps = collectStructureDependencies(clientCapsStructure);
         const uniqueDeps = Array.from(new Map(deps.map(d => [d.name, d])).values());
 
         for (const dep of uniqueDeps) {
-            const depLines = generateFinalizedTypeAndHelper(dep, false);
+            const depLines = generateResolvedTypeAndHelper(dep, false);
             for (const line of depLines) {
                 writeLine(line);
             }
         }
 
-        // Generate the main FinalizedClientCapabilities type and function
-        writeLine("// FinalizedClientCapabilities is a version of ClientCapabilities where all nested");
+        // Generate the main ResolvedClientCapabilities type and function
+        writeLine("// ResolvedClientCapabilities is a version of ClientCapabilities where all nested");
         writeLine("// fields are values (not pointers), making it easier to access deeply nested capabilities.");
-        writeLine("// Use FinalizeClientCapabilities to convert from ClientCapabilities.");
-        const mainLines = generateFinalizedTypeAndHelper(clientCapsStructure, true);
+        writeLine("// Use ResolveClientCapabilities to convert from ClientCapabilities.");
+        const mainLines = generateResolvedTypeAndHelper(clientCapsStructure, true);
         for (const line of mainLines) {
             writeLine(line);
         }
