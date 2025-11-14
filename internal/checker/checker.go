@@ -774,6 +774,7 @@ type Checker struct {
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
 	flowNodePostSuper                           map[*ast.FlowNode]bool
+	potentialWeakMapSetCollisions               []*ast.Node
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
@@ -2126,6 +2127,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
+		c.potentialWeakMapSetCollisions = nil
 		c.checkSourceElements(sourceFile.Statements.Nodes)
 		c.checkDeferredNodes(sourceFile)
 		if ast.IsExternalOrCommonJSModule(sourceFile) {
@@ -2142,6 +2144,12 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			}
 		} else {
 			c.wasCanceled = true
+		}
+		if len(c.potentialWeakMapSetCollisions) > 0 {
+			for _, node := range c.potentialWeakMapSetCollisions {
+				c.checkWeakMapSetCollision(node)
+			}
+			c.potentialWeakMapSetCollisions = nil
 		}
 		c.ctx = nil
 		links.typeChecked = true
@@ -2536,6 +2544,7 @@ func (c *Checker) checkPropertyDeclaration(node *ast.Node) {
 		c.checkGrammarComputedPropertyName(node.Name())
 	}
 	c.checkVariableLikeDeclaration(node)
+	c.setNodeLinksForPrivateIdentifierScope(node)
 	// property signatures already report "initializer not allowed in ambient context" elsewhere
 	if ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) && ast.IsPropertyDeclaration(node) {
 		if node.Initializer() != nil {
@@ -2633,6 +2642,7 @@ func (c *Checker) checkMethodDeclaration(node *ast.Node) {
 	if ast.IsPrivateIdentifier(node.Name()) && ast.GetContainingClass(node) == nil {
 		c.error(node, diagnostics.Private_identifiers_are_not_allowed_outside_class_bodies)
 	}
+	c.setNodeLinksForPrivateIdentifierScope(node)
 }
 
 func (c *Checker) checkClassStaticBlockDeclaration(node *ast.Node) {
@@ -2800,6 +2810,7 @@ func (c *Checker) checkAccessorDeclaration(node *ast.Node) {
 		c.checkAllCodePathsInNonVoidFunctionReturnOrThrow(node, returnType)
 	}
 	c.checkSourceElement(node.Body())
+	c.setNodeLinksForPrivateIdentifierScope(node)
 }
 
 func (c *Checker) checkTypeReferenceNode(node *ast.Node) {
@@ -10148,6 +10159,7 @@ func (c *Checker) assignBindingElementTypes(pattern *ast.Node, parentType *Type)
 
 func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.Node) {
 	c.checkCollisionWithRequireExportsInGeneratedCode(node, name)
+	c.recordPotentialCollisionWithWeakMapSetInGeneratedCode(node, name)
 	switch {
 	case name == nil:
 		return
@@ -10204,6 +10216,35 @@ func (c *Checker) needCollisionCheckForIdentifier(node *ast.Node, identifier *as
 		return false
 	}
 	return true
+}
+
+func (c *Checker) setNodeLinksForPrivateIdentifierScope(node *ast.Node) {
+	if name := node.Name(); ast.IsPrivateIdentifier(name) {
+		// Check if we need to mark containers with the ContainsClassWithPrivateIdentifiers flag
+		// This happens for older language versions or when useDefineForClassFields is false
+		// PrivateNamesAndClassStaticBlocks is ES2022, ClassAndClassElementDecorators is ESNext
+		if c.languageVersion < core.ScriptTargetES2022 || c.languageVersion < core.ScriptTargetESNext || !c.emitStandardClassFields {
+			for lexicalScope := ast.GetEnclosingBlockScopeContainer(node); lexicalScope != nil; lexicalScope = ast.GetEnclosingBlockScopeContainer(lexicalScope) {
+				c.nodeLinks.Get(lexicalScope).flags |= NodeCheckFlagsContainsClassWithPrivateIdentifiers
+			}
+		}
+	}
+}
+
+func (c *Checker) recordPotentialCollisionWithWeakMapSetInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if c.languageVersion <= core.ScriptTargetES2021 &&
+		(c.needCollisionCheckForIdentifier(node, name, "WeakMap") || c.needCollisionCheckForIdentifier(node, name, "WeakSet")) {
+		c.potentialWeakMapSetCollisions = append(c.potentialWeakMapSetCollisions, node)
+	}
+}
+
+func (c *Checker) checkWeakMapSetCollision(node *ast.Node) {
+	enclosingBlockScope := ast.GetEnclosingBlockScopeContainer(node)
+	if c.nodeLinks.Get(enclosingBlockScope).flags&NodeCheckFlagsContainsClassWithPrivateIdentifiers != 0 {
+		if name := node.Name(); ast.IsIdentifier(name) {
+			c.errorSkippedOnNoEmit(node, diagnostics.Compiler_reserves_name_0_when_emitting_private_identifier_downlevel, name.Text())
+		}
+	}
 }
 
 func (c *Checker) checkTypeOfExpression(node *ast.Node) *Type {
