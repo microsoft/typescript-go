@@ -25736,7 +25736,7 @@ func derefOr[T any](v *T) T {
 }
 
 type ResolvedChangeAnnotationsSupportOptions struct {
-	GroupsOnLabel bool
+	GroupsOnLabel bool `json:"groupsOnLabel,omitzero"`
 }
 
 func resolveChangeAnnotationsSupportOptions(v *ChangeAnnotationsSupportOptions) ResolvedChangeAnnotationsSupportOptions {
@@ -25749,13 +25749,13 @@ func resolveChangeAnnotationsSupportOptions(v *ChangeAnnotationsSupportOptions) 
 }
 
 type ResolvedWorkspaceEditClientCapabilities struct {
-	DocumentChanges         bool
-	ResourceOperations      []ResourceOperationKind
-	FailureHandling         FailureHandlingKind
-	NormalizesLineEndings   bool
-	ChangeAnnotationSupport ResolvedChangeAnnotationsSupportOptions
-	MetadataSupport         bool
-	SnippetEditSupport      bool
+	DocumentChanges         bool                                    `json:"documentChanges,omitzero"`
+	ResourceOperations      []ResourceOperationKind                 `json:"resourceOperations,omitzero"`
+	FailureHandling         FailureHandlingKind                     `json:"failureHandling,omitzero"`
+	NormalizesLineEndings   bool                                    `json:"normalizesLineEndings,omitzero"`
+	ChangeAnnotationSupport ResolvedChangeAnnotationsSupportOptions `json:"changeAnnotationSupport,omitzero"`
+	MetadataSupport         bool                                    `json:"metadataSupport,omitzero"`
+	SnippetEditSupport      bool                                    `json:"snippetEditSupport,omitzero"`
 }
 
 func resolveWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) ResolvedWorkspaceEditClientCapabilities {
@@ -25774,7 +25774,7 @@ func resolveWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) 
 }
 
 type ResolvedDidChangeConfigurationClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveDidChangeConfigurationClientCapabilities(v *DidChangeConfigurationClientCapabilities) ResolvedDidChangeConfigurationClientCapabilities {
@@ -25787,8 +25787,8 @@ func resolveDidChangeConfigurationClientCapabilities(v *DidChangeConfigurationCl
 }
 
 type ResolvedDidChangeWatchedFilesClientCapabilities struct {
-	DynamicRegistration    bool
-	RelativePatternSupport bool
+	DynamicRegistration    bool `json:"dynamicRegistration,omitzero"`
+	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
 }
 
 func resolveDidChangeWatchedFilesClientCapabilities(v *DidChangeWatchedFilesClientCapabilities) ResolvedDidChangeWatchedFilesClientCapabilities {
@@ -25802,7 +25802,7 @@ func resolveDidChangeWatchedFilesClientCapabilities(v *DidChangeWatchedFilesClie
 }
 
 type ResolvedClientSymbolKindOptions struct {
-	ValueSet []SymbolKind
+	ValueSet []SymbolKind `json:"valueSet,omitzero"`
 }
 
 func resolveClientSymbolKindOptions(v *ClientSymbolKindOptions) ResolvedClientSymbolKindOptions {
@@ -25815,7 +25815,7 @@ func resolveClientSymbolKindOptions(v *ClientSymbolKindOptions) ResolvedClientSy
 }
 
 type ResolvedClientSymbolTagOptions struct {
-	ValueSet []SymbolTag
+	ValueSet []SymbolTag `json:"valueSet,omitzero"`
 }
 
 func resolveClientSymbolTagOptions(v *ClientSymbolTagOptions) ResolvedClientSymbolTagOptions {
@@ -25828,7 +25828,7 @@ func resolveClientSymbolTagOptions(v *ClientSymbolTagOptions) ResolvedClientSymb
 }
 
 type ResolvedClientSymbolResolveOptions struct {
-	Properties []string
+	Properties []string `json:"properties,omitzero"`
 }
 
 func resolveClientSymbolResolveOptions(v *ClientSymbolResolveOptions) ResolvedClientSymbolResolveOptions {
@@ -25841,10 +25841,10 @@ func resolveClientSymbolResolveOptions(v *ClientSymbolResolveOptions) ResolvedCl
 }
 
 type ResolvedWorkspaceSymbolClientCapabilities struct {
-	DynamicRegistration bool
-	SymbolKind          ResolvedClientSymbolKindOptions
-	TagSupport          ResolvedClientSymbolTagOptions
-	ResolveSupport      ResolvedClientSymbolResolveOptions
+	DynamicRegistration bool                               `json:"dynamicRegistration,omitzero"`
+	SymbolKind          ResolvedClientSymbolKindOptions    `json:"symbolKind,omitzero"`
+	TagSupport          ResolvedClientSymbolTagOptions     `json:"tagSupport,omitzero"`
+	ResolveSupport      ResolvedClientSymbolResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 func resolveWorkspaceSymbolClientCapabilities(v *WorkspaceSymbolClientCapabilities) ResolvedWorkspaceSymbolClientCapabilities {
@@ -25860,7 +25860,7 @@ func resolveWorkspaceSymbolClientCapabilities(v *WorkspaceSymbolClientCapabiliti
 }
 
 type ResolvedExecuteCommandClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveExecuteCommandClientCapabilities(v *ExecuteCommandClientCapabilities) ResolvedExecuteCommandClientCapabilities {
@@ -25873,7 +25873,7 @@ func resolveExecuteCommandClientCapabilities(v *ExecuteCommandClientCapabilities
 }
 
 type ResolvedSemanticTokensWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveSemanticTokensWorkspaceClientCapabilities(v *SemanticTokensWorkspaceClientCapabilities) ResolvedSemanticTokensWorkspaceClientCapabilities {
@@ -25886,7 +25886,7 @@ func resolveSemanticTokensWorkspaceClientCapabilities(v *SemanticTokensWorkspace
 }
 
 type ResolvedCodeLensWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveCodeLensWorkspaceClientCapabilities(v *CodeLensWorkspaceClientCapabilities) ResolvedCodeLensWorkspaceClientCapabilities {
@@ -25899,13 +25899,13 @@ func resolveCodeLensWorkspaceClientCapabilities(v *CodeLensWorkspaceClientCapabi
 }
 
 type ResolvedFileOperationClientCapabilities struct {
-	DynamicRegistration bool
-	DidCreate           bool
-	WillCreate          bool
-	DidRename           bool
-	WillRename          bool
-	DidDelete           bool
-	WillDelete          bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	DidCreate           bool `json:"didCreate,omitzero"`
+	WillCreate          bool `json:"willCreate,omitzero"`
+	DidRename           bool `json:"didRename,omitzero"`
+	WillRename          bool `json:"willRename,omitzero"`
+	DidDelete           bool `json:"didDelete,omitzero"`
+	WillDelete          bool `json:"willDelete,omitzero"`
 }
 
 func resolveFileOperationClientCapabilities(v *FileOperationClientCapabilities) ResolvedFileOperationClientCapabilities {
@@ -25924,7 +25924,7 @@ func resolveFileOperationClientCapabilities(v *FileOperationClientCapabilities) 
 }
 
 type ResolvedInlineValueWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveInlineValueWorkspaceClientCapabilities(v *InlineValueWorkspaceClientCapabilities) ResolvedInlineValueWorkspaceClientCapabilities {
@@ -25937,7 +25937,7 @@ func resolveInlineValueWorkspaceClientCapabilities(v *InlineValueWorkspaceClient
 }
 
 type ResolvedInlayHintWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveInlayHintWorkspaceClientCapabilities(v *InlayHintWorkspaceClientCapabilities) ResolvedInlayHintWorkspaceClientCapabilities {
@@ -25950,7 +25950,7 @@ func resolveInlayHintWorkspaceClientCapabilities(v *InlayHintWorkspaceClientCapa
 }
 
 type ResolvedDiagnosticWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveDiagnosticWorkspaceClientCapabilities(v *DiagnosticWorkspaceClientCapabilities) ResolvedDiagnosticWorkspaceClientCapabilities {
@@ -25963,7 +25963,7 @@ func resolveDiagnosticWorkspaceClientCapabilities(v *DiagnosticWorkspaceClientCa
 }
 
 type ResolvedFoldingRangeWorkspaceClientCapabilities struct {
-	RefreshSupport bool
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
 func resolveFoldingRangeWorkspaceClientCapabilities(v *FoldingRangeWorkspaceClientCapabilities) ResolvedFoldingRangeWorkspaceClientCapabilities {
@@ -25976,7 +25976,7 @@ func resolveFoldingRangeWorkspaceClientCapabilities(v *FoldingRangeWorkspaceClie
 }
 
 type ResolvedTextDocumentContentClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveTextDocumentContentClientCapabilities(v *TextDocumentContentClientCapabilities) ResolvedTextDocumentContentClientCapabilities {
@@ -25989,22 +25989,22 @@ func resolveTextDocumentContentClientCapabilities(v *TextDocumentContentClientCa
 }
 
 type ResolvedWorkspaceClientCapabilities struct {
-	ApplyEdit              bool
-	WorkspaceEdit          ResolvedWorkspaceEditClientCapabilities
-	DidChangeConfiguration ResolvedDidChangeConfigurationClientCapabilities
-	DidChangeWatchedFiles  ResolvedDidChangeWatchedFilesClientCapabilities
-	Symbol                 ResolvedWorkspaceSymbolClientCapabilities
-	ExecuteCommand         ResolvedExecuteCommandClientCapabilities
-	WorkspaceFolders       bool
-	Configuration          bool
-	SemanticTokens         ResolvedSemanticTokensWorkspaceClientCapabilities
-	CodeLens               ResolvedCodeLensWorkspaceClientCapabilities
-	FileOperations         ResolvedFileOperationClientCapabilities
-	InlineValue            ResolvedInlineValueWorkspaceClientCapabilities
-	InlayHint              ResolvedInlayHintWorkspaceClientCapabilities
-	Diagnostics            ResolvedDiagnosticWorkspaceClientCapabilities
-	FoldingRange           ResolvedFoldingRangeWorkspaceClientCapabilities
-	TextDocumentContent    ResolvedTextDocumentContentClientCapabilities
+	ApplyEdit              bool                                              `json:"applyEdit,omitzero"`
+	WorkspaceEdit          ResolvedWorkspaceEditClientCapabilities           `json:"workspaceEdit,omitzero"`
+	DidChangeConfiguration ResolvedDidChangeConfigurationClientCapabilities  `json:"didChangeConfiguration,omitzero"`
+	DidChangeWatchedFiles  ResolvedDidChangeWatchedFilesClientCapabilities   `json:"didChangeWatchedFiles,omitzero"`
+	Symbol                 ResolvedWorkspaceSymbolClientCapabilities         `json:"symbol,omitzero"`
+	ExecuteCommand         ResolvedExecuteCommandClientCapabilities          `json:"executeCommand,omitzero"`
+	WorkspaceFolders       bool                                              `json:"workspaceFolders,omitzero"`
+	Configuration          bool                                              `json:"configuration,omitzero"`
+	SemanticTokens         ResolvedSemanticTokensWorkspaceClientCapabilities `json:"semanticTokens,omitzero"`
+	CodeLens               ResolvedCodeLensWorkspaceClientCapabilities       `json:"codeLens,omitzero"`
+	FileOperations         ResolvedFileOperationClientCapabilities           `json:"fileOperations,omitzero"`
+	InlineValue            ResolvedInlineValueWorkspaceClientCapabilities    `json:"inlineValue,omitzero"`
+	InlayHint              ResolvedInlayHintWorkspaceClientCapabilities      `json:"inlayHint,omitzero"`
+	Diagnostics            ResolvedDiagnosticWorkspaceClientCapabilities     `json:"diagnostics,omitzero"`
+	FoldingRange           ResolvedFoldingRangeWorkspaceClientCapabilities   `json:"foldingRange,omitzero"`
+	TextDocumentContent    ResolvedTextDocumentContentClientCapabilities     `json:"textDocumentContent,omitzero"`
 }
 
 func resolveWorkspaceClientCapabilities(v *WorkspaceClientCapabilities) ResolvedWorkspaceClientCapabilities {
@@ -26032,10 +26032,10 @@ func resolveWorkspaceClientCapabilities(v *WorkspaceClientCapabilities) Resolved
 }
 
 type ResolvedTextDocumentSyncClientCapabilities struct {
-	DynamicRegistration bool
-	WillSave            bool
-	WillSaveWaitUntil   bool
-	DidSave             bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	WillSave            bool `json:"willSave,omitzero"`
+	WillSaveWaitUntil   bool `json:"willSaveWaitUntil,omitzero"`
+	DidSave             bool `json:"didSave,omitzero"`
 }
 
 func resolveTextDocumentSyncClientCapabilities(v *TextDocumentSyncClientCapabilities) ResolvedTextDocumentSyncClientCapabilities {
@@ -26051,7 +26051,7 @@ func resolveTextDocumentSyncClientCapabilities(v *TextDocumentSyncClientCapabili
 }
 
 type ResolvedTextDocumentFilterClientCapabilities struct {
-	RelativePatternSupport bool
+	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
 }
 
 func resolveTextDocumentFilterClientCapabilities(v *TextDocumentFilterClientCapabilities) ResolvedTextDocumentFilterClientCapabilities {
@@ -26064,7 +26064,7 @@ func resolveTextDocumentFilterClientCapabilities(v *TextDocumentFilterClientCapa
 }
 
 type ResolvedCompletionItemTagOptions struct {
-	ValueSet []CompletionItemTag
+	ValueSet []CompletionItemTag `json:"valueSet,omitzero"`
 }
 
 func resolveCompletionItemTagOptions(v *CompletionItemTagOptions) ResolvedCompletionItemTagOptions {
@@ -26077,7 +26077,7 @@ func resolveCompletionItemTagOptions(v *CompletionItemTagOptions) ResolvedComple
 }
 
 type ResolvedClientCompletionItemResolveOptions struct {
-	Properties []string
+	Properties []string `json:"properties,omitzero"`
 }
 
 func resolveClientCompletionItemResolveOptions(v *ClientCompletionItemResolveOptions) ResolvedClientCompletionItemResolveOptions {
@@ -26090,7 +26090,7 @@ func resolveClientCompletionItemResolveOptions(v *ClientCompletionItemResolveOpt
 }
 
 type ResolvedClientCompletionItemInsertTextModeOptions struct {
-	ValueSet []InsertTextMode
+	ValueSet []InsertTextMode `json:"valueSet,omitzero"`
 }
 
 func resolveClientCompletionItemInsertTextModeOptions(v *ClientCompletionItemInsertTextModeOptions) ResolvedClientCompletionItemInsertTextModeOptions {
@@ -26103,16 +26103,16 @@ func resolveClientCompletionItemInsertTextModeOptions(v *ClientCompletionItemIns
 }
 
 type ResolvedClientCompletionItemOptions struct {
-	SnippetSupport          bool
-	CommitCharactersSupport bool
-	DocumentationFormat     []MarkupKind
-	DeprecatedSupport       bool
-	PreselectSupport        bool
-	TagSupport              ResolvedCompletionItemTagOptions
-	InsertReplaceSupport    bool
-	ResolveSupport          ResolvedClientCompletionItemResolveOptions
-	InsertTextModeSupport   ResolvedClientCompletionItemInsertTextModeOptions
-	LabelDetailsSupport     bool
+	SnippetSupport          bool                                              `json:"snippetSupport,omitzero"`
+	CommitCharactersSupport bool                                              `json:"commitCharactersSupport,omitzero"`
+	DocumentationFormat     []MarkupKind                                      `json:"documentationFormat,omitzero"`
+	DeprecatedSupport       bool                                              `json:"deprecatedSupport,omitzero"`
+	PreselectSupport        bool                                              `json:"preselectSupport,omitzero"`
+	TagSupport              ResolvedCompletionItemTagOptions                  `json:"tagSupport,omitzero"`
+	InsertReplaceSupport    bool                                              `json:"insertReplaceSupport,omitzero"`
+	ResolveSupport          ResolvedClientCompletionItemResolveOptions        `json:"resolveSupport,omitzero"`
+	InsertTextModeSupport   ResolvedClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport,omitzero"`
+	LabelDetailsSupport     bool                                              `json:"labelDetailsSupport,omitzero"`
 }
 
 func resolveClientCompletionItemOptions(v *ClientCompletionItemOptions) ResolvedClientCompletionItemOptions {
@@ -26134,7 +26134,7 @@ func resolveClientCompletionItemOptions(v *ClientCompletionItemOptions) Resolved
 }
 
 type ResolvedClientCompletionItemOptionsKind struct {
-	ValueSet []CompletionItemKind
+	ValueSet []CompletionItemKind `json:"valueSet,omitzero"`
 }
 
 func resolveClientCompletionItemOptionsKind(v *ClientCompletionItemOptionsKind) ResolvedClientCompletionItemOptionsKind {
@@ -26147,8 +26147,8 @@ func resolveClientCompletionItemOptionsKind(v *ClientCompletionItemOptionsKind) 
 }
 
 type ResolvedCompletionListCapabilities struct {
-	ItemDefaults     []string
-	ApplyKindSupport bool
+	ItemDefaults     []string `json:"itemDefaults,omitzero"`
+	ApplyKindSupport bool     `json:"applyKindSupport,omitzero"`
 }
 
 func resolveCompletionListCapabilities(v *CompletionListCapabilities) ResolvedCompletionListCapabilities {
@@ -26162,12 +26162,12 @@ func resolveCompletionListCapabilities(v *CompletionListCapabilities) ResolvedCo
 }
 
 type ResolvedCompletionClientCapabilities struct {
-	DynamicRegistration bool
-	CompletionItem      ResolvedClientCompletionItemOptions
-	CompletionItemKind  ResolvedClientCompletionItemOptionsKind
-	InsertTextMode      InsertTextMode
-	ContextSupport      bool
-	CompletionList      ResolvedCompletionListCapabilities
+	DynamicRegistration bool                                    `json:"dynamicRegistration,omitzero"`
+	CompletionItem      ResolvedClientCompletionItemOptions     `json:"completionItem,omitzero"`
+	CompletionItemKind  ResolvedClientCompletionItemOptionsKind `json:"completionItemKind,omitzero"`
+	InsertTextMode      InsertTextMode                          `json:"insertTextMode,omitzero"`
+	ContextSupport      bool                                    `json:"contextSupport,omitzero"`
+	CompletionList      ResolvedCompletionListCapabilities      `json:"completionList,omitzero"`
 }
 
 func resolveCompletionClientCapabilities(v *CompletionClientCapabilities) ResolvedCompletionClientCapabilities {
@@ -26185,8 +26185,8 @@ func resolveCompletionClientCapabilities(v *CompletionClientCapabilities) Resolv
 }
 
 type ResolvedHoverClientCapabilities struct {
-	DynamicRegistration bool
-	ContentFormat       []MarkupKind
+	DynamicRegistration bool         `json:"dynamicRegistration,omitzero"`
+	ContentFormat       []MarkupKind `json:"contentFormat,omitzero"`
 }
 
 func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverClientCapabilities {
@@ -26200,7 +26200,7 @@ func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverCli
 }
 
 type ResolvedClientSignatureParameterInformationOptions struct {
-	LabelOffsetSupport bool
+	LabelOffsetSupport bool `json:"labelOffsetSupport,omitzero"`
 }
 
 func resolveClientSignatureParameterInformationOptions(v *ClientSignatureParameterInformationOptions) ResolvedClientSignatureParameterInformationOptions {
@@ -26213,10 +26213,10 @@ func resolveClientSignatureParameterInformationOptions(v *ClientSignatureParamet
 }
 
 type ResolvedClientSignatureInformationOptions struct {
-	DocumentationFormat      []MarkupKind
-	ParameterInformation     ResolvedClientSignatureParameterInformationOptions
-	ActiveParameterSupport   bool
-	NoActiveParameterSupport bool
+	DocumentationFormat      []MarkupKind                                       `json:"documentationFormat,omitzero"`
+	ParameterInformation     ResolvedClientSignatureParameterInformationOptions `json:"parameterInformation,omitzero"`
+	ActiveParameterSupport   bool                                               `json:"activeParameterSupport,omitzero"`
+	NoActiveParameterSupport bool                                               `json:"noActiveParameterSupport,omitzero"`
 }
 
 func resolveClientSignatureInformationOptions(v *ClientSignatureInformationOptions) ResolvedClientSignatureInformationOptions {
@@ -26232,9 +26232,9 @@ func resolveClientSignatureInformationOptions(v *ClientSignatureInformationOptio
 }
 
 type ResolvedSignatureHelpClientCapabilities struct {
-	DynamicRegistration  bool
-	SignatureInformation ResolvedClientSignatureInformationOptions
-	ContextSupport       bool
+	DynamicRegistration  bool                                      `json:"dynamicRegistration,omitzero"`
+	SignatureInformation ResolvedClientSignatureInformationOptions `json:"signatureInformation,omitzero"`
+	ContextSupport       bool                                      `json:"contextSupport,omitzero"`
 }
 
 func resolveSignatureHelpClientCapabilities(v *SignatureHelpClientCapabilities) ResolvedSignatureHelpClientCapabilities {
@@ -26249,8 +26249,8 @@ func resolveSignatureHelpClientCapabilities(v *SignatureHelpClientCapabilities) 
 }
 
 type ResolvedDeclarationClientCapabilities struct {
-	DynamicRegistration bool
-	LinkSupport         bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	LinkSupport         bool `json:"linkSupport,omitzero"`
 }
 
 func resolveDeclarationClientCapabilities(v *DeclarationClientCapabilities) ResolvedDeclarationClientCapabilities {
@@ -26264,8 +26264,8 @@ func resolveDeclarationClientCapabilities(v *DeclarationClientCapabilities) Reso
 }
 
 type ResolvedDefinitionClientCapabilities struct {
-	DynamicRegistration bool
-	LinkSupport         bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	LinkSupport         bool `json:"linkSupport,omitzero"`
 }
 
 func resolveDefinitionClientCapabilities(v *DefinitionClientCapabilities) ResolvedDefinitionClientCapabilities {
@@ -26279,8 +26279,8 @@ func resolveDefinitionClientCapabilities(v *DefinitionClientCapabilities) Resolv
 }
 
 type ResolvedTypeDefinitionClientCapabilities struct {
-	DynamicRegistration bool
-	LinkSupport         bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	LinkSupport         bool `json:"linkSupport,omitzero"`
 }
 
 func resolveTypeDefinitionClientCapabilities(v *TypeDefinitionClientCapabilities) ResolvedTypeDefinitionClientCapabilities {
@@ -26294,8 +26294,8 @@ func resolveTypeDefinitionClientCapabilities(v *TypeDefinitionClientCapabilities
 }
 
 type ResolvedImplementationClientCapabilities struct {
-	DynamicRegistration bool
-	LinkSupport         bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	LinkSupport         bool `json:"linkSupport,omitzero"`
 }
 
 func resolveImplementationClientCapabilities(v *ImplementationClientCapabilities) ResolvedImplementationClientCapabilities {
@@ -26309,7 +26309,7 @@ func resolveImplementationClientCapabilities(v *ImplementationClientCapabilities
 }
 
 type ResolvedReferenceClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveReferenceClientCapabilities(v *ReferenceClientCapabilities) ResolvedReferenceClientCapabilities {
@@ -26322,7 +26322,7 @@ func resolveReferenceClientCapabilities(v *ReferenceClientCapabilities) Resolved
 }
 
 type ResolvedDocumentHighlightClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveDocumentHighlightClientCapabilities(v *DocumentHighlightClientCapabilities) ResolvedDocumentHighlightClientCapabilities {
@@ -26335,11 +26335,11 @@ func resolveDocumentHighlightClientCapabilities(v *DocumentHighlightClientCapabi
 }
 
 type ResolvedDocumentSymbolClientCapabilities struct {
-	DynamicRegistration               bool
-	SymbolKind                        ResolvedClientSymbolKindOptions
-	HierarchicalDocumentSymbolSupport bool
-	TagSupport                        ResolvedClientSymbolTagOptions
-	LabelSupport                      bool
+	DynamicRegistration               bool                            `json:"dynamicRegistration,omitzero"`
+	SymbolKind                        ResolvedClientSymbolKindOptions `json:"symbolKind,omitzero"`
+	HierarchicalDocumentSymbolSupport bool                            `json:"hierarchicalDocumentSymbolSupport,omitzero"`
+	TagSupport                        ResolvedClientSymbolTagOptions  `json:"tagSupport,omitzero"`
+	LabelSupport                      bool                            `json:"labelSupport,omitzero"`
 }
 
 func resolveDocumentSymbolClientCapabilities(v *DocumentSymbolClientCapabilities) ResolvedDocumentSymbolClientCapabilities {
@@ -26356,7 +26356,7 @@ func resolveDocumentSymbolClientCapabilities(v *DocumentSymbolClientCapabilities
 }
 
 type ResolvedClientCodeActionKindOptions struct {
-	ValueSet []CodeActionKind
+	ValueSet []CodeActionKind `json:"valueSet,omitzero"`
 }
 
 func resolveClientCodeActionKindOptions(v *ClientCodeActionKindOptions) ResolvedClientCodeActionKindOptions {
@@ -26369,7 +26369,7 @@ func resolveClientCodeActionKindOptions(v *ClientCodeActionKindOptions) Resolved
 }
 
 type ResolvedClientCodeActionLiteralOptions struct {
-	CodeActionKind ResolvedClientCodeActionKindOptions
+	CodeActionKind ResolvedClientCodeActionKindOptions `json:"codeActionKind,omitzero"`
 }
 
 func resolveClientCodeActionLiteralOptions(v *ClientCodeActionLiteralOptions) ResolvedClientCodeActionLiteralOptions {
@@ -26382,7 +26382,7 @@ func resolveClientCodeActionLiteralOptions(v *ClientCodeActionLiteralOptions) Re
 }
 
 type ResolvedClientCodeActionResolveOptions struct {
-	Properties []string
+	Properties []string `json:"properties,omitzero"`
 }
 
 func resolveClientCodeActionResolveOptions(v *ClientCodeActionResolveOptions) ResolvedClientCodeActionResolveOptions {
@@ -26395,7 +26395,7 @@ func resolveClientCodeActionResolveOptions(v *ClientCodeActionResolveOptions) Re
 }
 
 type ResolvedCodeActionTagOptions struct {
-	ValueSet []CodeActionTag
+	ValueSet []CodeActionTag `json:"valueSet,omitzero"`
 }
 
 func resolveCodeActionTagOptions(v *CodeActionTagOptions) ResolvedCodeActionTagOptions {
@@ -26408,15 +26408,15 @@ func resolveCodeActionTagOptions(v *CodeActionTagOptions) ResolvedCodeActionTagO
 }
 
 type ResolvedCodeActionClientCapabilities struct {
-	DynamicRegistration      bool
-	CodeActionLiteralSupport ResolvedClientCodeActionLiteralOptions
-	IsPreferredSupport       bool
-	DisabledSupport          bool
-	DataSupport              bool
-	ResolveSupport           ResolvedClientCodeActionResolveOptions
-	HonorsChangeAnnotations  bool
-	DocumentationSupport     bool
-	TagSupport               ResolvedCodeActionTagOptions
+	DynamicRegistration      bool                                   `json:"dynamicRegistration,omitzero"`
+	CodeActionLiteralSupport ResolvedClientCodeActionLiteralOptions `json:"codeActionLiteralSupport,omitzero"`
+	IsPreferredSupport       bool                                   `json:"isPreferredSupport,omitzero"`
+	DisabledSupport          bool                                   `json:"disabledSupport,omitzero"`
+	DataSupport              bool                                   `json:"dataSupport,omitzero"`
+	ResolveSupport           ResolvedClientCodeActionResolveOptions `json:"resolveSupport,omitzero"`
+	HonorsChangeAnnotations  bool                                   `json:"honorsChangeAnnotations,omitzero"`
+	DocumentationSupport     bool                                   `json:"documentationSupport,omitzero"`
+	TagSupport               ResolvedCodeActionTagOptions           `json:"tagSupport,omitzero"`
 }
 
 func resolveCodeActionClientCapabilities(v *CodeActionClientCapabilities) ResolvedCodeActionClientCapabilities {
@@ -26437,7 +26437,7 @@ func resolveCodeActionClientCapabilities(v *CodeActionClientCapabilities) Resolv
 }
 
 type ResolvedClientCodeLensResolveOptions struct {
-	Properties []string
+	Properties []string `json:"properties,omitzero"`
 }
 
 func resolveClientCodeLensResolveOptions(v *ClientCodeLensResolveOptions) ResolvedClientCodeLensResolveOptions {
@@ -26450,8 +26450,8 @@ func resolveClientCodeLensResolveOptions(v *ClientCodeLensResolveOptions) Resolv
 }
 
 type ResolvedCodeLensClientCapabilities struct {
-	DynamicRegistration bool
-	ResolveSupport      ResolvedClientCodeLensResolveOptions
+	DynamicRegistration bool                                 `json:"dynamicRegistration,omitzero"`
+	ResolveSupport      ResolvedClientCodeLensResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 func resolveCodeLensClientCapabilities(v *CodeLensClientCapabilities) ResolvedCodeLensClientCapabilities {
@@ -26465,8 +26465,8 @@ func resolveCodeLensClientCapabilities(v *CodeLensClientCapabilities) ResolvedCo
 }
 
 type ResolvedDocumentLinkClientCapabilities struct {
-	DynamicRegistration bool
-	TooltipSupport      bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	TooltipSupport      bool `json:"tooltipSupport,omitzero"`
 }
 
 func resolveDocumentLinkClientCapabilities(v *DocumentLinkClientCapabilities) ResolvedDocumentLinkClientCapabilities {
@@ -26480,7 +26480,7 @@ func resolveDocumentLinkClientCapabilities(v *DocumentLinkClientCapabilities) Re
 }
 
 type ResolvedDocumentColorClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveDocumentColorClientCapabilities(v *DocumentColorClientCapabilities) ResolvedDocumentColorClientCapabilities {
@@ -26493,7 +26493,7 @@ func resolveDocumentColorClientCapabilities(v *DocumentColorClientCapabilities) 
 }
 
 type ResolvedDocumentFormattingClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveDocumentFormattingClientCapabilities(v *DocumentFormattingClientCapabilities) ResolvedDocumentFormattingClientCapabilities {
@@ -26506,8 +26506,8 @@ func resolveDocumentFormattingClientCapabilities(v *DocumentFormattingClientCapa
 }
 
 type ResolvedDocumentRangeFormattingClientCapabilities struct {
-	DynamicRegistration bool
-	RangesSupport       bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	RangesSupport       bool `json:"rangesSupport,omitzero"`
 }
 
 func resolveDocumentRangeFormattingClientCapabilities(v *DocumentRangeFormattingClientCapabilities) ResolvedDocumentRangeFormattingClientCapabilities {
@@ -26521,7 +26521,7 @@ func resolveDocumentRangeFormattingClientCapabilities(v *DocumentRangeFormatting
 }
 
 type ResolvedDocumentOnTypeFormattingClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveDocumentOnTypeFormattingClientCapabilities(v *DocumentOnTypeFormattingClientCapabilities) ResolvedDocumentOnTypeFormattingClientCapabilities {
@@ -26534,10 +26534,10 @@ func resolveDocumentOnTypeFormattingClientCapabilities(v *DocumentOnTypeFormatti
 }
 
 type ResolvedRenameClientCapabilities struct {
-	DynamicRegistration           bool
-	PrepareSupport                bool
-	PrepareSupportDefaultBehavior PrepareSupportDefaultBehavior
-	HonorsChangeAnnotations       bool
+	DynamicRegistration           bool                          `json:"dynamicRegistration,omitzero"`
+	PrepareSupport                bool                          `json:"prepareSupport,omitzero"`
+	PrepareSupportDefaultBehavior PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitzero"`
+	HonorsChangeAnnotations       bool                          `json:"honorsChangeAnnotations,omitzero"`
 }
 
 func resolveRenameClientCapabilities(v *RenameClientCapabilities) ResolvedRenameClientCapabilities {
@@ -26553,7 +26553,7 @@ func resolveRenameClientCapabilities(v *RenameClientCapabilities) ResolvedRename
 }
 
 type ResolvedClientFoldingRangeKindOptions struct {
-	ValueSet []FoldingRangeKind
+	ValueSet []FoldingRangeKind `json:"valueSet,omitzero"`
 }
 
 func resolveClientFoldingRangeKindOptions(v *ClientFoldingRangeKindOptions) ResolvedClientFoldingRangeKindOptions {
@@ -26566,7 +26566,7 @@ func resolveClientFoldingRangeKindOptions(v *ClientFoldingRangeKindOptions) Reso
 }
 
 type ResolvedClientFoldingRangeOptions struct {
-	CollapsedText bool
+	CollapsedText bool `json:"collapsedText,omitzero"`
 }
 
 func resolveClientFoldingRangeOptions(v *ClientFoldingRangeOptions) ResolvedClientFoldingRangeOptions {
@@ -26579,11 +26579,11 @@ func resolveClientFoldingRangeOptions(v *ClientFoldingRangeOptions) ResolvedClie
 }
 
 type ResolvedFoldingRangeClientCapabilities struct {
-	DynamicRegistration bool
-	RangeLimit          uint32
-	LineFoldingOnly     bool
-	FoldingRangeKind    ResolvedClientFoldingRangeKindOptions
-	FoldingRange        ResolvedClientFoldingRangeOptions
+	DynamicRegistration bool                                  `json:"dynamicRegistration,omitzero"`
+	RangeLimit          uint32                                `json:"rangeLimit,omitzero"`
+	LineFoldingOnly     bool                                  `json:"lineFoldingOnly,omitzero"`
+	FoldingRangeKind    ResolvedClientFoldingRangeKindOptions `json:"foldingRangeKind,omitzero"`
+	FoldingRange        ResolvedClientFoldingRangeOptions     `json:"foldingRange,omitzero"`
 }
 
 func resolveFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) ResolvedFoldingRangeClientCapabilities {
@@ -26600,7 +26600,7 @@ func resolveFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) Re
 }
 
 type ResolvedSelectionRangeClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveSelectionRangeClientCapabilities(v *SelectionRangeClientCapabilities) ResolvedSelectionRangeClientCapabilities {
@@ -26613,7 +26613,7 @@ func resolveSelectionRangeClientCapabilities(v *SelectionRangeClientCapabilities
 }
 
 type ResolvedClientDiagnosticsTagOptions struct {
-	ValueSet []DiagnosticTag
+	ValueSet []DiagnosticTag `json:"valueSet,omitzero"`
 }
 
 func resolveClientDiagnosticsTagOptions(v *ClientDiagnosticsTagOptions) ResolvedClientDiagnosticsTagOptions {
@@ -26626,11 +26626,11 @@ func resolveClientDiagnosticsTagOptions(v *ClientDiagnosticsTagOptions) Resolved
 }
 
 type ResolvedPublishDiagnosticsClientCapabilities struct {
-	RelatedInformation     bool
-	TagSupport             ResolvedClientDiagnosticsTagOptions
-	CodeDescriptionSupport bool
-	DataSupport            bool
-	VersionSupport         bool
+	RelatedInformation     bool                                `json:"relatedInformation,omitzero"`
+	TagSupport             ResolvedClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+	CodeDescriptionSupport bool                                `json:"codeDescriptionSupport,omitzero"`
+	DataSupport            bool                                `json:"dataSupport,omitzero"`
+	VersionSupport         bool                                `json:"versionSupport,omitzero"`
 }
 
 func resolvePublishDiagnosticsClientCapabilities(v *PublishDiagnosticsClientCapabilities) ResolvedPublishDiagnosticsClientCapabilities {
@@ -26647,7 +26647,7 @@ func resolvePublishDiagnosticsClientCapabilities(v *PublishDiagnosticsClientCapa
 }
 
 type ResolvedCallHierarchyClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveCallHierarchyClientCapabilities(v *CallHierarchyClientCapabilities) ResolvedCallHierarchyClientCapabilities {
@@ -26660,8 +26660,8 @@ func resolveCallHierarchyClientCapabilities(v *CallHierarchyClientCapabilities) 
 }
 
 type ResolvedClientSemanticTokensRequestOptions struct {
-	Range BooleanOrEmptyObject
-	Full  BooleanOrClientSemanticTokensRequestFullDelta
+	Range BooleanOrEmptyObject                          `json:"range,omitzero"`
+	Full  BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitzero"`
 }
 
 func resolveClientSemanticTokensRequestOptions(v *ClientSemanticTokensRequestOptions) ResolvedClientSemanticTokensRequestOptions {
@@ -26675,15 +26675,15 @@ func resolveClientSemanticTokensRequestOptions(v *ClientSemanticTokensRequestOpt
 }
 
 type ResolvedSemanticTokensClientCapabilities struct {
-	DynamicRegistration     bool
-	Requests                ResolvedClientSemanticTokensRequestOptions
-	TokenTypes              []string
-	TokenModifiers          []string
-	Formats                 []TokenFormat
-	OverlappingTokenSupport bool
-	MultilineTokenSupport   bool
-	ServerCancelSupport     bool
-	AugmentsSyntaxTokens    bool
+	DynamicRegistration     bool                                       `json:"dynamicRegistration,omitzero"`
+	Requests                ResolvedClientSemanticTokensRequestOptions `json:"requests,omitzero"`
+	TokenTypes              []string                                   `json:"tokenTypes,omitzero"`
+	TokenModifiers          []string                                   `json:"tokenModifiers,omitzero"`
+	Formats                 []TokenFormat                              `json:"formats,omitzero"`
+	OverlappingTokenSupport bool                                       `json:"overlappingTokenSupport,omitzero"`
+	MultilineTokenSupport   bool                                       `json:"multilineTokenSupport,omitzero"`
+	ServerCancelSupport     bool                                       `json:"serverCancelSupport,omitzero"`
+	AugmentsSyntaxTokens    bool                                       `json:"augmentsSyntaxTokens,omitzero"`
 }
 
 func resolveSemanticTokensClientCapabilities(v *SemanticTokensClientCapabilities) ResolvedSemanticTokensClientCapabilities {
@@ -26704,7 +26704,7 @@ func resolveSemanticTokensClientCapabilities(v *SemanticTokensClientCapabilities
 }
 
 type ResolvedLinkedEditingRangeClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveLinkedEditingRangeClientCapabilities(v *LinkedEditingRangeClientCapabilities) ResolvedLinkedEditingRangeClientCapabilities {
@@ -26717,7 +26717,7 @@ func resolveLinkedEditingRangeClientCapabilities(v *LinkedEditingRangeClientCapa
 }
 
 type ResolvedMonikerClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveMonikerClientCapabilities(v *MonikerClientCapabilities) ResolvedMonikerClientCapabilities {
@@ -26730,7 +26730,7 @@ func resolveMonikerClientCapabilities(v *MonikerClientCapabilities) ResolvedMoni
 }
 
 type ResolvedTypeHierarchyClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveTypeHierarchyClientCapabilities(v *TypeHierarchyClientCapabilities) ResolvedTypeHierarchyClientCapabilities {
@@ -26743,7 +26743,7 @@ func resolveTypeHierarchyClientCapabilities(v *TypeHierarchyClientCapabilities) 
 }
 
 type ResolvedInlineValueClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveInlineValueClientCapabilities(v *InlineValueClientCapabilities) ResolvedInlineValueClientCapabilities {
@@ -26756,7 +26756,7 @@ func resolveInlineValueClientCapabilities(v *InlineValueClientCapabilities) Reso
 }
 
 type ResolvedClientInlayHintResolveOptions struct {
-	Properties []string
+	Properties []string `json:"properties,omitzero"`
 }
 
 func resolveClientInlayHintResolveOptions(v *ClientInlayHintResolveOptions) ResolvedClientInlayHintResolveOptions {
@@ -26769,8 +26769,8 @@ func resolveClientInlayHintResolveOptions(v *ClientInlayHintResolveOptions) Reso
 }
 
 type ResolvedInlayHintClientCapabilities struct {
-	DynamicRegistration bool
-	ResolveSupport      ResolvedClientInlayHintResolveOptions
+	DynamicRegistration bool                                  `json:"dynamicRegistration,omitzero"`
+	ResolveSupport      ResolvedClientInlayHintResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 func resolveInlayHintClientCapabilities(v *InlayHintClientCapabilities) ResolvedInlayHintClientCapabilities {
@@ -26784,12 +26784,12 @@ func resolveInlayHintClientCapabilities(v *InlayHintClientCapabilities) Resolved
 }
 
 type ResolvedDiagnosticClientCapabilities struct {
-	RelatedInformation     bool
-	TagSupport             ResolvedClientDiagnosticsTagOptions
-	CodeDescriptionSupport bool
-	DataSupport            bool
-	DynamicRegistration    bool
-	RelatedDocumentSupport bool
+	RelatedInformation     bool                                `json:"relatedInformation,omitzero"`
+	TagSupport             ResolvedClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+	CodeDescriptionSupport bool                                `json:"codeDescriptionSupport,omitzero"`
+	DataSupport            bool                                `json:"dataSupport,omitzero"`
+	DynamicRegistration    bool                                `json:"dynamicRegistration,omitzero"`
+	RelatedDocumentSupport bool                                `json:"relatedDocumentSupport,omitzero"`
 }
 
 func resolveDiagnosticClientCapabilities(v *DiagnosticClientCapabilities) ResolvedDiagnosticClientCapabilities {
@@ -26807,7 +26807,7 @@ func resolveDiagnosticClientCapabilities(v *DiagnosticClientCapabilities) Resolv
 }
 
 type ResolvedInlineCompletionClientCapabilities struct {
-	DynamicRegistration bool
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
 func resolveInlineCompletionClientCapabilities(v *InlineCompletionClientCapabilities) ResolvedInlineCompletionClientCapabilities {
@@ -26820,38 +26820,38 @@ func resolveInlineCompletionClientCapabilities(v *InlineCompletionClientCapabili
 }
 
 type ResolvedTextDocumentClientCapabilities struct {
-	Synchronization    ResolvedTextDocumentSyncClientCapabilities
-	Filters            ResolvedTextDocumentFilterClientCapabilities
-	Completion         ResolvedCompletionClientCapabilities
-	Hover              ResolvedHoverClientCapabilities
-	SignatureHelp      ResolvedSignatureHelpClientCapabilities
-	Declaration        ResolvedDeclarationClientCapabilities
-	Definition         ResolvedDefinitionClientCapabilities
-	TypeDefinition     ResolvedTypeDefinitionClientCapabilities
-	Implementation     ResolvedImplementationClientCapabilities
-	References         ResolvedReferenceClientCapabilities
-	DocumentHighlight  ResolvedDocumentHighlightClientCapabilities
-	DocumentSymbol     ResolvedDocumentSymbolClientCapabilities
-	CodeAction         ResolvedCodeActionClientCapabilities
-	CodeLens           ResolvedCodeLensClientCapabilities
-	DocumentLink       ResolvedDocumentLinkClientCapabilities
-	ColorProvider      ResolvedDocumentColorClientCapabilities
-	Formatting         ResolvedDocumentFormattingClientCapabilities
-	RangeFormatting    ResolvedDocumentRangeFormattingClientCapabilities
-	OnTypeFormatting   ResolvedDocumentOnTypeFormattingClientCapabilities
-	Rename             ResolvedRenameClientCapabilities
-	FoldingRange       ResolvedFoldingRangeClientCapabilities
-	SelectionRange     ResolvedSelectionRangeClientCapabilities
-	PublishDiagnostics ResolvedPublishDiagnosticsClientCapabilities
-	CallHierarchy      ResolvedCallHierarchyClientCapabilities
-	SemanticTokens     ResolvedSemanticTokensClientCapabilities
-	LinkedEditingRange ResolvedLinkedEditingRangeClientCapabilities
-	Moniker            ResolvedMonikerClientCapabilities
-	TypeHierarchy      ResolvedTypeHierarchyClientCapabilities
-	InlineValue        ResolvedInlineValueClientCapabilities
-	InlayHint          ResolvedInlayHintClientCapabilities
-	Diagnostic         ResolvedDiagnosticClientCapabilities
-	InlineCompletion   ResolvedInlineCompletionClientCapabilities
+	Synchronization    ResolvedTextDocumentSyncClientCapabilities         `json:"synchronization,omitzero"`
+	Filters            ResolvedTextDocumentFilterClientCapabilities       `json:"filters,omitzero"`
+	Completion         ResolvedCompletionClientCapabilities               `json:"completion,omitzero"`
+	Hover              ResolvedHoverClientCapabilities                    `json:"hover,omitzero"`
+	SignatureHelp      ResolvedSignatureHelpClientCapabilities            `json:"signatureHelp,omitzero"`
+	Declaration        ResolvedDeclarationClientCapabilities              `json:"declaration,omitzero"`
+	Definition         ResolvedDefinitionClientCapabilities               `json:"definition,omitzero"`
+	TypeDefinition     ResolvedTypeDefinitionClientCapabilities           `json:"typeDefinition,omitzero"`
+	Implementation     ResolvedImplementationClientCapabilities           `json:"implementation,omitzero"`
+	References         ResolvedReferenceClientCapabilities                `json:"references,omitzero"`
+	DocumentHighlight  ResolvedDocumentHighlightClientCapabilities        `json:"documentHighlight,omitzero"`
+	DocumentSymbol     ResolvedDocumentSymbolClientCapabilities           `json:"documentSymbol,omitzero"`
+	CodeAction         ResolvedCodeActionClientCapabilities               `json:"codeAction,omitzero"`
+	CodeLens           ResolvedCodeLensClientCapabilities                 `json:"codeLens,omitzero"`
+	DocumentLink       ResolvedDocumentLinkClientCapabilities             `json:"documentLink,omitzero"`
+	ColorProvider      ResolvedDocumentColorClientCapabilities            `json:"colorProvider,omitzero"`
+	Formatting         ResolvedDocumentFormattingClientCapabilities       `json:"formatting,omitzero"`
+	RangeFormatting    ResolvedDocumentRangeFormattingClientCapabilities  `json:"rangeFormatting,omitzero"`
+	OnTypeFormatting   ResolvedDocumentOnTypeFormattingClientCapabilities `json:"onTypeFormatting,omitzero"`
+	Rename             ResolvedRenameClientCapabilities                   `json:"rename,omitzero"`
+	FoldingRange       ResolvedFoldingRangeClientCapabilities             `json:"foldingRange,omitzero"`
+	SelectionRange     ResolvedSelectionRangeClientCapabilities           `json:"selectionRange,omitzero"`
+	PublishDiagnostics ResolvedPublishDiagnosticsClientCapabilities       `json:"publishDiagnostics,omitzero"`
+	CallHierarchy      ResolvedCallHierarchyClientCapabilities            `json:"callHierarchy,omitzero"`
+	SemanticTokens     ResolvedSemanticTokensClientCapabilities           `json:"semanticTokens,omitzero"`
+	LinkedEditingRange ResolvedLinkedEditingRangeClientCapabilities       `json:"linkedEditingRange,omitzero"`
+	Moniker            ResolvedMonikerClientCapabilities                  `json:"moniker,omitzero"`
+	TypeHierarchy      ResolvedTypeHierarchyClientCapabilities            `json:"typeHierarchy,omitzero"`
+	InlineValue        ResolvedInlineValueClientCapabilities              `json:"inlineValue,omitzero"`
+	InlayHint          ResolvedInlayHintClientCapabilities                `json:"inlayHint,omitzero"`
+	Diagnostic         ResolvedDiagnosticClientCapabilities               `json:"diagnostic,omitzero"`
+	InlineCompletion   ResolvedInlineCompletionClientCapabilities         `json:"inlineCompletion,omitzero"`
 }
 
 func resolveTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) ResolvedTextDocumentClientCapabilities {
@@ -26895,8 +26895,8 @@ func resolveTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) Re
 }
 
 type ResolvedNotebookDocumentSyncClientCapabilities struct {
-	DynamicRegistration     bool
-	ExecutionSummarySupport bool
+	DynamicRegistration     bool `json:"dynamicRegistration,omitzero"`
+	ExecutionSummarySupport bool `json:"executionSummarySupport,omitzero"`
 }
 
 func resolveNotebookDocumentSyncClientCapabilities(v *NotebookDocumentSyncClientCapabilities) ResolvedNotebookDocumentSyncClientCapabilities {
@@ -26910,7 +26910,7 @@ func resolveNotebookDocumentSyncClientCapabilities(v *NotebookDocumentSyncClient
 }
 
 type ResolvedNotebookDocumentClientCapabilities struct {
-	Synchronization ResolvedNotebookDocumentSyncClientCapabilities
+	Synchronization ResolvedNotebookDocumentSyncClientCapabilities `json:"synchronization,omitzero"`
 }
 
 func resolveNotebookDocumentClientCapabilities(v *NotebookDocumentClientCapabilities) ResolvedNotebookDocumentClientCapabilities {
@@ -26923,7 +26923,7 @@ func resolveNotebookDocumentClientCapabilities(v *NotebookDocumentClientCapabili
 }
 
 type ResolvedClientShowMessageActionItemOptions struct {
-	AdditionalPropertiesSupport bool
+	AdditionalPropertiesSupport bool `json:"additionalPropertiesSupport,omitzero"`
 }
 
 func resolveClientShowMessageActionItemOptions(v *ClientShowMessageActionItemOptions) ResolvedClientShowMessageActionItemOptions {
@@ -26936,7 +26936,7 @@ func resolveClientShowMessageActionItemOptions(v *ClientShowMessageActionItemOpt
 }
 
 type ResolvedShowMessageRequestClientCapabilities struct {
-	MessageActionItem ResolvedClientShowMessageActionItemOptions
+	MessageActionItem ResolvedClientShowMessageActionItemOptions `json:"messageActionItem,omitzero"`
 }
 
 func resolveShowMessageRequestClientCapabilities(v *ShowMessageRequestClientCapabilities) ResolvedShowMessageRequestClientCapabilities {
@@ -26949,7 +26949,7 @@ func resolveShowMessageRequestClientCapabilities(v *ShowMessageRequestClientCapa
 }
 
 type ResolvedShowDocumentClientCapabilities struct {
-	Support bool
+	Support bool `json:"support,omitzero"`
 }
 
 func resolveShowDocumentClientCapabilities(v *ShowDocumentClientCapabilities) ResolvedShowDocumentClientCapabilities {
@@ -26962,9 +26962,9 @@ func resolveShowDocumentClientCapabilities(v *ShowDocumentClientCapabilities) Re
 }
 
 type ResolvedWindowClientCapabilities struct {
-	WorkDoneProgress bool
-	ShowMessage      ResolvedShowMessageRequestClientCapabilities
-	ShowDocument     ResolvedShowDocumentClientCapabilities
+	WorkDoneProgress bool                                         `json:"workDoneProgress,omitzero"`
+	ShowMessage      ResolvedShowMessageRequestClientCapabilities `json:"showMessage,omitzero"`
+	ShowDocument     ResolvedShowDocumentClientCapabilities       `json:"showDocument,omitzero"`
 }
 
 func resolveWindowClientCapabilities(v *WindowClientCapabilities) ResolvedWindowClientCapabilities {
@@ -26979,8 +26979,8 @@ func resolveWindowClientCapabilities(v *WindowClientCapabilities) ResolvedWindow
 }
 
 type ResolvedStaleRequestSupportOptions struct {
-	Cancel                 bool
-	RetryOnContentModified []string
+	Cancel                 bool     `json:"cancel,omitzero"`
+	RetryOnContentModified []string `json:"retryOnContentModified,omitzero"`
 }
 
 func resolveStaleRequestSupportOptions(v *StaleRequestSupportOptions) ResolvedStaleRequestSupportOptions {
@@ -26994,8 +26994,8 @@ func resolveStaleRequestSupportOptions(v *StaleRequestSupportOptions) ResolvedSt
 }
 
 type ResolvedRegularExpressionsClientCapabilities struct {
-	Engine  string
-	Version string
+	Engine  string `json:"engine,omitzero"`
+	Version string `json:"version,omitzero"`
 }
 
 func resolveRegularExpressionsClientCapabilities(v *RegularExpressionsClientCapabilities) ResolvedRegularExpressionsClientCapabilities {
@@ -27009,9 +27009,9 @@ func resolveRegularExpressionsClientCapabilities(v *RegularExpressionsClientCapa
 }
 
 type ResolvedMarkdownClientCapabilities struct {
-	Parser      string
-	Version     string
-	AllowedTags []string
+	Parser      string   `json:"parser,omitzero"`
+	Version     string   `json:"version,omitzero"`
+	AllowedTags []string `json:"allowedTags,omitzero"`
 }
 
 func resolveMarkdownClientCapabilities(v *MarkdownClientCapabilities) ResolvedMarkdownClientCapabilities {
@@ -27026,10 +27026,10 @@ func resolveMarkdownClientCapabilities(v *MarkdownClientCapabilities) ResolvedMa
 }
 
 type ResolvedGeneralClientCapabilities struct {
-	StaleRequestSupport ResolvedStaleRequestSupportOptions
-	RegularExpressions  ResolvedRegularExpressionsClientCapabilities
-	Markdown            ResolvedMarkdownClientCapabilities
-	PositionEncodings   []PositionEncodingKind
+	StaleRequestSupport ResolvedStaleRequestSupportOptions           `json:"staleRequestSupport,omitzero"`
+	RegularExpressions  ResolvedRegularExpressionsClientCapabilities `json:"regularExpressions,omitzero"`
+	Markdown            ResolvedMarkdownClientCapabilities           `json:"markdown,omitzero"`
+	PositionEncodings   []PositionEncodingKind                       `json:"positionEncodings,omitzero"`
 }
 
 func resolveGeneralClientCapabilities(v *GeneralClientCapabilities) ResolvedGeneralClientCapabilities {
@@ -27048,12 +27048,12 @@ func resolveGeneralClientCapabilities(v *GeneralClientCapabilities) ResolvedGene
 // fields are values (not pointers), making it easier to access deeply nested capabilities.
 // Use ResolveClientCapabilities to convert from ClientCapabilities.
 type ResolvedClientCapabilities struct {
-	Workspace        ResolvedWorkspaceClientCapabilities
-	TextDocument     ResolvedTextDocumentClientCapabilities
-	NotebookDocument ResolvedNotebookDocumentClientCapabilities
-	Window           ResolvedWindowClientCapabilities
-	General          ResolvedGeneralClientCapabilities
-	Experimental     any
+	Workspace        ResolvedWorkspaceClientCapabilities        `json:"workspace,omitzero"`
+	TextDocument     ResolvedTextDocumentClientCapabilities     `json:"textDocument,omitzero"`
+	NotebookDocument ResolvedNotebookDocumentClientCapabilities `json:"notebookDocument,omitzero"`
+	Window           ResolvedWindowClientCapabilities           `json:"window,omitzero"`
+	General          ResolvedGeneralClientCapabilities          `json:"general,omitzero"`
+	Experimental     any                                        `json:"experimental,omitzero"`
 }
 
 func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities {

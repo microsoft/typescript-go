@@ -483,14 +483,14 @@ function generateCode() {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
                     // Use a named type for the resolved version
-                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name}`);
+                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
                     continue;
                 }
             }
 
             // For other types (primitives, enums, arrays, etc.), use the type directly (no pointer)
             const goType = type.name;
-            lines.push(`${indent}${titleCase(prop.name)} ${goType}`);
+            lines.push(`${indent}${titleCase(prop.name)} ${goType} \`json:"${prop.name},omitzero"\``);
         }
 
         return lines;
