@@ -1,20 +1,21 @@
-CHANGES.md lists intentional changes between the Strada (Typescript) and Corsa (Go) compilers.
+CHANGES.md lists intentional changes between the Strada (TypeScript) and Corsa (Go) compilers.
 
-# Feature-Level Description
+# JavaScript support
 
-At a high level, Javascript support in Corsa is intended to expose Typescript features in a .js file, working exactly as they do in Typescript with different syntax.
-This differs from Strada, which has many Javascript features that do not exist in Typescript at all, and quite a few differences in features that overlap.
-For example, Corsa uses the same rule for checking calls in both Typescript and Javascript; Strada lets you skip parameters with type `any`.
-And because Corsa uses the same rule for optional parameters, it fixes subtle Strada bugs with `"strict": true` in Javascript.
+At a high level, JavaScript support in Corsa is intended to expose TypeScript features in a .js file, working exactly as they do in TypeScript with different syntax.
+This differs from Strada, which has many JavaScript features that do not exist in TypeScript at all, and quite a few differences in features that overlap.
+For example, Corsa uses the same rule for checking calls in both TypeScript and JavaScript; Strada lets you skip parameters with type `any`.
+And because Corsa uses the same rule for optional parameters, it fixes subtle Strada bugs with `"strict": true` in JavaScript.
 
-We primarily want to support people writing modern Javascript, using things like ES modules, classes, destructuring, etc.
+We primarily want to support people writing modern JavaScript, using things like ES modules, classes, destructuring, etc.
 Not CommonJS modules and constructor functions, although those do still work.
 However, we have trimmed a lot of unused or underused features.
+This makes the implementation much simpler and more like TypeScript.
 
 The biggest single removed area is support for Closure header files--any Closure-specific features, in fact.
 The tables below list removed Closure features along with the other removed features.
 
-Reminder: Javascript support in Typescript falls into three main categories:
+Reminder: JavaScript support in TypeScript falls into three main categories:
 
 - JSDoc Tags
 - Expando declarations
@@ -27,58 +28,57 @@ function f() {}
 f.called = false;
 ```
 
-
 ## JSDoc Tags and Types
 
-| Name | Example | Substitute | Note  |
-| ---- | ------- | ---------- | ----- |
-| UnknownType  | `?`              | `any`               |                                     |
-| NamepathType | `Module:file~id` | `import("file").id` | TS has never had semantics for this |
-| `@class`     | `/** @class \*/`<br/>`function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.p = 1`<br/>`}` |  | Only inference from `this.p=` or `C.prototype.m=` is supported. |
-|`@throws`     |`/** @throws {E} */` | Keep the same    | TS never had semantics for this     |
-|`@enum` | `/** @enum {number} */`<br/> `const E = { A: 1, B: 2 }`  |`/** @typedef {number} E */`<br/>`/** @type {Record<string, E>}`<br/>`const E = { A: 1, B: 2 }` | Closure feature.  |
-| `@author`    | `/** @author Finn <finn@treehouse.com> */` | Keep the same  | `@treehouse` parses as a new tag in Corsa. |
-| Postfix optional type      | `T?` | `T \| undefined`  | This was legacy in *Closure*  |
-| Postfix definite type      | `T!` | `T`               | This was legacy in *Closure*  |
-| Uppercase synonyms         | `String`, `Void`, `array`| `string`, `void`, `Array`  | |
-| JSDoc index signatures     | `Object.<K,V>`           | `{ [x: K]: V }`  |  |
-| Identifier-named typedefs  | `/** @typedef {T} */ typeName;` | `/** @typedef {T} typeName */`  | Closure feature.   |
-| Closure function syntax    | `function(string): void` | `(s: string) => void` |  |
-| Automatic typeof insertion | `const o = { a: 1 }`<br/>`/** @type {o} */ var o2 = { a: 1 }` | `const o = { a: 1 }`<br/>`/** @type {typeof o} */ var o2 = { a: 1 }` |  |
-| `@typedef` nested names    | `/** @typedef {1} NS.T */` | Translate to .d.ts  | Also applies to `@callback` |
+| Name       | Example                                                                                                                                       | Substitute                                                                                                                                   | Note                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| UnknownType                | `?`                                                                                                                                           | `any`                                                                                                                                        |                                                                                       |
+| NamepathType               | `Module:file~id`                                                                                                                              | `import("file").id`                                                                                                                          | TS has never had semantics for this                                                   |
+| `@class`                   | <pre><code>/** @class */</code><br/><code>function C() {</code><br/>    <code>this.p = 1</code><br/><code>}</code></pre> | Infer from <code>this.p=</code> or <code>C.prototype.m=</code>                                                                               | Only inference from <code>this.p=</code> or <code>C.prototype.m=</code> is supported. |
+| `@throws`                  | `/** @throws {E} */`                                                                                                                          | Keep the same                                                                                                                                | TS never had semantics for this                                                       |
+| `@enum`                    | <pre><code>/\** @enum {number} */</code><br/><code>const E = { A: 1, B: 2 }</code></pre>                                                      | <pre><code>/** @typedef {number} E \*/</code><br/><code>/** @type {Record<string, E>} */</code><br/><code>const E = { A: 1, B: 2 }</code></pre> | Closure feature.                                                                      |
+| `@author`                  | `/** @author Finn <finn@treehouse.com> */`                                                                                                    | Keep the same                                                                                                                                | `@treehouse` parses as a new tag in Corsa.                                            |
+| Postfix optional type      | `T?`                                                                                                                                          | `T \| undefined`                                                                                                                             | This was legacy in _Closure_                                                          |
+| Postfix definite type      | `T!`                                                                                                                                          | `T`                                                                                                                                          | This was legacy in _Closure_                                                          |
+| Uppercase synonyms         | `String`, `Void`, `array`                                                                                                                     | `string`, `void`, `Array`                                                                                                                    |                                                                                       |
+| JSDoc index signatures     | `Object.<K,V>`                                                                                                                                | `Record<K, V>`                                                                                                                              |                                                                                       |
+| Identifier-named typedefs  | `/** @typedef {T} */ typeName;`                                                                                                               | `/** @typedef {T} typeName */`                                                                                                               | Closure feature.                                                                      |
+| Closure function syntax    | `function(string): void`                                                                                                                      | `(s: string) => void`                                                                                                                        |                                                                                       |
+| Automatic typeof insertion | <pre><code>const o = { a: 1 }</code><br/><code>/\** @type {o} */</code><br/><code>var o2 = { a: 1 }</code></pre>                                               | <pre><code>const o = { a: 1 }</code><br/><code>/\** @type {typeof o} */</code><br/><code>var o2 = { a: 1 }</code></pre>                                       |                                                                                       |
+| `@typedef` nested names    | `/** @typedef {1} NS.T */`                                                                                                                    | Translate to .d.ts                                                                                                                           | Also applies to `@callback`                                                           |
 
 ## Expando declarations
 
-| Name | Example | Substitute | Note  |
-| ---- | ------- | ---------- | ----- |
-| Fallback initialisers                           | `f.x = f.x \| init` | `if (!f.x) f.x = init` | |
-| Nested, undeclared expandos                     | `var N = {};`<br/>`N.X.Y = {}` | `var N = {};`<br/>`N.X = {};`<br/>`N.X.Y = {}` | All intermediate expandos have to be assigned. Closure feature.  |
-| Constructor function whole-prototype assignment | `C.prototype = {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`m: function() { }`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`n: function() { }`<br/>`}` | `C.prototype.m = function() { }`<br/>`C.prototype.n = function() { }`                                    | Constructor function feature. See note at end.                     |
-| Identifier declarations                         | `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`constructor() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/** @type {T} */`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`identifier;`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`}`<br/>`}` | `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/** @type {T} */`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`identifier;`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`constructor() { }`<br/>`}`                                 | Closure feature. |
-| `this` aliases                                  | `function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`var that = this`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`that.x = 12`<br/>`}` | `function C() {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.x = 12`<br/>`}` | even better:<br/> `class C {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`this.x = 12 `<br/>`}` |                                                                    |
-| `this` alias for `globalThis`                   | `this.globby = true` | `globalThis.globby = true` | When used at the top level of a script |
+| Name       | Example                                                                                                                                       | Substitute                                                                                                                                   | Note                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Fallback initialisers                           | `f.x = f.x \| init`                                                                                                                                                                                                                                                                                                                                          | `if (!f.x) f.x = init`                                                                                                                                                                                                                            |                                                                 |
+| Nested, undeclared expandos                     | <pre><code>var N = {};</code><br/><code>N.X.Y = {}</code></pre>                                                                                                                                                                                                                                                                                              | <pre><code>var N = {};</code><br/><code>N.X = {};</code><br/><code>N.X.Y = {}</code></pre>                                                                                                                                                        | All intermediate expandos have to be assigned. Closure feature. |
+| Constructor function whole-prototype assignment | <pre><code>C.prototype = {</code><br/>  <code>m: function() { }</code><br/>  <code>n: function() { }</code><br/><code>}</code></pre>                                                                                                                                                                 | <pre><code>C.prototype.m = function() { }</code><br/><code>C.prototype.n = function() { }</code></pre>                                                                                                                                            | Constructor function feature. See note at end.                  |
+| Identifier declarations                         | <pre><code>class C {</code><br/>  <code>constructor() {</code><br/>    <code>/\** @type {T} */</code><br/>    <code>identifier;</code><br/>  <code>}</code><br/><code>}</code></pre> | <pre><code>class C {</code><br/>    <code>/\** @type {T} */</code><br/>    <code>identifier;</code><br/>    <code>constructor() { }</code><br/><code>}</code></pre> | Closure feature.                                                |
+| `this` aliases                                  | <pre><code>function C() {</code><br/>  <code>var that = this</code><br/>  <code>that.x = 12</code><br/><code>}</code></pre>                                                                                                                                                                          | <pre><code>function C() {</code><br/>  <code>this.x = 12</code><br/><code>}</code></pre>                                                                                                                              | even better:<br/> <code>class C { this.x = 12 }</code>          |     |
+| `this` alias for `globalThis`                   | `this.globby = true`                                                                                                                                                                                                                                                                                                                                         | `globalThis.globby = true`                                                                                                                                                                                                                        | When used at the top level of a script                          |
 
 ## CommonJS syntax
 
-| Name | Example | Substitute | Note  |
-| ---- | ------- | ---------- | ----- |
-| Nested, undeclared exports                   | `exports.N.X.p = 1`   | `exports.N = {}`<br/>`exports.N.X = {}`<br/>`exports.N.X.p = 1` | Same as expando rules. |
-| Ignored empty module.exports assignment      | `module.exports = {}` | Delete this line   | People used to write in this in case module.exports was not defined. |
-| `this` alias for `module.exports`            | `this.p = 1`          | `exports.p = 1`    | When used at the top level of a CommonJS module. |
-| Multiple assignments narrow with control flow| `if (isWindows) {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`exports.platform = 'win32'`<br/>`} else {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`exports.platform = 'posix'`<br/>`}` | Keep the same in most cases | This now unions instead; most uses have the same type in both branches. |
-| Single-property access `require`             | `var readFile = require('fs').readFile`    | `var { readFile } = require('fs')` | |
-| Aliasing of `module.exports`                 | `var mod = module.exports`<br/>`mod.x = 1` | `module.exports.x = 1` | |
+| Name                                          | Example                                                                                                                                                                                                                                   | Substitute                                                                                                  | Note                                                                    |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Nested, undeclared exports                    | `exports.N.X.p = 1`                                                                                                                                                                                                                       | <pre><code>exports.N = {}</code><br/><code>exports.N.X = {}</code><br/><code>exports.N.X.p = 1</code></pre> | Same as expando rules.                                                  |
+| Ignored empty module.exports assignment       | `module.exports = {}`                                                                                                                                                                                                                     | Delete this line                                                                                            | People used to write in this in case module.exports was not defined.    |
+| `this` alias for `module.exports`             | `this.p = 1`                                                                                                                                                                                                                              | `exports.p = 1`                                                                                             | When used at the top level of a CommonJS module.                        |
+| Multiple assignments narrow with control flow | <pre><code>if (isWindows) {</code><br/><code>  exports.platform = 'win32'</code><br/><code>} else {</code><br/>  <code>exports.platform = 'posix'</code><br/><code>}</code></pre> | Keep the same in most cases                                                                                 | This now unions instead; most uses have the same type in both branches. |
+| Single-property access `require`              | `var readFile = require('fs').readFile`                                                                                                                                                                                                   | `var { readFile } = require('fs')`                                                                          |                                                                         |
+| Aliasing of `module.exports`                  | <pre><code>var mod = module.exports</code><br/><code>mod.x = 1</code></pre>                                                                                                                                                               | `module.exports.x = 1`                                                                                      |                                                                         |
 
 ## Features yet to be implemented
 
 `Object.defineProperty` for CommonJS exports and expandos. The compiler treats this as an alternate to the usual assignment syntax:
 
 ```js
-function f() { }
-Object.defineProperty(f, "p", { value: 1, writable: true })
-````
+function f() {}
+Object.defineProperty(f, "p", { value: 1, writable: true });
+```
 
-# Component-Level Description
+# Component-Level Changes
 
 ## Scanner
 
@@ -236,7 +236,7 @@ const foo = (a) => {
 };
 ```
 
-This is identical to the Typescript rule.
+This is identical to the TypeScript rule.
 
 #### Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
 
@@ -269,7 +269,7 @@ function f(x) {
 }
 ```
 
-This behaves the same as Typescript's `x?: number` syntax.
+This behaves the same as TypeScript's `x?: number` syntax.
 Strada makes the parameter optional but does not add `undefined` to the type.
 
 #### Type assertions with `@type` tags now prevent narrowing of the type.
