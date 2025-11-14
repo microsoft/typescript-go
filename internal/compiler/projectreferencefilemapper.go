@@ -109,8 +109,8 @@ func (mapper *projectReferenceFileMapper) getResolvedReferenceFor(path tspath.Pa
 	return config, ok
 }
 
-func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+func (mapper *projectReferenceFileMapper) rangeResolvedProjectReference(
+	f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
 ) bool {
 	if mapper.opts.Config.ConfigFile == nil {
 		return false
@@ -118,12 +118,12 @@ func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
 	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
 	seenRef.Add(mapper.opts.Config.ConfigFile.SourceFile.Path())
 	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
-	return mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
+	return mapper.rangeResolvedReferenceWorker(refs, f, mapper.opts.Config, seenRef)
 }
 
-func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
+func (mapper *projectReferenceFileMapper) rangeResolvedReferenceWorker(
 	references []tspath.Path,
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+	f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
 	parent *tsoptions.ParsedCommandLine,
 	seenRef *collections.Set[tspath.Path],
 ) bool {
@@ -132,19 +132,19 @@ func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
 			continue
 		}
 		config, _ := mapper.configToProjectReference[path]
-		if fn(path, config, parent, index) {
-			return true
+		if !f(path, config, parent, index) {
+			return false
 		}
-		if mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn, config, seenRef) {
-			return true
+		if !mapper.rangeResolvedReferenceWorker(mapper.referencesInConfigFile[path], f, config, seenRef) {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
-func (mapper *projectReferenceFileMapper) forEachResolvedProjectReferenceInChildConfig(
+func (mapper *projectReferenceFileMapper) rangeResolvedProjectReferenceInChildConfig(
 	childConfig *tsoptions.ParsedCommandLine,
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+	f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
 ) bool {
 	if childConfig == nil || childConfig.ConfigFile == nil {
 		return false
@@ -152,7 +152,7 @@ func (mapper *projectReferenceFileMapper) forEachResolvedProjectReferenceInChild
 	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
 	seenRef.Add(childConfig.ConfigFile.SourceFile.Path())
 	refs := mapper.referencesInConfigFile[childConfig.ConfigFile.SourceFile.Path()]
-	return mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
+	return mapper.rangeResolvedReferenceWorker(refs, f, mapper.opts.Config, seenRef)
 }
 
 func (mapper *projectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceOutputAndProjectReference {

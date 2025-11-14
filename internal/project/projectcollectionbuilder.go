@@ -266,8 +266,8 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 						return true
 					}
 				}
-			} else if program := project.GetProgram(); program != nil && program.ForEachResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
-				return referencePath == refPath
+			} else if program := project.GetProgram(); program != nil && !program.RangeResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+				return referencePath != refPath
 			}) {
 				return true
 			}
@@ -278,11 +278,11 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 			// Retain project
 			toRemoveProjects.Delete(project.configFilePath)
 			if program := project.GetProgram(); program != nil {
-				program.ForEachResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+				program.RangeResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 					if _, ok := b.configuredProjects.Load(referencePath); ok {
 						toRemoveProjects.Delete(referencePath)
 					}
-					return false
+					return true
 				})
 			}
 		}
@@ -494,11 +494,11 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 	}
 	for _, childConfig := range children {
 		wg.Queue(func() {
-			if projectsReferenced != nil && !program.ForEachResolvedProjectReferenceInChildConfig(
+			if projectsReferenced != nil && program.RangeResolvedProjectReferenceInChildConfig(
 				childConfig,
 				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 					_, isReferenced := projectsReferenced[referencePath]
-					return isReferenced
+					return !isReferenced
 				}) {
 				return
 			}
@@ -1082,9 +1082,9 @@ func (b *ProjectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*
 		logger.Log("Deleting configured project: " + project.Value().configFileName)
 	}
 	if program := project.Value().Program; program != nil {
-		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+		program.RangeResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 			b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
-			return false
+			return true
 		})
 	}
 	b.configFileRegistryBuilder.releaseConfigForProject(projectPath, projectPath)

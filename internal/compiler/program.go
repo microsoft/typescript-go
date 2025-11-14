@@ -149,15 +149,15 @@ func (p *Program) GetResolvedProjectReferences() []*tsoptions.ParsedCommandLine 
 	return p.projectReferenceFileMapper.getResolvedProjectReferences()
 }
 
-func (p *Program) ForEachResolvedProjectReference(fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool) bool {
-	return p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
+func (p *Program) RangeResolvedProjectReference(f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool) bool {
+	return p.projectReferenceFileMapper.rangeResolvedProjectReference(f)
 }
 
-func (p *Program) ForEachResolvedProjectReferenceInChildConfig(
+func (p *Program) RangeResolvedProjectReferenceInChildConfig(
 	childConfig *tsoptions.ParsedCommandLine,
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+	f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
 ) bool {
-	return p.projectReferenceFileMapper.forEachResolvedProjectReferenceInChildConfig(childConfig, fn)
+	return p.projectReferenceFileMapper.rangeResolvedProjectReferenceInChildConfig(childConfig, f)
 }
 
 // UseCaseSensitiveFileNames implements checker.Program.
@@ -914,13 +914,13 @@ func (p *Program) verifyProjectReferences() {
 		p.programDiagnostics = append(p.programDiagnostics, diag)
 	}
 
-	p.ForEachResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool {
+	p.RangeResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool {
 		ref := parent.ProjectReferences()[index]
 		// !!! Deprecated in 5.0 and removed since 5.5
 		// verifyRemovedProjectReference(ref, parent, index);
 		if config == nil {
 			createDiagnosticForReference(parent, index, diagnostics.File_0_not_found, ref.Path)
-			return false
+			return true
 		}
 		refOptions := config.CompilerOptions()
 		if !refOptions.Composite.IsTrue() || refOptions.NoEmit.IsTrue() {
@@ -937,7 +937,7 @@ func (p *Program) verifyProjectReferences() {
 			createDiagnosticForReference(parent, index, diagnostics.Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1, buildInfoFileName, ref.Path)
 			p.hasEmitBlockingDiagnostics.Add(p.toPath(buildInfoFileName))
 		}
-		return false
+		return true
 	})
 }
 
