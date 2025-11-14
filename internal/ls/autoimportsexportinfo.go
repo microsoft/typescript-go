@@ -25,6 +25,8 @@ func (l *LanguageService) getExportInfoMap(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
+		l.UserPreferences(),
+		l.UseCaseSensitiveFileNames(),
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {
@@ -122,6 +124,8 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
+		l.UserPreferences(),
+		l.UseCaseSensitiveFileNames(),
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {

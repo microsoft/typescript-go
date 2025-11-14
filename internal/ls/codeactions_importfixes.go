@@ -388,6 +388,8 @@ func getExportInfos(
 	forEachExternalModuleToImportFrom(
 		ch,
 		program,
+		ls.UserPreferences(),
+		ls.UseCaseSensitiveFileNames(),
 		func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool) {
 			// Check for cancellation
 			if ctx.Err() != nil {
