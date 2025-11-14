@@ -642,6 +642,12 @@ func (f *FourslashTest) CloseFileOfMarker(t *testing.T, markerName string) {
 	if f.activeFilename == marker.FileName() {
 		f.activeFilename = ""
 	}
+	if index := slices.IndexFunc(f.testData.Files, func(f *TestFileInfo) bool { return f.fileName == marker.FileName() }); index >= 0 {
+		testFile := f.testData.Files[index]
+		f.scriptInfos[testFile.fileName] = newScriptInfo(testFile.fileName, testFile.Content)
+	} else {
+		delete(f.scriptInfos, marker.FileName())
+	}
 	sendNotification(t, f, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
@@ -652,7 +658,12 @@ func (f *FourslashTest) CloseFileOfMarker(t *testing.T, markerName string) {
 func (f *FourslashTest) openFile(t *testing.T, filename string) {
 	script := f.getScriptInfo(filename)
 	if script == nil {
-		t.Fatalf("File %s not found in test data", filename)
+		if content, ok := f.vfs.ReadFile(filename); ok {
+			script = newScriptInfo(filename, content)
+			f.scriptInfos[filename] = script
+		} else {
+			t.Fatalf("File %s not found in test data", filename)
+		}
 	}
 	f.activeFilename = filename
 	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
@@ -1943,10 +1954,6 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	}
 
 	script.editContent(start, end, newText)
-	// err := f.FS.WriteFile(fileName, script.content, false)
-	// if err != nil {
-	// 	panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
-	// }
 	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			Uri:     lsconv.FileNameToDocumentURI(fileName),
@@ -1965,14 +1972,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 }
 
 func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
-	info := f.scriptInfos[fileName]
-	if info == nil {
-		if content, ok := f.vfs.ReadFile(fileName); ok {
-			info = newScriptInfo(fileName, content)
-			f.scriptInfos[fileName] = info
-		}
-	}
-	return info
+	return f.scriptInfos[fileName]
 }
 
 // !!! expected tags
