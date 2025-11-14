@@ -2377,6 +2377,8 @@ func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
 func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
 	// Precondition: ast.IsPotentiallyExecutableNode is true
 	if node.Flags&ast.NodeFlagsUnreachable != 0 {
+		// The binder has determined that this code is unreachable.
+		// Ignore const enums unless preserveConstEnums is set.
 		switch node.Kind {
 		case ast.KindEnumDeclaration:
 			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
@@ -2386,6 +2388,7 @@ func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
 			return true
 		}
 	} else if flowNode := node.FlowNodeData().FlowNode; flowNode != nil {
+		// For code the binder doesn't know is unreachable, use control flow / types.
 		return !c.isReachableFlowNode(flowNode)
 	}
 	return false
