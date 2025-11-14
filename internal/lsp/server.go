@@ -507,6 +507,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentInlayHintInfo, (*Server).handleInlayHint)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
@@ -905,6 +906,13 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
 				Boolean: ptrTo(true),
 			},
+			CodeActionProvider: &lsproto.BooleanOrCodeActionOptions{
+				CodeActionOptions: &lsproto.CodeActionOptions{
+					CodeActionKinds: &[]lsproto.CodeActionKind{
+						lsproto.CodeActionKindQuickFix,
+					},
+				},
+			},
 		},
 	}
 
@@ -1207,6 +1215,10 @@ func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageSer
 
 func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
 	return ls.ProvideSelectionRanges(ctx, params)
+}
+
+func (s *Server) handleCodeAction(ctx context.Context, ls *ls.LanguageService, params *lsproto.CodeActionParams) (lsproto.CodeActionResponse, error) {
+	return ls.ProvideCodeActions(ctx, params)
 }
 
 func (s *Server) Log(msg ...any) {
