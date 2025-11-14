@@ -312,3 +312,46 @@ func BenchmarkNewProgram(b *testing.B) {
 		}
 	})
 }
+
+func TestMissingReferenceFile(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	fs := vfstest.FromMap[any](nil, false /*useCaseSensitiveFileNames*/)
+	fs = bundled.WrapFS(fs)
+
+	// Write a test file that references a missing file
+	_ = fs.WriteFile("c:/dev/src/index.ts", `/// <reference path="missing.ts" />
+		const x = 42;
+		console.log(x);`, false)
+
+	compilerHost := compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil)
+
+	opts := core.CompilerOptions{Target: core.ScriptTargetESNext}
+
+	parsedConfig := &tsoptions.ParsedCommandLine{
+		ParsedConfig: &core.ParsedOptions{
+			FileNames:       []string{"c:/dev/src/index.ts"},
+			CompilerOptions: &opts,
+		},
+	}
+
+	program := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsedConfig,
+		Host:   compilerHost,
+	})
+
+	diagnostics := program.GetDiagnostics()
+	found := false
+	for _, d := range diagnostics {
+		if d.Code() == 6053 {
+			found = true
+			break
+		}
+	}
+
+	assert.Assert(t, found, "Expected TS6053 diagnostic for missing reference file")
+}

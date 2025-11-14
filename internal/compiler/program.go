@@ -160,6 +160,10 @@ func (p *Program) UsesUriStyleNodeCoreModules() bool {
 	return p.usesUriStyleNodeCoreModules.IsTrue()
 }
 
+func (p *Program) GetDiagnostics() []*ast.Diagnostic {
+	return p.programDiagnostics
+}
+
 var _ checker.Program = (*Program)(nil)
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
@@ -209,7 +213,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
-	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded(), p)
 	p.verifyCompilerOptions()
 	return p
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -79,6 +80,7 @@ type jsxRuntimeImportSpecifier struct {
 func processAllProgramFiles(
 	opts ProgramOptions,
 	singleThreaded bool,
+	p *Program,
 ) processedFiles {
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
@@ -171,6 +173,26 @@ func processAllProgramFiles(
 		if file == nil {
 			// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 			missingFiles = append(missingFiles, task.normalizedFilePath)
+
+			if task.includeReason != nil {
+				task.includeReason.diagOnce.Do(func() {
+					var parentFile *ast.SourceFile
+					if f, ok := task.includeReason.data.(*ast.SourceFile); ok {
+						parentFile = f
+					}
+
+					task.includeReason.diag = ast.NewDiagnostic(
+						parentFile,
+						core.UndefinedTextRange(),
+						diagnostics.File_0_not_found, // TS6053
+						task.normalizedFilePath,
+					)
+				})
+			}
+
+			// Append to programDiagnostics
+			p.programDiagnostics = append(p.programDiagnostics, task.includeReason.diag)
+
 			return
 		}
 
