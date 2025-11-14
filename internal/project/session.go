@@ -476,15 +476,10 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 		return nil
 	}
 	// if program doesnt contain this file any more ignore it
-	if !s.projectContainsFile(project, uri) {
+	if !project.containsFile(s.toPath(uri.FileName())) {
 		return nil
 	}
 	return ls.NewLanguageService(project.GetProgram(), snapshot)
-}
-
-func (s *Session) projectContainsFile(project *Project, uri lsproto.DocumentUri) bool {
-	path := s.toPath(uri.FileName())
-	return project.containsFile(path)
 }
 
 func (s *Session) GetSnapshotLoadingProjectTree(
@@ -518,11 +513,11 @@ func (s *Session) ForEachProjectLocationLoadingProjectTree(
 			continue
 		}
 
-		if s.projectContainsFile(project, defaultDefinition.TextDocumentURI()) {
+		if project.containsFile(s.toPath(defaultDefinition.TextDocumentURI().FileName())) {
 			handleLocation(project, defaultDefinition.TextDocumentURI(), defaultDefinition.TextDocumentPosition())
-		} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && s.projectContainsFile(project, sourcePos.TextDocumentURI()) {
+		} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && project.containsFile(s.toPath(sourcePos.TextDocumentURI().FileName())) {
 			handleLocation(project, sourcePos.TextDocumentURI(), sourcePos.TextDocumentPosition())
-		} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && s.projectContainsFile(project, generatedPos.TextDocumentURI()) {
+		} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && project.containsFile(s.toPath(generatedPos.TextDocumentURI().FileName())) {
 			handleLocation(project, generatedPos.TextDocumentURI(), generatedPos.TextDocumentPosition())
 		}
 	}
