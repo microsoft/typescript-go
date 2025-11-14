@@ -163,3 +163,12 @@ func GetClientCapabilities(ctx context.Context) *FinalizedClientCapabilities {
 	}
 	return &FinalizedClientCapabilities{}
 }
+
+// PreferredMarkupKind returns the first (most preferred) markup kind from the given formats,
+// or MarkupKindPlainText if the slice is empty.
+func PreferredMarkupKind(formats []MarkupKind) MarkupKind {
+	if len(formats) > 0 {
+		return formats[0]
+	}
+	return MarkupKindPlainText
+}
