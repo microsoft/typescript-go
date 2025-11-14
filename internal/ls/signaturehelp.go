@@ -199,7 +199,7 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 	}
 }
 
-func (l *LanguageService) createSignatureHelpItems(ctx context.Context,candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool) *lsproto.SignatureHelp {
+func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool) *lsproto.SignatureHelp {
 	caps := lsproto.GetClientCapabilities(ctx)
 	docFormat := lsproto.PreferredMarkupKind(caps.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat)
 
