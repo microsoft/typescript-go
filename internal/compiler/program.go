@@ -210,6 +210,7 @@ func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
+	p.programDiagnostics = append(p.programDiagnostics, p.processedFiles.fileDiagnostics...)
 	p.verifyCompilerOptions()
 	return p
 }
