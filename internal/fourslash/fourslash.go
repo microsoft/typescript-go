@@ -413,9 +413,16 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
+	// !!!
+	// Callers to this function may need to consider
+	// sending a more specific configuration for 'javascript'
+	// or 'js/ts' as well. For now, we only send 'typescript',
+	// and most tests probably just want this.
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
-		Settings: config,
+		Settings: map[string]any{
+			"typescript": config,
+		},
 	})
 }
 
