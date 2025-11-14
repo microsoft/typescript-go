@@ -905,10 +905,8 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// import /**/type { propertyName as [|name|] } from ...;
 		// import /**/type ... from "[|module|]";
 		if ast.IsImportClause(parent) && parent.IsTypeOnly() {
-			if parent.Parent != nil {
-				if location := getAdjustedLocationForImportDeclaration(parent.Parent.AsImportDeclaration(), forRename); location != nil {
-					return location
-				}
+			if location := getAdjustedLocationForImportDeclaration(parent.Parent.AsImportDeclaration(), forRename); location != nil {
+				return location
 			}
 		}
 		// export /**/type { [|name|] } from ...;
