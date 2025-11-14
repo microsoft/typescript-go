@@ -144,7 +144,7 @@ type Server struct {
 	typingsLocation    string
 
 	initializeParams   *lsproto.InitializeParams
-	clientCapabilities lsproto.FinalizedClientCapabilities
+	clientCapabilities *lsproto.FinalizedClientCapabilities
 	positionEncoding   lsproto.PositionEncodingKind
 	locale             language.Tag
 
@@ -448,6 +448,8 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
+	ctx = lsproto.WithClientCapabilities(ctx, s.clientCapabilities)
+
 	if handler := handlers()[req.Method]; handler != nil {
 		return handler(s, ctx, req)
 	}
@@ -586,7 +588,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	s.initializeParams = params
-	s.clientCapabilities = lsproto.FinalizeClientCapabilities(params.Capabilities)
+	s.clientCapabilities = ptrTo(lsproto.FinalizeClientCapabilities(params.Capabilities))
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {

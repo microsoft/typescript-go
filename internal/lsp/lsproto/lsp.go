@@ -1,6 +1,7 @@
 package lsproto
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
@@ -148,4 +149,17 @@ func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
+}
+
+type clientCapabilitiesKey struct{}
+
+func WithClientCapabilities(ctx context.Context, caps *FinalizedClientCapabilities) context.Context {
+	return context.WithValue(ctx, clientCapabilitiesKey{}, caps)
+}
+
+func GetClientCapabilities(ctx context.Context) *FinalizedClientCapabilities {
+	if caps, _ := ctx.Value(clientCapabilitiesKey{}).(*FinalizedClientCapabilities); caps != nil {
+		return caps
+	}
+	return &FinalizedClientCapabilities{}
 }
