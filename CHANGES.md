@@ -71,7 +71,7 @@ f.called = false;
 
 ## Features yet to be implemented
 
-Object.defineProperty for CommonJS exports and expandos. The compiler treats this as an alternate to the usual assignment syntax:
+`Object.defineProperty` for CommonJS exports and expandos. The compiler treats this as an alternate to the usual assignment syntax:
 
 ```js
 function f() { }
