@@ -1,4 +1,6 @@
 # Diff files to instead write to submoduleAccepted as "accepted" changes.
+
+## jsdoc ##
 conformance/assertionsAndNonReturningFunctions.types.diff
 conformance/assertionTypePredicates2.errors.txt.diff
 conformance/assignmentToVoidZero1.errors.txt.diff
@@ -27,6 +29,8 @@ conformance/checkParamTag1.types.diff
 conformance/node10Alternateresult_noTypes.errors.txt.diff
 conformance/node10AlternateResult_noResolution.errors.txt.diff
 conformance/node10AlternateResult_noResolution.errors.txt.diff
+
+## inlay hints ##
 fourslash/inlayHints/inlayHintsInteractiveParameterNamesWithComments.baseline.diff
 fourslash/inlayHints/inlayHintsImportType2.baseline.diff
 fourslash/inlayHints/inlayHintsInteractiveImportType2.baseline.diff
