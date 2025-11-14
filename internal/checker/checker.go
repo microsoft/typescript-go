@@ -10241,7 +10241,8 @@ func (c *Checker) recordPotentialCollisionWithWeakMapSetInGeneratedCode(node *as
 func (c *Checker) checkWeakMapSetCollision(node *ast.Node) {
 	enclosingBlockScope := ast.GetEnclosingBlockScopeContainer(node)
 	if c.nodeLinks.Get(enclosingBlockScope).flags&NodeCheckFlagsContainsClassWithPrivateIdentifiers != 0 {
-		if name := node.Name(); ast.IsIdentifier(name) {
+		name := node.Name()
+		if name != nil && ast.IsIdentifier(name) {
 			c.errorSkippedOnNoEmit(node, diagnostics.Compiler_reserves_name_0_when_emitting_private_identifier_downlevel, name.Text())
 		}
 	}
