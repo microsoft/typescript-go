@@ -231,8 +231,8 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 	s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 		reason:      UpdateReasonDidOpenFile,
 		fileChanges: changes,
-		snapshotChangeRequest: snapshotChangeRequest{
-			requestedURIs: []lsproto.DocumentUri{uri},
+		ResourceRequest: ResourceRequest{
+			Documents: []lsproto.DocumentUri{uri},
 		},
 	})
 }
@@ -377,8 +377,7 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) getSnapshot(
 	ctx context.Context,
-	changeRequest snapshotChangeRequest,
-	updateIf func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason,
+	request ResourceRequest,
 ) *Snapshot {
 	var snapshot *Snapshot
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
@@ -386,23 +385,50 @@ func (s *Session) getSnapshot(
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
-			reason:                UpdateReasonRequestedLanguageServicePendingChanges,
-			fileChanges:           fileChanges,
-			ataChanges:            ataChanges,
-			newConfig:             newConfig,
-			snapshotChangeRequest: changeRequest,
+		return s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:          UpdateReasonRequestedLanguageServicePendingChanges,
+			fileChanges:     fileChanges,
+			ataChanges:      ataChanges,
+			newConfig:       newConfig,
+			ResourceRequest: request,
 		})
-	} else {
-		// If there are no pending file changes, we can try to use the current snapshot.
-		s.snapshotMu.RLock()
-		snapshot = s.snapshot
-		s.snapshotMu.RUnlock()
 	}
-	if updateReason := updateIf(snapshot, updateSnapshot); updateReason != UpdateReasonUnknown {
+
+	// If there are no pending file changes, we can try to use the current snapshot.
+	s.snapshotMu.RLock()
+	snapshot = s.snapshot
+	s.snapshotMu.RUnlock()
+
+	var updateReason UpdateReason
+	if len(request.Projects) > 0 {
+		updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
+	} else if request.ProjectTree != nil {
+		updateReason = UpdateReasonRequestedLoadProjectTree
+	} else {
+		for _, document := range request.Documents {
+			if snapshot.fs.isOpenFile(document.FileName()) {
+				// The current snapshot does not have an up to date project for the URI,
+				// so we need to update the snapshot to ensure the project is loaded.
+				// !!! Allow multiple projects to update in parallel
+				project := snapshot.GetDefaultProject(document)
+				if project == nil {
+					updateReason = UpdateReasonRequestedLanguageServiceProjectNotLoaded
+					break
+				} else if project.dirty {
+					updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
+					break
+				}
+			} else {
+				updateReason = UpdateReasonRequestedLanguageServiceForFileNotOpen
+				break
+			}
+		}
+	}
+
+	if updateReason != UpdateReasonUnknown {
 		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
-			reason:                updateReason,
-			snapshotChangeRequest: changeRequest,
+			reason:          updateReason,
+			ResourceRequest: request,
 		})
 	}
 	return snapshot
@@ -411,17 +437,7 @@ func (s *Session) getSnapshot(
 func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.DocumentUri) (*Snapshot, *Project, *ls.LanguageService, error) {
 	snapshot := s.getSnapshot(
 		ctx,
-		snapshotChangeRequest{requestedURIs: []lsproto.DocumentUri{uri}},
-		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
-			project := snapshot.GetDefaultProject(uri)
-			if project == nil && !updatedSnapshot || project != nil && project.dirty {
-				// The current snapshot does not have an up to date project for the URI,
-				// so we need to update the snapshot to ensure the project is loaded.
-				// !!! Allow multiple projects to update in parallel
-				return core.IfElse(project == nil, UpdateReasonRequestedLanguageServiceProjectNotLoaded, UpdateReasonRequestedLanguageServiceProjectDirty)
-			}
-			return UpdateReasonUnknown
-		},
+		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
 	)
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
@@ -451,10 +467,7 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]*Project, error) {
 	snapshot := s.getSnapshot(
 		ctx,
-		snapshotChangeRequest{ensureDefaultProjectForURIs: []lsproto.DocumentUri{uri}},
-		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
-			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLanguageServiceForFileNotOpen, UpdateReasonUnknown)
-		},
+		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
 	)
 
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
@@ -465,10 +478,7 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
 	snapshot := s.getSnapshot(
 		ctx,
-		snapshotChangeRequest{requestedProjectUpdates: []tspath.Path{project.Id()}},
-		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
-			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLanguageServiceProjectDirty, UpdateReasonUnknown)
-		},
+		ResourceRequest{Projects: []tspath.Path{project.Id()}},
 	)
 	// Ensure we have updated project
 	project = snapshot.ProjectCollection.GetProjectByPath(project.Id())
@@ -489,10 +499,7 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 ) *Snapshot {
 	snapshot := s.getSnapshot(
 		ctx,
-		snapshotChangeRequest{requestedProjectTrees: &projectTreeRequest{requestedProjectTrees}},
-		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
-			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLoadProjectTree, UpdateReasonUnknown)
-		},
+		ResourceRequest{ProjectTree: &projectTreeRequest{requestedProjectTrees}},
 	)
 	return snapshot
 }

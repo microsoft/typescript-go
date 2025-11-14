@@ -141,25 +141,22 @@ type projectTreeRequest struct {
 	referencedProjects map[tspath.Path]struct{}
 }
 
-type snapshotChangeRequest struct {
-	// requestedURIs are URIs that were requested by the client.
+type ResourceRequest struct {
+	// Documents are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
-	requestedURIs []lsproto.DocumentUri
-	// Update requested projects.
-	// this is used when we want to get LS and from all the projects the file can be part of
-	requestedProjectUpdates []tspath.Path
-	// Ensure default project for these URIs
-	// These are documents that might not be open, but we need default project for them
-	// eg for Find all references when the definition is in a mapped location that is not yet open
-	ensureDefaultProjectForURIs []lsproto.DocumentUri
+	// If the requested Documents are not open, ensure that their default project is created
+	Documents []lsproto.DocumentUri
+	// Update requested Projects.
+	// this is used when we want to get LS and from all the Projects the file can be part of
+	Projects []tspath.Path
 	// Update and ensure project trees that reference the projects
 	// This is used to compute the solution and project tree so that
 	// we can find references across all the projects in the solution irrespective of which project is open
-	requestedProjectTrees *projectTreeRequest
+	ProjectTree *projectTreeRequest
 }
 
 type SnapshotChange struct {
-	snapshotChangeRequest
+	ResourceRequest
 	reason UpdateReason
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
@@ -209,17 +206,14 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
 		getDetails := func() string {
 			details := ""
-			if len(change.requestedURIs) != 0 {
-				details += fmt.Sprintf(" requestedURIs: %v", change.requestedURIs)
+			if len(change.Documents) != 0 {
+				details += fmt.Sprintf(" Documents: %v", change.Documents)
 			}
-			if len(change.requestedProjectUpdates) != 0 {
-				details += fmt.Sprintf(" requestedProjectUpdates: %v", change.requestedProjectUpdates)
+			if len(change.Projects) != 0 {
+				details += fmt.Sprintf(" Projects: %v", change.Projects)
 			}
-			if len(change.ensureDefaultProjectForURIs) != 0 {
-				details += fmt.Sprintf(" ensureDefaultProjectForURIs: %v", change.ensureDefaultProjectForURIs)
-			}
-			if change.requestedProjectTrees != nil {
-				details += fmt.Sprintf(" requestedProjectTrees: %v", maps.Keys(change.requestedProjectTrees.referencedProjects))
+			if change.ProjectTree != nil {
+				details += fmt.Sprintf(" ProjectTree: %v", maps.Keys(change.ProjectTree.referencedProjects))
 			}
 			return details
 		}
@@ -292,20 +286,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
 	}
 
-	for _, uri := range change.requestedURIs {
+	for _, uri := range change.Documents {
 		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
 	}
 
-	for _, projectId := range change.requestedProjectUpdates {
+	for _, projectId := range change.Projects {
 		projectCollectionBuilder.DidRequestProject(projectId, logger.Fork("DidRequestProject"))
 	}
 
-	for _, uri := range change.ensureDefaultProjectForURIs {
-		projectCollectionBuilder.DidRequestEnsureDefaultProject(uri, logger.Fork("DidRequestFile"))
-	}
-
-	if change.requestedProjectTrees != nil {
-		projectCollectionBuilder.DidRequestProjectTrees(change.requestedProjectTrees.referencedProjects, logger.Fork("DidRequestProjectTrees"))
+	if change.ProjectTree != nil {
+		projectCollectionBuilder.DidRequestProjectTrees(change.ProjectTree.referencedProjects, logger.Fork("DidRequestProjectTrees"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)

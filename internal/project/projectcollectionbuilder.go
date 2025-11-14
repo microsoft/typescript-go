@@ -341,47 +341,51 @@ func logChangeFileResult(result changeFileResult, logger *logging.LogTree) {
 func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
-	hasChanges := b.programStructureChanged
-
-	// See if we can find a default project without updating a bunch of stuff.
 	path := b.toPath(fileName)
-	if result := b.findDefaultProject(fileName, path); result != nil {
-		hasChanges = b.updateProgram(result, logger) || hasChanges
-		if result.Value() != nil {
-			return
-		}
-	}
+	if b.fs.isOpenFile(path) {
+		hasChanges := b.programStructureChanged
 
-	// Make sure all projects we know about are up to date...
-	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
-		hasChanges = b.updateProgram(entry, logger) || hasChanges
-		return true
-	})
-	if hasChanges {
-		// If the structure of other projects changed, we might need to move files
-		// in/out of the inferred project.
-		var inferredProjectFiles []string
-		for path, overlay := range b.fs.overlays {
-			if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
-				inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+		// See if we can find a default project without updating a bunch of stuff.
+		if result := b.findDefaultProject(fileName, path); result != nil {
+			hasChanges = b.updateProgram(result, logger) || hasChanges
+			if result.Value() != nil {
+				return
 			}
 		}
-		if len(inferredProjectFiles) > 0 {
-			b.updateInferredProjectRoots(inferredProjectFiles, logger)
+
+		// Make sure all projects we know about are up to date...
+		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
+			hasChanges = b.updateProgram(entry, logger) || hasChanges
+			return true
+		})
+		if hasChanges {
+			// If the structure of other projects changed, we might need to move files
+			// in/out of the inferred project.
+			var inferredProjectFiles []string
+			for path, overlay := range b.fs.overlays {
+				if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
+					inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+				}
+			}
+			if len(inferredProjectFiles) > 0 {
+				b.updateInferredProjectRoots(inferredProjectFiles, logger)
+			}
 		}
-	}
 
-	if b.inferredProject.Value() != nil {
-		b.updateProgram(b.inferredProject, logger)
-	}
+		if b.inferredProject.Value() != nil {
+			b.updateProgram(b.inferredProject, logger)
+		}
 
-	// At this point we should be able to find the default project for the file without
-	// creating anything else. Initially, I verified that and panicked if nothing was found,
-	// but that panic was getting triggered by fourslash infrastructure when it told us to
-	// open a package.json file. This is something the VS Code client would never do, but
-	// it seems possible that another client would. There's no point in panicking; we don't
-	// really even have an error condition until it tries to ask us language questions about
-	// a non-TS-handleable file.
+		// At this point we should be able to find the default project for the file without
+		// creating anything else. Initially, I verified that and panicked if nothing was found,
+		// but that panic was getting triggered by fourslash infrastructure when it told us to
+		// open a package.json file. This is something the VS Code client would never do, but
+		// it seems possible that another client would. There's no point in panicking; we don't
+		// really even have an error condition until it tries to ask us language questions about
+		// a non-TS-handleable file.
+	} else {
+		b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+	}
 
 	if logger != nil {
 		elapsed := time.Since(startTime)
@@ -405,23 +409,6 @@ func (b *ProjectCollectionBuilder) DidRequestProject(projectId tspath.Path, logg
 	if logger != nil {
 		elapsed := time.Since(startTime)
 		logger.Log(fmt.Sprintf("Completed project update request for %s in %v", projectId, elapsed))
-	}
-}
-
-func (b *ProjectCollectionBuilder) DidRequestEnsureDefaultProject(uri lsproto.DocumentUri, logger *logging.LogTree) {
-	fileName := uri.FileName()
-	path := b.toPath(fileName)
-	if b.fs.isOpenFile(path) {
-		b.DidRequestFile(uri, logger)
-		return
-	}
-
-	startTime := time.Now()
-	b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
-
-	if logger != nil {
-		elapsed := time.Since(startTime)
-		logger.Log(fmt.Sprintf("Completed file request for %s in %v", fileName, elapsed))
 	}
 }
 
