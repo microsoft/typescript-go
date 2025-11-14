@@ -211,28 +211,6 @@ Regardless of strictness, it still makes parameters optional when used in a `@pa
 
 ### JSDoc Tags
 
-#### `@type` tags no longer apply to function declarations, and now contextually type function expressions instead of applying directly. So this annotation no longer does anything:
-
-```js
-/** @type {(x: unknown) => asserts x is string } */
-function assertIsString(x) {
-  if (!(typeof x === "string")) throw new Error();
-}
-```
-
-Although this one still works via contextual typing:
-
-```js
-/** @typedef {(check: boolean) => asserts check} AssertFunc */
-
-/** @type {AssertFunc} */
-const assert = (check) => {
-  if (!check) throw new Error();
-};
-```
-
-A number of things change slightly because of differences between type annotation and contextual typing.
-
 #### `asserts` annotation for an arrow function must be on the declaring variable, not on the arrow itself. This no longer works:
 
 ```js
@@ -389,14 +367,6 @@ exports.x = theRealExport;
 
 This exports `x: undefined` not `x: typeof theRealExport`.
 
-#### Hover for `module` shows a property with name of the export instead of `exports`:
-
-```js
-module.exports = singleIdentifier;
-```
-
-shows a hover type like `module: { singleIdentifier: any }`
-
 #### Property access on `require` no longer imports a single property from a module:
 
 ```js
@@ -408,12 +378,3 @@ If you can't configure your package to use ESM syntax, you can use destructuring
 ```js
 const { x } = require("y");
 ```
-
-#### `Object.defineProperty` on `exports` no longer creates an export:
-
-```js
-Object.defineProperty(exports, "x", { value: 12 });
-```
-
-This applies to `module.exports` as well.
-Use `exports.x = 12` instead.
