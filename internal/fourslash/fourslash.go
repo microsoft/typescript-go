@@ -2664,21 +2664,6 @@ func (d *Diagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
 		relatedInfo = append(relatedInfo, relDiag)
 	}
 	return relatedInfo
-	//  {
-	// 	var related []diagnosticwriter.Diagnostic
-	// 	for _, info := range *d.diagnostic.RelatedInformation {
-	// 		// lspDiag := &LSPDiagnostic{
-	// 		// 	file: &LSPFile{UnitName: info.Location.Uri.FileName()},
-	// 		// }
-	// 		// relDiag := *d.diagnostic
-	// 		// relDiag.Range = info.Location.Range
-	// 		// relDiag.Message = info.Message
-	// 		// related = append(related, &LSPDiagnostic{
-	// 		// 	file:       &harnessutil.TestFile{UnitName: info.Location.Uri.FileName()},
-	// 		// 	diagnostic: &relDiag,
-	// 		// })
-	// 	}
-	// }
 }
 
 func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *Diagnostic {
