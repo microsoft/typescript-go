@@ -143,9 +143,10 @@ type Server struct {
 	defaultLibraryPath string
 	typingsLocation    string
 
-	initializeParams *lsproto.InitializeParams
-	positionEncoding lsproto.PositionEncodingKind
-	locale           language.Tag
+	initializeParams   *lsproto.InitializeParams
+	clientCapabilities lsproto.FinalizedClientCapabilities
+	positionEncoding   lsproto.PositionEncodingKind
+	locale             language.Tag
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
@@ -585,6 +586,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	s.initializeParams = params
+	s.clientCapabilities = lsproto.FinalizeClientCapabilities(params.Capabilities)
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
@@ -688,10 +690,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	return response, nil
-}
-
-func (s *Server) FinalizedClientCapabilities() lsproto.FinalizedClientCapabilities {
-	return lsproto.FinalizeClientCapabilities(s.initializeParams.Capabilities)
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
@@ -835,11 +833,11 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
-	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientSupportsLink(s.FinalizedClientCapabilities()))
+	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientSupportsLink(s.clientCapabilities))
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
-	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.FinalizedClientCapabilities()))
+	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.clientCapabilities))
 }
 
 func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
@@ -849,7 +847,7 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.FinalizedClientCapabilities()))
+	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.clientCapabilities))
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
