@@ -14,6 +14,7 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -586,6 +587,13 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	s.initializeParams = params
 	s.clientCapabilities = resolveClientCapabilities(params.Capabilities)
+
+	if _, err := fmt.Fprint(s.stderr, "Resolved client capabilities: "); err != nil {
+		return nil, err
+	}
+	if err := jsonutil.MarshalIndentWrite(s.stderr, &s.clientCapabilities, "", "\t"); err != nil {
+		return nil, err
+	}
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if slices.Contains(s.clientCapabilities.General.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
