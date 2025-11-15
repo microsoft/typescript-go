@@ -210,7 +210,7 @@ func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
-	p.programDiagnostics = append(p.programDiagnostics, p.processedFiles.fileDiagnostics...)
+	p.addProgramDiagnostics()
 	p.verifyCompilerOptions()
 	return p
 }
@@ -1223,6 +1223,59 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 	return SortAndDeduplicateDiagnostics(result)
 }
 
+func (p *Program) addProgramDiagnostic(diagnostic *ast.Diagnostic) {
+	p.programDiagnostics = append(p.programDiagnostics, diagnostic)
+}
+
+func (p *Program) addProgramDiagnostics() {
+	for _, m := range p.missingFiles {
+		reason := m.reason
+		data, ok := reason.data.(*referencedFileData)
+		if !ok {
+			// fallback if no reference info
+			diag := ast.NewDiagnostic(
+				nil,
+				core.UndefinedTextRange(),
+				diagnostics.File_0_not_found,
+				m.path,
+			)
+			p.addProgramDiagnostic(diag)
+			continue
+		}
+
+		parent := p.filesByPath[data.file]
+		if parent == nil {
+			diag := ast.NewDiagnostic(
+				nil,
+				core.UndefinedTextRange(),
+				diagnostics.File_0_not_found,
+				m.path,
+			)
+			p.addProgramDiagnostic(diag)
+			continue
+		}
+
+		var ref *ast.FileReference
+		if data.index < len(parent.ReferencedFiles) {
+			ref = parent.ReferencedFiles[data.index]
+		}
+
+		loc := core.UndefinedTextRange()
+		if ref != nil {
+			loc = ref.TextRange
+		}
+
+		diag := ast.NewDiagnostic(
+			parent,
+			loc,
+			diagnostics.File_0_not_found,
+			m.path,
+		)
+
+		p.addProgramDiagnostic(diag)
+	}
+}
+
 func (p *Program) LineCount() int {
 	var count int
 	for _, file := range p.files {
@@ -1554,9 +1607,21 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
-	return slices.ContainsFunc(p.missingFiles, func(missingPath string) bool {
+	return slices.ContainsFunc(p.missingFilePaths(), func(missingPath string) bool {
 		return p.toPath(missingPath) == path
 	})
+}
+
+func (p *Program) missingFilePaths() []string {
+	if len(p.missingFiles) == 0 {
+		return nil
+	}
+
+	paths := make([]string, 0, len(p.missingFiles))
+	for _, m := range p.missingFiles {
+		paths = append(paths, m.path)
+	}
+	return paths
 }
 
 func (p *Program) ExplainFiles(w io.Writer) {

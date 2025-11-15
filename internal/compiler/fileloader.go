@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -52,12 +51,17 @@ type fileLoader struct {
 	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
 }
 
+type missingFile struct {
+	path   string
+	reason *FileIncludeReason
+}
+
 type processedFiles struct {
 	resolver                      *module.Resolver
 	files                         []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
 	projectReferenceFileMapper    *projectReferenceFileMapper
-	missingFiles                  []string
+	missingFiles                  []missingFile
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
@@ -70,7 +74,6 @@ type processedFiles struct {
 	// if file was included using source file and its output is actually part of program
 	// this contains mapping from output to source file
 	outputFileToProjectReferenceSource map[tspath.Path]string
-	fileDiagnostics                    []*ast.Diagnostic
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -82,7 +85,6 @@ func processAllProgramFiles(
 	opts ProgramOptions,
 	singleThreaded bool,
 ) processedFiles {
-	var fileDiagnostics []*ast.Diagnostic
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
@@ -139,7 +141,7 @@ func processAllProgramFiles(
 	totalFileCount := int(loader.totalFileCount.Load())
 	libFileCount := int(loader.libFileCount.Load())
 
-	var missingFiles []string
+	var missingFiles []missingFile
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
@@ -174,21 +176,10 @@ func processAllProgramFiles(
 
 		// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 		if file == nil {
-			missingFiles = append(missingFiles, task.normalizedFilePath)
-
-			if task.includeReason != nil {
-				task.includeReason.diagOnce.Do(func() {
-					var parentFile *ast.SourceFile
-					d := ast.NewDiagnostic(
-						parentFile,                // !!! unknown parent file
-						core.UndefinedTextRange(), // !!! unknown location
-						diagnostics.File_0_not_found,
-						task.normalizedFilePath,
-					)
-					task.includeReason.diag = d
-					fileDiagnostics = append(fileDiagnostics, d)
-				})
-			}
+			missingFiles = append(missingFiles, missingFile{
+				path:   task.normalizedFilePath,
+				reason: task.includeReason,
+			})
 			return
 		}
 
@@ -268,7 +259,6 @@ func processAllProgramFiles(
 		missingFiles:                         missingFiles,
 		includeProcessor:                     loader.includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
-		fileDiagnostics:                      fileDiagnostics,
 	}
 }
 
