@@ -113,6 +113,10 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 		// transform `enum`, `namespace`, and parameter properties
 		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(&opts))
+
+		if options.ExperimentalDecorators.IsTrue() {
+			tx = append(tx, tstransforms.NewLegacyDecoratorsTransformer(&opts))
+		}
 	}
 
 	// !!! transform legacy decorator syntax

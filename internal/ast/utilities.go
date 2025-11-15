@@ -3941,3 +3941,78 @@ func IsPotentiallyExecutableNode(node *Node) bool {
 	}
 	return IsClassDeclaration(node) || IsEnumDeclaration(node) || IsModuleDeclaration(node)
 }
+
+func HasAbstractModifier(node *Node) bool {
+	return HasSyntacticModifier(node, ModifierFlagsAbstract)
+}
+
+func HasAmbientModifier(node *Node) bool {
+	return HasSyntacticModifier(node, ModifierFlagsAmbient)
+}
+
+func NodeCanBeDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
+	// private names cannot be used with decorators yet
+	if useLegacyDecorators && node.Name() != nil && IsPrivateIdentifier(node.Name()) {
+		return false
+	}
+	switch node.Kind {
+	case KindClassDeclaration:
+		// class declarations are valid targets
+		return true
+	case KindClassExpression:
+		// class expressions are valid targets for native decorators
+		return !useLegacyDecorators
+	case KindPropertyDeclaration:
+		// property declarations are valid if their parent is a class declaration.
+		return parent != nil && (useLegacyDecorators && IsClassDeclaration(parent) ||
+			!useLegacyDecorators && IsClassLike(parent) && !HasAbstractModifier(node) && !HasAmbientModifier(node))
+	case KindGetAccessor, KindSetAccessor, KindMethodDeclaration:
+		// if this method has a body and its parent is a class declaration, this is a valid target.
+		return parent != nil && node.Body() != nil && (useLegacyDecorators && IsClassDeclaration(parent) ||
+			!useLegacyDecorators && IsClassLike(parent))
+	case KindParameter:
+		// TODO(rbuckton): Parameter decorator support for ES decorators must wait until it is standardized
+		if !useLegacyDecorators {
+			return false
+		}
+		// if the parameter's parent has a body and its grandparent is a class declaration, this is a valid target.
+		return parent != nil && parent.Body() != nil &&
+			(parent.Kind == KindConstructor || parent.Kind == KindMethodDeclaration || parent.Kind == KindSetAccessor) &&
+			GetThisParameter(parent) != node && grandparent != nil && grandparent.Kind == KindClassDeclaration
+	}
+
+	return false
+}
+
+func ClassOrConstructorParameterIsDecorated(useLegacyDecorators bool, node *Node) bool {
+	if nodeIsDecorated(useLegacyDecorators, node, nil, nil) {
+		return true
+	}
+	constructor := GetFirstConstructorWithBody(node)
+	return constructor != nil && ChildIsDecorated(useLegacyDecorators, constructor, node)
+}
+
+func nodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
+	return HasDecorators(node) && NodeCanBeDecorated(useLegacyDecorators, node, parent, grandparent)
+}
+
+func NodeOrChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
+	return nodeIsDecorated(useLegacyDecorators, node, parent, grandparent) || ChildIsDecorated(useLegacyDecorators, node, parent)
+}
+
+func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
+	switch node.Kind {
+	case KindClassDeclaration, KindClassExpression:
+		return core.Some(node.Members(), func(m *Node) bool {
+			return NodeOrChildIsDecorated(useLegacyDecorators, m, node, parent)
+		})
+	case KindMethodDeclaration,
+		KindSetAccessor,
+		KindConstructor:
+		return core.Some(node.Parameters(), func(p *Node) bool {
+			return nodeIsDecorated(useLegacyDecorators, p, node, parent)
+		})
+	default:
+		return false
+	}
+}

@@ -520,6 +520,41 @@ func (f *NodeFactory) NewUnscopedHelperName(name string) *ast.IdentifierNode {
 
 // !!! TypeScript Helpers
 
+func (f *NodeFactory) NewDecorateHelper(decoratorExpressions []*ast.Node, target *ast.Node, memberName *ast.Node, descriptor *ast.Node) *ast.Expression {
+	f.emitContext.RequestEmitHelper(decorateHelper)
+
+	var argumentsArray []*ast.Node
+	argumentsArray = append(argumentsArray, f.NewArrayLiteralExpression(f.NewNodeList(decoratorExpressions), false))
+	argumentsArray = append(argumentsArray, target)
+	if memberName != nil {
+		argumentsArray = append(argumentsArray, memberName)
+		if descriptor != nil {
+			argumentsArray = append(argumentsArray, descriptor)
+		}
+	}
+
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__decorate"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(argumentsArray),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewParamHelper(expression *ast.Node, parameterOffset int, location core.TextRange) *ast.Expression {
+	f.emitContext.RequestEmitHelper(paramHelper)
+	helper := f.NewCallExpression(
+		f.NewUnscopedHelperName("__param"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(fmt.Sprint(parameterOffset)), expression}),
+		ast.NodeFlagsNone,
+	)
+	helper.Loc = location
+	return helper
+}
+
 // ESNext Helpers
 
 func (f *NodeFactory) NewAddDisposableResourceHelper(envBinding *ast.Expression, value *ast.Expression, async bool) *ast.Expression {
