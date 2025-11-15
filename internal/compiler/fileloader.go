@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -265,6 +266,20 @@ func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReaso
 			libFile:            libFile,
 			includeReason:      includeReason,
 		})
+	} else if tspath.HasExtension(fileName) {
+		// File has an extension but it's not in the supported extensions list
+		// Check if it's a JavaScript file and report the appropriate diagnostic
+		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
+		if tspath.HasJSFileExtension(canonicalFileName) {
+			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					diagnosticReason: includeReason,
+					message:          diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option,
+					args:             []any{fileName},
+				},
+			})
+		}
 	}
 }
 
