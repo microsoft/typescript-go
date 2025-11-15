@@ -21,8 +21,13 @@ import (
 )
 
 func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual string) {
-	b, ok := f.baselines[command]
-	if !ok {
+	var b *strings.Builder
+	if f.testData.isStateBaseliningEnabled() {
+		// Single baseline for all commands
+		b = &f.stateBaseline.baseline
+	} else if builder, ok := f.baselines[command]; ok {
+		b = builder
+	} else {
 		f.baselines[command] = &strings.Builder{}
 		b = f.baselines[command]
 	}
@@ -253,6 +258,7 @@ type baselineFourslashLocationsOptions struct {
 
 	startMarkerPrefix func(span lsproto.Location) *string
 	endMarkerSuffix   func(span lsproto.Location) *string
+	getLocationData   func(span lsproto.Location) string
 
 	additionalLocation *lsproto.Location
 }
@@ -294,7 +300,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 			return nil
 		}
 
-		content, ok := f.vfs.ReadFile(path)
+		content, ok := f.textOfFile(path)
 		if !ok {
 			// !!! error?
 			return nil
@@ -320,7 +326,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	// already added the file to the baseline.
 	if options.additionalLocation != nil && !foundAdditionalLocation {
 		fileName := options.additionalLocation.Uri.FileName()
-		if content, ok := f.vfs.ReadFile(fileName); ok {
+		if content, ok := f.textOfFile(fileName); ok {
 			baselineEntries = append(
 				baselineEntries,
 				f.getBaselineContentForFile(fileName, content, []lsproto.Range{options.additionalLocation.Range}, nil, options),
@@ -334,7 +340,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	if !foundMarker && options.marker != nil {
 		// If we didn't find the marker in any file, we need to add it.
 		markerFileName := options.marker.FileName()
-		if content, ok := f.vfs.ReadFile(markerFileName); ok {
+		if content, ok := f.textOfFile(markerFileName); ok {
 			baselineEntries = append(baselineEntries, f.getBaselineContentForFile(markerFileName, content, nil, nil, options))
 		}
 	}
@@ -342,6 +348,13 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	// !!! skipDocumentContainingOnlyMarker
 
 	return strings.Join(baselineEntries, "\n\n")
+}
+
+func (f *FourslashTest) textOfFile(fileName string) (string, bool) {
+	if _, ok := f.openFiles[fileName]; ok {
+		return f.getScriptInfo(fileName).content, true
+	}
+	return f.vfs.ReadFile(fileName)
 }
 
 type baselineDetail struct {
@@ -370,8 +383,12 @@ func (f *FourslashTest) getBaselineContentForFile(
 
 	for _, span := range spansInFile {
 		textSpanIndex := len(details)
+		startMarker := "[|"
+		if options.getLocationData != nil {
+			startMarker += options.getLocationData(lsproto.Location{Uri: uri, Range: span})
+		}
 		details = append(details,
-			&baselineDetail{pos: span.Start, positionMarker: "[|", span: &span, kind: "textStart"},
+			&baselineDetail{pos: span.Start, positionMarker: startMarker, span: &span, kind: "textStart"},
 			&baselineDetail{pos: span.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: "textEnd"},
 		)
 
@@ -754,4 +771,65 @@ func (t *textWithContext) getIndex(i any) *int {
 
 func codeFence(lang string, code string) string {
 	return "```" + lang + "\n" + code + "\n```"
+}
+
+func symbolInformationToData(symbol *lsproto.SymbolInformation) string {
+	var symbolKindToString string
+	switch symbol.Kind {
+	case lsproto.SymbolKindFile:
+		symbolKindToString = "file"
+	case lsproto.SymbolKindModule:
+		symbolKindToString = "module"
+	case lsproto.SymbolKindNamespace:
+		symbolKindToString = "namespace"
+	case lsproto.SymbolKindPackage:
+		symbolKindToString = "package"
+	case lsproto.SymbolKindClass:
+		symbolKindToString = "class"
+	case lsproto.SymbolKindMethod:
+		symbolKindToString = "method"
+	case lsproto.SymbolKindProperty:
+		symbolKindToString = "property"
+	case lsproto.SymbolKindField:
+		symbolKindToString = "field"
+	case lsproto.SymbolKindConstructor:
+		symbolKindToString = "constructor"
+	case lsproto.SymbolKindEnum:
+		symbolKindToString = "enum"
+	case lsproto.SymbolKindInterface:
+		symbolKindToString = "interface"
+	case lsproto.SymbolKindFunction:
+		symbolKindToString = "function"
+	case lsproto.SymbolKindVariable:
+		symbolKindToString = "variable"
+	case lsproto.SymbolKindConstant:
+		symbolKindToString = "constant"
+	case lsproto.SymbolKindString:
+		symbolKindToString = "string"
+	case lsproto.SymbolKindNumber:
+		symbolKindToString = "number"
+	case lsproto.SymbolKindBoolean:
+		symbolKindToString = "boolean"
+	case lsproto.SymbolKindArray:
+		symbolKindToString = "array"
+	case lsproto.SymbolKindObject:
+		symbolKindToString = "object"
+	case lsproto.SymbolKindKey:
+		symbolKindToString = "key"
+	case lsproto.SymbolKindNull:
+		symbolKindToString = "null"
+	case lsproto.SymbolKindEnumMember:
+		symbolKindToString = "enumMember"
+	case lsproto.SymbolKindStruct:
+		symbolKindToString = "struct"
+	case lsproto.SymbolKindEvent:
+		symbolKindToString = "event"
+	case lsproto.SymbolKindOperator:
+		symbolKindToString = "operator"
+	case lsproto.SymbolKindTypeParameter:
+		symbolKindToString = "typeParameter"
+	default:
+		symbolKindToString = "unknown"
+	}
+	return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbolKindToString)
 }

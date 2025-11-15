@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute/tsctests"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -28,6 +29,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -39,9 +41,11 @@ type FourslashTest struct {
 	id     int32
 	vfs    vfs.FS
 
-	testData     *TestData // !!! consolidate test files from test data and script info
-	baselines    map[string]*strings.Builder
-	rangesByText *collections.MultiMap[string, *RangeMarker]
+	testData      *TestData // !!! consolidate test files from test data and script info
+	baselines     map[string]*strings.Builder
+	rangesByText  *collections.MultiMap[string, *RangeMarker]
+	openFiles     map[string]struct{}
+	stateBaseline *stateBaseline
 
 	scriptInfos map[string]*scriptInfo
 	converters  *lsconv.Converters
@@ -134,7 +138,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		t.Skip("bundled files are not embedded")
 	}
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
-	testfs := make(map[string]string)
+	testfs := make(map[string]any)
 	scriptInfos := make(map[string]*scriptInfo)
 	testData := ParseTestData(t, content, fileName)
 	for _, file := range testData.Files {
@@ -143,10 +147,20 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		scriptInfos[filePath] = newScriptInfo(filePath, file.Content)
 	}
 
+	for link, target := range testData.Symlinks {
+		filePath := tspath.GetNormalizedAbsolutePath(link, rootDir)
+		testfs[filePath] = vfstest.Symlink(tspath.GetNormalizedAbsolutePath(target, rootDir))
+	}
+
 	compilerOptions := &core.CompilerOptions{
 		SkipDefaultLibCheck: core.TSTrue,
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
+	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
+		for commandLine := range strings.SplitSeq(commandLines, ",") {
+			tsctests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
+		}
+	}
 
 	// Skip tests with deprecated/removed compiler options
 	if compilerOptions.BaseUrl != "" {
@@ -173,7 +187,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
-	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
+
+	fsFromMap := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
+	fs := bundled.WrapFS(fsFromMap)
 
 	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
@@ -216,16 +232,23 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		scriptInfos:     scriptInfos,
 		converters:      converters,
 		baselines:       make(map[string]*strings.Builder),
+		openFiles:       make(map[string]struct{}),
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
 	f.initialize(t, capabilities)
-	for _, file := range testData.Files {
-		f.openFile(t, file.fileName)
+
+	if testData.isStateBaseliningEnabled() {
+		// Single baseline, so initialize project state baseline too
+		f.stateBaseline = newStateBaseline(fsFromMap.(iovfs.FsWithSys))
+	} else {
+		for _, file := range testData.Files {
+			f.openFile(t, file.fileName)
+		}
+		f.activeFilename = f.testData.Files[0].fileName
 	}
-	f.activeFilename = f.testData.Files[0].fileName
 
 	_, testPath, _, _ := runtime.Caller(1)
 	t.Cleanup(func() {
@@ -236,7 +259,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
-	name := strings.TrimPrefix(t.Name(), "Test")
+	name := t.Name()
+	name = core.LastOrNil(strings.Split(name, "/"))
+	name = strings.TrimPrefix(name, "Test")
 	return stringutil.LowerFirstChar(name)
 }
 
@@ -252,8 +277,8 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
-	sendRequest(t, f, lsproto.InitializeInfo, params)
-	sendNotification(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
+	sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 }
 
 var (
@@ -348,7 +373,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
+func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
 		info.Method,
@@ -392,7 +417,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	return resp, result, ok
 }
 
-func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
+func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
 	notification := lsproto.NewNotificationMessage(
 		info.Method,
 		params,
@@ -415,6 +440,39 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	}
 	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
+}
+
+func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	f.baselineState(t)
+	f.baselineRequestOrNotification(t, info.Method, params)
+	resMsg, result, resultOk := sendRequestWorker(t, f, info, params)
+	f.baselineState(t)
+	if resMsg == nil {
+		t.Fatalf(prefix+"Nil response received for %s request", info.Method)
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resMsg.AsResponse().Result)
+	}
+	return result
+}
+
+func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
+	t.Helper()
+	f.baselineState(t)
+	f.updateState(info.Method, params)
+	f.baselineRequestOrNotification(t, info.Method, params)
+	sendNotificationWorker(t, f, info, params)
+}
+
+func (f *FourslashTest) updateState(method lsproto.Method, params any) {
+	switch method {
+	case lsproto.MethodTextDocumentDidOpen:
+		f.openFiles[params.(*lsproto.DidOpenTextDocumentParams).TextDocument.Uri.FileName()] = struct{}{}
+	case lsproto.MethodTextDocumentDidClose:
+		delete(f.openFiles, params.(*lsproto.DidCloseTextDocumentParams).TextDocument.Uri.FileName())
+	}
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
@@ -580,14 +638,44 @@ func (f *FourslashTest) getRangesInFile(fileName string) []*RangeMarker {
 
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 	if f.activeFilename != filename {
-		f.openFile(t, filename)
+		if _, ok := f.openFiles[filename]; !ok {
+			f.openFile(t, filename)
+		} else {
+			f.activeFilename = filename
+		}
 	}
+}
+
+func (f *FourslashTest) CloseFileOfMarker(t *testing.T, markerName string) {
+	marker, ok := f.testData.MarkerPositions[markerName]
+	if !ok {
+		t.Fatalf("Marker '%s' not found", markerName)
+	}
+	if f.activeFilename == marker.FileName() {
+		f.activeFilename = ""
+	}
+	if index := slices.IndexFunc(f.testData.Files, func(f *TestFileInfo) bool { return f.fileName == marker.FileName() }); index >= 0 {
+		testFile := f.testData.Files[index]
+		f.scriptInfos[testFile.fileName] = newScriptInfo(testFile.fileName, testFile.Content)
+	} else {
+		delete(f.scriptInfos, marker.FileName())
+	}
+	sendNotification(t, f, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
+		},
+	})
 }
 
 func (f *FourslashTest) openFile(t *testing.T, filename string) {
 	script := f.getScriptInfo(filename)
 	if script == nil {
-		t.Fatalf("File %s not found in test data", filename)
+		if content, ok := f.vfs.ReadFile(filename); ok {
+			script = newScriptInfo(filename, content)
+			f.scriptInfos[filename] = script
+		} else {
+			t.Fatalf("File %s not found in test data", filename)
+		}
 	}
 	f.activeFilename = filename
 	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
@@ -597,6 +685,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 			Text:       script.content,
 		},
 	})
+	f.baselineProjectsAfterNotification(t, filename)
 }
 
 func getLanguageKind(filename string) lsproto.LanguageKind {
@@ -730,7 +819,6 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 }
 
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
-	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -742,13 +830,7 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		reset := f.ConfigureWithReset(t, userPreferences)
 		defer reset()
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
-	if resMsg == nil {
-		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	return result.List
 }
 
@@ -984,14 +1066,7 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 }
 
 func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
-	prefix := f.getCurrentPositionPrefix()
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
-	if resMsg == nil {
-		t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
-	}
+	result := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
 	return result
 }
 
@@ -1106,10 +1181,7 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 	}
-	_, diagResult, diagOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
-	if !diagOk {
-		t.Fatalf("Failed to get diagnostics")
-	}
+	diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
 
 	var diagnostics []*lsproto.Diagnostic
 	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
@@ -1128,13 +1200,7 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 			Diagnostics: diagnostics,
 		},
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
-	if resMsg == nil {
-		t.Fatalf("Nil response received for code action request at pos %v", f.currentCaretPosition)
-	}
-	if !resultOk {
-		t.Fatalf("Unexpected code action response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
 	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
 	var importActions []*lsproto.CodeAction
@@ -1230,22 +1296,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			Position: f.currentCaretPosition,
 			Context:  &lsproto.ReferenceContext{},
 		}
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
-		if resMsg == nil {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Nil response received for references request at pos %v", f.currentCaretPosition)
-			} else {
-				t.Fatalf("Nil response received for references request at marker '%s'", *f.lastKnownMarkerName)
-			}
-		}
-		if !resultOk {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
-			} else {
-				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
-			}
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*FIND ALL REFS*/",
@@ -1272,22 +1323,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			Position: f.currentCaretPosition,
 		}
 
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
-		if resMsg == nil {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Nil response received for definition request at pos %v", f.currentCaretPosition)
-			} else {
-				t.Fatalf("Nil response received for definition request at marker '%s'", *f.lastKnownMarkerName)
-			}
-		}
-		if !resultOk {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected definition response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
-			} else {
-				t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
-			}
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
 		var resultAsLocations []lsproto.Location
 		var additionalLocation *lsproto.Location
 		if result.Locations != nil {
@@ -1339,22 +1375,7 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 			Position: f.currentCaretPosition,
 		}
 
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
-		if resMsg == nil {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Nil response received for type definition request at pos %v", f.currentCaretPosition)
-			} else {
-				t.Fatalf("Nil response received for type definition request at marker '%s'", *f.lastKnownMarkerName)
-			}
-		}
-		if !resultOk {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected type definition response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
-			} else {
-				t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
-			}
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
 		var resultAsLocations []lsproto.Location
 		if result.Locations != nil {
 			resultAsLocations = *result.Locations
@@ -1376,6 +1397,30 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineWorkspaceSymbol(t *testing.T, query string) {
+	t.Helper()
+	result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: query})
+
+	locationToText := map[lsproto.Location]*lsproto.SymbolInformation{}
+	fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+	var symbolInformations []*lsproto.SymbolInformation
+	if result.SymbolInformations != nil {
+		symbolInformations = *result.SymbolInformations
+	}
+	for _, symbol := range symbolInformations {
+		uri := symbol.Location.Uri
+		fileToRange.Add(uri, symbol.Location.Range)
+		locationToText[symbol.Location] = symbol
+	}
+
+	f.addResultToBaseline(t, "workspaceSymbol", f.getBaselineForGroupedLocationsWithFileContents(
+		&fileToRange,
+		baselineFourslashLocationsOptions{
+			getLocationData: func(span lsproto.Location) string { return symbolInformationToData(locationToText[span]) },
+		},
+	))
+}
+
 func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
 		if marker.Name == nil {
@@ -1389,14 +1434,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 			Position: marker.LSPosition,
 		}
 
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
-		if resMsg == nil {
-			t.Fatalf(f.getCurrentPositionPrefix()+"Nil response received for quick info request", f.lastKnownMarkerName)
-		}
-		if !resultOk {
-			t.Fatalf(f.getCurrentPositionPrefix()+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
 		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
 	})
 
@@ -1460,14 +1498,7 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 			Position: marker.LSPosition,
 		}
 
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
-		if resMsg == nil {
-			t.Fatalf(f.getCurrentPositionPrefix()+"Nil response received for signature help request", f.lastKnownMarkerName)
-		}
-		if !resultOk {
-			t.Fatalf(f.getCurrentPositionPrefix()+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
 		return markerAndItem[*lsproto.SignatureHelp]{Marker: marker, Item: result.SignatureHelp}, true
 	})
 
@@ -1581,17 +1612,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 			Positions: []lsproto.Position{marker.LSPosition},
 		}
 
-		resMsg, selectionRangeResult, resultOk := sendRequest(t, f, lsproto.TextDocumentSelectionRangeInfo, params)
-		markerNameStr := *core.OrElse(marker.Name, ptrTo("(unnamed)"))
-		if resMsg == nil {
-			t.Fatalf("Nil response received for selection range request at marker '%s'", markerNameStr)
-		}
-		if !resultOk {
-			if resMsg.AsResponse().Error != nil {
-				t.Fatalf("Error response for selection range request at marker '%s': %v", markerNameStr, resMsg.AsResponse().Error)
-			}
-			t.Fatalf("Unexpected selection range response type at marker '%s': %T", markerNameStr, resMsg.AsResponse().Result)
-		}
+		selectionRangeResult := sendRequest(t, f, lsproto.TextDocumentSelectionRangeInfo, params)
 
 		if selectionRangeResult.SelectionRanges == nil || len(*selectionRangeResult.SelectionRanges) == 0 {
 			result.WriteString("No selection ranges available\n")
@@ -1738,22 +1759,7 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 			},
 			Position: f.currentCaretPosition,
 		}
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
-		if resMsg == nil {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Nil response received for document highlights request at pos %v", f.currentCaretPosition)
-			} else {
-				t.Fatalf("Nil response received for document highlights request at marker '%s'", *f.lastKnownMarkerName)
-			}
-		}
-		if !resultOk {
-			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected document highlights response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
-			} else {
-				t.Fatalf("Unexpected document highlights response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
-			}
-		}
-
+		result := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
 		highlights := result.DocumentHighlights
 		if highlights == nil {
 			highlights = &[]*lsproto.DocumentHighlight{}
@@ -1960,10 +1966,6 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	}
 
 	script.editContent(start, end, newText)
-	err := f.vfs.WriteFile(fileName, script.content, false)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
-	}
 	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			Uri:     lsconv.FileNameToDocumentURI(fileName),
@@ -1999,13 +2001,7 @@ func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hov
 		},
 		Position: f.currentCaretPosition,
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
-	if resMsg == nil {
-		t.Fatalf("Nil response received for hover request at marker '%s'", *f.lastKnownMarkerName)
-	}
-	if !resultOk {
-		t.Fatalf("Unexpected hover response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
 	if result.Hover == nil {
 		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
 	}
@@ -2110,13 +2106,7 @@ func (f *FourslashTest) verifySignatureHelp(
 		Position: f.currentCaretPosition,
 		Context:  context,
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
-	if resMsg == nil {
-		t.Fatalf(prefix+"Nil response received for signature help request", f.lastKnownMarkerName)
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
 	f.verifySignatureHelpResult(t, result.SignatureHelp, expected, prefix)
 }
 
@@ -2152,15 +2142,9 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			Position: f.currentCaretPosition,
 			Context:  &lsproto.CompletionContext{},
 		}
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
+		result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 
 		prefix := fmt.Sprintf("At marker '%s': ", markerName)
-		if resMsg == nil {
-			t.Fatalf(prefix+"Nil response received for completion request for autoimports", f.lastKnownMarkerName)
-		}
-		if !resultOk {
-			t.Fatalf(prefix+"Unexpected response type for completion request for autoimports: %T", resMsg.AsResponse().Result)
-		}
 
 		f.writeToBaseline("Auto Imports", "// === Auto Imports === \n")
 
@@ -2197,13 +2181,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			if item.Data == nil || *item.SortText != string(ls.SortTextAutoImportSuggestions) {
 				continue
 			}
-			resMsg, details, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
-			if resMsg == nil {
-				t.Fatalf(prefix+"Nil response received for resolve completion", f.lastKnownMarkerName)
-			}
-			if !resultOk {
-				t.Fatalf(prefix+"Unexpected response type for resolve completion: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
-			}
+			details := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
 			if details == nil || details.AdditionalTextEdits == nil || len(*details.AdditionalTextEdits) == 0 {
 				t.Fatalf(prefix+"Entry %s from %s returned no code changes from completion details request", item.Label, item.Detail)
 			}
@@ -2281,14 +2259,7 @@ func (f *FourslashTest) verifyBaselineRename(
 			NewName:  "?",
 		}
 
-		prefix := f.getCurrentPositionPrefix()
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-		if resMsg == nil {
-			t.Fatal(prefix + "Nil response received for rename request")
-		}
-		if !resultOk {
-			t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
-		}
+		result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
 
 		var changes map[lsproto.DocumentUri][]*lsproto.TextEdit
 		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
@@ -2363,14 +2334,7 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if resMsg == nil {
-		t.Fatal(prefix + "Nil response received for rename request")
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
-	}
-
+	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
 	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
 		t.Fatal(prefix + "Expected rename to succeed, but got no changes")
 	}
@@ -2387,14 +2351,7 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.Use
 	}
 
 	prefix := f.getCurrentPositionPrefix()
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
-	if resMsg == nil {
-		t.Fatal(prefix + "Nil response received for rename request")
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
-	}
-
+	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
 	if result.WorkspaceEdit != nil {
 		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
 	}
@@ -2432,8 +2389,12 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 }
 
 func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
-	for command, content := range f.baselines {
-		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command, testPath))
+	if !f.testData.isStateBaseliningEnabled() {
+		for command, content := range f.baselines {
+			baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command, testPath))
+		}
+	} else {
+		baseline.Run(t, getBaseFileNameFromTest(t)+".baseline", f.stateBaseline.baseline.String(), baseline.Options{Subfolder: "fourslash/state"})
 	}
 }
 
@@ -2461,14 +2422,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
-	if resMsg == nil {
-		t.Fatal(prefix + "Nil response received for inlay hints request")
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for inlay hints request: %T", resMsg.AsResponse().Result)
-	}
-
+	result := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
 	fileLines := strings.Split(f.getScriptInfo(fileName).content, "\n")
 	var annotations []string
 	if result.InlayHints != nil {
@@ -2522,13 +2476,7 @@ func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diag
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
-	if resMsg == nil {
-		t.Fatal("Nil response received for diagnostics request")
-	}
-	if !resultOk {
-		t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
 
 	var actualDiagnostics []*lsproto.Diagnostic
 	if result.FullDocumentDiagnosticReport != nil {
