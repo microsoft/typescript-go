@@ -37,13 +37,14 @@ const (
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
-	CurrentDirectory   string
-	DefaultLibraryPath string
-	TypingsLocation    string
-	PositionEncoding   lsproto.PositionEncodingKind
-	WatchEnabled       bool
-	LoggingEnabled     bool
-	DebounceDelay      time.Duration
+	CurrentDirectory     string
+	DefaultLibraryPath   string
+	TypingsLocation      string
+	PositionEncoding     lsproto.PositionEncodingKind
+	WatchEnabled         bool
+	LoggingEnabled       bool
+	DebounceDelay        time.Duration
+	CustomConfigFileName string
 }
 
 type SessionInit struct {
