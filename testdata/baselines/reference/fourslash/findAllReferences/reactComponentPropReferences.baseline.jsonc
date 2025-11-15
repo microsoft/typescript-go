@@ -1,0 +1,12 @@
+// === findAllReferences ===
+// === /Counter.tsx ===
+// --- (line: 5) skipped ---
+// }
+// 
+// interface CounterProps {
+//     /*FIND ALL REFS*/[|value|]: number;
+// }
+// 
+// export function Counter({ [|value|] }: CounterProps) {
+//     return <div>{value}</div>;
+// }
