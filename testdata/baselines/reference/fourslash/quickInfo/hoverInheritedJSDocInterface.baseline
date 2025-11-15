@@ -1,0 +1,159 @@
+// === QuickInfo ===
+=== /hoverInheritedJSDocInterface.ts ===
+// interface foo {
+//   /** base jsdoc */
+//   bar(k: string): number;
+//   /** other jsdoc */
+//   other: 24;
+// }
+// 
+// interface bar extends foo {
+//   bar(k: string | symbol): number | 99;
+// }
+// 
+// declare const f: foo;
+// declare const b: bar;
+// 
+// f.bar;
+//   ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (method) foo.bar(k: string): number
+// | ```
+// | base jsdoc
+// | ----------------------------------------------------------------------
+// f.other;
+//   ^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) foo.other: 24
+// | ```
+// | other jsdoc
+// | ----------------------------------------------------------------------
+// b.bar;
+//   ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (method) bar.bar(k: string | symbol): number
+// | ```
+// | base jsdoc
+// | ----------------------------------------------------------------------
+// b.other;
+//   ^^^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) foo.other: 24
+// | ```
+// | other jsdoc
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 217,
+      "LSPosition": {
+        "line": 14,
+        "character": 2
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) foo.bar(k: string): number\n```\nbase jsdoc"
+      },
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 2
+        },
+        "end": {
+          "line": 14,
+          "character": 5
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 224,
+      "LSPosition": {
+        "line": 15,
+        "character": 2
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) foo.other: 24\n```\nother jsdoc"
+      },
+      "range": {
+        "start": {
+          "line": 15,
+          "character": 2
+        },
+        "end": {
+          "line": 15,
+          "character": 7
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 233,
+      "LSPosition": {
+        "line": 16,
+        "character": 2
+      },
+      "Name": "3",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) bar.bar(k: string | symbol): number\n```\nbase jsdoc"
+      },
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 2
+        },
+        "end": {
+          "line": 16,
+          "character": 5
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 240,
+      "LSPosition": {
+        "line": 17,
+        "character": 2
+      },
+      "Name": "4",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) foo.other: 24\n```\nother jsdoc"
+      },
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 2
+        },
+        "end": {
+          "line": 17,
+          "character": 7
+        }
+      }
+    }
+  }
+]

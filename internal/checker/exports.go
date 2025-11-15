@@ -62,6 +62,10 @@ func (c *Checker) GetPropertyOfType(t *Type, name string) *ast.Symbol {
 	return c.getPropertyOfType(t, name)
 }
 
+func (c *Checker) GetBaseTypes(t *Type) []*Type {
+	return c.getBaseTypes(t)
+}
+
 func (c *Checker) TypeHasCallOrConstructSignatures(t *Type) bool {
 	return c.typeHasCallOrConstructSignatures(t)
 }
