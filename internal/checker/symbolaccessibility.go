@@ -569,10 +569,8 @@ func (ch *Checker) isAccessible(
 	resolvedAliasSymbol *ast.Symbol,
 	ignoreQualification bool,
 ) bool {
-	likeSymbols := false
-	if ctx.symbol == resolvedAliasSymbol {
-		likeSymbols = true
-	}
+	likeSymbols := ctx.symbol == resolvedAliasSymbol
+
 	if ctx.symbol == symbolFromSymbolTable {
 		likeSymbols = true
 	}

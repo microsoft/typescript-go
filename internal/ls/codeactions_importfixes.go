@@ -583,7 +583,7 @@ func promoteImportClause(
 
 				// If the alias declaration is an ImportSpecifier and the list is sorted,
 				// move it to index 0 (since it will be the only non-type-only import)
-				if isSorted.IsFalse() == false && // isSorted !== false
+				if !isSorted.IsFalse() &&
 					aliasDeclaration != nil &&
 					aliasDeclaration.Kind == ast.KindImportSpecifier {
 					// Find the index of the alias declaration

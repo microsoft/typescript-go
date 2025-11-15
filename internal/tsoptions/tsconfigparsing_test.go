@@ -155,9 +155,8 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 }
 
 type parseJsonConfigTestCase struct {
-	title               string
-	noSubmoduleBaseline bool
-	input               []testConfig
+	title string
+	input []testConfig
 }
 
 var parseJsonConfigFileTests = []parseJsonConfigTestCase{
@@ -235,8 +234,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "parses tsconfig with compilerOptions, files, include, and exclude",
-		noSubmoduleBaseline: true,
+		title: "parses tsconfig with compilerOptions, files, include, and exclude",
 		input: []testConfig{{
 			jsonText: `{
   "compilerOptions": {
@@ -439,8 +437,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "parses tsconfig with extends, files, include and other options",
-		noSubmoduleBaseline: true,
+		title: "parses tsconfig with extends, files, include and other options",
 		input: []testConfig{{
 			jsonText: `{
 				"extends": "./tsconfigWithExtends.json",
@@ -457,8 +454,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "parses tsconfig with extends and configDir",
-		noSubmoduleBaseline: true,
+		title: "parses tsconfig with extends and configDir",
 		input: []testConfig{{
 			jsonText: `{
 				"extends": "./tsconfig.base.json"
@@ -497,8 +493,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "handles empty types array",
-		noSubmoduleBaseline: true,
+		title: "handles empty types array",
 		input: []testConfig{{
 			jsonText: `{
 			    "compilerOptions": {
@@ -511,8 +506,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "issue 1267 scenario - extended files not picked up",
-		noSubmoduleBaseline: true,
+		title: "issue 1267 scenario - extended files not picked up",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-base/backend.json",
@@ -581,8 +575,7 @@ export {}`,
 		}},
 	},
 	{
-		title:               "null overrides in extended tsconfig - array fields",
-		noSubmoduleBaseline: true,
+		title: "null overrides in extended tsconfig - array fields",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-base.json",
@@ -607,8 +600,7 @@ export {}`,
 		}},
 	},
 	{
-		title:               "null overrides in extended tsconfig - string fields",
-		noSubmoduleBaseline: true,
+		title: "null overrides in extended tsconfig - string fields",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-base.json",
@@ -633,8 +625,7 @@ export {}`,
 		}},
 	},
 	{
-		title:               "null overrides in extended tsconfig - mixed field types",
-		noSubmoduleBaseline: true,
+		title: "null overrides in extended tsconfig - mixed field types",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-base.json",
@@ -664,8 +655,7 @@ export {}`,
 		}},
 	},
 	{
-		title:               "null overrides with multiple extends levels",
-		noSubmoduleBaseline: true,
+		title: "null overrides with multiple extends levels",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-middle.json",
@@ -697,8 +687,7 @@ export {}`,
 		}},
 	},
 	{
-		title:               "null overrides in middle level of extends chain",
-		noSubmoduleBaseline: true,
+		title: "null overrides in middle level of extends chain",
 		input: []testConfig{{
 			jsonText: `{
   "extends": "./tsconfig-middle.json",
@@ -772,7 +761,7 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with json api", func(t *testing.T) {
 			t.Parallel()
-			baselineParseConfigWith(t, rec.title+" with json api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonApi)
+			baselineParseConfigWith(t, rec.title+" with json api.js", rec.input, getParsedWithJsonApi)
 		})
 	}
 }
@@ -799,7 +788,7 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
-			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonSourceFileApi)
+			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.input, getParsedWithJsonSourceFileApi)
 		})
 	}
 }
@@ -826,8 +815,8 @@ func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfi
 	)
 }
 
-func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleBaseline bool, input []testConfig, getParsed func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine) {
-	noSubmoduleBaseline = true
+func baselineParseConfigWith(t *testing.T, baselineFileName string, input []testConfig, getParsed func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine) {
+	noSubmoduleBaseline := true
 	var baselineContent strings.Builder
 	for i, config := range input {
 		basePath := config.basePath
@@ -973,12 +962,12 @@ func TestParseTypeAcquisition(t *testing.T) {
 		}
 		t.Run(withJsonApiName, func(t *testing.T) {
 			t.Parallel()
-			baselineParseConfigWith(t, withJsonApiName+".js", true, input, getParsedWithJsonApi)
+			baselineParseConfigWith(t, withJsonApiName+".js", input, getParsedWithJsonApi)
 		})
 		withJsonSourceFileApiName := test.title + " with jsonSourceFile api"
 		t.Run(withJsonSourceFileApiName, func(t *testing.T) {
 			t.Parallel()
-			baselineParseConfigWith(t, withJsonSourceFileApiName+".js", true, input, getParsedWithJsonSourceFileApi)
+			baselineParseConfigWith(t, withJsonSourceFileApiName+".js", input, getParsedWithJsonSourceFileApi)
 		})
 	}
 }
