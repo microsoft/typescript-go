@@ -428,13 +428,7 @@ func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map
 			if entry, ok := b.configuredProjects.Load(projectId); ok {
 				// If this project has potential project reference for any of the project we are loading ancestor tree for
 				// load this project first
-				if project := entry.Value(); project != nil && project.forEachPotentialProjectReference(func(p tspath.Path) bool {
-					if projectsReferenced == nil {
-						return true
-					}
-					_, isReferenced := projectsReferenced[p]
-					return isReferenced
-				}) {
+				if project := entry.Value(); project != nil && (projectsReferenced == nil || project.hasPotentialProjectReference(projectsReferenced)) {
 					b.updateProgram(entry, logger)
 				}
 				b.ensureProjectTree(wg, entry, projectsReferenced, &seenProjects, logger)

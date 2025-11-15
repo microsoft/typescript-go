@@ -288,16 +288,16 @@ func (p *Project) setPotentialProjectReference(configFilePath tspath.Path) {
 	p.potentialProjectReferences.Add(configFilePath)
 }
 
-func (p *Project) forEachPotentialProjectReference(fn func(tspath.Path) bool) bool {
+func (p *Project) hasPotentialProjectReference(references map[tspath.Path]struct{}) bool {
 	if p.CommandLine != nil {
 		for _, path := range p.CommandLine.ResolvedProjectReferencePaths() {
-			if fn(p.toPath(path)) {
+			if _, has := references[p.toPath(path)]; has {
 				return true
 			}
 		}
 	} else if p.potentialProjectReferences != nil {
 		for path := range p.potentialProjectReferences.Keys() {
-			if fn(path) {
+			if _, has := references[path]; has {
 				return true
 			}
 		}

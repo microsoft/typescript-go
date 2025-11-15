@@ -144,12 +144,12 @@ Config::
 
 // === workspaceSymbol ===
 // === /a/a.ts ===
-// export function [|{| name: fnA, kind: function |}[|{| name: fnA, kind: function |}fnA|]|]() {}
+// export function [|{| name: fnA, kind: function |}fnA|]() {}
 // export interface IfaceA {}
 // export const instanceA: IfaceA = {};
 
 // === /b/b.ts ===
-// export function [|{| name: fnB, kind: function |}[|{| name: fnB, kind: function |}fnB|]|]() {}
+// export function [|{| name: fnB, kind: function |}fnB|]() {}
 
 // === /b/c.ts ===
 // export function [|{| name: fnC, kind: function |}fnC|]() {}
