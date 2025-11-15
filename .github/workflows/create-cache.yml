@@ -38,6 +38,7 @@ jobs:
           large-packages: false
           docker-images: false
           swap-storage: false
+          dotnet: false
 
       - run: git config --system core.longpaths true
         if: ${{ matrix.os == 'windows-latest' }}
