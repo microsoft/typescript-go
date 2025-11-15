@@ -6,3 +6,5 @@ parserCorruptionAfterMapInClass
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
+moduleReexportedIntoGlobalQuickInfo
+quickInfoImportNonunicodePath
