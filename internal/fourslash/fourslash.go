@@ -350,8 +350,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := lsproto.NewRequestMessage(
-		info.Method,
+	req := info.NewRequestMessage(
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
@@ -393,8 +392,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := lsproto.NewNotificationMessage(
-		info.Method,
+	notification := info.NewNotificationMessage(
 		params,
 	)
 	f.writeMsg(t, notification.Message())
