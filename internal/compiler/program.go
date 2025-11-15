@@ -24,8 +24,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
@@ -67,6 +69,7 @@ type Program struct {
 	// Cached unresolved imports for ATA
 	unresolvedImportsOnce sync.Once
 	unresolvedImports     *collections.Set[string]
+	knownSymlinks         *symlinks.KnownSymlinks
 }
 
 // FileExists implements checker.Program.
@@ -211,6 +214,11 @@ func NewProgram(opts ProgramOptions) *Program {
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.verifyCompilerOptions()
+	p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+	if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
+		p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+	}
+	p.populateSymlinkCacheFromResolutions()
 	return p
 }
 
@@ -241,6 +249,11 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
 	updateFileIncludeProcessor(result)
+	result.knownSymlinks = symlinks.NewKnownSymlink(result.GetCurrentDirectory(), result.UseCaseSensitiveFileNames())
+	if len(result.resolvedModules) > 0 || len(result.typeResolutionsInFile) > 0 {
+		result.knownSymlinks.SetSymlinksFromResolutions(result.ForEachResolvedModule, result.ForEachResolvedTypeReferenceDirective)
+	}
+	p.populateSymlinkCacheFromResolutions()
 	return result, true
 }
 
@@ -1621,6 +1634,86 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
+}
+
+func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
+	// if p.Host().GetSymlinkCache() != nil {
+	// 	return p.Host().GetSymlinkCache()
+	// }
+	if p.knownSymlinks == nil {
+		p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		// In declaration-only builds, the symlink cache might not be populated yet
+		// because module resolution was skipped. Populate it now if we have resolutions.
+		if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
+			p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+		}
+		p.populateSymlinkCacheFromResolutions()
+	}
+	return p.knownSymlinks
+}
+
+func (p *Program) populateSymlinkCacheFromResolutions() {
+	p.Host().FS().WalkDir(
+		p.GetCurrentDirectory(),
+		func(path string, d vfs.DirEntry, e error) error {
+			if e != nil {
+				return e
+			}
+			if !d.IsDir() {
+				return nil
+			}
+
+			packageJsonDir := p.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(path))
+			if packageJsonDir == "" {
+				return nil
+			}
+
+			packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
+			// Check if we've already populated symlinks for this package.json
+			if p.knownSymlinks.IsPackagePopulated(packageJsonPath) {
+				return nil
+			}
+			pkgJsonInfo := p.GetPackageJsonInfo(packageJsonPath)
+			if pkgJsonInfo == nil {
+				return nil
+			}
+			pkgJson := pkgJsonInfo.GetContents()
+			if pkgJson == nil {
+				return nil
+			}
+			p.knownSymlinks.PopulateFromResolutions(packageJsonPath, pkgJson, p.ResolveModuleName)
+			return nil
+		},
+	)
+}
+
+func (p *Program) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+	resolved, _ := p.resolver.ResolveModuleName(moduleName, containingFile, resolutionMode, nil)
+	return resolved
+}
+
+func (p *Program) ForEachResolvedModule(callback func(resolution *module.ResolvedModule, moduleName string, mode core.ResolutionMode, filePath tspath.Path), file *ast.SourceFile) {
+	forEachResolution(p.resolvedModules, callback, file)
+}
+
+func (p *Program) ForEachResolvedTypeReferenceDirective(callback func(resolution *module.ResolvedTypeReferenceDirective, moduleName string, mode core.ResolutionMode, filePath tspath.Path), file *ast.SourceFile) {
+	forEachResolution(p.typeResolutionsInFile, callback, file)
+}
+
+func forEachResolution[T any](resolutionCache map[tspath.Path]module.ModeAwareCache[T], callback func(resolution T, moduleName string, mode core.ResolutionMode, filePath tspath.Path), file *ast.SourceFile) {
+	if file != nil {
+		if resolutions, ok := resolutionCache[file.Path()]; ok {
+			for key, resolution := range resolutions {
+				callback(resolution, key.Name, key.Mode, file.Path())
+			}
+		}
+	} else {
+		for filePath, resolutions := range resolutionCache {
+			for key, resolution := range resolutions {
+				callback(resolution, key.Name, key.Mode, filePath)
+			}
+		}
+	}
 }
 
 var plainJSErrors = collections.NewSetFromItems(
