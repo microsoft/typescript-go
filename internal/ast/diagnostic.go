@@ -4,6 +4,7 @@ import (
 	"maps"
 	"slices"
 	"strings"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -67,7 +68,10 @@ func (d *Diagnostic) AddRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 	return d
 }
 
+var randomChangeJustToTestCI atomic.Int64
+
 func (d *Diagnostic) Clone() *Diagnostic {
+	randomChangeJustToTestCI.Add(1)
 	result := *d
 	return &result
 }
