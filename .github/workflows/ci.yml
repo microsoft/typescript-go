@@ -127,9 +127,14 @@ jobs:
         # Also, avoid using it in race mode so we get the full output.
         if: ${{ matrix.config.os != 'windows-latest' && !matrix.config.race }}
 
+      - run: df -h
+
       - name: Tests
         id: test
         run: npx hereby test
+
+      - run: df -h
+        if: ${{ always() }}
 
       - name: Benchmarks
         run: npx hereby test:benchmarks
