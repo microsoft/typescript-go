@@ -1232,42 +1232,26 @@ func (p *Program) addProgramDiagnostics() {
 		reason := m.reason
 		data, ok := reason.data.(*referencedFileData)
 		if !ok {
-			// fallback if no reference info
-			diag := ast.NewDiagnostic(
-				nil,
-				core.UndefinedTextRange(),
-				diagnostics.File_0_not_found,
-				m.path,
-			)
-			p.addProgramDiagnostic(diag)
 			continue
 		}
 
 		parent := p.filesByPath[data.file]
 		if parent == nil {
-			diag := ast.NewDiagnostic(
-				nil,
-				core.UndefinedTextRange(),
-				diagnostics.File_0_not_found,
-				m.path,
-			)
-			p.addProgramDiagnostic(diag)
 			continue
 		}
 
 		var ref *ast.FileReference
+
 		if data.index < len(parent.ReferencedFiles) {
 			ref = parent.ReferencedFiles[data.index]
 		}
-
-		loc := core.UndefinedTextRange()
-		if ref != nil {
-			loc = ref.TextRange
+		if ref == nil {
+			continue
 		}
 
 		diag := ast.NewDiagnostic(
 			parent,
-			loc,
+			ref.TextRange,
 			diagnostics.File_0_not_found,
 			m.path,
 		)
