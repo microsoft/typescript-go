@@ -1,11 +1,16 @@
 package autoimport
 
 import (
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 func getModuleIDOfModuleSymbol(symbol *ast.Symbol) ModuleID {
@@ -57,4 +62,43 @@ func isUpper(c rune) bool {
 
 func isLower(c rune) bool {
 	return c >= 'a' && c <= 'z'
+}
+
+func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collections.Set[string], error) {
+	packageNames := &collections.Set[string]{}
+	if tspath.GetBaseFileName(nodeModulesDir) != "node_modules" {
+		panic("nodeModulesDir is not a node_modules directory")
+	}
+	err := fs.WalkDir(nodeModulesDir, func(packageDirName string, entry vfs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() {
+			baseName := tspath.GetBaseFileName(packageDirName)
+			if strings.HasPrefix(baseName, "@") {
+				// Scoped package
+				return fs.WalkDir(packageDirName, func(scopedPackageDirName string, scopedEntry vfs.DirEntry, scopedErr error) error {
+					if scopedErr != nil {
+						return scopedErr
+					}
+					if scopedEntry.IsDir() {
+						scopedBaseName := tspath.GetBaseFileName(scopedPackageDirName)
+						if baseName == "@types" {
+							packageNames.Add(module.GetPackageNameFromTypesPackageName(tspath.CombinePaths("@types", scopedBaseName)))
+						} else {
+							packageNames.Add(tspath.CombinePaths(baseName, scopedBaseName))
+						}
+					}
+					return nil
+				})
+			} else {
+				packageNames.Add(baseName)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return packageNames, nil
 }

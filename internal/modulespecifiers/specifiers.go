@@ -101,7 +101,7 @@ func GetModuleSpecifiersForFileWithInfo(
 
 func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker CheckerShape) string {
 	for _, decl := range moduleSymbol.Declarations {
-		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
+		if ast.IsModuleWithStringLiteralName(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
 			return decl.Name().Text()
 		}
 	}
@@ -121,7 +121,7 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 			continue
 		}
 
-		possibleContainer := ast.FindAncestor(d, isNonGlobalAmbientModule)
+		possibleContainer := ast.FindAncestor(d, ast.IsModuleWithStringLiteralName)
 		if possibleContainer == nil || possibleContainer.Parent == nil || !ast.IsSourceFile(possibleContainer.Parent) {
 			continue
 		}

@@ -12,6 +12,11 @@ func (v *View) GetModuleSpecifier(
 ) string {
 	// !!! try using existing import
 
+	// Ambient module
+	if modulespecifiers.PathIsBareSpecifier(string(export.ModuleID)) {
+		return string(export.ModuleID)
+	}
+
 	if export.NodeModulesDirectory != "" {
 		if entrypoints, ok := v.registry.nodeModules[export.NodeModulesDirectory].Entrypoints[export.Path]; ok {
 			conditions := collections.NewSetFromItems(module.GetConditions(v.program.Options(), v.program.GetDefaultResolutionModeForFile(v.importingFile))...)

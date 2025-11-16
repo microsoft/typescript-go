@@ -272,7 +272,7 @@ func (fs *sourceFS) UseCaseSensitiveFileNames() bool {
 
 // WalkDir implements vfs.FS.
 func (fs *sourceFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	panic("unimplemented")
+	return fs.source.FS().WalkDir(root, walkFn)
 }
 
 // WriteFile implements vfs.FS.

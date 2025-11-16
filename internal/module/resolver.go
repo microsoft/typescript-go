@@ -2015,13 +2015,10 @@ type ResolvedEntrypoint struct {
 	ExcludeConditions *collections.Set[string]
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry) *ResolvedEntrypoints {
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) *ResolvedEntrypoints {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
-	// !!! scoped package names
-	packageName := GetPackageNameFromTypesPackageName(tspath.GetBaseFileName(packageJson.PackageDirectory))
-
 	if packageJson.Contents.Exports.IsPresent() {
 		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
 		return &ResolvedEntrypoints{

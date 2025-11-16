@@ -54,14 +54,24 @@ func (a *autoImportRegistryCloneHost) GetDefaultProject(path tspath.Path) (tspat
 
 // GetPackageJson implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetPackageJson(fileName string) *packagejson.InfoCacheEntry {
-	// !!! ref-counted cache
+	// !!! ref-counted shared cache
 	fh := a.fs.GetFile(fileName)
+	packageDirectory := tspath.GetDirectoryPath(fileName)
 	if fh == nil {
-		return nil
+		return &packagejson.InfoCacheEntry{
+			DirectoryExists:  a.fs.DirectoryExists(packageDirectory),
+			PackageDirectory: packageDirectory,
+		}
 	}
 	fields, err := packagejson.Parse([]byte(fh.Content()))
 	if err != nil {
-		return nil
+		return &packagejson.InfoCacheEntry{
+			DirectoryExists:  true,
+			PackageDirectory: tspath.GetDirectoryPath(fileName),
+			Contents: &packagejson.PackageJson{
+				Parseable: false,
+			},
+		}
 	}
 	return &packagejson.InfoCacheEntry{
 		DirectoryExists:  true,

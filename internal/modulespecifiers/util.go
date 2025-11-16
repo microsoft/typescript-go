@@ -14,10 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func isNonGlobalAmbientModule(node *ast.Node) bool {
-	return ast.IsModuleDeclaration(node) && ast.IsStringLiteral(node.Name())
-}
-
 func comparePathsByRedirectAndNumberOfDirectorySeparators(a ModulePath, b ModulePath) int {
 	if a.IsRedirect == b.IsRedirect {
 		return strings.Count(a.FileName, "/") - strings.Count(b.FileName, "/")

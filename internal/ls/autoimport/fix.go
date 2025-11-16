@@ -560,7 +560,7 @@ func getImportKind(importingFile *ast.SourceFile, export *RawExport, program *co
 	switch export.Syntax {
 	case ExportSyntaxDefaultModifier, ExportSyntaxDefaultDeclaration:
 		return ImportKindDefault
-	case ExportSyntaxNamed, ExportSyntaxModifier:
+	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar:
 		return ImportKindNamed
 	case ExportSyntaxEquals:
 		return ImportKindDefault

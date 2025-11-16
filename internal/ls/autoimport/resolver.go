@@ -13,10 +13,29 @@ import (
 )
 
 type resolver struct {
-	toPath          func(fileName string) tspath.Path
-	host            RegistryCloneHost
-	moduleResolver  *module.Resolver
-	resolvedModules collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
+	toPath         func(fileName string) tspath.Path
+	host           RegistryCloneHost
+	moduleResolver *module.Resolver
+
+	rootFiles []*ast.SourceFile
+
+	resolvedModules                          collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
+	possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
+	possibleFailedAmbientModuleLookupSources collections.SyncSet[ast.HasFileName]
+}
+
+func newResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver *module.Resolver, toPath func(fileName string) tspath.Path) *resolver {
+	r := &resolver{
+		toPath:         toPath,
+		host:           host,
+		moduleResolver: moduleResolver,
+		rootFiles:      make([]*ast.SourceFile, 0, len(rootFileNames)),
+	}
+	for _, fileName := range rootFileNames {
+		// !!! if we don't end up storing files in the ParseCache, this would be repeated
+		r.rootFiles = append(r.rootFiles, r.GetSourceFile(fileName))
+	}
+	return r
 }
 
 // BindSourceFiles implements checker.Program.
@@ -26,8 +45,7 @@ func (r *resolver) BindSourceFiles() {
 
 // SourceFiles implements checker.Program.
 func (r *resolver) SourceFiles() []*ast.SourceFile {
-	// !!! I think this is fine but not sure
-	return nil
+	return r.rootFiles
 }
 
 // Options implements checker.Program.
@@ -88,6 +106,11 @@ func (r *resolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleRe
 	resolved, _ := r.moduleResolver.ResolveModuleName(moduleReference, currentSourceFile.FileName(), mode, nil)
 	resolved, _ = cache.LoadOrStore(module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}, resolved)
 	// !!! failed lookup locations
+	// !!! also successful lookup locations, for that matter, need to cause invalidation
+	if !resolved.IsResolved() && !tspath.PathIsRelative(moduleReference) {
+		r.possibleFailedAmbientModuleLookupTargets.Add(moduleReference)
+		r.possibleFailedAmbientModuleLookupSources.Add(currentSourceFile)
+	}
 	return resolved
 }
 
