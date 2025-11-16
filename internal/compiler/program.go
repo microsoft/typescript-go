@@ -1242,9 +1242,13 @@ func (p *Program) addProgramDiagnostics() {
 
 		var ref *ast.FileReference
 
-		if data.index < len(parent.ReferencedFiles) {
-			ref = parent.ReferencedFiles[data.index]
+		for _, r := range parent.ReferencedFiles {
+			if r.FileName == string(m.path) {
+				ref = r
+				break
+			}
 		}
+
 		if ref == nil {
 			continue
 		}
