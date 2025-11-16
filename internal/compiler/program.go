@@ -1243,7 +1243,7 @@ func (p *Program) addProgramDiagnostics() {
 		var ref *ast.FileReference
 
 		for _, r := range parent.ReferencedFiles {
-			if r.FileName == string(m.path) {
+			if r.FileName == m.path {
 				ref = r
 				break
 			}
