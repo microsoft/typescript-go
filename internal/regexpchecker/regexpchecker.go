@@ -55,7 +55,7 @@ type regExpValidator struct {
 	unicodeSetsMode                bool
 	anyUnicodeMode                 bool
 	anyUnicodeModeOrNonAnnexB      bool
-	namedCaptureGroups             bool
+	hasNamedCapturingGroups        bool
 	numberOfCapturingGroups        int
 	groupSpecifiers                map[string]bool
 	groupNameReferences            []namedReference
@@ -119,20 +119,20 @@ func Check(
 	v.anyUnicodeMode = v.regExpFlags&regExpFlagsAnyUnicodeMode != 0
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
-	v.namedCaptureGroups = v.detectNamedCaptureGroups()
+	v.hasNamedCapturingGroups = v.detectNamedCapturingGroups()
 
 	v.scanDisjunction(false)
 	v.validateGroupReferences()
 	v.validateDecimalEscapes()
 }
 
-// detectNamedCaptureGroups performs a quick scan of the pattern to detect
-// if it contains any named capture groups (?<name>...). This is needed because
+// detectNamedCapturingGroups performs a quick scan of the pattern to detect
+// if it contains any named capturing groups (?<name>...). This is needed because
 // the presence of named groups changes the interpretation of \k escapes:
 // - Without named groups: \k is an identity escape (matches literal 'k')
 // - With named groups: \k must be followed by <name> or it's a syntax error
 // This matches the behavior in scanner.ts's reScanSlashToken.
-func (v *regExpValidator) detectNamedCaptureGroups() bool {
+func (v *regExpValidator) detectNamedCapturingGroups() bool {
 	inEscape := false
 	inCharacterClass := false
 	text := v.text[v.pos:v.end]
@@ -158,7 +158,7 @@ func (v *regExpValidator) detectNamedCaptureGroups() bool {
 			text[i+2] == '<' &&
 			text[i+3] != '=' &&
 			text[i+3] != '!' {
-			// Found (?< that's not (?<= or (?<! - this is a named capture group
+			// Found (?< that's not (?<= or (?<! - this is a named capturing group
 			return true
 		}
 	}
@@ -471,7 +471,7 @@ func (v *regExpValidator) scanAtomEscape() {
 			v.pos++
 			v.scanGroupName(true)
 			v.scanExpectedChar('>')
-		} else if v.anyUnicodeModeOrNonAnnexB || v.namedCaptureGroups {
+		} else if v.anyUnicodeModeOrNonAnnexB || v.hasNamedCapturingGroups {
 			v.error(diagnostics.X_k_must_be_followed_by_a_capturing_group_name_enclosed_in_angle_brackets, v.pos-2, 2)
 		}
 	case 'q':
