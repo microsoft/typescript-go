@@ -153,7 +153,7 @@ func (v *regExpValidator) detectNamedCapturingGroups() bool {
 		}
 
 		// Only check ASCII characters for the pattern (?<
-		if ch >= 0x80 {
+		if ch >= utf8.RuneSelf {
 			continue
 		}
 
@@ -182,7 +182,7 @@ func (v *regExpValidator) charAndSize() (rune, int) {
 		return 0, 0
 	}
 	// Simple ASCII fast path
-	if ch := v.text[v.pos]; ch < 0x80 {
+	if ch := v.text[v.pos]; ch < utf8.RuneSelf {
 		return rune(ch), 1
 	}
 	// Decode multi-byte UTF-8 character
@@ -195,7 +195,7 @@ func (v *regExpValidator) charAtOffset(offset int) rune {
 		return 0
 	}
 	// Simple ASCII fast path
-	if ch := v.text[v.pos+offset]; ch < 0x80 {
+	if ch := v.text[v.pos+offset]; ch < utf8.RuneSelf {
 		return rune(ch)
 	}
 	// Decode multi-byte UTF-8 character
