@@ -757,17 +757,12 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 	case 'x':
 		// Hex escape '\xDD'
 		hexStart := v.pos
-		validHex := true
 		for range 2 {
 			if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
-				validHex = false
-				break
+				v.error(diagnostics.Hexadecimal_digit_expected, v.pos, 0)
+				return v.text[start:v.pos]
 			}
 			v.pos++
-		}
-		if !validHex {
-			v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
-			return v.text[start:v.pos]
 		}
 		code := parseHexValue(v.text, hexStart, v.pos)
 		return string(rune(code))
@@ -789,8 +784,8 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			}
 			if v.charAtOffset(0) == '}' {
 				v.pos++
-			} else if hasDigits {
-				v.error(diagnostics.Unterminated_Unicode_escape_sequence, start, v.pos-start)
+			} else {
+				v.error(diagnostics.Unterminated_Unicode_escape_sequence, v.pos, 0)
 				return v.text[start:v.pos]
 			}
 			// Parse hex value (-1 to skip closing brace)
@@ -806,17 +801,12 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 		} else {
 			// Standard unicode escape '\uDDDD'
 			hexStart := v.pos
-			validHex := true
 			for range 4 {
 				if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
-					validHex = false
-					break
+					v.error(diagnostics.Hexadecimal_digit_expected, v.pos, 0)
+					return v.text[start:v.pos]
 				}
 				v.pos++
-			}
-			if !validHex {
-				v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
-				return v.text[start:v.pos]
 			}
 			code := parseHexValue(v.text, hexStart, v.pos)
 			// For surrogates, we need to preserve the actual value since string(rune(surrogate))
