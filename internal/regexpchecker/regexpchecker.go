@@ -674,7 +674,7 @@ func (v *regExpValidator) scanCharacterEscape(atomEscape bool) string {
 		}
 		if v.anyUnicodeModeOrNonAnnexB {
 			v.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, v.pos-2, 2)
-		} else if atomEscape {
+		} else {
 			v.pos--
 			return "\\"
 		}
