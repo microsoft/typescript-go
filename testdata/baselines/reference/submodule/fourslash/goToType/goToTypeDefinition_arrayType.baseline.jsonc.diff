@@ -200,7 +200,7 @@
 -// interface ArrayConstructor {
 -//     new (arrayLength?: number): any[];
 -// --- (line: --) skipped ---
-
+-
 -// --- (line: --) skipped ---
 -//     readonly prototype: any[];
 -// }
@@ -210,13 +210,15 @@
 -// interface TypedPropertyDescriptor<T> {
 -//     enumerable?: boolean;
 -// --- (line: --) skipped ---
+-
+
 
  // === goToType ===
- // === /goToTypeDefinition_arrayType.ts ===
-@@= skipped -221, +16 lines =@@
+@@= skipped -222, +15 lines =@@
+ // class CustomArray<T> extends Array<T> { immutableReverse() { return [...this].reverse() } }
  // declare const users3: CustomArray<User>
  // users3
-
+-
 -// === lib.d.ts ===
 -// --- (line: --) skipped ---
 -//     slice(start?: number, end?: number): T[];
@@ -413,7 +415,7 @@
 -// interface ArrayConstructor {
 -//     new (arrayLength?: number): any[];
 -// --- (line: --) skipped ---
-
+-
 -// --- (line: --) skipped ---
 -//     readonly prototype: any[];
 -// }
@@ -424,5 +426,4 @@
 -//     enumerable?: boolean;
 -// --- (line: --) skipped ---
 
- // === goToType ===
- // === /goToTypeDefinition_arrayType.ts ===
+

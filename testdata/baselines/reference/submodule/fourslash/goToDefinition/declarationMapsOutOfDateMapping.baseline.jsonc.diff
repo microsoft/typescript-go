@@ -1,11 +1,6 @@
 --- old.declarationMapsOutOfDateMapping.baseline.jsonc
 +++ new.declarationMapsOutOfDateMapping.baseline.jsonc
-@@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
- // === /home/src/workspaces/project/node_modules/a/src/index.ts ===
- // export class [|Foo|] {
- // }
+@@= skipped -4, +4 lines =@@
  // 
 
  // === /home/src/workspaces/project/index.ts ===

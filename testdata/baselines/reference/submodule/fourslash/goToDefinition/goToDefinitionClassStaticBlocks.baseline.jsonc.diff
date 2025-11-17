@@ -11,6 +11,8 @@
 -//     [|static|] {}
 -// }
 -
+-
+-
 -// === goToDefinition ===
 -// === /goToDefinitionClassStaticBlocks.ts ===
 -// class ClassStaticBocks {
@@ -21,6 +23,8 @@
 -//     static y;
 -//     [|static|] {}
 -// }
+-
+-
 -
 -// === goToDefinition ===
 -// === /goToDefinitionClassStaticBlocks.ts ===

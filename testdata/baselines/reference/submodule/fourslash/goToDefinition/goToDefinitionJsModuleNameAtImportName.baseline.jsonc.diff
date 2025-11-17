@@ -16,10 +16,8 @@
 
  // === /bar.js ===
  // const /*GOTO DEF*/[|BlahModule|] = require("./foo.js");
- // new BlahModule.Blah()
+@@= skipped -13, +13 lines =@@
 
-+
-+
  // === goToDefinition ===
  // === /foo.js ===
 -// [|function notExported() { }
@@ -35,10 +33,8 @@
 
  // === /bar.js ===
  // const BlahModule = require("./foo.js");
- // new /*GOTO DEF*/[|BlahModule|].Blah()
+@@= skipped -14, +14 lines =@@
 
-+
-+
  // === goToDefinition ===
  // === /foo.js ===
 -// [|function notExported() { }
@@ -54,10 +50,8 @@
 
  // === /barTs.ts ===
  // import /*GOTO DEF*/[|BlahModule|] = require("./foo.js");
- // new BlahModule.Blah()
+@@= skipped -14, +14 lines =@@
 
-+
-+
  // === goToDefinition ===
  // === /foo.js ===
 -// [|function notExported() { }

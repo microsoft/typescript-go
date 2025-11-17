@@ -1,11 +1,5 @@
 --- old.goToDefinitionAmbiants.baseline.jsonc
 +++ new.goToDefinitionAmbiants.baseline.jsonc
-@@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
- // === /goToDefinitionAmbiants.ts ===
- // declare var [|ambientVar|];
- // declare function ambientFunction();
 @@= skipped -7, +7 lines =@@
  //     public method();
  // }
@@ -15,16 +9,7 @@
  // ambientFunction();
  // var ambientClassVariable = new ambientClass();
  // ambientClass.method();
- // ambientClassVariable.method();
-
--// === getDefinitionAtPosition ===
-+
-+
-+// === goToDefinition ===
- // === /goToDefinitionAmbiants.ts ===
- // declare var ambientVar;
- // declare function [|ambientFunction|]();
-@@= skipped -17, +19 lines =@@
+@@= skipped -19, +19 lines =@@
  // }
  // 
  // ambientVar = 1;
@@ -33,15 +18,7 @@
  // var ambientClassVariable = new ambientClass();
  // ambientClass.method();
  // ambientClassVariable.method();
-
--// === getDefinitionAtPosition ===
-+
-+
-+// === goToDefinition ===
- // === /goToDefinitionAmbiants.ts ===
- // declare var ambientVar;
- // declare function ambientFunction();
-@@= skipped -17, +19 lines =@@
+@@= skipped -19, +19 lines =@@
  // 
  // ambientVar = 1;
  // ambientFunction();
@@ -50,14 +27,7 @@
  // ambientClass.method();
  // ambientClassVariable.method();
 
--// === getDefinitionAtPosition ===
-+
-+
-+// === goToDefinition ===
- // === /goToDefinitionAmbiants.ts ===
- // declare var ambientVar;
- // declare function ambientFunction();
-@@= skipped -17, +19 lines =@@
+@@= skipped -19, +19 lines =@@
  // ambientVar = 1;
  // ambientFunction();
  // var ambientClassVariable = new ambientClass();
@@ -65,14 +35,8 @@
 +// ambientClass./*GOTO DEF*/method();
  // ambientClassVariable.method();
 
--// === getDefinitionAtPosition ===
-+
-+
-+// === goToDefinition ===
- // === /goToDefinitionAmbiants.ts ===
- // declare var ambientVar;
- // declare function ambientFunction();
-@@= skipped -17, +19 lines =@@
+
+@@= skipped -19, +19 lines =@@
  // ambientFunction();
  // var ambientClassVariable = new ambientClass();
  // ambientClass.method();

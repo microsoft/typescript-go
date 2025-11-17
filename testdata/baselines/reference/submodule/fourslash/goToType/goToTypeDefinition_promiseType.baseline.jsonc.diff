@@ -29,11 +29,11 @@
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
 -// --- (line: --) skipped ---
-+
+-
+
 
  // === goToType ===
- // === /goToTypeDefinition_promiseType.ts ===
-@@= skipped -34, +10 lines =@@
+@@= skipped -36, +10 lines =@@
  // const /*GOTO TYPE*/promisedBob = getUser() 
  // 
  // export {}

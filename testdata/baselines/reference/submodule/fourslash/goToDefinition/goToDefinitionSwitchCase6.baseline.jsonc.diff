@@ -8,8 +8,8 @@
  // default;
  // case 42;
 
-+
-+
+@@= skipped -7, +7 lines =@@
+
  // === goToDefinition ===
  // === /goToDefinitionSwitchCase6.ts ===
 -// [|export default { case };
@@ -17,8 +17,5 @@
  // /*GOTO DEF*/default;
 -// case 42;|]
 +// case 42;
-+
-+
 
- // === goToDefinition ===
- // === /goToDefinitionSwitchCase6.ts ===
+

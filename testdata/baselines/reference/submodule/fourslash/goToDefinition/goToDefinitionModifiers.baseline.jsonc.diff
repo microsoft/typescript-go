@@ -15,8 +15,8 @@
 -// 
 -// export function foo() { }
 +// --- (line: 5) skipped ---
-+
-+
+
+
 
  // === goToDefinition ===
  // === /a.ts ===
@@ -36,18 +36,10 @@
 -// 
 -// export function foo() { }
 +// --- (line: 5) skipped ---
-+
-+
 
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -38, +24 lines =@@
- // 
- // --- (line: 7) skipped ---
 
-+
-+
- // === goToDefinition ===
+
+@@= skipped -48, +30 lines =@@
  // === /a.ts ===
  // export class A {
  // 
@@ -56,21 +48,7 @@
  // 
  //     readonly x: string;
  // 
- // --- (line: 7) skipped ---
-+
-+
-
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -22, +26 lines =@@
- // 
- // --- (line: 9) skipped ---
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // export class A {
+@@= skipped -28, +28 lines =@@
  // 
  //     private z: string;
  // 
@@ -79,21 +57,7 @@
  // 
  //     async a() {  }
  // 
- // --- (line: 9) skipped ---
-+
-+
-
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -24, +28 lines =@@
- // 
- // --- (line: 11) skipped ---
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 3) skipped ---
+@@= skipped -28, +28 lines =@@
  // 
  //     readonly x: string;
  // 
@@ -102,21 +66,7 @@
  // 
  //     override b() {}
  // 
- // --- (line: 11) skipped ---
-+
-+
-
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -25, +29 lines =@@
- // 
- // export function foo() { }
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 5) skipped ---
+@@= skipped -29, +29 lines =@@
  // 
  //     async a() {  }
  // 
@@ -125,40 +75,7 @@
  // 
  //     public async c() { }
  // }
- // 
- // export function foo() { }
-+
-+
-
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -24, +28 lines =@@
- // 
- // export function foo() { }
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 7) skipped ---
-@@= skipped -11, +13 lines =@@
- // 
- // export function foo() { }
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 7) skipped ---
-@@= skipped -11, +13 lines =@@
- // 
- // export function foo() { }
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 7) skipped ---
+@@= skipped -54, +54 lines =@@
  // 
  //     override b() {}
  // 
@@ -167,20 +84,7 @@
  // }
  // 
  // export function foo() { }
-+
-+
-
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -19, +23 lines =@@
- // 
- // exp/*GOTO DEF*/ort function [|foo|]() { }
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // --- (line: 10) skipped ---
+@@= skipped -23, +23 lines =@@
  //     public async c() { }
  // }
  // 

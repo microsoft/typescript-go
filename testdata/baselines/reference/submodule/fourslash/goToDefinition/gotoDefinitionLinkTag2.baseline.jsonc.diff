@@ -1,8 +1,7 @@
 --- old.gotoDefinitionLinkTag2.baseline.jsonc
 +++ new.gotoDefinitionLinkTag2.baseline.jsonc
 @@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
+ // === goToDefinition ===
  // === /gotoDefinitionLinkTag2.ts ===
  // enum E {
 -//     /** {@link /*GOTO DEF POS*/A} */

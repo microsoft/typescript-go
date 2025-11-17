@@ -8,8 +8,8 @@
  // import("./f/*GOTO DEF*/oo")
 -// var x = import("./foo")
 +// var x = import("./foo")|]
-+
-+
+
+
 
  // === goToDefinition ===
  // === /foo.ts ===

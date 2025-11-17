@@ -10,6 +10,8 @@
 -// import "./stylez.css";
 -// import "./foo.txt";
 -
+-
+-
 -// === goToDefinition ===
 -// === /home/src/workspaces/project/stylez.css ===
 -// [||]div {
@@ -20,6 +22,8 @@
 -// import "./scriptThing";
 -// import /*GOTO DEF*/[|"./stylez.css"|];
 -// import "./foo.txt";
+-
+-
 -
 -// === goToDefinition ===
 -// === /home/src/workspaces/project/foo.txt ===

@@ -8,10 +8,7 @@
  // x./*GOTO DEF*/test();
  // x.test3 = function () { }
  // x.test3();
-
-+
-+
- // === goToDefinition ===
+@@= skipped -10, +10 lines =@@
  // === /foo.js ===
  // x.test = () => { }
  // x.test();

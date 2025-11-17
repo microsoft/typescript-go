@@ -1,8 +1,6 @@
 --- old.goToDefinitionShadowVariableInsideModule.baseline.jsonc
 +++ new.goToDefinitionShadowVariableInsideModule.baseline.jsonc
-@@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
+@@= skipped -1, +1 lines =@@
  // === /goToDefinitionShadowVariableInsideModule.ts ===
  // module shdModule {
  //     var [|shdVar|];

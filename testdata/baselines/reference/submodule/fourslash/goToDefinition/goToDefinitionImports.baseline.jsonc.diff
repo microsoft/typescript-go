@@ -16,26 +16,4 @@
 -// /*GOTO DEF*/a;
 +// /*GOTO DEF*/[|a|];
  // b;
-+
-+
 
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -21, +27 lines =@@
- // a;
- // b;
-
-+
-+
- // === goToDefinition ===
- // === /a.ts ===
- // export default function f() {}
-@@= skipped -13, +15 lines =@@
- // /*GOTO DEF*/[|x|];
- // a;
- // b;
-+
-+
-
- // === goToDefinition ===
- // === /b.ts ===

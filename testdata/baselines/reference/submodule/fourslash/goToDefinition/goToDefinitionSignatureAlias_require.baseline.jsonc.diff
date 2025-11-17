@@ -8,10 +8,8 @@
 
  // === /b.js ===
  // const f = require("./a");
- // /*GOTO DEF*/[|f|]();
+@@= skipped -9, +9 lines =@@
 
-+
-+
  // === goToDefinition ===
  // === /a.js ===
 -// module.exports = function [|f|]() {}

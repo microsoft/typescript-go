@@ -253,11 +253,13 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 				serverTestFilePrefix := "/server"
 				contextSpanOpening := "<|"
 				contextSpanClosing := "|>"
+				oldGoToDefCommand := "getDefinitionAtPosition"
 				replacer := strings.NewReplacer(
 					contextSpanOpening, "",
 					contextSpanClosing, "",
 					testFilePrefix, "",
 					serverTestFilePrefix, "",
+					oldGoToDefCommand, string(goToDefinitionCmd),
 				)
 				var defIdRegex = regexp.MustCompile(`{\| defId: [0-9]+ \|}`)
 				detailsStr := "// === Details ==="
@@ -270,19 +272,26 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 						isInDetails = false
 						commandName := matches[1]
 						if commandName == string(command) ||
-							command == goToDefinitionCmd && commandName == "getDefinitionAtPosition" {
+							command == goToDefinitionCmd && commandName == oldGoToDefCommand {
 							isInCommand = true
 						} else {
 							isInCommand = false
 						}
-					} else if strings.Contains(line, detailsStr) {
-						isInDetails = true
 					}
-					// We don't diff the details section, since the structure of responses is different.
-					if isInCommand && !isInDetails {
-						fixedLine := replacer.Replace(line)
-						fixedLine = defIdRegex.ReplaceAllString(fixedLine, "")
-						commandLines = append(commandLines, fixedLine)
+					if isInCommand {
+						if strings.Contains(line, detailsStr) {
+							// Drop blank line before details
+							commandLines = commandLines[:len(commandLines)-1]
+							isInDetails = true
+						}
+						// We don't diff the details section, since the structure of responses is different.
+						if !isInDetails {
+							fixedLine := replacer.Replace(line)
+							fixedLine = defIdRegex.ReplaceAllString(fixedLine, "")
+							commandLines = append(commandLines, fixedLine)
+						} else if line == "  ]" {
+							isInDetails = false
+						}
 					}
 				}
 				return strings.Join(commandLines, "\n")

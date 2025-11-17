@@ -1,8 +1,6 @@
 --- old.goToDefinitionImplicitConstructor.baseline.jsonc
 +++ new.goToDefinitionImplicitConstructor.baseline.jsonc
-@@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
+@@= skipped -1, +1 lines =@@
  // === /goToDefinitionImplicitConstructor.ts ===
  // class [|ImplicitConstructor|] {
  // }

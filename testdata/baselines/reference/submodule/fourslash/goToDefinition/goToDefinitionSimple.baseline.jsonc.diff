@@ -8,11 +8,10 @@
 -// var n = new c();
 +//  var n = new /*GOTO DEF*/[|c|]();
 +//  var n = new c();
-+
-+
 
- // === goToDefinition ===
- // === /Definition.ts ===
+
+
+@@= skipped -10, +10 lines =@@
  // class [|c|] { }
 
  // === /Consumption.ts ===

@@ -1,65 +1,7 @@
 --- old.goToTypeDefinition_returnType.baseline.jsonc
 +++ new.goToTypeDefinition_returnType.baseline.jsonc
-@@= skipped -15, +15 lines =@@
- // f3();
- // --- (line: 29) skipped ---
+@@= skipped -148, +148 lines =@@
 
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // interface I { x: number; }
-@@= skipped -23, +25 lines =@@
- // f4();
- // --- (line: 30) skipped ---
-
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // interface [|I|] { x: number; }
-@@= skipped -18, +20 lines =@@
- // f5();
- // --- (line: 31) skipped ---
-
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // --- (line: 7) skipped ---
-@@= skipped -23, +25 lines =@@
- // f7();
- // f8();
-
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // interface [|I|] { x: number; }
-@@= skipped -18, +20 lines =@@
- // f7();
- // f8();
-
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // interface [|I|] { x: number; }
-@@= skipped -18, +20 lines =@@
- // f7();
- // f8();
-
-+
-+
- // === goToType ===
- // === /goToTypeDefinition_returnType.ts ===
- // interface [|I|] { x: number; }
-@@= skipped -17, +19 lines =@@
- // f7();
- // f8();
-
-+
-+
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
 -// --- (line: 15) skipped ---
@@ -75,12 +17,8 @@
  // --- (line: 28) skipped ---
  // f4();
  // f5();
-@@= skipped -19, +11 lines =@@
- // /*GOTO TYPE*/f7();
- // f8();
+@@= skipped -21, +11 lines =@@
 
-+
-+
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
 -// --- (line: 19) skipped ---

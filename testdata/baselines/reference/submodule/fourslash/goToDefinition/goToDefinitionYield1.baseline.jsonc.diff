@@ -1,14 +1,6 @@
 --- old.goToDefinitionYield1.baseline.jsonc
 +++ new.goToDefinitionYield1.baseline.jsonc
-@@= skipped -7, +7 lines =@@
- //     yield 0;
- // }
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionYield1.ts ===
- // function* gen() {
+@@= skipped -15, +15 lines =@@
  //     yield 0;
  // }
  // 

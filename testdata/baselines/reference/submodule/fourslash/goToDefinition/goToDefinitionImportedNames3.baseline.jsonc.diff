@@ -8,12 +8,10 @@
 -// var c = new /*GOTO DEF*/[|C|]();
 +//  import {M, C, I} from "./d";
 +//  var c = new /*GOTO DEF*/[|C|]();
-+
-+
 
- // === goToDefinition ===
- // === /a.ts ===
-@@= skipped -15, +17 lines =@@
+
+
+@@= skipped -17, +17 lines =@@
  // }
 
  // === /e.ts ===

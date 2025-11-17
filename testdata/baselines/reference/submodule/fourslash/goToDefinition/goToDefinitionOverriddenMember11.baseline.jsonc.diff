@@ -9,10 +9,3 @@
  // }
  // class Bar extends Foo {
  //     /** @over/*GOTO DEF*/ride see {@link https://test.com} description */
- //     m() {}
- // }
-+
-+
-
- // === goToDefinition ===
- // === /a.js ===

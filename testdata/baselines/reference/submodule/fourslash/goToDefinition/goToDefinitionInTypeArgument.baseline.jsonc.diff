@@ -1,23 +1,15 @@
 --- old.goToDefinitionInTypeArgument.baseline.jsonc
 +++ new.goToDefinitionInTypeArgument.baseline.jsonc
-@@= skipped -0, +0 lines =@@
--// === getDefinitionAtPosition ===
-+// === goToDefinition ===
- // === /goToDefinitionInTypeArgument.ts ===
- // class Foo<T> { }
+@@= skipped -3, +3 lines =@@
  // 
  // class [|Bar|] { }
  // 
 -// var x = new Foo<Ba/*GOTO DEF POS*/r>();
--
--// === getDefinitionAtPosition ===
 +// var x = new Foo<Ba/*GOTO DEF*/r>();
-+
-+
-+
-+// === goToDefinition ===
- // === /goToDefinitionInTypeArgument.ts ===
- // class [|Foo|]<T> { }
+
+
+
+@@= skipped -10, +10 lines =@@
  // 
  // class Bar { }
  // 

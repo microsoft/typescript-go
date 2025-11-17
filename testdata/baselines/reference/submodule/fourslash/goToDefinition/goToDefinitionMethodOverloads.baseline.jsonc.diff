@@ -1,38 +1,6 @@
 --- old.goToDefinitionMethodOverloads.baseline.jsonc
 +++ new.goToDefinitionMethodOverloads.baseline.jsonc
-@@= skipped -15, +15 lines =@@
- // methodOverload.method();
- // methodOverload.method("456");
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionMethodOverloads.ts ===
- // class MethodOverload {
-@@= skipped -18, +20 lines =@@
- // methodOverload.method();
- // methodOverload.method("456");
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionMethodOverloads.ts ===
- // class MethodOverload {
-@@= skipped -18, +20 lines =@@
- // methodOverload./*GOTO DEF*/method();
- // methodOverload.method("456");
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionMethodOverloads.ts ===
- // class MethodOverload {
-@@= skipped -18, +20 lines =@@
- // methodOverload.method();
- // methodOverload./*GOTO DEF*/method("456");
-
-+
-+
+@@= skipped -80, +80 lines =@@
  // === goToDefinition ===
  // === /goToDefinitionMethodOverloads.ts ===
  // class MethodOverload {
@@ -43,14 +11,7 @@
  //     static [|method|](foo?: any) { }
  //     public method(): any;
  //     public method(foo: string);
- //     public method(foo?: any) { return "foo" }
- // --- (line: 8) skipped ---
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionMethodOverloads.ts ===
- // class MethodOverload {
+@@= skipped -16, +16 lines =@@
  //     static method();
  //     static method(foo: string);
  //     static method(foo?: any) { }

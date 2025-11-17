@@ -1,20 +1,7 @@
 --- old.goToImplementationNamespace_05.baseline.jsonc
 +++ new.goToImplementationNamespace_05.baseline.jsonc
-@@= skipped -12, +12 lines =@@
- // let x1 = Foo.Baz;
- // let y1 = Bar.Baz;
+@@= skipped -33, +33 lines =@@
 
-+
-+
- // === goToImplementation ===
- // === /goToImplementationNamespace_05.ts ===
- // namespace Foo.Baz {
-@@= skipped -15, +17 lines =@@
- // let x1 = Foo.Baz;
- // let y1 = Bar.Baz;
-
-+
-+
  // === goToImplementation ===
  // === /goToImplementationNamespace_05.ts ===
 -// namespace Foo.[|Baz|] {
@@ -28,11 +15,8 @@
  // 
  // let x = Foo;
  // let y = Bar;
- // let x1 = Foo.B/*GOTO IMPL*/az;
- // let y1 = Bar.Baz;
+@@= skipped -17, +11 lines =@@
 
-+
-+
  // === goToImplementation ===
  // === /goToImplementationNamespace_05.ts ===
 -// namespace Foo.Baz {

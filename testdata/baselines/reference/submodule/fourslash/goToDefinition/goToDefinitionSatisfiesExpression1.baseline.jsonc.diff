@@ -9,9 +9,3 @@
  // } satisfies Record<string,string>;
  // 
  // //somewhere in app
- // STRINGS.title
-+
-+
-
- // === goToDefinition ===
- // === /goToDefinitionSatisfiesExpression1.ts ===

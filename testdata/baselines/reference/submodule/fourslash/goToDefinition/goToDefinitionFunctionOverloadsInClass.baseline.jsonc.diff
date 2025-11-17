@@ -11,14 +11,7 @@
  //     static [|fnOverload|](foo: any) { }
  //     public fnOverload(): any;
  //     public fnOverload(foo: string);
- //     public fnOverload(foo: any) { return "foo" }
- // --- (line: 8) skipped ---
-
-+
-+
- // === goToDefinition ===
- // === /goToDefinitionFunctionOverloadsInClass.ts ===
- // class clsInOverload {
+@@= skipped -16, +16 lines =@@
  //     static fnOverload();
  //     static fnOverload(foo: string);
  //     static fnOverload(foo: any) { }

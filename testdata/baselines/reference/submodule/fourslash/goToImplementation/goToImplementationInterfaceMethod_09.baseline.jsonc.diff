@@ -18,12 +18,8 @@
  // 
  //     whatever() {
  //         super.he/*GOTO IMPL*/llo();
-@@= skipped -16, +24 lines =@@
- //     hello() {}
- // }
+@@= skipped -20, +28 lines =@@
 
-+
-+
  // === goToImplementation ===
  // === /goToImplementationInterfaceMethod_09.ts ===
 -// --- (line: 10) skipped ---
