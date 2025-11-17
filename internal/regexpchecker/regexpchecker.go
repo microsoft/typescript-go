@@ -1106,7 +1106,7 @@ func (v *regExpValidator) scanClassSetExpression() {
 		operand = v.scanClassSetOperand()
 	}
 
-	// Check what follows the first operand
+	// Use the first operator to determine the expression type
 	switch v.charAtOffset(0) {
 	case '-':
 		if v.charAtOffset(1) == '-' {
@@ -1135,7 +1135,7 @@ func (v *regExpValidator) scanClassSetExpression() {
 		expressionMayContainStrings = v.mayContainStrings
 	}
 
-	// Continue scanning operands
+	// Neither a classSetExpressionIntersection nor a classSetExpressionSubtraction, scan as class union
 	for {
 		ch = v.charAtOffset(0)
 		if ch == 0 {
