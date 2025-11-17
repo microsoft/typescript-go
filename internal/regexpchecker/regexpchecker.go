@@ -410,9 +410,7 @@ func (v *regExpValidator) validateGroupReferences() {
 			if len(v.groupSpecifiers) > 0 {
 				// Convert map keys to slice
 				candidates := make([]string, 0, len(v.groupSpecifiers))
-				for name := range v.groupSpecifiers {
-					candidates = append(candidates, name)
-				}
+				candidates = slices.AppendSeq(candidates, maps.Keys(v.groupSpecifiers))
 				suggestion := core.GetSpellingSuggestion(ref.name, candidates, core.Identity[string])
 				if suggestion != "" {
 					v.error(diagnostics.Did_you_mean_0, ref.pos, ref.end-ref.pos, suggestion)
@@ -562,9 +560,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			v.error(diagnostics.Unknown_Unicode_property_name, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
 			// Provide spelling suggestion
 			candidates := make([]string, 0, len(nonBinaryUnicodePropertyNames))
-			for key := range nonBinaryUnicodePropertyNames {
-				candidates = append(candidates, key)
-			}
+			candidates = slices.AppendSeq(candidates, maps.Keys(nonBinaryUnicodePropertyNames))
 			suggestion := core.GetSpellingSuggestion(propertyNameOrValue, candidates, core.Identity[string])
 			if suggestion != "" {
 				v.error(diagnostics.Did_you_mean_0, propertyNameOrValueStart, v.pos-propertyNameOrValueStart, suggestion)
