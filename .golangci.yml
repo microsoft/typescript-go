@@ -14,7 +14,7 @@ linters:
     - bodyclose
     - canonicalheader
     - copyloopvar
-    # - customlint
+    - customlint
     - depguard
     - durationcheck
     - errcheck
@@ -61,9 +61,9 @@ linters:
     # - unused
 
   settings:
-    # custom:
-    #   customlint:
-    #     type: module
+    custom:
+      customlint:
+        type: module
     depguard:
       rules:
         main:
