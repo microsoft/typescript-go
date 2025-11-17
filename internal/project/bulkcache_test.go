@@ -48,7 +48,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///project/src/index.ts", 1, baseFiles["/project/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Get initial snapshot and verify config
-			ls, err := session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+			ls, _, err := session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 			assert.NilError(t, err)
 			assert.Equal(t, ls.GetProgram().Options().Target, core.ScriptTargetES2015)
 
@@ -74,7 +74,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			session.DidChangeWatchedFiles(context.Background(), fileEvents)
 
 			// Get language service again to trigger snapshot update
-			ls, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+			ls, _, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 			assert.NilError(t, err)
 
 			snapshotAfter, release := session.Snapshot()
@@ -127,7 +127,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			session.DidOpenFile(context.Background(), "file:///project/src/index.ts", 1, baseFiles["/project/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Get initial state
-			ls, err := session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+			ls, _, err := session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 			assert.NilError(t, err)
 			assert.Equal(t, ls.GetProgram().Options().Target, core.ScriptTargetES2015)
 
@@ -146,7 +146,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), fileEvents)
-			ls, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+			ls, _, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 			assert.NilError(t, err)
 
 			if expectConfigReload {
@@ -189,7 +189,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		assert.Equal(t, initialProject.Name(), "/project/tsconfig.json", "Should initially use root tsconfig")
 
 		// Get language service to verify initial strict mode
-		ls, err := session.GetLanguageService(context.Background(), "file:///project/src/utils/lib.ts")
+		ls, _, err := session.GetLanguageService(context.Background(), "file:///project/src/utils/lib.ts")
 		assert.NilError(t, err)
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue, "Should initially use strict mode from root config")
 
@@ -209,7 +209,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		session.DidChangeWatchedFiles(context.Background(), fileEvents)
 
 		// Get language service - this should now find the nested config and switch projects
-		ls, err = session.GetLanguageService(context.Background(), "file:///project/src/utils/lib.ts")
+		ls, _, err = session.GetLanguageService(context.Background(), "file:///project/src/utils/lib.ts")
 		assert.NilError(t, err)
 
 		snapshot, release = session.Snapshot()
@@ -251,7 +251,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 			session.DidChangeWatchedFiles(context.Background(), fileEvents)
 
 			// Get language service to trigger config discovery
-			_, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+			_, _, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 			assert.NilError(t, err)
 
 			snapshot, release = session.Snapshot()
@@ -317,7 +317,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		session.DidChangeWatchedFiles(context.Background(), fileEvents)
 
 		// File should still use inferred project (config file names cache NOT cleared for dist changes)
-		_, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
+		_, _, err = session.GetLanguageService(context.Background(), "file:///project/src/index.ts")
 		assert.NilError(t, err)
 
 		snapshot, release = session.Snapshot()

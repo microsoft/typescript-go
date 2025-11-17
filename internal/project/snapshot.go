@@ -425,7 +425,7 @@ func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*d
 }
 
 func (s *Snapshot) cloneFromSnapshotFSChanges(
-	snapshotFS *snapshotFS,
+	snapshotFS *SnapshotFS,
 	changes map[tspath.Path]*dirty.Change[*diskFile],
 	session *Session,
 	logger *logging.LogTree,
@@ -439,6 +439,7 @@ func (s *Snapshot) cloneFromSnapshotFSChanges(
 		session.extendedConfigCache,
 		s.ConfigFileRegistry,
 		s.compilerOptionsForInferredProjects,
+		s.config,
 		s.toPath,
 	)
 
@@ -462,8 +463,8 @@ func (s *Snapshot) cloneFromSnapshotFSChanges(
 	return newSnapshot
 }
 
-func getComputeGlobPatterns(workspaceDirectory string, useCaseSensitiveFileNames bool) func(files map[tspath.Path]string) patternsAndIgnored {
-	return func(files map[tspath.Path]string) patternsAndIgnored {
+func getComputeGlobPatterns(workspaceDirectory string, useCaseSensitiveFileNames bool) func(files map[tspath.Path]string) PatternsAndIgnored {
+	return func(files map[tspath.Path]string) PatternsAndIgnored {
 		comparePathsOptions := tspath.ComparePathsOptions{
 			CurrentDirectory:          workspaceDirectory,
 			UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
@@ -500,7 +501,7 @@ func getComputeGlobPatterns(workspaceDirectory string, useCaseSensitiveFileNames
 			}
 		}
 
-		return patternsAndIgnored{
+		return PatternsAndIgnored{
 			patterns: globs,
 			ignored:  ignored,
 		}

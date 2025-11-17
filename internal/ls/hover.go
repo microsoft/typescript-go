@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -491,7 +492,10 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
 		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-		loc := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		loc := l.getMappedLocation(&lsproto.Location{
+			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
+			Range: *l.createLspRangeFromNode(node, file),
+		})
 		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
 		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {
