@@ -209,6 +209,7 @@ func (v *regExpValidator) error(message *diagnostics.Message, start, length int,
 
 func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlags, size int) {
 	var availableFrom core.ScriptTarget
+	// TODO: Use LanguageFeatureMinimumTarget
 	switch flag {
 	case regExpFlagsHasIndices:
 		availableFrom = core.ScriptTargetES2022
@@ -278,6 +279,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 					default:
 						groupName = v.scanGroupName(false)
 						v.scanExpectedChar('>')
+						// TODO: Move to LanguageFeatureMinimumTarget.RegularExpressionNamedCapturingGroups
 						if v.languageVersion < core.ScriptTargetES2018 {
 							v.error(diagnostics.Named_capturing_groups_are_only_available_when_targeting_ES2018_or_later, groupNameStart, v.pos-groupNameStart)
 						}
