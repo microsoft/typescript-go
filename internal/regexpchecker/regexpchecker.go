@@ -332,7 +332,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						isPreviousTermQuantifiable = true
 						break
 					}
-				} else if maxVal != "" {
+				} else if maxVal != "" && (v.anyUnicodeModeOrNonAnnexB || v.charAtOffset(0) == '}') {
 					minInt := 0
 					maxInt := 0
 					for _, c := range minVal {
@@ -341,7 +341,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 					for _, c := range maxVal {
 						maxInt = maxInt*10 + int(c-'0')
 					}
-					if minInt > maxInt && (v.anyUnicodeModeOrNonAnnexB || v.charAtOffset(0) == '}') {
+					if minInt > maxInt {
 						v.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, v.pos-digitsStart)
 					}
 				}
