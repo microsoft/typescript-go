@@ -268,6 +268,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 				switch v.charAtOffset(0) {
 				case '=', '!':
 					v.pos++
+					// In Annex B, `(?=Disjunction)` and `(?!Disjunction)` are quantifiable
 					isPreviousTermQuantifiable = !v.anyUnicodeModeOrNonAnnexB
 				case '<':
 					groupNameStart := v.pos
@@ -367,6 +368,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 		case '*', '+', '?':
 			v.pos++
 			if v.charAtOffset(0) == '?' {
+				// Non-greedy
 				v.pos++
 			}
 			if !isPreviousTermQuantifiable {
