@@ -337,14 +337,8 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						break
 					}
 				} else if maxVal != "" && (v.anyUnicodeModeOrNonAnnexB || v.charAtOffset(0) == '}') {
-					minInt := 0
-					maxInt := 0
-					for _, c := range minVal {
-						minInt = minInt*10 + int(c-'0')
-					}
-					for _, c := range maxVal {
-						maxInt = maxInt*10 + int(c-'0')
-					}
+					minInt := parseDecimalValue(minVal, 0, len(minVal))
+					maxInt := parseDecimalValue(maxVal, 0, len(maxVal))
 					if minInt > maxInt {
 						v.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, v.pos-digitsStart)
 					}
@@ -516,10 +510,7 @@ func (v *regExpValidator) scanDecimalEscape() bool {
 	if ch >= '1' && ch <= '9' {
 		start := v.pos
 		v.scanDigits()
-		value := 0
-		for _, c := range v.tokenValue {
-			value = value*10 + int(c-'0')
-		}
+		value := parseDecimalValue(v.tokenValue, 0, len(v.tokenValue))
 		v.decimalEscapes = append(v.decimalEscapes, decimalEscape{pos: start, end: v.pos, value: value})
 		return true
 	}
@@ -719,10 +710,7 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			v.pos++
 		}
 		// Always report errors for octal escapes in regexp mode
-		code := 0
-		for i := start + 1; i < v.pos; i++ {
-			code = code*8 + int(v.text[i]-'0')
-		}
+		code := parseOctalValue(v.text, start+1, v.pos)
 		hexCode := fmt.Sprintf("\\x%02x", code)
 		if !atomEscape && ch != '0' {
 			v.error(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, v.pos-start, hexCode)
@@ -866,6 +854,24 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 		}
 		return string(ch)
 	}
+}
+
+// parses octal digits from text and returns the integer value
+func parseOctalValue(text string, start, end int) int {
+	code := 0
+	for i := start; i < end; i++ {
+		code = code*8 + int(text[i]-'0')
+	}
+	return code
+}
+
+// parses decimal digits from text and returns the integer value
+func parseDecimalValue(text string, start, end int) int {
+	code := 0
+	for i := start; i < end; i++ {
+		code = code*10 + int(text[i]-'0')
+	}
+	return code
 }
 
 // parseHexValue parses hexadecimal digits from text and returns the integer value
