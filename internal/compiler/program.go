@@ -1223,10 +1223,6 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 	return SortAndDeduplicateDiagnostics(result)
 }
 
-func (p *Program) addProgramDiagnostic(diagnostic *ast.Diagnostic) {
-	p.programDiagnostics = append(p.programDiagnostics, diagnostic)
-}
-
 func (p *Program) addProgramDiagnostics() {
 	for _, m := range p.missingFiles {
 		reason := m.reason
@@ -1240,27 +1236,21 @@ func (p *Program) addProgramDiagnostics() {
 			continue
 		}
 
-		var ref *ast.FileReference
-
-		for _, r := range parent.ReferencedFiles {
-			if r.FileName == m.path {
-				ref = r
-				break
-			}
-		}
-
+		ref := core.Find(parent.ReferencedFiles, func(r *ast.FileReference) bool {
+			return r.FileName == m.path
+		})
 		if ref == nil {
 			continue
 		}
 
-		diag := ast.NewDiagnostic(
+		diagnostic := ast.NewDiagnostic(
 			parent,
 			ref.TextRange,
 			diagnostics.File_0_not_found,
 			m.path,
 		)
 
-		p.addProgramDiagnostic(diag)
+		p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 	}
 }
 
@@ -1595,21 +1585,9 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
-	return slices.ContainsFunc(p.missingFilePaths(), func(missingPath string) bool {
-		return p.toPath(missingPath) == path
+	return slices.ContainsFunc(p.missingFiles, func(missingPath missingFile) bool {
+		return p.toPath(missingPath.path) == path
 	})
-}
-
-func (p *Program) missingFilePaths() []string {
-	if len(p.missingFiles) == 0 {
-		return nil
-	}
-
-	paths := make([]string, 0, len(p.missingFiles))
-	for _, m := range p.missingFiles {
-		paths = append(paths, m.path)
-	}
-	return paths
 }
 
 func (p *Program) ExplainFiles(w io.Writer) {
