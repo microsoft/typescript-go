@@ -9,11 +9,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/text/language"
 )
 
 type ResolutionHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
+	Locale() language.Tag
 }
 
 type ModeAwareCacheKey struct {

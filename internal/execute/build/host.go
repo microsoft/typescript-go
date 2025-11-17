@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/text/language"
 )
 
 type host struct {
@@ -43,6 +44,10 @@ func (h *host) DefaultLibraryPath() string {
 
 func (h *host) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
+}
+
+func (h *host) Locale() language.Tag {
+	return h.host.Locale()
 }
 
 func (h *host) Trace(msg string) {

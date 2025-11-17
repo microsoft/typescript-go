@@ -1565,10 +1565,10 @@ func (p *Program) ExplainFiles(w io.Writer) {
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
-			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Message())
+			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(p.Host().Locale()))
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
-			fmt.Fprintln(w, "  ", diag.Message())
+			fmt.Fprintln(w, "  ", diag.Localize(p.Host().Locale()))
 		}
 	}
 }

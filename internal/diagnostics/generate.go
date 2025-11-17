@@ -87,6 +87,17 @@ func main() {
 		buf.WriteString("}\n\n")
 	}
 
+	buf.WriteString("func keyToMessage(key Key) *Message {\n")
+	buf.WriteString("\tswitch key {\n")
+	for _, m := range diagnosticMessages {
+		_, key := convertPropertyName(m.key, m.Code)
+		varName, _ := convertPropertyName(m.key, m.Code)
+		fmt.Fprintf(&buf, "\tcase %q:\n\t\treturn %s\n", key, varName)
+	}
+	buf.WriteString("\tdefault:\n\t\treturn nil\n")
+	buf.WriteString("\t}\n")
+	buf.WriteString("}\n")
+
 	formatted, err := format.Source(buf.Bytes())
 	if err != nil {
 		log.Fatalf("failed to format output: %v", err)

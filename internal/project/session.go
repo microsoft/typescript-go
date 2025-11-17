@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/text/language"
 )
 
 type UpdateReason int
@@ -44,6 +45,7 @@ type SessionOptions struct {
 	WatchEnabled       bool
 	LoggingEnabled     bool
 	DebounceDelay      time.Duration
+	Locale             language.Tag
 }
 
 type SessionInit struct {
@@ -183,6 +185,10 @@ func (s *Session) FS() vfs.FS {
 // GetCurrentDirectory implements module.ResolutionHost
 func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
+}
+
+func (s *Session) Locale() language.Tag {
+	return s.options.Locale
 }
 
 // Gets current UserPreferences, always a copy

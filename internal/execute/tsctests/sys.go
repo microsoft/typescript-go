@@ -23,6 +23,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 )
 
 type FileMap map[string]any
@@ -217,6 +218,10 @@ func (s *TestSys) GetWidthOfTerminal() int {
 
 func (s *TestSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
+}
+
+func (s *TestSys) Locale() language.Tag {
+	return language.Und
 }
 
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {

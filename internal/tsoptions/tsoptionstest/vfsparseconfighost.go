@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 )
 
 func fixRoot(path string) string {
@@ -21,6 +22,7 @@ func fixRoot(path string) string {
 type VfsParseConfigHost struct {
 	Vfs              vfs.FS
 	CurrentDirectory string
+	TheLocale           language.Tag
 }
 
 var _ tsoptions.ParseConfigHost = (*VfsParseConfigHost)(nil)
@@ -31,6 +33,10 @@ func (h *VfsParseConfigHost) FS() vfs.FS {
 
 func (h *VfsParseConfigHost) GetCurrentDirectory() string {
 	return h.CurrentDirectory
+}
+
+func (h *VfsParseConfigHost) Locale() language.Tag {
+	return h.TheLocale
 }
 
 func NewVFSParseConfigHost(files map[string]string, currentDirectory string, useCaseSensitiveFileNames bool) *VfsParseConfigHost {

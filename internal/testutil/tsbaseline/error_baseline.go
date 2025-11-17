@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
 )
@@ -91,7 +92,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 	var result []string
 
 	outputErrorText := func(diag *ast.Diagnostic) {
-		message := diagnosticwriter.FlattenDiagnosticMessage(diag, harnessNewLine)
+		message := diagnosticwriter.FlattenDiagnosticMessage(diag, harnessNewLine, language.Und)
 
 		var errLines []string
 		for line := range strings.SplitSeq(removeTestPathPrefixes(message, false), "\n") {
@@ -112,7 +113,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 			if len(location) > 0 && isDefaultLibraryFile(info.File().FileName()) {
 				location = diagnosticsLocationPattern.ReplaceAllString(location, "$1:--:--")
 			}
-			errLines = append(errLines, fmt.Sprintf("!!! related TS%d%s: %s", info.Code(), location, diagnosticwriter.FlattenDiagnosticMessage(info, harnessNewLine)))
+			errLines = append(errLines, fmt.Sprintf("!!! related TS%d%s: %s", info.Code(), location, diagnosticwriter.FlattenDiagnosticMessage(info, harnessNewLine, language.Und)))
 		}
 
 		for _, e := range errLines {

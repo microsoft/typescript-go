@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"golang.org/x/text/language"
 )
 
 type resolved struct {
@@ -42,6 +43,7 @@ func unresolved() *resolved {
 type resolutionKindSpecificLoader = func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved
 
 type tracer struct {
+	locale language.Tag
 	traces []string
 }
 
@@ -166,9 +168,9 @@ func NewResolver(
 	}
 }
 
-func (r *Resolver) newTraceBuilder() *tracer {
+func (r *Resolver) newTraceBuilder(locale language.Tag) *tracer {
 	if r.compilerOptions.TraceResolution == core.TSTrue {
-		return &tracer{}
+		return &tracer{locale: locale}
 	}
 	return nil
 }
@@ -192,7 +194,7 @@ func (r *Resolver) GetPackageJsonScopeIfApplicable(path string) *packagejson.Inf
 
 func (r *tracer) traceResolutionUsingProjectReference(redirectedReference ResolvedProjectReference) {
 	if redirectedReference != nil && redirectedReference.CompilerOptions() != nil {
-		r.write(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.ConfigName()))
+		r.write(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Localize(r.locale, redirectedReference.ConfigName()))
 	}
 }
 
@@ -202,14 +204,14 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 	resolutionMode core.ResolutionMode,
 	redirectedReference ResolvedProjectReference,
 ) (*ResolvedTypeReferenceDirective, []string) {
-	traceBuilder := r.newTraceBuilder()
+	traceBuilder := r.newTraceBuilder(r.host.Locale())
 
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
 
 	typeRoots, fromConfig := compilerOptions.GetEffectiveTypeRoots(r.host.GetCurrentDirectory())
 	if traceBuilder != nil {
-		traceBuilder.write(diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2.Format(typeReferenceDirectiveName, containingFile, strings.Join(typeRoots, ",")))
+		traceBuilder.write(diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2.Localize(r.host.Locale(), typeReferenceDirectiveName, containingFile, strings.Join(typeRoots, ",")))
 		traceBuilder.traceResolutionUsingProjectReference(redirectedReference)
 	}
 
@@ -223,10 +225,10 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 }
 
 func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []string) {
-	traceBuilder := r.newTraceBuilder()
+	traceBuilder := r.newTraceBuilder(r.host.Locale())
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
 	if traceBuilder != nil {
-		traceBuilder.write(diagnostics.Resolving_module_0_from_1.Format(moduleName, containingFile))
+		traceBuilder.write(diagnostics.Resolving_module_0_from_1.Localize(r.host.Locale(), moduleName, containingFile))
 		traceBuilder.traceResolutionUsingProjectReference(redirectedReference)
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
@@ -234,11 +236,11 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	moduleResolution := compilerOptions.GetModuleResolutionKind()
 	if compilerOptions.ModuleResolution != moduleResolution {
 		if traceBuilder != nil {
-			traceBuilder.write(diagnostics.Module_resolution_kind_is_not_specified_using_0.Format(moduleResolution.String()))
+			traceBuilder.write(diagnostics.Module_resolution_kind_is_not_specified_using_0.Localize(r.host.Locale(), moduleResolution.String()))
 		}
 	} else {
 		if traceBuilder != nil {
-			traceBuilder.write(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0.Format(moduleResolution.String()))
+			traceBuilder.write(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0.Localize(r.host.Locale(), moduleResolution.String()))
 		}
 	}
 
@@ -254,12 +256,12 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	if traceBuilder != nil {
 		if result.IsResolved() {
 			if result.PackageId.Name != "" {
-				traceBuilder.write(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2.Format(moduleName, result.ResolvedFileName, result.PackageId.String()))
+				traceBuilder.write(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2.Localize(r.host.Locale(), moduleName, result.ResolvedFileName, result.PackageId.String()))
 			} else {
-				traceBuilder.write(diagnostics.Module_name_0_was_successfully_resolved_to_1.Format(moduleName, result.ResolvedFileName))
+				traceBuilder.write(diagnostics.Module_name_0_was_successfully_resolved_to_1.Localize(r.host.Locale(), moduleName, result.ResolvedFileName))
 			}
 		} else {
-			traceBuilder.write(diagnostics.Module_name_0_was_not_resolved.Format(moduleName))
+			traceBuilder.write(diagnostics.Module_name_0_was_not_resolved.Localize(r.host.Locale(), moduleName))
 		}
 	}
 
@@ -284,7 +286,7 @@ func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDi
 		traceBuilder,
 	)
 	if traceBuilder != nil {
-		traceBuilder.write(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Format(r.projectName, moduleName, r.typingsLocation))
+		traceBuilder.write(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Localize(r.host.Locale(), r.projectName, moduleName, r.typingsLocation))
 	}
 	globalResolved := state.loadModuleFromImmediateNodeModulesDirectory(extensionsDeclaration, r.typingsLocation, false)
 	if globalResolved == nil {
@@ -307,16 +309,18 @@ func (r *Resolver) resolveConfig(moduleName string, containingFile string) *Reso
 
 func (r *tracer) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName string, result *ResolvedTypeReferenceDirective) {
 	if !result.IsResolved() {
-		r.write(diagnostics.Type_reference_directive_0_was_not_resolved.Format(typeReferenceDirectiveName))
+		r.write(diagnostics.Type_reference_directive_0_was_not_resolved.Localize(r.locale, typeReferenceDirectiveName))
 	} else if result.PackageId.Name != "" {
-		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_with_Package_ID_2_primary_Colon_3.Format(
+		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_with_Package_ID_2_primary_Colon_3.Localize(
+			r.locale,
 			typeReferenceDirectiveName,
 			result.ResolvedFileName,
 			result.PackageId.String(),
 			result.Primary,
 		))
 	} else {
-		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_primary_Colon_2.Format(
+		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_primary_Colon_2.Localize(
+			r.locale,
 			typeReferenceDirectiveName,
 			result.ResolvedFileName,
 			result.Primary,
@@ -328,13 +332,13 @@ func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 	// Primary lookup
 	if len(typeRoots) > 0 {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Resolving_with_primary_search_path_0.Format(strings.Join(typeRoots, ", ")))
+			r.tracer.write(diagnostics.Resolving_with_primary_search_path_0.Localize(r.resolver.host.Locale(), strings.Join(typeRoots, ", ")))
 		}
 		for _, typeRoot := range typeRoots {
 			candidate := r.getCandidateFromTypeRoot(typeRoot)
 			directoryExists := r.resolver.host.FS().DirectoryExists(candidate)
 			if !directoryExists && r.tracer != nil {
-				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(typeRoot))
+				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Localize(r.resolver.host.Locale(), typeRoot))
 			}
 			if fromConfig {
 				// Custom typeRoots resolve as file or directory just like we do modules
@@ -351,14 +355,14 @@ func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 			}
 		}
 	} else if r.tracer != nil {
-		r.tracer.write(diagnostics.Root_directory_cannot_be_determined_skipping_primary_search_paths.Format())
+		r.tracer.write(diagnostics.Root_directory_cannot_be_determined_skipping_primary_search_paths.Localize(r.resolver.host.Locale()))
 	}
 
 	// Secondary lookup
 	var resolved *resolved
 	if !fromConfig || !fromInferredTypesContainingFile {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Looking_up_in_node_modules_folder_initial_location_0.Format(r.containingDirectory))
+			r.tracer.write(diagnostics.Looking_up_in_node_modules_folder_initial_location_0.Localize(r.resolver.host.Locale(), r.containingDirectory))
 		}
 		if !tspath.IsExternalModuleNameRelative(r.name) {
 			resolved = r.loadModuleFromNearestNodeModulesDirectory(false /*typesScopeOnly*/)
@@ -367,7 +371,7 @@ func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 			resolved = r.nodeLoadModuleByRelativeName(extensionsDeclaration, candidate, false /*onlyRecordFailures*/, true /*considerPackageJson*/)
 		}
 	} else if r.tracer != nil {
-		r.tracer.write(diagnostics.Resolving_type_reference_directive_for_program_that_specifies_custom_typeRoots_skipping_lookup_in_node_modules_folder.Format())
+		r.tracer.write(diagnostics.Resolving_type_reference_directive_for_program_that_specifies_custom_typeRoots_skipping_lookup_in_node_modules_folder.Localize(r.resolver.host.Locale()))
 	}
 	return r.createResolvedTypeReferenceDirective(resolved, false /*primary*/)
 }
@@ -383,7 +387,7 @@ func (r *resolutionState) getCandidateFromTypeRoot(typeRoot string) string {
 func (r *resolutionState) mangleScopedPackageName(name string) string {
 	mangled := MangleScopedPackageName(name)
 	if r.tracer != nil && mangled != name {
-		r.tracer.write(diagnostics.Scoped_package_detected_looking_in_0.Format(mangled))
+		r.tracer.write(diagnostics.Scoped_package_detected_looking_in_0.Localize(r.resolver.host.Locale(), mangled))
 	}
 	return mangled
 }
@@ -406,9 +410,9 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModule {
 	if r.tracer != nil {
 		conditions := strings.Join(core.Map(r.conditions, func(c string) string { return `'` + c + `'` }), ", ")
 		if r.esmMode {
-			r.tracer.write(diagnostics.Resolving_in_0_mode_with_conditions_1.Format("ESM", conditions))
+			r.tracer.write(diagnostics.Resolving_in_0_mode_with_conditions_1.Localize(r.resolver.host.Locale(), "ESM", conditions))
 		} else {
-			r.tracer.write(diagnostics.Resolving_in_0_mode_with_conditions_1.Format("CJS", conditions))
+			r.tracer.write(diagnostics.Resolving_in_0_mode_with_conditions_1.Localize(r.resolver.host.Locale(), "CJS", conditions))
 		}
 	}
 	result := r.resolveNodeLikeWorker()
@@ -422,7 +426,7 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModule {
 		!extensionIsOk(extensionsTypeScript|extensionsDeclaration, result.Extension) &&
 		slices.Contains(r.conditions, "import") {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Resolution_of_non_relative_name_failed_trying_with_modern_Node_resolution_features_disabled_to_see_if_npm_library_needs_configuration_update.Format())
+			r.tracer.write(diagnostics.Resolution_of_non_relative_name_failed_trying_with_modern_Node_resolution_features_disabled_to_see_if_npm_library_needs_configuration_update.Localize(r.resolver.host.Locale()))
 		}
 		r.features = r.features & ^NodeResolutionFeaturesExports
 		r.extensions = r.extensions & (extensionsTypeScript | extensionsDeclaration)
@@ -453,12 +457,12 @@ func (r *resolutionState) resolveNodeLikeWorker() *ResolvedModule {
 		}
 		if strings.Contains(r.name, ":") {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.Skipping_module_0_that_looks_like_an_absolute_URI_target_file_types_Colon_1.Format(r.name, r.extensions.String()))
+				r.tracer.write(diagnostics.Skipping_module_0_that_looks_like_an_absolute_URI_target_file_types_Colon_1.Localize(r.resolver.host.Locale(), r.name, r.extensions.String()))
 			}
 			return r.createResolvedModule(nil, false)
 		}
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Loading_module_0_from_node_modules_folder_target_file_types_Colon_1.Format(r.name, r.extensions.String()))
+			r.tracer.write(diagnostics.Loading_module_0_from_node_modules_folder_target_file_types_Colon_1.Localize(r.resolver.host.Locale(), r.name, r.extensions.String()))
 		}
 		if resolved := r.loadModuleFromNearestNodeModulesDirectory(false /*typesScopeOnly*/); !resolved.shouldContinueSearching() {
 			return r.createResolvedModuleHandlingSymlink(resolved)
@@ -530,7 +534,7 @@ func (r *resolutionState) loadModuleFromSelfNameReference() *resolved {
 func (r *resolutionState) loadModuleFromImports() *resolved {
 	if r.name == "#" || strings.HasPrefix(r.name, "#/") {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Invalid_import_specifier_0_has_no_possible_resolutions.Format(r.name))
+			r.tracer.write(diagnostics.Invalid_import_specifier_0_has_no_possible_resolutions.Localize(r.resolver.host.Locale(), r.name))
 		}
 		return continueSearching()
 	}
@@ -538,7 +542,7 @@ func (r *resolutionState) loadModuleFromImports() *resolved {
 	scope := r.getPackageScopeForPath(directoryPath)
 	if !scope.Exists() {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Directory_0_has_no_containing_package_json_scope_Imports_will_not_resolve.Format(directoryPath))
+			r.tracer.write(diagnostics.Directory_0_has_no_containing_package_json_scope_Imports_will_not_resolve.Localize(r.resolver.host.Locale(), directoryPath))
 		}
 		return continueSearching()
 	}
@@ -546,7 +550,7 @@ func (r *resolutionState) loadModuleFromImports() *resolved {
 		// !!! Old compiler only checks for undefined, but then assumes `imports` is an object if present.
 		// Maybe should have a new diagnostic for imports of an invalid type. Also, array should be handled?
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.X_package_json_scope_0_has_no_imports_defined.Format(scope.PackageDirectory))
+			r.tracer.write(diagnostics.X_package_json_scope_0_has_no_imports_defined.Localize(r.resolver.host.Locale(), scope.PackageDirectory))
 		}
 		return continueSearching()
 	}
@@ -556,7 +560,7 @@ func (r *resolutionState) loadModuleFromImports() *resolved {
 	}
 
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.Import_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Format(r.name, scope.PackageDirectory))
+		r.tracer.write(diagnostics.Import_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Localize(r.resolver.host.Locale(), r.name, scope.PackageDirectory))
 	}
 	return continueSearching()
 }
@@ -589,7 +593,7 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 	}
 
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.Export_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Format(subpath, packageInfo.PackageDirectory))
+		r.tracer.write(diagnostics.Export_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Localize(r.resolver.host.Locale(), subpath, packageInfo.PackageDirectory))
 	}
 	return continueSearching()
 }
@@ -641,7 +645,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		targetString, _ := target.Value.(string)
 		if !isPattern && len(subpath) > 0 && !strings.HasSuffix(targetString, "/") {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 			}
 			return continueSearching()
 		}
@@ -652,8 +656,8 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 					combinedLookup = strings.ReplaceAll(targetString, "*", subpath)
 				}
 				if r.tracer != nil {
-					r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2.Format("imports", key, combinedLookup))
-					r.tracer.write(diagnostics.Resolving_module_0_from_1.Format(combinedLookup, scope.PackageDirectory+"/"))
+					r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2.Localize(r.resolver.host.Locale(), "imports", key, combinedLookup))
+					r.tracer.write(diagnostics.Resolving_module_0_from_1.Localize(r.resolver.host.Locale(), combinedLookup, scope.PackageDirectory+"/"))
 				}
 				name, containingDirectory := r.name, r.containingDirectory
 				r.name, r.containingDirectory = combinedLookup, scope.PackageDirectory+"/"
@@ -672,7 +676,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 				return continueSearching()
 			}
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 			}
 			return continueSearching()
 		}
@@ -685,7 +689,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		partsAfterFirst := parts[1:]
 		if slices.Contains(partsAfterFirst, "..") || slices.Contains(partsAfterFirst, ".") || slices.Contains(partsAfterFirst, "node_modules") {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 			}
 			return continueSearching()
 		}
@@ -695,7 +699,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		subpathParts := tspath.GetPathComponents(subpath, "")
 		if slices.Contains(subpathParts, "..") || slices.Contains(subpathParts, ".") || slices.Contains(subpathParts, "node_modules") {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 			}
 			return continueSearching()
 		}
@@ -707,7 +711,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 			} else {
 				messageTarget = targetString + subpath
 			}
-			r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2.Format(core.IfElse(isImports, "imports", "exports"), key, messageTarget))
+			r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2.Localize(r.resolver.host.Locale(), core.IfElse(isImports, "imports", "exports"), key, messageTarget))
 		}
 		var finalPath string
 		if isPattern {
@@ -726,39 +730,39 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 
 	case packagejson.JSONValueTypeObject:
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Entering_conditional_exports.Format())
+			r.tracer.write(diagnostics.Entering_conditional_exports.Localize(r.resolver.host.Locale()))
 		}
 		for condition := range target.AsObject().Keys() {
 			if r.conditionMatches(condition) {
 				if r.tracer != nil {
-					r.tracer.write(diagnostics.Matched_0_condition_1.Format(core.IfElse(isImports, "imports", "exports"), condition))
+					r.tracer.write(diagnostics.Matched_0_condition_1.Localize(r.resolver.host.Locale(), core.IfElse(isImports, "imports", "exports"), condition))
 				}
 				subTarget, _ := target.AsObject().Get(condition)
 				if result := r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, subTarget, subpath, isPattern, key); !result.shouldContinueSearching() {
 					if r.tracer != nil {
-						r.tracer.write(diagnostics.Resolved_under_condition_0.Format(condition))
+						r.tracer.write(diagnostics.Resolved_under_condition_0.Localize(r.resolver.host.Locale(), condition))
 					}
 					if r.tracer != nil {
-						r.tracer.write(diagnostics.Exiting_conditional_exports.Format())
+						r.tracer.write(diagnostics.Exiting_conditional_exports.Localize(r.resolver.host.Locale()))
 					}
 					return result
 				} else if r.tracer != nil {
-					r.tracer.write(diagnostics.Failed_to_resolve_under_condition_0.Format(condition))
+					r.tracer.write(diagnostics.Failed_to_resolve_under_condition_0.Localize(r.resolver.host.Locale(), condition))
 				}
 			} else {
 				if r.tracer != nil {
-					r.tracer.write(diagnostics.Saw_non_matching_condition_0.Format(condition))
+					r.tracer.write(diagnostics.Saw_non_matching_condition_0.Localize(r.resolver.host.Locale(), condition))
 				}
 			}
 		}
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Exiting_conditional_exports.Format())
+			r.tracer.write(diagnostics.Exiting_conditional_exports.Localize(r.resolver.host.Locale()))
 		}
 		return continueSearching()
 	case packagejson.JSONValueTypeArray:
 		if len(target.AsArray()) == 0 {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+				r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 			}
 			return continueSearching()
 		}
@@ -770,13 +774,13 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 
 	case packagejson.JSONValueTypeNull:
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.X_package_json_scope_0_explicitly_maps_specifier_1_to_null.Format(scope.PackageDirectory, moduleName))
+			r.tracer.write(diagnostics.X_package_json_scope_0_explicitly_maps_specifier_1_to_null.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 		}
 		return continueSearching()
 	}
 
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+		r.tracer.write(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Localize(r.resolver.host.Locale(), scope.PackageDirectory, moduleName))
 	}
 	return continueSearching()
 }
@@ -896,7 +900,7 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 	// (1)
 	if priorityExtensions != 0 {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Searching_all_ancestor_node_modules_directories_for_preferred_extensions_Colon_0.Format(priorityExtensions.String()))
+			r.tracer.write(diagnostics.Searching_all_ancestor_node_modules_directories_for_preferred_extensions_Colon_0.Localize(r.resolver.host.Locale(), priorityExtensions.String()))
 		}
 		if result := r.loadModuleFromNearestNodeModulesDirectoryWorker(priorityExtensions, mode, typesScopeOnly); !result.shouldContinueSearching() {
 			return result
@@ -905,7 +909,7 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 	// (2)
 	if secondaryExtensions != 0 && !typesScopeOnly {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Searching_all_ancestor_node_modules_directories_for_fallback_extensions_Colon_0.Format(secondaryExtensions.String()))
+			r.tracer.write(diagnostics.Searching_all_ancestor_node_modules_directories_for_fallback_extensions_Colon_0.Localize(r.resolver.host.Locale(), secondaryExtensions.String()))
 		}
 		return r.loadModuleFromNearestNodeModulesDirectoryWorker(secondaryExtensions, mode, typesScopeOnly)
 	}
@@ -931,7 +935,7 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 	nodeModulesFolder := tspath.CombinePaths(directory, "node_modules")
 	nodeModulesFolderExists := r.resolver.host.FS().DirectoryExists(nodeModulesFolder)
 	if !nodeModulesFolderExists && r.tracer != nil {
-		r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(nodeModulesFolder))
+		r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Localize(r.resolver.host.Locale(), nodeModulesFolder))
 	}
 
 	if !typesScopeOnly {
@@ -944,7 +948,7 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 		nodeModulesAtTypes := tspath.CombinePaths(nodeModulesFolder, "@types")
 		nodeModulesAtTypesExists := nodeModulesFolderExists && r.resolver.host.FS().DirectoryExists(nodeModulesAtTypes)
 		if !nodeModulesAtTypesExists && r.tracer != nil {
-			r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(nodeModulesAtTypes))
+			r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Localize(r.resolver.host.Locale(), nodeModulesAtTypes))
 		}
 		return r.loadModuleFromSpecificNodeModulesDirectory(extensionsDeclaration, r.mangleScopedPackageName(r.name), nodeModulesAtTypes, nodeModulesAtTypesExists)
 	}
@@ -1021,7 +1025,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			versionPaths := packageInfo.Contents.GetVersionPaths(r.getTraceFunc())
 			if versionPaths.Exists() {
 				if r.tracer != nil {
-					r.tracer.write(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version(), rest))
+					r.tracer.write(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Localize(r.resolver.host.Locale(), versionPaths.Version, core.Version(), rest))
 				}
 				packageDirectoryExists := nodeModulesDirectoryExists && r.resolver.host.FS().DirectoryExists(packageDirectory)
 				pathPatterns := TryParsePatterns(versionPaths.GetPaths())
@@ -1136,7 +1140,7 @@ func (r *resolutionState) getParsedPatternsForPaths() *ParsedPatterns {
 func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 	if r.compilerOptions.Paths.Size() > 0 && !tspath.PathIsRelative(r.name) {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.name))
+			r.tracer.write(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Localize(r.resolver.host.Locale(), r.name))
 		}
 	} else {
 		return continueSearching()
@@ -1160,13 +1164,13 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 	if matchedPattern := MatchPatternOrExact(pathPatterns, moduleName); matchedPattern.IsValid() {
 		matchedStar := matchedPattern.MatchedText(moduleName)
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Module_name_0_matched_pattern_1.Format(moduleName, matchedPattern.Text))
+			r.tracer.write(diagnostics.Module_name_0_matched_pattern_1.Localize(r.resolver.host.Locale(), moduleName, matchedPattern.Text))
 		}
 		for _, subst := range paths.GetOrZero(matchedPattern.Text) {
 			path := strings.Replace(subst, "*", matchedStar, 1)
 			candidate := tspath.NormalizePath(tspath.CombinePaths(containingDirectory, path))
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1.Format(subst, path))
+				r.tracer.write(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1.Localize(r.resolver.host.Locale(), subst, path))
 			}
 			// A path mapping may have an extension
 			if extension := tspath.TryGetExtensionFromPath(subst); extension != "" {
@@ -1191,7 +1195,7 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 	}
 
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.X_rootDirs_option_is_set_using_it_to_resolve_relative_module_name_0.Format(r.name))
+		r.tracer.write(diagnostics.X_rootDirs_option_is_set_using_it_to_resolve_relative_module_name_0.Localize(r.resolver.host.Locale(), r.name))
 	}
 
 	candidate := tspath.NormalizePath(tspath.CombinePaths(r.containingDirectory, r.name))
@@ -1210,7 +1214,7 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 			(matchedNormalizedPrefix == "" || len(matchedNormalizedPrefix) < len(normalizedRoot))
 
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Checking_if_0_is_the_longest_matching_prefix_for_1_2.Format(normalizedRoot, candidate, isLongestMatchingPrefix))
+			r.tracer.write(diagnostics.Checking_if_0_is_the_longest_matching_prefix_for_1_2.Localize(r.resolver.host.Locale(), normalizedRoot, candidate, isLongestMatchingPrefix))
 		}
 
 		if isLongestMatchingPrefix {
@@ -1221,13 +1225,13 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 
 	if matchedNormalizedPrefix != "" {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Longest_matching_prefix_for_0_is_1.Format(candidate, matchedNormalizedPrefix))
+			r.tracer.write(diagnostics.Longest_matching_prefix_for_0_is_1.Localize(r.resolver.host.Locale(), candidate, matchedNormalizedPrefix))
 		}
 		suffix := candidate[len(matchedNormalizedPrefix):]
 
 		// first - try to load from a initial location
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Loading_0_from_the_root_dir_1_candidate_location_2.Format(suffix, matchedNormalizedPrefix, candidate))
+			r.tracer.write(diagnostics.Loading_0_from_the_root_dir_1_candidate_location_2.Localize(r.resolver.host.Locale(), suffix, matchedNormalizedPrefix, candidate))
 		}
 		loader := func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 			return r.nodeLoadModuleByRelativeName(extensions, candidate, onlyRecordFailures, true /*considerPackageJson*/)
@@ -1237,7 +1241,7 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 		}
 
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Trying_other_entries_in_rootDirs.Format())
+			r.tracer.write(diagnostics.Trying_other_entries_in_rootDirs.Localize(r.resolver.host.Locale()))
 		}
 		// then try to resolve using remaining entries in rootDirs
 		for _, rootDir := range r.compilerOptions.RootDirs {
@@ -1247,7 +1251,7 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 			}
 			candidate := tspath.CombinePaths(tspath.NormalizePath(rootDir), suffix)
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.Loading_0_from_the_root_dir_1_candidate_location_2.Format(suffix, rootDir, candidate))
+				r.tracer.write(diagnostics.Loading_0_from_the_root_dir_1_candidate_location_2.Localize(r.resolver.host.Locale(), suffix, rootDir, candidate))
 			}
 			baseDirectory := tspath.GetDirectoryPath(candidate)
 			if resolvedFileName := loader(r.extensions, candidate, !r.resolver.host.FS().DirectoryExists(baseDirectory)); !resolvedFileName.shouldContinueSearching() {
@@ -1255,7 +1259,7 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 			}
 		}
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Module_resolution_using_rootDirs_has_failed.Format())
+			r.tracer.write(diagnostics.Module_resolution_using_rootDirs_has_failed.Localize(r.resolver.host.Locale()))
 		}
 	}
 	return continueSearching()
@@ -1263,14 +1267,14 @@ func (r *resolutionState) tryLoadModuleUsingRootDirs() *resolved {
 
 func (r *resolutionState) nodeLoadModuleByRelativeName(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.Loading_module_as_file_Slash_folder_candidate_module_location_0_target_file_types_Colon_1.Format(candidate, extensions.String()))
+		r.tracer.write(diagnostics.Loading_module_as_file_Slash_folder_candidate_module_location_0_target_file_types_Colon_1.Localize(r.resolver.host.Locale(), candidate, extensions.String()))
 	}
 	if !tspath.HasTrailingDirectorySeparator(candidate) {
 		if !onlyRecordFailures {
 			parentOfCandidate := tspath.GetDirectoryPath(candidate)
 			if !r.resolver.host.FS().DirectoryExists(parentOfCandidate) {
 				if r.tracer != nil {
-					r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(parentOfCandidate))
+					r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Localize(r.resolver.host.Locale(), parentOfCandidate))
 				}
 				onlyRecordFailures = true
 			}
@@ -1289,7 +1293,7 @@ func (r *resolutionState) nodeLoadModuleByRelativeName(extensions extensions, ca
 		candidateExists := r.resolver.host.FS().DirectoryExists(candidate)
 		if !candidateExists {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(candidate))
+				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Localize(r.resolver.host.Locale(), candidate))
 			}
 			onlyRecordFailures = true
 		}
@@ -1331,7 +1335,7 @@ func (r *resolutionState) loadModuleFromFileNoImplicitExtensions(extensions exte
 
 	extension := candidate[len(extensionless):]
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.File_name_0_has_a_1_extension_stripping_it.Format(candidate, extension))
+		r.tracer.write(diagnostics.File_name_0_has_a_1_extension_stripping_it.Localize(r.resolver.host.Locale(), candidate, extension))
 	}
 	return r.tryAddingExtensions(extensionless, extensions, extension, onlyRecordFailures)
 }
@@ -1485,11 +1489,11 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 	if !onlyRecordFailures {
 		if r.resolver.host.FS().FileExists(fileName) {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.File_0_exists_use_it_as_a_name_resolution_result.Format(fileName))
+				r.tracer.write(diagnostics.File_0_exists_use_it_as_a_name_resolution_result.Localize(r.resolver.host.Locale(), fileName))
 			}
 			return true
 		} else if r.tracer != nil {
-			r.tracer.write(diagnostics.File_0_does_not_exist.Format(fileName))
+			r.tracer.write(diagnostics.File_0_does_not_exist.Localize(r.resolver.host.Locale(), fileName))
 		}
 	}
 	r.failedLookupLocations = append(r.failedLookupLocations, fileName)
@@ -1561,7 +1565,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 			moduleName = tspath.GetRelativePathFromDirectory(candidate, indexPath, tspath.ComparePathsOptions{})
 		}
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version(), moduleName))
+			r.tracer.write(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Localize(r.resolver.host.Locale(), versionPaths.Version, core.Version(), moduleName))
 		}
 		pathPatterns := TryParsePatterns(versionPaths.GetPaths())
 		if result := r.tryLoadModuleUsingPaths(ext, moduleName, candidate, versionPaths.GetPaths(), pathPatterns, loader, onlyRecordFailuresForPackageFile); !result.shouldContinueSearching() {
@@ -1649,7 +1653,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 	if existing := r.resolver.packageJsonInfoCache.Get(packageJsonPath); existing != nil {
 		if existing.Contents != nil {
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.File_0_exists_according_to_earlier_cached_lookups.Format(packageJsonPath))
+				r.tracer.write(diagnostics.File_0_exists_according_to_earlier_cached_lookups.Localize(r.resolver.host.Locale(), packageJsonPath))
 			}
 			r.affectingLocations = append(r.affectingLocations, packageJsonPath)
 			if existing.PackageDirectory == packageDirectory {
@@ -1663,7 +1667,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			}
 		} else {
 			if existing.DirectoryExists && r.tracer != nil {
-				r.tracer.write(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups.Format(packageJsonPath))
+				r.tracer.write(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups.Localize(r.resolver.host.Locale(), packageJsonPath))
 			}
 			r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
 			return nil
@@ -1676,7 +1680,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 		contents, _ := r.resolver.host.FS().ReadFile(packageJsonPath)
 		packageJsonContent, err := packagejson.Parse([]byte(contents))
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Found_package_json_at_0.Format(packageJsonPath))
+			r.tracer.write(diagnostics.Found_package_json_at_0.Localize(r.resolver.host.Locale(), packageJsonPath))
 		}
 		result := &packagejson.InfoCacheEntry{
 			PackageDirectory: packageDirectory,
@@ -1691,7 +1695,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 		return result
 	} else {
 		if directoryExists && r.tracer != nil {
-			r.tracer.write(diagnostics.File_0_does_not_exist.Format(packageJsonPath))
+			r.tracer.write(diagnostics.File_0_does_not_exist.Localize(r.resolver.host.Locale(), packageJsonPath))
 		}
 		_ = r.resolver.packageJsonInfoCache.Set(packageJsonPath, &packagejson.InfoCacheEntry{
 			PackageDirectory: packageDirectory,
@@ -1730,7 +1734,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		return ""
 	}
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.X_package_json_has_a_peerDependencies_field.Message())
+		r.tracer.write(diagnostics.X_package_json_has_a_peerDependencies_field.Localize(r.resolver.host.Locale()))
 	}
 	packageDirectory := r.realPath(packageJsonInfo.PackageDirectory)
 	nodeModulesIndex := strings.LastIndex(packageDirectory, "/node_modules")
@@ -1748,10 +1752,10 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 			builder.WriteString("@")
 			builder.WriteString(version)
 			if r.tracer != nil {
-				r.tracer.write(diagnostics.Found_peerDependency_0_with_1_version.Format(name, version))
+				r.tracer.write(diagnostics.Found_peerDependency_0_with_1_version.Localize(r.resolver.host.Locale(), name, version))
 			}
 		} else if r.tracer != nil {
-			r.tracer.write(diagnostics.Failed_to_find_peerDependency_0.Format(name))
+			r.tracer.write(diagnostics.Failed_to_find_peerDependency_0.Localize(r.resolver.host.Locale(), name))
 		}
 	}
 	return builder.String()
@@ -1760,7 +1764,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 func (r *resolutionState) realPath(path string) string {
 	rp := tspath.NormalizePath(r.resolver.host.FS().Realpath(path))
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.Resolving_real_path_for_0_result_1.Format(path, rp))
+		r.tracer.write(diagnostics.Resolving_real_path_for_0_result_1.Localize(r.resolver.host.Locale(), path, rp))
 	}
 	return rp
 }
@@ -1771,11 +1775,11 @@ func (r *resolutionState) validatePackageJSONField(fieldName string, field packa
 			return true
 		}
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format(fieldName, field.ExpectedJSONType(), field.ActualJSONType()))
+			r.tracer.write(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Localize(r.resolver.host.Locale(), fieldName, field.ExpectedJSONType(), field.ActualJSONType()))
 		}
 	}
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.X_package_json_does_not_have_a_0_field.Format(fieldName))
+		r.tracer.write(diagnostics.X_package_json_does_not_have_a_0_field.Localize(r.resolver.host.Locale(), fieldName))
 	}
 	return false
 }
@@ -1786,13 +1790,13 @@ func (r *resolutionState) getPackageJSONPathField(fieldName string, field *packa
 	}
 	if field.Value == "" {
 		if r.tracer != nil {
-			r.tracer.write(diagnostics.X_package_json_had_a_falsy_0_field.Format(fieldName))
+			r.tracer.write(diagnostics.X_package_json_had_a_falsy_0_field.Localize(r.resolver.host.Locale(), fieldName))
 		}
 		return "", false
 	}
 	path := tspath.NormalizePath(tspath.CombinePaths(directory, field.Value))
 	if r.tracer != nil {
-		r.tracer.write(diagnostics.X_package_json_has_0_field_1_that_references_2.Format(fieldName, field.Value, path))
+		r.tracer.write(diagnostics.X_package_json_has_0_field_1_that_references_2.Localize(r.resolver.host.Locale(), fieldName, field.Value, path))
 	}
 	return path, true
 }
@@ -1813,9 +1817,11 @@ func (r *resolutionState) conditionMatches(condition string) bool {
 	return false
 }
 
-func (r *resolutionState) getTraceFunc() func(string) {
+func (r *resolutionState) getTraceFunc() func(m *diagnostics.Message, args ...any) {
 	if r.tracer != nil {
-		return r.tracer.write
+		return func(m *diagnostics.Message, args ...any) {
+			r.tracer.write(m.Localize(r.resolver.host.Locale(), args...))
+		}
 	}
 	return nil
 }

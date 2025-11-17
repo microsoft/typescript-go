@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"golang.org/x/text/language"
 )
 
 type projectReferenceDtsFakingHost struct {
@@ -35,6 +36,10 @@ func newProjectReferenceDtsFakingHost(loader *fileLoader) module.ResolutionHost 
 // FS implements module.ResolutionHost.
 func (h *projectReferenceDtsFakingHost) FS() vfs.FS {
 	return h.fs
+}
+
+func (h *projectReferenceDtsFakingHost) Locale() language.Tag {
+	return h.host.Locale()
 }
 
 // GetCurrentDirectory implements module.ResolutionHost.

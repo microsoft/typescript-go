@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 )
 
@@ -36,7 +37,7 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(cd, fs, language.Und, bundled.LibPath(), nil, nil)
 
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
@@ -70,7 +71,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(rootPath, fs, language.Und,bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{
@@ -87,7 +88,7 @@ func BenchmarkNewChecker(b *testing.B) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(rootPath, fs, language.Und,bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{

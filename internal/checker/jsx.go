@@ -326,13 +326,14 @@ func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *T
 			nonArrayLikeTargetParts = c.filterType(childrenTargetType, func(t *Type) bool { return !c.isArrayOrTupleLikeType(t) })
 		}
 		var invalidTextDiagnostic *diagnostics.Message
-		getInvalidTextualChildDiagnostic := func() *diagnostics.Message {
+		var invalidTextDiagnosticArgs []any
+		getInvalidTextualChildDiagnostic := func() (*diagnostics.Message, []any) {
 			if invalidTextDiagnostic == nil {
 				tagNameText := scanner.GetTextOfNode(node.Parent.TagName())
-				diagnostic := diagnostics.X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2
-				invalidTextDiagnostic = diagnostics.FormatMessage(diagnostic, tagNameText, childrenPropName, c.TypeToString(childrenTargetType))
+				invalidTextDiagnostic = diagnostics.X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2
+				invalidTextDiagnosticArgs = []any{tagNameText, childrenPropName, c.TypeToString(childrenTargetType)}
 			}
-			return invalidTextDiagnostic
+			return invalidTextDiagnostic, invalidTextDiagnosticArgs
 		}
 		if moreThanOneRealChildren {
 			if arrayLikeTargetParts != c.neverType {
@@ -368,9 +369,10 @@ type JsxElaborationElement struct {
 	innerExpression *ast.Node
 	nameType        *Type
 	errorMessage    *diagnostics.Message
+	errorArgs       []any // !!! This doesn't work at all!
 }
 
-func (c *Checker) generateJsxChildren(node *ast.Node, getInvalidTextDiagnostic func() *diagnostics.Message) iter.Seq[JsxElaborationElement] {
+func (c *Checker) generateJsxChildren(node *ast.Node, getInvalidTextDiagnostic func() (*diagnostics.Message, []any)) iter.Seq[JsxElaborationElement] {
 	return func(yield func(JsxElaborationElement) bool) {
 		memberOffset := 0
 		for i, child := range node.Children().Nodes {
@@ -387,7 +389,7 @@ func (c *Checker) generateJsxChildren(node *ast.Node, getInvalidTextDiagnostic f
 	}
 }
 
-func (c *Checker) getElaborationElementForJsxChild(child *ast.Node, nameType *Type, getInvalidTextDiagnostic func() *diagnostics.Message) JsxElaborationElement {
+func (c *Checker) getElaborationElementForJsxChild(child *ast.Node, nameType *Type, getInvalidTextDiagnostic func() (*diagnostics.Message, []any)) JsxElaborationElement {
 	switch child.Kind {
 	case ast.KindJsxExpression:
 		// child is of the type of the expression
@@ -398,7 +400,8 @@ func (c *Checker) getElaborationElementForJsxChild(child *ast.Node, nameType *Ty
 			return JsxElaborationElement{}
 		}
 		// child is a string
-		return JsxElaborationElement{errorNode: child, innerExpression: nil, nameType: nameType, errorMessage: getInvalidTextDiagnostic()}
+		errorMessage, errorArgs := getInvalidTextDiagnostic()
+		return JsxElaborationElement{errorNode: child, innerExpression: nil, nameType: nameType, errorMessage: errorMessage, errorArgs: errorArgs}
 	case ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindJsxFragment:
 		// child is of type JSX.Element
 		return JsxElaborationElement{errorNode: child, innerExpression: child, nameType: nameType}

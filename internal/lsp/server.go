@@ -726,6 +726,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			WatchEnabled:       s.watchEnabled,
 			LoggingEnabled:     true,
 			DebounceDelay:      500 * time.Millisecond,
+			Locale:             s.locale,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,

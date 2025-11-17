@@ -385,6 +385,7 @@ func NewOrchestrator(opts Options) *Orchestrator {
 		host: compiler.NewCachedFSCompilerHost(
 			orchestrator.opts.Sys.GetCurrentDirectory(),
 			orchestrator.opts.Sys.FS(),
+			orchestrator.opts.Sys.Locale(),
 			orchestrator.opts.Sys.DefaultLibraryPath(),
 			nil,
 			nil,

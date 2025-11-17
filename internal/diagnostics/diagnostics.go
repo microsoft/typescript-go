@@ -1,7 +1,13 @@
 // Package diagnostics contains generated localizable diagnostic messages.
 package diagnostics
 
-import "github.com/microsoft/typescript-go/internal/stringutil"
+import (
+	"fmt"
+	"regexp"
+	"strconv"
+
+	"golang.org/x/text/language"
+)
 
 //go:generate go run generate.go -output ./diagnostics_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
@@ -30,10 +36,12 @@ func (category Category) Name() string {
 	panic("Unhandled diagnostic category")
 }
 
+type Key string
+
 type Message struct {
 	code                         int32
 	category                     Category
-	key                          string
+	key                          Key
 	text                         string
 	reportsUnnecessary           bool
 	elidedInCompatibilityPyramid bool
@@ -42,22 +50,61 @@ type Message struct {
 
 func (m *Message) Code() int32                        { return m.code }
 func (m *Message) Category() Category                 { return m.category }
-func (m *Message) Key() string                        { return m.key }
-func (m *Message) Message() string                    { return m.text }
+func (m *Message) Key() Key                           { return m.key }
 func (m *Message) ReportsUnnecessary() bool           { return m.reportsUnnecessary }
 func (m *Message) ElidedInCompatibilityPyramid() bool { return m.elidedInCompatibilityPyramid }
 func (m *Message) ReportsDeprecated() bool            { return m.reportsDeprecated }
 
-func (m *Message) Format(args ...any) string {
-	text := m.Message()
-	if len(args) != 0 {
-		text = stringutil.Format(text, args)
-	}
-	return text
+// For debugging only.
+func (m *Message) String() string {
+	return m.text
 }
 
-func FormatMessage(m *Message, args ...any) *Message {
-	result := *m
-	result.text = stringutil.Format(m.text, args)
-	return &result
+func (m *Message) Localize(locale language.Tag, args ...any) string {
+	return Localize(locale, m, "", StringifyArgs(args)...)
+}
+
+func (m *Message) LocalizeStringArgs(locale language.Tag, args ...string) string {
+	return Localize(locale, m, "", args...)
+}
+
+func Localize(locale language.Tag, message *Message, key Key, args ...string) string {
+	if message == nil {
+		message = keyToMessage(key)
+	}
+
+	if message != nil {
+		// !!! localize
+		return Format(message.text, args)
+	}
+
+	panic("Unknown diagnostic message: " + string(key))
+}
+
+var placeholderRegexp = regexp.MustCompile(`{(\d+)}`)
+
+func Format(text string, args []string) string {
+	if len(args) == 0 {
+		return text
+	}
+
+	return placeholderRegexp.ReplaceAllStringFunc(text, func(match string) string {
+		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
+		if err != nil || int(index) >= len(args) {
+			panic("Invalid formatting placeholder")
+		}
+		return args[int(index)]
+	})
+}
+
+func StringifyArgs(args []any) []string {
+	result := make([]string, len(args))
+	for i, arg := range args {
+		if s, ok := arg.(string); ok {
+			result[i] = s
+		} else {
+			result[i] = fmt.Sprintf("%v", arg)
+		}
+	}
+	return result
 }

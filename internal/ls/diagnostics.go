@@ -6,10 +6,12 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"golang.org/x/text/language"
 )
 
 func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
@@ -61,6 +63,8 @@ func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.D
 		severity = lsproto.DiagnosticSeverityError
 	}
 
+	locale := core.GetLocale(ctx)
+
 	var relatedInformation []*lsproto.DiagnosticRelatedInformation
 	if clientOptions.RelatedInformation {
 		relatedInformation = make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
@@ -70,7 +74,7 @@ func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.D
 					Uri:   lsconv.FileNameToDocumentURI(related.File().FileName()),
 					Range: l.converters.ToLSPRange(related.File(), related.Loc()),
 				},
-				Message: related.Message(),
+				Message: related.Localize(locale),
 			})
 		}
 	}
@@ -92,19 +96,19 @@ func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.D
 			Integer: ptrTo(diagnostic.Code()),
 		},
 		Severity:           &severity,
-		Message:            messageChainToString(diagnostic),
+		Message:            messageChainToString(diagnostic, locale),
 		Source:             ptrTo("ts"),
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}
 }
 
-func messageChainToString(diagnostic *ast.Diagnostic) string {
+func messageChainToString(diagnostic *ast.Diagnostic, locale language.Tag) string {
 	if len(diagnostic.MessageChain()) == 0 {
-		return diagnostic.Message()
+		return diagnostic.Localize(locale)
 	}
 	var b strings.Builder
-	diagnosticwriter.WriteFlattenedDiagnosticMessage(&b, diagnostic, "\n")
+	diagnosticwriter.WriteFlattenedDiagnosticMessage(&b, diagnostic, "\n", locale)
 	return b.String()
 }
 

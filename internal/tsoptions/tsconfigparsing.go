@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/text/language"
 )
 
 type extendsResult struct {
@@ -672,6 +673,7 @@ func ParseConfigFileTextToJson(fileName string, path tspath.Path, jsonText strin
 type ParseConfigHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
+	Locale() language.Tag
 }
 
 type resolverHost struct {

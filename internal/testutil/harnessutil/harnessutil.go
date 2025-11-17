@@ -31,6 +31,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 )
 
 // Posix-style path to additional test libraries
@@ -209,7 +210,9 @@ func CompileFilesEx(
 	fs = bundled.WrapFS(fs)
 	fs = NewOutputRecorderFS(fs)
 
-	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory)
+	locale := language.Und // !!!
+
+	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, locale)
 	var configFile *tsoptions.TsConfigSourceFile
 	var errors []*ast.Diagnostic
 	if tsconfig != nil {
@@ -602,13 +605,13 @@ func (t *TracerForBaselining) Reset() {
 	t.packageJsonCache = make(map[tspath.Path]bool)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string, locale language.Tag) *cachedCompilerHost {
 	tracer := NewTracerForBaselining(tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          currentDirectory,
 	}, &strings.Builder{})
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, locale, defaultLibraryPath, nil, tracer.Trace),
 		tracer:       tracer,
 	}
 }

@@ -22,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 )
 
@@ -1025,7 +1026,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
-			t.Log(error.Message())
+			t.Log(error.Localize(language.Und))
 		}
 		t.FailNow()
 	}
@@ -1047,7 +1048,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parseConfigFileContent.Errors) > 0 {
 		for _, error := range parseConfigFileContent.Errors {
-			t.Log(error.Message())
+			t.Log(error.Localize(language.Und))
 		}
 		t.FailNow()
 	}

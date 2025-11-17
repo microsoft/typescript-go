@@ -12,7 +12,7 @@ import (
 )
 
 func PrintVersion(sys System) {
-	fmt.Fprintln(sys.Writer(), diagnostics.Version_0.Format(core.Version()))
+	fmt.Fprintln(sys.Writer(), diagnostics.Version_0.Localize(sys.Locale(), core.Version()))
 }
 
 func PrintHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
@@ -70,13 +70,13 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 		for _, example := range examples {
 			output = append(output, "  ", colors.blue(example), "\n")
 		}
-		output = append(output, "  ", desc.Format(), "\n", "\n")
+		output = append(output, "  ", desc.Localize(sys.Locale()), "\n", "\n")
 	}
 
-	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Localize(sys.Locale()) + " - " + diagnostics.Version_0.Localize(sys.Locale(), core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
-	output = append(output, colors.bold(diagnostics.COMMON_COMMANDS.Format()), "\n", "\n")
+	output = append(output, colors.bold(diagnostics.COMMON_COMMANDS.Localize(sys.Locale())), "\n", "\n")
 
 	example([]string{"tsc"}, diagnostics.Compiles_the_current_project_tsconfig_json_in_the_working_directory)
 	example([]string{"tsc app.ts util.ts"}, diagnostics.Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options)
@@ -96,11 +96,11 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 		}
 	}
 
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMAND_LINE_FLAGS.Format(), cliCommands /*subCategory*/, false /*beforeOptionsDescription*/, nil /*afterOptionsDescription*/, nil)...)
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMAND_LINE_FLAGS.Localize(sys.Locale()), cliCommands /*subCategory*/, false /*beforeOptionsDescription*/, nil /*afterOptionsDescription*/, nil)...)
 
 	// !!! locale formatMessage
-	after := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Format("https://aka.ms/tsc")
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMON_COMPILER_OPTIONS.Format(), configOpts /*subCategory*/, false /*beforeOptionsDescription*/, nil, &after)...)
+	after := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Localize(sys.Locale(), "https://aka.ms/tsc")
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMON_COMPILER_OPTIONS.Localize(sys.Locale()), configOpts /*subCategory*/, false /*beforeOptionsDescription*/, nil, &after)...)
 
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
@@ -109,23 +109,23 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 
 func printAllHelp(sys System, options []*tsoptions.CommandLineOption) {
 	var output []string
-	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Localize(sys.Locale()) + " - " + diagnostics.Version_0.Localize(sys.Locale(), core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
 	// ALL COMPILER OPTIONS section
-	afterCompilerOptions := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Format("https://aka.ms/tsc")
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.ALL_COMPILER_OPTIONS.Format(), options, true, nil, &afterCompilerOptions)...)
+	afterCompilerOptions := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Localize(sys.Locale(), "https://aka.ms/tsc")
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.ALL_COMPILER_OPTIONS.Localize(sys.Locale()), options, true, nil, &afterCompilerOptions)...)
 
 	// WATCH OPTIONS section
-	beforeWatchOptions := diagnostics.Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_config_watch_mode_with_Colon.Format()
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.WATCH_OPTIONS.Format(), tsoptions.OptionsForWatch, false, &beforeWatchOptions, nil)...)
+	beforeWatchOptions := diagnostics.Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_config_watch_mode_with_Colon.Localize(sys.Locale())
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.WATCH_OPTIONS.Localize(sys.Locale()), tsoptions.OptionsForWatch, false, &beforeWatchOptions, nil)...)
 
 	// BUILD OPTIONS section
-	beforeBuildOptions := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Format("https://aka.ms/tsc-composite-builds")
+	beforeBuildOptions := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Localize(sys.Locale(), "https://aka.ms/tsc-composite-builds")
 	buildOptions := core.Filter(tsoptions.OptionsForBuild, func(option *tsoptions.CommandLineOption) bool {
 		return option != &tsoptions.TscBuildOption
 	})
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.BUILD_OPTIONS.Format(), buildOptions, false, &beforeBuildOptions, nil)...)
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.BUILD_OPTIONS.Localize(sys.Locale()), buildOptions, false, &beforeBuildOptions, nil)...)
 
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
@@ -134,12 +134,12 @@ func printAllHelp(sys System, options []*tsoptions.CommandLineOption) {
 
 func PrintBuildHelp(sys System, buildOptions []*tsoptions.CommandLineOption) {
 	var output []string
-	output = append(output, getHeader(sys, diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format()+" - "+diagnostics.Version_0.Format(core.Version()))...)
-	before := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Format("https://aka.ms/tsc-composite-builds")
+	output = append(output, getHeader(sys, diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Localize(sys.Locale())+" - "+diagnostics.Version_0.Localize(sys.Locale(), core.Version()))...)
+	before := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Localize(sys.Locale(), "https://aka.ms/tsc-composite-builds")
 	options := core.Filter(buildOptions, func(option *tsoptions.CommandLineOption) bool {
 		return option != &tsoptions.TscBuildOption
 	})
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.BUILD_OPTIONS.Format(), options, false, &before, nil)...)
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.BUILD_OPTIONS.Localize(sys.Locale()), options, false, &before, nil)...)
 
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
@@ -172,7 +172,7 @@ func generateSectionOptionsOutput(
 		if option.Category == nil {
 			continue
 		}
-		curCategory := option.Category.Format()
+		curCategory := option.Category.Localize(sys.Locale())
 		if _, exists := categoryMap[curCategory]; !exists {
 			categoryOrder = append(categoryOrder, curCategory)
 		}
@@ -230,11 +230,11 @@ func generateOptionOutput(
 	name := getDisplayNameTextOfOption(option)
 
 	// value type and possible value
-	valueCandidates := getValueCandidate(option)
+	valueCandidates := getValueCandidate(sys, option)
 
 	var defaultValueDescription string
 	if msg, ok := option.DefaultValueDescription.(*diagnostics.Message); ok && msg != nil {
-		defaultValueDescription = msg.Format()
+		defaultValueDescription = msg.Localize(sys.Locale())
 	} else {
 		defaultValueDescription = formatDefaultValue(
 			option.DefaultValueDescription,
@@ -250,7 +250,7 @@ func generateOptionOutput(
 	if terminalWidth >= 80 {
 		description := ""
 		if option.Description != nil {
-			description = option.Description.Format()
+			description = option.Description.Localize(sys.Locale())
 		}
 		text = append(text, getPrettyOutput(colors, name, description, rightAlignOfLeft, leftAlignOfRight, terminalWidth, true /*colorLeft*/)...)
 		text = append(text, "\n")
@@ -260,7 +260,7 @@ func generateOptionOutput(
 				text = append(text, "\n")
 			}
 			if defaultValueDescription != "" {
-				text = append(text, getPrettyOutput(colors, diagnostics.X_default_Colon.Format(), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
+				text = append(text, getPrettyOutput(colors, diagnostics.X_default_Colon.Localize(sys.Locale()), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
 				text = append(text, "\n")
 			}
 		}
@@ -268,7 +268,7 @@ func generateOptionOutput(
 	} else {
 		text = append(text, colors.blue(name), "\n")
 		if option.Description != nil {
-			text = append(text, option.Description.Format())
+			text = append(text, option.Description.Localize(sys.Locale()))
 		}
 		text = append(text, "\n")
 		if showAdditionalInfoOutput(valueCandidates, option) {
@@ -279,7 +279,7 @@ func generateOptionOutput(
 				if valueCandidates != nil {
 					text = append(text, "\n")
 				}
-				text = append(text, diagnostics.X_default_Colon.Format(), " ", defaultValueDescription)
+				text = append(text, diagnostics.X_default_Colon.Localize(sys.Locale()), " ", defaultValueDescription)
 			}
 
 			text = append(text, "\n")
@@ -327,7 +327,7 @@ func showAdditionalInfoOutput(valueCandidates *valueCandidate, option *tsoptions
 	return true
 }
 
-func getValueCandidate(option *tsoptions.CommandLineOption) *valueCandidate {
+func getValueCandidate(sys System, option *tsoptions.CommandLineOption) *valueCandidate {
 	// option.type might be "string" | "number" | "boolean" | "object" | "list" | Map<string, number | string>
 	// string -- any of: string
 	// number -- any of: number
@@ -349,11 +349,11 @@ func getValueCandidate(option *tsoptions.CommandLineOption) *valueCandidate {
 	case tsoptions.CommandLineOptionTypeString,
 		tsoptions.CommandLineOptionTypeNumber,
 		tsoptions.CommandLineOptionTypeBoolean:
-		res.valueType = diagnostics.X_type_Colon.Format()
+		res.valueType = diagnostics.X_type_Colon.Localize(sys.Locale())
 	case tsoptions.CommandLineOptionTypeList:
-		res.valueType = diagnostics.X_one_or_more_Colon.Format()
+		res.valueType = diagnostics.X_one_or_more_Colon.Localize(sys.Locale())
 	default:
-		res.valueType = diagnostics.X_one_of_Colon.Format()
+		res.valueType = diagnostics.X_one_of_Colon.Localize(sys.Locale())
 	}
 
 	res.possibleValues = getPossibleValues(option)

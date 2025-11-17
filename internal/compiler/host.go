@@ -8,12 +8,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"golang.org/x/text/language"
 )
 
 type CompilerHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
+	Locale() language.Tag
 	Trace(msg string)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
@@ -24,6 +26,7 @@ var _ CompilerHost = (*compilerHost)(nil)
 type compilerHost struct {
 	currentDirectory    string
 	fs                  vfs.FS
+	locale              language.Tag
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
 	trace               func(msg string)
@@ -32,16 +35,18 @@ type compilerHost struct {
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
+	locale language.Tag,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), locale, defaultLibraryPath, extendedConfigCache, trace)
 }
 
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
+	locale language.Tag,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
@@ -52,6 +57,7 @@ func NewCompilerHost(
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
 		fs:                  fs,
+		locale:              locale,
 		defaultLibraryPath:  defaultLibraryPath,
 		extendedConfigCache: extendedConfigCache,
 		trace:               trace,
@@ -68,6 +74,10 @@ func (h *compilerHost) DefaultLibraryPath() string {
 
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
+}
+
+func (h *compilerHost) Locale() language.Tag {
+	return h.locale
 }
 
 func (h *compilerHost) Trace(msg string) {

@@ -14,9 +14,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"golang.org/x/text/language"
 )
 
 type FormattingOptions struct {
+	Locale language.Tag
 	tspath.ComparePathsOptions
 	NewLine string
 }
@@ -58,7 +60,7 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic *ast.Diagn
 
 	writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
 	fmt.Fprintf(output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
-	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
+	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 
 	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 		fmt.Fprint(output, formatOpts.NewLine)
@@ -75,7 +77,7 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic *ast.Diagn
 				pos := relatedInformation.Pos()
 				WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
 				fmt.Fprint(output, " - ")
-				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
+				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine, formatOpts.Locale)
 				writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, "    ", formatOpts)
 			}
 			fmt.Fprint(output, formatOpts.NewLine)
@@ -167,29 +169,29 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 	}
 }
 
-func FlattenDiagnosticMessage(d *ast.Diagnostic, newLine string) string {
+func FlattenDiagnosticMessage(d *ast.Diagnostic, newLine string, locale language.Tag) string {
 	var output strings.Builder
-	WriteFlattenedDiagnosticMessage(&output, d, newLine)
+	WriteFlattenedDiagnosticMessage(&output, d, newLine, locale)
 	return output.String()
 }
 
-func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnostic, newline string) {
-	fmt.Fprint(writer, diagnostic.Message())
+func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnostic, newline string, locale language.Tag) {
+	fmt.Fprint(writer, diagnostic.Localize(locale))
 
 	for _, chain := range diagnostic.MessageChain() {
-		flattenDiagnosticMessageChain(writer, chain, newline, 1 /*level*/)
+		flattenDiagnosticMessageChain(writer, chain, newline, locale, 1 /*level*/)
 	}
 }
 
-func flattenDiagnosticMessageChain(writer io.Writer, chain *ast.Diagnostic, newLine string, level int) {
+func flattenDiagnosticMessageChain(writer io.Writer, chain *ast.Diagnostic, newLine string, locale language.Tag, level int) {
 	fmt.Fprint(writer, newLine)
 	for range level {
 		fmt.Fprint(writer, "  ")
 	}
 
-	fmt.Fprint(writer, chain.Message())
+	fmt.Fprint(writer, chain.Localize(locale))
 	for _, child := range chain.MessageChain() {
-		flattenDiagnosticMessageChain(writer, child, newLine, level+1)
+		flattenDiagnosticMessageChain(writer, child, newLine, locale, level+1)
 	}
 }
 
@@ -260,21 +262,21 @@ func WriteErrorSummaryText(output io.Writer, allDiagnostics []*ast.Diagnostic, f
 	if totalErrorCount == 1 {
 		// Special-case a single error.
 		if len(errorSummary.GlobalErrors) > 0 || firstFileName == "" {
-			message = diagnostics.Found_1_error.Format()
+			message = diagnostics.Found_1_error.Localize(formatOpts.Locale)
 		} else {
-			message = diagnostics.Found_1_error_in_0.Format(firstFileName)
+			message = diagnostics.Found_1_error_in_0.Localize(formatOpts.Locale, firstFileName)
 		}
 	} else {
 		switch numErroringFiles {
 		case 0:
 			// No file-specific errors.
-			message = diagnostics.Found_0_errors.Format(totalErrorCount)
+			message = diagnostics.Found_0_errors.Localize(formatOpts.Locale, totalErrorCount)
 		case 1:
 			// One file with errors.
-			message = diagnostics.Found_0_errors_in_the_same_file_starting_at_Colon_1.Format(totalErrorCount, firstFileName)
+			message = diagnostics.Found_0_errors_in_the_same_file_starting_at_Colon_1.Localize(formatOpts.Locale, totalErrorCount, firstFileName)
 		default:
 			// Multiple files with errors.
-			message = diagnostics.Found_0_errors_in_1_files.Format(totalErrorCount, numErroringFiles)
+			message = diagnostics.Found_0_errors_in_1_files.Localize(formatOpts.Locale, totalErrorCount, numErroringFiles)
 		}
 	}
 	fmt.Fprint(output, formatOpts.NewLine)
@@ -333,7 +335,7 @@ func writeTabularErrorsDisplay(output io.Writer, errorSummary *ErrorSummary, for
 	// !!!
 	// TODO (drosen): This was never localized.
 	// Should make this better.
-	headerRow := diagnostics.Errors_Files.Message()
+	headerRow := diagnostics.Errors_Files.Localize(formatOpts.Locale)
 	leftColumnHeadingLength := len(strings.Split(headerRow, " ")[0])
 	lengthOfBiggestErrorCount := len(strconv.Itoa(maxErrors))
 	leftPaddingGoal := max(leftColumnHeadingLength, lengthOfBiggestErrorCount)
@@ -385,7 +387,7 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic *ast.Diagnostic, formatO
 	}
 
 	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())
-	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
+	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine, formatOpts.Locale)
 	fmt.Fprint(output, formatOpts.NewLine)
 }
 
@@ -393,12 +395,12 @@ func FormatDiagnosticsStatusWithColorAndTime(output io.Writer, time string, diag
 	fmt.Fprint(output, "[")
 	writeWithStyleAndReset(output, time, foregroundColorEscapeGrey)
 	fmt.Fprint(output, "] ")
-	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine, formatOpts.Locale)
 }
 
 func FormatDiagnosticsStatusAndTime(output io.Writer, time string, diag *ast.Diagnostic, formatOpts *FormattingOptions) {
 	fmt.Fprint(output, time, " - ")
-	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine, formatOpts.Locale)
 }
 
 var ScreenStartingCodes = []int32{

@@ -18,6 +18,7 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 			CurrentDirectory:          sys.GetCurrentDirectory(),
 			UseCaseSensitiveFileNames: sys.FS().UseCaseSensitiveFileNames(),
 		},
+		Locale: sys.Locale(),
 	}
 }
 
