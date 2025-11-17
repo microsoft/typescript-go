@@ -147,14 +147,17 @@ func (v *regExpValidator) detectNamedCapturingGroups() bool {
 	text := v.text[v.pos:v.end]
 
 	for i, ch := range text {
+		if inEscape {
+			inEscape = false
+			continue
+		}
+
 		// Only check ASCII characters for the pattern (?<
 		if ch >= 0x80 {
 			continue
 		}
 
-		if inEscape {
-			inEscape = false
-		} else if ch == '\\' {
+		if ch == '\\' {
 			inEscape = true
 		} else if ch == '[' {
 			inCharacterClass = true
