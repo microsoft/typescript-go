@@ -915,11 +915,11 @@ func (b *Binder) bindCallExpression(node *ast.Node) {
 	// We're only inspecting call expressions to detect CommonJS modules, so we can skip
 	// this check if we've already seen the module indicator
 	if b.file.CommonJSModuleIndicator == nil && ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
-		b.setCommonJsModuleIndicator(node)
+		b.setCommonJSModuleIndicator(node)
 	}
 }
 
-func (b *Binder) setCommonJsModuleIndicator(node *ast.Node) bool {
+func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
 	if b.file.ExternalModuleIndicator != nil && b.file.ExternalModuleIndicator != b.file.AsNode() {
 		return false
 	}
