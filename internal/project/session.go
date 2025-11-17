@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
@@ -439,6 +440,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 				s.logger.Log(err)
 			}
 		}
+		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
 	})
 
 	return newSnapshot
@@ -687,6 +689,55 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
+}
+
+func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	collections.DiffOrderedMaps(
+		oldSnapshot.ProjectCollection.ProjectsByPath(),
+		newSnapshot.ProjectCollection.ProjectsByPath(),
+		func(_ tspath.Path, addedProject *Project) {
+		},
+		func(projectPath tspath.Path, removedProject *Project) {
+			if removedProject.Kind != KindConfigured {
+				return
+			}
+			if err := s.client.PublishDiagnostics(context.Background(), &lsproto.PublishDiagnosticsParams{
+				Uri:         lsproto.DocumentUri(removedProject.ConfigFileName()),
+				Diagnostics: []*lsproto.Diagnostic{},
+			}); err != nil && s.options.LoggingEnabled {
+				s.logger.Logf("Error clearing diagnostics for removed project: %v", err)
+			}
+		},
+		func(projectPath tspath.Path, oldProject, newProject *Project) {
+		},
+	)
+
+	for _, project := range newSnapshot.ProjectCollection.Projects() {
+		if project.Program == nil {
+			continue
+		}
+
+		if project.ProgramLastUpdate != newSnapshot.ID() {
+			continue
+		}
+
+		if project.Kind != KindConfigured {
+			continue
+		}
+
+		programDiagnostics := project.Program.GetProgramDiagnostics()
+		lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(programDiagnostics))
+		for _, diag := range programDiagnostics {
+			lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(context.TODO(), newSnapshot.converters, diag))
+		}
+
+		if err := s.client.PublishDiagnostics(context.TODO(), &lsproto.PublishDiagnosticsParams{
+			Uri:         lsproto.DocumentUri(project.ConfigFileName()),
+			Diagnostics: lspDiagnostics,
+		}); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error publishing diagnostics: %v", err)
+		}
+	}
 }
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {

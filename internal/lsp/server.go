@@ -219,6 +219,13 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
+// PublishDiagnostics implements project.Client.
+func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
+	s.outgoingQueue <- notification.Message()
+	return nil
+}
+
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {

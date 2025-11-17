@@ -1,6 +1,7 @@
 package lsconv
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"slices"
@@ -8,7 +9,9 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -198,4 +201,85 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+type diagnosticCapabilities struct {
+	relatedInformation bool
+	tagValueSet        []lsproto.DiagnosticTag
+}
+
+// DiagnosticToLSPPull converts a diagnostic for pull diagnostics (textDocument/diagnostic)
+func DiagnosticToLSPPull(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
+	clientCaps := lsproto.GetClientCapabilities(ctx).TextDocument.Diagnostic
+	return diagnosticToLSP(converters, diagnostic, diagnosticCapabilities{
+		relatedInformation: clientCaps.RelatedInformation,
+		tagValueSet:        clientCaps.TagSupport.ValueSet,
+	})
+}
+
+// DiagnosticToLSPPush converts a diagnostic for push diagnostics (textDocument/publishDiagnostics)
+func DiagnosticToLSPPush(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
+	clientCaps := lsproto.GetClientCapabilities(ctx).TextDocument.PublishDiagnostics
+	return diagnosticToLSP(converters, diagnostic, diagnosticCapabilities{
+		relatedInformation: clientCaps.RelatedInformation,
+		tagValueSet:        clientCaps.TagSupport.ValueSet,
+	})
+}
+
+func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps diagnosticCapabilities) *lsproto.Diagnostic {
+	var severity lsproto.DiagnosticSeverity
+	switch diagnostic.Category() {
+	case diagnostics.CategorySuggestion:
+		severity = lsproto.DiagnosticSeverityHint
+	case diagnostics.CategoryMessage:
+		severity = lsproto.DiagnosticSeverityInformation
+	case diagnostics.CategoryWarning:
+		severity = lsproto.DiagnosticSeverityWarning
+	default:
+		severity = lsproto.DiagnosticSeverityError
+	}
+
+	var relatedInformation []*lsproto.DiagnosticRelatedInformation
+	if caps.relatedInformation {
+		relatedInformation = make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
+		for _, related := range diagnostic.RelatedInformation() {
+			relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
+				Location: lsproto.Location{
+					Uri:   FileNameToDocumentURI(related.File().FileName()),
+					Range: converters.ToLSPRange(related.File(), related.Loc()),
+				},
+				Message: related.Message(),
+			})
+		}
+	}
+
+	var tags []lsproto.DiagnosticTag
+	if len(caps.tagValueSet) > 0 && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
+		tags = make([]lsproto.DiagnosticTag, 0, 2)
+		if diagnostic.ReportsUnnecessary() && slices.Contains(caps.tagValueSet, lsproto.DiagnosticTagUnnecessary) {
+			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
+		}
+		if diagnostic.ReportsDeprecated() && slices.Contains(caps.tagValueSet, lsproto.DiagnosticTagDeprecated) {
+			tags = append(tags, lsproto.DiagnosticTagDeprecated)
+		}
+	}
+
+	return &lsproto.Diagnostic{
+		Range: converters.ToLSPRange(diagnostic.File(), diagnostic.Loc()),
+		Code: &lsproto.IntegerOrString{
+			Integer: ptrTo(diagnostic.Code()),
+		},
+		Severity:           &severity,
+		Message:            diagnostic.Message(),
+		Source:             ptrTo("ts"),
+		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
+		Tags:               ptrToSliceIfNonEmpty(tags),
+	}
+}
+
+func ptrToSliceIfNonEmpty[T any](s []T) *[]T {
+	if len(s) == 0 {
+		return nil
+	}
+	return &s
 }
