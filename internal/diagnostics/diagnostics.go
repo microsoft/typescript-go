@@ -98,6 +98,10 @@ func Format(text string, args []string) string {
 }
 
 func StringifyArgs(args []any) []string {
+	if len(args) == 0 {
+		return nil
+	}
+
 	result := make([]string, len(args))
 	for i, arg := range args {
 		if s, ok := arg.(string); ok {
