@@ -1629,6 +1629,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -2458,7 +2465,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
+func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
 	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 

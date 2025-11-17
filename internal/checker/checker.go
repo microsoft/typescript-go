@@ -857,9 +857,13 @@ type Checker struct {
 	activeTypeMappersCaches                     []map[string]*Type
 	ambientModulesOnce                          sync.Once
 	ambientModules                              []*ast.Symbol
+	withinUnreachableCode                       bool
+	reportedUnreachableNodes                    collections.Set[*ast.Node]
+
+	mu sync.Mutex
 }
 
-func NewChecker(program Program) *Checker {
+func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
@@ -1071,7 +1075,7 @@ func NewChecker(program Program) *Checker {
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
-	return c
+	return c, &c.mu
 }
 
 func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
@@ -2142,6 +2146,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			c.wasCanceled = true
 		}
 		c.ctx = nil
+		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
 }
@@ -2158,10 +2163,12 @@ func (c *Checker) checkSourceElements(nodes []*ast.Node) {
 func (c *Checker) checkSourceElement(node *ast.Node) bool {
 	if node != nil {
 		saveCurrentNode := c.currentNode
+		saveWithinUnreachableCode := c.withinUnreachableCode
 		c.currentNode = node
 		c.instantiationCount = 0
 		c.checkSourceElementWorker(node)
 		c.currentNode = saveCurrentNode
+		c.withinUnreachableCode = saveWithinUnreachableCode
 	}
 	return false
 }
@@ -2177,13 +2184,13 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 			}
 		}
 	}
-	kind := node.Kind
-	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement {
-		flowNode := node.FlowNodeData().FlowNode
-		if flowNode != nil && !c.isReachableFlowNode(flowNode) {
-			c.errorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, node, diagnostics.Unreachable_code_detected)
+
+	if !c.withinUnreachableCode && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
+		if c.checkSourceElementUnreachable(node) {
+			c.withinUnreachableCode = true
 		}
 	}
+
 	switch node.Kind {
 	case ast.KindTypeParameter:
 		c.checkTypeParameter(node)
@@ -2304,6 +2311,87 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	case ast.KindJSDocNonNullableType, ast.KindJSDocNullableType, ast.KindJSDocAllType, ast.KindJSDocTypeLiteral:
 		c.checkJSDocType(node)
 	}
+}
+
+func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
+	if !ast.IsPotentiallyExecutableNode(node) {
+		return false
+	}
+
+	if c.reportedUnreachableNodes.Has(node) {
+		return true
+	}
+
+	if !c.isSourceElementUnreachable(node) {
+		return false
+	}
+
+	c.reportedUnreachableNodes.Add(node)
+
+	sourceFile := ast.GetSourceFileOfNode(node)
+
+	start := node.Pos()
+	end := node.End()
+
+	parent := node.Parent
+	if parent.CanHaveStatements() {
+		statements := parent.Statements()
+		if offset := slices.Index(statements, node); offset >= 0 {
+			// Scan backwards to find the first unreachable unreported node;
+			// this may happen when producing region diagnostics where not all nodes
+			// will have been visited.
+			// TODO: enable this code once we support region diagnostics again.
+			first := offset
+			// for i := offset - 1; i >= 0; i-- {
+			// 	prevNode := statements[i]
+			// 	if !ast.IsPotentiallyExecutableNode(prevNode) || c.reportedUnreachableNodes.Has(prevNode) || !c.isSourceElementUnreachable(prevNode) {
+			// 		break
+			// 	}
+			// 	firstUnreachableIndex = i
+			// 	c.reportedUnreachableNodes.Add(prevNode)
+			// }
+
+			last := offset
+			for i := offset + 1; i < len(statements); i++ {
+				nextNode := statements[i]
+				if !ast.IsPotentiallyExecutableNode(nextNode) || !c.isSourceElementUnreachable(nextNode) {
+					break
+				}
+				last = i
+				c.reportedUnreachableNodes.Add(nextNode)
+			}
+
+			start = statements[first].Pos()
+			end = statements[last].End()
+		}
+	}
+
+	start = scanner.SkipTrivia(sourceFile.Text(), start)
+
+	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
+	c.addErrorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, diagnostic)
+
+	return true
+}
+
+func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
+	// Precondition: ast.IsPotentiallyExecutableNode is true
+	if node.Flags&ast.NodeFlagsUnreachable != 0 {
+		// The binder has determined that this code is unreachable.
+		// Ignore const enums unless preserveConstEnums is set.
+		switch node.Kind {
+		case ast.KindEnumDeclaration:
+			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
+		case ast.KindModuleDeclaration:
+			return ast.IsInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums())
+		default:
+			return true
+		}
+	} else if flowNode := node.FlowNodeData().FlowNode; flowNode != nil {
+		// For code the binder doesn't know is unreachable, use control flow / types.
+		return !c.isReachableFlowNode(flowNode)
+	}
+	return false
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
@@ -3966,7 +4054,7 @@ func (c *Checker) checkWithStatement(node *ast.Node) {
 	c.checkExpression(node.Expression())
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
-		start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
+		start := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.Statement().Pos()
 		c.grammarErrorAtPos(sourceFile.AsNode(), start, end-start, diagnostics.The_with_statement_is_not_supported_All_symbols_in_a_with_block_will_have_type_any)
 	}
@@ -4019,6 +4107,9 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 				break
 			}
 		}
+	}
+	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 && c.compilerOptions.AllowUnusedLabels != core.TSTrue {
+		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
 	c.checkSourceElement(labeledStatement.Statement)
 }
@@ -12572,7 +12663,7 @@ func (c *Checker) isIndirectCall(node *ast.Node) bool {
 	right := node.AsBinaryExpression().Right
 	return ast.IsParenthesizedExpression(node.Parent) && ast.IsNumericLiteral(left) && left.Text() == "0" &&
 		(ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent ||
-			ast.IsTaggedTemplateExpression(node.Parent.Parent) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval"))
+			ast.IsTaggedTemplateExpression(node.Parent.Parent)) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
 }
 
 func (c *Checker) checkInstanceOfExpression(left *ast.Expression, right *ast.Expression, leftType *Type, rightType *Type, checkMode CheckMode) *Type {
@@ -30518,7 +30609,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
-		return c.getSymbolOfNode(node)
+		return c.getSymbolOfNode(node.Parent)
 	case ast.KindImportType:
 		if ast.IsLiteralImportTypeNode(node) {
 			return c.getSymbolAtLocation(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal, ignoreErrors)
@@ -30658,6 +30749,9 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			}
 			meaning := core.IfElse(isJSDoc, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, ast.SymbolFlagsValue)
 			result := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
+			if result != nil && result.Flags&ast.SymbolFlagsModuleExports != 0 {
+				result = result.ValueDeclaration.Symbol() // Symbol of the module source file
+			}
 			if result == nil && isJSDoc {
 				if container := ast.FindAncestor(name, ast.IsClassOrInterfaceLike); container != nil {
 					symbol := c.getSymbolOfDeclaration(container)

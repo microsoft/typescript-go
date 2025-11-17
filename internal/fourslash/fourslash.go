@@ -16,6 +16,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -26,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -412,8 +415,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := lsproto.NewRequestMessage(
-		info.Method,
+	req := info.NewRequestMessage(
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
@@ -427,19 +429,24 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
 	if resp.Kind == lsproto.MessageKindRequest {
 		req := resp.AsRequest()
-		switch req.Method {
-		case lsproto.MethodWorkspaceConfiguration:
-			req := lsproto.ResponseMessage{
-				ID:      req.ID,
-				JSONRPC: req.JSONRPC,
-				Result:  []any{f.userPreferences},
-			}
-			f.writeMsg(t, req.Message())
-			resp = f.readMsg(t)
-		default:
-			// other types of requests not yet used in fourslash; implement them if needed
-			t.Fatalf("Unexpected request received: %s", req.Method)
+
+		assert.Equal(t, req.Method, lsproto.MethodWorkspaceConfiguration, "Unexpected request received: %s", req.Method)
+		res := lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  []any{f.userPreferences},
 		}
+		f.writeMsg(t, res.Message())
+		req = f.readMsg(t).AsRequest()
+
+		assert.Equal(t, req.Method, lsproto.MethodClientRegisterCapability, "Unexpected request received: %s", req.Method)
+		res = lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+		f.writeMsg(t, res.Message())
+		resp = f.readMsg(t)
 	}
 
 	if resp == nil {
@@ -450,8 +457,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := lsproto.NewNotificationMessage(
-		info.Method,
+	notification := info.NewNotificationMessage(
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -475,9 +481,16 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
+	// !!!
+	// Callers to this function may need to consider
+	// sending a more specific configuration for 'javascript'
+	// or 'js/ts' as well. For now, we only send 'typescript',
+	// and most tests probably just want this.
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
-		Settings: config,
+		Settings: map[string]any{
+			"typescript": config,
+		},
 	})
 }
 
@@ -616,6 +629,16 @@ func (f *FourslashTest) MarkerByName(t *testing.T, name string) *Marker {
 
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
+}
+
+func (f *FourslashTest) getRangesInFile(fileName string) []*RangeMarker {
+	var rangesInFile []*RangeMarker
+	for _, rangeMarker := range f.testData.Ranges {
+		if rangeMarker.FileName() == fileName {
+			rangesInFile = append(rangesInFile, rangeMarker)
+		}
+	}
+	return rangesInFile
 }
 
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
@@ -975,8 +998,9 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
-	autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
@@ -1877,7 +1901,12 @@ func (f *FourslashTest) ReplaceLine(t *testing.T, lineIndex int, text string) {
 func (f *FourslashTest) selectLine(t *testing.T, lineIndex int) {
 	script := f.getScriptInfo(f.activeFilename)
 	start := script.lineMap.LineStarts[lineIndex]
-	end := script.lineMap.LineStarts[lineIndex+1] - 1
+	var end core.TextPos
+	if lineIndex+1 >= len(script.lineMap.LineStarts) {
+		end = core.TextPos(len(script.content))
+	} else {
+		end = script.lineMap.LineStarts[lineIndex+1] - 1
+	}
 	f.selectRange(t, core.NewTextRange(int(start), int(end)))
 }
 
@@ -2534,6 +2563,255 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
+}
+
+func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return true })
+}
+
+// Similar to `VerifyDiagnostics`, but excludes suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifyNonSuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) })
+}
+
+// Similar to `VerifyDiagnostics`, but includes only suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifySuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, isSuggestionDiagnostic)
+}
+
+func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic, filterDiagnostics func(*lsproto.Diagnostic) bool) {
+	actualDiagnostics := f.getDiagnostics(t, f.activeFilename)
+	actualDiagnostics = core.Filter(actualDiagnostics, filterDiagnostics)
+	emptyRange := lsproto.Range{}
+	expectedWithRanges := make([]*lsproto.Diagnostic, len(expected))
+	for i, diag := range expected {
+		if diag.Range == emptyRange {
+			rangesInFile := f.getRangesInFile(f.activeFilename)
+			if len(rangesInFile) == 0 {
+				t.Fatalf("No ranges found in file %s to assign to diagnostic with empty range", f.activeFilename)
+			}
+			diagWithRange := *diag
+			diagWithRange.Range = rangesInFile[0].LSRange
+			expectedWithRanges[i] = &diagWithRange
+		} else {
+			expectedWithRanges[i] = diag
+		}
+	}
+	if len(actualDiagnostics) == 0 && len(expectedWithRanges) == 0 {
+		return
+	}
+	assertDeepEqual(t, actualDiagnostics, expectedWithRanges, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
+}
+
+func (f *FourslashTest) getDiagnostics(t *testing.T, fileName string) []*lsproto.Diagnostic {
+	params := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for diagnostics request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
+	}
+
+	if result.FullDocumentDiagnosticReport != nil {
+		return result.FullDocumentDiagnosticReport.Items
+	}
+	return nil
+}
+
+func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
+	return diag.Tags != nil && len(*diag.Tags) > 0 ||
+		(diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityHint)
+}
+
+func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
+	var diagnostics []*fourslashDiagnostic
+	var files []*harnessutil.TestFile
+	for fileName, scriptInfo := range f.scriptInfos {
+		if tspath.HasJSONFileExtension(fileName) {
+			continue
+		}
+		files = append(files, &harnessutil.TestFile{UnitName: fileName, Content: scriptInfo.content})
+		lspDiagnostics := core.Filter(
+			f.getDiagnostics(t, fileName),
+			func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) },
+		)
+		diagnostics = append(diagnostics, core.Map(lspDiagnostics, func(d *lsproto.Diagnostic) *fourslashDiagnostic {
+			return f.toDiagnostic(scriptInfo, d)
+		})...)
+	}
+	slices.SortFunc(files, func(a, b *harnessutil.TestFile) int {
+		return strings.Compare(a.UnitName, b.UnitName)
+	})
+	result := tsbaseline.GetErrorBaseline(t, files, diagnostics, compareDiagnostics, false /*pretty*/)
+	f.addResultToBaseline(t, "Syntax and Semantic Diagnostics", result)
+}
+
+type fourslashDiagnostic struct {
+	file               *fourslashDiagnosticFile
+	loc                core.TextRange
+	code               int32
+	category           diagnostics.Category
+	message            string
+	relatedDiagnostics []*fourslashDiagnostic
+	reportsUnnecessary bool
+	reportsDeprecated  bool
+}
+
+type fourslashDiagnosticFile struct {
+	file        *harnessutil.TestFile
+	ecmaLineMap []core.TextPos
+}
+
+var _ diagnosticwriter.FileLike = (*fourslashDiagnosticFile)(nil)
+
+func (f *fourslashDiagnosticFile) FileName() string {
+	return f.file.UnitName
+}
+
+func (f *fourslashDiagnosticFile) Text() string {
+	return f.file.Content
+}
+
+func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
+	if f.ecmaLineMap == nil {
+		f.ecmaLineMap = core.ComputeECMALineStarts(f.file.Content)
+	}
+	return f.ecmaLineMap
+}
+
+var _ diagnosticwriter.Diagnostic = (*fourslashDiagnostic)(nil)
+
+func (d *fourslashDiagnostic) File() diagnosticwriter.FileLike {
+	return d.file
+}
+
+func (d *fourslashDiagnostic) Pos() int {
+	return d.loc.Pos()
+}
+
+func (d *fourslashDiagnostic) End() int {
+	return d.loc.End()
+}
+
+func (d *fourslashDiagnostic) Len() int {
+	return d.loc.Len()
+}
+
+func (d *fourslashDiagnostic) Code() int32 {
+	return d.code
+}
+
+func (d *fourslashDiagnostic) Category() diagnostics.Category {
+	return d.category
+}
+
+func (d *fourslashDiagnostic) Message() string {
+	return d.message
+}
+
+func (d *fourslashDiagnostic) MessageChain() []diagnosticwriter.Diagnostic {
+	return nil
+}
+
+func (d *fourslashDiagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
+	relatedInfo := make([]diagnosticwriter.Diagnostic, 0, len(d.relatedDiagnostics))
+	for _, relDiag := range d.relatedDiagnostics {
+		relatedInfo = append(relatedInfo, relDiag)
+	}
+	return relatedInfo
+}
+
+func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *fourslashDiagnostic {
+	var category diagnostics.Category
+	switch *lspDiagnostic.Severity {
+	case lsproto.DiagnosticSeverityError:
+		category = diagnostics.CategoryError
+	case lsproto.DiagnosticSeverityWarning:
+		category = diagnostics.CategoryWarning
+	case lsproto.DiagnosticSeverityInformation:
+		category = diagnostics.CategoryMessage
+	case lsproto.DiagnosticSeverityHint:
+		category = diagnostics.CategorySuggestion
+	default:
+		category = diagnostics.CategoryError
+	}
+	code := *lspDiagnostic.Code.Integer
+
+	var relatedDiagnostics []*fourslashDiagnostic
+	if lspDiagnostic.RelatedInformation != nil {
+		for _, info := range *lspDiagnostic.RelatedInformation {
+			relatedScriptInfo := f.getScriptInfo(info.Location.Uri.FileName())
+			if relatedScriptInfo == nil {
+				continue
+			}
+			relatedDiagnostic := &fourslashDiagnostic{
+				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
+				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				code:     code,
+				category: category,
+				message:  info.Message,
+			}
+			relatedDiagnostics = append(relatedDiagnostics, relatedDiagnostic)
+		}
+	}
+
+	diagnostic := &fourslashDiagnostic{
+		file: &fourslashDiagnosticFile{
+			file: &harnessutil.TestFile{
+				UnitName: scriptInfo.fileName,
+				Content:  scriptInfo.content,
+			},
+		},
+		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
+		code:               code,
+		category:           category,
+		message:            lspDiagnostic.Message,
+		relatedDiagnostics: relatedDiagnostics,
+	}
+	return diagnostic
+}
+
+func compareDiagnostics(d1, d2 *fourslashDiagnostic) int {
+	c := strings.Compare(d1.file.FileName(), d2.file.FileName())
+	if c != 0 {
+		return c
+	}
+	c = d1.Pos() - d2.Pos()
+	if c != 0 {
+		return c
+	}
+	c = d1.End() - d2.End()
+	if c != 0 {
+		return c
+	}
+	c = int(d1.code) - int(d2.code)
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.message, d2.message)
+	if c != 0 {
+		return c
+	}
+	return compareRelatedDiagnostics(d1.relatedDiagnostics, d2.relatedDiagnostics)
+}
+
+func compareRelatedDiagnostics(d1, d2 []*fourslashDiagnostic) int {
+	c := len(d2) - len(d1)
+	if c != 0 {
+		return c
+	}
+	for i := range d1 {
+		c = compareDiagnostics(d1[i], d2[i])
+		if c != 0 {
+			return c
+		}
+	}
+	return 0
 }
 
 func isLibFile(fileName string) bool {

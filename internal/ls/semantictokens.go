@@ -104,16 +104,16 @@ const (
 // SemanticTokensLegend returns the legend describing the token types and modifiers.
 // If clientCapabilities is provided, it filters the legend to only include types and modifiers
 // that the client supports.
-func SemanticTokensLegend(clientCapabilities *lsproto.SemanticTokensClientCapabilities) *lsproto.SemanticTokensLegend {
+func SemanticTokensLegend(clientCapabilities lsproto.ResolvedSemanticTokensClientCapabilities) *lsproto.SemanticTokensLegend {
 	types := make([]string, 0, len(tokenTypes))
 	for _, t := range tokenTypes {
-		if clientCapabilities == nil || slices.Contains(clientCapabilities.TokenTypes, string(t)) {
+		if slices.Contains(clientCapabilities.TokenTypes, string(t)) {
 			types = append(types, string(t))
 		}
 	}
 	modifiers := make([]string, 0, len(tokenModifiers))
 	for _, m := range tokenModifiers {
-		if clientCapabilities == nil || slices.Contains(clientCapabilities.TokenModifiers, string(m)) {
+		if slices.Contains(clientCapabilities.TokenModifiers, string(m)) {
 			modifiers = append(modifiers, string(m))
 		}
 	}
@@ -123,7 +123,7 @@ func SemanticTokensLegend(clientCapabilities *lsproto.SemanticTokensClientCapabi
 	}
 }
 
-func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI lsproto.DocumentUri, clientCapabilities *lsproto.SemanticTokensClientCapabilities) (lsproto.SemanticTokensResponse, error) {
+func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.SemanticTokensResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -136,7 +136,7 @@ func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI
 	}
 
 	// Convert to LSP format (relative encoding)
-	encoded := encodeSemanticTokens(tokens, file, l.converters, clientCapabilities)
+	encoded := encodeSemanticTokens(ctx, tokens, file, l.converters)
 
 	return lsproto.SemanticTokensOrNull{
 		SemanticTokens: &lsproto.SemanticTokens{
@@ -145,7 +145,7 @@ func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI
 	}, nil
 }
 
-func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, documentURI lsproto.DocumentUri, rang lsproto.Range, clientCapabilities *lsproto.SemanticTokensClientCapabilities) (lsproto.SemanticTokensRangeResponse, error) {
+func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, documentURI lsproto.DocumentUri, rang lsproto.Range) (lsproto.SemanticTokensRangeResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -161,7 +161,7 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 	}
 
 	// Convert to LSP format (relative encoding)
-	encoded := encodeSemanticTokens(tokens, file, l.converters, clientCapabilities)
+	encoded := encodeSemanticTokens(ctx, tokens, file, l.converters)
 
 	return lsproto.SemanticTokensOrNull{
 		SemanticTokens: &lsproto.SemanticTokens{
@@ -474,36 +474,28 @@ func isInfinityOrNaNString(text string) bool {
 
 // encodeSemanticTokens encodes tokens into the LSP format using relative positioning.
 // It filters tokens based on client capabilities, only including types and modifiers that the client supports.
-func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converters *lsconv.Converters, clientCapabilities *lsproto.SemanticTokensClientCapabilities) []uint32 {
+func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast.SourceFile, converters *lsconv.Converters) []uint32 {
 	// Build mapping from server token types/modifiers to client indices
 	typeMapping := make(map[tokenType]uint32)
 	modifierMapping := make(map[lsproto.SemanticTokenModifiers]uint32)
 
-	if clientCapabilities != nil {
-		// Map server token types to client-supported indices
-		clientIdx := uint32(0)
-		for i, serverType := range tokenTypes {
-			if slices.Contains(clientCapabilities.TokenTypes, string(serverType)) {
-				typeMapping[tokenType(i)] = clientIdx
-				clientIdx++
-			}
-		}
+	clientCapabilities := lsproto.GetClientCapabilities(ctx).TextDocument.SemanticTokens
 
-		// Map server token modifiers to client-supported bit positions
-		clientBit := uint32(0)
-		for _, serverModifier := range tokenModifiers {
-			if slices.Contains(clientCapabilities.TokenModifiers, string(serverModifier)) {
-				modifierMapping[serverModifier] = clientBit
-				clientBit++
-			}
+	// Map server token types to client-supported indices
+	clientIdx := uint32(0)
+	for i, serverType := range tokenTypes {
+		if slices.Contains(clientCapabilities.TokenTypes, string(serverType)) {
+			typeMapping[tokenType(i)] = clientIdx
+			clientIdx++
 		}
-	} else {
-		// No filtering - use direct mapping
-		for i := range tokenTypes {
-			typeMapping[tokenType(i)] = uint32(i)
-		}
-		for i, mod := range tokenModifiers {
-			modifierMapping[mod] = uint32(i)
+	}
+
+	// Map server token modifiers to client-supported bit positions
+	clientBit := uint32(0)
+	for _, serverModifier := range tokenModifiers {
+		if slices.Contains(clientCapabilities.TokenModifiers, string(serverModifier)) {
+			modifierMapping[serverModifier] = clientBit
+			clientBit++
 		}
 	}
 
