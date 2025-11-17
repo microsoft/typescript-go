@@ -464,7 +464,7 @@ func (v *regExpValidator) scanFlags(currFlags regExpFlags, checkModifiers bool) 
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if currFlags&flag != 0 {
 			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if (currFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
+		} else if !checkModifiers && (currFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
 			v.error(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, v.pos, size)
 		} else if checkModifiers && flag&regExpFlagsModifiers == 0 {
 			v.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, v.pos, size)
