@@ -1,12 +1,6 @@
 --- old.jsDeclarationsTypedefAndImportTypes.js
 +++ new.jsDeclarationsTypedefAndImportTypes.js
-@@= skipped -34, +34 lines =@@
-
-
- //// [conn.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /**
+@@= skipped -38, +38 lines =@@
   * @typedef {string | number} Whatever
   */
  class Conn {
@@ -17,23 +11,15 @@
 +    item = 3;
      method() { }
  }
-+export = Conn;
  module.exports = Conn;
- //// [usage.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- /**
-  * @typedef {import("./conn")} Conn
-  */
-@@= skipped -30, +34 lines =@@
+@@= skipped -26, +25 lines =@@
 
 
  //// [conn.d.ts]
-+export type Whatever = string | number;
- export = Conn;
--/**
-- * @typedef {string | number} Whatever
-- */
+-export = Conn;
+ /**
+  * @typedef {string | number} Whatever
+  */
 -declare class Conn {
 -    item: number;
 -    method(): void;
@@ -42,11 +28,16 @@
 -    export { Whatever };
 -}
 -type Whatever = string | number;
++export type Whatever = string | number;
++export = Conn;
  //// [usage.d.ts]
++/**
++ * @typedef {import("./conn")} Conn
++ */
  export type Conn = import("./conn");
- /**
-  * @typedef {import("./conn")} Conn
-  */
+-/**
+- * @typedef {import("./conn")} Conn
+- */
 -export class Wrap {
 +declare class Wrap {
      /**

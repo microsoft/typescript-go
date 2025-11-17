@@ -214,7 +214,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousDecoratorErrors(node) || c.reportObviousModifierErrors(node) {
 		return true
 	}
-	if ast.IsParameter(node) && ast.IsThisParameter(node) {
+	if ast.IsThisParameter(node) {
 		return c.grammarErrorOnFirstToken(node, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 	}
 	blockScopeKind := ast.NodeFlagsNone
@@ -900,7 +900,7 @@ func (c *Checker) checkGrammarHeritageClause(node *ast.HeritageClause) bool {
 		return c.grammarErrorAtPos(node.AsNode(), types.Pos(), 0, diagnostics.X_0_list_cannot_be_empty, listType)
 	}
 
-	for _, node := range types.Nodes {
+	for _, node := range types.Nodes { //nolint:modernize
 		if c.checkGrammarExpressionWithTypeArguments(node) {
 			return true
 		}
@@ -1338,9 +1338,6 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
 	body := accessor.Body()
 	if accessor.Flags&ast.NodeFlagsAmbient == 0 && (accessor.Parent.Kind != ast.KindTypeLiteral) && (accessor.Parent.Kind != ast.KindInterfaceDeclaration) {
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(accessor.Name()) {
-			return c.grammarErrorOnNode(accessor.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
 		if body == nil && !ast.HasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
 			return c.grammarErrorAtPos(accessor, accessor.End()-1, len(";"), diagnostics.X_0_expected, "{")
 		}
@@ -1492,9 +1489,6 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 	}
 
 	if ast.IsClassLike(node.Parent) {
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(node.Name()) {
-			return c.grammarErrorOnNode(node.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
 		// Technically, computed properties in ambient contexts is disallowed
 		// for property declarations and accessors too, not just methods.
 		// However, property declarations disallow computed names in general,
@@ -1933,12 +1927,6 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		}
 		if c.checkGrammarForInvalidDynamicName(propertyName, diagnostics.A_computed_property_name_in_a_class_property_declaration_must_have_a_simple_literal_type_or_a_unique_symbol_type) {
 			return true
-		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(propertyName) {
-			return c.grammarErrorOnNode(propertyName, diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
-			return c.grammarErrorOnNode(propertyName, diagnostics.Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
 			return true

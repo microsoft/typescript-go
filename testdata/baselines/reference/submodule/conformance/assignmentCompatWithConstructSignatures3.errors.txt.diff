@@ -9,7 +9,7 @@
    Types of parameters 'y' and 'y' are incompatible.
      Type 'T' is not assignable to type 'Derived2[]'.
        Type 'Base[]' is not assignable to type 'Derived2[]'.
-         Type 'Base' is missing the following properties from type 'Derived2': bar, baz
+         Type 'Base' is missing the following properties from type 'Derived2': baz, bar
 -assignmentCompatWithConstructSignatures3.ts(83,1): error TS2322: Type 'new (x: Base[], y: Derived[]) => Derived[]' is not assignable to type 'new <T extends Array<Derived>>(x: Base[], y: T) => T'.
 +assignmentCompatWithConstructSignatures3.ts(83,1): error TS2322: Type 'new (x: Base[], y: Derived[]) => Derived[]' is not assignable to type 'new <T extends Derived[]>(x: Base[], y: T) => T'.
    Type 'Derived[]' is not assignable to type 'T'.

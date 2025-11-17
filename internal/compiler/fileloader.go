@@ -64,7 +64,6 @@ type processedFiles struct {
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
-	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	includeProcessor                     *includeProcessor
 	// if file was included using source file and its output is actually part of program
@@ -106,19 +105,19 @@ func processAllProgramFiles(
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	for index, rootFile := range rootFiles {
-		loader.addRootTask(rootFile, nil, &fileIncludeReason{kind: fileIncludeKindRootFile, data: index})
+		loader.addRootTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
 	}
 	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
 			libFile := loader.pathForLibFile(name)
-			loader.addRootTask(libFile.path, libFile, &fileIncludeReason{kind: fileIncludeKindLibFile})
+			loader.addRootTask(libFile.path, libFile, &FileIncludeReason{kind: fileIncludeKindLibFile})
 
 		} else {
 			for index, lib := range compilerOptions.Lib {
 				if name, ok := tsoptions.GetLibFileName(lib); ok {
 					libFile := loader.pathForLibFile(name)
-					loader.addRootTask(libFile.path, libFile, &fileIncludeReason{kind: fileIncludeKindLibFile, data: index})
+					loader.addRootTask(libFile.path, libFile, &FileIncludeReason{kind: fileIncludeKindLibFile, data: index})
 				}
 				// !!! error on unknown name
 			}
@@ -142,7 +141,7 @@ func processAllProgramFiles(
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
-	loader.includeProcessor.fileIncludeReasons = make(map[tspath.Path][]*fileIncludeReason, totalFileCount)
+	loader.includeProcessor.fileIncludeReasons = make(map[tspath.Path][]*FileIncludeReason, totalFileCount)
 	var outputFileToProjectReferenceSource map[tspath.Path]string
 	if !opts.canUseProjectReferenceSource() {
 		outputFileToProjectReferenceSource = make(map[tspath.Path]string, totalFileCount)
@@ -152,7 +151,6 @@ func processAllProgramFiles(
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
-	var unsupportedExtensions []string
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
@@ -217,10 +215,6 @@ func processAllProgramFiles(
 			}
 			importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
 		}
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-		}
 		if task.fromExternalLibrary {
 			sourceFilesFoundSearchingNodeModules.Add(path)
 		}
@@ -251,7 +245,6 @@ func processAllProgramFiles(
 		sourceFileMetaDatas:                  sourceFileMetaDatas,
 		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
-		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 		libFiles:                             libFilesMap,
 		missingFiles:                         missingFiles,
@@ -264,7 +257,7 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 	return tspath.ToPath(file, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 }
 
-func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *fileIncludeReason) {
+func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
 	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
 	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
 		p.rootTasks = append(p.rootTasks, &parseTask{
@@ -309,7 +302,7 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 					fileName:      resolved.ResolvedFileName,
 					increaseDepth: resolved.IsExternalLibraryImport,
 					elideOnDepth:  false,
-					includeReason: &fileIncludeReason{
+					includeReason: &FileIncludeReason{
 						kind: fileIncludeKindAutomaticTypeDirectiveFile,
 						data: &automaticTypeDirectiveFileData{name, resolved.PackageId},
 					},
@@ -350,7 +343,7 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 				for _, fileName := range resolved.FileNames() {
 					p.rootTasks = append(p.rootTasks, &parseTask{
 						normalizedFilePath: fileName,
-						includeReason: &fileIncludeReason{
+						includeReason: &FileIncludeReason{
 							kind: fileIncludeKindSourceFromProjectReference,
 							data: index,
 						},
@@ -361,7 +354,7 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 					if outputDts != "" {
 						p.rootTasks = append(p.rootTasks, &parseTask{
 							normalizedFilePath: outputDts,
-							includeReason: &fileIncludeReason{
+							includeReason: &FileIncludeReason{
 								kind: fileIncludeKindOutputFromProjectReference,
 								data: index,
 							},
@@ -438,7 +431,7 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 	}
 	return resolvedRef{
 		fileName: tspath.NormalizePath(referencedFileName),
-		includeReason: &fileIncludeReason{
+		includeReason: &FileIncludeReason{
 			kind: fileIncludeKindReferenceFile,
 			data: &referencedFileData{
 				file:  p.toPath(containingFile),
@@ -462,7 +455,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
 		resolved, trace := p.resolver.ResolveTypeReferenceDirective(ref.FileName, fileName, resolutionMode, redirect)
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
-		includeReason := &fileIncludeReason{
+		includeReason := &FileIncludeReason{
 			kind: fileIncludeKindTypeReferenceDirective,
 			data: &referencedFileData{
 				file:  t.path,
@@ -577,7 +570,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 					increaseDepth:         resolvedModule.IsExternalLibraryImport,
 					elideOnDepth:          isJsFileFromNodeModules,
 					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
-					includeReason: &fileIncludeReason{
+					includeReason: &FileIncludeReason{
 						kind: fileIncludeKindImport,
 						data: &referencedFileData{
 							file:      t.path,
@@ -638,16 +631,22 @@ func getLibraryNameFromLibFileName(libFileName string) string {
 	//                      lib.dom.iterable.d.ts -> @typescript/lib-dom/iterable
 	//                      lib.es2015.symbol.wellknown.d.ts -> @typescript/lib-es2015/symbol-wellknown
 	components := strings.Split(libFileName, ".")
-	var path string
+	var path strings.Builder
+	path.WriteString("@typescript/lib-")
 	if len(components) > 1 {
-		path = components[1]
+		path.WriteString(components[1])
 	}
 	i := 2
 	for i < len(components) && components[i] != "" && components[i] != "d" {
-		path += core.IfElse(i == 2, "/", "-") + components[i]
+		if i == 2 {
+			path.WriteByte('/')
+		} else {
+			path.WriteByte('-')
+		}
+		path.WriteString(components[i])
 		i++
 	}
-	return "@typescript/lib-" + path
+	return path.String()
 }
 
 func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDirectory string, libFileName string) string {

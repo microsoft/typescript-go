@@ -783,10 +783,9 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! TODO: enable multiline emit
-	// if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
-	// 	return true
-	// }
+	if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+		return true
+	}
 	return format&LFPreferNewLine != 0
 }
 
@@ -1559,10 +1558,10 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 
 	if p.shouldEmitBlockFunctionBodyOnSingleLine(body) && statementOffset == 0 && pos == p.writer.GetTextPos() {
 		p.decreaseIndent()
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements, statementOffset, -1)
 		p.increaseIndent()
 	} else {
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements, statementOffset, -1)
 	}
 
 	p.emitDetachedCommentsAfterStatementList(body.AsNode(), body.Statements.Loc, detachedState)
@@ -4385,18 +4384,24 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	state := p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
 
 	index := 0
+	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
@@ -5084,7 +5089,7 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 	containerPos := p.containerPos
 	containerEnd := p.containerEnd
 	declarationListContainerEnd := p.declarationListContainerEnd
-	skipLeadingComments := emitFlags&EFNoLeadingComments == 0 && !ast.PositionIsSynthesized(detachedRange.Pos())
+	skipLeadingComments := ast.PositionIsSynthesized(detachedRange.Pos()) || emitFlags&EFNoLeadingComments != 0
 
 	if !skipLeadingComments {
 		p.emitDetachedCommentsAndUpdateCommentsInfo(detachedRange)

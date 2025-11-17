@@ -25,6 +25,8 @@ example(42, (foo, bar) => ({
 
 
 //// [typeInferenceCacheInvalidation.js]
+"use strict";
+// Repro from #32230
 example(42, (foo, bar) => ({
     t: () => {
         let s = bar;

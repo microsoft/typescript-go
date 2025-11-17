@@ -571,7 +571,7 @@ func IsClassElement(node *Node) bool {
 	return false
 }
 
-func isMethodOrAccessor(node *Node) bool {
+func IsMethodOrAccessor(node *Node) bool {
 	switch node.Kind {
 	case KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
 		return true
@@ -580,7 +580,7 @@ func isMethodOrAccessor(node *Node) bool {
 }
 
 func IsPrivateIdentifierClassElementDeclaration(node *Node) bool {
-	return (IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
+	return (IsPropertyDeclaration(node) || IsMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
 }
 
 func IsObjectLiteralOrClassExpressionMethodOrAccessor(node *Node) bool {
@@ -2641,7 +2641,7 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 		}
 		if child == nil {
 			current.ForEachChild(func(node *Node) bool {
-				if nodeContainsPosition(node, position) {
+				if nodeContainsPosition(node, position) && node.Kind != KindJSExportAssignment && node.Kind != KindCommonJSExport {
 					child = node
 					return true
 				}
@@ -3526,6 +3526,10 @@ func IsTypeDeclarationName(name *Node) bool {
 		GetNameOfDeclaration(name.Parent) == name
 }
 
+func IsRightSideOfPropertyAccess(node *Node) bool {
+	return node.Parent.Kind == KindPropertyAccessExpression && node.Parent.Name() == node
+}
+
 func IsRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
@@ -3889,4 +3893,31 @@ func IsExpandoInitializer(initializer *Node) bool {
 
 func GetContainingFunction(node *Node) *Node {
 	return FindAncestor(node.Parent, IsFunctionLike)
+}
+
+func IsImplicitlyExportedJSTypeAlias(node *Node) bool {
+	return IsJSTypeAliasDeclaration(node) && IsSourceFile(node.Parent) && IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
+}
+
+func HasContextSensitiveParameters(node *Node) bool {
+	// Functions with type parameters are not context sensitive.
+	if node.TypeParameters() == nil {
+		// Functions with any parameters that lack type annotations are context sensitive.
+		if core.Some(node.Parameters(), func(p *Node) bool { return p.Type() == nil }) {
+			return true
+		}
+		if !IsArrowFunction(node) {
+			// If the first parameter is not an explicit 'this' parameter, then the function has
+			// an implicit 'this' parameter which is subject to contextual typing.
+			parameter := core.FirstOrNil(node.Parameters())
+			if parameter == nil || !IsThisParameter(parameter) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func IsInfinityOrNaNString(name string) bool {
+	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }

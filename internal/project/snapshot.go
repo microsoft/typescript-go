@@ -10,7 +10,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
@@ -28,13 +30,14 @@ type Snapshot struct {
 	// so can be a pointer.
 	sessionOptions *SessionOptions
 	toPath         func(fileName string) tspath.Path
-	converters     *ls.Converters
+	converters     *lsconv.Converters
 
 	// Immutable state, cloned between snapshots
-	fs                                 *snapshotFS
+	fs                                 *SnapshotFS
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	config                             Config
 	// Disk files present in the snapshot due to source map references.
 	extraDiskFiles      map[tspath.Path]string
 	extraDiskFilesWatch *WatchedFiles[map[tspath.Path]string]
@@ -46,12 +49,13 @@ type Snapshot struct {
 // NewSnapshot
 func NewSnapshot(
 	id uint64,
-	fs *snapshotFS,
+	fs *SnapshotFS,
 	sessionOptions *SessionOptions,
 	parseCache *ParseCache,
-	extendedConfigCache *extendedConfigCache,
+	extendedConfigCache *ExtendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	config Config,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -64,8 +68,9 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		config:                             config,
 	}
-	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
+	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
 	s.extraDiskFiles = make(map[tspath.Path]string)
 	s.extraDiskFilesWatch = NewWatchedFiles(
@@ -86,7 +91,7 @@ func (s *Snapshot) GetFile(fileName string) FileHandle {
 	return s.fs.GetFile(fileName)
 }
 
-func (s *Snapshot) LSPLineMap(fileName string) *ls.LSPLineMap {
+func (s *Snapshot) LSPLineMap(fileName string) *lsconv.LSPLineMap {
 	if file := s.fs.GetFile(fileName); file != nil {
 		return file.LSPLineMap()
 	}
@@ -100,7 +105,15 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) Converters() *ls.Converters {
+func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
+	return s.config.tsUserPreferences
+}
+
+func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
+	return s.config.formatOptions
+}
+
+func (s *Snapshot) Converters() *lsconv.Converters {
 	return s.converters
 }
 
@@ -137,9 +150,17 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	newConfig                          *Config
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
+}
+
+type Config struct {
+	tsUserPreferences *lsutil.UserPreferences
+	// jsUserPreferences *lsutil.UserPreferences
+	formatOptions *format.FormatCodeSettings
+	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -154,7 +175,7 @@ type ATAStateChange struct {
 	Logs                *logging.LogTree
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*overlay, session *Session) *Snapshot {
+func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*Overlay, session *Session) *Snapshot {
 	var logger *logging.LogTree
 
 	// Print in-progress logs immediately if cloning fails
@@ -185,7 +206,21 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
-	fs.markDirtyFiles(change.fileChanges)
+	if change.fileChanges.HasExcessiveWatchEvents() {
+		invalidateStart := time.Now()
+		if !fs.watchChangesOverlapCache(change.fileChanges) {
+			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
+			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
+		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
+			fs.invalidateCache()
+			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		} else {
+			fs.invalidateNodeModulesCache()
+			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
+		}
+	} else {
+		fs.markDirtyFiles(change.fileChanges)
+	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
@@ -286,6 +321,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	config := s.config
+	if change.newConfig != nil {
+		if change.newConfig.tsUserPreferences != nil {
+			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
+		}
+		if change.newConfig.formatOptions != nil {
+			config.formatOptions = change.newConfig.formatOptions
+		}
+	}
+
 	snapshotFS, _, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
@@ -295,6 +340,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
+		config,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id

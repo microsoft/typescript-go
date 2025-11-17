@@ -1455,6 +1455,9 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
 	strLen := strings.IndexRune(s.text[s.pos:], quote)
@@ -1820,7 +1823,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1828,7 +1831,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1853,7 +1856,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
