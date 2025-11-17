@@ -547,7 +547,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 	start := v.pos - 3
 
 	propertyNameOrValueStart := v.pos
-	v.scanIdentifier(v.charAtOffset(0))
+	v.scanWordCharacters(v.charAtOffset(0))
 	propertyNameOrValue := v.tokenValue
 
 	if v.charAtOffset(0) == '=' {
@@ -569,7 +569,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		}
 		v.pos++
 		propertyValueStart := v.pos
-		v.scanIdentifier(v.charAtOffset(0))
+		v.scanWordCharacters(v.charAtOffset(0))
 		propertyValue := v.tokenValue
 		if v.pos == propertyValueStart {
 			v.error(diagnostics.Expected_a_Unicode_property_value, propertyValueStart, 0)
@@ -626,13 +626,29 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 	}
 }
 
-func (v *regExpValidator) scanIdentifier(ch rune) {
+func (v *regExpValidator) scanWordCharacters(ch rune) {
 	start := v.pos
-	if ch != 0 && (scanner.IsIdentifierStart(ch) || ch == '_' || ch == '$') {
+	if ch != 0 && scanner.IsWordCharacter(ch) {
 		v.pos++
 		for v.pos < v.end {
 			ch = v.charAtOffset(0)
-			if scanner.IsIdentifierPart(ch) || ch == '_' || ch == '$' {
+			if scanner.IsWordCharacter(ch) {
+				v.pos++
+			} else {
+				break
+			}
+		}
+	}
+	v.tokenValue = v.text[start:v.pos]
+}
+
+func (v *regExpValidator) scanIdentifier(ch rune) {
+	start := v.pos
+	if ch != 0 && scanner.IsIdentifierStart(ch) {
+		v.pos++
+		for v.pos < v.end {
+			ch = v.charAtOffset(0)
+			if scanner.IsIdentifierPart(ch) {
 				v.pos++
 			} else {
 				break
