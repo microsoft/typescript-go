@@ -44,28 +44,37 @@ var charCodeToRegExpFlag = map[rune]regExpFlags{
 
 // regExpValidator is used to validate regular expressions
 type regExpValidator struct {
-	text                           string
-	pos                            int
-	end                            int
-	languageVersion                core.ScriptTarget
-	languageVariant                core.LanguageVariant
-	onError                        scanner.ErrorCallback
-	regExpFlags                    regExpFlags
-	annexB                         bool
-	unicodeSetsMode                bool
-	anyUnicodeMode                 bool
-	anyUnicodeModeOrNonAnnexB      bool
-	namedCaptureGroups             bool
-	numberOfCapturingGroups        int
-	groupSpecifiers                map[string]bool
-	groupNameReferences            []namedReference
-	decimalEscapes                 []decimalEscape
-	namedCapturingGroupsScopeStack []map[string]bool
-	topNamedCapturingGroupsScope   map[string]bool
-	mayContainStrings              bool
-	isCharacterComplement          bool
-	tokenValue                     string
-	surrogateState                 *surrogatePairState // For non-Unicode mode: tracks partial surrogate pair
+	text                      string
+	pos                       int
+	end                       int
+	languageVersion           core.ScriptTarget
+	languageVariant           core.LanguageVariant
+	onError                   scanner.ErrorCallback
+	regExpFlags               regExpFlags
+	annexB                    bool
+	unicodeSetsMode           bool
+	anyUnicodeMode            bool
+	anyUnicodeModeOrNonAnnexB bool
+	hasNamedCapturingGroups   bool
+	numberOfCapturingGroups   int
+	groupSpecifiers           map[string]bool
+	groupNameReferences       []namedReference
+	decimalEscapes            []decimalEscape
+	disjunctionsScopesStack   []disjunctionsScope
+	topDisjunctionsScope      disjunctionsScope
+	mayContainStrings         bool
+	isCharacterComplement     bool
+	tokenValue                string
+	surrogateState            *surrogatePairState // For non-Unicode mode: tracks partial surrogate pair
+}
+
+type disjunction struct {
+	groupName string // Not a named capturing group if empty
+}
+
+type disjunctionsScope struct {
+	disjunctions            []disjunction
+	currentAlternativeIndex int
 }
 
 // surrogatePairState tracks when we're in the middle of emitting a surrogate pair
@@ -119,33 +128,36 @@ func Check(
 	v.anyUnicodeMode = v.regExpFlags&regExpFlagsAnyUnicodeMode != 0
 	v.annexB = true
 	v.anyUnicodeModeOrNonAnnexB = v.anyUnicodeMode || !v.annexB
-	v.namedCaptureGroups = v.detectNamedCaptureGroups()
+	v.hasNamedCapturingGroups = v.detectNamedCapturingGroups()
 
 	v.scanDisjunction(false)
 	v.validateGroupReferences()
 	v.validateDecimalEscapes()
 }
 
-// detectNamedCaptureGroups performs a quick scan of the pattern to detect
-// if it contains any named capture groups (?<name>...). This is needed because
+// detectNamedCapturingGroups performs a quick scan of the pattern to detect
+// if it contains any named capturing groups (?<name>...). This is needed because
 // the presence of named groups changes the interpretation of \k escapes:
 // - Without named groups: \k is an identity escape (matches literal 'k')
 // - With named groups: \k must be followed by <name> or it's a syntax error
 // This matches the behavior in scanner.ts's reScanSlashToken.
-func (v *regExpValidator) detectNamedCaptureGroups() bool {
+func (v *regExpValidator) detectNamedCapturingGroups() bool {
 	inEscape := false
 	inCharacterClass := false
 	text := v.text[v.pos:v.end]
 
 	for i, ch := range text {
-		// Only check ASCII characters for the pattern (?<
-		if ch >= 0x80 {
+		if inEscape {
+			inEscape = false
 			continue
 		}
 
-		if inEscape {
-			inEscape = false
-		} else if ch == '\\' {
+		// Only check ASCII characters for the pattern (?<
+		if ch >= utf8.RuneSelf {
+			continue
+		}
+
+		if ch == '\\' {
 			inEscape = true
 		} else if ch == '[' {
 			inCharacterClass = true
@@ -158,7 +170,7 @@ func (v *regExpValidator) detectNamedCaptureGroups() bool {
 			text[i+2] == '<' &&
 			text[i+3] != '=' &&
 			text[i+3] != '!' {
-			// Found (?< that's not (?<= or (?<! - this is a named capture group
+			// Found (?< that's not (?<= or (?<! - this is a named capturing group
 			return true
 		}
 	}
@@ -170,7 +182,7 @@ func (v *regExpValidator) charAndSize() (rune, int) {
 		return 0, 0
 	}
 	// Simple ASCII fast path
-	if ch := v.text[v.pos]; ch < 0x80 {
+	if ch := v.text[v.pos]; ch < utf8.RuneSelf {
 		return rune(ch), 1
 	}
 	// Decode multi-byte UTF-8 character
@@ -183,7 +195,7 @@ func (v *regExpValidator) charAtOffset(offset int) rune {
 		return 0
 	}
 	// Simple ASCII fast path
-	if ch := v.text[v.pos+offset]; ch < 0x80 {
+	if ch := v.text[v.pos+offset]; ch < utf8.RuneSelf {
 		return rune(ch)
 	}
 	// Decode multi-byte UTF-8 character
@@ -197,6 +209,7 @@ func (v *regExpValidator) error(message *diagnostics.Message, start, length int,
 
 func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlags, size int) {
 	var availableFrom core.ScriptTarget
+	// TODO: Use LanguageFeatureMinimumTarget
 	switch flag {
 	case regExpFlagsHasIndices:
 		availableFrom = core.ScriptTargetES2022
@@ -215,17 +228,14 @@ func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlag
 }
 
 func (v *regExpValidator) scanDisjunction(isInGroup bool) {
+	v.topDisjunctionsScope = disjunctionsScope{}
 	for {
-		v.namedCapturingGroupsScopeStack = append(v.namedCapturingGroupsScopeStack, v.topNamedCapturingGroupsScope)
-		v.topNamedCapturingGroupsScope = nil
 		v.scanAlternative(isInGroup)
-		v.topNamedCapturingGroupsScope = v.namedCapturingGroupsScopeStack[len(v.namedCapturingGroupsScopeStack)-1]
-		v.namedCapturingGroupsScopeStack = v.namedCapturingGroupsScopeStack[:len(v.namedCapturingGroupsScopeStack)-1]
-
 		if v.charAtOffset(0) != '|' {
 			return
 		}
 		v.pos++
+		v.topDisjunctionsScope.currentAlternativeIndex = len(v.topDisjunctionsScope.disjunctions)
 	}
 }
 
@@ -252,11 +262,13 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 			}
 		case '(':
 			v.pos++
+			var groupName string
 			if v.charAtOffset(0) == '?' {
 				v.pos++
 				switch v.charAtOffset(0) {
 				case '=', '!':
 					v.pos++
+					// In Annex B, `(?=Disjunction)` and `(?!Disjunction)` are quantifiable
 					isPreviousTermQuantifiable = !v.anyUnicodeModeOrNonAnnexB
 				case '<':
 					groupNameStart := v.pos
@@ -267,7 +279,9 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						isPreviousTermQuantifiable = false
 					default:
 						v.scanGroupName(false)
+						groupName = v.tokenValue
 						v.scanExpectedChar('>')
+						// TODO: Move to LanguageFeatureMinimumTarget.RegularExpressionNamedCapturingGroups
 						if v.languageVersion < core.ScriptTargetES2018 {
 							v.error(diagnostics.Named_capturing_groups_are_only_available_when_targeting_ES2018_or_later, groupNameStart, v.pos-groupNameStart)
 						}
@@ -291,7 +305,15 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 				v.numberOfCapturingGroups++
 				isPreviousTermQuantifiable = true
 			}
+			disjunction := disjunction{groupName}
+			v.topDisjunctionsScope.disjunctions = append(v.topDisjunctionsScope.disjunctions, disjunction)
+			oldTopDisjunctionsScope := v.topDisjunctionsScope
+			oldDisjunctionsScopesStack := v.disjunctionsScopesStack
+			v.disjunctionsScopesStack = append(v.disjunctionsScopesStack, v.topDisjunctionsScope)
 			v.scanDisjunction(true)
+			oldTopDisjunctionsScope.disjunctions = append(oldTopDisjunctionsScope.disjunctions, v.topDisjunctionsScope.disjunctions...)
+			v.topDisjunctionsScope = oldTopDisjunctionsScope
+			v.disjunctionsScopesStack = oldDisjunctionsScopesStack
 			v.scanExpectedChar(')')
 		case '{':
 			v.pos++
@@ -314,16 +336,10 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						isPreviousTermQuantifiable = true
 						break
 					}
-				} else if maxVal != "" {
-					minInt := 0
-					maxInt := 0
-					for _, c := range minVal {
-						minInt = minInt*10 + int(c-'0')
-					}
-					for _, c := range maxVal {
-						maxInt = maxInt*10 + int(c-'0')
-					}
-					if minInt > maxInt && (v.anyUnicodeModeOrNonAnnexB || v.charAtOffset(0) == '}') {
+				} else if maxVal != "" && (v.anyUnicodeModeOrNonAnnexB || v.charAtOffset(0) == '}') {
+					minInt := parseDecimalValue(minVal, 0, len(minVal))
+					maxInt := parseDecimalValue(maxVal, 0, len(maxVal))
+					if minInt > maxInt {
 						v.error(diagnostics.Numbers_out_of_order_in_quantifier, digitsStart, v.pos-digitsStart)
 					}
 				}
@@ -347,6 +363,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 		case '*', '+', '?':
 			v.pos++
 			if v.charAtOffset(0) == '?' {
+				// Non-greedy
 				v.pos++
 			}
 			if !isPreviousTermQuantifiable {
@@ -393,9 +410,7 @@ func (v *regExpValidator) validateGroupReferences() {
 			if len(v.groupSpecifiers) > 0 {
 				// Convert map keys to slice
 				candidates := make([]string, 0, len(v.groupSpecifiers))
-				for name := range v.groupSpecifiers {
-					candidates = append(candidates, name)
-				}
+				candidates = slices.AppendSeq(candidates, maps.Keys(v.groupSpecifiers))
 				suggestion := core.GetSpellingSuggestion(ref.name, candidates, core.Identity[string])
 				if suggestion != "" {
 					v.error(diagnostics.Did_you_mean_0, ref.pos, ref.end-ref.pos, suggestion)
@@ -446,7 +461,7 @@ func (v *regExpValidator) scanFlags(currFlags regExpFlags, checkModifiers bool) 
 			v.error(diagnostics.Unknown_regular_expression_flag, v.pos, size)
 		} else if currFlags&flag != 0 {
 			v.error(diagnostics.Duplicate_regular_expression_flag, v.pos, size)
-		} else if (currFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
+		} else if !checkModifiers && (currFlags|flag)&regExpFlagsAnyUnicodeMode == regExpFlagsAnyUnicodeMode {
 			v.error(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, v.pos, size)
 		} else if checkModifiers && flag&regExpFlagsModifiers == 0 {
 			v.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, v.pos, size)
@@ -471,7 +486,7 @@ func (v *regExpValidator) scanAtomEscape() {
 			v.pos++
 			v.scanGroupName(true)
 			v.scanExpectedChar('>')
-		} else if v.anyUnicodeModeOrNonAnnexB || v.namedCaptureGroups {
+		} else if v.anyUnicodeModeOrNonAnnexB || v.hasNamedCapturingGroups {
 			v.error(diagnostics.X_k_must_be_followed_by_a_capturing_group_name_enclosed_in_angle_brackets, v.pos-2, 2)
 		}
 	case 'q':
@@ -493,10 +508,7 @@ func (v *regExpValidator) scanDecimalEscape() bool {
 	if ch >= '1' && ch <= '9' {
 		start := v.pos
 		v.scanDigits()
-		value := 0
-		for _, c := range v.tokenValue {
-			value = value*10 + int(c-'0')
-		}
+		value := parseDecimalValue(v.tokenValue, 0, len(v.tokenValue))
 		v.decimalEscapes = append(v.decimalEscapes, decimalEscape{pos: start, end: v.pos, value: value})
 		return true
 	}
@@ -535,7 +547,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 	start := v.pos - 3
 
 	propertyNameOrValueStart := v.pos
-	v.scanIdentifier(v.charAtOffset(0))
+	v.scanWordCharacters(v.charAtOffset(0))
 	propertyNameOrValue := v.tokenValue
 
 	if v.charAtOffset(0) == '=' {
@@ -548,9 +560,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			v.error(diagnostics.Unknown_Unicode_property_name, propertyNameOrValueStart, v.pos-propertyNameOrValueStart)
 			// Provide spelling suggestion
 			candidates := make([]string, 0, len(nonBinaryUnicodePropertyNames))
-			for key := range nonBinaryUnicodePropertyNames {
-				candidates = append(candidates, key)
-			}
+			candidates = slices.AppendSeq(candidates, maps.Keys(nonBinaryUnicodePropertyNames))
 			suggestion := core.GetSpellingSuggestion(propertyNameOrValue, candidates, core.Identity[string])
 			if suggestion != "" {
 				v.error(diagnostics.Did_you_mean_0, propertyNameOrValueStart, v.pos-propertyNameOrValueStart, suggestion)
@@ -559,7 +569,7 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 		}
 		v.pos++
 		propertyValueStart := v.pos
-		v.scanIdentifier(v.charAtOffset(0))
+		v.scanWordCharacters(v.charAtOffset(0))
 		propertyValue := v.tokenValue
 		if v.pos == propertyValueStart {
 			v.error(diagnostics.Expected_a_Unicode_property_value, propertyValueStart, 0)
@@ -568,9 +578,10 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			// Provide spelling suggestion based on the property name
 			canonicalName := nonBinaryUnicodePropertyNames[propertyNameOrValue]
 			var candidates []string
-			if canonicalName == "General_Category" {
+			switch canonicalName {
+			case "General_Category":
 				candidates = generalCategoryValues.KeysSlice()
-			} else if canonicalName == "Script" || canonicalName == "Script_Extensions" {
+			case "Script", "Script_Extensions":
 				candidates = scriptValues.KeysSlice()
 			}
 			if len(candidates) > 0 {
@@ -616,13 +627,29 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 	}
 }
 
-func (v *regExpValidator) scanIdentifier(ch rune) {
+func (v *regExpValidator) scanWordCharacters(ch rune) {
 	start := v.pos
-	if ch != 0 && (scanner.IsIdentifierStart(ch) || ch == '_' || ch == '$') {
+	if ch != 0 && scanner.IsWordCharacter(ch) {
 		v.pos++
 		for v.pos < v.end {
 			ch = v.charAtOffset(0)
-			if scanner.IsIdentifierPart(ch) || ch == '_' || ch == '$' {
+			if scanner.IsWordCharacter(ch) {
+				v.pos++
+			} else {
+				break
+			}
+		}
+	}
+	v.tokenValue = v.text[start:v.pos]
+}
+
+func (v *regExpValidator) scanIdentifier(ch rune) {
+	start := v.pos
+	if ch != 0 && scanner.IsIdentifierStart(ch) {
+		v.pos++
+		for v.pos < v.end {
+			ch = v.charAtOffset(0)
+			if scanner.IsIdentifierPart(ch) {
 				v.pos++
 			} else {
 				break
@@ -647,7 +674,7 @@ func (v *regExpValidator) scanCharacterEscape(atomEscape bool) string {
 		}
 		if v.anyUnicodeModeOrNonAnnexB {
 			v.error(diagnostics.X_c_must_be_followed_by_an_ASCII_letter, v.pos-2, 2)
-		} else if atomEscape {
+		} else {
 			v.pos--
 			return "\\"
 		}
@@ -696,10 +723,7 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			v.pos++
 		}
 		// Always report errors for octal escapes in regexp mode
-		code := 0
-		for i := start + 1; i < v.pos; i++ {
-			code = code*8 + int(v.text[i]-'0')
-		}
+		code := parseOctalValue(v.text, start+1, v.pos)
 		hexCode := fmt.Sprintf("\\x%02x", code)
 		if !atomEscape && ch != '0' {
 			v.error(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, v.pos-start, hexCode)
@@ -733,17 +757,12 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 	case 'x':
 		// Hex escape '\xDD'
 		hexStart := v.pos
-		validHex := true
 		for range 2 {
 			if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
-				validHex = false
-				break
+				v.error(diagnostics.Hexadecimal_digit_expected, v.pos, 0)
+				return v.text[start:v.pos]
 			}
 			v.pos++
-		}
-		if !validHex {
-			v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
-			return v.text[start:v.pos]
 		}
 		code := parseHexValue(v.text, hexStart, v.pos)
 		return string(rune(code))
@@ -765,8 +784,8 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			}
 			if v.charAtOffset(0) == '}' {
 				v.pos++
-			} else if hasDigits {
-				v.error(diagnostics.Unterminated_Unicode_escape_sequence, start, v.pos-start)
+			} else {
+				v.error(diagnostics.Unterminated_Unicode_escape_sequence, v.pos, 0)
 				return v.text[start:v.pos]
 			}
 			// Parse hex value (-1 to skip closing brace)
@@ -782,17 +801,12 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 		} else {
 			// Standard unicode escape '\uDDDD'
 			hexStart := v.pos
-			validHex := true
 			for range 4 {
 				if v.pos >= v.end || !stringutil.IsHexDigit(v.charAtOffset(0)) {
-					validHex = false
-					break
+					v.error(diagnostics.Hexadecimal_digit_expected, v.pos, 0)
+					return v.text[start:v.pos]
 				}
 				v.pos++
-			}
-			if !validHex {
-				v.error(diagnostics.Hexadecimal_digit_expected, hexStart, v.pos-hexStart)
-				return v.text[start:v.pos]
 			}
 			code := parseHexValue(v.text, hexStart, v.pos)
 			// For surrogates, we need to preserve the actual value since string(rune(surrogate))
@@ -806,7 +820,7 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			}
 			// In Unicode mode, check for surrogate pairs
 			if v.anyUnicodeMode && isHighSurrogate(rune(code)) &&
-				v.pos+6 <= v.end && v.text[v.pos:v.pos+2] == "\\u" {
+				v.pos+6 <= v.end && v.charAtOffset(0) == '\\' && v.charAtOffset(1) == 'u' {
 				// High surrogate followed by potential low surrogate
 				nextStart := v.pos
 				nextPos := v.pos + 2
@@ -845,6 +859,24 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 	}
 }
 
+// parses octal digits from text and returns the integer value
+func parseOctalValue(text string, start, end int) int {
+	code := 0
+	for i := start; i < end; i++ {
+		code = code*8 + int(text[i]-'0')
+	}
+	return code
+}
+
+// parses decimal digits from text and returns the integer value
+func parseDecimalValue(text string, start, end int) int {
+	code := 0
+	for i := start; i < end; i++ {
+		code = code*10 + int(text[i]-'0')
+	}
+	return code
+}
+
 // parseHexValue parses hexadecimal digits from text and returns the integer value
 func parseHexValue(text string, start, end int) int {
 	code := 0
@@ -866,24 +898,22 @@ func (v *regExpValidator) scanGroupName(isReference bool) {
 	v.scanIdentifier(v.charAtOffset(0))
 	if v.pos == tokenStart {
 		v.error(diagnostics.Expected_a_capturing_group_name, v.pos, 0)
-	} else if isReference {
+	}
+	if isReference {
 		v.groupNameReferences = append(v.groupNameReferences, namedReference{pos: tokenStart, end: v.pos, name: v.tokenValue})
 	} else {
-		// Check for duplicate names in scope
-		if v.topNamedCapturingGroupsScope != nil && v.topNamedCapturingGroupsScope[v.tokenValue] {
-			v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
-		} else {
-			for _, scope := range v.namedCapturingGroupsScopeStack {
-				if scope != nil && scope[v.tokenValue] {
-					v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
-					break
+		if v.tokenValue != "" {
+			// Check for duplicate names in scope
+		outer:
+			for _, scope := range append(v.disjunctionsScopesStack, v.topDisjunctionsScope) {
+				for i := scope.currentAlternativeIndex; i < len(scope.disjunctions); i++ {
+					if scope.disjunctions[i].groupName == v.tokenValue {
+						v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
+						break outer
+					}
 				}
 			}
 		}
-		if v.topNamedCapturingGroupsScope == nil {
-			v.topNamedCapturingGroupsScope = make(map[string]bool)
-		}
-		v.topNamedCapturingGroupsScope[v.tokenValue] = true
 		if v.groupSpecifiers == nil {
 			v.groupSpecifiers = make(map[string]bool)
 		}
@@ -948,7 +978,7 @@ func (v *regExpValidator) scanClassRanges() {
 		}
 		atomStart := v.pos
 		atom := v.scanClassAtom()
-		if v.charAtOffset(0) == '-' && v.charAtOffset(1) != ']' {
+		if v.charAtOffset(0) == '-' {
 			v.pos++
 			if v.isClassContentExit(v.charAtOffset(0)) {
 				return
@@ -1069,15 +1099,14 @@ func (v *regExpValidator) scanClassSetExpression() {
 	var operand string
 
 	// Check for operators at the start
-	slice := v.text[v.pos:min(v.pos+2, v.end)]
-	if slice == "--" || slice == "&&" {
+	if ch == v.charAtOffset(1) && (ch == '-' || ch == '&') {
 		v.error(diagnostics.Expected_a_class_set_operand, v.pos, 0)
 		v.mayContainStrings = false
 	} else {
 		operand = v.scanClassSetOperand()
 	}
 
-	// Check what follows the first operand
+	// Use the first operator to determine the expression type
 	switch v.charAtOffset(0) {
 	case '-':
 		if v.charAtOffset(1) == '-' {
@@ -1098,8 +1127,6 @@ func (v *regExpValidator) scanClassSetExpression() {
 			expressionMayContainStrings = v.mayContainStrings
 			v.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 			return
-		} else {
-			v.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, v.pos, 1, string(ch))
 		}
 	default:
 		if isCharacterComplement && v.mayContainStrings {
@@ -1108,7 +1135,7 @@ func (v *regExpValidator) scanClassSetExpression() {
 		expressionMayContainStrings = v.mayContainStrings
 	}
 
-	// Continue scanning operands
+	// Neither a classSetExpressionIntersection nor a classSetExpressionSubtraction, scan as class union
 	for {
 		ch = v.charAtOffset(0)
 		if ch == 0 {
@@ -1176,8 +1203,8 @@ func (v *regExpValidator) scanClassSetExpression() {
 		}
 
 		start = v.pos
-		slice = v.text[v.pos:min(v.pos+2, v.end)]
-		if slice == "--" || slice == "&&" {
+		ch = v.charAtOffset(0)
+		if ch == v.charAtOffset(1) && (ch == '-' || ch == '&') {
 			v.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, v.pos, 2)
 			v.pos += 2
 			operand = v.text[start:v.pos]

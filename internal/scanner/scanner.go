@@ -1401,7 +1401,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 		for {
 			s.pos++
 			ch = s.char()
-			if !(isWordCharacter(ch) || ch == '$') {
+			if !(IsWordCharacter(ch) || ch == '$') {
 				break
 			}
 		}
@@ -2007,7 +2007,7 @@ func IsValidIdentifier(s string) bool {
 }
 
 // Section 6.1.4
-func isWordCharacter(ch rune) bool {
+func IsWordCharacter(ch rune) bool {
 	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
 }
 
@@ -2020,7 +2020,7 @@ func IsIdentifierPart(ch rune) bool {
 }
 
 func IsIdentifierPartEx(ch rune, languageVariant core.LanguageVariant) bool {
-	return isWordCharacter(ch) || ch == '$' ||
+	return IsWordCharacter(ch) || ch == '$' ||
 		ch >= utf8.RuneSelf && isUnicodeIdentifierPart(ch) ||
 		languageVariant == core.LanguageVariantJSX && (ch == '-' || ch == ':') // "-" and ":" are valid in JSX Identifiers
 }
