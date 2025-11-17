@@ -418,7 +418,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
 		return getJSDocOrTag(c, node.Parent)
 	}
-	if symbol := node.Symbol(); symbol != nil && ast.IsClassOrInterfaceLike(node.Parent) {
+	if symbol := node.Symbol(); symbol != nil && node.Parent != nil && ast.IsClassOrInterfaceLike(node.Parent) {
 		isStatic := ast.HasStaticModifier(node)
 		for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
 			t := baseType
