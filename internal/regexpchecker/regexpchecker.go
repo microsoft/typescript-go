@@ -820,7 +820,7 @@ func (v *regExpValidator) scanEscapeSequence(atomEscape bool) string {
 			}
 			// In Unicode mode, check for surrogate pairs
 			if v.anyUnicodeMode && isHighSurrogate(rune(code)) &&
-				v.pos+6 <= v.end && v.text[v.pos:v.pos+2] == "\\u" {
+				v.pos+6 <= v.end && v.charAtOffset(0) == '\\' && v.charAtOffset(1) == 'u' {
 				// High surrogate followed by potential low surrogate
 				nextStart := v.pos
 				nextPos := v.pos + 2
@@ -1099,8 +1099,7 @@ func (v *regExpValidator) scanClassSetExpression() {
 	var operand string
 
 	// Check for operators at the start
-	slice := v.text[v.pos:min(v.pos+2, v.end)]
-	if slice == "--" || slice == "&&" {
+	if ch == v.charAtOffset(1) && (ch == '-' || ch == '&') {
 		v.error(diagnostics.Expected_a_class_set_operand, v.pos, 0)
 		v.mayContainStrings = false
 	} else {
@@ -1206,8 +1205,8 @@ func (v *regExpValidator) scanClassSetExpression() {
 		}
 
 		start = v.pos
-		slice = v.text[v.pos:min(v.pos+2, v.end)]
-		if slice == "--" || slice == "&&" {
+		ch = v.charAtOffset(0)
+		if ch == v.charAtOffset(1) && (ch == '-' || ch == '&') {
 			v.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, v.pos, 2)
 			v.pos += 2
 			operand = v.text[start:v.pos]
