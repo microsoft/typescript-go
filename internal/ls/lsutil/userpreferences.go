@@ -59,13 +59,13 @@ type UserPreferences struct {
 
 	// ------- AutoImports --------
 
-	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference // !!!
+	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference
 	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference // !!!
-	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               // !!!
-	AutoImportFileExcludePatterns     []string                                               // !!!
-	PreferTypeOnlyAutoImports         bool                                                   // !!!
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference
+	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports
+	AutoImportSpecifierExcludeRegexes []string
+	AutoImportFileExcludePatterns     []string
+	PreferTypeOnlyAutoImports         core.Tristate
 
 	// ------- OrganizeImports -------
 
@@ -581,7 +581,7 @@ func (p *UserPreferences) set(name string, value any) {
 	case "autoimportfileexcludepatterns":
 		p.AutoImportFileExcludePatterns = tsoptions.ParseStringArray(value)
 	case "prefertypeonlyautoimports":
-		p.PreferTypeOnlyAutoImports = parseBoolWithDefault(value, false)
+		p.PreferTypeOnlyAutoImports = tsoptions.ParseTristate(value)
 	case "organizeimportsignorecase":
 		p.OrganizeImportsIgnoreCase = tsoptions.ParseTristate(value)
 	case "organizeimportscollation":
