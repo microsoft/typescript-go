@@ -88,7 +88,6 @@ const (
 type UserPreferences struct {
 	ImportModuleSpecifierPreference   ImportModuleSpecifierPreference
 	ImportModuleSpecifierEnding       ImportModuleSpecifierEndingPreference
-	allowRenameOfImportPath           core.Tristate
 	AutoImportSpecifierExcludeRegexes []string
 }
 
