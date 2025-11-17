@@ -550,10 +550,10 @@ func isValidNonBinaryUnicodePropertyName(name string) bool {
 
 func isValidUnicodeProperty(name, value string) bool {
 	canonicalName := nonBinaryUnicodePropertyNames[name]
-	if canonicalName == "General_Category" {
+	switch canonicalName {
+	case "General_Category":
 		return generalCategoryValues.Has(value)
-	}
-	if canonicalName == "Script" || canonicalName == "Script_Extensions" {
+	case "Script", "Script_Extensions":
 		return scriptValues.Has(value)
 	}
 	return false

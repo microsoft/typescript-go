@@ -578,9 +578,10 @@ func (v *regExpValidator) scanUnicodePropertyValueExpression(isCharacterCompleme
 			// Provide spelling suggestion based on the property name
 			canonicalName := nonBinaryUnicodePropertyNames[propertyNameOrValue]
 			var candidates []string
-			if canonicalName == "General_Category" {
+			switch canonicalName {
+			case "General_Category":
 				candidates = generalCategoryValues.KeysSlice()
-			} else if canonicalName == "Script" || canonicalName == "Script_Extensions" {
+			case "Script", "Script_Extensions":
 				candidates = scriptValues.KeysSlice()
 			}
 			if len(candidates) > 0 {
