@@ -278,7 +278,8 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						v.pos++
 						isPreviousTermQuantifiable = false
 					default:
-						groupName = v.scanGroupName(false)
+						v.scanGroupName(false)
+						groupName = v.tokenValue
 						v.scanExpectedChar('>')
 						// TODO: Move to LanguageFeatureMinimumTarget.RegularExpressionNamedCapturingGroups
 						if v.languageVersion < core.ScriptTargetES2018 {
@@ -883,12 +884,11 @@ func parseHexValue(text string, start, end int) int {
 	return code
 }
 
-func (v *regExpValidator) scanGroupName(isReference bool) string {
+func (v *regExpValidator) scanGroupName(isReference bool) {
 	tokenStart := v.pos
 	v.scanIdentifier(v.charAtOffset(0))
 	if v.pos == tokenStart {
 		v.error(diagnostics.Expected_a_capturing_group_name, v.pos, 0)
-		return ""
 	}
 	if isReference {
 		v.groupNameReferences = append(v.groupNameReferences, namedReference{pos: tokenStart, end: v.pos, name: v.tokenValue})
@@ -910,7 +910,6 @@ func (v *regExpValidator) scanGroupName(isReference bool) string {
 		}
 		v.groupSpecifiers[v.tokenValue] = true
 	}
-	return v.tokenValue
 }
 
 // scanSourceCharacter scans and returns a single "character" from the source.
