@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/regularExpressionDuplicateCapturingGroupName.ts] ////
+
+=== regularExpressionDuplicateCapturingGroupName.ts ===
+// Adjacent homonymous capturing groups
+/(?<foo>)(?<foo>)/;
+>/(?<foo>)(?<foo>)/ : RegExp
+
+/(?<foo>)((?<foo>))/;
+>/(?<foo>)((?<foo>))/ : RegExp
+
+/((?<foo>))(?<foo>)/;
+>/((?<foo>))(?<foo>)/ : RegExp
+
+/((?<foo>))((?<foo>))/;
+>/((?<foo>))((?<foo>))/ : RegExp
+
+/(?<foo>)(?=(?<foo>))/;
+>/(?<foo>)(?=(?<foo>))/ : RegExp
+
+/(?<=(?<foo>))(?<foo>)/;
+>/(?<=(?<foo>))(?<foo>)/ : RegExp
+
+/(?<foo>)(?!(?<foo>))/;
+>/(?<foo>)(?!(?<foo>))/ : RegExp
+
+/(?<!(?<foo>))(?<foo>)/;
+>/(?<!(?<foo>))(?<foo>)/ : RegExp
+
+/((?<foo>))((?=(?<foo>)))/;
+>/((?<foo>))((?=(?<foo>)))/ : RegExp
+
+/((?<!(?<foo>)))((?<foo>))/;
+>/((?<!(?<foo>)))((?<foo>))/ : RegExp
+
+/(?=(?<foo>))(?=(?<foo>))/;
+>/(?=(?<foo>))(?=(?<foo>))/ : RegExp
+
+/(?!(?<foo>))(?!(?<foo>))/;
+>/(?!(?<foo>))(?!(?<foo>))/ : RegExp
+
+/(?=(?<foo>))(?!(?<foo>))/;
+>/(?=(?<foo>))(?!(?<foo>))/ : RegExp
+
+// Nested homonymous capturing groups
+/(?<foo>(?<foo>))/;
+>/(?<foo>(?<foo>))/ : RegExp
+
+/(?<foo>((?<foo>)))/;
+>/(?<foo>((?<foo>)))/ : RegExp
+
+// Complicated cases
+/(?<a>)((?<b>)((?<c>)|(?<d>))|(?<b>)|((?<c>)))(?<c>)((?<b>)|(?<d>))/;
+>/(?<a>)((?<b>)((?<c>)|(?<d>))|(?<b>)|((?<c>)))(?<c>)((?<b>)|(?<d>))/ : RegExp
+
+/(?<a>)(((?<b>)|(?<c>))((?<d>)|(?<a>)|(?<b>))|(?<c>)|((?<d>)))(?<a>)(((?<b>)|(?<c>))|(?<d>))/;
+>/(?<a>)(((?<b>)|(?<c>))((?<d>)|(?<a>)|(?<b>))|(?<c>)|((?<d>)))(?<a>)(((?<b>)|(?<c>))|(?<d>))/ : RegExp
+
+// Should not error
+/(?<foo>)|(?<foo>)/;
+>/(?<foo>)|(?<foo>)/ : RegExp
+
+/(?<foo>)|((?<foo>))/;
+>/(?<foo>)|((?<foo>))/ : RegExp
+
+/((?<foo>))|(?<foo>)/;
+>/((?<foo>))|(?<foo>)/ : RegExp
+
+/((?<foo>))|((?<foo>))/;
+>/((?<foo>))|((?<foo>))/ : RegExp
+

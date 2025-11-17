@@ -44,28 +44,37 @@ var charCodeToRegExpFlag = map[rune]regExpFlags{
 
 // regExpValidator is used to validate regular expressions
 type regExpValidator struct {
-	text                           string
-	pos                            int
-	end                            int
-	languageVersion                core.ScriptTarget
-	languageVariant                core.LanguageVariant
-	onError                        scanner.ErrorCallback
-	regExpFlags                    regExpFlags
-	annexB                         bool
-	unicodeSetsMode                bool
-	anyUnicodeMode                 bool
-	anyUnicodeModeOrNonAnnexB      bool
-	hasNamedCapturingGroups        bool
-	numberOfCapturingGroups        int
-	groupSpecifiers                map[string]bool
-	groupNameReferences            []namedReference
-	decimalEscapes                 []decimalEscape
-	namedCapturingGroupsScopeStack []map[string]bool
-	topNamedCapturingGroupsScope   map[string]bool
-	mayContainStrings              bool
-	isCharacterComplement          bool
-	tokenValue                     string
-	surrogateState                 *surrogatePairState // For non-Unicode mode: tracks partial surrogate pair
+	text                      string
+	pos                       int
+	end                       int
+	languageVersion           core.ScriptTarget
+	languageVariant           core.LanguageVariant
+	onError                   scanner.ErrorCallback
+	regExpFlags               regExpFlags
+	annexB                    bool
+	unicodeSetsMode           bool
+	anyUnicodeMode            bool
+	anyUnicodeModeOrNonAnnexB bool
+	hasNamedCapturingGroups   bool
+	numberOfCapturingGroups   int
+	groupSpecifiers           map[string]bool
+	groupNameReferences       []namedReference
+	decimalEscapes            []decimalEscape
+	disjunctionsScopesStack   []disjunctionsScope
+	topDisjunctionsScope      disjunctionsScope
+	mayContainStrings         bool
+	isCharacterComplement     bool
+	tokenValue                string
+	surrogateState            *surrogatePairState // For non-Unicode mode: tracks partial surrogate pair
+}
+
+type disjunction struct {
+	groupName string // Not a named capturing group if empty
+}
+
+type disjunctionsScope struct {
+	disjunctions            []disjunction
+	currentAlternativeIndex int
 }
 
 // surrogatePairState tracks when we're in the middle of emitting a surrogate pair
@@ -215,17 +224,14 @@ func (v *regExpValidator) checkRegularExpressionFlagAvailability(flag regExpFlag
 }
 
 func (v *regExpValidator) scanDisjunction(isInGroup bool) {
+	v.topDisjunctionsScope = disjunctionsScope{}
 	for {
-		v.namedCapturingGroupsScopeStack = append(v.namedCapturingGroupsScopeStack, v.topNamedCapturingGroupsScope)
-		v.topNamedCapturingGroupsScope = nil
 		v.scanAlternative(isInGroup)
-		v.topNamedCapturingGroupsScope = v.namedCapturingGroupsScopeStack[len(v.namedCapturingGroupsScopeStack)-1]
-		v.namedCapturingGroupsScopeStack = v.namedCapturingGroupsScopeStack[:len(v.namedCapturingGroupsScopeStack)-1]
-
 		if v.charAtOffset(0) != '|' {
 			return
 		}
 		v.pos++
+		v.topDisjunctionsScope.currentAlternativeIndex = len(v.topDisjunctionsScope.disjunctions)
 	}
 }
 
@@ -252,6 +258,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 			}
 		case '(':
 			v.pos++
+			var groupName string
 			if v.charAtOffset(0) == '?' {
 				v.pos++
 				switch v.charAtOffset(0) {
@@ -266,7 +273,7 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 						v.pos++
 						isPreviousTermQuantifiable = false
 					default:
-						v.scanGroupName(false)
+						groupName = v.scanGroupName(false)
 						v.scanExpectedChar('>')
 						if v.languageVersion < core.ScriptTargetES2018 {
 							v.error(diagnostics.Named_capturing_groups_are_only_available_when_targeting_ES2018_or_later, groupNameStart, v.pos-groupNameStart)
@@ -291,7 +298,15 @@ func (v *regExpValidator) scanAlternative(isInGroup bool) {
 				v.numberOfCapturingGroups++
 				isPreviousTermQuantifiable = true
 			}
+			disjunction := disjunction{groupName}
+			v.topDisjunctionsScope.disjunctions = append(v.topDisjunctionsScope.disjunctions, disjunction)
+			oldTopDisjunctionsScope := v.topDisjunctionsScope
+			oldDisjunctionsScopesStack := v.disjunctionsScopesStack
+			v.disjunctionsScopesStack = append(v.disjunctionsScopesStack, v.topDisjunctionsScope)
 			v.scanDisjunction(true)
+			oldTopDisjunctionsScope.disjunctions = append(oldTopDisjunctionsScope.disjunctions, v.topDisjunctionsScope.disjunctions...)
+			v.topDisjunctionsScope = oldTopDisjunctionsScope
+			v.disjunctionsScopesStack = oldDisjunctionsScopesStack
 			v.scanExpectedChar(')')
 		case '{':
 			v.pos++
@@ -861,34 +876,34 @@ func parseHexValue(text string, start, end int) int {
 	return code
 }
 
-func (v *regExpValidator) scanGroupName(isReference bool) {
+func (v *regExpValidator) scanGroupName(isReference bool) string {
 	tokenStart := v.pos
 	v.scanIdentifier(v.charAtOffset(0))
 	if v.pos == tokenStart {
 		v.error(diagnostics.Expected_a_capturing_group_name, v.pos, 0)
-	} else if isReference {
+		return ""
+	}
+	if isReference {
 		v.groupNameReferences = append(v.groupNameReferences, namedReference{pos: tokenStart, end: v.pos, name: v.tokenValue})
 	} else {
-		// Check for duplicate names in scope
-		if v.topNamedCapturingGroupsScope != nil && v.topNamedCapturingGroupsScope[v.tokenValue] {
-			v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
-		} else {
-			for _, scope := range v.namedCapturingGroupsScopeStack {
-				if scope != nil && scope[v.tokenValue] {
-					v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
-					break
+		if v.tokenValue != "" {
+			// Check for duplicate names in scope
+		outer:
+			for _, scope := range append(v.disjunctionsScopesStack, v.topDisjunctionsScope) {
+				for i := scope.currentAlternativeIndex; i < len(scope.disjunctions); i++ {
+					if scope.disjunctions[i].groupName == v.tokenValue {
+						v.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, tokenStart, v.pos-tokenStart)
+						break outer
+					}
 				}
 			}
 		}
-		if v.topNamedCapturingGroupsScope == nil {
-			v.topNamedCapturingGroupsScope = make(map[string]bool)
-		}
-		v.topNamedCapturingGroupsScope[v.tokenValue] = true
 		if v.groupSpecifiers == nil {
 			v.groupSpecifiers = make(map[string]bool)
 		}
 		v.groupSpecifiers[v.tokenValue] = true
 	}
+	return v.tokenValue
 }
 
 // scanSourceCharacter scans and returns a single "character" from the source.
