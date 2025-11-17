@@ -125,16 +125,10 @@ var FileExtensionKindModifiers = []ScriptElementKindModifier{
 }
 
 func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
-	if typeChecker != nil {
-		result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
-		if result != ScriptElementKindUnknown {
-			return result
-		}
+	result := getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker, symbol, location)
+	if result != ScriptElementKindUnknown {
+		return result
 	}
-	return GetSymbolKindSimple(symbol)
-}
-
-func GetSymbolKindSimple(symbol *ast.Symbol) ScriptElementKind {
 	flags := symbol.CombinedLocalAndExportSymbolFlags()
 	if flags&ast.SymbolFlagsClass != 0 {
 		decl := ast.GetDeclarationOfKind(symbol, ast.KindClassExpression)
@@ -142,9 +136,6 @@ func GetSymbolKindSimple(symbol *ast.Symbol) ScriptElementKind {
 			return ScriptElementKindLocalClassElement
 		}
 		return ScriptElementKindClassElement
-	}
-	if flags&ast.SymbolFlagsFunction != 0 {
-		return ScriptElementKindFunctionElement
 	}
 	if flags&ast.SymbolFlagsEnum != 0 {
 		return ScriptElementKindEnumElement
@@ -172,24 +163,32 @@ func GetSymbolKindSimple(symbol *ast.Symbol) ScriptElementKind {
 }
 
 func getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {
-	roots := typeChecker.GetRootSymbols(symbol)
+	var roots []*ast.Symbol
+	if typeChecker != nil {
+		roots = typeChecker.GetRootSymbols(symbol)
+	} else {
+		roots = []*ast.Symbol{symbol}
+	}
+
 	// If this is a method from a mapped type, leave as a method so long as it still has a call signature, as opposed to e.g.
 	// `{ [K in keyof I]: number }`.
 	if len(roots) == 1 &&
 		roots[0].Flags&ast.SymbolFlagsMethod != 0 &&
-		len(typeChecker.GetCallSignatures(typeChecker.GetNonNullableType(typeChecker.GetTypeOfSymbolAtLocation(symbol, location)))) > 0 {
+		(typeChecker == nil || len(typeChecker.GetCallSignatures(typeChecker.GetNonNullableType(typeChecker.GetTypeOfSymbolAtLocation(symbol, location)))) > 0) {
 		return ScriptElementKindMemberFunctionElement
 	}
 
-	if typeChecker.IsUndefinedSymbol(symbol) {
-		return ScriptElementKindVariableElement
-	}
-	if typeChecker.IsArgumentsSymbol(symbol) {
-		return ScriptElementKindLocalVariableElement
-	}
-	if location.Kind == ast.KindThisKeyword && ast.IsExpression(location) ||
-		ast.IsThisInTypeQuery(location) {
-		return ScriptElementKindParameterElement
+	if typeChecker != nil {
+		if typeChecker.IsUndefinedSymbol(symbol) {
+			return ScriptElementKindVariableElement
+		}
+		if typeChecker.IsArgumentsSymbol(symbol) {
+			return ScriptElementKindLocalVariableElement
+		}
+		if location.Kind == ast.KindThisKeyword && ast.IsExpression(location) ||
+			ast.IsThisInTypeQuery(location) {
+			return ScriptElementKindParameterElement
+		}
 	}
 
 	flags := symbol.CombinedLocalAndExportSymbolFlags()
@@ -235,8 +234,7 @@ func getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker *
 	}
 
 	if flags&ast.SymbolFlagsProperty != 0 {
-		if flags&ast.SymbolFlagsTransient != 0 &&
-			symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
+		if typeChecker != nil && flags&ast.SymbolFlagsTransient != 0 && symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 			// If union property is result of union of non method (property/accessors/variables), it is labeled as property
 			var unionPropertyKind ScriptElementKind
 			for _, rootSymbol := range roots {

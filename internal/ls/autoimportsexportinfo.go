@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -93,7 +94,7 @@ func (l *LanguageService) searchExportInfosForCompletions(
 		if b, ok := symbolNameMatches[symbolName]; ok {
 			return b
 		}
-		if isNonContextualKeyword(scanner.StringToToken(symbolName)) {
+		if lsutil.IsNonContextualKeyword(scanner.StringToToken(symbolName)) {
 			symbolNameMatches[symbolName] = false
 			return false
 		}

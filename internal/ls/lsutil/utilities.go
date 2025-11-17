@@ -2,12 +2,15 @@ package lsutil
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
@@ -104,4 +107,47 @@ func GetQuotePreference(sourceFile *ast.SourceFile, preferences *UserPreferences
 		return QuotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
 	}
 	return QuotePreferenceDouble
+}
+
+func ModuleSymbolToValidIdentifier(moduleSymbol *ast.Symbol, target core.ScriptTarget, forceCapitalize bool) string {
+	return ModuleSpecifierToValidIdentifier(stringutil.StripQuotes(moduleSymbol.Name), target, forceCapitalize)
+}
+
+func ModuleSpecifierToValidIdentifier(moduleSpecifier string, target core.ScriptTarget, forceCapitalize bool) string {
+	baseName := tspath.GetBaseFileName(strings.TrimSuffix(tspath.RemoveFileExtension(moduleSpecifier), "/index"))
+	res := []rune{}
+	lastCharWasValid := true
+	baseNameRunes := []rune(baseName)
+	if len(baseNameRunes) > 0 && scanner.IsIdentifierStart(baseNameRunes[0]) {
+		if forceCapitalize {
+			res = append(res, unicode.ToUpper(baseNameRunes[0]))
+		} else {
+			res = append(res, baseNameRunes[0])
+		}
+	} else {
+		lastCharWasValid = false
+	}
+
+	for i := 1; i < len(baseNameRunes); i++ {
+		isValid := scanner.IsIdentifierPart(baseNameRunes[i])
+		if isValid {
+			if !lastCharWasValid {
+				res = append(res, unicode.ToUpper(baseNameRunes[i]))
+			} else {
+				res = append(res, baseNameRunes[i])
+			}
+		}
+		lastCharWasValid = isValid
+	}
+
+	// Need `"_"` to ensure result isn't empty.
+	resString := string(res)
+	if resString != "" && !IsNonContextualKeyword(scanner.StringToToken(resString)) {
+		return resString
+	}
+	return "_" + resString
+}
+
+func IsNonContextualKeyword(token ast.Kind) bool {
+	return ast.IsKeywordKind(token) && !ast.IsContextualKeyword(token)
 }

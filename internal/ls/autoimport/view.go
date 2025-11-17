@@ -32,11 +32,12 @@ func (v *View) Search(prefix string) []*RawExport {
 	if ok {
 		results = append(results, bucket.Index.Search(prefix)...)
 	}
-	for directoryPath, nodeModulesBucket := range v.registry.nodeModules {
-		// !!! better to iterate by ancestor directory?
-		if directoryPath.GetDirectoryPath().ContainsPath(v.importingFile.Path()) {
+	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
+		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
 			results = append(results, nodeModulesBucket.Index.Search(prefix)...)
 		}
-	}
+		return nil, false
+	})
+
 	return results
 }

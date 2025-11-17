@@ -6,10 +6,12 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -56,8 +58,9 @@ func (s ExportSyntax) IsAlias() bool {
 
 type RawExport struct {
 	ExportID
-	Syntax ExportSyntax
-	Flags  ast.SymbolFlags
+	Syntax    ExportSyntax
+	Flags     ast.SymbolFlags
+	localName string
 
 	// Checker-set fields
 
@@ -76,15 +79,18 @@ func (e *RawExport) Name() string {
 	if e.Syntax == ExportSyntaxStar {
 		return e.Target.ExportName
 	}
+	if e.localName != "" {
+		return e.localName
+	}
 	if strings.HasPrefix(e.ExportName, ast.InternalSymbolNamePrefix) {
 		return "!!! TODO"
 	}
 	return e.ExportName
 }
 
-func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, getChecker func() (*checker.Checker, func())) []*RawExport {
+func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func())) []*RawExport {
 	if file.Symbol != nil {
-		return parseModule(file, nodeModulesDirectory, getChecker)
+		return parseModule(file, nodeModulesDirectory, moduleResolver, getChecker)
 	}
 	if len(file.AmbientModuleNames) > 0 {
 		moduleDeclarations := core.Filter(file.Statements.Nodes, ast.IsModuleWithStringLiteralName)
@@ -94,14 +100,14 @@ func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, getChecke
 		}
 		exports := make([]*RawExport, 0, exportCount)
 		for _, decl := range moduleDeclarations {
-			parseModuleDeclaration(decl.AsModuleDeclaration(), file, nodeModulesDirectory, getChecker, &exports)
+			parseModuleDeclaration(decl.AsModuleDeclaration(), file, ModuleID(file.FileName()), nodeModulesDirectory, getChecker, &exports)
 		}
 		return exports
 	}
 	return nil
 }
 
-func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, getChecker func() (*checker.Checker, func())) []*RawExport {
+func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func())) []*RawExport {
 	moduleAugmentations := core.MapNonNil(file.ModuleAugmentations, func(name *ast.ModuleName) *ast.ModuleDeclaration {
 		decl := name.Parent
 		if ast.IsGlobalScopeAugmentation(decl) {
@@ -118,7 +124,18 @@ func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, getChec
 		parseExport(name, symbol, ModuleID(file.Path()), file, nodeModulesDirectory, getChecker, &exports)
 	}
 	for _, decl := range moduleAugmentations {
-		parseModuleDeclaration(decl, file, nodeModulesDirectory, getChecker, &exports)
+		name := decl.Name().AsStringLiteral().Text
+		moduleID := ModuleID(name)
+		if tspath.IsExternalModuleNameRelative(name) {
+			// !!! need to resolve non-relative names in separate pass
+			if resolved, _ := moduleResolver.ResolveModuleName(name, file.FileName(), core.ModuleKindCommonJS, nil); resolved.IsResolved() {
+				moduleID = ModuleID(resolved.ResolvedFileName)
+			} else {
+				// :shrug:
+				moduleID = ModuleID(tspath.ResolvePath(tspath.GetDirectoryPath(file.FileName()), name))
+			}
+		}
+		parseModuleDeclaration(decl, file, moduleID, nodeModulesDirectory, getChecker, &exports)
 	}
 	return exports
 }
@@ -134,7 +151,7 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 			if name != ast.InternalSymbolNameExportStar {
 				idx := slices.Index(allExports, namedExport)
 				if idx >= 0 {
-					allExports = slices.Delete(allExports, idx, 1)
+					allExports = slices.Delete(allExports, idx, idx+1)
 				}
 			}
 		}
@@ -182,7 +199,11 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 				ExportSyntaxDefaultDeclaration,
 			)
 		default:
-			declSyntax = ExportSyntaxModifier
+			if ast.GetCombinedModifierFlags(decl)&ast.ModifierFlagsDefault != 0 {
+				declSyntax = ExportSyntaxDefaultModifier
+			} else {
+				declSyntax = ExportSyntaxModifier
+			}
 		}
 		if syntax != ExportSyntaxNone && syntax != declSyntax {
 			// !!! this can probably happen in erroring code
@@ -191,14 +212,26 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 		syntax = declSyntax
 	}
 
+	var localName string
+	if symbol.Name == ast.InternalSymbolNameDefault || symbol.Name == ast.InternalSymbolNameExportEquals {
+		namedSymbol := symbol
+		if s := binder.GetLocalSymbolForExportDefault(symbol); s != nil {
+			namedSymbol = s
+		}
+		localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
+		if localName == "" {
+			localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
+		}
+	}
+
 	export := &RawExport{
 		ExportID: ExportID{
 			ExportName: name,
 			ModuleID:   moduleID,
 		},
 		Syntax:               syntax,
+		localName:            localName,
 		Flags:                symbol.Flags,
-		ScriptElementKind:    lsutil.GetSymbolKindSimple(symbol),
 		FileName:             file.FileName(),
 		Path:                 file.Path(),
 		NodeModulesDirectory: nodeModulesDirectory,
@@ -228,15 +261,15 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 		}
 		release()
 	} else {
-		export.ScriptElementKind = lsutil.GetSymbolKindSimple(symbol)
+		export.ScriptElementKind = lsutil.GetSymbolKind(nil, symbol, symbol.Declarations[0])
 		export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(nil, symbol)
 	}
 
 	*exports = append(*exports, export)
 }
 
-func parseModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, nodeModulesDirectory tspath.Path, getChecker func() (*checker.Checker, func()), exports *[]*RawExport) {
+func parseModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, moduleID ModuleID, nodeModulesDirectory tspath.Path, getChecker func() (*checker.Checker, func()), exports *[]*RawExport) {
 	for name, symbol := range decl.Symbol.Exports {
-		parseExport(name, symbol, ModuleID(decl.Name().AsStringLiteral().Text), file, nodeModulesDirectory, getChecker, exports)
+		parseExport(name, symbol, moduleID, file, nodeModulesDirectory, getChecker, exports)
 	}
 }

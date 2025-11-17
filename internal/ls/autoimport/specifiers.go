@@ -38,7 +38,7 @@ func (v *View) GetModuleSpecifier(
 
 	specifiers, _ := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
 		v.importingFile,
-		export.FileName,
+		string(export.ExportID.ModuleID),
 		v.program.Options(),
 		v.program,
 		userPreferences,

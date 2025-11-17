@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -101,4 +102,31 @@ func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collection
 		return nil, err
 	}
 	return packageNames, nil
+}
+
+func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
+	for _, d := range symbol.Declarations {
+		// "export default" in this case. See `ExportAssignment`for more details.
+		if ast.IsExportAssignment(d) {
+			if innerExpression := ast.SkipOuterExpressions(d.Expression(), ast.OEKAll); ast.IsIdentifier(innerExpression) {
+				return innerExpression.Text()
+			}
+			continue
+		}
+		// "export { ~ as default }"
+		if ast.IsExportSpecifier(d) && d.Symbol().Flags == ast.SymbolFlagsAlias && d.PropertyName() != nil {
+			if d.PropertyName().Kind == ast.KindIdentifier {
+				return d.PropertyName().Text()
+			}
+			continue
+		}
+		// GH#52694
+		if name := ast.GetNameOfDeclaration(d); name != nil && name.Kind == ast.KindIdentifier {
+			return name.Text()
+		}
+		if symbol.Parent != nil && !checker.IsExternalModuleSymbol(symbol.Parent) {
+			return symbol.Parent.Name
+		}
+	}
+	return ""
 }

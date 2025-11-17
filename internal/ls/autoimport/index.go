@@ -1,7 +1,6 @@
 package autoimport
 
 import (
-	"slices"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -72,78 +71,16 @@ func containsCharsInOrder(str, pattern string) bool {
 	return patternIdx == len(pattern)
 }
 
-// IndexBuilder builds an Index with copy-on-write semantics for efficient updates.
-type IndexBuilder[T Named] struct {
-	idx    *Index[T]
-	cloned bool
-}
-
-// NewIndexBuilder creates a new IndexBuilder from an existing Index.
-// If idx is nil, a new empty Index will be created.
-func NewIndexBuilder[T Named](idx *Index[T]) *IndexBuilder[T] {
-	if idx == nil {
-		idx = &Index[T]{
-			entries: make([]T, 0),
-			index:   make(map[rune][]int),
-		}
+// insertAsWords adds a value to the index keyed by the first letter of each word in its name.
+func (idx *Index[T]) insertAsWords(value T) {
+	if idx.index == nil {
+		idx.index = make(map[rune][]int)
 	}
-	return &IndexBuilder[T]{
-		idx:    idx,
-		cloned: false,
-	}
-}
-
-func (b *IndexBuilder[T]) ensureCloned() {
-	if !b.cloned {
-		newIdx := &Index[T]{
-			entries: slices.Clone(b.idx.entries),
-			index:   make(map[rune][]int, len(b.idx.index)),
-		}
-		for k, v := range b.idx.index {
-			newIdx.index[k] = slices.Clone(v)
-		}
-		b.idx = newIdx
-		b.cloned = true
-	}
-}
-
-// Insert adds a value to the index.
-// The value will be indexed by the first letter of its name.
-func (b *IndexBuilder[T]) Insert(value T) {
-	if b.idx == nil {
-		panic("insert called after IndexBuilder.Index()")
-	}
-	b.ensureCloned()
 
 	name := value.Name()
-	name = strings.ToLower(name)
-	if len(name) == 0 {
-		return
-	}
+	entryIndex := len(idx.entries)
+	idx.entries = append(idx.entries, value)
 
-	firstRune, _ := utf8.DecodeRuneInString(name)
-	if firstRune == utf8.RuneError {
-		return
-	}
-
-	entryIndex := len(b.idx.entries)
-	b.idx.entries = append(b.idx.entries, value)
-	b.idx.index[firstRune] = append(b.idx.index[firstRune], entryIndex)
-}
-
-// InsertAsWords adds a value to the index, indexing it by the first letter of each word
-// in its name. Words are determined by camelCase, PascalCase, and snake_case conventions.
-func (b *IndexBuilder[T]) InsertAsWords(value T) {
-	if b.idx == nil {
-		panic("insert called after IndexBuilder.Index()")
-	}
-	b.ensureCloned()
-
-	name := value.Name()
-	entryIndex := len(b.idx.entries)
-	b.idx.entries = append(b.idx.entries, value)
-
-	// Get all word start positions
 	indices := wordIndices(name)
 	seenRunes := make(map[rune]bool)
 
@@ -155,17 +92,9 @@ func (b *IndexBuilder[T]) InsertAsWords(value T) {
 		}
 		firstRune = unicode.ToLower(firstRune)
 
-		// Only add each letter once per entry
 		if !seenRunes[firstRune] {
-			b.idx.index[firstRune] = append(b.idx.index[firstRune], entryIndex)
+			idx.index[firstRune] = append(idx.index[firstRune], entryIndex)
 			seenRunes[firstRune] = true
 		}
 	}
-}
-
-// Index returns the built Index and invalidates the builder.
-func (b *IndexBuilder[T]) Index() *Index[T] {
-	idx := b.idx
-	b.idx = nil
-	return idx
 }

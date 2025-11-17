@@ -527,16 +527,13 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			resolver := newResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
 			ch := checker.NewChecker(resolver)
 			for file := range t.result.possibleFailedAmbientModuleLookupSources.Keys() {
-				fileExports := parseFile(resolver.GetSourceFile(file.FileName()), t.entry.Key(), func() (*checker.Checker, func()) {
+				fileExports := parseFile(resolver.GetSourceFile(file.FileName()), t.entry.Key(), b.resolver, func() (*checker.Checker, func()) {
 					return ch, func() {}
 				})
 				t.result.bucket.Paths[file.Path()] = struct{}{}
-				// !!! we don't need IndexBuilder since we always rebuild full buckets for now
-				idx := NewIndexBuilder(t.result.bucket.Index)
 				for _, exp := range fileExports {
-					idx.InsertAsWords(exp)
+					t.result.bucket.Index.insertAsWords(exp)
 				}
-				t.result.bucket.Index = idx.Index()
 			}
 		}
 	}
@@ -575,7 +572,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 			if ctx.Err() == nil {
 				// !!! we could consider doing ambient modules / augmentations more directly
 				// from the program checker, instead of doing the syntax-based collection
-				fileExports := parseFile(file, "", getChecker)
+				fileExports := parseFile(file, "", b.resolver, getChecker)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -584,18 +581,18 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	}
 
 	wg.RunAndWait()
-	idx := NewIndexBuilder[*RawExport](nil)
+	idx := &Index[*RawExport]{}
 	for path, fileExports := range exports {
 		if result.bucket.Paths == nil {
 			result.bucket.Paths = make(map[tspath.Path]struct{}, len(exports))
 		}
 		result.bucket.Paths[path] = struct{}{}
 		for _, exp := range fileExports {
-			idx.InsertAsWords(exp)
+			idx.insertAsWords(exp)
 		}
 	}
 
-	result.bucket.Index = idx.Index()
+	result.bucket.Index = idx
 	return result, nil
 }
 
@@ -652,8 +649,24 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 
 	var entrypointsMu sync.Mutex
 	var entrypoints []*module.ResolvedEntrypoints
-	wg := core.NewWorkGroup(false)
 
+	processFile := func(fileName string, path tspath.Path) {
+		sourceFile := b.host.GetSourceFile(fileName, path)
+		binder.BindSourceFile(sourceFile)
+		fileExports := parseFile(sourceFile, dirPath, b.resolver, getChecker)
+		if !resolver.possibleFailedAmbientModuleLookupSources.Has(sourceFile) {
+			// If we failed to resolve any ambient modules from this file, we'll try the
+			// whole file again later, so don't add anything now.
+			exportsMu.Lock()
+			exports[path] = fileExports
+			for _, name := range sourceFile.AmbientModuleNames {
+				ambientModuleNames[name] = append(ambientModuleNames[name], fileName)
+			}
+			exportsMu.Unlock()
+		}
+	}
+
+	wg := core.NewWorkGroup(false)
 	for packageName := range packageNames.Keys() {
 		wg.Queue(func() {
 			if ctx.Err() != nil {
@@ -672,21 +685,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 					indexPath := b.base.toPath(indexFileName)
 					// This is not realistic, but a lot of tests omit package.json for brevity.
 					// There's no need to do a more complete default entrypoint resolution.
-					sourceFile := b.host.GetSourceFile(indexFileName, indexPath)
-					binder.BindSourceFile(sourceFile)
-					fileExports := parseFile(sourceFile, dirPath, getChecker)
-
-					if !resolver.possibleFailedAmbientModuleLookupSources.Has(sourceFile) {
-						// If we failed to resolve any ambient modules from this file, we'll try the
-						// whole file again later, so don't add anything now.
-						exportsMu.Lock()
-						exports[indexPath] = fileExports
-						for _, name := range sourceFile.AmbientModuleNames {
-							ambientModuleNames[name] = append(ambientModuleNames[name], indexFileName)
-						}
-						exportsMu.Unlock()
-					}
-
+					processFile(indexFileName, indexPath)
 					entrypointsMu.Lock()
 					entrypoints = append(entrypoints, &module.ResolvedEntrypoints{
 						Entrypoints: []*module.ResolvedEntrypoint{{
@@ -706,6 +705,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 			entrypointsMu.Lock()
 			entrypoints = append(entrypoints, packageEntrypoints)
 			entrypointsMu.Unlock()
+
 			seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
 			for _, entrypoint := range packageEntrypoints.Entrypoints {
 				path := b.base.toPath(entrypoint.ResolvedFileName)
@@ -717,15 +717,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 					if ctx.Err() != nil {
 						return
 					}
-					sourceFile := b.host.GetSourceFile(entrypoint.ResolvedFileName, path)
-					binder.BindSourceFile(sourceFile)
-					fileExports := parseFile(sourceFile, dirPath, getChecker)
-					exportsMu.Lock()
-					for _, name := range sourceFile.AmbientModuleNames {
-						ambientModuleNames[name] = append(ambientModuleNames[name], entrypoint.ResolvedFileName)
-					}
-					exports[path] = fileExports
-					exportsMu.Unlock()
+					processFile(entrypoint.ResolvedFileName, path)
 				})
 			}
 		})
@@ -735,6 +727,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
+			Index:              &Index[*RawExport]{},
 			Dependencies:       dependencies,
 			AmbientModuleNames: ambientModuleNames,
 			Paths:              make(map[tspath.Path]struct{}, len(exports)),
@@ -744,14 +737,12 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		possibleFailedAmbientModuleLookupSources: &resolver.possibleFailedAmbientModuleLookupSources,
 		possibleFailedAmbientModuleLookupTargets: &resolver.possibleFailedAmbientModuleLookupTargets,
 	}
-	idx := NewIndexBuilder[*RawExport](nil)
 	for path, fileExports := range exports {
 		result.bucket.Paths[path] = struct{}{}
 		for _, exp := range fileExports {
-			idx.InsertAsWords(exp)
+			result.bucket.Index.insertAsWords(exp)
 		}
 	}
-	result.bucket.Index = idx.Index()
 	for _, entrypointSet := range entrypoints {
 		for _, entrypoint := range entrypointSet.Entrypoints {
 			path := b.base.toPath(entrypoint.ResolvedFileName)

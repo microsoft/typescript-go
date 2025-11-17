@@ -1987,6 +1987,11 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		// !!! check for type-only in JS
 		// !!! deprecation
 
+		if string(exp.ModuleID) == file.FileName() {
+			// Ignore exports from the current file
+			continue
+		}
+
 		if data.importStatementCompletion != nil {
 			/// !!! andrewbranch/autoimport
 			// resolvedOrigin := origin.asExport()
@@ -2310,7 +2315,7 @@ func (l *LanguageService) createCompletionItem(
 		} else if parentNamedImportOrExport.Kind == ast.KindNamedImports {
 			possibleToken := scanner.StringToToken(name)
 			if possibleToken != ast.KindUnknown &&
-				(possibleToken == ast.KindAwaitKeyword || isNonContextualKeyword(possibleToken)) {
+				(possibleToken == ast.KindAwaitKeyword || lsutil.IsNonContextualKeyword(possibleToken)) {
 				insertText = fmt.Sprintf("%s as %s_", name, name)
 			}
 		}
@@ -5406,7 +5411,7 @@ func getPotentiallyInvalidImportSpecifier(namedBindings *ast.NamedImportBindings
 		return nil
 	}
 	return core.Find(namedBindings.Elements(), func(e *ast.Node) bool {
-		return e.PropertyName() == nil && isNonContextualKeyword(scanner.StringToToken(e.Name().Text())) &&
+		return e.PropertyName() == nil && lsutil.IsNonContextualKeyword(scanner.StringToToken(e.Name().Text())) &&
 			astnav.FindPrecedingToken(ast.GetSourceFileOfNode(namedBindings), e.Name().Pos()).Kind != ast.KindCommaToken
 	})
 }
