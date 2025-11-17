@@ -471,7 +471,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Kind != ast.KindIdentifier && !(ast.IsStringLiteralLike(node) && tryGetImportFromModuleSpecifier(node) != nil && prefs.AllowRenameOfImportPath) {
+	if node.Kind != ast.KindIdentifier && !(ast.IsStringLiteralLike(node) && tryGetImportFromModuleSpecifier(node) != nil && prefs.AllowRenameOfImportPath == core.TSTrue) {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
@@ -482,7 +482,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	defer done()
 	for _, entry := range entries {
 		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
-		if !prefs.AllowRenameOfImportPath && entry.node != nil && ast.IsStringLiteralLike(entry.node) && tryGetImportFromModuleSpecifier(entry.node) != nil {
+		if prefs.AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && tryGetImportFromModuleSpecifier(entry.node) != nil {
 			continue
 		}
 		textEdit := &lsproto.TextEdit{

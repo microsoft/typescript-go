@@ -14,7 +14,7 @@ func NewDefaultUserPreferences() *UserPreferences {
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 
-		AllowRenameOfImportPath:            true,
+		AllowRenameOfImportPath:            core.TSTrue,
 		ProvideRefactorNotApplicableReason: true,
 		IncludeCompletionsWithSnippetText:  core.TSTrue,
 		DisplayPartsForJSDoc:               true,
@@ -125,7 +125,7 @@ type UserPreferences struct {
 
 	// renamed from `providePrefixAndSuffixTextForRename`
 	UseAliasesForRename     core.Tristate
-	AllowRenameOfImportPath bool // !!!
+	AllowRenameOfImportPath core.Tristate
 
 	// ------- CodeFixes/Refactors -------
 
@@ -601,7 +601,7 @@ func (p *UserPreferences) set(name string, value any) {
 	case "usealiasesforrename", "provideprefixandsuffixtextforrename":
 		p.UseAliasesForRename = tsoptions.ParseTristate(value)
 	case "allowrenameofimportpath":
-		p.AllowRenameOfImportPath = parseBoolWithDefault(value, true)
+		p.AllowRenameOfImportPath = tsoptions.ParseTristate(value)
 	case "providerefactornotapplicablereason":
 		p.ProvideRefactorNotApplicableReason = parseBoolWithDefault(value, true)
 	case "includeinlayparameternamehints":
