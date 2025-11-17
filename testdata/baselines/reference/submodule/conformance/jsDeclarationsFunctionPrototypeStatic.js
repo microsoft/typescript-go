@@ -51,10 +51,9 @@ export type DoneCB = (failures: number) => any;
 
 
 out/source.d.ts(1,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-out/source.d.ts(9,41): error TS1005: '=>' expected.
 
 
-==== out/source.d.ts (2 errors) ====
+==== out/source.d.ts (1 errors) ====
     export = MyClass;
     ~~~~~~~~~~~~~~~~~
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
@@ -65,9 +64,7 @@ out/source.d.ts(9,41): error TS1005: '=>' expected.
     declare namespace MyClass {
         var staticProperty: number;
     }
-    export type DoneCB = (failures: number) ;
-                                            ~
-!!! error TS1005: '=>' expected.
+    export type DoneCB = (failures: number) => any;
     /**
      * Callback to be invoked when test execution is complete.
      *
