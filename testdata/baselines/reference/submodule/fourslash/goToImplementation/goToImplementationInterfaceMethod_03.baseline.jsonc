@@ -9,7 +9,7 @@
 // }
 // 
 // class SuperBar implements Foo {
-// // --- (line: 10) skipped ---
+// --- (line: 10) skipped ---
 
 // --- (line: 13) skipped ---
 //     hello() {} // should not show up

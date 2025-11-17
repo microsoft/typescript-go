@@ -4,7 +4,7 @@
 //     p;
 // }
 // type propertyType = I1;
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 // === /goToTypeDefinition2_Consumption.ts ===
 // var i2: I2;

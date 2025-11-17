@@ -1,47 +1,11 @@
 --- old.jsDocSee2.baseline.jsonc
 +++ new.jsDocSee2.baseline.jsonc
-@@= skipped -3, +3 lines =@@
- // const a = ""
- // /** @see {@bar} invalid tag*/
- // const b = ""
--// --- (line: 5) skipped ---
-+// // --- (line: 5) skipped ---
-
-
-
-@@= skipped -12, +12 lines =@@
- // const b = ""
- // /** @see foooo unknown reference without brace*/
- // const c = ""
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
-
-
-
-@@= skipped -14, +14 lines =@@
- // const c = ""
- // /** @see @bar invalid tag without brace*/
- // const d = ""
--// --- (line: 9) skipped ---
-+// // --- (line: 9) skipped ---
-
-
-
-@@= skipped -14, +14 lines =@@
- // const d = ""
- // /** @see {d@fff} partial reference */
- // const e = ""
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
-
-
-
-@@= skipped -17, +17 lines =@@
- // const f = ""
+@@= skipped -61, +61 lines =@@
  // /** @see d@{fff} partial reference */
  // const g = ""
-+
-+
 
++
++
  // === goToDefinition ===
  // === /jsDocSee2.ts ===
+ // --- (line: 7) skipped ---

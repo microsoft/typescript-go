@@ -10,7 +10,7 @@
 // var constructorOverload = new ConstructorOverload("foo");
 // 
 // class Extended extends ConstructorOverload {
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 
@@ -27,7 +27,7 @@
 // 
 // class Extended extends ConstructorOverload {
 //     readonly name = "extended";
-// // --- (line: 12) skipped ---
+// --- (line: 12) skipped ---
 
 
 
@@ -40,7 +40,7 @@
 // }
 // 
 // var constructorOverload = new ConstructorOverload();
-// // --- (line: 8) skipped ---
+// --- (line: 8) skipped ---
 
 
 

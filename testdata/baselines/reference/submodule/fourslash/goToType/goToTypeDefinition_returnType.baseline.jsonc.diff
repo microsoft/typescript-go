@@ -1,75 +1,33 @@
 --- old.goToTypeDefinition_returnType.baseline.jsonc
 +++ new.goToTypeDefinition_returnType.baseline.jsonc
-@@= skipped -3, +3 lines =@@
- // interface J { y: number; }
- // 
- // function f0(): I { return { x: 0 }; }
--// --- (line: 5) skipped ---
-+// // --- (line: 5) skipped ---
-
- // --- (line: 21) skipped ---
- // function f8(j: J): J;
-@@= skipped -10, +10 lines =@@
- // f1();
- // f2();
+@@= skipped -15, +15 lines =@@
  // f3();
--// --- (line: 29) skipped ---
-+// // --- (line: 29) skipped ---
-+
-+
+ // --- (line: 29) skipped ---
 
++
++
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
-@@= skipped -13, +15 lines =@@
- // const f1: T = i => ({ x: i.x + 1 });
- // 
- // const f2 = (i: I): I => ({ x: i.x + 1 });
--// --- (line: 10) skipped ---
-+// // --- (line: 10) skipped ---
-
- // --- (line: 22) skipped ---
- // function f8(ij: any): any { return ij; }
-@@= skipped -10, +10 lines =@@
- // f2();
- // f3();
+ // interface I { x: number; }
+@@= skipped -23, +25 lines =@@
  // f4();
--// --- (line: 30) skipped ---
-+// // --- (line: 30) skipped ---
-+
-+
+ // --- (line: 30) skipped ---
 
++
++
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
-@@= skipped -8, +10 lines =@@
- // interface J { y: number; }
- // 
- // function f0(): I { return { x: 0 }; }
--// --- (line: 5) skipped ---
-+// // --- (line: 5) skipped ---
-
- // --- (line: 23) skipped ---
- // 
-@@= skipped -10, +10 lines =@@
- // f3();
- // f4();
+ // interface [|I|] { x: number; }
+@@= skipped -18, +20 lines =@@
  // f5();
--// --- (line: 31) skipped ---
-+// // --- (line: 31) skipped ---
-+
-+
+ // --- (line: 31) skipped ---
 
++
++
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
-@@= skipped -12, +14 lines =@@
- // 
- // const f4 = (i: I) => i;
- // 
--// --- (line: 15) skipped ---
-+// // --- (line: 15) skipped ---
-
- // --- (line: 24) skipped ---
- // f0();
-@@= skipped -13, +13 lines =@@
+ // --- (line: 7) skipped ---
+@@= skipped -23, +25 lines =@@
  // f7();
  // f8();
 
@@ -78,14 +36,6 @@
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
  // interface [|I|] { x: number; }
- // interface J { y: number; }
- // 
- // function f0(): I { return { x: 0 }; }
--// --- (line: 5) skipped ---
-+// // --- (line: 5) skipped ---
-
- // --- (line: 25) skipped ---
- // f1();
 @@= skipped -18, +20 lines =@@
  // f7();
  // f8();
@@ -95,16 +45,7 @@
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
  // interface [|I|] { x: number; }
-@@= skipped -7, +9 lines =@@
- // 
- // function f0(): I { return { x: 0 }; }
- // 
--// --- (line: 6) skipped ---
-+// // --- (line: 6) skipped ---
-
- // --- (line: 26) skipped ---
- // f2();
-@@= skipped -11, +11 lines =@@
+@@= skipped -18, +20 lines =@@
  // f7();
  // f8();
 
@@ -113,16 +54,7 @@
  // === goToType ===
  // === /goToTypeDefinition_returnType.ts ===
  // interface [|I|] { x: number; }
-@@= skipped -7, +9 lines =@@
- // 
- // function f0(): I { return { x: 0 }; }
- // 
--// --- (line: 6) skipped ---
-+// // --- (line: 6) skipped ---
-
- // --- (line: 27) skipped ---
- // f3();
-@@= skipped -10, +10 lines =@@
+@@= skipped -17, +19 lines =@@
  // f7();
  // f8();
 

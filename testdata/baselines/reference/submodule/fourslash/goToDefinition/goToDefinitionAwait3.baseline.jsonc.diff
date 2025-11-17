@@ -7,7 +7,7 @@
 -//       await Promise.resolve(0);
 -//     }
 -// }
-+// // --- (line: 7) skipped ---
++// --- (line: 7) skipped ---
 +
 +
 

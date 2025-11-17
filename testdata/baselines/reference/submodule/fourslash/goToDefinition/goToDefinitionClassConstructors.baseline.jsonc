@@ -30,7 +30,7 @@
 // }
 // 
 // export class Derived extends Base {
-// // --- (line: 6) skipped ---
+// --- (line: 6) skipped ---
 
 
 
@@ -52,7 +52,7 @@
 // }
 // 
 // export class Derived extends Base {
-// // --- (line: 6) skipped ---
+// --- (line: 6) skipped ---
 
 // === /defInSameFile.ts ===
 // import { Base } from './definitions'

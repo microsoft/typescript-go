@@ -7,4 +7,4 @@
 -// var x = new SuperBar();
 -// var y: SuperBar = new SuperBar();
 -// var z: AbstractBar = new NotAbstractBar();
-+// // --- (line: 18) skipped ---
++// --- (line: 18) skipped ---

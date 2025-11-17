@@ -1,11 +1,9 @@
 --- old.goToTypeDefinition_arrayType.baseline.jsonc
 +++ new.goToTypeDefinition_arrayType.baseline.jsonc
-@@= skipped -5, +5 lines =@@
- // 
- // type UsersArr = Array<User>
+@@= skipped -7, +7 lines =@@
  // declare const users2: UsersArr
--// --- (line: 7) skipped ---
--
+ // --- (line: 7) skipped ---
+
 -// === lib.d.ts ===
 -// --- (line: --) skipped ---
 -//     slice(start?: number, end?: number): T[];
@@ -202,7 +200,7 @@
 -// interface ArrayConstructor {
 -//     new (arrayLength?: number): any[];
 -// --- (line: --) skipped ---
--
+
 -// --- (line: --) skipped ---
 -//     readonly prototype: any[];
 -// }
@@ -212,13 +210,10 @@
 -// interface TypedPropertyDescriptor<T> {
 -//     enumerable?: boolean;
 -// --- (line: --) skipped ---
-+// // --- (line: 7) skipped ---
-+
-+
 
  // === goToType ===
  // === /goToTypeDefinition_arrayType.ts ===
-@@= skipped -223, +18 lines =@@
+@@= skipped -221, +16 lines =@@
  // declare const users3: CustomArray<User>
  // users3
 

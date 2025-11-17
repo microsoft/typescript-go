@@ -9,18 +9,16 @@
  // === goToDefinition ===
  // === /defInSameFile.ts ===
  // import { Base } from './definitions'
-@@= skipped -15, +17 lines =@@
- // }
- // 
+@@= skipped -17, +19 lines =@@
  // export class Derived extends Base {
--// --- (line: 6) skipped ---
-+// // --- (line: 6) skipped ---
-+
-+
+ // --- (line: 6) skipped ---
 
++
++
  // === goToDefinition ===
  // === /hasConstructor.ts ===
-@@= skipped -11, +13 lines =@@
+ // import { Base } from './definitions'
+@@= skipped -9, +11 lines =@@
  // }
  // const hasConstructor = new /*GOTO DEF*/HasConstructor(cArg)
 
@@ -36,7 +34,7 @@
 -//     readonly email = this.cArg.getByLabel('Email')
 -//     readonly password =  this.cArg.getByLabel('Password')
 -// }
-+// // --- (line: 6) skipped ---
++// --- (line: 6) skipped ---
 
  // === /defInSameFile.ts ===
  // import { Base } from './definitions'

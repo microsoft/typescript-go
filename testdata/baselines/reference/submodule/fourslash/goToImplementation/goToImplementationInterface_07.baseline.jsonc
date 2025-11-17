@@ -4,7 +4,7 @@
 //     hello (): void;
 // }
 // 
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 // --- (line: 8) skipped ---
 // let x1: Foo            = { hello ()          { /**typeReference*/ } };

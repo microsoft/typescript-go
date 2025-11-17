@@ -14,7 +14,7 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 +
 +
 
@@ -35,21 +35,18 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 +
 +
 
  // === goToDefinition ===
  // === /a.ts ===
-@@= skipped -36, +22 lines =@@
+@@= skipped -38, +24 lines =@@
  // 
- //     readonly x: string;
- // 
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
-+
-+
+ // --- (line: 7) skipped ---
 
++
++
  // === goToDefinition ===
  // === /a.ts ===
  // export class A {
@@ -59,8 +56,7 @@
  // 
  //     readonly x: string;
  // 
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
+ // --- (line: 7) skipped ---
 +
 +
 
@@ -68,16 +64,13 @@
  // === /a.ts ===
 @@= skipped -22, +26 lines =@@
  // 
- //     async a() {  }
- // 
--// --- (line: 9) skipped ---
-+// // --- (line: 9) skipped ---
-+
-+
+ // --- (line: 9) skipped ---
 
++
++
  // === goToDefinition ===
  // === /a.ts ===
-@@= skipped -8, +10 lines =@@
+ // export class A {
  // 
  //     private z: string;
  // 
@@ -86,25 +79,21 @@
  // 
  //     async a() {  }
  // 
--// --- (line: 9) skipped ---
-+// // --- (line: 9) skipped ---
+ // --- (line: 9) skipped ---
 +
 +
 
  // === goToDefinition ===
  // === /a.ts ===
-@@= skipped -16, +18 lines =@@
+@@= skipped -24, +28 lines =@@
  // 
- //     override b() {}
- // 
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
-+
-+
+ // --- (line: 11) skipped ---
 
++
++
  // === goToDefinition ===
  // === /a.ts ===
-@@= skipped -8, +10 lines =@@
+ // --- (line: 3) skipped ---
  // 
  //     readonly x: string;
  // 
@@ -113,14 +102,13 @@
  // 
  //     override b() {}
  // 
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
+ // --- (line: 11) skipped ---
 +
 +
 
  // === goToDefinition ===
  // === /a.ts ===
-@@= skipped -19, +21 lines =@@
+@@= skipped -25, +29 lines =@@
  // 
  // export function foo() { }
 

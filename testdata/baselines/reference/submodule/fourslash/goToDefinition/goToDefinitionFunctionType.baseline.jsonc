@@ -5,7 +5,7 @@
 // function test(cb: () => void) {
 //     cb();
 // }
-// // --- (line: 6) skipped ---
+// --- (line: 6) skipped ---
 
 
 
@@ -18,7 +18,7 @@
 // }
 // class C {
 //     prop: () => void;
-// // --- (line: 8) skipped ---
+// --- (line: 8) skipped ---
 
 
 

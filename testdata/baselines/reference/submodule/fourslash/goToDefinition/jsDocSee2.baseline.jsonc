@@ -4,7 +4,7 @@
 // const a = ""
 // /** @see {@bar} invalid tag*/
 // const b = ""
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 
 
@@ -16,7 +16,7 @@
 // const b = ""
 // /** @see foooo unknown reference without brace*/
 // const c = ""
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
 
 
 
@@ -30,7 +30,7 @@
 // const c = ""
 // /** @see @bar invalid tag without brace*/
 // const d = ""
-// // --- (line: 9) skipped ---
+// --- (line: 9) skipped ---
 
 
 
@@ -44,7 +44,7 @@
 // const d = ""
 // /** @see {d@fff} partial reference */
 // const e = ""
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 

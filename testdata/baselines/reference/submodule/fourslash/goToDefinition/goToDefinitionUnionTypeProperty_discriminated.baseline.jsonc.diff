@@ -1,17 +1,15 @@
 --- old.goToDefinitionUnionTypeProperty_discriminated.baseline.jsonc
 +++ new.goToDefinitionUnionTypeProperty_discriminated.baseline.jsonc
-@@= skipped -16, +16 lines =@@
- //   prop: 0,
- // };
+@@= skipped -18, +18 lines =@@
  // const u2: U = {
--// --- (line: 18) skipped ---
-+// // --- (line: 18) skipped ---
-+
-+
+ // --- (line: 18) skipped ---
 
++
++
  // === goToDefinition ===
  // === /goToDefinitionUnionTypeProperty_discriminated.ts ===
-@@= skipped -25, +27 lines =@@
+ // type U = A | B;
+@@= skipped -23, +25 lines =@@
  //   prop: 0,
  // };
 

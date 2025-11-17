@@ -9,7 +9,7 @@
 -// 
 -//     someFunction() {}
 -// };
-+// // --- (line: 18) skipped ---
++// --- (line: 18) skipped ---
 +
 +// --- (line: 22) skipped ---
  // 
@@ -22,7 +22,7 @@
 -// function createBarUsingClassDeclaration(): Bar {
 -//     return {
 -// --- (line: 32) skipped ---
-+// // --- (line: 30) skipped ---
++// --- (line: 30) skipped ---
 
  // --- (line: 37) skipped ---
  //     someFunction() {}

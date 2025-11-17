@@ -9,9 +9,3 @@
  // === goToImplementation ===
  // === /goToImplementationInterfaceMethod_01.ts ===
  // interface Foo {
-@@= skipped -12, +14 lines =@@
- //     public sure() {}
- // }
- // 
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---

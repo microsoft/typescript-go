@@ -15,7 +15,7 @@
 // declare const ij: I | J;
 // ij.foo;
 // declare const k: K;
-// // --- (line: 16) skipped ---
+// --- (line: 16) skipped ---
 
 
 

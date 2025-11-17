@@ -11,7 +11,7 @@
 //     }
 //     method() {
 //         super.x();
-// // --- (line: 12) skipped ---
+// --- (line: 12) skipped ---
 
 
 
@@ -31,7 +31,7 @@
 //     }
 // }
 // class D {
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---
 
 
 

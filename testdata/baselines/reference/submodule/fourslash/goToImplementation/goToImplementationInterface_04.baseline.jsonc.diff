@@ -14,4 +14,4 @@
 -// 
 -//     constructor(public f: Foo = [|function(a) {}|] ) {}
 -// }
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---

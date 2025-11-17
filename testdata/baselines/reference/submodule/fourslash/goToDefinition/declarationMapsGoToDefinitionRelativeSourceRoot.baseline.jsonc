@@ -6,7 +6,7 @@
 //     otherMethod() {
 //         if (Math.random() > 0.5) {
 //             return {x: 42};
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
 
 // === /mymodule.ts ===
 // import * as mod from "./out/indexdef";

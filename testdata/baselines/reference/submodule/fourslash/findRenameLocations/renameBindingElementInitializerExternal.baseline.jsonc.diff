@@ -15,7 +15,7 @@
 -//     oldName: newName = [|externalRENAME|]
 -// } = obj;
 +//     lvl1 = external,
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 
 
 

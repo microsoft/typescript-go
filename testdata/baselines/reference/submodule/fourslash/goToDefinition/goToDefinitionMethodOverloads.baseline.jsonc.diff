@@ -44,14 +44,13 @@
  //     public method(): any;
  //     public method(foo: string);
  //     public method(foo?: any) { return "foo" }
--// --- (line: 8) skipped ---
-+// // --- (line: 8) skipped ---
-+
-+
+ // --- (line: 8) skipped ---
 
++
++
  // === goToDefinition ===
  // === /goToDefinitionMethodOverloads.ts ===
-@@= skipped -17, +21 lines =@@
+ // class MethodOverload {
  //     static method();
  //     static method(foo: string);
  //     static method(foo?: any) { }
@@ -62,6 +61,3 @@
  //     public [|method|](foo?: any) { return "foo" }
  // }
  // // static method
- // MethodOverload.method();
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---

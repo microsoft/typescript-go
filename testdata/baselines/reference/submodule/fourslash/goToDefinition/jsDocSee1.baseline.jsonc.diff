@@ -15,11 +15,9 @@
  // const a = ""
  // /** @see {NS.Bar} ns.bar*/
  // const b = ""
--// --- (line: 13) skipped ---
--
+ // --- (line: 13) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 13) skipped ---
-+
 +
 +
 +// === goToDefinition ===
@@ -35,11 +33,9 @@
  // const b = ""
  // /** @see Foo f1*/
  // const c = ""
--// --- (line: 15) skipped ---
--
+ // --- (line: 15) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 15) skipped ---
-+
 +
 +
 +// === goToDefinition ===
@@ -53,7 +49,7 @@
 -//     }
 -// }
 -// /** @see {Foo} foooo*/
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 +
 +// --- (line: 9) skipped ---
  // const a = ""

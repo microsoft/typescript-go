@@ -19,4 +19,4 @@
 -// }
 +// var bar: Foo = { hello: helloImpl /**0*/ };
 +// var baz: Foo[] = [{ hello: helloImpl /**4*/ }];
-+// // --- (line: 9) skipped ---
++// --- (line: 9) skipped ---

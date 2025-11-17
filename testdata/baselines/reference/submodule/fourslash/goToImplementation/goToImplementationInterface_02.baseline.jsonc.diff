@@ -20,4 +20,4 @@
 -// function createFooLike() {
 -//     return {
 -// --- (line: 20) skipped ---
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---

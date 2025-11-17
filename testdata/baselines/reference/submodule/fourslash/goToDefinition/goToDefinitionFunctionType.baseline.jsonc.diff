@@ -10,11 +10,9 @@
  // function test(cb: () => void) {
  //     cb();
  // }
--// --- (line: 6) skipped ---
--
+ // --- (line: 6) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 6) skipped ---
-+
 +
 +
 +// === goToDefinition ===
@@ -27,11 +25,9 @@
  // }
  // class C {
  //     prop: () => void;
--// --- (line: 8) skipped ---
--
+ // --- (line: 8) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 8) skipped ---
-+
 +
 +
 +// === goToDefinition ===

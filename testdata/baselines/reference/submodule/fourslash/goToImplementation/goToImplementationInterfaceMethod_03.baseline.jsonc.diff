@@ -1,11 +1,2 @@
 --- old.goToImplementationInterfaceMethod_03.baseline.jsonc
 +++ new.goToImplementationInterfaceMethod_03.baseline.jsonc
-@@= skipped -8, +8 lines =@@
- // }
- // 
- // class SuperBar implements Foo {
--// --- (line: 10) skipped ---
-+// // --- (line: 10) skipped ---
-
- // --- (line: 13) skipped ---
- //     hello() {} // should not show up

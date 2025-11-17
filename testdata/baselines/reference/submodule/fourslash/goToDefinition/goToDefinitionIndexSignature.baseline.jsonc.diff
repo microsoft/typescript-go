@@ -1,17 +1,15 @@
 --- old.goToDefinitionIndexSignature.baseline.jsonc
 +++ new.goToDefinitionIndexSignature.baseline.jsonc
-@@= skipped -14, +14 lines =@@
- // declare const ij: I | J;
- // ij.foo;
+@@= skipped -16, +16 lines =@@
  // declare const k: K;
--// --- (line: 16) skipped ---
-+// // --- (line: 16) skipped ---
-+
-+
+ // --- (line: 16) skipped ---
 
++
++
  // === goToDefinition ===
  // === /goToDefinitionIndexSignature.ts ===
-@@= skipped -23, +25 lines =@@
+ // interface I {
+@@= skipped -21, +23 lines =@@
  // k.b;
  // k.ab;
 

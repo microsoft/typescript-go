@@ -1,28 +1,11 @@
 --- old.declarationMapsGoToDefinitionSameNameDifferentDirectory.baseline.jsonc
 +++ new.declarationMapsGoToDefinitionSameNameDifferentDirectory.baseline.jsonc
-@@= skipped -3, +3 lines =@@
- //     constructor(){
- //         return;
- //     }
--// --- (line: 5) skipped ---
-+// // --- (line: 5) skipped ---
-
- // === /buttonClass/Source.ts ===
- // // I cannot F12 navigate to Control
-@@= skipped -9, +9 lines =@@
- //     public myFunction() {
- //         // I cannot F12 navigate to myVar
+@@= skipped -14, +14 lines =@@
  //         //              vvvvv
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
-+
-+
+ // --- (line: 7) skipped ---
 
++
++
  // === goToDefinition ===
  // === /BaseClass/Source.ts ===
-@@= skipped -21, +23 lines =@@
- //             this.myVar;
- //         } else {
- //             this.myVar.toLocaleUpperCase();
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
+ // class Control{

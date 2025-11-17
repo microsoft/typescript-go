@@ -14,11 +14,9 @@
  //  */
  // const t1 = 1
  // /**
--// --- (line: 10) skipped ---
--
+ // --- (line: 10) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 10) skipped ---
-+
 +
 +
 +// === goToDefinition ===
@@ -34,11 +32,9 @@
  //  */
  // const t2 = 1
  // /**
--// --- (line: 14) skipped ---
--
+ // --- (line: 14) skipped ---
+
 -// === getDefinitionAtPosition ===
-+// // --- (line: 14) skipped ---
-+
 +
 +
 +// === goToDefinition ===

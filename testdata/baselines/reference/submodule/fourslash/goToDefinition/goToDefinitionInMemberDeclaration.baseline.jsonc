@@ -13,7 +13,7 @@
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
-// // --- (line: 14) skipped ---
+// --- (line: 14) skipped ---
 
 
 
@@ -23,7 +23,7 @@
 // 
 // class Foo implements IFoo {
 //     public method1(): number { return 0; }
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 // --- (line: 8) skipped ---
 // class Bar {
@@ -33,7 +33,7 @@
 //     public _enum: Enum = Enum.value1;
 //     public _self: Bar;
 // 
-// // --- (line: 16) skipped ---
+// --- (line: 16) skipped ---
 
 
 
@@ -43,7 +43,7 @@
 // 
 // class Foo implements IFoo {
 //     public method1(): number { return 0; }
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 // --- (line: 12) skipped ---
 //     public _enum: Enum = Enum.value1;
@@ -71,7 +71,7 @@
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
 //     public _self: Bar;
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---
 
 
 
@@ -90,7 +90,7 @@
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
-// // --- (line: 14) skipped ---
+// --- (line: 14) skipped ---
 
 
 

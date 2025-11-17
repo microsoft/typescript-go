@@ -4,7 +4,7 @@
 // 
 //     private z: string;
 // 
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 
 
@@ -14,7 +14,7 @@
 // 
 //     private z: string;
 // 
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
 
 
 
@@ -26,7 +26,7 @@
 // 
 //     readonly x: string;
 // 
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
 
 
 
@@ -38,7 +38,7 @@
 // 
 //     readonly x: string;
 // 
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
 
 
 
@@ -52,7 +52,7 @@
 // 
 //     async a() {  }
 // 
-// // --- (line: 9) skipped ---
+// --- (line: 9) skipped ---
 
 
 
@@ -66,7 +66,7 @@
 // 
 //     async a() {  }
 // 
-// // --- (line: 9) skipped ---
+// --- (line: 9) skipped ---
 
 
 
@@ -80,7 +80,7 @@
 // 
 //     override b() {}
 // 
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 
@@ -94,7 +94,7 @@
 // 
 //     override b() {}
 // 
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 

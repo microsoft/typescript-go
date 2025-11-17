@@ -16,7 +16,7 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 +
 +
 
@@ -38,31 +38,13 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 5) skipped ---
++// --- (line: 5) skipped ---
 +
 +
 
  // === goToType ===
  // === /a.ts ===
-@@= skipped -21, +12 lines =@@
- // 
- //     private y: A;
- // 
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
-
-
-
-@@= skipped -12, +12 lines =@@
- // 
- //     private y: A;
- // 
--// --- (line: 7) skipped ---
-+// // --- (line: 7) skipped ---
-
-
-
-@@= skipped -14, +14 lines =@@
+@@= skipped -47, +38 lines =@@
  // 
  //     readonly x: string;
  // 
@@ -74,7 +56,7 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 9) skipped ---
++// --- (line: 9) skipped ---
 +
 +
 
@@ -92,28 +74,13 @@
 -// }
 -// 
 -// export function foo() { }
-+// // --- (line: 9) skipped ---
++// --- (line: 9) skipped ---
 +
 +
 
  // === goToType ===
  // === /a.ts ===
-@@= skipped -19, +14 lines =@@
- // 
- //     async a() {  }
- // 
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
-
-
-
-@@= skipped -14, +14 lines =@@
- // 
- //     async a() {  }
- // 
--// --- (line: 11) skipped ---
-+// // --- (line: 11) skipped ---
-
+@@= skipped -38, +33 lines =@@
 
 
  // === goToType ===
@@ -146,15 +113,12 @@
  // === /a.ts ===
  // --- (line: 5) skipped ---
  // 
-@@= skipped -40, +14 lines =@@
+@@= skipped -37, +11 lines =@@
  // 
- //     override b() {}
- // 
--// --- (line: 13) skipped ---
-+// // --- (line: 13) skipped ---
-+
-+
+ // --- (line: 13) skipped ---
 
++
++
  // === goToType ===
 -// === lib.d.ts ===
 -// --- (line: --) skipped ---
@@ -187,10 +151,8 @@
  // 
 @@= skipped -38, +14 lines =@@
  // 
- //     override b() {}
- // 
--// --- (line: 13) skipped ---
--
+ // --- (line: 13) skipped ---
+
 -// === goToType ===
 -// === /a.ts ===
 -// --- (line: 7) skipped ---
@@ -244,8 +206,6 @@
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
 -// --- (line: --) skipped ---
 -
-+// // --- (line: 13) skipped ---
-+
 +
 +
 +// === goToType ===
@@ -282,7 +242,7 @@
  // === /a.ts ===
  // --- (line: 9) skipped ---
  // 
-@@= skipped -65, +45 lines =@@
+@@= skipped -63, +43 lines =@@
  // 
  // export function foo() { }
 

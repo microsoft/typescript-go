@@ -8,7 +8,7 @@
 //     createBarInClassExpression(): Bar {
 //         return {
 //             Foo
-// // --- (line: 18) skipped ---
+// --- (line: 18) skipped ---
 
 // --- (line: 22) skipped ---
 // 
@@ -18,7 +18,7 @@
 // 
 // }
 // 
-// // --- (line: 30) skipped ---
+// --- (line: 30) skipped ---
 
 // --- (line: 37) skipped ---
 //     someFunction() {}

@@ -637,7 +637,7 @@ func (t *textWithContext) add(detail *baselineDetail) {
 				if t.isLibFile {
 					skippedString = "--- (line: --) skipped ---\n"
 				} else {
-					skippedString = fmt.Sprintf(`// --- (line: %v) skipped ---`, posLineIndex+t.nLinesContext+1)
+					skippedString = fmt.Sprintf(`--- (line: %v) skipped ---`, posLineIndex+t.nLinesContext+1)
 				}
 
 				t.readableContents.WriteString("\n")

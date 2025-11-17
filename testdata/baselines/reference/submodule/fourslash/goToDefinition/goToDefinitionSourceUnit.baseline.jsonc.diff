@@ -13,9 +13,8 @@
 +//  /// <reference path="b.ts" />
  // 
 -// class clsInOverload {
--// --- (line: 7) skipped ---
 +//  class clsInOverload {
-+// // --- (line: 7) skipped ---
+ // --- (line: 7) skipped ---
 
 
 
@@ -35,7 +34,6 @@
  // 
 -// class clsInOverload {
 -//     static fnOverload();
--// --- (line: 8) skipped ---
 +//  class clsInOverload {
 +//      static fnOverload();
-+// // --- (line: 8) skipped ---
+ // --- (line: 8) skipped ---

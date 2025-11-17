@@ -4,4 +4,4 @@
 //     new (a: number): SomeOtherType;
 // }
 // 
-// // --- (line: 5) skipped ---
+// --- (line: 5) skipped ---
