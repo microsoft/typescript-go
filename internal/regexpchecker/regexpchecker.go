@@ -978,7 +978,7 @@ func (v *regExpValidator) scanClassRanges() {
 		}
 		atomStart := v.pos
 		atom := v.scanClassAtom()
-		if v.charAtOffset(0) == '-' && v.charAtOffset(1) != ']' {
+		if v.charAtOffset(0) == '-' {
 			v.pos++
 			if v.isClassContentExit(v.charAtOffset(0)) {
 				return
