@@ -106,10 +106,18 @@ func utf16Length(s string) int {
 		return 1
 	}
 
-	// Otherwise, count UTF-16 code units from UTF-8 runes
+	// Otherwise, count UTF-16 code units from UTF-8 string
+	sLength := len(s)
 	length := 0
-	for _, r := range s {
-		length += charSize(r)
+	// ASCII fast path similar to stdlib utf8.RuneCount
+	for ; length < sLength; length++ {
+		if ch := s[length]; ch == 0 || ch >= 0x80 {
+			// non-ASCII slow path, count from runes
+			for _, r := range s[length:] {
+				length += charSize(r)
+			}
+			return length
+		}
 	}
 	return length
 }
