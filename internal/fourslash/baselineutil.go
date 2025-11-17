@@ -51,8 +51,6 @@ func getBaselineExtension(command string) string {
 		return "baseline"
 	case "Auto Imports":
 		return "baseline.md"
-	case "findAllReferences", "goToDefinition", "findRenameLocations":
-		return "baseline.jsonc"
 	default:
 		return "baseline.jsonc"
 	}

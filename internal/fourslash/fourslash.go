@@ -2763,3 +2763,62 @@ func isLibFile(fileName string) bool {
 }
 
 var AnyTextEdits *[]*lsproto.TextEdit
+
+func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNames ...string) {
+	markers := f.lookupMarkersOrGetRanges(t, markerNames)
+
+	for _, markerOrRange := range markers {
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.ImplementationParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentImplementationInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for implementation request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for implementation request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected implementation response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected implementation response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		// Strada did not allow for LocationLinks, so we convert them to Locations here.
+		// We also don't include the origin selection range in the baselines for the same reason.
+		var resultAsLocations []lsproto.Location
+		if result.Locations != nil {
+			resultAsLocations = *result.Locations
+		} else if result.Location != nil {
+			resultAsLocations = []lsproto.Location{*result.Location}
+		} else if result.DefinitionLinks != nil {
+			var originRange *lsproto.Range
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				if originRange != nil && originRange != link.OriginSelectionRange {
+					panic("multiple different origin ranges in definition links")
+				}
+				originRange = link.OriginSelectionRange
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
+		}
+		f.addResultToBaseline(t, "goToImplementation", f.getBaselineForLocationsWithFileContents(
+			resultAsLocations,
+			baselineFourslashLocationsOptions{
+				marker:     markerOrRange,
+				markerName: "/*GOTO IMPL*/",
+			},
+		))
+	}
+}
