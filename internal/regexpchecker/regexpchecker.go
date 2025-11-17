@@ -1127,8 +1127,6 @@ func (v *regExpValidator) scanClassSetExpression() {
 			expressionMayContainStrings = v.mayContainStrings
 			v.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 			return
-		} else {
-			v.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, v.pos, 1, string(ch))
 		}
 	default:
 		if isCharacterComplement && v.mayContainStrings {
