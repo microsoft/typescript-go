@@ -20,7 +20,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual string) {
+const (
+	autoImportsCmd              baselineCommand = "Auto Imports"
+	documentHighlightsCmd       baselineCommand = "documentHighlights"
+	findAllReferencesCmd        baselineCommand = "findAllReferences"
+	goToDefinitionCmd           baselineCommand = "goToDefinition"
+	goToImplementationCmd       baselineCommand = "goToImplementation"
+	goToTypeDefinitionCmd       baselineCommand = "goToType"
+	inlayHintsCmd               baselineCommand = "Inlay Hints"
+	nonSuggestionDiagnosticsCmd baselineCommand = "Syntax and Semantic Diagnostics"
+	quickInfoCmd                baselineCommand = "QuickInfo"
+	renameCmd                   baselineCommand = "findRenameLocations"
+	signatureHelpCmd            baselineCommand = "SignatureHelp"
+	smartSelectionCmd           baselineCommand = "Smart Selection"
+)
+
+type baselineCommand string
+
+func (f *FourslashTest) addResultToBaseline(t *testing.T, command baselineCommand, actual string) {
 	b, ok := f.baselines[command]
 	if !ok {
 		f.baselines[command] = &strings.Builder{}
@@ -29,10 +46,10 @@ func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual
 	if b.Len() != 0 {
 		b.WriteString("\n\n\n\n")
 	}
-	b.WriteString(`// === ` + command + " ===\n" + actual)
+	b.WriteString(`// === ` + string(command) + " ===\n" + actual)
 }
 
-func (f *FourslashTest) writeToBaseline(command string, content string) {
+func (f *FourslashTest) writeToBaseline(command baselineCommand, content string) {
 	b, ok := f.baselines[command]
 	if !ok {
 		f.baselines[command] = &strings.Builder{}
@@ -41,35 +58,35 @@ func (f *FourslashTest) writeToBaseline(command string, content string) {
 	b.WriteString(content)
 }
 
-func getBaselineFileName(t *testing.T, command string) string {
+func getBaselineFileName(t *testing.T, command baselineCommand) string {
 	return getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
 }
 
-func getBaselineExtension(command string) string {
+func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case "QuickInfo", "SignatureHelp", "Smart Selection", "Inlay Hints", "Syntax and Semantic Diagnostics":
+	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd:
 		return "baseline"
-	case "Auto Imports":
+	case autoImportsCmd:
 		return "baseline.md"
 	default:
 		return "baseline.jsonc"
 	}
 }
 
-func getBaselineOptions(command string, testPath string) baseline.Options {
-	subfolder := "fourslash/" + normalizeCommandName(command)
+func getBaselineOptions(command baselineCommand, testPath string) baseline.Options {
+	subfolder := "fourslash/" + normalizeCommandName(string(command))
 	if !isSubmoduleTest(testPath) {
 		return baseline.Options{
 			Subfolder: subfolder,
 		}
 	}
 	switch command {
-	case "Smart Selection":
+	case smartSelectionCmd:
 		return baseline.Options{
 			Subfolder:   subfolder,
 			IsSubmodule: true,
 		}
-	case "findRenameLocations":
+	case renameCmd:
 		return baseline.Options{
 			Subfolder:   subfolder,
 			IsSubmodule: true,
@@ -98,7 +115,7 @@ func getBaselineOptions(command string, testPath string) baseline.Options {
 					matches := commandPrefix.FindStringSubmatch(line)
 					if len(matches) > 0 {
 						commandName := matches[1]
-						if commandName == command {
+						if commandName == string(command) {
 							isInCommand = true
 						} else {
 							isInCommand = false
@@ -112,7 +129,7 @@ func getBaselineOptions(command string, testPath string) baseline.Options {
 				return strings.Join(commandLines, "\n")
 			},
 		}
-	case "Inlay Hints":
+	case inlayHintsCmd:
 		return baseline.Options{
 			Subfolder:   subfolder,
 			IsSubmodule: true,
@@ -131,7 +148,7 @@ func getBaselineOptions(command string, testPath string) baseline.Options {
 					matches := commandPrefix.FindStringSubmatch(line)
 					if len(matches) > 0 {
 						commandName := matches[1]
-						if commandName == command {
+						if commandName == string(command) {
 							isInCommand = true
 						} else {
 							isInCommand = false

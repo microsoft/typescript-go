@@ -43,7 +43,7 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData     *TestData // !!! consolidate test files from test data and script info
-	baselines    map[string]*strings.Builder
+	baselines    map[baselineCommand]*strings.Builder
 	rangesByText *collections.MultiMap[string, *RangeMarker]
 
 	scriptInfos map[string]*scriptInfo
@@ -218,7 +218,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
-		baselines:       make(map[string]*strings.Builder),
+		baselines:       make(map[baselineCommand]*strings.Builder),
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
@@ -1249,7 +1249,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			}
 		}
 
-		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, findAllReferencesCmd, f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*FIND ALL REFS*/",
 		}))
@@ -1317,7 +1317,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			}
 		}
 
-		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, goToDefinitionCmd, f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
 			marker:             markerOrRange,
 			markerName:         "/*GOTO DEF*/",
 			additionalLocation: additionalLocation,
@@ -1372,7 +1372,7 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 			})
 		}
 
-		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, goToTypeDefinitionCmd, f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*GOTO TYPE*/",
 		}))
@@ -1435,9 +1435,9 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		return result
 	}
 
-	f.addResultToBaseline(t, "QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	f.addResultToBaseline(t, quickInfoCmd, annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
-		f.writeToBaseline("QuickInfo", jsonStr)
+		f.writeToBaseline(quickInfoCmd, jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
@@ -1550,9 +1550,9 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		return result
 	}
 
-	f.addResultToBaseline(t, "SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
+	f.addResultToBaseline(t, signatureHelpCmd, annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
-		f.writeToBaseline("SignatureHelp", jsonStr)
+		f.writeToBaseline(signatureHelpCmd, jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
@@ -1698,7 +1698,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 			selectionRange = selectionRange.Parent
 		}
 	}
-	f.addResultToBaseline(t, "Smart Selection", strings.TrimSuffix(result.String(), "\n"))
+	f.addResultToBaseline(t, smartSelectionCmd, strings.TrimSuffix(result.String(), "\n"))
 }
 
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
@@ -1771,7 +1771,7 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 		}
 
 		// Add result to baseline
-		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, documentHighlightsCmd, f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*HIGHLIGHTS*/",
 		}))
@@ -2165,7 +2165,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			t.Fatalf(prefix+"Unexpected response type for completion request for autoimports: %T", resMsg.AsResponse().Result)
 		}
 
-		f.writeToBaseline("Auto Imports", "// === Auto Imports === \n")
+		f.writeToBaseline(autoImportsCmd, "// === Auto Imports === \n")
 
 		fileContent, ok := f.vfs.ReadFile(f.activeFilename)
 		if !ok {
@@ -2175,7 +2175,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		marker := f.testData.MarkerPositions[markerName]
 		ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
 		lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
-		f.writeToBaseline("Auto Imports", (codeFence(
+		f.writeToBaseline(autoImportsCmd, (codeFence(
 			lang,
 			"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
 		)))
@@ -2187,7 +2187,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		var list []*lsproto.CompletionItem
 		if result.Items == nil || len(*result.Items) == 0 {
 			if result.List == nil || result.List.Items == nil || len(result.List.Items) == 0 {
-				f.writeToBaseline("Auto Imports", "no autoimport completions found"+"\n\n")
+				f.writeToBaseline(autoImportsCmd, "no autoimport completions found"+"\n\n")
 
 				continue
 			}
@@ -2233,7 +2233,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			for _, change := range allChanges {
 				newFileContent = newFileContent[:converters.LineAndCharacterToPosition(currentFile, change.Range.Start)] + change.NewText + newFileContent[converters.LineAndCharacterToPosition(currentFile, change.Range.End):]
 			}
-			f.writeToBaseline("Auto Imports", codeFence(lang, newFileContent)+"\n\n")
+			f.writeToBaseline(autoImportsCmd, codeFence(lang, newFileContent)+"\n\n")
 		}
 	}
 }
@@ -2348,10 +2348,7 @@ func (f *FourslashTest) verifyBaselineRename(
 			baselineResult = baselineFileContent
 		}
 
-		f.addResultToBaseline(t,
-			"findRenameLocations",
-			baselineResult,
-		)
+		f.addResultToBaseline(t, renameCmd, baselineResult)
 	}
 }
 
@@ -2502,7 +2499,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		annotations = append(annotations, "=== No inlay hints ===")
 	}
 
-	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
+	f.addResultToBaseline(t, inlayHintsCmd, strings.Join(annotations, "\n\n"))
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
@@ -2588,7 +2585,7 @@ func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
 		return strings.Compare(a.UnitName, b.UnitName)
 	})
 	result := tsbaseline.GetErrorBaseline(t, files, diagnostics, compareDiagnostics, false /*pretty*/)
-	f.addResultToBaseline(t, "Syntax and Semantic Diagnostics", result)
+	f.addResultToBaseline(t, nonSuggestionDiagnosticsCmd, result)
 }
 
 type fourslashDiagnostic struct {
@@ -2813,7 +2810,7 @@ func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNam
 				}
 			})
 		}
-		f.addResultToBaseline(t, "goToImplementation", f.getBaselineForLocationsWithFileContents(
+		f.addResultToBaseline(t, goToImplementationCmd, f.getBaselineForLocationsWithFileContents(
 			resultAsLocations,
 			baselineFourslashLocationsOptions{
 				marker:     markerOrRange,
