@@ -1,0 +1,11 @@
+--- old.goToDefinitionShorthandProperty03.baseline.jsonc
++++ new.goToDefinitionShorthandProperty03.baseline.jsonc
+@@= skipped -6, +6 lines =@@
+ //     y
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionShorthandProperty03.ts ===
+ // var x = {

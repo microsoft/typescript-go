@@ -1,0 +1,11 @@
+--- old.goToImplementationInterfaceMethod_10.baseline.jsonc
++++ new.goToImplementationInterfaceMethod_10.baseline.jsonc
+@@= skipped -30, +30 lines =@@
+ // 	 x.hello();
+ // }
+
++
++
+ // === goToImplementation ===
+ // === /goToImplementationInterfaceMethod_10.ts ===
+ // --- (line: 11) skipped ---

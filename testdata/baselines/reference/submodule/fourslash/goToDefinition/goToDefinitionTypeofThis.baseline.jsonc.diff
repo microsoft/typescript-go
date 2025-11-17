@@ -1,0 +1,20 @@
+--- old.goToDefinitionTypeofThis.baseline.jsonc
++++ new.goToDefinitionTypeofThis.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+ //     get self(this: number) { type X = typeof this; }
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionTypeofThis.ts ===
+ // function f(this: number) {
+@@= skipped -9, +11 lines =@@
+ //     constructor() { type X = typeof /*GOTO DEF*/this; }
+ //     get self(this: number) { type X = typeof this; }
+ // }
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionTypeofThis.ts ===

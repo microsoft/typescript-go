@@ -1,0 +1,29 @@
+--- old.goToDefinitionLabels.baseline.jsonc
++++ new.goToDefinitionLabels.baseline.jsonc
+@@= skipped -8, +8 lines =@@
+ //     }
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionLabels.ts ===
+ // label1: while (true) {
+@@= skipped -11, +13 lines =@@
+ //     }
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionLabels.ts ===
+ // [|label1|]: while (true) {
+@@= skipped -10, +12 lines =@@
+ //         continue unknownLabel;
+ //     }
+ // }
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionLabels.ts ===

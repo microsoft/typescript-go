@@ -1,0 +1,13 @@
+--- old.definitionNameOnEnumMember.baseline.jsonc
++++ new.definitionNameOnEnumMember.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /definitionNameOnEnumMember.ts ===
+ // enum e {
+ //     firstMember,
+ //     secondMember,
+ //     [|thirdMember|]
+ // }
+-// var enumMember = e./*GOTO DEF POS*/thirdMember;
++// var enumMember = e./*GOTO DEF*/thirdMember;

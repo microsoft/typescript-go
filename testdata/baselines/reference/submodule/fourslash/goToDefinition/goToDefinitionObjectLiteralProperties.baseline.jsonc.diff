@@ -1,0 +1,80 @@
+--- old.goToDefinitionObjectLiteralProperties.baseline.jsonc
++++ new.goToDefinitionObjectLiteralProperties.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties.ts ===
+ // var o = {
+ //     [|value|]: 0,
+@@= skipped -7, +7 lines =@@
+ //     es6StyleMethod() { }
+ // };
+ // 
+-// o./*GOTO DEF POS*/value;
++// o./*GOTO DEF*/value;
+ // o.getter;
+ // o.setter;
+ // o.method;
+ // o.es6StyleMethod;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties.ts ===
+ // var o = {
+ //     value: 0,
+@@= skipped -17, +19 lines =@@
+ // };
+ // 
+ // o.value;
+-// o./*GOTO DEF POS*/getter;
++// o./*GOTO DEF*/getter;
+ // o.setter;
+ // o.method;
+ // o.es6StyleMethod;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties.ts ===
+ // var o = {
+ //     value: 0,
+@@= skipped -17, +19 lines =@@
+ // 
+ // o.value;
+ // o.getter;
+-// o./*GOTO DEF POS*/setter;
++// o./*GOTO DEF*/setter;
+ // o.method;
+ // o.es6StyleMethod;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties.ts ===
+ // var o = {
+ //     value: 0,
+@@= skipped -17, +19 lines =@@
+ // o.value;
+ // o.getter;
+ // o.setter;
+-// o./*GOTO DEF POS*/method;
++// o./*GOTO DEF*/method;
+ // o.es6StyleMethod;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties.ts ===
+ // var o = {
+ //     value: 0,
+@@= skipped -17, +19 lines =@@
+ // o.getter;
+ // o.setter;
+ // o.method;
+-// o./*GOTO DEF POS*/es6StyleMethod;
++// o./*GOTO DEF*/es6StyleMethod;

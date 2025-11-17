@@ -1,0 +1,80 @@
+--- old.goToDefinitionDifferentFile.baseline.jsonc
++++ new.goToDefinitionDifferentFile.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionDifferentFile_Definition.ts ===
+ // var [|remoteVariable|];
+ // function remoteFunction() { }
+@@= skipped -6, +6 lines =@@
+ // module remoteModule{ export var foo = 1;}
+
+ // === /goToDefinitionDifferentFile_Consumption.ts ===
+-// /*GOTO DEF POS*/remoteVariable = 1;
++// /*GOTO DEF*/remoteVariable = 1;
+ // remoteFunction();
+ // var foo = new remoteClass();
+ // class fooCls implements remoteInterface { }
+ // var fooVar = remoteModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionDifferentFile_Definition.ts ===
+ // var remoteVariable;
+ // function [|remoteFunction|]() { }
+@@= skipped -16, +18 lines =@@
+
+ // === /goToDefinitionDifferentFile_Consumption.ts ===
+ // remoteVariable = 1;
+-// /*GOTO DEF POS*/remoteFunction();
++// /*GOTO DEF*/remoteFunction();
+ // var foo = new remoteClass();
+ // class fooCls implements remoteInterface { }
+ // var fooVar = remoteModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionDifferentFile_Definition.ts ===
+ // var remoteVariable;
+ // function remoteFunction() { }
+@@= skipped -16, +18 lines =@@
+ // === /goToDefinitionDifferentFile_Consumption.ts ===
+ // remoteVariable = 1;
+ // remoteFunction();
+-// var foo = new /*GOTO DEF POS*/remoteClass();
++// var foo = new /*GOTO DEF*/remoteClass();
+ // class fooCls implements remoteInterface { }
+ // var fooVar = remoteModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionDifferentFile_Definition.ts ===
+ // var remoteVariable;
+ // function remoteFunction() { }
+@@= skipped -16, +18 lines =@@
+ // remoteVariable = 1;
+ // remoteFunction();
+ // var foo = new remoteClass();
+-// class fooCls implements /*GOTO DEF POS*/remoteInterface { }
++// class fooCls implements /*GOTO DEF*/remoteInterface { }
+ // var fooVar = remoteModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionDifferentFile_Definition.ts ===
+ // var remoteVariable;
+ // function remoteFunction() { }
+@@= skipped -16, +18 lines =@@
+ // remoteFunction();
+ // var foo = new remoteClass();
+ // class fooCls implements remoteInterface { }
+-// var fooVar = /*GOTO DEF POS*/remoteModule.foo;
++// var fooVar = /*GOTO DEF*/remoteModule.foo;

@@ -1,0 +1,20 @@
+// === goToImplementation ===
+// === /goToImplementationInterface_01.ts ===
+// interface Fo/*GOTO IMPL*/o { hello(): void }
+// 
+// class [|SuperBar|] implements Foo {
+//     hello () {}
+// }
+// 
+// abstract class [|AbstractBar|] implements Foo {
+//     abstract hello (): void;
+// }
+// 
+// class [|Bar|] extends SuperBar {
+// }
+// 
+// class [|NotAbstractBar|] extends AbstractBar {
+//     hello () {}
+// }
+// 
+// // --- (line: 18) skipped ---

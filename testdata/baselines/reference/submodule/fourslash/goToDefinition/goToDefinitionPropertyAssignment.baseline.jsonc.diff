@@ -1,0 +1,11 @@
+--- old.goToDefinitionPropertyAssignment.baseline.jsonc
++++ new.goToDefinitionPropertyAssignment.baseline.jsonc
+@@= skipped -6, +6 lines =@@
+ // 
+ // Component.displayName
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionPropertyAssignment.ts ===
+ // export const Component = () => { return "OK"}

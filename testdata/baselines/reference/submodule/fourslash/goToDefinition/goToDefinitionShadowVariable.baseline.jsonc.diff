@@ -1,0 +1,12 @@
+--- old.goToDefinitionShadowVariable.baseline.jsonc
++++ new.goToDefinitionShadowVariable.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionShadowVariable.ts ===
+ // var shadowVariable = "foo";
+ // function shadowVariableTestModule() {
+ //     var [|shadowVariable|];
+-//     /*GOTO DEF POS*/shadowVariable = 1;
++//     /*GOTO DEF*/shadowVariable = 1;
+ // }

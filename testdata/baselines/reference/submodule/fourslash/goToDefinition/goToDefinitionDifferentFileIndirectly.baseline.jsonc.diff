@@ -1,0 +1,80 @@
+--- old.goToDefinitionDifferentFileIndirectly.baseline.jsonc
++++ new.goToDefinitionDifferentFileIndirectly.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /Remote2.ts ===
+ // var [|rem2Var|];
+ // function rem2Fn() { }
+@@= skipped -6, +6 lines =@@
+ // module rem2Mod { export var foo; }
+
+ // === /Definition.ts ===
+-// /*GOTO DEF POS*/rem2Var = 1;
++// /*GOTO DEF*/rem2Var = 1;
+ // rem2Fn();
+ // var rem2foo = new rem2Cls();
+ // class rem2fooCls implements rem2Int { }
+ // var rem2fooVar = rem2Mod.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /Remote2.ts ===
+ // var rem2Var;
+ // function [|rem2Fn|]() { }
+@@= skipped -16, +18 lines =@@
+
+ // === /Definition.ts ===
+ // rem2Var = 1;
+-// /*GOTO DEF POS*/rem2Fn();
++// /*GOTO DEF*/rem2Fn();
+ // var rem2foo = new rem2Cls();
+ // class rem2fooCls implements rem2Int { }
+ // var rem2fooVar = rem2Mod.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /Remote2.ts ===
+ // var rem2Var;
+ // function rem2Fn() { }
+@@= skipped -16, +18 lines =@@
+ // === /Definition.ts ===
+ // rem2Var = 1;
+ // rem2Fn();
+-// var rem2foo = new /*GOTO DEF POS*/rem2Cls();
++// var rem2foo = new /*GOTO DEF*/rem2Cls();
+ // class rem2fooCls implements rem2Int { }
+ // var rem2fooVar = rem2Mod.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /Remote2.ts ===
+ // var rem2Var;
+ // function rem2Fn() { }
+@@= skipped -16, +18 lines =@@
+ // rem2Var = 1;
+ // rem2Fn();
+ // var rem2foo = new rem2Cls();
+-// class rem2fooCls implements /*GOTO DEF POS*/rem2Int { }
++// class rem2fooCls implements /*GOTO DEF*/rem2Int { }
+ // var rem2fooVar = rem2Mod.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /Remote2.ts ===
+ // var rem2Var;
+ // function rem2Fn() { }
+@@= skipped -16, +18 lines =@@
+ // rem2Fn();
+ // var rem2foo = new rem2Cls();
+ // class rem2fooCls implements rem2Int { }
+-// var rem2fooVar = /*GOTO DEF POS*/rem2Mod.foo;
++// var rem2fooVar = /*GOTO DEF*/rem2Mod.foo;

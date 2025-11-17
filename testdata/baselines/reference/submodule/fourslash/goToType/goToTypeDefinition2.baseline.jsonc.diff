@@ -1,0 +1,13 @@
+--- old.goToTypeDefinition2.baseline.jsonc
++++ new.goToTypeDefinition2.baseline.jsonc
+@@= skipped -3, +3 lines =@@
+ //     p;
+ // }
+ // type propertyType = I1;
+-// interface I2 {
+-//     property: propertyType;
+-// }
++// // --- (line: 5) skipped ---
+
+ // === /goToTypeDefinition2_Consumption.ts ===
+ // var i2: I2;

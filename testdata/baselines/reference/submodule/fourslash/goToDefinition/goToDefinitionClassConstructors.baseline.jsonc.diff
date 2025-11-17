@@ -1,0 +1,42 @@
+--- old.goToDefinitionClassConstructors.baseline.jsonc
++++ new.goToDefinitionClassConstructors.baseline.jsonc
+@@= skipped -12, +12 lines =@@
+ // import { Derived } from './definitions'
+ // const derived = new /*GOTO DEF*/[|Derived|](cArg)
+
++
++
+ // === goToDefinition ===
+ // === /defInSameFile.ts ===
+ // import { Base } from './definitions'
+@@= skipped -15, +17 lines =@@
+ // }
+ // 
+ // export class Derived extends Base {
+-// --- (line: 6) skipped ---
++// // --- (line: 6) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /hasConstructor.ts ===
+@@= skipped -11, +13 lines =@@
+ // }
+ // const hasConstructor = new /*GOTO DEF*/HasConstructor(cArg)
+
++
++
+ // === goToDefinition ===
+ // === /definitions.ts ===
+ // export class [|Base|] {
+@@= skipped -7, +9 lines =@@
+ // }
+ // 
+ // export class Derived extends Base {
+-//     readonly email = this.cArg.getByLabel('Email')
+-//     readonly password =  this.cArg.getByLabel('Password')
+-// }
++// // --- (line: 6) skipped ---
+
+ // === /defInSameFile.ts ===
+ // import { Base } from './definitions'

@@ -1,0 +1,10 @@
+--- old.goToImplementationInterface_01.baseline.jsonc
++++ new.goToImplementationInterface_01.baseline.jsonc
+@@= skipped -16, +16 lines =@@
+ //     hello () {}
+ // }
+ // 
+-// var x = new SuperBar();
+-// var y: SuperBar = new SuperBar();
+-// var z: AbstractBar = new NotAbstractBar();
++// // --- (line: 18) skipped ---

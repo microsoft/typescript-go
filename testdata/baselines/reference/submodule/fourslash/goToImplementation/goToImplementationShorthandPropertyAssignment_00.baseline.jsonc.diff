@@ -1,0 +1,34 @@
+--- old.goToImplementationShorthandPropertyAssignment_00.baseline.jsonc
++++ new.goToImplementationShorthandPropertyAssignment_00.baseline.jsonc
+@@= skipped -13, +13 lines =@@
+ //     someFunction() {}
+ // }
+ // 
+-// class Foo {
+-// 
+-// --- (line: 25) skipped ---
++// class [|Foo|] {
++// 
++// }
++// 
++// // --- (line: 27) skipped ---
++
++
+
+ // === goToImplementation ===
+ // === /goToImplementationShorthandPropertyAssignment_00.ts ===
+-// --- (line: 19) skipped ---
++// --- (line: 9) skipped ---
++//     Foo: FooConstructor;
++// }
++// 
++// var x = class [|Foo|] {
++//     createBarInClassExpression(): Bar {
++//         return {
++//             Foo
++//         };
++//     }
++// 
+ //     someFunction() {}
+ // }
+ // 

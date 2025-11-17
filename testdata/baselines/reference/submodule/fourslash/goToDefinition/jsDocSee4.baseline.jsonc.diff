@@ -1,0 +1,55 @@
+--- old.jsDocSee4.baseline.jsonc
++++ new.jsDocSee4.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /jsDocSee4.ts ===
+ // class [|A|] {
+ //     foo () { }
+ // }
+ // declare const a: A;
+ // /**
+-//  * @see {/*GOTO DEF POS*/A#foo}
++//  * @see {/*GOTO DEF*/A#foo}
+ //  */
+ // const t1 = 1
+ // /**
+-// --- (line: 10) skipped ---
+-
+-// === getDefinitionAtPosition ===
++// // --- (line: 10) skipped ---
++
++
++
++// === goToDefinition ===
+ // === /jsDocSee4.ts ===
+ // class A {
+ //     foo () { }
+@@= skipped -21, +23 lines =@@
+ //  */
+ // const t1 = 1
+ // /**
+-//  * @see {/*GOTO DEF POS*/a.foo()}
++//  * @see {/*GOTO DEF*/a.foo()}
+ //  */
+ // const t2 = 1
+ // /**
+-// --- (line: 14) skipped ---
+-
+-// === getDefinitionAtPosition ===
++// // --- (line: 14) skipped ---
++
++
++
++// === goToDefinition ===
+ // === /jsDocSee4.ts ===
+ // class A {
+ //     foo () { }
+@@= skipped -21, +23 lines =@@
+ //  */
+ // const t2 = 1
+ // /**
+-//  * @see {@link /*GOTO DEF POS*/a.foo()}
++//  * @see {@link /*GOTO DEF*/a.foo()}
+ //  */
+ // const t3 = 1

@@ -1,0 +1,11 @@
+--- old.goToDefinitionApparentTypeProperties.baseline.jsonc
++++ new.goToDefinitionApparentTypeProperties.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+ // o./*GOTO DEF*/myObjectMethod();
+ // o["myObjectMethod"]();
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionApparentTypeProperties.ts ===
+ // interface Number {

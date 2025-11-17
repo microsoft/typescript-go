@@ -1,0 +1,20 @@
+--- old.tsxGoToDefinitionClasses.baseline.jsonc
++++ new.tsxGoToDefinitionClasses.baseline.jsonc
+@@= skipped -13, +13 lines =@@
+ // var y = <MyClass foo= 'hello' />;
+ // var z = <MyClass wrong= 'hello' />;
+
++
++
+ // === goToDefinition ===
+ // === /file.tsx ===
+ // --- (line: 4) skipped ---
+@@= skipped -12, +14 lines =@@
+ // var x = <MyClass />;
+ // var y = <MyClass f/*GOTO DEF*/oo= 'hello' />;
+ // var z = <MyClass wrong= 'hello' />;
++
++
+
+ // === goToDefinition ===
+ // === /file.tsx ===

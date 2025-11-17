@@ -1,0 +1,11 @@
+--- old.goToDefinitionObjectLiteralProperties1.baseline.jsonc
++++ new.goToDefinitionObjectLiteralProperties1.baseline.jsonc
+@@= skipped -11, +11 lines =@@
+ //    propx: 10
+ // })
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionObjectLiteralProperties1.ts ===
+ // interface PropsBag {

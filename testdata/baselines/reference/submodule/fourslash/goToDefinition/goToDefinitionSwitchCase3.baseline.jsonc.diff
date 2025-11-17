@@ -1,0 +1,11 @@
+--- old.goToDefinitionSwitchCase3.baseline.jsonc
++++ new.goToDefinitionSwitchCase3.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+ //   };
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionSwitchCase3.ts ===
+ // switch (null) {

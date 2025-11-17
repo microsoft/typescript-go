@@ -1,0 +1,17 @@
+--- old.goToImplementationInterfaceMethod_01.baseline.jsonc
++++ new.goToImplementationInterfaceMethod_01.baseline.jsonc
+@@= skipped -13, +13 lines =@@
+ // 
+ // whatever(new Bar());
+
++
++
+ // === goToImplementation ===
+ // === /goToImplementationInterfaceMethod_01.ts ===
+ // interface Foo {
+@@= skipped -12, +14 lines =@@
+ //     public sure() {}
+ // }
+ // 
+-// --- (line: 11) skipped ---
++// // --- (line: 11) skipped ---

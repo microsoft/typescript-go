@@ -1,0 +1,430 @@
+--- old.goToTypeDefinitionModifiers.baseline.jsonc
++++ new.goToTypeDefinitionModifiers.baseline.jsonc
+@@= skipped -3, +3 lines =@@
+ // 
+ //     private z: string;
+ // 
+-//     private y: A;
+-// 
+-//     readonly x: string;
+-// 
+-//     async a() {  }
+-// 
+-//     override b() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
++// // --- (line: 5) skipped ---
++
++
+
+ // === goToType ===
+ // === /a.ts ===
+@@= skipped -19, +10 lines =@@
+ // 
+ //     private z: string;
+ // 
+-//     private y: A;
+-// 
+-//     readonly x: string;
+-// 
+-//     async a() {  }
+-// 
+-//     override b() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
++// // --- (line: 5) skipped ---
++
++
+
+ // === goToType ===
+ // === /a.ts ===
+@@= skipped -21, +12 lines =@@
+ // 
+ //     private y: A;
+ // 
+-// --- (line: 7) skipped ---
++// // --- (line: 7) skipped ---
+
+
+
+@@= skipped -12, +12 lines =@@
+ // 
+ //     private y: A;
+ // 
+-// --- (line: 7) skipped ---
++// // --- (line: 7) skipped ---
+
+
+
+@@= skipped -14, +14 lines =@@
+ // 
+ //     readonly x: string;
+ // 
+-//     async a() {  }
+-// 
+-//     override b() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
++// // --- (line: 9) skipped ---
++
++
+
+ // === goToType ===
+ // === /a.ts ===
+@@= skipped -19, +14 lines =@@
+ // 
+ //     readonly x: string;
+ // 
+-//     async a() {  }
+-// 
+-//     override b() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
++// // --- (line: 9) skipped ---
++
++
+
+ // === goToType ===
+ // === /a.ts ===
+@@= skipped -19, +14 lines =@@
+ // 
+ //     async a() {  }
+ // 
+-// --- (line: 11) skipped ---
++// // --- (line: 11) skipped ---
+
+
+
+@@= skipped -14, +14 lines =@@
+ // 
+ //     async a() {  }
+ // 
+-// --- (line: 11) skipped ---
++// // --- (line: 11) skipped ---
+
+
+
+ // === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
+ // === /a.ts ===
+ // --- (line: 5) skipped ---
+ // 
+@@= skipped -40, +14 lines =@@
+ // 
+ //     override b() {}
+ // 
+-// --- (line: 13) skipped ---
++// // --- (line: 13) skipped ---
++
++
+
+ // === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
+ // === /a.ts ===
+ // --- (line: 5) skipped ---
+ // 
+@@= skipped -38, +14 lines =@@
+ // 
+ //     override b() {}
+ // 
+-// --- (line: 13) skipped ---
+-
+-// === goToType ===
+-// === /a.ts ===
+-// --- (line: 7) skipped ---
+-// 
+-//     async a() {  }
+-// 
+-//     /*GOTO TYPE*/override [|b|]() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
+-
+-// === goToType ===
+-// === /a.ts ===
+-// --- (line: 7) skipped ---
+-// 
+-//     async a() {  }
+-// 
+-//     override [|b|]/*GOTO TYPE*/() {}
+-// 
+-//     public async c() { }
+-// }
+-// 
+-// export function foo() { }
+-
+-// === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
++// // --- (line: 13) skipped ---
++
++
++
++// === goToType ===
++// === /a.ts ===
++// --- (line: 7) skipped ---
++// 
++//     async a() {  }
++// 
++//     /*GOTO TYPE*/override b() {}
++// 
++//     public async c() { }
++// }
++// 
++// export function foo() { }
++
++
++
++// === goToType ===
++// === /a.ts ===
++// --- (line: 7) skipped ---
++// 
++//     async a() {  }
++// 
++//     override b/*GOTO TYPE*/() {}
++// 
++//     public async c() { }
++// }
++// 
++// export function foo() { }
++
++
++
++// === goToType ===
+ // === /a.ts ===
+ // --- (line: 9) skipped ---
+ // 
+@@= skipped -65, +45 lines =@@
+ // 
+ // export function foo() { }
+
++
++
+ // === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
+ // === /a.ts ===
+ // --- (line: 9) skipped ---
+ // 
+@@= skipped -37, +13 lines =@@
+ // 
+ // export function foo() { }
+
++
++
+ // === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
+ // === /a.ts ===
+ // --- (line: 9) skipped ---
+ // 
+@@= skipped -37, +13 lines =@@
+ // 
+ // export function foo() { }
+
++
++
+ // === goToType ===
+-// === lib.d.ts ===
+-// --- (line: --) skipped ---
+-// /**
+-//  * Represents the completion of an asynchronous operation
+-//  */
+-// interface [|Promise|]<T> {
+-//     /**
+-//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+-//      * @param onfulfilled The callback to execute when the Promise is resolved.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of which ever callback is executed.
+-//      */
+-//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+-// 
+-//     /**
+-//      * Attaches a callback for only the rejection of the Promise.
+-//      * @param onrejected The callback to execute when the Promise is rejected.
+-//      * @returns A Promise for the completion of the callback.
+-//      */
+-//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+-// }
+-// 
+-// /**
+-//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+-// --- (line: --) skipped ---
+-
+ // === /a.ts ===
+ // --- (line: 9) skipped ---
+ // 
+@@= skipped -37, +13 lines =@@
+ // 
+ // export function foo() { }
+
+-// === goToType ===
+-// === /a.ts ===
+-// --- (line: 12) skipped ---
+-//     public async c() { }
+-// }
+-// 
+-// exp/*GOTO TYPE*/ort function [|foo|]() { }
+-
+-// === goToType ===
+-// === /a.ts ===
+-// --- (line: 12) skipped ---
+-//     public async c() { }
+-// }
+-// 
+-// export function [|foo|]/*GOTO TYPE*/() { }
++
++
++// === goToType ===
++// === /a.ts ===
++// --- (line: 12) skipped ---
++//     public async c() { }
++// }
++// 
++// exp/*GOTO TYPE*/ort function foo() { }
++
++
++
++// === goToType ===
++// === /a.ts ===
++// --- (line: 12) skipped ---
++//     public async c() { }
++// }
++// 
++// export function foo/*GOTO TYPE*/() { }

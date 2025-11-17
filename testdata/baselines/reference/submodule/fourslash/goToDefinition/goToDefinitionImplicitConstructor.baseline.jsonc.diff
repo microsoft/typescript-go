@@ -1,0 +1,10 @@
+--- old.goToDefinitionImplicitConstructor.baseline.jsonc
++++ new.goToDefinitionImplicitConstructor.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionImplicitConstructor.ts ===
+ // class [|ImplicitConstructor|] {
+ // }
+-// var implicitConstructor = new /*GOTO DEF POS*/ImplicitConstructor();
++// var implicitConstructor = new /*GOTO DEF*/ImplicitConstructor();

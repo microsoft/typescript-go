@@ -1,0 +1,35 @@
+--- old.goToDefinitionFunctionOverloads.baseline.jsonc
++++ new.goToDefinitionFunctionOverloads.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+ // functionOverload("123");
+ // functionOverload({});
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionFunctionOverloads.ts ===
+ // function functionOverload(value: number);
+@@= skipped -10, +12 lines =@@
+ // /*GOTO DEF*/functionOverload("123");
+ // functionOverload({});
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionFunctionOverloads.ts ===
+ // function [|functionOverload|](value: number);
+@@= skipped -10, +12 lines =@@
+ // functionOverload("123");
+ // /*GOTO DEF*/functionOverload({});
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionFunctionOverloads.ts ===
+-// function /*GOTO DEF*/functionOverload(value: number);
+-// function functionOverload(value: string);
++// function /*GOTO DEF*/[|functionOverload|](value: number);
++// function [|functionOverload|](value: string);
+ // function [|functionOverload|]() {}
+ // 
+ // functionOverload(123);

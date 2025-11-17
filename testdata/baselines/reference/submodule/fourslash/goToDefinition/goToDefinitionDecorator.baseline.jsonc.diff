@@ -1,0 +1,11 @@
+--- old.goToDefinitionDecorator.baseline.jsonc
++++ new.goToDefinitionDecorator.baseline.jsonc
+@@= skipped -13, +13 lines =@@
+ //     method() {}
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /a.ts ===
+ // function decorator(target) {

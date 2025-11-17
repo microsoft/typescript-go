@@ -1,0 +1,11 @@
+--- old.goToTypeDefinitionModule.baseline.jsonc
++++ new.goToTypeDefinitionModule.baseline.jsonc
+@@= skipped -8, +8 lines =@@
+ // /*GOTO TYPE*/M;
+ // m;
+
++
++
+ // === goToType ===
+ // === /module1.ts ===
+ // module [|M|] {

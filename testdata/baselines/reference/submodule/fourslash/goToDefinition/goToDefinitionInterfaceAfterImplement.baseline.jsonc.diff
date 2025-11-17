@@ -1,0 +1,16 @@
+--- old.goToDefinitionInterfaceAfterImplement.baseline.jsonc
++++ new.goToDefinitionInterfaceAfterImplement.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionInterfaceAfterImplement.ts ===
+ // interface [|sInt|] {
+ //     sVar: number;
+ //     sFn: () => void;
+ // }
+ // 
+-// class iClass implements /*GOTO DEF POS*/sInt {
++// class iClass implements /*GOTO DEF*/sInt {
+ //     public sVar = 1;
+ //     public sFn() {
+ //     }

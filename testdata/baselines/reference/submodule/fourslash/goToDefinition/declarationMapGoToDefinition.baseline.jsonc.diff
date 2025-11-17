@@ -1,0 +1,11 @@
+--- old.declarationMapGoToDefinition.baseline.jsonc
++++ new.declarationMapGoToDefinition.baseline.jsonc
+@@= skipped -5, +5 lines =@@
+ //     otherMethod() {
+ //         if (Math.random() > 0.5) {
+ //             return {x: 42};
+-// --- (line: 7) skipped ---
++// // --- (line: 7) skipped ---
+
+ // === /mymodule.ts ===
+ // import * as mod from "./indexdef";

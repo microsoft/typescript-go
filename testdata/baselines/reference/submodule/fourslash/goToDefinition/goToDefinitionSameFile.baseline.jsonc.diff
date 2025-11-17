@@ -1,0 +1,80 @@
+--- old.goToDefinitionSameFile.baseline.jsonc
++++ new.goToDefinitionSameFile.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+-// === getDefinitionAtPosition ===
++// === goToDefinition ===
+ // === /goToDefinitionSameFile.ts ===
+ // var [|localVariable|];
+ // function localFunction() { }
+@@= skipped -6, +6 lines =@@
+ // module localModule{ export var foo = 1;}
+ // 
+ // 
+-// /*GOTO DEF POS*/localVariable = 1;
++// /*GOTO DEF*/localVariable = 1;
+ // localFunction();
+ // var foo = new localClass();
+ // class fooCls implements localInterface { }
+ // var fooVar = localModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionSameFile.ts ===
+ // var localVariable;
+ // function [|localFunction|]() { }
+@@= skipped -16, +18 lines =@@
+ // 
+ // 
+ // localVariable = 1;
+-// /*GOTO DEF POS*/localFunction();
++// /*GOTO DEF*/localFunction();
+ // var foo = new localClass();
+ // class fooCls implements localInterface { }
+ // var fooVar = localModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionSameFile.ts ===
+ // var localVariable;
+ // function localFunction() { }
+@@= skipped -16, +18 lines =@@
+ // 
+ // localVariable = 1;
+ // localFunction();
+-// var foo = new /*GOTO DEF POS*/localClass();
++// var foo = new /*GOTO DEF*/localClass();
+ // class fooCls implements localInterface { }
+ // var fooVar = localModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionSameFile.ts ===
+ // var localVariable;
+ // function localFunction() { }
+@@= skipped -16, +18 lines =@@
+ // localVariable = 1;
+ // localFunction();
+ // var foo = new localClass();
+-// class fooCls implements /*GOTO DEF POS*/localInterface { }
++// class fooCls implements /*GOTO DEF*/localInterface { }
+ // var fooVar = localModule.foo;
+
+-// === getDefinitionAtPosition ===
++
++
++// === goToDefinition ===
+ // === /goToDefinitionSameFile.ts ===
+ // var localVariable;
+ // function localFunction() { }
+@@= skipped -16, +18 lines =@@
+ // localFunction();
+ // var foo = new localClass();
+ // class fooCls implements localInterface { }
+-// var fooVar = /*GOTO DEF POS*/localModule.foo;
++// var fooVar = /*GOTO DEF*/localModule.foo;

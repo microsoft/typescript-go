@@ -1,0 +1,8 @@
+--- old.goToTypeDefinition4.baseline.jsonc
++++ new.goToTypeDefinition4.baseline.jsonc
+@@= skipped -1, +1 lines =@@
+ // === /bar.ts ===
+ // import { T } from "./foo";
+ // let x: /*GOTO TYPE*/T;
+-
+-
