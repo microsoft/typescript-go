@@ -1,8 +1,0 @@
---- old.declarationMapsOutOfDateMapping.baseline.jsonc
-+++ new.declarationMapsOutOfDateMapping.baseline.jsonc
-@@= skipped -4, +4 lines =@@
- // 
-
- // === /home/src/workspaces/project/index.ts ===
--// import { Foo/*GOTO DEF POS*/ } from "a";
-+// import { Foo/*GOTO DEF*/ } from "a";

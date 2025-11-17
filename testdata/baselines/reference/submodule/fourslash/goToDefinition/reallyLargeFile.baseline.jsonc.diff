@@ -1,12 +1,9 @@
 --- old.reallyLargeFile.baseline.jsonc
 +++ new.reallyLargeFile.baseline.jsonc
-@@= skipped -0, +0 lines =@@
- // === goToDefinition ===
- // === /file.d.ts ===
--// namespace /*GOTO DEF POS*/[|Foo|] {
--// 
--// 
--// 
+@@= skipped -3, +3 lines =@@
+ // 
+ // 
+ // 
 -// 
 -// 
 -// 
@@ -583709,8 +583706,4 @@
 -// 
 -// 
 -// }
-+// namespace /*GOTO DEF*/[|Foo|] {
-+// 
-+// 
-+// 
 +// --- (line: 5) skipped ---

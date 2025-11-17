@@ -1,24 +1,6 @@
 --- old.jsDocSee1.baseline.jsonc
 +++ new.jsDocSee1.baseline.jsonc
-@@= skipped -7, +7 lines =@@
- //         baz: Foo
- //     }
- // }
--// /** @see {/*GOTO DEF POS*/Foo} foooo*/
-+// /** @see {/*GOTO DEF*/Foo} foooo*/
- // const a = ""
- // /** @see {NS.Bar} ns.bar*/
- // const b = ""
-@@= skipped -20, +20 lines =@@
- // }
- // /** @see {Foo} foooo*/
- // const a = ""
--// /** @see {NS./*GOTO DEF POS*/Bar} ns.bar*/
-+// /** @see {NS./*GOTO DEF*/Bar} ns.bar*/
- // const b = ""
- // /** @see Foo f1*/
- // const c = ""
-@@= skipped -14, +14 lines =@@
+@@= skipped -41, +41 lines =@@
  //     foo: string
  // }
  // namespace NS {
@@ -33,24 +15,3 @@
  // const a = ""
  // /** @see {NS.Bar} ns.bar*/
  // const b = ""
--// /** @see /*GOTO DEF POS*/Foo f1*/
-+// /** @see /*GOTO DEF*/Foo f1*/
- // const c = ""
- // /** @see NS.Bar ns.bar*/
- // const d = ""
-@@= skipped -33, +31 lines =@@
- // const b = ""
- // /** @see Foo f1*/
- // const c = ""
--// /** @see NS./*GOTO DEF POS*/Bar ns.bar*/
-+// /** @see NS./*GOTO DEF*/Bar ns.bar*/
- // const d = ""
- // /** @see d dd*/
- // const e = ""
-@@= skipped -14, +14 lines =@@
- // const c = ""
- // /** @see NS.Bar ns.bar*/
- // const [|d|] = ""
--// /** @see /*GOTO DEF POS*/d dd*/
-+// /** @see /*GOTO DEF*/d dd*/
- // const e = ""

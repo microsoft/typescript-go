@@ -7,7 +7,4 @@
 +// class E extends Error {}
  // 
  // /**
--//  * @throws {/*GOTO DEF POS*/E}
-+//  * @throws {/*GOTO DEF*/E}
- //  */
- // function f() {}
+ //  * @throws {/*GOTO DEF*/E}

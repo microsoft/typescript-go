@@ -254,12 +254,14 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 				contextSpanOpening := "<|"
 				contextSpanClosing := "|>"
 				oldGoToDefCommand := "getDefinitionAtPosition"
+				oldGoToDefComment := "/*GOTO DEF POS*/"
 				replacer := strings.NewReplacer(
 					contextSpanOpening, "",
 					contextSpanClosing, "",
 					testFilePrefix, "",
 					serverTestFilePrefix, "",
 					oldGoToDefCommand, string(goToDefinitionCmd),
+					oldGoToDefComment, "/*GOTO DEF*/",
 				)
 				var defIdRegex = regexp.MustCompile(`{\| defId: [0-9]+ \|}`)
 				detailsStr := "// === Details ==="

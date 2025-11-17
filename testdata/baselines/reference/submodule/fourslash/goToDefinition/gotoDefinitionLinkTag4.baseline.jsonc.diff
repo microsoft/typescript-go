@@ -9,8 +9,7 @@
 -
  // === /b.ts ===
  // enum E {
--//     /** {@link /*GOTO DEF POS*/Foo} */
+ //     /** {@link /*GOTO DEF*/Foo} */
 -//     Foo
-+//     /** {@link /*GOTO DEF*/Foo} */
 +//     [|Foo|]
  // }

@@ -1,9 +1,0 @@
---- old.gotoDefinitionSatisfiesTag.baseline.jsonc
-+++ new.gotoDefinitionSatisfiesTag.baseline.jsonc
-@@= skipped -4, +4 lines =@@
- //  * @property {number} a
- //  */
- // 
--// /** @satisfies {/*GOTO DEF POS*/T} comment */
-+// /** @satisfies {/*GOTO DEF*/T} comment */
- // const foo = { a: 1 };

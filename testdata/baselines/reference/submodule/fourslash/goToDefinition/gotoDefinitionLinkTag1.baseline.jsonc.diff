@@ -1,24 +1,6 @@
 --- old.gotoDefinitionLinkTag1.baseline.jsonc
 +++ new.gotoDefinitionLinkTag1.baseline.jsonc
-@@= skipped -7, +7 lines =@@
- //         baz: Foo
- //     }
- // }
--// /** {@link /*GOTO DEF POS*/Foo} foooo*/
-+// /** {@link /*GOTO DEF*/Foo} foooo*/
- // const a = ""
- // /** {@link NS.Bar} ns.bar*/
- // const b = ""
-@@= skipped -20, +20 lines =@@
- // }
- // /** {@link Foo} foooo*/
- // const a = ""
--// /** {@link NS./*GOTO DEF POS*/Bar} ns.bar*/
-+// /** {@link NS./*GOTO DEF*/Bar} ns.bar*/
- // const b = ""
- // /** {@link Foo f1}*/
- // const c = ""
-@@= skipped -14, +14 lines =@@
+@@= skipped -41, +41 lines =@@
  //     foo: string
  // }
  // namespace NS {
@@ -33,30 +15,7 @@
  // const a = ""
  // /** {@link NS.Bar} ns.bar*/
  // const b = ""
--// /** {@link /*GOTO DEF POS*/Foo f1}*/
-+// /** {@link /*GOTO DEF*/Foo f1}*/
- // const c = ""
- // /** {@link NS.Bar ns.bar}*/
- // const d = ""
-@@= skipped -32, +30 lines =@@
- // const b = ""
- // /** {@link Foo f1}*/
- // const c = ""
--// /** {@link NS./*GOTO DEF POS*/Bar ns.bar}*/
-+// /** {@link NS./*GOTO DEF*/Bar ns.bar}*/
- // const d = ""
- // /** {@link d }dd*/
- // const e = ""
-@@= skipped -16, +16 lines =@@
- // const c = ""
- // /** {@link NS.Bar ns.bar}*/
- // const [|d|] = ""
--// /** {@link /*GOTO DEF POS*/d }dd*/
-+// /** {@link /*GOTO DEF*/d }dd*/
- // const e = ""
- // /** @param x {@link Foo} */
- // function foo(x) { }
-@@= skipped -13, +13 lines =@@
+@@= skipped -61, +59 lines =@@
  //     foo: string
  // }
  // namespace NS {
@@ -67,13 +26,6 @@
 
  // --- (line: 15) skipped ---
  // const d = ""
- // /** {@link d }dd*/
- // const e = ""
--// /** @param x {@link /*GOTO DEF POS*/Foo} */
-+// /** @param x {@link /*GOTO DEF*/Foo} */
- // function foo(x) { }
-
-
 @@= skipped -19, +17 lines =@@
  //     foo: string
  // }
@@ -84,6 +36,4 @@
 +// --- (line: 5) skipped ---
 
  // === /bar.ts ===
--// /** {@link /*GOTO DEF POS*/Foo }dd*/
-+// /** {@link /*GOTO DEF*/Foo }dd*/
- // const f = ""
+ // /** {@link /*GOTO DEF*/Foo }dd*/
