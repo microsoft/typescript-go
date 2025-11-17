@@ -1387,13 +1387,12 @@ func forEachExternalModuleToImportFrom(
 	ch *checker.Checker,
 	program *compiler.Program,
 	preferences *lsutil.UserPreferences,
-	useCaseSensitiveFileNames bool,
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
 ) {
 	var excludePatterns []*regexp2.Regexp
 	if preferences.AutoImportFileExcludePatterns != nil {
-		excludePatterns = getIsExcludedPatterns(preferences, useCaseSensitiveFileNames)
+		excludePatterns = getIsExcludedPatterns(preferences, program.UseCaseSensitiveFileNames())
 	}
 
 	forEachExternalModule(
