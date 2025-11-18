@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -276,11 +277,20 @@ func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps di
 			Integer: ptrTo(diagnostic.Code()),
 		},
 		Severity:           &severity,
-		Message:            diagnostic.Message(),
+		Message:            messageChainToString(diagnostic),
 		Source:             ptrTo("ts"),
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}
+}
+
+func messageChainToString(diagnostic *ast.Diagnostic) string {
+	if len(diagnostic.MessageChain()) == 0 {
+		return diagnostic.Message()
+	}
+	var b strings.Builder
+	diagnosticwriter.WriteFlattenedASTDiagnosticMessage(&b, diagnostic, "\n")
+	return b.String()
 }
 
 func ptrToSliceIfNonEmpty[T any](s []T) *[]T {

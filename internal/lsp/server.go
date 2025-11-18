@@ -751,36 +751,28 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		DisablePushDiagnostics: disablePushDiagnostics,
 	})
 
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
-		// handle userPreferences from initializationOptions
-		userPreferences := s.session.NewUserPreferences()
-		userPreferences.Parse(*s.initializeParams.InitializationOptions)
-		s.session.InitializeWithConfig(userPreferences)
-	} else {
-		// request userPreferences if not provided at initialization
-		userPreferences, err := s.RequestConfiguration(ctx)
-		if err != nil {
-			return err
-		}
-		s.session.InitializeWithConfig(userPreferences)
+	userPreferences, err := s.RequestConfiguration(ctx)
+	if err != nil {
+		return err
+	}
+	s.session.InitializeWithConfig(userPreferences)
 
-		_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
-			Registrations: []*lsproto.Registration{
-				{
-					Id:     "typescript-config-watch-id",
-					Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
-					RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
-						Section: &lsproto.StringOrStrings{
-							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
-							Strings: &[]string{"typescript"},
-						},
-					})),
-				},
+	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
+		Registrations: []*lsproto.Registration{
+			{
+				Id:     "typescript-config-watch-id",
+				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
+				RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
+					Section: &lsproto.StringOrStrings{
+						// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
+						Strings: &[]string{"typescript"},
+					},
+				})),
 			},
-		})
-		if err != nil {
-			return fmt.Errorf("failed to register configuration change watcher: %w", err)
-		}
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to register configuration change watcher: %w", err)
 	}
 
 	// !!! temporary.

@@ -2,10 +2,8 @@ package ls
 
 import (
 	"context"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -43,20 +41,4 @@ func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[
 		}
 	}
 	return lspDiagnostics
-}
-
-func messageChainToString(diagnostic *ast.Diagnostic) string {
-	if len(diagnostic.MessageChain()) == 0 {
-		return diagnostic.Message()
-	}
-	var b strings.Builder
-	diagnosticwriter.WriteFlattenedASTDiagnosticMessage(&b, diagnostic, "\n")
-	return b.String()
-}
-
-func ptrToSliceIfNonEmpty[T any](s []T) *[]T {
-	if len(s) == 0 {
-		return nil
-	}
-	return &s
 }
