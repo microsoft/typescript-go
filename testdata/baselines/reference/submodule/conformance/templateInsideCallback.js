@@ -113,7 +113,7 @@ function flatMap(array, iterable = identity) {
 
 
 //// [templateInsideCallback.d.ts]
-export type Call = () ;
+type Call = () => any;
 /**
  * @typedef Oops
  * @template T

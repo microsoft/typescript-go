@@ -20,6 +20,7 @@ type CheckerPool struct {
 	cond                *sync.Cond
 	createCheckersOnce  sync.Once
 	checkers            []*checker.Checker
+	locks               []sync.Mutex
 	inUse               map[*checker.Checker]bool
 	fileAssociations    map[*ast.SourceFile]int
 	requestAssociations map[string]int
@@ -33,6 +34,7 @@ func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg str
 		program:             program,
 		maxCheckers:         maxCheckers,
 		checkers:            make([]*checker.Checker, maxCheckers),
+		locks:               make([]sync.Mutex, maxCheckers),
 		inUse:               make(map[*checker.Checker]bool),
 		requestAssociations: make(map[string]int),
 		log:                 log,
@@ -75,6 +77,12 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return checker, p.createRelease(requestID, index, checker)
 }
 
+// GetCheckerForFileExclusive is the same as GetCheckerForFile but also locks a mutex associated with the checker.
+// Call `done` to free the lock.
+func (p *CheckerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	panic("unimplemented") // implement if used by LS
+}
+
 func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -86,22 +94,32 @@ func (p *CheckerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] 
 	panic("unimplemented")
 }
 
-func (p *CheckerPool) GetAllCheckers(ctx context.Context) ([]*checker.Checker, func()) {
+func (p *CheckerPool) Count() int {
+	return p.maxCheckers
+}
+
+func (p *CheckerPool) ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker)) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	requestID := core.GetRequestID(ctx)
 	if requestID == "" {
-		panic("cannot call GetAllCheckers on a project.checkerPool without a request ID")
+		panic("cannot call ForEachCheckerParallel on a project.checkerPool without a request ID")
 	}
 
 	// A request can only access one checker
 	if c, release := p.getRequestCheckerLocked(requestID); c != nil {
-		return []*checker.Checker{c}, release
+		defer release()
+		cb(0, c)
+		return
 	}
 
+	// TODO: Does this ever work without deadlocking? `p.GetChecker` also tries to lock this mutex.
+	// Should this just be a panic?
 	c, release := p.GetChecker(ctx)
-	return []*checker.Checker{c}, release
+	defer release()
+	cb(0, c)
+	return
 }
 
 func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
@@ -200,7 +218,7 @@ func (p *CheckerPool) isFullLocked() bool {
 func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
 	for i, existing := range p.checkers {
 		if existing == nil {
-			checker := checker.NewChecker(p.program)
+			checker, _ := checker.NewChecker(p.program)
 			p.checkers[i] = checker
 			return checker, i
 		}

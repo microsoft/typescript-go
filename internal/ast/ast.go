@@ -617,6 +617,8 @@ func (n *Node) StatementList() *NodeList {
 		return n.AsBlock().Statements
 	case KindModuleBlock:
 		return n.AsModuleBlock().Statements
+	case KindCaseClause, KindDefaultClause:
+		return n.AsCaseOrDefaultClause().Statements
 	}
 	panic("Unhandled case in Node.StatementList: " + n.Kind.String())
 }
@@ -627,6 +629,15 @@ func (n *Node) Statements() []*Node {
 		return list.Nodes
 	}
 	return nil
+}
+
+func (n *Node) CanHaveStatements() bool {
+	switch n.Kind {
+	case KindSourceFile, KindBlock, KindModuleBlock, KindCaseClause, KindDefaultClause:
+		return true
+	default:
+		return false
+	}
 }
 
 func (n *Node) ModifierFlags() ModifierFlags {
@@ -1038,6 +1049,10 @@ func (n *Node) Statement() *Statement {
 		return n.AsForStatement().Statement
 	case KindForInStatement, KindForOfStatement:
 		return n.AsForInOrOfStatement().Statement
+	case KindWithStatement:
+		return n.AsWithStatement().Statement
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -1068,8 +1083,11 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedExports().Elements
 	case KindObjectBindingPattern, KindArrayBindingPattern:
 		return n.AsBindingPattern().Elements
+	case KindArrayLiteralExpression:
+		return n.AsArrayLiteralExpression().Elements
+	case KindTupleType:
+		return n.AsTupleTypeNode().Elements
 	}
-
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
 
@@ -1081,22 +1099,22 @@ func (n *Node) Elements() []*Node {
 	return nil
 }
 
-func (n *Node) postfixToken() *Node {
+func (n *Node) PostfixToken() *Node {
 	switch n.Kind {
-	case KindEnumMember:
-		return n.AsEnumMember().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
 	case KindMethodDeclaration:
 		return n.AsMethodDeclaration().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	case KindEnumMember:
+		return n.AsEnumMember().PostfixToken
 	case KindGetAccessor:
 		return n.AsGetAccessorDeclaration().PostfixToken
 	case KindSetAccessor:
@@ -1116,7 +1134,7 @@ func (n *Node) QuestionToken() *TokenNode {
 	case KindNamedTupleMember:
 		return n.AsNamedTupleMember().QuestionToken
 	}
-	postfix := n.postfixToken()
+	postfix := n.PostfixToken()
 	if postfix != nil && postfix.Kind == KindQuestionToken {
 		return postfix
 	}
@@ -1161,26 +1179,6 @@ func (n *Node) ClassName() *Node {
 		return n.AsJSDocImplementsTag().ClassName
 	}
 	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
-}
-
-func (n *Node) PostfixToken() *Node {
-	switch n.Kind {
-	case KindParameter:
-		return n.AsParameterDeclaration().QuestionToken
-	case KindMethodDeclaration:
-		return n.AsMethodDeclaration().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	}
-	return nil
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -10759,7 +10757,9 @@ type SourceFile struct {
 	NodeCount                   int
 	TextCount                   int
 	CommonJSModuleIndicator     *Node
-	ExternalModuleIndicator     *Node
+	// If this is the SourceFile itself, then this module was "forced"
+	// to be an external module (previously "true").
+	ExternalModuleIndicator *Node
 
 	// Fields set by binder
 
@@ -11045,7 +11045,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 			exportClause := node.AsExportDeclaration().ExportClause
 			if exportClause != nil {
 				if IsNamedExports(exportClause) {
-					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+					for _, element := range exportClause.Elements() {
 						visit(element)
 					}
 				} else {
@@ -11068,7 +11068,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					if namedBindings.Kind == KindNamespaceImport {
 						addDeclaration(namedBindings)
 					} else {
-						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+						for _, element := range namedBindings.Elements() {
 							visit(element)
 						}
 					}

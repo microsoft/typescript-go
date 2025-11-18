@@ -15,7 +15,7 @@
 ->webpack : Symbol(webpack, Decl(bug24754.js, 1, 5), Decl(bug24754.js, 4, 23))
 +>exports : Symbol("./bug24754", Decl(bug24754.js, 0, 0))
 +>module.exports : Symbol("./bug24754", Decl(bug24754.js, 0, 0))
-+>module : Symbol(module.exports)
++>module : Symbol("./bug24754", Decl(bug24754.js, 0, 0))
 +>exports : Symbol("./bug24754", Decl(bug24754.js, 0, 0))
 +>webpack : Symbol(webpack, Decl(bug24754.js, 1, 5))
 

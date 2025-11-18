@@ -225,7 +225,7 @@ func isTypeAnnotationContext(context *FormattingContext) bool {
 }
 
 func isOptionalPropertyContext(context *FormattingContext) bool {
-	return ast.IsPropertyDeclaration(context.contextNode) && context.contextNode.AsPropertyDeclaration().PostfixToken != nil && context.contextNode.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken
+	return ast.IsPropertyDeclaration(context.contextNode) && ast.HasQuestionToken(context.contextNode)
 }
 
 func isNonOptionalPropertyContext(context *FormattingContext) bool {
@@ -539,7 +539,7 @@ func isVoidOpContext(context *FormattingContext) bool {
 }
 
 func isYieldOrYieldStarWithOperand(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindYieldExpression && context.contextNode.AsYieldExpression().Expression != nil
+	return context.contextNode.Kind == ast.KindYieldExpression && context.contextNode.Expression() != nil
 }
 
 func isNonNullAssertionContext(context *FormattingContext) bool {
@@ -584,8 +584,8 @@ func isSemicolonDeletionContext(context *FormattingContext) bool {
 		nextTokenStart = scanner.GetTokenPosOfNode(nextRealToken, context.SourceFile, false)
 	}
 
-	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(context.SourceFile, context.currentTokenSpan.Loc.Pos())
-	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(context.SourceFile, nextTokenStart)
+	startLine := scanner.GetECMALineOfPosition(context.SourceFile, context.currentTokenSpan.Loc.Pos())
+	endLine := scanner.GetECMALineOfPosition(context.SourceFile, nextTokenStart)
 	if startLine == endLine {
 		return nextTokenKind == ast.KindCloseBraceToken || nextTokenKind == ast.KindEndOfFile
 	}
