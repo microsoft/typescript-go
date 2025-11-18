@@ -499,7 +499,7 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 ) *Snapshot {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{ProjectTree: &projectTreeRequest{requestedProjectTrees}},
+		ResourceRequest{ProjectTree: &ProjectTreeRequest{requestedProjectTrees}},
 	)
 	return snapshot
 }

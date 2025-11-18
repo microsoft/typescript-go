@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"maps"
+	"slices"
 	"sync/atomic"
 	"time"
 
@@ -136,7 +137,7 @@ type APISnapshotRequest struct {
 	UpdateProjects *collections.Set[tspath.Path]
 }
 
-type projectTreeRequest struct {
+type ProjectTreeRequest struct {
 	// If null, all project trees need to be loaded, otherwise only those that are referenced
 	referencedProjects map[tspath.Path]struct{}
 }
@@ -152,7 +153,7 @@ type ResourceRequest struct {
 	// Update and ensure project trees that reference the projects
 	// This is used to compute the solution and project tree so that
 	// we can find references across all the projects in the solution irrespective of which project is open
-	ProjectTree *projectTreeRequest
+	ProjectTree *ProjectTreeRequest
 }
 
 type SnapshotChange struct {
@@ -213,7 +214,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 				details += fmt.Sprintf(" Projects: %v", change.Projects)
 			}
 			if change.ProjectTree != nil {
-				details += fmt.Sprintf(" ProjectTree: %v", maps.Keys(change.ProjectTree.referencedProjects))
+				details += fmt.Sprintf(" ProjectTree: %v", slices.Collect(maps.Keys(change.ProjectTree.referencedProjects)))
 			}
 			return details
 		}
