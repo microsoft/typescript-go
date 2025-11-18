@@ -131,7 +131,7 @@ func (vfs *wrappedFS) walkDir(rest string, walkFn vfs.WalkDirFunc) error {
 			return err
 		}
 		if entry.IsDir() {
-			if err := vfs.walkDir(name, walkFn); err != nil {
+			if err := vfs.walkDir(entry.Name(), walkFn); err != nil {
 				return err
 			}
 		}

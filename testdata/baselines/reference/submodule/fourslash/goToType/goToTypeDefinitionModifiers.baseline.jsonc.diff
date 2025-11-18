@@ -77,14 +77,14 @@
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -100,24 +100,24 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 5) skipped ---
- // 
-@@= skipped -40, +14 lines =@@
+@@= skipped -31, +17 lines =@@
 
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -133,12 +133,12 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 5) skipped ---
- // 
-@@= skipped -45, +19 lines =@@
+@@= skipped -36, +22 lines =@@
  // 
  //     async a() {  }
  // 
@@ -161,14 +161,14 @@
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -184,24 +184,24 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 9) skipped ---
- // 
-@@= skipped -39, +13 lines =@@
+@@= skipped -30, +16 lines =@@
 
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -217,24 +217,24 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 9) skipped ---
- // 
-@@= skipped -39, +13 lines =@@
+@@= skipped -30, +16 lines =@@
 
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -250,24 +250,24 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 9) skipped ---
- // 
-@@= skipped -39, +13 lines =@@
+@@= skipped -30, +16 lines =@@
 
 
  // === goToType ===
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -283,12 +283,12 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
  // === /a.ts ===
  // --- (line: 9) skipped ---
- // 
-@@= skipped -44, +18 lines =@@
+@@= skipped -35, +21 lines =@@
  //     public async c() { }
  // }
  // 

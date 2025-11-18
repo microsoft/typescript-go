@@ -5,14 +5,14 @@
  // export {}
 
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -28,25 +28,24 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
 
 
- // === goToType ===
-@@= skipped -36, +10 lines =@@
- // const /*GOTO TYPE*/promisedBob = getUser() 
+
+@@= skipped -28, +14 lines =@@
  // 
  // export {}
--
+
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--// /**
--//  * Represents the completion of an asynchronous operation
--//  */
--// interface [|Promise|]<T> {
--//     /**
--//      * Attaches callbacks for the resolution and/or rejection of the Promise.
--//      * @param onfulfilled The callback to execute when the Promise is resolved.
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ // /**
+ //  * Represents the completion of an asynchronous operation
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Attaches callbacks for the resolution and/or rejection of the Promise.
+ //      * @param onfulfilled The callback to execute when the Promise is resolved.
 -//      * @param onrejected The callback to execute when the Promise is rejected.
 -//      * @returns A Promise for the completion of which ever callback is executed.
 -//      */
@@ -62,4 +61,5 @@
 -// 
 -// /**
 -//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
--// --- (line: --) skipped ---
+ // --- (line: --) skipped ---
++// 

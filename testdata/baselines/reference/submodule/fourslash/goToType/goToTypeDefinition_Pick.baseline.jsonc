@@ -8,9 +8,37 @@
 // declare const user2: PickedUser
 // user2
 
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+// /**
+//  * From T, pick a set of properties whose keys are in the union K
+//  */
+// type Pick<T, K extends keyof T> = [|{
+//     [P in K]: T[P];
+// }|];
+// 
+// /**
+//  * Construct a type with a set of properties K of type T
+// --- (line: --) skipped ---
+// 
+
 
 
 // === goToType ===
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+// /**
+//  * From T, pick a set of properties whose keys are in the union K
+//  */
+// type Pick<T, K extends keyof T> = [|{
+//     [P in K]: T[P];
+// }|];
+// 
+// /**
+//  * Construct a type with a set of properties K of type T
+// --- (line: --) skipped ---
+// 
+
 // === /goToTypeDefinition_Pick.ts ===
 // --- (line: 3) skipped ---
 // 

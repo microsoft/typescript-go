@@ -8,6 +8,29 @@
 // declare const users2: UsersArr
 // --- (line: 7) skipped ---
 
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+//     slice(start?: number, end?: number): T[];
+// }
+// 
+// interface [|Array|]<T> {
+//     /**
+//      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+//      */
+// --- (line: --) skipped ---
+// 
+
+// --- (line: --) skipped ---
+//     readonly prototype: any[];
+// }
+// 
+// declare var [|Array|]: ArrayConstructor;
+// 
+// interface TypedPropertyDescriptor<T> {
+//     enumerable?: boolean;
+// --- (line: --) skipped ---
+// 
+
 
 
 // === goToType ===
@@ -23,6 +46,29 @@
 // class CustomArray<T> extends Array<T> { immutableReverse() { return [...this].reverse() } }
 // declare const users3: CustomArray<User>
 // users3
+
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+//     slice(start?: number, end?: number): T[];
+// }
+// 
+// interface [|Array|]<T> {
+//     /**
+//      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+//      */
+// --- (line: --) skipped ---
+// 
+
+// --- (line: --) skipped ---
+//     readonly prototype: any[];
+// }
+// 
+// declare var [|Array|]: ArrayConstructor;
+// 
+// interface TypedPropertyDescriptor<T> {
+//     enumerable?: boolean;
+// --- (line: --) skipped ---
+// 
 
 
 

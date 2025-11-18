@@ -7,6 +7,18 @@
 // 
 // export {}
 
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+// /**
+//  * Represents the completion of an asynchronous operation
+//  */
+// interface [|Promise|]<T> {
+//     /**
+//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+//      * @param onfulfilled The callback to execute when the Promise is resolved.
+// --- (line: --) skipped ---
+// 
+
 
 
 // === goToType ===
@@ -17,3 +29,15 @@
 // const /*GOTO TYPE*/promisedBob = getUser() 
 // 
 // export {}
+
+// === bundled:///libs/lib.es5.d.ts ===
+// --- (line: --) skipped ---
+// /**
+//  * Represents the completion of an asynchronous operation
+//  */
+// interface [|Promise|]<T> {
+//     /**
+//      * Attaches callbacks for the resolution and/or rejection of the Promise.
+//      * @param onfulfilled The callback to execute when the Promise is resolved.
+// --- (line: --) skipped ---
+// 

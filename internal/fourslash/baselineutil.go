@@ -298,6 +298,9 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 				}
 				return strings.Join(commandLines, "\n")
 			},
+			DiffFixupNew: func(s string) string {
+				return strings.ReplaceAll(s, "bundled:///libs/", "")
+			},
 		}
 	default:
 		return baseline.Options{
@@ -351,7 +354,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	foundAdditionalLocation := false
 
 	baselineEntries := []string{}
-	err := f.vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+	walkDirFn := func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
 		}
@@ -382,8 +385,14 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 
 		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, ranges, nil, options))
 		return nil
-	})
+	}
 
+	err := f.vfs.WalkDir("/", walkDirFn)
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		panic("walkdir error during fourslash baseline: " + err.Error())
+	}
+
+	err = f.vfs.WalkDir("bundled:///", walkDirFn)
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic("walkdir error during fourslash baseline: " + err.Error())
 	}

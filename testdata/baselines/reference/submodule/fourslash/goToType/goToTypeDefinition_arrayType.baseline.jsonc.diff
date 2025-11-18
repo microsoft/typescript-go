@@ -5,14 +5,14 @@
  // --- (line: 7) skipped ---
 
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--//     slice(start?: number, end?: number): T[];
--// }
--// 
--// interface [|Array|]<T> {
--//     /**
--//      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
--//      */
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ //     slice(start?: number, end?: number): T[];
+ // }
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+ //      */
 -//     length: number;
 -//     /**
 -//      * Returns a string representation of an array.
@@ -199,35 +199,32 @@
 -// 
 -// interface ArrayConstructor {
 -//     new (arrayLength?: number): any[];
--// --- (line: --) skipped ---
--
--// --- (line: --) skipped ---
--//     readonly prototype: any[];
--// }
--// 
--// declare var [|Array|]: ArrayConstructor;
--// 
--// interface TypedPropertyDescriptor<T> {
--//     enumerable?: boolean;
--// --- (line: --) skipped ---
--
+ // --- (line: --) skipped ---
++// 
+
+ // --- (line: --) skipped ---
+ //     readonly prototype: any[];
+@@= skipped -197, +12 lines =@@
+ // interface TypedPropertyDescriptor<T> {
+ //     enumerable?: boolean;
+ // --- (line: --) skipped ---
++// 
 
 
- // === goToType ===
-@@= skipped -222, +15 lines =@@
- // class CustomArray<T> extends Array<T> { immutableReverse() { return [...this].reverse() } }
+
+@@= skipped -17, +18 lines =@@
  // declare const users3: CustomArray<User>
  // users3
--
+
 -// === lib.d.ts ===
--// --- (line: --) skipped ---
--//     slice(start?: number, end?: number): T[];
--// }
--// 
--// interface [|Array|]<T> {
--//     /**
--//      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
--//      */
++// === lib.es5.d.ts ===
+ // --- (line: --) skipped ---
+ //     slice(start?: number, end?: number): T[];
+ // }
+@@= skipped -9, +9 lines =@@
+ //     /**
+ //      * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+ //      */
 -//     length: number;
 -//     /**
 -//      * Returns a string representation of an array.
@@ -414,16 +411,15 @@
 -// 
 -// interface ArrayConstructor {
 -//     new (arrayLength?: number): any[];
--// --- (line: --) skipped ---
--
--// --- (line: --) skipped ---
--//     readonly prototype: any[];
--// }
--// 
--// declare var [|Array|]: ArrayConstructor;
--// 
--// interface TypedPropertyDescriptor<T> {
--//     enumerable?: boolean;
--// --- (line: --) skipped ---
+ // --- (line: --) skipped ---
++// 
+
+ // --- (line: --) skipped ---
+ //     readonly prototype: any[];
+@@= skipped -197, +12 lines =@@
+ // interface TypedPropertyDescriptor<T> {
+ //     enumerable?: boolean;
+ // --- (line: --) skipped ---
++// 
 
 
