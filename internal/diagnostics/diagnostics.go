@@ -10,7 +10,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go
+//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go -locdir ./loc
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
 //go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go loc_generated.go stringer_generated.go
 
@@ -73,27 +73,24 @@ func Localize(locale locale.Locale, message *Message, key Key, args ...string) s
 	if message == nil {
 		message = keyToMessage(key)
 	}
-
-	if message != nil {
-		text := message.text
-
-		if language.Tag(locale) != language.Und {
-			if localizedMap := getLocalizedMessages(locale); localizedMap != nil {
-				if localizedText, ok := localizedMap[message.key]; ok {
-					text = localizedText
-				}
-			}
-		}
-
-		return Format(text, args)
+	if message == nil {
+		panic("Unknown diagnostic message: " + string(key))
 	}
 
-	panic("Unknown diagnostic message: " + string(key))
+	text := message.text
+	if localized, ok := getLocalizedMessages(language.Tag(locale))[message.key]; ok {
+		text = localized
+	}
+
+	return Format(text, args)
 }
 
-func getLocalizedMessages(loc locale.Locale) map[Key]string {
-	_, index, confidence := matcher.Match(language.Tag(loc))
+func getLocalizedMessages(loc language.Tag) map[Key]string {
+	if loc == language.Und {
+		return nil
+	}
 
+	_, index, confidence := matcher.Match(loc)
 	if confidence >= language.Low && index >= 0 && index < len(localeFuncs) {
 		if fn := localeFuncs[index]; fn != nil {
 			return fn()
