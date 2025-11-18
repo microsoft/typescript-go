@@ -692,51 +692,48 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	ctx := context.Background()
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(_ tspath.Path, addedProject *Project) {
+			if addedProject.Kind != KindConfigured || addedProject.Program == nil {
+				return
+			}
+			if addedProject.ProgramLastUpdate != newSnapshot.ID() {
+				return
+			}
+			s.publishProjectDiagnostics(ctx, addedProject, addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
 		},
-		func(projectPath tspath.Path, removedProject *Project) {
+		func(_ tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
 				return
 			}
-			if err := s.client.PublishDiagnostics(context.Background(), &lsproto.PublishDiagnosticsParams{
-				Uri:         lsproto.DocumentUri(removedProject.ConfigFileName()),
-				Diagnostics: []*lsproto.Diagnostic{},
-			}); err != nil && s.options.LoggingEnabled {
-				s.logger.Logf("Error clearing diagnostics for removed project: %v", err)
-			}
+			s.publishProjectDiagnostics(ctx, removedProject, nil, newSnapshot.converters)
 		},
-		func(projectPath tspath.Path, oldProject, newProject *Project) {
+		func(_ tspath.Path, oldProject, newProject *Project) {
+			if newProject.Kind != KindConfigured || newProject.Program == nil {
+				return
+			}
+			if newProject.ProgramLastUpdate != newSnapshot.ID() {
+				return
+			}
+			s.publishProjectDiagnostics(ctx, newProject, newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
 		},
 	)
+}
 
-	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		if project.Program == nil {
-			continue
-		}
+func (s *Session) publishProjectDiagnostics(ctx context.Context, project *Project, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
+	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
+	for _, diag := range diagnostics {
+		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
+	}
 
-		if project.ProgramLastUpdate != newSnapshot.ID() {
-			continue
-		}
-
-		if project.Kind != KindConfigured {
-			continue
-		}
-
-		programDiagnostics := project.Program.GetProgramDiagnostics()
-		lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(programDiagnostics))
-		for _, diag := range programDiagnostics {
-			lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(context.TODO(), newSnapshot.converters, diag))
-		}
-
-		if err := s.client.PublishDiagnostics(context.TODO(), &lsproto.PublishDiagnosticsParams{
-			Uri:         lsproto.DocumentUri(project.ConfigFileName()),
-			Diagnostics: lspDiagnostics,
-		}); err != nil && s.options.LoggingEnabled {
-			s.logger.Logf("Error publishing diagnostics: %v", err)
-		}
+	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
+		Uri:         lsproto.DocumentUri(project.ConfigFileName()),
+		Diagnostics: lspDiagnostics,
+	}); err != nil && s.options.LoggingEnabled {
+		s.logger.Logf("Error publishing diagnostics: %v", err)
 	}
 }
 
