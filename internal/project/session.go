@@ -706,7 +706,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(configFilePath tspath.Path, addedProject *Project) {
-			if addedProject.Kind != KindConfigured || addedProject.Program == nil || addedProject.ProgramLastUpdate != newSnapshot.ID() {
+			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
@@ -718,12 +718,19 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
-			if newProject.Kind != KindConfigured || newProject.Program == nil || newProject.ProgramLastUpdate != newSnapshot.ID() {
+			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
 		},
 	)
+}
+
+func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
+	if p.Kind != KindConfigured || p.Program == nil || p.ProgramLastUpdate != snapshotID {
+		return false
+	}
+	return p.ProgramUpdateKind > ProgramUpdateKindCloned
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
