@@ -90,10 +90,11 @@ export class Client {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
 
-        // Get pprofDir
+		// Get pprofDir
         const config = vscode.workspace.getConfiguration("typescript.native-preview");
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
+		const customConfigFileName = config.get<string>("customConfigFileName") ?? "";
 
         const serverOptions: ServerOptions = {
             run: {
@@ -108,12 +109,17 @@ export class Client {
             },
         };
 
-        this.client = new LanguageClient(
-            "typescript.native-preview",
-            "typescript.native-preview-lsp",
-            serverOptions,
-            this.clientOptions,
-        );
+		this.client = new LanguageClient(
+			"typescript.native-preview",
+			"typescript.native-preview-lsp",
+			serverOptions,
+			{
+				...this.clientOptions,
+				initializationOptions: {
+					customConfigFileName,
+				},
+			},
+		);
 
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();

@@ -495,19 +495,37 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
+	// Prefer custom config file if provided; search ancestors with correct skip behavior.
+	if c.sessionOptions.CustomConfigFileName != "" {
+		skipCustom := skipSearchInDirectoryOfFile
+		if result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
+			customConfigFilePath := tspath.CombinePaths(directory, c.sessionOptions.CustomConfigFileName)
+			if !skipCustom && c.FS().FileExists(customConfigFilePath) {
+				return customConfigFilePath, true
+			}
+			skipCustom = false
+			return "", false
+		}); result != "" {
+			logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+			return result
+		}
+	}
+
+	// Fallback to tsconfig.json/jsconfig.json
+	skip := skipSearchInDirectoryOfFile
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(tsconfigPath) {
+		if !skip && c.FS().FileExists(tsconfigPath) {
 			return tsconfigPath, true
 		}
 		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(jsconfigPath) {
+		if !skip && c.FS().FileExists(jsconfigPath) {
 			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
 		}
-		skipSearchInDirectoryOfFile = false
+		skip = false
 		return "", false
 	})
 	logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
