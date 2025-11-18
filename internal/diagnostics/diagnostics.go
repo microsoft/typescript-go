@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/locale"
 	"golang.org/x/text/language"
@@ -81,19 +82,32 @@ func Localize(locale locale.Locale, message *Message, key Key, args ...string) s
 	return Format(text, args)
 }
 
+var localizedMessagesCache sync.Map // map[language.Tag]map[Key]string
+
 func getLocalizedMessages(loc language.Tag) map[Key]string {
 	if loc == language.Und {
 		return nil
 	}
 
+	// Check cache first
+	if cached, ok := localizedMessagesCache.Load(loc); ok {
+		if cached == nil {
+			return nil
+		}
+		return cached.(map[Key]string)
+	}
+
+	var messages map[Key]string
+
 	_, index, confidence := matcher.Match(loc)
 	if confidence >= language.Low && index >= 0 && index < len(localeFuncs) {
 		if fn := localeFuncs[index]; fn != nil {
-			return fn()
+			messages = fn()
 		}
 	}
 
-	return nil
+	localizedMessagesCache.Store(loc, messages)
+	return messages
 }
 
 var placeholderRegexp = regexp.MustCompile(`{(\d+)}`)

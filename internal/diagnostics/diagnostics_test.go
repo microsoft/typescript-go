@@ -54,7 +54,7 @@ func TestLocalize(t *testing.T) {
 			name:     "german",
 			message:  Identifier_expected,
 			locale:   locale.Locale(language.MustParse("de-DE")),
-			expected: "Ein Bezeichner wurde erwartet.",
+			expected: "Es wurde ein Bezeichner erwartet.",
 		},
 		{
 			name:     "french",
@@ -90,7 +90,7 @@ func TestLocalize(t *testing.T) {
 			name:     "russian",
 			message:  Identifier_expected,
 			locale:   locale.Locale(language.MustParse("ru-RU")),
-			expected: "Ожидается идентификатор.",
+			expected: "Ожидался идентификатор.",
 		},
 		{
 			name:     "german with args",
