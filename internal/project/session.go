@@ -125,10 +125,6 @@ type Session struct {
 }
 
 func NewSession(init *SessionInit) *Session {
-	client := init.Client
-	if client == nil {
-		client = noopClient{}
-	}
 	currentDirectory := init.Options.CurrentDirectory
 	useCaseSensitiveFileNames := init.FS.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
@@ -144,7 +140,7 @@ func NewSession(init *SessionInit) *Session {
 	session := &Session{
 		options:             init.Options,
 		toPath:              toPath,
-		client:              client,
+		client:              init.Client,
 		logger:              init.Logger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
