@@ -65,10 +65,6 @@ func (m *Message) Localize(locale locale.Locale, args ...any) string {
 	return Localize(locale, m, "", StringifyArgs(args)...)
 }
 
-func (m *Message) LocalizeStringArgs(locale locale.Locale, args ...string) string {
-	return Localize(locale, m, "", args...)
-}
-
 func Localize(locale locale.Locale, message *Message, key Key, args ...string) string {
 	if message == nil {
 		message = keyToMessage(key)
