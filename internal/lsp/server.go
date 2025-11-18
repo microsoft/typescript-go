@@ -588,15 +588,17 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 }
 
 type projectAndTextDocumentPosition struct {
-	project  *project.Project
-	ls       *ls.LanguageService
-	Uri      lsproto.DocumentUri
-	Position lsproto.Position
+	project             *project.Project
+	ls                  *ls.LanguageService
+	Uri                 lsproto.DocumentUri
+	Position            lsproto.Position
+	forOriginalLocation bool
 }
 
 type response[Resp any] struct {
-	complete bool
-	result   Resp
+	complete            bool
+	result              Resp
+	forOriginalLocation bool
 }
 
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
@@ -664,9 +666,10 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 								// Optimization: don't enqueue if will be discarded
 								if canSearchProject(defProject) {
 									enqueueItem(projectAndTextDocumentPosition{
-										project:  defProject,
-										Uri:      uri,
-										Position: position,
+										project:             defProject,
+										Uri:                 uri,
+										Position:            position,
+										forOriginalLocation: true,
 									})
 								}
 							}
@@ -677,6 +680,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				if result, errSearch := fn(s, ctx, ls, params, originalNode, symbolsAndEntries); errSearch == nil {
 					response.complete = true
 					response.result = result
+					response.forOriginalLocation = item.forOriginalLocation
 				} else {
 					errMu.Lock()
 					defer errMu.Unlock()
@@ -723,8 +727,16 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 						}
 					}
 				}
+				// Prefer the searches from locations for default definition
 				results.Range(func(key tspath.Path, response *response[Resp]) bool {
-					if seenProjects.AddIfAbsent(key) && response.complete {
+					if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
+						return yield(response.result)
+					}
+					return true
+				})
+				// Then the searches from original locations
+				results.Range(func(key tspath.Path, response *response[Resp]) bool {
+					if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
 						return yield(response.result)
 					}
 					return true
