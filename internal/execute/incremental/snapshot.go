@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
@@ -136,7 +135,6 @@ type buildInfoDiagnosticWithFileName struct {
 	pos                int
 	end                int
 	code               int32
-	category           diagnostics.Category
 	message            string
 	messageChain       []*buildInfoDiagnosticWithFileName
 	relatedInformation []*buildInfoDiagnosticWithFileName
@@ -169,7 +167,6 @@ func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file
 		fileForDiagnostic,
 		core.NewTextRange(b.pos, b.end),
 		b.code,
-		b.category,
 		b.message,
 		messageChain,
 		relatedInformation,
@@ -299,7 +296,7 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 	if diagnostic.File() != nil {
 		builder.WriteString(fmt.Sprintf("(%d,%d): ", diagnostic.Pos(), diagnostic.Len()))
 	}
-	builder.WriteString(diagnostic.Category().Name())
+	builder.WriteString("error")
 	builder.WriteString(fmt.Sprintf("%d: ", diagnostic.Code()))
 	builder.WriteString(diagnostic.Message())
 	for _, chain := range diagnostic.MessageChain() {

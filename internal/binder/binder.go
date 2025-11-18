@@ -2609,7 +2609,6 @@ func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, end
 	if isError {
 		b.addDiagnostic(diagnostic)
 	} else {
-		diagnostic.SetCategory(diagnostics.CategorySuggestion)
 		b.file.BindSuggestionDiagnostics = append(b.file.BindSuggestionDiagnostics, diagnostic)
 	}
 }

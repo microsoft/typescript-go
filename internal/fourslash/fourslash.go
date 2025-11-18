@@ -16,7 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -2593,7 +2592,6 @@ type fourslashDiagnostic struct {
 	file               *fourslashDiagnosticFile
 	loc                core.TextRange
 	code               int32
-	category           diagnostics.Category
 	message            string
 	relatedDiagnostics []*fourslashDiagnostic
 	reportsUnnecessary bool
@@ -2644,10 +2642,6 @@ func (d *fourslashDiagnostic) Code() int32 {
 	return d.code
 }
 
-func (d *fourslashDiagnostic) Category() diagnostics.Category {
-	return d.category
-}
-
 func (d *fourslashDiagnostic) Message() string {
 	return d.message
 }
@@ -2665,19 +2659,6 @@ func (d *fourslashDiagnostic) RelatedInformation() []diagnosticwriter.Diagnostic
 }
 
 func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *fourslashDiagnostic {
-	var category diagnostics.Category
-	switch *lspDiagnostic.Severity {
-	case lsproto.DiagnosticSeverityError:
-		category = diagnostics.CategoryError
-	case lsproto.DiagnosticSeverityWarning:
-		category = diagnostics.CategoryWarning
-	case lsproto.DiagnosticSeverityInformation:
-		category = diagnostics.CategoryMessage
-	case lsproto.DiagnosticSeverityHint:
-		category = diagnostics.CategorySuggestion
-	default:
-		category = diagnostics.CategoryError
-	}
 	code := *lspDiagnostic.Code.Integer
 
 	var relatedDiagnostics []*fourslashDiagnostic
@@ -2688,11 +2669,10 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 				continue
 			}
 			relatedDiagnostic := &fourslashDiagnostic{
-				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
-				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
-				code:     code,
-				category: category,
-				message:  info.Message,
+				file:    &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
+				loc:     f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				code:    code,
+				message: info.Message,
 			}
 			relatedDiagnostics = append(relatedDiagnostics, relatedDiagnostic)
 		}
@@ -2707,7 +2687,6 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 		},
 		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
 		code:               code,
-		category:           category,
 		message:            lspDiagnostic.Message,
 		relatedDiagnostics: relatedDiagnostics,
 	}

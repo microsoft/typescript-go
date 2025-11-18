@@ -7,7 +7,6 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 )
@@ -61,7 +60,6 @@ type readableBuildInfoDiagnostic struct {
 	Pos                int                            `json:"pos,omitzero"`
 	End                int                            `json:"end,omitzero"`
 	Code               int32                          `json:"code,omitzero"`
-	Category           diagnostics.Category           `json:"category,omitzero"`
 	Message            string                         `json:"message,omitzero"`
 	MessageChain       []*readableBuildInfoDiagnostic `json:"messageChain,omitzero"`
 	RelatedInformation []*readableBuildInfoDiagnostic `json:"relatedInformation,omitzero"`
@@ -253,7 +251,6 @@ func (r *readableBuildInfo) toReadableBuildInfoDiagnostic(diagnostics []*increme
 			Pos:                d.Pos,
 			End:                d.End,
 			Code:               d.Code,
-			Category:           d.Category,
 			Message:            d.Message,
 			MessageChain:       r.toReadableBuildInfoDiagnostic(d.MessageChain),
 			RelatedInformation: r.toReadableBuildInfoDiagnostic(d.RelatedInformation),

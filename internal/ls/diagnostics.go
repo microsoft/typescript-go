@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -15,51 +14,48 @@ import (
 func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
 	program, file := l.getProgramAndFile(uri)
 
-	diagnostics := make([][]*ast.Diagnostic, 0, 4)
-	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, file))
-	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, file))
+	syntactic := program.GetSyntacticDiagnostics(ctx, file)
+	semantic := program.GetSemanticDiagnostics(ctx, file)
+	suggestion := program.GetSuggestionDiagnostics(ctx, file)
+	var declaration []*ast.Diagnostic
+	if program.Options().GetEmitDeclarations() {
+		declaration = program.GetDeclarationDiagnostics(ctx, file)
+	}
+
+	type diagsAndSeverity struct {
+		diags    [][]*ast.Diagnostic
+		severity lsproto.DiagnosticSeverity
+	}
+
 	// !!! user preference for suggestion diagnostics; keep only unnecessary/deprecated?
 	// See: https://github.com/microsoft/vscode/blob/3dbc74129aaae102e5cb485b958fa5360e8d3e7a/extensions/typescript-language-features/src/languageFeatures/diagnostics.ts#L114
 	// TODO: also implement reportStyleCheckAsWarnings to rewrite diags with Warning severity
-	diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, file))
-	if program.Options().GetEmitDeclarations() {
-		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, file))
+
+	diags := []diagsAndSeverity{
+		{diags: [][]*ast.Diagnostic{syntactic, semantic, declaration}, severity: lsproto.DiagnosticSeverityError},
+		{diags: [][]*ast.Diagnostic{suggestion}, severity: lsproto.DiagnosticSeverityHint},
+	}
+
+	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(syntactic)+len(semantic)+len(suggestion)+len(declaration))
+
+	for _, ds := range diags {
+		for _, diagList := range ds.diags {
+			for _, diag := range diagList {
+				lspDiag := l.toLSPDiagnostic(ctx, diag, ds.severity)
+				lspDiagnostics = append(lspDiagnostics, lspDiag)
+			}
+		}
 	}
 
 	return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
 		FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
-			Items: l.toLSPDiagnostics(ctx, diagnostics...),
+			Items: lspDiagnostics,
 		},
 	}, nil
 }
 
-func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
-	size := 0
-	for _, diagSlice := range diagnostics {
-		size += len(diagSlice)
-	}
-	lspDiagnostics := make([]*lsproto.Diagnostic, 0, size)
-	for _, diagSlice := range diagnostics {
-		for _, diag := range diagSlice {
-			lspDiagnostics = append(lspDiagnostics, l.toLSPDiagnostic(ctx, diag))
-		}
-	}
-	return lspDiagnostics
-}
-
-func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
+func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.Diagnostic, severity lsproto.DiagnosticSeverity) *lsproto.Diagnostic {
 	clientOptions := lsproto.GetClientCapabilities(ctx).TextDocument.Diagnostic
-	var severity lsproto.DiagnosticSeverity
-	switch diagnostic.Category() {
-	case diagnostics.CategorySuggestion:
-		severity = lsproto.DiagnosticSeverityHint
-	case diagnostics.CategoryMessage:
-		severity = lsproto.DiagnosticSeverityInformation
-	case diagnostics.CategoryWarning:
-		severity = lsproto.DiagnosticSeverityWarning
-	default:
-		severity = lsproto.DiagnosticSeverityError
-	}
 
 	var relatedInformation []*lsproto.DiagnosticRelatedInformation
 	if clientOptions.RelatedInformation {

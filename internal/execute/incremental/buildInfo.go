@@ -8,7 +8,6 @@ import (
 	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -200,7 +199,6 @@ type BuildInfoDiagnostic struct {
 	Pos                int                    `json:"pos,omitzero"`
 	End                int                    `json:"end,omitzero"`
 	Code               int32                  `json:"code,omitzero"`
-	Category           diagnostics.Category   `json:"category,omitzero"`
 	Message            string                 `json:"message,omitzero"`
 	MessageChain       []*BuildInfoDiagnostic `json:"messageChain,omitzero"`
 	RelatedInformation []*BuildInfoDiagnostic `json:"relatedInformation,omitzero"`

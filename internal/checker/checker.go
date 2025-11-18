@@ -6879,9 +6879,7 @@ func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *
 		if isError {
 			c.diagnostics.Add(diagnostic)
 		} else {
-			suggestion := *diagnostic
-			suggestion.SetCategory(diagnostics.CategorySuggestion)
-			c.suggestionDiagnostics.Add(&suggestion)
+			c.suggestionDiagnostics.Add(diagnostic)
 		}
 	}
 }
@@ -13582,9 +13580,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 	if isError {
 		c.diagnostics.Add(diagnostic)
 	} else {
-		suggestion := *diagnostic
-		suggestion.SetCategory(diagnostics.CategorySuggestion)
-		c.suggestionDiagnostics.Add(&suggestion)
+		c.suggestionDiagnostics.Add(diagnostic)
 	}
 }
 

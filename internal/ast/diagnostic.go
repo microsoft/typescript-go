@@ -15,7 +15,6 @@ type Diagnostic struct {
 	file               *SourceFile
 	loc                core.TextRange
 	code               int32
-	category           diagnostics.Category
 	message            string
 	messageChain       []*Diagnostic
 	relatedInformation []*Diagnostic
@@ -30,7 +29,6 @@ func (d *Diagnostic) End() int                          { return d.loc.End() }
 func (d *Diagnostic) Len() int                          { return d.loc.Len() }
 func (d *Diagnostic) Loc() core.TextRange               { return d.loc }
 func (d *Diagnostic) Code() int32                       { return d.code }
-func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
 func (d *Diagnostic) Message() string                   { return d.message }
 func (d *Diagnostic) MessageChain() []*Diagnostic       { return d.messageChain }
 func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
@@ -40,7 +38,6 @@ func (d *Diagnostic) SkippedOnNoEmit() bool             { return d.skippedOnNoEm
 
 func (d *Diagnostic) SetFile(file *SourceFile)                  { d.file = file }
 func (d *Diagnostic) SetLocation(loc core.TextRange)            { d.loc = loc }
-func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
 func (d *Diagnostic) SetSkippedOnNoEmit()                       { d.skippedOnNoEmit = true }
 
 func (d *Diagnostic) SetMessageChain(messageChain []*Diagnostic) *Diagnostic {
@@ -76,7 +73,6 @@ func NewDiagnosticWith(
 	file *SourceFile,
 	loc core.TextRange,
 	code int32,
-	category diagnostics.Category,
 	message string,
 	messageChain []*Diagnostic,
 	relatedInformation []*Diagnostic,
@@ -88,7 +84,6 @@ func NewDiagnosticWith(
 		file:               file,
 		loc:                loc,
 		code:               code,
-		category:           category,
 		message:            message,
 		messageChain:       messageChain,
 		relatedInformation: relatedInformation,
@@ -103,7 +98,6 @@ func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Me
 		file:               file,
 		loc:                loc,
 		code:               message.Code(),
-		category:           message.Category(),
 		message:            message.Format(args...),
 		reportsUnnecessary: message.ReportsUnnecessary(),
 		reportsDeprecated:  message.ReportsDeprecated(),

@@ -29,7 +29,6 @@ type Diagnostic interface {
 	End() int
 	Len() int
 	Code() int32
-	Category() diagnostics.Category
 	Message() string
 	MessageChain() []Diagnostic
 	RelatedInformation() []Diagnostic
@@ -137,13 +136,13 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic Diagnostic
 		fmt.Fprint(output, " - ")
 	}
 
-	writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
+	writeWithStyleAndReset(output, "error", foregroundColorEscapeRed)
 	fmt.Fprintf(output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 
 	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 		fmt.Fprint(output, formatOpts.NewLine)
-		writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), "", formatOpts)
+		writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), foregroundColorEscapeRed, "", formatOpts)
 		fmt.Fprint(output, formatOpts.NewLine)
 	}
 
@@ -278,20 +277,6 @@ func flattenDiagnosticMessageChain(writer io.Writer, chain Diagnostic, newLine s
 	}
 }
 
-func getCategoryFormat(category diagnostics.Category) string {
-	switch category {
-	case diagnostics.CategoryError:
-		return foregroundColorEscapeRed
-	case diagnostics.CategoryWarning:
-		return foregroundColorEscapeYellow
-	case diagnostics.CategorySuggestion:
-		return foregroundColorEscapeGrey
-	case diagnostics.CategoryMessage:
-		return foregroundColorEscapeBlue
-	}
-	panic("Unhandled diagnostic category")
-}
-
 type FormattedWriter func(output io.Writer, text string, formatStyle string)
 
 func writeWithStyleAndReset(output io.Writer, text string, formatStyle string) {
@@ -378,10 +363,6 @@ func getErrorSummary(diags []Diagnostic) *ErrorSummary {
 	var errorsByFile map[FileLike][]Diagnostic
 
 	for _, diagnostic := range diags {
-		if diagnostic.Category() != diagnostics.CategoryError {
-			continue
-		}
-
 		totalErrorCount++
 		if diagnostic.File() == nil {
 			globalErrors = append(globalErrors, diagnostic)
@@ -469,7 +450,7 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
 	}
 
-	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())
+	fmt.Fprintf(output, "error TS%d: ", diagnostic.Code())
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 	fmt.Fprint(output, formatOpts.NewLine)
 }

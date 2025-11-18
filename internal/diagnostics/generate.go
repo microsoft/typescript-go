@@ -25,7 +25,6 @@ import (
 )
 
 type diagnosticMessage struct {
-	Category           string `json:"category"`
 	Code               int    `json:"code"`
 	ReportsUnnecessary bool   `json:"reportsUnnecessary"`
 	ReportsDeprecated  bool   `json:"reportsDeprecated"`
@@ -72,7 +71,7 @@ func main() {
 	for _, m := range diagnosticMessages {
 		varName, key := convertPropertyName(m.key, m.Code)
 
-		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", varName, m.Code, m.Category, key, m.key)
+		fmt.Fprintf(&buf, "var %s = &Message{code: %d, key: %q, text: %q", varName, m.Code, key, m.key)
 
 		if m.ReportsUnnecessary {
 			buf.WriteString(`, reportsUnnecessary: true`)
