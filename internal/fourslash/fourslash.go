@@ -1317,10 +1317,17 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			}
 		}
 
+		var additionalSpan *documentSpan
+		if additionalLocation != nil {
+			additionalSpan = &documentSpan{
+				uri:      additionalLocation.Uri,
+				textSpan: additionalLocation.Range,
+			}
+		}
 		f.addResultToBaseline(t, goToDefinitionCmd, f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:             markerOrRange,
-			markerName:         "/*GOTO DEF*/",
-			additionalLocation: additionalLocation,
+			marker:         markerOrRange,
+			markerName:     "/*GOTO DEF*/",
+			additionalSpan: additionalSpan,
 		}))
 	}
 }
@@ -2297,12 +2304,13 @@ func (f *FourslashTest) verifyBaselineRename(
 		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
 			changes = *result.WorkspaceEdit.Changes
 		}
-		locationToText := map[lsproto.Location]string{}
-		fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+		spanToText := map[documentSpan]string{}
+		fileToSpan := collections.MultiMap[lsproto.DocumentUri, documentSpan]{}
 		for uri, edits := range changes {
 			for _, edit := range edits {
-				fileToRange.Add(uri, edit.Range)
-				locationToText[lsproto.Location{Uri: uri, Range: edit.Range}] = edit.NewText
+				span := documentSpan{uri: uri, textSpan: edit.Range}
+				fileToSpan.Add(uri, span)
+				spanToText[span] = edit.NewText
 			}
 		}
 
@@ -2316,22 +2324,22 @@ func (f *FourslashTest) verifyBaselineRename(
 			}
 		}
 
-		baselineFileContent := f.getBaselineForGroupedLocationsWithFileContents(
-			&fileToRange,
+		baselineFileContent := f.getBaselineForGroupedSpansWithFileContents(
+			&fileToSpan,
 			baselineFourslashLocationsOptions{
 				marker:     markerOrRange,
 				markerName: "/*RENAME*/",
 				endMarker:  "RENAME|]",
-				startMarkerPrefix: func(span lsproto.Location) *string {
-					text := locationToText[span]
+				startMarkerPrefix: func(span documentSpan) *string {
+					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[0] != "" {
 						return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
 					}
 					return nil
 				},
-				endMarkerSuffix: func(span lsproto.Location) *string {
-					text := locationToText[span]
+				endMarkerSuffix: func(span documentSpan) *string {
+					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[1] != "" {
 						return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")

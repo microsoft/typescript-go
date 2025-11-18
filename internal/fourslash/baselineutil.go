@@ -263,7 +263,7 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 					oldGoToDefCommand, string(goToDefinitionCmd),
 					oldGoToDefComment, "/*GOTO DEF*/",
 				)
-				var objectRangeRegex = regexp.MustCompile(`{\| [^|]* \|}`)
+				objectRangeRegex := regexp.MustCompile(`{\| [^|]* \|}`)
 				detailsStr := "// === Details ==="
 				lines := strings.Split(s, "\n")
 				var isInCommand bool
@@ -319,6 +319,12 @@ func normalizeCommandName(command string) string {
 	return stringutil.LowerFirstChar(command)
 }
 
+type documentSpan struct {
+	uri         lsproto.DocumentUri
+	textSpan    lsproto.Range
+	contextSpan *lsproto.Range
+}
+
 type baselineFourslashLocationsOptions struct {
 	// markerInfo
 	marker     MarkerOrRange // location
@@ -326,27 +332,33 @@ type baselineFourslashLocationsOptions struct {
 
 	endMarker string
 
-	startMarkerPrefix func(span lsproto.Location) *string
-	endMarkerSuffix   func(span lsproto.Location) *string
+	startMarkerPrefix func(span documentSpan) *string
+	endMarkerSuffix   func(span documentSpan) *string
 
-	additionalLocation *lsproto.Location
+	additionalSpan *documentSpan
 }
 
-func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.Location, options baselineFourslashLocationsOptions) string {
-	locationsByFile := collections.GroupBy(spans, func(span lsproto.Location) lsproto.DocumentUri { return span.Uri })
-	rangesByFile := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
-	for file, locs := range locationsByFile.M {
-		for _, loc := range locs {
-			rangesByFile.Add(file, loc.Range)
-		}
-	}
-	return f.getBaselineForGroupedLocationsWithFileContents(
-		&rangesByFile,
+func (f *FourslashTest) getBaselineForLocationsWithFileContents(locations []lsproto.Location, options baselineFourslashLocationsOptions) string {
+	return f.getBaselineForSpansWithFileContents(
+		core.Map(locations, func(loc lsproto.Location) documentSpan {
+			return documentSpan{
+				uri:      loc.Uri,
+				textSpan: loc.Range,
+			}
+		}),
 		options,
 	)
 }
 
-func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRanges *collections.MultiMap[lsproto.DocumentUri, lsproto.Range], options baselineFourslashLocationsOptions) string {
+func (f *FourslashTest) getBaselineForSpansWithFileContents(spans []documentSpan, options baselineFourslashLocationsOptions) string {
+	spansByFile := collections.GroupBy(spans, func(span documentSpan) lsproto.DocumentUri { return span.uri })
+	return f.getBaselineForGroupedSpansWithFileContents(
+		spansByFile,
+		options,
+	)
+}
+
+func (f *FourslashTest) getBaselineForGroupedSpansWithFileContents(groupedRanges *collections.MultiMap[lsproto.DocumentUri, documentSpan], options baselineFourslashLocationsOptions) string {
 	// We must always print the file containing the marker,
 	// but don't want to print it twice at the end if it already
 	// found in a file with ranges.
@@ -379,7 +391,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 			foundMarker = true
 		}
 
-		if options.additionalLocation != nil && options.additionalLocation.Uri == fileName {
+		if options.additionalSpan != nil && options.additionalSpan.uri == fileName {
 			foundAdditionalLocation = true
 		}
 
@@ -399,12 +411,12 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 
 	// In Strada, there is a bug where we only ever add additional spans to baselines if we haven't
 	// already added the file to the baseline.
-	if options.additionalLocation != nil && !foundAdditionalLocation {
-		fileName := options.additionalLocation.Uri.FileName()
+	if options.additionalSpan != nil && !foundAdditionalLocation {
+		fileName := options.additionalSpan.uri.FileName()
 		if content, ok := f.vfs.ReadFile(fileName); ok {
 			baselineEntries = append(
 				baselineEntries,
-				f.getBaselineContentForFile(fileName, content, []lsproto.Range{options.additionalLocation.Range}, nil, options),
+				f.getBaselineContentForFile(fileName, content, []documentSpan{*options.additionalSpan}, nil, options),
 			)
 			if options.marker != nil && options.marker.FileName() == fileName {
 				foundMarker = true
@@ -428,45 +440,72 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 type baselineDetail struct {
 	pos            lsproto.Position
 	positionMarker string
-	span           *lsproto.Range
+	span           *documentSpan
 	kind           string
 }
 
 func (f *FourslashTest) getBaselineContentForFile(
 	fileName string,
 	content string,
-	spansInFile []lsproto.Range,
-	spanToContextId map[lsproto.Range]int,
+	spansInFile []documentSpan,
+	spanToContextId map[documentSpan]int,
 	options baselineFourslashLocationsOptions,
 ) string {
 	details := []*baselineDetail{}
 	detailPrefixes := map[*baselineDetail]string{}
 	detailSuffixes := map[*baselineDetail]string{}
 	canDetermineContextIdInline := true
-	uri := lsconv.FileNameToDocumentURI(fileName)
 
 	if options.marker != nil && options.marker.FileName() == fileName {
 		details = append(details, &baselineDetail{pos: options.marker.LSPos(), positionMarker: options.markerName})
 	}
 
 	for _, span := range spansInFile {
+		contextSpanIndex := len(details)
+
+		// Add context span markers if present
+		if span.contextSpan != nil {
+			details = append(details, &baselineDetail{
+				pos:            span.contextSpan.Start,
+				positionMarker: "<|",
+				span:           &span,
+				kind:           "contextStart",
+			})
+
+			// Check if context span starts after text span
+			if lsproto.ComparePositions(span.contextSpan.Start, span.textSpan.Start) > 0 {
+				canDetermineContextIdInline = false
+			}
+		}
+
 		textSpanIndex := len(details)
 		details = append(details,
-			&baselineDetail{pos: span.Start, positionMarker: "[|", span: &span, kind: "textStart"},
-			&baselineDetail{pos: span.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: "textEnd"},
+			&baselineDetail{pos: span.textSpan.Start, positionMarker: "[|", span: &span, kind: "textStart"},
+			&baselineDetail{pos: span.textSpan.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: "textEnd"},
 		)
 
+		if span.contextSpan != nil {
+			details = append(details, &baselineDetail{
+				pos:            span.contextSpan.End,
+				positionMarker: "|>",
+				span:           &span,
+				kind:           "contextEnd",
+			})
+		}
+
 		if options.startMarkerPrefix != nil {
-			startPrefix := options.startMarkerPrefix(lsproto.Location{Uri: uri, Range: span})
+			startPrefix := options.startMarkerPrefix(span)
 			if startPrefix != nil {
 				// Special case: if this span starts at the same position as the provided marker,
 				// we want the span's prefix to appear before the marker name.
 				// i.e. We want `/*START PREFIX*/A: /*RENAME*/[|ARENAME|]`,
 				// not `/*RENAME*//*START PREFIX*/A: [|ARENAME|]`
-				if options.marker != nil && fileName == options.marker.FileName() && span.Start == options.marker.LSPos() {
+				if options.marker != nil && fileName == options.marker.FileName() && span.textSpan.Start == options.marker.LSPos() {
 					_, ok := detailPrefixes[details[0]]
 					debug.Assert(!ok, "Expected only single prefix at marker location")
 					detailPrefixes[details[0]] = *startPrefix
+				} else if span.contextSpan != nil && span.contextSpan.Start == span.textSpan.Start {
+					detailPrefixes[details[contextSpanIndex]] = *startPrefix
 				} else {
 					detailPrefixes[details[textSpanIndex]] = *startPrefix
 				}
@@ -474,9 +513,16 @@ func (f *FourslashTest) getBaselineContentForFile(
 		}
 
 		if options.endMarkerSuffix != nil {
-			endSuffix := options.endMarkerSuffix(lsproto.Location{Uri: uri, Range: span})
+			endSuffix := options.endMarkerSuffix(span)
 			if endSuffix != nil {
-				detailSuffixes[details[textSpanIndex+1]] = *endSuffix
+				// Same as above for suffixes:
+				if options.marker != nil && fileName == options.marker.FileName() && span.textSpan.End == options.marker.LSPos() {
+					detailSuffixes[details[0]] = *endSuffix
+				} else if span.contextSpan != nil && span.contextSpan.End == span.textSpan.End {
+					detailSuffixes[details[textSpanIndex+2]] = *endSuffix
+				} else {
+					detailSuffixes[details[textSpanIndex+1]] = *endSuffix
+				}
 			}
 		}
 	}
