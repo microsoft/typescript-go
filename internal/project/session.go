@@ -724,7 +724,7 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, project *Projec
 	}
 
 	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
-		Uri:         lsproto.DocumentUri(project.ConfigFileName()),
+		Uri:         lsconv.FileNameToDocumentURI(project.ConfigFileName()),
 		Diagnostics: lspDiagnostics,
 	}); err != nil && s.options.LoggingEnabled {
 		s.logger.Logf("Error publishing diagnostics: %v", err)
