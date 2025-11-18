@@ -64,6 +64,7 @@ linters:
     custom:
       customlint:
         type: module
+
     depguard:
       rules:
         main:
