@@ -38,23 +38,23 @@ const (
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
-	CurrentDirectory   string
-	DefaultLibraryPath string
-	TypingsLocation    string
-	PositionEncoding   lsproto.PositionEncodingKind
-	WatchEnabled       bool
-	LoggingEnabled     bool
-	DebounceDelay      time.Duration
+	CurrentDirectory       string
+	DefaultLibraryPath     string
+	TypingsLocation        string
+	PositionEncoding       lsproto.PositionEncodingKind
+	WatchEnabled           bool
+	LoggingEnabled         bool
+	PushDiagnosticsEnabled bool
+	DebounceDelay          time.Duration
 }
 
 type SessionInit struct {
-	Options                *SessionOptions
-	FS                     vfs.FS
-	Client                 Client
-	Logger                 logging.Logger
-	NpmExecutor            ata.NpmExecutor
-	ParseCache             *ParseCache
-	DisablePushDiagnostics bool
+	Options     *SessionOptions
+	FS          vfs.FS
+	Client      Client
+	Logger      logging.Logger
+	NpmExecutor ata.NpmExecutor
+	ParseCache  *ParseCache
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -88,7 +88,6 @@ type Session struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
-	disablePushDiagnostics             bool
 
 	// snapshotID is the counter for snapshot IDs. It does not necessarily
 	// equal the `snapshot.ID`. It is stored on Session instead of globally
@@ -142,17 +141,16 @@ func NewSession(init *SessionInit) *Session {
 	extendedConfigCache := &ExtendedConfigCache{}
 
 	session := &Session{
-		options:                init.Options,
-		toPath:                 toPath,
-		client:                 init.Client,
-		logger:                 init.Logger,
-		npmExecutor:            init.NpmExecutor,
-		fs:                     overlayFS,
-		parseCache:             parseCache,
-		extendedConfigCache:    extendedConfigCache,
-		programCounter:         &programCounter{},
-		backgroundQueue:        background.NewQueue(),
-		disablePushDiagnostics: init.DisablePushDiagnostics,
+		options:             init.Options,
+		toPath:              toPath,
+		client:              init.Client,
+		logger:              init.Logger,
+		npmExecutor:         init.NpmExecutor,
+		fs:                  overlayFS,
+		parseCache:          parseCache,
+		extendedConfigCache: extendedConfigCache,
+		programCounter:      &programCounter{},
+		backgroundQueue:     background.NewQueue(),
 		snapshot: NewSnapshot(
 			uint64(0),
 			&SnapshotFS{
@@ -697,7 +695,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
-	if s.disablePushDiagnostics {
+	if !s.options.PushDiagnosticsEnabled {
 		return
 	}
 

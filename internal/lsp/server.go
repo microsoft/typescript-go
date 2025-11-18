@@ -735,20 +735,20 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
-			CurrentDirectory:   cwd,
-			DefaultLibraryPath: s.defaultLibraryPath,
-			TypingsLocation:    s.typingsLocation,
-			PositionEncoding:   s.positionEncoding,
-			WatchEnabled:       s.watchEnabled,
-			LoggingEnabled:     true,
-			DebounceDelay:      500 * time.Millisecond,
+			CurrentDirectory:       cwd,
+			DefaultLibraryPath:     s.defaultLibraryPath,
+			TypingsLocation:        s.typingsLocation,
+			PositionEncoding:       s.positionEncoding,
+			WatchEnabled:           s.watchEnabled,
+			LoggingEnabled:         true,
+			DebounceDelay:          500 * time.Millisecond,
+			PushDiagnosticsEnabled: !disablePushDiagnostics,
 		},
-		FS:                     s.fs,
-		Logger:                 s.logger,
-		Client:                 s,
-		NpmExecutor:            s,
-		ParseCache:             s.parseCache,
-		DisablePushDiagnostics: disablePushDiagnostics,
+		FS:          s.fs,
+		Logger:      s.logger,
+		Client:      s,
+		NpmExecutor: s,
+		ParseCache:  s.parseCache,
 	})
 
 	userPreferences, err := s.RequestConfiguration(ctx)
