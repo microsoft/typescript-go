@@ -80,6 +80,71 @@ func TestCheckSrcCompiler(t *testing.T) {
 	p.CheckSourceFiles(t.Context(), nil)
 }
 
+func TestTypePredicateParameterMismatch(t *testing.T) {
+	t.Parallel()
+
+	// This test verifies that the checker doesn't panic when a type predicate
+	// references a parameter name that doesn't match any actual function parameter.
+	// The issue was that getTypePredicateArgument would try to access the arguments
+	// array with a negative index (-1) when the parameter name wasn't found.
+	content := `type TypeA = { kind: 'a' };
+type TypeB = { kind: 'b' };
+type UnionType = TypeA | TypeB;
+
+function isTypeA(
+  _value: UnionType
+): value is TypeA {  // "value" doesn't match parameter "_value"
+  return true;
+}
+
+function test(input: UnionType): void {
+  if (isTypeA(input)) {
+    console.log(input.kind);
+  }
+}`
+	fs := vfstest.FromMap(map[string]string{
+		"/test.ts": content,
+		"/tsconfig.json": `
+				{
+					"compilerOptions": {
+						"target": "es2015",
+						"module": "commonjs",
+						"strict": true
+					},
+					"files": ["test.ts"]
+				}
+			`,
+	}, false /*useCaseSensitiveFileNames*/)
+	fs = bundled.WrapFS(fs)
+
+	cd := "/"
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
+
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
+	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+
+	p := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsed,
+		Host:   host,
+	})
+
+	// This should not panic - it should report a diagnostic error instead
+	diags := p.GetSemanticDiagnostics(t.Context(), nil)
+
+	// We expect at least one diagnostic error (TS1225: Cannot find parameter 'value')
+	assert.Assert(t, len(diags) > 0, "Expected at least one diagnostic error")
+
+	// Verify the expected error code is present
+	foundExpectedError := false
+	for _, diag := range diags {
+		if diag.Code() == 1225 { // TS1225: Cannot find parameter
+			foundExpectedError = true
+			break
+		}
+	}
+	assert.Assert(t, foundExpectedError, "Expected to find error TS1225 (Cannot find parameter)")
+}
+
 func BenchmarkNewChecker(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	fs := osvfs.FS()
