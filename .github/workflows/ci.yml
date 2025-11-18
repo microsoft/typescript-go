@@ -253,10 +253,10 @@ jobs:
         run: |
           set -x
           echo "" > ./internal/fourslash/_scripts/failingTests.txt
-          npm run convertfourslash >/dev/null || true
+          npm run convertfourslash >/dev/null 2>&1 || true
           npx hereby test >/dev/null || true
           npx hereby baseline-accept || true
-          npm run updatefailing >/dev/null || true
+          npm run updatefailing >/dev/null 2>&1 || true
           npx hereby baseline-accept || true
           rm -rf testdata/baselines/reference/fourslash || true
           npx hereby test >/dev/null || true
