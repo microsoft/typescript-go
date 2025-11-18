@@ -88,9 +88,9 @@ func (e *RawExport) Name() string {
 	return e.ExportName
 }
 
-func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func())) []*RawExport {
+func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func()), toPath func(string) tspath.Path) []*RawExport {
 	if file.Symbol != nil {
-		return parseModule(file, nodeModulesDirectory, moduleResolver, getChecker)
+		return parseModule(file, nodeModulesDirectory, moduleResolver, getChecker, toPath)
 	}
 	if len(file.AmbientModuleNames) > 0 {
 		moduleDeclarations := core.Filter(file.Statements.Nodes, ast.IsModuleWithStringLiteralName)
@@ -100,14 +100,14 @@ func parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleRes
 		}
 		exports := make([]*RawExport, 0, exportCount)
 		for _, decl := range moduleDeclarations {
-			parseModuleDeclaration(decl.AsModuleDeclaration(), file, ModuleID(file.FileName()), nodeModulesDirectory, getChecker, &exports)
+			parseModuleDeclaration(decl.AsModuleDeclaration(), file, ModuleID(decl.Name().Text()), nodeModulesDirectory, getChecker, &exports)
 		}
 		return exports
 	}
 	return nil
 }
 
-func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func())) []*RawExport {
+func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleResolver *module.Resolver, getChecker func() (*checker.Checker, func()), toPath func(string) tspath.Path) []*RawExport {
 	moduleAugmentations := core.MapNonNil(file.ModuleAugmentations, func(name *ast.ModuleName) *ast.ModuleDeclaration {
 		decl := name.Parent
 		if ast.IsGlobalScopeAugmentation(decl) {
@@ -129,10 +129,10 @@ func parseModule(file *ast.SourceFile, nodeModulesDirectory tspath.Path, moduleR
 		if tspath.IsExternalModuleNameRelative(name) {
 			// !!! need to resolve non-relative names in separate pass
 			if resolved, _ := moduleResolver.ResolveModuleName(name, file.FileName(), core.ModuleKindCommonJS, nil); resolved.IsResolved() {
-				moduleID = ModuleID(resolved.ResolvedFileName)
+				moduleID = ModuleID(toPath(resolved.ResolvedFileName))
 			} else {
 				// :shrug:
-				moduleID = ModuleID(tspath.ResolvePath(tspath.GetDirectoryPath(file.FileName()), name))
+				moduleID = ModuleID(toPath(tspath.ResolvePath(tspath.GetDirectoryPath(file.FileName()), name)))
 			}
 		}
 		parseModuleDeclaration(decl, file, moduleID, nodeModulesDirectory, getChecker, &exports)
@@ -167,6 +167,7 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 			*exports = append(*exports, &RawExport{
 				ExportID: ExportID{
 					// !!! these are overlapping, what do I even want with this
+					//     overlapping actually useful for merging later
 					ExportName: name,
 					ModuleID:   moduleID,
 				},

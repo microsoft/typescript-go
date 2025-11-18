@@ -2027,6 +2027,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		}
 	}
 
+	result := &ResolvedEntrypoints{}
 	mainResolution := state.loadNodeModuleFromDirectoryWorker(
 		extensions,
 		packageJson.PackageDirectory,
@@ -2034,16 +2035,38 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		packageJson,
 	)
 
+	otherFiles := vfs.ReadDirectory(
+		r.host.FS(),
+		r.host.GetCurrentDirectory(),
+		packageJson.PackageDirectory,
+		extensions.Array(),
+		[]string{"node_modules"},
+		[]string{"**/*"},
+		nil,
+	)
+
 	if mainResolution.isResolved() {
-		return &ResolvedEntrypoints{
-			Entrypoints: []*ResolvedEntrypoint{{
-				ResolvedFileName: mainResolution.path,
-				ModuleSpecifier:  packageName,
-			}},
-			FailedLookupLocations: state.failedLookupLocations,
-		}
+		result.Entrypoints = append(result.Entrypoints, &ResolvedEntrypoint{
+			ResolvedFileName: mainResolution.path,
+			ModuleSpecifier:  packageName,
+		})
 	}
 
+	comparePathsOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.host.FS().UseCaseSensitiveFileNames()}
+	for _, file := range otherFiles {
+		if mainResolution.isResolved() && tspath.ComparePaths(file, mainResolution.path, comparePathsOptions) == 0 {
+			continue
+		}
+		result.Entrypoints = append(result.Entrypoints, &ResolvedEntrypoint{
+			ResolvedFileName: file,
+			ModuleSpecifier:  tspath.ResolvePath(packageName, tspath.GetRelativePathFromDirectory(packageJson.PackageDirectory, file, comparePathsOptions)),
+		})
+	}
+
+	if len(result.Entrypoints) > 0 {
+		result.FailedLookupLocations = state.failedLookupLocations
+		return result
+	}
 	return nil
 }
 
@@ -2075,7 +2098,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				for _, file := range files {
 					entrypoints = append(entrypoints, &ResolvedEntrypoint{
 						ResolvedFileName:  file,
-						ModuleSpecifier:   "", // !!!
+						ModuleSpecifier:   "!!! TODO",
 						IncludeConditions: includeConditions,
 						ExcludeConditions: excludeConditions,
 					})

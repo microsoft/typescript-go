@@ -529,7 +529,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			for file := range t.result.possibleFailedAmbientModuleLookupSources.Keys() {
 				fileExports := parseFile(resolver.GetSourceFile(file.FileName()), t.entry.Key(), b.resolver, func() (*checker.Checker, func()) {
 					return ch, func() {}
-				})
+				}, b.base.toPath)
 				t.result.bucket.Paths[file.Path()] = struct{}{}
 				for _, exp := range fileExports {
 					t.result.bucket.Index.insertAsWords(exp)
@@ -565,14 +565,14 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	getChecker, closePool := b.createCheckerPool(program)
 	defer closePool()
 	for _, file := range program.GetSourceFiles() {
-		if strings.Contains(file.FileName(), "/node_modules/") {
+		if strings.Contains(file.FileName(), "/node_modules/") || program.IsSourceFileDefaultLibrary(file.Path()) {
 			continue
 		}
 		wg.Queue(func() {
 			if ctx.Err() == nil {
 				// !!! we could consider doing ambient modules / augmentations more directly
 				// from the program checker, instead of doing the syntax-based collection
-				fileExports := parseFile(file, "", b.resolver, getChecker)
+				fileExports := parseFile(file, "", b.resolver, getChecker, b.base.toPath)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -653,7 +653,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	processFile := func(fileName string, path tspath.Path) {
 		sourceFile := b.host.GetSourceFile(fileName, path)
 		binder.BindSourceFile(sourceFile)
-		fileExports := parseFile(sourceFile, dirPath, b.resolver, getChecker)
+		fileExports := parseFile(sourceFile, dirPath, b.resolver, getChecker, b.base.toPath)
 		if !resolver.possibleFailedAmbientModuleLookupSources.Has(sourceFile) {
 			// If we failed to resolve any ambient modules from this file, we'll try the
 			// whole file again later, so don't add anything now.
@@ -698,6 +698,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 				return
 			}
 
+			// !!! get all TS files for packages without exports?
 			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 			if packageEntrypoints == nil {
 				return

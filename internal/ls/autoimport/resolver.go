@@ -50,7 +50,9 @@ func (r *resolver) SourceFiles() []*ast.SourceFile {
 
 // Options implements checker.Program.
 func (r *resolver) Options() *core.CompilerOptions {
-	return core.EmptyCompilerOptions
+	return &core.CompilerOptions{
+		NoCheck: core.TSTrue,
+	}
 }
 
 // GetCurrentDirectory implements checker.Program.

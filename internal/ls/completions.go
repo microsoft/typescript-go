@@ -1987,11 +1987,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		// !!! check for type-only in JS
 		// !!! deprecation
 
-		if string(exp.ModuleID) == file.FileName() {
-			// Ignore exports from the current file
-			continue
-		}
-
 		if data.importStatementCompletion != nil {
 			/// !!! andrewbranch/autoimport
 			// resolvedOrigin := origin.asExport()

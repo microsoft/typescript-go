@@ -58,6 +58,22 @@ func (s *Set[T]) Clone() *Set[T] {
 	return clone
 }
 
+func (s *Set[T]) Union(other *Set[T]) *Set[T] {
+	if s == nil && other == nil {
+		return nil
+	}
+	result := &Set[T]{}
+	if s != nil {
+		result.M = maps.Clone(s.M)
+	} else {
+		result.M = make(map[T]struct{})
+	}
+	if other != nil {
+		maps.Copy(result.M, other.M)
+	}
+	return result
+}
+
 func (s *Set[T]) Equals(other *Set[T]) bool {
 	if s == other {
 		return true
