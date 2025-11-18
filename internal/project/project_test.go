@@ -213,7 +213,7 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Assert(t, len(tsconfigCall.Params.Diagnostics) > 0, "expected at least one diagnostic")
 	})
 
-	t.Run("clears diagnostics when config fixed", func(t *testing.T) {
+	t.Run("clears diagnostics when project is removed", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
 			"/src/tsconfig.json":  `{"compilerOptions": {"baseUrl": "."}}`,
