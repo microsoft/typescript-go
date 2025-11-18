@@ -697,10 +697,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(_ tspath.Path, addedProject *Project) {
-			if addedProject.Kind != KindConfigured || addedProject.Program == nil {
-				return
-			}
-			if addedProject.ProgramLastUpdate != newSnapshot.ID() {
+			if addedProject.Kind != KindConfigured || addedProject.Program == nil || addedProject.ProgramLastUpdate != newSnapshot.ID() {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, addedProject, addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
@@ -712,10 +709,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, removedProject, nil, newSnapshot.converters)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
-			if newProject.Kind != KindConfigured || newProject.Program == nil {
-				return
-			}
-			if newProject.ProgramLastUpdate != newSnapshot.ID() {
+			if newProject.Kind != KindConfigured || newProject.Program == nil || newProject.ProgramLastUpdate != newSnapshot.ID() {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, newProject, newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
