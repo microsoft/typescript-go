@@ -125,8 +125,9 @@ type Session struct {
 }
 
 func NewSession(init *SessionInit) *Session {
-	if init.Client == nil {
-		panic("NewSession: Client cannot be nil")
+	client := init.Client
+	if client == nil {
+		client = noopClient{}
 	}
 	currentDirectory := init.Options.CurrentDirectory
 	useCaseSensitiveFileNames := init.FS.UseCaseSensitiveFileNames()
@@ -143,7 +144,7 @@ func NewSession(init *SessionInit) *Session {
 	session := &Session{
 		options:             init.Options,
 		toPath:              toPath,
-		client:              init.Client,
+		client:              client,
 		logger:              init.Logger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,

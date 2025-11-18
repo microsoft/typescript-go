@@ -12,3 +12,21 @@ type Client interface {
 	RefreshDiagnostics(ctx context.Context) error
 	PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
 }
+
+type noopClient struct{}
+
+func (n noopClient) WatchFiles(ctx context.Context, id WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+	return nil
+}
+
+func (n noopClient) UnwatchFiles(ctx context.Context, id WatcherID) error {
+	return nil
+}
+
+func (n noopClient) RefreshDiagnostics(ctx context.Context) error {
+	return nil
+}
+
+func (n noopClient) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	return nil
+}
