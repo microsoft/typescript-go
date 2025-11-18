@@ -8,7 +8,7 @@
 -// 
 -// const f6 = (i: I, j: J, b: boolean) => b ? i : j;
 -// 
--// const [|{| contextId: 0 |}f7|] = (i: I) => {};
+-// const [|f7|] = (i: I) => {};
 -// 
 -// function f8(i: I): I;
 -// function f8(j: J): J;

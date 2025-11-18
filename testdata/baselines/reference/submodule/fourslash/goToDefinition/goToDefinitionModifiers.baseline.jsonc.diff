@@ -18,10 +18,7 @@
 
 
 
- // === goToDefinition ===
- // === /a.ts ===
--// export class [|{| textSpan: true |}A|]/*GOTO DEF*/ {
-+// export class [|A|]/*GOTO DEF*/ {
+@@= skipped -19, +10 lines =@@
  // 
  //     private z: string;
  // 
@@ -38,55 +35,3 @@
 +// --- (line: 5) skipped ---
 
 
-
-@@= skipped -48, +30 lines =@@
- // === /a.ts ===
- // export class A {
- // 
--//     private [|{| textSpan: true |}z|]/*GOTO DEF*/: string;
-+//     private [|z|]/*GOTO DEF*/: string;
- // 
- //     readonly x: string;
- // 
-@@= skipped -28, +28 lines =@@
- // 
- //     private z: string;
- // 
--//     readonly [|{| textSpan: true |}x|]/*GOTO DEF*/: string;
-+//     readonly [|x|]/*GOTO DEF*/: string;
- // 
- //     async a() {  }
- // 
-@@= skipped -28, +28 lines =@@
- // 
- //     readonly x: string;
- // 
--//     async [|{| textSpan: true |}a|]/*GOTO DEF*/() {  }
-+//     async [|a|]/*GOTO DEF*/() {  }
- // 
- //     override b() {}
- // 
-@@= skipped -29, +29 lines =@@
- // 
- //     async a() {  }
- // 
--//     override [|{| textSpan: true |}b|]/*GOTO DEF*/() {}
-+//     override [|b|]/*GOTO DEF*/() {}
- // 
- //     public async c() { }
- // }
-@@= skipped -54, +54 lines =@@
- // 
- //     override b() {}
- // 
--//     public async [|{| textSpan: true |}c|]/*GOTO DEF*/() { }
-+//     public async [|c|]/*GOTO DEF*/() { }
- // }
- // 
- // export function foo() { }
-@@= skipped -23, +23 lines =@@
- //     public async c() { }
- // }
- // 
--// export function [|{| textSpan: true |}foo|]/*GOTO DEF*/() { }
-+// export function [|foo|]/*GOTO DEF*/() { }

@@ -263,7 +263,7 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 					oldGoToDefCommand, string(goToDefinitionCmd),
 					oldGoToDefComment, "/*GOTO DEF*/",
 				)
-				var defIdRegex = regexp.MustCompile(`{\| defId: [0-9]+ \|}`)
+				var objectRangeRegex = regexp.MustCompile(`{\| [^|]* \|}`)
 				detailsStr := "// === Details ==="
 				lines := strings.Split(s, "\n")
 				var isInCommand bool
@@ -289,7 +289,7 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 						// We don't diff the details section, since the structure of responses is different.
 						if !isInDetails {
 							fixedLine := replacer.Replace(line)
-							fixedLine = defIdRegex.ReplaceAllString(fixedLine, "")
+							fixedLine = objectRangeRegex.ReplaceAllString(fixedLine, "")
 							commandLines = append(commandLines, fixedLine)
 						} else if line == "  ]" {
 							isInDetails = false

@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
  // === /foo.js ===
--// x.[|{| contextId: 0 |}test|] = () => { }
+-// x.[|test|] = () => { }
 +// x.test = () => { }
  // x./*GOTO DEF*/test();
  // x.test3 = function () { }
@@ -12,6 +12,6 @@
  // === /foo.js ===
  // x.test = () => { }
  // x.test();
--// x.[|{| contextId: 0 |}test3|] = function () { }
+-// x.[|test3|] = function () { }
 +// x.test3 = function () { }
  // x./*GOTO DEF*/test3();
