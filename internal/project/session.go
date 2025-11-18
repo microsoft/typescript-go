@@ -47,7 +47,7 @@ type SessionOptions struct {
 	LoggingEnabled         bool
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
-	Locale             locale.Locale
+	Locale                 locale.Locale
 }
 
 type SessionInit struct {
