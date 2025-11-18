@@ -165,7 +165,7 @@ type Server struct {
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
-	_, err := s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
+	_, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
 				Id:     string(id),
@@ -187,7 +187,7 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 // UnwatchFiles implements project.Client.
 func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 	if s.watchers.Has(id) {
-		_, err := s.sendRequest(ctx, lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
+		_, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
 				{
 					Id:     string(id),
@@ -212,10 +212,17 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceDiagnosticRefreshInfo, nil); err != nil {
 		return fmt.Errorf("failed to refresh diagnostics: %w", err)
 	}
 
+	return nil
+}
+
+// PublishDiagnostics implements project.Client.
+func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
+	s.outgoingQueue <- notification.Message()
 	return nil
 }
 
@@ -225,7 +232,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 		// if no configuration request capapbility, return default preferences
 		return s.session.NewUserPreferences(), nil
 	}
-	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
+	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
 				Section: ptrTo("typescript"),
@@ -235,7 +242,6 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 	if err != nil {
 		return nil, fmt.Errorf("configure request failed: %w", err)
 	}
-	configs := result.([]any)
 	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
 	userPreferences := s.session.NewUserPreferences()
 	for _, item := range configs {
@@ -391,9 +397,9 @@ func (s *Server) writeLoop(ctx context.Context) error {
 	}
 }
 
-func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params any) (any, error) {
+func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
 	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
-	req := lsproto.NewRequestMessage(method, id, params)
+	req := info.NewRequestMessage(id, params)
 
 	responseChan := make(chan *lsproto.ResponseMessage, 1)
 	s.pendingServerRequestsMu.Lock()
@@ -410,12 +416,12 @@ func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params 
 			close(respChan)
 			delete(s.pendingServerRequests, *id)
 		}
-		return nil, ctx.Err()
+		return *new(Resp), ctx.Err()
 	case resp := <-responseChan:
 		if resp.Error != nil {
-			return nil, fmt.Errorf("request failed: %s", resp.Error.String())
+			return *new(Resp), fmt.Errorf("request failed: %s", resp.Error.String())
 		}
-		return resp.Result, nil
+		return info.UnmarshalResult(resp.Result)
 	}
 }
 
@@ -713,16 +719,27 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
+	var disablePushDiagnostics bool
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
+		// Check for disablePushDiagnostics option
+		if initOpts, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
+			if disable, ok := initOpts["disablePushDiagnostics"].(bool); ok {
+				disablePushDiagnostics = disable
+			}
+		}
+	}
+
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
-			CurrentDirectory:   cwd,
-			DefaultLibraryPath: s.defaultLibraryPath,
-			TypingsLocation:    s.typingsLocation,
-			PositionEncoding:   s.positionEncoding,
-			WatchEnabled:       s.watchEnabled,
-			LoggingEnabled:     true,
-			DebounceDelay:      500 * time.Millisecond,
-			Locale:             s.locale,
+			CurrentDirectory:       cwd,
+			DefaultLibraryPath:     s.defaultLibraryPath,
+			TypingsLocation:        s.typingsLocation,
+			PositionEncoding:       s.positionEncoding,
+			WatchEnabled:           s.watchEnabled,
+			LoggingEnabled:         true,
+			DebounceDelay:          500 * time.Millisecond,
+			PushDiagnosticsEnabled: !disablePushDiagnostics,
+			Locale:                 s.locale,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
@@ -731,36 +748,28 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		ParseCache:  s.parseCache,
 	})
 
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
-		// handle userPreferences from initializationOptions
-		userPreferences := s.session.NewUserPreferences()
-		userPreferences.Parse(*s.initializeParams.InitializationOptions)
-		s.session.InitializeWithConfig(userPreferences)
-	} else {
-		// request userPreferences if not provided at initialization
-		userPreferences, err := s.RequestConfiguration(ctx)
-		if err != nil {
-			return err
-		}
-		s.session.InitializeWithConfig(userPreferences)
+	userPreferences, err := s.RequestConfiguration(ctx)
+	if err != nil {
+		return err
+	}
+	s.session.InitializeWithConfig(userPreferences)
 
-		_, err = s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
-			Registrations: []*lsproto.Registration{
-				{
-					Id:     "typescript-config-watch-id",
-					Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
-					RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
-						Section: &lsproto.StringOrStrings{
-							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
-							Strings: &[]string{"typescript"},
-						},
-					})),
-				},
+	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
+		Registrations: []*lsproto.Registration{
+			{
+				Id:     "typescript-config-watch-id",
+				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
+				RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
+					Section: &lsproto.StringOrStrings{
+						// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
+						Strings: &[]string{"typescript"},
+					},
+				})),
 			},
-		})
-		if err != nil {
-			return fmt.Errorf("failed to register configuration change watcher: %w", err)
-		}
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to register configuration change watcher: %w", err)
 	}
 
 	// !!! temporary.
