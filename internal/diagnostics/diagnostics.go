@@ -7,11 +7,12 @@ import (
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/locale"
+	"golang.org/x/text/language"
 )
 
-//go:generate go run generate.go -output ./diagnostics_generated.go
+//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go loc_generated.go stringer_generated.go
 
 type Category int32
 
@@ -74,11 +75,32 @@ func Localize(locale locale.Locale, message *Message, key Key, args ...string) s
 	}
 
 	if message != nil {
-		// !!! localize
-		return Format(message.text, args)
+		text := message.text
+
+		if language.Tag(locale) != language.Und {
+			if localizedMap := getLocalizedMessages(locale); localizedMap != nil {
+				if localizedText, ok := localizedMap[message.key]; ok {
+					text = localizedText
+				}
+			}
+		}
+
+		return Format(text, args)
 	}
 
 	panic("Unknown diagnostic message: " + string(key))
+}
+
+func getLocalizedMessages(loc locale.Locale) map[Key]string {
+	_, index, confidence := matcher.Match(language.Tag(loc))
+
+	if confidence >= language.Low && index >= 0 && index < len(localeFuncs) {
+		if fn := localeFuncs[index]; fn != nil {
+			return fn()
+		}
+	}
+
+	return nil
 }
 
 var placeholderRegexp = regexp.MustCompile(`{(\d+)}`)
