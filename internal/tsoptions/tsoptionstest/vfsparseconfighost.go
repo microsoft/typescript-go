@@ -22,7 +22,7 @@ func fixRoot(path string) string {
 type VfsParseConfigHost struct {
 	Vfs              vfs.FS
 	CurrentDirectory string
-	TheLocale           language.Tag
+	TheLocale        language.Tag
 }
 
 var _ tsoptions.ParseConfigHost = (*VfsParseConfigHost)(nil)
