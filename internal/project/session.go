@@ -734,18 +734,6 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
-	if s.client == nil {
-		// Client not set (shouldn't happen in normal operation)
-		return
-	}
-	if converters == nil {
-		// This shouldn't happen, but be defensive
-		if s.options.LoggingEnabled {
-			s.logger.Logf("publishProjectDiagnostics called with nil converters for %s", configFilePath)
-		}
-		return
-	}
-
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
