@@ -28,7 +28,8 @@ func TestRefCountingCaches(t *testing.T) {
 				WatchEnabled:       false,
 				LoggingEnabled:     false,
 			},
-			FS: fs,
+			FS:     fs,
+			Client: &noopClient{},
 		})
 		return session
 	}

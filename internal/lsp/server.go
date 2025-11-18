@@ -723,6 +723,16 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
+	var disablePushDiagnostics bool
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
+		// Check for disablePushDiagnostics option
+		if initOpts, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
+			if disable, ok := initOpts["disablePushDiagnostics"].(bool); ok {
+				disablePushDiagnostics = disable
+			}
+		}
+	}
+
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
 			CurrentDirectory:   cwd,
@@ -733,11 +743,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			LoggingEnabled:     true,
 			DebounceDelay:      500 * time.Millisecond,
 		},
-		FS:          s.fs,
-		Logger:      s.logger,
-		Client:      s,
-		NpmExecutor: s,
-		ParseCache:  s.parseCache,
+		FS:                     s.fs,
+		Logger:                 s.logger,
+		Client:                 s,
+		NpmExecutor:            s,
+		ParseCache:             s.parseCache,
+		DisablePushDiagnostics: disablePushDiagnostics,
 	})
 
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {

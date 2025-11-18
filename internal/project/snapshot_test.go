@@ -11,6 +11,25 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+// noopClient is a minimal Client implementation for snapshot tests
+type noopClient struct{}
+
+func (n *noopClient) WatchFiles(ctx context.Context, id WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+	return nil
+}
+
+func (n *noopClient) UnwatchFiles(ctx context.Context, id WatcherID) error {
+	return nil
+}
+
+func (n *noopClient) RefreshDiagnostics(ctx context.Context) error {
+	return nil
+}
+
+func (n *noopClient) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	return nil
+}
+
 func TestSnapshot(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
@@ -28,7 +47,8 @@ func TestSnapshot(t *testing.T) {
 				WatchEnabled:       false,
 				LoggingEnabled:     false,
 			},
-			FS: fs,
+			FS:     fs,
+			Client: &noopClient{},
 		})
 		return session
 	}

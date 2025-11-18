@@ -264,8 +264,14 @@ func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps di
 		}
 	}
 
+	// For diagnostics without a file (e.g., program diagnostics), use a zero range
+	var lspRange lsproto.Range
+	if diagnostic.File() != nil {
+		lspRange = converters.ToLSPRange(diagnostic.File(), diagnostic.Loc())
+	}
+
 	return &lsproto.Diagnostic{
-		Range: converters.ToLSPRange(diagnostic.File(), diagnostic.Loc()),
+		Range: lspRange,
 		Code: &lsproto.IntegerOrString{
 			Integer: ptrTo(diagnostic.Code()),
 		},

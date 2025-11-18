@@ -48,12 +48,13 @@ type SessionOptions struct {
 }
 
 type SessionInit struct {
-	Options     *SessionOptions
-	FS          vfs.FS
-	Client      Client
-	Logger      logging.Logger
-	NpmExecutor ata.NpmExecutor
-	ParseCache  *ParseCache
+	Options                *SessionOptions
+	FS                     vfs.FS
+	Client                 Client
+	Logger                 logging.Logger
+	NpmExecutor            ata.NpmExecutor
+	ParseCache             *ParseCache
+	DisablePushDiagnostics bool
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -87,6 +88,7 @@ type Session struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
+	disablePushDiagnostics             bool
 
 	// snapshotID is the counter for snapshot IDs. It does not necessarily
 	// equal the `snapshot.ID`. It is stored on Session instead of globally
@@ -124,6 +126,9 @@ type Session struct {
 }
 
 func NewSession(init *SessionInit) *Session {
+	if init.Client == nil {
+		panic("NewSession: Client cannot be nil")
+	}
 	currentDirectory := init.Options.CurrentDirectory
 	useCaseSensitiveFileNames := init.FS.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
@@ -137,17 +142,17 @@ func NewSession(init *SessionInit) *Session {
 	extendedConfigCache := &ExtendedConfigCache{}
 
 	session := &Session{
-		options:             init.Options,
-		toPath:              toPath,
-		client:              init.Client,
-		logger:              init.Logger,
-		npmExecutor:         init.NpmExecutor,
-		fs:                  overlayFS,
-		parseCache:          parseCache,
-		extendedConfigCache: extendedConfigCache,
-		programCounter:      &programCounter{},
-		backgroundQueue:     background.NewQueue(),
-		snapshotID:          atomic.Uint64{},
+		options:                init.Options,
+		toPath:                 toPath,
+		client:                 init.Client,
+		logger:                 init.Logger,
+		npmExecutor:            init.NpmExecutor,
+		fs:                     overlayFS,
+		parseCache:             parseCache,
+		extendedConfigCache:    extendedConfigCache,
+		programCounter:         &programCounter{},
+		backgroundQueue:        background.NewQueue(),
+		disablePushDiagnostics: init.DisablePushDiagnostics,
 		snapshot: NewSnapshot(
 			uint64(0),
 			&SnapshotFS{
@@ -692,39 +697,55 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	if s.disablePushDiagnostics {
+		return
+	}
+
 	ctx := context.Background()
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
-		func(_ tspath.Path, addedProject *Project) {
+		func(configFilePath tspath.Path, addedProject *Project) {
 			if addedProject.Kind != KindConfigured || addedProject.Program == nil || addedProject.ProgramLastUpdate != newSnapshot.ID() {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, addedProject, addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
 		},
-		func(_ tspath.Path, removedProject *Project) {
+		func(configFilePath tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, removedProject, nil, newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
 		},
-		func(_ tspath.Path, oldProject, newProject *Project) {
+		func(configFilePath tspath.Path, oldProject, newProject *Project) {
 			if newProject.Kind != KindConfigured || newProject.Program == nil || newProject.ProgramLastUpdate != newSnapshot.ID() {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, newProject, newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.Program.GetProgramDiagnostics(), newSnapshot.converters)
 		},
 	)
 }
 
-func (s *Session) publishProjectDiagnostics(ctx context.Context, project *Project, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
+func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
+	if s.client == nil {
+		// Client not set (shouldn't happen in normal operation)
+		return
+	}
+	if converters == nil {
+		// This shouldn't happen, but be defensive
+		if s.options.LoggingEnabled {
+			s.logger.Logf("publishProjectDiagnostics called with nil converters for %s", configFilePath)
+		}
+		return
+	}
+
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
 	}
 
 	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
-		Uri:         lsconv.FileNameToDocumentURI(project.ConfigFileName()),
+		Uri:         lsconv.FileNameToDocumentURI(configFilePath),
 		Diagnostics: lspDiagnostics,
 	}); err != nil && s.options.LoggingEnabled {
 		s.logger.Logf("Error publishing diagnostics: %v", err)
