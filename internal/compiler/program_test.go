@@ -9,12 +9,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
-	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 )
 
@@ -244,7 +244,7 @@ func TestProgram(t *testing.T) {
 						CompilerOptions: &opts,
 					},
 				},
-				Host: compiler.NewCompilerHost("c:/dev/src", fs, language.Und, bundled.LibPath(), nil, nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, locale.Default, bundled.LibPath(), nil, nil),
 			})
 
 			actualFiles := []string{}
@@ -281,7 +281,7 @@ func BenchmarkNewProgram(b *testing.B) {
 						CompilerOptions: &opts,
 					},
 				},
-				Host: compiler.NewCompilerHost("c:/dev/src", fs, language.Und, bundled.LibPath(), nil, nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, locale.Default, bundled.LibPath(), nil, nil),
 			}
 
 			for b.Loop() {
@@ -298,7 +298,7 @@ func BenchmarkNewProgram(b *testing.B) {
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)
 
-		host := compiler.NewCompilerHost(rootPath, fs, language.Und, bundled.LibPath(), nil, nil)
+		host := compiler.NewCompilerHost(rootPath, fs, locale.Default, bundled.LibPath(), nil, nil)
 
 		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")

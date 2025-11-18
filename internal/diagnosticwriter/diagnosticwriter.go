@@ -12,13 +12,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"golang.org/x/text/language"
 )
 
 type FormattingOptions struct {
-	Locale language.Tag
+	Locale locale.Locale
 	tspath.ComparePathsOptions
 	NewLine string
 }
@@ -169,13 +169,13 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 	}
 }
 
-func FlattenDiagnosticMessage(d *ast.Diagnostic, newLine string, locale language.Tag) string {
+func FlattenDiagnosticMessage(d *ast.Diagnostic, newLine string, locale locale.Locale) string {
 	var output strings.Builder
 	WriteFlattenedDiagnosticMessage(&output, d, newLine, locale)
 	return output.String()
 }
 
-func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnostic, newline string, locale language.Tag) {
+func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnostic, newline string, locale locale.Locale) {
 	fmt.Fprint(writer, diagnostic.Localize(locale))
 
 	for _, chain := range diagnostic.MessageChain() {
@@ -183,7 +183,7 @@ func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnosti
 	}
 }
 
-func flattenDiagnosticMessageChain(writer io.Writer, chain *ast.Diagnostic, newLine string, locale language.Tag, level int) {
+func flattenDiagnosticMessageChain(writer io.Writer, chain *ast.Diagnostic, newLine string, locale locale.Locale, level int) {
 	fmt.Fprint(writer, newLine)
 	for range level {
 		fmt.Fprint(writer, "  ")

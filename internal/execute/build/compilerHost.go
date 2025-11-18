@@ -3,10 +3,10 @@ package build
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 type compilerHost struct {
@@ -28,7 +28,7 @@ func (h *compilerHost) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
 }
 
-func (h *compilerHost) Locale() language.Tag {
+func (h *compilerHost) Locale() locale.Locale {
 	return h.host.Locale()
 }
 

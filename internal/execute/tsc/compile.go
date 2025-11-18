@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 type System interface {
@@ -24,8 +23,6 @@ type System interface {
 
 	Now() time.Time
 	SinceStart() time.Duration
-
-	Locale() language.Tag
 }
 
 type ExitStatus int

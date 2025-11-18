@@ -6,12 +6,11 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"golang.org/x/text/language"
 )
 
 func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
@@ -63,7 +62,7 @@ func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.D
 		severity = lsproto.DiagnosticSeverityError
 	}
 
-	locale := core.GetLocale(ctx)
+	locale := locale.FromContext(ctx)
 
 	var relatedInformation []*lsproto.DiagnosticRelatedInformation
 	if clientOptions.RelatedInformation {
@@ -103,7 +102,7 @@ func (l *LanguageService) toLSPDiagnostic(ctx context.Context, diagnostic *ast.D
 	}
 }
 
-func messageChainToString(diagnostic *ast.Diagnostic, locale language.Tag) string {
+func messageChainToString(diagnostic *ast.Diagnostic, locale locale.Locale) string {
 	if len(diagnostic.MessageChain()) == 0 {
 		return diagnostic.Localize(locale)
 	}

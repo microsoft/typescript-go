@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"golang.org/x/term"
-	"golang.org/x/text/language"
 )
 
 type osSys struct {
@@ -58,11 +57,6 @@ func (s *osSys) GetWidthOfTerminal() int {
 
 func (s *osSys) GetEnvironmentVariable(name string) string {
 	return os.Getenv(name)
-}
-
-func (s *osSys) Locale() language.Tag {
-	// !!!
-	return language.Und
 }
 
 func newSystem() *osSys {

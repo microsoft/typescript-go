@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"golang.org/x/text/language"
+	"github.com/microsoft/typescript-go/internal/locale"
 )
 
 //go:generate go run generate.go -output ./diagnostics_generated.go
@@ -60,15 +60,15 @@ func (m *Message) String() string {
 	return m.text
 }
 
-func (m *Message) Localize(locale language.Tag, args ...any) string {
+func (m *Message) Localize(locale locale.Locale, args ...any) string {
 	return Localize(locale, m, "", StringifyArgs(args)...)
 }
 
-func (m *Message) LocalizeStringArgs(locale language.Tag, args ...string) string {
+func (m *Message) LocalizeStringArgs(locale locale.Locale, args ...string) string {
 	return Localize(locale, m, "", args...)
 }
 
-func Localize(locale language.Tag, message *Message, key Key, args ...string) string {
+func Localize(locale locale.Locale, message *Message, key Key, args ...string) string {
 	if message == nil {
 		message = keyToMessage(key)
 	}

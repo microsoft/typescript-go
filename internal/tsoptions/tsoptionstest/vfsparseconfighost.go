@@ -1,11 +1,11 @@
 package tsoptionstest
 
 import (
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
-	"golang.org/x/text/language"
 )
 
 func fixRoot(path string) string {
@@ -22,7 +22,7 @@ func fixRoot(path string) string {
 type VfsParseConfigHost struct {
 	Vfs              vfs.FS
 	CurrentDirectory string
-	TheLocale        language.Tag
+	TheLocale        locale.Locale
 }
 
 var _ tsoptions.ParseConfigHost = (*VfsParseConfigHost)(nil)
@@ -35,7 +35,7 @@ func (h *VfsParseConfigHost) GetCurrentDirectory() string {
 	return h.CurrentDirectory
 }
 
-func (h *VfsParseConfigHost) Locale() language.Tag {
+func (h *VfsParseConfigHost) Locale() locale.Locale {
 	return h.TheLocale
 }
 

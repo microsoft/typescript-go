@@ -6,11 +6,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
@@ -109,7 +109,7 @@ func (c *compilerHost) GetCurrentDirectory() string {
 	return c.currentDirectory
 }
 
-func (c *compilerHost) Locale() language.Tag {
+func (c *compilerHost) Locale() locale.Locale {
 	return c.sessionOptions.Locale
 }
 

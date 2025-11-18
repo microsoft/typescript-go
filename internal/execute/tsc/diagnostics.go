@@ -8,17 +8,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
+func getFormatOptsOfSys(sys System, locale locale.Locale) *diagnosticwriter.FormattingOptions {
 	return &diagnosticwriter.FormattingOptions{
 		NewLine: "\n",
 		ComparePathsOptions: tspath.ComparePathsOptions{
 			CurrentDirectory:          sys.GetCurrentDirectory(),
 			UseCaseSensitiveFileNames: sys.FS().UseCaseSensitiveFileNames(),
 		},
-		Locale: sys.Locale(),
+		Locale: locale,
 	}
 }
 
@@ -30,7 +31,7 @@ func CreateDiagnosticReporter(sys System, w io.Writer, options *core.CompilerOpt
 	if options.Quiet.IsTrue() {
 		return QuietDiagnosticReporter
 	}
-	formatOpts := getFormatOptsOfSys(sys)
+	formatOpts := getFormatOptsOfSys(sys, locale.Parse(options.Locale))
 	if shouldBePretty(sys, options) {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.FormatDiagnosticWithColorAndContext(w, diagnostic, formatOpts)
@@ -126,7 +127,7 @@ func QuietDiagnosticsReporter(diagnostics []*ast.Diagnostic) {}
 
 func CreateReportErrorSummary(sys System, options *core.CompilerOptions) DiagnosticsReporter {
 	if shouldBePretty(sys, options) {
-		formatOpts := getFormatOptsOfSys(sys)
+		formatOpts := getFormatOptsOfSys(sys, locale.Parse(options.Locale))
 		return func(diagnostics []*ast.Diagnostic) {
 			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
 		}
@@ -139,7 +140,7 @@ func CreateBuilderStatusReporter(sys System, w io.Writer, options *core.Compiler
 		return QuietDiagnosticReporter
 	}
 
-	formatOpts := getFormatOptsOfSys(sys)
+	formatOpts := getFormatOptsOfSys(sys, locale.Parse(options.Locale))
 	writeStatus := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticsStatusWithColorAndTime, diagnosticwriter.FormatDiagnosticsStatusAndTime)
 	return func(diagnostic *ast.Diagnostic) {
 		if testing != nil {
@@ -152,7 +153,7 @@ func CreateBuilderStatusReporter(sys System, w io.Writer, options *core.Compiler
 }
 
 func CreateWatchStatusReporter(sys System, options *core.CompilerOptions, testing CommandLineTesting) DiagnosticReporter {
-	formatOpts := getFormatOptsOfSys(sys)
+	formatOpts := getFormatOptsOfSys(sys, locale.Parse(options.Locale))
 	writeStatus := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticsStatusWithColorAndTime, diagnosticwriter.FormatDiagnosticsStatusAndTime)
 	return func(diagnostic *ast.Diagnostic) {
 		writer := sys.Writer()

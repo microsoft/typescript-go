@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -81,9 +82,11 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		defer profileSession.Stop()
 	}
 
+	locale := locale.Parse(buildCommand.CompilerOptions.Locale)
+
 	if buildCommand.CompilerOptions.Help.IsTrue() {
-		tsc.PrintVersion(sys)
-		tsc.PrintBuildHelp(sys, tsoptions.BuildOpts)
+		tsc.PrintVersion(sys, locale)
+		tsc.PrintBuildHelp(sys, locale, tsoptions.BuildOpts)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
@@ -98,7 +101,7 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
-	// if commandLine.Options().Locale != nil
+	locale := locale.Parse(commandLine.CompilerOptions().Locale)
 
 	if len(commandLine.Errors) > 0 {
 		for _, e := range commandLine.Errors {
@@ -114,17 +117,17 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		tsc.WriteConfigFile(sys, reportDiagnostic, commandLine.Raw.(*collections.OrderedMap[string, any]))
+		tsc.WriteConfigFile(sys, locale, reportDiagnostic, commandLine.Raw.(*collections.OrderedMap[string, any]))
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
-		tsc.PrintVersion(sys)
+		tsc.PrintVersion(sys, locale)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Help.IsTrue() || commandLine.CompilerOptions().All.IsTrue() {
-		tsc.PrintHelp(sys, commandLine)
+		tsc.PrintHelp(sys, locale, commandLine)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
@@ -162,8 +165,8 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
 		} else {
-			tsc.PrintVersion(sys)
-			tsc.PrintHelp(sys, commandLine)
+			tsc.PrintVersion(sys, locale)
+			tsc.PrintHelp(sys, locale, commandLine)
 		}
 		return tsc.CommandLineResult{Status: tsc.ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
@@ -254,7 +257,7 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.Locale(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), locale.Parse(config.CompilerOptions().Locale), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -297,7 +300,7 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.Locale(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), locale.Parse(config.CompilerOptions().Locale), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

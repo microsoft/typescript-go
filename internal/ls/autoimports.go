@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -1459,7 +1460,7 @@ func (l *LanguageService) codeActionForFixWorker(
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
 ) string {
-	locale := core.GetLocale(ctx)
+	locale := locale.FromContext(ctx)
 
 	switch fix.kind {
 	case ImportFixKindUseNamespace:

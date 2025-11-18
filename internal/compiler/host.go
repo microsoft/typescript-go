@@ -3,19 +3,19 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
-	"golang.org/x/text/language"
 )
 
 type CompilerHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
-	Locale() language.Tag
+	Locale() locale.Locale
 	Trace(msg string)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
@@ -26,7 +26,7 @@ var _ CompilerHost = (*compilerHost)(nil)
 type compilerHost struct {
 	currentDirectory    string
 	fs                  vfs.FS
-	locale              language.Tag
+	locale              locale.Locale
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
 	trace               func(msg string)
@@ -35,7 +35,7 @@ type compilerHost struct {
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
-	locale language.Tag,
+	locale locale.Locale,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
@@ -46,7 +46,7 @@ func NewCachedFSCompilerHost(
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
-	locale language.Tag,
+	locale locale.Locale,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
@@ -76,7 +76,7 @@ func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
 
-func (h *compilerHost) Locale() language.Tag {
+func (h *compilerHost) Locale() locale.Locale {
 	return h.locale
 }
 

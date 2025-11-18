@@ -8,10 +8,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 type host struct {
@@ -46,7 +46,7 @@ func (h *host) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
 }
 
-func (h *host) Locale() language.Tag {
+func (h *host) Locale() locale.Locale {
 	return h.host.Locale()
 }
 

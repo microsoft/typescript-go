@@ -10,10 +10,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"golang.org/x/text/language"
 )
 
 type resolved struct {
@@ -43,7 +43,7 @@ func unresolved() *resolved {
 type resolutionKindSpecificLoader = func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved
 
 type tracer struct {
-	locale language.Tag
+	locale locale.Locale
 	traces []string
 }
 
@@ -168,7 +168,7 @@ func NewResolver(
 	}
 }
 
-func (r *Resolver) newTraceBuilder(locale language.Tag) *tracer {
+func (r *Resolver) newTraceBuilder(locale locale.Locale) *tracer {
 	if r.compilerOptions.TraceResolution == core.TSTrue {
 		return &tracer{locale: locale}
 	}

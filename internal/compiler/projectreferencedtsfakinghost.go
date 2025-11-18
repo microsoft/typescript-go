@@ -6,11 +6,11 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
-	"golang.org/x/text/language"
 )
 
 type projectReferenceDtsFakingHost struct {
@@ -38,7 +38,7 @@ func (h *projectReferenceDtsFakingHost) FS() vfs.FS {
 	return h.fs
 }
 
-func (h *projectReferenceDtsFakingHost) Locale() language.Tag {
+func (h *projectReferenceDtsFakingHost) Locale() locale.Locale {
 	return h.host.Locale()
 }
 

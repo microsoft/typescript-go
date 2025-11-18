@@ -7,7 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"golang.org/x/text/language"
+	"github.com/microsoft/typescript-go/internal/locale"
 )
 
 // Diagnostic
@@ -77,13 +77,13 @@ func (d *Diagnostic) Clone() *Diagnostic {
 	return &result
 }
 
-func (d *Diagnostic) Localize(locale language.Tag) string {
+func (d *Diagnostic) Localize(locale locale.Locale) string {
 	return diagnostics.Localize(locale, d.message, d.messageKey, d.messageArgs...)
 }
 
 // For debugging only.
 func (d *Diagnostic) String() string {
-	return diagnostics.Localize(language.Und, d.message, d.messageKey, d.messageArgs...)
+	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.messageArgs...)
 }
 
 func NewDiagnosticFromSerialized(

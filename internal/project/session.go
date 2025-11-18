@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -21,7 +22,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 type UpdateReason int
@@ -45,7 +45,7 @@ type SessionOptions struct {
 	WatchEnabled       bool
 	LoggingEnabled     bool
 	DebounceDelay      time.Duration
-	Locale             language.Tag
+	Locale             locale.Locale
 }
 
 type SessionInit struct {
@@ -187,7 +187,7 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-func (s *Session) Locale() language.Tag {
+func (s *Session) Locale() locale.Locale {
 	return s.options.Locale
 }
 

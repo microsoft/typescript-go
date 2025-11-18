@@ -8,12 +8,12 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"golang.org/x/text/language"
 )
 
 var (
@@ -571,7 +571,7 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 	return c.sessionOptions.CurrentDirectory
 }
 
-func (c *configFileRegistryBuilder) Locale() language.Tag {
+func (c *configFileRegistryBuilder) Locale() locale.Locale {
 	return c.sessionOptions.Locale
 }
 
