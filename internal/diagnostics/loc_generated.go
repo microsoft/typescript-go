@@ -52,13 +52,9 @@ func loadLocaleData(data string) map[Key]string {
 		panic("failed to create gzip reader: " + err.Error())
 	}
 	defer gr.Close()
-	var m map[string]string
-	if err := json.UnmarshalRead(gr, &m); err != nil {
+	var result map[Key]string
+	if err := json.UnmarshalRead(gr, &result); err != nil {
 		panic("failed to unmarshal locale data: " + err.Error())
-	}
-	result := make(map[Key]string, len(m))
-	for k, v := range m {
-		result[Key(k)] = v
 	}
 	return result
 }

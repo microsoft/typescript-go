@@ -23,6 +23,7 @@ import (
 	"unicode"
 
 	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"golang.org/x/text/language"
 )
@@ -254,7 +255,13 @@ func generateLocalizations(knownKeys map[string]bool, locDir string) *bytes.Buff
 		filename := fmt.Sprintf("%s.json.gz", tgtCul)
 
 		// Write the JSON.gz file
-		jsonData, err := json.Marshal(localizedMessages)
+		// Convert map to OrderedMap with sorted keys for consistent ordering
+		keys := slices.Sorted(maps.Keys(localizedMessages))
+		var orderedMessages collections.OrderedMap[string, string]
+		for _, key := range keys {
+			orderedMessages.Set(key, localizedMessages[key])
+		}
+		jsonData, err := json.Marshal(&orderedMessages)
 		if err != nil {
 			log.Fatalf("failed to marshal locale %s: %v", tgtCul, err)
 		}
@@ -311,13 +318,9 @@ func generateLocalizations(knownKeys map[string]bool, locDir string) *bytes.Buff
 	buf.WriteString("\t\tpanic(\"failed to create gzip reader: \" + err.Error())\n")
 	buf.WriteString("\t}\n")
 	buf.WriteString("\tdefer gr.Close()\n")
-	buf.WriteString("\tvar m map[string]string\n")
-	buf.WriteString("\tif err := json.UnmarshalRead(gr, &m); err != nil {\n")
+	buf.WriteString("\tvar result map[Key]string\n")
+	buf.WriteString("\tif err := json.UnmarshalRead(gr, &result); err != nil {\n")
 	buf.WriteString("\t\tpanic(\"failed to unmarshal locale data: \" + err.Error())\n")
-	buf.WriteString("\t}\n")
-	buf.WriteString("\tresult := make(map[Key]string, len(m))\n")
-	buf.WriteString("\tfor k, v := range m {\n")
-	buf.WriteString("\t\tresult[Key(k)] = v\n")
 	buf.WriteString("\t}\n")
 	buf.WriteString("\treturn result\n")
 	buf.WriteString("}\n")
