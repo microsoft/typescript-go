@@ -1226,27 +1226,31 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 func (p *Program) addProgramDiagnostics() {
 	for _, m := range p.missingFiles {
 		reason := m.reason
-		var location core.TextRange
-		var parent *ast.SourceFile
-		var ref *ast.FileReference
-
-		if data, ok := reason.data.(*referencedFileData); ok {
-			parent = p.filesByPath[data.file]
-			if parent != nil && data.index < len(parent.ReferencedFiles) {
-				ref = parent.ReferencedFiles[data.index]
-				location = ref.TextRange
-			}
-
+		data, ok := reason.data.(*referencedFileData)
+		if !ok {
+			continue
 		}
 
-		diag := ast.NewDiagnostic(
+		parent := p.filesByPath[data.file]
+		if parent == nil {
+			continue
+		}
+
+		ref := core.Find(parent.ReferencedFiles, func(r *ast.FileReference) bool {
+			return r.FileName == m.path
+		})
+		if ref == nil {
+			continue
+		}
+
+		diagnostic := ast.NewDiagnostic(
 			parent,
-			location,
+			ref.TextRange,
 			diagnostics.File_0_not_found,
 			m.path,
 		)
 
-		p.programDiagnostics = append(p.programDiagnostics, diag)
+		p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 	}
 }
 

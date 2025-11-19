@@ -27,10 +27,10 @@ import { m } from '@alpha/a'
 tsgo --p beta/tsconfig.json
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
-[96mbeta/b.ts[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS6053: [0mFile '/home/src/workspaces/project/alpha/bin/a.d.ts' not found.
+[96mbeta/b.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS6305: [0mOutput file '/home/src/workspaces/project/alpha/bin/a.d.ts' has not been built from source file '/home/src/workspaces/project/alpha/a.ts'.
 
 [7m1[0m import { m } from '@alpha/a'
-[7m [0m [91m~[0m
+[7m [0m [91m                  ~~~~~~~~~~[0m
 
 
 Found 1 error in beta/b.ts[90m:1[0m
@@ -66,11 +66,10 @@ export {};
 Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [/home/src/workspaces/project/beta/bin/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.d.ts","../b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"311c3bac923f08ac35ab2246c3464fb7-import { m } from '@alpha/a'","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"semanticDiagnosticsPerFile":[1,2],"latestChangedDtsFile":"./b.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.d.ts","../b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"311c3bac923f08ac35ab2246c3464fb7-import { m } from '@alpha/a'","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"semanticDiagnosticsPerFile":[[2,[{"pos":18,"end":28,"code":6305,"category":1,"message":"Output file '/home/src/workspaces/project/alpha/bin/a.d.ts' has not been built from source file '/home/src/workspaces/project/alpha/a.ts'."}]]],"latestChangedDtsFile":"./b.d.ts"}
 //// [/home/src/workspaces/project/beta/bin/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -113,16 +112,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
     "outDir": "./"
   },
   "semanticDiagnosticsPerFile": [
-    "lib.d.ts",
-    "../b.ts"
+    [
+      "../b.ts",
+      [
+        {
+          "pos": 18,
+          "end": 28,
+          "code": 6305,
+          "category": 1,
+          "message": "Output file '/home/src/workspaces/project/alpha/bin/a.d.ts' has not been built from source file '/home/src/workspaces/project/alpha/a.ts'."
+        }
+      ]
+    ]
   ],
   "latestChangedDtsFile": "./b.d.ts",
-  "size": 1141
+  "size": 1325
 }
 
 beta/tsconfig.json::
 SemanticDiagnostics::
-*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
-*not cached* /home/src/workspaces/project/beta/b.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/beta/b.ts
 Signatures::
 (stored at emit) /home/src/workspaces/project/beta/b.ts
