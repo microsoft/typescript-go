@@ -126,7 +126,7 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 						commandLines = append(commandLines, fixedLine)
 					}
 				}
-				return strings.Join(commandLines, "\n")
+				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
 			},
 		}
 	case inlayHintsCmd:
@@ -220,7 +220,7 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 						commandLines = append(commandLines, fixedLine)
 					}
 				}
-				return strings.Join(commandLines, "\n")
+				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
 			},
 			DiffFixupNew: func(s string) string {
 				lines := strings.Split(s, "\n")
@@ -292,7 +292,7 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 						}
 					}
 				}
-				return strings.Join(commandLines, "\n")
+				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
 			},
 			DiffFixupNew: func(s string) string {
 				return strings.ReplaceAll(s, "bundled:///libs/", "")
@@ -303,6 +303,10 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 			Subfolder: subfolder,
 		}
 	}
+}
+
+func dropTrailingEmptyLines(ss []string) []string {
+	return ss[:core.FindLastIndex(ss, func(s string) bool { return s != "" })+1]
 }
 
 func isSubmoduleTest(testPath string) bool {
