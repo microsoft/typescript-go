@@ -266,10 +266,10 @@ func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReaso
 			libFile:            libFile,
 			includeReason:      includeReason,
 		})
-	} else if tspath.HasExtension(fileName) {
+	} else if tspath.HasExtension(absPath) {
 		// File has an extension but it's not in the supported extensions list
 		// Check if it's a JavaScript file and report the appropriate diagnostic
-		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
+		canonicalFileName := tspath.GetCanonicalFileName(absPath, p.opts.Host.FS().UseCaseSensitiveFileNames())
 		if tspath.HasJSFileExtension(canonicalFileName) {
 			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
