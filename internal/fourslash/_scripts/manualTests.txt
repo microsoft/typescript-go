@@ -6,4 +6,5 @@ parserCorruptionAfterMapInClass
 quickInfoForOverloadOnConst1
 renameDefaultKeyword
 renameForDefaultExport01
+semanticModernClassificationFunctions
 tsxCompletion12
