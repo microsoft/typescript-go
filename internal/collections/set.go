@@ -62,13 +62,11 @@ func (s *Set[T]) Union(other *Set[T]) *Set[T] {
 	if s == nil && other == nil {
 		return nil
 	}
-	result := &Set[T]{}
-	if s != nil {
-		result.M = maps.Clone(s.M)
-	} else {
-		result.M = make(map[T]struct{})
-	}
+	result := s.Clone()
 	if other != nil {
+		if result.M == nil {
+			result.M = make(map[T]struct{}, len(other.M))
+		}
 		maps.Copy(result.M, other.M)
 	}
 	return result

@@ -4,6 +4,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 // Named is a constraint for types that can provide their name.
@@ -21,13 +23,16 @@ type Index[T Named] struct {
 // Search returns all entries whose name contains the characters of prefix in order.
 // The search first uses the index to narrow down candidates by the first letter,
 // then filters by checking if the name contains all characters in order.
-func (idx *Index[T]) Search(prefix string) []T {
+func (idx *Index[T]) Search(prefix string, filter func(T) bool) []T {
 	if idx == nil || len(idx.entries) == 0 {
 		return nil
 	}
 
 	if len(prefix) == 0 {
-		return idx.entries
+		if filter == nil {
+			return idx.entries
+		}
+		return core.Filter(idx.entries, filter)
 	}
 
 	prefix = strings.ToLower(prefix)
@@ -47,7 +52,7 @@ func (idx *Index[T]) Search(prefix string) []T {
 	results := make([]T, 0, len(indices))
 	for _, i := range indices {
 		entry := idx.entries[i]
-		if containsCharsInOrder(entry.Name(), prefix) {
+		if containsCharsInOrder(entry.Name(), prefix) && (filter == nil || filter(entry)) {
 			results = append(results, entry)
 		}
 	}

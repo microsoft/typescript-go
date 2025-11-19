@@ -2008,9 +2008,18 @@ type ResolvedEntrypoints struct {
 	FailedLookupLocations []string
 }
 
+type Ending int
+
+const (
+	EndingFixed Ending = iota
+	EndingExtensionChangeable
+	EndingChangeable
+)
+
 type ResolvedEntrypoint struct {
 	ResolvedFileName  string
 	ModuleSpecifier   string
+	Ending            Ending
 	IncludeConditions *collections.Set[string]
 	ExcludeConditions *collections.Set[string]
 }
@@ -2019,7 +2028,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
-	if packageJson.Contents.Exports.IsPresent() {
+	if packageJson.Exists() && packageJson.Contents.Exports.IsPresent() {
 		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
 		return &ResolvedEntrypoints{
 			Entrypoints:           entrypoints,
@@ -2060,6 +2069,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		result.Entrypoints = append(result.Entrypoints, &ResolvedEntrypoint{
 			ResolvedFileName: file,
 			ModuleSpecifier:  tspath.ResolvePath(packageName, tspath.GetRelativePathFromDirectory(packageJson.PackageDirectory, file, comparePathsOptions)),
+			Ending:           EndingChangeable,
 		})
 	}
 
@@ -2101,6 +2111,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 						ModuleSpecifier:   "!!! TODO",
 						IncludeConditions: includeConditions,
 						ExcludeConditions: excludeConditions,
+						Ending:            core.IfElse(strings.HasSuffix(exports.AsString(), "*"), EndingExtensionChangeable, EndingFixed),
 					})
 				}
 			} else {

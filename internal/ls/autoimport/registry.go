@@ -30,8 +30,9 @@ type RegistryBucket struct {
 	dirty              bool
 	Paths              map[tspath.Path]struct{}
 	LookupLocations    map[tspath.Path]struct{}
+	PackageNames       *collections.Set[string]
 	AmbientModuleNames map[string][]string
-	Dependencies       *collections.Set[string]
+	DependencyNames    *collections.Set[string]
 	Entrypoints        map[tspath.Path][]*module.ResolvedEntrypoint
 	Index              *Index[*RawExport]
 }
@@ -42,7 +43,7 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 		Paths:              b.Paths,
 		LookupLocations:    b.LookupLocations,
 		AmbientModuleNames: b.AmbientModuleNames,
-		Dependencies:       b.Dependencies,
+		DependencyNames:    b.DependencyNames,
 		Entrypoints:        b.Entrypoints,
 		Index:              b.Index,
 	}
@@ -457,7 +458,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 
 	var tasks []*task
 	var projectTasks, nodeModulesTasks int
-	wg := core.NewWorkGroup(false)
+	var wg sync.WaitGroup
 	projectPath, _ := b.host.GetDefaultProject(change.RequestedFile)
 	if projectPath == "" {
 		return
@@ -467,7 +468,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			task := &task{entry: project}
 			tasks = append(tasks, task)
 			projectTasks++
-			wg.Queue(func() {
+			wg.Go(func() {
 				index, err := b.buildProjectBucket(ctx, projectPath)
 				task.result = index
 				task.err = err
@@ -481,7 +482,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				task := &task{entry: nodeModulesBucket}
 				tasks = append(tasks, task)
 				nodeModulesTasks++
-				wg.Queue(func() {
+				wg.Go(func() {
 					result, err := b.buildNodeModulesBucket(ctx, change, dirName, dirPath)
 					task.result = result
 					task.err = err
@@ -496,7 +497,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 
 	start := time.Now()
-	wg.RunAndWait()
+	wg.Wait()
 
 	// !!! clean up this hot mess
 	for _, t := range tasks {
@@ -526,15 +527,16 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			// !!! parallelize?
 			resolver := newResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
 			ch := checker.NewChecker(resolver)
-			for file := range t.result.possibleFailedAmbientModuleLookupSources.Keys() {
-				fileExports := parseFile(resolver.GetSourceFile(file.FileName()), t.entry.Key(), b.resolver, func() (*checker.Checker, func()) {
+			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
+				fileExports := b.parseFile(resolver.GetSourceFile(source.fileName), t.entry.Key(), source.packageName, func() (*checker.Checker, func()) {
 					return ch, func() {}
-				}, b.base.toPath)
-				t.result.bucket.Paths[file.Path()] = struct{}{}
+				})
+				t.result.bucket.Paths[path] = struct{}{}
 				for _, exp := range fileExports {
 					t.result.bucket.Index.insertAsWords(exp)
 				}
-			}
+				return true
+			})
 		}
 	}
 
@@ -547,8 +549,10 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 }
 
 type bucketBuildResult struct {
-	bucket                                   *RegistryBucket
-	possibleFailedAmbientModuleLookupSources *collections.SyncSet[ast.HasFileName]
+	bucket *RegistryBucket
+	// File path to filename and package name
+	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
+	// Likely ambient module name
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 }
 
@@ -561,18 +565,18 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
 	exports := make(map[tspath.Path][]*RawExport)
-	wg := core.NewWorkGroup(false)
+	var wg sync.WaitGroup
 	getChecker, closePool := b.createCheckerPool(program)
 	defer closePool()
 	for _, file := range program.GetSourceFiles() {
 		if strings.Contains(file.FileName(), "/node_modules/") || program.IsSourceFileDefaultLibrary(file.Path()) {
 			continue
 		}
-		wg.Queue(func() {
+		wg.Go(func() {
 			if ctx.Err() == nil {
 				// !!! we could consider doing ambient modules / augmentations more directly
 				// from the program checker, instead of doing the syntax-based collection
-				fileExports := parseFile(file, "", b.resolver, getChecker, b.base.toPath)
+				fileExports := b.parseFile(file, "", "", getChecker)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -580,7 +584,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 		})
 	}
 
-	wg.RunAndWait()
+	wg.Wait()
 	idx := &Index[*RawExport]{}
 	for path, fileExports := range exports {
 		if result.bucket.Paths == nil {
@@ -614,9 +618,14 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	var packageNames *collections.Set[string]
 	for path := range change.OpenFiles {
 		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithPackageJson(path) == nil {
+			dependencies = nil
 			break
 		}
 		dependencies = &collections.Set[string]{}
+	}
+	directoryPackageNames, err := getPackageNamesInNodeModules(tspath.CombinePaths(dirName, "node_modules"), b.host.FS())
+	if err != nil {
+		return nil, err
 	}
 
 	// Get all package.jsons that have this node_modules directory in their spine
@@ -632,10 +641,6 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		})
 		packageNames = dependencies
 	} else {
-		directoryPackageNames, err := getPackageNamesInNodeModules(tspath.CombinePaths(dirName, "node_modules"), b.host.FS())
-		if err != nil {
-			return nil, err
-		}
 		packageNames = directoryPackageNames
 	}
 
@@ -650,11 +655,11 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	var entrypointsMu sync.Mutex
 	var entrypoints []*module.ResolvedEntrypoints
 
-	processFile := func(fileName string, path tspath.Path) {
+	processFile := func(fileName string, path tspath.Path, packageName string) {
 		sourceFile := b.host.GetSourceFile(fileName, path)
 		binder.BindSourceFile(sourceFile)
-		fileExports := parseFile(sourceFile, dirPath, b.resolver, getChecker, b.base.toPath)
-		if !resolver.possibleFailedAmbientModuleLookupSources.Has(sourceFile) {
+		fileExports := b.parseFile(sourceFile, dirPath, packageName, getChecker)
+		if source, ok := resolver.possibleFailedAmbientModuleLookupSources.Load(sourceFile.Path()); !ok {
 			// If we failed to resolve any ambient modules from this file, we'll try the
 			// whole file again later, so don't add anything now.
 			exportsMu.Lock()
@@ -663,12 +668,19 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 				ambientModuleNames[name] = append(ambientModuleNames[name], fileName)
 			}
 			exportsMu.Unlock()
+		} else {
+			// Record the package name so we can use it later during the second pass
+			// !!! perhaps we could store the whole set of partial exports and avoid
+			//     repeating some work
+			source.mu.Lock()
+			source.packageName = packageName
+			source.mu.Unlock()
 		}
 	}
 
-	wg := core.NewWorkGroup(false)
+	var wg sync.WaitGroup
 	for packageName := range packageNames.Keys() {
-		wg.Queue(func() {
+		wg.Go(func() {
 			if ctx.Err() != nil {
 				return
 			}
@@ -679,26 +691,6 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 			if !packageJson.DirectoryExists {
 				packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			}
-			if !packageJson.Exists() {
-				indexFileName := tspath.CombinePaths(packageJson.PackageDirectory, "index.d.ts")
-				if b.host.FS().FileExists(indexFileName) {
-					indexPath := b.base.toPath(indexFileName)
-					// This is not realistic, but a lot of tests omit package.json for brevity.
-					// There's no need to do a more complete default entrypoint resolution.
-					processFile(indexFileName, indexPath)
-					entrypointsMu.Lock()
-					entrypoints = append(entrypoints, &module.ResolvedEntrypoints{
-						Entrypoints: []*module.ResolvedEntrypoint{{
-							ResolvedFileName: indexFileName,
-							ModuleSpecifier:  packageName,
-						}},
-					})
-					entrypointsMu.Unlock()
-				}
-				return
-			}
-
-			// !!! get all TS files for packages without exports?
 			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
 			if packageEntrypoints == nil {
 				return
@@ -714,22 +706,23 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 					continue
 				}
 
-				wg.Queue(func() {
+				wg.Go(func() {
 					if ctx.Err() != nil {
 						return
 					}
-					processFile(entrypoint.ResolvedFileName, path)
+					processFile(entrypoint.ResolvedFileName, path, packageName)
 				})
 			}
 		})
 	}
 
-	wg.RunAndWait()
+	wg.Wait()
 
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
 			Index:              &Index[*RawExport]{},
-			Dependencies:       dependencies,
+			DependencyNames:    dependencies,
+			PackageNames:       directoryPackageNames,
 			AmbientModuleNames: ambientModuleNames,
 			Paths:              make(map[tspath.Path]struct{}, len(exports)),
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
@@ -758,9 +751,11 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 }
 
 // !!! tune default size, create on demand
+const checkerPoolSize = 16
+
 func (b *registryBuilder) createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func()) {
-	pool := make(chan *checker.Checker, 4)
-	for range 4 {
+	pool := make(chan *checker.Checker, checkerPoolSize)
+	for range checkerPoolSize {
 		pool <- checker.NewChecker(program)
 	}
 	return func() (*checker.Checker, func()) {

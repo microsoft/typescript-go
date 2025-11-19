@@ -780,7 +780,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			t.Fatal(prefix + "Expected exact completion list but also specified 'unsorted'.")
 		}
 		if len(actual) != len(expected.Exact) {
-			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
+			t.Fatalf(prefix+"Expected %d exact completion items but got %d.", len(expected.Exact), len(actual))
 		}
 		if len(actual) > 0 {
 			f.verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
@@ -803,13 +803,13 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			case string:
 				_, ok := nameToActualItems[item]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item)
 				}
 				delete(nameToActualItems, item)
 			case *lsproto.CompletionItem:
 				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item.Label)
 				}
 				actualItem := actualItems[0]
 				actualItems = actualItems[1:]
@@ -835,12 +835,12 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			case string:
 				_, ok := nameToActualItems[item]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item)
 				}
 			case *lsproto.CompletionItem:
 				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item.Label)
 				}
 				actualItem := actualItems[0]
 				actualItems = actualItems[1:]
@@ -857,7 +857,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 	}
 	for _, exclude := range expected.Excludes {
 		if _, ok := nameToActualItems[exclude]; ok {
-			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
+			t.Fatalf("%sLabel '%s' should not be in actual items but was found.", prefix, exclude)
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package autoimport
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -12,6 +14,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+type failedAmbientModuleLookupSource struct {
+	mu          sync.Mutex
+	fileName    string
+	packageName string
+}
+
 type resolver struct {
 	toPath         func(fileName string) tspath.Path
 	host           RegistryCloneHost
@@ -21,7 +29,7 @@ type resolver struct {
 
 	resolvedModules                          collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
 	possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
-	possibleFailedAmbientModuleLookupSources collections.SyncSet[ast.HasFileName]
+	possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 }
 
 func newResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver *module.Resolver, toPath func(fileName string) tspath.Path) *resolver {
@@ -111,7 +119,9 @@ func (r *resolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleRe
 	// !!! also successful lookup locations, for that matter, need to cause invalidation
 	if !resolved.IsResolved() && !tspath.PathIsRelative(moduleReference) {
 		r.possibleFailedAmbientModuleLookupTargets.Add(moduleReference)
-		r.possibleFailedAmbientModuleLookupSources.Add(currentSourceFile)
+		r.possibleFailedAmbientModuleLookupSources.LoadOrStore(currentSourceFile.Path(), &failedAmbientModuleLookupSource{
+			fileName: currentSourceFile.FileName(),
+		})
 	}
 	return resolved
 }
@@ -119,6 +129,12 @@ func (r *resolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleRe
 // GetSourceFileForResolvedModule implements checker.Program.
 func (r *resolver) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
 	return r.GetSourceFile(fileName)
+}
+
+// GetResolvedModules implements checker.Program.
+func (r *resolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
+	// only used when producing diagnostics, which hopefully the checker won't do
+	return nil
 }
 
 // ---
@@ -185,11 +201,6 @@ func (r *resolver) GetRedirectTargets(path tspath.Path) []string {
 
 // GetResolvedModuleFromModuleSpecifier implements checker.Program.
 func (r *resolver) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
-	panic("unimplemented")
-}
-
-// GetResolvedModules implements checker.Program.
-func (r *resolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
 	panic("unimplemented")
 }
 

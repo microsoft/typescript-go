@@ -32,11 +32,21 @@ func (v *View) Search(prefix string) []*RawExport {
 	var results []*RawExport
 	bucket, ok := v.registry.projects[v.projectKey]
 	if ok {
-		results = append(results, bucket.Index.Search(prefix)...)
+		results = append(results, bucket.Index.Search(prefix, nil)...)
 	}
+
+	var excludePackages collections.Set[string]
 	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
 		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
-			results = append(results, nodeModulesBucket.Index.Search(prefix)...)
+			var filter func(e *RawExport) bool
+			if excludePackages.Len() > 0 {
+				filter = func(e *RawExport) bool {
+					return !excludePackages.Has(e.PackageName)
+				}
+			}
+
+			results = append(results, nodeModulesBucket.Index.Search(prefix, filter)...)
+			excludePackages = *excludePackages.Union(nodeModulesBucket.PackageNames)
 		}
 		return nil, false
 	})

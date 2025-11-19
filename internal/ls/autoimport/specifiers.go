@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (v *View) GetModuleSpecifier(
@@ -22,7 +23,20 @@ func (v *View) GetModuleSpecifier(
 			conditions := collections.NewSetFromItems(module.GetConditions(v.program.Options(), v.program.GetDefaultResolutionModeForFile(v.importingFile))...)
 			for _, entrypoint := range entrypoints {
 				if entrypoint.IncludeConditions.IsSubsetOf(conditions) && !conditions.Intersects(entrypoint.ExcludeConditions) {
-					return entrypoint.ModuleSpecifier
+					// !!! modulespecifiers.processEnding
+					switch entrypoint.Ending {
+					case module.EndingFixed:
+						return entrypoint.ModuleSpecifier
+					case module.EndingExtensionChangeable:
+						dtsExtension := tspath.GetDeclarationFileExtension(entrypoint.ModuleSpecifier)
+						if dtsExtension != "" {
+							return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false)
+						}
+						return entrypoint.ModuleSpecifier
+					default:
+						// !!! definitely wrong, lazy
+						return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false)
+					}
 				}
 			}
 			return ""

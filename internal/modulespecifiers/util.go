@@ -61,7 +61,7 @@ func ensurePathIsNonModuleName(path string) string {
 	return path
 }
 
-func getJsExtensionForDeclarationFileExtension(ext string) string {
+func GetJSExtensionForDeclarationFileExtension(ext string) string {
 	switch ext {
 	case tspath.ExtensionDts:
 		return tspath.ExtensionJs

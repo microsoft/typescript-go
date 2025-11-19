@@ -1,7 +1,6 @@
 package autoimport
 
 import (
-	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -70,36 +69,27 @@ func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collection
 	if tspath.GetBaseFileName(nodeModulesDir) != "node_modules" {
 		panic("nodeModulesDir is not a node_modules directory")
 	}
-	err := fs.WalkDir(nodeModulesDir, func(packageDirName string, entry vfs.DirEntry, err error) error {
-		if err != nil {
-			return err
+	if !fs.DirectoryExists(nodeModulesDir) {
+		return nil, vfs.ErrNotExist
+	}
+	entries := fs.GetAccessibleEntries(nodeModulesDir)
+	for _, baseName := range entries.Directories {
+		if baseName[0] == '.' {
+			continue
 		}
-		if entry.IsDir() {
-			baseName := tspath.GetBaseFileName(packageDirName)
-			if strings.HasPrefix(baseName, "@") {
-				// Scoped package
-				return fs.WalkDir(packageDirName, func(scopedPackageDirName string, scopedEntry vfs.DirEntry, scopedErr error) error {
-					if scopedErr != nil {
-						return scopedErr
-					}
-					if scopedEntry.IsDir() {
-						scopedBaseName := tspath.GetBaseFileName(scopedPackageDirName)
-						if baseName == "@types" {
-							packageNames.Add(module.GetPackageNameFromTypesPackageName(tspath.CombinePaths("@types", scopedBaseName)))
-						} else {
-							packageNames.Add(tspath.CombinePaths(baseName, scopedBaseName))
-						}
-					}
-					return nil
-				})
-			} else {
-				packageNames.Add(baseName)
+		if baseName[0] == '@' {
+			scopedDirPath := tspath.CombinePaths(nodeModulesDir, baseName)
+			for _, scopedPackageDirName := range fs.GetAccessibleEntries(scopedDirPath).Directories {
+				scopedBaseName := tspath.GetBaseFileName(scopedPackageDirName)
+				if baseName == "@types" {
+					packageNames.Add(module.GetPackageNameFromTypesPackageName(tspath.CombinePaths("@types", scopedBaseName)))
+				} else {
+					packageNames.Add(tspath.CombinePaths(baseName, scopedBaseName))
+				}
 			}
+			continue
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
+		packageNames.Add(baseName)
 	}
 	return packageNames, nil
 }

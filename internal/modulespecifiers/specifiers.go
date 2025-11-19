@@ -636,7 +636,7 @@ func processEnding(
 	}
 	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionDcts, tspath.ExtensionCts}) {
 		inputExt := tspath.GetDeclarationFileExtension(fileName)
-		ext := getJsExtensionForDeclarationFileExtension(inputExt)
+		ext := GetJSExtensionForDeclarationFileExtension(inputExt)
 		return tspath.RemoveExtension(fileName, inputExt) + ext
 	}
 
