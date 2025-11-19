@@ -303,7 +303,10 @@ func (n *Node) Body() *Node {
 func (n *Node) Text() string {
 	switch n.Kind {
 	case KindIdentifier:
-		return n.AsIdentifier().Text
+		if ident := n.TryAsIdentifier(); ident != nil {
+			return ident.Text
+		}
+		return ""
 	case KindPrivateIdentifier:
 		return n.AsPrivateIdentifier().Text
 	case KindStringLiteral:
@@ -1201,6 +1204,13 @@ func (n *Node) Contains(descendant *Node) bool {
 
 func (n *Node) AsIdentifier() *Identifier {
 	return n.data.(*Identifier)
+}
+
+// TryAsIdentifier attempts to cast the node to an Identifier, returning nil if it fails.
+// This is useful for handling malformed code where the Kind may not match the actual data type.
+func (n *Node) TryAsIdentifier() *Identifier {
+	ident, _ := n.data.(*Identifier)
+	return ident
 }
 
 func (n *Node) AsPrivateIdentifier() *PrivateIdentifier {

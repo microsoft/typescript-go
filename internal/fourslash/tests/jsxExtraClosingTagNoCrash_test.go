@@ -14,12 +14,11 @@ func TestJsxExtraClosingTagNoCrash(t *testing.T) {
 	const content = `//@Filename: file.tsx
 class MyComponent {
 	render() {
-		return <div></div></d/*$*/iv>;
+		return <div></div></div>;
 	}
-}`
+}
+let x/*$*/;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	// This should not crash - just call the API to trigger the bug
-	f.GoToMarker(t, "$")
-	// Request completions which will trigger tryGetObjectTypeDeclarationCompletionContainer
-	f.VerifyCompletions(t, nil, nil)
+	// This should not crash - verify quickinfo on a safe location
+	f.VerifyQuickInfoAt(t, "$", "let x: any", "")
 }

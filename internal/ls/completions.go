@@ -4089,9 +4089,12 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 			return ast.FindAncestor(location, ast.IsClassLike)
 		}
 	case ast.KindIdentifier:
-		originalKeywordKind := scanner.IdentifierToKeywordKind(location.AsIdentifier())
-		if originalKeywordKind != ast.KindUnknown {
-			return nil
+		// Use TryAsIdentifier to safely handle malformed code where Kind may not match data type
+		if ident := location.TryAsIdentifier(); ident != nil {
+			originalKeywordKind := scanner.IdentifierToKeywordKind(ident)
+			if originalKeywordKind != ast.KindUnknown {
+				return nil
+			}
 		}
 		// class c { public prop = c| }
 		if ast.IsPropertyDeclaration(location.Parent) && location.Parent.Initializer() == location {
