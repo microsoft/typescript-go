@@ -25,13 +25,22 @@ import * as mod_1 from "../primary/a";
 tsgo --p reference/tsconfig.json
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[96mreference/b.ts[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS6053: [0mFile '/home/src/workspaces/project/primary/bin/a.d.ts' not found.
+
+[7m1[0m import * as mod_1 from "../primary/a";
+[7m [0m [91m~[0m
+
 [96mreference/tsconfig.json[0m:[93m7[0m:[93m21[0m - [91merror[0m[90m TS6306: [0mReferenced project '/home/src/workspaces/project/primary' must have setting "composite": true.
 
 [7m7[0m     "references": [ { "path": "../primary" } ]
 [7m [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
 
-Found 1 error in reference/tsconfig.json[90m:7[0m
+Found 2 errors in 2 files.
+
+Errors  Files
+     1  reference/b.ts[90m:1[0m
+     1  reference/tsconfig.json[90m:7[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
