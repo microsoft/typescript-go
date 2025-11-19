@@ -46,15 +46,6 @@ const (
 	ExportSyntaxStar
 )
 
-func (s ExportSyntax) IsAlias() bool {
-	switch s {
-	case ExportSyntaxNamed, ExportSyntaxEquals, ExportSyntaxDefaultDeclaration:
-		return true
-	default:
-		return false
-	}
-}
-
 type RawExport struct {
 	ExportID
 	Syntax    ExportSyntax
@@ -82,10 +73,27 @@ func (e *RawExport) Name() string {
 	if e.localName != "" {
 		return e.localName
 	}
+	if e.ExportName == ast.InternalSymbolNameExportEquals {
+		return e.Target.ExportName
+	}
 	if strings.HasPrefix(e.ExportName, ast.InternalSymbolNamePrefix) {
-		return "!!! TODO"
+		panic("unexpected internal symbol name in export")
 	}
 	return e.ExportName
+}
+
+func (e *RawExport) AmbientModuleName() string {
+	if !tspath.IsExternalModuleNameRelative(string(e.ModuleID)) {
+		return string(e.ModuleID)
+	}
+	return ""
+}
+
+func (e *RawExport) ModuleFileName() string {
+	if e.AmbientModuleName() == "" {
+		return string(e.ModuleID)
+	}
+	return ""
 }
 
 func (b *registryBuilder) parseFile(file *ast.SourceFile, nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) []*RawExport {
@@ -141,6 +149,10 @@ func (b *registryBuilder) parseModule(file *ast.SourceFile, nodeModulesDirectory
 }
 
 func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.SourceFile, nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func()), exports *[]*RawExport) {
+	if shouldIgnoreSymbol(symbol) {
+		return
+	}
+
 	if name == ast.InternalSymbolNameExportStar {
 		checker, release := getChecker()
 		defer release()
@@ -150,11 +162,13 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 		for name, namedExport := range symbol.Parent.Exports {
 			if name != ast.InternalSymbolNameExportStar {
 				idx := slices.Index(allExports, namedExport)
-				if idx >= 0 {
+				if idx >= 0 || shouldIgnoreSymbol(namedExport) {
 					allExports = slices.Delete(allExports, idx, idx+1)
 				}
 			}
 		}
+
+		*exports = slices.Grow(*exports, len(allExports))
 		for _, reexportedSymbol := range allExports {
 			var scriptElementKind lsutil.ScriptElementKind
 			var targetModuleID ModuleID
@@ -261,6 +275,38 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 				ExportName: targetSymbol.Name,
 				ModuleID:   ModuleID(ast.GetSourceFileOfNode(decl).Path()),
 			}
+
+			if syntax == ExportSyntaxEquals && targetSymbol.Flags&ast.SymbolFlagsNamespace != 0 {
+				// !!! what is the right boundary for recursion? we never need to expand named exports into another level of named
+				//     exports, but for getting flags/kinds, we should resolve each named export as an alias
+				*exports = slices.Grow(*exports, len(targetSymbol.Exports))
+				for _, namedExport := range targetSymbol.Exports {
+					resolved := checker.SkipAlias(namedExport)
+					if shouldIgnoreSymbol(resolved) {
+						continue
+					}
+					*exports = append(*exports, &RawExport{
+						ExportID: ExportID{
+							ExportName: name,
+							ModuleID:   moduleID,
+						},
+						// !!! decide what this means for reexports
+						Syntax: ExportSyntaxNamed,
+						Flags:  resolved.Flags,
+						Target: ExportID{
+							ExportName: namedExport.Name,
+							// !!!
+							ModuleID: ModuleID(ast.GetSourceFileOfNode(resolved.Declarations[0]).Path()),
+						},
+						ScriptElementKind:          lsutil.GetSymbolKind(checker, resolved, resolved.Declarations[0]),
+						ScriptElementKindModifiers: lsutil.GetSymbolModifiers(checker, resolved),
+						FileName:                   file.FileName(),
+						Path:                       file.Path(),
+						NodeModulesDirectory:       nodeModulesDirectory,
+						PackageName:                packageName,
+					})
+				}
+			}
 		}
 		release()
 	} else {
@@ -275,4 +321,11 @@ func parseModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, m
 	for name, symbol := range decl.Symbol.Exports {
 		parseExport(name, symbol, moduleID, file, nodeModulesDirectory, packageName, getChecker, exports)
 	}
+}
+
+func shouldIgnoreSymbol(symbol *ast.Symbol) bool {
+	if symbol.Flags&ast.SymbolFlagsPrototype != 0 {
+		return true
+	}
+	return false
 }

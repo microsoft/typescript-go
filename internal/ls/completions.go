@@ -81,8 +81,7 @@ type completionData = any
 
 type completionDataData struct {
 	symbols          []*ast.Symbol
-	autoImportView   *autoimport.View
-	autoImports      []*autoimport.RawExport
+	autoImports      []*autoimport.FixAndExport
 	completionKind   CompletionKind
 	isInSnippetScope bool
 	// Note that the presence of this alone doesn't mean that we need a conversion. Only do that if the completion is not an ordinary identifier.
@@ -667,8 +666,7 @@ func (l *LanguageService) getCompletionData(
 	hasUnresolvedAutoImports := false
 	// This also gets mutated in nested-functions after the return
 	var symbols []*ast.Symbol
-	var autoImports []*autoimport.RawExport
-	var autoImportView *autoimport.View
+	var autoImports []*autoimport.FixAndExport
 	// Keys are indexes of `symbols`.
 	symbolToOriginInfoMap := map[int]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]SortText{}
@@ -1219,8 +1217,7 @@ func (l *LanguageService) getCompletionData(
 			return err
 		}
 
-		autoImports = append(autoImports, view.Search(lowerCaseTokenText)...)
-		autoImportView = view
+		autoImports = view.GetCompletions(ctx, lowerCaseTokenText)
 
 		// l.searchExportInfosForCompletions(ctx,
 		// 	typeChecker,
@@ -1748,7 +1745,6 @@ func (l *LanguageService) getCompletionData(
 	return &completionDataData{
 		symbols:                      symbols,
 		autoImports:                  autoImports,
-		autoImportView:               autoImportView,
 		completionKind:               completionKind,
 		isInSnippetScope:             isInSnippetScope,
 		propertyAccessToConvert:      propertyAccessToConvert,
@@ -1982,7 +1978,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		uniques[name] = shouldShadowLaterSymbols
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
-	for _, exp := range data.autoImports {
+	for _, autoImport := range data.autoImports {
 		// !!! flags filtering similar to shouldIncludeSymbol
 		// !!! check for type-only in JS
 		// !!! deprecation
@@ -2027,22 +2023,17 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			continue
 		}
 
-		fixes := data.autoImportView.GetFixes(ctx, exp, l.UserPreferences().ModuleSpecifierPreferences())
-		if len(fixes) == 0 {
-			continue
-		}
-		fix := fixes[0]
 		entry := l.createLSPCompletionItem(
-			exp.Name(),
+			autoImport.Fix.Name,
 			"",
 			"",
 			SortTextAutoImportSuggestions,
-			exp.ScriptElementKind,
-			exp.ScriptElementKindModifiers, // !!!
+			autoImport.Export.ScriptElementKind,
+			autoImport.Export.ScriptElementKindModifiers,
 			nil,
 			nil,
 			&lsproto.CompletionItemLabelDetails{
-				Description: ptrTo(fix.ModuleSpecifier),
+				Description: ptrTo(autoImport.Fix.ModuleSpecifier),
 			},
 			file,
 			position,
@@ -2051,10 +2042,10 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			false, /*isSnippet*/
 			true,  /*hasAction*/
 			false, /*preselect*/
-			fix.ModuleSpecifier,
-			fix,
+			autoImport.Fix.ModuleSpecifier,
+			autoImport.Fix,
 		)
-		uniques[exp.Name()] = false
+		uniques[autoImport.Fix.Name] = false
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
 

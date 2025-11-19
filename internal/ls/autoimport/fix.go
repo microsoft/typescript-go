@@ -3,6 +3,7 @@ package autoimport
 import (
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -19,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ImportKind int
@@ -61,19 +63,21 @@ type newImportBinding struct {
 }
 
 type Fix struct {
-	Kind          FixKind       `json:"kind"`
-	Name          string        `json:"name,omitzero"`
-	ImportKind    ImportKind    `json:"importKind"`
-	UseRequire    bool          `json:"useRequire,omitzero"`
-	AddAsTypeOnly AddAsTypeOnly `json:"addAsTypeOnly"`
+	Kind            FixKind       `json:"kind"`
+	Name            string        `json:"name,omitzero"`
+	ImportKind      ImportKind    `json:"importKind"`
+	UseRequire      bool          `json:"useRequire,omitzero"`
+	AddAsTypeOnly   AddAsTypeOnly `json:"addAsTypeOnly"`
+	ModuleSpecifier string        `json:"moduleSpecifier,omitzero"`
 
-	// FixKindAddNew
+	// Only used for comparing fixes before serializing, no need to include in JSON
 
-	ModuleSpecifier string `json:"moduleSpecifier,omitzero"`
+	ModuleSpecifierKind modulespecifiers.ResultKind
+	IsReExport          bool
+	ModuleFileName      string
 
-	// FixKindAddToExisting
-
-	// ImportIndex is the index of the existing import in file.Imports()
+	// ImportIndex is the index of the existing import in file.Imports(),
+	// used for FixKindAddToExisting.
 	ImportIndex int `json:"importIndex"`
 }
 
@@ -456,10 +460,10 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
 }
 
+// !!! when/why could this return multiple?
 func (v *View) GetFixes(
 	ctx context.Context,
 	export *RawExport,
-	userPreferences modulespecifiers.UserPreferences,
 ) []*Fix {
 	// !!! tryUseExistingNamespaceImport
 	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
@@ -468,7 +472,7 @@ func (v *View) GetFixes(
 
 	// !!! getNewImportFromExistingSpecifier - even worth it?
 
-	moduleSpecifier := v.GetModuleSpecifier(export, userPreferences)
+	moduleSpecifier, moduleSpecifierKind := v.GetModuleSpecifier(export, v.preferences)
 	if moduleSpecifier == "" {
 		return nil
 	}
@@ -476,10 +480,14 @@ func (v *View) GetFixes(
 	// !!! JSDoc type import, add as type only
 	return []*Fix{
 		{
-			Kind:            FixKindAddNew,
-			ImportKind:      importKind,
-			ModuleSpecifier: moduleSpecifier,
-			Name:            export.Name(),
+			Kind:                FixKindAddNew,
+			ImportKind:          importKind,
+			ModuleSpecifier:     moduleSpecifier,
+			ModuleSpecifierKind: moduleSpecifierKind,
+			Name:                export.Name(),
+
+			IsReExport:     export.Target.ModuleID != export.ModuleID,
+			ModuleFileName: export.ModuleFileName(),
 		},
 	}
 }
@@ -607,4 +615,82 @@ func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
 
 func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
+}
+
+func (v *View) compareFixes(a, b *Fix) int {
+	if res := compareFixKinds(a.Kind, b.Kind); res != 0 {
+		return res
+	}
+	return v.compareModuleSpecifiers(a, b)
+}
+
+func compareFixKinds(a, b FixKind) int {
+	return int(a) - int(b)
+}
+
+func (v *View) compareModuleSpecifiers(
+	a *Fix, // !!! ImportFixWithModuleSpecifier
+	b *Fix, // !!! ImportFixWithModuleSpecifier
+) int {
+	if comparison := compareModuleSpecifierRelativity(a, b, v.preferences); comparison != 0 {
+		return comparison
+	}
+	if comparison := compareNodeCoreModuleSpecifiers(a.ModuleSpecifier, b.ModuleSpecifier, v.importingFile, v.program); comparison != 0 {
+		return comparison
+	}
+	if comparison := core.CompareBooleans(
+		isFixPossiblyReExportingImportingFile(a, v.importingFile.Path(), v.registry.toPath),
+		isFixPossiblyReExportingImportingFile(b, v.importingFile.Path(), v.registry.toPath),
+	); comparison != 0 {
+		return comparison
+	}
+	if comparison := tspath.CompareNumberOfDirectorySeparators(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
+		return comparison
+	}
+	return 0
+}
+
+func compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile, program *compiler.Program) int {
+	if strings.HasPrefix(a, "node:") && !strings.HasPrefix(b, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return -1
+		}
+		return 1
+	}
+	if strings.HasPrefix(b, "node:") && !strings.HasPrefix(a, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return 1
+		}
+		return -1
+	}
+	return 0
+}
+
+// This is a simple heuristic to try to avoid creating an import cycle with a barrel re-export.
+// E.g., do not `import { Foo } from ".."` when you could `import { Foo } from "../Foo"`.
+// This can produce false positives or negatives if re-exports cross into sibling directories
+// (e.g. `export * from "../whatever"`) or are not named "index".
+func isFixPossiblyReExportingImportingFile(fix *Fix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
+	if fix.IsReExport && isIndexFileName(fix.ModuleFileName) {
+		reExportDir := toPath(tspath.GetDirectoryPath(fix.ModuleFileName))
+		return strings.HasPrefix(string(importingFilePath), string(reExportDir))
+	}
+	return false
+}
+
+func isIndexFileName(fileName string) bool {
+	fileName = tspath.GetBaseFileName(fileName)
+	if tspath.FileExtensionIsOneOf(fileName, []string{".js", ".jsx", ".d.ts", ".ts", ".tsx"}) {
+		fileName = tspath.RemoveFileExtension(fileName)
+	}
+	return fileName == "index"
+}
+
+// returns `-1` if `a` is better than `b`
+func compareModuleSpecifierRelativity(a *Fix, b *Fix, preferences modulespecifiers.UserPreferences) int {
+	switch preferences.ImportModuleSpecifierPreference {
+	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
+		return core.CompareBooleans(a.ModuleSpecifierKind == modulespecifiers.ResultKindRelative, b.ModuleSpecifierKind == modulespecifiers.ResultKindRelative)
+	}
+	return 0
 }

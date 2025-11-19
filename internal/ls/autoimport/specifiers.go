@@ -10,12 +10,12 @@ import (
 func (v *View) GetModuleSpecifier(
 	export *RawExport,
 	userPreferences modulespecifiers.UserPreferences,
-) string {
+) (string, modulespecifiers.ResultKind) {
 	// !!! try using existing import
 
 	// Ambient module
 	if modulespecifiers.PathIsBareSpecifier(string(export.ModuleID)) {
-		return string(export.ModuleID)
+		return string(export.ModuleID), modulespecifiers.ResultKindAmbient
 	}
 
 	if export.NodeModulesDirectory != "" {
@@ -26,31 +26,31 @@ func (v *View) GetModuleSpecifier(
 					// !!! modulespecifiers.processEnding
 					switch entrypoint.Ending {
 					case module.EndingFixed:
-						return entrypoint.ModuleSpecifier
+						return entrypoint.ModuleSpecifier, modulespecifiers.ResultKindNodeModules
 					case module.EndingExtensionChangeable:
 						dtsExtension := tspath.GetDeclarationFileExtension(entrypoint.ModuleSpecifier)
 						if dtsExtension != "" {
-							return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false)
+							return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false), modulespecifiers.ResultKindNodeModules
 						}
-						return entrypoint.ModuleSpecifier
+						return entrypoint.ModuleSpecifier, modulespecifiers.ResultKindNodeModules
 					default:
 						// !!! definitely wrong, lazy
-						return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false)
+						return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false), modulespecifiers.ResultKindNodeModules
 					}
 				}
 			}
-			return ""
+			return "", modulespecifiers.ResultKindNone
 		}
 	}
 
 	cache := v.registry.relativeSpecifierCache[v.importingFile.Path()]
 	if export.NodeModulesDirectory == "" {
 		if specifier, ok := cache[export.Path]; ok {
-			return specifier
+			return specifier, modulespecifiers.ResultKindRelative
 		}
 	}
 
-	specifiers, _ := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
+	specifiers, kind := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
 		v.importingFile,
 		string(export.ExportID.ModuleID),
 		v.program.Options(),
@@ -63,7 +63,7 @@ func (v *View) GetModuleSpecifier(
 		// !!! sort/filter specifiers?
 		specifier := specifiers[0]
 		cache[export.Path] = specifier
-		return specifier
+		return specifier, kind
 	}
-	return ""
+	return "", modulespecifiers.ResultKindNone
 }

@@ -14,6 +14,6 @@ func (l *LanguageService) getAutoImportView(ctx context.Context, fromFile *ast.S
 		return nil, ErrNeedsAutoImports
 	}
 
-	view := autoimport.NewView(registry, fromFile, l.projectPath, program)
+	view := autoimport.NewView(registry, fromFile, l.projectPath, program, l.UserPreferences().ModuleSpecifierPreferences())
 	return view, nil
 }
