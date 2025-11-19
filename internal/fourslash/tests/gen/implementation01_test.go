@@ -14,5 +14,6 @@ func TestImplementation01(t *testing.T) {
 	const content = `interface Fo/*1*/o {}
 class /*2*/Bar implements Foo {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyBaselineGoToImplementation(t, "1")
 }

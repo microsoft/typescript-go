@@ -4,7 +4,10 @@
  // === goToDefinition ===
  // === /goToDefinitionConstructorOfClassWhenClassIsPrecededByNamespace01.ts ===
 -// namespace Foo {
-+// namespace [|Foo|] {
++// <|namespace [|Foo|] {
  //     export var x;
- // }
+-// }
++// }|>
  // 
+ // <|class [|Foo|] {
+ //     [|constructor() {

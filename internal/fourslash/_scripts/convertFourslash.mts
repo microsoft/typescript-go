@@ -65,8 +65,9 @@ function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string
         else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
+            const isServer = filePath.split(path.sep).includes("server");
             if (test) {
-                const testContent = generateGoTest(failingTests, test);
+                const testContent = generateGoTest(failingTests, test, isServer);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
             }
@@ -2093,7 +2094,7 @@ interface GoTest {
     commands: Cmd[];
 }
 
-function generateGoTest(failingTests: Set<string>, test: GoTest): string {
+function generateGoTest(failingTests: Set<string>, test: GoTest, isServer: boolean): string {
     const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_").replaceAll(/[^a-zA-Z0-9_]/g, "");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
@@ -2129,7 +2130,7 @@ func Test${testName}(t *testing.T) {
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
     f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-    ${commands}
+    ${isServer ? `f.MarkTestAsStradaServer()\n` : ""}${commands}
 }`;
     return template;
 }

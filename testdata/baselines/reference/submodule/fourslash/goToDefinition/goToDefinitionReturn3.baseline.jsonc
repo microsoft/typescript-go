@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionReturn3.ts ===
 // class C {
-//     [|m|]() {
+//     <|[|m|]() {
 //         /*GOTO DEF*/return 1;
-//     }
+//     }|>
 // }

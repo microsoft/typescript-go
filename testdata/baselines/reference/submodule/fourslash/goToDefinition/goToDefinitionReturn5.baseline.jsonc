@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionReturn5.ts ===
-// function [|foo|]() {
+// <|function [|foo|]() {
 //     class Foo {
 //         static { /*GOTO DEF*/return; }
 //     }
-// }
+// }|>

@@ -8,7 +8,7 @@
 +
  // === /b.ts ===
  // import f, { x } from "./a";
--// import * as [|a|] from "./a";
+-// <|import * as [|a|] from "./a";|>
 +// import * as a from "./a";
  // import b = require("./b");
  // f;

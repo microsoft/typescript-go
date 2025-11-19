@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionObjectBindingElementPropertyName01.ts ===
 // interface I {
-//     [|property1|]: number;
+//     <|[|property1|]: number;|>
 //     property2: string;
 // }
 // 

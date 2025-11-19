@@ -4,11 +4,11 @@
  // === goToDefinition ===
  // === /jsDocSee3.ts ===
 -// function foo (a: string) {
-+// function foo ([|a|]: string) {
++// function foo (<|[|a|]: string|>) {
  //     /**
  //      * @see {/*GOTO DEF*/a}
  //      */
--//     function bar ([|a|]: string) {
+-//     function bar (<|[|a|]: string|>) {
 +//     function bar (a: string) {
  //     }
  // }

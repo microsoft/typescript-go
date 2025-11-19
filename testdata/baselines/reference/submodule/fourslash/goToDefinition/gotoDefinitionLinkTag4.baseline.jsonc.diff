@@ -3,9 +3,9 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
 -// === /a.ts ===
--// interface [|Foo|] {
+-// <|interface [|Foo|] {
 -//     foo: E.Foo;
--// }
+-// }|>
 -
  // === /b.ts ===
  // enum E {

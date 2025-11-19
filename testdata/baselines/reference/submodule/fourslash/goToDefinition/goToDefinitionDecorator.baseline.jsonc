@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /a.ts ===
-// function [|decorator|](target) {
+// <|function [|decorator|](target) {
 //     return target;
-// }
+// }|>
 // function decoratorFactory(...args) {
 //     return target => target;
 // }
@@ -21,9 +21,9 @@
 // function decorator(target) {
 //     return target;
 // }
-// function [|decoratorFactory|](...args) {
+// <|function [|decoratorFactory|](...args) {
 //     return target => target;
-// }
+// }|>
 
 // === /b.ts ===
 // @decorator

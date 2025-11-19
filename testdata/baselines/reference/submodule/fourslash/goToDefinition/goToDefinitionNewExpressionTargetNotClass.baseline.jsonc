@@ -2,9 +2,9 @@
 // === /goToDefinitionNewExpressionTargetNotClass.ts ===
 // class C2 {
 // }
-// let [|I|]: {
+// <|let [|I|]: {
 //     [|new(): C2;|]
-// };
+// };|>
 // new /*GOTO DEF*/I();
 // let I2: {
 // };
@@ -18,6 +18,6 @@
 //     new(): C2;
 // };
 // new I();
-// let [|I2|]: {
-// };
+// <|let [|I2|]: {
+// };|>
 // new /*GOTO DEF*/I2();

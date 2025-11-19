@@ -2,7 +2,7 @@
 // === /Foo.js ===
 // class Foo {
 //    constructor() {
-//        this.[|alpha|] = 10;
+//        <|this.[|alpha|] = 10;|>
 //        this.beta = 'gamma';
 //    }
 //    method() { return this.alpha; }
@@ -18,7 +18,7 @@
 // class Foo {
 //    constructor() {
 //        this.alpha = 10;
-//        this.[|beta|] = 'gamma';
+//        <|this.[|beta|] = 'gamma';|>
 //    }
 //    method() { return this.alpha; }
 // }

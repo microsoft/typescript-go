@@ -73,7 +73,7 @@ func getBaselineExtension(command baselineCommand) string {
 	}
 }
 
-func getBaselineOptions(command baselineCommand, testPath string) baseline.Options {
+func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath string) baseline.Options {
 	subfolder := "fourslash/" + normalizeCommandName(string(command))
 	if !isSubmoduleTest(testPath) {
 		return baseline.Options{
@@ -251,13 +251,9 @@ func getBaselineOptions(command baselineCommand, testPath string) baseline.Optio
 				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
 				testFilePrefix := "/tests/cases/fourslash"
 				serverTestFilePrefix := "/server"
-				contextSpanOpening := "<|"
-				contextSpanClosing := "|>"
 				oldGoToDefCommand := "getDefinitionAtPosition"
 				oldGoToDefComment := "/*GOTO DEF POS*/"
 				replacer := strings.NewReplacer(
-					contextSpanOpening, "",
-					contextSpanClosing, "",
 					testFilePrefix, "",
 					serverTestFilePrefix, "",
 					oldGoToDefCommand, string(goToDefinitionCmd),
@@ -338,14 +334,16 @@ type baselineFourslashLocationsOptions struct {
 	additionalSpan *documentSpan
 }
 
+func locationToSpan(loc lsproto.Location) documentSpan {
+	return documentSpan{
+		uri:      loc.Uri,
+		textSpan: loc.Range,
+	}
+}
+
 func (f *FourslashTest) getBaselineForLocationsWithFileContents(locations []lsproto.Location, options baselineFourslashLocationsOptions) string {
 	return f.getBaselineForSpansWithFileContents(
-		core.Map(locations, func(loc lsproto.Location) documentSpan {
-			return documentSpan{
-				uri:      loc.Uri,
-				textSpan: loc.Range,
-			}
-		}),
+		core.Map(locations, locationToSpan),
 		options,
 	)
 }
@@ -364,6 +362,7 @@ func (f *FourslashTest) getBaselineForGroupedSpansWithFileContents(groupedRanges
 	// found in a file with ranges.
 	foundMarker := false
 	foundAdditionalLocation := false
+	spanToContextId := map[documentSpan]int{}
 
 	baselineEntries := []string{}
 	walkDirFn := func(path string, d vfs.DirEntry, e error) error {
@@ -395,7 +394,7 @@ func (f *FourslashTest) getBaselineForGroupedSpansWithFileContents(groupedRanges
 			foundAdditionalLocation = true
 		}
 
-		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, ranges, nil, options))
+		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, ranges, spanToContextId, options))
 		return nil
 	}
 
@@ -416,7 +415,7 @@ func (f *FourslashTest) getBaselineForGroupedSpansWithFileContents(groupedRanges
 		if content, ok := f.vfs.ReadFile(fileName); ok {
 			baselineEntries = append(
 				baselineEntries,
-				f.getBaselineContentForFile(fileName, content, []documentSpan{*options.additionalSpan}, nil, options),
+				f.getBaselineContentForFile(fileName, content, []documentSpan{*options.additionalSpan}, spanToContextId, options),
 			)
 			if options.marker != nil && options.marker.FileName() == fileName {
 				foundMarker = true
@@ -428,7 +427,7 @@ func (f *FourslashTest) getBaselineForGroupedSpansWithFileContents(groupedRanges
 		// If we didn't find the marker in any file, we need to add it.
 		markerFileName := options.marker.FileName()
 		if content, ok := f.vfs.ReadFile(markerFileName); ok {
-			baselineEntries = append(baselineEntries, f.getBaselineContentForFile(markerFileName, content, nil, nil, options))
+			baselineEntries = append(baselineEntries, f.getBaselineContentForFile(markerFileName, content, nil, spanToContextId, options))
 		}
 	}
 

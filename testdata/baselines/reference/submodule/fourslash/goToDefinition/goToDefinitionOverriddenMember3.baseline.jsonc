@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionOverriddenMember3.ts ===
 // abstract class Foo {
-// 	abstract [|m|]() {}
+// 	<|abstract [|m|]() {}|>
 // }
 // 
 // export class Bar extends Foo {

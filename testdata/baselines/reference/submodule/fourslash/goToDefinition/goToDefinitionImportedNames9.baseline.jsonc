@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /a.js ===
-// class [|Class|] {
+// <|class [|Class|] {
 //     f;
-// }
+// }|>
 //  export { Class };
 
 // === /b.js ===

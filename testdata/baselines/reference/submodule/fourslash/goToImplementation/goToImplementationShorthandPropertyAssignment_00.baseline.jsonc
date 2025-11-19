@@ -4,7 +4,7 @@
 //     Foo: FooConstructor;
 // }
 // 
-// var x = class [|Foo|] {
+// var x = <|class [|Foo|] {
 //     createBarInClassExpression(): Bar {
 //         return {
 //             Fo/*GOTO IMPL*/o
@@ -12,13 +12,15 @@
 //     }
 // 
 //     someFunction() {}
-// }
+// }|>
 // 
-// class [|Foo|] {
+// <|class [|Foo|] {
 // 
-// }
+// }|>
 // 
-// --- (line: 27) skipped ---
+// function createBarUsingClassDeclaration(): Bar {
+//     return {
+// --- (line: 29) skipped ---
 
 
 
@@ -28,7 +30,7 @@
 //     Foo: FooConstructor;
 // }
 // 
-// var x = class [|Foo|] {
+// var x = <|class [|Foo|] {
 //     createBarInClassExpression(): Bar {
 //         return {
 //             Foo
@@ -36,11 +38,11 @@
 //     }
 // 
 //     someFunction() {}
-// }
+// }|>
 // 
-// class [|Foo|] {
+// <|class [|Foo|] {
 // 
-// }
+// }|>
 // 
 // function createBarUsingClassDeclaration(): Bar {
 //     return {

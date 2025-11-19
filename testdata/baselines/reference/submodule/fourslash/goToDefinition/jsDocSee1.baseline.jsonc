@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
 //     export interface Bar {
 //         baz: Foo
@@ -22,9 +22,9 @@
 //     foo: string
 // }
 // namespace NS {
-//     export interface [|Bar|] {
+//     <|export interface [|Bar|] {
 //         baz: Foo
-//     }
+//     }|>
 // }
 // /** @see {Foo} foooo*/
 // const a = ""
@@ -38,13 +38,15 @@
 
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
-// --- (line: 5) skipped ---
-
-// --- (line: 9) skipped ---
+//     export interface Bar {
+//         baz: Foo
+//     }
+// }
+// /** @see {Foo} foooo*/
 // const a = ""
 // /** @see {NS.Bar} ns.bar*/
 // const b = ""
@@ -63,9 +65,9 @@
 //     foo: string
 // }
 // namespace NS {
-//     export interface [|Bar|] {
+//     <|export interface [|Bar|] {
 //         baz: Foo
-//     }
+//     }|>
 // }
 // /** @see {Foo} foooo*/
 // const a = ""
@@ -86,6 +88,6 @@
 // /** @see Foo f1*/
 // const c = ""
 // /** @see NS.Bar ns.bar*/
-// const [|d|] = ""
+// <|const [|d|] = ""|>
 // /** @see /*GOTO DEF*/d dd*/
 // const e = ""

@@ -4,7 +4,7 @@
 // }
 // 
 // class Bar extends AbstractBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // function whatever(a: AbstractBar) {
@@ -24,7 +24,7 @@
 // }
 // 
 // class Bar extends AbstractBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // function whatever(a: AbstractBar) {

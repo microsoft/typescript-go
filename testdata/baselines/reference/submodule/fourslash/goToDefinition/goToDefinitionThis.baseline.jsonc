@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionThis.ts ===
-// function f([|this|]: number) {
+// function f(<|[|this|]: number|>) {
 //     return /*GOTO DEF*/this;
 // }
 // class C {
@@ -15,10 +15,10 @@
 // function f(this: number) {
 //     return this;
 // }
-// class [|C|] {
+// <|class [|C|] {
 //     constructor() { return /*GOTO DEF*/this; }
 //     get self(this: number) { return this; }
-// }
+// }|>
 
 
 
@@ -29,5 +29,5 @@
 // }
 // class C {
 //     constructor() { return this; }
-//     get self([|this|]: number) { return /*GOTO DEF*/this; }
+//     get self(<|[|this|]: number|>) { return /*GOTO DEF*/this; }
 // }

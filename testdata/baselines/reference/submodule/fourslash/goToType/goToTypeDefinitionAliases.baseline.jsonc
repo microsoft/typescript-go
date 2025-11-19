@@ -1,8 +1,8 @@
 // === goToType ===
 // === /goToTypeDefinitioAliases_module1.ts ===
-// interface [|I|] {
+// <|interface [|I|] {
 //     p;
-// }
+// }|>
 // export {I as I2};
 
 // === /goToTypeDefinitioAliases_module3.ts ===
@@ -13,9 +13,9 @@
 
 // === goToType ===
 // === /goToTypeDefinitioAliases_module1.ts ===
-// interface [|I|] {
+// <|interface [|I|] {
 //     p;
-// }
+// }|>
 // export {I as I2};
 
 // === /goToTypeDefinitioAliases_module3.ts ===

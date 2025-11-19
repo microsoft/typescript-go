@@ -1,4 +1,4 @@
 // === goToType ===
 // === /goToTypeDefinition3.ts ===
-// type [|T|] = string;
+// <|type [|T|] = string;|>
 // const x: /*GOTO TYPE*/T;

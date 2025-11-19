@@ -4,7 +4,7 @@
 +// === goToDefinition ===
 +// === /qualifiedName_import_declaration_with_variable_entity_names.ts ===
 +// module Alpha {
-+//     export var [|x|] = 100;
++//     <|export var [|x|] = 100;|>
 +// }
 +// 
 +// module Beta {

@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-// declare var [|ambientVar|];
+// <|declare var [|ambientVar|];|>
 // declare function ambientFunction();
 // declare class ambientClass {
 //     constructor();
@@ -19,7 +19,7 @@
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
 // declare var ambientVar;
-// declare function [|ambientFunction|]();
+// <|declare function [|ambientFunction|]();|>
 // declare class ambientClass {
 //     constructor();
 //     static method();
@@ -38,11 +38,11 @@
 // === /goToDefinitionAmbiants.ts ===
 // declare var ambientVar;
 // declare function ambientFunction();
-// declare class [|ambientClass|] {
+// <|declare class [|ambientClass|] {
 //     [|constructor();|]
 //     static method();
 //     public method();
-// }
+// }|>
 // 
 // ambientVar = 1;
 // ambientFunction();
@@ -58,7 +58,7 @@
 // declare function ambientFunction();
 // declare class ambientClass {
 //     constructor();
-//     static [|method|]();
+//     <|static [|method|]();|>
 //     public method();
 // }
 // 
@@ -77,7 +77,7 @@
 // declare class ambientClass {
 //     constructor();
 //     static method();
-//     public [|method|]();
+//     <|public [|method|]();|>
 // }
 // 
 // ambientVar = 1;

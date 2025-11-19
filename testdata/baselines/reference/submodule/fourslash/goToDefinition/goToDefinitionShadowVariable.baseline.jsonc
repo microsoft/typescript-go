@@ -2,6 +2,6 @@
 // === /goToDefinitionShadowVariable.ts ===
 // var shadowVariable = "foo";
 // function shadowVariableTestModule() {
-//     var [|shadowVariable|];
+//     <|var [|shadowVariable|];|>
 //     /*GOTO DEF*/shadowVariable = 1;
 // }

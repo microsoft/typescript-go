@@ -1,12 +1,14 @@
 // === goToDefinition ===
 // === /goToDefinitionAwait3.ts ===
 // class C {
-//     [|notAsync|]() {
+//     <|[|notAsync|]() {
 //       /*GOTO DEF*/await Promise.resolve(0);
-//     }
+//     }|>
 // 
 //     async foo() {
-// --- (line: 7) skipped ---
+//       await Promise.resolve(0);
+//     }
+// }
 
 
 
@@ -17,7 +19,7 @@
 //       await Promise.resolve(0);
 //     }
 // 
-//     async [|foo|]() {
+//     <|async [|foo|]() {
 //       /*GOTO DEF*/await Promise.resolve(0);
-//     }
+//     }|>
 // }

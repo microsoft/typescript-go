@@ -4,5 +4,5 @@
 //     public hello() {}
 // }
 // 
-// var [|someVar|] = new Bar();
+// <|var [|someVar|] = new Bar();|>
 // someVa/*GOTO IMPL*/r.hello();

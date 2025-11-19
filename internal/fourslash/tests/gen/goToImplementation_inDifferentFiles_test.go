@@ -26,5 +26,6 @@ export interface /**/Foo {
     func();
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyBaselineGoToImplementation(t, "")
 }

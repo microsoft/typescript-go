@@ -4,9 +4,9 @@
 
  // === goToImplementation ===
  // === /goToImplementationNamespace_05.ts ===
--// namespace Foo.[|Baz|] {
+-// namespace Foo.<|[|Baz|] {
 -//     export function hello() {}
--// }
+-// }|>
 -// 
 -// module Bar.Baz {
 -//     export function sure() {}
@@ -23,9 +23,9 @@
 -//     export function hello() {}
 -// }
 -// 
--// module Bar.[|Baz|] {
+-// module Bar.<|[|Baz|] {
 -//     export function sure() {}
--// }
+-// }|>
 -// 
 +// --- (line: 8) skipped ---
  // let x = Foo;

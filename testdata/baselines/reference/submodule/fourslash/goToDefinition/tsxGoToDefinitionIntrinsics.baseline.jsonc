@@ -3,10 +3,10 @@
 // declare module JSX {
 //     interface Element { }
 //     interface IntrinsicElements {
-//         [|div|]: {
+//         <|[|div|]: {
 //             name?: string;
 //             isOpen?: boolean;
-//         };
+//         };|>
 //         span: { n: string; };
 //     }
 // }
@@ -22,7 +22,7 @@
 //             name?: string;
 //             isOpen?: boolean;
 //         };
-//         [|span|]: { n: string; };
+//         <|[|span|]: { n: string; };|>
 //     }
 // }
 // var x = <div />;
@@ -37,7 +37,7 @@
 //     interface Element { }
 //     interface IntrinsicElements {
 //         div: {
-//             [|name|]?: string;
+//             <|[|name|]?: string;|>
 //             isOpen?: boolean;
 //         };
 //         span: { n: string; };

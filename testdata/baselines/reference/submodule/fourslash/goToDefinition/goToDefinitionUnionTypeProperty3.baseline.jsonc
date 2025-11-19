@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty3.ts ===
 // interface Array<T> {
-//     [|specialPop|](): T
+//     <|[|specialPop|](): T|>
 // }
 // 
 // var strings: string[];

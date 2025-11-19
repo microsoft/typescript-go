@@ -1,7 +1,7 @@
 --- old.goToDefinitionOverriddenMember8.baseline.jsonc
 +++ new.goToDefinitionOverriddenMember8.baseline.jsonc
 @@= skipped -3, +3 lines =@@
- //     [|m|]() {}
+ //     <|[|m|]() {}|>
  // }
 
 -// === /./b.ts ===

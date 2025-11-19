@@ -4,7 +4,7 @@
 //     propString: "hell"
 //     optional?: boolean
 // }
-// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// <|declare function [|Opt|](attributes: OptionPropBag): JSX.Element;|>
 // let opt = <O/*GOTO DEF*/pt />;
 // let opt1 = <Opt propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
@@ -18,7 +18,7 @@
 //     propString: "hell"
 //     optional?: boolean
 // }
-// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// <|declare function [|Opt|](attributes: OptionPropBag): JSX.Element;|>
 // let opt = <Opt />;
 // let opt1 = <Op/*GOTO DEF*/t propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
@@ -32,7 +32,7 @@
 //     propString: "hell"
 //     optional?: boolean
 // }
-// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// <|declare function [|Opt|](attributes: OptionPropBag): JSX.Element;|>
 // let opt = <Opt />;
 // let opt1 = <Opt propx={100} />;
 // let opt2 = <Op/*GOTO DEF*/t propx={100} optional />;
@@ -46,7 +46,7 @@
 //     propString: "hell"
 //     optional?: boolean
 // }
-// declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
+// <|declare function [|Opt|](attributes: OptionPropBag): JSX.Element;|>
 // let opt = <Opt />;
 // let opt1 = <Opt propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
@@ -60,7 +60,7 @@
 //     interface ElementAttributesProperty { props; }
 // }
 // interface OptionPropBag {
-//     [|propx|]: number
+//     <|[|propx|]: number|>
 //     propString: "hell"
 //     optional?: boolean
 // }
@@ -78,7 +78,7 @@
 // interface OptionPropBag {
 //     propx: number
 //     propString: "hell"
-//     [|optional|]?: boolean
+//     <|[|optional|]?: boolean|>
 // }
 // declare function Opt(attributes: OptionPropBag): JSX.Element;
 // let opt = <Opt />;

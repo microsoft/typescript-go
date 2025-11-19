@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
  // === /gotoDefinitionThrowsTag.ts ===
--// class [|E|] extends Error {}
+-// <|class [|E|] extends Error {}|>
 +// class E extends Error {}
  // 
  // /**

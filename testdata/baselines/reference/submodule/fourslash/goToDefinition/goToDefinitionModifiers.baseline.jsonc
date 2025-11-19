@@ -1,20 +1,38 @@
 // === goToDefinition ===
 // === /a.ts ===
-// /*GOTO DEF*/export class [|A|] {
+// /*GOTO DEF*/<|export class [|A|] {
 // 
 //     private z: string;
 // 
-// --- (line: 5) skipped ---
+//     readonly x: string;
+// 
+//     async a() {  }
+// 
+//     override b() {}
+// 
+//     public async c() { }
+// }|>
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-// export class [|A|]/*GOTO DEF*/ {
+// <|export class [|A|]/*GOTO DEF*/ {
 // 
 //     private z: string;
 // 
-// --- (line: 5) skipped ---
+//     readonly x: string;
+// 
+//     async a() {  }
+// 
+//     override b() {}
+// 
+//     public async c() { }
+// }|>
+// 
+// export function foo() { }
 
 
 
@@ -22,7 +40,7 @@
 // === /a.ts ===
 // export class A {
 // 
-//     /*GOTO DEF*/private [|z|]: string;
+//     /*GOTO DEF*/<|private [|z|]: string;|>
 // 
 //     readonly x: string;
 // 
@@ -34,7 +52,7 @@
 // === /a.ts ===
 // export class A {
 // 
-//     private [|z|]/*GOTO DEF*/: string;
+//     <|private [|z|]/*GOTO DEF*/: string;|>
 // 
 //     readonly x: string;
 // 
@@ -48,7 +66,7 @@
 // 
 //     private z: string;
 // 
-//     /*GOTO DEF*/readonly [|x|]: string;
+//     /*GOTO DEF*/<|readonly [|x|]: string;|>
 // 
 //     async a() {  }
 // 
@@ -62,7 +80,7 @@
 // 
 //     private z: string;
 // 
-//     readonly [|x|]/*GOTO DEF*/: string;
+//     <|readonly [|x|]/*GOTO DEF*/: string;|>
 // 
 //     async a() {  }
 // 
@@ -76,7 +94,7 @@
 // 
 //     readonly x: string;
 // 
-//     /*GOTO DEF*/async [|a|]() {  }
+//     /*GOTO DEF*/<|async [|a|]() {  }|>
 // 
 //     override b() {}
 // 
@@ -90,7 +108,7 @@
 // 
 //     readonly x: string;
 // 
-//     async [|a|]/*GOTO DEF*/() {  }
+//     <|async [|a|]/*GOTO DEF*/() {  }|>
 // 
 //     override b() {}
 // 
@@ -104,7 +122,7 @@
 // 
 //     async a() {  }
 // 
-//     /*GOTO DEF*/override [|b|]() {}
+//     /*GOTO DEF*/<|override [|b|]() {}|>
 // 
 //     public async c() { }
 // }
@@ -119,7 +137,7 @@
 // 
 //     async a() {  }
 // 
-//     override [|b|]/*GOTO DEF*/() {}
+//     <|override [|b|]/*GOTO DEF*/() {}|>
 // 
 //     public async c() { }
 // }
@@ -134,7 +152,7 @@
 // 
 //     override b() {}
 // 
-//     /*GOTO DEF*/public async [|c|]() { }
+//     /*GOTO DEF*/<|public async [|c|]() { }|>
 // }
 // 
 // export function foo() { }
@@ -147,7 +165,7 @@
 // 
 //     override b() {}
 // 
-//     public/*GOTO DEF*/ async [|c|]() { }
+//     <|public/*GOTO DEF*/ async [|c|]() { }|>
 // }
 // 
 // export function foo() { }
@@ -160,7 +178,7 @@
 // 
 //     override b() {}
 // 
-//     public as/*GOTO DEF*/ync [|c|]() { }
+//     <|public as/*GOTO DEF*/ync [|c|]() { }|>
 // }
 // 
 // export function foo() { }
@@ -173,7 +191,7 @@
 // 
 //     override b() {}
 // 
-//     public async [|c|]/*GOTO DEF*/() { }
+//     <|public async [|c|]/*GOTO DEF*/() { }|>
 // }
 // 
 // export function foo() { }
@@ -186,7 +204,7 @@
 //     public async c() { }
 // }
 // 
-// exp/*GOTO DEF*/ort function [|foo|]() { }
+// <|exp/*GOTO DEF*/ort function [|foo|]() { }|>
 
 
 
@@ -196,4 +214,4 @@
 //     public async c() { }
 // }
 // 
-// export function [|foo|]/*GOTO DEF*/() { }
+// <|export function [|foo|]/*GOTO DEF*/() { }|>

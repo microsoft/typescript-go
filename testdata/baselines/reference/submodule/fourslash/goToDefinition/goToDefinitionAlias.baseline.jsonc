@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /b.ts ===
-// import [|alias1|] = require("fileb");
+// <|import [|alias1|] = require("fileb");|>
 // module Module {
 //     export import alias2 = alias1;
 // }
@@ -17,7 +17,7 @@
 
 // === goToDefinition ===
 // === /b.ts ===
-// import [|alias1|] = require("fileb");
+// <|import [|alias1|] = require("fileb");|>
 // module Module {
 //     export import alias2 = alias1;
 // }
@@ -36,7 +36,7 @@
 // === /b.ts ===
 // import alias1 = require("fileb");
 // module Module {
-//     export import [|alias2|] = alias1;
+//     <|export import [|alias2|] = alias1;|>
 // }
 // 
 // // Type position
@@ -53,7 +53,7 @@
 // === /b.ts ===
 // import alias1 = require("fileb");
 // module Module {
-//     export import [|alias2|] = alias1;
+//     <|export import [|alias2|] = alias1;|>
 // }
 // 
 // // Type position

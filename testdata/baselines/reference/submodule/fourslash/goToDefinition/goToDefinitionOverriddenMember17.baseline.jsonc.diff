@@ -6,11 +6,11 @@
 -// const entityKind = Symbol.for("drizzle:entityKind");
 -// 
 -// abstract class MySqlColumn {
--//   static readonly [|[entityKind]|]: string = "MySqlColumn";
+-//   <|static readonly [|[entityKind]|]: string = "MySqlColumn";|>
 +// --- (line: 4) skipped ---
  // }
  // 
  // export class MySqlVarBinary extends MySqlColumn {
 -//   static /*GOTO DEF*/override readonly [entityKind]: string = "MySqlVarBinary";
-+//   static /*GOTO DEF*/override readonly [|[entityKind]|]: string = "MySqlVarBinary";
++//   <|static /*GOTO DEF*/override readonly [|[entityKind]|]: string = "MySqlVarBinary";|>
  // }

@@ -7,7 +7,8 @@
 -//     Foo
 +//     [|Foo|]
  // }
--// interface [|Foo|] {
+-// <|interface [|Foo|] {
 +// interface Foo {
  //     foo: E.Foo;
- // }
+-// }|>
++// }

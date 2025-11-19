@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /foo.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
 //     export interface Bar {
 //         baz: Foo
@@ -22,9 +22,9 @@
 //     foo: string
 // }
 // namespace NS {
-//     export interface [|Bar|] {
+//     <|export interface [|Bar|] {
 //         baz: Foo
-//     }
+//     }|>
 // }
 // /** {@link Foo} foooo*/
 // const a = ""
@@ -38,13 +38,15 @@
 
 // === goToDefinition ===
 // === /foo.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
-// --- (line: 5) skipped ---
-
-// --- (line: 9) skipped ---
+//     export interface Bar {
+//         baz: Foo
+//     }
+// }
+// /** {@link Foo} foooo*/
 // const a = ""
 // /** {@link NS.Bar} ns.bar*/
 // const b = ""
@@ -62,9 +64,9 @@
 //     foo: string
 // }
 // namespace NS {
-//     export interface [|Bar|] {
+//     <|export interface [|Bar|] {
 //         baz: Foo
-//     }
+//     }|>
 // }
 // /** {@link Foo} foooo*/
 // const a = ""
@@ -87,7 +89,7 @@
 // /** {@link Foo f1}*/
 // const c = ""
 // /** {@link NS.Bar ns.bar}*/
-// const [|d|] = ""
+// <|const [|d|] = ""|>
 // /** {@link /*GOTO DEF*/d }dd*/
 // const e = ""
 // /** @param x {@link Foo} */
@@ -97,11 +99,13 @@
 
 // === goToDefinition ===
 // === /foo.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
-// --- (line: 5) skipped ---
+//     export interface Bar {
+//         baz: Foo
+// --- (line: 7) skipped ---
 
 // --- (line: 15) skipped ---
 // const d = ""
@@ -114,11 +118,13 @@
 
 // === goToDefinition ===
 // === /foo.ts ===
-// interface [|Foo|] {
+// <|interface [|Foo|] {
 //     foo: string
-// }
+// }|>
 // namespace NS {
-// --- (line: 5) skipped ---
+//     export interface Bar {
+//         baz: Foo
+// --- (line: 7) skipped ---
 
 // === /bar.ts ===
 // /** {@link /*GOTO DEF*/Foo }dd*/

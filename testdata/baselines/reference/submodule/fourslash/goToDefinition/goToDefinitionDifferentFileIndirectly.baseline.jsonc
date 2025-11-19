@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /Remote2.ts ===
-// var [|rem2Var|];
+// <|var [|rem2Var|];|>
 // function rem2Fn() { }
 // class rem2Cls { }
 // interface rem2Int{}
@@ -18,7 +18,7 @@
 // === goToDefinition ===
 // === /Remote2.ts ===
 // var rem2Var;
-// function [|rem2Fn|]() { }
+// <|function [|rem2Fn|]() { }|>
 // class rem2Cls { }
 // interface rem2Int{}
 // module rem2Mod { export var foo; }
@@ -36,7 +36,7 @@
 // === /Remote2.ts ===
 // var rem2Var;
 // function rem2Fn() { }
-// class [|rem2Cls|] { }
+// <|class [|rem2Cls|] { }|>
 // interface rem2Int{}
 // module rem2Mod { export var foo; }
 
@@ -54,7 +54,7 @@
 // var rem2Var;
 // function rem2Fn() { }
 // class rem2Cls { }
-// interface [|rem2Int|]{}
+// <|interface [|rem2Int|]{}|>
 // module rem2Mod { export var foo; }
 
 // === /Definition.ts ===
@@ -72,7 +72,7 @@
 // function rem2Fn() { }
 // class rem2Cls { }
 // interface rem2Int{}
-// module [|rem2Mod|] { export var foo; }
+// <|module [|rem2Mod|] { export var foo; }|>
 
 // === /Definition.ts ===
 // rem2Var = 1;

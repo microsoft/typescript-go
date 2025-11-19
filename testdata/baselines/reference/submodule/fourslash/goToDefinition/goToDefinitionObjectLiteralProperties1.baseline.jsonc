@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties1.ts ===
 // interface PropsBag {
-//    [|propx|]: number
+//    <|[|propx|]: number|>
 // }
 // function foo(arg: PropsBag) {}
 // foo({
@@ -17,7 +17,7 @@
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties1.ts ===
 // interface PropsBag {
-//    [|propx|]: number
+//    <|[|propx|]: number|>
 // }
 // function foo(arg: PropsBag) {}
 // foo({

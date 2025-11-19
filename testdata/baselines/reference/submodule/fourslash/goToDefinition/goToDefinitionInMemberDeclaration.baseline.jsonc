@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionInMemberDeclaration.ts ===
-// interface [|IFoo|] { method1(): number; }
+// <|interface [|IFoo|] { method1(): number; }|>
 // 
 // class Foo implements IFoo {
 //     public method1(): number { return 0; }
@@ -19,7 +19,7 @@
 
 // === goToDefinition ===
 // === /goToDefinitionInMemberDeclaration.ts ===
-// interface [|IFoo|] { method1(): number; }
+// <|interface [|IFoo|] { method1(): number; }|>
 // 
 // class Foo implements IFoo {
 //     public method1(): number { return 0; }
@@ -39,7 +39,7 @@
 
 // === goToDefinition ===
 // === /goToDefinitionInMemberDeclaration.ts ===
-// interface [|IFoo|] { method1(): number; }
+// <|interface [|IFoo|] { method1(): number; }|>
 // 
 // class Foo implements IFoo {
 //     public method1(): number { return 0; }
@@ -59,9 +59,9 @@
 // === /goToDefinitionInMemberDeclaration.ts ===
 // interface IFoo { method1(): number; }
 // 
-// class [|Foo|] implements IFoo {
+// <|class [|Foo|] implements IFoo {
 //     public method1(): number { return 0; }
-// }
+// }|>
 // 
 // enum Enum { value1, value2 };
 // 
@@ -79,9 +79,9 @@
 // === /goToDefinitionInMemberDeclaration.ts ===
 // interface IFoo { method1(): number; }
 // 
-// class [|Foo|] implements IFoo {
+// <|class [|Foo|] implements IFoo {
 //     public method1(): number { return 0; }
-// }
+// }|>
 // 
 // enum Enum { value1, value2 };
 // 
@@ -100,7 +100,7 @@
 //     public method1(): number { return 0; }
 // }
 // 
-// enum [|Enum|] { value1, value2 };
+// <|enum [|Enum|] { value1, value2 }|>;
 // 
 // class Bar {
 //     public _interface: IFoo = new Foo();
@@ -121,7 +121,7 @@
 //     public method1(): number { return 0; }
 // }
 // 
-// enum [|Enum|] { value1, value2 };
+// <|enum [|Enum|] { value1, value2 }|>;
 // 
 // class Bar {
 //     public _interface: IFoo = new Foo();
@@ -142,7 +142,7 @@
 // 
 // enum Enum { value1, value2 };
 // 
-// class [|Bar|] {
+// <|class [|Bar|] {
 //     public _interface: IFoo = new Foo();
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
@@ -151,4 +151,4 @@
 // 
 //     constructor(public _inConstructor: IFoo) {
 //     }
-// }
+// }|>

@@ -4,11 +4,11 @@
  // === /goToDefinitionClassStaticBlocks.ts ===
  // class ClassStaticBocks {
  //     static x;
--//     /*GOTO DEF*/[|static|] {}
+-//     /*GOTO DEF*/<|[|static|] {}|>
 -//     static y;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -//     static y;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -// }
 -
 -
@@ -17,11 +17,11 @@
 -// === /goToDefinitionClassStaticBlocks.ts ===
 -// class ClassStaticBocks {
 -//     static x;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -//     static y;
--//     /*GOTO DEF*/[|static|] {}
+-//     /*GOTO DEF*/<|[|static|] {}|>
 -//     static y;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -// }
 -
 -
@@ -30,11 +30,11 @@
 -// === /goToDefinitionClassStaticBlocks.ts ===
 -// class ClassStaticBocks {
 -//     static x;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -//     static y;
--//     [|static|] {}
+-//     <|[|static|] {}|>
 -//     static y;
--//     /*GOTO DEF*/[|static|] {}
+-//     /*GOTO DEF*/<|[|static|] {}|>
 +//     /*GOTO DEF*/static {}
 +//     static y;
 +//     static {}

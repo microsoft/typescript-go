@@ -1,11 +1,13 @@
 // === goToDefinition ===
 // === /goToDefinition_filteringGenericMappedType.ts ===
 // const obj = {
-//   get [|id|]() {
+//   <|get [|id|]() {
 //     return 1;
-//   },
+//   }|>,
 //   name: "test",
-// --- (line: 6) skipped ---
+// };
+// 
+// --- (line: 8) skipped ---
 
 // --- (line: 17) skipped ---
 //   name: true,

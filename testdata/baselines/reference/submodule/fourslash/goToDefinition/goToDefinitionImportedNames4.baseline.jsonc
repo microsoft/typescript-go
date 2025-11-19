@@ -2,9 +2,9 @@
 // === /a.ts ===
 // export module Module {
 // }
-// export class [|Class|] {
+// <|export class [|Class|] {
 //     private f;
-// }
+// }|>
 // export interface Interface {
 //     x;
 // }

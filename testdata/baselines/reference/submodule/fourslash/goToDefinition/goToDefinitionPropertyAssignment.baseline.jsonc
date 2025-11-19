@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionPropertyAssignment.ts ===
-// export const [|Component|] = () => { return "OK"}
+// <|export const [|Component|] = () => { return "OK"}|>
 // Component.displayName = 'Component'
 // 
 // /*GOTO DEF*/Component
@@ -12,7 +12,7 @@
 // === goToDefinition ===
 // === /goToDefinitionPropertyAssignment.ts ===
 // export const Component = () => { return "OK"}
-// Component.[|displayName|] = 'Component'
+// <|Component.[|displayName|] = 'Component'|>
 // 
 // Component
 // 

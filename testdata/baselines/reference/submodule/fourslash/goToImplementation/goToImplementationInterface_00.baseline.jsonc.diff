@@ -2,7 +2,7 @@
 +++ new.goToImplementationInterface_00.baseline.jsonc
 @@= skipped -5, +5 lines =@@
  // 
- // interface [|Baz|] extends Foo {}
+ // <|interface [|Baz|] extends Foo {}|>
  // 
 -// var bar: Foo = [|{ hello: helloImpl /**0*/ }|];
 -// var baz: Foo[] = [|[{ hello: helloImpl /**4*/ }]|];

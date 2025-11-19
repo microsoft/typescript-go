@@ -1,12 +1,12 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty2.ts ===
 // interface HasAOrB {
-//     [|a|]: string;
+//     <|[|a|]: string;|>
 //     b: string;
 // }
 // 
 // interface One {
-//     common: { [|a|] : number; };
+//     common: { <|[|a|] : number;|> };
 // }
 // 
 // interface Two {

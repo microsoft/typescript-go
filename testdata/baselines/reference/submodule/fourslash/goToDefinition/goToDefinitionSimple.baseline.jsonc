@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /Definition.ts ===
-// class [|c|] { }
+// <|class [|c|] { }|>
 
 // === /Consumption.ts ===
 //  var n = new /*GOTO DEF*/[|c|]();
@@ -10,7 +10,7 @@
 
 // === goToDefinition ===
 // === /Definition.ts ===
-// class [|c|] { }
+// <|class [|c|] { }|>
 
 // === /Consumption.ts ===
 //  var n = new c();

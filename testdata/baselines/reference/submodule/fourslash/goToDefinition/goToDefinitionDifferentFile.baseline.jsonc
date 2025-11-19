@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionDifferentFile_Definition.ts ===
-// var [|remoteVariable|];
+// <|var [|remoteVariable|];|>
 // function remoteFunction() { }
 // class remoteClass { }
 // interface remoteInterface{ }
@@ -18,7 +18,7 @@
 // === goToDefinition ===
 // === /goToDefinitionDifferentFile_Definition.ts ===
 // var remoteVariable;
-// function [|remoteFunction|]() { }
+// <|function [|remoteFunction|]() { }|>
 // class remoteClass { }
 // interface remoteInterface{ }
 // module remoteModule{ export var foo = 1;}
@@ -36,7 +36,7 @@
 // === /goToDefinitionDifferentFile_Definition.ts ===
 // var remoteVariable;
 // function remoteFunction() { }
-// class [|remoteClass|] { }
+// <|class [|remoteClass|] { }|>
 // interface remoteInterface{ }
 // module remoteModule{ export var foo = 1;}
 
@@ -54,7 +54,7 @@
 // var remoteVariable;
 // function remoteFunction() { }
 // class remoteClass { }
-// interface [|remoteInterface|]{ }
+// <|interface [|remoteInterface|]{ }|>
 // module remoteModule{ export var foo = 1;}
 
 // === /goToDefinitionDifferentFile_Consumption.ts ===
@@ -72,7 +72,7 @@
 // function remoteFunction() { }
 // class remoteClass { }
 // interface remoteInterface{ }
-// module [|remoteModule|]{ export var foo = 1;}
+// <|module [|remoteModule|]{ export var foo = 1;}|>
 
 // === /goToDefinitionDifferentFile_Consumption.ts ===
 // remoteVariable = 1;

@@ -5,11 +5,11 @@
 //     interface IntrinsicElements { }
 //     interface ElementAttributesProperty { props; }
 // }
-// class [|MyClass|] {
+// <|class [|MyClass|] {
 //     props: {
 //         foo: string;
 //     }
-// }
+// }|>
 // var x = <My/*GOTO DEF*/Class />;
 // var y = <MyClass foo= 'hello' />;
 // var z = <MyClass wrong= 'hello' />;
@@ -22,7 +22,7 @@
 // }
 // class MyClass {
 //     props: {
-//         [|foo|]: string;
+//         <|[|foo|]: string;|>
 //     }
 // }
 // var x = <MyClass />;
@@ -38,11 +38,11 @@
 //     interface IntrinsicElements { }
 //     interface ElementAttributesProperty { props; }
 // }
-// class [|MyClass|] {
+// <|class [|MyClass|] {
 //     props: {
 //         foo: string;
 //     }
-// }
+// }|>
 // var x = <MyClass />;
 // var y = <MyClass foo= 'hello' />;
 // var z = <MyCl/*GOTO DEF*/ass wrong= 'hello' />;

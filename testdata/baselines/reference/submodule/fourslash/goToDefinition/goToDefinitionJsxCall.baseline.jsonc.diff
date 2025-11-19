@@ -8,7 +8,7 @@
 +//     [|(props: P, context?: any): string;|]
  // }
  // 
- // const [|Thing|]: FC = (props) => <div></div>;
+ // <|const [|Thing|]: FC = (props) => <div></div>;|>
 -// const HelloWorld = () => <Thing />;
 -
 -// === /./test.tsx ===

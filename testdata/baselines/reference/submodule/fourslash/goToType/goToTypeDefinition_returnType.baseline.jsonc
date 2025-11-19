@@ -1,6 +1,6 @@
 // === goToType ===
 // === /goToTypeDefinition_returnType.ts ===
-// interface [|I|] { x: number; }
+// <|interface [|I|] { x: number; }|>
 // interface J { y: number; }
 // 
 // function f0(): I { return { x: 0 }; }
@@ -45,7 +45,7 @@
 
 // === goToType ===
 // === /goToTypeDefinition_returnType.ts ===
-// interface [|I|] { x: number; }
+// <|interface [|I|] { x: number; }|>
 // interface J { y: number; }
 // 
 // function f0(): I { return { x: 0 }; }
@@ -90,7 +90,7 @@
 
 // === goToType ===
 // === /goToTypeDefinition_returnType.ts ===
-// interface [|I|] { x: number; }
+// <|interface [|I|] { x: number; }|>
 // interface J { y: number; }
 // 
 // function f0(): I { return { x: 0 }; }
@@ -110,8 +110,8 @@
 
 // === goToType ===
 // === /goToTypeDefinition_returnType.ts ===
-// interface [|I|] { x: number; }
-// interface [|J|] { y: number; }
+// <|interface [|I|] { x: number; }|>
+// <|interface [|J|] { y: number; }|>
 // 
 // function f0(): I { return { x: 0 }; }
 // 
@@ -130,8 +130,8 @@
 
 // === goToType ===
 // === /goToTypeDefinition_returnType.ts ===
-// interface [|I|] { x: number; }
-// interface [|J|] { y: number; }
+// <|interface [|I|] { x: number; }|>
+// <|interface [|J|] { y: number; }|>
 // 
 // function f0(): I { return { x: 0 }; }
 // 
@@ -164,9 +164,9 @@
 // 
 // const f7 = (i: I) => {};
 // 
-// function [|f8|](i: I): I;
-// function [|f8|](j: J): J;
-// function [|f8|](ij: any): any { return ij; }
+// <|function [|f8|](i: I): I;|>
+// <|function [|f8|](j: J): J;|>
+// <|function [|f8|](ij: any): any { return ij; }|>
 // 
 // f0();
 // f1();

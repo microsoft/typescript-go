@@ -4,5 +4,5 @@
 //    hel/*GOTO IMPL*/lo(): void;
 // }
 // 
-// var x = <Foo> { [|hello|]: () => {} };
-// var y = <Foo> (((({ [|hello|]: () => {} }))));
+// var x = <Foo> { <|[|hello|]: () => {}|> };
+// var y = <Foo> (((({ <|[|hello|]: () => {}|> }))));

@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /foo.jsx ===
-// const [|Foo|] = () => (
+// <|const [|Foo|] = () => (
 //     <div>foo</div>
-// );
+// );|>
 // export default Foo;
 
 // === /bar.jsx ===

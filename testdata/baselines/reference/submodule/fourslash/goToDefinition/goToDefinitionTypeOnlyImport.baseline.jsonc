@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /a.ts ===
-// enum [|SyntaxKind|] { SourceFile }
+// <|enum [|SyntaxKind|] { SourceFile }|>
 // export type { SyntaxKind }
 
 // === /c.ts ===

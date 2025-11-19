@@ -4,24 +4,24 @@
 // }
 // 
 // class Bar implements Foo {
-//      [|hello|]() {}
+//      <|[|hello|]() {}|>
 //      someOtherFunction() {}
 // }
 // 
 // function createFoo(): Foo {
 //     return {
-//         [|hello|]() {},
+//         <|[|hello|]() {}|>,
 //         someOtherFunction() {}
 //     };
 // }
 // 
 // var y: Foo = {
-//     [|hello|]() {},
+//     <|[|hello|]() {}|>,
 //     someOtherFunction() {}
 // };
 // 
 // class FooLike implements SuperFoo {
-//      [|hello|]() {}
+//      <|[|hello|]() {}|>
 //      someOtherFunction() {}
 // }
 // 
@@ -31,7 +31,7 @@
 // }
 // 
 // class NotFoo implements SuperFoo {
-//      [|hello|]() {}                // We only want implementations of Foo, even though the function is declared in SuperFoo
+//      <|[|hello|]() {}|>                // We only want implementations of Foo, even though the function is declared in SuperFoo
 // }
 // 
 // function (x: Foo) {

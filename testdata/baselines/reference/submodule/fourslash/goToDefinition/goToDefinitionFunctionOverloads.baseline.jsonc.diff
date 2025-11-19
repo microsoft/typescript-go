@@ -6,8 +6,8 @@
  // === /goToDefinitionFunctionOverloads.ts ===
 -// function /*GOTO DEF*/functionOverload(value: number);
 -// function functionOverload(value: string);
-+// function /*GOTO DEF*/[|functionOverload|](value: number);
-+// function [|functionOverload|](value: string);
- // function [|functionOverload|]() {}
++// <|function /*GOTO DEF*/[|functionOverload|](value: number);|>
++// <|function [|functionOverload|](value: string);|>
+ // <|function [|functionOverload|]() {}|>
  // 
  // functionOverload(123);

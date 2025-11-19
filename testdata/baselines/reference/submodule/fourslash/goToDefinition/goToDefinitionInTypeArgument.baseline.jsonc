@@ -2,7 +2,7 @@
 // === /goToDefinitionInTypeArgument.ts ===
 // class Foo<T> { }
 // 
-// class [|Bar|] { }
+// <|class [|Bar|] { }|>
 // 
 // var x = new Foo<Ba/*GOTO DEF*/r>();
 
@@ -10,7 +10,7 @@
 
 // === goToDefinition ===
 // === /goToDefinitionInTypeArgument.ts ===
-// class [|Foo|]<T> { }
+// <|class [|Foo|]<T> { }|>
 // 
 // class Bar { }
 // 

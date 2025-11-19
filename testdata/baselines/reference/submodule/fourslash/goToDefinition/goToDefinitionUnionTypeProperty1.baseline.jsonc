@@ -1,12 +1,12 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty1.ts ===
 // interface One {
-//     [|commonProperty|]: number;
+//     <|[|commonProperty|]: number;|>
 //     commonFunction(): number;
 // }
 // 
 // interface Two {
-//     [|commonProperty|]: string
+//     <|[|commonProperty|]: string|>
 //     commonFunction(): number;
 // }
 // 

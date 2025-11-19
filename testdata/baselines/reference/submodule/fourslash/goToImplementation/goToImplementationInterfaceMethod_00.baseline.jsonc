@@ -4,19 +4,19 @@
 //     hello: () => void
 // }
 // 
-// var bar: Foo = { [|hello|]: helloImpl };
-// var baz: Foo = { "[|hello|]": helloImpl };
+// var bar: Foo = { <|[|hello|]: helloImpl|> };
+// var baz: Foo = { <|"[|hello|]": helloImpl|> };
 // 
 // function helloImpl () {}
 // 
-// function whatever(x: Foo = { [|hello|]() {/**1*/} }) {
+// function whatever(x: Foo = { <|[|hello|]() {/**1*/}|> }) {
 //     x.he/*GOTO IMPL*/llo()
 // }
 // 
 // class Bar {
-//     x: Foo = { [|hello|]() {} }
+//     x: Foo = { <|[|hello|]() {}|> }
 // 
-//     constructor(public f: Foo = { [|hello|]() {/**3*/} } ) {}
+//     constructor(public f: Foo = { <|[|hello|]() {/**3*/}|> } ) {}
 // }
 
 
@@ -27,17 +27,17 @@
 //     he/*GOTO IMPL*/llo: () => void
 // }
 // 
-// var bar: Foo = { [|hello|]: helloImpl };
-// var baz: Foo = { "[|hello|]": helloImpl };
+// var bar: Foo = { <|[|hello|]: helloImpl|> };
+// var baz: Foo = { <|"[|hello|]": helloImpl|> };
 // 
 // function helloImpl () {}
 // 
-// function whatever(x: Foo = { [|hello|]() {/**1*/} }) {
+// function whatever(x: Foo = { <|[|hello|]() {/**1*/}|> }) {
 //     x.hello()
 // }
 // 
 // class Bar {
-//     x: Foo = { [|hello|]() {} }
+//     x: Foo = { <|[|hello|]() {}|> }
 // 
-//     constructor(public f: Foo = { [|hello|]() {/**3*/} } ) {}
+//     constructor(public f: Foo = { <|[|hello|]() {/**3*/}|> } ) {}
 // }

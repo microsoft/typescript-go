@@ -5,11 +5,11 @@
 // }
 // 
 // class SubBar extends Bar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // class Bar extends SuperBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // 
 //     whatever() {
 //         super.he/*GOTO IMPL*/llo();
@@ -18,7 +18,7 @@
 // }
 // 
 // class SuperBar extends MegaBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // class MegaBar implements Foo {
@@ -34,11 +34,11 @@
 // }
 // 
 // class SubBar extends Bar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // class Bar extends SuperBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // 
 //     whatever() {
 //         super.hello();
@@ -47,7 +47,7 @@
 // }
 // 
 // class SuperBar extends MegaBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // class MegaBar implements Foo {

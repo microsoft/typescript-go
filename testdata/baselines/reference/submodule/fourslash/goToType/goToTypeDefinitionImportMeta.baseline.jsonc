@@ -1,17 +1,20 @@
 // === goToType ===
 // === /bar.d.ts ===
-// interface [|ImportMeta|] {
-// }
+// <|interface [|ImportMeta|] {
+// }|>
 
 // === bundled:///libs/lib.dom.d.ts ===
 // --- (line: --) skipped ---
 //     new(): ImageTrackList;
 // };
 // 
-// interface [|ImportMeta|] {
+// <|interface [|ImportMeta|] {
 //     url: string;
 //     resolve(specifier: string): string;
-// }
+// }|>
+// 
+// /**
+//  * The **`InputDeviceInfo`** interface of the Media Capture and Streams API gives access to the capabilities of the input device that it represents.
 // --- (line: --) skipped ---
 // 
 
@@ -20,10 +23,11 @@
 //  * If you need to declare that a given property exists on `import.meta`,
 //  * this type may be augmented via interface merging.
 //  */
-// interface [|ImportMeta|] {
-// }
+// <|interface [|ImportMeta|] {
+// }|>
 // 
 // /**
+//  * The type for the optional second argument to `import()`.
 // --- (line: --) skipped ---
 // 
 

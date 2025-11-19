@@ -1,15 +1,15 @@
 // === goToDefinition ===
 // === /a.ts ===
-// var [|x|]: number;
+// <|var [|x|]: number;|>
 
 // === /b.ts ===
-// var [|x|]: number;
+// <|var [|x|]: number;|>
 
 // === /c.ts ===
-// var [|x|]: number;
+// <|var [|x|]: number;|>
 
 // === /d.ts ===
-// var [|x|]: number;
+// <|var [|x|]: number;|>
 
 // === /e.ts ===
 // /// <reference path="a.ts" />

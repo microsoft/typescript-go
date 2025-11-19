@@ -3,7 +3,7 @@
 // type U = A | B;
 // 
 // interface A {
-//   [|kind|]: "a";
+//   <|[|kind|]: "a";|>
 //   prop: number;
 // };
 // 
@@ -27,7 +27,7 @@
 // 
 // interface A {
 //   kind: "a";
-//   [|prop|]: number;
+//   <|[|prop|]: number;|>
 // };
 // 
 // interface B {
@@ -51,12 +51,12 @@
 // type U = A | B;
 // 
 // interface A {
-//   [|kind|]: "a";
+//   <|[|kind|]: "a";|>
 //   prop: number;
 // };
 // 
 // interface B {
-//   [|kind|]: "b";
+//   <|[|kind|]: "b";|>
 //   prop: string;
 // }
 // 
@@ -77,12 +77,12 @@
 // 
 // interface A {
 //   kind: "a";
-//   [|prop|]: number;
+//   <|[|prop|]: number;|>
 // };
 // 
 // interface B {
 //   kind: "b";
-//   [|prop|]: string;
+//   <|[|prop|]: string;|>
 // }
 // 
 // const u: U = {

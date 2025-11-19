@@ -16,7 +16,7 @@
 
 // === goToDefinition ===
 // === /a.ts ===
-// export default function [|f|]() {}
+// <|export default function [|f|]() {}|>
 // export const x = 0;
 
 // === /b.ts ===
@@ -33,7 +33,7 @@
 // === goToDefinition ===
 // === /a.ts ===
 // export default function f() {}
-// export const [|x|] = 0;
+// <|export const [|x|] = 0;|>
 
 // === /b.ts ===
 // import f, { x } from "./a";

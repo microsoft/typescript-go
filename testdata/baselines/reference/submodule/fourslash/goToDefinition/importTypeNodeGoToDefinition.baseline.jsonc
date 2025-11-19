@@ -14,11 +14,11 @@
 
 // === goToDefinition ===
 // === /ns.ts ===
-// export namespace [|Foo|] {
+// <|export namespace [|Foo|] {
 //     export namespace Bar {
 //         export class Baz {}
 //     }
-// }
+// }|>
 
 // === /usage.ts ===
 // type A = typeof import("./ns")./*GOTO DEF*/[|Foo|].Bar;
@@ -29,9 +29,9 @@
 // === goToDefinition ===
 // === /ns.ts ===
 // export namespace Foo {
-//     export namespace [|Bar|] {
+//     <|export namespace [|Bar|] {
 //         export class Baz {}
-//     }
+//     }|>
 // }
 
 // === /usage.ts ===
@@ -56,11 +56,11 @@
 
 // === goToDefinition ===
 // === /ns.ts ===
-// export namespace [|Foo|] {
+// <|export namespace [|Foo|] {
 //     export namespace Bar {
 //         export class Baz {}
 //     }
-// }
+// }|>
 
 // === /usage.ts ===
 // type A = typeof import("./ns").Foo.Bar;
@@ -71,9 +71,9 @@
 // === goToDefinition ===
 // === /ns.ts ===
 // export namespace Foo {
-//     export namespace [|Bar|] {
+//     <|export namespace [|Bar|] {
 //         export class Baz {}
-//     }
+//     }|>
 // }
 
 // === /usage.ts ===
@@ -86,7 +86,7 @@
 // === /ns.ts ===
 // export namespace Foo {
 //     export namespace Bar {
-//         export class [|Baz|] {}
+//         <|export class [|Baz|] {}|>
 //     }
 // }
 

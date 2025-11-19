@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
 // var o = {
-//     [|value|]: 0,
+//     <|[|value|]: 0|>,
 //     get getter() {return 0 },
 //     set setter(v: number) { },
 //     method: () => { },
@@ -20,7 +20,7 @@
 // === /goToDefinitionObjectLiteralProperties.ts ===
 // var o = {
 //     value: 0,
-//     get [|getter|]() {return 0 },
+//     <|get [|getter|]() {return 0 }|>,
 //     set setter(v: number) { },
 //     method: () => { },
 //     es6StyleMethod() { }
@@ -39,7 +39,7 @@
 // var o = {
 //     value: 0,
 //     get getter() {return 0 },
-//     set [|setter|](v: number) { },
+//     <|set [|setter|](v: number) { }|>,
 //     method: () => { },
 //     es6StyleMethod() { }
 // };
@@ -58,7 +58,7 @@
 //     value: 0,
 //     get getter() {return 0 },
 //     set setter(v: number) { },
-//     [|method|]: () => { },
+//     <|[|method|]: () => { }|>,
 //     es6StyleMethod() { }
 // };
 // 
@@ -77,7 +77,7 @@
 //     get getter() {return 0 },
 //     set setter(v: number) { },
 //     method: () => { },
-//     [|es6StyleMethod|]() { }
+//     <|[|es6StyleMethod|]() { }|>
 // };
 // 
 // o.value;

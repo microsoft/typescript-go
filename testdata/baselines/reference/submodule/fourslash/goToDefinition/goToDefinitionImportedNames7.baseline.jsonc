@@ -1,8 +1,8 @@
 // === goToDefinition ===
 // === /a.ts ===
-// class [|Class|] {
+// <|class [|Class|] {
 //     private f;
-// }
+// }|>
 // export default Class;
 
 // === /b.ts ===

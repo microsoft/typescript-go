@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
 // class MethodOverload {
-//     static [|method|]();
+//     <|static [|method|]();|>
 //     static method(foo: string);
 //     static method(foo?: any) { }
 //     public method(): any;
@@ -22,7 +22,7 @@
 // === /goToDefinitionMethodOverloads.ts ===
 // class MethodOverload {
 //     static method();
-//     static [|method|](foo: string);
+//     <|static [|method|](foo: string);|>
 //     static method(foo?: any) { }
 //     public method(): any;
 //     public method(foo: string);
@@ -44,7 +44,7 @@
 //     static method();
 //     static method(foo: string);
 //     static method(foo?: any) { }
-//     public [|method|](): any;
+//     <|public [|method|](): any;|>
 //     public method(foo: string);
 //     public method(foo?: any) { return "foo" }
 // }
@@ -65,7 +65,7 @@
 //     static method(foo: string);
 //     static method(foo?: any) { }
 //     public method(): any;
-//     public [|method|](foo: string);
+//     <|public [|method|](foo: string);|>
 //     public method(foo?: any) { return "foo" }
 // }
 // // static method
@@ -81,9 +81,9 @@
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
 // class MethodOverload {
-//     static /*GOTO DEF*/[|method|]();
-//     static [|method|](foo: string);
-//     static [|method|](foo?: any) { }
+//     <|static /*GOTO DEF*/[|method|]();|>
+//     <|static [|method|](foo: string);|>
+//     <|static [|method|](foo?: any) { }|>
 //     public method(): any;
 //     public method(foo: string);
 //     public method(foo?: any) { return "foo" }
@@ -97,9 +97,9 @@
 //     static method();
 //     static method(foo: string);
 //     static method(foo?: any) { }
-//     public /*GOTO DEF*/[|method|](): any;
-//     public [|method|](foo: string);
-//     public [|method|](foo?: any) { return "foo" }
+//     <|public /*GOTO DEF*/[|method|](): any;|>
+//     <|public [|method|](foo: string);|>
+//     <|public [|method|](foo?: any) { return "foo" }|>
 // }
 // // static method
 // MethodOverload.method();

@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionTaggedTemplateOverloads.ts ===
-// function [|f|](strs: TemplateStringsArray, x: number): void;
+// <|function [|f|](strs: TemplateStringsArray, x: number): void;|>
 // function f(strs: TemplateStringsArray, x: boolean): void;
 // function f(strs: TemplateStringsArray, x: number | boolean) {}
 // 
@@ -12,7 +12,7 @@
 // === goToDefinition ===
 // === /goToDefinitionTaggedTemplateOverloads.ts ===
 // function f(strs: TemplateStringsArray, x: number): void;
-// function [|f|](strs: TemplateStringsArray, x: boolean): void;
+// <|function [|f|](strs: TemplateStringsArray, x: boolean): void;|>
 // function f(strs: TemplateStringsArray, x: number | boolean) {}
 // 
 // f`${0}`;

@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionOverriddenMember4.ts ===
 // class Foo {
-//     [|m|]() {}
+//     <|[|m|]() {}|>
 // }
 // function f () {
 //     return class extends Foo {

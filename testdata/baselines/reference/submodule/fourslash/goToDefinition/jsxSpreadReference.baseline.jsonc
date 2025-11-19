@@ -4,5 +4,5 @@
 //   }
 // }
 // 
-// var [|nn|]: {name?: string; size?: number};
+// <|var [|nn|]: {name?: string; size?: number};|>
 // var x = <MyClass {...n/*GOTO DEF*/n}></MyClass>;

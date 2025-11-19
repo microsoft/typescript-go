@@ -1,78 +1,6 @@
 --- old.goToTypeDefinitionModifiers.baseline.jsonc
 +++ new.goToTypeDefinitionModifiers.baseline.jsonc
-@@= skipped -3, +3 lines =@@
- // 
- //     private z: string;
- // 
--//     private y: A;
--// 
--//     readonly x: string;
--// 
--//     async a() {  }
--// 
--//     override b() {}
--// 
--//     public async c() { }
--// }
--// 
--// export function foo() { }
-+// --- (line: 5) skipped ---
-
-
-
-@@= skipped -21, +10 lines =@@
- // 
- //     private z: string;
- // 
--//     private y: A;
--// 
--//     readonly x: string;
--// 
--//     async a() {  }
--// 
--//     override b() {}
--// 
--//     public async c() { }
--// }
--// 
--// export function foo() { }
-+// --- (line: 5) skipped ---
-
-
-
-@@= skipped -49, +38 lines =@@
- // 
- //     readonly x: string;
- // 
--//     async a() {  }
--// 
--//     override b() {}
--// 
--//     public async c() { }
--// }
--// 
--// export function foo() { }
-+// --- (line: 9) skipped ---
-
-
-
-@@= skipped -21, +14 lines =@@
- // 
- //     readonly x: string;
- // 
--//     async a() {  }
--// 
--//     override b() {}
--// 
--//     public async c() { }
--// }
--// 
--// export function foo() { }
-+// --- (line: 9) skipped ---
-
-
-
-@@= skipped -40, +33 lines =@@
+@@= skipped -134, +134 lines =@@
 
 
  // === goToType ===
@@ -81,31 +9,15 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 5) skipped ---
-@@= skipped -31, +17 lines =@@
+@@= skipped -15, +16 lines =@@
 
 
  // === goToType ===
@@ -114,35 +26,19 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 5) skipped ---
-@@= skipped -36, +22 lines =@@
+@@= skipped -20, +21 lines =@@
  // 
  //     async a() {  }
  // 
--//     /*GOTO TYPE*/override [|b|]() {}
+-//     /*GOTO TYPE*/<|override [|b|]() {}|>
 +//     /*GOTO TYPE*/override b() {}
  // 
  //     public async c() { }
@@ -151,7 +47,7 @@
  // 
  //     async a() {  }
  // 
--//     override [|b|]/*GOTO TYPE*/() {}
+-//     <|override [|b|]/*GOTO TYPE*/() {}|>
 +//     override b/*GOTO TYPE*/() {}
  // 
  //     public async c() { }
@@ -165,31 +61,15 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 9) skipped ---
-@@= skipped -30, +16 lines =@@
+@@= skipped -14, +15 lines =@@
 
 
  // === goToType ===
@@ -198,31 +78,15 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 9) skipped ---
-@@= skipped -30, +16 lines =@@
+@@= skipped -14, +15 lines =@@
 
 
  // === goToType ===
@@ -231,31 +95,15 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 9) skipped ---
-@@= skipped -30, +16 lines =@@
+@@= skipped -14, +15 lines =@@
 
 
  // === goToType ===
@@ -264,35 +112,19 @@
  // --- (line: --) skipped ---
  // /**
  //  * Represents the completion of an asynchronous operation
-@@= skipped -9, +9 lines =@@
- //     /**
- //      * Attaches callbacks for the resolution and/or rejection of the Promise.
- //      * @param onfulfilled The callback to execute when the Promise is resolved.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of which ever callback is executed.
--//      */
--//     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
--// 
--//     /**
--//      * Attaches a callback for only the rejection of the Promise.
--//      * @param onrejected The callback to execute when the Promise is rejected.
--//      * @returns A Promise for the completion of the callback.
--//      */
--//     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
--// }
--// 
--// /**
--//  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
+@@= skipped -25, +25 lines =@@
+ // /**
+ //  * Recursively unwraps the "awaited type" of a type. Non-promise "thenables" should resolve to `never`. This emulates the behavior of `await`.
  // --- (line: --) skipped ---
 +// 
 
  // === /a.ts ===
  // --- (line: 9) skipped ---
-@@= skipped -35, +21 lines =@@
+@@= skipped -19, +20 lines =@@
  //     public async c() { }
  // }
  // 
--// exp/*GOTO TYPE*/ort function [|foo|]() { }
+-// <|exp/*GOTO TYPE*/ort function [|foo|]() { }|>
 +// exp/*GOTO TYPE*/ort function foo() { }
 
 
@@ -301,5 +133,5 @@
  //     public async c() { }
  // }
  // 
--// export function [|foo|]/*GOTO TYPE*/() { }
+-// <|export function [|foo|]/*GOTO TYPE*/() { }|>
 +// export function foo/*GOTO TYPE*/() { }

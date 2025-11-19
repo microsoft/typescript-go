@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /gotoDefinitionConstructorFunction.js ===
-// function [|StringStreamm|]() {
-// }
+// <|function [|StringStreamm|]() {
+// }|>
 // StringStreamm.prototype = {
 // };
 // 

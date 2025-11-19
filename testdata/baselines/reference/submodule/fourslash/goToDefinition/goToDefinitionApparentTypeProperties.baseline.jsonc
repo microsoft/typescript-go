@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionApparentTypeProperties.ts ===
 // interface Number {
-//     [|myObjectMethod|](): number;
+//     <|[|myObjectMethod|](): number;|>
 // }
 // 
 // var o = 0;
@@ -13,7 +13,7 @@
 // === goToDefinition ===
 // === /goToDefinitionApparentTypeProperties.ts ===
 // interface Number {
-//     [|myObjectMethod|](): number;
+//     <|[|myObjectMethod|](): number;|>
 // }
 // 
 // var o = 0;

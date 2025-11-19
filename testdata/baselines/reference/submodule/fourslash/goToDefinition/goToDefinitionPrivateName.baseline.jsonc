@@ -2,7 +2,7 @@
 // === /goToDefinitionPrivateName.ts ===
 // class A {
 //     #method() { }
-//     [|#foo|] = 3;
+//     <|[|#foo|] = 3;|>
 //     get #prop() { return ""; }
 //     set #prop(value: string) {  }
 //     constructor() {
@@ -17,7 +17,7 @@
 // === goToDefinition ===
 // === /goToDefinitionPrivateName.ts ===
 // class A {
-//     [|#method|]() { }
+//     <|[|#method|]() { }|>
 //     #foo = 3;
 //     get #prop() { return ""; }
 //     set #prop(value: string) {  }
@@ -35,8 +35,8 @@
 // class A {
 //     #method() { }
 //     #foo = 3;
-//     get [|#prop|]() { return ""; }
-//     set [|#prop|](value: string) {  }
+//     <|get [|#prop|]() { return ""; }|>
+//     <|set [|#prop|](value: string) {  }|>
 //     constructor() {
 //         this.#foo
 //         this.#method

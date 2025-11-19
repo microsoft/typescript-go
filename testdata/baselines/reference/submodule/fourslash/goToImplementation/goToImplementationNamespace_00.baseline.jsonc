@@ -1,8 +1,8 @@
 // === goToImplementation ===
 // === /goToImplementationNamespace_00.ts ===
-// namespace [|Foo|] {
+// <|namespace [|Foo|] {
 //     export function hello() {}
-// }
+// }|>
 // 
 // module Bar {
 //     export function sure() {}
@@ -19,9 +19,9 @@
 //     export function hello() {}
 // }
 // 
-// module [|Bar|] {
+// <|module [|Bar|] {
 //     export function sure() {}
-// }
+// }|>
 // 
 // let x = Foo;
 // let y = Ba/*GOTO IMPL*/r;

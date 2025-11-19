@@ -3,11 +3,11 @@
 // interface /*GOTO IMPL*/A {
 // 	foo: boolean;
 // }
-// interface [|B|] extends A {
+// <|interface [|B|] extends A {
 // 	bar: boolean;
-// }
-// export class [|C|] implements B {
+// }|>
+// <|export class [|C|] implements B {
 // 	foo = true;
 // 	bar = true;
-// }
-// export class [|D|] extends C { }
+// }|>
+// <|export class [|D|] extends C { }|>

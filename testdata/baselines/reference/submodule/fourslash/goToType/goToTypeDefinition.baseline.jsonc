@@ -1,8 +1,8 @@
 // === goToType ===
 // === /goToTypeDefinition_Definition.ts ===
-// class [|C|] {
+// <|class [|C|] {
 //     p;
-// }
+// }|>
 // var c: C;
 
 // === /goToTypeDefinition_Consumption.ts ===

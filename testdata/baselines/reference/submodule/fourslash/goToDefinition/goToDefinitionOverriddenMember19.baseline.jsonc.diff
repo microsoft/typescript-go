@@ -6,11 +6,11 @@
 -// const prop = "foo" as const;
 -// 
 -// abstract class A {
--//   static readonly [|[prop]|] = "A";
+-//   <|static readonly [|[prop]|] = "A";|>
 +// --- (line: 4) skipped ---
  // }
  // 
  // export class B extends A {
 -//   static /*GOTO DEF*/override readonly [prop] = "B";
-+//   static /*GOTO DEF*/override readonly [|[prop]|] = "B";
++//   <|static /*GOTO DEF*/override readonly [|[prop]|] = "B";|>
  // }

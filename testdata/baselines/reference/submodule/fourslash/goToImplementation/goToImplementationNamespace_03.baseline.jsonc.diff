@@ -2,7 +2,7 @@
 +++ new.goToImplementationNamespace_03.baseline.jsonc
 @@= skipped -13, +13 lines =@@
  //     hello() {}
- // }
+ // }|>
  // 
 -// var someVar1 : Foo.Bar = [|{ hello: () => {/**1*/} }|];
 +// var someVar1 : Foo.Bar = { hello: () => {/**1*/} };

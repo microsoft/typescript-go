@@ -1,6 +1,6 @@
 // === goToImplementation ===
 // === /goToImplementationLocal_03.ts ===
-// let [|he/*GOTO IMPL*/llo|] = {};
+// <|let [|he/*GOTO IMPL*/llo|] = {};|>
 // 
 // x.hello();
 // 

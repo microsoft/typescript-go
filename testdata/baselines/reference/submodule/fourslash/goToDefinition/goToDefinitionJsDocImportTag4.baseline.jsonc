@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /b.ts ===
-// export interface [|A|] { }
+// <|export interface [|A|] { }|>
 
 // === /a.js ===
 // /**

@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionFunctionOverloads.ts ===
-// function [|functionOverload|](value: number);
+// <|function [|functionOverload|](value: number);|>
 // function functionOverload(value: string);
 // function functionOverload() {}
 // 
@@ -13,7 +13,7 @@
 // === goToDefinition ===
 // === /goToDefinitionFunctionOverloads.ts ===
 // function functionOverload(value: number);
-// function [|functionOverload|](value: string);
+// <|function [|functionOverload|](value: string);|>
 // function functionOverload() {}
 // 
 // functionOverload(123);
@@ -24,7 +24,7 @@
 
 // === goToDefinition ===
 // === /goToDefinitionFunctionOverloads.ts ===
-// function [|functionOverload|](value: number);
+// <|function [|functionOverload|](value: number);|>
 // function functionOverload(value: string);
 // function functionOverload() {}
 // 
@@ -36,9 +36,9 @@
 
 // === goToDefinition ===
 // === /goToDefinitionFunctionOverloads.ts ===
-// function /*GOTO DEF*/[|functionOverload|](value: number);
-// function [|functionOverload|](value: string);
-// function [|functionOverload|]() {}
+// <|function /*GOTO DEF*/[|functionOverload|](value: number);|>
+// <|function [|functionOverload|](value: string);|>
+// <|function [|functionOverload|]() {}|>
 // 
 // functionOverload(123);
 // functionOverload("123");

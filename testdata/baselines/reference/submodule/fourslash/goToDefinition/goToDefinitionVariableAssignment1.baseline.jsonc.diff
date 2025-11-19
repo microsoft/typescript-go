@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
  // === /foo.js ===
--// const Foo = module.[|exports|] = function () {}
-+// const [|Foo|] = module.[|exports|] = function () {}
+-// const Foo = module.[|exports|] = <|function () {}|>
++// <|const [|Foo|] = module.[|exports|] = <|function () {}|>|>
  // Foo.prototype.bar = function() {}
  // new Foo/*GOTO DEF*/();

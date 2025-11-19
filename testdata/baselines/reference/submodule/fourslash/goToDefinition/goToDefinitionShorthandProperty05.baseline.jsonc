@@ -3,7 +3,7 @@
 // interface Foo {
 //     foo(): void
 // }
-// const [|foo|] = 1;
+// <|const [|foo|] = 1;|>
 // let x: Foo = {
 //     f/*GOTO DEF*/oo
 // }

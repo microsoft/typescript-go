@@ -2,7 +2,7 @@
 // === /goToDefinitionRest.ts ===
 // interface Gen {
 //     x: number;
-//     [|parent|]: Gen;
+//     <|[|parent|]: Gen;|>
 //     millenial: string;
 // }
 // let t: Gen;

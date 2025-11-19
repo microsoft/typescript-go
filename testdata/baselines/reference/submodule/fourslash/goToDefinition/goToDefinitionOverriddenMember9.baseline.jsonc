@@ -4,7 +4,7 @@
 //     m(): void;
 // }
 // class A {
-//     [|m|]() {};
+//     <|[|m|]() {}|>;
 // }
 // class B extends A implements I {
 //    /*GOTO DEF*/override m() {}

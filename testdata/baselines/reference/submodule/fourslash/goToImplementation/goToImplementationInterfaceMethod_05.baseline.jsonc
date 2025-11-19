@@ -5,7 +5,7 @@
 // }
 // 
 // class SuperBar implements Foo {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 // }
 // 
 // class Bar extends SuperBar {
@@ -13,7 +13,7 @@
 // }
 // 
 // class OtherBar extends SuperBar {
-//     [|hello|]() {}
+//     <|[|hello|]() {}|>
 //     hello2() {}
 //     hello3() {}
 // }
@@ -23,7 +23,7 @@
 // }
 // 
 // class NotBar extends SuperBar {
-//     [|hello|]() {}         // Should not be returned because it is not structurally equivalent to Bar
+//     <|[|hello|]() {}|>         // Should not be returned because it is not structurally equivalent to Bar
 // }
 // 
 // function whatever(x: Bar) {

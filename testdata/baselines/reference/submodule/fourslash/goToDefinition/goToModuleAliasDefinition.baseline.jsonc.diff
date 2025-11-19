@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
  // === /b.ts ===
--// import [|n|] = require('a');
+-// <|import [|n|] = require('a');|>
 -// var x = new /*GOTO DEF*/n.Foo();
-+//  import [|n|] = require('a');
++//  <|import [|n|] = require('a');|>
 +//  var x = new /*GOTO DEF*/n.Foo();

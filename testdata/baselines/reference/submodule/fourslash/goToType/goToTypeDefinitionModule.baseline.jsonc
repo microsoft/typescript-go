@@ -1,8 +1,8 @@
 // === goToType ===
 // === /module1.ts ===
-// module [|M|] {
+// <|module [|M|] {
 //     export var p;
-// }
+// }|>
 // var m: typeof M;
 
 // === /module3.ts ===
@@ -13,9 +13,9 @@
 
 // === goToType ===
 // === /module1.ts ===
-// module [|M|] {
+// <|module [|M|] {
 //     export var p;
-// }
+// }|>
 // var m: typeof M;
 
 // === /module3.ts ===

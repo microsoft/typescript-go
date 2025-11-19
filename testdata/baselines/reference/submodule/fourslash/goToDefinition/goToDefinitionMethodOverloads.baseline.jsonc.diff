@@ -6,9 +6,9 @@
  // class MethodOverload {
 -//     static /*GOTO DEF*/method();
 -//     static method(foo: string);
-+//     static /*GOTO DEF*/[|method|]();
-+//     static [|method|](foo: string);
- //     static [|method|](foo?: any) { }
++//     <|static /*GOTO DEF*/[|method|]();|>
++//     <|static [|method|](foo: string);|>
+ //     <|static [|method|](foo?: any) { }|>
  //     public method(): any;
  //     public method(foo: string);
 @@= skipped -16, +16 lines =@@
@@ -17,8 +17,8 @@
  //     static method(foo?: any) { }
 -//     public /*GOTO DEF*/method(): any;
 -//     public method(foo: string);
-+//     public /*GOTO DEF*/[|method|](): any;
-+//     public [|method|](foo: string);
- //     public [|method|](foo?: any) { return "foo" }
++//     <|public /*GOTO DEF*/[|method|](): any;|>
++//     <|public [|method|](foo: string);|>
+ //     <|public [|method|](foo?: any) { return "foo" }|>
  // }
  // // static method

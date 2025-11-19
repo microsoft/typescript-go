@@ -2,9 +2,9 @@
 // === /index.js ===
 // const Core = {}
 // 
-// Core.[|Test|] = class {
+// <|Core.[|Test|] = class {
 //   [|constructor() { }|]
-// }
+// }|>
 // 
 // Core.Test.prototype.foo = 10
 // 

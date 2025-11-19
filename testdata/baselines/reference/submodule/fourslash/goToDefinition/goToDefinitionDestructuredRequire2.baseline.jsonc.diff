@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToDefinition ===
 -// === /util.js ===
--// class [|Util|] {}
+-// <|class [|Util|] {}|>
 -// module.exports = { Util };
 +// === /reexport.js ===
 +// const { Util } = require('./util');

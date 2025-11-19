@@ -1,15 +1,15 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty4.ts ===
 // interface SnapCrackle {
-//     [|pop|](): string;
+//     <|[|pop|](): string;|>
 // }
 // 
 // interface Magnitude {
-//     [|pop|](): number;
+//     <|[|pop|](): number;|>
 // }
 // 
 // interface Art {
-//     [|pop|](): boolean;
+//     <|[|pop|](): boolean;|>
 // }
 // 
 // var art: Art;
