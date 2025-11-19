@@ -32,12 +32,12 @@ func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
 			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
 				withSemicolon++
 			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
-				lastTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
+				lastTokenLine := scanner.GetECMALineOfPosition(
 					file,
 					astnav.GetStartOfNode(lastToken, file, false /*includeJSDoc*/))
-				nextTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
+				nextTokenLine := scanner.GetECMALineOfPosition(
 					file,
-					scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
+					scanner.SkipTrivia(file.Text(), lastToken.End()))
 				// Avoid counting missing semicolon in single-line objects:
 				// `function f(p: { x: string /*no semicolon here is insignificant*/ }) {`
 				if lastTokenLine != nextTokenLine {

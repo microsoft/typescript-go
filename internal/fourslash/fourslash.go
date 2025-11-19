@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"runtime"
 	"slices"
 	"strings"
 	"testing"
@@ -15,6 +16,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -25,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -147,6 +151,29 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
 
+	// Skip tests with deprecated/removed compiler options
+	if compilerOptions.BaseUrl != "" {
+		t.Skipf("Test uses deprecated 'baseUrl' option")
+	}
+	if compilerOptions.OutFile != "" {
+		t.Skipf("Test uses deprecated 'outFile' option")
+	}
+	if compilerOptions.Module == core.ModuleKindAMD {
+		t.Skipf("Test uses deprecated 'module: AMD' option")
+	}
+	if compilerOptions.Module == core.ModuleKindSystem {
+		t.Skipf("Test uses deprecated 'module: System' option")
+	}
+	if compilerOptions.Module == core.ModuleKindUMD {
+		t.Skipf("Test uses deprecated 'module: UMD' option")
+	}
+	if compilerOptions.ModuleResolution == core.ModuleResolutionKindClassic {
+		t.Skipf("Test uses deprecated 'moduleResolution: Classic' option")
+	}
+	if compilerOptions.AllowSyntheticDefaultImports == core.TSFalse {
+		t.Skipf("Test uses unsupported 'allowSyntheticDefaultImports: false' option")
+	}
+
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
 	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
@@ -203,9 +230,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	f.activeFilename = f.testData.Files[0].fileName
 
+	_, testPath, _, _ := runtime.Caller(1)
 	t.Cleanup(func() {
 		inputWriter.Close()
-		f.verifyBaselines(t)
+		f.verifyBaselines(t, testPath)
 	})
 	return f
 }
@@ -222,8 +250,14 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+	initOptions := map[string]any{
+		// Hack: disable push diagnostics entirely, since the fourslash runner does not
+		// yet gracefully handle non-request messages.
+		"disablePushDiagnostics": true,
+	}
 	params := &lsproto.InitializeParams{
-		Locale: ptrTo("en-US"),
+		Locale:                ptrTo("en-US"),
+		InitializationOptions: ptrTo[any](initOptions),
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
@@ -240,6 +274,7 @@ var (
 			PreselectSupport:        ptrTrue,
 			LabelDetailsSupport:     ptrTrue,
 			InsertReplaceSupport:    ptrTrue,
+			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
 		CompletionList: &lsproto.CompletionListCapabilities{
 			ItemDefaults: &[]string{"commitCharacters", "editRange"},
@@ -250,6 +285,9 @@ var (
 	}
 	defaultTypeDefinitionCapabilities = &lsproto.TypeDefinitionClientCapabilities{
 		LinkSupport: ptrTrue,
+	}
+	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
+		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 	}
 )
 
@@ -278,6 +316,17 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 			},
 		}
 	}
+	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
+			RelatedInformation: ptrTrue,
+			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+				ValueSet: []lsproto.DiagnosticTag{
+					lsproto.DiagnosticTagUnnecessary,
+					lsproto.DiagnosticTagDeprecated,
+				},
+			},
+		}
+	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	}
@@ -290,13 +339,27 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.TypeDefinition == nil {
 		capabilitiesWithDefaults.TextDocument.TypeDefinition = defaultTypeDefinitionCapabilities
 	}
+	if capabilitiesWithDefaults.TextDocument.Hover == nil {
+		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
+		capabilitiesWithDefaults.TextDocument.SignatureHelp = &lsproto.SignatureHelpClientCapabilities{
+			SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+				DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+				ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+					LabelOffsetSupport: ptrTrue,
+				},
+				ActiveParameterSupport: ptrTrue,
+			},
+			ContextSupport: ptrTrue,
+		}
+	}
 	return &capabilitiesWithDefaults
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := lsproto.NewRequestMessage(
-		info.Method,
+	req := info.NewRequestMessage(
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
@@ -310,19 +373,24 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
 	if resp.Kind == lsproto.MessageKindRequest {
 		req := resp.AsRequest()
-		switch req.Method {
-		case lsproto.MethodWorkspaceConfiguration:
-			req := lsproto.ResponseMessage{
-				ID:      req.ID,
-				JSONRPC: req.JSONRPC,
-				Result:  []any{f.userPreferences},
-			}
-			f.writeMsg(t, req.Message())
-			resp = f.readMsg(t)
-		default:
-			// other types of requests not yet used in fourslash; implement them if needed
-			t.Fatalf("Unexpected request received: %s", req.Method)
+
+		assert.Equal(t, req.Method, lsproto.MethodWorkspaceConfiguration, "Unexpected request received: %s", req.Method)
+		res := lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  []any{f.userPreferences},
 		}
+		f.writeMsg(t, res.Message())
+		req = f.readMsg(t).AsRequest()
+
+		assert.Equal(t, req.Method, lsproto.MethodClientRegisterCapability, "Unexpected request received: %s", req.Method)
+		res = lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+		f.writeMsg(t, res.Message())
+		resp = f.readMsg(t)
 	}
 
 	if resp == nil {
@@ -333,8 +401,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := lsproto.NewNotificationMessage(
-		info.Method,
+	notification := info.NewNotificationMessage(
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -358,9 +425,16 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
+	// !!!
+	// Callers to this function may need to consider
+	// sending a more specific configuration for 'javascript'
+	// or 'js/ts' as well. For now, we only send 'typescript',
+	// and most tests probably just want this.
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
-		Settings: config,
+		Settings: map[string]any{
+			"typescript": config,
+		},
 	})
 }
 
@@ -493,8 +567,22 @@ func (f *FourslashTest) MarkerNames() []string {
 	})
 }
 
+func (f *FourslashTest) MarkerByName(t *testing.T, name string) *Marker {
+	return f.testData.MarkerPositions[name]
+}
+
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
+}
+
+func (f *FourslashTest) getRangesInFile(fileName string) []*RangeMarker {
+	var rangesInFile []*RangeMarker
+	for _, rangeMarker := range f.testData.Ranges {
+		if rangeMarker.FileName() == fileName {
+			rangesInFile = append(rangesInFile, rangeMarker)
+		}
+	}
+	return rangesInFile
 }
 
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
@@ -847,20 +935,16 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 func ignorePaths(paths ...string) cmp.Option {
 	return cmp.FilterPath(
 		func(p cmp.Path) bool {
-			for _, path := range paths {
-				if p.Last().String() == path {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(paths, p.Last().String())
 		},
 		cmp.Ignore(),
 	)
 }
 
 var (
-	completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
-	autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
@@ -998,6 +1082,141 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		assert.Equal(t, f.getScriptInfo(f.activeFilename).content, *options.NewFileContent, "File content after applying code action did not match expected content.")
 	} else if options.NewRangeContent != nil {
 		t.Fatal("!!! TODO")
+	}
+}
+
+func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []string, preferences *lsutil.UserPreferences) {
+	fileName := f.activeFilename
+	ranges := f.Ranges()
+	var filteredRanges []*RangeMarker
+	for _, r := range ranges {
+		if r.FileName() == fileName {
+			filteredRanges = append(filteredRanges, r)
+		}
+	}
+	if len(filteredRanges) > 1 {
+		t.Fatalf("Exactly one range should be specified in the testfile.")
+	}
+	var rangeMarker *RangeMarker
+	if len(filteredRanges) == 1 {
+		rangeMarker = filteredRanges[0]
+	}
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	// Get diagnostics at the current position to find errors that need import fixes
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	_, diagResult, diagOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+	if !diagOk {
+		t.Fatalf("Failed to get diagnostics")
+	}
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for code action request at pos %v", f.currentCaretPosition)
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected code action response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+	}
+
+	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
+	var importActions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				importActions = append(importActions, item.CodeAction)
+			}
+		}
+	}
+
+	if len(importActions) == 0 {
+		if len(expectedTexts) != 0 {
+			t.Fatalf("No codefixes returned.")
+		}
+		return
+	}
+
+	// Save the original content before any edits
+	script := f.getScriptInfo(f.activeFilename)
+	originalContent := script.content
+
+	// For each import action, apply it and check the result
+	actualTextArray := make([]string, 0, len(importActions))
+	for _, action := range importActions {
+		// Apply the code action
+		var edits []*lsproto.TextEdit
+		if action.Edit != nil && action.Edit.Changes != nil {
+			if len(*action.Edit.Changes) != 1 {
+				t.Fatalf("Expected exactly 1 change, got %d", len(*action.Edit.Changes))
+			}
+			for uri, changeEdits := range *action.Edit.Changes {
+				if uri != lsconv.FileNameToDocumentURI(f.activeFilename) {
+					t.Fatalf("Expected change to file %s, got %s", f.activeFilename, uri)
+				}
+				edits = changeEdits
+				f.applyTextEdits(t, changeEdits)
+			}
+		}
+
+		// Get the result text
+		var text string
+		if rangeMarker != nil {
+			text = f.getRangeText(rangeMarker)
+		} else {
+			text = f.getScriptInfo(f.activeFilename).content
+		}
+		actualTextArray = append(actualTextArray, text)
+
+		// Undo changes to perform next fix
+		for _, textChange := range edits {
+			start := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.Start))
+			end := int(f.converters.LineAndCharacterToPosition(script, textChange.Range.End))
+			deletedText := originalContent[start:end]
+			insertedText := textChange.NewText
+			f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+len(insertedText), deletedText)
+		}
+	}
+
+	// Compare results
+	if len(expectedTexts) != len(actualTextArray) {
+		var actualJoined strings.Builder
+		for i, actual := range actualTextArray {
+			if i > 0 {
+				actualJoined.WriteString("\n\n" + strings.Repeat("-", 20) + "\n\n")
+			}
+			actualJoined.WriteString(actual)
+		}
+		t.Fatalf("Expected %d import fixes, got %d:\n\n%s", len(expectedTexts), len(actualTextArray), actualJoined.String())
+	}
+	for i, expected := range expectedTexts {
+		actual := actualTextArray[i]
+		if expected != actual {
+			t.Fatalf("Import fix at index %d doesn't match.\nExpected:\n%s\n\nActual:\n%s", i, expected, actual)
+		}
 	}
 }
 
@@ -1626,7 +1845,12 @@ func (f *FourslashTest) ReplaceLine(t *testing.T, lineIndex int, text string) {
 func (f *FourslashTest) selectLine(t *testing.T, lineIndex int) {
 	script := f.getScriptInfo(f.activeFilename)
 	start := script.lineMap.LineStarts[lineIndex]
-	end := script.lineMap.LineStarts[lineIndex+1] - 1
+	var end core.TextPos
+	if lineIndex+1 >= len(script.lineMap.LineStarts) {
+		end = core.TextPos(len(script.content))
+	} else {
+		end = script.lineMap.LineStarts[lineIndex+1] - 1
+	}
 	f.selectRange(t, core.NewTextRange(int(start), int(end)))
 }
 
@@ -2214,10 +2438,332 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 	return script.content[r.Range.Pos():r.Range.End()]
 }
 
-func (f *FourslashTest) verifyBaselines(t *testing.T) {
+func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
 	for command, content := range f.baselines {
-		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command))
+		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command, testPath))
 	}
+}
+
+func (f *FourslashTest) VerifyBaselineInlayHints(
+	t *testing.T,
+	span *lsproto.Range,
+	userPreferences *lsutil.UserPreferences,
+) {
+	fileName := f.activeFilename
+	var lspRange lsproto.Range
+	if span == nil {
+		lspRange = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
+	} else {
+		lspRange = *span
+	}
+
+	params := &lsproto.InlayHintParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: lsconv.FileNameToDocumentURI(fileName)},
+		Range:        lspRange,
+	}
+
+	if userPreferences != nil {
+		reset := f.ConfigureWithReset(t, userPreferences)
+		defer reset()
+	}
+
+	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
+	if resMsg == nil {
+		t.Fatal(prefix + "Nil response received for inlay hints request")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for inlay hints request: %T", resMsg.AsResponse().Result)
+	}
+
+	fileLines := strings.Split(f.getScriptInfo(fileName).content, "\n")
+	var annotations []string
+	if result.InlayHints != nil {
+		slices.SortFunc(*result.InlayHints, func(a, b *lsproto.InlayHint) int {
+			return lsproto.ComparePositions(a.Position, b.Position)
+		})
+		annotations = core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
+			if hint.Label.InlayHintLabelParts != nil {
+				for _, part := range *hint.Label.InlayHintLabelParts {
+					if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
+						part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
+					}
+				}
+			}
+
+			underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
+			hintJson, err := core.StringifyJson(hint, "", "  ")
+			if err != nil {
+				t.Fatalf(prefix+"Failed to stringify inlay hint for baseline: %v", err)
+			}
+			annotation := fileLines[hint.Position.Line]
+			annotation += "\n" + underline + "\n" + hintJson
+			return annotation
+		})
+	}
+
+	if len(annotations) == 0 {
+		annotations = append(annotations, "=== No inlay hints ===")
+	}
+
+	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
+}
+
+func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return true })
+}
+
+// Similar to `VerifyDiagnostics`, but excludes suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifyNonSuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) })
+}
+
+// Similar to `VerifyDiagnostics`, but includes only suggestion diagnostics returned from server.
+func (f *FourslashTest) VerifySuggestionDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
+	f.verifyDiagnostics(t, expected, isSuggestionDiagnostic)
+}
+
+func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic, filterDiagnostics func(*lsproto.Diagnostic) bool) {
+	actualDiagnostics := f.getDiagnostics(t, f.activeFilename)
+	actualDiagnostics = core.Filter(actualDiagnostics, filterDiagnostics)
+	emptyRange := lsproto.Range{}
+	expectedWithRanges := make([]*lsproto.Diagnostic, len(expected))
+	for i, diag := range expected {
+		if diag.Range == emptyRange {
+			rangesInFile := f.getRangesInFile(f.activeFilename)
+			if len(rangesInFile) == 0 {
+				t.Fatalf("No ranges found in file %s to assign to diagnostic with empty range", f.activeFilename)
+			}
+			diagWithRange := *diag
+			diagWithRange.Range = rangesInFile[0].LSRange
+			expectedWithRanges[i] = &diagWithRange
+		} else {
+			expectedWithRanges[i] = diag
+		}
+	}
+	if len(actualDiagnostics) == 0 && len(expectedWithRanges) == 0 {
+		return
+	}
+	assertDeepEqual(t, actualDiagnostics, expectedWithRanges, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
+}
+
+func (f *FourslashTest) getDiagnostics(t *testing.T, fileName string) []*lsproto.Diagnostic {
+	params := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for diagnostics request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for diagnostics request: %T", resMsg.AsResponse().Result)
+	}
+
+	if result.FullDocumentDiagnosticReport != nil {
+		return result.FullDocumentDiagnosticReport.Items
+	}
+	return nil
+}
+
+func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
+	return diag.Tags != nil && len(*diag.Tags) > 0 ||
+		(diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityHint)
+}
+
+func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
+	var diagnostics []*fourslashDiagnostic
+	var files []*harnessutil.TestFile
+	for fileName, scriptInfo := range f.scriptInfos {
+		if tspath.HasJSONFileExtension(fileName) {
+			continue
+		}
+		files = append(files, &harnessutil.TestFile{UnitName: fileName, Content: scriptInfo.content})
+		lspDiagnostics := core.Filter(
+			f.getDiagnostics(t, fileName),
+			func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) },
+		)
+		diagnostics = append(diagnostics, core.Map(lspDiagnostics, func(d *lsproto.Diagnostic) *fourslashDiagnostic {
+			return f.toDiagnostic(scriptInfo, d)
+		})...)
+	}
+	slices.SortFunc(files, func(a, b *harnessutil.TestFile) int {
+		return strings.Compare(a.UnitName, b.UnitName)
+	})
+	result := tsbaseline.GetErrorBaseline(t, files, diagnostics, compareDiagnostics, false /*pretty*/)
+	f.addResultToBaseline(t, "Syntax and Semantic Diagnostics", result)
+}
+
+type fourslashDiagnostic struct {
+	file               *fourslashDiagnosticFile
+	loc                core.TextRange
+	code               int32
+	category           diagnostics.Category
+	message            string
+	relatedDiagnostics []*fourslashDiagnostic
+	reportsUnnecessary bool
+	reportsDeprecated  bool
+}
+
+type fourslashDiagnosticFile struct {
+	file        *harnessutil.TestFile
+	ecmaLineMap []core.TextPos
+}
+
+var _ diagnosticwriter.FileLike = (*fourslashDiagnosticFile)(nil)
+
+func (f *fourslashDiagnosticFile) FileName() string {
+	return f.file.UnitName
+}
+
+func (f *fourslashDiagnosticFile) Text() string {
+	return f.file.Content
+}
+
+func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
+	if f.ecmaLineMap == nil {
+		f.ecmaLineMap = core.ComputeECMALineStarts(f.file.Content)
+	}
+	return f.ecmaLineMap
+}
+
+var _ diagnosticwriter.Diagnostic = (*fourslashDiagnostic)(nil)
+
+func (d *fourslashDiagnostic) File() diagnosticwriter.FileLike {
+	return d.file
+}
+
+func (d *fourslashDiagnostic) Pos() int {
+	return d.loc.Pos()
+}
+
+func (d *fourslashDiagnostic) End() int {
+	return d.loc.End()
+}
+
+func (d *fourslashDiagnostic) Len() int {
+	return d.loc.Len()
+}
+
+func (d *fourslashDiagnostic) Code() int32 {
+	return d.code
+}
+
+func (d *fourslashDiagnostic) Category() diagnostics.Category {
+	return d.category
+}
+
+func (d *fourslashDiagnostic) Message() string {
+	return d.message
+}
+
+func (d *fourslashDiagnostic) MessageChain() []diagnosticwriter.Diagnostic {
+	return nil
+}
+
+func (d *fourslashDiagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
+	relatedInfo := make([]diagnosticwriter.Diagnostic, 0, len(d.relatedDiagnostics))
+	for _, relDiag := range d.relatedDiagnostics {
+		relatedInfo = append(relatedInfo, relDiag)
+	}
+	return relatedInfo
+}
+
+func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *fourslashDiagnostic {
+	var category diagnostics.Category
+	switch *lspDiagnostic.Severity {
+	case lsproto.DiagnosticSeverityError:
+		category = diagnostics.CategoryError
+	case lsproto.DiagnosticSeverityWarning:
+		category = diagnostics.CategoryWarning
+	case lsproto.DiagnosticSeverityInformation:
+		category = diagnostics.CategoryMessage
+	case lsproto.DiagnosticSeverityHint:
+		category = diagnostics.CategorySuggestion
+	default:
+		category = diagnostics.CategoryError
+	}
+	code := *lspDiagnostic.Code.Integer
+
+	var relatedDiagnostics []*fourslashDiagnostic
+	if lspDiagnostic.RelatedInformation != nil {
+		for _, info := range *lspDiagnostic.RelatedInformation {
+			relatedScriptInfo := f.getScriptInfo(info.Location.Uri.FileName())
+			if relatedScriptInfo == nil {
+				continue
+			}
+			relatedDiagnostic := &fourslashDiagnostic{
+				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
+				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				code:     code,
+				category: category,
+				message:  info.Message,
+			}
+			relatedDiagnostics = append(relatedDiagnostics, relatedDiagnostic)
+		}
+	}
+
+	diagnostic := &fourslashDiagnostic{
+		file: &fourslashDiagnosticFile{
+			file: &harnessutil.TestFile{
+				UnitName: scriptInfo.fileName,
+				Content:  scriptInfo.content,
+			},
+		},
+		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
+		code:               code,
+		category:           category,
+		message:            lspDiagnostic.Message,
+		relatedDiagnostics: relatedDiagnostics,
+	}
+	return diagnostic
+}
+
+func compareDiagnostics(d1, d2 *fourslashDiagnostic) int {
+	c := strings.Compare(d1.file.FileName(), d2.file.FileName())
+	if c != 0 {
+		return c
+	}
+	c = d1.Pos() - d2.Pos()
+	if c != 0 {
+		return c
+	}
+	c = d1.End() - d2.End()
+	if c != 0 {
+		return c
+	}
+	c = int(d1.code) - int(d2.code)
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.message, d2.message)
+	if c != 0 {
+		return c
+	}
+	return compareRelatedDiagnostics(d1.relatedDiagnostics, d2.relatedDiagnostics)
+}
+
+func compareRelatedDiagnostics(d1, d2 []*fourslashDiagnostic) int {
+	c := len(d2) - len(d1)
+	if c != 0 {
+		return c
+	}
+	for i := range d1 {
+		c = compareDiagnostics(d1[i], d2[i])
+		if c != 0 {
+			return c
+		}
+	}
+	return 0
+}
+
+func isLibFile(fileName string) bool {
+	baseName := tspath.GetBaseFileName(fileName)
+	if strings.HasPrefix(baseName, "lib.") && strings.HasSuffix(baseName, ".d.ts") {
+		return true
+	}
+	return false
 }
 
 var AnyTextEdits *[]*lsproto.TextEdit
