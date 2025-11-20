@@ -2178,7 +2178,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 
 		f.writeToBaseline(autoImportsCmd, "// === Auto Imports === \n")
 
-		fileContent, ok := f.vfs.ReadFile(f.activeFilename)
+		fileContent, ok := f.textOfFile(f.activeFilename)
 		if !ok {
 			t.Fatalf(prefix+"Failed to read file %s for auto-import baseline", f.activeFilename)
 		}
