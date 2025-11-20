@@ -1243,7 +1243,7 @@ func (p *Program) addProgramDiagnostics() {
 		// })
 
 		for _, ref := range parentFile.ReferencedFiles {
-			if ref.FileName == missingFile.path {
+			if ref.FileName == tspath.GetBaseFileName(missingFile.path) {
 				diagnostic := ast.NewDiagnostic(
 					parentFile,
 					ref.TextRange,
@@ -1253,25 +1253,6 @@ func (p *Program) addProgramDiagnostics() {
 				p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 			}
 		}
-
-		// ref := core.Find(parent.ReferencedFiles, func(r *ast.FileReference) bool {
-		// 	// refPath := tspath.Join(parent., r.FileName) // make it absolute
-		// 	// return tspath.NormalizePath(refPath) == tspath.NormalizePath(m.path)
-		// 	return tspath.GetBaseFileName(tspath.NormalizePath(r.FileName)) == tspath.GetBaseFileName(m.path)
-		// })
-
-		// if ref == nil {
-		// 	continue
-		// }
-
-		// diagnostic := ast.NewDiagnostic(
-		// 	parent,
-		// 	ref.TextRange,
-		// 	diagnostics.File_0_not_found,
-		// 	m.path,
-		// )
-
-		// p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 	}
 }
 
@@ -1607,7 +1588,7 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
 	return slices.ContainsFunc(p.missingFiles, func(missingPath missingFile) bool {
-		return missingPath.path == path
+		return missingPath.path == string(path)
 	})
 }
 
