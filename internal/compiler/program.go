@@ -1236,14 +1236,8 @@ func (p *Program) addProgramDiagnostics() {
 			continue
 		}
 
-		// ref := core.Find(parentFile.ReferencedFiles, func(r *ast.FileReference) bool {
-		// 	// refPath := tspath.Join(parent., r.FileName) // make it absolute
-		// 	// return tspath.NormalizePath(refPath) == tspath.NormalizePath(m.path)
-		// 	return tspath.GetBaseFileName(tspath.NormalizePath(r.FileName)) == tspath.GetBaseFileName(m.path)
-		// })
-
 		for _, ref := range parentFile.ReferencedFiles {
-			if ref.FileName == tspath.GetBaseFileName(missingFile.path) {
+			if tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(parentFile.FileName())) == missingFile.path {
 				diagnostic := ast.NewDiagnostic(
 					parentFile,
 					ref.TextRange,
