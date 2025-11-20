@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -20,6 +21,8 @@ type System interface {
 	WriteOutputIsTTY() bool
 	GetWidthOfTerminal() int
 	GetEnvironmentVariable(name string) string
+
+	PnpApi() *pnp.PnpApi
 
 	Now() time.Time
 	SinceStart() time.Duration

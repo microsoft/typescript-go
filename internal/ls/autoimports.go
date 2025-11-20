@@ -420,6 +420,11 @@ func (l *LanguageService) isImportable(
 	// }
 
 	fromPath := fromFile.FileName()
+	pnpApi := l.host.PnpApi()
+	if pnpApi != nil {
+		return pnpApi.IsImportable(fromPath, toFile.FileName())
+	}
+
 	useCaseSensitiveFileNames := moduleSpecifierResolutionHost.UseCaseSensitiveFileNames()
 	globalTypingsCache := l.GetProgram().GetGlobalTypingsCacheLocation()
 	modulePaths := modulespecifiers.GetEachFileNameOfModule(

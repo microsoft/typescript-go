@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -17,6 +18,7 @@ type CompilerHost interface {
 	Trace(msg string)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
+	PnpApi() *pnp.PnpApi
 }
 
 var _ CompilerHost = (*compilerHost)(nil)
@@ -27,6 +29,7 @@ type compilerHost struct {
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
 	trace               func(msg string)
+	pnpApi              *pnp.PnpApi
 }
 
 func NewCachedFSCompilerHost(
@@ -34,9 +37,10 @@ func NewCachedFSCompilerHost(
 	fs vfs.FS,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
+	pnpApi *pnp.PnpApi,
 	trace func(msg string),
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, pnpApi, trace)
 }
 
 func NewCompilerHost(
@@ -44,17 +48,20 @@ func NewCompilerHost(
 	fs vfs.FS,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
+	pnpApi *pnp.PnpApi,
 	trace func(msg string),
 ) CompilerHost {
 	if trace == nil {
 		trace = func(msg string) {}
 	}
+
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
 		fs:                  fs,
 		defaultLibraryPath:  defaultLibraryPath,
 		extendedConfigCache: extendedConfigCache,
 		trace:               trace,
+		pnpApi:              pnpApi,
 	}
 }
 
@@ -68,6 +75,10 @@ func (h *compilerHost) DefaultLibraryPath() string {
 
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
+}
+
+func (h *compilerHost) PnpApi() *pnp.PnpApi {
+	return h.pnpApi
 }
 
 func (h *compilerHost) Trace(msg string) {
