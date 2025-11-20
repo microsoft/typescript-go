@@ -2,8 +2,10 @@ package autoimport
 
 import (
 	"context"
+	"fmt"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -461,10 +463,7 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 }
 
 // !!! when/why could this return multiple?
-func (v *View) GetFixes(
-	ctx context.Context,
-	export *Export,
-) []*Fix {
+func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix {
 	// !!! tryUseExistingNamespaceImport
 	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
 		return []*Fix{fix}
@@ -478,6 +477,16 @@ func (v *View) GetFixes(
 	}
 	importKind := getImportKind(v.importingFile, export, v.program)
 	// !!! JSDoc type import, add as type only
+
+	name := export.Name()
+	startsWithUpper := unicode.IsUpper(rune(name[0]))
+	if forJSX && !startsWithUpper {
+		if export.IsRenameable() {
+			name = fmt.Sprintf("%c%s", unicode.ToUpper(rune(name[0])), name[1:])
+		}
+		return nil
+	}
+
 	return []*Fix{
 		{
 			Kind:                FixKindAddNew,

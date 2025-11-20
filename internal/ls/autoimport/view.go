@@ -3,10 +3,12 @@ package autoimport
 import (
 	"context"
 	"slices"
+	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -63,13 +65,13 @@ type FixAndExport struct {
 	Export *Export
 }
 
-func (v *View) GetCompletions(ctx context.Context, prefix string) []*FixAndExport {
+func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) []*FixAndExport {
 	results := v.Search(prefix)
 
 	type exportGroupKey struct {
-		target            ExportID
-		name              string
-		ambientModuleName string
+		target                     ExportID
+		name                       string
+		ambientModuleOrPackageName string
 	}
 	grouped := make(map[exportGroupKey][]*Export, len(results))
 	for _, e := range results {
@@ -77,14 +79,18 @@ func (v *View) GetCompletions(ctx context.Context, prefix string) []*FixAndExpor
 			// Don't auto-import from the importing file itself
 			continue
 		}
+		name := e.Name()
+		if forJSX && !(unicode.IsUpper(rune(name[0])) || e.IsRenameable()) {
+			continue
+		}
 		target := e.ExportID
 		if e.Target != (ExportID{}) {
 			target = e.Target
 		}
 		key := exportGroupKey{
-			target:            target,
-			name:              e.Name(),
-			ambientModuleName: e.AmbientModuleName(),
+			target:                     target,
+			name:                       name,
+			ambientModuleOrPackageName: core.FirstNonZero(e.AmbientModuleName(), e.PackageName),
 		}
 		if existing, ok := grouped[key]; ok {
 			for i, ex := range existing {
@@ -114,7 +120,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string) []*FixAndExpor
 	for _, exps := range grouped {
 		fixesForGroup := make([]*FixAndExport, 0, len(exps))
 		for _, e := range exps {
-			for _, fix := range v.GetFixes(ctx, e) {
+			for _, fix := range v.GetFixes(ctx, e, forJSX) {
 				fixesForGroup = append(fixesForGroup, &FixAndExport{
 					Fix:    fix,
 					Export: e,

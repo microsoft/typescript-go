@@ -108,6 +108,7 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 }
 
 func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost, logger *logging.LogTree) (*Registry, error) {
+	// !!! try to do less to discover that this call is a no-op
 	start := time.Now()
 	if logger != nil {
 		logger = logger.Fork("Building autoimport registry")
@@ -663,15 +664,15 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		binder.BindSourceFile(sourceFile)
 		extractor := b.newExportExtractor(dirPath, packageName, getChecker)
 		fileExports := extractor.extractFromFile(sourceFile)
+		exportsMu.Lock()
+		defer exportsMu.Unlock()
+		for _, name := range sourceFile.AmbientModuleNames {
+			ambientModuleNames[name] = append(ambientModuleNames[name], fileName)
+		}
 		if source, ok := aliasResolver.possibleFailedAmbientModuleLookupSources.Load(sourceFile.Path()); !ok {
 			// If we failed to resolve any ambient modules from this file, we'll try the
 			// whole file again later, so don't add anything now.
-			exportsMu.Lock()
 			exports[path] = fileExports
-			for _, name := range sourceFile.AmbientModuleNames {
-				ambientModuleNames[name] = append(ambientModuleNames[name], fileName)
-			}
-			exportsMu.Unlock()
 		} else {
 			// Record the package name so we can use it later during the second pass
 			// !!! perhaps we could store the whole set of partial exports and avoid

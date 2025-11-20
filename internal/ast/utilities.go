@@ -1874,11 +1874,11 @@ func IsExpressionNode(node *Node) bool {
 		for node.Parent.Kind == KindQualifiedName {
 			node = node.Parent
 		}
-		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || isJSXTagName(node)
+		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || IsJsxTagName(node)
 	case KindPrivateIdentifier:
 		return IsBinaryExpression(node.Parent) && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == KindInKeyword
 	case KindIdentifier:
-		if IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || isJSXTagName(node) {
+		if IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || IsJsxTagName(node) {
 			return true
 		}
 		fallthrough
@@ -1993,15 +1993,6 @@ func IsJSDocLinkLike(node *Node) bool {
 
 func IsJSDocTag(node *Node) bool {
 	return node.Kind >= KindFirstJSDocTagNode && node.Kind <= KindLastJSDocTagNode
-}
-
-func isJSXTagName(node *Node) bool {
-	parent := node.Parent
-	switch parent.Kind {
-	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindJsxClosingElement:
-		return parent.TagName() == node
-	}
-	return false
 }
 
 func IsSuperCall(node *Node) bool {

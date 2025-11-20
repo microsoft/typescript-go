@@ -180,26 +180,27 @@ func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		syntax = declSyntax
 	}
 
-	var localName string
+	checkerLease := &checkerLease{getChecker: e.getChecker}
+	defer checkerLease.Done()
+	export, target := e.createExport(symbol, moduleID, syntax, file, checkerLease)
+	if export == nil {
+		return
+	}
+
 	if symbol.Name == ast.InternalSymbolNameDefault || symbol.Name == ast.InternalSymbolNameExportEquals {
 		namedSymbol := symbol
 		if s := binder.GetLocalSymbolForExportDefault(symbol); s != nil {
 			namedSymbol = s
 		}
-		localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-		if localName == "" {
-			localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
+		export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
+		if export.localName == "" {
+			export.localName = export.Target.ExportName
+		}
+		if export.localName == "" || export.localName == ast.InternalSymbolNameDefault || export.localName == ast.InternalSymbolNameExportEquals || export.localName == ast.InternalSymbolNameExportStar {
+			export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
 		}
 	}
 
-	checkerLease := &checkerLease{getChecker: e.getChecker}
-	export, target := e.createExport(symbol, moduleID, syntax, file, checkerLease)
-	defer checkerLease.Done()
-	if export == nil {
-		return
-	}
-
-	export.localName = localName
 	*exports = append(*exports, export)
 
 	if target != nil {

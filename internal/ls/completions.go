@@ -1219,7 +1219,7 @@ func (l *LanguageService) getCompletionData(
 			return err
 		}
 
-		autoImports = view.GetCompletions(ctx, lowerCaseTokenText)
+		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, isRightOfOpenTag)
 
 		// l.searchExportInfosForCompletions(ctx,
 		// 	typeChecker,
@@ -1685,7 +1685,9 @@ func (l *LanguageService) getCompletionData(
 	} else if isRightOfOpenTag {
 		symbols = typeChecker.GetJsxIntrinsicTagNamesAt(location)
 		core.CheckEachDefined(symbols, "GetJsxIntrinsicTagNamesAt() should all be defined")
-		tryGetGlobalSymbols()
+		if _, err := tryGetGlobalSymbols(); err != nil {
+			return nil, err
+		}
 		completionKind = CompletionKindGlobal
 		keywordFilters = KeywordCompletionFiltersNone
 	} else if isStartingCloseTag {
@@ -2621,9 +2623,9 @@ func shouldIncludeSymbol(
 	// Auto Imports are not available for scripts so this conditional is always false.
 	if file.AsSourceFile().ExternalModuleIndicator != nil &&
 		compilerOptions.AllowUmdGlobalAccess != core.TSTrue &&
+		symbol != symbolOrigin &&
 		data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == SortTextGlobalsOrKeywords &&
-		(data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextAutoImportSuggestions ||
-			data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextLocationPriority) {
+		symbol.Parent != nil && checker.IsExternalModuleSymbol(symbol.Parent) {
 		return false
 	}
 

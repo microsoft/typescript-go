@@ -266,6 +266,16 @@ func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
 	return *new(U)
 }
 
+func FirstNonZero[T comparable](values ...T) T {
+	var zero T
+	for _, value := range values {
+		if value != zero {
+			return value
+		}
+	}
+	return zero
+}
+
 func Concatenate[T any](s1 []T, s2 []T) []T {
 	if len(s2) == 0 {
 		return s1

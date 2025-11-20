@@ -80,6 +80,10 @@ func (e *Export) Name() string {
 	return e.ExportName
 }
 
+func (e *Export) IsRenameable() bool {
+	return e.ExportName == ast.InternalSymbolNameExportEquals || e.ExportName == ast.InternalSymbolNameDefault
+}
+
 func (e *Export) AmbientModuleName() string {
 	if !tspath.IsExternalModuleNameRelative(string(e.ModuleID)) {
 		return string(e.ModuleID)

@@ -1,6 +1,7 @@
 package autoimport
 
 import (
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -49,19 +50,11 @@ func wordIndices(s string) []int {
 			}
 			continue
 		}
-		if isUpper(runeValue) && (isLower(core.FirstResult(utf8.DecodeLastRuneInString(s[:byteIndex]))) || (byteIndex+1 < len(s) && isLower(core.FirstResult(utf8.DecodeRuneInString(s[byteIndex+1:]))))) {
+		if unicode.IsUpper(runeValue) && (unicode.IsLower(core.FirstResult(utf8.DecodeLastRuneInString(s[:byteIndex]))) || (byteIndex+1 < len(s) && unicode.IsLower(core.FirstResult(utf8.DecodeRuneInString(s[byteIndex+1:]))))) {
 			indices = append(indices, byteIndex)
 		}
 	}
 	return indices
-}
-
-func isUpper(c rune) bool {
-	return c >= 'A' && c <= 'Z'
-}
-
-func isLower(c rune) bool {
-	return c >= 'a' && c <= 'z'
 }
 
 func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collections.Set[string], error) {

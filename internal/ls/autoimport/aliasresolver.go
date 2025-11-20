@@ -27,6 +27,7 @@ type aliasResolver struct {
 
 	rootFiles []*ast.SourceFile
 
+	// !!! if I make an aliasResolver per file, this probably becomes less kludgy
 	resolvedModules                          collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
 	possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
 	possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
