@@ -149,7 +149,7 @@ type UserPreferences struct {
 	DisableSuggestions           bool // !!!
 	DisableLineTextInReferences  bool // !!!
 	DisplayPartsForJSDoc         bool // !!!
-	ReportStyleChecksAsWarnings  bool
+	ReportStyleChecksAsWarnings  bool // !!! If this changes, we need to ask the client to recompute diagnostics
 }
 
 type JsxAttributeCompletionStyle string
