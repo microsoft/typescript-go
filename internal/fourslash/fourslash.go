@@ -2822,3 +2822,48 @@ func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNam
 		markerNames...,
 	)
 }
+
+type VerifyWorkspaceSymbolCase struct {
+	Includes    []*lsproto.SymbolInformation // !!! HERE: fourslash.Range instead of Location
+	Preferences *lsutil.UserPreferences
+}
+
+// `verify.navigateTo` in Strada.
+func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
+	var configReset func()
+	for _, testCase := range cases {
+		configReset = f.ConfigureWithReset(t, testCase.Preferences)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{})
+		if resMsg == nil {
+			t.Fatalf("Nil response received for workspace symbol request")
+		}
+		if !resultOk {
+			t.Fatalf("Unexpected response type for workspace symbol request: %T", resMsg.AsResponse().Result)
+		}
+		if result.SymbolInformations == nil {
+			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
+		}
+		verifyIncludesSymbols(t, *result.SymbolInformations, testCase.Includes, "Workspace symbols mismatch")
+	}
+	configReset()
+}
+
+func verifyIncludesSymbols(
+	t *testing.T,
+	actual []*lsproto.SymbolInformation,
+	includes []*lsproto.SymbolInformation,
+	prefix string,
+) {
+	nameToActualSymbol := make(map[string]*lsproto.SymbolInformation, len(actual))
+	for _, sym := range actual {
+		nameToActualSymbol[sym.Name] = sym
+	}
+
+	for _, sym := range includes {
+		actualSym, ok := nameToActualSymbol[sym.Name]
+		if !ok {
+			t.Fatalf("%s: Expected symbol '%s' not found", prefix, sym.Name)
+		}
+		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' mismatch", prefix, sym.Name))
+	}
+}

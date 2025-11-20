@@ -142,12 +142,15 @@ type UserPreferences struct {
 	IncludeInlayFunctionLikeReturnTypeHints               bool
 	IncludeInlayEnumMemberValueHints                      bool
 
+	// ------- Symbols -------
+
+	ExcludeLibrarySymbolsInNavTo bool
+
 	// ------- Misc -------
 
-	ExcludeLibrarySymbolsInNavTo bool // !!!
-	DisableSuggestions           bool // !!!
-	DisableLineTextInReferences  bool // !!!
-	DisplayPartsForJSDoc         bool // !!!
+	DisableSuggestions          bool // !!!
+	DisableLineTextInReferences bool // !!!
+	DisplayPartsForJSDoc        bool // !!!
 }
 
 type JsxAttributeCompletionStyle string
