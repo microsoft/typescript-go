@@ -121,7 +121,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string) []*FixAndExpor
 				})
 			}
 		}
-		fixes = append(fixes, slices.MaxFunc(fixesForGroup, compareFixes))
+		fixes = append(fixes, slices.MinFunc(fixesForGroup, compareFixes))
 	}
 
 	return fixes

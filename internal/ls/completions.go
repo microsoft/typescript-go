@@ -319,11 +319,15 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! see if incomplete completion list and continue or clean
 
+	checker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
+	defer done()
+
 	stringCompletions := l.getStringLiteralCompletions(
 		ctx,
 		file,
 		position,
 		previousToken,
+		checker,
 		compilerOptions,
 		clientOptions,
 	)
@@ -344,8 +348,6 @@ func (l *LanguageService) getCompletionsAtPosition(
 		), nil
 	}
 
-	checker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
-	defer done()
 	preferences := l.UserPreferences()
 	data, err := l.getCompletionData(ctx, checker, file, position, preferences)
 	if err != nil {
@@ -1839,6 +1841,7 @@ func (l *LanguageService) completionInfoFromData(
 
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
 		ctx,
+		typeChecker,
 		data,
 		nil, /*replacementToken*/
 		position,
@@ -1902,6 +1905,7 @@ func (l *LanguageService) completionInfoFromData(
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
 	ctx context.Context,
+	typeChecker *checker.Checker,
 	data *completionDataData,
 	replacementToken *ast.Node,
 	position int,
@@ -1911,8 +1915,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 ) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
-	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
-	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
 	// Tracks unique names.
 	// Value is set to false for global variables or completions from external module exports, because we can have multiple of those;
@@ -2045,8 +2047,11 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			autoImport.Fix.ModuleSpecifier,
 			autoImport.Fix,
 		)
-		uniques[autoImport.Fix.Name] = false
-		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+
+		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
+			uniques[autoImport.Fix.Name] = false
+			sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+		}
 	}
 
 	uniqueSet := collections.NewSetWithSizeHint[string](len(uniques))
@@ -4973,7 +4978,9 @@ func (l *LanguageService) ResolveCompletionItem(
 		return nil, fmt.Errorf("file not found: %s", data.FileName)
 	}
 
-	return l.getCompletionItemDetails(ctx, program, data.Position, file, item, data, clientOptions), nil
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	return l.getCompletionItemDetails(ctx, program, checker, data.Position, file, item, data, clientOptions), nil
 }
 
 func GetCompletionItemData(item *lsproto.CompletionItem) (*CompletionItemData, error) {
@@ -5004,14 +5011,13 @@ func getCompletionDocumentationFormat(clientOptions *lsproto.CompletionClientCap
 func (l *LanguageService) getCompletionItemDetails(
 	ctx context.Context,
 	program *compiler.Program,
+	checker *checker.Checker,
 	position int,
 	file *ast.SourceFile,
 	item *lsproto.CompletionItem,
 	itemData *CompletionItemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionItem {
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
-	defer done()
 	docFormat := getCompletionDocumentationFormat(clientOptions)
 	contextToken, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {

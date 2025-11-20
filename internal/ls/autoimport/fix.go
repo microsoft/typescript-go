@@ -617,6 +617,8 @@ func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPref
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
 }
 
+// compareFixes returns negative if `a` is better than `b`.
+// Sorting with this comparator will place the best fix first.
 func (v *View) compareFixes(a, b *Fix) int {
 	if res := compareFixKinds(a.Kind, b.Kind); res != 0 {
 		return res
@@ -628,10 +630,7 @@ func compareFixKinds(a, b FixKind) int {
 	return int(a) - int(b)
 }
 
-func (v *View) compareModuleSpecifiers(
-	a *Fix, // !!! ImportFixWithModuleSpecifier
-	b *Fix, // !!! ImportFixWithModuleSpecifier
-) int {
+func (v *View) compareModuleSpecifiers(a, b *Fix) int {
 	if comparison := compareModuleSpecifierRelativity(a, b, v.preferences); comparison != 0 {
 		return comparison
 	}

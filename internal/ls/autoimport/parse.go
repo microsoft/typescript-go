@@ -261,12 +261,19 @@ func parseExport(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.S
 			var decl *ast.Node
 			if len(targetSymbol.Declarations) > 0 {
 				decl = targetSymbol.Declarations[0]
-			} else if len(symbol.Declarations) > 0 {
+			} else if targetSymbol.CheckFlags&ast.CheckFlagsMapped != 0 {
+				if mappedDecl := checker.GetMappedTypeSymbolOfProperty(targetSymbol); mappedDecl != nil && len(mappedDecl.Declarations) > 0 {
+					decl = mappedDecl.Declarations[0]
+				}
+			}
+			if decl == nil {
+				// !!! consider GetImmediateAliasedSymbol to go as far as we can
 				decl = symbol.Declarations[0]
 			}
 			if decl == nil {
-				panic("I want to know how this can happen")
+				panic("no declaration for aliased symbol")
 			}
+
 			export.ScriptElementKind = lsutil.GetSymbolKind(checker, targetSymbol, decl)
 			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checker, targetSymbol)
 			// !!! completely wrong

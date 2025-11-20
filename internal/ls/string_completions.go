@@ -46,6 +46,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 	file *ast.SourceFile,
 	position int,
 	contextToken *ast.Node,
+	checker *checker.Checker,
 	compilerOptions *core.CompilerOptions,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
@@ -58,13 +59,16 @@ func (l *LanguageService) getStringLiteralCompletions(
 			ctx,
 			file,
 			contextToken,
-			position)
+			position,
+			checker,
+		)
 		return l.convertStringLiteralCompletions(
 			ctx,
 			entries,
 			contextToken,
 			file,
 			position,
+			checker,
 			compilerOptions,
 			clientOptions,
 		)
@@ -78,6 +82,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	contextToken *ast.StringLiteralLike,
 	file *ast.SourceFile,
 	position int,
+	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
@@ -101,6 +106,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		}
 		_, items := l.getCompletionEntriesFromSymbols(
 			ctx,
+			typeChecker,
 			data,
 			contextToken, /*replacementToken*/
 			position,
@@ -225,9 +231,8 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	file *ast.SourceFile,
 	node *ast.StringLiteralLike,
 	position int,
+	typeChecker *checker.Checker,
 ) *stringLiteralCompletions {
-	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
-	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
 	case ast.KindLiteralType:
@@ -678,6 +683,7 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 		file,
 		contextToken,
 		position,
+		checker,
 	)
 	if completions == nil {
 		return item

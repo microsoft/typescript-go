@@ -393,6 +393,13 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	return result
 }
 
+func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol {
+	if valueLinks := c.valueSymbolLinks.TryGet(symbol); valueLinks != nil {
+		return valueLinks.containingType.symbol
+	}
+	return nil
+}
+
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	if symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 		return core.MapNonNil(
