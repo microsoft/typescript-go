@@ -29,7 +29,7 @@ This is still a work in progress and is not yet at full feature parity with Type
 |---------|--------|-------|
 | Program creation | done | Same files and module resolution as TS 5.9. Not all resolution modes supported yet. |
 | Parsing/scanning | done | Exact same syntax errors as TS 5.9 |
-| Commandline and `tsconfig.json` parsing | done | Done, though `tsconfig` errors may not be as helpfu;. |
+| Commandline and `tsconfig.json` parsing | done | Done, though `tsconfig` errors may not be as helpful. |
 | Type resolution | done | Same types as TS 5.9. |
 | Type checking | done | Same errors, locations, and messages as TS 5.9. Types printback in errors may display differently. |
 | JavaScript-specific inference and JSDoc | in progress | Mostly complete, but intentionally lacking some features. Declaration emit not complete. |
