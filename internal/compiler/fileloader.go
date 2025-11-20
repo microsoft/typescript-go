@@ -52,7 +52,7 @@ type fileLoader struct {
 }
 
 type missingFile struct {
-	path   string
+	path   tspath.Path
 	reason *FileIncludeReason
 }
 
@@ -177,7 +177,7 @@ func processAllProgramFiles(
 		// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 		if file == nil {
 			missingFiles = append(missingFiles, missingFile{
-				path:   task.normalizedFilePath,
+				path:   task.path,
 				reason: task.includeReason,
 			})
 			return

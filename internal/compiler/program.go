@@ -1224,33 +1224,54 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 }
 
 func (p *Program) addProgramDiagnostics() {
-	for _, m := range p.missingFiles {
-		reason := m.reason
-		data, ok := reason.data.(*referencedFileData)
+	for _, missingFile := range p.missingFiles {
+		missingFileReason := missingFile.reason
+		refData, ok := missingFileReason.data.(*referencedFileData)
 		if !ok {
 			continue
 		}
 
-		parent := p.filesByPath[data.file]
-		if parent == nil {
+		parentFile := p.filesByPath[refData.file]
+		if parentFile == nil {
 			continue
 		}
 
-		ref := core.Find(parent.ReferencedFiles, func(r *ast.FileReference) bool {
-			return r.FileName == m.path
-		})
-		if ref == nil {
-			continue
+		// ref := core.Find(parentFile.ReferencedFiles, func(r *ast.FileReference) bool {
+		// 	// refPath := tspath.Join(parent., r.FileName) // make it absolute
+		// 	// return tspath.NormalizePath(refPath) == tspath.NormalizePath(m.path)
+		// 	return tspath.GetBaseFileName(tspath.NormalizePath(r.FileName)) == tspath.GetBaseFileName(m.path)
+		// })
+
+		for _, ref := range parentFile.ReferencedFiles {
+			if ref.FileName == missingFile.path {
+				diagnostic := ast.NewDiagnostic(
+					parentFile,
+					ref.TextRange,
+					diagnostics.File_0_not_found,
+					missingFile.path,
+				)
+				p.programDiagnostics = append(p.programDiagnostics, diagnostic)
+			}
 		}
 
-		diagnostic := ast.NewDiagnostic(
-			parent,
-			ref.TextRange,
-			diagnostics.File_0_not_found,
-			m.path,
-		)
+		// ref := core.Find(parent.ReferencedFiles, func(r *ast.FileReference) bool {
+		// 	// refPath := tspath.Join(parent., r.FileName) // make it absolute
+		// 	// return tspath.NormalizePath(refPath) == tspath.NormalizePath(m.path)
+		// 	return tspath.GetBaseFileName(tspath.NormalizePath(r.FileName)) == tspath.GetBaseFileName(m.path)
+		// })
 
-		p.programDiagnostics = append(p.programDiagnostics, diagnostic)
+		// if ref == nil {
+		// 	continue
+		// }
+
+		// diagnostic := ast.NewDiagnostic(
+		// 	parent,
+		// 	ref.TextRange,
+		// 	diagnostics.File_0_not_found,
+		// 	m.path,
+		// )
+
+		// p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 	}
 }
 
@@ -1586,7 +1607,7 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
 	return slices.ContainsFunc(p.missingFiles, func(missingPath missingFile) bool {
-		return p.toPath(missingPath.path) == path
+		return missingPath.path == path
 	})
 }
 
