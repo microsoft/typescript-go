@@ -2417,8 +2417,12 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 }
 
 func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
-	for command, content := range f.baselines {
-		baseline.Run(t, getBaselineFileName(t, command), content.String(), f.getBaselineOptions(command, testPath))
+	if !f.testData.isStateBaseliningEnabled() {
+		for command, content := range f.baselines {
+			baseline.Run(t, getBaselineFileName(t, command), content.String(), f.getBaselineOptions(command, testPath))
+		}
+	} else {
+		baseline.Run(t, getBaseFileNameFromTest(t)+".baseline", f.stateBaseline.baseline.String(), baseline.Options{Subfolder: "fourslash/state"})
 	}
 }
 
