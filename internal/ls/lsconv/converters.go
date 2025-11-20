@@ -242,7 +242,7 @@ var styleCheckDiagnostics = collections.NewSetFromItems(
 	diagnostics.Not_all_code_paths_return_a_value.Code(),
 )
 
-func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps diagnosticOptions) *lsproto.Diagnostic {
+func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, opts diagnosticOptions) *lsproto.Diagnostic {
 	var severity lsproto.DiagnosticSeverity
 	switch diagnostic.Category() {
 	case diagnostics.CategorySuggestion:
@@ -255,12 +255,12 @@ func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps di
 		severity = lsproto.DiagnosticSeverityError
 	}
 
-	if caps.reportStyleCheckAsWarnings && severity == lsproto.DiagnosticSeverityError && styleCheckDiagnostics.Has(diagnostic.Code()) {
+	if opts.reportStyleCheckAsWarnings && severity == lsproto.DiagnosticSeverityError && styleCheckDiagnostics.Has(diagnostic.Code()) {
 		severity = lsproto.DiagnosticSeverityWarning
 	}
 
 	var relatedInformation []*lsproto.DiagnosticRelatedInformation
-	if caps.relatedInformation {
+	if opts.relatedInformation {
 		relatedInformation = make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
 		for _, related := range diagnostic.RelatedInformation() {
 			relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
@@ -274,12 +274,12 @@ func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, caps di
 	}
 
 	var tags []lsproto.DiagnosticTag
-	if len(caps.tagValueSet) > 0 && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
+	if len(opts.tagValueSet) > 0 && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
 		tags = make([]lsproto.DiagnosticTag, 0, 2)
-		if diagnostic.ReportsUnnecessary() && slices.Contains(caps.tagValueSet, lsproto.DiagnosticTagUnnecessary) {
+		if diagnostic.ReportsUnnecessary() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagUnnecessary) {
 			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
 		}
-		if diagnostic.ReportsDeprecated() && slices.Contains(caps.tagValueSet, lsproto.DiagnosticTagDeprecated) {
+		if diagnostic.ReportsDeprecated() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagDeprecated) {
 			tags = append(tags, lsproto.DiagnosticTagDeprecated)
 		}
 	}
