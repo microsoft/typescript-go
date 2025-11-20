@@ -230,6 +230,7 @@ func DiagnosticToLSPPush(ctx context.Context, converters *Converters, diagnostic
 	})
 }
 
+// https://github.com/microsoft/vscode/blob/93e08afe0469712706ca4e268f778cfadf1a43ef/extensions/typescript-language-features/src/typeScriptServiceClientHost.ts#L40C7-L40C29
 var styleCheckDiagnostics = collections.NewSetFromItems(
 	diagnostics.X_0_is_declared_but_never_used.Code(),
 	diagnostics.X_0_is_declared_but_its_value_is_never_read.Code(),
