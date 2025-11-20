@@ -16,6 +16,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -27,6 +29,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
@@ -42,7 +45,7 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData      *TestData // !!! consolidate test files from test data and script info
-	baselines     map[string]*strings.Builder
+	baselines     map[baselineCommand]*strings.Builder
 	rangesByText  *collections.MultiMap[string, *RangeMarker]
 	openFiles     map[string]struct{}
 	stateBaseline *stateBaseline
@@ -55,6 +58,8 @@ type FourslashTest struct {
 	lastKnownMarkerName  *string
 	activeFilename       string
 	selectionEnd         *lsproto.Position
+
+	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
 }
 
 type scriptInfo struct {
@@ -231,7 +236,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
-		baselines:       make(map[string]*strings.Builder),
+		baselines:       make(map[baselineCommand]*strings.Builder),
 		openFiles:       make(map[string]struct{}),
 	}
 
@@ -272,8 +277,14 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+	initOptions := map[string]any{
+		// Hack: disable push diagnostics entirely, since the fourslash runner does not
+		// yet gracefully handle non-request messages.
+		"disablePushDiagnostics": true,
+	}
 	params := &lsproto.InitializeParams{
-		Locale: ptrTo("en-US"),
+		Locale:                ptrTo("en-US"),
+		InitializationOptions: ptrTo[any](initOptions),
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
@@ -300,6 +311,9 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultTypeDefinitionCapabilities = &lsproto.TypeDefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
+	defaultImplementationCapabilities = &lsproto.ImplementationClientCapabilities{
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
@@ -355,6 +369,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.TypeDefinition == nil {
 		capabilitiesWithDefaults.TextDocument.TypeDefinition = defaultTypeDefinitionCapabilities
 	}
+	if capabilitiesWithDefaults.TextDocument.Implementation == nil {
+		capabilitiesWithDefaults.TextDocument.Implementation = defaultImplementationCapabilities
+	}
 	if capabilitiesWithDefaults.TextDocument.Hover == nil {
 		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
 	}
@@ -375,8 +392,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := lsproto.NewRequestMessage(
-		info.Method,
+	req := info.NewRequestMessage(
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
@@ -418,8 +434,7 @@ func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info ls
 }
 
 func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := lsproto.NewNotificationMessage(
-		info.Method,
+	notification := info.NewNotificationMessage(
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -1297,7 +1312,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			Context:  &lsproto.ReferenceContext{},
 		}
 		result := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
-		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, findAllReferencesCmd, f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*FIND ALL REFS*/",
 		}))
@@ -1305,8 +1320,39 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	}
 }
 
+func (f *FourslashTest) MarkTestAsStradaServer() {
+	f.isStradaServer = true
+}
+
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	t *testing.T,
+	includeOriginalSelectionRange bool,
+	markers ...string,
+) {
+	f.verifyBaselineDefinitions(
+		t,
+		goToDefinitionCmd,
+		"/*GOTO DEF*/", /*definitionMarker*/
+		func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull {
+			params := &lsproto.DefinitionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
+
+			return sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
+		},
+		includeOriginalSelectionRange,
+		markers...,
+	)
+}
+
+func (f *FourslashTest) verifyBaselineDefinitions(
+	t *testing.T,
+	definitionCommand baselineCommand,
+	definitionMarker string,
+	getDefinitions func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull,
 	includeOriginalSelectionRange bool,
 	markers ...string,
 ) {
@@ -1316,44 +1362,43 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		// worker in `baselineEachMarkerOrRange`
 		f.GoToMarkerOrRange(t, markerOrRange)
 
-		params := &lsproto.DefinitionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-			Position: f.currentCaretPosition,
-		}
+		result := getDefinitions(t, f, f.activeFilename, f.currentCaretPosition)
 
-		result := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
-		var resultAsLocations []lsproto.Location
-		var additionalLocation *lsproto.Location
+		var resultAsSpans []documentSpan
+		var additionalSpan *documentSpan
 		if result.Locations != nil {
-			resultAsLocations = *result.Locations
+			resultAsSpans = core.Map(*result.Locations, locationToSpan)
 		} else if result.Location != nil {
-			resultAsLocations = []lsproto.Location{*result.Location}
+			resultAsSpans = []documentSpan{locationToSpan(*result.Location)}
 		} else if result.DefinitionLinks != nil {
 			var originRange *lsproto.Range
-			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+			resultAsSpans = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) documentSpan {
 				if originRange != nil && originRange != link.OriginSelectionRange {
 					panic("multiple different origin ranges in definition links")
 				}
 				originRange = link.OriginSelectionRange
-				return lsproto.Location{
-					Uri:   link.TargetUri,
-					Range: link.TargetSelectionRange,
+				var contextSpan *lsproto.Range
+				if link.TargetRange != link.TargetSelectionRange && !f.isStradaServer {
+					contextSpan = &link.TargetRange
+				}
+				return documentSpan{
+					uri:         link.TargetUri,
+					textSpan:    link.TargetSelectionRange,
+					contextSpan: contextSpan,
 				}
 			})
 			if originRange != nil && includeOriginalSelectionRange {
-				additionalLocation = &lsproto.Location{
-					Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
-					Range: *originRange,
+				additionalSpan = &documentSpan{
+					uri:      lsconv.FileNameToDocumentURI(f.activeFilename),
+					textSpan: *originRange,
 				}
 			}
 		}
 
-		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:             markerOrRange,
-			markerName:         "/*GOTO DEF*/",
-			additionalLocation: additionalLocation,
+		f.addResultToBaseline(t, definitionCommand, f.getBaselineForSpansWithFileContents(resultAsSpans, baselineFourslashLocationsOptions{
+			marker:         markerOrRange,
+			markerName:     definitionMarker,
+			additionalSpan: additionalSpan,
 		}))
 	}
 }
@@ -1362,61 +1407,46 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 	t *testing.T,
 	markers ...string,
 ) {
-	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+	f.verifyBaselineDefinitions(
+		t,
+		goToTypeDefinitionCmd,
+		"/*GOTO TYPE*/", /*definitionMarker*/
+		func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull {
+			params := &lsproto.TypeDefinitionParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
 
-	for _, markerOrRange := range referenceLocations {
-		// worker in `baselineEachMarkerOrRange`
-		f.GoToMarkerOrRange(t, markerOrRange)
-
-		params := &lsproto.TypeDefinitionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-			Position: f.currentCaretPosition,
-		}
-
-		result := sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
-		var resultAsLocations []lsproto.Location
-		if result.Locations != nil {
-			resultAsLocations = *result.Locations
-		} else if result.Location != nil {
-			resultAsLocations = []lsproto.Location{*result.Location}
-		} else if result.DefinitionLinks != nil {
-			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
-				return lsproto.Location{
-					Uri:   link.TargetUri,
-					Range: link.TargetSelectionRange,
-				}
-			})
-		}
-
-		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*GOTO TYPE*/",
-		}))
-	}
+			return sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
+		},
+		false, /*includeOriginalSelectionRange*/
+		markers...,
+	)
 }
 
 func (f *FourslashTest) VerifyBaselineWorkspaceSymbol(t *testing.T, query string) {
 	t.Helper()
 	result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: query})
 
-	locationToText := map[lsproto.Location]*lsproto.SymbolInformation{}
-	fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+	locationToText := map[documentSpan]*lsproto.SymbolInformation{}
+	groupedRanges := collections.MultiMap[lsproto.DocumentUri, documentSpan]{}
 	var symbolInformations []*lsproto.SymbolInformation
 	if result.SymbolInformations != nil {
 		symbolInformations = *result.SymbolInformations
 	}
 	for _, symbol := range symbolInformations {
 		uri := symbol.Location.Uri
-		fileToRange.Add(uri, symbol.Location.Range)
-		locationToText[symbol.Location] = symbol
+		span := locationToSpan(symbol.Location)
+		groupedRanges.Add(uri, span)
+		locationToText[span] = symbol
 	}
 
-	f.addResultToBaseline(t, "workspaceSymbol", f.getBaselineForGroupedLocationsWithFileContents(
-		&fileToRange,
+	f.addResultToBaseline(t, "workspaceSymbol", f.getBaselineForGroupedSpansWithFileContents(
+		&groupedRanges,
 		baselineFourslashLocationsOptions{
-			getLocationData: func(span lsproto.Location) string { return symbolInformationToData(locationToText[span]) },
+			getLocationData: func(span documentSpan) string { return symbolInformationToData(locationToText[span]) },
 		},
 	))
 }
@@ -1470,9 +1500,9 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		return result
 	}
 
-	f.addResultToBaseline(t, "QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	f.addResultToBaseline(t, quickInfoCmd, annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
-		f.writeToBaseline("QuickInfo", jsonStr)
+		f.writeToBaseline(quickInfoCmd, jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
@@ -1578,9 +1608,9 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		return result
 	}
 
-	f.addResultToBaseline(t, "SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
+	f.addResultToBaseline(t, signatureHelpCmd, annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
-		f.writeToBaseline("SignatureHelp", jsonStr)
+		f.writeToBaseline(signatureHelpCmd, jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
@@ -1716,7 +1746,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 			selectionRange = selectionRange.Parent
 		}
 	}
-	f.addResultToBaseline(t, "Smart Selection", strings.TrimSuffix(result.String(), "\n"))
+	f.addResultToBaseline(t, smartSelectionCmd, strings.TrimSuffix(result.String(), "\n"))
 }
 
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
@@ -1774,7 +1804,7 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 		}
 
 		// Add result to baseline
-		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, documentHighlightsCmd, f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*HIGHLIGHTS*/",
 		}))
@@ -2146,7 +2176,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 
 		prefix := fmt.Sprintf("At marker '%s': ", markerName)
 
-		f.writeToBaseline("Auto Imports", "// === Auto Imports === \n")
+		f.writeToBaseline(autoImportsCmd, "// === Auto Imports === \n")
 
 		fileContent, ok := f.vfs.ReadFile(f.activeFilename)
 		if !ok {
@@ -2156,7 +2186,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		marker := f.testData.MarkerPositions[markerName]
 		ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
 		lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
-		f.writeToBaseline("Auto Imports", (codeFence(
+		f.writeToBaseline(autoImportsCmd, (codeFence(
 			lang,
 			"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
 		)))
@@ -2168,7 +2198,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		var list []*lsproto.CompletionItem
 		if result.Items == nil || len(*result.Items) == 0 {
 			if result.List == nil || result.List.Items == nil || len(result.List.Items) == 0 {
-				f.writeToBaseline("Auto Imports", "no autoimport completions found"+"\n\n")
+				f.writeToBaseline(autoImportsCmd, "no autoimport completions found"+"\n\n")
 
 				continue
 			}
@@ -2208,7 +2238,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			for _, change := range allChanges {
 				newFileContent = newFileContent[:converters.LineAndCharacterToPosition(currentFile, change.Range.Start)] + change.NewText + newFileContent[converters.LineAndCharacterToPosition(currentFile, change.Range.End):]
 			}
-			f.writeToBaseline("Auto Imports", codeFence(lang, newFileContent)+"\n\n")
+			f.writeToBaseline(autoImportsCmd, codeFence(lang, newFileContent)+"\n\n")
 		}
 	}
 }
@@ -2265,12 +2295,13 @@ func (f *FourslashTest) verifyBaselineRename(
 		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
 			changes = *result.WorkspaceEdit.Changes
 		}
-		locationToText := map[lsproto.Location]string{}
-		fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+		spanToText := map[documentSpan]string{}
+		fileToSpan := collections.MultiMap[lsproto.DocumentUri, documentSpan]{}
 		for uri, edits := range changes {
 			for _, edit := range edits {
-				fileToRange.Add(uri, edit.Range)
-				locationToText[lsproto.Location{Uri: uri, Range: edit.Range}] = edit.NewText
+				span := documentSpan{uri: uri, textSpan: edit.Range}
+				fileToSpan.Add(uri, span)
+				spanToText[span] = edit.NewText
 			}
 		}
 
@@ -2284,22 +2315,22 @@ func (f *FourslashTest) verifyBaselineRename(
 			}
 		}
 
-		baselineFileContent := f.getBaselineForGroupedLocationsWithFileContents(
-			&fileToRange,
+		baselineFileContent := f.getBaselineForGroupedSpansWithFileContents(
+			&fileToSpan,
 			baselineFourslashLocationsOptions{
 				marker:     markerOrRange,
 				markerName: "/*RENAME*/",
 				endMarker:  "RENAME|]",
-				startMarkerPrefix: func(span lsproto.Location) *string {
-					text := locationToText[span]
+				startMarkerPrefix: func(span documentSpan) *string {
+					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[0] != "" {
 						return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
 					}
 					return nil
 				},
-				endMarkerSuffix: func(span lsproto.Location) *string {
-					text := locationToText[span]
+				endMarkerSuffix: func(span documentSpan) *string {
+					text := spanToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[1] != "" {
 						return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
@@ -2316,10 +2347,7 @@ func (f *FourslashTest) verifyBaselineRename(
 			baselineResult = baselineFileContent
 		}
 
-		f.addResultToBaseline(t,
-			"findRenameLocations",
-			baselineResult,
-		)
+		f.addResultToBaseline(t, renameCmd, baselineResult)
 	}
 }
 
@@ -2389,12 +2417,8 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 }
 
 func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
-	if !f.testData.isStateBaseliningEnabled() {
-		for command, content := range f.baselines {
-			baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command, testPath))
-		}
-	} else {
-		baseline.Run(t, getBaseFileNameFromTest(t)+".baseline", f.stateBaseline.baseline.String(), baseline.Options{Subfolder: "fourslash/state"})
+	for command, content := range f.baselines {
+		baseline.Run(t, getBaselineFileName(t, command), content.String(), f.getBaselineOptions(command, testPath))
 	}
 }
 
@@ -2453,7 +2477,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		annotations = append(annotations, "=== No inlay hints ===")
 	}
 
-	f.addResultToBaseline(t, "Inlay Hints", strings.Join(annotations, "\n\n"))
+	f.addResultToBaseline(t, inlayHintsCmd, strings.Join(annotations, "\n\n"))
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {
@@ -2471,17 +2495,7 @@ func (f *FourslashTest) VerifySuggestionDiagnostics(t *testing.T, expected []*ls
 }
 
 func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic, filterDiagnostics func(*lsproto.Diagnostic) bool) {
-	params := &lsproto.DocumentDiagnosticParams{
-		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-		},
-	}
-	result := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
-
-	var actualDiagnostics []*lsproto.Diagnostic
-	if result.FullDocumentDiagnosticReport != nil {
-		actualDiagnostics = append(actualDiagnostics, result.FullDocumentDiagnosticReport.Items...)
-	}
+	actualDiagnostics := f.getDiagnostics(t, f.activeFilename)
 	actualDiagnostics = core.Filter(actualDiagnostics, filterDiagnostics)
 	emptyRange := lsproto.Range{}
 	expectedWithRanges := make([]*lsproto.Diagnostic, len(expected))
@@ -2504,9 +2518,207 @@ func (f *FourslashTest) verifyDiagnostics(t *testing.T, expected []*lsproto.Diag
 	assertDeepEqual(t, actualDiagnostics, expectedWithRanges, "Diagnostics do not match expected", diagnosticsIgnoreOpts)
 }
 
+func (f *FourslashTest) getDiagnostics(t *testing.T, fileName string) []*lsproto.Diagnostic {
+	params := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, params)
+	if result.FullDocumentDiagnosticReport != nil {
+		return result.FullDocumentDiagnosticReport.Items
+	}
+	return nil
+}
+
 func isSuggestionDiagnostic(diag *lsproto.Diagnostic) bool {
-	return diag.Tags != nil && len(*diag.Tags) > 0 ||
-		(diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityHint)
+	return diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityHint
+}
+
+func (f *FourslashTest) VerifyBaselineNonSuggestionDiagnostics(t *testing.T) {
+	var diagnostics []*fourslashDiagnostic
+	var files []*harnessutil.TestFile
+	for fileName, scriptInfo := range f.scriptInfos {
+		if tspath.HasJSONFileExtension(fileName) {
+			continue
+		}
+		files = append(files, &harnessutil.TestFile{UnitName: fileName, Content: scriptInfo.content})
+		lspDiagnostics := core.Filter(
+			f.getDiagnostics(t, fileName),
+			func(d *lsproto.Diagnostic) bool { return !isSuggestionDiagnostic(d) },
+		)
+		diagnostics = append(diagnostics, core.Map(lspDiagnostics, func(d *lsproto.Diagnostic) *fourslashDiagnostic {
+			return f.toDiagnostic(scriptInfo, d)
+		})...)
+	}
+	slices.SortFunc(files, func(a, b *harnessutil.TestFile) int {
+		return strings.Compare(a.UnitName, b.UnitName)
+	})
+	result := tsbaseline.GetErrorBaseline(t, files, diagnostics, compareDiagnostics, false /*pretty*/)
+	f.addResultToBaseline(t, nonSuggestionDiagnosticsCmd, result)
+}
+
+type fourslashDiagnostic struct {
+	file               *fourslashDiagnosticFile
+	loc                core.TextRange
+	code               int32
+	category           diagnostics.Category
+	message            string
+	relatedDiagnostics []*fourslashDiagnostic
+	reportsUnnecessary bool
+	reportsDeprecated  bool
+}
+
+type fourslashDiagnosticFile struct {
+	file        *harnessutil.TestFile
+	ecmaLineMap []core.TextPos
+}
+
+var _ diagnosticwriter.FileLike = (*fourslashDiagnosticFile)(nil)
+
+func (f *fourslashDiagnosticFile) FileName() string {
+	return f.file.UnitName
+}
+
+func (f *fourslashDiagnosticFile) Text() string {
+	return f.file.Content
+}
+
+func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
+	if f.ecmaLineMap == nil {
+		f.ecmaLineMap = core.ComputeECMALineStarts(f.file.Content)
+	}
+	return f.ecmaLineMap
+}
+
+var _ diagnosticwriter.Diagnostic = (*fourslashDiagnostic)(nil)
+
+func (d *fourslashDiagnostic) File() diagnosticwriter.FileLike {
+	return d.file
+}
+
+func (d *fourslashDiagnostic) Pos() int {
+	return d.loc.Pos()
+}
+
+func (d *fourslashDiagnostic) End() int {
+	return d.loc.End()
+}
+
+func (d *fourslashDiagnostic) Len() int {
+	return d.loc.Len()
+}
+
+func (d *fourslashDiagnostic) Code() int32 {
+	return d.code
+}
+
+func (d *fourslashDiagnostic) Category() diagnostics.Category {
+	return d.category
+}
+
+func (d *fourslashDiagnostic) Message() string {
+	return d.message
+}
+
+func (d *fourslashDiagnostic) MessageChain() []diagnosticwriter.Diagnostic {
+	return nil
+}
+
+func (d *fourslashDiagnostic) RelatedInformation() []diagnosticwriter.Diagnostic {
+	relatedInfo := make([]diagnosticwriter.Diagnostic, 0, len(d.relatedDiagnostics))
+	for _, relDiag := range d.relatedDiagnostics {
+		relatedInfo = append(relatedInfo, relDiag)
+	}
+	return relatedInfo
+}
+
+func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lsproto.Diagnostic) *fourslashDiagnostic {
+	var category diagnostics.Category
+	switch *lspDiagnostic.Severity {
+	case lsproto.DiagnosticSeverityError:
+		category = diagnostics.CategoryError
+	case lsproto.DiagnosticSeverityWarning:
+		category = diagnostics.CategoryWarning
+	case lsproto.DiagnosticSeverityInformation:
+		category = diagnostics.CategoryMessage
+	case lsproto.DiagnosticSeverityHint:
+		category = diagnostics.CategorySuggestion
+	default:
+		category = diagnostics.CategoryError
+	}
+	code := *lspDiagnostic.Code.Integer
+
+	var relatedDiagnostics []*fourslashDiagnostic
+	if lspDiagnostic.RelatedInformation != nil {
+		for _, info := range *lspDiagnostic.RelatedInformation {
+			relatedScriptInfo := f.getScriptInfo(info.Location.Uri.FileName())
+			if relatedScriptInfo == nil {
+				continue
+			}
+			relatedDiagnostic := &fourslashDiagnostic{
+				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
+				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				code:     code,
+				category: category,
+				message:  info.Message,
+			}
+			relatedDiagnostics = append(relatedDiagnostics, relatedDiagnostic)
+		}
+	}
+
+	diagnostic := &fourslashDiagnostic{
+		file: &fourslashDiagnosticFile{
+			file: &harnessutil.TestFile{
+				UnitName: scriptInfo.fileName,
+				Content:  scriptInfo.content,
+			},
+		},
+		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
+		code:               code,
+		category:           category,
+		message:            lspDiagnostic.Message,
+		relatedDiagnostics: relatedDiagnostics,
+	}
+	return diagnostic
+}
+
+func compareDiagnostics(d1, d2 *fourslashDiagnostic) int {
+	c := strings.Compare(d1.file.FileName(), d2.file.FileName())
+	if c != 0 {
+		return c
+	}
+	c = d1.Pos() - d2.Pos()
+	if c != 0 {
+		return c
+	}
+	c = d1.End() - d2.End()
+	if c != 0 {
+		return c
+	}
+	c = int(d1.code) - int(d2.code)
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.message, d2.message)
+	if c != 0 {
+		return c
+	}
+	return compareRelatedDiagnostics(d1.relatedDiagnostics, d2.relatedDiagnostics)
+}
+
+func compareRelatedDiagnostics(d1, d2 []*fourslashDiagnostic) int {
+	c := len(d2) - len(d1)
+	if c != 0 {
+		return c
+	}
+	for i := range d1 {
+		c = compareDiagnostics(d1[i], d2[i])
+		if c != 0 {
+			return c
+		}
+	}
+	return 0
 }
 
 func isLibFile(fileName string) bool {
@@ -2518,3 +2730,23 @@ func isLibFile(fileName string) bool {
 }
 
 var AnyTextEdits *[]*lsproto.TextEdit
+
+func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNames ...string) {
+	f.verifyBaselineDefinitions(
+		t,
+		goToImplementationCmd,
+		"/*GOTO IMPL*/", /*definitionMarker*/
+		func(t *testing.T, f *FourslashTest, fileName string, position lsproto.Position) lsproto.LocationOrLocationsOrDefinitionLinksOrNull {
+			params := &lsproto.ImplementationParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
+
+			return sendRequest(t, f, lsproto.TextDocumentImplementationInfo, params)
+		},
+		false, /*includeOriginalSelectionRange*/
+		markerNames...,
+	)
+}

@@ -20781,6 +20781,151 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	}
 }
 
+func unmarshalResult(method Method, data []byte) (any, error) {
+	switch method {
+	case MethodTextDocumentImplementation:
+		return unmarshalValue[ImplementationResponse](data)
+	case MethodTextDocumentTypeDefinition:
+		return unmarshalValue[TypeDefinitionResponse](data)
+	case MethodWorkspaceWorkspaceFolders:
+		return unmarshalValue[WorkspaceFoldersResponse](data)
+	case MethodWorkspaceConfiguration:
+		return unmarshalValue[ConfigurationResponse](data)
+	case MethodTextDocumentDocumentColor:
+		return unmarshalValue[DocumentColorResponse](data)
+	case MethodTextDocumentColorPresentation:
+		return unmarshalValue[ColorPresentationResponse](data)
+	case MethodTextDocumentFoldingRange:
+		return unmarshalValue[FoldingRangeResponse](data)
+	case MethodWorkspaceFoldingRangeRefresh:
+		return unmarshalValue[FoldingRangeRefreshResponse](data)
+	case MethodTextDocumentDeclaration:
+		return unmarshalValue[DeclarationResponse](data)
+	case MethodTextDocumentSelectionRange:
+		return unmarshalValue[SelectionRangeResponse](data)
+	case MethodWindowWorkDoneProgressCreate:
+		return unmarshalValue[WorkDoneProgressCreateResponse](data)
+	case MethodTextDocumentPrepareCallHierarchy:
+		return unmarshalValue[CallHierarchyPrepareResponse](data)
+	case MethodCallHierarchyIncomingCalls:
+		return unmarshalValue[CallHierarchyIncomingCallsResponse](data)
+	case MethodCallHierarchyOutgoingCalls:
+		return unmarshalValue[CallHierarchyOutgoingCallsResponse](data)
+	case MethodTextDocumentSemanticTokensFull:
+		return unmarshalValue[SemanticTokensResponse](data)
+	case MethodTextDocumentSemanticTokensFullDelta:
+		return unmarshalValue[SemanticTokensDeltaResponse](data)
+	case MethodTextDocumentSemanticTokensRange:
+		return unmarshalValue[SemanticTokensRangeResponse](data)
+	case MethodWorkspaceSemanticTokensRefresh:
+		return unmarshalValue[SemanticTokensRefreshResponse](data)
+	case MethodWindowShowDocument:
+		return unmarshalValue[ShowDocumentResponse](data)
+	case MethodTextDocumentLinkedEditingRange:
+		return unmarshalValue[LinkedEditingRangeResponse](data)
+	case MethodWorkspaceWillCreateFiles:
+		return unmarshalValue[WillCreateFilesResponse](data)
+	case MethodWorkspaceWillRenameFiles:
+		return unmarshalValue[WillRenameFilesResponse](data)
+	case MethodWorkspaceWillDeleteFiles:
+		return unmarshalValue[WillDeleteFilesResponse](data)
+	case MethodTextDocumentMoniker:
+		return unmarshalValue[MonikerResponse](data)
+	case MethodTextDocumentPrepareTypeHierarchy:
+		return unmarshalValue[TypeHierarchyPrepareResponse](data)
+	case MethodTypeHierarchySupertypes:
+		return unmarshalValue[TypeHierarchySupertypesResponse](data)
+	case MethodTypeHierarchySubtypes:
+		return unmarshalValue[TypeHierarchySubtypesResponse](data)
+	case MethodTextDocumentInlineValue:
+		return unmarshalValue[InlineValueResponse](data)
+	case MethodWorkspaceInlineValueRefresh:
+		return unmarshalValue[InlineValueRefreshResponse](data)
+	case MethodTextDocumentInlayHint:
+		return unmarshalValue[InlayHintResponse](data)
+	case MethodInlayHintResolve:
+		return unmarshalValue[InlayHintResolveResponse](data)
+	case MethodWorkspaceInlayHintRefresh:
+		return unmarshalValue[InlayHintRefreshResponse](data)
+	case MethodTextDocumentDiagnostic:
+		return unmarshalValue[DocumentDiagnosticResponse](data)
+	case MethodWorkspaceDiagnostic:
+		return unmarshalValue[WorkspaceDiagnosticResponse](data)
+	case MethodWorkspaceDiagnosticRefresh:
+		return unmarshalValue[DiagnosticRefreshResponse](data)
+	case MethodTextDocumentInlineCompletion:
+		return unmarshalValue[InlineCompletionResponse](data)
+	case MethodWorkspaceTextDocumentContent:
+		return unmarshalValue[TextDocumentContentResponse](data)
+	case MethodWorkspaceTextDocumentContentRefresh:
+		return unmarshalValue[TextDocumentContentRefreshResponse](data)
+	case MethodClientRegisterCapability:
+		return unmarshalValue[RegistrationResponse](data)
+	case MethodClientUnregisterCapability:
+		return unmarshalValue[UnregistrationResponse](data)
+	case MethodInitialize:
+		return unmarshalValue[InitializeResponse](data)
+	case MethodShutdown:
+		return unmarshalValue[ShutdownResponse](data)
+	case MethodWindowShowMessageRequest:
+		return unmarshalValue[ShowMessageResponse](data)
+	case MethodTextDocumentWillSaveWaitUntil:
+		return unmarshalValue[WillSaveTextDocumentWaitUntilResponse](data)
+	case MethodTextDocumentCompletion:
+		return unmarshalValue[CompletionResponse](data)
+	case MethodCompletionItemResolve:
+		return unmarshalValue[CompletionResolveResponse](data)
+	case MethodTextDocumentHover:
+		return unmarshalValue[HoverResponse](data)
+	case MethodTextDocumentSignatureHelp:
+		return unmarshalValue[SignatureHelpResponse](data)
+	case MethodTextDocumentDefinition:
+		return unmarshalValue[DefinitionResponse](data)
+	case MethodTextDocumentReferences:
+		return unmarshalValue[ReferencesResponse](data)
+	case MethodTextDocumentDocumentHighlight:
+		return unmarshalValue[DocumentHighlightResponse](data)
+	case MethodTextDocumentDocumentSymbol:
+		return unmarshalValue[DocumentSymbolResponse](data)
+	case MethodTextDocumentCodeAction:
+		return unmarshalValue[CodeActionResponse](data)
+	case MethodCodeActionResolve:
+		return unmarshalValue[CodeActionResolveResponse](data)
+	case MethodWorkspaceSymbol:
+		return unmarshalValue[WorkspaceSymbolResponse](data)
+	case MethodWorkspaceSymbolResolve:
+		return unmarshalValue[WorkspaceSymbolResolveResponse](data)
+	case MethodTextDocumentCodeLens:
+		return unmarshalValue[CodeLensResponse](data)
+	case MethodCodeLensResolve:
+		return unmarshalValue[CodeLensResolveResponse](data)
+	case MethodWorkspaceCodeLensRefresh:
+		return unmarshalValue[CodeLensRefreshResponse](data)
+	case MethodTextDocumentDocumentLink:
+		return unmarshalValue[DocumentLinkResponse](data)
+	case MethodDocumentLinkResolve:
+		return unmarshalValue[DocumentLinkResolveResponse](data)
+	case MethodTextDocumentFormatting:
+		return unmarshalValue[DocumentFormattingResponse](data)
+	case MethodTextDocumentRangeFormatting:
+		return unmarshalValue[DocumentRangeFormattingResponse](data)
+	case MethodTextDocumentRangesFormatting:
+		return unmarshalValue[DocumentRangesFormattingResponse](data)
+	case MethodTextDocumentOnTypeFormatting:
+		return unmarshalValue[DocumentOnTypeFormattingResponse](data)
+	case MethodTextDocumentRename:
+		return unmarshalValue[RenameResponse](data)
+	case MethodTextDocumentPrepareRename:
+		return unmarshalValue[PrepareRenameResponse](data)
+	case MethodWorkspaceExecuteCommand:
+		return unmarshalValue[ExecuteCommandResponse](data)
+	case MethodWorkspaceApplyEdit:
+		return unmarshalValue[ApplyWorkspaceEditResponse](data)
+	default:
+		return unmarshalAny(data)
+	}
+}
+
 // Methods
 const (
 	// A request to resolve the implementation locations of a symbol at a given text
@@ -25796,4 +25941,2358 @@ func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return fmt.Errorf("expected StringLiteralSnippet value %s, got %s", `"snippet"`, v)
 	}
 	return nil
+}
+
+// Helper function for dereferencing pointers with zero value fallback
+func derefOr[T any](v *T) T {
+	if v != nil {
+		return *v
+	}
+	var zero T
+	return zero
+}
+
+// ResolvedChangeAnnotationsSupportOptions is a resolved version of ChangeAnnotationsSupportOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedChangeAnnotationsSupportOptions struct {
+	// Whether the client groups edits with equal labels into tree nodes,
+	// for instance all edits labelled with "Changes in Strings" would
+	// be a tree node.
+	GroupsOnLabel bool `json:"groupsOnLabel,omitzero"`
+}
+
+func resolveChangeAnnotationsSupportOptions(v *ChangeAnnotationsSupportOptions) ResolvedChangeAnnotationsSupportOptions {
+	if v == nil {
+		return ResolvedChangeAnnotationsSupportOptions{}
+	}
+	return ResolvedChangeAnnotationsSupportOptions{
+		GroupsOnLabel: derefOr(v.GroupsOnLabel),
+	}
+}
+
+// ResolvedWorkspaceEditClientCapabilities is a resolved version of WorkspaceEditClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedWorkspaceEditClientCapabilities struct {
+	// The client supports versioned document changes in `WorkspaceEdit`s
+	DocumentChanges bool `json:"documentChanges,omitzero"`
+	// The resource operations the client supports. Clients should at least
+	// support 'create', 'rename' and 'delete' files and folders.
+	//
+	// Since: 3.13.0
+	ResourceOperations []ResourceOperationKind `json:"resourceOperations,omitzero"`
+	// The failure handling strategy of a client if applying the workspace edit
+	// fails.
+	//
+	// Since: 3.13.0
+	FailureHandling FailureHandlingKind `json:"failureHandling,omitzero"`
+	// Whether the client normalizes line endings to the client specific
+	// setting.
+	// If set to `true` the client will normalize line ending characters
+	// in a workspace edit to the client-specified new line
+	// character.
+	//
+	// Since: 3.16.0
+	NormalizesLineEndings bool `json:"normalizesLineEndings,omitzero"`
+	// Whether the client in general supports change annotations on text edits,
+	// create file, rename file and delete file changes.
+	//
+	// Since: 3.16.0
+	ChangeAnnotationSupport ResolvedChangeAnnotationsSupportOptions `json:"changeAnnotationSupport,omitzero"`
+	// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MetadataSupport bool `json:"metadataSupport,omitzero"`
+	// Whether the client supports snippets as text edits.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	SnippetEditSupport bool `json:"snippetEditSupport,omitzero"`
+}
+
+func resolveWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) ResolvedWorkspaceEditClientCapabilities {
+	if v == nil {
+		return ResolvedWorkspaceEditClientCapabilities{}
+	}
+	return ResolvedWorkspaceEditClientCapabilities{
+		DocumentChanges:         derefOr(v.DocumentChanges),
+		ResourceOperations:      derefOr(v.ResourceOperations),
+		FailureHandling:         derefOr(v.FailureHandling),
+		NormalizesLineEndings:   derefOr(v.NormalizesLineEndings),
+		ChangeAnnotationSupport: resolveChangeAnnotationsSupportOptions(v.ChangeAnnotationSupport),
+		MetadataSupport:         derefOr(v.MetadataSupport),
+		SnippetEditSupport:      derefOr(v.SnippetEditSupport),
+	}
+}
+
+// ResolvedDidChangeConfigurationClientCapabilities is a resolved version of DidChangeConfigurationClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedDidChangeConfigurationClientCapabilities struct {
+	// Did change configuration notification supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveDidChangeConfigurationClientCapabilities(v *DidChangeConfigurationClientCapabilities) ResolvedDidChangeConfigurationClientCapabilities {
+	if v == nil {
+		return ResolvedDidChangeConfigurationClientCapabilities{}
+	}
+	return ResolvedDidChangeConfigurationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedDidChangeWatchedFilesClientCapabilities is a resolved version of DidChangeWatchedFilesClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedDidChangeWatchedFilesClientCapabilities struct {
+	// Did change watched files notification supports dynamic registration. Please note
+	// that the current protocol doesn't support static configuration for file changes
+	// from the server side.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Whether the client has support for pattern
+	// or not.
+	//
+	// Since: 3.17.0
+	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
+}
+
+func resolveDidChangeWatchedFilesClientCapabilities(v *DidChangeWatchedFilesClientCapabilities) ResolvedDidChangeWatchedFilesClientCapabilities {
+	if v == nil {
+		return ResolvedDidChangeWatchedFilesClientCapabilities{}
+	}
+	return ResolvedDidChangeWatchedFilesClientCapabilities{
+		DynamicRegistration:    derefOr(v.DynamicRegistration),
+		RelativePatternSupport: derefOr(v.RelativePatternSupport),
+	}
+}
+
+// ResolvedClientSymbolKindOptions is a resolved version of ClientSymbolKindOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSymbolKindOptions struct {
+	// The symbol kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	//
+	// If this property is not present the client only supports
+	// the symbol kinds from `File` to `Array` as defined in
+	// the initial version of the protocol.
+	ValueSet []SymbolKind `json:"valueSet,omitzero"`
+}
+
+func resolveClientSymbolKindOptions(v *ClientSymbolKindOptions) ResolvedClientSymbolKindOptions {
+	if v == nil {
+		return ResolvedClientSymbolKindOptions{}
+	}
+	return ResolvedClientSymbolKindOptions{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+// ResolvedClientSymbolTagOptions is a resolved version of ClientSymbolTagOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSymbolTagOptions struct {
+	// The tags supported by the client.
+	ValueSet []SymbolTag `json:"valueSet,omitzero"`
+}
+
+func resolveClientSymbolTagOptions(v *ClientSymbolTagOptions) ResolvedClientSymbolTagOptions {
+	if v == nil {
+		return ResolvedClientSymbolTagOptions{}
+	}
+	return ResolvedClientSymbolTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedClientSymbolResolveOptions is a resolved version of ClientSymbolResolveOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSymbolResolveOptions struct {
+	// The properties that a client can resolve lazily. Usually
+	// `location.range`
+	Properties []string `json:"properties,omitzero"`
+}
+
+func resolveClientSymbolResolveOptions(v *ClientSymbolResolveOptions) ResolvedClientSymbolResolveOptions {
+	if v == nil {
+		return ResolvedClientSymbolResolveOptions{}
+	}
+	return ResolvedClientSymbolResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+// ResolvedWorkspaceSymbolClientCapabilities is a resolved version of WorkspaceSymbolClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities for a WorkspaceSymbolRequest.
+type ResolvedWorkspaceSymbolClientCapabilities struct {
+	// Symbol request supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
+	SymbolKind ResolvedClientSymbolKindOptions `json:"symbolKind,omitzero"`
+	// The client supports tags on `SymbolInformation`.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.16.0
+	TagSupport ResolvedClientSymbolTagOptions `json:"tagSupport,omitzero"`
+	// The client support partial workspace symbols. The client will send the
+	// request `workspaceSymbol/resolve` to the server to resolve additional
+	// properties.
+	//
+	// Since: 3.17.0
+	ResolveSupport ResolvedClientSymbolResolveOptions `json:"resolveSupport,omitzero"`
+}
+
+func resolveWorkspaceSymbolClientCapabilities(v *WorkspaceSymbolClientCapabilities) ResolvedWorkspaceSymbolClientCapabilities {
+	if v == nil {
+		return ResolvedWorkspaceSymbolClientCapabilities{}
+	}
+	return ResolvedWorkspaceSymbolClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		SymbolKind:          resolveClientSymbolKindOptions(v.SymbolKind),
+		TagSupport:          resolveClientSymbolTagOptions(v.TagSupport),
+		ResolveSupport:      resolveClientSymbolResolveOptions(v.ResolveSupport),
+	}
+}
+
+// ResolvedExecuteCommandClientCapabilities is a resolved version of ExecuteCommandClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The client capabilities of a ExecuteCommandRequest.
+type ResolvedExecuteCommandClientCapabilities struct {
+	// Execute command supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveExecuteCommandClientCapabilities(v *ExecuteCommandClientCapabilities) ResolvedExecuteCommandClientCapabilities {
+	if v == nil {
+		return ResolvedExecuteCommandClientCapabilities{}
+	}
+	return ResolvedExecuteCommandClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedSemanticTokensWorkspaceClientCapabilities is a resolved version of SemanticTokensWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.16.0
+type ResolvedSemanticTokensWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// semantic tokens currently shown. It should be used with absolute care
+	// and is useful for situation where a server for example detects a project
+	// wide change that requires such a calculation.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveSemanticTokensWorkspaceClientCapabilities(v *SemanticTokensWorkspaceClientCapabilities) ResolvedSemanticTokensWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedSemanticTokensWorkspaceClientCapabilities{}
+	}
+	return ResolvedSemanticTokensWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedCodeLensWorkspaceClientCapabilities is a resolved version of CodeLensWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.16.0
+type ResolvedCodeLensWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from the
+	// server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// code lenses currently shown. It should be used with absolute care and is
+	// useful for situation where a server for example detect a project wide
+	// change that requires such a calculation.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveCodeLensWorkspaceClientCapabilities(v *CodeLensWorkspaceClientCapabilities) ResolvedCodeLensWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedCodeLensWorkspaceClientCapabilities{}
+	}
+	return ResolvedCodeLensWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedFileOperationClientCapabilities is a resolved version of FileOperationClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Capabilities relating to events from file operations by the user in the client.
+//
+// These events do not come from the file system, they come from user operations
+// like renaming a file in the UI.
+//
+// Since: 3.16.0
+type ResolvedFileOperationClientCapabilities struct {
+	// Whether the client supports dynamic registration for file requests/notifications.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client has support for sending didCreateFiles notifications.
+	DidCreate bool `json:"didCreate,omitzero"`
+	// The client has support for sending willCreateFiles requests.
+	WillCreate bool `json:"willCreate,omitzero"`
+	// The client has support for sending didRenameFiles notifications.
+	DidRename bool `json:"didRename,omitzero"`
+	// The client has support for sending willRenameFiles requests.
+	WillRename bool `json:"willRename,omitzero"`
+	// The client has support for sending didDeleteFiles notifications.
+	DidDelete bool `json:"didDelete,omitzero"`
+	// The client has support for sending willDeleteFiles requests.
+	WillDelete bool `json:"willDelete,omitzero"`
+}
+
+func resolveFileOperationClientCapabilities(v *FileOperationClientCapabilities) ResolvedFileOperationClientCapabilities {
+	if v == nil {
+		return ResolvedFileOperationClientCapabilities{}
+	}
+	return ResolvedFileOperationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		DidCreate:           derefOr(v.DidCreate),
+		WillCreate:          derefOr(v.WillCreate),
+		DidRename:           derefOr(v.DidRename),
+		WillRename:          derefOr(v.WillRename),
+		DidDelete:           derefOr(v.DidDelete),
+		WillDelete:          derefOr(v.WillDelete),
+	}
+}
+
+// ResolvedInlineValueWorkspaceClientCapabilities is a resolved version of InlineValueWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client workspace capabilities specific to inline values.
+//
+// Since: 3.17.0
+type ResolvedInlineValueWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from the
+	// server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// inline values currently shown. It should be used with absolute care and is
+	// useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveInlineValueWorkspaceClientCapabilities(v *InlineValueWorkspaceClientCapabilities) ResolvedInlineValueWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedInlineValueWorkspaceClientCapabilities{}
+	}
+	return ResolvedInlineValueWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedInlayHintWorkspaceClientCapabilities is a resolved version of InlayHintWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client workspace capabilities specific to inlay hints.
+//
+// Since: 3.17.0
+type ResolvedInlayHintWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// inlay hints currently shown. It should be used with absolute care and
+	// is useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveInlayHintWorkspaceClientCapabilities(v *InlayHintWorkspaceClientCapabilities) ResolvedInlayHintWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedInlayHintWorkspaceClientCapabilities{}
+	}
+	return ResolvedInlayHintWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedDiagnosticWorkspaceClientCapabilities is a resolved version of DiagnosticWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Workspace client capabilities specific to diagnostic pull requests.
+//
+// Since: 3.17.0
+type ResolvedDiagnosticWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// pulled diagnostics currently shown. It should be used with absolute care and
+	// is useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveDiagnosticWorkspaceClientCapabilities(v *DiagnosticWorkspaceClientCapabilities) ResolvedDiagnosticWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedDiagnosticWorkspaceClientCapabilities{}
+	}
+	return ResolvedDiagnosticWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedFoldingRangeWorkspaceClientCapabilities is a resolved version of FoldingRangeWorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// # Client workspace capabilities specific to folding ranges
+//
+// Since: 3.18.0
+//
+// Proposed.
+type ResolvedFoldingRangeWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from the
+	// server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// folding ranges currently shown. It should be used with absolute care and is
+	// useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	RefreshSupport bool `json:"refreshSupport,omitzero"`
+}
+
+func resolveFoldingRangeWorkspaceClientCapabilities(v *FoldingRangeWorkspaceClientCapabilities) ResolvedFoldingRangeWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedFoldingRangeWorkspaceClientCapabilities{}
+	}
+	return ResolvedFoldingRangeWorkspaceClientCapabilities{
+		RefreshSupport: derefOr(v.RefreshSupport),
+	}
+}
+
+// ResolvedTextDocumentContentClientCapabilities is a resolved version of TextDocumentContentClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities for a text document content provider.
+//
+// Since: 3.18.0
+//
+// Proposed.
+type ResolvedTextDocumentContentClientCapabilities struct {
+	// Text document content provider supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveTextDocumentContentClientCapabilities(v *TextDocumentContentClientCapabilities) ResolvedTextDocumentContentClientCapabilities {
+	if v == nil {
+		return ResolvedTextDocumentContentClientCapabilities{}
+	}
+	return ResolvedTextDocumentContentClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedWorkspaceClientCapabilities is a resolved version of WorkspaceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Workspace specific client capabilities.
+type ResolvedWorkspaceClientCapabilities struct {
+	// The client supports applying batch edits
+	// to the workspace by supporting the request
+	// 'workspace/applyEdit'
+	ApplyEdit bool `json:"applyEdit,omitzero"`
+	// Capabilities specific to `WorkspaceEdit`s.
+	WorkspaceEdit ResolvedWorkspaceEditClientCapabilities `json:"workspaceEdit,omitzero"`
+	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
+	DidChangeConfiguration ResolvedDidChangeConfigurationClientCapabilities `json:"didChangeConfiguration,omitzero"`
+	// Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
+	DidChangeWatchedFiles ResolvedDidChangeWatchedFilesClientCapabilities `json:"didChangeWatchedFiles,omitzero"`
+	// Capabilities specific to the `workspace/symbol` request.
+	Symbol ResolvedWorkspaceSymbolClientCapabilities `json:"symbol,omitzero"`
+	// Capabilities specific to the `workspace/executeCommand` request.
+	ExecuteCommand ResolvedExecuteCommandClientCapabilities `json:"executeCommand,omitzero"`
+	// The client has support for workspace folders.
+	//
+	// Since: 3.6.0
+	WorkspaceFolders bool `json:"workspaceFolders,omitzero"`
+	// The client supports `workspace/configuration` requests.
+	//
+	// Since: 3.6.0
+	Configuration bool `json:"configuration,omitzero"`
+	// Capabilities specific to the semantic token requests scoped to the
+	// workspace.
+	//
+	// Since: 3.16.0.
+	SemanticTokens ResolvedSemanticTokensWorkspaceClientCapabilities `json:"semanticTokens,omitzero"`
+	// Capabilities specific to the code lens requests scoped to the
+	// workspace.
+	//
+	// Since: 3.16.0.
+	CodeLens ResolvedCodeLensWorkspaceClientCapabilities `json:"codeLens,omitzero"`
+	// The client has support for file notifications/requests for user operations on files.
+	//
+	// Since 3.16.0
+	FileOperations ResolvedFileOperationClientCapabilities `json:"fileOperations,omitzero"`
+	// Capabilities specific to the inline values requests scoped to the
+	// workspace.
+	//
+	// Since: 3.17.0.
+	InlineValue ResolvedInlineValueWorkspaceClientCapabilities `json:"inlineValue,omitzero"`
+	// Capabilities specific to the inlay hint requests scoped to the
+	// workspace.
+	//
+	// Since: 3.17.0.
+	InlayHint ResolvedInlayHintWorkspaceClientCapabilities `json:"inlayHint,omitzero"`
+	// Capabilities specific to the diagnostic requests scoped to the
+	// workspace.
+	//
+	// Since: 3.17.0.
+	Diagnostics ResolvedDiagnosticWorkspaceClientCapabilities `json:"diagnostics,omitzero"`
+	// Capabilities specific to the folding range requests scoped to the workspace.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	FoldingRange ResolvedFoldingRangeWorkspaceClientCapabilities `json:"foldingRange,omitzero"`
+	// Capabilities specific to the `workspace/textDocumentContent` request.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	TextDocumentContent ResolvedTextDocumentContentClientCapabilities `json:"textDocumentContent,omitzero"`
+}
+
+func resolveWorkspaceClientCapabilities(v *WorkspaceClientCapabilities) ResolvedWorkspaceClientCapabilities {
+	if v == nil {
+		return ResolvedWorkspaceClientCapabilities{}
+	}
+	return ResolvedWorkspaceClientCapabilities{
+		ApplyEdit:              derefOr(v.ApplyEdit),
+		WorkspaceEdit:          resolveWorkspaceEditClientCapabilities(v.WorkspaceEdit),
+		DidChangeConfiguration: resolveDidChangeConfigurationClientCapabilities(v.DidChangeConfiguration),
+		DidChangeWatchedFiles:  resolveDidChangeWatchedFilesClientCapabilities(v.DidChangeWatchedFiles),
+		Symbol:                 resolveWorkspaceSymbolClientCapabilities(v.Symbol),
+		ExecuteCommand:         resolveExecuteCommandClientCapabilities(v.ExecuteCommand),
+		WorkspaceFolders:       derefOr(v.WorkspaceFolders),
+		Configuration:          derefOr(v.Configuration),
+		SemanticTokens:         resolveSemanticTokensWorkspaceClientCapabilities(v.SemanticTokens),
+		CodeLens:               resolveCodeLensWorkspaceClientCapabilities(v.CodeLens),
+		FileOperations:         resolveFileOperationClientCapabilities(v.FileOperations),
+		InlineValue:            resolveInlineValueWorkspaceClientCapabilities(v.InlineValue),
+		InlayHint:              resolveInlayHintWorkspaceClientCapabilities(v.InlayHint),
+		Diagnostics:            resolveDiagnosticWorkspaceClientCapabilities(v.Diagnostics),
+		FoldingRange:           resolveFoldingRangeWorkspaceClientCapabilities(v.FoldingRange),
+		TextDocumentContent:    resolveTextDocumentContentClientCapabilities(v.TextDocumentContent),
+	}
+}
+
+// ResolvedTextDocumentSyncClientCapabilities is a resolved version of TextDocumentSyncClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedTextDocumentSyncClientCapabilities struct {
+	// Whether text document synchronization supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports sending will save notifications.
+	WillSave bool `json:"willSave,omitzero"`
+	// The client supports sending a will save request and
+	// waits for a response providing text edits which will
+	// be applied to the document before it is saved.
+	WillSaveWaitUntil bool `json:"willSaveWaitUntil,omitzero"`
+	// The client supports did save notifications.
+	DidSave bool `json:"didSave,omitzero"`
+}
+
+func resolveTextDocumentSyncClientCapabilities(v *TextDocumentSyncClientCapabilities) ResolvedTextDocumentSyncClientCapabilities {
+	if v == nil {
+		return ResolvedTextDocumentSyncClientCapabilities{}
+	}
+	return ResolvedTextDocumentSyncClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		WillSave:            derefOr(v.WillSave),
+		WillSaveWaitUntil:   derefOr(v.WillSaveWaitUntil),
+		DidSave:             derefOr(v.DidSave),
+	}
+}
+
+// ResolvedTextDocumentFilterClientCapabilities is a resolved version of TextDocumentFilterClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedTextDocumentFilterClientCapabilities struct {
+	// The client supports Relative Patterns.
+	//
+	// Since: 3.18.0
+	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
+}
+
+func resolveTextDocumentFilterClientCapabilities(v *TextDocumentFilterClientCapabilities) ResolvedTextDocumentFilterClientCapabilities {
+	if v == nil {
+		return ResolvedTextDocumentFilterClientCapabilities{}
+	}
+	return ResolvedTextDocumentFilterClientCapabilities{
+		RelativePatternSupport: derefOr(v.RelativePatternSupport),
+	}
+}
+
+// ResolvedCompletionItemTagOptions is a resolved version of CompletionItemTagOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedCompletionItemTagOptions struct {
+	// The tags supported by the client.
+	ValueSet []CompletionItemTag `json:"valueSet,omitzero"`
+}
+
+func resolveCompletionItemTagOptions(v *CompletionItemTagOptions) ResolvedCompletionItemTagOptions {
+	if v == nil {
+		return ResolvedCompletionItemTagOptions{}
+	}
+	return ResolvedCompletionItemTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedClientCompletionItemResolveOptions is a resolved version of ClientCompletionItemResolveOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCompletionItemResolveOptions struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties,omitzero"`
+}
+
+func resolveClientCompletionItemResolveOptions(v *ClientCompletionItemResolveOptions) ResolvedClientCompletionItemResolveOptions {
+	if v == nil {
+		return ResolvedClientCompletionItemResolveOptions{}
+	}
+	return ResolvedClientCompletionItemResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+// ResolvedClientCompletionItemInsertTextModeOptions is a resolved version of ClientCompletionItemInsertTextModeOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCompletionItemInsertTextModeOptions struct {
+	ValueSet []InsertTextMode `json:"valueSet,omitzero"`
+}
+
+func resolveClientCompletionItemInsertTextModeOptions(v *ClientCompletionItemInsertTextModeOptions) ResolvedClientCompletionItemInsertTextModeOptions {
+	if v == nil {
+		return ResolvedClientCompletionItemInsertTextModeOptions{}
+	}
+	return ResolvedClientCompletionItemInsertTextModeOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedClientCompletionItemOptions is a resolved version of ClientCompletionItemOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCompletionItemOptions struct {
+	// Client supports snippets as insert text.
+	//
+	// A snippet can define tab stops and placeholders with `$1`, `$2`
+	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
+	// the end of the snippet. Placeholders with equal identifiers are linked,
+	// that is typing in one will update others too.
+	SnippetSupport bool `json:"snippetSupport,omitzero"`
+	// Client supports commit characters on a completion item.
+	CommitCharactersSupport bool `json:"commitCharactersSupport,omitzero"`
+	// Client supports the following content formats for the documentation
+	// property. The order describes the preferred format of the client.
+	DocumentationFormat []MarkupKind `json:"documentationFormat,omitzero"`
+	// Client supports the deprecated property on a completion item.
+	DeprecatedSupport bool `json:"deprecatedSupport,omitzero"`
+	// Client supports the preselect property on a completion item.
+	PreselectSupport bool `json:"preselectSupport,omitzero"`
+	// Client supports the tag property on a completion item. Clients supporting
+	// tags have to handle unknown tags gracefully. Clients especially need to
+	// preserve unknown tags when sending a completion item back to the server in
+	// a resolve call.
+	//
+	// Since: 3.15.0
+	TagSupport ResolvedCompletionItemTagOptions `json:"tagSupport,omitzero"`
+	// Client support insert replace edit to control different behavior if a
+	// completion item is inserted in the text or should replace text.
+	//
+	// Since: 3.16.0
+	InsertReplaceSupport bool `json:"insertReplaceSupport,omitzero"`
+	// Indicates which properties a client can resolve lazily on a completion
+	// item. Before version 3.16.0 only the predefined properties `documentation`
+	// and `details` could be resolved lazily.
+	//
+	// Since: 3.16.0
+	ResolveSupport ResolvedClientCompletionItemResolveOptions `json:"resolveSupport,omitzero"`
+	// The client supports the `insertTextMode` property on
+	// a completion item to override the whitespace handling mode
+	// as defined by the client (see `insertTextMode`).
+	//
+	// Since: 3.16.0
+	InsertTextModeSupport ResolvedClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport,omitzero"`
+	// The client has support for completion item label
+	// details (see also `CompletionItemLabelDetails`).
+	//
+	// Since: 3.17.0
+	LabelDetailsSupport bool `json:"labelDetailsSupport,omitzero"`
+}
+
+func resolveClientCompletionItemOptions(v *ClientCompletionItemOptions) ResolvedClientCompletionItemOptions {
+	if v == nil {
+		return ResolvedClientCompletionItemOptions{}
+	}
+	return ResolvedClientCompletionItemOptions{
+		SnippetSupport:          derefOr(v.SnippetSupport),
+		CommitCharactersSupport: derefOr(v.CommitCharactersSupport),
+		DocumentationFormat:     derefOr(v.DocumentationFormat),
+		DeprecatedSupport:       derefOr(v.DeprecatedSupport),
+		PreselectSupport:        derefOr(v.PreselectSupport),
+		TagSupport:              resolveCompletionItemTagOptions(v.TagSupport),
+		InsertReplaceSupport:    derefOr(v.InsertReplaceSupport),
+		ResolveSupport:          resolveClientCompletionItemResolveOptions(v.ResolveSupport),
+		InsertTextModeSupport:   resolveClientCompletionItemInsertTextModeOptions(v.InsertTextModeSupport),
+		LabelDetailsSupport:     derefOr(v.LabelDetailsSupport),
+	}
+}
+
+// ResolvedClientCompletionItemOptionsKind is a resolved version of ClientCompletionItemOptionsKind with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCompletionItemOptionsKind struct {
+	// The completion item kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	//
+	// If this property is not present the client only supports
+	// the completion items kinds from `Text` to `Reference` as defined in
+	// the initial version of the protocol.
+	ValueSet []CompletionItemKind `json:"valueSet,omitzero"`
+}
+
+func resolveClientCompletionItemOptionsKind(v *ClientCompletionItemOptionsKind) ResolvedClientCompletionItemOptionsKind {
+	if v == nil {
+		return ResolvedClientCompletionItemOptionsKind{}
+	}
+	return ResolvedClientCompletionItemOptionsKind{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+// ResolvedCompletionListCapabilities is a resolved version of CompletionListCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The client supports the following `CompletionList` specific
+// capabilities.
+//
+// Since: 3.17.0
+type ResolvedCompletionListCapabilities struct {
+	// The client supports the following itemDefaults on
+	// a completion list.
+	//
+	// The value lists the supported property names of the
+	// `CompletionList.itemDefaults` object. If omitted
+	// no properties are supported.
+	//
+	// Since: 3.17.0
+	ItemDefaults []string `json:"itemDefaults,omitzero"`
+	// Specifies whether the client supports `CompletionList.applyKind` to
+	// indicate how supported values from `completionList.itemDefaults`
+	// and `completion` will be combined.
+	//
+	// If a client supports `applyKind` it must support it for all fields
+	// that it supports that are listed in `CompletionList.applyKind`. This
+	// means when clients add support for new/future fields in completion
+	// items the MUST also support merge for them if those fields are
+	// defined in `CompletionList.applyKind`.
+	//
+	// Since: 3.18.0
+	ApplyKindSupport bool `json:"applyKindSupport,omitzero"`
+}
+
+func resolveCompletionListCapabilities(v *CompletionListCapabilities) ResolvedCompletionListCapabilities {
+	if v == nil {
+		return ResolvedCompletionListCapabilities{}
+	}
+	return ResolvedCompletionListCapabilities{
+		ItemDefaults:     derefOr(v.ItemDefaults),
+		ApplyKindSupport: derefOr(v.ApplyKindSupport),
+	}
+}
+
+// ResolvedCompletionClientCapabilities is a resolved version of CompletionClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Completion client capabilities
+type ResolvedCompletionClientCapabilities struct {
+	// Whether completion supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports the following `CompletionItem` specific
+	// capabilities.
+	CompletionItem     ResolvedClientCompletionItemOptions     `json:"completionItem,omitzero"`
+	CompletionItemKind ResolvedClientCompletionItemOptionsKind `json:"completionItemKind,omitzero"`
+	// Defines how the client handles whitespace and indentation
+	// when accepting a completion item that uses multi line
+	// text in either `insertText` or `textEdit`.
+	//
+	// Since: 3.17.0
+	InsertTextMode InsertTextMode `json:"insertTextMode,omitzero"`
+	// The client supports to send additional context information for a
+	// `textDocument/completion` request.
+	ContextSupport bool `json:"contextSupport,omitzero"`
+	// The client supports the following `CompletionList` specific
+	// capabilities.
+	//
+	// Since: 3.17.0
+	CompletionList ResolvedCompletionListCapabilities `json:"completionList,omitzero"`
+}
+
+func resolveCompletionClientCapabilities(v *CompletionClientCapabilities) ResolvedCompletionClientCapabilities {
+	if v == nil {
+		return ResolvedCompletionClientCapabilities{}
+	}
+	return ResolvedCompletionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		CompletionItem:      resolveClientCompletionItemOptions(v.CompletionItem),
+		CompletionItemKind:  resolveClientCompletionItemOptionsKind(v.CompletionItemKind),
+		InsertTextMode:      derefOr(v.InsertTextMode),
+		ContextSupport:      derefOr(v.ContextSupport),
+		CompletionList:      resolveCompletionListCapabilities(v.CompletionList),
+	}
+}
+
+// ResolvedHoverClientCapabilities is a resolved version of HoverClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedHoverClientCapabilities struct {
+	// Whether hover supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Client supports the following content formats for the content
+	// property. The order describes the preferred format of the client.
+	ContentFormat []MarkupKind `json:"contentFormat,omitzero"`
+}
+
+func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverClientCapabilities {
+	if v == nil {
+		return ResolvedHoverClientCapabilities{}
+	}
+	return ResolvedHoverClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ContentFormat:       derefOr(v.ContentFormat),
+	}
+}
+
+// ResolvedClientSignatureParameterInformationOptions is a resolved version of ClientSignatureParameterInformationOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSignatureParameterInformationOptions struct {
+	// The client supports processing label offsets instead of a
+	// simple label string.
+	//
+	// Since: 3.14.0
+	LabelOffsetSupport bool `json:"labelOffsetSupport,omitzero"`
+}
+
+func resolveClientSignatureParameterInformationOptions(v *ClientSignatureParameterInformationOptions) ResolvedClientSignatureParameterInformationOptions {
+	if v == nil {
+		return ResolvedClientSignatureParameterInformationOptions{}
+	}
+	return ResolvedClientSignatureParameterInformationOptions{
+		LabelOffsetSupport: derefOr(v.LabelOffsetSupport),
+	}
+}
+
+// ResolvedClientSignatureInformationOptions is a resolved version of ClientSignatureInformationOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSignatureInformationOptions struct {
+	// Client supports the following content formats for the documentation
+	// property. The order describes the preferred format of the client.
+	DocumentationFormat []MarkupKind `json:"documentationFormat,omitzero"`
+	// Client capabilities specific to parameter information.
+	ParameterInformation ResolvedClientSignatureParameterInformationOptions `json:"parameterInformation,omitzero"`
+	// The client supports the `activeParameter` property on `SignatureInformation`
+	// literal.
+	//
+	// Since: 3.16.0
+	ActiveParameterSupport bool `json:"activeParameterSupport,omitzero"`
+	// The client supports the `activeParameter` property on
+	// `SignatureHelp`/`SignatureInformation` being set to `null` to
+	// indicate that no parameter should be active.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	NoActiveParameterSupport bool `json:"noActiveParameterSupport,omitzero"`
+}
+
+func resolveClientSignatureInformationOptions(v *ClientSignatureInformationOptions) ResolvedClientSignatureInformationOptions {
+	if v == nil {
+		return ResolvedClientSignatureInformationOptions{}
+	}
+	return ResolvedClientSignatureInformationOptions{
+		DocumentationFormat:      derefOr(v.DocumentationFormat),
+		ParameterInformation:     resolveClientSignatureParameterInformationOptions(v.ParameterInformation),
+		ActiveParameterSupport:   derefOr(v.ActiveParameterSupport),
+		NoActiveParameterSupport: derefOr(v.NoActiveParameterSupport),
+	}
+}
+
+// ResolvedSignatureHelpClientCapabilities is a resolved version of SignatureHelpClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client Capabilities for a SignatureHelpRequest.
+type ResolvedSignatureHelpClientCapabilities struct {
+	// Whether signature help supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports the following `SignatureInformation`
+	// specific properties.
+	SignatureInformation ResolvedClientSignatureInformationOptions `json:"signatureInformation,omitzero"`
+	// The client supports to send additional context information for a
+	// `textDocument/signatureHelp` request. A client that opts into
+	// contextSupport will also support the `retriggerCharacters` on
+	// `SignatureHelpOptions`.
+	//
+	// Since: 3.15.0
+	ContextSupport bool `json:"contextSupport,omitzero"`
+}
+
+func resolveSignatureHelpClientCapabilities(v *SignatureHelpClientCapabilities) ResolvedSignatureHelpClientCapabilities {
+	if v == nil {
+		return ResolvedSignatureHelpClientCapabilities{}
+	}
+	return ResolvedSignatureHelpClientCapabilities{
+		DynamicRegistration:  derefOr(v.DynamicRegistration),
+		SignatureInformation: resolveClientSignatureInformationOptions(v.SignatureInformation),
+		ContextSupport:       derefOr(v.ContextSupport),
+	}
+}
+
+// ResolvedDeclarationClientCapabilities is a resolved version of DeclarationClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.14.0
+type ResolvedDeclarationClientCapabilities struct {
+	// Whether declaration supports dynamic registration. If this is set to `true`
+	// the client supports the new `DeclarationRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports additional metadata in the form of declaration links.
+	LinkSupport bool `json:"linkSupport,omitzero"`
+}
+
+func resolveDeclarationClientCapabilities(v *DeclarationClientCapabilities) ResolvedDeclarationClientCapabilities {
+	if v == nil {
+		return ResolvedDeclarationClientCapabilities{}
+	}
+	return ResolvedDeclarationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+// ResolvedDefinitionClientCapabilities is a resolved version of DefinitionClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client Capabilities for a DefinitionRequest.
+type ResolvedDefinitionClientCapabilities struct {
+	// Whether definition supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports additional metadata in the form of definition links.
+	//
+	// Since: 3.14.0
+	LinkSupport bool `json:"linkSupport,omitzero"`
+}
+
+func resolveDefinitionClientCapabilities(v *DefinitionClientCapabilities) ResolvedDefinitionClientCapabilities {
+	if v == nil {
+		return ResolvedDefinitionClientCapabilities{}
+	}
+	return ResolvedDefinitionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+// ResolvedTypeDefinitionClientCapabilities is a resolved version of TypeDefinitionClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since 3.6.0
+type ResolvedTypeDefinitionClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `TypeDefinitionRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports additional metadata in the form of definition links.
+	//
+	// Since 3.14.0
+	LinkSupport bool `json:"linkSupport,omitzero"`
+}
+
+func resolveTypeDefinitionClientCapabilities(v *TypeDefinitionClientCapabilities) ResolvedTypeDefinitionClientCapabilities {
+	if v == nil {
+		return ResolvedTypeDefinitionClientCapabilities{}
+	}
+	return ResolvedTypeDefinitionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+// ResolvedImplementationClientCapabilities is a resolved version of ImplementationClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.6.0
+type ResolvedImplementationClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `ImplementationRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports additional metadata in the form of definition links.
+	//
+	// Since: 3.14.0
+	LinkSupport bool `json:"linkSupport,omitzero"`
+}
+
+func resolveImplementationClientCapabilities(v *ImplementationClientCapabilities) ResolvedImplementationClientCapabilities {
+	if v == nil {
+		return ResolvedImplementationClientCapabilities{}
+	}
+	return ResolvedImplementationClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		LinkSupport:         derefOr(v.LinkSupport),
+	}
+}
+
+// ResolvedReferenceClientCapabilities is a resolved version of ReferenceClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client Capabilities for a ReferencesRequest.
+type ResolvedReferenceClientCapabilities struct {
+	// Whether references supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveReferenceClientCapabilities(v *ReferenceClientCapabilities) ResolvedReferenceClientCapabilities {
+	if v == nil {
+		return ResolvedReferenceClientCapabilities{}
+	}
+	return ResolvedReferenceClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedDocumentHighlightClientCapabilities is a resolved version of DocumentHighlightClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client Capabilities for a DocumentHighlightRequest.
+type ResolvedDocumentHighlightClientCapabilities struct {
+	// Whether document highlight supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveDocumentHighlightClientCapabilities(v *DocumentHighlightClientCapabilities) ResolvedDocumentHighlightClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentHighlightClientCapabilities{}
+	}
+	return ResolvedDocumentHighlightClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedDocumentSymbolClientCapabilities is a resolved version of DocumentSymbolClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client Capabilities for a DocumentSymbolRequest.
+type ResolvedDocumentSymbolClientCapabilities struct {
+	// Whether document symbol supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Specific capabilities for the `SymbolKind` in the
+	// `textDocument/documentSymbol` request.
+	SymbolKind ResolvedClientSymbolKindOptions `json:"symbolKind,omitzero"`
+	// The client supports hierarchical document symbols.
+	HierarchicalDocumentSymbolSupport bool `json:"hierarchicalDocumentSymbolSupport,omitzero"`
+	// The client supports tags on `SymbolInformation`. Tags are supported on
+	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.16.0
+	TagSupport ResolvedClientSymbolTagOptions `json:"tagSupport,omitzero"`
+	// The client supports an additional label presented in the UI when
+	// registering a document symbol provider.
+	//
+	// Since: 3.16.0
+	LabelSupport bool `json:"labelSupport,omitzero"`
+}
+
+func resolveDocumentSymbolClientCapabilities(v *DocumentSymbolClientCapabilities) ResolvedDocumentSymbolClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentSymbolClientCapabilities{}
+	}
+	return ResolvedDocumentSymbolClientCapabilities{
+		DynamicRegistration:               derefOr(v.DynamicRegistration),
+		SymbolKind:                        resolveClientSymbolKindOptions(v.SymbolKind),
+		HierarchicalDocumentSymbolSupport: derefOr(v.HierarchicalDocumentSymbolSupport),
+		TagSupport:                        resolveClientSymbolTagOptions(v.TagSupport),
+		LabelSupport:                      derefOr(v.LabelSupport),
+	}
+}
+
+// ResolvedClientCodeActionKindOptions is a resolved version of ClientCodeActionKindOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCodeActionKindOptions struct {
+	// The code action kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	ValueSet []CodeActionKind `json:"valueSet,omitzero"`
+}
+
+func resolveClientCodeActionKindOptions(v *ClientCodeActionKindOptions) ResolvedClientCodeActionKindOptions {
+	if v == nil {
+		return ResolvedClientCodeActionKindOptions{}
+	}
+	return ResolvedClientCodeActionKindOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedClientCodeActionLiteralOptions is a resolved version of ClientCodeActionLiteralOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCodeActionLiteralOptions struct {
+	// The code action kind is support with the following value
+	// set.
+	CodeActionKind ResolvedClientCodeActionKindOptions `json:"codeActionKind,omitzero"`
+}
+
+func resolveClientCodeActionLiteralOptions(v *ClientCodeActionLiteralOptions) ResolvedClientCodeActionLiteralOptions {
+	if v == nil {
+		return ResolvedClientCodeActionLiteralOptions{}
+	}
+	return ResolvedClientCodeActionLiteralOptions{
+		CodeActionKind: resolveClientCodeActionKindOptions(v.CodeActionKind),
+	}
+}
+
+// ResolvedClientCodeActionResolveOptions is a resolved version of ClientCodeActionResolveOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCodeActionResolveOptions struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties,omitzero"`
+}
+
+func resolveClientCodeActionResolveOptions(v *ClientCodeActionResolveOptions) ResolvedClientCodeActionResolveOptions {
+	if v == nil {
+		return ResolvedClientCodeActionResolveOptions{}
+	}
+	return ResolvedClientCodeActionResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+// ResolvedCodeActionTagOptions is a resolved version of CodeActionTagOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0 - proposed
+type ResolvedCodeActionTagOptions struct {
+	// The tags supported by the client.
+	ValueSet []CodeActionTag `json:"valueSet,omitzero"`
+}
+
+func resolveCodeActionTagOptions(v *CodeActionTagOptions) ResolvedCodeActionTagOptions {
+	if v == nil {
+		return ResolvedCodeActionTagOptions{}
+	}
+	return ResolvedCodeActionTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedCodeActionClientCapabilities is a resolved version of CodeActionClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The Client Capabilities of a CodeActionRequest.
+type ResolvedCodeActionClientCapabilities struct {
+	// Whether code action supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client support code action literals of type `CodeAction` as a valid
+	// response of the `textDocument/codeAction` request. If the property is not
+	// set the request can only return `Command` literals.
+	//
+	// Since: 3.8.0
+	CodeActionLiteralSupport ResolvedClientCodeActionLiteralOptions `json:"codeActionLiteralSupport,omitzero"`
+	// Whether code action supports the `isPreferred` property.
+	//
+	// Since: 3.15.0
+	IsPreferredSupport bool `json:"isPreferredSupport,omitzero"`
+	// Whether code action supports the `disabled` property.
+	//
+	// Since: 3.16.0
+	DisabledSupport bool `json:"disabledSupport,omitzero"`
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/codeAction` and a
+	// `codeAction/resolve` request.
+	//
+	// Since: 3.16.0
+	DataSupport bool `json:"dataSupport,omitzero"`
+	// Whether the client supports resolving additional code action
+	// properties via a separate `codeAction/resolve` request.
+	//
+	// Since: 3.16.0
+	ResolveSupport ResolvedClientCodeActionResolveOptions `json:"resolveSupport,omitzero"`
+	// Whether the client honors the change annotations in
+	// text edits and resource operations returned via the
+	// `CodeAction#edit` property by for example presenting
+	// the workspace edit in the user interface and asking
+	// for confirmation.
+	//
+	// Since: 3.16.0
+	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitzero"`
+	// Whether the client supports documentation for a class of
+	// code actions.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	DocumentationSupport bool `json:"documentationSupport,omitzero"`
+	// Client supports the tag property on a code action. Clients
+	// supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.18.0 - proposed
+	TagSupport ResolvedCodeActionTagOptions `json:"tagSupport,omitzero"`
+}
+
+func resolveCodeActionClientCapabilities(v *CodeActionClientCapabilities) ResolvedCodeActionClientCapabilities {
+	if v == nil {
+		return ResolvedCodeActionClientCapabilities{}
+	}
+	return ResolvedCodeActionClientCapabilities{
+		DynamicRegistration:      derefOr(v.DynamicRegistration),
+		CodeActionLiteralSupport: resolveClientCodeActionLiteralOptions(v.CodeActionLiteralSupport),
+		IsPreferredSupport:       derefOr(v.IsPreferredSupport),
+		DisabledSupport:          derefOr(v.DisabledSupport),
+		DataSupport:              derefOr(v.DataSupport),
+		ResolveSupport:           resolveClientCodeActionResolveOptions(v.ResolveSupport),
+		HonorsChangeAnnotations:  derefOr(v.HonorsChangeAnnotations),
+		DocumentationSupport:     derefOr(v.DocumentationSupport),
+		TagSupport:               resolveCodeActionTagOptions(v.TagSupport),
+	}
+}
+
+// ResolvedClientCodeLensResolveOptions is a resolved version of ClientCodeLensResolveOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientCodeLensResolveOptions struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties,omitzero"`
+}
+
+func resolveClientCodeLensResolveOptions(v *ClientCodeLensResolveOptions) ResolvedClientCodeLensResolveOptions {
+	if v == nil {
+		return ResolvedClientCodeLensResolveOptions{}
+	}
+	return ResolvedClientCodeLensResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+// ResolvedCodeLensClientCapabilities is a resolved version of CodeLensClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The client capabilities of a CodeLensRequest.
+type ResolvedCodeLensClientCapabilities struct {
+	// Whether code lens supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Whether the client supports resolving additional code lens
+	// properties via a separate `codeLens/resolve` request.
+	//
+	// Since: 3.18.0
+	ResolveSupport ResolvedClientCodeLensResolveOptions `json:"resolveSupport,omitzero"`
+}
+
+func resolveCodeLensClientCapabilities(v *CodeLensClientCapabilities) ResolvedCodeLensClientCapabilities {
+	if v == nil {
+		return ResolvedCodeLensClientCapabilities{}
+	}
+	return ResolvedCodeLensClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ResolveSupport:      resolveClientCodeLensResolveOptions(v.ResolveSupport),
+	}
+}
+
+// ResolvedDocumentLinkClientCapabilities is a resolved version of DocumentLinkClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The client capabilities of a DocumentLinkRequest.
+type ResolvedDocumentLinkClientCapabilities struct {
+	// Whether document link supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Whether the client supports the `tooltip` property on `DocumentLink`.
+	//
+	// Since: 3.15.0
+	TooltipSupport bool `json:"tooltipSupport,omitzero"`
+}
+
+func resolveDocumentLinkClientCapabilities(v *DocumentLinkClientCapabilities) ResolvedDocumentLinkClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentLinkClientCapabilities{}
+	}
+	return ResolvedDocumentLinkClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		TooltipSupport:      derefOr(v.TooltipSupport),
+	}
+}
+
+// ResolvedDocumentColorClientCapabilities is a resolved version of DocumentColorClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedDocumentColorClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `DocumentColorRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveDocumentColorClientCapabilities(v *DocumentColorClientCapabilities) ResolvedDocumentColorClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentColorClientCapabilities{}
+	}
+	return ResolvedDocumentColorClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedDocumentFormattingClientCapabilities is a resolved version of DocumentFormattingClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities of a DocumentFormattingRequest.
+type ResolvedDocumentFormattingClientCapabilities struct {
+	// Whether formatting supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveDocumentFormattingClientCapabilities(v *DocumentFormattingClientCapabilities) ResolvedDocumentFormattingClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentFormattingClientCapabilities{}
+	}
+	return ResolvedDocumentFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedDocumentRangeFormattingClientCapabilities is a resolved version of DocumentRangeFormattingClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities of a DocumentRangeFormattingRequest.
+type ResolvedDocumentRangeFormattingClientCapabilities struct {
+	// Whether range formatting supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Whether the client supports formatting multiple ranges at once.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	RangesSupport bool `json:"rangesSupport,omitzero"`
+}
+
+func resolveDocumentRangeFormattingClientCapabilities(v *DocumentRangeFormattingClientCapabilities) ResolvedDocumentRangeFormattingClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentRangeFormattingClientCapabilities{}
+	}
+	return ResolvedDocumentRangeFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		RangesSupport:       derefOr(v.RangesSupport),
+	}
+}
+
+// ResolvedDocumentOnTypeFormattingClientCapabilities is a resolved version of DocumentOnTypeFormattingClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities of a DocumentOnTypeFormattingRequest.
+type ResolvedDocumentOnTypeFormattingClientCapabilities struct {
+	// Whether on type formatting supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveDocumentOnTypeFormattingClientCapabilities(v *DocumentOnTypeFormattingClientCapabilities) ResolvedDocumentOnTypeFormattingClientCapabilities {
+	if v == nil {
+		return ResolvedDocumentOnTypeFormattingClientCapabilities{}
+	}
+	return ResolvedDocumentOnTypeFormattingClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedRenameClientCapabilities is a resolved version of RenameClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedRenameClientCapabilities struct {
+	// Whether rename supports dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Client supports testing for validity of rename operations
+	// before execution.
+	//
+	// Since: 3.12.0
+	PrepareSupport bool `json:"prepareSupport,omitzero"`
+	// Client supports the default behavior result.
+	//
+	// The value indicates the default behavior used by the
+	// client.
+	//
+	// Since: 3.16.0
+	PrepareSupportDefaultBehavior PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitzero"`
+	// Whether the client honors the change annotations in
+	// text edits and resource operations returned via the
+	// rename request's workspace edit by for example presenting
+	// the workspace edit in the user interface and asking
+	// for confirmation.
+	//
+	// Since: 3.16.0
+	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitzero"`
+}
+
+func resolveRenameClientCapabilities(v *RenameClientCapabilities) ResolvedRenameClientCapabilities {
+	if v == nil {
+		return ResolvedRenameClientCapabilities{}
+	}
+	return ResolvedRenameClientCapabilities{
+		DynamicRegistration:           derefOr(v.DynamicRegistration),
+		PrepareSupport:                derefOr(v.PrepareSupport),
+		PrepareSupportDefaultBehavior: derefOr(v.PrepareSupportDefaultBehavior),
+		HonorsChangeAnnotations:       derefOr(v.HonorsChangeAnnotations),
+	}
+}
+
+// ResolvedClientFoldingRangeKindOptions is a resolved version of ClientFoldingRangeKindOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientFoldingRangeKindOptions struct {
+	// The folding range kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	ValueSet []FoldingRangeKind `json:"valueSet,omitzero"`
+}
+
+func resolveClientFoldingRangeKindOptions(v *ClientFoldingRangeKindOptions) ResolvedClientFoldingRangeKindOptions {
+	if v == nil {
+		return ResolvedClientFoldingRangeKindOptions{}
+	}
+	return ResolvedClientFoldingRangeKindOptions{
+		ValueSet: derefOr(v.ValueSet),
+	}
+}
+
+// ResolvedClientFoldingRangeOptions is a resolved version of ClientFoldingRangeOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientFoldingRangeOptions struct {
+	// If set, the client signals that it supports setting collapsedText on
+	// folding ranges to display custom labels instead of the default text.
+	//
+	// Since: 3.17.0
+	CollapsedText bool `json:"collapsedText,omitzero"`
+}
+
+func resolveClientFoldingRangeOptions(v *ClientFoldingRangeOptions) ResolvedClientFoldingRangeOptions {
+	if v == nil {
+		return ResolvedClientFoldingRangeOptions{}
+	}
+	return ResolvedClientFoldingRangeOptions{
+		CollapsedText: derefOr(v.CollapsedText),
+	}
+}
+
+// ResolvedFoldingRangeClientCapabilities is a resolved version of FoldingRangeClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedFoldingRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration for folding range
+	// providers. If this is set to `true` the client supports the new
+	// `FoldingRangeRegistrationOptions` return value for the corresponding
+	// server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The maximum number of folding ranges that the client prefers to receive
+	// per document. The value serves as a hint, servers are free to follow the
+	// limit.
+	RangeLimit uint32 `json:"rangeLimit,omitzero"`
+	// If set, the client signals that it only supports folding complete lines.
+	// If set, client will ignore specified `startCharacter` and `endCharacter`
+	// properties in a FoldingRange.
+	LineFoldingOnly bool `json:"lineFoldingOnly,omitzero"`
+	// Specific options for the folding range kind.
+	//
+	// Since: 3.17.0
+	FoldingRangeKind ResolvedClientFoldingRangeKindOptions `json:"foldingRangeKind,omitzero"`
+	// Specific options for the folding range.
+	//
+	// Since: 3.17.0
+	FoldingRange ResolvedClientFoldingRangeOptions `json:"foldingRange,omitzero"`
+}
+
+func resolveFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) ResolvedFoldingRangeClientCapabilities {
+	if v == nil {
+		return ResolvedFoldingRangeClientCapabilities{}
+	}
+	return ResolvedFoldingRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		RangeLimit:          derefOr(v.RangeLimit),
+		LineFoldingOnly:     derefOr(v.LineFoldingOnly),
+		FoldingRangeKind:    resolveClientFoldingRangeKindOptions(v.FoldingRangeKind),
+		FoldingRange:        resolveClientFoldingRangeOptions(v.FoldingRange),
+	}
+}
+
+// ResolvedSelectionRangeClientCapabilities is a resolved version of SelectionRangeClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedSelectionRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
+	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
+	// capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveSelectionRangeClientCapabilities(v *SelectionRangeClientCapabilities) ResolvedSelectionRangeClientCapabilities {
+	if v == nil {
+		return ResolvedSelectionRangeClientCapabilities{}
+	}
+	return ResolvedSelectionRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedClientDiagnosticsTagOptions is a resolved version of ClientDiagnosticsTagOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientDiagnosticsTagOptions struct {
+	// The tags supported by the client.
+	ValueSet []DiagnosticTag `json:"valueSet,omitzero"`
+}
+
+func resolveClientDiagnosticsTagOptions(v *ClientDiagnosticsTagOptions) ResolvedClientDiagnosticsTagOptions {
+	if v == nil {
+		return ResolvedClientDiagnosticsTagOptions{}
+	}
+	return ResolvedClientDiagnosticsTagOptions{
+		ValueSet: v.ValueSet,
+	}
+}
+
+// ResolvedPublishDiagnosticsClientCapabilities is a resolved version of PublishDiagnosticsClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// The publish diagnostic client capabilities.
+type ResolvedPublishDiagnosticsClientCapabilities struct {
+	// Whether the clients accepts diagnostics with related information.
+	RelatedInformation bool `json:"relatedInformation,omitzero"`
+	// Client supports the tag property to provide meta data about a diagnostic.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.15.0
+	TagSupport ResolvedClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+	// Client supports a codeDescription property
+	//
+	// Since: 3.16.0
+	CodeDescriptionSupport bool `json:"codeDescriptionSupport,omitzero"`
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/publishDiagnostics` and
+	// `textDocument/codeAction` request.
+	//
+	// Since: 3.16.0
+	DataSupport bool `json:"dataSupport,omitzero"`
+	// Whether the client interprets the version property of the
+	// `textDocument/publishDiagnostics` notification's parameter.
+	//
+	// Since: 3.15.0
+	VersionSupport bool `json:"versionSupport,omitzero"`
+}
+
+func resolvePublishDiagnosticsClientCapabilities(v *PublishDiagnosticsClientCapabilities) ResolvedPublishDiagnosticsClientCapabilities {
+	if v == nil {
+		return ResolvedPublishDiagnosticsClientCapabilities{}
+	}
+	return ResolvedPublishDiagnosticsClientCapabilities{
+		RelatedInformation:     derefOr(v.RelatedInformation),
+		TagSupport:             resolveClientDiagnosticsTagOptions(v.TagSupport),
+		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
+		DataSupport:            derefOr(v.DataSupport),
+		VersionSupport:         derefOr(v.VersionSupport),
+	}
+}
+
+// ResolvedCallHierarchyClientCapabilities is a resolved version of CallHierarchyClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.16.0
+type ResolvedCallHierarchyClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveCallHierarchyClientCapabilities(v *CallHierarchyClientCapabilities) ResolvedCallHierarchyClientCapabilities {
+	if v == nil {
+		return ResolvedCallHierarchyClientCapabilities{}
+	}
+	return ResolvedCallHierarchyClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedClientSemanticTokensRequestOptions is a resolved version of ClientSemanticTokensRequestOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientSemanticTokensRequestOptions struct {
+	// The client will send the `textDocument/semanticTokens/range` request if
+	// the server provides a corresponding handler.
+	Range BooleanOrEmptyObject `json:"range,omitzero"`
+	// The client will send the `textDocument/semanticTokens/full` request if
+	// the server provides a corresponding handler.
+	Full BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitzero"`
+}
+
+func resolveClientSemanticTokensRequestOptions(v *ClientSemanticTokensRequestOptions) ResolvedClientSemanticTokensRequestOptions {
+	if v == nil {
+		return ResolvedClientSemanticTokensRequestOptions{}
+	}
+	return ResolvedClientSemanticTokensRequestOptions{
+		Range: derefOr(v.Range),
+		Full:  derefOr(v.Full),
+	}
+}
+
+// ResolvedSemanticTokensClientCapabilities is a resolved version of SemanticTokensClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.16.0
+type ResolvedSemanticTokensClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Which requests the client supports and might send to the server
+	// depending on the server's capability. Please note that clients might not
+	// show semantic tokens or degrade some of the user experience if a range
+	// or full request is advertised by the client but not provided by the
+	// server. If for example the client capability `requests.full` and
+	// `request.range` are both set to true but the server only provides a
+	// range provider the client might not render a minimap correctly or might
+	// even decide to not show any semantic tokens at all.
+	Requests ResolvedClientSemanticTokensRequestOptions `json:"requests,omitzero"`
+	// The token types that the client supports.
+	TokenTypes []string `json:"tokenTypes,omitzero"`
+	// The token modifiers that the client supports.
+	TokenModifiers []string `json:"tokenModifiers,omitzero"`
+	// The token formats the clients supports.
+	Formats []TokenFormat `json:"formats,omitzero"`
+	// Whether the client supports tokens that can overlap each other.
+	OverlappingTokenSupport bool `json:"overlappingTokenSupport,omitzero"`
+	// Whether the client supports tokens that can span multiple lines.
+	MultilineTokenSupport bool `json:"multilineTokenSupport,omitzero"`
+	// Whether the client allows the server to actively cancel a
+	// semantic token request, e.g. supports returning
+	// LSPErrorCodes.ServerCancelled. If a server does the client
+	// needs to retrigger the request.
+	//
+	// Since: 3.17.0
+	ServerCancelSupport bool `json:"serverCancelSupport,omitzero"`
+	// Whether the client uses semantic tokens to augment existing
+	// syntax tokens. If set to `true` client side created syntax
+	// tokens and semantic tokens are both used for colorization. If
+	// set to `false` the client only uses the returned semantic tokens
+	// for colorization.
+	//
+	// If the value is `undefined` then the client behavior is not
+	// specified.
+	//
+	// Since: 3.17.0
+	AugmentsSyntaxTokens bool `json:"augmentsSyntaxTokens,omitzero"`
+}
+
+func resolveSemanticTokensClientCapabilities(v *SemanticTokensClientCapabilities) ResolvedSemanticTokensClientCapabilities {
+	if v == nil {
+		return ResolvedSemanticTokensClientCapabilities{}
+	}
+	return ResolvedSemanticTokensClientCapabilities{
+		DynamicRegistration:     derefOr(v.DynamicRegistration),
+		Requests:                resolveClientSemanticTokensRequestOptions(v.Requests),
+		TokenTypes:              v.TokenTypes,
+		TokenModifiers:          v.TokenModifiers,
+		Formats:                 v.Formats,
+		OverlappingTokenSupport: derefOr(v.OverlappingTokenSupport),
+		MultilineTokenSupport:   derefOr(v.MultilineTokenSupport),
+		ServerCancelSupport:     derefOr(v.ServerCancelSupport),
+		AugmentsSyntaxTokens:    derefOr(v.AugmentsSyntaxTokens),
+	}
+}
+
+// ResolvedLinkedEditingRangeClientCapabilities is a resolved version of LinkedEditingRangeClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities for the linked editing range request.
+//
+// Since: 3.16.0
+type ResolvedLinkedEditingRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveLinkedEditingRangeClientCapabilities(v *LinkedEditingRangeClientCapabilities) ResolvedLinkedEditingRangeClientCapabilities {
+	if v == nil {
+		return ResolvedLinkedEditingRangeClientCapabilities{}
+	}
+	return ResolvedLinkedEditingRangeClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedMonikerClientCapabilities is a resolved version of MonikerClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to the moniker request.
+//
+// Since: 3.16.0
+type ResolvedMonikerClientCapabilities struct {
+	// Whether moniker supports dynamic registration. If this is set to `true`
+	// the client supports the new `MonikerRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveMonikerClientCapabilities(v *MonikerClientCapabilities) ResolvedMonikerClientCapabilities {
+	if v == nil {
+		return ResolvedMonikerClientCapabilities{}
+	}
+	return ResolvedMonikerClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedTypeHierarchyClientCapabilities is a resolved version of TypeHierarchyClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.17.0
+type ResolvedTypeHierarchyClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveTypeHierarchyClientCapabilities(v *TypeHierarchyClientCapabilities) ResolvedTypeHierarchyClientCapabilities {
+	if v == nil {
+		return ResolvedTypeHierarchyClientCapabilities{}
+	}
+	return ResolvedTypeHierarchyClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedInlineValueClientCapabilities is a resolved version of InlineValueClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to inline values.
+//
+// Since: 3.17.0
+type ResolvedInlineValueClientCapabilities struct {
+	// Whether implementation supports dynamic registration for inline value providers.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveInlineValueClientCapabilities(v *InlineValueClientCapabilities) ResolvedInlineValueClientCapabilities {
+	if v == nil {
+		return ResolvedInlineValueClientCapabilities{}
+	}
+	return ResolvedInlineValueClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedClientInlayHintResolveOptions is a resolved version of ClientInlayHintResolveOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientInlayHintResolveOptions struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties,omitzero"`
+}
+
+func resolveClientInlayHintResolveOptions(v *ClientInlayHintResolveOptions) ResolvedClientInlayHintResolveOptions {
+	if v == nil {
+		return ResolvedClientInlayHintResolveOptions{}
+	}
+	return ResolvedClientInlayHintResolveOptions{
+		Properties: v.Properties,
+	}
+}
+
+// ResolvedInlayHintClientCapabilities is a resolved version of InlayHintClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Inlay hint client capabilities.
+//
+// Since: 3.17.0
+type ResolvedInlayHintClientCapabilities struct {
+	// Whether inlay hints support dynamic registration.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Indicates which properties a client can resolve lazily on an inlay
+	// hint.
+	ResolveSupport ResolvedClientInlayHintResolveOptions `json:"resolveSupport,omitzero"`
+}
+
+func resolveInlayHintClientCapabilities(v *InlayHintClientCapabilities) ResolvedInlayHintClientCapabilities {
+	if v == nil {
+		return ResolvedInlayHintClientCapabilities{}
+	}
+	return ResolvedInlayHintClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+		ResolveSupport:      resolveClientInlayHintResolveOptions(v.ResolveSupport),
+	}
+}
+
+// ResolvedDiagnosticClientCapabilities is a resolved version of DiagnosticClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to diagnostic pull requests.
+//
+// Since: 3.17.0
+type ResolvedDiagnosticClientCapabilities struct {
+	// Whether the clients accepts diagnostics with related information.
+	RelatedInformation bool `json:"relatedInformation,omitzero"`
+	// Client supports the tag property to provide meta data about a diagnostic.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.15.0
+	TagSupport ResolvedClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+	// Client supports a codeDescription property
+	//
+	// Since: 3.16.0
+	CodeDescriptionSupport bool `json:"codeDescriptionSupport,omitzero"`
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/publishDiagnostics` and
+	// `textDocument/codeAction` request.
+	//
+	// Since: 3.16.0
+	DataSupport bool `json:"dataSupport,omitzero"`
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// Whether the clients supports related documents for document diagnostic pulls.
+	RelatedDocumentSupport bool `json:"relatedDocumentSupport,omitzero"`
+}
+
+func resolveDiagnosticClientCapabilities(v *DiagnosticClientCapabilities) ResolvedDiagnosticClientCapabilities {
+	if v == nil {
+		return ResolvedDiagnosticClientCapabilities{}
+	}
+	return ResolvedDiagnosticClientCapabilities{
+		RelatedInformation:     derefOr(v.RelatedInformation),
+		TagSupport:             resolveClientDiagnosticsTagOptions(v.TagSupport),
+		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
+		DataSupport:            derefOr(v.DataSupport),
+		DynamicRegistration:    derefOr(v.DynamicRegistration),
+		RelatedDocumentSupport: derefOr(v.RelatedDocumentSupport),
+	}
+}
+
+// ResolvedInlineCompletionClientCapabilities is a resolved version of InlineCompletionClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to inline completions.
+//
+// Since: 3.18.0
+//
+// Proposed.
+type ResolvedInlineCompletionClientCapabilities struct {
+	// Whether implementation supports dynamic registration for inline completion providers.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+}
+
+func resolveInlineCompletionClientCapabilities(v *InlineCompletionClientCapabilities) ResolvedInlineCompletionClientCapabilities {
+	if v == nil {
+		return ResolvedInlineCompletionClientCapabilities{}
+	}
+	return ResolvedInlineCompletionClientCapabilities{
+		DynamicRegistration: derefOr(v.DynamicRegistration),
+	}
+}
+
+// ResolvedTextDocumentClientCapabilities is a resolved version of TextDocumentClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Text document specific client capabilities.
+type ResolvedTextDocumentClientCapabilities struct {
+	// Defines which synchronization capabilities the client supports.
+	Synchronization ResolvedTextDocumentSyncClientCapabilities `json:"synchronization,omitzero"`
+	// Defines which filters the client supports.
+	//
+	// Since: 3.18.0
+	Filters ResolvedTextDocumentFilterClientCapabilities `json:"filters,omitzero"`
+	// Capabilities specific to the `textDocument/completion` request.
+	Completion ResolvedCompletionClientCapabilities `json:"completion,omitzero"`
+	// Capabilities specific to the `textDocument/hover` request.
+	Hover ResolvedHoverClientCapabilities `json:"hover,omitzero"`
+	// Capabilities specific to the `textDocument/signatureHelp` request.
+	SignatureHelp ResolvedSignatureHelpClientCapabilities `json:"signatureHelp,omitzero"`
+	// Capabilities specific to the `textDocument/declaration` request.
+	//
+	// Since: 3.14.0
+	Declaration ResolvedDeclarationClientCapabilities `json:"declaration,omitzero"`
+	// Capabilities specific to the `textDocument/definition` request.
+	Definition ResolvedDefinitionClientCapabilities `json:"definition,omitzero"`
+	// Capabilities specific to the `textDocument/typeDefinition` request.
+	//
+	// Since: 3.6.0
+	TypeDefinition ResolvedTypeDefinitionClientCapabilities `json:"typeDefinition,omitzero"`
+	// Capabilities specific to the `textDocument/implementation` request.
+	//
+	// Since: 3.6.0
+	Implementation ResolvedImplementationClientCapabilities `json:"implementation,omitzero"`
+	// Capabilities specific to the `textDocument/references` request.
+	References ResolvedReferenceClientCapabilities `json:"references,omitzero"`
+	// Capabilities specific to the `textDocument/documentHighlight` request.
+	DocumentHighlight ResolvedDocumentHighlightClientCapabilities `json:"documentHighlight,omitzero"`
+	// Capabilities specific to the `textDocument/documentSymbol` request.
+	DocumentSymbol ResolvedDocumentSymbolClientCapabilities `json:"documentSymbol,omitzero"`
+	// Capabilities specific to the `textDocument/codeAction` request.
+	CodeAction ResolvedCodeActionClientCapabilities `json:"codeAction,omitzero"`
+	// Capabilities specific to the `textDocument/codeLens` request.
+	CodeLens ResolvedCodeLensClientCapabilities `json:"codeLens,omitzero"`
+	// Capabilities specific to the `textDocument/documentLink` request.
+	DocumentLink ResolvedDocumentLinkClientCapabilities `json:"documentLink,omitzero"`
+	// Capabilities specific to the `textDocument/documentColor` and the
+	// `textDocument/colorPresentation` request.
+	//
+	// Since: 3.6.0
+	ColorProvider ResolvedDocumentColorClientCapabilities `json:"colorProvider,omitzero"`
+	// Capabilities specific to the `textDocument/formatting` request.
+	Formatting ResolvedDocumentFormattingClientCapabilities `json:"formatting,omitzero"`
+	// Capabilities specific to the `textDocument/rangeFormatting` request.
+	RangeFormatting ResolvedDocumentRangeFormattingClientCapabilities `json:"rangeFormatting,omitzero"`
+	// Capabilities specific to the `textDocument/onTypeFormatting` request.
+	OnTypeFormatting ResolvedDocumentOnTypeFormattingClientCapabilities `json:"onTypeFormatting,omitzero"`
+	// Capabilities specific to the `textDocument/rename` request.
+	Rename ResolvedRenameClientCapabilities `json:"rename,omitzero"`
+	// Capabilities specific to the `textDocument/foldingRange` request.
+	//
+	// Since: 3.10.0
+	FoldingRange ResolvedFoldingRangeClientCapabilities `json:"foldingRange,omitzero"`
+	// Capabilities specific to the `textDocument/selectionRange` request.
+	//
+	// Since: 3.15.0
+	SelectionRange ResolvedSelectionRangeClientCapabilities `json:"selectionRange,omitzero"`
+	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
+	PublishDiagnostics ResolvedPublishDiagnosticsClientCapabilities `json:"publishDiagnostics,omitzero"`
+	// Capabilities specific to the various call hierarchy requests.
+	//
+	// Since: 3.16.0
+	CallHierarchy ResolvedCallHierarchyClientCapabilities `json:"callHierarchy,omitzero"`
+	// Capabilities specific to the various semantic token request.
+	//
+	// Since: 3.16.0
+	SemanticTokens ResolvedSemanticTokensClientCapabilities `json:"semanticTokens,omitzero"`
+	// Capabilities specific to the `textDocument/linkedEditingRange` request.
+	//
+	// Since: 3.16.0
+	LinkedEditingRange ResolvedLinkedEditingRangeClientCapabilities `json:"linkedEditingRange,omitzero"`
+	// Client capabilities specific to the `textDocument/moniker` request.
+	//
+	// Since: 3.16.0
+	Moniker ResolvedMonikerClientCapabilities `json:"moniker,omitzero"`
+	// Capabilities specific to the various type hierarchy requests.
+	//
+	// Since: 3.17.0
+	TypeHierarchy ResolvedTypeHierarchyClientCapabilities `json:"typeHierarchy,omitzero"`
+	// Capabilities specific to the `textDocument/inlineValue` request.
+	//
+	// Since: 3.17.0
+	InlineValue ResolvedInlineValueClientCapabilities `json:"inlineValue,omitzero"`
+	// Capabilities specific to the `textDocument/inlayHint` request.
+	//
+	// Since: 3.17.0
+	InlayHint ResolvedInlayHintClientCapabilities `json:"inlayHint,omitzero"`
+	// Capabilities specific to the diagnostic pull model.
+	//
+	// Since: 3.17.0
+	Diagnostic ResolvedDiagnosticClientCapabilities `json:"diagnostic,omitzero"`
+	// Client capabilities specific to inline completions.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	InlineCompletion ResolvedInlineCompletionClientCapabilities `json:"inlineCompletion,omitzero"`
+}
+
+func resolveTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) ResolvedTextDocumentClientCapabilities {
+	if v == nil {
+		return ResolvedTextDocumentClientCapabilities{}
+	}
+	return ResolvedTextDocumentClientCapabilities{
+		Synchronization:    resolveTextDocumentSyncClientCapabilities(v.Synchronization),
+		Filters:            resolveTextDocumentFilterClientCapabilities(v.Filters),
+		Completion:         resolveCompletionClientCapabilities(v.Completion),
+		Hover:              resolveHoverClientCapabilities(v.Hover),
+		SignatureHelp:      resolveSignatureHelpClientCapabilities(v.SignatureHelp),
+		Declaration:        resolveDeclarationClientCapabilities(v.Declaration),
+		Definition:         resolveDefinitionClientCapabilities(v.Definition),
+		TypeDefinition:     resolveTypeDefinitionClientCapabilities(v.TypeDefinition),
+		Implementation:     resolveImplementationClientCapabilities(v.Implementation),
+		References:         resolveReferenceClientCapabilities(v.References),
+		DocumentHighlight:  resolveDocumentHighlightClientCapabilities(v.DocumentHighlight),
+		DocumentSymbol:     resolveDocumentSymbolClientCapabilities(v.DocumentSymbol),
+		CodeAction:         resolveCodeActionClientCapabilities(v.CodeAction),
+		CodeLens:           resolveCodeLensClientCapabilities(v.CodeLens),
+		DocumentLink:       resolveDocumentLinkClientCapabilities(v.DocumentLink),
+		ColorProvider:      resolveDocumentColorClientCapabilities(v.ColorProvider),
+		Formatting:         resolveDocumentFormattingClientCapabilities(v.Formatting),
+		RangeFormatting:    resolveDocumentRangeFormattingClientCapabilities(v.RangeFormatting),
+		OnTypeFormatting:   resolveDocumentOnTypeFormattingClientCapabilities(v.OnTypeFormatting),
+		Rename:             resolveRenameClientCapabilities(v.Rename),
+		FoldingRange:       resolveFoldingRangeClientCapabilities(v.FoldingRange),
+		SelectionRange:     resolveSelectionRangeClientCapabilities(v.SelectionRange),
+		PublishDiagnostics: resolvePublishDiagnosticsClientCapabilities(v.PublishDiagnostics),
+		CallHierarchy:      resolveCallHierarchyClientCapabilities(v.CallHierarchy),
+		SemanticTokens:     resolveSemanticTokensClientCapabilities(v.SemanticTokens),
+		LinkedEditingRange: resolveLinkedEditingRangeClientCapabilities(v.LinkedEditingRange),
+		Moniker:            resolveMonikerClientCapabilities(v.Moniker),
+		TypeHierarchy:      resolveTypeHierarchyClientCapabilities(v.TypeHierarchy),
+		InlineValue:        resolveInlineValueClientCapabilities(v.InlineValue),
+		InlayHint:          resolveInlayHintClientCapabilities(v.InlayHint),
+		Diagnostic:         resolveDiagnosticClientCapabilities(v.Diagnostic),
+		InlineCompletion:   resolveInlineCompletionClientCapabilities(v.InlineCompletion),
+	}
+}
+
+// ResolvedNotebookDocumentSyncClientCapabilities is a resolved version of NotebookDocumentSyncClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Notebook specific client capabilities.
+//
+// Since: 3.17.0
+type ResolvedNotebookDocumentSyncClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is
+	// set to `true` the client supports the new
+	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
+	// The client supports sending execution summary data per cell.
+	ExecutionSummarySupport bool `json:"executionSummarySupport,omitzero"`
+}
+
+func resolveNotebookDocumentSyncClientCapabilities(v *NotebookDocumentSyncClientCapabilities) ResolvedNotebookDocumentSyncClientCapabilities {
+	if v == nil {
+		return ResolvedNotebookDocumentSyncClientCapabilities{}
+	}
+	return ResolvedNotebookDocumentSyncClientCapabilities{
+		DynamicRegistration:     derefOr(v.DynamicRegistration),
+		ExecutionSummarySupport: derefOr(v.ExecutionSummarySupport),
+	}
+}
+
+// ResolvedNotebookDocumentClientCapabilities is a resolved version of NotebookDocumentClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Capabilities specific to the notebook document support.
+//
+// Since: 3.17.0
+type ResolvedNotebookDocumentClientCapabilities struct {
+	// Capabilities specific to notebook document synchronization
+	//
+	// Since: 3.17.0
+	Synchronization ResolvedNotebookDocumentSyncClientCapabilities `json:"synchronization,omitzero"`
+}
+
+func resolveNotebookDocumentClientCapabilities(v *NotebookDocumentClientCapabilities) ResolvedNotebookDocumentClientCapabilities {
+	if v == nil {
+		return ResolvedNotebookDocumentClientCapabilities{}
+	}
+	return ResolvedNotebookDocumentClientCapabilities{
+		Synchronization: resolveNotebookDocumentSyncClientCapabilities(v.Synchronization),
+	}
+}
+
+// ResolvedClientShowMessageActionItemOptions is a resolved version of ClientShowMessageActionItemOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedClientShowMessageActionItemOptions struct {
+	// Whether the client supports additional attributes which
+	// are preserved and send back to the server in the
+	// request's response.
+	AdditionalPropertiesSupport bool `json:"additionalPropertiesSupport,omitzero"`
+}
+
+func resolveClientShowMessageActionItemOptions(v *ClientShowMessageActionItemOptions) ResolvedClientShowMessageActionItemOptions {
+	if v == nil {
+		return ResolvedClientShowMessageActionItemOptions{}
+	}
+	return ResolvedClientShowMessageActionItemOptions{
+		AdditionalPropertiesSupport: derefOr(v.AdditionalPropertiesSupport),
+	}
+}
+
+// ResolvedShowMessageRequestClientCapabilities is a resolved version of ShowMessageRequestClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Show message request client capabilities
+type ResolvedShowMessageRequestClientCapabilities struct {
+	// Capabilities specific to the `MessageActionItem` type.
+	MessageActionItem ResolvedClientShowMessageActionItemOptions `json:"messageActionItem,omitzero"`
+}
+
+func resolveShowMessageRequestClientCapabilities(v *ShowMessageRequestClientCapabilities) ResolvedShowMessageRequestClientCapabilities {
+	if v == nil {
+		return ResolvedShowMessageRequestClientCapabilities{}
+	}
+	return ResolvedShowMessageRequestClientCapabilities{
+		MessageActionItem: resolveClientShowMessageActionItemOptions(v.MessageActionItem),
+	}
+}
+
+// ResolvedShowDocumentClientCapabilities is a resolved version of ShowDocumentClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities for the showDocument request.
+//
+// Since: 3.16.0
+type ResolvedShowDocumentClientCapabilities struct {
+	// The client has support for the showDocument
+	// request.
+	Support bool `json:"support,omitzero"`
+}
+
+func resolveShowDocumentClientCapabilities(v *ShowDocumentClientCapabilities) ResolvedShowDocumentClientCapabilities {
+	if v == nil {
+		return ResolvedShowDocumentClientCapabilities{}
+	}
+	return ResolvedShowDocumentClientCapabilities{
+		Support: v.Support,
+	}
+}
+
+// ResolvedWindowClientCapabilities is a resolved version of WindowClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+type ResolvedWindowClientCapabilities struct {
+	// It indicates whether the client supports server initiated
+	// progress using the `window/workDoneProgress/create` request.
+	//
+	// The capability also controls Whether client supports handling
+	// of progress notifications. If set servers are allowed to report a
+	// `workDoneProgress` property in the request specific server
+	// capabilities.
+	//
+	// Since: 3.15.0
+	WorkDoneProgress bool `json:"workDoneProgress,omitzero"`
+	// Capabilities specific to the showMessage request.
+	//
+	// Since: 3.16.0
+	ShowMessage ResolvedShowMessageRequestClientCapabilities `json:"showMessage,omitzero"`
+	// Capabilities specific to the showDocument request.
+	//
+	// Since: 3.16.0
+	ShowDocument ResolvedShowDocumentClientCapabilities `json:"showDocument,omitzero"`
+}
+
+func resolveWindowClientCapabilities(v *WindowClientCapabilities) ResolvedWindowClientCapabilities {
+	if v == nil {
+		return ResolvedWindowClientCapabilities{}
+	}
+	return ResolvedWindowClientCapabilities{
+		WorkDoneProgress: derefOr(v.WorkDoneProgress),
+		ShowMessage:      resolveShowMessageRequestClientCapabilities(v.ShowMessage),
+		ShowDocument:     resolveShowDocumentClientCapabilities(v.ShowDocument),
+	}
+}
+
+// ResolvedStaleRequestSupportOptions is a resolved version of StaleRequestSupportOptions with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Since: 3.18.0
+type ResolvedStaleRequestSupportOptions struct {
+	// The client will actively cancel the request.
+	Cancel bool `json:"cancel,omitzero"`
+	// The list of requests for which the client
+	// will retry the request if it receives a
+	// response with error code `ContentModified`
+	RetryOnContentModified []string `json:"retryOnContentModified,omitzero"`
+}
+
+func resolveStaleRequestSupportOptions(v *StaleRequestSupportOptions) ResolvedStaleRequestSupportOptions {
+	if v == nil {
+		return ResolvedStaleRequestSupportOptions{}
+	}
+	return ResolvedStaleRequestSupportOptions{
+		Cancel:                 v.Cancel,
+		RetryOnContentModified: v.RetryOnContentModified,
+	}
+}
+
+// ResolvedRegularExpressionsClientCapabilities is a resolved version of RegularExpressionsClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to regular expressions.
+//
+// Since: 3.16.0
+type ResolvedRegularExpressionsClientCapabilities struct {
+	// The engine's name.
+	Engine string `json:"engine,omitzero"`
+	// The engine's version.
+	Version string `json:"version,omitzero"`
+}
+
+func resolveRegularExpressionsClientCapabilities(v *RegularExpressionsClientCapabilities) ResolvedRegularExpressionsClientCapabilities {
+	if v == nil {
+		return ResolvedRegularExpressionsClientCapabilities{}
+	}
+	return ResolvedRegularExpressionsClientCapabilities{
+		Engine:  v.Engine,
+		Version: derefOr(v.Version),
+	}
+}
+
+// ResolvedMarkdownClientCapabilities is a resolved version of MarkdownClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// Client capabilities specific to the used markdown parser.
+//
+// Since: 3.16.0
+type ResolvedMarkdownClientCapabilities struct {
+	// The name of the parser.
+	Parser string `json:"parser,omitzero"`
+	// The version of the parser.
+	Version string `json:"version,omitzero"`
+	// A list of HTML tags that the client allows / supports in
+	// Markdown.
+	//
+	// Since: 3.17.0
+	AllowedTags []string `json:"allowedTags,omitzero"`
+}
+
+func resolveMarkdownClientCapabilities(v *MarkdownClientCapabilities) ResolvedMarkdownClientCapabilities {
+	if v == nil {
+		return ResolvedMarkdownClientCapabilities{}
+	}
+	return ResolvedMarkdownClientCapabilities{
+		Parser:      v.Parser,
+		Version:     derefOr(v.Version),
+		AllowedTags: derefOr(v.AllowedTags),
+	}
+}
+
+// ResolvedGeneralClientCapabilities is a resolved version of GeneralClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// General client capabilities.
+//
+// Since: 3.16.0
+type ResolvedGeneralClientCapabilities struct {
+	// Client capability that signals how the client
+	// handles stale requests (e.g. a request
+	// for which the client will not process the response
+	// anymore since the information is outdated).
+	//
+	// Since: 3.17.0
+	StaleRequestSupport ResolvedStaleRequestSupportOptions `json:"staleRequestSupport,omitzero"`
+	// Client capabilities specific to regular expressions.
+	//
+	// Since: 3.16.0
+	RegularExpressions ResolvedRegularExpressionsClientCapabilities `json:"regularExpressions,omitzero"`
+	// Client capabilities specific to the client's markdown parser.
+	//
+	// Since: 3.16.0
+	Markdown ResolvedMarkdownClientCapabilities `json:"markdown,omitzero"`
+	// The position encodings supported by the client. Client and server
+	// have to agree on the same position encoding to ensure that offsets
+	// (e.g. character position in a line) are interpreted the same on both
+	// sides.
+	//
+	// To keep the protocol backwards compatible the following applies: if
+	// the value 'utf-16' is missing from the array of position encodings
+	// servers can assume that the client supports UTF-16. UTF-16 is
+	// therefore a mandatory encoding.
+	//
+	// If omitted it defaults to ['utf-16'].
+	//
+	// Implementation considerations: since the conversion from one encoding
+	// into another requires the content of the file / line the conversion
+	// is best done where the file is read which is usually on the server
+	// side.
+	//
+	// Since: 3.17.0
+	PositionEncodings []PositionEncodingKind `json:"positionEncodings,omitzero"`
+}
+
+func resolveGeneralClientCapabilities(v *GeneralClientCapabilities) ResolvedGeneralClientCapabilities {
+	if v == nil {
+		return ResolvedGeneralClientCapabilities{}
+	}
+	return ResolvedGeneralClientCapabilities{
+		StaleRequestSupport: resolveStaleRequestSupportOptions(v.StaleRequestSupport),
+		RegularExpressions:  resolveRegularExpressionsClientCapabilities(v.RegularExpressions),
+		Markdown:            resolveMarkdownClientCapabilities(v.Markdown),
+		PositionEncodings:   derefOr(v.PositionEncodings),
+	}
+}
+
+// ResolvedClientCapabilities is a version of ClientCapabilities where all nested
+// fields are values (not pointers), making it easier to access deeply nested capabilities.
+// Use ResolveClientCapabilities to convert from ClientCapabilities.
+//
+// Defines the capabilities provided by the client.
+type ResolvedClientCapabilities struct {
+	// Workspace specific client capabilities.
+	Workspace ResolvedWorkspaceClientCapabilities `json:"workspace,omitzero"`
+	// Text document specific client capabilities.
+	TextDocument ResolvedTextDocumentClientCapabilities `json:"textDocument,omitzero"`
+	// Capabilities specific to the notebook document support.
+	//
+	// Since: 3.17.0
+	NotebookDocument ResolvedNotebookDocumentClientCapabilities `json:"notebookDocument,omitzero"`
+	// Window specific client capabilities.
+	Window ResolvedWindowClientCapabilities `json:"window,omitzero"`
+	// General client capabilities.
+	//
+	// Since: 3.16.0
+	General ResolvedGeneralClientCapabilities `json:"general,omitzero"`
+	// Experimental client capabilities.
+	Experimental any `json:"experimental,omitzero"`
+}
+
+func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities {
+	if v == nil {
+		return ResolvedClientCapabilities{}
+	}
+	return ResolvedClientCapabilities{
+		Workspace:        resolveWorkspaceClientCapabilities(v.Workspace),
+		TextDocument:     resolveTextDocumentClientCapabilities(v.TextDocument),
+		NotebookDocument: resolveNotebookDocumentClientCapabilities(v.NotebookDocument),
+		Window:           resolveWindowClientCapabilities(v.Window),
+		General:          resolveGeneralClientCapabilities(v.General),
+		Experimental:     derefOr(v.Experimental),
+	}
 }

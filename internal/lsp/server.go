@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -156,9 +157,10 @@ type Server struct {
 	defaultLibraryPath string
 	typingsLocation    string
 
-	initializeParams *lsproto.InitializeParams
-	positionEncoding lsproto.PositionEncodingKind
-	locale           language.Tag
+	initializeParams   *lsproto.InitializeParams
+	clientCapabilities lsproto.ResolvedClientCapabilities
+	positionEncoding   lsproto.PositionEncodingKind
+	locale             language.Tag
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
@@ -181,7 +183,7 @@ func (s *Server) Session() *project.Session { return s.session }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
-	_, err := s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
+	_, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
 				Id:     string(id),
@@ -203,7 +205,7 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 // UnwatchFiles implements project.Client.
 func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 	if s.watchers.Has(id) {
-		_, err := s.sendRequest(ctx, lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
+		_, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
 				{
 					Id:     string(id),
@@ -224,27 +226,31 @@ func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 
 // RefreshDiagnostics implements project.Client.
 func (s *Server) RefreshDiagnostics(ctx context.Context) error {
-	if s.initializeParams.Capabilities == nil ||
-		s.initializeParams.Capabilities.Workspace == nil ||
-		s.initializeParams.Capabilities.Workspace.Diagnostics == nil ||
-		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
+	if !s.clientCapabilities.Workspace.Diagnostics.RefreshSupport {
 		return nil
 	}
 
-	if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceDiagnosticRefreshInfo, nil); err != nil {
 		return fmt.Errorf("failed to refresh diagnostics: %w", err)
 	}
 
 	return nil
 }
 
+// PublishDiagnostics implements project.Client.
+func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
+	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
+	s.outgoingQueue <- notification.Message()
+	return nil
+}
+
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
-	if s.initializeParams.Capabilities == nil || s.initializeParams.Capabilities.Workspace == nil ||
-		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Configuration) {
+	caps := lsproto.GetClientCapabilities(ctx)
+	if !caps.Workspace.Configuration {
 		// if no configuration request capapbility, return default preferences
 		return s.session.NewUserPreferences(), nil
 	}
-	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
+	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
 				Section: ptrTo("typescript"),
@@ -254,7 +260,6 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 	if err != nil {
 		return nil, fmt.Errorf("configure request failed: %w", err)
 	}
-	configs := result.([]any)
 	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
 	userPreferences := s.session.NewUserPreferences()
 	for _, item := range configs {
@@ -410,9 +415,9 @@ func (s *Server) writeLoop(ctx context.Context) error {
 	}
 }
 
-func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params any) (any, error) {
+func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
 	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
-	req := lsproto.NewRequestMessage(method, id, params)
+	req := info.NewRequestMessage(id, params)
 
 	responseChan := make(chan *lsproto.ResponseMessage, 1)
 	s.pendingServerRequestsMu.Lock()
@@ -429,12 +434,12 @@ func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params 
 			close(respChan)
 			delete(s.pendingServerRequests, *id)
 		}
-		return nil, ctx.Err()
+		return *new(Resp), ctx.Err()
 	case resp := <-responseChan:
 		if resp.Error != nil {
-			return nil, fmt.Errorf("request failed: %s", resp.Error.String())
+			return *new(Resp), fmt.Errorf("request failed: %s", resp.Error.String())
 		}
-		return resp.Result, nil
+		return info.UnmarshalResult(resp.Result)
 	}
 }
 
@@ -465,6 +470,8 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
+	ctx = lsproto.WithClientCapabilities(ctx, &s.clientCapabilities)
+
 	if handler := handlers()[req.Method]; handler != nil {
 		return handler(s, ctx, req)
 	}
@@ -842,12 +849,18 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	s.initializeParams = params
+	s.clientCapabilities = resolveClientCapabilities(params.Capabilities)
+
+	if _, err := fmt.Fprint(s.stderr, "Resolved client capabilities: "); err != nil {
+		return nil, err
+	}
+	if err := jsonutil.MarshalIndentWrite(s.stderr, &s.clientCapabilities, "", "\t"); err != nil {
+		return nil, err
+	}
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
-	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
-		if slices.Contains(*genCapabilities.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
-			s.positionEncoding = lsproto.PositionEncodingKindUTF8
-		}
+	if slices.Contains(s.clientCapabilities.General.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
+		s.positionEncoding = lsproto.PositionEncodingKindUTF8
 	}
 
 	if s.initializeParams.Locale != nil {
@@ -948,15 +961,12 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
-	if shouldEnableWatch(s.initializeParams) {
+	if s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
 		s.watchEnabled = true
 	}
 
 	cwd := s.cwd
-	if s.initializeParams.Capabilities != nil &&
-		s.initializeParams.Capabilities.Workspace != nil &&
-		s.initializeParams.Capabilities.Workspace.WorkspaceFolders != nil &&
-		ptrIsTrue(s.initializeParams.Capabilities.Workspace.WorkspaceFolders) &&
+	if s.clientCapabilities.Workspace.WorkspaceFolders &&
 		s.initializeParams.WorkspaceFolders != nil &&
 		s.initializeParams.WorkspaceFolders.WorkspaceFolders != nil &&
 		len(*s.initializeParams.WorkspaceFolders.WorkspaceFolders) == 1 {
@@ -970,59 +980,56 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
-	var client project.Client
-	if s.client != nil {
-		client = s.client
-	} else {
-		client = s
+	var disablePushDiagnostics bool
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
+		// Check for disablePushDiagnostics option
+		if initOpts, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
+			if disable, ok := initOpts["disablePushDiagnostics"].(bool); ok {
+				disablePushDiagnostics = disable
+			}
+		}
 	}
 
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
-			CurrentDirectory:   cwd,
-			DefaultLibraryPath: s.defaultLibraryPath,
-			TypingsLocation:    s.typingsLocation,
-			PositionEncoding:   s.positionEncoding,
-			WatchEnabled:       s.watchEnabled,
-			LoggingEnabled:     true,
-			DebounceDelay:      500 * time.Millisecond,
+			CurrentDirectory:       cwd,
+			DefaultLibraryPath:     s.defaultLibraryPath,
+			TypingsLocation:        s.typingsLocation,
+			PositionEncoding:       s.positionEncoding,
+			WatchEnabled:           s.watchEnabled,
+			LoggingEnabled:         true,
+			DebounceDelay:          500 * time.Millisecond,
+			PushDiagnosticsEnabled: !disablePushDiagnostics,
 		},
-		FS:         s.fs,
-		Logger:     s.logger,
-		Client:     client,
-		ParseCache: s.parseCache,
+		FS:          s.fs,
+		Logger:      s.logger,
+		Client:      s,
+		NpmExecutor: s,
+		ParseCache:  s.parseCache,
 	})
 
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
-		// handle userPreferences from initializationOptions
-		userPreferences := s.session.NewUserPreferences()
-		userPreferences.Parse(*s.initializeParams.InitializationOptions)
-		s.session.InitializeWithConfig(userPreferences)
-	} else {
-		// request userPreferences if not provided at initialization
-		userPreferences, err := s.RequestConfiguration(ctx)
-		if err != nil {
-			return err
-		}
-		s.session.InitializeWithConfig(userPreferences)
+	userPreferences, err := s.RequestConfiguration(ctx)
+	if err != nil {
+		return err
+	}
+	s.session.InitializeWithConfig(userPreferences)
 
-		_, err = s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
-			Registrations: []*lsproto.Registration{
-				{
-					Id:     "typescript-config-watch-id",
-					Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
-					RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
-						Section: &lsproto.StringOrStrings{
-							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
-							Strings: &[]string{"typescript"},
-						},
-					})),
-				},
+	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
+		Registrations: []*lsproto.Registration{
+			{
+				Id:     "typescript-config-watch-id",
+				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
+				RegisterOptions: ptrTo(any(lsproto.DidChangeConfigurationRegistrationOptions{
+					Section: &lsproto.StringOrStrings{
+						// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
+						Strings: &[]string{"typescript"},
+					},
+				})),
 			},
-		})
-		if err != nil {
-			return fmt.Errorf("failed to register configuration change watcher: %w", err)
-		}
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to register configuration change watcher: %w", err)
 	}
 
 	// !!! temporary.
@@ -1100,11 +1107,11 @@ func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTracePar
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri, getDiagnosticClientCapabilities(s.initializeParams))
+	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
-	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position, getHoverContentFormat(s.initializeParams))
+	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
@@ -1113,17 +1120,15 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
-		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
-		getSignatureHelpDocumentationFormat(s.initializeParams),
 	)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
-	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientSupportsLink(s.initializeParams))
+	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
-	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.initializeParams))
+	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.ReferencesResponse, error) {
@@ -1149,7 +1154,7 @@ func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.Ref
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.initializeParams))
+	return ls.ProvideImplementations(ctx, params)
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -1158,7 +1163,6 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
-		getCompletionClientCapabilities(s.initializeParams),
 	)
 }
 
@@ -1176,7 +1180,6 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		ctx,
 		params,
 		data,
-		getCompletionClientCapabilities(s.initializeParams),
 	)
 }
 
@@ -1216,7 +1219,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
-	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri, getDocumentSymbolClientSupportsHierarchical(s.initializeParams))
+	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.RenameResponse, error) {
@@ -1274,6 +1277,14 @@ func (s *Server) handleCodeAction(ctx context.Context, ls *ls.LanguageService, p
 	return ls.ProvideCodeActions(ctx, params)
 }
 
+func (s *Server) handleInlayHint(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.InlayHintParams,
+) (lsproto.InlayHintResponse, error) {
+	return languageService.ProvideInlayHint(ctx, params)
+}
+
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
 }
@@ -1311,117 +1322,28 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
-func ptrIsTrue(v *bool) bool {
-	if v == nil {
-		return false
-	}
-	return *v
-}
-
-func shouldEnableWatch(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.Workspace == nil {
-		return false
-	}
-	return params.Capabilities.Workspace.DidChangeWatchedFiles != nil &&
-		ptrIsTrue(params.Capabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration)
-}
-
-func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.CompletionClientCapabilities {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
-		return nil
-	}
-	return params.Capabilities.TextDocument.Completion
-}
-
-func (s *Server) handleInlayHint(
-	ctx context.Context,
-	languageService *ls.LanguageService,
-	params *lsproto.InlayHintParams,
-) (lsproto.InlayHintResponse, error) {
-	return languageService.ProvideInlayHint(ctx, params)
-}
-
-func getDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.Definition == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.Definition.LinkSupport)
-}
-
-func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.TypeDefinition == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
-}
-
-func getImplementationClientSupportsLink(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.Implementation == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.Implementation.LinkSupport)
-}
-
-func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParams) bool {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
-		params.Capabilities.TextDocument.DocumentSymbol == nil {
-		return false
-	}
-	return ptrIsTrue(params.Capabilities.TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport)
-}
-
-func getHoverContentFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.Hover == nil || params.Capabilities.TextDocument.Hover.ContentFormat == nil {
-		// Default to plaintext if no preference specified
-		return lsproto.MarkupKindPlainText
-	}
-	formats := *params.Capabilities.TextDocument.Hover.ContentFormat
-	if len(formats) == 0 {
-		return lsproto.MarkupKindPlainText
-	}
-	// Return the first (most preferred) format
-	return formats[0]
-}
-
-func getSignatureHelpDocumentationFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.SignatureHelp == nil ||
-		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation == nil ||
-		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat == nil {
-		// Default to plaintext if no preference specified
-		return lsproto.MarkupKindPlainText
-	}
-	formats := *params.Capabilities.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat
-	if len(formats) == 0 {
-		return lsproto.MarkupKindPlainText
-	}
-	// Return the first (most preferred) format
-	return formats[0]
-}
-
-func getDiagnosticClientCapabilities(params *lsproto.InitializeParams) *lsproto.DiagnosticClientCapabilities {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
-		return nil
-	}
-
-	var caps lsproto.DiagnosticClientCapabilities
-	if params.Capabilities.TextDocument.Diagnostic != nil {
-		caps = *params.Capabilities.TextDocument.Diagnostic
-	}
+func resolveClientCapabilities(caps *lsproto.ClientCapabilities) lsproto.ResolvedClientCapabilities {
+	resolved := lsproto.ResolveClientCapabilities(caps)
 
 	// Some clients claim that push and pull diagnostics have different capabilities,
 	// including vscode-languageclient v9. Work around this by defaulting any missing
 	// pull diagnostic caps with the pull diagnostic equivalents.
 	//
 	// TODO: remove when we upgrade to vscode-languageclient v10, which fixes this issue.
-	if publish := params.Capabilities.TextDocument.PublishDiagnostics; publish != nil {
-		caps.RelatedInformation = core.Coalesce(caps.RelatedInformation, publish.RelatedInformation)
-		caps.TagSupport = core.Coalesce(caps.TagSupport, publish.TagSupport)
-		caps.CodeDescriptionSupport = core.Coalesce(caps.CodeDescriptionSupport, publish.CodeDescriptionSupport)
-		caps.DataSupport = core.Coalesce(caps.DataSupport, publish.DataSupport)
+	publish := resolved.TextDocument.PublishDiagnostics
+	diagnostic := &resolved.TextDocument.Diagnostic
+	if !diagnostic.RelatedInformation && publish.RelatedInformation {
+		diagnostic.RelatedInformation = true
+	}
+	if !diagnostic.CodeDescriptionSupport && publish.CodeDescriptionSupport {
+		diagnostic.CodeDescriptionSupport = true
+	}
+	if !diagnostic.DataSupport && publish.DataSupport {
+		diagnostic.DataSupport = true
+	}
+	if len(diagnostic.TagSupport.ValueSet) == 0 && len(publish.TagSupport.ValueSet) > 0 {
+		diagnostic.TagSupport.ValueSet = publish.TagSupport.ValueSet
 	}
 
-	return &caps
+	return resolved
 }
