@@ -724,12 +724,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 
 	var disablePushDiagnostics bool
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
-		// Check for disablePushDiagnostics option
-		if initOpts, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
-			if disable, ok := initOpts["disablePushDiagnostics"].(bool); ok {
-				disablePushDiagnostics = disable
-			}
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
+		if s.initializeParams.InitializationOptions.DisablePushDiagnostics != nil {
+			disablePushDiagnostics = *s.initializeParams.InitializationOptions.DisablePushDiagnostics
 		}
 	}
 

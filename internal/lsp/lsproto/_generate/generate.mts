@@ -29,6 +29,22 @@ if (!fs.existsSync(metaModelPath)) {
 
 const model: MetaModel = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
+// Custom structures to add to the model
+const customStructures: Structure[] = [
+    {
+        name: "InitializationOptions",
+        properties: [
+            {
+                name: "disablePushDiagnostics",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "DisablePushDiagnostics disables automatic pushing of diagnostics to the client.",
+            },
+        ],
+        documentation: "InitializationOptions contains user-provided initialization options.",
+    },
+];
+
 // Preprocess the model to inline extends/mixins contents
 function preprocessModel() {
     const structureMap = new Map<string, Structure>();
@@ -75,6 +91,23 @@ function preprocessModel() {
         structure.mixins = undefined;
     }
 }
+
+// Add custom structures to the model
+model.structures.unshift(...customStructures);
+
+// Patch the model to use custom types
+function patchModel() {
+    for (const structure of model.structures) {
+        for (const prop of structure.properties) {
+            // Replace initializationOptions type with custom InitializationOptions
+            if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                prop.type = { kind: "reference", name: "InitializationOptions" };
+            }
+        }
+    }
+}
+
+patchModel();
 
 // Preprocess the model before proceeding
 preprocessModel();

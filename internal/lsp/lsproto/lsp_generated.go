@@ -13,6 +13,12 @@ import (
 
 // Structures
 
+// InitializationOptions contains user-provided initialization options.
+type InitializationOptions struct {
+	// DisablePushDiagnostics disables automatic pushing of diagnostics to the client.
+	DisablePushDiagnostics *bool `json:"disablePushDiagnostics,omitzero"`
+}
+
 type ImplementationParams struct {
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -5401,7 +5407,7 @@ type InitializeParams struct {
 	Capabilities *ClientCapabilities `json:"capabilities"`
 
 	// User provided initialization options.
-	InitializationOptions *any `json:"initializationOptions,omitzero"`
+	InitializationOptions *InitializationOptions `json:"initializationOptions,omitzero"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValue `json:"trace,omitzero"`
@@ -13480,7 +13486,7 @@ type InitializeParamsBase struct {
 	Capabilities *ClientCapabilities `json:"capabilities"`
 
 	// User provided initialization options.
-	InitializationOptions *any `json:"initializationOptions,omitzero"`
+	InitializationOptions *InitializationOptions `json:"initializationOptions,omitzero"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValue `json:"trace,omitzero"`
