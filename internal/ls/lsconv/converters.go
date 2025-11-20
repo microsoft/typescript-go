@@ -206,18 +206,18 @@ func ptrTo[T any](v T) *T {
 }
 
 type diagnosticOptions struct {
-	reportStyleCheckAsWarnings bool
-	relatedInformation         bool
-	tagValueSet                []lsproto.DiagnosticTag
+	reportStyleChecksAsWarnings bool
+	relatedInformation          bool
+	tagValueSet                 []lsproto.DiagnosticTag
 }
 
 // DiagnosticToLSPPull converts a diagnostic for pull diagnostics (textDocument/diagnostic)
-func DiagnosticToLSPPull(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, reportStyleCheckAsWarnings bool) *lsproto.Diagnostic {
+func DiagnosticToLSPPull(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, reportStyleChecksAsWarnings bool) *lsproto.Diagnostic {
 	clientCaps := lsproto.GetClientCapabilities(ctx).TextDocument.Diagnostic
 	return diagnosticToLSP(converters, diagnostic, diagnosticOptions{
-		reportStyleCheckAsWarnings: reportStyleCheckAsWarnings, // !!! get through context UserPreferences
-		relatedInformation:         clientCaps.RelatedInformation,
-		tagValueSet:                clientCaps.TagSupport.ValueSet,
+		reportStyleChecksAsWarnings: reportStyleChecksAsWarnings, // !!! get through context UserPreferences
+		relatedInformation:          clientCaps.RelatedInformation,
+		tagValueSet:                 clientCaps.TagSupport.ValueSet,
 	})
 }
 
@@ -255,7 +255,7 @@ func diagnosticToLSP(converters *Converters, diagnostic *ast.Diagnostic, opts di
 		severity = lsproto.DiagnosticSeverityError
 	}
 
-	if opts.reportStyleCheckAsWarnings && severity == lsproto.DiagnosticSeverityError && styleCheckDiagnostics.Has(diagnostic.Code()) {
+	if opts.reportStyleChecksAsWarnings && severity == lsproto.DiagnosticSeverityError && styleCheckDiagnostics.Has(diagnostic.Code()) {
 		severity = lsproto.DiagnosticSeverityWarning
 	}
 
