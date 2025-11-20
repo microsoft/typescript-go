@@ -347,7 +347,7 @@ func (p *PnpApi) GetPackageLocationAbsolutePath(packageInfo *PackageInfo) string
 	}
 
 	packageLocation := packageInfo.PackageLocation
-	return tspath.ResolvePath(p.manifest.dirPath, packageLocation)
+	return tspath.RemoveTrailingDirectorySeparators(tspath.ResolvePath(p.manifest.dirPath, packageLocation))
 }
 
 // Checks if fromFileName and toFileName are in different pnp modules
