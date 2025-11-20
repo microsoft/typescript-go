@@ -272,12 +272,12 @@ func (p *PnpApi) ParseBareIdentifier(specifier string) (ident string, modulePath
 			ident = specifier[:firstSlash+1+secondSlash]
 		}
 	} else {
-		firstSlash := strings.Index(specifier, "/")
+		beforeFirstSlash, _, found := strings.Cut(specifier, "/")
 
-		if firstSlash == -1 {
+		if !found {
 			ident = specifier
 		} else {
-			ident = specifier[:firstSlash]
+			ident = beforeFirstSlash
 		}
 	}
 

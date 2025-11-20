@@ -178,13 +178,11 @@ func getMatchingFS(pnpFS *pnpFS, path string) (vfs.FS, string, string) {
 // Virtual paths are used to make different paths resolve to the same real file or folder, which is necessary in some cases when PnP is enabled
 // See https://yarnpkg.com/advanced/lexicon#virtual-package and https://yarnpkg.com/advanced/pnpapi#resolvevirtual for more details
 func resolveVirtual(path string) (realPath string, hash string, basePath string) {
-	idx := strings.Index(path, "/__virtual__/")
-	if idx == -1 {
+	base, rest, found := strings.Cut(path, "/__virtual__/")
+	if !found {
 		return path, "", ""
 	}
 
-	base := path[:idx]
-	rest := path[idx+len("/__virtual__/"):]
 	parts := strings.SplitN(rest, "/", 3)
 	if len(parts) < 3 {
 		// Not enough parts to match the pattern, return as is
@@ -198,7 +196,7 @@ func resolveVirtual(path string) (realPath string, hash string, basePath string)
 		return path, "", ""
 	}
 
-	basePath = path[:idx] + "/__virtual__"
+	basePath = base + "/__virtual__"
 
 	// Apply dirname n times to base
 	for range depth {
