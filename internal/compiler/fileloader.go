@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -260,6 +259,8 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 
 func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
 	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
+	// Check if file should be included based on extension
+	// This mirrors the logic from getSourceFileFromReferenceWorker in TypeScript
 	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
 		p.rootTasks = append(p.rootTasks, &parseTask{
 			normalizedFilePath: absPath,
@@ -269,17 +270,14 @@ func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReaso
 	} else if tspath.HasExtension(absPath) {
 		// File has an extension but it's not in the supported extensions list
 		// Check if it's a JavaScript file and report the appropriate diagnostic
-		canonicalFileName := tspath.GetCanonicalFileName(absPath, p.opts.Host.FS().UseCaseSensitiveFileNames())
-		if tspath.HasJSFileExtension(canonicalFileName) {
-			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
-				kind: processingDiagnosticKindExplainingFileInclude,
-				data: &includeExplainingDiagnostic{
-					diagnosticReason: includeReason,
-					message:          diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option,
-					args:             []any{fileName},
-				},
-			})
-		}
+		// This will be caught later in parseTask.load() for consistency with other file inclusion paths
+		// But for root files, we need to add them to rootTasks so they can be processed
+		// The diagnostic will be reported in load() before attempting to parse
+		p.rootTasks = append(p.rootTasks, &parseTask{
+			normalizedFilePath: absPath,
+			libFile:            libFile,
+			includeReason:      includeReason,
+		})
 	}
 }
 
