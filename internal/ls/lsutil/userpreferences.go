@@ -19,7 +19,6 @@ func NewDefaultUserPreferences() *UserPreferences {
 		IncludeCompletionsWithSnippetText:  core.TSTrue,
 		DisplayPartsForJSDoc:               true,
 		DisableLineTextInReferences:        true,
-		InteractiveInlayHints:              true,
 	}
 }
 
@@ -142,7 +141,6 @@ type UserPreferences struct {
 	IncludeInlayPropertyDeclarationTypeHints              bool
 	IncludeInlayFunctionLikeReturnTypeHints               bool
 	IncludeInlayEnumMemberValueHints                      bool
-	InteractiveInlayHints                                 bool
 
 	// ------- Misc -------
 
@@ -364,7 +362,7 @@ func (p *UserPreferences) Parse(item any) *UserPreferences {
 	return nil
 }
 
-func (p *UserPreferences) parseWorker(config map[string]interface{}) {
+func (p *UserPreferences) parseWorker(config map[string]any) {
 	// Process unstable preferences first so that they do not overwrite stable properties
 	if unstable, ok := config["unstable"]; ok {
 		// unstable properties must be named the same as userPreferences
@@ -622,8 +620,6 @@ func (p *UserPreferences) set(name string, value any) {
 		p.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayenummembervaluehints":
 		p.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
-	case "interactiveinlayhints":
-		p.InteractiveInlayHints = parseBoolWithDefault(value, true)
 	case "excludelibrarysymbolsinnavto":
 		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, false)
 	case "disablesuggestions":

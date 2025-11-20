@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -60,7 +61,7 @@ func DoJSEmitBaseline(
 				CompilerOptions: options.SourceFileAffecting(),
 			}, file.Content, core.ScriptKindJSON)
 			if len(fileParseResult.Diagnostics()) > 0 {
-				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
+				jsCode.WriteString(GetErrorBaseline(t, []*harnessutil.TestFile{file}, diagnosticwriter.WrapASTDiagnostics(fileParseResult.Diagnostics()), diagnosticwriter.CompareASTDiagnostics, false /*pretty*/))
 				continue
 			}
 		}
@@ -87,10 +88,11 @@ func DoJSEmitBaseline(
 	if declFileCompilationResult != nil && len(declFileCompilationResult.declResult.Diagnostics) > 0 {
 		jsCode.WriteString("\r\n\r\n//// [DtsFileErrors]\r\n")
 		jsCode.WriteString("\r\n\r\n")
-		jsCode.WriteString(getErrorBaseline(
+		jsCode.WriteString(GetErrorBaseline(
 			t,
 			slices.Concat(tsConfigFiles, declFileCompilationResult.declInputFiles, declFileCompilationResult.declOtherFiles),
-			declFileCompilationResult.declResult.Diagnostics,
+			diagnosticwriter.WrapASTDiagnostics(declFileCompilationResult.declResult.Diagnostics),
+			diagnosticwriter.CompareASTDiagnostics,
 			false, /*pretty*/
 		))
 	}
@@ -202,7 +204,7 @@ func prepareDeclarationCompilationContext(
 		var sourceFileName string
 
 		if len(options.OutDir) != 0 {
-			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
+			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Host.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
 			sourceFileName = tspath.CombinePaths(options.OutDir, sourceFilePath)
 		} else {

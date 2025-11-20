@@ -175,6 +175,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "applyCodeActionFromCompletion":
                     // `verify.applyCodeActionFromCompletion(...)`
                     return parseVerifyApplyCodeActionFromCompletionArgs(callExpression.arguments);
+                case "importFixAtPosition":
+                    // `verify.importFixAtPosition(...)`
+                    return parseImportFixAtPositionArgs(callExpression.arguments);
                 case "quickInfoAt":
                 case "quickInfoExists":
                 case "quickInfoIs":
@@ -205,9 +208,18 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineRenameAtRangesWithText":
                     // `verify.baselineRename...(...)`
                     return parseBaselineRenameArgs(func.text, callExpression.arguments);
+                case "baselineInlayHints":
+                    return parseBaselineInlayHints(callExpression.arguments);
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
+                case "getSemanticDiagnostics":
+                case "getSuggestionDiagnostics":
+                case "getSyntacticDiagnostics":
+                    return parseVerifyDiagnostics(func.text, callExpression.arguments);
+                case "baselineSyntacticDiagnostics":
+                case "baselineSyntacticAndSemanticDiagnostics":
+                    return [{ kind: "verifyBaselineDiagnostics" }];
             }
         }
         // `goTo....`
@@ -318,10 +330,11 @@ function parseGoToArgs(args: readonly ts.Expression[], funcName: string): GoToCm
             }
             let arg0;
             if (arg0 = getStringLiteralLike(args[0])) {
+                const text = arg0.text.replace("tests/cases/fourslash/server/", "").replace("tests/cases/fourslash/", "");
                 return [{
                     kind: "goTo",
                     funcName: "file",
-                    args: [getGoStringLiteral(arg0.text)],
+                    args: [getGoStringLiteral(text)],
                 }];
             }
             else if (arg0 = getNumericLiteral(args[0])) {
@@ -538,6 +551,46 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined 
         return undefined;
     }
     return `&fourslash.ApplyCodeActionFromCompletionOptions{\n${props.join("\n")}\n}`;
+}
+
+function parseImportFixAtPositionArgs(args: readonly ts.Expression[]): VerifyImportFixAtPositionCmd[] | undefined {
+    if (args.length < 1 || args.length > 3) {
+        console.error(`Expected 1-3 arguments in verify.importFixAtPosition, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    const arrayArg = getArrayLiteralExpression(args[0]);
+    if (!arrayArg) {
+        console.error(`Expected array literal for first argument in verify.importFixAtPosition, got ${args[0].getText()}`);
+        return undefined;
+    }
+    const expectedTexts: string[] = [];
+    for (const elem of arrayArg.elements) {
+        const strElem = getStringLiteralLike(elem);
+        if (!strElem) {
+            console.error(`Expected string literal in verify.importFixAtPosition array, got ${elem.getText()}`);
+            return undefined;
+        }
+        expectedTexts.push(getGoMultiLineStringLiteral(strElem.text));
+    }
+
+    // If the array is empty, we should still generate valid Go code
+    if (expectedTexts.length === 0) {
+        expectedTexts.push(""); // This will be handled specially in code generation
+    }
+
+    let preferences: string | undefined;
+    if (args.length > 2 && ts.isObjectLiteralExpression(args[2])) {
+        preferences = parseUserPreferences(args[2]);
+        if (!preferences) {
+            console.error(`Unrecognized user preferences in verify.importFixAtPosition: ${args[2].getText()}`);
+            return undefined;
+        }
+    }
+    return [{
+        kind: "verifyImportFixAtPosition",
+        expectedTexts,
+        preferences: preferences || "nil /*preferences*/",
+    }];
 }
 
 const completionConstants = new Map([
@@ -1189,6 +1242,131 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
     }];
 }
 
+function parseBaselineInlayHints(args: readonly ts.Expression[]): [VerifyBaselineInlayHintsCmd] | undefined {
+    let preferences: string | undefined;
+    // Parse span
+    if (args.length > 0) {
+        if (args[0].getText() !== "undefined") {
+            console.error(`Unsupported span argument in verify.baselineInlayHints: ${args[0].getText()}`);
+            return undefined;
+        }
+    }
+    // Parse preferences
+    if (args.length > 1) {
+        if (ts.isObjectLiteralExpression(args[1])) {
+            preferences = parseUserPreferences(args[1]);
+            if (!preferences) {
+                console.error(`Unrecognized user preferences in verify.baselineInlayHints: ${args[1].getText()}`);
+                return undefined;
+            }
+        }
+    }
+    return [{
+        kind: "verifyBaselineInlayHints",
+        span: "nil /*span*/", // Only supporteed manually
+        preferences: preferences ? preferences : "nil /*preferences*/",
+    }];
+}
+
+function parseVerifyDiagnostics(funcName: string, args: readonly ts.Expression[]): [VerifyDiagnosticsCmd] | undefined {
+    if (!args[0] || !ts.isArrayLiteralExpression(args[0])) {
+        console.error(`Expected an array literal argument in verify.${funcName}`);
+        return undefined;
+    }
+    const goArgs: string[] = [];
+    for (const expr of args[0].elements) {
+        const diag = parseExpectedDiagnostic(expr);
+        if (diag === undefined) {
+            return undefined;
+        }
+        goArgs.push(diag);
+    }
+    return [{
+        kind: "verifyDiagnostics",
+        arg: goArgs.length > 0 ? `[]*lsproto.Diagnostic{\n${goArgs.join(",\n")},\n}` : "nil",
+        isSuggestion: funcName === "getSuggestionDiagnostics",
+    }];
+}
+
+function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
+    if (!ts.isObjectLiteralExpression(expr)) {
+        console.error(`Expected object literal expression for expected diagnostic, got ${expr.getText()}`);
+        return undefined;
+    }
+
+    const diagnosticProps: string[] = [];
+
+    for (const prop of expr.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            console.error(`Expected property assignment with identifier name for expected diagnostic, got ${prop.getText()}`);
+            return undefined;
+        }
+
+        const propName = prop.name.text;
+        const init = prop.initializer;
+
+        switch (propName) {
+            case "message": {
+                let messageInit;
+                if (messageInit = getStringLiteralLike(init)) {
+                    messageInit.text = messageInit.text.replace("/tests/cases/fourslash", "");
+                    diagnosticProps.push(`Message: ${getGoStringLiteral(messageInit.text)},`);
+                }
+                else {
+                    console.error(`Expected string literal for diagnostic message, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "code": {
+                let codeInit;
+                if (codeInit = getNumericLiteral(init)) {
+                    diagnosticProps.push(`Code: &lsproto.IntegerOrString{Integer: PtrTo[int32](${codeInit.text})},`);
+                }
+                else {
+                    console.error(`Expected numeric literal for diagnostic code, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "range": {
+                // Handle range references like ranges[0]
+                const rangeArg = parseBaselineMarkerOrRangeArg(init);
+                if (rangeArg) {
+                    diagnosticProps.push(`Range: ${rangeArg}.LSRange,`);
+                }
+                else {
+                    console.error(`Expected range reference for diagnostic range, got ${init.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
+            case "reportsDeprecated": {
+                if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                    diagnosticProps.push(`Tags: &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},`);
+                }
+                break;
+            }
+            case "reportsUnnecessary": {
+                if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                    diagnosticProps.push(`Tags: &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagUnnecessary},`);
+                }
+                break;
+            }
+            default:
+                console.error(`Unrecognized property in expected diagnostic: ${propName}`);
+                return undefined;
+        }
+    }
+
+    if (diagnosticProps.length === 0) {
+        console.error(`No valid properties found in diagnostic object`);
+        return undefined;
+    }
+
+    return `&lsproto.Diagnostic{\n${diagnosticProps.join("\n")}\n}`;
+}
+
 function stringToTristate(s: string): string {
     switch (s) {
         case "true":
@@ -1211,6 +1389,63 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                     break;
                 case "quotePreference":
                     preferences.push(`QuotePreference: lsutil.QuotePreference(${prop.initializer.getText()})`);
+                    break;
+                case "autoImportFileExcludePatterns":
+                    const arrayArg = getArrayLiteralExpression(prop.initializer);
+                    if (!arrayArg) {
+                        return undefined;
+                    }
+                    const patterns: string[] = [];
+                    for (const elem of arrayArg.elements) {
+                        const strElem = getStringLiteralLike(elem);
+                        if (!strElem) {
+                            return undefined;
+                        }
+                        patterns.push(getGoStringLiteral(strElem.text));
+                    }
+                    preferences.push(`AutoImportFileExcludePatterns: []string{${patterns.join(", ")}}`);
+                    break;
+                case "includeInlayParameterNameHints":
+                    let paramHint;
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    switch (prop.initializer.text) {
+                        case "none":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsNone";
+                            break;
+                        case "literals":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsLiterals";
+                            break;
+                        case "all":
+                            paramHint = "lsutil.IncludeInlayParameterNameHintsAll";
+                            break;
+                    }
+                    preferences.push(`IncludeInlayParameterNameHints: ${paramHint}`);
+                    break;
+                case "includeInlayParameterNameHintsWhenArgumentMatchesName":
+                    preferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayFunctionParameterTypeHints":
+                    preferences.push(`IncludeInlayFunctionParameterTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayVariableTypeHints":
+                    preferences.push(`IncludeInlayVariableTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayVariableTypeHintsWhenTypeMatchesName":
+                    preferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayPropertyDeclarationTypeHints":
+                    preferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayFunctionLikeReturnTypeHints":
+                    preferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${prop.initializer.getText()}`);
+                    break;
+                case "includeInlayEnumMemberValueHints":
+                    preferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
+                    break;
+                case "interactiveInlayHints":
+                    // Ignore, deprecated
                     break;
             }
         }
@@ -1267,7 +1502,7 @@ function parseBaselineMarkerOrRangeArg(arg: ts.Expression): string | undefined {
             return result;
         }
     }
-    console.error(`Unrecognized argument in verify.baselineRename: ${arg.getText()}`);
+    console.error(`Unrecognized range argument: ${arg.getText()}`);
     return undefined;
 }
 
@@ -1588,12 +1823,6 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
-interface VerifyBaselineFindAllReferencesCmd {
-    kind: "verifyBaselineFindAllReferences";
-    markers: string[];
-    ranges?: boolean;
-}
-
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
@@ -1625,6 +1854,18 @@ interface VerifyBaselineDocumentHighlightsCmd {
     preferences: string;
 }
 
+interface VerifyBaselineInlayHintsCmd {
+    kind: "verifyBaselineInlayHints";
+    span: string;
+    preferences: string;
+}
+
+interface VerifyImportFixAtPositionCmd {
+    kind: "verifyImportFixAtPosition";
+    expectedTexts: string[];
+    preferences: string;
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -1649,6 +1890,16 @@ interface VerifyRenameInfoCmd {
     preferences: string;
 }
 
+interface VerifyDiagnosticsCmd {
+    kind: "verifyDiagnostics";
+    arg: string;
+    isSuggestion: boolean;
+}
+
+interface VerifyBaselineDiagnosticsCmd {
+    kind: "verifyBaselineDiagnostics";
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -1662,7 +1913,11 @@ type Cmd =
     | EditCmd
     | VerifyQuickInfoCmd
     | VerifyBaselineRenameCmd
-    | VerifyRenameInfoCmd;
+    | VerifyRenameInfoCmd
+    | VerifyBaselineInlayHintsCmd
+    | VerifyImportFixAtPositionCmd
+    | VerifyDiagnosticsCmd
+    | VerifyBaselineDiagnosticsCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1759,6 +2014,18 @@ function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenam
     }
 }
 
+function generateBaselineInlayHints({ span, preferences }: VerifyBaselineInlayHintsCmd): string {
+    return `f.VerifyBaselineInlayHints(t, ${span}, ${preferences})`;
+}
+
+function generateImportFixAtPosition({ expectedTexts, preferences }: VerifyImportFixAtPositionCmd): string {
+    // Handle empty array case
+    if (expectedTexts.length === 1 && expectedTexts[0] === "") {
+        return `f.VerifyImportFixAtPosition(t, []string{}, ${preferences})`;
+    }
+    return `f.VerifyImportFixAtPosition(t, []string{\n${expectedTexts.join(",\n")},\n}, ${preferences})`;
+}
+
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
@@ -1795,6 +2062,15 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
+        case "verifyBaselineInlayHints":
+            return generateBaselineInlayHints(cmd);
+        case "verifyImportFixAtPosition":
+            return generateImportFixAtPosition(cmd);
+        case "verifyDiagnostics":
+            const funcName = cmd.isSuggestion ? "VerifySuggestionDiagnostics" : "VerifyNonSuggestionDiagnostics";
+            return `f.${funcName}(t, ${cmd.arg})`;
+        case "verifyBaselineDiagnostics":
+            return `f.VerifyBaselineNonSuggestionDiagnostics(t)`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

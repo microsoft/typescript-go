@@ -93,10 +93,13 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	var markers []*Marker
 	var ranges []*RangeMarker
 
-	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinks(
+	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinksWithOptions(
 		contents,
 		fileName,
 		parseFileContent,
+		testrunner.ParseTestFilesOptions{
+			AllowImplicitFirstFile: true,
+		},
 	)
 	if e != nil {
 		t.Fatalf("Error parsing fourslash data: %s", e.Error())
@@ -407,13 +410,13 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, error) {
 	// Attempt to parse the marker value as JSON
-	var v interface{}
+	var v any
 	e := json.Unmarshal([]byte("{ "+text+" }"), &v)
 
 	if e != nil {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text "+text)
 	}
-	markerValue, ok := v.(map[string]interface{})
+	markerValue, ok := v.(map[string]any)
 	if !ok || len(markerValue) == 0 {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty")
 	}
