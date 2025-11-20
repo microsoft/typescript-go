@@ -20,7 +20,7 @@ type failedAmbientModuleLookupSource struct {
 	packageName string
 }
 
-type resolver struct {
+type aliasResolver struct {
 	toPath         func(fileName string) tspath.Path
 	host           RegistryCloneHost
 	moduleResolver *module.Resolver
@@ -32,8 +32,8 @@ type resolver struct {
 	possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 }
 
-func newResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver *module.Resolver, toPath func(fileName string) tspath.Path) *resolver {
-	r := &resolver{
+func newAliasResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver *module.Resolver, toPath func(fileName string) tspath.Path) *aliasResolver {
+	r := &aliasResolver{
 		toPath:         toPath,
 		host:           host,
 		moduleResolver: moduleResolver,
@@ -47,34 +47,34 @@ func newResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver 
 }
 
 // BindSourceFiles implements checker.Program.
-func (r *resolver) BindSourceFiles() {
+func (r *aliasResolver) BindSourceFiles() {
 	// We will bind as we parse
 }
 
 // SourceFiles implements checker.Program.
-func (r *resolver) SourceFiles() []*ast.SourceFile {
+func (r *aliasResolver) SourceFiles() []*ast.SourceFile {
 	return r.rootFiles
 }
 
 // Options implements checker.Program.
-func (r *resolver) Options() *core.CompilerOptions {
+func (r *aliasResolver) Options() *core.CompilerOptions {
 	return &core.CompilerOptions{
 		NoCheck: core.TSTrue,
 	}
 }
 
 // GetCurrentDirectory implements checker.Program.
-func (r *resolver) GetCurrentDirectory() string {
+func (r *aliasResolver) GetCurrentDirectory() string {
 	return r.host.GetCurrentDirectory()
 }
 
 // UseCaseSensitiveFileNames implements checker.Program.
-func (r *resolver) UseCaseSensitiveFileNames() bool {
+func (r *aliasResolver) UseCaseSensitiveFileNames() bool {
 	return r.host.FS().UseCaseSensitiveFileNames()
 }
 
 // GetSourceFile implements checker.Program.
-func (r *resolver) GetSourceFile(fileName string) *ast.SourceFile {
+func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
 	// !!! local cache
 	file := r.host.GetSourceFile(fileName, r.toPath(fileName))
 	binder.BindSourceFile(file)
@@ -82,33 +82,33 @@ func (r *resolver) GetSourceFile(fileName string) *ast.SourceFile {
 }
 
 // GetDefaultResolutionModeForFile implements checker.Program.
-func (r *resolver) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
+func (r *aliasResolver) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
 	// !!!
 	return core.ModuleKindESNext
 }
 
 // GetEmitModuleFormatOfFile implements checker.Program.
-func (r *resolver) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
+func (r *aliasResolver) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
 	return core.ModuleKindESNext
 }
 
 // GetEmitSyntaxForUsageLocation implements checker.Program.
-func (r *resolver) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode {
+func (r *aliasResolver) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode {
 	return core.ModuleKindESNext
 }
 
 // GetImpliedNodeFormatForEmit implements checker.Program.
-func (r *resolver) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind {
+func (r *aliasResolver) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind {
 	return core.ModuleKindESNext
 }
 
 // GetModeForUsageLocation implements checker.Program.
-func (r *resolver) GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode {
+func (r *aliasResolver) GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode {
 	return core.ModuleKindESNext
 }
 
 // GetResolvedModule implements checker.Program.
-func (r *resolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (r *aliasResolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	cache, _ := r.resolvedModules.LoadOrStore(currentSourceFile.Path(), &collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]{})
 	if resolved, ok := cache.Load(module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}); ok {
 		return resolved
@@ -127,12 +127,12 @@ func (r *resolver) GetResolvedModule(currentSourceFile ast.HasFileName, moduleRe
 }
 
 // GetSourceFileForResolvedModule implements checker.Program.
-func (r *resolver) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
+func (r *aliasResolver) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
 	return r.GetSourceFile(fileName)
 }
 
 // GetResolvedModules implements checker.Program.
-func (r *resolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
+func (r *aliasResolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
 	// only used when producing diagnostics, which hopefully the checker won't do
 	return nil
 }
@@ -140,88 +140,88 @@ func (r *resolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*m
 // ---
 
 // GetSourceFileMetaData implements checker.Program.
-func (r *resolver) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
+func (r *aliasResolver) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
 	panic("unimplemented")
 }
 
 // CommonSourceDirectory implements checker.Program.
-func (r *resolver) CommonSourceDirectory() string {
+func (r *aliasResolver) CommonSourceDirectory() string {
 	panic("unimplemented")
 }
 
 // FileExists implements checker.Program.
-func (r *resolver) FileExists(fileName string) bool {
+func (r *aliasResolver) FileExists(fileName string) bool {
 	panic("unimplemented")
 }
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
-func (r *resolver) GetGlobalTypingsCacheLocation() string {
+func (r *aliasResolver) GetGlobalTypingsCacheLocation() string {
 	panic("unimplemented")
 }
 
 // GetImportHelpersImportSpecifier implements checker.Program.
-func (r *resolver) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
+func (r *aliasResolver) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	panic("unimplemented")
 }
 
 // GetJSXRuntimeImportSpecifier implements checker.Program.
-func (r *resolver) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
+func (r *aliasResolver) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
 	panic("unimplemented")
 }
 
 // GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
-func (r *resolver) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
+func (r *aliasResolver) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
 	panic("unimplemented")
 }
 
 // GetPackageJsonInfo implements checker.Program.
-func (r *resolver) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (r *aliasResolver) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
 	panic("unimplemented")
 }
 
 // GetProjectReferenceFromOutputDts implements checker.Program.
-func (r *resolver) GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+func (r *aliasResolver) GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
 	panic("unimplemented")
 }
 
 // GetProjectReferenceFromSource implements checker.Program.
-func (r *resolver) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+func (r *aliasResolver) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
 	panic("unimplemented")
 }
 
 // GetRedirectForResolution implements checker.Program.
-func (r *resolver) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
+func (r *aliasResolver) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
 	panic("unimplemented")
 }
 
 // GetRedirectTargets implements checker.Program.
-func (r *resolver) GetRedirectTargets(path tspath.Path) []string {
+func (r *aliasResolver) GetRedirectTargets(path tspath.Path) []string {
 	panic("unimplemented")
 }
 
 // GetResolvedModuleFromModuleSpecifier implements checker.Program.
-func (r *resolver) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+func (r *aliasResolver) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
 	panic("unimplemented")
 }
 
 // GetSourceOfProjectReferenceIfOutputIncluded implements checker.Program.
-func (r *resolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+func (r *aliasResolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
 	panic("unimplemented")
 }
 
 // IsSourceFileDefaultLibrary implements checker.Program.
-func (r *resolver) IsSourceFileDefaultLibrary(path tspath.Path) bool {
+func (r *aliasResolver) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	panic("unimplemented")
 }
 
 // IsSourceFromProjectReference implements checker.Program.
-func (r *resolver) IsSourceFromProjectReference(path tspath.Path) bool {
+func (r *aliasResolver) IsSourceFromProjectReference(path tspath.Path) bool {
 	panic("unimplemented")
 }
 
 // SourceFileMayBeEmitted implements checker.Program.
-func (r *resolver) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
+func (r *aliasResolver) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	panic("unimplemented")
 }
 
-var _ checker.Program = (*resolver)(nil)
+var _ checker.Program = (*aliasResolver)(nil)

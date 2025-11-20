@@ -8,7 +8,7 @@ import (
 )
 
 func (v *View) GetModuleSpecifier(
-	export *RawExport,
+	export *Export,
 	userPreferences modulespecifiers.UserPreferences,
 ) (string, modulespecifiers.ResultKind) {
 	// !!! try using existing import

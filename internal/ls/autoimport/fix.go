@@ -463,7 +463,7 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 // !!! when/why could this return multiple?
 func (v *View) GetFixes(
 	ctx context.Context,
-	export *RawExport,
+	export *Export,
 ) []*Fix {
 	// !!! tryUseExistingNamespaceImport
 	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
@@ -485,6 +485,7 @@ func (v *View) GetFixes(
 			ModuleSpecifier:     moduleSpecifier,
 			ModuleSpecifierKind: moduleSpecifierKind,
 			Name:                export.Name(),
+			UseRequire:          v.shouldUseRequire(),
 
 			IsReExport:     export.Target.ModuleID != export.ModuleID,
 			ModuleFileName: export.ModuleFileName(),
@@ -494,7 +495,7 @@ func (v *View) GetFixes(
 
 func (v *View) tryAddToExistingImport(
 	ctx context.Context,
-	export *RawExport,
+	export *Export,
 ) *Fix {
 	existingImports := v.getExistingImports(ctx)
 	matchingDeclarations := existingImports.Get(export.ModuleID)
@@ -561,7 +562,7 @@ func (v *View) tryAddToExistingImport(
 	return nil
 }
 
-func getImportKind(importingFile *ast.SourceFile, export *RawExport, program *compiler.Program) ImportKind {
+func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) ImportKind {
 	if program.Options().VerbatimModuleSyntax.IsTrue() && program.GetEmitModuleFormatOfFile(importingFile) == core.ModuleKindCommonJS {
 		return ImportKindCommonJS
 	}
@@ -570,8 +571,9 @@ func getImportKind(importingFile *ast.SourceFile, export *RawExport, program *co
 		return ImportKindDefault
 	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar:
 		return ImportKindNamed
-	case ExportSyntaxEquals:
-		return ImportKindDefault
+	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports:
+		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.
+		return core.IfElse(export.ExportName == ast.InternalSymbolNameExportEquals, ImportKindDefault, ImportKindNamed)
 	default:
 		panic("unhandled export syntax kind: " + export.Syntax.String())
 	}
@@ -607,6 +609,60 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 	}
 	v.existingImports = result
 	return result
+}
+
+func (v *View) shouldUseRequire() bool {
+	if v.shouldUseRequireForFixes != nil {
+		return *v.shouldUseRequireForFixes
+	}
+	shouldUseRequire := v.computeShouldUseRequire()
+	v.shouldUseRequireForFixes = &shouldUseRequire
+	return shouldUseRequire
+}
+
+func (v *View) computeShouldUseRequire() bool {
+	// 1. TypeScript files don't use require variable declarations
+	if !tspath.HasJSFileExtension(v.importingFile.FileName()) {
+		return false
+	}
+
+	// 2. If the current source file is unambiguously CJS or ESM, go with that
+	switch {
+	case v.importingFile.CommonJSModuleIndicator != nil && v.importingFile.ExternalModuleIndicator == nil:
+		return true
+	case v.importingFile.ExternalModuleIndicator != nil && v.importingFile.CommonJSModuleIndicator == nil:
+		return false
+	}
+
+	// 3. If there's a tsconfig/jsconfig, use its module setting
+	if v.program.Options().ConfigFilePath != "" {
+		return v.program.Options().GetEmitModuleKind() < core.ModuleKindES2015
+	}
+
+	// 4. In --module nodenext, assume we're not emitting JS -> JS, so use
+	//    whatever syntax Node expects based on the detected module kind
+	//    TODO: consider removing `impliedNodeFormatForEmit`
+	switch v.program.GetImpliedNodeFormatForEmit(v.importingFile) {
+	case core.ModuleKindCommonJS:
+		return true
+	case core.ModuleKindESNext:
+		return false
+	}
+
+	// 5. Match the first other JS file in the program that's unambiguously CJS or ESM
+	for _, otherFile := range v.program.GetSourceFiles() {
+		switch {
+		case otherFile == v.importingFile, !ast.IsSourceFileJS(otherFile), v.program.IsSourceFileFromExternalLibrary(otherFile):
+			continue
+		case otherFile.CommonJSModuleIndicator != nil && otherFile.ExternalModuleIndicator == nil:
+			return true
+		case otherFile.ExternalModuleIndicator != nil && otherFile.CommonJSModuleIndicator == nil:
+			return false
+		}
+	}
+
+	// 6. Literally nothing to go on
+	return true
 }
 
 func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {

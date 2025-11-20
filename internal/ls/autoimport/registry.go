@@ -34,7 +34,7 @@ type RegistryBucket struct {
 	AmbientModuleNames map[string][]string
 	DependencyNames    *collections.Set[string]
 	Entrypoints        map[tspath.Path][]*module.ResolvedEntrypoint
-	Index              *Index[*RawExport]
+	Index              *Index[*Export]
 }
 
 func (b *RegistryBucket) Clone() *RegistryBucket {
@@ -525,12 +525,14 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		if len(rootFiles) > 0 {
 			// !!! parallelize?
-			resolver := newResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
-			ch := checker.NewChecker(resolver)
+			aliasResolver := newAliasResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
+			ch := checker.NewChecker(aliasResolver)
 			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
-				fileExports := b.parseFile(resolver.GetSourceFile(source.fileName), t.entry.Key(), source.packageName, func() (*checker.Checker, func()) {
+				sourceFile := aliasResolver.GetSourceFile(source.fileName)
+				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, func() (*checker.Checker, func()) {
 					return ch, func() {}
 				})
+				fileExports := extractor.extractFromFile(sourceFile)
 				t.result.bucket.Paths[path] = struct{}{}
 				for _, exp := range fileExports {
 					t.result.bucket.Index.insertAsWords(exp)
@@ -564,10 +566,11 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	var mu sync.Mutex
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
-	exports := make(map[tspath.Path][]*RawExport)
+	exports := make(map[tspath.Path][]*Export)
 	var wg sync.WaitGroup
 	getChecker, closePool := b.createCheckerPool(program)
 	defer closePool()
+	extractor := b.newExportExtractor("", "", getChecker)
 	for _, file := range program.GetSourceFiles() {
 		if strings.Contains(file.FileName(), "/node_modules/") || program.IsSourceFileDefaultLibrary(file.Path()) {
 			continue
@@ -576,7 +579,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 			if ctx.Err() == nil {
 				// !!! we could consider doing ambient modules / augmentations more directly
 				// from the program checker, instead of doing the syntax-based collection
-				fileExports := b.parseFile(file, "", "", getChecker)
+				fileExports := extractor.extractFromFile(file)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
@@ -585,7 +588,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	}
 
 	wg.Wait()
-	idx := &Index[*RawExport]{}
+	idx := &Index[*Export]{}
 	for path, fileExports := range exports {
 		if result.bucket.Paths == nil {
 			result.bucket.Paths = make(map[tspath.Path]struct{}, len(exports))
@@ -644,12 +647,12 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		packageNames = directoryPackageNames
 	}
 
-	resolver := newResolver(nil, b.host, b.resolver, b.base.toPath)
-	getChecker, closePool := b.createCheckerPool(resolver)
+	aliasResolver := newAliasResolver(nil, b.host, b.resolver, b.base.toPath)
+	getChecker, closePool := b.createCheckerPool(aliasResolver)
 	defer closePool()
 
 	var exportsMu sync.Mutex
-	exports := make(map[tspath.Path][]*RawExport)
+	exports := make(map[tspath.Path][]*Export)
 	ambientModuleNames := make(map[string][]string)
 
 	var entrypointsMu sync.Mutex
@@ -658,8 +661,9 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	processFile := func(fileName string, path tspath.Path, packageName string) {
 		sourceFile := b.host.GetSourceFile(fileName, path)
 		binder.BindSourceFile(sourceFile)
-		fileExports := b.parseFile(sourceFile, dirPath, packageName, getChecker)
-		if source, ok := resolver.possibleFailedAmbientModuleLookupSources.Load(sourceFile.Path()); !ok {
+		extractor := b.newExportExtractor(dirPath, packageName, getChecker)
+		fileExports := extractor.extractFromFile(sourceFile)
+		if source, ok := aliasResolver.possibleFailedAmbientModuleLookupSources.Load(sourceFile.Path()); !ok {
 			// If we failed to resolve any ambient modules from this file, we'll try the
 			// whole file again later, so don't add anything now.
 			exportsMu.Lock()
@@ -720,7 +724,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
-			Index:              &Index[*RawExport]{},
+			Index:              &Index[*Export]{},
 			DependencyNames:    dependencies,
 			PackageNames:       directoryPackageNames,
 			AmbientModuleNames: ambientModuleNames,
@@ -728,8 +732,8 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
 			LookupLocations:    make(map[tspath.Path]struct{}),
 		},
-		possibleFailedAmbientModuleLookupSources: &resolver.possibleFailedAmbientModuleLookupSources,
-		possibleFailedAmbientModuleLookupTargets: &resolver.possibleFailedAmbientModuleLookupTargets,
+		possibleFailedAmbientModuleLookupSources: &aliasResolver.possibleFailedAmbientModuleLookupSources,
+		possibleFailedAmbientModuleLookupTargets: &aliasResolver.possibleFailedAmbientModuleLookupTargets,
 	}
 	for path, fileExports := range exports {
 		result.bucket.Paths[path] = struct{}{}
