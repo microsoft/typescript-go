@@ -1224,29 +1224,29 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 }
 
 func (p *Program) addProgramDiagnostics() {
-	for _, m := range p.missingFiles {
-		reason := m.reason
-		var location core.TextRange
-		var parent *ast.SourceFile
-		var ref *ast.FileReference
-
-		if data, ok := reason.data.(*referencedFileData); ok {
-			parent = p.filesByPath[data.file]
-			if parent != nil && data.index < len(parent.ReferencedFiles) {
-				ref = parent.ReferencedFiles[data.index]
-				location = ref.TextRange
-			}
-
+	for _, missingFile := range p.missingFiles {
+		missingFileReason := missingFile.reason
+		refData, ok := missingFileReason.data.(*referencedFileData)
+		if !ok {
+			continue
 		}
 
-		diag := ast.NewDiagnostic(
-			parent,
-			location,
-			diagnostics.File_0_not_found,
-			m.path,
-		)
+		parentFile := p.filesByPath[refData.file]
+		if parentFile == nil {
+			continue
+		}
 
-		p.programDiagnostics = append(p.programDiagnostics, diag)
+		for _, ref := range parentFile.ReferencedFiles {
+			if tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(parentFile.FileName()), ref.FileName) == missingFile.path {
+				diagnostic := ast.NewDiagnostic(
+					parentFile,
+					ref.TextRange,
+					diagnostics.File_0_not_found,
+					missingFile.path,
+				)
+				p.programDiagnostics = append(p.programDiagnostics, diagnostic)
+			}
+		}
 	}
 }
 
@@ -1582,7 +1582,7 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
 	return slices.ContainsFunc(p.missingFiles, func(missingPath missingFile) bool {
-		return p.toPath(missingPath.path) == path
+		return missingPath.path == string(path)
 	})
 }
 

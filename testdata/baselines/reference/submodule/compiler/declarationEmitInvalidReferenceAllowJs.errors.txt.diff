@@ -2,13 +2,12 @@
 +++ new.declarationEmitInvalidReferenceAllowJs.errors.txt
 @@= skipped -0, +0 lines =@@
 -declarationEmitInvalidReferenceAllowJs.ts(1,22): error TS6231: Could not resolve the path 'invalid' with the extensions: '.ts', '.tsx', '.d.ts', '.js', '.jsx', '.cts', '.d.cts', '.cjs', '.mts', '.d.mts', '.mjs'.
-+declarationEmitInvalidReferenceAllowJs.ts(1,22): error TS6053: File 'invalid' not found.
-
-
- ==== declarationEmitInvalidReferenceAllowJs.ts (1 errors) ====
-     /// <reference path="invalid" />
-                          ~~~~~~~
+-
+-
+-==== declarationEmitInvalidReferenceAllowJs.ts (1 errors) ====
+-    /// <reference path="invalid" />
+-                         ~~~~~~~
 -!!! error TS6231: Could not resolve the path 'invalid' with the extensions: '.ts', '.tsx', '.d.ts', '.js', '.jsx', '.cts', '.d.cts', '.cjs', '.mts', '.d.mts', '.mjs'.
-+!!! error TS6053: File 'invalid' not found.
-     var x = 0; 
-     
+-    var x = 0; 
+-    
++<no content>
