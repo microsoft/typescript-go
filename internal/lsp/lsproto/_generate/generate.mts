@@ -1097,19 +1097,16 @@ function generateCode() {
                 writeLine(`\tif e == 0 {`);
                 writeLine(`\t\treturn "0"`);
                 writeLine(`\t}`);
-                writeLine(`\tvar result string`);
+                writeLine(`\tvar parts []string`);
                 for (let i = 0; i < values.length; i++) {
                     writeLine(`\tif e&${values[i]} != 0 {`);
-                    writeLine(`\t\tif result != "" {`);
-                    writeLine(`\t\t\tresult += "|"`);
-                    writeLine(`\t\t}`);
-                    writeLine(`\t\tresult += ${nameConst}[${indexVar}[${i}]:${indexVar}[${i + 1}]]`);
+                    writeLine(`\t\tparts = append(parts, ${nameConst}[${indexVar}[${i}]:${indexVar}[${i + 1}]])`);
                     writeLine(`\t}`);
                 }
-                writeLine(`\tif result == "" {`);
+                writeLine(`\tif len(parts) == 0 {`);
                 writeLine(`\t\treturn fmt.Sprintf("${enumeration.name}(%d)", e)`);
                 writeLine(`\t}`);
-                writeLine(`\treturn result`);
+                writeLine(`\treturn strings.Join(parts, "|")`);
                 writeLine(`}`);
                 writeLine("");
             }

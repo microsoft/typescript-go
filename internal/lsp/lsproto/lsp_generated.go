@@ -22483,29 +22483,20 @@ func (e WatchKind) String() string {
 	if e == 0 {
 		return "0"
 	}
-	var result string
+	var parts []string
 	if e&1 != 0 {
-		if result != "" {
-			result += "|"
-		}
-		result += _WatchKind_name[_WatchKind_index[0]:_WatchKind_index[1]]
+		parts = append(parts, _WatchKind_name[_WatchKind_index[0]:_WatchKind_index[1]])
 	}
 	if e&2 != 0 {
-		if result != "" {
-			result += "|"
-		}
-		result += _WatchKind_name[_WatchKind_index[1]:_WatchKind_index[2]]
+		parts = append(parts, _WatchKind_name[_WatchKind_index[1]:_WatchKind_index[2]])
 	}
 	if e&4 != 0 {
-		if result != "" {
-			result += "|"
-		}
-		result += _WatchKind_name[_WatchKind_index[2]:_WatchKind_index[3]]
+		parts = append(parts, _WatchKind_name[_WatchKind_index[2]:_WatchKind_index[3]])
 	}
-	if result == "" {
+	if len(parts) == 0 {
 		return fmt.Sprintf("WatchKind(%d)", e)
 	}
-	return result
+	return strings.Join(parts, "|")
 }
 
 // The diagnostic's severity.
