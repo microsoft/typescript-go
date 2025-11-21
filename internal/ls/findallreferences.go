@@ -433,6 +433,17 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 }
 
 func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
+	return l.provideImplementationsEx(ctx, params, provideImplementationsOpts{})
+}
+
+type provideImplementationsOpts struct {
+	// Force the result to be Location objects.
+	requireLocationsResult bool
+	// Omit node(s) containing the original position.
+	dropOriginNodes bool
+}
+
+func (l *LanguageService) provideImplementationsEx(ctx context.Context, params *lsproto.ImplementationParams, opts provideImplementationsOpts) (lsproto.ImplementationResponse, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
@@ -449,12 +460,14 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 		queue = queue[1:]
 		if !seenNodes.Has(entry.node) {
 			seenNodes.Add(entry.node)
-			entries = append(entries, entry)
+			if !(opts.dropOriginNodes && entry.node.Loc.ContainsInclusive(position)) {
+				entries = append(entries, entry)
+			}
 			queue = append(queue, l.getImplementationReferenceEntries(ctx, program, entry.node, entry.node.Pos())...)
 		}
 	}
 
-	if lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
+	if !opts.requireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
 		links := l.convertEntriesToLocationLinks(entries)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
