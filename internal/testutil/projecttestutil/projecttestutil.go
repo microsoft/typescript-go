@@ -176,7 +176,7 @@ func (h *SessionUtils) appendTypesRegistryConfig(builder *strings.Builder, index
 	if index > 0 {
 		builder.WriteString(",")
 	}
-	builder.WriteString(fmt.Sprintf("\n    \"%s\": {%s\n    }", entry, TypesRegistryConfigText()))
+	fmt.Fprintf(builder, "\n    \"%s\": {%s\n    }", entry, TypesRegistryConfigText())
 }
 
 func Setup(files map[string]any) (*project.Session, *SessionUtils) {
