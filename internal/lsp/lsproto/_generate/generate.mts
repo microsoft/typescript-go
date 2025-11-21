@@ -144,8 +144,8 @@ const customStructures: Structure[] = [
 // Track which custom Data structures were declared explicitly
 const explicitDataStructures = new Set(customStructures.map(s => s.name));
 
-// Patch the model to use custom types
-function patchModel() {
+// Patch and preprocess the model
+function patchAndPreprocessModel() {
     // Track which Data types we need to create as placeholders
     const neededDataStructures = new Set<string>();
 
@@ -178,10 +178,11 @@ function patchModel() {
             documentation: `${dataTypeName} is a placeholder for custom data preserved on a ${baseName}.`,
         });
     }
-}
 
-// Preprocess the model to inline extends/mixins contents
-function preprocessModel() {
+    // Add custom structures to the model
+    model.structures.push(...customStructures);
+
+    // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
     for (const structure of model.structures) {
         structureMap.set(structure.name, structure);
@@ -232,13 +233,7 @@ function preprocessModel() {
     }
 }
 
-patchModel();
-
-// Add custom structures to the model (including any placeholders created during patching)
-model.structures.push(...customStructures);
-
-// Preprocess the model before proceeding
-preprocessModel();
+patchAndPreprocessModel();
 
 interface GoType {
     name: string;
