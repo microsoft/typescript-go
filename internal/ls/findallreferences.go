@@ -1626,7 +1626,8 @@ func (state *refState) getReferencesInContainerOrFiles(symbol *ast.Symbol, searc
 	// Try to get the smallest valid scope that we can limit our search to;
 	// otherwise we'll need to search globally (i.e. include each file).
 	if scope := getSymbolScope(symbol); scope != nil {
-		state.getReferencesInContainer(scope, ast.GetSourceFileOfNode(scope), search /*addReferencesHere*/, !(scope.Kind == ast.KindSourceFile && !slices.Contains(state.sourceFiles, scope.AsSourceFile())))
+		addReferencesHere := scope.Kind != ast.KindSourceFile || slices.Contains(state.sourceFiles, scope.AsSourceFile())
+		state.getReferencesInContainer(scope, ast.GetSourceFileOfNode(scope), search, addReferencesHere)
 	} else {
 		// Global search
 		for _, sourceFile := range state.sourceFiles {
