@@ -252,14 +252,13 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	// Hack: disable push diagnostics entirely, since the fourslash runner does not
-	// yet gracefully handle non-request messages.
-	initOptions := &lsproto.InitializationOptions{
-		DisablePushDiagnostics: ptrTo(true),
-	}
 	params := &lsproto.InitializeParams{
-		Locale:                ptrTo("en-US"),
-		InitializationOptions: initOptions,
+		Locale: ptrTo("en-US"),
+		InitializationOptions: &lsproto.InitializationOptions{
+			// Hack: disable push diagnostics entirely, since the fourslash runner does not
+			// yet gracefully handle non-request messages.
+			DisablePushDiagnostics: ptrTo(true),
+		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
