@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -77,11 +76,11 @@ ref/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "ref",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "vue",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
@@ -92,7 +91,7 @@ ref/**/`
 		Name:          "ref",
 		Source:        "vue",
 		Description:   "Update import from \"vue\"",
-		AutoImportFix: &autoimport.Fix{},
+		AutoImportFix: &lsproto.AutoImportFix{},
 		NewFileContent: PtrTo(`import { ref } from "vue";
 ref`),
 	})

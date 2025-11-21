@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -55,31 +54,31 @@ export default methods.$;
 				&lsproto.CompletionItem{
 					Label:               "$",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "dom7",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label:               "Dom7",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "dom7",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label:               "Dom7",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./dom7",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},

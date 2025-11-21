@@ -6,14 +6,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionsImport_default_symbolName(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @esModuleInterop: false
@@ -40,11 +39,11 @@ R/*0*/`
 				&lsproto.CompletionItem{
 					Label: "RangeParser",
 					Kind:  PtrTo(lsproto.CompletionItemKindFunction),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "range-parser",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					Detail:              PtrTo("namespace RangeParser\nfunction RangeParser(): string"),

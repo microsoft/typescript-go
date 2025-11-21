@@ -60,6 +60,12 @@ func (s *SnapshotFS) GetFileByPath(fileName string, path tspath.Path) FileHandle
 	return entry()
 }
 
+func (s *SnapshotFS) isOpenFile(fileName string) bool {
+	path := s.toPath(fileName)
+	_, ok := s.overlays[path]
+	return ok
+}
+
 type snapshotFSBuilder struct {
 	fs        vfs.FS
 	overlays  map[tspath.Path]*Overlay
@@ -96,6 +102,11 @@ func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 		diskFiles: diskFiles,
 		toPath:    s.toPath,
 	}, changed
+}
+
+func (s *snapshotFSBuilder) isOpenFile(path tspath.Path) bool {
+	_, ok := s.overlays[path]
+	return ok
 }
 
 func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {

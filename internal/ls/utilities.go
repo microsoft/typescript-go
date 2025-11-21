@@ -807,7 +807,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// export /**/type * from "[|module|]";
 		// export /**/type * as ... from "[|module|]";
 		if ast.IsExportDeclaration(parent) && parent.IsTypeOnly() {
-			if location := getAdjustedLocationForExportDeclaration(parent.Parent.AsExportDeclaration(), forRename); location != nil {
+			if location := getAdjustedLocationForExportDeclaration(parent.AsExportDeclaration(), forRename); location != nil {
 				return location
 			}
 		}
@@ -1067,6 +1067,22 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 		return node.ModuleSpecifier
 	}
 	return nil
+}
+
+func symbolFlagsHaveMeaning(flags ast.SymbolFlags, meaning ast.SemanticMeaning) bool {
+	if meaning == ast.SemanticMeaningAll {
+		return true
+	}
+	if meaning&ast.SemanticMeaningValue != 0 {
+		return flags&ast.SymbolFlagsValue != 0
+	}
+	if meaning&ast.SemanticMeaningType != 0 {
+		return flags&ast.SymbolFlagsType != 0
+	}
+	if meaning&ast.SemanticMeaningNamespace != 0 {
+		return flags&ast.SymbolFlagsNamespace != 0
+	}
+	return false
 }
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {

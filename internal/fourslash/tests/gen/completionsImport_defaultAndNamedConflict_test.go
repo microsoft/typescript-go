@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -33,11 +32,11 @@ someMo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "someModule",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./someModule",
 							},
-						})),
+						},
 						Detail:              PtrTo("(property) default: 1"),
 						Kind:                PtrTo(lsproto.CompletionItemKindField),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -45,11 +44,11 @@ someMo/**/`
 					},
 					&lsproto.CompletionItem{
 						Label: "someModule",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./someModule",
 							},
-						})),
+						},
 						Detail:              PtrTo("const someModule: 0"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -61,7 +60,7 @@ someMo/**/`
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:          "someModule",
 		Source:        "./someModule",
-		AutoImportFix: &autoimport.Fix{},
+		AutoImportFix: &lsproto.AutoImportFix{},
 		Description:   "Add import from \"./someModule\"",
 		NewFileContent: PtrTo(`import someModule from "./someModule";
 

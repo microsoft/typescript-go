@@ -1391,10 +1391,6 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
-func GetImportClauseOfDeclaration(declaration *Declaration) *ImportClause {
-	return declaration.ImportClause().AsImportClause()
-}
-
 func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	// !!!
 	switch declaration.Kind {
@@ -2329,6 +2325,12 @@ func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited
 	}
 	// Couldn't locate, assume could refer to a value
 	return ModuleInstanceStateInstantiated
+}
+
+func IsInstantiatedModule(node *Node, preserveConstEnums bool) bool {
+	moduleState := GetModuleInstanceState(node)
+	return moduleState == ModuleInstanceStateInstantiated ||
+		(preserveConstEnums && moduleState == ModuleInstanceStateConstEnumOnly)
 }
 
 func NodeHasName(statement *Node, id *Node) bool {
@@ -3857,4 +3859,22 @@ func GetFirstConstructorWithBody(node *Node) *Node {
 		}
 	}
 	return nil
+}
+
+// Returns true for nodes that are considered executable for the purposes of unreachable code detection.
+func IsPotentiallyExecutableNode(node *Node) bool {
+	if KindFirstStatement <= node.Kind && node.Kind <= KindLastStatement {
+		if IsVariableStatement(node) {
+			declarationList := node.AsVariableStatement().DeclarationList
+			if GetCombinedNodeFlags(declarationList)&NodeFlagsBlockScoped != 0 {
+				return true
+			}
+			declarations := declarationList.AsVariableDeclarationList().Declarations.Nodes
+			return core.Some(declarations, func(d *Node) bool {
+				return d.Initializer() != nil
+			})
+		}
+		return true
+	}
+	return IsClassDeclaration(node) || IsEnumDeclaration(node) || IsModuleDeclaration(node)
 }

@@ -524,7 +524,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		if len(rootFiles) > 0 {
 			// !!! parallelize?
 			aliasResolver := newAliasResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
-			ch := checker.NewChecker(aliasResolver)
+			ch, _ := checker.NewChecker(aliasResolver)
 			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
 				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, func() (*checker.Checker, func()) {
@@ -784,7 +784,7 @@ const checkerPoolSize = 16
 func (b *registryBuilder) createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func()) {
 	pool := make(chan *checker.Checker, checkerPoolSize)
 	for range checkerPoolSize {
-		pool <- checker.NewChecker(program)
+		pool <- core.FirstResult(checker.NewChecker(program))
 	}
 	return func() (*checker.Checker, func()) {
 			checker := <-pool

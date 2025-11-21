@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -30,6 +29,7 @@ export * from "fs";
 // @Filename: /home/src/workspaces/project/index.ts
 access/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -40,21 +40,21 @@ access/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "accessSync",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "fs",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "accessSync",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "fs-extra",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
@@ -68,7 +68,7 @@ access/**/`
 		NewFileContent: PtrTo(`import { accessSync } from "fs-extra";
 
 access`),
-		AutoImportFix: &autoimport.Fix{
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "fs-extra",
 		},
 	})

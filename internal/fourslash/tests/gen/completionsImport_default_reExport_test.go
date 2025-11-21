@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -41,21 +40,21 @@ export default foo.b;`
 					"foo",
 					&lsproto.CompletionItem{
 						Label: "a",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./file1",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "b",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./file1",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

@@ -33,6 +33,10 @@ func NewLanguageService(
 	}
 }
 
+func (l *LanguageService) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, l.program.GetCurrentDirectory(), l.UseCaseSensitiveFileNames())
+}
+
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.program
 }

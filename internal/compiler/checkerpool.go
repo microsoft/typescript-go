@@ -12,10 +12,11 @@ import (
 )
 
 type CheckerPool interface {
+	Count() int
 	GetChecker(ctx context.Context) (*checker.Checker, func())
 	GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
 	GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
-	GetAllCheckers(ctx context.Context) ([]*checker.Checker, func())
+	ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker))
 	Files(checker *checker.Checker) iter.Seq[*ast.SourceFile]
 }
 
@@ -25,7 +26,7 @@ type checkerPool struct {
 
 	createCheckersOnce sync.Once
 	checkers           []*checker.Checker
-	locks              []sync.Mutex
+	locks              []*sync.Mutex
 	fileAssociations   map[*ast.SourceFile]*checker.Checker
 }
 
@@ -36,10 +37,14 @@ func newCheckerPool(checkerCount int, program *Program) *checkerPool {
 		program:      program,
 		checkerCount: checkerCount,
 		checkers:     make([]*checker.Checker, checkerCount),
-		locks:        make([]sync.Mutex, checkerCount),
+		locks:        make([]*sync.Mutex, checkerCount),
 	}
 
 	return pool
+}
+
+func (p *checkerPool) Count() int {
+	return p.checkerCount
 }
 
 func (p *checkerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
@@ -69,7 +74,7 @@ func (p *checkerPool) createCheckers() {
 		wg := core.NewWorkGroup(p.program.SingleThreaded())
 		for i := range p.checkerCount {
 			wg.Queue(func() {
-				p.checkers[i] = checker.NewChecker(p.program)
+				p.checkers[i], p.locks[i] = checker.NewChecker(p.program)
 			})
 		}
 
@@ -82,9 +87,19 @@ func (p *checkerPool) createCheckers() {
 	})
 }
 
-func (p *checkerPool) GetAllCheckers(ctx context.Context) ([]*checker.Checker, func()) {
+// Runs `cb` for each checker in the pool concurrently, locking and unlocking checker mutexes as it goes,
+// making it safe to call `ForEachCheckerParallel` from many threads simultaneously.
+func (p *checkerPool) ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker)) {
 	p.createCheckers()
-	return p.checkers, noop
+	wg := core.NewWorkGroup(p.program.SingleThreaded())
+	for idx, checker := range p.checkers {
+		wg.Queue(func() {
+			p.locks[idx].Lock()
+			defer p.locks[idx].Unlock()
+			cb(idx, checker)
+		})
+	}
+	wg.RunAndWait()
 }
 
 func (p *checkerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {

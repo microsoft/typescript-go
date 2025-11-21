@@ -857,9 +857,13 @@ type Checker struct {
 	activeTypeMappersCaches                     []map[string]*Type
 	ambientModulesOnce                          sync.Once
 	ambientModules                              []*ast.Symbol
+	withinUnreachableCode                       bool
+	reportedUnreachableNodes                    collections.Set[*ast.Node]
+
+	mu sync.Mutex
 }
 
-func NewChecker(program Program) *Checker {
+func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
@@ -1071,7 +1075,7 @@ func NewChecker(program Program) *Checker {
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
-	return c
+	return c, &c.mu
 }
 
 func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
@@ -1999,7 +2003,7 @@ func isSameScopeDescendentOf(initial *ast.Node, parent *ast.Node, stopAt *ast.No
 	return false
 }
 
-// stopAtAnyPropertyDeclaration is used for detecting ES-standard class field use-before-def errors
+// isPropertyImmediatelyReferencedWithinDeclaration is used for detecting ES-standard class field use-before-def errors
 func isPropertyImmediatelyReferencedWithinDeclaration(declaration *ast.Node, usage *ast.Node, stopAtAnyPropertyDeclaration bool) bool {
 	// always legal if usage is after declaration
 	if usage.End() > declaration.End() {
@@ -2142,6 +2146,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			c.wasCanceled = true
 		}
 		c.ctx = nil
+		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
 }
@@ -2158,10 +2163,12 @@ func (c *Checker) checkSourceElements(nodes []*ast.Node) {
 func (c *Checker) checkSourceElement(node *ast.Node) bool {
 	if node != nil {
 		saveCurrentNode := c.currentNode
+		saveWithinUnreachableCode := c.withinUnreachableCode
 		c.currentNode = node
 		c.instantiationCount = 0
 		c.checkSourceElementWorker(node)
 		c.currentNode = saveCurrentNode
+		c.withinUnreachableCode = saveWithinUnreachableCode
 	}
 	return false
 }
@@ -2177,13 +2184,13 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 			}
 		}
 	}
-	kind := node.Kind
-	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement {
-		flowNode := node.FlowNodeData().FlowNode
-		if flowNode != nil && !c.isReachableFlowNode(flowNode) {
-			c.errorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, node, diagnostics.Unreachable_code_detected)
+
+	if !c.withinUnreachableCode && c.compilerOptions.AllowUnreachableCode != core.TSTrue {
+		if c.checkSourceElementUnreachable(node) {
+			c.withinUnreachableCode = true
 		}
 	}
+
 	switch node.Kind {
 	case ast.KindTypeParameter:
 		c.checkTypeParameter(node)
@@ -2304,6 +2311,87 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	case ast.KindJSDocNonNullableType, ast.KindJSDocNullableType, ast.KindJSDocAllType, ast.KindJSDocTypeLiteral:
 		c.checkJSDocType(node)
 	}
+}
+
+func (c *Checker) checkSourceElementUnreachable(node *ast.Node) bool {
+	if !ast.IsPotentiallyExecutableNode(node) {
+		return false
+	}
+
+	if c.reportedUnreachableNodes.Has(node) {
+		return true
+	}
+
+	if !c.isSourceElementUnreachable(node) {
+		return false
+	}
+
+	c.reportedUnreachableNodes.Add(node)
+
+	sourceFile := ast.GetSourceFileOfNode(node)
+
+	start := node.Pos()
+	end := node.End()
+
+	parent := node.Parent
+	if parent.CanHaveStatements() {
+		statements := parent.Statements()
+		if offset := slices.Index(statements, node); offset >= 0 {
+			// Scan backwards to find the first unreachable unreported node;
+			// this may happen when producing region diagnostics where not all nodes
+			// will have been visited.
+			// TODO: enable this code once we support region diagnostics again.
+			first := offset
+			// for i := offset - 1; i >= 0; i-- {
+			// 	prevNode := statements[i]
+			// 	if !ast.IsPotentiallyExecutableNode(prevNode) || c.reportedUnreachableNodes.Has(prevNode) || !c.isSourceElementUnreachable(prevNode) {
+			// 		break
+			// 	}
+			// 	firstUnreachableIndex = i
+			// 	c.reportedUnreachableNodes.Add(prevNode)
+			// }
+
+			last := offset
+			for i := offset + 1; i < len(statements); i++ {
+				nextNode := statements[i]
+				if !ast.IsPotentiallyExecutableNode(nextNode) || !c.isSourceElementUnreachable(nextNode) {
+					break
+				}
+				last = i
+				c.reportedUnreachableNodes.Add(nextNode)
+			}
+
+			start = statements[first].Pos()
+			end = statements[last].End()
+		}
+	}
+
+	start = scanner.SkipTrivia(sourceFile.Text(), start)
+
+	diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, end), diagnostics.Unreachable_code_detected)
+	c.addErrorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, diagnostic)
+
+	return true
+}
+
+func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
+	// Precondition: ast.IsPotentiallyExecutableNode is true
+	if node.Flags&ast.NodeFlagsUnreachable != 0 {
+		// The binder has determined that this code is unreachable.
+		// Ignore const enums unless preserveConstEnums is set.
+		switch node.Kind {
+		case ast.KindEnumDeclaration:
+			return !ast.IsEnumConst(node) || c.compilerOptions.ShouldPreserveConstEnums()
+		case ast.KindModuleDeclaration:
+			return ast.IsInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums())
+		default:
+			return true
+		}
+	} else if flowNode := node.FlowNodeData().FlowNode; flowNode != nil {
+		// For code the binder doesn't know is unreachable, use control flow / types.
+		return !c.isReachableFlowNode(flowNode)
+	}
+	return false
 }
 
 // Function and class expression bodies are checked after all statements in the enclosing body. This is
@@ -2859,7 +2947,7 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	case ast.KindTaggedTemplateExpression:
 		return c.getDeprecatedSuggestionNode(node.AsTaggedTemplateExpression().Tag)
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return c.getDeprecatedSuggestionNode(getTagNameOfNode(node))
+		return c.getDeprecatedSuggestionNode(node.TagName())
 	case ast.KindElementAccessExpression:
 		return node.AsElementAccessExpression().ArgumentExpression
 	case ast.KindPropertyAccessExpression:
@@ -3966,7 +4054,7 @@ func (c *Checker) checkWithStatement(node *ast.Node) {
 	c.checkExpression(node.Expression())
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
-		start := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()).Pos()
+		start := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.Statement().Pos()
 		c.grammarErrorAtPos(sourceFile.AsNode(), start, end-start, diagnostics.The_with_statement_is_not_supported_All_symbols_in_a_with_block_will_have_type_any)
 	}
@@ -4019,6 +4107,9 @@ func (c *Checker) checkLabeledStatement(node *ast.Node) {
 				break
 			}
 		}
+	}
+	if labelNode.Flags&ast.NodeFlagsUnreachable != 0 && c.compilerOptions.AllowUnusedLabels != core.TSTrue {
+		c.errorOrSuggestion(c.compilerOptions.AllowUnusedLabels == core.TSFalse, labelNode, diagnostics.Unused_label)
 	}
 	c.checkSourceElement(labeledStatement.Statement)
 }
@@ -4180,7 +4271,7 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	}
 	c.checkIndexConstraints(classType, symbol, false /*isStaticIndex*/)
 	c.checkIndexConstraints(staticType, symbol, true /*isStaticIndex*/)
-	c.checkTypeForDuplicateIndexSignatures(node)
+	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.checkPropertyInitialization(node)
 }
 
@@ -4667,14 +4758,15 @@ func (c *Checker) checkIndexConstraintForIndexSignature(t *Type, checkInfo *Inde
 	}
 }
 
-func (c *Checker) checkTypeForDuplicateIndexSignatures(node *ast.Node) {
-	if ast.IsInterfaceDeclaration(node) {
-		// in case of merging interface declaration it is possible that we'll enter this check procedure several times for every declaration
-		// to prevent this run check only for the first declaration of a given kind
-		if symbol := c.getSymbolOfDeclaration(node); len(symbol.Declarations) != 0 && symbol.Declarations[0] != node {
-			return
-		}
+func (c *Checker) checkClassOrInterfaceForDuplicateIndexSignatures(node *ast.Node) {
+	// Only check the type once
+	if links := c.declaredTypeLinks.Get(c.getSymbolOfDeclaration(node)); !links.indexSignaturesChecked {
+		links.indexSignaturesChecked = true
+		c.checkTypeForDuplicateIndexSignatures(node)
 	}
+}
+
+func (c *Checker) checkTypeForDuplicateIndexSignatures(node *ast.Node) {
 	// TypeScript 1.0 spec (April 2014)
 	// 3.7.4: An object type can contain at most one string index signature and one numeric index signature.
 	// 8.5: A class declaration can have at most one string index member declaration and one numeric index member declaration
@@ -4774,8 +4866,8 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	c.checkTypeParameterListsIdentical(symbol)
 	// Only check this symbol once
-	firstInterfaceDecl := ast.GetDeclarationOfKind(symbol, ast.KindInterfaceDeclaration)
-	if node == firstInterfaceDecl {
+	if links := c.declaredTypeLinks.Get(symbol); !links.interfaceChecked {
+		links.interfaceChecked = true
 		t := c.getDeclaredTypeOfSymbol(symbol)
 		typeWithThis := c.getTypeWithThisArgument(t, nil, false)
 		// run subsequent checks only if first set succeeded
@@ -4795,7 +4887,7 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 		c.checkTypeReferenceNode(heritageElement)
 	}
 	c.checkSourceElements(node.Members())
-	c.checkTypeForDuplicateIndexSignatures(node)
+	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.registerForUnusedIdentifiersCheck(node)
 }
 
@@ -5448,7 +5540,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	links := c.moduleSymbolLinks.Get(moduleSymbol)
 	if !links.exportsChecked {
 		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
-		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol) {
+		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol, exportEqualsSymbol.ValueDeclaration.Kind == ast.KindJSExportAssignment) {
 			declaration := core.OrElse(c.getDeclarationOfAliasSymbol(exportEqualsSymbol), exportEqualsSymbol.ValueDeclaration)
 			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) {
 				c.error(declaration, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
@@ -5484,10 +5576,17 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	}
 }
 
-func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol) bool {
+func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol, isCommonJS bool) bool {
 	for id := range moduleSymbol.Exports {
 		if id != ast.InternalSymbolNameExportEquals {
-			return true
+			if !isCommonJS {
+				return true
+			}
+			for _, declaration := range moduleSymbol.Exports[id].Declarations {
+				if declaration.Kind != ast.KindJSTypeAliasDeclaration {
+					return true
+				}
+			}
 		}
 	}
 	return false
@@ -12572,7 +12671,7 @@ func (c *Checker) isIndirectCall(node *ast.Node) bool {
 	right := node.AsBinaryExpression().Right
 	return ast.IsParenthesizedExpression(node.Parent) && ast.IsNumericLiteral(left) && left.Text() == "0" &&
 		(ast.IsCallExpression(node.Parent.Parent) && node.Parent.Parent.Expression() == node.Parent ||
-			ast.IsTaggedTemplateExpression(node.Parent.Parent) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval"))
+			ast.IsTaggedTemplateExpression(node.Parent.Parent)) && (ast.IsAccessExpression(right) || ast.IsIdentifier(right) && right.Text() == "eval")
 }
 
 func (c *Checker) checkInstanceOfExpression(left *ast.Expression, right *ast.Expression, leftType *Type, rightType *Type, checkMode CheckMode) *Type {
@@ -14349,7 +14448,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 	}
 
 	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
-	return !ast.IsExternalModule(file.AsSourceFile()) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
+	return (file.AsSourceFile().ExternalModuleIndicator == nil || file.AsSourceFile().ExternalModuleIndicator == file) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
@@ -15243,13 +15342,27 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		if resolveLocation == nil {
 			resolveLocation = name
 		}
-		symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		if meaning == ast.SymbolFlagsNamespace {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, nil, true /*isUse*/, false /*excludeGlobals*/))
+			if symbol == nil {
+				alias := c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/))
+				if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
+					// resolve typedefs exported from commonjs, stored on the module symbol
+					symbol = alias.Parent
+				}
+			}
+			if symbol == nil && message != nil {
+				c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/)
+			}
+		} else {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		}
 	case ast.KindQualifiedName:
 		qualified := name.AsQualifiedName()
-		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, dontResolveAlias, location)
+		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, location)
 	case ast.KindPropertyAccessExpression:
 		access := name.AsPropertyAccessExpression()
-		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, dontResolveAlias, location)
+		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, location)
 	default:
 		panic("Unknown entity name kind")
 	}
@@ -15267,7 +15380,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	return symbol
 }
 
-func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, dontResolveAlias bool, location *ast.Node) *ast.Symbol {
+func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, location *ast.Node) *ast.Symbol {
 	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
 	if namespace == nil || ast.NodeIsMissing(right) {
 		return nil
@@ -15623,11 +15736,25 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		}
 		return symbols
 	}
+	var originalModule *ast.Symbol
+	if moduleSymbol != nil {
+		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+			originalModule = moduleSymbol
+		}
+	}
 	// A module defined by an 'export=' consists of one export that needs to be resolved
 	moduleSymbol = c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
 	exports = visit(moduleSymbol, nil, false)
 	if exports == nil {
 		exports = make(ast.SymbolTable)
+	}
+	// A CommonJS module defined by an 'export=' might also export typedefs, stored on the original module
+	if originalModule != nil && len(originalModule.Exports) > 1 {
+		for _, symbol := range originalModule.Exports {
+			if symbol.Flags&ast.SymbolFlagsType != 0 && symbol.Name != ast.InternalSymbolNameExportEquals && exports[symbol.Name] == nil {
+				exports[symbol.Name] = symbol
+			}
+		}
 	}
 	for name := range nonTypeOnlyNames.Keys() {
 		delete(typeOnlyExportStarMap, name)
@@ -23882,6 +24009,13 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), false /*skipObjectFunctionPropertyAugment*/, true /*includeTypeOnlyMembers*/)
 				} else {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
+					if symbolFromModule == nil {
+						// a CommonJS module might have typedefs exported alongside an export=
+						immediateModuleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, true /*dontResolveAlias*/)
+						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
+							symbolFromModule = c.getSymbol(c.getExportsOfSymbol(immediateModuleSymbol.Parent), current.Text(), meaning)
+						}
+					}
 				}
 				next := core.OrElse(symbolFromModule, symbolFromVariable)
 				if next == nil {
@@ -30343,7 +30477,7 @@ func (c *Checker) hasContextualTypeWithNoGenericTypes(node *ast.Node, checkMode 
 	// If check mode has `CheckMode.RestBindingElement`, we skip binding pattern contextual types,
 	// as we want the type of a rest element to be generic when possible.
 	if (ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
-		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && getTagNameOfNode(node.Parent) == node) {
+		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && node.Parent.TagName() == node) {
 		contextualType := c.getContextualType(node, core.IfElse(checkMode&CheckModeRestBindingElement != 0, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
 		if contextualType != nil {
 			return !c.isGenericType(contextualType)
@@ -30519,7 +30653,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 		return nil
 	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
-		return c.getSymbolOfNode(node)
+		return c.getSymbolOfNode(node.Parent)
 	case ast.KindImportType:
 		if ast.IsLiteralImportTypeNode(node) {
 			return c.getSymbolAtLocation(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal, ignoreErrors)
@@ -30659,6 +30793,9 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			}
 			meaning := core.IfElse(isJSDoc, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, ast.SymbolFlagsValue)
 			result := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
+			if result != nil && result.Flags&ast.SymbolFlagsModuleExports != 0 {
+				result = result.ValueDeclaration.Symbol() // Symbol of the module source file
+			}
 			if result == nil && isJSDoc {
 				if container := ast.FindAncestor(name, ast.IsClassOrInterfaceLike); container != nil {
 					symbol := c.getSymbolOfDeclaration(container)

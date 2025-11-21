@@ -25,62 +25,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type ImportKind int
-
-const (
-	ImportKindNamed     ImportKind = 0
-	ImportKindDefault   ImportKind = 1
-	ImportKindNamespace ImportKind = 2
-	ImportKindCommonJS  ImportKind = 3
-)
-
-type FixKind int
-
-const (
-	// Sorted with the preferred fix coming first.
-	FixKindUseNamespace    FixKind = 0
-	FixKindJsdocTypeImport FixKind = 1
-	FixKindAddToExisting   FixKind = 2
-	FixKindAddNew          FixKind = 3
-	FixKindPromoteTypeOnly FixKind = 4
-)
-
-type AddAsTypeOnly int
-
-const (
-	// These should not be combined as bitflags, but are given powers of 2 values to
-	// easily detect conflicts between `NotAllowed` and `Required` by giving them a unique sum.
-	// They're also ordered in terms of increasing priority for a fix-all scenario (see
-	// `reduceAddAsTypeOnlyValues`).
-	AddAsTypeOnlyAllowed    AddAsTypeOnly = 1 << 0
-	AddAsTypeOnlyRequired   AddAsTypeOnly = 1 << 1
-	AddAsTypeOnlyNotAllowed AddAsTypeOnly = 1 << 2
-)
-
 type newImportBinding struct {
-	kind          ImportKind
+	kind          lsproto.ImportKind
 	propertyName  string
 	name          string
-	addAsTypeOnly AddAsTypeOnly
+	addAsTypeOnly lsproto.AddAsTypeOnly
 }
 
 type Fix struct {
-	Kind            FixKind       `json:"kind"`
-	Name            string        `json:"name,omitzero"`
-	ImportKind      ImportKind    `json:"importKind"`
-	UseRequire      bool          `json:"useRequire,omitzero"`
-	AddAsTypeOnly   AddAsTypeOnly `json:"addAsTypeOnly"`
-	ModuleSpecifier string        `json:"moduleSpecifier,omitzero"`
-
-	// Only used for comparing fixes before serializing, no need to include in JSON
+	*lsproto.AutoImportFix
 
 	ModuleSpecifierKind modulespecifiers.ResultKind
 	IsReExport          bool
 	ModuleFileName      string
-
-	// ImportIndex is the index of the existing import in file.Imports(),
-	// used for FixKindAddToExisting.
-	ImportIndex int `json:"importIndex"`
 }
 
 func (f *Fix) Edits(
@@ -93,8 +50,8 @@ func (f *Fix) Edits(
 ) ([]*lsproto.TextEdit, string) {
 	tracker := change.NewTracker(ctx, compilerOptions, formatOptions, converters)
 	switch f.Kind {
-	case FixKindAddToExisting:
-		if len(file.Imports()) <= f.ImportIndex {
+	case lsproto.AutoImportFixKindAddToExisting:
+		if len(file.Imports()) <= int(f.ImportIndex) {
 			panic("import index out of range")
 		}
 		moduleSpecifier := file.Imports()[f.ImportIndex]
@@ -104,7 +61,7 @@ func (f *Fix) Edits(
 		}
 		var importClauseOrBindingPattern *ast.Node
 		if importDecl.Kind == ast.KindImportDeclaration {
-			importClauseOrBindingPattern = ast.GetImportClauseOfDeclaration(importDecl).AsNode()
+			importClauseOrBindingPattern = importDecl.ImportClause()
 			if importClauseOrBindingPattern == nil {
 				panic("expected import clause")
 			}
@@ -114,17 +71,17 @@ func (f *Fix) Edits(
 			panic("expected import declaration or variable declaration")
 		}
 
-		defaultImport := core.IfElse(f.ImportKind == ImportKindDefault, &newImportBinding{kind: ImportKindDefault, name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == ImportKindNamed, []*newImportBinding{{kind: ImportKindNamed, name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name}}, nil)
 		addToExistingImport(tracker, file, importClauseOrBindingPattern, defaultImport, namedImports, preferences)
 		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Format(f.ModuleSpecifier)
-	case FixKindAddNew:
+	case lsproto.AutoImportFixKindAddNew:
 		var declarations []*ast.Statement
-		defaultImport := core.IfElse(f.ImportKind == ImportKindDefault, &newImportBinding{name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == ImportKindNamed, []*newImportBinding{{name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name}}, nil)
 		var namespaceLikeImport *newImportBinding
 		// qualification := f.qualification()
-		// if f.ImportKind == ImportKindNamespace || f.ImportKind == ImportKindCommonJS {
+		// if f.ImportKind == lsproto.ImportKindNamespace || f.ImportKind == lsproto.ImportKindCommonJS {
 		// 	namespaceLikeImport = &newImportBinding{kind: f.ImportKind, name: f.Name}
 		// 	if qualification != nil && qualification.namespacePref != "" {
 		// 		namespaceLikeImport.name = qualification.namespacePref
@@ -258,7 +215,7 @@ func getNewImports(
 	quotePreference lsutil.QuotePreference,
 	defaultImport *newImportBinding,
 	namedImports []*newImportBinding,
-	namespaceLikeImport *newImportBinding, // { importKind: ImportKind.CommonJS | ImportKind.Namespace; }
+	namespaceLikeImport *newImportBinding, // { lsproto.importKind: lsproto.ImportKind.CommonJS | lsproto.ImportKind.Namespace; }
 	compilerOptions *core.CompilerOptions,
 	preferences *lsutil.UserPreferences,
 ) []*ast.Statement {
@@ -273,7 +230,7 @@ func getNewImports(
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *newImportBinding) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
 			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
-				defaultImport != nil && defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
+				defaultImport != nil && defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
@@ -295,7 +252,7 @@ func getNewImports(
 
 	if namespaceLikeImport != nil {
 		var declaration *ast.Statement
-		if namespaceLikeImport.kind == ImportKindCommonJS {
+		if namespaceLikeImport.kind == lsproto.ImportKindCommonJS {
 			declaration = ct.NodeFactory.NewImportEqualsDeclaration(
 				/*modifiers*/ nil,
 				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
@@ -489,15 +446,16 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 
 	return []*Fix{
 		{
-			Kind:                FixKindAddNew,
-			ImportKind:          importKind,
-			ModuleSpecifier:     moduleSpecifier,
+			AutoImportFix: &lsproto.AutoImportFix{
+				Kind:            lsproto.AutoImportFixKindAddNew,
+				ImportKind:      importKind,
+				ModuleSpecifier: moduleSpecifier,
+				Name:            export.Name(),
+				UseRequire:      v.shouldUseRequire(),
+			},
 			ModuleSpecifierKind: moduleSpecifierKind,
-			Name:                export.Name(),
-			UseRequire:          v.shouldUseRequire(),
-
-			IsReExport:     export.Target.ModuleID != export.ModuleID,
-			ModuleFileName: export.ModuleFileName(),
+			IsReExport:          export.Target.ModuleID != export.ModuleID,
+			ModuleFileName:      export.ModuleFileName(),
 		},
 	}
 }
@@ -520,7 +478,7 @@ func (v *View) tryAddToExistingImport(
 	}
 
 	importKind := getImportKind(v.importingFile, export, v.program)
-	if importKind == ImportKindCommonJS || importKind == ImportKindNamespace {
+	if importKind == lsproto.ImportKindCommonJS || importKind == lsproto.ImportKindNamespace {
 		return nil
 	}
 
@@ -530,19 +488,21 @@ func (v *View) tryAddToExistingImport(
 		}
 
 		if existingImport.node.Kind == ast.KindVariableDeclaration {
-			if (importKind == ImportKindNamed || importKind == ImportKindDefault) && existingImport.node.Name().Kind == ast.KindObjectBindingPattern {
+			if (importKind == lsproto.ImportKindNamed || importKind == lsproto.ImportKindDefault) && existingImport.node.Name().Kind == ast.KindObjectBindingPattern {
 				return &Fix{
-					Kind:            FixKindAddToExisting,
-					Name:            export.Name(),
-					ImportKind:      importKind,
-					ImportIndex:     existingImport.index,
-					ModuleSpecifier: existingImport.moduleSpecifier,
+					AutoImportFix: &lsproto.AutoImportFix{
+						Kind:            lsproto.AutoImportFixKindAddToExisting,
+						Name:            export.Name(),
+						ImportKind:      importKind,
+						ImportIndex:     int32(existingImport.index),
+						ModuleSpecifier: existingImport.moduleSpecifier,
+					},
 				}
 			}
 			continue
 		}
 
-		importClause := ast.GetImportClauseOfDeclaration(existingImport.node)
+		importClause := existingImport.node.ImportClause().AsImportClause()
 		if importClause == nil || !ast.IsStringLiteralLike(existingImport.node.ModuleSpecifier()) {
 			continue
 		}
@@ -550,39 +510,41 @@ func (v *View) tryAddToExistingImport(
 		namedBindings := importClause.NamedBindings
 		// A type-only import may not have both a default and named imports, so the only way a name can
 		// be added to an existing type-only import is adding a named import to existing named bindings.
-		if importClause.IsTypeOnly() && !(importKind == ImportKindNamed && namedBindings != nil) {
+		if importClause.IsTypeOnly() && !(importKind == lsproto.ImportKindNamed && namedBindings != nil) {
 			continue
 		}
 
 		// Cannot add a named import to a declaration that has a namespace import
-		if importKind == ImportKindNamed && namedBindings != nil && namedBindings.Kind == ast.KindNamespaceImport {
+		if importKind == lsproto.ImportKindNamed && namedBindings != nil && namedBindings.Kind == ast.KindNamespaceImport {
 			continue
 		}
 
 		return &Fix{
-			Kind:            FixKindAddToExisting,
-			Name:            export.Name(),
-			ImportKind:      importKind,
-			ImportIndex:     existingImport.index,
-			ModuleSpecifier: existingImport.moduleSpecifier,
+			AutoImportFix: &lsproto.AutoImportFix{
+				Kind:            lsproto.AutoImportFixKindAddToExisting,
+				Name:            export.Name(),
+				ImportKind:      importKind,
+				ImportIndex:     int32(existingImport.index),
+				ModuleSpecifier: existingImport.moduleSpecifier,
+			},
 		}
 	}
 
 	return nil
 }
 
-func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) ImportKind {
+func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) lsproto.ImportKind {
 	if program.Options().VerbatimModuleSyntax.IsTrue() && program.GetEmitModuleFormatOfFile(importingFile) == core.ModuleKindCommonJS {
-		return ImportKindCommonJS
+		return lsproto.ImportKindCommonJS
 	}
 	switch export.Syntax {
 	case ExportSyntaxDefaultModifier, ExportSyntaxDefaultDeclaration:
-		return ImportKindDefault
+		return lsproto.ImportKindDefault
 	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar, ExportSyntaxCommonJSExportsProperty:
-		return ImportKindNamed
+		return lsproto.ImportKindNamed
 	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports:
 		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.
-		return core.IfElse(export.ExportName == ast.InternalSymbolNameExportEquals, ImportKindDefault, ImportKindNamed)
+		return core.IfElse(export.ExportName == ast.InternalSymbolNameExportEquals, lsproto.ImportKindDefault, lsproto.ImportKindNamed)
 	default:
 		panic("unhandled export syntax kind: " + export.Syntax.String())
 	}
@@ -674,12 +636,12 @@ func (v *View) computeShouldUseRequire() bool {
 	return true
 }
 
-func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
-	return addAsTypeOnly == AddAsTypeOnlyRequired
+func needsTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly) bool {
+	return addAsTypeOnly == lsproto.AddAsTypeOnlyRequired
 }
 
-func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
-	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
+func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
+	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
 }
 
 // compareFixes returns negative if `a` is better than `b`.
@@ -691,7 +653,7 @@ func (v *View) compareFixes(a, b *Fix) int {
 	return v.compareModuleSpecifiers(a, b)
 }
 
-func compareFixKinds(a, b FixKind) int {
+func compareFixKinds(a, b lsproto.AutoImportFixKind) int {
 	return int(a) - int(b)
 }
 

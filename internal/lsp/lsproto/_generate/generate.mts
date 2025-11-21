@@ -6,10 +6,12 @@ import path from "node:path";
 import url from "node:url";
 import which from "which";
 import type {
+    Enumeration,
     MetaModel,
     Notification,
     OrType,
     Property,
+    ReferenceType,
     Request,
     Structure,
     Type,
@@ -28,8 +30,234 @@ if (!fs.existsSync(metaModelPath)) {
 
 const model: MetaModel = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
-// Preprocess the model to inline extends/mixins contents
-function preprocessModel() {
+// Custom structures to add to the model
+const customStructures: Structure[] = [
+    {
+        name: "InitializationOptions",
+        properties: [
+            {
+                name: "disablePushDiagnostics",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "DisablePushDiagnostics disables automatic pushing of diagnostics to the client.",
+            },
+        ],
+        documentation: "InitializationOptions contains user-provided initialization options.",
+    },
+    {
+        name: "AutoImportFix",
+        properties: [
+            {
+                name: "kind",
+                type: { kind: "reference", name: "AutoImportFixKind" },
+                omitzeroValue: true,
+            },
+            {
+                name: "name",
+                type: { kind: "base", name: "string" },
+                omitzeroValue: true,
+            },
+            {
+                name: "importKind",
+                type: { kind: "reference", name: "ImportKind" },
+            },
+            {
+                name: "useRequire",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "addAsTypeOnly",
+                type: { kind: "reference", name: "AddAsTypeOnly" },
+            },
+            {
+                name: "moduleSpecifier",
+                type: { kind: "base", name: "string" },
+                documentation: "The module specifier for this auto-import.",
+                omitzeroValue: true,
+            },
+            {
+                name: "importIndex",
+                type: { kind: "base", name: "integer" },
+                documentation: "Index of the import to modify when adding to an existing import declaration.",
+            },
+        ],
+        documentation: "AutoImportFix contains information about an auto-import suggestion.",
+    },
+    {
+        name: "CompletionItemData",
+        properties: [
+            {
+                name: "fileName",
+                type: { kind: "base", name: "string" },
+                documentation: "The file name where the completion was requested.",
+                omitzeroValue: true,
+            },
+            {
+                name: "position",
+                type: { kind: "base", name: "integer" },
+                documentation: "The position where the completion was requested.",
+                omitzeroValue: true,
+            },
+            {
+                name: "source",
+                type: { kind: "base", name: "string" },
+                documentation: "Special source value for disambiguation.",
+                omitzeroValue: true,
+            },
+            {
+                name: "name",
+                type: { kind: "base", name: "string" },
+                documentation: "The name of the completion item.",
+                omitzeroValue: true,
+            },
+            {
+                name: "autoImport",
+                type: { kind: "reference", name: "AutoImportFix" },
+                optional: true,
+                documentation: "Auto-import data for this completion item.",
+            },
+        ],
+        documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
+    },
+];
+
+const customEnumerations: Enumeration[] = [
+    {
+        name: "AutoImportFixKind",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "UseNamespace", value: 0, documentation: "Augment an existing namespace import." },
+            { name: "JsdocTypeImport", value: 1, documentation: "Add a JSDoc-only type import." },
+            { name: "AddToExisting", value: 2, documentation: "Insert into an existing import declaration." },
+            { name: "AddNew", value: 3, documentation: "Create a fresh import statement." },
+            { name: "PromoteTypeOnly", value: 4, documentation: "Promote a type-only import when necessary." },
+        ],
+    },
+    {
+        name: "ImportKind",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Named", value: 0, documentation: "Adds a named import." },
+            { name: "Default", value: 1, documentation: "Adds a default import." },
+            { name: "Namespace", value: 2, documentation: "Adds a namespace import." },
+            { name: "CommonJS", value: 3, documentation: "Adds a CommonJS import assignment." },
+        ],
+    },
+    {
+        name: "AddAsTypeOnly",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Allowed", value: 1, documentation: "Import may be marked type-only if needed." },
+            { name: "Required", value: 2, documentation: "Import must be marked type-only." },
+            { name: "NotAllowed", value: 4, documentation: "Import cannot be marked type-only." },
+        ],
+    },
+];
+
+// Track which custom Data structures were declared explicitly
+const explicitDataStructures = new Set(customStructures.map(s => s.name));
+
+// Global variable to track the RegisterOptions union type for special naming
+let registerOptionsUnionType: OrType | undefined;
+
+// Patch and preprocess the model
+function patchAndPreprocessModel() {
+    // Track which Data types we need to create as placeholders
+    const neededDataStructures = new Set<string>();
+
+    // Collect all registration option types from requests and notifications
+    const registrationOptionTypes: Type[] = [];
+    for (const request of [...model.requests, ...model.notifications]) {
+        if (request.registrationOptions) {
+            registrationOptionTypes.push(request.registrationOptions);
+        }
+    }
+
+    // Create synthetic structures for "and" types in registration options
+    const syntheticStructures: Structure[] = [];
+    for (let i = 0; i < registrationOptionTypes.length; i++) {
+        const regOptType = registrationOptionTypes[i];
+        if (regOptType.kind === "and") {
+            // Find which request/notification this registration option belongs to
+            const owner = [...model.requests, ...model.notifications].find(r => r.registrationOptions === regOptType);
+            if (!owner) {
+                throw new Error("Could not find owner for 'and' type registration option");
+            }
+
+            // Determine the proper name based on the typeName or method
+            let structureName: string;
+            if (owner.typeName) {
+                // Use typeName as base: "ColorPresentationRequest" -> "ColorPresentationRegistrationOptions"
+                structureName = owner.typeName.replace(/Request$/, "").replace(/Notification$/, "") + "RegistrationOptions";
+            }
+            else {
+                // Fall back to method: "textDocument/colorPresentation" -> "ColorPresentationRegistrationOptions"
+                const methodParts = owner.method.split("/");
+                const lastPart = methodParts[methodParts.length - 1];
+                structureName = titleCase(lastPart) + "RegistrationOptions";
+            }
+
+            // Extract all reference types from the "and"
+            const refTypes = regOptType.items.filter((item): item is ReferenceType => item.kind === "reference");
+
+            // Create a synthetic structure that combines all the referenced structures
+            syntheticStructures.push({
+                name: structureName,
+                properties: [],
+                extends: refTypes,
+                documentation: `Registration options for ${owner.method}.`,
+            });
+
+            // Replace the "and" type with a reference to the synthetic structure
+            registrationOptionTypes[i] = { kind: "reference", name: structureName };
+        }
+    }
+
+    for (const structure of model.structures) {
+        for (const prop of structure.properties) {
+            // Replace initializationOptions type with custom InitializationOptions
+            if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                prop.type = { kind: "reference", name: "InitializationOptions" };
+            }
+
+            // Replace Data *any fields with custom typed Data fields
+            if (prop.name === "data" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                const customDataType = `${structure.name}Data`;
+                prop.type = { kind: "reference", name: customDataType };
+
+                // If we haven't explicitly declared this Data structure, we'll need a placeholder
+                if (!explicitDataStructures.has(customDataType)) {
+                    neededDataStructures.add(customDataType);
+                }
+            }
+
+            // Replace registerOptions type with a custom RegisterOptions type
+            if (prop.name === "registerOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                // Create a union type and save it for special naming
+                if (registrationOptionTypes.length > 0) {
+                    registerOptionsUnionType = { kind: "or", items: registrationOptionTypes };
+                    prop.type = registerOptionsUnionType;
+                }
+            }
+        }
+    }
+
+    // Create placeholder structures for Data types that weren't explicitly declared
+    for (const dataTypeName of neededDataStructures) {
+        const baseName = dataTypeName.replace(/Data$/, "");
+        customStructures.push({
+            name: dataTypeName,
+            properties: [],
+            documentation: `${dataTypeName} is a placeholder for custom data preserved on a ${baseName}.`,
+        });
+    }
+
+    // Add custom enumerations, custom structures, and synthetic structures to the model
+    model.enumerations.push(...customEnumerations);
+    model.structures.push(...customStructures, ...syntheticStructures);
+
+    // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
     for (const structure of model.structures) {
         structureMap.set(structure.name, structure);
@@ -72,11 +300,18 @@ function preprocessModel() {
         structure.properties = Array.from(propertyMap.values());
         structure.extends = undefined;
         structure.mixins = undefined;
+
+        // Remove experimental properties from ServerCapabilities and ClientCapabilities
+        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
+            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        }
     }
+
+    // Remove _InitializeParams structure after flattening (it was only needed for inheritance)
+    model.structures = model.structures.filter(s => s.name !== "_InitializeParams");
 }
 
-// Preprocess the model before proceeding
-preprocessModel();
+patchAndPreprocessModel();
 
 interface GoType {
     name: string;
@@ -239,6 +474,20 @@ function flattenOrTypes(types: Type[]): Type[] {
     return Array.from(flattened);
 }
 
+function pluralize(name: string): string {
+    // Handle common irregular plurals and special cases
+    if (
+        name.endsWith("s") || name.endsWith("x") || name.endsWith("z") ||
+        name.endsWith("ch") || name.endsWith("sh")
+    ) {
+        return name + "es";
+    }
+    if (name.endsWith("y") && name.length > 1 && !"aeiou".includes(name[name.length - 2])) {
+        return name.slice(0, -1) + "ies";
+    }
+    return name + "s";
+}
+
 function handleOrType(orType: OrType): GoType {
     // First, flatten any nested OR types
     const types = flattenOrTypes(orType.items);
@@ -272,7 +521,7 @@ function handleOrType(orType: OrType): GoType {
             type.kind === "array" &&
             (type.element.kind === "reference" || type.element.kind === "base")
         ) {
-            return `${titleCase(type.element.name)}s`;
+            return pluralize(titleCase(type.element.name));
         }
         else if (type.kind === "array") {
             // Handle more complex array types
@@ -355,6 +604,20 @@ function handleOrType(orType: OrType): GoType {
         unionTypeName = memberNames.join("Or");
     }
 
+    // Special case: if this is the RegisterOptions union, use a custom name
+    // and slice off the common suffix "RegistrationOptions" from member names
+    if (orType === registerOptionsUnionType) {
+        unionTypeName = "RegisterOptions";
+
+        // Remove the common suffix "RegistrationOptions" from all member names
+        memberNames = memberNames.map(name => {
+            if (name.endsWith("RegistrationOptions")) {
+                return name.slice(0, -"RegistrationOptions".length);
+            }
+            return name;
+        });
+    }
+
     if (containedNull) {
         unionTypeName += "OrNull";
     }
@@ -376,6 +639,7 @@ const typeAliasOverrides = new Map([
     ["LSPAny", { name: "any", needsPointer: false }],
     ["LSPArray", { name: "[]any", needsPointer: false }],
     ["LSPObject", { name: "map[string]any", needsPointer: false }],
+    ["uint64", { name: "uint64", needsPointer: false }],
 ]);
 
 /**
@@ -401,6 +665,7 @@ function collectTypeDefinitions() {
         "VersionedNotebookDocumentIdentifier",
         "VersionedTextDocumentIdentifier",
         "OptionalVersionedTextDocumentIdentifier",
+        "ExportInfoMapKey",
     ]);
 
     // Process all structures
@@ -471,6 +736,141 @@ function generateCode() {
         parts.push(s + "\n");
     }
 
+    function generateResolvedStruct(structure: Structure, indent: string = "\t"): string[] {
+        const lines: string[] = [];
+
+        for (const prop of structure.properties) {
+            // Add property documentation if it exists
+            if (prop.documentation) {
+                const propDoc = formatDocumentation(prop.documentation);
+                if (propDoc) {
+                    // Add the documentation with proper indentation
+                    for (const line of propDoc.split("\n").filter(l => l)) {
+                        lines.push(`${indent}${line}`);
+                    }
+                }
+            }
+
+            const type = resolveType(prop.type);
+
+            // For reference types that are structures, use a named resolved type
+            if (prop.type.kind === "reference") {
+                const refStructure = model.structures.find(s => s.name === type.name);
+                if (refStructure) {
+                    // Use a named type for the resolved version
+                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
+                    continue;
+                }
+            }
+
+            // For other types (primitives, enums, arrays, etc.), use the type directly (no pointer)
+            const goType = type.name;
+            lines.push(`${indent}${titleCase(prop.name)} ${goType} \`json:"${prop.name},omitzero"\``);
+        }
+
+        return lines;
+    }
+
+    function generateResolveConversion(structure: Structure, varName: string, indent: string): string[] {
+        const lines: string[] = [];
+
+        for (const prop of structure.properties) {
+            const type = resolveType(prop.type);
+            const fieldName = titleCase(prop.name);
+            const accessPath = `${varName}.${fieldName}`;
+
+            // For reference types that are structures, call the resolve function
+            if (prop.type.kind === "reference") {
+                const refStructure = model.structures.find(s => s.name === type.name);
+                if (refStructure) {
+                    // Use lowercase (unexported) function name for helper functions
+                    lines.push(`${indent}${fieldName}: resolve${type.name}(${accessPath}),`);
+                    continue;
+                }
+            }
+
+            // For other types, dereference if pointer
+            if (prop.optional || type.needsPointer) {
+                lines.push(`${indent}${fieldName}: derefOr(${accessPath}),`);
+            }
+            else {
+                lines.push(`${indent}${fieldName}: ${accessPath},`);
+            }
+        }
+
+        return lines;
+    }
+
+    function collectStructureDependencies(structure: Structure, visited = new Set<string>()): Structure[] {
+        if (visited.has(structure.name)) {
+            return [];
+        }
+        visited.add(structure.name);
+
+        const deps: Structure[] = [];
+
+        for (const prop of structure.properties) {
+            if (prop.type.kind === "reference") {
+                const refStructure = model.structures.find(s => s.name === (prop.type as ReferenceType).name);
+                if (refStructure) {
+                    deps.push(...collectStructureDependencies(refStructure, new Set(visited)));
+                    deps.push(refStructure);
+                }
+            }
+        }
+
+        return deps;
+    }
+
+    function generateResolvedTypeAndHelper(structure: Structure, isMain: boolean = false): string[] {
+        const lines: string[] = [];
+        const typeName = `Resolved${structure.name}`;
+        // Main function is exported, helpers are unexported
+        const funcName = isMain ? `Resolve${structure.name}` : `resolve${structure.name}`;
+
+        // Generate the resolved type with documentation
+        if (!isMain) {
+            // For non-main types, add standard documentation header
+            if (structure.documentation) {
+                const typeDoc = formatDocumentation(structure.documentation);
+                if (typeDoc) {
+                    // Prepend comment explaining this is the resolved version
+                    lines.push(`// ${typeName} is a resolved version of ${structure.name} with all optional fields`);
+                    lines.push(`// converted to non-pointer values for easier access.`);
+                    lines.push(`//`);
+                    // Add the original structure documentation
+                    for (const line of typeDoc.split("\n").filter(l => l)) {
+                        lines.push(line);
+                    }
+                }
+            }
+            else {
+                // If no documentation, just add a basic comment
+                lines.push(`// ${typeName} is a resolved version of ${structure.name} with all optional fields`);
+                lines.push(`// converted to non-pointer values for easier access.`);
+            }
+        }
+        // For main type, documentation is added separately before calling this function
+
+        lines.push(`type ${typeName} struct {`);
+        lines.push(...generateResolvedStruct(structure, "\t"));
+        lines.push(`}`);
+        lines.push(``);
+
+        // Generate the conversion function
+        lines.push(`func ${funcName}(v *${structure.name}) ${typeName} {`);
+        lines.push(`\tif v == nil {`);
+        lines.push(`\t\treturn ${typeName}{}`);
+        lines.push(`\t}`);
+        lines.push(`\treturn ${typeName}{`);
+        lines.push(...generateResolveConversion(structure, "v", "\t\t"));
+        lines.push(`\t}`);
+        lines.push(`}`);
+        lines.push(``);
+
+        return lines;
+    }
+
     // File header
     writeLine("// Code generated by generate.mts; DO NOT EDIT.");
     writeLine("");
@@ -478,6 +878,7 @@ function generateCode() {
     writeLine("");
     writeLine(`import (`);
     writeLine(`\t"fmt"`);
+    writeLine(`\t"strings"`);
     writeLine("");
     writeLine(`\t"github.com/go-json-experiment/json"`);
     writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
@@ -504,9 +905,12 @@ function generateCode() {
                 }
 
                 const type = resolveType(prop.type);
-                const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
 
-                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitzero" : ""}"\``);
+                // For properties marked with omitzeroValue, use value type with omitzero instead of pointer
+                const useOmitzero = prop.optional || prop.omitzeroValue;
+                const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
+
+                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -526,20 +930,37 @@ function generateCode() {
             writeLine(`\treturn s.TextDocument.Uri`);
             writeLine(`}`);
             writeLine("");
+
+            if (hasTextDocumentPosition(structure)) {
+                // Generate TextDocumentPosition method
+                writeLine(`func (s *${structure.name}) TextDocumentPosition() Position {`);
+                writeLine(`\treturn s.Position`);
+                writeLine(`}`);
+                writeLine("");
+            }
         }
 
         // Generate UnmarshalJSONFrom method for structure validation
-        const requiredProps = structure.properties?.filter(p => !p.optional) || [];
+        // Skip properties marked with omitzeroValue since they're optional by nature
+        const requiredProps = structure.properties?.filter(p => {
+            if (p.optional) return false;
+            if (p.omitzeroValue) return false;
+            return true;
+        }) || [];
         if (requiredProps.length > 0) {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
-            writeLine(`\tvar (`);
-            for (const prop of requiredProps) {
-                writeLine(`\t\tseen${titleCase(prop.name)} bool`);
+            writeLine(`\tconst (`);
+            for (let i = 0; i < requiredProps.length; i++) {
+                const prop = requiredProps[i];
+                const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
+                writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
             }
+            writeLine(`\t\t_missingLast`);
             writeLine(`\t)`);
+            writeLine(`\tmissing := _missingLast - 1`);
             writeLine("");
 
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
@@ -559,8 +980,8 @@ function generateCode() {
 
             for (const prop of structure.properties) {
                 writeLine(`\t\tcase \`"${prop.name}"\`:`);
-                if (!prop.optional) {
-                    writeLine(`\t\t\tseen${titleCase(prop.name)} = true`);
+                if (!prop.optional && !prop.omitzeroValue) {
+                    writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
                 }
                 writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
                 writeLine(`\t\t\t\treturn err`);
@@ -578,11 +999,15 @@ function generateCode() {
             writeLine(`\t}`);
             writeLine("");
 
+            writeLine(`\tif missing != 0 {`);
+            writeLine(`\t\tvar missingProps []string`);
             for (const prop of requiredProps) {
-                writeLine(`\tif !seen${titleCase(prop.name)} {`);
-                writeLine(`\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
-                writeLine(`\t}`);
+                writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
+                writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
+                writeLine(`\t\t}`);
             }
+            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
+            writeLine(`\t}`);
 
             writeLine("");
             writeLine(`\treturn nil`);
@@ -674,6 +1099,36 @@ function generateCode() {
         else {
             writeLine(`\t\treturn unmarshalPtrTo[${resolvedType.name}](data)`);
         }
+    }
+
+    writeLine("\tdefault:");
+    writeLine(`\t\treturn unmarshalAny(data)`);
+    writeLine("\t}");
+    writeLine("}");
+    writeLine("");
+
+    // Generate unmarshalResult function
+    writeLine("func unmarshalResult(method Method, data []byte) (any, error) {");
+    writeLine("\tswitch method {");
+
+    // Only requests have results, not notifications
+    for (const request of model.requests) {
+        const methodName = methodNameIdentifier(request.method);
+
+        if (!("result" in request)) {
+            continue;
+        }
+
+        let responseTypeName: string;
+        if (request.typeName && request.typeName.endsWith("Request")) {
+            responseTypeName = request.typeName.replace(/Request$/, "Response");
+        }
+        else {
+            responseTypeName = `${methodName}Response`;
+        }
+
+        writeLine(`\tcase Method${methodName}:`);
+        writeLine(`\t\treturn unmarshalValue[${responseTypeName}](data)`);
     }
 
     writeLine("\tdefault:");
@@ -877,16 +1332,65 @@ function generateCode() {
         writeLine("");
     }
 
+    // Generate resolved capabilities
+    const clientCapsStructure = model.structures.find(s => s.name === "ClientCapabilities");
+    if (clientCapsStructure) {
+        writeLine("// Helper function for dereferencing pointers with zero value fallback");
+        writeLine("func derefOr[T any](v *T) T {");
+        writeLine("\tif v != nil {");
+        writeLine("\t\treturn *v");
+        writeLine("\t}");
+        writeLine("\tvar zero T");
+        writeLine("\treturn zero");
+        writeLine("}");
+        writeLine("");
+
+        // Collect all dependent structures and generate their resolved types
+        const deps = collectStructureDependencies(clientCapsStructure);
+        const uniqueDeps = Array.from(new Map(deps.map(d => [d.name, d])).values());
+
+        for (const dep of uniqueDeps) {
+            const depLines = generateResolvedTypeAndHelper(dep, false);
+            for (const line of depLines) {
+                writeLine(line);
+            }
+        }
+
+        // Generate the main ResolvedClientCapabilities type and function
+        writeLine("// ResolvedClientCapabilities is a version of ClientCapabilities where all nested");
+        writeLine("// fields are values (not pointers), making it easier to access deeply nested capabilities.");
+        writeLine("// Use ResolveClientCapabilities to convert from ClientCapabilities.");
+        if (clientCapsStructure.documentation) {
+            writeLine("//");
+            const typeDoc = formatDocumentation(clientCapsStructure.documentation);
+            for (const line of typeDoc.split("\n").filter(l => l)) {
+                writeLine(line);
+            }
+        }
+        const mainLines = generateResolvedTypeAndHelper(clientCapsStructure, true);
+        for (const line of mainLines) {
+            writeLine(line);
+        }
+    }
+
     return parts.join("");
 }
 
-function hasTextDocumentURI(structure: Structure) {
+function hasSomeProp(structure: Structure, propName: string, propTypeName: string) {
     return structure.properties?.some(p =>
         !p.optional &&
-        p.name === "textDocument" &&
+        p.name === propName &&
         p.type.kind === "reference" &&
-        p.type.name === "TextDocumentIdentifier"
+        p.type.name === propTypeName
     );
+}
+
+function hasTextDocumentURI(structure: Structure) {
+    return hasSomeProp(structure, "textDocument", "TextDocumentIdentifier");
+}
+
+function hasTextDocumentPosition(structure: Structure) {
+    return hasSomeProp(structure, "position", "Position");
 }
 
 /**

@@ -6,14 +6,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionsImport_exportEquals_anonymous(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @module: commonjs
@@ -48,11 +47,11 @@ fooB/*1*/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "fooBar",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./foo-bar",
 							},
-						})),
+						},
 						Detail:              PtrTo("(property) export=: 0"),
 						Kind:                PtrTo(lsproto.CompletionItemKindField),
 						AdditionalTextEdits: fourslash.AnyTextEdits,

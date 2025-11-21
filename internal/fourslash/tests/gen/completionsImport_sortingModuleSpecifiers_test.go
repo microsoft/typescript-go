@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -30,6 +29,7 @@ declare module "path" {
 // @Filename: main.ts
 normalize/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -41,31 +41,31 @@ normalize/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "normalize",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "normalize",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path/posix",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "normalize",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImportFix: &autoimport.Fix{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path/win32",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

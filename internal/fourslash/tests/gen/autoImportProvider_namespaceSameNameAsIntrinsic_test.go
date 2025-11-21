@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -29,6 +28,7 @@ export type SafeString = string;
 // @Filename: /home/src/workspaces/project/index.ts
 type A = { name: string/**/ }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -45,11 +45,11 @@ type A = { name: string/**/ }`
 				&lsproto.CompletionItem{
 					Label:    "string",
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImportFix: &autoimport.Fix{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "fp-ts",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},
