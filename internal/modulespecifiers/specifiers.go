@@ -461,7 +461,6 @@ func getLocalModuleSpecifier(
 	preferences ModuleSpecifierPreferences,
 	pathsOnly bool,
 ) string {
-	baseUrl := compilerOptions.BaseUrl
 	paths := compilerOptions.Paths
 	rootDirs := compilerOptions.RootDirs
 
@@ -524,8 +523,6 @@ func getLocalModuleSpecifier(
 	var maybeNonRelative string
 	if len(fromPackageJsonImports) > 0 {
 		maybeNonRelative = fromPackageJsonImports
-	} else if len(fromPaths) == 0 && len(baseUrl) > 0 {
-		maybeNonRelative = processEnding(relativeToBaseUrl, allowedEndings, compilerOptions, host)
 	} else {
 		maybeNonRelative = fromPaths
 	}

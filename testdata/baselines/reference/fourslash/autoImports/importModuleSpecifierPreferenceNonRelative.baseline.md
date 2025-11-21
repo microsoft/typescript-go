@@ -1,9 +1,9 @@
 // === Auto Imports === 
 ```ts
-// @FileName: /project/src/index.ts
+// @FileName: /project/src/app/index.ts
 helper/**/
 ``````ts
-import { helperFunc } from "src/utils/helper";
+import { helperFunc } from "@utils/helper";
 
 helper
 ```

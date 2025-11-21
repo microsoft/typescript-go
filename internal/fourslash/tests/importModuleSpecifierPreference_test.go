@@ -94,16 +94,16 @@ func TestImportModuleSpecifierPreferenceNonRelative(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /project/tsconfig.json
 {
- "compilerOptions": {
-   "baseUrl": "./src",
-   "paths": {
-     "*": ["*", "utils/*"]
-   }
- }
+  "compilerOptions": {
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@utils/*": ["./src/utils/*"],
+    }
+  }
 }
 // @Filename: /project/src/utils/helper.ts
 export const helperFunc = () => {};
-// @Filename: /project/src/index.ts
+// @Filename: /project/src/app/index.ts
 helper/**/`
 
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
