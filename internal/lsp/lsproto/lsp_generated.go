@@ -35,10 +35,12 @@ func (s *ImplementationParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*ImplementationParams)(nil)
 
 func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -54,12 +56,12 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -80,11 +82,13 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -101,10 +105,12 @@ type Location struct {
 var _ json.UnmarshalerFrom = (*Location)(nil)
 
 func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri   bool
-		seenRange bool
+	const (
+		missingUri uint = 1 << iota
+		missingRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -120,12 +126,12 @@ func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -138,11 +144,13 @@ func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -163,7 +171,11 @@ type ImplementationRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*ImplementationRegistrationOptions)(nil)
 
 func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -179,7 +191,7 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -200,8 +212,10 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -229,10 +243,12 @@ func (s *TypeDefinitionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*TypeDefinitionParams)(nil)
 
 func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -248,12 +264,12 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -274,11 +290,13 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -299,7 +317,11 @@ type TypeDefinitionRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TypeDefinitionRegistrationOptions)(nil)
 
 func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -315,7 +337,7 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -336,8 +358,10 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -356,10 +380,12 @@ type WorkspaceFolder struct {
 var _ json.UnmarshalerFrom = (*WorkspaceFolder)(nil)
 
 func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri  bool
-		seenName bool
+	const (
+		missingUri uint = 1 << iota
+		missingName
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -375,12 +401,12 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
@@ -393,11 +419,13 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
 	}
 
 	return nil
@@ -412,7 +440,11 @@ type DidChangeWorkspaceFoldersParams struct {
 var _ json.UnmarshalerFrom = (*DidChangeWorkspaceFoldersParams)(nil)
 
 func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenEvent bool
+	const (
+		missingEvent uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -428,7 +460,7 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"event"`:
-			seenEvent = true
+			missing &^= missingEvent
 			if err := json.UnmarshalDecode(dec, &s.Event); err != nil {
 				return err
 			}
@@ -441,8 +473,10 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenEvent {
-		return fmt.Errorf("required property 'event' is missing")
+	if missing != 0 {
+		if missing&missingEvent != 0 {
+			return fmt.Errorf("required property 'event' is missing")
+		}
 	}
 
 	return nil
@@ -456,7 +490,11 @@ type ConfigurationParams struct {
 var _ json.UnmarshalerFrom = (*ConfigurationParams)(nil)
 
 func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItems bool
+	const (
+		missingItems uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -472,7 +510,7 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -485,8 +523,10 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -512,7 +552,11 @@ func (s *DocumentColorParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentColorParams)(nil)
 
 func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -536,7 +580,7 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -549,8 +593,10 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -568,10 +614,12 @@ type ColorInformation struct {
 var _ json.UnmarshalerFrom = (*ColorInformation)(nil)
 
 func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange bool
-		seenColor bool
+	const (
+		missingRange uint = 1 << iota
+		missingColor
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -587,12 +635,12 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"color"`:
-			seenColor = true
+			missing &^= missingColor
 			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
 				return err
 			}
@@ -605,11 +653,13 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenColor {
-		return fmt.Errorf("required property 'color' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingColor != 0 {
+			return fmt.Errorf("required property 'color' is missing")
+		}
 	}
 
 	return nil
@@ -630,7 +680,11 @@ type DocumentColorRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentColorRegistrationOptions)(nil)
 
 func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -646,7 +700,7 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -667,8 +721,10 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -700,11 +756,13 @@ func (s *ColorPresentationParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*ColorPresentationParams)(nil)
 
 func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenColor        bool
-		seenRange        bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingColor
+		missingRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -728,17 +786,17 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"color"`:
-			seenColor = true
+			missing &^= missingColor
 			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -751,14 +809,16 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenColor {
-		return fmt.Errorf("required property 'color' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingColor != 0 {
+			return fmt.Errorf("required property 'color' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -783,7 +843,11 @@ type ColorPresentation struct {
 var _ json.UnmarshalerFrom = (*ColorPresentation)(nil)
 
 func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLabel bool
+	const (
+		missingLabel uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -799,7 +863,7 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -820,8 +884,10 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -841,7 +907,11 @@ type TextDocumentRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TextDocumentRegistrationOptions)(nil)
 
 func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -857,7 +927,7 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -870,8 +940,10 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -897,7 +969,11 @@ func (s *FoldingRangeParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*FoldingRangeParams)(nil)
 
 func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -921,7 +997,7 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -934,8 +1010,10 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -974,10 +1052,12 @@ type FoldingRange struct {
 var _ json.UnmarshalerFrom = (*FoldingRange)(nil)
 
 func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenStartLine bool
-		seenEndLine   bool
+	const (
+		missingStartLine uint = 1 << iota
+		missingEndLine
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -993,7 +1073,7 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"startLine"`:
-			seenStartLine = true
+			missing &^= missingStartLine
 			if err := json.UnmarshalDecode(dec, &s.StartLine); err != nil {
 				return err
 			}
@@ -1002,7 +1082,7 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"endLine"`:
-			seenEndLine = true
+			missing &^= missingEndLine
 			if err := json.UnmarshalDecode(dec, &s.EndLine); err != nil {
 				return err
 			}
@@ -1027,11 +1107,13 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenStartLine {
-		return fmt.Errorf("required property 'startLine' is missing")
-	}
-	if !seenEndLine {
-		return fmt.Errorf("required property 'endLine' is missing")
+	if missing != 0 {
+		if missing&missingStartLine != 0 {
+			return fmt.Errorf("required property 'startLine' is missing")
+		}
+		if missing&missingEndLine != 0 {
+			return fmt.Errorf("required property 'endLine' is missing")
+		}
 	}
 
 	return nil
@@ -1052,7 +1134,11 @@ type FoldingRangeRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*FoldingRangeRegistrationOptions)(nil)
 
 func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1068,7 +1154,7 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -1089,8 +1175,10 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -1118,10 +1206,12 @@ func (s *DeclarationParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DeclarationParams)(nil)
 
 func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1137,12 +1227,12 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -1163,11 +1253,13 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -1188,7 +1280,11 @@ type DeclarationRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DeclarationRegistrationOptions)(nil)
 
 func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1208,7 +1304,7 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -1225,8 +1321,10 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -1255,10 +1353,12 @@ func (s *SelectionRangeParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*SelectionRangeParams)(nil)
 
 func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPositions    bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPositions
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1282,12 +1382,12 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"positions"`:
-			seenPositions = true
+			missing &^= missingPositions
 			if err := json.UnmarshalDecode(dec, &s.Positions); err != nil {
 				return err
 			}
@@ -1300,11 +1400,13 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPositions {
-		return fmt.Errorf("required property 'positions' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPositions != 0 {
+			return fmt.Errorf("required property 'positions' is missing")
+		}
 	}
 
 	return nil
@@ -1323,7 +1425,11 @@ type SelectionRange struct {
 var _ json.UnmarshalerFrom = (*SelectionRange)(nil)
 
 func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRange bool
+	const (
+		missingRange uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1339,7 +1445,7 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -1356,8 +1462,10 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -1378,7 +1486,11 @@ type SelectionRangeRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*SelectionRangeRegistrationOptions)(nil)
 
 func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1398,7 +1510,7 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -1415,8 +1527,10 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -1430,7 +1544,11 @@ type WorkDoneProgressCreateParams struct {
 var _ json.UnmarshalerFrom = (*WorkDoneProgressCreateParams)(nil)
 
 func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenToken bool
+	const (
+		missingToken uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1446,7 +1564,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"token"`:
-			seenToken = true
+			missing &^= missingToken
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
 			}
@@ -1459,8 +1577,10 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenToken {
-		return fmt.Errorf("required property 'token' is missing")
+	if missing != 0 {
+		if missing&missingToken != 0 {
+			return fmt.Errorf("required property 'token' is missing")
+		}
 	}
 
 	return nil
@@ -1474,7 +1594,11 @@ type WorkDoneProgressCancelParams struct {
 var _ json.UnmarshalerFrom = (*WorkDoneProgressCancelParams)(nil)
 
 func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenToken bool
+	const (
+		missingToken uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1490,7 +1614,7 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"token"`:
-			seenToken = true
+			missing &^= missingToken
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
 			}
@@ -1503,8 +1627,10 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenToken {
-		return fmt.Errorf("required property 'token' is missing")
+	if missing != 0 {
+		if missing&missingToken != 0 {
+			return fmt.Errorf("required property 'token' is missing")
+		}
 	}
 
 	return nil
@@ -1531,10 +1657,12 @@ func (s *CallHierarchyPrepareParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*CallHierarchyPrepareParams)(nil)
 
 func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1550,12 +1678,12 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -1572,11 +1700,13 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -1617,13 +1747,15 @@ type CallHierarchyItem struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyItem)(nil)
 
 func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName           bool
-		seenKind           bool
-		seenUri            bool
-		seenRange          bool
-		seenSelectionRange bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		missingUri
+		missingRange
+		missingSelectionRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1639,12 +1771,12 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -1657,17 +1789,17 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"selectionRange"`:
-			seenSelectionRange = true
+			missing &^= missingSelectionRange
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
@@ -1684,20 +1816,22 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenSelectionRange {
-		return fmt.Errorf("required property 'selectionRange' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingSelectionRange != 0 {
+			return fmt.Errorf("required property 'selectionRange' is missing")
+		}
 	}
 
 	return nil
@@ -1721,7 +1855,11 @@ type CallHierarchyRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyRegistrationOptions)(nil)
 
 func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1737,7 +1875,7 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -1758,8 +1896,10 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -1782,7 +1922,11 @@ type CallHierarchyIncomingCallsParams struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyIncomingCallsParams)(nil)
 
 func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItem bool
+	const (
+		missingItem uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1806,7 +1950,7 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 				return err
 			}
 		case `"item"`:
-			seenItem = true
+			missing &^= missingItem
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -1819,8 +1963,10 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenItem {
-		return fmt.Errorf("required property 'item' is missing")
+	if missing != 0 {
+		if missing&missingItem != 0 {
+			return fmt.Errorf("required property 'item' is missing")
+		}
 	}
 
 	return nil
@@ -1841,10 +1987,12 @@ type CallHierarchyIncomingCall struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyIncomingCall)(nil)
 
 func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenFrom       bool
-		seenFromRanges bool
+	const (
+		missingFrom uint = 1 << iota
+		missingFromRanges
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1860,12 +2008,12 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"from"`:
-			seenFrom = true
+			missing &^= missingFrom
 			if err := json.UnmarshalDecode(dec, &s.From); err != nil {
 				return err
 			}
 		case `"fromRanges"`:
-			seenFromRanges = true
+			missing &^= missingFromRanges
 			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
 				return err
 			}
@@ -1878,11 +2026,13 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenFrom {
-		return fmt.Errorf("required property 'from' is missing")
-	}
-	if !seenFromRanges {
-		return fmt.Errorf("required property 'fromRanges' is missing")
+	if missing != 0 {
+		if missing&missingFrom != 0 {
+			return fmt.Errorf("required property 'from' is missing")
+		}
+		if missing&missingFromRanges != 0 {
+			return fmt.Errorf("required property 'fromRanges' is missing")
+		}
 	}
 
 	return nil
@@ -1905,7 +2055,11 @@ type CallHierarchyOutgoingCallsParams struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyOutgoingCallsParams)(nil)
 
 func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItem bool
+	const (
+		missingItem uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1929,7 +2083,7 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 				return err
 			}
 		case `"item"`:
-			seenItem = true
+			missing &^= missingItem
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -1942,8 +2096,10 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenItem {
-		return fmt.Errorf("required property 'item' is missing")
+	if missing != 0 {
+		if missing&missingItem != 0 {
+			return fmt.Errorf("required property 'item' is missing")
+		}
 	}
 
 	return nil
@@ -1965,10 +2121,12 @@ type CallHierarchyOutgoingCall struct {
 var _ json.UnmarshalerFrom = (*CallHierarchyOutgoingCall)(nil)
 
 func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTo         bool
-		seenFromRanges bool
+	const (
+		missingTo uint = 1 << iota
+		missingFromRanges
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -1984,12 +2142,12 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"to"`:
-			seenTo = true
+			missing &^= missingTo
 			if err := json.UnmarshalDecode(dec, &s.To); err != nil {
 				return err
 			}
 		case `"fromRanges"`:
-			seenFromRanges = true
+			missing &^= missingFromRanges
 			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
 				return err
 			}
@@ -2002,11 +2160,13 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenTo {
-		return fmt.Errorf("required property 'to' is missing")
-	}
-	if !seenFromRanges {
-		return fmt.Errorf("required property 'fromRanges' is missing")
+	if missing != 0 {
+		if missing&missingTo != 0 {
+			return fmt.Errorf("required property 'to' is missing")
+		}
+		if missing&missingFromRanges != 0 {
+			return fmt.Errorf("required property 'fromRanges' is missing")
+		}
 	}
 
 	return nil
@@ -2032,7 +2192,11 @@ func (s *SemanticTokensParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*SemanticTokensParams)(nil)
 
 func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2056,7 +2220,7 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -2069,8 +2233,10 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -2091,7 +2257,11 @@ type SemanticTokens struct {
 var _ json.UnmarshalerFrom = (*SemanticTokens)(nil)
 
 func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenData bool
+	const (
+		missingData uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2111,7 +2281,7 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"data"`:
-			seenData = true
+			missing &^= missingData
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -2124,8 +2294,10 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenData {
-		return fmt.Errorf("required property 'data' is missing")
+	if missing != 0 {
+		if missing&missingData != 0 {
+			return fmt.Errorf("required property 'data' is missing")
+		}
 	}
 
 	return nil
@@ -2139,7 +2311,11 @@ type SemanticTokensPartialResult struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensPartialResult)(nil)
 
 func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenData bool
+	const (
+		missingData uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2155,7 +2331,7 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"data"`:
-			seenData = true
+			missing &^= missingData
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -2168,8 +2344,10 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenData {
-		return fmt.Errorf("required property 'data' is missing")
+	if missing != 0 {
+		if missing&missingData != 0 {
+			return fmt.Errorf("required property 'data' is missing")
+		}
 	}
 
 	return nil
@@ -2201,10 +2379,12 @@ type SemanticTokensRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensRegistrationOptions)(nil)
 
 func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenDocumentSelector bool
-		seenLegend           bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		missingLegend
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2220,7 +2400,7 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -2229,7 +2409,7 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 				return err
 			}
 		case `"legend"`:
-			seenLegend = true
+			missing &^= missingLegend
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
@@ -2254,11 +2434,13 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
-	}
-	if !seenLegend {
-		return fmt.Errorf("required property 'legend' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
+		if missing&missingLegend != 0 {
+			return fmt.Errorf("required property 'legend' is missing")
+		}
 	}
 
 	return nil
@@ -2288,10 +2470,12 @@ func (s *SemanticTokensDeltaParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*SemanticTokensDeltaParams)(nil)
 
 func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument     bool
-		seenPreviousResultId bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPreviousResultId
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2315,12 +2499,12 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"previousResultId"`:
-			seenPreviousResultId = true
+			missing &^= missingPreviousResultId
 			if err := json.UnmarshalDecode(dec, &s.PreviousResultId); err != nil {
 				return err
 			}
@@ -2333,11 +2517,13 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPreviousResultId {
-		return fmt.Errorf("required property 'previousResultId' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPreviousResultId != 0 {
+			return fmt.Errorf("required property 'previousResultId' is missing")
+		}
 	}
 
 	return nil
@@ -2354,7 +2540,11 @@ type SemanticTokensDelta struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensDelta)(nil)
 
 func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenEdits bool
+	const (
+		missingEdits uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2374,7 +2564,7 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"edits"`:
-			seenEdits = true
+			missing &^= missingEdits
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
 			}
@@ -2387,8 +2577,10 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenEdits {
-		return fmt.Errorf("required property 'edits' is missing")
+	if missing != 0 {
+		if missing&missingEdits != 0 {
+			return fmt.Errorf("required property 'edits' is missing")
+		}
 	}
 
 	return nil
@@ -2402,7 +2594,11 @@ type SemanticTokensDeltaPartialResult struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensDeltaPartialResult)(nil)
 
 func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenEdits bool
+	const (
+		missingEdits uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2418,7 +2614,7 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"edits"`:
-			seenEdits = true
+			missing &^= missingEdits
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
 			}
@@ -2431,8 +2627,10 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenEdits {
-		return fmt.Errorf("required property 'edits' is missing")
+	if missing != 0 {
+		if missing&missingEdits != 0 {
+			return fmt.Errorf("required property 'edits' is missing")
+		}
 	}
 
 	return nil
@@ -2461,10 +2659,12 @@ func (s *SemanticTokensRangeParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*SemanticTokensRangeParams)(nil)
 
 func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRange        bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2488,12 +2688,12 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -2506,11 +2706,13 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -2544,7 +2746,11 @@ type ShowDocumentParams struct {
 var _ json.UnmarshalerFrom = (*ShowDocumentParams)(nil)
 
 func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2560,7 +2766,7 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -2585,8 +2791,10 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -2603,7 +2811,11 @@ type ShowDocumentResult struct {
 var _ json.UnmarshalerFrom = (*ShowDocumentResult)(nil)
 
 func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSuccess bool
+	const (
+		missingSuccess uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2619,7 +2831,7 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"success"`:
-			seenSuccess = true
+			missing &^= missingSuccess
 			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
 				return err
 			}
@@ -2632,8 +2844,10 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenSuccess {
-		return fmt.Errorf("required property 'success' is missing")
+	if missing != 0 {
+		if missing&missingSuccess != 0 {
+			return fmt.Errorf("required property 'success' is missing")
+		}
 	}
 
 	return nil
@@ -2657,10 +2871,12 @@ func (s *LinkedEditingRangeParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*LinkedEditingRangeParams)(nil)
 
 func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2676,12 +2892,12 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -2698,11 +2914,13 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -2725,7 +2943,11 @@ type LinkedEditingRanges struct {
 var _ json.UnmarshalerFrom = (*LinkedEditingRanges)(nil)
 
 func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRanges bool
+	const (
+		missingRanges uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2741,7 +2963,7 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"ranges"`:
-			seenRanges = true
+			missing &^= missingRanges
 			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
 				return err
 			}
@@ -2758,8 +2980,10 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRanges {
-		return fmt.Errorf("required property 'ranges' is missing")
+	if missing != 0 {
+		if missing&missingRanges != 0 {
+			return fmt.Errorf("required property 'ranges' is missing")
+		}
 	}
 
 	return nil
@@ -2780,7 +3004,11 @@ type LinkedEditingRangeRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*LinkedEditingRangeRegistrationOptions)(nil)
 
 func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2796,7 +3024,7 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -2817,8 +3045,10 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -2836,7 +3066,11 @@ type CreateFilesParams struct {
 var _ json.UnmarshalerFrom = (*CreateFilesParams)(nil)
 
 func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenFiles bool
+	const (
+		missingFiles uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2852,7 +3086,7 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"files"`:
-			seenFiles = true
+			missing &^= missingFiles
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
 			}
@@ -2865,8 +3099,10 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenFiles {
-		return fmt.Errorf("required property 'files' is missing")
+	if missing != 0 {
+		if missing&missingFiles != 0 {
+			return fmt.Errorf("required property 'files' is missing")
+		}
 	}
 
 	return nil
@@ -2920,7 +3156,11 @@ type FileOperationRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*FileOperationRegistrationOptions)(nil)
 
 func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenFilters bool
+	const (
+		missingFilters uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2936,7 +3176,7 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"filters"`:
-			seenFilters = true
+			missing &^= missingFilters
 			if err := json.UnmarshalDecode(dec, &s.Filters); err != nil {
 				return err
 			}
@@ -2949,8 +3189,10 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenFilters {
-		return fmt.Errorf("required property 'filters' is missing")
+	if missing != 0 {
+		if missing&missingFilters != 0 {
+			return fmt.Errorf("required property 'filters' is missing")
+		}
 	}
 
 	return nil
@@ -2969,7 +3211,11 @@ type RenameFilesParams struct {
 var _ json.UnmarshalerFrom = (*RenameFilesParams)(nil)
 
 func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenFiles bool
+	const (
+		missingFiles uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -2985,7 +3231,7 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"files"`:
-			seenFiles = true
+			missing &^= missingFiles
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
 			}
@@ -2998,8 +3244,10 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenFiles {
-		return fmt.Errorf("required property 'files' is missing")
+	if missing != 0 {
+		if missing&missingFiles != 0 {
+			return fmt.Errorf("required property 'files' is missing")
+		}
 	}
 
 	return nil
@@ -3017,7 +3265,11 @@ type DeleteFilesParams struct {
 var _ json.UnmarshalerFrom = (*DeleteFilesParams)(nil)
 
 func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenFiles bool
+	const (
+		missingFiles uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3033,7 +3285,7 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"files"`:
-			seenFiles = true
+			missing &^= missingFiles
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
 			}
@@ -3046,8 +3298,10 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenFiles {
-		return fmt.Errorf("required property 'files' is missing")
+	if missing != 0 {
+		if missing&missingFiles != 0 {
+			return fmt.Errorf("required property 'files' is missing")
+		}
 	}
 
 	return nil
@@ -3075,10 +3329,12 @@ func (s *MonikerParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*MonikerParams)(nil)
 
 func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3094,12 +3350,12 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -3120,11 +3376,13 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -3151,11 +3409,13 @@ type Moniker struct {
 var _ json.UnmarshalerFrom = (*Moniker)(nil)
 
 func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenScheme     bool
-		seenIdentifier bool
-		seenUnique     bool
+	const (
+		missingScheme uint = 1 << iota
+		missingIdentifier
+		missingUnique
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3171,17 +3431,17 @@ func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"scheme"`:
-			seenScheme = true
+			missing &^= missingScheme
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
 		case `"identifier"`:
-			seenIdentifier = true
+			missing &^= missingIdentifier
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
 		case `"unique"`:
-			seenUnique = true
+			missing &^= missingUnique
 			if err := json.UnmarshalDecode(dec, &s.Unique); err != nil {
 				return err
 			}
@@ -3198,14 +3458,16 @@ func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenScheme {
-		return fmt.Errorf("required property 'scheme' is missing")
-	}
-	if !seenIdentifier {
-		return fmt.Errorf("required property 'identifier' is missing")
-	}
-	if !seenUnique {
-		return fmt.Errorf("required property 'unique' is missing")
+	if missing != 0 {
+		if missing&missingScheme != 0 {
+			return fmt.Errorf("required property 'scheme' is missing")
+		}
+		if missing&missingIdentifier != 0 {
+			return fmt.Errorf("required property 'identifier' is missing")
+		}
+		if missing&missingUnique != 0 {
+			return fmt.Errorf("required property 'unique' is missing")
+		}
 	}
 
 	return nil
@@ -3222,7 +3484,11 @@ type MonikerRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*MonikerRegistrationOptions)(nil)
 
 func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3238,7 +3504,7 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -3255,8 +3521,10 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -3283,10 +3551,12 @@ func (s *TypeHierarchyPrepareParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*TypeHierarchyPrepareParams)(nil)
 
 func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3302,12 +3572,12 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -3324,11 +3594,13 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -3370,13 +3642,15 @@ type TypeHierarchyItem struct {
 var _ json.UnmarshalerFrom = (*TypeHierarchyItem)(nil)
 
 func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName           bool
-		seenKind           bool
-		seenUri            bool
-		seenRange          bool
-		seenSelectionRange bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		missingUri
+		missingRange
+		missingSelectionRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3392,12 +3666,12 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -3410,17 +3684,17 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"selectionRange"`:
-			seenSelectionRange = true
+			missing &^= missingSelectionRange
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
@@ -3437,20 +3711,22 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenSelectionRange {
-		return fmt.Errorf("required property 'selectionRange' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingSelectionRange != 0 {
+			return fmt.Errorf("required property 'selectionRange' is missing")
+		}
 	}
 
 	return nil
@@ -3474,7 +3750,11 @@ type TypeHierarchyRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TypeHierarchyRegistrationOptions)(nil)
 
 func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3490,7 +3770,7 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -3511,8 +3791,10 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -3535,7 +3817,11 @@ type TypeHierarchySupertypesParams struct {
 var _ json.UnmarshalerFrom = (*TypeHierarchySupertypesParams)(nil)
 
 func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItem bool
+	const (
+		missingItem uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3559,7 +3845,7 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 				return err
 			}
 		case `"item"`:
-			seenItem = true
+			missing &^= missingItem
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -3572,8 +3858,10 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenItem {
-		return fmt.Errorf("required property 'item' is missing")
+	if missing != 0 {
+		if missing&missingItem != 0 {
+			return fmt.Errorf("required property 'item' is missing")
+		}
 	}
 
 	return nil
@@ -3596,7 +3884,11 @@ type TypeHierarchySubtypesParams struct {
 var _ json.UnmarshalerFrom = (*TypeHierarchySubtypesParams)(nil)
 
 func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItem bool
+	const (
+		missingItem uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3620,7 +3912,7 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 				return err
 			}
 		case `"item"`:
-			seenItem = true
+			missing &^= missingItem
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
 			}
@@ -3633,8 +3925,10 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenItem {
-		return fmt.Errorf("required property 'item' is missing")
+	if missing != 0 {
+		if missing&missingItem != 0 {
+			return fmt.Errorf("required property 'item' is missing")
+		}
 	}
 
 	return nil
@@ -3665,11 +3959,13 @@ func (s *InlineValueParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*InlineValueParams)(nil)
 
 func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRange        bool
-		seenContext      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRange
+		missingContext
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3689,17 +3985,17 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"context"`:
-			seenContext = true
+			missing &^= missingContext
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -3712,14 +4008,16 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenContext {
-		return fmt.Errorf("required property 'context' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingContext != 0 {
+			return fmt.Errorf("required property 'context' is missing")
+		}
 	}
 
 	return nil
@@ -3743,7 +4041,11 @@ type InlineValueRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*InlineValueRegistrationOptions)(nil)
 
 func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3763,7 +4065,7 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -3780,8 +4082,10 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -3808,10 +4112,12 @@ func (s *InlayHintParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*InlayHintParams)(nil)
 
 func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRange        bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3831,12 +4137,12 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -3849,11 +4155,13 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -3911,10 +4219,12 @@ type InlayHint struct {
 var _ json.UnmarshalerFrom = (*InlayHint)(nil)
 
 func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenPosition bool
-		seenLabel    bool
+	const (
+		missingPosition uint = 1 << iota
+		missingLabel
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -3930,12 +4240,12 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -3972,11 +4282,13 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -4004,7 +4316,11 @@ type InlayHintRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*InlayHintRegistrationOptions)(nil)
 
 func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4028,7 +4344,7 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -4045,8 +4361,10 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -4080,7 +4398,11 @@ func (s *DocumentDiagnosticParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentDiagnosticParams)(nil)
 
 func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4104,7 +4426,7 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -4125,8 +4447,10 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -4142,7 +4466,11 @@ type DocumentDiagnosticReportPartialResult struct {
 var _ json.UnmarshalerFrom = (*DocumentDiagnosticReportPartialResult)(nil)
 
 func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRelatedDocuments bool
+	const (
+		missingRelatedDocuments uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4158,7 +4486,7 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.
 		}
 		switch string(name) {
 		case `"relatedDocuments"`:
-			seenRelatedDocuments = true
+			missing &^= missingRelatedDocuments
 			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
 				return err
 			}
@@ -4171,8 +4499,10 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.
 		return err
 	}
 
-	if !seenRelatedDocuments {
-		return fmt.Errorf("required property 'relatedDocuments' is missing")
+	if missing != 0 {
+		if missing&missingRelatedDocuments != 0 {
+			return fmt.Errorf("required property 'relatedDocuments' is missing")
+		}
 	}
 
 	return nil
@@ -4188,7 +4518,11 @@ type DiagnosticServerCancellationData struct {
 var _ json.UnmarshalerFrom = (*DiagnosticServerCancellationData)(nil)
 
 func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRetriggerRequest bool
+	const (
+		missingRetriggerRequest uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4204,7 +4538,7 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"retriggerRequest"`:
-			seenRetriggerRequest = true
+			missing &^= missingRetriggerRequest
 			if err := json.UnmarshalDecode(dec, &s.RetriggerRequest); err != nil {
 				return err
 			}
@@ -4217,8 +4551,10 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenRetriggerRequest {
-		return fmt.Errorf("required property 'retriggerRequest' is missing")
+	if missing != 0 {
+		if missing&missingRetriggerRequest != 0 {
+			return fmt.Errorf("required property 'retriggerRequest' is missing")
+		}
 	}
 
 	return nil
@@ -4255,11 +4591,13 @@ type DiagnosticRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DiagnosticRegistrationOptions)(nil)
 
 func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenDocumentSelector      bool
-		seenInterFileDependencies bool
-		seenWorkspaceDiagnostics  bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		missingInterFileDependencies
+		missingWorkspaceDiagnostics
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4275,7 +4613,7 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -4288,12 +4626,12 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 				return err
 			}
 		case `"interFileDependencies"`:
-			seenInterFileDependencies = true
+			missing &^= missingInterFileDependencies
 			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
 				return err
 			}
 		case `"workspaceDiagnostics"`:
-			seenWorkspaceDiagnostics = true
+			missing &^= missingWorkspaceDiagnostics
 			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
 				return err
 			}
@@ -4310,14 +4648,16 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
-	}
-	if !seenInterFileDependencies {
-		return fmt.Errorf("required property 'interFileDependencies' is missing")
-	}
-	if !seenWorkspaceDiagnostics {
-		return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
+		if missing&missingInterFileDependencies != 0 {
+			return fmt.Errorf("required property 'interFileDependencies' is missing")
+		}
+		if missing&missingWorkspaceDiagnostics != 0 {
+			return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+		}
 	}
 
 	return nil
@@ -4345,7 +4685,11 @@ type WorkspaceDiagnosticParams struct {
 var _ json.UnmarshalerFrom = (*WorkspaceDiagnosticParams)(nil)
 
 func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenPreviousResultIds bool
+	const (
+		missingPreviousResultIds uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4373,7 +4717,7 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 				return err
 			}
 		case `"previousResultIds"`:
-			seenPreviousResultIds = true
+			missing &^= missingPreviousResultIds
 			if err := json.UnmarshalDecode(dec, &s.PreviousResultIds); err != nil {
 				return err
 			}
@@ -4386,8 +4730,10 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenPreviousResultIds {
-		return fmt.Errorf("required property 'previousResultIds' is missing")
+	if missing != 0 {
+		if missing&missingPreviousResultIds != 0 {
+			return fmt.Errorf("required property 'previousResultIds' is missing")
+		}
 	}
 
 	return nil
@@ -4403,7 +4749,11 @@ type WorkspaceDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*WorkspaceDiagnosticReport)(nil)
 
 func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItems bool
+	const (
+		missingItems uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4419,7 +4769,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -4432,8 +4782,10 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -4449,7 +4801,11 @@ type WorkspaceDiagnosticReportPartialResult struct {
 var _ json.UnmarshalerFrom = (*WorkspaceDiagnosticReportPartialResult)(nil)
 
 func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItems bool
+	const (
+		missingItems uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4465,7 +4821,7 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext
 		}
 		switch string(name) {
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -4478,8 +4834,10 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext
 		return err
 	}
 
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -4500,10 +4858,12 @@ type DidOpenNotebookDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidOpenNotebookDocumentParams)(nil)
 
 func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenNotebookDocument  bool
-		seenCellTextDocuments bool
+	const (
+		missingNotebookDocument uint = 1 << iota
+		missingCellTextDocuments
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4519,12 +4879,12 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"notebookDocument"`:
-			seenNotebookDocument = true
+			missing &^= missingNotebookDocument
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
 		case `"cellTextDocuments"`:
-			seenCellTextDocuments = true
+			missing &^= missingCellTextDocuments
 			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
 				return err
 			}
@@ -4537,11 +4897,13 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenNotebookDocument {
-		return fmt.Errorf("required property 'notebookDocument' is missing")
-	}
-	if !seenCellTextDocuments {
-		return fmt.Errorf("required property 'cellTextDocuments' is missing")
+	if missing != 0 {
+		if missing&missingNotebookDocument != 0 {
+			return fmt.Errorf("required property 'notebookDocument' is missing")
+		}
+		if missing&missingCellTextDocuments != 0 {
+			return fmt.Errorf("required property 'cellTextDocuments' is missing")
+		}
 	}
 
 	return nil
@@ -4566,7 +4928,11 @@ type NotebookDocumentSyncRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentSyncRegistrationOptions)(nil)
 
 func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebookSelector bool
+	const (
+		missingNotebookSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4582,7 +4948,7 @@ func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontex
 		}
 		switch string(name) {
 		case `"notebookSelector"`:
-			seenNotebookSelector = true
+			missing &^= missingNotebookSelector
 			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
 				return err
 			}
@@ -4603,8 +4969,10 @@ func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontex
 		return err
 	}
 
-	if !seenNotebookSelector {
-		return fmt.Errorf("required property 'notebookSelector' is missing")
+	if missing != 0 {
+		if missing&missingNotebookSelector != 0 {
+			return fmt.Errorf("required property 'notebookSelector' is missing")
+		}
 	}
 
 	return nil
@@ -4639,10 +5007,12 @@ type DidChangeNotebookDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidChangeNotebookDocumentParams)(nil)
 
 func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenNotebookDocument bool
-		seenChange           bool
+	const (
+		missingNotebookDocument uint = 1 << iota
+		missingChange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4658,12 +5028,12 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"notebookDocument"`:
-			seenNotebookDocument = true
+			missing &^= missingNotebookDocument
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
 		case `"change"`:
-			seenChange = true
+			missing &^= missingChange
 			if err := json.UnmarshalDecode(dec, &s.Change); err != nil {
 				return err
 			}
@@ -4676,11 +5046,13 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenNotebookDocument {
-		return fmt.Errorf("required property 'notebookDocument' is missing")
-	}
-	if !seenChange {
-		return fmt.Errorf("required property 'change' is missing")
+	if missing != 0 {
+		if missing&missingNotebookDocument != 0 {
+			return fmt.Errorf("required property 'notebookDocument' is missing")
+		}
+		if missing&missingChange != 0 {
+			return fmt.Errorf("required property 'change' is missing")
+		}
 	}
 
 	return nil
@@ -4697,7 +5069,11 @@ type DidSaveNotebookDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidSaveNotebookDocumentParams)(nil)
 
 func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebookDocument bool
+	const (
+		missingNotebookDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4713,7 +5089,7 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"notebookDocument"`:
-			seenNotebookDocument = true
+			missing &^= missingNotebookDocument
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
@@ -4726,8 +5102,10 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenNotebookDocument {
-		return fmt.Errorf("required property 'notebookDocument' is missing")
+	if missing != 0 {
+		if missing&missingNotebookDocument != 0 {
+			return fmt.Errorf("required property 'notebookDocument' is missing")
+		}
 	}
 
 	return nil
@@ -4748,10 +5126,12 @@ type DidCloseNotebookDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidCloseNotebookDocumentParams)(nil)
 
 func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenNotebookDocument  bool
-		seenCellTextDocuments bool
+	const (
+		missingNotebookDocument uint = 1 << iota
+		missingCellTextDocuments
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4767,12 +5147,12 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"notebookDocument"`:
-			seenNotebookDocument = true
+			missing &^= missingNotebookDocument
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
 		case `"cellTextDocuments"`:
-			seenCellTextDocuments = true
+			missing &^= missingCellTextDocuments
 			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
 				return err
 			}
@@ -4785,11 +5165,13 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenNotebookDocument {
-		return fmt.Errorf("required property 'notebookDocument' is missing")
-	}
-	if !seenCellTextDocuments {
-		return fmt.Errorf("required property 'cellTextDocuments' is missing")
+	if missing != 0 {
+		if missing&missingNotebookDocument != 0 {
+			return fmt.Errorf("required property 'notebookDocument' is missing")
+		}
+		if missing&missingCellTextDocuments != 0 {
+			return fmt.Errorf("required property 'cellTextDocuments' is missing")
+		}
 	}
 
 	return nil
@@ -4822,11 +5204,13 @@ func (s *InlineCompletionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*InlineCompletionParams)(nil)
 
 func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
-		seenContext      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingContext
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4842,12 +5226,12 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -4856,7 +5240,7 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 				return err
 			}
 		case `"context"`:
-			seenContext = true
+			missing &^= missingContext
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -4869,14 +5253,16 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenContext {
-		return fmt.Errorf("required property 'context' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
+		if missing&missingContext != 0 {
+			return fmt.Errorf("required property 'context' is missing")
+		}
 	}
 
 	return nil
@@ -4895,7 +5281,11 @@ type InlineCompletionList struct {
 var _ json.UnmarshalerFrom = (*InlineCompletionList)(nil)
 
 func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenItems bool
+	const (
+		missingItems uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4911,7 +5301,7 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -4924,8 +5314,10 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -4953,7 +5345,11 @@ type InlineCompletionItem struct {
 var _ json.UnmarshalerFrom = (*InlineCompletionItem)(nil)
 
 func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenInsertText bool
+	const (
+		missingInsertText uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -4969,7 +5365,7 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"insertText"`:
-			seenInsertText = true
+			missing &^= missingInsertText
 			if err := json.UnmarshalDecode(dec, &s.InsertText); err != nil {
 				return err
 			}
@@ -4994,8 +5390,10 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenInsertText {
-		return fmt.Errorf("required property 'insertText' is missing")
+	if missing != 0 {
+		if missing&missingInsertText != 0 {
+			return fmt.Errorf("required property 'insertText' is missing")
+		}
 	}
 
 	return nil
@@ -5021,7 +5419,11 @@ type InlineCompletionRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*InlineCompletionRegistrationOptions)(nil)
 
 func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5041,7 +5443,7 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -5058,8 +5460,10 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -5078,7 +5482,11 @@ type TextDocumentContentParams struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentParams)(nil)
 
 func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5094,7 +5502,7 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -5107,8 +5515,10 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -5130,7 +5540,11 @@ type TextDocumentContentResult struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentResult)(nil)
 
 func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenText bool
+	const (
+		missingText uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5146,7 +5560,7 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -5159,8 +5573,10 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -5183,7 +5599,11 @@ type TextDocumentContentRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentRegistrationOptions)(nil)
 
 func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSchemes bool
+	const (
+		missingSchemes uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5199,7 +5619,7 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext
 		}
 		switch string(name) {
 		case `"schemes"`:
-			seenSchemes = true
+			missing &^= missingSchemes
 			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
 				return err
 			}
@@ -5216,8 +5636,10 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext
 		return err
 	}
 
-	if !seenSchemes {
-		return fmt.Errorf("required property 'schemes' is missing")
+	if missing != 0 {
+		if missing&missingSchemes != 0 {
+			return fmt.Errorf("required property 'schemes' is missing")
+		}
 	}
 
 	return nil
@@ -5236,7 +5658,11 @@ type TextDocumentContentRefreshParams struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentRefreshParams)(nil)
 
 func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5252,7 +5678,7 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -5265,8 +5691,10 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -5279,7 +5707,11 @@ type RegistrationParams struct {
 var _ json.UnmarshalerFrom = (*RegistrationParams)(nil)
 
 func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRegistrations bool
+	const (
+		missingRegistrations uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5295,7 +5727,7 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"registrations"`:
-			seenRegistrations = true
+			missing &^= missingRegistrations
 			if err := json.UnmarshalDecode(dec, &s.Registrations); err != nil {
 				return err
 			}
@@ -5308,8 +5740,10 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRegistrations {
-		return fmt.Errorf("required property 'registrations' is missing")
+	if missing != 0 {
+		if missing&missingRegistrations != 0 {
+			return fmt.Errorf("required property 'registrations' is missing")
+		}
 	}
 
 	return nil
@@ -5322,7 +5756,11 @@ type UnregistrationParams struct {
 var _ json.UnmarshalerFrom = (*UnregistrationParams)(nil)
 
 func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUnregisterations bool
+	const (
+		missingUnregisterations uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5338,7 +5776,7 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"unregisterations"`:
-			seenUnregisterations = true
+			missing &^= missingUnregisterations
 			if err := json.UnmarshalDecode(dec, &s.Unregisterations); err != nil {
 				return err
 			}
@@ -5351,8 +5789,10 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUnregisterations {
-		return fmt.Errorf("required property 'unregisterations' is missing")
+	if missing != 0 {
+		if missing&missingUnregisterations != 0 {
+			return fmt.Errorf("required property 'unregisterations' is missing")
+		}
 	}
 
 	return nil
@@ -5419,11 +5859,13 @@ type InitializeParams struct {
 var _ json.UnmarshalerFrom = (*InitializeParams)(nil)
 
 func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenProcessId    bool
-		seenRootUri      bool
-		seenCapabilities bool
+	const (
+		missingProcessId uint = 1 << iota
+		missingRootUri
+		missingCapabilities
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5443,7 +5885,7 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"processId"`:
-			seenProcessId = true
+			missing &^= missingProcessId
 			if err := json.UnmarshalDecode(dec, &s.ProcessId); err != nil {
 				return err
 			}
@@ -5460,12 +5902,12 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"rootUri"`:
-			seenRootUri = true
+			missing &^= missingRootUri
 			if err := json.UnmarshalDecode(dec, &s.RootUri); err != nil {
 				return err
 			}
 		case `"capabilities"`:
-			seenCapabilities = true
+			missing &^= missingCapabilities
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
@@ -5490,14 +5932,16 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenProcessId {
-		return fmt.Errorf("required property 'processId' is missing")
-	}
-	if !seenRootUri {
-		return fmt.Errorf("required property 'rootUri' is missing")
-	}
-	if !seenCapabilities {
-		return fmt.Errorf("required property 'capabilities' is missing")
+	if missing != 0 {
+		if missing&missingProcessId != 0 {
+			return fmt.Errorf("required property 'processId' is missing")
+		}
+		if missing&missingRootUri != 0 {
+			return fmt.Errorf("required property 'rootUri' is missing")
+		}
+		if missing&missingCapabilities != 0 {
+			return fmt.Errorf("required property 'capabilities' is missing")
+		}
 	}
 
 	return nil
@@ -5517,7 +5961,11 @@ type InitializeResult struct {
 var _ json.UnmarshalerFrom = (*InitializeResult)(nil)
 
 func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCapabilities bool
+	const (
+		missingCapabilities uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5533,7 +5981,7 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"capabilities"`:
-			seenCapabilities = true
+			missing &^= missingCapabilities
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
@@ -5550,8 +5998,10 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenCapabilities {
-		return fmt.Errorf("required property 'capabilities' is missing")
+	if missing != 0 {
+		if missing&missingCapabilities != 0 {
+			return fmt.Errorf("required property 'capabilities' is missing")
+		}
 	}
 
 	return nil
@@ -5570,7 +6020,11 @@ type InitializeError struct {
 var _ json.UnmarshalerFrom = (*InitializeError)(nil)
 
 func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRetry bool
+	const (
+		missingRetry uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5586,7 +6040,7 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"retry"`:
-			seenRetry = true
+			missing &^= missingRetry
 			if err := json.UnmarshalDecode(dec, &s.Retry); err != nil {
 				return err
 			}
@@ -5599,8 +6053,10 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRetry {
-		return fmt.Errorf("required property 'retry' is missing")
+	if missing != 0 {
+		if missing&missingRetry != 0 {
+			return fmt.Errorf("required property 'retry' is missing")
+		}
 	}
 
 	return nil
@@ -5617,7 +6073,11 @@ type DidChangeConfigurationParams struct {
 var _ json.UnmarshalerFrom = (*DidChangeConfigurationParams)(nil)
 
 func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSettings bool
+	const (
+		missingSettings uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5633,7 +6093,7 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"settings"`:
-			seenSettings = true
+			missing &^= missingSettings
 			if err := json.UnmarshalDecode(dec, &s.Settings); err != nil {
 				return err
 			}
@@ -5646,8 +6106,10 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenSettings {
-		return fmt.Errorf("required property 'settings' is missing")
+	if missing != 0 {
+		if missing&missingSettings != 0 {
+			return fmt.Errorf("required property 'settings' is missing")
+		}
 	}
 
 	return nil
@@ -5669,10 +6131,12 @@ type ShowMessageParams struct {
 var _ json.UnmarshalerFrom = (*ShowMessageParams)(nil)
 
 func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenType    bool
-		seenMessage bool
+	const (
+		missingType uint = 1 << iota
+		missingMessage
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5688,12 +6152,12 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"type"`:
-			seenType = true
+			missing &^= missingType
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -5706,11 +6170,13 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenType {
-		return fmt.Errorf("required property 'type' is missing")
-	}
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingType != 0 {
+			return fmt.Errorf("required property 'type' is missing")
+		}
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -5730,10 +6196,12 @@ type ShowMessageRequestParams struct {
 var _ json.UnmarshalerFrom = (*ShowMessageRequestParams)(nil)
 
 func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenType    bool
-		seenMessage bool
+	const (
+		missingType uint = 1 << iota
+		missingMessage
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5749,12 +6217,12 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"type"`:
-			seenType = true
+			missing &^= missingType
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -5771,11 +6239,13 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenType {
-		return fmt.Errorf("required property 'type' is missing")
-	}
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingType != 0 {
+			return fmt.Errorf("required property 'type' is missing")
+		}
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -5789,7 +6259,11 @@ type MessageActionItem struct {
 var _ json.UnmarshalerFrom = (*MessageActionItem)(nil)
 
 func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTitle bool
+	const (
+		missingTitle uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5805,7 +6279,7 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"title"`:
-			seenTitle = true
+			missing &^= missingTitle
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
@@ -5818,8 +6292,10 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTitle {
-		return fmt.Errorf("required property 'title' is missing")
+	if missing != 0 {
+		if missing&missingTitle != 0 {
+			return fmt.Errorf("required property 'title' is missing")
+		}
 	}
 
 	return nil
@@ -5837,10 +6313,12 @@ type LogMessageParams struct {
 var _ json.UnmarshalerFrom = (*LogMessageParams)(nil)
 
 func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenType    bool
-		seenMessage bool
+	const (
+		missingType uint = 1 << iota
+		missingMessage
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5856,12 +6334,12 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"type"`:
-			seenType = true
+			missing &^= missingType
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -5874,11 +6352,13 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenType {
-		return fmt.Errorf("required property 'type' is missing")
-	}
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingType != 0 {
+			return fmt.Errorf("required property 'type' is missing")
+		}
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -5893,7 +6373,11 @@ type DidOpenTextDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidOpenTextDocumentParams)(nil)
 
 func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5909,7 +6393,7 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -5922,8 +6406,10 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -5953,10 +6439,12 @@ type DidChangeTextDocumentParams struct {
 var _ json.UnmarshalerFrom = (*DidChangeTextDocumentParams)(nil)
 
 func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument   bool
-		seenContentChanges bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingContentChanges
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -5972,12 +6460,12 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"contentChanges"`:
-			seenContentChanges = true
+			missing &^= missingContentChanges
 			if err := json.UnmarshalDecode(dec, &s.ContentChanges); err != nil {
 				return err
 			}
@@ -5990,11 +6478,13 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenContentChanges {
-		return fmt.Errorf("required property 'contentChanges' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingContentChanges != 0 {
+			return fmt.Errorf("required property 'contentChanges' is missing")
+		}
 	}
 
 	return nil
@@ -6013,10 +6503,12 @@ type TextDocumentChangeRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TextDocumentChangeRegistrationOptions)(nil)
 
 func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenDocumentSelector bool
-		seenSyncKind         bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		missingSyncKind
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6032,12 +6524,12 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
 		case `"syncKind"`:
-			seenSyncKind = true
+			missing &^= missingSyncKind
 			if err := json.UnmarshalDecode(dec, &s.SyncKind); err != nil {
 				return err
 			}
@@ -6050,11 +6542,13 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
-	}
-	if !seenSyncKind {
-		return fmt.Errorf("required property 'syncKind' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
+		if missing&missingSyncKind != 0 {
+			return fmt.Errorf("required property 'syncKind' is missing")
+		}
 	}
 
 	return nil
@@ -6073,7 +6567,11 @@ func (s *DidCloseTextDocumentParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DidCloseTextDocumentParams)(nil)
 
 func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6089,7 +6587,7 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -6102,8 +6600,10 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -6126,7 +6626,11 @@ func (s *DidSaveTextDocumentParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DidSaveTextDocumentParams)(nil)
 
 func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6142,7 +6646,7 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -6159,8 +6663,10 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -6179,7 +6685,11 @@ type TextDocumentSaveRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*TextDocumentSaveRegistrationOptions)(nil)
 
 func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6195,7 +6705,7 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -6212,8 +6722,10 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -6235,10 +6747,12 @@ func (s *WillSaveTextDocumentParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*WillSaveTextDocumentParams)(nil)
 
 func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenReason       bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingReason
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6254,12 +6768,12 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"reason"`:
-			seenReason = true
+			missing &^= missingReason
 			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
 				return err
 			}
@@ -6272,11 +6786,13 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenReason {
-		return fmt.Errorf("required property 'reason' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingReason != 0 {
+			return fmt.Errorf("required property 'reason' is missing")
+		}
 	}
 
 	return nil
@@ -6296,10 +6812,12 @@ type TextEdit struct {
 var _ json.UnmarshalerFrom = (*TextEdit)(nil)
 
 func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange   bool
-		seenNewText bool
+	const (
+		missingRange uint = 1 << iota
+		missingNewText
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6315,12 +6833,12 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"newText"`:
-			seenNewText = true
+			missing &^= missingNewText
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
 			}
@@ -6333,11 +6851,13 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenNewText {
-		return fmt.Errorf("required property 'newText' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingNewText != 0 {
+			return fmt.Errorf("required property 'newText' is missing")
+		}
 	}
 
 	return nil
@@ -6352,7 +6872,11 @@ type DidChangeWatchedFilesParams struct {
 var _ json.UnmarshalerFrom = (*DidChangeWatchedFilesParams)(nil)
 
 func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenChanges bool
+	const (
+		missingChanges uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6368,7 +6892,7 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"changes"`:
-			seenChanges = true
+			missing &^= missingChanges
 			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
 				return err
 			}
@@ -6381,8 +6905,10 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenChanges {
-		return fmt.Errorf("required property 'changes' is missing")
+	if missing != 0 {
+		if missing&missingChanges != 0 {
+			return fmt.Errorf("required property 'changes' is missing")
+		}
 	}
 
 	return nil
@@ -6397,7 +6923,11 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DidChangeWatchedFilesRegistrationOptions)(nil)
 
 func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenWatchers bool
+	const (
+		missingWatchers uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6413,7 +6943,7 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsonte
 		}
 		switch string(name) {
 		case `"watchers"`:
-			seenWatchers = true
+			missing &^= missingWatchers
 			if err := json.UnmarshalDecode(dec, &s.Watchers); err != nil {
 				return err
 			}
@@ -6426,8 +6956,10 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsonte
 		return err
 	}
 
-	if !seenWatchers {
-		return fmt.Errorf("required property 'watchers' is missing")
+	if missing != 0 {
+		if missing&missingWatchers != 0 {
+			return fmt.Errorf("required property 'watchers' is missing")
+		}
 	}
 
 	return nil
@@ -6450,10 +6982,12 @@ type PublishDiagnosticsParams struct {
 var _ json.UnmarshalerFrom = (*PublishDiagnosticsParams)(nil)
 
 func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri         bool
-		seenDiagnostics bool
+	const (
+		missingUri uint = 1 << iota
+		missingDiagnostics
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6469,7 +7003,7 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -6478,7 +7012,7 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 				return err
 			}
 		case `"diagnostics"`:
-			seenDiagnostics = true
+			missing &^= missingDiagnostics
 			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
 				return err
 			}
@@ -6491,11 +7025,13 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenDiagnostics {
-		return fmt.Errorf("required property 'diagnostics' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingDiagnostics != 0 {
+			return fmt.Errorf("required property 'diagnostics' is missing")
+		}
 	}
 
 	return nil
@@ -6528,10 +7064,12 @@ func (s *CompletionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*CompletionParams)(nil)
 
 func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6547,12 +7085,12 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -6577,11 +7115,13 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -6731,7 +7271,11 @@ type CompletionItem struct {
 var _ json.UnmarshalerFrom = (*CompletionItem)(nil)
 
 func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLabel bool
+	const (
+		missingLabel uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6747,7 +7291,7 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -6832,8 +7376,10 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -6891,10 +7437,12 @@ type CompletionList struct {
 var _ json.UnmarshalerFrom = (*CompletionList)(nil)
 
 func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenIsIncomplete bool
-		seenItems        bool
+	const (
+		missingIsIncomplete uint = 1 << iota
+		missingItems
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -6910,7 +7458,7 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"isIncomplete"`:
-			seenIsIncomplete = true
+			missing &^= missingIsIncomplete
 			if err := json.UnmarshalDecode(dec, &s.IsIncomplete); err != nil {
 				return err
 			}
@@ -6923,7 +7471,7 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -6936,11 +7484,13 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenIsIncomplete {
-		return fmt.Errorf("required property 'isIncomplete' is missing")
-	}
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingIsIncomplete != 0 {
+			return fmt.Errorf("required property 'isIncomplete' is missing")
+		}
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -6988,7 +7538,11 @@ type CompletionRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*CompletionRegistrationOptions)(nil)
 
 func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7004,7 +7558,7 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7037,8 +7591,10 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7063,10 +7619,12 @@ func (s *HoverParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*HoverParams)(nil)
 
 func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7082,12 +7640,12 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -7104,11 +7662,13 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -7127,7 +7687,11 @@ type Hover struct {
 var _ json.UnmarshalerFrom = (*Hover)(nil)
 
 func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenContents bool
+	const (
+		missingContents uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7143,7 +7707,7 @@ func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"contents"`:
-			seenContents = true
+			missing &^= missingContents
 			if err := json.UnmarshalDecode(dec, &s.Contents); err != nil {
 				return err
 			}
@@ -7160,8 +7724,10 @@ func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenContents {
-		return fmt.Errorf("required property 'contents' is missing")
+	if missing != 0 {
+		if missing&missingContents != 0 {
+			return fmt.Errorf("required property 'contents' is missing")
+		}
 	}
 
 	return nil
@@ -7179,7 +7745,11 @@ type HoverRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*HoverRegistrationOptions)(nil)
 
 func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7195,7 +7765,7 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7212,8 +7782,10 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7244,10 +7816,12 @@ func (s *SignatureHelpParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*SignatureHelpParams)(nil)
 
 func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7263,12 +7837,12 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -7289,11 +7863,13 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -7339,7 +7915,11 @@ type SignatureHelp struct {
 var _ json.UnmarshalerFrom = (*SignatureHelp)(nil)
 
 func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSignatures bool
+	const (
+		missingSignatures uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7355,7 +7935,7 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"signatures"`:
-			seenSignatures = true
+			missing &^= missingSignatures
 			if err := json.UnmarshalDecode(dec, &s.Signatures); err != nil {
 				return err
 			}
@@ -7376,8 +7956,10 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenSignatures {
-		return fmt.Errorf("required property 'signatures' is missing")
+	if missing != 0 {
+		if missing&missingSignatures != 0 {
+			return fmt.Errorf("required property 'signatures' is missing")
+		}
 	}
 
 	return nil
@@ -7406,7 +7988,11 @@ type SignatureHelpRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*SignatureHelpRegistrationOptions)(nil)
 
 func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7422,7 +8008,7 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7447,8 +8033,10 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7477,10 +8065,12 @@ func (s *DefinitionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DefinitionParams)(nil)
 
 func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7496,12 +8086,12 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -7522,11 +8112,13 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -7544,7 +8136,11 @@ type DefinitionRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DefinitionRegistrationOptions)(nil)
 
 func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7560,7 +8156,7 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7577,8 +8173,10 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7609,11 +8207,13 @@ func (s *ReferenceParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*ReferenceParams)(nil)
 
 func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
-		seenContext      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingContext
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7629,12 +8229,12 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -7647,7 +8247,7 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"context"`:
-			seenContext = true
+			missing &^= missingContext
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -7660,14 +8260,16 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenContext {
-		return fmt.Errorf("required property 'context' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
+		if missing&missingContext != 0 {
+			return fmt.Errorf("required property 'context' is missing")
+		}
 	}
 
 	return nil
@@ -7685,7 +8287,11 @@ type ReferenceRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*ReferenceRegistrationOptions)(nil)
 
 func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7701,7 +8307,7 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7718,8 +8324,10 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7748,10 +8356,12 @@ func (s *DocumentHighlightParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentHighlightParams)(nil)
 
 func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7767,12 +8377,12 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -7793,11 +8403,13 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -7817,7 +8429,11 @@ type DocumentHighlight struct {
 var _ json.UnmarshalerFrom = (*DocumentHighlight)(nil)
 
 func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRange bool
+	const (
+		missingRange uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7833,7 +8449,7 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -7850,8 +8466,10 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -7869,7 +8487,11 @@ type DocumentHighlightRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentHighlightRegistrationOptions)(nil)
 
 func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7885,7 +8507,7 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -7902,8 +8524,10 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -7929,7 +8553,11 @@ func (s *DocumentSymbolParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentSymbolParams)(nil)
 
 func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -7953,7 +8581,7 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -7966,8 +8594,10 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -8013,11 +8643,13 @@ type SymbolInformation struct {
 var _ json.UnmarshalerFrom = (*SymbolInformation)(nil)
 
 func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName     bool
-		seenKind     bool
-		seenLocation bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		missingLocation
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8033,12 +8665,12 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -8055,7 +8687,7 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"location"`:
-			seenLocation = true
+			missing &^= missingLocation
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
@@ -8068,14 +8700,16 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenLocation {
-		return fmt.Errorf("required property 'location' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingLocation != 0 {
+			return fmt.Errorf("required property 'location' is missing")
+		}
 	}
 
 	return nil
@@ -8122,12 +8756,14 @@ type DocumentSymbol struct {
 var _ json.UnmarshalerFrom = (*DocumentSymbol)(nil)
 
 func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName           bool
-		seenKind           bool
-		seenRange          bool
-		seenSelectionRange bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		missingRange
+		missingSelectionRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8143,7 +8779,7 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
@@ -8152,7 +8788,7 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -8165,12 +8801,12 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"selectionRange"`:
-			seenSelectionRange = true
+			missing &^= missingSelectionRange
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
@@ -8187,17 +8823,19 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenSelectionRange {
-		return fmt.Errorf("required property 'selectionRange' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingSelectionRange != 0 {
+			return fmt.Errorf("required property 'selectionRange' is missing")
+		}
 	}
 
 	return nil
@@ -8221,7 +8859,11 @@ type DocumentSymbolRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentSymbolRegistrationOptions)(nil)
 
 func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8237,7 +8879,7 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -8258,8 +8900,10 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -8291,11 +8935,13 @@ func (s *CodeActionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*CodeActionParams)(nil)
 
 func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRange        bool
-		seenContext      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRange
+		missingContext
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8319,17 +8965,17 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"context"`:
-			seenContext = true
+			missing &^= missingContext
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -8342,14 +8988,16 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenContext {
-		return fmt.Errorf("required property 'context' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingContext != 0 {
+			return fmt.Errorf("required property 'context' is missing")
+		}
 	}
 
 	return nil
@@ -8381,10 +9029,12 @@ type Command struct {
 var _ json.UnmarshalerFrom = (*Command)(nil)
 
 func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTitle   bool
-		seenCommand bool
+	const (
+		missingTitle uint = 1 << iota
+		missingCommand
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8400,7 +9050,7 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"title"`:
-			seenTitle = true
+			missing &^= missingTitle
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
@@ -8409,7 +9059,7 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"command"`:
-			seenCommand = true
+			missing &^= missingCommand
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -8426,11 +9076,13 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTitle {
-		return fmt.Errorf("required property 'title' is missing")
-	}
-	if !seenCommand {
-		return fmt.Errorf("required property 'command' is missing")
+	if missing != 0 {
+		if missing&missingTitle != 0 {
+			return fmt.Errorf("required property 'title' is missing")
+		}
+		if missing&missingCommand != 0 {
+			return fmt.Errorf("required property 'command' is missing")
+		}
 	}
 
 	return nil
@@ -8501,7 +9153,11 @@ type CodeAction struct {
 var _ json.UnmarshalerFrom = (*CodeAction)(nil)
 
 func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTitle bool
+	const (
+		missingTitle uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8517,7 +9173,7 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"title"`:
-			seenTitle = true
+			missing &^= missingTitle
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
@@ -8562,8 +9218,10 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTitle {
-		return fmt.Errorf("required property 'title' is missing")
+	if missing != 0 {
+		if missing&missingTitle != 0 {
+			return fmt.Errorf("required property 'title' is missing")
+		}
 	}
 
 	return nil
@@ -8611,7 +9269,11 @@ type CodeActionRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*CodeActionRegistrationOptions)(nil)
 
 func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8627,7 +9289,7 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -8656,8 +9318,10 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -8686,7 +9350,11 @@ type WorkspaceSymbolParams struct {
 var _ json.UnmarshalerFrom = (*WorkspaceSymbolParams)(nil)
 
 func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenQuery bool
+	const (
+		missingQuery uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8710,7 +9378,7 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"query"`:
-			seenQuery = true
+			missing &^= missingQuery
 			if err := json.UnmarshalDecode(dec, &s.Query); err != nil {
 				return err
 			}
@@ -8723,8 +9391,10 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenQuery {
-		return fmt.Errorf("required property 'query' is missing")
+	if missing != 0 {
+		if missing&missingQuery != 0 {
+			return fmt.Errorf("required property 'query' is missing")
+		}
 	}
 
 	return nil
@@ -8768,11 +9438,13 @@ type WorkspaceSymbol struct {
 var _ json.UnmarshalerFrom = (*WorkspaceSymbol)(nil)
 
 func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName     bool
-		seenKind     bool
-		seenLocation bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		missingLocation
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8788,12 +9460,12 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -8806,7 +9478,7 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"location"`:
-			seenLocation = true
+			missing &^= missingLocation
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
@@ -8823,14 +9495,16 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenLocation {
-		return fmt.Errorf("required property 'location' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingLocation != 0 {
+			return fmt.Errorf("required property 'location' is missing")
+		}
 	}
 
 	return nil
@@ -8867,7 +9541,11 @@ func (s *CodeLensParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*CodeLensParams)(nil)
 
 func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8891,7 +9569,7 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -8904,8 +9582,10 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -8931,7 +9611,11 @@ type CodeLens struct {
 var _ json.UnmarshalerFrom = (*CodeLens)(nil)
 
 func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRange bool
+	const (
+		missingRange uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -8947,7 +9631,7 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -8968,8 +9652,10 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -8990,7 +9676,11 @@ type CodeLensRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*CodeLensRegistrationOptions)(nil)
 
 func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9006,7 +9696,7 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -9027,8 +9717,10 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -9054,7 +9746,11 @@ func (s *DocumentLinkParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentLinkParams)(nil)
 
 func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTextDocument bool
+	const (
+		missingTextDocument uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9078,7 +9774,7 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
@@ -9091,8 +9787,10 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
 	}
 
 	return nil
@@ -9124,7 +9822,11 @@ type DocumentLink struct {
 var _ json.UnmarshalerFrom = (*DocumentLink)(nil)
 
 func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRange bool
+	const (
+		missingRange uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9140,7 +9842,7 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -9165,8 +9867,10 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -9187,7 +9891,11 @@ type DocumentLinkRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentLinkRegistrationOptions)(nil)
 
 func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9203,7 +9911,7 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -9224,8 +9932,10 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -9250,10 +9960,12 @@ func (s *DocumentFormattingParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentFormattingParams)(nil)
 
 func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenOptions      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingOptions
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9273,12 +9985,12 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"options"`:
-			seenOptions = true
+			missing &^= missingOptions
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -9291,11 +10003,13 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenOptions {
-		return fmt.Errorf("required property 'options' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingOptions != 0 {
+			return fmt.Errorf("required property 'options' is missing")
+		}
 	}
 
 	return nil
@@ -9313,7 +10027,11 @@ type DocumentFormattingRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentFormattingRegistrationOptions)(nil)
 
 func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9329,7 +10047,7 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -9346,8 +10064,10 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -9375,11 +10095,13 @@ func (s *DocumentRangeFormattingParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentRangeFormattingParams)(nil)
 
 func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRange        bool
-		seenOptions      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRange
+		missingOptions
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9399,17 +10121,17 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"options"`:
-			seenOptions = true
+			missing &^= missingOptions
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -9422,14 +10144,16 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenOptions {
-		return fmt.Errorf("required property 'options' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingOptions != 0 {
+			return fmt.Errorf("required property 'options' is missing")
+		}
 	}
 
 	return nil
@@ -9454,7 +10178,11 @@ type DocumentRangeFormattingRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentRangeFormattingRegistrationOptions)(nil)
 
 func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9470,7 +10198,7 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -9491,8 +10219,10 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -9524,11 +10254,13 @@ func (s *DocumentRangesFormattingParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentRangesFormattingParams)(nil)
 
 func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenRanges       bool
-		seenOptions      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingRanges
+		missingOptions
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9548,17 +10280,17 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"ranges"`:
-			seenRanges = true
+			missing &^= missingRanges
 			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
 				return err
 			}
 		case `"options"`:
-			seenOptions = true
+			missing &^= missingOptions
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -9571,14 +10303,16 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenRanges {
-		return fmt.Errorf("required property 'ranges' is missing")
-	}
-	if !seenOptions {
-		return fmt.Errorf("required property 'options' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingRanges != 0 {
+			return fmt.Errorf("required property 'ranges' is missing")
+		}
+		if missing&missingOptions != 0 {
+			return fmt.Errorf("required property 'options' is missing")
+		}
 	}
 
 	return nil
@@ -9611,12 +10345,14 @@ func (s *DocumentOnTypeFormattingParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*DocumentOnTypeFormattingParams)(nil)
 
 func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
-		seenCh           bool
-		seenOptions      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingCh
+		missingOptions
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9632,22 +10368,22 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
 		case `"ch"`:
-			seenCh = true
+			missing &^= missingCh
 			if err := json.UnmarshalDecode(dec, &s.Ch); err != nil {
 				return err
 			}
 		case `"options"`:
-			seenOptions = true
+			missing &^= missingOptions
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -9660,17 +10396,19 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenCh {
-		return fmt.Errorf("required property 'ch' is missing")
-	}
-	if !seenOptions {
-		return fmt.Errorf("required property 'options' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
+		if missing&missingCh != 0 {
+			return fmt.Errorf("required property 'ch' is missing")
+		}
+		if missing&missingOptions != 0 {
+			return fmt.Errorf("required property 'options' is missing")
+		}
 	}
 
 	return nil
@@ -9692,10 +10430,12 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentOnTypeFormattingRegistrationOptions)(nil)
 
 func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenDocumentSelector      bool
-		seenFirstTriggerCharacter bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		missingFirstTriggerCharacter
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9711,12 +10451,12 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
 		case `"firstTriggerCharacter"`:
-			seenFirstTriggerCharacter = true
+			missing &^= missingFirstTriggerCharacter
 			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
 				return err
 			}
@@ -9733,11 +10473,13 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
-	}
-	if !seenFirstTriggerCharacter {
-		return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
+		if missing&missingFirstTriggerCharacter != 0 {
+			return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+		}
 	}
 
 	return nil
@@ -9767,11 +10509,13 @@ func (s *RenameParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*RenameParams)(nil)
 
 func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
-		seenNewName      bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingNewName
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9791,17 +10535,17 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
 		case `"newName"`:
-			seenNewName = true
+			missing &^= missingNewName
 			if err := json.UnmarshalDecode(dec, &s.NewName); err != nil {
 				return err
 			}
@@ -9814,14 +10558,16 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenNewName {
-		return fmt.Errorf("required property 'newName' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
+		if missing&missingNewName != 0 {
+			return fmt.Errorf("required property 'newName' is missing")
+		}
 	}
 
 	return nil
@@ -9844,7 +10590,11 @@ type RenameRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*RenameRegistrationOptions)(nil)
 
 func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9860,7 +10610,7 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -9881,8 +10631,10 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil
@@ -9906,10 +10658,12 @@ func (s *PrepareRenameParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*PrepareRenameParams)(nil)
 
 func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9925,12 +10679,12 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -9947,11 +10701,13 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -9972,7 +10728,11 @@ type ExecuteCommandParams struct {
 var _ json.UnmarshalerFrom = (*ExecuteCommandParams)(nil)
 
 func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCommand bool
+	const (
+		missingCommand uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -9992,7 +10752,7 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"command"`:
-			seenCommand = true
+			missing &^= missingCommand
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -10009,8 +10769,10 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenCommand {
-		return fmt.Errorf("required property 'command' is missing")
+	if missing != 0 {
+		if missing&missingCommand != 0 {
+			return fmt.Errorf("required property 'command' is missing")
+		}
 	}
 
 	return nil
@@ -10027,7 +10789,11 @@ type ExecuteCommandRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*ExecuteCommandRegistrationOptions)(nil)
 
 func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCommands bool
+	const (
+		missingCommands uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10047,7 +10813,7 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 				return err
 			}
 		case `"commands"`:
-			seenCommands = true
+			missing &^= missingCommands
 			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
 				return err
 			}
@@ -10060,8 +10826,10 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenCommands {
-		return fmt.Errorf("required property 'commands' is missing")
+	if missing != 0 {
+		if missing&missingCommands != 0 {
+			return fmt.Errorf("required property 'commands' is missing")
+		}
 	}
 
 	return nil
@@ -10088,7 +10856,11 @@ type ApplyWorkspaceEditParams struct {
 var _ json.UnmarshalerFrom = (*ApplyWorkspaceEditParams)(nil)
 
 func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenEdit bool
+	const (
+		missingEdit uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10108,7 +10880,7 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 				return err
 			}
 		case `"edit"`:
-			seenEdit = true
+			missing &^= missingEdit
 			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
 				return err
 			}
@@ -10125,8 +10897,10 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenEdit {
-		return fmt.Errorf("required property 'edit' is missing")
+	if missing != 0 {
+		if missing&missingEdit != 0 {
+			return fmt.Errorf("required property 'edit' is missing")
+		}
 	}
 
 	return nil
@@ -10153,7 +10927,11 @@ type ApplyWorkspaceEditResult struct {
 var _ json.UnmarshalerFrom = (*ApplyWorkspaceEditResult)(nil)
 
 func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenApplied bool
+	const (
+		missingApplied uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10169,7 +10947,7 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"applied"`:
-			seenApplied = true
+			missing &^= missingApplied
 			if err := json.UnmarshalDecode(dec, &s.Applied); err != nil {
 				return err
 			}
@@ -10190,8 +10968,10 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenApplied {
-		return fmt.Errorf("required property 'applied' is missing")
+	if missing != 0 {
+		if missing&missingApplied != 0 {
+			return fmt.Errorf("required property 'applied' is missing")
+		}
 	}
 
 	return nil
@@ -10230,10 +11010,12 @@ type WorkDoneProgressBegin struct {
 var _ json.UnmarshalerFrom = (*WorkDoneProgressBegin)(nil)
 
 func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind  bool
-		seenTitle bool
+	const (
+		missingKind uint = 1 << iota
+		missingTitle
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10249,12 +11031,12 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"title"`:
-			seenTitle = true
+			missing &^= missingTitle
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
@@ -10279,11 +11061,13 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenTitle {
-		return fmt.Errorf("required property 'title' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingTitle != 0 {
+			return fmt.Errorf("required property 'title' is missing")
+		}
 	}
 
 	return nil
@@ -10317,7 +11101,11 @@ type WorkDoneProgressReport struct {
 var _ json.UnmarshalerFrom = (*WorkDoneProgressReport)(nil)
 
 func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenKind bool
+	const (
+		missingKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10333,7 +11121,7 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -10358,8 +11146,10 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
 	}
 
 	return nil
@@ -10376,7 +11166,11 @@ type WorkDoneProgressEnd struct {
 var _ json.UnmarshalerFrom = (*WorkDoneProgressEnd)(nil)
 
 func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenKind bool
+	const (
+		missingKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10392,7 +11186,7 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -10409,8 +11203,10 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
 	}
 
 	return nil
@@ -10423,7 +11219,11 @@ type SetTraceParams struct {
 var _ json.UnmarshalerFrom = (*SetTraceParams)(nil)
 
 func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValue bool
+	const (
+		missingValue uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10439,7 +11239,7 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -10452,8 +11252,10 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -10468,7 +11270,11 @@ type LogTraceParams struct {
 var _ json.UnmarshalerFrom = (*LogTraceParams)(nil)
 
 func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenMessage bool
+	const (
+		missingMessage uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10484,7 +11290,7 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -10501,8 +11307,10 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -10516,7 +11324,11 @@ type CancelParams struct {
 var _ json.UnmarshalerFrom = (*CancelParams)(nil)
 
 func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenId bool
+	const (
+		missingId uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10532,7 +11344,7 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"id"`:
-			seenId = true
+			missing &^= missingId
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -10545,8 +11357,10 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenId {
-		return fmt.Errorf("required property 'id' is missing")
+	if missing != 0 {
+		if missing&missingId != 0 {
+			return fmt.Errorf("required property 'id' is missing")
+		}
 	}
 
 	return nil
@@ -10563,10 +11377,12 @@ type ProgressParams struct {
 var _ json.UnmarshalerFrom = (*ProgressParams)(nil)
 
 func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenToken bool
-		seenValue bool
+	const (
+		missingToken uint = 1 << iota
+		missingValue
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10582,12 +11398,12 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"token"`:
-			seenToken = true
+			missing &^= missingToken
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
 			}
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -10600,11 +11416,13 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenToken {
-		return fmt.Errorf("required property 'token' is missing")
-	}
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingToken != 0 {
+			return fmt.Errorf("required property 'token' is missing")
+		}
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -10627,10 +11445,12 @@ func (s *TextDocumentPositionParams) TextDocumentURI() DocumentUri {
 var _ json.UnmarshalerFrom = (*TextDocumentPositionParams)(nil)
 
 func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenPosition     bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10646,12 +11466,12 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"position"`:
-			seenPosition = true
+			missing &^= missingPosition
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
@@ -10664,11 +11484,13 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingPosition != 0 {
+			return fmt.Errorf("required property 'position' is missing")
+		}
 	}
 
 	return nil
@@ -10710,11 +11532,13 @@ type LocationLink struct {
 var _ json.UnmarshalerFrom = (*LocationLink)(nil)
 
 func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTargetUri            bool
-		seenTargetRange          bool
-		seenTargetSelectionRange bool
+	const (
+		missingTargetUri uint = 1 << iota
+		missingTargetRange
+		missingTargetSelectionRange
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10734,17 +11558,17 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"targetUri"`:
-			seenTargetUri = true
+			missing &^= missingTargetUri
 			if err := json.UnmarshalDecode(dec, &s.TargetUri); err != nil {
 				return err
 			}
 		case `"targetRange"`:
-			seenTargetRange = true
+			missing &^= missingTargetRange
 			if err := json.UnmarshalDecode(dec, &s.TargetRange); err != nil {
 				return err
 			}
 		case `"targetSelectionRange"`:
-			seenTargetSelectionRange = true
+			missing &^= missingTargetSelectionRange
 			if err := json.UnmarshalDecode(dec, &s.TargetSelectionRange); err != nil {
 				return err
 			}
@@ -10757,14 +11581,16 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTargetUri {
-		return fmt.Errorf("required property 'targetUri' is missing")
-	}
-	if !seenTargetRange {
-		return fmt.Errorf("required property 'targetRange' is missing")
-	}
-	if !seenTargetSelectionRange {
-		return fmt.Errorf("required property 'targetSelectionRange' is missing")
+	if missing != 0 {
+		if missing&missingTargetUri != 0 {
+			return fmt.Errorf("required property 'targetUri' is missing")
+		}
+		if missing&missingTargetRange != 0 {
+			return fmt.Errorf("required property 'targetRange' is missing")
+		}
+		if missing&missingTargetSelectionRange != 0 {
+			return fmt.Errorf("required property 'targetSelectionRange' is missing")
+		}
 	}
 
 	return nil
@@ -10794,10 +11620,12 @@ type Range struct {
 var _ json.UnmarshalerFrom = (*Range)(nil)
 
 func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenStart bool
-		seenEnd   bool
+	const (
+		missingStart uint = 1 << iota
+		missingEnd
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10813,12 +11641,12 @@ func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"start"`:
-			seenStart = true
+			missing &^= missingStart
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
 		case `"end"`:
-			seenEnd = true
+			missing &^= missingEnd
 			if err := json.UnmarshalDecode(dec, &s.End); err != nil {
 				return err
 			}
@@ -10831,11 +11659,13 @@ func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenStart {
-		return fmt.Errorf("required property 'start' is missing")
-	}
-	if !seenEnd {
-		return fmt.Errorf("required property 'end' is missing")
+	if missing != 0 {
+		if missing&missingStart != 0 {
+			return fmt.Errorf("required property 'start' is missing")
+		}
+		if missing&missingEnd != 0 {
+			return fmt.Errorf("required property 'end' is missing")
+		}
 	}
 
 	return nil
@@ -10869,10 +11699,12 @@ type WorkspaceFoldersChangeEvent struct {
 var _ json.UnmarshalerFrom = (*WorkspaceFoldersChangeEvent)(nil)
 
 func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenAdded   bool
-		seenRemoved bool
+	const (
+		missingAdded uint = 1 << iota
+		missingRemoved
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10888,12 +11720,12 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"added"`:
-			seenAdded = true
+			missing &^= missingAdded
 			if err := json.UnmarshalDecode(dec, &s.Added); err != nil {
 				return err
 			}
 		case `"removed"`:
-			seenRemoved = true
+			missing &^= missingRemoved
 			if err := json.UnmarshalDecode(dec, &s.Removed); err != nil {
 				return err
 			}
@@ -10906,11 +11738,13 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenAdded {
-		return fmt.Errorf("required property 'added' is missing")
-	}
-	if !seenRemoved {
-		return fmt.Errorf("required property 'removed' is missing")
+	if missing != 0 {
+		if missing&missingAdded != 0 {
+			return fmt.Errorf("required property 'added' is missing")
+		}
+		if missing&missingRemoved != 0 {
+			return fmt.Errorf("required property 'removed' is missing")
+		}
 	}
 
 	return nil
@@ -10933,7 +11767,11 @@ type TextDocumentIdentifier struct {
 var _ json.UnmarshalerFrom = (*TextDocumentIdentifier)(nil)
 
 func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -10949,7 +11787,7 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -10962,8 +11800,10 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -10987,12 +11827,14 @@ type Color struct {
 var _ json.UnmarshalerFrom = (*Color)(nil)
 
 func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRed   bool
-		seenGreen bool
-		seenBlue  bool
-		seenAlpha bool
+	const (
+		missingRed uint = 1 << iota
+		missingGreen
+		missingBlue
+		missingAlpha
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11008,22 +11850,22 @@ func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"red"`:
-			seenRed = true
+			missing &^= missingRed
 			if err := json.UnmarshalDecode(dec, &s.Red); err != nil {
 				return err
 			}
 		case `"green"`:
-			seenGreen = true
+			missing &^= missingGreen
 			if err := json.UnmarshalDecode(dec, &s.Green); err != nil {
 				return err
 			}
 		case `"blue"`:
-			seenBlue = true
+			missing &^= missingBlue
 			if err := json.UnmarshalDecode(dec, &s.Blue); err != nil {
 				return err
 			}
 		case `"alpha"`:
-			seenAlpha = true
+			missing &^= missingAlpha
 			if err := json.UnmarshalDecode(dec, &s.Alpha); err != nil {
 				return err
 			}
@@ -11036,17 +11878,19 @@ func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRed {
-		return fmt.Errorf("required property 'red' is missing")
-	}
-	if !seenGreen {
-		return fmt.Errorf("required property 'green' is missing")
-	}
-	if !seenBlue {
-		return fmt.Errorf("required property 'blue' is missing")
-	}
-	if !seenAlpha {
-		return fmt.Errorf("required property 'alpha' is missing")
+	if missing != 0 {
+		if missing&missingRed != 0 {
+			return fmt.Errorf("required property 'red' is missing")
+		}
+		if missing&missingGreen != 0 {
+			return fmt.Errorf("required property 'green' is missing")
+		}
+		if missing&missingBlue != 0 {
+			return fmt.Errorf("required property 'blue' is missing")
+		}
+		if missing&missingAlpha != 0 {
+			return fmt.Errorf("required property 'alpha' is missing")
+		}
 	}
 
 	return nil
@@ -11105,10 +11949,12 @@ type Position struct {
 var _ json.UnmarshalerFrom = (*Position)(nil)
 
 func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenLine      bool
-		seenCharacter bool
+	const (
+		missingLine uint = 1 << iota
+		missingCharacter
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11124,12 +11970,12 @@ func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"line"`:
-			seenLine = true
+			missing &^= missingLine
 			if err := json.UnmarshalDecode(dec, &s.Line); err != nil {
 				return err
 			}
 		case `"character"`:
-			seenCharacter = true
+			missing &^= missingCharacter
 			if err := json.UnmarshalDecode(dec, &s.Character); err != nil {
 				return err
 			}
@@ -11142,11 +11988,13 @@ func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLine {
-		return fmt.Errorf("required property 'line' is missing")
-	}
-	if !seenCharacter {
-		return fmt.Errorf("required property 'character' is missing")
+	if missing != 0 {
+		if missing&missingLine != 0 {
+			return fmt.Errorf("required property 'line' is missing")
+		}
+		if missing&missingCharacter != 0 {
+			return fmt.Errorf("required property 'character' is missing")
+		}
 	}
 
 	return nil
@@ -11181,7 +12029,11 @@ type SemanticTokensOptions struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensOptions)(nil)
 
 func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLegend bool
+	const (
+		missingLegend uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11201,7 +12053,7 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"legend"`:
-			seenLegend = true
+			missing &^= missingLegend
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
@@ -11222,8 +12074,10 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLegend {
-		return fmt.Errorf("required property 'legend' is missing")
+	if missing != 0 {
+		if missing&missingLegend != 0 {
+			return fmt.Errorf("required property 'legend' is missing")
+		}
 	}
 
 	return nil
@@ -11244,10 +12098,12 @@ type SemanticTokensEdit struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensEdit)(nil)
 
 func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenStart       bool
-		seenDeleteCount bool
+	const (
+		missingStart uint = 1 << iota
+		missingDeleteCount
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11263,12 +12119,12 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"start"`:
-			seenStart = true
+			missing &^= missingStart
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
 		case `"deleteCount"`:
-			seenDeleteCount = true
+			missing &^= missingDeleteCount
 			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
 				return err
 			}
@@ -11285,11 +12141,13 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenStart {
-		return fmt.Errorf("required property 'start' is missing")
-	}
-	if !seenDeleteCount {
-		return fmt.Errorf("required property 'deleteCount' is missing")
+	if missing != 0 {
+		if missing&missingStart != 0 {
+			return fmt.Errorf("required property 'start' is missing")
+		}
+		if missing&missingDeleteCount != 0 {
+			return fmt.Errorf("required property 'deleteCount' is missing")
+		}
 	}
 
 	return nil
@@ -11310,7 +12168,11 @@ type FileCreate struct {
 var _ json.UnmarshalerFrom = (*FileCreate)(nil)
 
 func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11326,7 +12188,7 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -11339,8 +12201,10 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -11367,10 +12231,12 @@ type TextDocumentEdit struct {
 var _ json.UnmarshalerFrom = (*TextDocumentEdit)(nil)
 
 func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTextDocument bool
-		seenEdits        bool
+	const (
+		missingTextDocument uint = 1 << iota
+		missingEdits
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11386,12 +12252,12 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"textDocument"`:
-			seenTextDocument = true
+			missing &^= missingTextDocument
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
 		case `"edits"`:
-			seenEdits = true
+			missing &^= missingEdits
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
 			}
@@ -11404,11 +12270,13 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTextDocument {
-		return fmt.Errorf("required property 'textDocument' is missing")
-	}
-	if !seenEdits {
-		return fmt.Errorf("required property 'edits' is missing")
+	if missing != 0 {
+		if missing&missingTextDocument != 0 {
+			return fmt.Errorf("required property 'textDocument' is missing")
+		}
+		if missing&missingEdits != 0 {
+			return fmt.Errorf("required property 'edits' is missing")
+		}
 	}
 
 	return nil
@@ -11434,10 +12302,12 @@ type CreateFile struct {
 var _ json.UnmarshalerFrom = (*CreateFile)(nil)
 
 func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind bool
-		seenUri  bool
+	const (
+		missingKind uint = 1 << iota
+		missingUri
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11453,7 +12323,7 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -11462,7 +12332,7 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -11479,11 +12349,13 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -11512,11 +12384,13 @@ type RenameFile struct {
 var _ json.UnmarshalerFrom = (*RenameFile)(nil)
 
 func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind   bool
-		seenOldUri bool
-		seenNewUri bool
+	const (
+		missingKind uint = 1 << iota
+		missingOldUri
+		missingNewUri
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11532,7 +12406,7 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -11541,12 +12415,12 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"oldUri"`:
-			seenOldUri = true
+			missing &^= missingOldUri
 			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
 				return err
 			}
 		case `"newUri"`:
-			seenNewUri = true
+			missing &^= missingNewUri
 			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
 				return err
 			}
@@ -11563,14 +12437,16 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenOldUri {
-		return fmt.Errorf("required property 'oldUri' is missing")
-	}
-	if !seenNewUri {
-		return fmt.Errorf("required property 'newUri' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingOldUri != 0 {
+			return fmt.Errorf("required property 'oldUri' is missing")
+		}
+		if missing&missingNewUri != 0 {
+			return fmt.Errorf("required property 'newUri' is missing")
+		}
 	}
 
 	return nil
@@ -11596,10 +12472,12 @@ type DeleteFile struct {
 var _ json.UnmarshalerFrom = (*DeleteFile)(nil)
 
 func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind bool
-		seenUri  bool
+	const (
+		missingKind uint = 1 << iota
+		missingUri
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11615,7 +12493,7 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -11624,7 +12502,7 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -11641,11 +12519,13 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -11671,7 +12551,11 @@ type ChangeAnnotation struct {
 var _ json.UnmarshalerFrom = (*ChangeAnnotation)(nil)
 
 func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLabel bool
+	const (
+		missingLabel uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11687,7 +12571,7 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -11708,8 +12592,10 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -11730,7 +12616,11 @@ type FileOperationFilter struct {
 var _ json.UnmarshalerFrom = (*FileOperationFilter)(nil)
 
 func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenPattern bool
+	const (
+		missingPattern uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11750,7 +12640,7 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"pattern"`:
-			seenPattern = true
+			missing &^= missingPattern
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -11763,8 +12653,10 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenPattern {
-		return fmt.Errorf("required property 'pattern' is missing")
+	if missing != 0 {
+		if missing&missingPattern != 0 {
+			return fmt.Errorf("required property 'pattern' is missing")
+		}
 	}
 
 	return nil
@@ -11784,10 +12676,12 @@ type FileRename struct {
 var _ json.UnmarshalerFrom = (*FileRename)(nil)
 
 func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenOldUri bool
-		seenNewUri bool
+	const (
+		missingOldUri uint = 1 << iota
+		missingNewUri
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11803,12 +12697,12 @@ func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"oldUri"`:
-			seenOldUri = true
+			missing &^= missingOldUri
 			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
 				return err
 			}
 		case `"newUri"`:
-			seenNewUri = true
+			missing &^= missingNewUri
 			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
 				return err
 			}
@@ -11821,11 +12715,13 @@ func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenOldUri {
-		return fmt.Errorf("required property 'oldUri' is missing")
-	}
-	if !seenNewUri {
-		return fmt.Errorf("required property 'newUri' is missing")
+	if missing != 0 {
+		if missing&missingOldUri != 0 {
+			return fmt.Errorf("required property 'oldUri' is missing")
+		}
+		if missing&missingNewUri != 0 {
+			return fmt.Errorf("required property 'newUri' is missing")
+		}
 	}
 
 	return nil
@@ -11842,7 +12738,11 @@ type FileDelete struct {
 var _ json.UnmarshalerFrom = (*FileDelete)(nil)
 
 func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11858,7 +12758,7 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -11871,8 +12771,10 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -11902,10 +12804,12 @@ type InlineValueContext struct {
 var _ json.UnmarshalerFrom = (*InlineValueContext)(nil)
 
 func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenFrameId         bool
-		seenStoppedLocation bool
+	const (
+		missingFrameId uint = 1 << iota
+		missingStoppedLocation
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11921,12 +12825,12 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"frameId"`:
-			seenFrameId = true
+			missing &^= missingFrameId
 			if err := json.UnmarshalDecode(dec, &s.FrameId); err != nil {
 				return err
 			}
 		case `"stoppedLocation"`:
-			seenStoppedLocation = true
+			missing &^= missingStoppedLocation
 			if err := json.UnmarshalDecode(dec, &s.StoppedLocation); err != nil {
 				return err
 			}
@@ -11939,11 +12843,13 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenFrameId {
-		return fmt.Errorf("required property 'frameId' is missing")
-	}
-	if !seenStoppedLocation {
-		return fmt.Errorf("required property 'stoppedLocation' is missing")
+	if missing != 0 {
+		if missing&missingFrameId != 0 {
+			return fmt.Errorf("required property 'frameId' is missing")
+		}
+		if missing&missingStoppedLocation != 0 {
+			return fmt.Errorf("required property 'stoppedLocation' is missing")
+		}
 	}
 
 	return nil
@@ -11963,10 +12869,12 @@ type InlineValueText struct {
 var _ json.UnmarshalerFrom = (*InlineValueText)(nil)
 
 func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange bool
-		seenText  bool
+	const (
+		missingRange uint = 1 << iota
+		missingText
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -11982,12 +12890,12 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -12000,11 +12908,13 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -12030,10 +12940,12 @@ type InlineValueVariableLookup struct {
 var _ json.UnmarshalerFrom = (*InlineValueVariableLookup)(nil)
 
 func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange               bool
-		seenCaseSensitiveLookup bool
+	const (
+		missingRange uint = 1 << iota
+		missingCaseSensitiveLookup
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12049,7 +12961,7 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -12058,7 +12970,7 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 				return err
 			}
 		case `"caseSensitiveLookup"`:
-			seenCaseSensitiveLookup = true
+			missing &^= missingCaseSensitiveLookup
 			if err := json.UnmarshalDecode(dec, &s.CaseSensitiveLookup); err != nil {
 				return err
 			}
@@ -12071,11 +12983,13 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenCaseSensitiveLookup {
-		return fmt.Errorf("required property 'caseSensitiveLookup' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingCaseSensitiveLookup != 0 {
+			return fmt.Errorf("required property 'caseSensitiveLookup' is missing")
+		}
 	}
 
 	return nil
@@ -12098,7 +13012,11 @@ type InlineValueEvaluatableExpression struct {
 var _ json.UnmarshalerFrom = (*InlineValueEvaluatableExpression)(nil)
 
 func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenRange bool
+	const (
+		missingRange uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12114,7 +13032,7 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -12131,8 +13049,10 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
 	}
 
 	return nil
@@ -12181,7 +13101,11 @@ type InlayHintLabelPart struct {
 var _ json.UnmarshalerFrom = (*InlayHintLabelPart)(nil)
 
 func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValue bool
+	const (
+		missingValue uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12197,7 +13121,7 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -12222,8 +13146,10 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -12264,10 +13190,12 @@ type MarkupContent struct {
 var _ json.UnmarshalerFrom = (*MarkupContent)(nil)
 
 func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind  bool
-		seenValue bool
+	const (
+		missingKind uint = 1 << iota
+		missingValue
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12283,12 +13211,12 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -12301,11 +13229,13 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -12350,10 +13280,12 @@ type RelatedFullDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*RelatedFullDocumentDiagnosticReport)(nil)
 
 func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind  bool
-		seenItems bool
+	const (
+		missingKind uint = 1 << iota
+		missingItems
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12369,7 +13301,7 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -12378,7 +13310,7 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 				return err
 			}
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -12395,11 +13327,13 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -12432,10 +13366,12 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*RelatedUnchangedDocumentDiagnosticReport)(nil)
 
 func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind     bool
-		seenResultId bool
+	const (
+		missingKind uint = 1 << iota
+		missingResultId
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12451,12 +13387,12 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsonte
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"resultId"`:
-			seenResultId = true
+			missing &^= missingResultId
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
@@ -12473,11 +13409,13 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsonte
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenResultId {
-		return fmt.Errorf("required property 'resultId' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingResultId != 0 {
+			return fmt.Errorf("required property 'resultId' is missing")
+		}
 	}
 
 	return nil
@@ -12502,10 +13440,12 @@ type FullDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReport)(nil)
 
 func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind  bool
-		seenItems bool
+	const (
+		missingKind uint = 1 << iota
+		missingItems
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12521,7 +13461,7 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -12530,7 +13470,7 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 				return err
 			}
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
@@ -12543,11 +13483,13 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
 	}
 
 	return nil
@@ -12572,10 +13514,12 @@ type UnchangedDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*UnchangedDocumentDiagnosticReport)(nil)
 
 func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind     bool
-		seenResultId bool
+	const (
+		missingKind uint = 1 << iota
+		missingResultId
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12591,12 +13535,12 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Deco
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"resultId"`:
-			seenResultId = true
+			missing &^= missingResultId
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
@@ -12609,11 +13553,13 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Deco
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenResultId {
-		return fmt.Errorf("required property 'resultId' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingResultId != 0 {
+			return fmt.Errorf("required property 'resultId' is missing")
+		}
 	}
 
 	return nil
@@ -12642,10 +13588,12 @@ type DiagnosticOptions struct {
 var _ json.UnmarshalerFrom = (*DiagnosticOptions)(nil)
 
 func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenInterFileDependencies bool
-		seenWorkspaceDiagnostics  bool
+	const (
+		missingInterFileDependencies uint = 1 << iota
+		missingWorkspaceDiagnostics
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12669,12 +13617,12 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"interFileDependencies"`:
-			seenInterFileDependencies = true
+			missing &^= missingInterFileDependencies
 			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
 				return err
 			}
 		case `"workspaceDiagnostics"`:
-			seenWorkspaceDiagnostics = true
+			missing &^= missingWorkspaceDiagnostics
 			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
 				return err
 			}
@@ -12687,11 +13635,13 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenInterFileDependencies {
-		return fmt.Errorf("required property 'interFileDependencies' is missing")
-	}
-	if !seenWorkspaceDiagnostics {
-		return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+	if missing != 0 {
+		if missing&missingInterFileDependencies != 0 {
+			return fmt.Errorf("required property 'interFileDependencies' is missing")
+		}
+		if missing&missingWorkspaceDiagnostics != 0 {
+			return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+		}
 	}
 
 	return nil
@@ -12712,10 +13662,12 @@ type PreviousResultId struct {
 var _ json.UnmarshalerFrom = (*PreviousResultId)(nil)
 
 func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri   bool
-		seenValue bool
+	const (
+		missingUri uint = 1 << iota
+		missingValue
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12731,12 +13683,12 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -12749,11 +13701,13 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -12786,12 +13740,14 @@ type NotebookDocument struct {
 var _ json.UnmarshalerFrom = (*NotebookDocument)(nil)
 
 func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri          bool
-		seenNotebookType bool
-		seenVersion      bool
-		seenCells        bool
+	const (
+		missingUri uint = 1 << iota
+		missingNotebookType
+		missingVersion
+		missingCells
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12807,17 +13763,17 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"notebookType"`:
-			seenNotebookType = true
+			missing &^= missingNotebookType
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -12826,7 +13782,7 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"cells"`:
-			seenCells = true
+			missing &^= missingCells
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
 			}
@@ -12839,17 +13795,19 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenNotebookType {
-		return fmt.Errorf("required property 'notebookType' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
-	}
-	if !seenCells {
-		return fmt.Errorf("required property 'cells' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingNotebookType != 0 {
+			return fmt.Errorf("required property 'notebookType' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
+		if missing&missingCells != 0 {
+			return fmt.Errorf("required property 'cells' is missing")
+		}
 	}
 
 	return nil
@@ -12875,12 +13833,14 @@ type TextDocumentItem struct {
 var _ json.UnmarshalerFrom = (*TextDocumentItem)(nil)
 
 func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri        bool
-		seenLanguageId bool
-		seenVersion    bool
-		seenText       bool
+	const (
+		missingUri uint = 1 << iota
+		missingLanguageId
+		missingVersion
+		missingText
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12896,22 +13856,22 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"languageId"`:
-			seenLanguageId = true
+			missing &^= missingLanguageId
 			if err := json.UnmarshalDecode(dec, &s.LanguageId); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -12924,17 +13884,19 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenLanguageId {
-		return fmt.Errorf("required property 'languageId' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
-	}
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingLanguageId != 0 {
+			return fmt.Errorf("required property 'languageId' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -12965,7 +13927,11 @@ type NotebookDocumentSyncOptions struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentSyncOptions)(nil)
 
 func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebookSelector bool
+	const (
+		missingNotebookSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -12981,7 +13947,7 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"notebookSelector"`:
-			seenNotebookSelector = true
+			missing &^= missingNotebookSelector
 			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
 				return err
 			}
@@ -12998,8 +13964,10 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenNotebookSelector {
-		return fmt.Errorf("required property 'notebookSelector' is missing")
+	if missing != 0 {
+		if missing&missingNotebookSelector != 0 {
+			return fmt.Errorf("required property 'notebookSelector' is missing")
+		}
 	}
 
 	return nil
@@ -13019,10 +13987,12 @@ type VersionedNotebookDocumentIdentifier struct {
 var _ json.UnmarshalerFrom = (*VersionedNotebookDocumentIdentifier)(nil)
 
 func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenVersion bool
-		seenUri     bool
+	const (
+		missingVersion uint = 1 << iota
+		missingUri
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13038,12 +14008,12 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.De
 		}
 		switch string(name) {
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -13056,11 +14026,13 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.De
 		return err
 	}
 
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -13090,7 +14062,11 @@ type NotebookDocumentIdentifier struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentIdentifier)(nil)
 
 func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13106,7 +14082,7 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -13119,8 +14095,10 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -13142,7 +14120,11 @@ type InlineCompletionContext struct {
 var _ json.UnmarshalerFrom = (*InlineCompletionContext)(nil)
 
 func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTriggerKind bool
+	const (
+		missingTriggerKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13158,7 +14140,7 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		}
 		switch string(name) {
 		case `"triggerKind"`:
-			seenTriggerKind = true
+			missing &^= missingTriggerKind
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
@@ -13175,8 +14157,10 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		return err
 	}
 
-	if !seenTriggerKind {
-		return fmt.Errorf("required property 'triggerKind' is missing")
+	if missing != 0 {
+		if missing&missingTriggerKind != 0 {
+			return fmt.Errorf("required property 'triggerKind' is missing")
+		}
 	}
 
 	return nil
@@ -13204,10 +14188,12 @@ type StringValue struct {
 var _ json.UnmarshalerFrom = (*StringValue)(nil)
 
 func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind  bool
-		seenValue bool
+	const (
+		missingKind uint = 1 << iota
+		missingValue
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13223,12 +14209,12 @@ func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -13241,11 +14227,13 @@ func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -13273,7 +14261,11 @@ type TextDocumentContentOptions struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentOptions)(nil)
 
 func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSchemes bool
+	const (
+		missingSchemes uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13289,7 +14281,7 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"schemes"`:
-			seenSchemes = true
+			missing &^= missingSchemes
 			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
 				return err
 			}
@@ -13302,8 +14294,10 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenSchemes {
-		return fmt.Errorf("required property 'schemes' is missing")
+	if missing != 0 {
+		if missing&missingSchemes != 0 {
+			return fmt.Errorf("required property 'schemes' is missing")
+		}
 	}
 
 	return nil
@@ -13325,10 +14319,12 @@ type Registration struct {
 var _ json.UnmarshalerFrom = (*Registration)(nil)
 
 func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenId     bool
-		seenMethod bool
+	const (
+		missingId uint = 1 << iota
+		missingMethod
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13344,12 +14340,12 @@ func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"id"`:
-			seenId = true
+			missing &^= missingId
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
 		case `"method"`:
-			seenMethod = true
+			missing &^= missingMethod
 			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
 				return err
 			}
@@ -13366,11 +14362,13 @@ func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenId {
-		return fmt.Errorf("required property 'id' is missing")
-	}
-	if !seenMethod {
-		return fmt.Errorf("required property 'method' is missing")
+	if missing != 0 {
+		if missing&missingId != 0 {
+			return fmt.Errorf("required property 'id' is missing")
+		}
+		if missing&missingMethod != 0 {
+			return fmt.Errorf("required property 'method' is missing")
+		}
 	}
 
 	return nil
@@ -13389,10 +14387,12 @@ type Unregistration struct {
 var _ json.UnmarshalerFrom = (*Unregistration)(nil)
 
 func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenId     bool
-		seenMethod bool
+	const (
+		missingId uint = 1 << iota
+		missingMethod
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13408,12 +14408,12 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"id"`:
-			seenId = true
+			missing &^= missingId
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
 		case `"method"`:
-			seenMethod = true
+			missing &^= missingMethod
 			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
 				return err
 			}
@@ -13426,11 +14426,13 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenId {
-		return fmt.Errorf("required property 'id' is missing")
-	}
-	if !seenMethod {
-		return fmt.Errorf("required property 'method' is missing")
+	if missing != 0 {
+		if missing&missingId != 0 {
+			return fmt.Errorf("required property 'id' is missing")
+		}
+		if missing&missingMethod != 0 {
+			return fmt.Errorf("required property 'method' is missing")
+		}
 	}
 
 	return nil
@@ -13608,7 +14610,11 @@ type ServerInfo struct {
 var _ json.UnmarshalerFrom = (*ServerInfo)(nil)
 
 func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenName bool
+	const (
+		missingName uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13624,7 +14630,7 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
@@ -13641,8 +14647,10 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
 	}
 
 	return nil
@@ -13660,10 +14668,12 @@ type VersionedTextDocumentIdentifier struct {
 var _ json.UnmarshalerFrom = (*VersionedTextDocumentIdentifier)(nil)
 
 func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri     bool
-		seenVersion bool
+	const (
+		missingUri uint = 1 << iota
+		missingVersion
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13679,12 +14689,12 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -13697,11 +14707,13 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
 	}
 
 	return nil
@@ -13725,10 +14737,12 @@ type FileEvent struct {
 var _ json.UnmarshalerFrom = (*FileEvent)(nil)
 
 func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri  bool
-		seenType bool
+	const (
+		missingUri uint = 1 << iota
+		missingType
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13744,12 +14758,12 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"type"`:
-			seenType = true
+			missing &^= missingType
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
@@ -13762,11 +14776,13 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenType {
-		return fmt.Errorf("required property 'type' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingType != 0 {
+			return fmt.Errorf("required property 'type' is missing")
+		}
 	}
 
 	return nil
@@ -13787,7 +14803,11 @@ type FileSystemWatcher struct {
 var _ json.UnmarshalerFrom = (*FileSystemWatcher)(nil)
 
 func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenGlobPattern bool
+	const (
+		missingGlobPattern uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13803,7 +14823,7 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"globPattern"`:
-			seenGlobPattern = true
+			missing &^= missingGlobPattern
 			if err := json.UnmarshalDecode(dec, &s.GlobPattern); err != nil {
 				return err
 			}
@@ -13820,8 +14840,10 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenGlobPattern {
-		return fmt.Errorf("required property 'globPattern' is missing")
+	if missing != 0 {
+		if missing&missingGlobPattern != 0 {
+			return fmt.Errorf("required property 'globPattern' is missing")
+		}
 	}
 
 	return nil
@@ -13874,10 +14896,12 @@ type Diagnostic struct {
 var _ json.UnmarshalerFrom = (*Diagnostic)(nil)
 
 func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange   bool
-		seenMessage bool
+	const (
+		missingRange uint = 1 << iota
+		missingMessage
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13893,7 +14917,7 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -13914,7 +14938,7 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -13939,11 +14963,13 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -13962,7 +14988,11 @@ type CompletionContext struct {
 var _ json.UnmarshalerFrom = (*CompletionContext)(nil)
 
 func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenTriggerKind bool
+	const (
+		missingTriggerKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -13978,7 +15008,7 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"triggerKind"`:
-			seenTriggerKind = true
+			missing &^= missingTriggerKind
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
@@ -13995,8 +15025,10 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTriggerKind {
-		return fmt.Errorf("required property 'triggerKind' is missing")
+	if missing != 0 {
+		if missing&missingTriggerKind != 0 {
+			return fmt.Errorf("required property 'triggerKind' is missing")
+		}
 	}
 
 	return nil
@@ -14032,11 +15064,13 @@ type InsertReplaceEdit struct {
 var _ json.UnmarshalerFrom = (*InsertReplaceEdit)(nil)
 
 func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenNewText bool
-		seenInsert  bool
-		seenReplace bool
+	const (
+		missingNewText uint = 1 << iota
+		missingInsert
+		missingReplace
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14052,17 +15086,17 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"newText"`:
-			seenNewText = true
+			missing &^= missingNewText
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
 			}
 		case `"insert"`:
-			seenInsert = true
+			missing &^= missingInsert
 			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
 				return err
 			}
 		case `"replace"`:
-			seenReplace = true
+			missing &^= missingReplace
 			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
 				return err
 			}
@@ -14075,14 +15109,16 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenNewText {
-		return fmt.Errorf("required property 'newText' is missing")
-	}
-	if !seenInsert {
-		return fmt.Errorf("required property 'insert' is missing")
-	}
-	if !seenReplace {
-		return fmt.Errorf("required property 'replace' is missing")
+	if missing != 0 {
+		if missing&missingNewText != 0 {
+			return fmt.Errorf("required property 'newText' is missing")
+		}
+		if missing&missingInsert != 0 {
+			return fmt.Errorf("required property 'insert' is missing")
+		}
+		if missing&missingReplace != 0 {
+			return fmt.Errorf("required property 'replace' is missing")
+		}
 	}
 
 	return nil
@@ -14258,10 +15294,12 @@ type SignatureHelpContext struct {
 var _ json.UnmarshalerFrom = (*SignatureHelpContext)(nil)
 
 func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTriggerKind bool
-		seenIsRetrigger bool
+	const (
+		missingTriggerKind uint = 1 << iota
+		missingIsRetrigger
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14277,7 +15315,7 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"triggerKind"`:
-			seenTriggerKind = true
+			missing &^= missingTriggerKind
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
@@ -14286,7 +15324,7 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"isRetrigger"`:
-			seenIsRetrigger = true
+			missing &^= missingIsRetrigger
 			if err := json.UnmarshalDecode(dec, &s.IsRetrigger); err != nil {
 				return err
 			}
@@ -14303,11 +15341,13 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTriggerKind {
-		return fmt.Errorf("required property 'triggerKind' is missing")
-	}
-	if !seenIsRetrigger {
-		return fmt.Errorf("required property 'isRetrigger' is missing")
+	if missing != 0 {
+		if missing&missingTriggerKind != 0 {
+			return fmt.Errorf("required property 'triggerKind' is missing")
+		}
+		if missing&missingIsRetrigger != 0 {
+			return fmt.Errorf("required property 'isRetrigger' is missing")
+		}
 	}
 
 	return nil
@@ -14345,7 +15385,11 @@ type SignatureInformation struct {
 var _ json.UnmarshalerFrom = (*SignatureInformation)(nil)
 
 func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLabel bool
+	const (
+		missingLabel uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14361,7 +15405,7 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -14386,8 +15430,10 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -14424,7 +15470,11 @@ type ReferenceContext struct {
 var _ json.UnmarshalerFrom = (*ReferenceContext)(nil)
 
 func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenIncludeDeclaration bool
+	const (
+		missingIncludeDeclaration uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14440,7 +15490,7 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"includeDeclaration"`:
-			seenIncludeDeclaration = true
+			missing &^= missingIncludeDeclaration
 			if err := json.UnmarshalDecode(dec, &s.IncludeDeclaration); err != nil {
 				return err
 			}
@@ -14453,8 +15503,10 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenIncludeDeclaration {
-		return fmt.Errorf("required property 'includeDeclaration' is missing")
+	if missing != 0 {
+		if missing&missingIncludeDeclaration != 0 {
+			return fmt.Errorf("required property 'includeDeclaration' is missing")
+		}
 	}
 
 	return nil
@@ -14493,10 +15545,12 @@ type BaseSymbolInformation struct {
 var _ json.UnmarshalerFrom = (*BaseSymbolInformation)(nil)
 
 func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenName bool
-		seenKind bool
+	const (
+		missingName uint = 1 << iota
+		missingKind
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14512,12 +15566,12 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -14538,11 +15592,13 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
 	}
 
 	return nil
@@ -14584,7 +15640,11 @@ type CodeActionContext struct {
 var _ json.UnmarshalerFrom = (*CodeActionContext)(nil)
 
 func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDiagnostics bool
+	const (
+		missingDiagnostics uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14600,7 +15660,7 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"diagnostics"`:
-			seenDiagnostics = true
+			missing &^= missingDiagnostics
 			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
 				return err
 			}
@@ -14621,8 +15681,10 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenDiagnostics {
-		return fmt.Errorf("required property 'diagnostics' is missing")
+	if missing != 0 {
+		if missing&missingDiagnostics != 0 {
+			return fmt.Errorf("required property 'diagnostics' is missing")
+		}
 	}
 
 	return nil
@@ -14641,7 +15703,11 @@ type CodeActionDisabled struct {
 var _ json.UnmarshalerFrom = (*CodeActionDisabled)(nil)
 
 func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenReason bool
+	const (
+		missingReason uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14657,7 +15723,7 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"reason"`:
-			seenReason = true
+			missing &^= missingReason
 			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
 				return err
 			}
@@ -14670,8 +15736,10 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenReason {
-		return fmt.Errorf("required property 'reason' is missing")
+	if missing != 0 {
+		if missing&missingReason != 0 {
+			return fmt.Errorf("required property 'reason' is missing")
+		}
 	}
 
 	return nil
@@ -14722,7 +15790,11 @@ type LocationUriOnly struct {
 var _ json.UnmarshalerFrom = (*LocationUriOnly)(nil)
 
 func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenUri bool
+	const (
+		missingUri uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14738,7 +15810,7 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
@@ -14751,8 +15823,10 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
 	}
 
 	return nil
@@ -14812,10 +15886,12 @@ type FormattingOptions struct {
 var _ json.UnmarshalerFrom = (*FormattingOptions)(nil)
 
 func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTabSize      bool
-		seenInsertSpaces bool
+	const (
+		missingTabSize uint = 1 << iota
+		missingInsertSpaces
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14831,12 +15907,12 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"tabSize"`:
-			seenTabSize = true
+			missing &^= missingTabSize
 			if err := json.UnmarshalDecode(dec, &s.TabSize); err != nil {
 				return err
 			}
 		case `"insertSpaces"`:
-			seenInsertSpaces = true
+			missing &^= missingInsertSpaces
 			if err := json.UnmarshalDecode(dec, &s.InsertSpaces); err != nil {
 				return err
 			}
@@ -14861,11 +15937,13 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTabSize {
-		return fmt.Errorf("required property 'tabSize' is missing")
-	}
-	if !seenInsertSpaces {
-		return fmt.Errorf("required property 'insertSpaces' is missing")
+	if missing != 0 {
+		if missing&missingTabSize != 0 {
+			return fmt.Errorf("required property 'tabSize' is missing")
+		}
+		if missing&missingInsertSpaces != 0 {
+			return fmt.Errorf("required property 'insertSpaces' is missing")
+		}
 	}
 
 	return nil
@@ -14900,7 +15978,11 @@ type DocumentOnTypeFormattingOptions struct {
 var _ json.UnmarshalerFrom = (*DocumentOnTypeFormattingOptions)(nil)
 
 func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenFirstTriggerCharacter bool
+	const (
+		missingFirstTriggerCharacter uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14916,7 +15998,7 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		}
 		switch string(name) {
 		case `"firstTriggerCharacter"`:
-			seenFirstTriggerCharacter = true
+			missing &^= missingFirstTriggerCharacter
 			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
 				return err
 			}
@@ -14933,8 +16015,10 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenFirstTriggerCharacter {
-		return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+	if missing != 0 {
+		if missing&missingFirstTriggerCharacter != 0 {
+			return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+		}
 	}
 
 	return nil
@@ -14960,10 +16044,12 @@ type PrepareRenamePlaceholder struct {
 var _ json.UnmarshalerFrom = (*PrepareRenamePlaceholder)(nil)
 
 func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange       bool
-		seenPlaceholder bool
+	const (
+		missingRange uint = 1 << iota
+		missingPlaceholder
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -14979,12 +16065,12 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"placeholder"`:
-			seenPlaceholder = true
+			missing &^= missingPlaceholder
 			if err := json.UnmarshalDecode(dec, &s.Placeholder); err != nil {
 				return err
 			}
@@ -14997,11 +16083,13 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenPlaceholder {
-		return fmt.Errorf("required property 'placeholder' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingPlaceholder != 0 {
+			return fmt.Errorf("required property 'placeholder' is missing")
+		}
 	}
 
 	return nil
@@ -15015,7 +16103,11 @@ type PrepareRenameDefaultBehavior struct {
 var _ json.UnmarshalerFrom = (*PrepareRenameDefaultBehavior)(nil)
 
 func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDefaultBehavior bool
+	const (
+		missingDefaultBehavior uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15031,7 +16123,7 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"defaultBehavior"`:
-			seenDefaultBehavior = true
+			missing &^= missingDefaultBehavior
 			if err := json.UnmarshalDecode(dec, &s.DefaultBehavior); err != nil {
 				return err
 			}
@@ -15044,8 +16136,10 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenDefaultBehavior {
-		return fmt.Errorf("required property 'defaultBehavior' is missing")
+	if missing != 0 {
+		if missing&missingDefaultBehavior != 0 {
+			return fmt.Errorf("required property 'defaultBehavior' is missing")
+		}
 	}
 
 	return nil
@@ -15062,7 +16156,11 @@ type ExecuteCommandOptions struct {
 var _ json.UnmarshalerFrom = (*ExecuteCommandOptions)(nil)
 
 func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCommands bool
+	const (
+		missingCommands uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15082,7 +16180,7 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"commands"`:
-			seenCommands = true
+			missing &^= missingCommands
 			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
 				return err
 			}
@@ -15095,8 +16193,10 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenCommands {
-		return fmt.Errorf("required property 'commands' is missing")
+	if missing != 0 {
+		if missing&missingCommands != 0 {
+			return fmt.Errorf("required property 'commands' is missing")
+		}
 	}
 
 	return nil
@@ -15124,10 +16224,12 @@ type SemanticTokensLegend struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensLegend)(nil)
 
 func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenTokenTypes     bool
-		seenTokenModifiers bool
+	const (
+		missingTokenTypes uint = 1 << iota
+		missingTokenModifiers
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15143,12 +16245,12 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"tokenTypes"`:
-			seenTokenTypes = true
+			missing &^= missingTokenTypes
 			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
 				return err
 			}
 		case `"tokenModifiers"`:
-			seenTokenModifiers = true
+			missing &^= missingTokenModifiers
 			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
 				return err
 			}
@@ -15161,11 +16263,13 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenTokenTypes {
-		return fmt.Errorf("required property 'tokenTypes' is missing")
-	}
-	if !seenTokenModifiers {
-		return fmt.Errorf("required property 'tokenModifiers' is missing")
+	if missing != 0 {
+		if missing&missingTokenTypes != 0 {
+			return fmt.Errorf("required property 'tokenTypes' is missing")
+		}
+		if missing&missingTokenModifiers != 0 {
+			return fmt.Errorf("required property 'tokenModifiers' is missing")
+		}
 	}
 
 	return nil
@@ -15195,10 +16299,12 @@ type OptionalVersionedTextDocumentIdentifier struct {
 var _ json.UnmarshalerFrom = (*OptionalVersionedTextDocumentIdentifier)(nil)
 
 func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenUri     bool
-		seenVersion bool
+	const (
+		missingUri uint = 1 << iota
+		missingVersion
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15214,12 +16320,12 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontex
 		}
 		switch string(name) {
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -15232,11 +16338,13 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontex
 		return err
 	}
 
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
+	if missing != 0 {
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
 	}
 
 	return nil
@@ -15261,11 +16369,13 @@ type AnnotatedTextEdit struct {
 var _ json.UnmarshalerFrom = (*AnnotatedTextEdit)(nil)
 
 func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange        bool
-		seenNewText      bool
-		seenAnnotationId bool
+	const (
+		missingRange uint = 1 << iota
+		missingNewText
+		missingAnnotationId
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15281,17 +16391,17 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"newText"`:
-			seenNewText = true
+			missing &^= missingNewText
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
 			}
 		case `"annotationId"`:
-			seenAnnotationId = true
+			missing &^= missingAnnotationId
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
@@ -15304,14 +16414,16 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenNewText {
-		return fmt.Errorf("required property 'newText' is missing")
-	}
-	if !seenAnnotationId {
-		return fmt.Errorf("required property 'annotationId' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingNewText != 0 {
+			return fmt.Errorf("required property 'newText' is missing")
+		}
+		if missing&missingAnnotationId != 0 {
+			return fmt.Errorf("required property 'annotationId' is missing")
+		}
 	}
 
 	return nil
@@ -15336,10 +16448,12 @@ type SnippetTextEdit struct {
 var _ json.UnmarshalerFrom = (*SnippetTextEdit)(nil)
 
 func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange   bool
-		seenSnippet bool
+	const (
+		missingRange uint = 1 << iota
+		missingSnippet
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15355,12 +16469,12 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"snippet"`:
-			seenSnippet = true
+			missing &^= missingSnippet
 			if err := json.UnmarshalDecode(dec, &s.Snippet); err != nil {
 				return err
 			}
@@ -15377,11 +16491,13 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenSnippet {
-		return fmt.Errorf("required property 'snippet' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingSnippet != 0 {
+			return fmt.Errorf("required property 'snippet' is missing")
+		}
 	}
 
 	return nil
@@ -15401,7 +16517,11 @@ type ResourceOperation struct {
 var _ json.UnmarshalerFrom = (*ResourceOperation)(nil)
 
 func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenKind bool
+	const (
+		missingKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15417,7 +16537,7 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -15434,8 +16554,10 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
 	}
 
 	return nil
@@ -15494,7 +16616,11 @@ type FileOperationPattern struct {
 var _ json.UnmarshalerFrom = (*FileOperationPattern)(nil)
 
 func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenGlob bool
+	const (
+		missingGlob uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15510,7 +16636,7 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"glob"`:
-			seenGlob = true
+			missing &^= missingGlob
 			if err := json.UnmarshalDecode(dec, &s.Glob); err != nil {
 				return err
 			}
@@ -15531,8 +16657,10 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenGlob {
-		return fmt.Errorf("required property 'glob' is missing")
+	if missing != 0 {
+		if missing&missingGlob != 0 {
+			return fmt.Errorf("required property 'glob' is missing")
+		}
 	}
 
 	return nil
@@ -15564,12 +16692,14 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*WorkspaceFullDocumentDiagnosticReport)(nil)
 
 func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind    bool
-		seenItems   bool
-		seenUri     bool
-		seenVersion bool
+	const (
+		missingKind uint = 1 << iota
+		missingItems
+		missingUri
+		missingVersion
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15585,7 +16715,7 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -15594,17 +16724,17 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 				return err
 			}
 		case `"items"`:
-			seenItems = true
+			missing &^= missingItems
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -15617,17 +16747,19 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenItems {
-		return fmt.Errorf("required property 'items' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingItems != 0 {
+			return fmt.Errorf("required property 'items' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
 	}
 
 	return nil
@@ -15658,12 +16790,14 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 var _ json.UnmarshalerFrom = (*WorkspaceUnchangedDocumentDiagnosticReport)(nil)
 
 func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind     bool
-		seenResultId bool
-		seenUri      bool
-		seenVersion  bool
+	const (
+		missingKind uint = 1 << iota
+		missingResultId
+		missingUri
+		missingVersion
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15679,22 +16813,22 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"resultId"`:
-			seenResultId = true
+			missing &^= missingResultId
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
 		case `"uri"`:
-			seenUri = true
+			missing &^= missingUri
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
 		case `"version"`:
-			seenVersion = true
+			missing &^= missingVersion
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -15707,17 +16841,19 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenResultId {
-		return fmt.Errorf("required property 'resultId' is missing")
-	}
-	if !seenUri {
-		return fmt.Errorf("required property 'uri' is missing")
-	}
-	if !seenVersion {
-		return fmt.Errorf("required property 'version' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingResultId != 0 {
+			return fmt.Errorf("required property 'resultId' is missing")
+		}
+		if missing&missingUri != 0 {
+			return fmt.Errorf("required property 'uri' is missing")
+		}
+		if missing&missingVersion != 0 {
+			return fmt.Errorf("required property 'version' is missing")
+		}
 	}
 
 	return nil
@@ -15751,10 +16887,12 @@ type NotebookCell struct {
 var _ json.UnmarshalerFrom = (*NotebookCell)(nil)
 
 func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind     bool
-		seenDocument bool
+	const (
+		missingKind uint = 1 << iota
+		missingDocument
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15770,12 +16908,12 @@ func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"document"`:
-			seenDocument = true
+			missing &^= missingDocument
 			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
 				return err
 			}
@@ -15796,11 +16934,13 @@ func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenDocument {
-		return fmt.Errorf("required property 'document' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingDocument != 0 {
+			return fmt.Errorf("required property 'document' is missing")
+		}
 	}
 
 	return nil
@@ -15820,7 +16960,11 @@ type NotebookDocumentFilterWithNotebook struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithNotebook)(nil)
 
 func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebook bool
+	const (
+		missingNotebook uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15836,7 +16980,7 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Dec
 		}
 		switch string(name) {
 		case `"notebook"`:
-			seenNotebook = true
+			missing &^= missingNotebook
 			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
 				return err
 			}
@@ -15853,8 +16997,10 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Dec
 		return err
 	}
 
-	if !seenNotebook {
-		return fmt.Errorf("required property 'notebook' is missing")
+	if missing != 0 {
+		if missing&missingNotebook != 0 {
+			return fmt.Errorf("required property 'notebook' is missing")
+		}
 	}
 
 	return nil
@@ -15874,7 +17020,11 @@ type NotebookDocumentFilterWithCells struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithCells)(nil)
 
 func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCells bool
+	const (
+		missingCells uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15894,7 +17044,7 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decode
 				return err
 			}
 		case `"cells"`:
-			seenCells = true
+			missing &^= missingCells
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
 			}
@@ -15907,8 +17057,10 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decode
 		return err
 	}
 
-	if !seenCells {
-		return fmt.Errorf("required property 'cells' is missing")
+	if missing != 0 {
+		if missing&missingCells != 0 {
+			return fmt.Errorf("required property 'cells' is missing")
+		}
 	}
 
 	return nil
@@ -15946,10 +17098,12 @@ type SelectedCompletionInfo struct {
 var _ json.UnmarshalerFrom = (*SelectedCompletionInfo)(nil)
 
 func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange bool
-		seenText  bool
+	const (
+		missingRange uint = 1 << iota
+		missingText
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -15965,12 +17119,12 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -15983,11 +17137,13 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -16009,7 +17165,11 @@ type ClientInfo struct {
 var _ json.UnmarshalerFrom = (*ClientInfo)(nil)
 
 func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenName bool
+	const (
+		missingName uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16025,7 +17185,7 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"name"`:
-			seenName = true
+			missing &^= missingName
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
@@ -16042,8 +17202,10 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
+	if missing != 0 {
+		if missing&missingName != 0 {
+			return fmt.Errorf("required property 'name' is missing")
+		}
 	}
 
 	return nil
@@ -16132,10 +17294,12 @@ type TextDocumentContentChangePartial struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentChangePartial)(nil)
 
 func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRange bool
-		seenText  bool
+	const (
+		missingRange uint = 1 << iota
+		missingText
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16151,7 +17315,7 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 		}
 		switch string(name) {
 		case `"range"`:
-			seenRange = true
+			missing &^= missingRange
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -16160,7 +17324,7 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 				return err
 			}
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -16173,11 +17337,13 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenRange {
-		return fmt.Errorf("required property 'range' is missing")
-	}
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingRange != 0 {
+			return fmt.Errorf("required property 'range' is missing")
+		}
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -16192,7 +17358,11 @@ type TextDocumentContentChangeWholeDocument struct {
 var _ json.UnmarshalerFrom = (*TextDocumentContentChangeWholeDocument)(nil)
 
 func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenText bool
+	const (
+		missingText uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16208,7 +17378,7 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext
 		}
 		switch string(name) {
 		case `"text"`:
-			seenText = true
+			missing &^= missingText
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -16221,8 +17391,10 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext
 		return err
 	}
 
-	if !seenText {
-		return fmt.Errorf("required property 'text' is missing")
+	if missing != 0 {
+		if missing&missingText != 0 {
+			return fmt.Errorf("required property 'text' is missing")
+		}
 	}
 
 	return nil
@@ -16239,7 +17411,11 @@ type CodeDescription struct {
 var _ json.UnmarshalerFrom = (*CodeDescription)(nil)
 
 func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenHref bool
+	const (
+		missingHref uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16255,7 +17431,7 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"href"`:
-			seenHref = true
+			missing &^= missingHref
 			if err := json.UnmarshalDecode(dec, &s.Href); err != nil {
 				return err
 			}
@@ -16268,8 +17444,10 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenHref {
-		return fmt.Errorf("required property 'href' is missing")
+	if missing != 0 {
+		if missing&missingHref != 0 {
+			return fmt.Errorf("required property 'href' is missing")
+		}
 	}
 
 	return nil
@@ -16289,10 +17467,12 @@ type DiagnosticRelatedInformation struct {
 var _ json.UnmarshalerFrom = (*DiagnosticRelatedInformation)(nil)
 
 func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenLocation bool
-		seenMessage  bool
+	const (
+		missingLocation uint = 1 << iota
+		missingMessage
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16308,12 +17488,12 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"location"`:
-			seenLocation = true
+			missing &^= missingLocation
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
 		case `"message"`:
-			seenMessage = true
+			missing &^= missingMessage
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -16326,11 +17506,13 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenLocation {
-		return fmt.Errorf("required property 'location' is missing")
-	}
-	if !seenMessage {
-		return fmt.Errorf("required property 'message' is missing")
+	if missing != 0 {
+		if missing&missingLocation != 0 {
+			return fmt.Errorf("required property 'location' is missing")
+		}
+		if missing&missingMessage != 0 {
+			return fmt.Errorf("required property 'message' is missing")
+		}
 	}
 
 	return nil
@@ -16348,10 +17530,12 @@ type EditRangeWithInsertReplace struct {
 var _ json.UnmarshalerFrom = (*EditRangeWithInsertReplace)(nil)
 
 func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenInsert  bool
-		seenReplace bool
+	const (
+		missingInsert uint = 1 << iota
+		missingReplace
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16367,12 +17551,12 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"insert"`:
-			seenInsert = true
+			missing &^= missingInsert
 			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
 				return err
 			}
 		case `"replace"`:
-			seenReplace = true
+			missing &^= missingReplace
 			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
 				return err
 			}
@@ -16385,11 +17569,13 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenInsert {
-		return fmt.Errorf("required property 'insert' is missing")
-	}
-	if !seenReplace {
-		return fmt.Errorf("required property 'replace' is missing")
+	if missing != 0 {
+		if missing&missingInsert != 0 {
+			return fmt.Errorf("required property 'insert' is missing")
+		}
+		if missing&missingReplace != 0 {
+			return fmt.Errorf("required property 'replace' is missing")
+		}
 	}
 
 	return nil
@@ -16417,10 +17603,12 @@ type MarkedStringWithLanguage struct {
 var _ json.UnmarshalerFrom = (*MarkedStringWithLanguage)(nil)
 
 func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenLanguage bool
-		seenValue    bool
+	const (
+		missingLanguage uint = 1 << iota
+		missingValue
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16436,12 +17624,12 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"language"`:
-			seenLanguage = true
+			missing &^= missingLanguage
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
 		case `"value"`:
-			seenValue = true
+			missing &^= missingValue
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
@@ -16454,11 +17642,13 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenLanguage {
-		return fmt.Errorf("required property 'language' is missing")
-	}
-	if !seenValue {
-		return fmt.Errorf("required property 'value' is missing")
+	if missing != 0 {
+		if missing&missingLanguage != 0 {
+			return fmt.Errorf("required property 'language' is missing")
+		}
+		if missing&missingValue != 0 {
+			return fmt.Errorf("required property 'value' is missing")
+		}
 	}
 
 	return nil
@@ -16489,7 +17679,11 @@ type ParameterInformation struct {
 var _ json.UnmarshalerFrom = (*ParameterInformation)(nil)
 
 func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLabel bool
+	const (
+		missingLabel uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16505,7 +17699,7 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"label"`:
-			seenLabel = true
+			missing &^= missingLabel
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -16522,8 +17716,10 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLabel {
-		return fmt.Errorf("required property 'label' is missing")
+	if missing != 0 {
+		if missing&missingLabel != 0 {
+			return fmt.Errorf("required property 'label' is missing")
+		}
 	}
 
 	return nil
@@ -16551,10 +17747,12 @@ type CodeActionKindDocumentation struct {
 var _ json.UnmarshalerFrom = (*CodeActionKindDocumentation)(nil)
 
 func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenKind    bool
-		seenCommand bool
+	const (
+		missingKind uint = 1 << iota
+		missingCommand
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16570,12 +17768,12 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"kind"`:
-			seenKind = true
+			missing &^= missingKind
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
 		case `"command"`:
-			seenCommand = true
+			missing &^= missingCommand
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -16588,11 +17786,13 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenKind {
-		return fmt.Errorf("required property 'kind' is missing")
-	}
-	if !seenCommand {
-		return fmt.Errorf("required property 'command' is missing")
+	if missing != 0 {
+		if missing&missingKind != 0 {
+			return fmt.Errorf("required property 'kind' is missing")
+		}
+		if missing&missingCommand != 0 {
+			return fmt.Errorf("required property 'command' is missing")
+		}
 	}
 
 	return nil
@@ -16619,7 +17819,11 @@ type NotebookCellTextDocumentFilter struct {
 var _ json.UnmarshalerFrom = (*NotebookCellTextDocumentFilter)(nil)
 
 func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebook bool
+	const (
+		missingNotebook uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16635,7 +17839,7 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"notebook"`:
-			seenNotebook = true
+			missing &^= missingNotebook
 			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
 				return err
 			}
@@ -16652,8 +17856,10 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenNotebook {
-		return fmt.Errorf("required property 'notebook' is missing")
+	if missing != 0 {
+		if missing&missingNotebook != 0 {
+			return fmt.Errorf("required property 'notebook' is missing")
+		}
 	}
 
 	return nil
@@ -16681,7 +17887,11 @@ type ExecutionSummary struct {
 var _ json.UnmarshalerFrom = (*ExecutionSummary)(nil)
 
 func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenExecutionOrder bool
+	const (
+		missingExecutionOrder uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16697,7 +17907,7 @@ func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"executionOrder"`:
-			seenExecutionOrder = true
+			missing &^= missingExecutionOrder
 			if err := json.UnmarshalDecode(dec, &s.ExecutionOrder); err != nil {
 				return err
 			}
@@ -16714,8 +17924,10 @@ func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenExecutionOrder {
-		return fmt.Errorf("required property 'executionOrder' is missing")
+	if missing != 0 {
+		if missing&missingExecutionOrder != 0 {
+			return fmt.Errorf("required property 'executionOrder' is missing")
+		}
 	}
 
 	return nil
@@ -16729,7 +17941,11 @@ type NotebookCellLanguage struct {
 var _ json.UnmarshalerFrom = (*NotebookCellLanguage)(nil)
 
 func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLanguage bool
+	const (
+		missingLanguage uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16745,7 +17961,7 @@ func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"language"`:
-			seenLanguage = true
+			missing &^= missingLanguage
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
@@ -16758,8 +17974,10 @@ func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenLanguage {
-		return fmt.Errorf("required property 'language' is missing")
+	if missing != 0 {
+		if missing&missingLanguage != 0 {
+			return fmt.Errorf("required property 'language' is missing")
+		}
 	}
 
 	return nil
@@ -16782,7 +18000,11 @@ type NotebookDocumentCellChangeStructure struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentCellChangeStructure)(nil)
 
 func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenArray bool
+	const (
+		missingArray uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16798,7 +18020,7 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.De
 		}
 		switch string(name) {
 		case `"array"`:
-			seenArray = true
+			missing &^= missingArray
 			if err := json.UnmarshalDecode(dec, &s.Array); err != nil {
 				return err
 			}
@@ -16819,8 +18041,10 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.De
 		return err
 	}
 
-	if !seenArray {
-		return fmt.Errorf("required property 'array' is missing")
+	if missing != 0 {
+		if missing&missingArray != 0 {
+			return fmt.Errorf("required property 'array' is missing")
+		}
 	}
 
 	return nil
@@ -16838,10 +18062,12 @@ type NotebookDocumentCellContentChanges struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentCellContentChanges)(nil)
 
 func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenDocument bool
-		seenChanges  bool
+	const (
+		missingDocument uint = 1 << iota
+		missingChanges
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -16857,12 +18083,12 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Dec
 		}
 		switch string(name) {
 		case `"document"`:
-			seenDocument = true
+			missing &^= missingDocument
 			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
 				return err
 			}
 		case `"changes"`:
-			seenChanges = true
+			missing &^= missingChanges
 			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
 				return err
 			}
@@ -16875,11 +18101,13 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Dec
 		return err
 	}
 
-	if !seenDocument {
-		return fmt.Errorf("required property 'document' is missing")
-	}
-	if !seenChanges {
-		return fmt.Errorf("required property 'changes' is missing")
+	if missing != 0 {
+		if missing&missingDocument != 0 {
+			return fmt.Errorf("required property 'document' is missing")
+		}
+		if missing&missingChanges != 0 {
+			return fmt.Errorf("required property 'changes' is missing")
+		}
 	}
 
 	return nil
@@ -17114,7 +18342,11 @@ type NotebookDocumentClientCapabilities struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentClientCapabilities)(nil)
 
 func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSynchronization bool
+	const (
+		missingSynchronization uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17130,7 +18362,7 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Dec
 		}
 		switch string(name) {
 		case `"synchronization"`:
-			seenSynchronization = true
+			missing &^= missingSynchronization
 			if err := json.UnmarshalDecode(dec, &s.Synchronization); err != nil {
 				return err
 			}
@@ -17143,8 +18375,10 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Dec
 		return err
 	}
 
-	if !seenSynchronization {
-		return fmt.Errorf("required property 'synchronization' is missing")
+	if missing != 0 {
+		if missing&missingSynchronization != 0 {
+			return fmt.Errorf("required property 'synchronization' is missing")
+		}
 	}
 
 	return nil
@@ -17270,10 +18504,12 @@ type RelativePattern struct {
 var _ json.UnmarshalerFrom = (*RelativePattern)(nil)
 
 func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenBaseUri bool
-		seenPattern bool
+	const (
+		missingBaseUri uint = 1 << iota
+		missingPattern
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17289,12 +18525,12 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"baseUri"`:
-			seenBaseUri = true
+			missing &^= missingBaseUri
 			if err := json.UnmarshalDecode(dec, &s.BaseUri); err != nil {
 				return err
 			}
 		case `"pattern"`:
-			seenPattern = true
+			missing &^= missingPattern
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17307,11 +18543,13 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenBaseUri {
-		return fmt.Errorf("required property 'baseUri' is missing")
-	}
-	if !seenPattern {
-		return fmt.Errorf("required property 'pattern' is missing")
+	if missing != 0 {
+		if missing&missingBaseUri != 0 {
+			return fmt.Errorf("required property 'baseUri' is missing")
+		}
+		if missing&missingPattern != 0 {
+			return fmt.Errorf("required property 'pattern' is missing")
+		}
 	}
 
 	return nil
@@ -17338,7 +18576,11 @@ type TextDocumentFilterLanguage struct {
 var _ json.UnmarshalerFrom = (*TextDocumentFilterLanguage)(nil)
 
 func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenLanguage bool
+	const (
+		missingLanguage uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17354,7 +18596,7 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"language"`:
-			seenLanguage = true
+			missing &^= missingLanguage
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
@@ -17375,8 +18617,10 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenLanguage {
-		return fmt.Errorf("required property 'language' is missing")
+	if missing != 0 {
+		if missing&missingLanguage != 0 {
+			return fmt.Errorf("required property 'language' is missing")
+		}
 	}
 
 	return nil
@@ -17403,7 +18647,11 @@ type TextDocumentFilterScheme struct {
 var _ json.UnmarshalerFrom = (*TextDocumentFilterScheme)(nil)
 
 func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenScheme bool
+	const (
+		missingScheme uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17423,7 +18671,7 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 				return err
 			}
 		case `"scheme"`:
-			seenScheme = true
+			missing &^= missingScheme
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
@@ -17440,8 +18688,10 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenScheme {
-		return fmt.Errorf("required property 'scheme' is missing")
+	if missing != 0 {
+		if missing&missingScheme != 0 {
+			return fmt.Errorf("required property 'scheme' is missing")
+		}
 	}
 
 	return nil
@@ -17468,7 +18718,11 @@ type TextDocumentFilterPattern struct {
 var _ json.UnmarshalerFrom = (*TextDocumentFilterPattern)(nil)
 
 func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenPattern bool
+	const (
+		missingPattern uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17492,7 +18746,7 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 				return err
 			}
 		case `"pattern"`:
-			seenPattern = true
+			missing &^= missingPattern
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17505,8 +18759,10 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 		return err
 	}
 
-	if !seenPattern {
-		return fmt.Errorf("required property 'pattern' is missing")
+	if missing != 0 {
+		if missing&missingPattern != 0 {
+			return fmt.Errorf("required property 'pattern' is missing")
+		}
 	}
 
 	return nil
@@ -17529,7 +18785,11 @@ type NotebookDocumentFilterNotebookType struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentFilterNotebookType)(nil)
 
 func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenNotebookType bool
+	const (
+		missingNotebookType uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17545,7 +18805,7 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Dec
 		}
 		switch string(name) {
 		case `"notebookType"`:
-			seenNotebookType = true
+			missing &^= missingNotebookType
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
@@ -17566,8 +18826,10 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Dec
 		return err
 	}
 
-	if !seenNotebookType {
-		return fmt.Errorf("required property 'notebookType' is missing")
+	if missing != 0 {
+		if missing&missingNotebookType != 0 {
+			return fmt.Errorf("required property 'notebookType' is missing")
+		}
 	}
 
 	return nil
@@ -17590,7 +18852,11 @@ type NotebookDocumentFilterScheme struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentFilterScheme)(nil)
 
 func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenScheme bool
+	const (
+		missingScheme uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17610,7 +18876,7 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 				return err
 			}
 		case `"scheme"`:
-			seenScheme = true
+			missing &^= missingScheme
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
@@ -17627,8 +18893,10 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenScheme {
-		return fmt.Errorf("required property 'scheme' is missing")
+	if missing != 0 {
+		if missing&missingScheme != 0 {
+			return fmt.Errorf("required property 'scheme' is missing")
+		}
 	}
 
 	return nil
@@ -17651,7 +18919,11 @@ type NotebookDocumentFilterPattern struct {
 var _ json.UnmarshalerFrom = (*NotebookDocumentFilterPattern)(nil)
 
 func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenPattern bool
+	const (
+		missingPattern uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17675,7 +18947,7 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder)
 				return err
 			}
 		case `"pattern"`:
-			seenPattern = true
+			missing &^= missingPattern
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17688,8 +18960,10 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenPattern {
-		return fmt.Errorf("required property 'pattern' is missing")
+	if missing != 0 {
+		if missing&missingPattern != 0 {
+			return fmt.Errorf("required property 'pattern' is missing")
+		}
 	}
 
 	return nil
@@ -17713,10 +18987,12 @@ type NotebookCellArrayChange struct {
 var _ json.UnmarshalerFrom = (*NotebookCellArrayChange)(nil)
 
 func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenStart       bool
-		seenDeleteCount bool
+	const (
+		missingStart uint = 1 << iota
+		missingDeleteCount
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -17732,12 +19008,12 @@ func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		}
 		switch string(name) {
 		case `"start"`:
-			seenStart = true
+			missing &^= missingStart
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
 		case `"deleteCount"`:
-			seenDeleteCount = true
+			missing &^= missingDeleteCount
 			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
 				return err
 			}
@@ -17754,11 +19030,13 @@ func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 		return err
 	}
 
-	if !seenStart {
-		return fmt.Errorf("required property 'start' is missing")
-	}
-	if !seenDeleteCount {
-		return fmt.Errorf("required property 'deleteCount' is missing")
+	if missing != 0 {
+		if missing&missingStart != 0 {
+			return fmt.Errorf("required property 'start' is missing")
+		}
+		if missing&missingDeleteCount != 0 {
+			return fmt.Errorf("required property 'deleteCount' is missing")
+		}
 	}
 
 	return nil
@@ -18417,12 +19695,14 @@ type SemanticTokensClientCapabilities struct {
 var _ json.UnmarshalerFrom = (*SemanticTokensClientCapabilities)(nil)
 
 func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenRequests       bool
-		seenTokenTypes     bool
-		seenTokenModifiers bool
-		seenFormats        bool
+	const (
+		missingRequests uint = 1 << iota
+		missingTokenTypes
+		missingTokenModifiers
+		missingFormats
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18442,22 +19722,22 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decod
 				return err
 			}
 		case `"requests"`:
-			seenRequests = true
+			missing &^= missingRequests
 			if err := json.UnmarshalDecode(dec, &s.Requests); err != nil {
 				return err
 			}
 		case `"tokenTypes"`:
-			seenTokenTypes = true
+			missing &^= missingTokenTypes
 			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
 				return err
 			}
 		case `"tokenModifiers"`:
-			seenTokenModifiers = true
+			missing &^= missingTokenModifiers
 			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
 				return err
 			}
 		case `"formats"`:
-			seenFormats = true
+			missing &^= missingFormats
 			if err := json.UnmarshalDecode(dec, &s.Formats); err != nil {
 				return err
 			}
@@ -18486,17 +19766,19 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decod
 		return err
 	}
 
-	if !seenRequests {
-		return fmt.Errorf("required property 'requests' is missing")
-	}
-	if !seenTokenTypes {
-		return fmt.Errorf("required property 'tokenTypes' is missing")
-	}
-	if !seenTokenModifiers {
-		return fmt.Errorf("required property 'tokenModifiers' is missing")
-	}
-	if !seenFormats {
-		return fmt.Errorf("required property 'formats' is missing")
+	if missing != 0 {
+		if missing&missingRequests != 0 {
+			return fmt.Errorf("required property 'requests' is missing")
+		}
+		if missing&missingTokenTypes != 0 {
+			return fmt.Errorf("required property 'tokenTypes' is missing")
+		}
+		if missing&missingTokenModifiers != 0 {
+			return fmt.Errorf("required property 'tokenModifiers' is missing")
+		}
+		if missing&missingFormats != 0 {
+			return fmt.Errorf("required property 'formats' is missing")
+		}
 	}
 
 	return nil
@@ -18626,7 +19908,11 @@ type ShowDocumentClientCapabilities struct {
 var _ json.UnmarshalerFrom = (*ShowDocumentClientCapabilities)(nil)
 
 func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenSupport bool
+	const (
+		missingSupport uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18642,7 +19928,7 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"support"`:
-			seenSupport = true
+			missing &^= missingSupport
 			if err := json.UnmarshalDecode(dec, &s.Support); err != nil {
 				return err
 			}
@@ -18655,8 +19941,10 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenSupport {
-		return fmt.Errorf("required property 'support' is missing")
+	if missing != 0 {
+		if missing&missingSupport != 0 {
+			return fmt.Errorf("required property 'support' is missing")
+		}
 	}
 
 	return nil
@@ -18676,10 +19964,12 @@ type StaleRequestSupportOptions struct {
 var _ json.UnmarshalerFrom = (*StaleRequestSupportOptions)(nil)
 
 func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenCancel                 bool
-		seenRetryOnContentModified bool
+	const (
+		missingCancel uint = 1 << iota
+		missingRetryOnContentModified
+		_missingLast
 	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18695,12 +19985,12 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"cancel"`:
-			seenCancel = true
+			missing &^= missingCancel
 			if err := json.UnmarshalDecode(dec, &s.Cancel); err != nil {
 				return err
 			}
 		case `"retryOnContentModified"`:
-			seenRetryOnContentModified = true
+			missing &^= missingRetryOnContentModified
 			if err := json.UnmarshalDecode(dec, &s.RetryOnContentModified); err != nil {
 				return err
 			}
@@ -18713,11 +20003,13 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenCancel {
-		return fmt.Errorf("required property 'cancel' is missing")
-	}
-	if !seenRetryOnContentModified {
-		return fmt.Errorf("required property 'retryOnContentModified' is missing")
+	if missing != 0 {
+		if missing&missingCancel != 0 {
+			return fmt.Errorf("required property 'cancel' is missing")
+		}
+		if missing&missingRetryOnContentModified != 0 {
+			return fmt.Errorf("required property 'retryOnContentModified' is missing")
+		}
 	}
 
 	return nil
@@ -18737,7 +20029,11 @@ type RegularExpressionsClientCapabilities struct {
 var _ json.UnmarshalerFrom = (*RegularExpressionsClientCapabilities)(nil)
 
 func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenEngine bool
+	const (
+		missingEngine uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18753,7 +20049,7 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.D
 		}
 		switch string(name) {
 		case `"engine"`:
-			seenEngine = true
+			missing &^= missingEngine
 			if err := json.UnmarshalDecode(dec, &s.Engine); err != nil {
 				return err
 			}
@@ -18770,8 +20066,10 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.D
 		return err
 	}
 
-	if !seenEngine {
-		return fmt.Errorf("required property 'engine' is missing")
+	if missing != 0 {
+		if missing&missingEngine != 0 {
+			return fmt.Errorf("required property 'engine' is missing")
+		}
 	}
 
 	return nil
@@ -18797,7 +20095,11 @@ type MarkdownClientCapabilities struct {
 var _ json.UnmarshalerFrom = (*MarkdownClientCapabilities)(nil)
 
 func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenParser bool
+	const (
+		missingParser uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18813,7 +20115,7 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"parser"`:
-			seenParser = true
+			missing &^= missingParser
 			if err := json.UnmarshalDecode(dec, &s.Parser); err != nil {
 				return err
 			}
@@ -18834,8 +20136,10 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenParser {
-		return fmt.Errorf("required property 'parser' is missing")
+	if missing != 0 {
+		if missing&missingParser != 0 {
+			return fmt.Errorf("required property 'parser' is missing")
+		}
 	}
 
 	return nil
@@ -18871,7 +20175,11 @@ type ClientSymbolTagOptions struct {
 var _ json.UnmarshalerFrom = (*ClientSymbolTagOptions)(nil)
 
 func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18887,7 +20195,7 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -18900,8 +20208,10 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -18917,7 +20227,11 @@ type ClientSymbolResolveOptions struct {
 var _ json.UnmarshalerFrom = (*ClientSymbolResolveOptions)(nil)
 
 func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenProperties bool
+	const (
+		missingProperties uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -18933,7 +20247,7 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		}
 		switch string(name) {
 		case `"properties"`:
-			seenProperties = true
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
@@ -18946,8 +20260,10 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		return err
 	}
 
-	if !seenProperties {
-		return fmt.Errorf("required property 'properties' is missing")
+	if missing != 0 {
+		if missing&missingProperties != 0 {
+			return fmt.Errorf("required property 'properties' is missing")
+		}
 	}
 
 	return nil
@@ -19088,7 +20404,11 @@ type ClientCodeActionLiteralOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCodeActionLiteralOptions)(nil)
 
 func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenCodeActionKind bool
+	const (
+		missingCodeActionKind uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19104,7 +20424,7 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"codeActionKind"`:
-			seenCodeActionKind = true
+			missing &^= missingCodeActionKind
 			if err := json.UnmarshalDecode(dec, &s.CodeActionKind); err != nil {
 				return err
 			}
@@ -19117,8 +20437,10 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenCodeActionKind {
-		return fmt.Errorf("required property 'codeActionKind' is missing")
+	if missing != 0 {
+		if missing&missingCodeActionKind != 0 {
+			return fmt.Errorf("required property 'codeActionKind' is missing")
+		}
 	}
 
 	return nil
@@ -19133,7 +20455,11 @@ type ClientCodeActionResolveOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCodeActionResolveOptions)(nil)
 
 func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenProperties bool
+	const (
+		missingProperties uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19149,7 +20475,7 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		}
 		switch string(name) {
 		case `"properties"`:
-			seenProperties = true
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
@@ -19162,8 +20488,10 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 		return err
 	}
 
-	if !seenProperties {
-		return fmt.Errorf("required property 'properties' is missing")
+	if missing != 0 {
+		if missing&missingProperties != 0 {
+			return fmt.Errorf("required property 'properties' is missing")
+		}
 	}
 
 	return nil
@@ -19178,7 +20506,11 @@ type CodeActionTagOptions struct {
 var _ json.UnmarshalerFrom = (*CodeActionTagOptions)(nil)
 
 func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19194,7 +20526,7 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -19207,8 +20539,10 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -19223,7 +20557,11 @@ type ClientCodeLensResolveOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCodeLensResolveOptions)(nil)
 
 func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenProperties bool
+	const (
+		missingProperties uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19239,7 +20577,7 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		}
 		switch string(name) {
 		case `"properties"`:
-			seenProperties = true
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
@@ -19252,8 +20590,10 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 		return err
 	}
 
-	if !seenProperties {
-		return fmt.Errorf("required property 'properties' is missing")
+	if missing != 0 {
+		if missing&missingProperties != 0 {
+			return fmt.Errorf("required property 'properties' is missing")
+		}
 	}
 
 	return nil
@@ -19321,7 +20661,11 @@ type ClientInlayHintResolveOptions struct {
 var _ json.UnmarshalerFrom = (*ClientInlayHintResolveOptions)(nil)
 
 func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenProperties bool
+	const (
+		missingProperties uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19337,7 +20681,7 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		}
 		switch string(name) {
 		case `"properties"`:
-			seenProperties = true
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
@@ -19350,8 +20694,10 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 		return err
 	}
 
-	if !seenProperties {
-		return fmt.Errorf("required property 'properties' is missing")
+	if missing != 0 {
+		if missing&missingProperties != 0 {
+			return fmt.Errorf("required property 'properties' is missing")
+		}
 	}
 
 	return nil
@@ -19374,7 +20720,11 @@ type CompletionItemTagOptions struct {
 var _ json.UnmarshalerFrom = (*CompletionItemTagOptions)(nil)
 
 func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19390,7 +20740,7 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -19403,8 +20753,10 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -19419,7 +20771,11 @@ type ClientCompletionItemResolveOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCompletionItemResolveOptions)(nil)
 
 func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenProperties bool
+	const (
+		missingProperties uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19435,7 +20791,7 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Dec
 		}
 		switch string(name) {
 		case `"properties"`:
-			seenProperties = true
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
@@ -19448,8 +20804,10 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Dec
 		return err
 	}
 
-	if !seenProperties {
-		return fmt.Errorf("required property 'properties' is missing")
+	if missing != 0 {
+		if missing&missingProperties != 0 {
+			return fmt.Errorf("required property 'properties' is missing")
+		}
 	}
 
 	return nil
@@ -19463,7 +20821,11 @@ type ClientCompletionItemInsertTextModeOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCompletionItemInsertTextModeOptions)(nil)
 
 func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19479,7 +20841,7 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsont
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -19492,8 +20854,10 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsont
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -19520,7 +20884,11 @@ type ClientCodeActionKindOptions struct {
 var _ json.UnmarshalerFrom = (*ClientCodeActionKindOptions)(nil)
 
 func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19536,7 +20904,7 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -19549,8 +20917,10 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -19565,7 +20935,11 @@ type ClientDiagnosticsTagOptions struct {
 var _ json.UnmarshalerFrom = (*ClientDiagnosticsTagOptions)(nil)
 
 func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenValueSet bool
+	const (
+		missingValueSet uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19581,7 +20955,7 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		}
 		switch string(name) {
 		case `"valueSet"`:
-			seenValueSet = true
+			missing &^= missingValueSet
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
 			}
@@ -19594,8 +20968,10 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 		return err
 	}
 
-	if !seenValueSet {
-		return fmt.Errorf("required property 'valueSet' is missing")
+	if missing != 0 {
+		if missing&missingValueSet != 0 {
+			return fmt.Errorf("required property 'valueSet' is missing")
+		}
 	}
 
 	return nil
@@ -19707,7 +21083,11 @@ type ColorPresentationRegistrationOptions struct {
 var _ json.UnmarshalerFrom = (*ColorPresentationRegistrationOptions)(nil)
 
 func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var seenDocumentSelector bool
+	const (
+		missingDocumentSelector uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
 
 	if k := dec.PeekKind(); k != '{' {
 		return fmt.Errorf("expected object start, but encountered %v", k)
@@ -19727,7 +21107,7 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 				return err
 			}
 		case `"documentSelector"`:
-			seenDocumentSelector = true
+			missing &^= missingDocumentSelector
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
@@ -19740,8 +21120,10 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 		return err
 	}
 
-	if !seenDocumentSelector {
-		return fmt.Errorf("required property 'documentSelector' is missing")
+	if missing != 0 {
+		if missing&missingDocumentSelector != 0 {
+			return fmt.Errorf("required property 'documentSelector' is missing")
+		}
 	}
 
 	return nil

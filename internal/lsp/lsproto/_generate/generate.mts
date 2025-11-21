@@ -926,11 +926,15 @@ function generateCode() {
             writeLine("");
 
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
-            writeLine(`\tvar (`);
-            for (const prop of requiredProps) {
-                writeLine(`\t\tseen${titleCase(prop.name)} bool`);
+            writeLine(`\tconst (`);
+            for (let i = 0; i < requiredProps.length; i++) {
+                const prop = requiredProps[i];
+                const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
+                writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
             }
+            writeLine(`\t\t_missingLast`);
             writeLine(`\t)`);
+            writeLine(`\tmissing := _missingLast - 1`);
             writeLine("");
 
             writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
@@ -950,8 +954,8 @@ function generateCode() {
 
             for (const prop of structure.properties) {
                 writeLine(`\t\tcase \`"${prop.name}"\`:`);
-                if (!prop.optional) {
-                    writeLine(`\t\t\tseen${titleCase(prop.name)} = true`);
+                if (!prop.optional && !prop.omitzeroValue) {
+                    writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
                 }
                 writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
                 writeLine(`\t\t\t\treturn err`);
@@ -969,11 +973,13 @@ function generateCode() {
             writeLine(`\t}`);
             writeLine("");
 
+            writeLine(`\tif missing != 0 {`);
             for (const prop of requiredProps) {
-                writeLine(`\tif !seen${titleCase(prop.name)} {`);
-                writeLine(`\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
-                writeLine(`\t}`);
+                writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
+                writeLine(`\t\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
+                writeLine(`\t\t}`);
             }
+            writeLine(`\t}`);
 
             writeLine("");
             writeLine(`\treturn nil`);
