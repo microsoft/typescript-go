@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -37,7 +36,7 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(cd, fs, locale.Default, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
 
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
@@ -71,7 +70,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, locale.Default, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{
@@ -88,7 +87,7 @@ func BenchmarkNewChecker(b *testing.B) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(rootPath, fs, locale.Default, bundled.LibPath(), nil, nil)
+	host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 	assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 	p := compiler.NewProgram(compiler.ProgramOptions{

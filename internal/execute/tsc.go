@@ -81,7 +81,7 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		defer profileSession.Stop()
 	}
 
-	locale := locale.Parse(buildCommand.CompilerOptions.Locale)
+	locale := buildCommand.Locale()
 
 	if buildCommand.CompilerOptions.Help.IsTrue() {
 		tsc.PrintVersion(sys, locale)
@@ -100,7 +100,7 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
-	locale := locale.Parse(commandLine.CompilerOptions().Locale)
+	locale := commandLine.Locale()
 
 	if len(commandLine.Errors) > 0 {
 		for _, e := range commandLine.Errors {
@@ -243,8 +243,8 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
-func getTraceFromSys(sys tsc.System, testing tsc.CommandLineTesting) func(msg string) {
-	return tsc.GetTraceWithWriterFromSys(sys.Writer(), testing)
+func getTraceFromSys(sys tsc.System, locale locale.Locale, testing tsc.CommandLineTesting) func(msg *diagnostics.Message, args ...any) {
+	return tsc.GetTraceWithWriterFromSys(sys.Writer(), locale, testing)
 }
 
 func performIncrementalCompilation(
@@ -256,7 +256,7 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), locale.Parse(config.CompilerOptions().Locale), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -299,7 +299,7 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), locale.Parse(config.CompilerOptions().Locale), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

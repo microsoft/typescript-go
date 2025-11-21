@@ -3,7 +3,7 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -15,8 +15,7 @@ type CompilerHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
-	Locale() locale.Locale
-	Trace(msg string)
+	Trace(msg *diagnostics.Message, args ...any)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 }
@@ -26,38 +25,34 @@ var _ CompilerHost = (*compilerHost)(nil)
 type compilerHost struct {
 	currentDirectory    string
 	fs                  vfs.FS
-	locale              locale.Locale
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
-	trace               func(msg string)
+	trace               func(msg *diagnostics.Message, args ...any)
 }
 
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
-	locale locale.Locale,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
-	trace func(msg string),
+	trace func(msg *diagnostics.Message, args ...any),
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), locale, defaultLibraryPath, extendedConfigCache, trace)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
 }
 
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
-	locale locale.Locale,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
-	trace func(msg string),
+	trace func(msg *diagnostics.Message, args ...any),
 ) CompilerHost {
 	if trace == nil {
-		trace = func(msg string) {}
+		trace = func(msg *diagnostics.Message, args ...any) {}
 	}
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
 		fs:                  fs,
-		locale:              locale,
 		defaultLibraryPath:  defaultLibraryPath,
 		extendedConfigCache: extendedConfigCache,
 		trace:               trace,
@@ -76,12 +71,8 @@ func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
 
-func (h *compilerHost) Locale() locale.Locale {
-	return h.locale
-}
-
-func (h *compilerHost) Trace(msg string) {
-	h.trace(msg)
+func (h *compilerHost) Trace(msg *diagnostics.Message, args ...any) {
+	h.trace(msg, args...)
 }
 
 func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {

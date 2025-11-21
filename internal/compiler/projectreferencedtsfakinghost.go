@@ -6,7 +6,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -36,10 +35,6 @@ func newProjectReferenceDtsFakingHost(loader *fileLoader) module.ResolutionHost 
 // FS implements module.ResolutionHost.
 func (h *projectReferenceDtsFakingHost) FS() vfs.FS {
 	return h.fs
-}
-
-func (h *projectReferenceDtsFakingHost) Locale() locale.Locale {
-	return h.host.Locale()
 }
 
 // GetCurrentDirectory implements module.ResolutionHost.

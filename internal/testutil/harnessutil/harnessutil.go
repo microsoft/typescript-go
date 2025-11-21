@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -210,9 +211,7 @@ func CompileFilesEx(
 	fs = bundled.WrapFS(fs)
 	fs = NewOutputRecorderFS(fs)
 
-	locale := locale.Default // !!!
-
-	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, locale)
+	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory)
 	var configFile *tsoptions.TsConfigSourceFile
 	var errors []*ast.Diagnostic
 	if tsconfig != nil {
@@ -534,8 +533,8 @@ func NewTracerForBaselining(opts tspath.ComparePathsOptions, builder *strings.Bu
 	}
 }
 
-func (t *TracerForBaselining) Trace(msg string) {
-	t.TraceWithWriter(t.builder, msg, true)
+func (t *TracerForBaselining) Trace(msg *diagnostics.Message, args ...any) {
+	t.TraceWithWriter(t.builder, msg.Localize(locale.Default, args...), true)
 }
 
 func (t *TracerForBaselining) TraceWithWriter(w io.Writer, msg string, usePackageJsonCache bool) {
@@ -605,13 +604,13 @@ func (t *TracerForBaselining) Reset() {
 	t.packageJsonCache = make(map[tspath.Path]bool)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string, locale locale.Locale) *cachedCompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
 	tracer := NewTracerForBaselining(tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          currentDirectory,
 	}, &strings.Builder{})
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, locale, defaultLibraryPath, nil, tracer.Trace),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace),
 		tracer:       tracer,
 	}
 }

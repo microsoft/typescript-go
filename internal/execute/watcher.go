@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
@@ -55,7 +54,7 @@ func createWatcher(
 }
 
 func (w *Watcher) start() {
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), locale.Parse(w.config.CompilerOptions().Locale), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing))
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(w.host), w.host)
 
 	if w.testing == nil {
@@ -132,7 +131,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		}
 		w.config = configParseResult
 	}
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), locale.Parse(w.config.CompilerOptions().Locale), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.testing))
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	return false
 }
 

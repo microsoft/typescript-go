@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
@@ -386,7 +385,6 @@ func NewOrchestrator(opts Options) *Orchestrator {
 		host: compiler.NewCachedFSCompilerHost(
 			orchestrator.opts.Sys.GetCurrentDirectory(),
 			orchestrator.opts.Sys.FS(),
-			locale.Parse(orchestrator.opts.Command.CompilerOptions.Locale),
 			orchestrator.opts.Sys.DefaultLibraryPath(),
 			nil,
 			nil,

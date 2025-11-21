@@ -7,7 +7,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -15,7 +14,6 @@ import (
 type ResolutionHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	Locale() locale.Locale
 }
 
 type ModeAwareCacheKey struct {

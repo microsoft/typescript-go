@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -283,12 +284,13 @@ func (s *TestSys) OnWatchStatusReportEnd() {
 	fmt.Fprintln(s.Writer(), watchStatusReportEnd)
 }
 
-func (s *TestSys) GetTrace(w io.Writer) func(str string) {
-	return func(str string) {
+func (s *TestSys) GetTrace(w io.Writer) func(msg *diagnostics.Message, args ...any) {
+	return func(msg *diagnostics.Message, args ...any) {
 		fmt.Fprintln(w, traceStart)
 		defer fmt.Fprintln(w, traceEnd)
 		// With tsc -b building projects in parallel we cannot serialize the package.json lookup trace
 		// so trace as if it wasnt cached
+		str := msg.Localize(locale.Default, args...)
 		s.tracer.TraceWithWriter(w, str, w == s.Writer())
 	}
 }
