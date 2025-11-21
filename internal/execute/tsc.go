@@ -64,10 +64,6 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), buildCommand.CompilerOptions)
 
-	// if (buildOptions.locale) {
-	//     validateLocaleAndSetLanguage(buildOptions.locale, sys, errors);
-	// }
-
 	if len(buildCommand.Errors) > 0 {
 		for _, err := range buildCommand.Errors {
 			reportDiagnostic(err)

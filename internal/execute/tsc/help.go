@@ -99,7 +99,6 @@ func printEasyHelp(sys System, locale locale.Locale, simpleOptions []*tsoptions.
 
 	output = append(output, generateSectionOptionsOutput(sys, locale, diagnostics.COMMAND_LINE_FLAGS.Localize(locale), cliCommands /*subCategory*/, false /*beforeOptionsDescription*/, nil /*afterOptionsDescription*/, nil)...)
 
-	// !!! locale formatMessage
 	after := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Localize(locale, "https://aka.ms/tsc")
 	output = append(output, generateSectionOptionsOutput(sys, locale, diagnostics.COMMON_COMPILER_OPTIONS.Localize(locale), configOpts /*subCategory*/, false /*beforeOptionsDescription*/, nil, &after)...)
 
