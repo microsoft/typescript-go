@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
 import {
+    DocumentUri,
     LanguageClient,
     LanguageClientOptions,
+    Location,
     NotebookDocumentFilter,
+    Position,
     ServerOptions,
     TextDocumentFilter,
     TransportKind,
@@ -119,10 +122,32 @@ export class Client {
         await this.client.start();
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
-        return new vscode.Disposable(() => {
-            if (this.client) {
-                this.client.stop();
+
+        const codeLensLocationsCommand = vscode.commands.registerCommand("typescript.codeLens.showLocations", (...args: unknown[]) => {
+            if (args.length !== 3) {
+                throw new Error("Unexpected number of arguments.");
             }
+
+            const lspUri = args[0] as DocumentUri;
+            const lspPosition = args[1] as Position;
+            const lspLocations = args[2] as Location[];
+            
+            const editorUri = vscode.Uri.parse(lspUri);
+            const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
+            const editorLocations = lspLocations.map(loc => new vscode.Location(
+                vscode.Uri.parse(loc.uri),
+                new vscode.Range(
+                    new vscode.Position(loc.range.start.line, loc.range.start.character),
+                    new vscode.Position(loc.range.end.line, loc.range.end.character),
+                ),
+            ));
+            
+            vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
+        });
+
+        return new vscode.Disposable(() => {
+            this.client?.stop();
+            codeLensLocationsCommand.dispose();
             vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
         });
     }

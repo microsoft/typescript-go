@@ -4257,3 +4257,11 @@ var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{co
 var Set_the_number_of_checkers_per_project = &Message{code: 100003, category: CategoryMessage, key: "Set_the_number_of_checkers_per_project_100003", text: "Set the number of checkers per project."}
 
 var X_4_unless_singleThreaded_is_passed = &Message{code: 100004, category: CategoryMessage, key: "4_unless_singleThreaded_is_passed_100004", text: "4, unless --singleThreaded is passed."}
+
+var X_0_references = &Message{code: 100005, category: CategoryMessage, key: "_0_references_100005", text: "{0} references"}
+
+var X_1_reference = &Message{code: 100006, category: CategoryMessage, key: "1_reference_100006", text: "1 reference"}
+
+var X_0_implementations = &Message{code: 100007, category: CategoryMessage, key: "_0_implementations_100007", text: "{0} implementations"}
+
+var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: "1_implementation_100008", text: "1 implementation"}
