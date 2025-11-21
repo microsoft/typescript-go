@@ -762,12 +762,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 				Id:     "typescript-config-watch-id",
 				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
 				RegisterOptions: &lsproto.RegisterOptions{
-					DidChangeConfiguration: ptrTo(lsproto.DidChangeConfigurationRegistrationOptions{
+					DidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
 							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
 							Strings: &[]string{"typescript"},
 						},
-					}),
+					},
 				},
 			},
 		},
