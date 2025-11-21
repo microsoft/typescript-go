@@ -1,7 +1,6 @@
 package tsoptionstest
 
 import (
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -22,7 +21,6 @@ func fixRoot(path string) string {
 type VfsParseConfigHost struct {
 	Vfs              vfs.FS
 	CurrentDirectory string
-	TheLocale        locale.Locale
 }
 
 var _ tsoptions.ParseConfigHost = (*VfsParseConfigHost)(nil)
@@ -33,10 +31,6 @@ func (h *VfsParseConfigHost) FS() vfs.FS {
 
 func (h *VfsParseConfigHost) GetCurrentDirectory() string {
 	return h.CurrentDirectory
-}
-
-func (h *VfsParseConfigHost) Locale() locale.Locale {
-	return h.TheLocale
 }
 
 func NewVFSParseConfigHost(files map[string]string, currentDirectory string, useCaseSensitiveFileNames bool) *VfsParseConfigHost {

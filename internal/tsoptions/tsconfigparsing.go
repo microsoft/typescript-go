@@ -14,7 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -680,11 +679,6 @@ type resolverHost struct {
 }
 
 func (r *resolverHost) Trace(msg string) {}
-
-func (r *resolverHost) Locale() locale.Locale {
-	// !!!
-	return locale.Default
-}
 
 func ParseJsonSourceFileConfigFileContent(
 	sourceFile *TsConfigSourceFile,

@@ -221,10 +221,6 @@ func (s *TestSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func (s *TestSys) Locale() locale.Locale {
-	return locale.Default
-}
-
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {

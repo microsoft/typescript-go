@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -569,10 +568,6 @@ func (c *configFileRegistryBuilder) FS() vfs.FS {
 // GetCurrentDirectory implements tsoptions.ParseConfigHost.
 func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 	return c.sessionOptions.CurrentDirectory
-}
-
-func (c *configFileRegistryBuilder) Locale() locale.Locale {
-	return c.sessionOptions.Locale
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.

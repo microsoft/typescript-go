@@ -188,10 +188,6 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-func (s *Session) Locale() locale.Locale {
-	return s.options.Locale
-}
-
 // Gets current UserPreferences, always a copy
 func (s *Session) UserPreferences() *lsutil.UserPreferences {
 	s.configRWMu.Lock()
