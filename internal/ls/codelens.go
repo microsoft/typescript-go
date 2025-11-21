@@ -2,9 +2,7 @@ package ls
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -12,30 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
-
-type CodeLensKind string
-
-const (
-	codeLensReferencesKind      CodeLensKind = "references"
-	codeLensImplementationsKind CodeLensKind = "implementations"
-)
-
-type CodeLensData struct {
-	Kind CodeLensKind        `json:"kind"`
-	Uri  lsproto.DocumentUri `json:"uri"`
-}
-
-func GetCodeLensData(item *lsproto.CodeLens) (*CodeLensData, error) {
-	bytes, err := json.Marshal(item.Data)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal completion item data: %w", err)
-	}
-	var itemData CodeLensData
-	if err := json.Unmarshal(bytes, &itemData); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal completion item data: %w", err)
-	}
-	return &itemData, nil
-}
 
 func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.CodeLensResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
@@ -53,11 +27,11 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 		}
 
 		if userPrefs.ReferencesCodeLensEnabled && isValidReferenceLensNode(node, userPrefs) {
-			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, codeLensReferencesKind))
+			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindReferences))
 		}
 
 		if userPrefs.ImplementationsCodeLensEnabled && isValidImplementationsCodeLensNode(node, userPrefs) {
-			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, codeLensImplementationsKind))
+			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindImplementations))
 		}
 
 		node.ForEachChild(visit)
@@ -67,20 +41,20 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 	visit(file.AsNode())
 
 	return lsproto.CodeLensResponse{
-		CodeLenss: &lenses,
+		CodeLenses: &lenses,
 	}, nil
 }
 
-func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens, codeLensData *CodeLensData) (*lsproto.CodeLens, error) {
-	uri := codeLensData.Uri
+func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens) (*lsproto.CodeLens, error) {
+	uri := codeLens.Data.Uri
 	textDoc := lsproto.TextDocumentIdentifier{
 		Uri: uri,
 	}
 
 	var locs []lsproto.Location
 	var lensTitle string
-	switch codeLensData.Kind {
-	case codeLensReferencesKind:
+	switch codeLens.Data.Kind {
+	case lsproto.CodeLensKindReferences:
 		references, err := l.ProvideReferences(ctx, &lsproto.ReferenceParams{
 			TextDocument: textDoc,
 			Position:     codeLens.Range.Start,
@@ -102,7 +76,7 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 		} else {
 			lensTitle = diagnostics.X_0_references.Format(len(locs))
 		}
-	case codeLensImplementationsKind:
+	case lsproto.CodeLensKindImplementations:
 		// "Force" link support to be false so that we only get `Locations` back,
 		// and don't include the "current" node in the results.
 		findImplsOptions := provideImplementationsOpts{
@@ -144,7 +118,7 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 	return codeLens, nil
 }
 
-func (l *LanguageService) newCodeLensForNode(fileUri lsproto.DocumentUri, file *ast.SourceFile, node *ast.Node, kind CodeLensKind) *lsproto.CodeLens {
+func (l *LanguageService) newCodeLensForNode(fileUri lsproto.DocumentUri, file *ast.SourceFile, node *ast.Node, kind lsproto.CodeLensKind) *lsproto.CodeLens {
 	nodeForRange := node
 	nodeName := node.Name()
 	if nodeName != nil {
@@ -152,17 +126,15 @@ func (l *LanguageService) newCodeLensForNode(fileUri lsproto.DocumentUri, file *
 	}
 	pos := scanner.SkipTrivia(file.Text(), nodeForRange.Pos())
 
-	var data any = &CodeLensData{
-		Kind: kind,
-		Uri:  fileUri,
-	}
-
 	return &lsproto.CodeLens{
 		Range: lsproto.Range{
 			Start: l.converters.PositionToLineAndCharacter(file, core.TextPos(pos)),
 			End:   l.converters.PositionToLineAndCharacter(file, core.TextPos(node.End())),
 		},
-		Data: &data,
+		Data: &lsproto.CodeLensData{
+			Kind: kind,
+			Uri:  fileUri,
+		},
 	}
 }
 

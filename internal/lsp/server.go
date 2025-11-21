@@ -981,17 +981,13 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	data, err := ls.GetCodeLensData(codeLens)
-	if err != nil {
-		return nil, err
-	}
-	ls, err := s.session.GetLanguageService(ctx, data.Uri)
+	ls, err := s.session.GetLanguageService(ctx, codeLens.Data.Uri)
 	if err != nil {
 		return nil, err
 	}
 	defer s.recover(reqMsg)
 
-	return ls.ResolveCodeLens(ctx, codeLens, data)
+	return ls.ResolveCodeLens(ctx, codeLens)
 }
 
 func (s *Server) Log(msg ...any) {

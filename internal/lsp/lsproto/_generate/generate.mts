@@ -6,6 +6,7 @@ import path from "node:path";
 import url from "node:url";
 import which from "which";
 import type {
+    Enumeration,
     MetaModel,
     Notification,
     OrType,
@@ -151,6 +152,41 @@ const customStructures: Structure[] = [
         ],
         documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
     },
+    {
+        name: "CodeLensData",
+        properties: [
+            {
+                name: "kind",
+                type: { kind: "reference", name: "CodeLensKind" },
+                documentation: `The kind of the code lens ("references" or "implementations").`,
+            },
+            {
+                name: "uri",
+                type: { kind: "base", name: "DocumentUri" },
+                documentation: `The document in which the code lens and its range are located.`,
+            },
+        ],
+    },
+];
+
+const customEnumerations: Enumeration[] = [
+    {
+        name: "CodeLensKind",
+        type: {
+            kind: "base",
+            name: "string",
+        },
+        values: [
+            {
+                name: "References",
+                value: "references",
+            },
+            {
+                name: "Implementations",
+                value: "implementations",
+            },
+        ],
+    },
 ];
 
 // Track which custom Data structures were declared explicitly
@@ -251,7 +287,8 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom structures and synthetic structures to the model
+    // Add custom enumerations, custom structures, and synthetic structures to the model
+    model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
 
     // Build structure map for preprocessing
