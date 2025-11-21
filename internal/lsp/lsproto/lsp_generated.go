@@ -4,6 +4,7 @@ package lsproto
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
@@ -83,12 +84,14 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -145,12 +148,14 @@ func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -213,9 +218,11 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -291,12 +298,14 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -359,9 +368,11 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -420,12 +431,14 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -474,9 +487,11 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingEvent != 0 {
-			return fmt.Errorf("required property 'event' is missing")
+			missingProps = append(missingProps, "event")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -524,9 +539,11 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -594,9 +611,11 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -654,12 +673,14 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingColor != 0 {
-			return fmt.Errorf("required property 'color' is missing")
+			missingProps = append(missingProps, "color")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -722,9 +743,11 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -810,15 +833,17 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingColor != 0 {
-			return fmt.Errorf("required property 'color' is missing")
+			missingProps = append(missingProps, "color")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -885,9 +910,11 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -941,9 +968,11 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1011,9 +1040,11 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1108,12 +1139,14 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingStartLine != 0 {
-			return fmt.Errorf("required property 'startLine' is missing")
+			missingProps = append(missingProps, "startLine")
 		}
 		if missing&missingEndLine != 0 {
-			return fmt.Errorf("required property 'endLine' is missing")
+			missingProps = append(missingProps, "endLine")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1176,9 +1209,11 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1254,12 +1289,14 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1322,9 +1359,11 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1401,12 +1440,14 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPositions != 0 {
-			return fmt.Errorf("required property 'positions' is missing")
+			missingProps = append(missingProps, "positions")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1463,9 +1504,11 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1528,9 +1571,11 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1578,9 +1623,11 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingToken != 0 {
-			return fmt.Errorf("required property 'token' is missing")
+			missingProps = append(missingProps, "token")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1628,9 +1675,11 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingToken != 0 {
-			return fmt.Errorf("required property 'token' is missing")
+			missingProps = append(missingProps, "token")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1701,12 +1750,14 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1817,21 +1868,23 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingSelectionRange != 0 {
-			return fmt.Errorf("required property 'selectionRange' is missing")
+			missingProps = append(missingProps, "selectionRange")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1897,9 +1950,11 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -1964,9 +2019,11 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItem != 0 {
-			return fmt.Errorf("required property 'item' is missing")
+			missingProps = append(missingProps, "item")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2027,12 +2084,14 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFrom != 0 {
-			return fmt.Errorf("required property 'from' is missing")
+			missingProps = append(missingProps, "from")
 		}
 		if missing&missingFromRanges != 0 {
-			return fmt.Errorf("required property 'fromRanges' is missing")
+			missingProps = append(missingProps, "fromRanges")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2097,9 +2156,11 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItem != 0 {
-			return fmt.Errorf("required property 'item' is missing")
+			missingProps = append(missingProps, "item")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2161,12 +2222,14 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTo != 0 {
-			return fmt.Errorf("required property 'to' is missing")
+			missingProps = append(missingProps, "to")
 		}
 		if missing&missingFromRanges != 0 {
-			return fmt.Errorf("required property 'fromRanges' is missing")
+			missingProps = append(missingProps, "fromRanges")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2234,9 +2297,11 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2295,9 +2360,11 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingData != 0 {
-			return fmt.Errorf("required property 'data' is missing")
+			missingProps = append(missingProps, "data")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2345,9 +2412,11 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingData != 0 {
-			return fmt.Errorf("required property 'data' is missing")
+			missingProps = append(missingProps, "data")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2435,12 +2504,14 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
 		if missing&missingLegend != 0 {
-			return fmt.Errorf("required property 'legend' is missing")
+			missingProps = append(missingProps, "legend")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2518,12 +2589,14 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPreviousResultId != 0 {
-			return fmt.Errorf("required property 'previousResultId' is missing")
+			missingProps = append(missingProps, "previousResultId")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2578,9 +2651,11 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingEdits != 0 {
-			return fmt.Errorf("required property 'edits' is missing")
+			missingProps = append(missingProps, "edits")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2628,9 +2703,11 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingEdits != 0 {
-			return fmt.Errorf("required property 'edits' is missing")
+			missingProps = append(missingProps, "edits")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2707,12 +2784,14 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2792,9 +2871,11 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2845,9 +2926,11 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSuccess != 0 {
-			return fmt.Errorf("required property 'success' is missing")
+			missingProps = append(missingProps, "success")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2915,12 +2998,14 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -2981,9 +3066,11 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRanges != 0 {
-			return fmt.Errorf("required property 'ranges' is missing")
+			missingProps = append(missingProps, "ranges")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3046,9 +3133,11 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3100,9 +3189,11 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFiles != 0 {
-			return fmt.Errorf("required property 'files' is missing")
+			missingProps = append(missingProps, "files")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3190,9 +3281,11 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFilters != 0 {
-			return fmt.Errorf("required property 'filters' is missing")
+			missingProps = append(missingProps, "filters")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3245,9 +3338,11 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFiles != 0 {
-			return fmt.Errorf("required property 'files' is missing")
+			missingProps = append(missingProps, "files")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3299,9 +3394,11 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFiles != 0 {
-			return fmt.Errorf("required property 'files' is missing")
+			missingProps = append(missingProps, "files")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3377,12 +3474,14 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3459,15 +3558,17 @@ func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingScheme != 0 {
-			return fmt.Errorf("required property 'scheme' is missing")
+			missingProps = append(missingProps, "scheme")
 		}
 		if missing&missingIdentifier != 0 {
-			return fmt.Errorf("required property 'identifier' is missing")
+			missingProps = append(missingProps, "identifier")
 		}
 		if missing&missingUnique != 0 {
-			return fmt.Errorf("required property 'unique' is missing")
+			missingProps = append(missingProps, "unique")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3522,9 +3623,11 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3595,12 +3698,14 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3712,21 +3817,23 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingSelectionRange != 0 {
-			return fmt.Errorf("required property 'selectionRange' is missing")
+			missingProps = append(missingProps, "selectionRange")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3792,9 +3899,11 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3859,9 +3968,11 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItem != 0 {
-			return fmt.Errorf("required property 'item' is missing")
+			missingProps = append(missingProps, "item")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -3926,9 +4037,11 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItem != 0 {
-			return fmt.Errorf("required property 'item' is missing")
+			missingProps = append(missingProps, "item")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4009,15 +4122,17 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingContext != 0 {
-			return fmt.Errorf("required property 'context' is missing")
+			missingProps = append(missingProps, "context")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4083,9 +4198,11 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4156,12 +4273,14 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4283,12 +4402,14 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4362,9 +4483,11 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4448,9 +4571,11 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4500,9 +4625,11 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRelatedDocuments != 0 {
-			return fmt.Errorf("required property 'relatedDocuments' is missing")
+			missingProps = append(missingProps, "relatedDocuments")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4552,9 +4679,11 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRetriggerRequest != 0 {
-			return fmt.Errorf("required property 'retriggerRequest' is missing")
+			missingProps = append(missingProps, "retriggerRequest")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4649,15 +4778,17 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
 		if missing&missingInterFileDependencies != 0 {
-			return fmt.Errorf("required property 'interFileDependencies' is missing")
+			missingProps = append(missingProps, "interFileDependencies")
 		}
 		if missing&missingWorkspaceDiagnostics != 0 {
-			return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+			missingProps = append(missingProps, "workspaceDiagnostics")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4731,9 +4862,11 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingPreviousResultIds != 0 {
-			return fmt.Errorf("required property 'previousResultIds' is missing")
+			missingProps = append(missingProps, "previousResultIds")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4783,9 +4916,11 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4835,9 +4970,11 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4898,12 +5035,14 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookDocument != 0 {
-			return fmt.Errorf("required property 'notebookDocument' is missing")
+			missingProps = append(missingProps, "notebookDocument")
 		}
 		if missing&missingCellTextDocuments != 0 {
-			return fmt.Errorf("required property 'cellTextDocuments' is missing")
+			missingProps = append(missingProps, "cellTextDocuments")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -4970,9 +5109,11 @@ func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookSelector != 0 {
-			return fmt.Errorf("required property 'notebookSelector' is missing")
+			missingProps = append(missingProps, "notebookSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5047,12 +5188,14 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookDocument != 0 {
-			return fmt.Errorf("required property 'notebookDocument' is missing")
+			missingProps = append(missingProps, "notebookDocument")
 		}
 		if missing&missingChange != 0 {
-			return fmt.Errorf("required property 'change' is missing")
+			missingProps = append(missingProps, "change")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5103,9 +5246,11 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookDocument != 0 {
-			return fmt.Errorf("required property 'notebookDocument' is missing")
+			missingProps = append(missingProps, "notebookDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5166,12 +5311,14 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookDocument != 0 {
-			return fmt.Errorf("required property 'notebookDocument' is missing")
+			missingProps = append(missingProps, "notebookDocument")
 		}
 		if missing&missingCellTextDocuments != 0 {
-			return fmt.Errorf("required property 'cellTextDocuments' is missing")
+			missingProps = append(missingProps, "cellTextDocuments")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5254,15 +5401,17 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
 		if missing&missingContext != 0 {
-			return fmt.Errorf("required property 'context' is missing")
+			missingProps = append(missingProps, "context")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5315,9 +5464,11 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5391,9 +5542,11 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingInsertText != 0 {
-			return fmt.Errorf("required property 'insertText' is missing")
+			missingProps = append(missingProps, "insertText")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5461,9 +5614,11 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5516,9 +5671,11 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5574,9 +5731,11 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5637,9 +5796,11 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSchemes != 0 {
-			return fmt.Errorf("required property 'schemes' is missing")
+			missingProps = append(missingProps, "schemes")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5692,9 +5853,11 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5741,9 +5904,11 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRegistrations != 0 {
-			return fmt.Errorf("required property 'registrations' is missing")
+			missingProps = append(missingProps, "registrations")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5790,9 +5955,11 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUnregisterations != 0 {
-			return fmt.Errorf("required property 'unregisterations' is missing")
+			missingProps = append(missingProps, "unregisterations")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5933,15 +6100,17 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProcessId != 0 {
-			return fmt.Errorf("required property 'processId' is missing")
+			missingProps = append(missingProps, "processId")
 		}
 		if missing&missingRootUri != 0 {
-			return fmt.Errorf("required property 'rootUri' is missing")
+			missingProps = append(missingProps, "rootUri")
 		}
 		if missing&missingCapabilities != 0 {
-			return fmt.Errorf("required property 'capabilities' is missing")
+			missingProps = append(missingProps, "capabilities")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -5999,9 +6168,11 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCapabilities != 0 {
-			return fmt.Errorf("required property 'capabilities' is missing")
+			missingProps = append(missingProps, "capabilities")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6054,9 +6225,11 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRetry != 0 {
-			return fmt.Errorf("required property 'retry' is missing")
+			missingProps = append(missingProps, "retry")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6107,9 +6280,11 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSettings != 0 {
-			return fmt.Errorf("required property 'settings' is missing")
+			missingProps = append(missingProps, "settings")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6171,12 +6346,14 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingType != 0 {
-			return fmt.Errorf("required property 'type' is missing")
+			missingProps = append(missingProps, "type")
 		}
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6240,12 +6417,14 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingType != 0 {
-			return fmt.Errorf("required property 'type' is missing")
+			missingProps = append(missingProps, "type")
 		}
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6293,9 +6472,11 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTitle != 0 {
-			return fmt.Errorf("required property 'title' is missing")
+			missingProps = append(missingProps, "title")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6353,12 +6534,14 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingType != 0 {
-			return fmt.Errorf("required property 'type' is missing")
+			missingProps = append(missingProps, "type")
 		}
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6407,9 +6590,11 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6479,12 +6664,14 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingContentChanges != 0 {
-			return fmt.Errorf("required property 'contentChanges' is missing")
+			missingProps = append(missingProps, "contentChanges")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6543,12 +6730,14 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
 		if missing&missingSyncKind != 0 {
-			return fmt.Errorf("required property 'syncKind' is missing")
+			missingProps = append(missingProps, "syncKind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6601,9 +6790,11 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6664,9 +6855,11 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6723,9 +6916,11 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6787,12 +6982,14 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingReason != 0 {
-			return fmt.Errorf("required property 'reason' is missing")
+			missingProps = append(missingProps, "reason")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6852,12 +7049,14 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingNewText != 0 {
-			return fmt.Errorf("required property 'newText' is missing")
+			missingProps = append(missingProps, "newText")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6906,9 +7105,11 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingChanges != 0 {
-			return fmt.Errorf("required property 'changes' is missing")
+			missingProps = append(missingProps, "changes")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -6957,9 +7158,11 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingWatchers != 0 {
-			return fmt.Errorf("required property 'watchers' is missing")
+			missingProps = append(missingProps, "watchers")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7026,12 +7229,14 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingDiagnostics != 0 {
-			return fmt.Errorf("required property 'diagnostics' is missing")
+			missingProps = append(missingProps, "diagnostics")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7116,12 +7321,14 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7377,9 +7584,11 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7485,12 +7694,14 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingIsIncomplete != 0 {
-			return fmt.Errorf("required property 'isIncomplete' is missing")
+			missingProps = append(missingProps, "isIncomplete")
 		}
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7592,9 +7803,11 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7663,12 +7876,14 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7725,9 +7940,11 @@ func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingContents != 0 {
-			return fmt.Errorf("required property 'contents' is missing")
+			missingProps = append(missingProps, "contents")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7783,9 +8000,11 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7864,12 +8083,14 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -7957,9 +8178,11 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSignatures != 0 {
-			return fmt.Errorf("required property 'signatures' is missing")
+			missingProps = append(missingProps, "signatures")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8034,9 +8257,11 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8113,12 +8338,14 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8174,9 +8401,11 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8261,15 +8490,17 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
 		if missing&missingContext != 0 {
-			return fmt.Errorf("required property 'context' is missing")
+			missingProps = append(missingProps, "context")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8325,9 +8556,11 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8404,12 +8637,14 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8467,9 +8702,11 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8525,9 +8762,11 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8595,9 +8834,11 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8701,15 +8942,17 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingLocation != 0 {
-			return fmt.Errorf("required property 'location' is missing")
+			missingProps = append(missingProps, "location")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8824,18 +9067,20 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingSelectionRange != 0 {
-			return fmt.Errorf("required property 'selectionRange' is missing")
+			missingProps = append(missingProps, "selectionRange")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8901,9 +9146,11 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -8989,15 +9236,17 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingContext != 0 {
-			return fmt.Errorf("required property 'context' is missing")
+			missingProps = append(missingProps, "context")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9077,12 +9326,14 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTitle != 0 {
-			return fmt.Errorf("required property 'title' is missing")
+			missingProps = append(missingProps, "title")
 		}
 		if missing&missingCommand != 0 {
-			return fmt.Errorf("required property 'command' is missing")
+			missingProps = append(missingProps, "command")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9219,9 +9470,11 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTitle != 0 {
-			return fmt.Errorf("required property 'title' is missing")
+			missingProps = append(missingProps, "title")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9319,9 +9572,11 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9392,9 +9647,11 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingQuery != 0 {
-			return fmt.Errorf("required property 'query' is missing")
+			missingProps = append(missingProps, "query")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9496,15 +9753,17 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingLocation != 0 {
-			return fmt.Errorf("required property 'location' is missing")
+			missingProps = append(missingProps, "location")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9583,9 +9842,11 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9653,9 +9914,11 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9718,9 +9981,11 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9788,9 +10053,11 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9868,9 +10135,11 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -9933,9 +10202,11 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10004,12 +10275,14 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingOptions != 0 {
-			return fmt.Errorf("required property 'options' is missing")
+			missingProps = append(missingProps, "options")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10065,9 +10338,11 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10145,15 +10420,17 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingOptions != 0 {
-			return fmt.Errorf("required property 'options' is missing")
+			missingProps = append(missingProps, "options")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10220,9 +10497,11 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10304,15 +10583,17 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingRanges != 0 {
-			return fmt.Errorf("required property 'ranges' is missing")
+			missingProps = append(missingProps, "ranges")
 		}
 		if missing&missingOptions != 0 {
-			return fmt.Errorf("required property 'options' is missing")
+			missingProps = append(missingProps, "options")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10397,18 +10678,20 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
 		if missing&missingCh != 0 {
-			return fmt.Errorf("required property 'ch' is missing")
+			missingProps = append(missingProps, "ch")
 		}
 		if missing&missingOptions != 0 {
-			return fmt.Errorf("required property 'options' is missing")
+			missingProps = append(missingProps, "options")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10474,12 +10757,14 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
 		if missing&missingFirstTriggerCharacter != 0 {
-			return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+			missingProps = append(missingProps, "firstTriggerCharacter")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10559,15 +10844,17 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
 		if missing&missingNewName != 0 {
-			return fmt.Errorf("required property 'newName' is missing")
+			missingProps = append(missingProps, "newName")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10632,9 +10919,11 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10702,12 +10991,14 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10770,9 +11061,11 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCommand != 0 {
-			return fmt.Errorf("required property 'command' is missing")
+			missingProps = append(missingProps, "command")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10827,9 +11120,11 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCommands != 0 {
-			return fmt.Errorf("required property 'commands' is missing")
+			missingProps = append(missingProps, "commands")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10898,9 +11193,11 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingEdit != 0 {
-			return fmt.Errorf("required property 'edit' is missing")
+			missingProps = append(missingProps, "edit")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -10969,9 +11266,11 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingApplied != 0 {
-			return fmt.Errorf("required property 'applied' is missing")
+			missingProps = append(missingProps, "applied")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11062,12 +11361,14 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingTitle != 0 {
-			return fmt.Errorf("required property 'title' is missing")
+			missingProps = append(missingProps, "title")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11147,9 +11448,11 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11204,9 +11507,11 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11253,9 +11558,11 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11308,9 +11615,11 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11358,9 +11667,11 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingId != 0 {
-			return fmt.Errorf("required property 'id' is missing")
+			missingProps = append(missingProps, "id")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11417,12 +11728,14 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingToken != 0 {
-			return fmt.Errorf("required property 'token' is missing")
+			missingProps = append(missingProps, "token")
 		}
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11485,12 +11798,14 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingPosition != 0 {
-			return fmt.Errorf("required property 'position' is missing")
+			missingProps = append(missingProps, "position")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11582,15 +11897,17 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTargetUri != 0 {
-			return fmt.Errorf("required property 'targetUri' is missing")
+			missingProps = append(missingProps, "targetUri")
 		}
 		if missing&missingTargetRange != 0 {
-			return fmt.Errorf("required property 'targetRange' is missing")
+			missingProps = append(missingProps, "targetRange")
 		}
 		if missing&missingTargetSelectionRange != 0 {
-			return fmt.Errorf("required property 'targetSelectionRange' is missing")
+			missingProps = append(missingProps, "targetSelectionRange")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11660,12 +11977,14 @@ func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingStart != 0 {
-			return fmt.Errorf("required property 'start' is missing")
+			missingProps = append(missingProps, "start")
 		}
 		if missing&missingEnd != 0 {
-			return fmt.Errorf("required property 'end' is missing")
+			missingProps = append(missingProps, "end")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11739,12 +12058,14 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingAdded != 0 {
-			return fmt.Errorf("required property 'added' is missing")
+			missingProps = append(missingProps, "added")
 		}
 		if missing&missingRemoved != 0 {
-			return fmt.Errorf("required property 'removed' is missing")
+			missingProps = append(missingProps, "removed")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11801,9 +12122,11 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11879,18 +12202,20 @@ func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRed != 0 {
-			return fmt.Errorf("required property 'red' is missing")
+			missingProps = append(missingProps, "red")
 		}
 		if missing&missingGreen != 0 {
-			return fmt.Errorf("required property 'green' is missing")
+			missingProps = append(missingProps, "green")
 		}
 		if missing&missingBlue != 0 {
-			return fmt.Errorf("required property 'blue' is missing")
+			missingProps = append(missingProps, "blue")
 		}
 		if missing&missingAlpha != 0 {
-			return fmt.Errorf("required property 'alpha' is missing")
+			missingProps = append(missingProps, "alpha")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -11989,12 +12314,14 @@ func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLine != 0 {
-			return fmt.Errorf("required property 'line' is missing")
+			missingProps = append(missingProps, "line")
 		}
 		if missing&missingCharacter != 0 {
-			return fmt.Errorf("required property 'character' is missing")
+			missingProps = append(missingProps, "character")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12075,9 +12402,11 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLegend != 0 {
-			return fmt.Errorf("required property 'legend' is missing")
+			missingProps = append(missingProps, "legend")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12142,12 +12471,14 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingStart != 0 {
-			return fmt.Errorf("required property 'start' is missing")
+			missingProps = append(missingProps, "start")
 		}
 		if missing&missingDeleteCount != 0 {
-			return fmt.Errorf("required property 'deleteCount' is missing")
+			missingProps = append(missingProps, "deleteCount")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12202,9 +12533,11 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12271,12 +12604,14 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTextDocument != 0 {
-			return fmt.Errorf("required property 'textDocument' is missing")
+			missingProps = append(missingProps, "textDocument")
 		}
 		if missing&missingEdits != 0 {
-			return fmt.Errorf("required property 'edits' is missing")
+			missingProps = append(missingProps, "edits")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12350,12 +12685,14 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12438,15 +12775,17 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingOldUri != 0 {
-			return fmt.Errorf("required property 'oldUri' is missing")
+			missingProps = append(missingProps, "oldUri")
 		}
 		if missing&missingNewUri != 0 {
-			return fmt.Errorf("required property 'newUri' is missing")
+			missingProps = append(missingProps, "newUri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12520,12 +12859,14 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12593,9 +12934,11 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12654,9 +12997,11 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingPattern != 0 {
-			return fmt.Errorf("required property 'pattern' is missing")
+			missingProps = append(missingProps, "pattern")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12716,12 +13061,14 @@ func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingOldUri != 0 {
-			return fmt.Errorf("required property 'oldUri' is missing")
+			missingProps = append(missingProps, "oldUri")
 		}
 		if missing&missingNewUri != 0 {
-			return fmt.Errorf("required property 'newUri' is missing")
+			missingProps = append(missingProps, "newUri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12772,9 +13119,11 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12844,12 +13193,14 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFrameId != 0 {
-			return fmt.Errorf("required property 'frameId' is missing")
+			missingProps = append(missingProps, "frameId")
 		}
 		if missing&missingStoppedLocation != 0 {
-			return fmt.Errorf("required property 'stoppedLocation' is missing")
+			missingProps = append(missingProps, "stoppedLocation")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12909,12 +13260,14 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -12984,12 +13337,14 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingCaseSensitiveLookup != 0 {
-			return fmt.Errorf("required property 'caseSensitiveLookup' is missing")
+			missingProps = append(missingProps, "caseSensitiveLookup")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13050,9 +13405,11 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13147,9 +13504,11 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13230,12 +13589,14 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13328,12 +13689,14 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13410,12 +13773,14 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingResultId != 0 {
-			return fmt.Errorf("required property 'resultId' is missing")
+			missingProps = append(missingProps, "resultId")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13484,12 +13849,14 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13554,12 +13921,14 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingResultId != 0 {
-			return fmt.Errorf("required property 'resultId' is missing")
+			missingProps = append(missingProps, "resultId")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13636,12 +14005,14 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingInterFileDependencies != 0 {
-			return fmt.Errorf("required property 'interFileDependencies' is missing")
+			missingProps = append(missingProps, "interFileDependencies")
 		}
 		if missing&missingWorkspaceDiagnostics != 0 {
-			return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
+			missingProps = append(missingProps, "workspaceDiagnostics")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13702,12 +14073,14 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13796,18 +14169,20 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingNotebookType != 0 {
-			return fmt.Errorf("required property 'notebookType' is missing")
+			missingProps = append(missingProps, "notebookType")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
 		if missing&missingCells != 0 {
-			return fmt.Errorf("required property 'cells' is missing")
+			missingProps = append(missingProps, "cells")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13885,18 +14260,20 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingLanguageId != 0 {
-			return fmt.Errorf("required property 'languageId' is missing")
+			missingProps = append(missingProps, "languageId")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -13965,9 +14342,11 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookSelector != 0 {
-			return fmt.Errorf("required property 'notebookSelector' is missing")
+			missingProps = append(missingProps, "notebookSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14027,12 +14406,14 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14096,9 +14477,11 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14158,9 +14541,11 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTriggerKind != 0 {
-			return fmt.Errorf("required property 'triggerKind' is missing")
+			missingProps = append(missingProps, "triggerKind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14228,12 +14613,14 @@ func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14295,9 +14682,11 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSchemes != 0 {
-			return fmt.Errorf("required property 'schemes' is missing")
+			missingProps = append(missingProps, "schemes")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14363,12 +14752,14 @@ func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingId != 0 {
-			return fmt.Errorf("required property 'id' is missing")
+			missingProps = append(missingProps, "id")
 		}
 		if missing&missingMethod != 0 {
-			return fmt.Errorf("required property 'method' is missing")
+			missingProps = append(missingProps, "method")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14427,12 +14818,14 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingId != 0 {
-			return fmt.Errorf("required property 'id' is missing")
+			missingProps = append(missingProps, "id")
 		}
 		if missing&missingMethod != 0 {
-			return fmt.Errorf("required property 'method' is missing")
+			missingProps = append(missingProps, "method")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14648,9 +15041,11 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14708,12 +15103,14 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14777,12 +15174,14 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingType != 0 {
-			return fmt.Errorf("required property 'type' is missing")
+			missingProps = append(missingProps, "type")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14841,9 +15240,11 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingGlobPattern != 0 {
-			return fmt.Errorf("required property 'globPattern' is missing")
+			missingProps = append(missingProps, "globPattern")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -14964,12 +15365,14 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15026,9 +15429,11 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTriggerKind != 0 {
-			return fmt.Errorf("required property 'triggerKind' is missing")
+			missingProps = append(missingProps, "triggerKind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15110,15 +15515,17 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNewText != 0 {
-			return fmt.Errorf("required property 'newText' is missing")
+			missingProps = append(missingProps, "newText")
 		}
 		if missing&missingInsert != 0 {
-			return fmt.Errorf("required property 'insert' is missing")
+			missingProps = append(missingProps, "insert")
 		}
 		if missing&missingReplace != 0 {
-			return fmt.Errorf("required property 'replace' is missing")
+			missingProps = append(missingProps, "replace")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15342,12 +15749,14 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTriggerKind != 0 {
-			return fmt.Errorf("required property 'triggerKind' is missing")
+			missingProps = append(missingProps, "triggerKind")
 		}
 		if missing&missingIsRetrigger != 0 {
-			return fmt.Errorf("required property 'isRetrigger' is missing")
+			missingProps = append(missingProps, "isRetrigger")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15431,9 +15840,11 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15504,9 +15915,11 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingIncludeDeclaration != 0 {
-			return fmt.Errorf("required property 'includeDeclaration' is missing")
+			missingProps = append(missingProps, "includeDeclaration")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15593,12 +16006,14 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15682,9 +16097,11 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDiagnostics != 0 {
-			return fmt.Errorf("required property 'diagnostics' is missing")
+			missingProps = append(missingProps, "diagnostics")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15737,9 +16154,11 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingReason != 0 {
-			return fmt.Errorf("required property 'reason' is missing")
+			missingProps = append(missingProps, "reason")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15824,9 +16243,11 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -15938,12 +16359,14 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTabSize != 0 {
-			return fmt.Errorf("required property 'tabSize' is missing")
+			missingProps = append(missingProps, "tabSize")
 		}
 		if missing&missingInsertSpaces != 0 {
-			return fmt.Errorf("required property 'insertSpaces' is missing")
+			missingProps = append(missingProps, "insertSpaces")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16016,9 +16439,11 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingFirstTriggerCharacter != 0 {
-			return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
+			missingProps = append(missingProps, "firstTriggerCharacter")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16084,12 +16509,14 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingPlaceholder != 0 {
-			return fmt.Errorf("required property 'placeholder' is missing")
+			missingProps = append(missingProps, "placeholder")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16137,9 +16564,11 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDefaultBehavior != 0 {
-			return fmt.Errorf("required property 'defaultBehavior' is missing")
+			missingProps = append(missingProps, "defaultBehavior")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16194,9 +16623,11 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCommands != 0 {
-			return fmt.Errorf("required property 'commands' is missing")
+			missingProps = append(missingProps, "commands")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16264,12 +16695,14 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingTokenTypes != 0 {
-			return fmt.Errorf("required property 'tokenTypes' is missing")
+			missingProps = append(missingProps, "tokenTypes")
 		}
 		if missing&missingTokenModifiers != 0 {
-			return fmt.Errorf("required property 'tokenModifiers' is missing")
+			missingProps = append(missingProps, "tokenModifiers")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16339,12 +16772,14 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16415,15 +16850,17 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingNewText != 0 {
-			return fmt.Errorf("required property 'newText' is missing")
+			missingProps = append(missingProps, "newText")
 		}
 		if missing&missingAnnotationId != 0 {
-			return fmt.Errorf("required property 'annotationId' is missing")
+			missingProps = append(missingProps, "annotationId")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16492,12 +16929,14 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingSnippet != 0 {
-			return fmt.Errorf("required property 'snippet' is missing")
+			missingProps = append(missingProps, "snippet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16555,9 +16994,11 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16658,9 +17099,11 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingGlob != 0 {
-			return fmt.Errorf("required property 'glob' is missing")
+			missingProps = append(missingProps, "glob")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16748,18 +17191,20 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingItems != 0 {
-			return fmt.Errorf("required property 'items' is missing")
+			missingProps = append(missingProps, "items")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16842,18 +17287,20 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingResultId != 0 {
-			return fmt.Errorf("required property 'resultId' is missing")
+			missingProps = append(missingProps, "resultId")
 		}
 		if missing&missingUri != 0 {
-			return fmt.Errorf("required property 'uri' is missing")
+			missingProps = append(missingProps, "uri")
 		}
 		if missing&missingVersion != 0 {
-			return fmt.Errorf("required property 'version' is missing")
+			missingProps = append(missingProps, "version")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16935,12 +17382,14 @@ func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingDocument != 0 {
-			return fmt.Errorf("required property 'document' is missing")
+			missingProps = append(missingProps, "document")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -16998,9 +17447,11 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebook != 0 {
-			return fmt.Errorf("required property 'notebook' is missing")
+			missingProps = append(missingProps, "notebook")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17058,9 +17509,11 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCells != 0 {
-			return fmt.Errorf("required property 'cells' is missing")
+			missingProps = append(missingProps, "cells")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17138,12 +17591,14 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17203,9 +17658,11 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingName != 0 {
-			return fmt.Errorf("required property 'name' is missing")
+			missingProps = append(missingProps, "name")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17338,12 +17795,14 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRange != 0 {
-			return fmt.Errorf("required property 'range' is missing")
+			missingProps = append(missingProps, "range")
 		}
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17392,9 +17851,11 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingText != 0 {
-			return fmt.Errorf("required property 'text' is missing")
+			missingProps = append(missingProps, "text")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17445,9 +17906,11 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingHref != 0 {
-			return fmt.Errorf("required property 'href' is missing")
+			missingProps = append(missingProps, "href")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17507,12 +17970,14 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLocation != 0 {
-			return fmt.Errorf("required property 'location' is missing")
+			missingProps = append(missingProps, "location")
 		}
 		if missing&missingMessage != 0 {
-			return fmt.Errorf("required property 'message' is missing")
+			missingProps = append(missingProps, "message")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17570,12 +18035,14 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingInsert != 0 {
-			return fmt.Errorf("required property 'insert' is missing")
+			missingProps = append(missingProps, "insert")
 		}
 		if missing&missingReplace != 0 {
-			return fmt.Errorf("required property 'replace' is missing")
+			missingProps = append(missingProps, "replace")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17643,12 +18110,14 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLanguage != 0 {
-			return fmt.Errorf("required property 'language' is missing")
+			missingProps = append(missingProps, "language")
 		}
 		if missing&missingValue != 0 {
-			return fmt.Errorf("required property 'value' is missing")
+			missingProps = append(missingProps, "value")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17717,9 +18186,11 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLabel != 0 {
-			return fmt.Errorf("required property 'label' is missing")
+			missingProps = append(missingProps, "label")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17787,12 +18258,14 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingKind != 0 {
-			return fmt.Errorf("required property 'kind' is missing")
+			missingProps = append(missingProps, "kind")
 		}
 		if missing&missingCommand != 0 {
-			return fmt.Errorf("required property 'command' is missing")
+			missingProps = append(missingProps, "command")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17857,9 +18330,11 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebook != 0 {
-			return fmt.Errorf("required property 'notebook' is missing")
+			missingProps = append(missingProps, "notebook")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17925,9 +18400,11 @@ func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingExecutionOrder != 0 {
-			return fmt.Errorf("required property 'executionOrder' is missing")
+			missingProps = append(missingProps, "executionOrder")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -17975,9 +18452,11 @@ func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLanguage != 0 {
-			return fmt.Errorf("required property 'language' is missing")
+			missingProps = append(missingProps, "language")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18042,9 +18521,11 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingArray != 0 {
-			return fmt.Errorf("required property 'array' is missing")
+			missingProps = append(missingProps, "array")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18102,12 +18583,14 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocument != 0 {
-			return fmt.Errorf("required property 'document' is missing")
+			missingProps = append(missingProps, "document")
 		}
 		if missing&missingChanges != 0 {
-			return fmt.Errorf("required property 'changes' is missing")
+			missingProps = append(missingProps, "changes")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18376,9 +18859,11 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSynchronization != 0 {
-			return fmt.Errorf("required property 'synchronization' is missing")
+			missingProps = append(missingProps, "synchronization")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18544,12 +19029,14 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingBaseUri != 0 {
-			return fmt.Errorf("required property 'baseUri' is missing")
+			missingProps = append(missingProps, "baseUri")
 		}
 		if missing&missingPattern != 0 {
-			return fmt.Errorf("required property 'pattern' is missing")
+			missingProps = append(missingProps, "pattern")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18618,9 +19105,11 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingLanguage != 0 {
-			return fmt.Errorf("required property 'language' is missing")
+			missingProps = append(missingProps, "language")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18689,9 +19178,11 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingScheme != 0 {
-			return fmt.Errorf("required property 'scheme' is missing")
+			missingProps = append(missingProps, "scheme")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18760,9 +19251,11 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingPattern != 0 {
-			return fmt.Errorf("required property 'pattern' is missing")
+			missingProps = append(missingProps, "pattern")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18827,9 +19320,11 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingNotebookType != 0 {
-			return fmt.Errorf("required property 'notebookType' is missing")
+			missingProps = append(missingProps, "notebookType")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18894,9 +19389,11 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingScheme != 0 {
-			return fmt.Errorf("required property 'scheme' is missing")
+			missingProps = append(missingProps, "scheme")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -18961,9 +19458,11 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingPattern != 0 {
-			return fmt.Errorf("required property 'pattern' is missing")
+			missingProps = append(missingProps, "pattern")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -19031,12 +19530,14 @@ func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingStart != 0 {
-			return fmt.Errorf("required property 'start' is missing")
+			missingProps = append(missingProps, "start")
 		}
 		if missing&missingDeleteCount != 0 {
-			return fmt.Errorf("required property 'deleteCount' is missing")
+			missingProps = append(missingProps, "deleteCount")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -19767,18 +20268,20 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingRequests != 0 {
-			return fmt.Errorf("required property 'requests' is missing")
+			missingProps = append(missingProps, "requests")
 		}
 		if missing&missingTokenTypes != 0 {
-			return fmt.Errorf("required property 'tokenTypes' is missing")
+			missingProps = append(missingProps, "tokenTypes")
 		}
 		if missing&missingTokenModifiers != 0 {
-			return fmt.Errorf("required property 'tokenModifiers' is missing")
+			missingProps = append(missingProps, "tokenModifiers")
 		}
 		if missing&missingFormats != 0 {
-			return fmt.Errorf("required property 'formats' is missing")
+			missingProps = append(missingProps, "formats")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -19942,9 +20445,11 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingSupport != 0 {
-			return fmt.Errorf("required property 'support' is missing")
+			missingProps = append(missingProps, "support")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20004,12 +20509,14 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCancel != 0 {
-			return fmt.Errorf("required property 'cancel' is missing")
+			missingProps = append(missingProps, "cancel")
 		}
 		if missing&missingRetryOnContentModified != 0 {
-			return fmt.Errorf("required property 'retryOnContentModified' is missing")
+			missingProps = append(missingProps, "retryOnContentModified")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20067,9 +20574,11 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingEngine != 0 {
-			return fmt.Errorf("required property 'engine' is missing")
+			missingProps = append(missingProps, "engine")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20137,9 +20646,11 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingParser != 0 {
-			return fmt.Errorf("required property 'parser' is missing")
+			missingProps = append(missingProps, "parser")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20209,9 +20720,11 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20261,9 +20774,11 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProperties != 0 {
-			return fmt.Errorf("required property 'properties' is missing")
+			missingProps = append(missingProps, "properties")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20438,9 +20953,11 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingCodeActionKind != 0 {
-			return fmt.Errorf("required property 'codeActionKind' is missing")
+			missingProps = append(missingProps, "codeActionKind")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20489,9 +21006,11 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProperties != 0 {
-			return fmt.Errorf("required property 'properties' is missing")
+			missingProps = append(missingProps, "properties")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20540,9 +21059,11 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20591,9 +21112,11 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProperties != 0 {
-			return fmt.Errorf("required property 'properties' is missing")
+			missingProps = append(missingProps, "properties")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20695,9 +21218,11 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProperties != 0 {
-			return fmt.Errorf("required property 'properties' is missing")
+			missingProps = append(missingProps, "properties")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20754,9 +21279,11 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20805,9 +21332,11 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingProperties != 0 {
-			return fmt.Errorf("required property 'properties' is missing")
+			missingProps = append(missingProps, "properties")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20855,9 +21384,11 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsont
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20918,9 +21449,11 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -20969,9 +21502,11 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingValueSet != 0 {
-			return fmt.Errorf("required property 'valueSet' is missing")
+			missingProps = append(missingProps, "valueSet")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil
@@ -21121,9 +21656,11 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	if missing != 0 {
+		var missingProps []string
 		if missing&missingDocumentSelector != 0 {
-			return fmt.Errorf("required property 'documentSelector' is missing")
+			missingProps = append(missingProps, "documentSelector")
 		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
 
 	return nil

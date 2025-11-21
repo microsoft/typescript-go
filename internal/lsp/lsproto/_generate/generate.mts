@@ -861,6 +861,7 @@ function generateCode() {
     writeLine("");
     writeLine(`import (`);
     writeLine(`\t"fmt"`);
+    writeLine(`\t"strings"`);
     writeLine("");
     writeLine(`\t"github.com/go-json-experiment/json"`);
     writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
@@ -974,11 +975,13 @@ function generateCode() {
             writeLine("");
 
             writeLine(`\tif missing != 0 {`);
+            writeLine(`\t\tvar missingProps []string`);
             for (const prop of requiredProps) {
                 writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
-                writeLine(`\t\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
+                writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
                 writeLine(`\t\t}`);
             }
+            writeLine(`\t\treturn fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))`);
             writeLine(`\t}`);
 
             writeLine("");
