@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -135,6 +136,7 @@ func formatQuickInfo(quickInfo string) string {
 
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
 	var b strings.Builder
+	var visitedAliases collections.Set[*ast.Symbol]
 	container := getContainerNode(node)
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) {
 		return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
@@ -275,7 +277,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	writeSymbol = func(symbol *ast.Symbol, isAlias bool) *ast.Node {
 		var declaration *ast.Node
 		// Recursively write all meanings of alias
-		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 && visitedAliases.AddIfAbsent(symbol) {
 			if aliasedSymbol := c.GetAliasedSymbol(symbol); aliasedSymbol != c.GetUnknownSymbol() {
 				declaration = writeSymbol(aliasedSymbol, true /*isAlias*/)
 			}
