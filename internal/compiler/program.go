@@ -59,6 +59,7 @@ type Program struct {
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 
 	programDiagnostics         []*ast.Diagnostic
+	programDiagnosticsOnce     sync.Once
 	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
 
 	sourceFilesToEmitOnce sync.Once
@@ -210,8 +211,8 @@ func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
-	p.addProgramDiagnostics()
 	p.verifyCompilerOptions()
+	p.addProgramDiagnostics()
 	return p
 }
 
@@ -1237,12 +1238,12 @@ func (p *Program) addProgramDiagnostics() {
 		}
 
 		for _, ref := range parentFile.ReferencedFiles {
-			if tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(parentFile.FileName()), ref.FileName) == missingFile.path {
+			if tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(parentFile.FileName())) == missingFile.path {
 				diagnostic := ast.NewDiagnostic(
 					parentFile,
 					ref.TextRange,
 					diagnostics.File_0_not_found,
-					missingFile.path,
+					ref.FileName,
 				)
 				p.programDiagnostics = append(p.programDiagnostics, diagnostic)
 			}
