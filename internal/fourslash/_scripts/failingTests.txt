@@ -325,7 +325,6 @@ TestIndexerReturnTypes1
 TestIndirectClassInstantiation
 TestInstanceTypesForGenericType1
 TestJavascriptModules20
-TestJavascriptModulesTypeImport
 TestJsDocAugments
 TestJsDocAugmentsAndExtends
 TestJsdocCallbackTag
