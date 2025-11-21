@@ -40,7 +40,7 @@ fo/**/`
 							},
 						})),
 						Detail:              PtrTo("(alias) function foo(): void\nexport foo"),
-						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
+						Kind:                PtrTo(lsproto.CompletionItemKindFunction),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

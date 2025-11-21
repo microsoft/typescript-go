@@ -327,6 +327,28 @@ func InsertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	return slices.Insert(slice, i, element)
 }
 
+func Bests[T any](xs []T, cmp func(a, b T) int) []T {
+	if len(xs) == 0 {
+		return nil
+	}
+
+	best := xs[0]
+	bests := []T{best}
+
+	for _, x := range xs[1:] {
+		c := cmp(x, best)
+		switch {
+		case c < 0:
+			best = x
+			bests = []T{x}
+		case c == 0:
+			bests = append(bests, x)
+		}
+	}
+
+	return bests
+}
+
 func AppendIfUnique[T comparable](slice []T, element T) []T {
 	if slices.Contains(slice, element) {
 		return slice

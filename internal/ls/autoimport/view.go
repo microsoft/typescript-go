@@ -127,7 +127,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) [
 				})
 			}
 		}
-		fixes = append(fixes, slices.MinFunc(fixesForGroup, compareFixes))
+		fixes = append(fixes, core.Bests(fixesForGroup, compareFixes)...)
 	}
 
 	return fixes

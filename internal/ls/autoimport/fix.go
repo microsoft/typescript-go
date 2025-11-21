@@ -578,7 +578,7 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 	switch export.Syntax {
 	case ExportSyntaxDefaultModifier, ExportSyntaxDefaultDeclaration:
 		return ImportKindDefault
-	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar:
+	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar, ExportSyntaxCommonJSExportsProperty:
 		return ImportKindNamed
 	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports:
 		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.

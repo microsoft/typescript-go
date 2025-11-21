@@ -67,6 +67,16 @@ export default methods.$;
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImportFix: &autoimport.Fix{
+							ModuleSpecifier: "dom7",
+						},
+					})),
+					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
+				},
+				&lsproto.CompletionItem{
+					Label:               "Dom7",
+					AdditionalTextEdits: fourslash.AnyTextEdits,
+					Data: PtrTo(any(&ls.CompletionItemData{
+						AutoImportFix: &autoimport.Fix{
 							ModuleSpecifier: "./dom7",
 						},
 					})),

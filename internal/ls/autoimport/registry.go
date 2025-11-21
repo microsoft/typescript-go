@@ -621,7 +621,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	var dependencies *collections.Set[string]
 	var packageNames *collections.Set[string]
 	for path := range change.OpenFiles {
-		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithPackageJson(path) == nil {
+		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithValidPackageJson(path) == nil {
 			dependencies = nil
 			break
 		}
@@ -773,9 +773,9 @@ func (b *registryBuilder) createCheckerPool(program checker.Program) (getChecker
 		}
 }
 
-func (b *registryBuilder) getNearestAncestorDirectoryWithPackageJson(filePath tspath.Path) *directory {
+func (b *registryBuilder) getNearestAncestorDirectoryWithValidPackageJson(filePath tspath.Path) *directory {
 	return core.FirstResult(tspath.ForEachAncestorDirectoryPath(filePath.GetDirectoryPath(), func(dirPath tspath.Path) (result *directory, stop bool) {
-		if dirEntry, ok := b.directories.Get(dirPath); ok && dirEntry.Value().packageJson.Exists() {
+		if dirEntry, ok := b.directories.Get(dirPath); ok && dirEntry.Value().packageJson.Exists() && dirEntry.Value().packageJson.Contents.Parseable {
 			return dirEntry.Value(), true
 		}
 		return nil, false

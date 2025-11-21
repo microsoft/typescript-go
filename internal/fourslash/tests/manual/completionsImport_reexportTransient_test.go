@@ -40,7 +40,17 @@ one/**/`
 						Label: "one",
 						Data: PtrTo(any(&ls.CompletionItemData{
 							AutoImportFix: &autoimport.Fix{
-								ModuleSpecifier: "./transient",
+								ModuleSpecifier: "./r1",
+							},
+						})),
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					},
+					&lsproto.CompletionItem{
+						Label: "one",
+						Data: PtrTo(any(&ls.CompletionItemData{
+							AutoImportFix: &autoimport.Fix{
+								ModuleSpecifier: "./r2",
 							},
 						})),
 						AdditionalTextEdits: fourslash.AnyTextEdits,

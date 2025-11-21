@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -3291,6 +3292,9 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 					sliceEntryData.AutoImportFix.ModuleSpecifier,
 					insertEntryData.AutoImportFix.ModuleSpecifier,
 				)
+			}
+			if result == stringutil.ComparisonEqual {
+				result = -cmp.Compare(sliceEntryData.AutoImportFix.ImportKind, insertEntryData.AutoImportFix.ImportKind)
 			}
 		}
 	}
