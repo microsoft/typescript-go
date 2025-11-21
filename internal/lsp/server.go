@@ -171,7 +171,7 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 				Id:     string(id),
 				Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
 				RegisterOptions: &lsproto.RegisterOptions{
-					DidChangeWatchedFilesRegistrationOptions: &lsproto.DidChangeWatchedFilesRegistrationOptions{
+					DidChangeWatchedFiles: &lsproto.DidChangeWatchedFilesRegistrationOptions{
 						Watchers: watchers,
 					},
 				},
@@ -762,7 +762,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 				Id:     "typescript-config-watch-id",
 				Method: string(lsproto.MethodWorkspaceDidChangeConfiguration),
 				RegisterOptions: &lsproto.RegisterOptions{
-					DidChangeConfigurationRegistrationOptions: ptrTo(lsproto.DidChangeConfigurationRegistrationOptions{
+					DidChangeConfiguration: ptrTo(lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
 							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
 							Strings: &[]string{"typescript"},

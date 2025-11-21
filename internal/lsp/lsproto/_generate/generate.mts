@@ -576,8 +576,17 @@ function handleOrType(orType: OrType): GoType {
     }
 
     // Special case: if this is the RegisterOptions union, use a custom name
+    // and slice off the common suffix "RegistrationOptions" from member names
     if (orType === registerOptionsUnionType) {
         unionTypeName = "RegisterOptions";
+
+        // Remove the common suffix "RegistrationOptions" from all member names
+        memberNames = memberNames.map(name => {
+            if (name.endsWith("RegistrationOptions")) {
+                return name.slice(0, -"RegistrationOptions".length);
+            }
+            return name;
+        });
     }
 
     if (containedNull) {

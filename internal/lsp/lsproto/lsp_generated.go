@@ -22875,172 +22875,172 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 }
 
 type RegisterOptions struct {
-	ImplementationRegistrationOptions           *ImplementationRegistrationOptions
-	TypeDefinitionRegistrationOptions           *TypeDefinitionRegistrationOptions
-	DocumentColorRegistrationOptions            *DocumentColorRegistrationOptions
-	ColorPresentationRegistrationOptions        *ColorPresentationRegistrationOptions
-	FoldingRangeRegistrationOptions             *FoldingRangeRegistrationOptions
-	DeclarationRegistrationOptions              *DeclarationRegistrationOptions
-	SelectionRangeRegistrationOptions           *SelectionRangeRegistrationOptions
-	CallHierarchyRegistrationOptions            *CallHierarchyRegistrationOptions
-	SemanticTokensRegistrationOptions           *SemanticTokensRegistrationOptions
-	LinkedEditingRangeRegistrationOptions       *LinkedEditingRangeRegistrationOptions
-	FileOperationRegistrationOptions            *FileOperationRegistrationOptions
-	MonikerRegistrationOptions                  *MonikerRegistrationOptions
-	TypeHierarchyRegistrationOptions            *TypeHierarchyRegistrationOptions
-	InlineValueRegistrationOptions              *InlineValueRegistrationOptions
-	InlayHintRegistrationOptions                *InlayHintRegistrationOptions
-	DiagnosticRegistrationOptions               *DiagnosticRegistrationOptions
-	InlineCompletionRegistrationOptions         *InlineCompletionRegistrationOptions
-	TextDocumentContentRegistrationOptions      *TextDocumentContentRegistrationOptions
-	TextDocumentRegistrationOptions             *TextDocumentRegistrationOptions
-	CompletionRegistrationOptions               *CompletionRegistrationOptions
-	HoverRegistrationOptions                    *HoverRegistrationOptions
-	SignatureHelpRegistrationOptions            *SignatureHelpRegistrationOptions
-	DefinitionRegistrationOptions               *DefinitionRegistrationOptions
-	ReferenceRegistrationOptions                *ReferenceRegistrationOptions
-	DocumentHighlightRegistrationOptions        *DocumentHighlightRegistrationOptions
-	DocumentSymbolRegistrationOptions           *DocumentSymbolRegistrationOptions
-	CodeActionRegistrationOptions               *CodeActionRegistrationOptions
-	WorkspaceSymbolRegistrationOptions          *WorkspaceSymbolRegistrationOptions
-	CodeLensRegistrationOptions                 *CodeLensRegistrationOptions
-	DocumentLinkRegistrationOptions             *DocumentLinkRegistrationOptions
-	DocumentFormattingRegistrationOptions       *DocumentFormattingRegistrationOptions
-	DocumentRangeFormattingRegistrationOptions  *DocumentRangeFormattingRegistrationOptions
-	DocumentOnTypeFormattingRegistrationOptions *DocumentOnTypeFormattingRegistrationOptions
-	RenameRegistrationOptions                   *RenameRegistrationOptions
-	ExecuteCommandRegistrationOptions           *ExecuteCommandRegistrationOptions
-	NotebookDocumentSyncRegistrationOptions     *NotebookDocumentSyncRegistrationOptions
-	DidChangeConfigurationRegistrationOptions   *DidChangeConfigurationRegistrationOptions
-	TextDocumentChangeRegistrationOptions       *TextDocumentChangeRegistrationOptions
-	TextDocumentSaveRegistrationOptions         *TextDocumentSaveRegistrationOptions
-	DidChangeWatchedFilesRegistrationOptions    *DidChangeWatchedFilesRegistrationOptions
+	Implementation           *ImplementationRegistrationOptions
+	TypeDefinition           *TypeDefinitionRegistrationOptions
+	DocumentColor            *DocumentColorRegistrationOptions
+	ColorPresentation        *ColorPresentationRegistrationOptions
+	FoldingRange             *FoldingRangeRegistrationOptions
+	Declaration              *DeclarationRegistrationOptions
+	SelectionRange           *SelectionRangeRegistrationOptions
+	CallHierarchy            *CallHierarchyRegistrationOptions
+	SemanticTokens           *SemanticTokensRegistrationOptions
+	LinkedEditingRange       *LinkedEditingRangeRegistrationOptions
+	FileOperation            *FileOperationRegistrationOptions
+	Moniker                  *MonikerRegistrationOptions
+	TypeHierarchy            *TypeHierarchyRegistrationOptions
+	InlineValue              *InlineValueRegistrationOptions
+	InlayHint                *InlayHintRegistrationOptions
+	Diagnostic               *DiagnosticRegistrationOptions
+	InlineCompletion         *InlineCompletionRegistrationOptions
+	TextDocumentContent      *TextDocumentContentRegistrationOptions
+	TextDocument             *TextDocumentRegistrationOptions
+	Completion               *CompletionRegistrationOptions
+	Hover                    *HoverRegistrationOptions
+	SignatureHelp            *SignatureHelpRegistrationOptions
+	Definition               *DefinitionRegistrationOptions
+	Reference                *ReferenceRegistrationOptions
+	DocumentHighlight        *DocumentHighlightRegistrationOptions
+	DocumentSymbol           *DocumentSymbolRegistrationOptions
+	CodeAction               *CodeActionRegistrationOptions
+	WorkspaceSymbol          *WorkspaceSymbolRegistrationOptions
+	CodeLens                 *CodeLensRegistrationOptions
+	DocumentLink             *DocumentLinkRegistrationOptions
+	DocumentFormatting       *DocumentFormattingRegistrationOptions
+	DocumentRangeFormatting  *DocumentRangeFormattingRegistrationOptions
+	DocumentOnTypeFormatting *DocumentOnTypeFormattingRegistrationOptions
+	Rename                   *RenameRegistrationOptions
+	ExecuteCommand           *ExecuteCommandRegistrationOptions
+	NotebookDocumentSync     *NotebookDocumentSyncRegistrationOptions
+	DidChangeConfiguration   *DidChangeConfigurationRegistrationOptions
+	TextDocumentChange       *TextDocumentChangeRegistrationOptions
+	TextDocumentSave         *TextDocumentSaveRegistrationOptions
+	DidChangeWatchedFiles    *DidChangeWatchedFilesRegistrationOptions
 }
 
 var _ json.MarshalerTo = (*RegisterOptions)(nil)
 
 func (o *RegisterOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("exactly one element of RegisterOptions should be set", o.ImplementationRegistrationOptions != nil, o.TypeDefinitionRegistrationOptions != nil, o.DocumentColorRegistrationOptions != nil, o.ColorPresentationRegistrationOptions != nil, o.FoldingRangeRegistrationOptions != nil, o.DeclarationRegistrationOptions != nil, o.SelectionRangeRegistrationOptions != nil, o.CallHierarchyRegistrationOptions != nil, o.SemanticTokensRegistrationOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil, o.FileOperationRegistrationOptions != nil, o.MonikerRegistrationOptions != nil, o.TypeHierarchyRegistrationOptions != nil, o.InlineValueRegistrationOptions != nil, o.InlayHintRegistrationOptions != nil, o.DiagnosticRegistrationOptions != nil, o.InlineCompletionRegistrationOptions != nil, o.TextDocumentContentRegistrationOptions != nil, o.TextDocumentRegistrationOptions != nil, o.CompletionRegistrationOptions != nil, o.HoverRegistrationOptions != nil, o.SignatureHelpRegistrationOptions != nil, o.DefinitionRegistrationOptions != nil, o.ReferenceRegistrationOptions != nil, o.DocumentHighlightRegistrationOptions != nil, o.DocumentSymbolRegistrationOptions != nil, o.CodeActionRegistrationOptions != nil, o.WorkspaceSymbolRegistrationOptions != nil, o.CodeLensRegistrationOptions != nil, o.DocumentLinkRegistrationOptions != nil, o.DocumentFormattingRegistrationOptions != nil, o.DocumentRangeFormattingRegistrationOptions != nil, o.DocumentOnTypeFormattingRegistrationOptions != nil, o.RenameRegistrationOptions != nil, o.ExecuteCommandRegistrationOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil, o.DidChangeConfigurationRegistrationOptions != nil, o.TextDocumentChangeRegistrationOptions != nil, o.TextDocumentSaveRegistrationOptions != nil, o.DidChangeWatchedFilesRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of RegisterOptions should be set", o.Implementation != nil, o.TypeDefinition != nil, o.DocumentColor != nil, o.ColorPresentation != nil, o.FoldingRange != nil, o.Declaration != nil, o.SelectionRange != nil, o.CallHierarchy != nil, o.SemanticTokens != nil, o.LinkedEditingRange != nil, o.FileOperation != nil, o.Moniker != nil, o.TypeHierarchy != nil, o.InlineValue != nil, o.InlayHint != nil, o.Diagnostic != nil, o.InlineCompletion != nil, o.TextDocumentContent != nil, o.TextDocument != nil, o.Completion != nil, o.Hover != nil, o.SignatureHelp != nil, o.Definition != nil, o.Reference != nil, o.DocumentHighlight != nil, o.DocumentSymbol != nil, o.CodeAction != nil, o.WorkspaceSymbol != nil, o.CodeLens != nil, o.DocumentLink != nil, o.DocumentFormatting != nil, o.DocumentRangeFormatting != nil, o.DocumentOnTypeFormatting != nil, o.Rename != nil, o.ExecuteCommand != nil, o.NotebookDocumentSync != nil, o.DidChangeConfiguration != nil, o.TextDocumentChange != nil, o.TextDocumentSave != nil, o.DidChangeWatchedFiles != nil)
 
-	if o.ImplementationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.ImplementationRegistrationOptions)
+	if o.Implementation != nil {
+		return json.MarshalEncode(enc, o.Implementation)
 	}
-	if o.TypeDefinitionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TypeDefinitionRegistrationOptions)
+	if o.TypeDefinition != nil {
+		return json.MarshalEncode(enc, o.TypeDefinition)
 	}
-	if o.DocumentColorRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentColorRegistrationOptions)
+	if o.DocumentColor != nil {
+		return json.MarshalEncode(enc, o.DocumentColor)
 	}
-	if o.ColorPresentationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.ColorPresentationRegistrationOptions)
+	if o.ColorPresentation != nil {
+		return json.MarshalEncode(enc, o.ColorPresentation)
 	}
-	if o.FoldingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.FoldingRangeRegistrationOptions)
+	if o.FoldingRange != nil {
+		return json.MarshalEncode(enc, o.FoldingRange)
 	}
-	if o.DeclarationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DeclarationRegistrationOptions)
+	if o.Declaration != nil {
+		return json.MarshalEncode(enc, o.Declaration)
 	}
-	if o.SelectionRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.SelectionRangeRegistrationOptions)
+	if o.SelectionRange != nil {
+		return json.MarshalEncode(enc, o.SelectionRange)
 	}
-	if o.CallHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyRegistrationOptions)
+	if o.CallHierarchy != nil {
+		return json.MarshalEncode(enc, o.CallHierarchy)
 	}
-	if o.SemanticTokensRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.SemanticTokensRegistrationOptions)
+	if o.SemanticTokens != nil {
+		return json.MarshalEncode(enc, o.SemanticTokens)
 	}
-	if o.LinkedEditingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.LinkedEditingRangeRegistrationOptions)
+	if o.LinkedEditingRange != nil {
+		return json.MarshalEncode(enc, o.LinkedEditingRange)
 	}
-	if o.FileOperationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.FileOperationRegistrationOptions)
+	if o.FileOperation != nil {
+		return json.MarshalEncode(enc, o.FileOperation)
 	}
-	if o.MonikerRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.MonikerRegistrationOptions)
+	if o.Moniker != nil {
+		return json.MarshalEncode(enc, o.Moniker)
 	}
-	if o.TypeHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TypeHierarchyRegistrationOptions)
+	if o.TypeHierarchy != nil {
+		return json.MarshalEncode(enc, o.TypeHierarchy)
 	}
-	if o.InlineValueRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.InlineValueRegistrationOptions)
+	if o.InlineValue != nil {
+		return json.MarshalEncode(enc, o.InlineValue)
 	}
-	if o.InlayHintRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.InlayHintRegistrationOptions)
+	if o.InlayHint != nil {
+		return json.MarshalEncode(enc, o.InlayHint)
 	}
-	if o.DiagnosticRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DiagnosticRegistrationOptions)
+	if o.Diagnostic != nil {
+		return json.MarshalEncode(enc, o.Diagnostic)
 	}
-	if o.InlineCompletionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.InlineCompletionRegistrationOptions)
+	if o.InlineCompletion != nil {
+		return json.MarshalEncode(enc, o.InlineCompletion)
 	}
-	if o.TextDocumentContentRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TextDocumentContentRegistrationOptions)
+	if o.TextDocumentContent != nil {
+		return json.MarshalEncode(enc, o.TextDocumentContent)
 	}
-	if o.TextDocumentRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TextDocumentRegistrationOptions)
+	if o.TextDocument != nil {
+		return json.MarshalEncode(enc, o.TextDocument)
 	}
-	if o.CompletionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.CompletionRegistrationOptions)
+	if o.Completion != nil {
+		return json.MarshalEncode(enc, o.Completion)
 	}
-	if o.HoverRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.HoverRegistrationOptions)
+	if o.Hover != nil {
+		return json.MarshalEncode(enc, o.Hover)
 	}
-	if o.SignatureHelpRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.SignatureHelpRegistrationOptions)
+	if o.SignatureHelp != nil {
+		return json.MarshalEncode(enc, o.SignatureHelp)
 	}
-	if o.DefinitionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DefinitionRegistrationOptions)
+	if o.Definition != nil {
+		return json.MarshalEncode(enc, o.Definition)
 	}
-	if o.ReferenceRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.ReferenceRegistrationOptions)
+	if o.Reference != nil {
+		return json.MarshalEncode(enc, o.Reference)
 	}
-	if o.DocumentHighlightRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentHighlightRegistrationOptions)
+	if o.DocumentHighlight != nil {
+		return json.MarshalEncode(enc, o.DocumentHighlight)
 	}
-	if o.DocumentSymbolRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentSymbolRegistrationOptions)
+	if o.DocumentSymbol != nil {
+		return json.MarshalEncode(enc, o.DocumentSymbol)
 	}
-	if o.CodeActionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.CodeActionRegistrationOptions)
+	if o.CodeAction != nil {
+		return json.MarshalEncode(enc, o.CodeAction)
 	}
-	if o.WorkspaceSymbolRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.WorkspaceSymbolRegistrationOptions)
+	if o.WorkspaceSymbol != nil {
+		return json.MarshalEncode(enc, o.WorkspaceSymbol)
 	}
-	if o.CodeLensRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.CodeLensRegistrationOptions)
+	if o.CodeLens != nil {
+		return json.MarshalEncode(enc, o.CodeLens)
 	}
-	if o.DocumentLinkRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentLinkRegistrationOptions)
+	if o.DocumentLink != nil {
+		return json.MarshalEncode(enc, o.DocumentLink)
 	}
-	if o.DocumentFormattingRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentFormattingRegistrationOptions)
+	if o.DocumentFormatting != nil {
+		return json.MarshalEncode(enc, o.DocumentFormatting)
 	}
-	if o.DocumentRangeFormattingRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentRangeFormattingRegistrationOptions)
+	if o.DocumentRangeFormatting != nil {
+		return json.MarshalEncode(enc, o.DocumentRangeFormatting)
 	}
-	if o.DocumentOnTypeFormattingRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentOnTypeFormattingRegistrationOptions)
+	if o.DocumentOnTypeFormatting != nil {
+		return json.MarshalEncode(enc, o.DocumentOnTypeFormatting)
 	}
-	if o.RenameRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.RenameRegistrationOptions)
+	if o.Rename != nil {
+		return json.MarshalEncode(enc, o.Rename)
 	}
-	if o.ExecuteCommandRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.ExecuteCommandRegistrationOptions)
+	if o.ExecuteCommand != nil {
+		return json.MarshalEncode(enc, o.ExecuteCommand)
 	}
-	if o.NotebookDocumentSyncRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.NotebookDocumentSyncRegistrationOptions)
+	if o.NotebookDocumentSync != nil {
+		return json.MarshalEncode(enc, o.NotebookDocumentSync)
 	}
-	if o.DidChangeConfigurationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DidChangeConfigurationRegistrationOptions)
+	if o.DidChangeConfiguration != nil {
+		return json.MarshalEncode(enc, o.DidChangeConfiguration)
 	}
-	if o.TextDocumentChangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TextDocumentChangeRegistrationOptions)
+	if o.TextDocumentChange != nil {
+		return json.MarshalEncode(enc, o.TextDocumentChange)
 	}
-	if o.TextDocumentSaveRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TextDocumentSaveRegistrationOptions)
+	if o.TextDocumentSave != nil {
+		return json.MarshalEncode(enc, o.TextDocumentSave)
 	}
-	if o.DidChangeWatchedFilesRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DidChangeWatchedFilesRegistrationOptions)
+	if o.DidChangeWatchedFiles != nil {
+		return json.MarshalEncode(enc, o.DidChangeWatchedFiles)
 	}
 	panic("unreachable")
 }
@@ -23054,204 +23054,204 @@ func (o *RegisterOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	var vImplementationRegistrationOptions ImplementationRegistrationOptions
-	if err := json.Unmarshal(data, &vImplementationRegistrationOptions); err == nil {
-		o.ImplementationRegistrationOptions = &vImplementationRegistrationOptions
+	var vImplementation ImplementationRegistrationOptions
+	if err := json.Unmarshal(data, &vImplementation); err == nil {
+		o.Implementation = &vImplementation
 		return nil
 	}
-	var vTypeDefinitionRegistrationOptions TypeDefinitionRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeDefinitionRegistrationOptions); err == nil {
-		o.TypeDefinitionRegistrationOptions = &vTypeDefinitionRegistrationOptions
+	var vTypeDefinition TypeDefinitionRegistrationOptions
+	if err := json.Unmarshal(data, &vTypeDefinition); err == nil {
+		o.TypeDefinition = &vTypeDefinition
 		return nil
 	}
-	var vDocumentColorRegistrationOptions DocumentColorRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentColorRegistrationOptions); err == nil {
-		o.DocumentColorRegistrationOptions = &vDocumentColorRegistrationOptions
+	var vDocumentColor DocumentColorRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentColor); err == nil {
+		o.DocumentColor = &vDocumentColor
 		return nil
 	}
-	var vColorPresentationRegistrationOptions ColorPresentationRegistrationOptions
-	if err := json.Unmarshal(data, &vColorPresentationRegistrationOptions); err == nil {
-		o.ColorPresentationRegistrationOptions = &vColorPresentationRegistrationOptions
+	var vColorPresentation ColorPresentationRegistrationOptions
+	if err := json.Unmarshal(data, &vColorPresentation); err == nil {
+		o.ColorPresentation = &vColorPresentation
 		return nil
 	}
-	var vFoldingRangeRegistrationOptions FoldingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vFoldingRangeRegistrationOptions); err == nil {
-		o.FoldingRangeRegistrationOptions = &vFoldingRangeRegistrationOptions
+	var vFoldingRange FoldingRangeRegistrationOptions
+	if err := json.Unmarshal(data, &vFoldingRange); err == nil {
+		o.FoldingRange = &vFoldingRange
 		return nil
 	}
-	var vDeclarationRegistrationOptions DeclarationRegistrationOptions
-	if err := json.Unmarshal(data, &vDeclarationRegistrationOptions); err == nil {
-		o.DeclarationRegistrationOptions = &vDeclarationRegistrationOptions
+	var vDeclaration DeclarationRegistrationOptions
+	if err := json.Unmarshal(data, &vDeclaration); err == nil {
+		o.Declaration = &vDeclaration
 		return nil
 	}
-	var vSelectionRangeRegistrationOptions SelectionRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vSelectionRangeRegistrationOptions); err == nil {
-		o.SelectionRangeRegistrationOptions = &vSelectionRangeRegistrationOptions
+	var vSelectionRange SelectionRangeRegistrationOptions
+	if err := json.Unmarshal(data, &vSelectionRange); err == nil {
+		o.SelectionRange = &vSelectionRange
 		return nil
 	}
-	var vCallHierarchyRegistrationOptions CallHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vCallHierarchyRegistrationOptions); err == nil {
-		o.CallHierarchyRegistrationOptions = &vCallHierarchyRegistrationOptions
+	var vCallHierarchy CallHierarchyRegistrationOptions
+	if err := json.Unmarshal(data, &vCallHierarchy); err == nil {
+		o.CallHierarchy = &vCallHierarchy
 		return nil
 	}
-	var vSemanticTokensRegistrationOptions SemanticTokensRegistrationOptions
-	if err := json.Unmarshal(data, &vSemanticTokensRegistrationOptions); err == nil {
-		o.SemanticTokensRegistrationOptions = &vSemanticTokensRegistrationOptions
+	var vSemanticTokens SemanticTokensRegistrationOptions
+	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
+		o.SemanticTokens = &vSemanticTokens
 		return nil
 	}
-	var vLinkedEditingRangeRegistrationOptions LinkedEditingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vLinkedEditingRangeRegistrationOptions); err == nil {
-		o.LinkedEditingRangeRegistrationOptions = &vLinkedEditingRangeRegistrationOptions
+	var vLinkedEditingRange LinkedEditingRangeRegistrationOptions
+	if err := json.Unmarshal(data, &vLinkedEditingRange); err == nil {
+		o.LinkedEditingRange = &vLinkedEditingRange
 		return nil
 	}
-	var vFileOperationRegistrationOptions FileOperationRegistrationOptions
-	if err := json.Unmarshal(data, &vFileOperationRegistrationOptions); err == nil {
-		o.FileOperationRegistrationOptions = &vFileOperationRegistrationOptions
+	var vFileOperation FileOperationRegistrationOptions
+	if err := json.Unmarshal(data, &vFileOperation); err == nil {
+		o.FileOperation = &vFileOperation
 		return nil
 	}
-	var vMonikerRegistrationOptions MonikerRegistrationOptions
-	if err := json.Unmarshal(data, &vMonikerRegistrationOptions); err == nil {
-		o.MonikerRegistrationOptions = &vMonikerRegistrationOptions
+	var vMoniker MonikerRegistrationOptions
+	if err := json.Unmarshal(data, &vMoniker); err == nil {
+		o.Moniker = &vMoniker
 		return nil
 	}
-	var vTypeHierarchyRegistrationOptions TypeHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeHierarchyRegistrationOptions); err == nil {
-		o.TypeHierarchyRegistrationOptions = &vTypeHierarchyRegistrationOptions
+	var vTypeHierarchy TypeHierarchyRegistrationOptions
+	if err := json.Unmarshal(data, &vTypeHierarchy); err == nil {
+		o.TypeHierarchy = &vTypeHierarchy
 		return nil
 	}
-	var vInlineValueRegistrationOptions InlineValueRegistrationOptions
-	if err := json.Unmarshal(data, &vInlineValueRegistrationOptions); err == nil {
-		o.InlineValueRegistrationOptions = &vInlineValueRegistrationOptions
+	var vInlineValue InlineValueRegistrationOptions
+	if err := json.Unmarshal(data, &vInlineValue); err == nil {
+		o.InlineValue = &vInlineValue
 		return nil
 	}
-	var vInlayHintRegistrationOptions InlayHintRegistrationOptions
-	if err := json.Unmarshal(data, &vInlayHintRegistrationOptions); err == nil {
-		o.InlayHintRegistrationOptions = &vInlayHintRegistrationOptions
+	var vInlayHint InlayHintRegistrationOptions
+	if err := json.Unmarshal(data, &vInlayHint); err == nil {
+		o.InlayHint = &vInlayHint
 		return nil
 	}
-	var vDiagnosticRegistrationOptions DiagnosticRegistrationOptions
-	if err := json.Unmarshal(data, &vDiagnosticRegistrationOptions); err == nil {
-		o.DiagnosticRegistrationOptions = &vDiagnosticRegistrationOptions
+	var vDiagnostic DiagnosticRegistrationOptions
+	if err := json.Unmarshal(data, &vDiagnostic); err == nil {
+		o.Diagnostic = &vDiagnostic
 		return nil
 	}
-	var vInlineCompletionRegistrationOptions InlineCompletionRegistrationOptions
-	if err := json.Unmarshal(data, &vInlineCompletionRegistrationOptions); err == nil {
-		o.InlineCompletionRegistrationOptions = &vInlineCompletionRegistrationOptions
+	var vInlineCompletion InlineCompletionRegistrationOptions
+	if err := json.Unmarshal(data, &vInlineCompletion); err == nil {
+		o.InlineCompletion = &vInlineCompletion
 		return nil
 	}
-	var vTextDocumentContentRegistrationOptions TextDocumentContentRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentRegistrationOptions); err == nil {
-		o.TextDocumentContentRegistrationOptions = &vTextDocumentContentRegistrationOptions
+	var vTextDocumentContent TextDocumentContentRegistrationOptions
+	if err := json.Unmarshal(data, &vTextDocumentContent); err == nil {
+		o.TextDocumentContent = &vTextDocumentContent
 		return nil
 	}
-	var vTextDocumentRegistrationOptions TextDocumentRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentRegistrationOptions); err == nil {
-		o.TextDocumentRegistrationOptions = &vTextDocumentRegistrationOptions
+	var vTextDocument TextDocumentRegistrationOptions
+	if err := json.Unmarshal(data, &vTextDocument); err == nil {
+		o.TextDocument = &vTextDocument
 		return nil
 	}
-	var vCompletionRegistrationOptions CompletionRegistrationOptions
-	if err := json.Unmarshal(data, &vCompletionRegistrationOptions); err == nil {
-		o.CompletionRegistrationOptions = &vCompletionRegistrationOptions
+	var vCompletion CompletionRegistrationOptions
+	if err := json.Unmarshal(data, &vCompletion); err == nil {
+		o.Completion = &vCompletion
 		return nil
 	}
-	var vHoverRegistrationOptions HoverRegistrationOptions
-	if err := json.Unmarshal(data, &vHoverRegistrationOptions); err == nil {
-		o.HoverRegistrationOptions = &vHoverRegistrationOptions
+	var vHover HoverRegistrationOptions
+	if err := json.Unmarshal(data, &vHover); err == nil {
+		o.Hover = &vHover
 		return nil
 	}
-	var vSignatureHelpRegistrationOptions SignatureHelpRegistrationOptions
-	if err := json.Unmarshal(data, &vSignatureHelpRegistrationOptions); err == nil {
-		o.SignatureHelpRegistrationOptions = &vSignatureHelpRegistrationOptions
+	var vSignatureHelp SignatureHelpRegistrationOptions
+	if err := json.Unmarshal(data, &vSignatureHelp); err == nil {
+		o.SignatureHelp = &vSignatureHelp
 		return nil
 	}
-	var vDefinitionRegistrationOptions DefinitionRegistrationOptions
-	if err := json.Unmarshal(data, &vDefinitionRegistrationOptions); err == nil {
-		o.DefinitionRegistrationOptions = &vDefinitionRegistrationOptions
+	var vDefinition DefinitionRegistrationOptions
+	if err := json.Unmarshal(data, &vDefinition); err == nil {
+		o.Definition = &vDefinition
 		return nil
 	}
-	var vReferenceRegistrationOptions ReferenceRegistrationOptions
-	if err := json.Unmarshal(data, &vReferenceRegistrationOptions); err == nil {
-		o.ReferenceRegistrationOptions = &vReferenceRegistrationOptions
+	var vReference ReferenceRegistrationOptions
+	if err := json.Unmarshal(data, &vReference); err == nil {
+		o.Reference = &vReference
 		return nil
 	}
-	var vDocumentHighlightRegistrationOptions DocumentHighlightRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentHighlightRegistrationOptions); err == nil {
-		o.DocumentHighlightRegistrationOptions = &vDocumentHighlightRegistrationOptions
+	var vDocumentHighlight DocumentHighlightRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentHighlight); err == nil {
+		o.DocumentHighlight = &vDocumentHighlight
 		return nil
 	}
-	var vDocumentSymbolRegistrationOptions DocumentSymbolRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentSymbolRegistrationOptions); err == nil {
-		o.DocumentSymbolRegistrationOptions = &vDocumentSymbolRegistrationOptions
+	var vDocumentSymbol DocumentSymbolRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentSymbol); err == nil {
+		o.DocumentSymbol = &vDocumentSymbol
 		return nil
 	}
-	var vCodeActionRegistrationOptions CodeActionRegistrationOptions
-	if err := json.Unmarshal(data, &vCodeActionRegistrationOptions); err == nil {
-		o.CodeActionRegistrationOptions = &vCodeActionRegistrationOptions
+	var vCodeAction CodeActionRegistrationOptions
+	if err := json.Unmarshal(data, &vCodeAction); err == nil {
+		o.CodeAction = &vCodeAction
 		return nil
 	}
-	var vWorkspaceSymbolRegistrationOptions WorkspaceSymbolRegistrationOptions
-	if err := json.Unmarshal(data, &vWorkspaceSymbolRegistrationOptions); err == nil {
-		o.WorkspaceSymbolRegistrationOptions = &vWorkspaceSymbolRegistrationOptions
+	var vWorkspaceSymbol WorkspaceSymbolRegistrationOptions
+	if err := json.Unmarshal(data, &vWorkspaceSymbol); err == nil {
+		o.WorkspaceSymbol = &vWorkspaceSymbol
 		return nil
 	}
-	var vCodeLensRegistrationOptions CodeLensRegistrationOptions
-	if err := json.Unmarshal(data, &vCodeLensRegistrationOptions); err == nil {
-		o.CodeLensRegistrationOptions = &vCodeLensRegistrationOptions
+	var vCodeLens CodeLensRegistrationOptions
+	if err := json.Unmarshal(data, &vCodeLens); err == nil {
+		o.CodeLens = &vCodeLens
 		return nil
 	}
-	var vDocumentLinkRegistrationOptions DocumentLinkRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentLinkRegistrationOptions); err == nil {
-		o.DocumentLinkRegistrationOptions = &vDocumentLinkRegistrationOptions
+	var vDocumentLink DocumentLinkRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentLink); err == nil {
+		o.DocumentLink = &vDocumentLink
 		return nil
 	}
-	var vDocumentFormattingRegistrationOptions DocumentFormattingRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentFormattingRegistrationOptions); err == nil {
-		o.DocumentFormattingRegistrationOptions = &vDocumentFormattingRegistrationOptions
+	var vDocumentFormatting DocumentFormattingRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentFormatting); err == nil {
+		o.DocumentFormatting = &vDocumentFormatting
 		return nil
 	}
-	var vDocumentRangeFormattingRegistrationOptions DocumentRangeFormattingRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentRangeFormattingRegistrationOptions); err == nil {
-		o.DocumentRangeFormattingRegistrationOptions = &vDocumentRangeFormattingRegistrationOptions
+	var vDocumentRangeFormatting DocumentRangeFormattingRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentRangeFormatting); err == nil {
+		o.DocumentRangeFormatting = &vDocumentRangeFormatting
 		return nil
 	}
-	var vDocumentOnTypeFormattingRegistrationOptions DocumentOnTypeFormattingRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentOnTypeFormattingRegistrationOptions); err == nil {
-		o.DocumentOnTypeFormattingRegistrationOptions = &vDocumentOnTypeFormattingRegistrationOptions
+	var vDocumentOnTypeFormatting DocumentOnTypeFormattingRegistrationOptions
+	if err := json.Unmarshal(data, &vDocumentOnTypeFormatting); err == nil {
+		o.DocumentOnTypeFormatting = &vDocumentOnTypeFormatting
 		return nil
 	}
-	var vRenameRegistrationOptions RenameRegistrationOptions
-	if err := json.Unmarshal(data, &vRenameRegistrationOptions); err == nil {
-		o.RenameRegistrationOptions = &vRenameRegistrationOptions
+	var vRename RenameRegistrationOptions
+	if err := json.Unmarshal(data, &vRename); err == nil {
+		o.Rename = &vRename
 		return nil
 	}
-	var vExecuteCommandRegistrationOptions ExecuteCommandRegistrationOptions
-	if err := json.Unmarshal(data, &vExecuteCommandRegistrationOptions); err == nil {
-		o.ExecuteCommandRegistrationOptions = &vExecuteCommandRegistrationOptions
+	var vExecuteCommand ExecuteCommandRegistrationOptions
+	if err := json.Unmarshal(data, &vExecuteCommand); err == nil {
+		o.ExecuteCommand = &vExecuteCommand
 		return nil
 	}
-	var vNotebookDocumentSyncRegistrationOptions NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncRegistrationOptions); err == nil {
-		o.NotebookDocumentSyncRegistrationOptions = &vNotebookDocumentSyncRegistrationOptions
+	var vNotebookDocumentSync NotebookDocumentSyncRegistrationOptions
+	if err := json.Unmarshal(data, &vNotebookDocumentSync); err == nil {
+		o.NotebookDocumentSync = &vNotebookDocumentSync
 		return nil
 	}
-	var vDidChangeConfigurationRegistrationOptions DidChangeConfigurationRegistrationOptions
-	if err := json.Unmarshal(data, &vDidChangeConfigurationRegistrationOptions); err == nil {
-		o.DidChangeConfigurationRegistrationOptions = &vDidChangeConfigurationRegistrationOptions
+	var vDidChangeConfiguration DidChangeConfigurationRegistrationOptions
+	if err := json.Unmarshal(data, &vDidChangeConfiguration); err == nil {
+		o.DidChangeConfiguration = &vDidChangeConfiguration
 		return nil
 	}
-	var vTextDocumentChangeRegistrationOptions TextDocumentChangeRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentChangeRegistrationOptions); err == nil {
-		o.TextDocumentChangeRegistrationOptions = &vTextDocumentChangeRegistrationOptions
+	var vTextDocumentChange TextDocumentChangeRegistrationOptions
+	if err := json.Unmarshal(data, &vTextDocumentChange); err == nil {
+		o.TextDocumentChange = &vTextDocumentChange
 		return nil
 	}
-	var vTextDocumentSaveRegistrationOptions TextDocumentSaveRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentSaveRegistrationOptions); err == nil {
-		o.TextDocumentSaveRegistrationOptions = &vTextDocumentSaveRegistrationOptions
+	var vTextDocumentSave TextDocumentSaveRegistrationOptions
+	if err := json.Unmarshal(data, &vTextDocumentSave); err == nil {
+		o.TextDocumentSave = &vTextDocumentSave
 		return nil
 	}
-	var vDidChangeWatchedFilesRegistrationOptions DidChangeWatchedFilesRegistrationOptions
-	if err := json.Unmarshal(data, &vDidChangeWatchedFilesRegistrationOptions); err == nil {
-		o.DidChangeWatchedFilesRegistrationOptions = &vDidChangeWatchedFilesRegistrationOptions
+	var vDidChangeWatchedFiles DidChangeWatchedFilesRegistrationOptions
+	if err := json.Unmarshal(data, &vDidChangeWatchedFiles); err == nil {
+		o.DidChangeWatchedFiles = &vDidChangeWatchedFiles
 		return nil
 	}
 	return fmt.Errorf("invalid RegisterOptions: %s", data)
