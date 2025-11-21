@@ -1,38 +1,126 @@
 import * as cp from "child_process";
 import * as fs from "fs";
 import path from "path";
+import * as readline from "readline";
 import which from "which";
 import { main as convertFourslash } from "./convertFourslash.mts";
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
 
-function main() {
+interface TestEvent {
+    Time?: string;
+    Action: string;
+    Package?: string;
+    Test?: string;
+    Output?: string;
+    Elapsed?: number;
+}
+
+async function main() {
     const oldFailingTests = fs.readFileSync(failingTestsPath, "utf-8");
     fs.writeFileSync(failingTestsPath, "", "utf-8");
     convertFourslash();
     const go = which.sync("go");
-    let testOutput: string;
+
+    let testProcess: cp.ChildProcess;
     try {
-        testOutput = cp.execFileSync(go, ["test", "./internal/fourslash/tests/gen"], { encoding: "utf-8" });
+        testProcess = cp.spawn(go, ["test", "-json", "./internal/fourslash/tests/gen"], {
+            stdio: ["ignore", "pipe", "pipe"],
+        });
     }
     catch (error) {
-        testOutput = (error as { stdout: string; }).stdout as string;
-    }
-    const panicRegex = /^panic/m;
-    if (panicRegex.test(testOutput)) {
         fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
-        throw new Error("Unrecovered panic detected in tests");
+        throw new Error("Failed to spawn test process: " + error);
     }
-    const failRegex = /--- FAIL: ([\S]+)/gm;
+
+    if (!testProcess.stdout || !testProcess.stderr) {
+        fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
+        throw new Error("Test process stdout or stderr is null");
+    }
+
     const failingTests: string[] = [];
-    let match;
+    const testOutputs = new Map<string, string[]>();
+    let hadPanic = false;
 
-    while ((match = failRegex.exec(testOutput)) !== null) {
-        failingTests.push(match[1]);
-    }
+    const rl = readline.createInterface({
+        input: testProcess.stdout,
+        crlfDelay: Infinity,
+    });
 
-    fs.writeFileSync(failingTestsPath, failingTests.sort((a, b) => a.localeCompare(b, "en-US")).join("\n") + "\n", "utf-8");
-    convertFourslash();
+    rl.on("line", line => {
+        try {
+            const event: TestEvent = JSON.parse(line);
+
+            // Collect output for each test
+            if (event.Action === "output" && event.Test && event.Output) {
+                if (!testOutputs.has(event.Test)) {
+                    testOutputs.set(event.Test, []);
+                }
+                testOutputs.get(event.Test)!.push(event.Output);
+
+                // Check for panics
+                if (/^panic/m.test(event.Output)) {
+                    hadPanic = true;
+                }
+            }
+
+            // Process failed tests
+            if (event.Action === "fail" && event.Test) {
+                const outputs = testOutputs.get(event.Test) || [];
+                const fullOutput = outputs.join("");
+
+                // Check if this is a baseline-only failure
+                // Baseline failures contain specific messages from baseline.go
+                const hasBaselineMessage = /new baseline created at/.test(fullOutput) ||
+                    /the baseline file .* has changed/.test(fullOutput);
+
+                // Check for non-baseline errors
+                // Look for patterns that indicate real test failures
+                const hasNonBaselineError = /^panic/m.test(fullOutput) ||
+                    /FAIL:/.test(fullOutput.replace(/^--- FAIL: /mg, "")) || // Ignore the top-level FAIL line
+                    /Error|error/.test(fullOutput.replace(/the baseline file .* has changed/g, "").replace(/new baseline created at/g, "")) ||
+                    /fatal|Fatal/.test(fullOutput);
+
+                // Only mark as failing if it's not a baseline-only failure
+                if (!hasBaselineMessage || hasNonBaselineError) {
+                    failingTests.push(event.Test);
+                }
+            }
+        }
+        catch (e) {
+            // Not JSON, possibly stderr or other output - ignore
+        }
+    });
+
+    testProcess.stderr.on("data", data => {
+        // Check stderr for panics too
+        const output = data.toString();
+        if (/^panic/m.test(output)) {
+            hadPanic = true;
+        }
+    });
+
+    await new Promise<void>((resolve, reject) => {
+        testProcess.on("close", code => {
+            if (hadPanic) {
+                fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
+                reject(new Error("Unrecovered panic detected in tests"));
+                return;
+            }
+
+            fs.writeFileSync(failingTestsPath, failingTests.sort((a, b) => a.localeCompare(b, "en-US")).join("\n") + "\n", "utf-8");
+            convertFourslash();
+            resolve();
+        });
+
+        testProcess.on("error", error => {
+            fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
+            reject(error);
+        });
+    });
 }
 
-main();
+main().catch(error => {
+    console.error("Error:", error);
+    process.exit(1);
+});
