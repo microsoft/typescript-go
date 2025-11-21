@@ -231,6 +231,9 @@ function patchAndPreprocessModel() {
             structure.properties = structure.properties.filter(p => p.name !== "experimental");
         }
     }
+
+    // Remove _InitializeParams structure after flattening (it was only needed for inheritance)
+    model.structures = model.structures.filter(s => s.name !== "_InitializeParams");
 }
 
 patchAndPreprocessModel();

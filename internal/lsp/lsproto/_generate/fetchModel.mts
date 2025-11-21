@@ -14,8 +14,7 @@ const metaModelURL = `https://raw.githubusercontent.com/microsoft/vscode-languag
 const metaModelSchemaURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${hash}/tools/src/metaModel.ts`;
 
 const metaModelResponse = await fetch(metaModelURL);
-let metaModel = await metaModelResponse.text();
-metaModel = metaModel.replaceAll('"_InitializeParams"', '"InitializeParamsBase"');
+const metaModel = await metaModelResponse.text();
 fs.writeFileSync(metaModelPath, metaModel);
 
 const metaModelSchemaResponse = await fetch(metaModelSchemaURL);
