@@ -426,7 +426,9 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 
-	locations := core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntriesToLocations)
+	locations := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
+		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
+	})
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
@@ -543,8 +545,40 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 }
 
 // == functions for conversions ==
-func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries) []lsproto.Location {
-	return l.convertEntriesToLocations(s.references)
+func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool) []lsproto.Location {
+	references := s.references
+
+	if !includeDeclarations && s.definition != nil {
+		references = core.Filter(references, func(entry *ReferenceEntry) bool {
+			return !isDeclarationOfSymbol(entry.node, s.definition.symbol)
+		})
+	}
+
+	return l.convertEntriesToLocations(references)
+}
+
+func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
+	if target == nil {
+		return false
+	}
+
+	var source *ast.Node
+	if decl := ast.GetDeclarationFromName(node); decl != nil {
+		source = decl
+	} else if node.Kind == ast.KindDefaultKeyword {
+		source = node.Parent
+	} else if ast.IsLiteralComputedPropertyDeclarationName(node) {
+		source = node.Parent.Parent
+	} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructorDeclaration(node.Parent) {
+		source = node.Parent.Parent
+	}
+
+	// !!!
+	// const commonjsSource = source && isBinaryExpression(source) ? source.left as unknown as Declaration : undefined;
+
+	return source != nil && core.Some(target.Declarations, func(decl *ast.Node) bool {
+		return decl == source
+	})
 }
 
 func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
