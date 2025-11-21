@@ -5,3 +5,6 @@ completionsWithDeprecatedTag4
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
+completionsImportDefaultExportCrash2
+completionsImport_reExportDefault
+completionsImport_reexportTransient
