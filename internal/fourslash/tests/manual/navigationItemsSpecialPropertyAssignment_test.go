@@ -17,7 +17,7 @@ func TestNavigationItemsSpecialPropertyAssignment(t *testing.T) {
 // @allowJs: true
 // @Filename: /a.js
 [|exports.x = 0|];
-[|exports.y = function() {}|];
+[|exports.z = function() {}|];
 function Cls() {
     [|this.instanceProp = 0|];
 }
@@ -37,12 +37,12 @@ function Cls() {
 				},
 			}),
 		}, {
-			Pattern:     "y",
+			Pattern:     "z",
 			Preferences: nil,
 			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
-					Name:     "y",
-					Kind:     lsproto.SymbolKindFunction,
+					Name:     "z",
+					Kind:     lsproto.SymbolKindVariable,
 					Location: f.Ranges()[1].LSLocation(),
 				},
 			}),
@@ -63,7 +63,7 @@ function Cls() {
 			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "staticMethod",
-					Kind:     lsproto.SymbolKindMethod,
+					Kind:     lsproto.SymbolKindProperty,
 					Location: f.Ranges()[3].LSLocation(),
 				},
 			}),
@@ -83,7 +83,7 @@ function Cls() {
 			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "instanceMethod",
-					Kind:     lsproto.SymbolKindMethod,
+					Kind:     lsproto.SymbolKindProperty,
 					Location: f.Ranges()[5].LSLocation(),
 				},
 			}),

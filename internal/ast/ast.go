@@ -11074,6 +11074,12 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					}
 				}
 			}
+		case KindBinaryExpression:
+			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
+				addDeclaration(node)
+			}
+			node.ForEachChild(visit)
 		default:
 			node.ForEachChild(visit)
 		}

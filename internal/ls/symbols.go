@@ -376,6 +376,11 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 			return lsproto.SymbolKindProperty
 		}
 		return lsproto.SymbolKindVariable
+	case ast.KindBinaryExpression:
+		switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+		case ast.JSDeclarationKindThisProperty, ast.JSDeclarationKindProperty:
+			return lsproto.SymbolKindProperty
+		}
 	}
 	return lsproto.SymbolKindVariable
 }
