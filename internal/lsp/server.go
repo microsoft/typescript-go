@@ -891,10 +891,7 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
-	data, err := ls.GetCompletionItemData(params)
-	if err != nil {
-		return nil, err
-	}
+	data := params.Data
 	languageService, err := s.session.GetLanguageService(ctx, lsconv.FileNameToDocumentURI(data.FileName))
 	if err != nil {
 		return nil, err

@@ -43,7 +43,142 @@ const customStructures: Structure[] = [
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
+    {
+        name: "ExportInfoMapKey",
+        properties: [
+            {
+                name: "symbolName",
+                type: { kind: "base", name: "string" },
+                documentation: "The symbol name.",
+            },
+            {
+                name: "symbolId",
+                type: { kind: "reference", name: "uint64" },
+                documentation: "The symbol ID.",
+            },
+            {
+                name: "ambientModuleName",
+                type: { kind: "base", name: "string" },
+                documentation: "The ambient module name.",
+            },
+            {
+                name: "moduleFile",
+                type: { kind: "base", name: "string" },
+                documentation: "The module file path.",
+            },
+        ],
+        documentation: "ExportInfoMapKey uniquely identifies an export for auto-import purposes.",
+    },
+    {
+        name: "AutoImportData",
+        properties: [
+            {
+                name: "exportName",
+                type: { kind: "base", name: "string" },
+                documentation: "The name of the property or export in the module's symbol table. Differs from the completion name in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.",
+            },
+            {
+                name: "exportMapKey",
+                type: { kind: "reference", name: "ExportInfoMapKey" },
+                documentation: "The export map key for this auto-import.",
+            },
+            {
+                name: "moduleSpecifier",
+                type: { kind: "base", name: "string" },
+                documentation: "The module specifier for this auto-import.",
+            },
+            {
+                name: "fileName",
+                type: { kind: "base", name: "string" },
+                documentation: "The file name declaring the export's module symbol, if it was an external module.",
+            },
+            {
+                name: "ambientModuleName",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The module name (with quotes stripped) of the export's module symbol, if it was an ambient module.",
+            },
+            {
+                name: "isPackageJsonImport",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "True if the export was found in the package.json AutoImportProvider.",
+            },
+        ],
+        documentation: "AutoImportData contains information about an auto-import suggestion.",
+    },
+    {
+        name: "CompletionItemData",
+        properties: [
+            {
+                name: "fileName",
+                type: { kind: "base", name: "string" },
+                documentation: "The file name where the completion was requested.",
+            },
+            {
+                name: "position",
+                type: { kind: "base", name: "integer" },
+                documentation: "The position where the completion was requested.",
+            },
+            {
+                name: "source",
+                type: { kind: "base", name: "string" },
+                documentation: "Special source value for disambiguation.",
+            },
+            {
+                name: "name",
+                type: { kind: "base", name: "string" },
+                documentation: "The name of the completion item.",
+            },
+            {
+                name: "autoImport",
+                type: { kind: "reference", name: "AutoImportData" },
+                optional: true,
+                documentation: "Auto-import data for this completion item.",
+            },
+        ],
+        documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
+    },
 ];
+
+// Track which custom Data structures were declared explicitly
+const explicitDataStructures = new Set(customStructures.map(s => s.name));
+
+// Patch the model to use custom types
+function patchModel() {
+    // Track which Data types we need to create as placeholders
+    const neededDataStructures = new Set<string>();
+
+    for (const structure of model.structures) {
+        for (const prop of structure.properties) {
+            // Replace initializationOptions type with custom InitializationOptions
+            if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                prop.type = { kind: "reference", name: "InitializationOptions" };
+            }
+
+            // Replace Data *any fields with custom typed Data fields
+            if (prop.name === "data" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                const customDataType = `${structure.name}Data`;
+                prop.type = { kind: "reference", name: customDataType };
+
+                // If we haven't explicitly declared this Data structure, we'll need a placeholder
+                if (!explicitDataStructures.has(customDataType)) {
+                    neededDataStructures.add(customDataType);
+                }
+            }
+        }
+    }
+
+    // Create placeholder structures for Data types that weren't explicitly declared
+    for (const dataTypeName of neededDataStructures) {
+        const baseName = dataTypeName.replace(/Data$/, "");
+        customStructures.push({
+            name: dataTypeName,
+            properties: [],
+            documentation: `${dataTypeName} is a placeholder for custom data preserved on a ${baseName}.`,
+        });
+    }
+}
 
 // Preprocess the model to inline extends/mixins contents
 function preprocessModel() {
@@ -92,22 +227,10 @@ function preprocessModel() {
     }
 }
 
-// Add custom structures to the model
-model.structures.unshift(...customStructures);
-
-// Patch the model to use custom types
-function patchModel() {
-    for (const structure of model.structures) {
-        for (const prop of structure.properties) {
-            // Replace initializationOptions type with custom InitializationOptions
-            if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                prop.type = { kind: "reference", name: "InitializationOptions" };
-            }
-        }
-    }
-}
-
 patchModel();
+
+// Add custom structures to the model (including any placeholders created during patching)
+model.structures.push(...customStructures);
 
 // Preprocess the model before proceeding
 preprocessModel();
@@ -410,6 +533,7 @@ const typeAliasOverrides = new Map([
     ["LSPAny", { name: "any", needsPointer: false }],
     ["LSPArray", { name: "[]any", needsPointer: false }],
     ["LSPObject", { name: "map[string]any", needsPointer: false }],
+    ["uint64", { name: "uint64", needsPointer: false }],
 ]);
 
 /**
@@ -435,6 +559,7 @@ function collectTypeDefinitions() {
         "VersionedNotebookDocumentIdentifier",
         "VersionedTextDocumentIdentifier",
         "OptionalVersionedTextDocumentIdentifier",
+        "ExportInfoMapKey",
     ]);
 
     // Process all structures
