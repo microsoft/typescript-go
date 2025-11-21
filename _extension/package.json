@@ -91,6 +91,11 @@
                 "title": "Report Issue",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "TypeScript Native Preview"
+            },
+            {
+                "title": "Show References of CodeLens",
+                "command": "typescript.codeLens.showLocations",
+                "enablement": "false"
             }
         ]
     },
