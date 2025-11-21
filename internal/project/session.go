@@ -372,6 +372,38 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 	}
 }
 
+func (s *Session) GetUpdatedSnapshot(ctx context.Context) (*Snapshot, func()) {
+	var snapshot *Snapshot
+	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
+	if updateSnapshot {
+		// If there are pending file changes, we need to update the snapshot.
+		// Sending the requested URI ensures that the project for this URI is loaded.
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:      UpdateReasonRequestedLanguageServicePendingChanges,
+			fileChanges: fileChanges,
+			ataChanges:  ataChanges,
+			newConfig:   newConfig,
+		})
+	} else {
+		// If there are no pending file changes, we can try to use the current snapshot.
+		s.snapshotMu.RLock()
+		snapshot = s.snapshot
+		s.snapshotMu.RUnlock()
+	}
+	return snapshot, func() {
+		if snapshot.Deref() {
+			// The session itself accounts for one reference to the snapshot, and it derefs
+			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end
+			// up here is for an external caller to release the snapshot after the session
+			// has already dereferenced it and moved to a new snapshot. In other words, we
+			// can assume that `snapshot != s.snapshot`, and therefor there's no way for
+			// anyone else to acquire a reference to this snapshot again.
+			snapshot.dispose(s)
+		}
+	}
+}
+
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)

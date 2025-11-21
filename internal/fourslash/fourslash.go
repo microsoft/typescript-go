@@ -2467,7 +2467,7 @@ func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
 func (f *FourslashTest) VerifyBaselineInlayHints(
 	t *testing.T,
 	span *lsproto.Range,
-	userPreferences *lsutil.UserPreferences,
+	testPreferences *lsutil.UserPreferences,
 ) {
 	fileName := f.activeFilename
 	var lspRange lsproto.Range
@@ -2482,10 +2482,12 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		Range:        lspRange,
 	}
 
-	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, userPreferences)
-		defer reset()
+	preferences := testPreferences
+	if preferences == nil {
+		preferences = lsutil.NewDefaultUserPreferences()
 	}
+	reset := f.ConfigureWithReset(t, testPreferences)
+	defer reset()
 
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
@@ -2824,16 +2826,22 @@ func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNam
 }
 
 type VerifyWorkspaceSymbolCase struct {
+	Pattern     string
 	Includes    []*lsproto.SymbolInformation // !!! HERE: fourslash.Range instead of Location
 	Preferences *lsutil.UserPreferences
 }
 
 // `verify.navigateTo` in Strada.
 func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
-	var configReset func()
+	originalPreferences := f.userPreferences.Copy()
 	for _, testCase := range cases {
-		configReset = f.ConfigureWithReset(t, testCase.Preferences)
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{})
+		preferences := testCase.Preferences
+		if preferences == nil {
+			preferences = lsutil.NewDefaultUserPreferences()
+		}
+		f.Configure(t, preferences)
+		resMsg, result, resultOk :=
+			sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
 		if resMsg == nil {
 			t.Fatalf("Nil response received for workspace symbol request")
 		}
@@ -2843,9 +2851,9 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
 		}
-		verifyIncludesSymbols(t, *result.SymbolInformations, testCase.Includes, "Workspace symbols mismatch")
+		verifyIncludesSymbols(t, *result.SymbolInformations, testCase.Includes, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
 	}
-	configReset()
+	f.Configure(t, originalPreferences)
 }
 
 func verifyIncludesSymbols(
@@ -2854,16 +2862,17 @@ func verifyIncludesSymbols(
 	includes []*lsproto.SymbolInformation,
 	prefix string,
 ) {
-	nameToActualSymbol := make(map[string]*lsproto.SymbolInformation, len(actual))
-	for _, sym := range actual {
-		nameToActualSymbol[sym.Name] = sym
-	}
+	assertDeepEqual(t, actual, includes, prefix)
+	// nameToActualSymbol := make(map[string]*lsproto.SymbolInformation, len(actual))
+	// for _, sym := range actual {
+	// 	nameToActualSymbol[sym.Name] = sym
+	// }
 
-	for _, sym := range includes {
-		actualSym, ok := nameToActualSymbol[sym.Name]
-		if !ok {
-			t.Fatalf("%s: Expected symbol '%s' not found", prefix, sym.Name)
-		}
-		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' mismatch", prefix, sym.Name))
-	}
+	// for _, sym := range includes {
+	// 	actualSym, ok := nameToActualSymbol[sym.Name]
+	// 	if !ok {
+	// 		t.Fatalf("%s: Expected symbol '%s' not found", prefix, sym.Name)
+	// 	}
+	// 	assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' mismatch", prefix, sym.Name))
+	// }
 }

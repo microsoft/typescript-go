@@ -938,11 +938,16 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
-	snapshot, release := s.session.Snapshot()
+	snapshot, release := s.session.GetUpdatedSnapshot(ctx)
 	defer release()
 	defer s.recover(reqMsg)
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
-	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
+	return ls.ProvideWorkspaceSymbols(
+		ctx,
+		programs,
+		snapshot.Converters(),
+		snapshot.UserPreferences(),
+		params.Query)
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {

@@ -32,6 +32,7 @@ var [|point = new Shapes.Point()|];
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "point",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -47,6 +48,7 @@ var [|point = new Shapes.Point()|];
 				},
 			},
 		}, {
+			Pattern:     "distance",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -80,6 +82,7 @@ var [|point = new Shapes.Point()|];
 				},
 			},
 		}, {
+			Pattern:     "origin",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -90,6 +93,7 @@ var [|point = new Shapes.Point()|];
 				},
 			},
 		}, {
+			Pattern:     "square",
 			Preferences: nil,
 			Includes:    []*lsproto.SymbolInformation{},
 		},

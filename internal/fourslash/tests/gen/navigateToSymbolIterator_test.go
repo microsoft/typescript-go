@@ -19,6 +19,7 @@ func TestNavigateToSymbolIterator(t *testing.T) {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "iterator",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{

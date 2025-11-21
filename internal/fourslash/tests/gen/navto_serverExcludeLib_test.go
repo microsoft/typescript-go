@@ -4,8 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -24,8 +23,10 @@ export const [|weirdName: number|];
 // @Filename: /home/src/workspaces/project/node_modules/bar/package.json
 {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "weirdName",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -43,7 +44,8 @@ export const [|weirdName: number|];
 	})
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
-			Preferences: &ls.UserPreferences{ExcludeLibrarySymbols: PtrTo(true)},
+			Pattern:     "weirdName",
+			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true},
 			Includes: []*lsproto.SymbolInformation{
 				{
 					Name:     "weirdName",

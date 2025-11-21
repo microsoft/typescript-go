@@ -35,6 +35,7 @@ function PointsFunc(): void {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "origin",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -56,6 +57,7 @@ function PointsFunc(): void {
 				},
 			},
 		}, {
+			Pattern:     "distance",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -84,6 +86,7 @@ function PointsFunc(): void {
 				},
 			},
 		}, {
+			Pattern:     "mPointThatIJustInitiated wrongKeyWord",
 			Preferences: nil,
 			Includes:    []*lsproto.SymbolInformation{},
 		},

@@ -4,8 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -22,7 +21,8 @@ export const someOtherName: string;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
-			Preferences: &ls.UserPreferences{ExcludeLibrarySymbols: PtrTo(true)},
+			Pattern:     "some",
+			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true},
 			Includes: []*lsproto.SymbolInformation{
 				{
 					Name:     "someName",

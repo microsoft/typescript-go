@@ -1826,6 +1826,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
     }
     let prefs;
     const items = [];
+    let pattern: string | undefined;
     for (const prop of arg.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
             console.error(`Expected property assignment with identifier name for verify.navigateTo argument, got ${prop.getText()}`);
@@ -1833,7 +1834,15 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
         }
         const propName = prop.name.text;
         switch (propName) {
-            case "pattern":
+            case "pattern": {
+                let patternInit = getStringLiteralLike(prop.initializer);
+                if (!patternInit) {
+                    console.error(`Expected string literal for pattern in verify.navigateTo argument, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                pattern = getGoStringLiteral(patternInit.text);
+                break;
+            }
             case "fileName":
                 // no longer supported
                 continue;
@@ -1854,7 +1863,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
             }
             case "excludeLibFiles": {
                 if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
-                    prefs = `&ls.UserPreferences{ExcludeLibrarySymbols: PtrTo(true)}`
+                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true}`
                 }
             }
         }
@@ -1863,6 +1872,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
         prefs = "nil";
     }
     return `{
+        Pattern: ${pattern ? pattern : '""'},
         Preferences: ${prefs},
         Includes: []*lsproto.SymbolInformation{${items.length ? items.join(",\n") + ",\n" : ""}},
     }`

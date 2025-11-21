@@ -10983,7 +10983,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	result := make(map[string][]*Node)
 
 	addDeclaration := func(declaration *Node) {
-		name := getDeclarationName(declaration)
+		name := GetDeclarationName(declaration)
 		if name != "" {
 			result[name] = append(result[name], declaration)
 		}
@@ -10993,7 +10993,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	visit = func(node *Node) bool {
 		switch node.Kind {
 		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
-			declarationName := getDeclarationName(node)
+			declarationName := GetDeclarationName(node)
 			if declarationName != "" {
 				declarations := result[declarationName]
 				var lastDeclaration *Node
@@ -11083,7 +11083,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	return result
 }
 
-func getDeclarationName(declaration *Node) string {
+func GetDeclarationName(declaration *Node) string {
 	name := GetNonAssignedNameOfDeclaration(declaration)
 	if name != nil {
 		if IsComputedPropertyName(name) {

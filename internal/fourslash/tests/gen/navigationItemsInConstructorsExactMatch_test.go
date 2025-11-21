@@ -22,6 +22,7 @@ class Test {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "search",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{

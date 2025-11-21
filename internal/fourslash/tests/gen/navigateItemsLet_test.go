@@ -21,6 +21,7 @@ function foo() {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "c",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -30,6 +31,7 @@ function foo() {
 				},
 			},
 		}, {
+			Pattern:     "d",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{

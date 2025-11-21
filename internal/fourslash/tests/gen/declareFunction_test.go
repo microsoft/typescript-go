@@ -17,6 +17,7 @@ declare function`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "",
 			Preferences: nil,
 			Includes:    []*lsproto.SymbolInformation{},
 		},

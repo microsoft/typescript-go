@@ -20,6 +20,7 @@ import {foo, [|bar as baz|]} from './library';`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "foo",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -29,6 +30,7 @@ import {foo, [|bar as baz|]} from './library';`
 				},
 			},
 		}, {
+			Pattern:     "bar",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -38,6 +40,7 @@ import {foo, [|bar as baz|]} from './library';`
 				},
 			},
 		}, {
+			Pattern:     "baz",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{

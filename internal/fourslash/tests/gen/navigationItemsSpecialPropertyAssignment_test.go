@@ -27,6 +27,7 @@ function Cls() {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
+			Pattern:     "x",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -36,6 +37,7 @@ function Cls() {
 				},
 			},
 		}, {
+			Pattern:     "y",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -45,6 +47,7 @@ function Cls() {
 				},
 			},
 		}, {
+			Pattern:     "instanceProp",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -55,6 +58,7 @@ function Cls() {
 				},
 			},
 		}, {
+			Pattern:     "staticMethod",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -64,6 +68,7 @@ function Cls() {
 				},
 			},
 		}, {
+			Pattern:     "staticProperty",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
@@ -73,6 +78,7 @@ function Cls() {
 				},
 			},
 		}, {
+			Pattern:     "instanceMethod",
 			Preferences: nil,
 			Includes: []*lsproto.SymbolInformation{
 				{
