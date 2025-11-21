@@ -1153,7 +1153,9 @@ function generateCode() {
                     const minVal = runs[0].values[0];
                     writeLine(`func (e ${enumeration.name}) String() string {`);
                     writeLine(`\ti := int(e) - ${minVal}`);
-                    writeLine(`\tif e < ${minVal} || i >= len(${indexVar})-1 {`);
+                    // For unsigned types, i can still be negative if e < minVal (due to underflow in conversion)
+                    // So we always need to check both bounds
+                    writeLine(`\tif i < 0 || i >= len(${indexVar})-1 {`);
                     writeLine(`\t\treturn fmt.Sprintf("${enumeration.name}(%d)", e)`);
                     writeLine(`\t}`);
                     writeLine(`\treturn ${nameConst}[${indexVar}[i]:${indexVar}[i+1]]`);
@@ -1204,8 +1206,11 @@ function generateCode() {
                             writeLine(`\t\treturn ${nameConst}[${info.startOffset}:${info.endOffset}]`);
                         }
                         else {
-                            if (info.minVal === 0) {
+                            if (info.minVal === 0 && baseType.startsWith("uint")) {
                                 writeLine(`\tcase e <= ${info.maxVal}:`);
+                            }
+                            else if (info.minVal === 0) {
+                                writeLine(`\tcase 0 <= e && e <= ${info.maxVal}:`);
                             }
                             else {
                                 writeLine(`\tcase ${info.minVal} <= e && e <= ${info.maxVal}:`);

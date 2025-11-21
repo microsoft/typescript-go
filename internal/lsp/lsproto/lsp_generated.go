@@ -21814,7 +21814,7 @@ var _LSPErrorCodes_index = [...]uint16{0, 13, 28, 43, 59}
 
 func (e LSPErrorCodes) String() string {
 	i := int(e) - -32803
-	if e < -32803 || i >= len(_LSPErrorCodes_index)-1 {
+	if i < 0 || i >= len(_LSPErrorCodes_index)-1 {
 		return fmt.Sprintf("LSPErrorCodes(%d)", e)
 	}
 	return _LSPErrorCodes_name[_LSPErrorCodes_index[i]:_LSPErrorCodes_index[i+1]]
@@ -21870,7 +21870,7 @@ var _SymbolKind_index = [...]uint16{0, 4, 10, 19, 26, 31, 37, 45, 50, 61, 65, 74
 
 func (e SymbolKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_SymbolKind_index)-1 {
+	if i < 0 || i >= len(_SymbolKind_index)-1 {
 		return fmt.Sprintf("SymbolKind(%d)", e)
 	}
 	return _SymbolKind_name[_SymbolKind_index[i]:_SymbolKind_index[i+1]]
@@ -21892,7 +21892,7 @@ var _SymbolTag_index = [...]uint16{0, 10}
 
 func (e SymbolTag) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_SymbolTag_index)-1 {
+	if i < 0 || i >= len(_SymbolTag_index)-1 {
 		return fmt.Sprintf("SymbolTag(%d)", e)
 	}
 	return _SymbolTag_name[_SymbolTag_index[i]:_SymbolTag_index[i+1]]
@@ -21949,7 +21949,7 @@ var _InlayHintKind_index = [...]uint16{0, 4, 13}
 
 func (e InlayHintKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_InlayHintKind_index)-1 {
+	if i < 0 || i >= len(_InlayHintKind_index)-1 {
 		return fmt.Sprintf("InlayHintKind(%d)", e)
 	}
 	return _InlayHintKind_name[_InlayHintKind_index[i]:_InlayHintKind_index[i+1]]
@@ -21981,7 +21981,7 @@ var _MessageType_index = [...]uint16{0, 5, 12, 16, 19, 24}
 
 func (e MessageType) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_MessageType_index)-1 {
+	if i < 0 || i >= len(_MessageType_index)-1 {
 		return fmt.Sprintf("MessageType(%d)", e)
 	}
 	return _MessageType_name[_MessageType_index[i]:_MessageType_index[i+1]]
@@ -22009,7 +22009,7 @@ var _TextDocumentSyncKind_index = [...]uint16{0, 4, 8, 19}
 
 func (e TextDocumentSyncKind) String() string {
 	i := int(e) - 0
-	if e < 0 || i >= len(_TextDocumentSyncKind_index)-1 {
+	if i < 0 || i >= len(_TextDocumentSyncKind_index)-1 {
 		return fmt.Sprintf("TextDocumentSyncKind(%d)", e)
 	}
 	return _TextDocumentSyncKind_name[_TextDocumentSyncKind_index[i]:_TextDocumentSyncKind_index[i+1]]
@@ -22034,7 +22034,7 @@ var _TextDocumentSaveReason_index = [...]uint16{0, 6, 16, 24}
 
 func (e TextDocumentSaveReason) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_TextDocumentSaveReason_index)-1 {
+	if i < 0 || i >= len(_TextDocumentSaveReason_index)-1 {
 		return fmt.Sprintf("TextDocumentSaveReason(%d)", e)
 	}
 	return _TextDocumentSaveReason_name[_TextDocumentSaveReason_index[i]:_TextDocumentSaveReason_index[i+1]]
@@ -22077,7 +22077,7 @@ var _CompletionItemKind_index = [...]uint16{0, 4, 10, 18, 29, 34, 42, 47, 56, 62
 
 func (e CompletionItemKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_CompletionItemKind_index)-1 {
+	if i < 0 || i >= len(_CompletionItemKind_index)-1 {
 		return fmt.Sprintf("CompletionItemKind(%d)", e)
 	}
 	return _CompletionItemKind_name[_CompletionItemKind_index[i]:_CompletionItemKind_index[i+1]]
@@ -22100,7 +22100,7 @@ var _CompletionItemTag_index = [...]uint16{0, 10}
 
 func (e CompletionItemTag) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_CompletionItemTag_index)-1 {
+	if i < 0 || i >= len(_CompletionItemTag_index)-1 {
 		return fmt.Sprintf("CompletionItemTag(%d)", e)
 	}
 	return _CompletionItemTag_name[_CompletionItemTag_index[i]:_CompletionItemTag_index[i+1]]
@@ -22130,7 +22130,7 @@ var _InsertTextFormat_index = [...]uint16{0, 9, 16}
 
 func (e InsertTextFormat) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_InsertTextFormat_index)-1 {
+	if i < 0 || i >= len(_InsertTextFormat_index)-1 {
 		return fmt.Sprintf("InsertTextFormat(%d)", e)
 	}
 	return _InsertTextFormat_name[_InsertTextFormat_index[i]:_InsertTextFormat_index[i+1]]
@@ -22165,7 +22165,7 @@ var _InsertTextMode_index = [...]uint16{0, 4, 21}
 
 func (e InsertTextMode) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_InsertTextMode_index)-1 {
+	if i < 0 || i >= len(_InsertTextMode_index)-1 {
 		return fmt.Sprintf("InsertTextMode(%d)", e)
 	}
 	return _InsertTextMode_name[_InsertTextMode_index[i]:_InsertTextMode_index[i+1]]
@@ -22189,7 +22189,7 @@ var _DocumentHighlightKind_index = [...]uint16{0, 4, 8, 13}
 
 func (e DocumentHighlightKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_DocumentHighlightKind_index)-1 {
+	if i < 0 || i >= len(_DocumentHighlightKind_index)-1 {
 		return fmt.Sprintf("DocumentHighlightKind(%d)", e)
 	}
 	return _DocumentHighlightKind_name[_DocumentHighlightKind_index[i]:_DocumentHighlightKind_index[i+1]]
@@ -22284,7 +22284,7 @@ var _CodeActionTag_index = [...]uint16{0, 12}
 
 func (e CodeActionTag) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_CodeActionTag_index)-1 {
+	if i < 0 || i >= len(_CodeActionTag_index)-1 {
 		return fmt.Sprintf("CodeActionTag(%d)", e)
 	}
 	return _CodeActionTag_name[_CodeActionTag_index[i]:_CodeActionTag_index[i+1]]
@@ -22413,7 +22413,7 @@ var _InlineCompletionTriggerKind_index = [...]uint16{0, 7, 16}
 
 func (e InlineCompletionTriggerKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_InlineCompletionTriggerKind_index)-1 {
+	if i < 0 || i >= len(_InlineCompletionTriggerKind_index)-1 {
 		return fmt.Sprintf("InlineCompletionTriggerKind(%d)", e)
 	}
 	return _InlineCompletionTriggerKind_name[_InlineCompletionTriggerKind_index[i]:_InlineCompletionTriggerKind_index[i+1]]
@@ -22458,7 +22458,7 @@ var _FileChangeType_index = [...]uint16{0, 7, 14, 21}
 
 func (e FileChangeType) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_FileChangeType_index)-1 {
+	if i < 0 || i >= len(_FileChangeType_index)-1 {
 		return fmt.Sprintf("FileChangeType(%d)", e)
 	}
 	return _FileChangeType_name[_FileChangeType_index[i]:_FileChangeType_index[i+1]]
@@ -22528,7 +22528,7 @@ var _DiagnosticSeverity_index = [...]uint16{0, 5, 12, 23, 27}
 
 func (e DiagnosticSeverity) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_DiagnosticSeverity_index)-1 {
+	if i < 0 || i >= len(_DiagnosticSeverity_index)-1 {
 		return fmt.Sprintf("DiagnosticSeverity(%d)", e)
 	}
 	return _DiagnosticSeverity_name[_DiagnosticSeverity_index[i]:_DiagnosticSeverity_index[i+1]]
@@ -22557,7 +22557,7 @@ var _DiagnosticTag_index = [...]uint16{0, 11, 21}
 
 func (e DiagnosticTag) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_DiagnosticTag_index)-1 {
+	if i < 0 || i >= len(_DiagnosticTag_index)-1 {
 		return fmt.Sprintf("DiagnosticTag(%d)", e)
 	}
 	return _DiagnosticTag_name[_DiagnosticTag_index[i]:_DiagnosticTag_index[i+1]]
@@ -22583,7 +22583,7 @@ var _CompletionTriggerKind_index = [...]uint16{0, 7, 23, 54}
 
 func (e CompletionTriggerKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_CompletionTriggerKind_index)-1 {
+	if i < 0 || i >= len(_CompletionTriggerKind_index)-1 {
 		return fmt.Sprintf("CompletionTriggerKind(%d)", e)
 	}
 	return _CompletionTriggerKind_name[_CompletionTriggerKind_index[i]:_CompletionTriggerKind_index[i+1]]
@@ -22612,7 +22612,7 @@ var _ApplyKind_index = [...]uint16{0, 7, 12}
 
 func (e ApplyKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_ApplyKind_index)-1 {
+	if i < 0 || i >= len(_ApplyKind_index)-1 {
 		return fmt.Sprintf("ApplyKind(%d)", e)
 	}
 	return _ApplyKind_name[_ApplyKind_index[i]:_ApplyKind_index[i+1]]
@@ -22638,7 +22638,7 @@ var _SignatureHelpTriggerKind_index = [...]uint16{0, 7, 23, 36}
 
 func (e SignatureHelpTriggerKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_SignatureHelpTriggerKind_index)-1 {
+	if i < 0 || i >= len(_SignatureHelpTriggerKind_index)-1 {
 		return fmt.Sprintf("SignatureHelpTriggerKind(%d)", e)
 	}
 	return _SignatureHelpTriggerKind_name[_SignatureHelpTriggerKind_index[i]:_SignatureHelpTriggerKind_index[i+1]]
@@ -22665,7 +22665,7 @@ var _CodeActionTriggerKind_index = [...]uint16{0, 7, 16}
 
 func (e CodeActionTriggerKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_CodeActionTriggerKind_index)-1 {
+	if i < 0 || i >= len(_CodeActionTriggerKind_index)-1 {
 		return fmt.Sprintf("CodeActionTriggerKind(%d)", e)
 	}
 	return _CodeActionTriggerKind_name[_CodeActionTriggerKind_index[i]:_CodeActionTriggerKind_index[i+1]]
@@ -22702,7 +22702,7 @@ var _NotebookCellKind_index = [...]uint16{0, 6, 10}
 
 func (e NotebookCellKind) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_NotebookCellKind_index)-1 {
+	if i < 0 || i >= len(_NotebookCellKind_index)-1 {
 		return fmt.Sprintf("NotebookCellKind(%d)", e)
 	}
 	return _NotebookCellKind_name[_NotebookCellKind_index[i]:_NotebookCellKind_index[i+1]]
@@ -22751,7 +22751,7 @@ var _PrepareSupportDefaultBehavior_index = [...]uint16{0, 10}
 
 func (e PrepareSupportDefaultBehavior) String() string {
 	i := int(e) - 1
-	if e < 1 || i >= len(_PrepareSupportDefaultBehavior_index)-1 {
+	if i < 0 || i >= len(_PrepareSupportDefaultBehavior_index)-1 {
 		return fmt.Sprintf("PrepareSupportDefaultBehavior(%d)", e)
 	}
 	return _PrepareSupportDefaultBehavior_name[_PrepareSupportDefaultBehavior_index[i]:_PrepareSupportDefaultBehavior_index[i+1]]
