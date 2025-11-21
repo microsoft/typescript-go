@@ -224,6 +224,11 @@ function preprocessModel() {
         structure.properties = Array.from(propertyMap.values());
         structure.extends = undefined;
         structure.mixins = undefined;
+
+        // Remove experimental properties from ServerCapabilities and ClientCapabilities
+        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
+            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        }
     }
 }
 

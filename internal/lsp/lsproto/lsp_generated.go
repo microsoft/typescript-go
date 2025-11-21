@@ -13723,9 +13723,6 @@ type ServerCapabilities struct {
 
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace,omitzero"`
-
-	// Experimental server capabilities.
-	Experimental *any `json:"experimental,omitzero"`
 }
 
 // Information about the server
@@ -16205,9 +16202,6 @@ type ClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitzero"`
-
-	// Experimental client capabilities.
-	Experimental *any `json:"experimental,omitzero"`
 }
 
 type TextDocumentSyncOptions struct {
@@ -28510,8 +28504,6 @@ type ResolvedClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General ResolvedGeneralClientCapabilities `json:"general,omitzero"`
-	// Experimental client capabilities.
-	Experimental any `json:"experimental,omitzero"`
 }
 
 func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities {
@@ -28524,6 +28516,5 @@ func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities
 		NotebookDocument: resolveNotebookDocumentClientCapabilities(v.NotebookDocument),
 		Window:           resolveWindowClientCapabilities(v.Window),
 		General:          resolveGeneralClientCapabilities(v.General),
-		Experimental:     derefOr(v.Experimental),
 	}
 }
