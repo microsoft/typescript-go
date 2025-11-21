@@ -1863,7 +1863,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
             }
             case "excludeLibFiles": {
                 if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
-                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true}`
+                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false}`
                 }
             }
         }
