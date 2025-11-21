@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -466,11 +467,11 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 }
 
-func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams) (lsproto.WorkspaceEditOrNull, error) {
+func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, prefs *lsutil.UserPreferences) (lsproto.WorkspaceEditOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Kind != ast.KindIdentifier {
+	if node.Kind != ast.KindIdentifier && !(ast.IsStringLiteralLike(node) && tryGetImportFromModuleSpecifier(node) != nil && prefs.AllowRenameOfImportPath == core.TSTrue) {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
@@ -481,6 +482,9 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	defer done()
 	for _, entry := range entries {
 		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		if prefs.AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && tryGetImportFromModuleSpecifier(entry.node) != nil {
+			continue
+		}
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
 			NewText: l.getTextForRename(node, entry, params.NewName, checker),
