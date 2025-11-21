@@ -144,10 +144,61 @@ const customStructures: Structure[] = [
 // Track which custom Data structures were declared explicitly
 const explicitDataStructures = new Set(customStructures.map(s => s.name));
 
+// Global variable to track the RegisterOptions union type for special naming
+let registerOptionsUnionType: OrType | undefined;
+
 // Patch and preprocess the model
 function patchAndPreprocessModel() {
     // Track which Data types we need to create as placeholders
     const neededDataStructures = new Set<string>();
+
+    // Collect all registration option types from requests and notifications
+    const registrationOptionTypes: Type[] = [];
+    for (const request of [...model.requests, ...model.notifications]) {
+        if (request.registrationOptions) {
+            registrationOptionTypes.push(request.registrationOptions);
+        }
+    }
+
+    // Create synthetic structures for "and" types in registration options
+    const syntheticStructures: Structure[] = [];
+    for (let i = 0; i < registrationOptionTypes.length; i++) {
+        const regOptType = registrationOptionTypes[i];
+        if (regOptType.kind === "and") {
+            // Find which request/notification this registration option belongs to
+            const owner = [...model.requests, ...model.notifications].find(r => r.registrationOptions === regOptType);
+            if (!owner) {
+                throw new Error("Could not find owner for 'and' type registration option");
+            }
+
+            // Determine the proper name based on the typeName or method
+            let structureName: string;
+            if (owner.typeName) {
+                // Use typeName as base: "ColorPresentationRequest" -> "ColorPresentationRegistrationOptions"
+                structureName = owner.typeName.replace(/Request$/, "").replace(/Notification$/, "") + "RegistrationOptions";
+            }
+            else {
+                // Fall back to method: "textDocument/colorPresentation" -> "ColorPresentationRegistrationOptions"
+                const methodParts = owner.method.split("/");
+                const lastPart = methodParts[methodParts.length - 1];
+                structureName = titleCase(lastPart) + "RegistrationOptions";
+            }
+
+            // Extract all reference types from the "and"
+            const refTypes = regOptType.items.filter((item): item is ReferenceType => item.kind === "reference");
+
+            // Create a synthetic structure that combines all the referenced structures
+            syntheticStructures.push({
+                name: structureName,
+                properties: [],
+                extends: refTypes,
+                documentation: `Registration options for ${owner.method}.`,
+            });
+
+            // Replace the "and" type with a reference to the synthetic structure
+            registrationOptionTypes[i] = { kind: "reference", name: structureName };
+        }
+    }
 
     for (const structure of model.structures) {
         for (const prop of structure.properties) {
@@ -166,6 +217,15 @@ function patchAndPreprocessModel() {
                     neededDataStructures.add(customDataType);
                 }
             }
+
+            // Replace registerOptions type with a custom RegisterOptions type
+            if (prop.name === "registerOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
+                // Create a union type and save it for special naming
+                if (registrationOptionTypes.length > 0) {
+                    registerOptionsUnionType = { kind: "or", items: registrationOptionTypes };
+                    prop.type = registerOptionsUnionType;
+                }
+            }
         }
     }
 
@@ -179,8 +239,8 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom structures to the model
-    model.structures.push(...customStructures);
+    // Add custom structures and synthetic structures to the model
+    model.structures.push(...customStructures, ...syntheticStructures);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
@@ -513,6 +573,11 @@ function handleOrType(orType: OrType): GoType {
     }
     else {
         unionTypeName = memberNames.join("Or");
+    }
+
+    // Special case: if this is the RegisterOptions union, use a custom name
+    if (orType === registerOptionsUnionType) {
+        unionTypeName = "RegisterOptions";
     }
 
     if (containedNull) {
