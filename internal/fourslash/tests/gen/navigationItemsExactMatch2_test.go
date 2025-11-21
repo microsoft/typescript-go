@@ -34,7 +34,7 @@ var [|point = new Shapes.Point()|];
 		{
 			Pattern:     "point",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "point",
 					Kind:     lsproto.SymbolKindVariable,
@@ -46,11 +46,11 @@ var [|point = new Shapes.Point()|];
 					Location:      f.Ranges()[0].LSLocation(),
 					ContainerName: PtrTo("Shapes"),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "distance",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "distance1",
 					Kind:          lsproto.SymbolKindProperty,
@@ -80,22 +80,22 @@ var [|point = new Shapes.Point()|];
 					Location:      f.Ranges()[7].LSLocation(),
 					ContainerName: PtrTo("distance2"),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "origin",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "_origin",
 					Kind:          lsproto.SymbolKindProperty,
 					Location:      f.Ranges()[1].LSLocation(),
 					ContainerName: PtrTo("Point"),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "square",
 			Preferences: nil,
-			Includes:    []*lsproto.SymbolInformation{},
+			Exact:       PtrTo([]*lsproto.SymbolInformation{}),
 		},
 	})
 }

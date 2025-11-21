@@ -1862,7 +1862,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
                 break;
             }
             case "excludeLibFiles": {
-                if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+                if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
                     prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true}`
                 }
             }
@@ -1874,7 +1874,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
     return `{
         Pattern: ${pattern ? pattern : '""'},
         Preferences: ${prefs},
-        Includes: []*lsproto.SymbolInformation{${items.length ? items.join(",\n") + ",\n" : ""}},
+        Exact: PtrTo([]*lsproto.SymbolInformation{${items.length ? items.join(",\n") + ",\n" : ""}}),
     }`
 }
 

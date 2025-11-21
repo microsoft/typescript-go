@@ -23,24 +23,24 @@ function foo() {
 		{
 			Pattern:     "c",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "c",
 					Kind:     lsproto.SymbolKindVariable,
 					Location: f.Ranges()[0].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "d",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "d",
 					Kind:          lsproto.SymbolKindVariable,
 					Location:      f.Ranges()[1].LSLocation(),
 					ContainerName: PtrTo("foo"),
 				},
-			},
+			}),
 		},
 	})
 }

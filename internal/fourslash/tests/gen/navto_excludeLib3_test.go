@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -19,14 +19,14 @@ func TestNavto_excludeLib3(t *testing.T) {
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
 			Pattern:     "parseInt",
-			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true},
-			Includes: []*lsproto.SymbolInformation{
+			Preferences: nil,
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "parseInt",
 					Kind:     lsproto.SymbolKindFunction,
 					Location: f.Ranges()[0].LSLocation(),
 				},
-			},
+			}),
 		},
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -19,7 +20,7 @@ declare function`
 		{
 			Pattern:     "",
 			Preferences: nil,
-			Includes:    []*lsproto.SymbolInformation{},
+			Exact:       PtrTo([]*lsproto.SymbolInformation{}),
 		},
 	})
 }

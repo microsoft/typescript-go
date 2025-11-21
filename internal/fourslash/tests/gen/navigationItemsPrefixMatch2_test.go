@@ -37,7 +37,7 @@ function PointsFunc(): void {
 		{
 			Pattern:     "origin",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "origin1",
 					Kind:          lsproto.SymbolKindProperty,
@@ -55,11 +55,11 @@ function PointsFunc(): void {
 					Kind:     lsproto.SymbolKindInterface,
 					Location: f.Ranges()[4].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "distance",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "distanceFarFarAway",
 					Kind:          lsproto.SymbolKindProperty,
@@ -84,11 +84,11 @@ function PointsFunc(): void {
 					Location:      f.Ranges()[6].LSLocation(),
 					ContainerName: PtrTo("OriginI"),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "mPointThatIJustInitiated wrongKeyWord",
 			Preferences: nil,
-			Includes:    []*lsproto.SymbolInformation{},
+			Exact:       PtrTo([]*lsproto.SymbolInformation{}),
 		},
 	})
 }

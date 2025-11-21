@@ -11025,7 +11025,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				break
 			}
 			fallthrough
-		case KindVariableDeclaration, KindBindingElement:
+		case KindVariableDeclaration, KindBindingElement, KindCommonJSExport:
 			name := node.Name()
 			if name != nil {
 				if IsBindingPattern(name) {

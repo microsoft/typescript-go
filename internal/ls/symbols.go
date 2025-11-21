@@ -371,6 +371,11 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		return lsproto.SymbolKindEnumMember
 	case ast.KindTypeParameter:
 		return lsproto.SymbolKindTypeParameter
+	case ast.KindParameter:
+		if ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) {
+			return lsproto.SymbolKindProperty
+		}
+		return lsproto.SymbolKindVariable
 	}
 	return lsproto.SymbolKindVariable
 }

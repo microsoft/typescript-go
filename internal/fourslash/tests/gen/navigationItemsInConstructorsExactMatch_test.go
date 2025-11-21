@@ -24,7 +24,7 @@ class Test {
 		{
 			Pattern:     "search",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "search1",
 					Kind:          lsproto.SymbolKindProperty,
@@ -43,7 +43,7 @@ class Test {
 					Location:      f.Ranges()[2].LSLocation(),
 					ContainerName: PtrTo("Test"),
 				},
-			},
+			}),
 		},
 	})
 }

@@ -21,14 +21,14 @@ func TestNavigateToSymbolIterator(t *testing.T) {
 		{
 			Pattern:     "iterator",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "iterator",
 					Kind:          lsproto.SymbolKindMethod,
 					Location:      f.Ranges()[0].LSLocation(),
 					ContainerName: PtrTo("C"),
 				},
-			},
+			}),
 		},
 	})
 }

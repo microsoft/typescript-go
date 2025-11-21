@@ -29,64 +29,64 @@ function Cls() {
 		{
 			Pattern:     "x",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "x",
 					Kind:     lsproto.SymbolKindVariable,
 					Location: f.Ranges()[0].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "y",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "y",
 					Kind:     lsproto.SymbolKindFunction,
 					Location: f.Ranges()[1].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "instanceProp",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:          "instanceProp",
 					Kind:          lsproto.SymbolKindProperty,
 					Location:      f.Ranges()[2].LSLocation(),
 					ContainerName: PtrTo("Cls"),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "staticMethod",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "staticMethod",
 					Kind:     lsproto.SymbolKindMethod,
 					Location: f.Ranges()[3].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "staticProperty",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "staticProperty",
 					Kind:     lsproto.SymbolKindProperty,
 					Location: f.Ranges()[4].LSLocation(),
 				},
-			},
+			}),
 		}, {
 			Pattern:     "instanceMethod",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "instanceMethod",
 					Kind:     lsproto.SymbolKindMethod,
 					Location: f.Ranges()[5].LSLocation(),
 				},
-			},
+			}),
 		},
 	})
 }

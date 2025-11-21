@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -20,7 +21,7 @@ const [|x: number = 1|];
 		{
 			Pattern:     "",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "x",
 					Kind:     lsproto.SymbolKindVariable,
@@ -31,7 +32,7 @@ const [|x: number = 1|];
 					Kind:     lsproto.SymbolKindFunction,
 					Location: f.Ranges()[1].LSLocation(),
 				},
-			},
+			}),
 		},
 	})
 }

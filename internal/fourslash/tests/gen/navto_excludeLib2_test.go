@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -26,20 +26,20 @@ export const someName: number;
 		{
 			Pattern:     "weirdName",
 			Preferences: nil,
-			Includes: []*lsproto.SymbolInformation{
+			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
 					Name:     "weirdName",
 					Kind:     lsproto.SymbolKindVariable,
 					Location: f.Ranges()[0].LSLocation(),
 				},
-			},
+			}),
 		},
 	})
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
 			Pattern:     "weirdName",
-			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: true},
-			Includes:    []*lsproto.SymbolInformation{},
+			Preferences: nil,
+			Exact:       PtrTo([]*lsproto.SymbolInformation{}),
 		},
 	})
 }

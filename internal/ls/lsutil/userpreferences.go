@@ -19,6 +19,8 @@ func NewDefaultUserPreferences() *UserPreferences {
 		IncludeCompletionsWithSnippetText:  core.TSTrue,
 		DisplayPartsForJSDoc:               true,
 		DisableLineTextInReferences:        true,
+
+		ExcludeLibrarySymbolsInNavTo: true,
 	}
 }
 

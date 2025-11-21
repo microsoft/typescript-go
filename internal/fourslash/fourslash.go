@@ -2827,7 +2827,8 @@ func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNam
 
 type VerifyWorkspaceSymbolCase struct {
 	Pattern     string
-	Includes    []*lsproto.SymbolInformation // !!! HERE: fourslash.Range instead of Location
+	Includes    *[]*lsproto.SymbolInformation
+	Exact       *[]*lsproto.SymbolInformation
 	Preferences *lsutil.UserPreferences
 }
 
@@ -2851,9 +2852,33 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
 		}
-		verifyIncludesSymbols(t, *result.SymbolInformations, testCase.Includes, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
+		if testCase.Includes != nil {
+			if testCase.Exact != nil {
+				t.Fatalf("Test case cannot have both 'Includes' and 'Exact' fields set")
+			}
+			verifyIncludesSymbols(t, *result.SymbolInformations, *testCase.Includes, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
+		} else {
+			if testCase.Exact == nil {
+				t.Fatalf("Test case must have either 'Includes' or 'Exact' field set")
+			}
+			verifyExactSymbols(t, *result.SymbolInformations, *testCase.Exact, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
+		}
 	}
 	f.Configure(t, originalPreferences)
+}
+
+func verifyExactSymbols(
+	t *testing.T,
+	actual []*lsproto.SymbolInformation,
+	expected []*lsproto.SymbolInformation,
+	prefix string,
+) {
+	if len(actual) != len(expected) {
+		t.Fatalf("%s: Expected %d symbols, but got %d:\n%s", prefix, len(expected), len(actual), cmp.Diff(actual, expected))
+	}
+	for i := range actual {
+		assertDeepEqual(t, actual[i], expected[i], prefix)
+	}
 }
 
 func verifyIncludesSymbols(
@@ -2862,17 +2887,20 @@ func verifyIncludesSymbols(
 	includes []*lsproto.SymbolInformation,
 	prefix string,
 ) {
-	assertDeepEqual(t, actual, includes, prefix)
-	// nameToActualSymbol := make(map[string]*lsproto.SymbolInformation, len(actual))
-	// for _, sym := range actual {
-	// 	nameToActualSymbol[sym.Name] = sym
-	// }
+	type key struct {
+		name string
+		loc  lsproto.Location
+	}
+	nameAndLocToActualSymbol := make(map[key]*lsproto.SymbolInformation, len(actual))
+	for _, sym := range actual {
+		nameAndLocToActualSymbol[key{name: sym.Name, loc: sym.Location}] = sym
+	}
 
-	// for _, sym := range includes {
-	// 	actualSym, ok := nameToActualSymbol[sym.Name]
-	// 	if !ok {
-	// 		t.Fatalf("%s: Expected symbol '%s' not found", prefix, sym.Name)
-	// 	}
-	// 	assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' mismatch", prefix, sym.Name))
-	// }
+	for _, sym := range includes {
+		actualSym, ok := nameAndLocToActualSymbol[key{name: sym.Name, loc: sym.Location}]
+		if !ok {
+			t.Fatalf("%s: Expected symbol '%s' at location '%v' not found", prefix, sym.Name, sym.Location)
+		}
+		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' at location '%v' mismatch", prefix, sym.Name, sym.Location))
+	}
 }
