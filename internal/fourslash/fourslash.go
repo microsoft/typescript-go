@@ -1243,7 +1243,9 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
-			Context:  &lsproto.ReferenceContext{},
+			Context: &lsproto.ReferenceContext{
+				IncludeDeclaration: true,
+			},
 		}
 		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		if resMsg == nil {
