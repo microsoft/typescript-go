@@ -19715,17 +19715,18 @@ type AutoImportData struct {
 	AmbientModuleName *string `json:"ambientModuleName,omitzero"`
 
 	// True if the export was found in the package.json AutoImportProvider.
-	IsPackageJsonImport *bool `json:"isPackageJsonImport,omitzero"`
+	IsPackageJsonImport bool `json:"isPackageJsonImport"`
 }
 
 var _ json.UnmarshalerFrom = (*AutoImportData)(nil)
 
 func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	var (
-		seenExportName      bool
-		seenExportMapKey    bool
-		seenModuleSpecifier bool
-		seenFileName        bool
+		seenExportName          bool
+		seenExportMapKey        bool
+		seenModuleSpecifier     bool
+		seenFileName            bool
+		seenIsPackageJsonImport bool
 	)
 
 	if k := dec.PeekKind(); k != '{' {
@@ -19766,6 +19767,7 @@ func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"isPackageJsonImport"`:
+			seenIsPackageJsonImport = true
 			if err := json.UnmarshalDecode(dec, &s.IsPackageJsonImport); err != nil {
 				return err
 			}
@@ -19789,6 +19791,9 @@ func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 	if !seenFileName {
 		return fmt.Errorf("required property 'fileName' is missing")
+	}
+	if !seenIsPackageJsonImport {
+		return fmt.Errorf("required property 'isPackageJsonImport' is missing")
 	}
 
 	return nil

@@ -246,10 +246,6 @@ func (origin *symbolOriginInfo) toCompletionEntryData() *lsproto.AutoImportData 
 	if origin.fileName == "" {
 		ambientModuleName = strPtrTo(stringutil.StripQuotes(origin.moduleSymbol().Name))
 	}
-	var isPackageJsonImport *bool
-	if origin.isFromPackageJson {
-		isPackageJsonImport = ptrTo(true)
-	}
 
 	data := origin.data.(*symbolOriginInfoExport)
 	return &lsproto.AutoImportData{
@@ -258,7 +254,7 @@ func (origin *symbolOriginInfo) toCompletionEntryData() *lsproto.AutoImportData 
 		ModuleSpecifier:     data.moduleSpecifier,
 		AmbientModuleName:   ambientModuleName,
 		FileName:            origin.fileName,
-		IsPackageJsonImport: isPackageJsonImport,
+		IsPackageJsonImport: origin.isFromPackageJson,
 	}
 }
 
@@ -5183,7 +5179,7 @@ func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker
 	origin := &symbolOriginInfo{
 		kind:              symbolOriginInfoKindExport,
 		fileName:          autoImportData.FileName,
-		isFromPackageJson: autoImportData.IsPackageJsonImport != nil && *autoImportData.IsPackageJsonImport,
+		isFromPackageJson: autoImportData.IsPackageJsonImport,
 		isDefaultExport:   isDefaultExport,
 		data:              autoImportDataToSymbolOriginExport(autoImportData, name, moduleSymbol, isDefaultExport),
 	}

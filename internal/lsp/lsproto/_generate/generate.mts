@@ -101,7 +101,6 @@ const customStructures: Structure[] = [
             {
                 name: "isPackageJsonImport",
                 type: { kind: "base", name: "boolean" },
-                optional: true,
                 documentation: "True if the export was found in the package.json AutoImportProvider.",
             },
         ],
