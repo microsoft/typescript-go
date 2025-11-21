@@ -45,7 +45,7 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 	}, nil
 }
 
-func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens) (*lsproto.CodeLens, error) {
+func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens, showLocationsCommandName *string) (*lsproto.CodeLens, error) {
 	uri := codeLens.Data.Uri
 	textDoc := lsproto.TextDocumentIdentifier{
 		Uri: uri,
@@ -105,8 +105,8 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 	cmd := &lsproto.Command{
 		Title: lensTitle,
 	}
-	if len(locs) > 0 {
-		cmd.Command = "typescript.codeLens.showLocations"
+	if len(locs) > 0 && showLocationsCommandName != nil {
+		cmd.Command = *showLocationsCommandName
 		cmd.Arguments = &[]any{
 			uri,
 			codeLens.Range.Start,

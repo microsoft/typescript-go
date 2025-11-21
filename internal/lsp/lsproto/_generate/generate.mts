@@ -41,6 +41,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "DisablePushDiagnostics disables automatic pushing of diagnostics to the client.",
             },
+            {
+                name: "codeLensShowLocationsCommandName",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },

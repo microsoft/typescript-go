@@ -17,6 +17,8 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
+const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
+
 export class Client {
     private outputChannel: vscode.OutputChannel;
     private traceOutputChannel: vscode.OutputChannel;
@@ -35,6 +37,9 @@ export class Client {
             ],
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
+            initializationOptions: {
+                codeLensShowLocationsCommandName,
+            },
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -123,7 +128,7 @@ export class Client {
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
 
-        const codeLensLocationsCommand = vscode.commands.registerCommand("typescript.codeLens.showLocations", (...args: unknown[]) => {
+        const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
             if (args.length !== 3) {
                 throw new Error("Unexpected number of arguments.");
             }
@@ -131,17 +136,19 @@ export class Client {
             const lspUri = args[0] as DocumentUri;
             const lspPosition = args[1] as Position;
             const lspLocations = args[2] as Location[];
-            
+
             const editorUri = vscode.Uri.parse(lspUri);
             const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
-            const editorLocations = lspLocations.map(loc => new vscode.Location(
-                vscode.Uri.parse(loc.uri),
-                new vscode.Range(
-                    new vscode.Position(loc.range.start.line, loc.range.start.character),
-                    new vscode.Position(loc.range.end.line, loc.range.end.character),
-                ),
-            ));
-            
+            const editorLocations = lspLocations.map(loc =>
+                new vscode.Location(
+                    vscode.Uri.parse(loc.uri),
+                    new vscode.Range(
+                        new vscode.Position(loc.range.start.line, loc.range.start.character),
+                        new vscode.Position(loc.range.end.line, loc.range.end.character),
+                    ),
+                )
+            );
+
             vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
         });
 

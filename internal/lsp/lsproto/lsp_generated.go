@@ -21523,6 +21523,9 @@ type ClientSemanticTokensRequestFullDelta struct {
 type InitializationOptions struct {
 	// DisablePushDiagnostics disables automatic pushing of diagnostics to the client.
 	DisablePushDiagnostics *bool `json:"disablePushDiagnostics,omitzero"`
+
+	// The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.
+	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
 }
 
 // ExportInfoMapKey uniquely identifies an export for auto-import purposes.

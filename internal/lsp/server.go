@@ -987,7 +987,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 	}
 	defer s.recover(reqMsg)
 
-	return ls.ResolveCodeLens(ctx, codeLens)
+	return ls.ResolveCodeLens(ctx, codeLens, s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName)
 }
 
 func (s *Server) Log(msg ...any) {
