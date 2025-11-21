@@ -95,7 +95,6 @@ const customStructures: Structure[] = [
             {
                 name: "ambientModuleName",
                 type: { kind: "base", name: "string" },
-                optional: true,
                 documentation: "The module name (with quotes stripped) of the export's module symbol, if it was an ambient module.",
             },
             {

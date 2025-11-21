@@ -19712,7 +19712,7 @@ type AutoImportData struct {
 	FileName string `json:"fileName"`
 
 	// The module name (with quotes stripped) of the export's module symbol, if it was an ambient module.
-	AmbientModuleName *string `json:"ambientModuleName,omitzero"`
+	AmbientModuleName string `json:"ambientModuleName"`
 
 	// True if the export was found in the package.json AutoImportProvider.
 	IsPackageJsonImport bool `json:"isPackageJsonImport"`
@@ -19726,6 +19726,7 @@ func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		seenExportMapKey        bool
 		seenModuleSpecifier     bool
 		seenFileName            bool
+		seenAmbientModuleName   bool
 		seenIsPackageJsonImport bool
 	)
 
@@ -19763,6 +19764,7 @@ func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"ambientModuleName"`:
+			seenAmbientModuleName = true
 			if err := json.UnmarshalDecode(dec, &s.AmbientModuleName); err != nil {
 				return err
 			}
@@ -19791,6 +19793,9 @@ func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 	if !seenFileName {
 		return fmt.Errorf("required property 'fileName' is missing")
+	}
+	if !seenAmbientModuleName {
+		return fmt.Errorf("required property 'ambientModuleName' is missing")
 	}
 	if !seenIsPackageJsonImport {
 		return fmt.Errorf("required property 'isPackageJsonImport' is missing")

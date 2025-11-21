@@ -242,9 +242,9 @@ func (origin *symbolOriginInfo) moduleSymbol() *ast.Symbol {
 
 func (origin *symbolOriginInfo) toCompletionEntryData() *lsproto.AutoImportData {
 	debug.Assert(origin.kind&symbolOriginInfoKindExport != 0, fmt.Sprintf("completionEntryData is not generated for symbolOriginInfo of type %T", origin.data))
-	var ambientModuleName *string
+	var ambientModuleName string
 	if origin.fileName == "" {
-		ambientModuleName = strPtrTo(stringutil.StripQuotes(origin.moduleSymbol().Name))
+		ambientModuleName = stringutil.StripQuotes(origin.moduleSymbol().Name)
 	}
 
 	data := origin.data.(*symbolOriginInfoExport)
@@ -5147,8 +5147,8 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker.Checker, name string, autoImportData *lsproto.AutoImportData) *symbolDetails {
 	containingProgram := l.GetProgram() // !!! isPackageJson ? packageJsonAutoimportProvider : program
 	var moduleSymbol *ast.Symbol
-	if autoImportData.AmbientModuleName != nil {
-		moduleSymbol = ch.TryFindAmbientModule(*autoImportData.AmbientModuleName)
+	if autoImportData.AmbientModuleName != "" {
+		moduleSymbol = ch.TryFindAmbientModule(autoImportData.AmbientModuleName)
 	} else if autoImportData.FileName != "" {
 		moduleSymbolSourceFile := containingProgram.GetSourceFile(autoImportData.FileName)
 		if moduleSymbolSourceFile == nil {

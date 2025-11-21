@@ -1058,7 +1058,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 			return data.AutoImport != nil && ((data.AutoImport.FileName == options.AutoImportData.FileName) &&
 				(options.AutoImportData.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier) &&
 				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
-				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
+				(options.AutoImportData.AmbientModuleName == "" || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
 				data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport)
 		}
 		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
