@@ -50,21 +50,25 @@ const customStructures: Structure[] = [
                 name: "symbolName",
                 type: { kind: "base", name: "string" },
                 documentation: "The symbol name.",
+                omitzeroValue: true,
             },
             {
                 name: "symbolId",
                 type: { kind: "reference", name: "uint64" },
                 documentation: "The symbol ID.",
+                omitzeroValue: true,
             },
             {
                 name: "ambientModuleName",
                 type: { kind: "base", name: "string" },
                 documentation: "The ambient module name.",
+                omitzeroValue: true,
             },
             {
                 name: "moduleFile",
                 type: { kind: "base", name: "string" },
                 documentation: "The module file path.",
+                omitzeroValue: true,
             },
         ],
         documentation: "ExportInfoMapKey uniquely identifies an export for auto-import purposes.",
@@ -76,31 +80,37 @@ const customStructures: Structure[] = [
                 name: "exportName",
                 type: { kind: "base", name: "string" },
                 documentation: "The name of the property or export in the module's symbol table. Differs from the completion name in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.",
+                omitzeroValue: true,
             },
             {
                 name: "exportMapKey",
                 type: { kind: "reference", name: "ExportInfoMapKey" },
                 documentation: "The export map key for this auto-import.",
+                omitzeroValue: true,
             },
             {
                 name: "moduleSpecifier",
                 type: { kind: "base", name: "string" },
                 documentation: "The module specifier for this auto-import.",
+                omitzeroValue: true,
             },
             {
                 name: "fileName",
                 type: { kind: "base", name: "string" },
                 documentation: "The file name declaring the export's module symbol, if it was an external module.",
+                omitzeroValue: true,
             },
             {
                 name: "ambientModuleName",
                 type: { kind: "base", name: "string" },
                 documentation: "The module name (with quotes stripped) of the export's module symbol, if it was an ambient module.",
+                omitzeroValue: true,
             },
             {
                 name: "isPackageJsonImport",
                 type: { kind: "base", name: "boolean" },
                 documentation: "True if the export was found in the package.json AutoImportProvider.",
+                omitzeroValue: true,
             },
         ],
         documentation: "AutoImportData contains information about an auto-import suggestion.",
@@ -112,21 +122,25 @@ const customStructures: Structure[] = [
                 name: "fileName",
                 type: { kind: "base", name: "string" },
                 documentation: "The file name where the completion was requested.",
+                omitzeroValue: true,
             },
             {
                 name: "position",
                 type: { kind: "base", name: "integer" },
                 documentation: "The position where the completion was requested.",
+                omitzeroValue: true,
             },
             {
                 name: "source",
                 type: { kind: "base", name: "string" },
                 documentation: "Special source value for disambiguation.",
+                omitzeroValue: true,
             },
             {
                 name: "name",
                 type: { kind: "base", name: "string" },
                 documentation: "The name of the completion item.",
+                omitzeroValue: true,
             },
             {
                 name: "autoImport",
@@ -873,9 +887,12 @@ function generateCode() {
                 }
 
                 const type = resolveType(prop.type);
-                const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
 
-                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitzero" : ""}"\``);
+                // For properties marked with omitzeroValue, use value type with omitzero instead of pointer
+                const useOmitzero = prop.optional || prop.omitzeroValue;
+                const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
+
+                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -898,7 +915,12 @@ function generateCode() {
         }
 
         // Generate UnmarshalJSONFrom method for structure validation
-        const requiredProps = structure.properties?.filter(p => !p.optional) || [];
+        // Skip properties marked with omitzeroValue since they're optional by nature
+        const requiredProps = structure.properties?.filter(p => {
+            if (p.optional) return false;
+            if (p.omitzeroValue) return false;
+            return true;
+        }) || [];
         if (requiredProps.length > 0) {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");

@@ -18,5 +18,12 @@ const metaModel = await metaModelResponse.text();
 fs.writeFileSync(metaModelPath, metaModel);
 
 const metaModelSchemaResponse = await fetch(metaModelSchemaURL);
-const metaModelSchema = await metaModelSchemaResponse.text();
+let metaModelSchema = await metaModelSchemaResponse.text();
+
+// Patch the schema to add omitzeroValue property to Property type
+metaModelSchema = metaModelSchema.replace(
+    /(\t \* Whether the property is deprecated or not\. If deprecated\n\t \* the property contains the deprecation message\.\n\t \*\/\n\tdeprecated\?: string;)\n}/m,
+    `$1\n\n\t/**\n\t * Whether this property uses omitzero without being a pointer.\n\t * Custom extension for special value types.\n\t */\n\tomitzeroValue?: boolean;\n}`,
+);
+
 fs.writeFileSync(metaModelSchemaPath, metaModelSchema);

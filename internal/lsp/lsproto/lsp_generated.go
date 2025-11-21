@@ -19617,281 +19617,55 @@ type InitializationOptions struct {
 // ExportInfoMapKey uniquely identifies an export for auto-import purposes.
 type ExportInfoMapKey struct {
 	// The symbol name.
-	SymbolName string `json:"symbolName"`
+	SymbolName string `json:"symbolName,omitzero"`
 
 	// The symbol ID.
-	SymbolId uint64 `json:"symbolId"`
+	SymbolId uint64 `json:"symbolId,omitzero"`
 
 	// The ambient module name.
-	AmbientModuleName string `json:"ambientModuleName"`
+	AmbientModuleName string `json:"ambientModuleName,omitzero"`
 
 	// The module file path.
-	ModuleFile string `json:"moduleFile"`
-}
-
-var _ json.UnmarshalerFrom = (*ExportInfoMapKey)(nil)
-
-func (s *ExportInfoMapKey) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenSymbolName        bool
-		seenSymbolId          bool
-		seenAmbientModuleName bool
-		seenModuleFile        bool
-	)
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"symbolName"`:
-			seenSymbolName = true
-			if err := json.UnmarshalDecode(dec, &s.SymbolName); err != nil {
-				return err
-			}
-		case `"symbolId"`:
-			seenSymbolId = true
-			if err := json.UnmarshalDecode(dec, &s.SymbolId); err != nil {
-				return err
-			}
-		case `"ambientModuleName"`:
-			seenAmbientModuleName = true
-			if err := json.UnmarshalDecode(dec, &s.AmbientModuleName); err != nil {
-				return err
-			}
-		case `"moduleFile"`:
-			seenModuleFile = true
-			if err := json.UnmarshalDecode(dec, &s.ModuleFile); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if !seenSymbolName {
-		return fmt.Errorf("required property 'symbolName' is missing")
-	}
-	if !seenSymbolId {
-		return fmt.Errorf("required property 'symbolId' is missing")
-	}
-	if !seenAmbientModuleName {
-		return fmt.Errorf("required property 'ambientModuleName' is missing")
-	}
-	if !seenModuleFile {
-		return fmt.Errorf("required property 'moduleFile' is missing")
-	}
-
-	return nil
+	ModuleFile string `json:"moduleFile,omitzero"`
 }
 
 // AutoImportData contains information about an auto-import suggestion.
 type AutoImportData struct {
 	// The name of the property or export in the module's symbol table. Differs from the completion name in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
-	ExportName string `json:"exportName"`
+	ExportName string `json:"exportName,omitzero"`
 
 	// The export map key for this auto-import.
-	ExportMapKey ExportInfoMapKey `json:"exportMapKey"`
+	ExportMapKey ExportInfoMapKey `json:"exportMapKey,omitzero"`
 
 	// The module specifier for this auto-import.
-	ModuleSpecifier string `json:"moduleSpecifier"`
+	ModuleSpecifier string `json:"moduleSpecifier,omitzero"`
 
 	// The file name declaring the export's module symbol, if it was an external module.
-	FileName string `json:"fileName"`
+	FileName string `json:"fileName,omitzero"`
 
 	// The module name (with quotes stripped) of the export's module symbol, if it was an ambient module.
-	AmbientModuleName string `json:"ambientModuleName"`
+	AmbientModuleName string `json:"ambientModuleName,omitzero"`
 
 	// True if the export was found in the package.json AutoImportProvider.
-	IsPackageJsonImport bool `json:"isPackageJsonImport"`
-}
-
-var _ json.UnmarshalerFrom = (*AutoImportData)(nil)
-
-func (s *AutoImportData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenExportName          bool
-		seenExportMapKey        bool
-		seenModuleSpecifier     bool
-		seenFileName            bool
-		seenAmbientModuleName   bool
-		seenIsPackageJsonImport bool
-	)
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"exportName"`:
-			seenExportName = true
-			if err := json.UnmarshalDecode(dec, &s.ExportName); err != nil {
-				return err
-			}
-		case `"exportMapKey"`:
-			seenExportMapKey = true
-			if err := json.UnmarshalDecode(dec, &s.ExportMapKey); err != nil {
-				return err
-			}
-		case `"moduleSpecifier"`:
-			seenModuleSpecifier = true
-			if err := json.UnmarshalDecode(dec, &s.ModuleSpecifier); err != nil {
-				return err
-			}
-		case `"fileName"`:
-			seenFileName = true
-			if err := json.UnmarshalDecode(dec, &s.FileName); err != nil {
-				return err
-			}
-		case `"ambientModuleName"`:
-			seenAmbientModuleName = true
-			if err := json.UnmarshalDecode(dec, &s.AmbientModuleName); err != nil {
-				return err
-			}
-		case `"isPackageJsonImport"`:
-			seenIsPackageJsonImport = true
-			if err := json.UnmarshalDecode(dec, &s.IsPackageJsonImport); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if !seenExportName {
-		return fmt.Errorf("required property 'exportName' is missing")
-	}
-	if !seenExportMapKey {
-		return fmt.Errorf("required property 'exportMapKey' is missing")
-	}
-	if !seenModuleSpecifier {
-		return fmt.Errorf("required property 'moduleSpecifier' is missing")
-	}
-	if !seenFileName {
-		return fmt.Errorf("required property 'fileName' is missing")
-	}
-	if !seenAmbientModuleName {
-		return fmt.Errorf("required property 'ambientModuleName' is missing")
-	}
-	if !seenIsPackageJsonImport {
-		return fmt.Errorf("required property 'isPackageJsonImport' is missing")
-	}
-
-	return nil
+	IsPackageJsonImport bool `json:"isPackageJsonImport,omitzero"`
 }
 
 // CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.
 type CompletionItemData struct {
 	// The file name where the completion was requested.
-	FileName string `json:"fileName"`
+	FileName string `json:"fileName,omitzero"`
 
 	// The position where the completion was requested.
-	Position int32 `json:"position"`
+	Position int32 `json:"position,omitzero"`
 
 	// Special source value for disambiguation.
-	Source string `json:"source"`
+	Source string `json:"source,omitzero"`
 
 	// The name of the completion item.
-	Name string `json:"name"`
+	Name string `json:"name,omitzero"`
 
 	// Auto-import data for this completion item.
 	AutoImport *AutoImportData `json:"autoImport,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*CompletionItemData)(nil)
-
-func (s *CompletionItemData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var (
-		seenFileName bool
-		seenPosition bool
-		seenSource   bool
-		seenName     bool
-	)
-
-	if k := dec.PeekKind(); k != '{' {
-		return fmt.Errorf("expected object start, but encountered %v", k)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	for dec.PeekKind() != '}' {
-		name, err := dec.ReadValue()
-		if err != nil {
-			return err
-		}
-		switch string(name) {
-		case `"fileName"`:
-			seenFileName = true
-			if err := json.UnmarshalDecode(dec, &s.FileName); err != nil {
-				return err
-			}
-		case `"position"`:
-			seenPosition = true
-			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
-				return err
-			}
-		case `"source"`:
-			seenSource = true
-			if err := json.UnmarshalDecode(dec, &s.Source); err != nil {
-				return err
-			}
-		case `"name"`:
-			seenName = true
-			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
-				return err
-			}
-		case `"autoImport"`:
-			if err := json.UnmarshalDecode(dec, &s.AutoImport); err != nil {
-				return err
-			}
-		default:
-			// Ignore unknown properties.
-		}
-	}
-
-	if _, err := dec.ReadToken(); err != nil {
-		return err
-	}
-
-	if !seenFileName {
-		return fmt.Errorf("required property 'fileName' is missing")
-	}
-	if !seenPosition {
-		return fmt.Errorf("required property 'position' is missing")
-	}
-	if !seenSource {
-		return fmt.Errorf("required property 'source' is missing")
-	}
-	if !seenName {
-		return fmt.Errorf("required property 'name' is missing")
-	}
-
-	return nil
 }
 
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
