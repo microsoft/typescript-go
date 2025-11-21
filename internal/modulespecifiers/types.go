@@ -39,11 +39,6 @@ type ModulePath struct {
 	IsRedirect      bool
 }
 
-type PackageJsonInfo interface {
-	GetDirectory() string
-	GetContents() *packagejson.PackageJson
-}
-
 type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	GetSymlinkCache() *symlinks.KnownSymlinks
@@ -60,7 +55,7 @@ type ModuleSpecifierGenerationHost interface {
 	FileExists(path string) bool
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
-	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
+	GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry
 	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
 	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
 	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode

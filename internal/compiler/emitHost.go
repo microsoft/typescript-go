@@ -6,8 +6,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
@@ -71,7 +71,7 @@ func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string)
 	return host.program.GetNearestAncestorDirectoryWithPackageJson(dirname)
 }
 
-func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 

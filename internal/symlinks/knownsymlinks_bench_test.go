@@ -18,7 +18,7 @@ func BenchmarkPopulateSymlinksFromResolutions(b *testing.B) {
 	b.ResetTimer()
 	for range b.N {
 		for _, dep := range deps {
-			cache.processResolution(dep.orig, dep.resolved)
+			cache.ProcessResolution(dep.orig, dep.resolved)
 		}
 	}
 }

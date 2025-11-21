@@ -21,9 +21,6 @@ func TestNewKnownSymlink(t *testing.T) {
 	if !cache.useCaseSensitiveFileNames {
 		t.Error("Expected useCaseSensitiveFileNames to be true")
 	}
-	if cache.HasProcessedResolutions {
-		t.Error("Expected HasProcessedResolutions to be false initially")
-	}
 }
 
 func TestSetDirectory(t *testing.T) {
@@ -81,14 +78,14 @@ func TestProcessResolution(t *testing.T) {
 	cache := NewKnownSymlink("/test/dir", true)
 
 	// Test with empty paths
-	cache.processResolution("", "")
-	cache.processResolution("original", "")
-	cache.processResolution("", "resolved")
+	cache.ProcessResolution("", "")
+	cache.ProcessResolution("original", "")
+	cache.ProcessResolution("", "resolved")
 
 	// Test with valid paths
 	originalPath := "/test/original/file.ts"
 	resolvedPath := "/test/resolved/file.ts"
-	cache.processResolution(originalPath, resolvedPath)
+	cache.ProcessResolution(originalPath, resolvedPath)
 
 	// Check that file was stored
 	symlinkPath := tspath.ToPath(originalPath, "/test/dir", true)
@@ -235,10 +232,6 @@ func TestSetSymlinksFromResolutions(t *testing.T) {
 	}
 
 	cache.SetSymlinksFromResolutions(forEachResolvedModule, forEachResolvedTypeReferenceDirective)
-
-	if !cache.HasProcessedResolutions {
-		t.Error("Expected HasProcessedResolutions to be true after processing")
-	}
 
 	// Check that files were stored
 	for _, res := range resolvedModules {

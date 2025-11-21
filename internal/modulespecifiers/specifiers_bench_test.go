@@ -19,11 +19,6 @@ func populateSymlinkCacheFromResolutions(importingFileName string, host *benchHo
 
 	packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
 
-	// Check if we've already populated symlinks for this package.json
-	if links.IsPackagePopulated(packageJsonPath) {
-		return
-	}
-
 	pkgJsonInfo := host.GetPackageJsonInfo(packageJsonPath)
 	if pkgJsonInfo == nil {
 		return
@@ -33,9 +28,6 @@ func populateSymlinkCacheFromResolutions(importingFileName string, host *benchHo
 	if pkgJson == nil {
 		return
 	}
-
-	// Mark this package as being processed to avoid redundant work
-	links.MarkPackageAsPopulated(packageJsonPath)
 
 	cwd := host.GetCurrentDirectory()
 	caseSensitive := host.UseCaseSensitiveFileNames()
@@ -107,7 +99,7 @@ func isNodeModulesOrScopedPackageDirectory(s string, caseSensitive bool) bool {
 type benchHost struct {
 	mockModuleSpecifierGenerationHost
 	resolveCount int
-	packageJson  PackageJsonInfo
+	packageJson  *packagejson.InfoCacheEntry
 }
 
 func (h *benchHost) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
@@ -118,7 +110,7 @@ func (h *benchHost) ResolveModuleName(moduleName string, containingFile string, 
 	}
 }
 
-func (h *benchHost) GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo {
+func (h *benchHost) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	return h.packageJson
 }
 
@@ -156,7 +148,16 @@ func BenchmarkPopulateSymlinkCacheFromResolutions(b *testing.B) {
 			useCaseSensitiveFileNames: true,
 			symlinkCache:              symlinks.NewKnownSymlink("/project", true),
 		},
-		packageJson: &mockPackageJsonInfo{deps: deps},
+		packageJson: &packagejson.InfoCacheEntry{
+			PackageDirectory: "/project",
+			Contents: &packagejson.PackageJson{
+				Fields: packagejson.Fields{
+					DependencyFields: packagejson.DependencyFields{
+						Dependencies: packagejson.ExpectedOf(deps),
+					},
+				},
+			},
+		},
 	}
 
 	compilerOptions := &core.CompilerOptions{}
@@ -190,7 +191,16 @@ func BenchmarkGetAllModulePaths(b *testing.B) {
 			useCaseSensitiveFileNames: true,
 			symlinkCache:              symlinks.NewKnownSymlink("/project", true),
 		},
-		packageJson: &mockPackageJsonInfo{deps: deps},
+		packageJson: &packagejson.InfoCacheEntry{
+			PackageDirectory: "/project",
+			Contents: &packagejson.PackageJson{
+				Fields: packagejson.Fields{
+					DependencyFields: packagejson.DependencyFields{
+						Dependencies: packagejson.ExpectedOf(deps),
+					},
+				},
+			},
+		},
 	}
 
 	info := getInfo(

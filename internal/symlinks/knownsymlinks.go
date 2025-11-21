@@ -6,22 +6,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type KnownDirectoryLink struct {
-	/**
-	 * Matches the casing returned by `realpath`.  Used to compute the `realpath` of children.
-	 * Always has trailing directory separator
-	 */
+	// Matches the casing returned by `realpath`. Used to compute the `realpath` of children.
+	// Always has trailing directory separator
 	Real string
-	/**
-	 * toPath(real).  Stored to avoid repeated recomputation.
-	 * Always has trailing directory separator
-	 */
+	// toPath(real). Stored to avoid repeated recomputation.
+	// Always has trailing directory separator
 	RealPath tspath.Path
 }
 
@@ -29,13 +23,16 @@ type KnownSymlinks struct {
 	directories               collections.SyncMap[tspath.Path, *KnownDirectoryLink]
 	directoriesByRealpath     collections.SyncMap[tspath.Path, *collections.SyncSet[string]]
 	files                     collections.SyncMap[tspath.Path, string]
-	HasProcessedResolutions   bool
-	populatedPackages         collections.SyncMap[string, struct{}]
 	cwd                       string
 	useCaseSensitiveFileNames bool
 }
 
-/** Gets a map from symlink to realpath. Keys have trailing directory separators. */
+func (cache *KnownSymlinks) HasDirectory(symlinkPath tspath.Path) bool {
+	_, ok := cache.directories.Load(symlinkPath.EnsureTrailingDirectorySeparator())
+	return ok
+}
+
+// Gets a map from symlink to realpath. Keys have trailing directory separators.
 func (cache *KnownSymlinks) Directories() *collections.SyncMap[tspath.Path, *KnownDirectoryLink] {
 	return &cache.directories
 }
@@ -44,7 +41,7 @@ func (cache *KnownSymlinks) DirectoriesByRealpath() *collections.SyncMap[tspath.
 	return &cache.directoriesByRealpath
 }
 
-/** Gets a map from symlink to realpath */
+// Gets a map from symlink to realpath
 func (cache *KnownSymlinks) Files() *collections.SyncMap[tspath.Path, string] {
 	return &cache.files
 }
@@ -74,17 +71,15 @@ func (cache *KnownSymlinks) SetSymlinksFromResolutions(
 	forEachResolvedModule func(callback func(resolution *module.ResolvedModule, moduleName string, mode core.ResolutionMode, filePath tspath.Path), file *ast.SourceFile),
 	forEachResolvedTypeReferenceDirective func(callback func(resolution *module.ResolvedTypeReferenceDirective, moduleName string, mode core.ResolutionMode, filePath tspath.Path), file *ast.SourceFile),
 ) {
-	debug.Assert(!cache.HasProcessedResolutions)
-	cache.HasProcessedResolutions = true
 	forEachResolvedModule(func(resolution *module.ResolvedModule, moduleName string, mode core.ResolutionMode, filePath tspath.Path) {
-		cache.processResolution(resolution.OriginalPath, resolution.ResolvedFileName)
+		cache.ProcessResolution(resolution.OriginalPath, resolution.ResolvedFileName)
 	}, nil)
 	forEachResolvedTypeReferenceDirective(func(resolution *module.ResolvedTypeReferenceDirective, moduleName string, mode core.ResolutionMode, filePath tspath.Path) {
-		cache.processResolution(resolution.OriginalPath, resolution.ResolvedFileName)
+		cache.ProcessResolution(resolution.OriginalPath, resolution.ResolvedFileName)
 	}, nil)
 }
 
-func (cache *KnownSymlinks) processResolution(originalPath string, resolvedFileName string) {
+func (cache *KnownSymlinks) ProcessResolution(originalPath string, resolvedFileName string) {
 	if originalPath == "" || resolvedFileName == "" {
 		return
 	}
@@ -125,40 +120,4 @@ func (cache *KnownSymlinks) guessDirectorySymlink(a string, b string, cwd string
 
 func (cache *KnownSymlinks) isNodeModulesOrScopedPackageDirectory(s string) bool {
 	return s != "" && (tspath.GetCanonicalFileName(s, cache.useCaseSensitiveFileNames) == "node_modules" || strings.HasPrefix(s, "@"))
-}
-
-func (cache *KnownSymlinks) IsPackagePopulated(packageJsonPath string) bool {
-	_, exists := cache.populatedPackages.Load(packageJsonPath)
-	return exists
-}
-
-func (cache *KnownSymlinks) MarkPackageAsPopulated(packageJsonPath string) {
-	cache.populatedPackages.Store(packageJsonPath, struct{}{})
-}
-
-func (cache *KnownSymlinks) PopulateFromResolutions(
-	packageJsonPath string,
-	packageJson *packagejson.PackageJson,
-	resolveModuleName func(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule,
-) {
-	cache.MarkPackageAsPopulated(packageJsonPath)
-	// Helper to resolve dependencies without creating intermediate slices
-	resolveDeps := func(deps map[string]string) {
-		for depName := range deps {
-			resolved := resolveModuleName(depName, packageJsonPath, core.ResolutionModeNone)
-			if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
-				cache.processResolution(resolved.OriginalPath, resolved.ResolvedFileName)
-			}
-		}
-	}
-
-	if deps, ok := packageJson.Dependencies.GetValue(); ok {
-		resolveDeps(deps)
-	}
-	if peerDeps, ok := packageJson.PeerDependencies.GetValue(); ok {
-		resolveDeps(peerDeps)
-	}
-	if optionalDeps, ok := packageJson.OptionalDependencies.GetValue(); ok {
-		resolveDeps(optionalDeps)
-	}
 }

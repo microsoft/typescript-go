@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
@@ -78,7 +78,7 @@ func (p *fakeProgram) ResolveModuleName(moduleName string, containingFile string
 	return nil
 }
 
-func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	return nil
 }
 

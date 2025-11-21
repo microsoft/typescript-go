@@ -17,8 +17,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -26,7 +26,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
@@ -69,6 +68,7 @@ type Program struct {
 	unresolvedImportsOnce sync.Once
 	unresolvedImports     *collections.Set[string]
 	knownSymlinks         *symlinks.KnownSymlinks
+	knownSymlinksOnce     sync.Once
 }
 
 // FileExists implements checker.Program.
@@ -96,7 +96,7 @@ func (p *Program) GetNearestAncestorDirectoryWithPackageJson(dirname string) str
 }
 
 // GetPackageJsonInfo implements checker.Program.
-func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	scoped := p.resolver.GetPackageScopeForPath(pkgJsonPath)
 	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
 		return scoped
@@ -213,11 +213,6 @@ func NewProgram(opts ProgramOptions) *Program {
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.verifyCompilerOptions()
-	p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
-	if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
-		p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
-	}
-	p.populateSymlinkCacheFromResolutions()
 	return p
 }
 
@@ -240,6 +235,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
 		unresolvedImports:           p.unresolvedImports,
+		knownSymlinks:               p.knownSymlinks,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -252,7 +248,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	if len(result.resolvedModules) > 0 || len(result.typeResolutionsInFile) > 0 {
 		result.knownSymlinks.SetSymlinksFromResolutions(result.ForEachResolvedModule, result.ForEachResolvedTypeReferenceDirective)
 	}
-	p.populateSymlinkCacheFromResolutions()
 	return result, true
 }
 
@@ -1649,54 +1644,54 @@ func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmi
 }
 
 func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
-	// if p.Host().GetSymlinkCache() != nil {
-	// 	return p.Host().GetSymlinkCache()
-	// }
-	if p.knownSymlinks == nil {
-		p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
-		// In declaration-only builds, the symlink cache might not be populated yet
-		// because module resolution was skipped. Populate it now if we have resolutions.
-		if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
-			p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+	p.knownSymlinksOnce.Do(func() {
+		if p.knownSymlinks == nil {
+			p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+
+			// Resolved modules store realpath information when they're resolved inside node_modules
+			if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
+				p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+			}
+
+			// Check other dependencies for symlinks
+			var seenPackageJsons collections.Set[tspath.Path]
+			for filePath, meta := range p.sourceFileMetaDatas {
+				if meta.PackageJsonDirectory == "" ||
+					!p.SourceFileMayBeEmitted(p.GetSourceFileByPath(filePath), false) ||
+					!seenPackageJsons.AddIfAbsent(p.toPath(meta.PackageJsonDirectory)) {
+					continue
+				}
+				packageJsonName := tspath.CombinePaths(meta.PackageJsonDirectory, "package.json")
+				info := p.GetPackageJsonInfo(packageJsonName)
+				if info.GetContents() == nil {
+					continue
+				}
+
+				for dep := range info.GetContents().GetRuntimeDependencyNames().Keys() {
+					// Skip work in common case: we already saved a symlink for this package directory
+					// in the node_modules adjacent to this package.json
+					possibleDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", dep))
+					if p.knownSymlinks.HasDirectory(possibleDirectoryPath) {
+						continue
+					}
+					if !strings.HasPrefix(dep, "@types") {
+						possibleTypesDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", module.GetTypesPackageName(dep)))
+						if p.knownSymlinks.HasDirectory(possibleTypesDirectoryPath) {
+							continue
+						}
+					}
+
+					if packageResolution := p.resolver.ResolvePackageDirectory(dep, packageJsonName, core.ResolutionModeCommonJS, nil); packageResolution.IsResolved() {
+						p.knownSymlinks.ProcessResolution(
+							tspath.CombinePaths(packageResolution.OriginalPath, "package.json"),
+							tspath.CombinePaths(packageResolution.ResolvedFileName, "package.json"),
+						)
+					}
+				}
+			}
 		}
-		p.populateSymlinkCacheFromResolutions()
-	}
+	})
 	return p.knownSymlinks
-}
-
-func (p *Program) populateSymlinkCacheFromResolutions() {
-	p.Host().FS().WalkDir(
-		p.GetCurrentDirectory(),
-		func(path string, d vfs.DirEntry, e error) error {
-			if e != nil {
-				return e
-			}
-			if !d.IsDir() {
-				return nil
-			}
-
-			packageJsonDir := p.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(path))
-			if packageJsonDir == "" {
-				return nil
-			}
-
-			packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
-			// Check if we've already populated symlinks for this package.json
-			if p.knownSymlinks.IsPackagePopulated(packageJsonPath) {
-				return nil
-			}
-			pkgJsonInfo := p.GetPackageJsonInfo(packageJsonPath)
-			if pkgJsonInfo == nil {
-				return nil
-			}
-			pkgJson := pkgJsonInfo.GetContents()
-			if pkgJson == nil {
-				return nil
-			}
-			p.knownSymlinks.PopulateFromResolutions(packageJsonPath, pkgJson, p.ResolveModuleName)
-			return nil
-		},
-	)
 }
 
 func (p *Program) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
