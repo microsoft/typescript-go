@@ -76,12 +76,20 @@ async function main() {
 
                 // Check for non-baseline errors
                 // Look for patterns that indicate real test failures
-                const hasNonBaselineError = /^panic/m.test(fullOutput) ||
-                    /FAIL:/.test(fullOutput.replace(/^--- FAIL: /mg, "")) || // Ignore the top-level FAIL line
-                    /Error|error/.test(fullOutput.replace(/the baseline file .* has changed/g, "").replace(/new baseline created at/g, "")) ||
-                    /fatal|Fatal/.test(fullOutput);
+                // We need to filter out baseline messages when checking for errors
+                const outputWithoutBaseline = fullOutput
+                    .replace(/the baseline file .* has changed\. \(Run `hereby baseline-accept` if the new baseline is correct\.\)/g, "")
+                    .replace(/new baseline created at .*\./g, "")
+                    .replace(/the baseline file .* does not exist in the TypeScript submodule/g, "")
+                    .replace(/the baseline file .* does not match the reference in the TypeScript submodule/g, "");
+
+                const hasNonBaselineError = /^panic/m.test(outputWithoutBaseline) ||
+                    /Error|error/i.test(outputWithoutBaseline) ||
+                    /fatal|Fatal/.test(outputWithoutBaseline) ||
+                    /Unexpected/.test(outputWithoutBaseline);
 
                 // Only mark as failing if it's not a baseline-only failure
+                // (i.e., if there's no baseline message, or if there are other errors besides baseline)
                 if (!hasBaselineMessage || hasNonBaselineError) {
                     failingTests.push(event.Test);
                 }
