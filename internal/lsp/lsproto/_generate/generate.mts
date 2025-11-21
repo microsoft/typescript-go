@@ -471,6 +471,20 @@ function flattenOrTypes(types: Type[]): Type[] {
     return Array.from(flattened);
 }
 
+function pluralize(name: string): string {
+    // Handle common irregular plurals and special cases
+    if (
+        name.endsWith("s") || name.endsWith("x") || name.endsWith("z") ||
+        name.endsWith("ch") || name.endsWith("sh")
+    ) {
+        return name + "es";
+    }
+    if (name.endsWith("y") && name.length > 1 && !"aeiou".includes(name[name.length - 2])) {
+        return name.slice(0, -1) + "ies";
+    }
+    return name + "s";
+}
+
 function handleOrType(orType: OrType): GoType {
     // First, flatten any nested OR types
     const types = flattenOrTypes(orType.items);
@@ -504,7 +518,7 @@ function handleOrType(orType: OrType): GoType {
             type.kind === "array" &&
             (type.element.kind === "reference" || type.element.kind === "base")
         ) {
-            return `${titleCase(type.element.name)}s`;
+            return pluralize(titleCase(type.element.name));
         }
         else if (type.kind === "array") {
             // Handle more complex array types

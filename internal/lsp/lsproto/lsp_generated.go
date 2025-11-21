@@ -23503,7 +23503,7 @@ type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
 var WorkspaceSymbolResolveInfo = RequestInfo[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
 
 // Response type for `textDocument/codeLens`
-type CodeLensResponse = CodeLenssOrNull
+type CodeLensResponse = CodeLensesOrNull
 
 // Type mapping info for `textDocument/codeLens`
 var TextDocumentCodeLensInfo = RequestInfo[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
@@ -27661,25 +27661,25 @@ func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSONFrom(dec *json
 	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
 }
 
-type CodeLenssOrNull struct {
-	CodeLenss *[]*CodeLens
+type CodeLensesOrNull struct {
+	CodeLenses *[]*CodeLens
 }
 
-var _ json.MarshalerTo = (*CodeLenssOrNull)(nil)
+var _ json.MarshalerTo = (*CodeLensesOrNull)(nil)
 
-func (o *CodeLenssOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
-	assertAtMostOne("more than one element of CodeLenssOrNull is set", o.CodeLenss != nil)
+func (o *CodeLensesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of CodeLensesOrNull is set", o.CodeLenses != nil)
 
-	if o.CodeLenss != nil {
-		return json.MarshalEncode(enc, o.CodeLenss)
+	if o.CodeLenses != nil {
+		return json.MarshalEncode(enc, o.CodeLenses)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.UnmarshalerFrom = (*CodeLenssOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CodeLensesOrNull)(nil)
 
-func (o *CodeLenssOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	*o = CodeLenssOrNull{}
+func (o *CodeLensesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = CodeLensesOrNull{}
 
 	data, err := dec.ReadValue()
 	if err != nil {
@@ -27689,12 +27689,12 @@ func (o *CodeLenssOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return nil
 	}
 
-	var vCodeLenss []*CodeLens
-	if err := json.Unmarshal(data, &vCodeLenss); err == nil {
-		o.CodeLenss = &vCodeLenss
+	var vCodeLenses []*CodeLens
+	if err := json.Unmarshal(data, &vCodeLenses); err == nil {
+		o.CodeLenses = &vCodeLenses
 		return nil
 	}
-	return fmt.Errorf("invalid CodeLenssOrNull: %s", data)
+	return fmt.Errorf("invalid CodeLensesOrNull: %s", data)
 }
 
 type DocumentLinksOrNull struct {
