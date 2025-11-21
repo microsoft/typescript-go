@@ -21757,14 +21757,25 @@ const (
 
 const _ErrorCodes_name = "ParseErrorInternalErrorInvalidParamsMethodNotFoundInvalidRequestServerNotInitializedUnknownErrorCode"
 
-var _ErrorCodes_index = [...]uint16{0, 10, 23, 36, 50, 64, 84, 100}
+var (
+	_ErrorCodes_index_0 = [...]uint16{0, 10}
+	_ErrorCodes_index_1 = [...]uint16{0, 13, 26, 40, 54}
+	_ErrorCodes_index_2 = [...]uint16{0, 20, 36}
+)
 
 func (e ErrorCodes) String() string {
-	i := int(e) - -32700
-	if e < -32700 || i >= len(_ErrorCodes_index)-1 {
+	switch {
+	case e == -32700:
+		return _ErrorCodes_name[0:10]
+	case -32603 <= e && e <= -32600:
+		i := int(e) - -32603
+		return _ErrorCodes_name[10+_ErrorCodes_index_1[i] : 10+_ErrorCodes_index_1[i+1]]
+	case -32002 <= e && e <= -32001:
+		i := int(e) - -32002
+		return _ErrorCodes_name[64+_ErrorCodes_index_2[i] : 64+_ErrorCodes_index_2[i+1]]
+	default:
 		return fmt.Sprintf("ErrorCodes(%d)", e)
 	}
-	return _ErrorCodes_name[_ErrorCodes_index[i]:_ErrorCodes_index[i+1]]
 }
 
 type LSPErrorCodes int32
