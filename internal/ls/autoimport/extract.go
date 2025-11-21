@@ -3,6 +3,7 @@ package autoimport
 import (
 	"fmt"
 	"slices"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -16,11 +17,21 @@ import (
 type exportExtractor struct {
 	nodeModulesDirectory tspath.Path
 	packageName          string
+	stats                *extractorStats
 
 	localNameResolver *binder.NameResolver
 	moduleResolver    *module.Resolver
 	getChecker        func() (*checker.Checker, func())
 	toPath            func(fileName string) tspath.Path
+}
+
+type extractorStats struct {
+	exports     int32
+	usedChecker int32
+}
+
+func (e *exportExtractor) Stats() extractorStats {
+	return *e.stats
 }
 
 type checkerLease struct {
@@ -57,6 +68,7 @@ func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, p
 		localNameResolver: &binder.NameResolver{
 			CompilerOptions: core.EmptyCompilerOptions,
 		},
+		stats: &extractorStats{},
 	}
 }
 
@@ -175,6 +187,8 @@ func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		}
 		if syntax != ExportSyntaxNone && syntax != declSyntax {
 			// !!! this can probably happen in erroring code
+			//     actually, it can probably happen in valid alias/local merges!
+			//     or no wait, maybe only for imports?
 			panic(fmt.Sprintf("mixed export syntaxes for symbol %s: %s", file.FileName(), name))
 		}
 		syntax = declSyntax
@@ -205,8 +219,6 @@ func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 
 	if target != nil {
 		if syntax == ExportSyntaxEquals && target.Flags&ast.SymbolFlagsNamespace != 0 {
-			// !!! what is the right boundary for recursion? we never need to expand named exports into another level of named
-			//     exports, but for getting flags/kinds, we should resolve each named export as an alias
 			*exports = slices.Grow(*exports, len(target.Exports))
 			for _, namedExport := range target.Exports {
 				export, _ := e.createExport(namedExport, moduleID, syntax, file, checkerLease)
@@ -256,15 +268,14 @@ func (e *exportExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 
 	var targetSymbol *ast.Symbol
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-		checker := checkerLease.GetChecker()
 		// !!! try localNameResolver first?
-		targetSymbol = checker.GetAliasedSymbol(symbol)
-		if !checker.IsUnknownSymbol(targetSymbol) {
+		targetSymbol = e.tryResolveSymbol(symbol, syntax, checkerLease)
+		if targetSymbol != nil {
 			var decl *ast.Node
 			if len(targetSymbol.Declarations) > 0 {
 				decl = targetSymbol.Declarations[0]
 			} else if targetSymbol.CheckFlags&ast.CheckFlagsMapped != 0 {
-				if mappedDecl := checker.GetMappedTypeSymbolOfProperty(targetSymbol); mappedDecl != nil && len(mappedDecl.Declarations) > 0 {
+				if mappedDecl := checkerLease.GetChecker().GetMappedTypeSymbolOfProperty(targetSymbol); mappedDecl != nil && len(mappedDecl.Declarations) > 0 {
 					decl = mappedDecl.Declarations[0]
 				}
 			}
@@ -276,9 +287,9 @@ func (e *exportExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 				panic("no declaration for aliased symbol")
 			}
 
-			export.ScriptElementKind = lsutil.GetSymbolKind(checker, targetSymbol, decl)
-			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checker, targetSymbol)
-			// !!! completely wrong
+			export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), targetSymbol, decl)
+			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), targetSymbol)
+			// !!! completely wrong, write a test for this
 			// do we need this for anything other than grouping reexports?
 			export.Target = ExportID{
 				ExportName: targetSymbol.Name,
@@ -290,7 +301,56 @@ func (e *exportExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 		export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), symbol)
 	}
 
+	atomic.AddInt32(&e.stats.exports, 1)
+	if checkerLease.TryChecker() != nil {
+		atomic.AddInt32(&e.stats.usedChecker, 1)
+	}
+
 	return export, targetSymbol
+}
+
+func (e *exportExtractor) tryResolveSymbol(symbol *ast.Symbol, syntax ExportSyntax, checkerLease *checkerLease) *ast.Symbol {
+	if !ast.IsNonLocalAlias(symbol, ast.SymbolFlagsNone) {
+		return symbol
+	}
+
+	var loc *ast.Node
+	var name string
+	switch syntax {
+	case ExportSyntaxNamed:
+		decl := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier)
+		if decl.Parent.Parent.AsExportDeclaration().ModuleSpecifier == nil {
+			if n := core.FirstNonZero(decl.Name(), decl.PropertyName()); n.Kind == ast.KindIdentifier {
+				loc = n
+				name = n.Text()
+			}
+		}
+	// !!! check if module.exports = foo is marked as an alias
+	case ExportSyntaxEquals:
+		if symbol.Name != ast.InternalSymbolNameExportEquals {
+			break
+		}
+		fallthrough
+	case ExportSyntaxDefaultDeclaration:
+		decl := ast.GetDeclarationOfKind(symbol, ast.KindExportAssignment)
+		if decl.Expression().Kind == ast.KindIdentifier {
+			loc = decl.Expression()
+			name = loc.Text()
+		}
+	}
+
+	if loc != nil {
+		local := e.localNameResolver.Resolve(loc, name, ast.SymbolFlagsAll, nil, false, false)
+		if local != nil && !ast.IsNonLocalAlias(local, ast.SymbolFlagsNone) {
+			return local
+		}
+	}
+
+	checker := checkerLease.GetChecker()
+	if resolved := checker.GetAliasedSymbol(symbol); !checker.IsUnknownSymbol(resolved) {
+		return resolved
+	}
+	return nil
 }
 
 func shouldIgnoreSymbol(symbol *ast.Symbol) bool {

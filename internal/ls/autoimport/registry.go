@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -470,7 +471,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			tasks = append(tasks, task)
 			projectTasks++
 			wg.Go(func() {
-				index, err := b.buildProjectBucket(ctx, projectPath)
+				index, err := b.buildProjectBucket(ctx, projectPath, logger.Fork("Building project bucket "+string(projectPath)))
 				task.result = index
 				task.err = err
 			})
@@ -484,7 +485,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				tasks = append(tasks, task)
 				nodeModulesTasks++
 				wg.Go(func() {
-					result, err := b.buildNodeModulesBucket(ctx, change, dirName, dirPath)
+					result, err := b.buildNodeModulesBucket(ctx, change, dirName, dirPath, logger.Fork("Building node_modules bucket "+dirName))
 					task.result = result
 					task.err = err
 				})
@@ -492,10 +493,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		return nil, false
 	})
-
-	if logger != nil && len(tasks) > 0 {
-		logger.Logf("Building %d indexes (%d projects, %d node_modules)", len(tasks), projectTasks, nodeModulesTasks)
-	}
 
 	start := time.Now()
 	wg.Wait()
@@ -559,11 +556,12 @@ type bucketBuildResult struct {
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 }
 
-func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath tspath.Path) (*bucketBuildResult, error) {
+func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath tspath.Path, logger *logging.LogTree) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
 	}
 
+	start := time.Now()
 	var mu sync.Mutex
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
@@ -589,6 +587,8 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	}
 
 	wg.Wait()
+
+	indexStart := time.Now()
 	idx := &Index[*Export]{}
 	for path, fileExports := range exports {
 		if result.bucket.Paths == nil {
@@ -601,10 +601,17 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	}
 
 	result.bucket.Index = idx
+
+	if logger != nil {
+		stats := extractor.Stats()
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), stats.exports, stats.usedChecker)
+		logger.Logf("Built index: %v", time.Since(indexStart))
+		logger.Logf("Bucket total: %v", time.Since(start))
+	}
 	return result, nil
 }
 
-func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change RegistryChange, dirName string, dirPath tspath.Path) (*bucketBuildResult, error) {
+func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change RegistryChange, dirName string, dirPath tspath.Path, logger *logging.LogTree) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
 	}
@@ -620,6 +627,7 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 	// should be moved out and the result used to determine whether we need a rebuild.
 	var dependencies *collections.Set[string]
 	var packageNames *collections.Set[string]
+	start := time.Now()
 	for path := range change.OpenFiles {
 		if dirPath.ContainsPath(path) && b.getNearestAncestorDirectoryWithValidPackageJson(path) == nil {
 			dependencies = nil
@@ -658,12 +666,18 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 
 	var entrypointsMu sync.Mutex
 	var entrypoints []*module.ResolvedEntrypoints
+	var combinedStats extractorStats
 
 	processFile := func(fileName string, path tspath.Path, packageName string) {
 		sourceFile := b.host.GetSourceFile(fileName, path)
 		binder.BindSourceFile(sourceFile)
 		extractor := b.newExportExtractor(dirPath, packageName, getChecker)
 		fileExports := extractor.extractFromFile(sourceFile)
+		if logger != nil {
+			stats := extractor.Stats()
+			atomic.AddInt32(&combinedStats.exports, stats.exports)
+			atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
+		}
 		exportsMu.Lock()
 		defer exportsMu.Unlock()
 		for _, name := range sourceFile.AmbientModuleNames {
@@ -721,8 +735,10 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		})
 	}
 
+	extractorStart := time.Now()
 	wg.Wait()
 
+	indexStart := time.Now()
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
 			Index:              &Index[*Export]{},
@@ -750,6 +766,13 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, change Reg
 		for _, failedLocation := range entrypointSet.FailedLookupLocations {
 			result.bucket.LookupLocations[b.base.toPath(failedLocation)] = struct{}{}
 		}
+	}
+
+	if logger != nil {
+		logger.Logf("Determined dependencies and package names: %v", extractorStart.Sub(start))
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(extractorStart), combinedStats.exports, combinedStats.usedChecker)
+		logger.Logf("Built index: %v", time.Since(indexStart))
+		logger.Logf("Bucket total: %v", time.Since(start))
 	}
 
 	return result, ctx.Err()
