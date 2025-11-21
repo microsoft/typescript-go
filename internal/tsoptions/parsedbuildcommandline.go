@@ -38,7 +38,7 @@ func (p *ParsedBuildCommandLine) ResolvedProjectPaths() []string {
 
 func (p *ParsedBuildCommandLine) Locale() locale.Locale {
 	p.localeOnce.Do(func() {
-		p.locale = locale.Parse(p.CompilerOptions.Locale)
+		p.locale, _ = locale.Parse(p.CompilerOptions.Locale)
 	})
 	return p.locale
 }

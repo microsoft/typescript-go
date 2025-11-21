@@ -386,7 +386,7 @@ func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *Parse
 
 func (p *ParsedCommandLine) Locale() locale.Locale {
 	p.localeOnce.Do(func() {
-		p.locale = locale.Parse(p.CompilerOptions().Locale)
+		p.locale, _ = locale.Parse(p.CompilerOptions().Locale)
 	})
 	return p.locale
 }

@@ -62,7 +62,8 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 }
 
 func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
-	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), buildCommand.CompilerOptions)
+	locale := buildCommand.Locale()
+	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, buildCommand.CompilerOptions)
 
 	if len(buildCommand.Errors) > 0 {
 		for _, err := range buildCommand.Errors {
@@ -76,8 +77,6 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		profileSession := pprof.BeginProfiling(pprofDir, sys.Writer())
 		defer profileSession.Stop()
 	}
-
-	locale := buildCommand.Locale()
 
 	if buildCommand.CompilerOptions.Help.IsTrue() {
 		tsc.PrintVersion(sys, locale)
@@ -95,8 +94,8 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
-	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
 	locale := commandLine.Locale()
+	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
 
 	if len(commandLine.Errors) > 0 {
 		for _, e := range commandLine.Errors {
@@ -184,10 +183,10 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		}
 		configForCompilation = configParseResult
 		// Updater to reflect pretty
-		reportDiagnostic = tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
+		reportDiagnostic = tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
 	}
 
-	reportErrorSummary := tsc.CreateReportErrorSummary(sys, configForCompilation.CompilerOptions())
+	reportErrorSummary := tsc.CreateReportErrorSummary(sys, locale, configForCompilation.CompilerOptions())
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 		showConfig(sys, configForCompilation.CompilerOptions())
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}

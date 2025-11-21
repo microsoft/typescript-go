@@ -21,8 +21,8 @@ func FromContext(ctx context.Context) Locale {
 	return locale
 }
 
-func Parse(localeStr string) Locale {
+func Parse(localeStr string) (locale Locale, ok bool) {
 	// Parse gracefully fails.
-	locale, _ := language.Parse(localeStr)
-	return Locale(locale)
+	tag, err := language.Parse(localeStr)
+	return Locale(tag), err == nil
 }

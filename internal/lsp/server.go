@@ -866,7 +866,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	if s.initializeParams.Locale != nil {
-		s.locale = locale.Parse(*s.initializeParams.Locale)
+		s.locale, _ = locale.Parse(*s.initializeParams.Locale)
 	}
 
 	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
