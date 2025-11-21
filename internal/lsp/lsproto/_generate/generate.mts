@@ -1005,6 +1005,14 @@ function generateCode() {
         }
     }
 
+    // Helper function to detect if an enum is a bitflag enum
+    // Hardcoded list of bitflag enums
+    const bitflagEnums = new Set(["WatchKind"]);
+
+    function isBitflagEnum(enumeration: any): boolean {
+        return bitflagEnums.has(enumeration.name);
+    }
+
     // Generate enumerations
     writeLine("// Enumerations\n");
 
@@ -1033,6 +1041,8 @@ function generateCode() {
 
         const enumValues = enumeration.values.map(value => ({
             value: String(value.value),
+            numericValue: Number(value.value),
+            name: value.name,
             identifier: `${enumeration.name}${value.name}`,
             documentation: value.documentation,
             deprecated: value.deprecated,
@@ -1058,6 +1068,83 @@ function generateCode() {
 
         writeLine(")");
         writeLine("");
+
+        // Generate String() method for non-string enums
+        if (enumeration.type.name !== "string") {
+            const isBitflag = isBitflagEnum(enumeration);
+
+            if (isBitflag) {
+                // Generate bitflag-aware String() method using stringer-style efficiency
+                const sortedValues = [...enumValues].sort((a, b) => a.numericValue - b.numericValue);
+                const names = sortedValues.map(v => v.name);
+                const values = sortedValues.map(v => v.numericValue);
+
+                const nameConst = `_${enumeration.name}_name`;
+                const indexVar = `_${enumeration.name}_index`;
+                const combinedNames = names.join("");
+
+                writeLine(`const ${nameConst} = "${combinedNames}"`);
+                write(`var ${indexVar} = [...]uint16{0`);
+                let offset = 0;
+                for (const name of names) {
+                    offset += name.length;
+                    write(`, ${offset}`);
+                }
+                writeLine(`}`);
+                writeLine("");
+
+                writeLine(`func (e ${enumeration.name}) String() string {`);
+                writeLine(`\tif e == 0 {`);
+                writeLine(`\t\treturn "0"`);
+                writeLine(`\t}`);
+                writeLine(`\tvar result string`);
+                for (let i = 0; i < values.length; i++) {
+                    writeLine(`\tif e&${values[i]} != 0 {`);
+                    writeLine(`\t\tif result != "" {`);
+                    writeLine(`\t\t\tresult += "|"`);
+                    writeLine(`\t\t}`);
+                    writeLine(`\t\tresult += ${nameConst}[${indexVar}[${i}]:${indexVar}[${i + 1}]]`);
+                    writeLine(`\t}`);
+                }
+                writeLine(`\tif result == "" {`);
+                writeLine(`\t\treturn fmt.Sprintf("${enumeration.name}(%d)", e)`);
+                writeLine(`\t}`);
+                writeLine(`\treturn result`);
+                writeLine(`}`);
+                writeLine("");
+            }
+            else {
+                // Generate regular String() method using stringer-style efficiency
+                const sortedValues = [...enumValues].sort((a, b) => a.numericValue - b.numericValue);
+                const names = sortedValues.map(v => v.name);
+                const values = sortedValues.map(v => v.numericValue);
+
+                const nameConst = `_${enumeration.name}_name`;
+                const indexVar = `_${enumeration.name}_index`;
+                const combinedNames = names.join("");
+
+                writeLine(`const ${nameConst} = "${combinedNames}"`);
+                write(`var ${indexVar} = [...]uint16{0`);
+                let offset = 0;
+                for (const name of names) {
+                    offset += name.length;
+                    write(`, ${offset}`);
+                }
+                writeLine(`}`);
+                writeLine("");
+
+                writeLine(`func (e ${enumeration.name}) String() string {`);
+                const minVal = Math.min(...values);
+                const maxVal = Math.max(...values);
+                writeLine(`\ti := int(e) - ${minVal}`);
+                writeLine(`\tif e < ${minVal} || i >= len(${indexVar})-1 {`);
+                writeLine(`\t\treturn fmt.Sprintf("${enumeration.name}(%d)", e)`);
+                writeLine(`\t}`);
+                writeLine(`\treturn ${nameConst}[${indexVar}[i]:${indexVar}[i+1]]`);
+                writeLine(`}`);
+                writeLine("");
+            }
+        }
     }
 
     const requestsAndNotifications: (Request | Notification)[] = [...model.requests, ...model.notifications];
