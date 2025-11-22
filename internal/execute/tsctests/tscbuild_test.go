@@ -149,6 +149,11 @@ func TestBuildCommandLine(t *testing.T) {
 				commandLineArgs: []string{"--build", "--help"},
 			},
 			{
+				subScenario:     "bad locale",
+				files:           FileMap{},
+				commandLineArgs: []string{"--build", "--help", "--locale", "whoops"},
+			},
+			{
 				subScenario:     "different options",
 				files:           getBuildCommandLineDifferentOptionsMap("composite"),
 				commandLineArgs: []string{"--build", "--verbose"},

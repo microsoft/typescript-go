@@ -205,6 +205,10 @@ func TestTscCommandline(t *testing.T) {
 			},
 			commandLineArgs: []string{"-p", "."},
 		},
+		{
+			subScenario:     "bad locale",
+			commandLineArgs: []string{"--locale", "whoops", "--version"},
+		},
 	}
 
 	for _, testCase := range testCases {
