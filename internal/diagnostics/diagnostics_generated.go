@@ -2436,7 +2436,7 @@ var Unterminated_quoted_string_in_response_file_0 = &Message{code: 6045, categor
 
 var Argument_for_0_option_must_be_Colon_1 = &Message{code: 6046, category: CategoryError, key: "Argument_for_0_option_must_be_Colon_1_6046", text: "Argument for '{0}' option must be: {1}."}
 
-var Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1 = &Message{code: 6048, category: CategoryError, key: "Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1_6048", text: "Locale must be of the form <language> or <language>-<territory>. For example '{0}' or '{1}'."}
+var Locale_must_be_an_IETF_BCP_47_language_tag_Examples_Colon_0_1 = &Message{code: 6048, category: CategoryError, key: "Locale_must_be_an_IETF_BCP_47_language_tag_Examples_Colon_0_1_6048", text: "Locale must be an IETF BCP 47 language tag. Examples: '{0}', '{1}'."}
 
 var Unable_to_open_file_0 = &Message{code: 6050, category: CategoryError, key: "Unable_to_open_file_0_6050", text: "Unable to open file '{0}'."}
 
@@ -6694,8 +6694,8 @@ func keyToMessage(key Key) *Message {
 		return Unterminated_quoted_string_in_response_file_0
 	case "Argument_for_0_option_must_be_Colon_1_6046":
 		return Argument_for_0_option_must_be_Colon_1
-	case "Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1_6048":
-		return Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1
+	case "Locale_must_be_an_IETF_BCP_47_language_tag_Examples_Colon_0_1_6048":
+		return Locale_must_be_an_IETF_BCP_47_language_tag_Examples_Colon_0_1
 	case "Unable_to_open_file_0_6050":
 		return Unable_to_open_file_0
 	case "Corrupted_locale_file_0_6051":
