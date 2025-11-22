@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -60,7 +59,10 @@ var ImportFixProvider = &CodeFixProvider{
 }
 
 type fixInfo struct {
+	// Use new-style fix when available
 	fix                 *autoimport.Fix
+	// Use old-style fix for features not yet ported (UMD, type-only promotion)
+	oldFix              *ImportFix
 	symbolName          string
 	errorIdentifierText string
 	isJsxNamespaceFix   bool
@@ -79,25 +81,43 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]Co
 
 	var actions []CodeAction
 	for _, fixInfo := range info {
-		tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
-		msg := fixContext.LS.codeActionForFixWorker(
-			tracker,
-			fixContext.SourceFile,
-			fixInfo.symbolName,
-			fixInfo.fix,
-			fixInfo.symbolName != fixInfo.errorIdentifierText,
-		)
+		var edits []*lsproto.TextEdit
+		var description string
 
-		if msg != nil {
-			// Convert changes to LSP edits
-			changes := tracker.GetChanges()
-			var edits []*lsproto.TextEdit
-			for _, fileChanges := range changes {
-				edits = append(edits, fileChanges...)
+		if fixInfo.fix != nil {
+			// Use new-style fix
+			edits, description = fixInfo.fix.Edits(
+				ctx,
+				fixContext.SourceFile,
+				fixContext.Program.Options(),
+				fixContext.LS.FormatOptions(),
+				fixContext.LS.converters,
+				fixContext.LS.UserPreferences(),
+			)
+		} else if fixInfo.oldFix != nil {
+			// Use old-style fix for features not yet ported
+			tracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+			msg := fixContext.LS.codeActionForFixWorker(
+				tracker,
+				fixContext.SourceFile,
+				fixInfo.symbolName,
+				fixInfo.oldFix,
+				fixInfo.symbolName != fixInfo.errorIdentifierText,
+			)
+
+			if msg != nil {
+				// Convert changes to LSP edits
+				changes := tracker.GetChanges()
+				for _, fileChanges := range changes {
+					edits = append(edits, fileChanges...)
+				}
+				description = msg.Message()
 			}
+		}
 
+		if len(edits) > 0 {
 			actions = append(actions, CodeAction{
-				Description: msg.Message(),
+				Description: description,
 				Changes:     edits,
 			})
 		}
@@ -126,15 +146,15 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 		symbolName := symbolNames[0]
 		fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, symbolName, fixContext.Program)
 		if fix != nil {
-			return []*fixInfo{{fix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()}}
+			return []*fixInfo{{oldFix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()}}
 		}
 		return nil
 	} else {
-		info = getFixesInfoForNonUMDImport(ctx, fixContext, symbolToken, useAutoImportProvider)
+		info = getFixesInfoForNonUMDImport(ctx, fixContext, symbolToken, view)
 	}
 
 	// Sort fixes by preference
-	return sortFixInfo(info, fixContext)
+	return sortFixInfo(info, fixContext, view)
 }
 
 func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, token *ast.Node) []*fixInfo {
@@ -181,7 +201,7 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 			errorIdentifierText = token.Text()
 		}
 		result = append(result, &fixInfo{
-			fix:                 fix,
+			oldFix:              fix,
 			symbolName:          symbolName,
 			errorIdentifierText: errorIdentifierText,
 		})
@@ -224,7 +244,7 @@ func isUMDExportSymbol(symbol *ast.Symbol) bool {
 		ast.IsNamespaceExportDeclaration(symbol.Declarations[0])
 }
 
-func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext, symbolToken *ast.Node, useAutoImportProvider bool) []*fixInfo {
+func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext, symbolToken *ast.Node, view *autoimport.View) []*fixInfo {
 	ch, done := fixContext.Program.GetTypeChecker(ctx)
 	defer done()
 	compilerOptions := fixContext.Program.Options()
@@ -232,49 +252,20 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 	symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
 	var allInfo []*fixInfo
 
+	isJsxTagName := ast.IsJsxTagName(symbolToken)
+
 	for _, symbolName := range symbolNames {
 		// "default" is a keyword and not a legal identifier for the import
 		if symbolName == "default" {
 			continue
 		}
 
-		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
-		useRequire := shouldUseRequire(fixContext.SourceFile, fixContext.Program)
-		exportInfosMap := getExportInfos(
-			ctx,
-			symbolName,
-			ast.IsJsxTagName(symbolToken),
-			getMeaningFromLocation(symbolToken),
-			fixContext.SourceFile,
-			fixContext.Program,
-			fixContext.LS,
-		)
+		// Use the new autoimport.View to search for exports
+		exports := view.Search(symbolName)
 
-		// Flatten all export infos from the map into a single slice
-		var allExportInfos []*SymbolExportInfo
-		for exportInfoList := range exportInfosMap.Values() {
-			allExportInfos = append(allExportInfos, exportInfoList...)
-		}
-
-		// Sort by moduleFileName to ensure deterministic iteration order
-		// TODO: This might not work 100% of the time; need to revisit this
-		slices.SortStableFunc(allExportInfos, func(a, b *SymbolExportInfo) int {
-			return strings.Compare(a.moduleFileName, b.moduleFileName)
-		})
-
-		if len(allExportInfos) > 0 {
-			usagePos := scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)
-			lspPos := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(usagePos))
-			_, fixes := fixContext.LS.getImportFixes(
-				ch,
-				allExportInfos,
-				&lspPos,
-				&isValidTypeOnlyUseSite,
-				&useRequire,
-				fixContext.SourceFile,
-				false, // fromCacheOnly
-			)
-
+		// Get fixes for each export
+		for _, export := range exports {
+			fixes := view.GetFixes(ctx, export, isJsxTagName)
 			for _, fix := range fixes {
 				allInfo = append(allInfo, &fixInfo{
 					fix:                 fix,
@@ -429,7 +420,7 @@ func getExportInfos(
 	return originalSymbolToExportInfos
 }
 
-func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
+func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.View) []*fixInfo {
 	if len(fixes) == 0 {
 		return fixes
 	}
@@ -438,32 +429,30 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext) []*fixInfo {
 	sorted := make([]*fixInfo, len(fixes))
 	copy(sorted, fixes)
 
-	// Create package.json filter for import filtering
-	packageJsonFilter := fixContext.LS.createPackageJsonImportFilter(fixContext.SourceFile)
-
 	// Sort by:
 	// 1. JSX namespace fixes last
-	// 2. Fix kind (UseNamespace and AddToExisting preferred)
-	// 3. Module specifier comparison
+	// 2. Fix comparison using view.compareFixes (handles fix kind and module specifier comparison)
 	slices.SortFunc(sorted, func(a, b *fixInfo) int {
 		// JSX namespace fixes should come last
 		if cmp := core.CompareBooleans(a.isJsxNamespaceFix, b.isJsxNamespaceFix); cmp != 0 {
 			return cmp
 		}
 
-		// Compare fix kinds (lower is better)
-		if cmp := cmp.Compare(int(a.fix.kind), int(b.fix.kind)); cmp != 0 {
-			return cmp
+		// Use view's CompareFixes method for new fixes, or compare by kind for old fixes
+		if a.fix != nil && b.fix != nil {
+			return view.CompareFixes(a.fix, b.fix)
 		}
 
-		// Compare module specifiers
-		return fixContext.LS.compareModuleSpecifiers(
-			a.fix,
-			b.fix,
-			fixContext.SourceFile,
-			packageJsonFilter.allowsImportingSpecifier,
-			func(fileName string) tspath.Path { return tspath.Path(fileName) },
-		)
+		// If both are old-style fixes, compare by fix kind
+		if a.oldFix != nil && b.oldFix != nil {
+			return cmp.Compare(int(a.oldFix.kind), int(b.oldFix.kind))
+		}
+
+		// Prefer new-style fixes over old-style fixes
+		if a.fix != nil {
+			return -1
+		}
+		return 1
 	})
 
 	return sorted
