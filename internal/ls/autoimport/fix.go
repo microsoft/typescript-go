@@ -118,7 +118,6 @@ func addToExistingImport(
 	namedImports []*newImportBinding,
 	preferences *lsutil.UserPreferences,
 ) {
-
 	switch importClauseOrBindingPattern.Kind {
 	case ast.KindObjectBindingPattern:
 		bindingPattern := importClauseOrBindingPattern.AsBindingPattern()

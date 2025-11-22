@@ -60,7 +60,7 @@ var ImportFixProvider = &CodeFixProvider{
 
 type fixInfo struct {
 	// Use new-style fix when available
-	fix                 *autoimport.Fix
+	fix *autoimport.Fix
 	// Use old-style fix for features not yet ported (UMD, type-only promotion)
 	oldFix              *ImportFix
 	symbolName          string
