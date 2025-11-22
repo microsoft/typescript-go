@@ -288,13 +288,13 @@ func (s *TestSys) OnWatchStatusReportEnd() {
 	fmt.Fprintln(s.Writer(), watchStatusReportEnd)
 }
 
-func (s *TestSys) GetTrace(w io.Writer) func(msg *diagnostics.Message, args ...any) {
+func (s *TestSys) GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any) {
 	return func(msg *diagnostics.Message, args ...any) {
 		fmt.Fprintln(w, traceStart)
 		defer fmt.Fprintln(w, traceEnd)
 		// With tsc -b building projects in parallel we cannot serialize the package.json lookup trace
 		// so trace as if it wasnt cached
-		str := msg.Localize(locale.Default, args...)
+		str := msg.Localize(locale, args...)
 		s.tracer.TraceWithWriter(w, str, w == s.Writer())
 	}
 }

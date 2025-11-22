@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -57,7 +58,7 @@ type CommandLineTesting interface {
 	OnBuildStatusReportEnd(w io.Writer)
 	OnWatchStatusReportStart()
 	OnWatchStatusReportEnd()
-	GetTrace(w io.Writer) func(msg *diagnostics.Message, args ...any)
+	GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any)
 	OnProgram(program *incremental.Program)
 }
 

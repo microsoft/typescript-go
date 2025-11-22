@@ -22,7 +22,7 @@ func GetTraceWithWriterFromSys(w io.Writer, locale locale.Locale, testing Comman
 			fmt.Fprintln(w, msg.Localize(locale, args...))
 		}
 	} else {
-		return testing.GetTrace(w)
+		return testing.GetTrace(w, locale)
 	}
 }
 
