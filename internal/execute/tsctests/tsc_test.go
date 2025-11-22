@@ -207,7 +207,7 @@ func TestTscCommandline(t *testing.T) {
 		},
 		{
 			subScenario:     "locale",
-			commandLineArgs: []string{"--locale", "en", "--version"},
+			commandLineArgs: []string{"--locale", "cs", "--version"},
 		},
 		{
 			subScenario:     "bad locale",

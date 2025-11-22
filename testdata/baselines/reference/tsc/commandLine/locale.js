@@ -2,8 +2,8 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 
-tsgo --locale en --version
+tsgo --locale cs --version
 ExitStatus:: Success
 Output::
-Version FakeTSVersion
+Verze FakeTSVersion
 

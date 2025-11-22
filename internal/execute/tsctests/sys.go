@@ -25,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 )
 
 type FileMap map[string]any
@@ -422,13 +423,18 @@ type outputSanitizer struct {
 	outputLines  []string
 }
 
+var (
+	englishVersion     = diagnostics.Version_0.Localize(locale.Default, core.Version())
+	fakeEnglishVersion = diagnostics.Version_0.Localize(locale.Default, harnessutil.FakeTSVersion)
+	czech              = locale.Locale(language.MustParse("cs"))
+	czechVersion       = diagnostics.Version_0.Localize(czech, core.Version())
+	fakeCzechVersion   = diagnostics.Version_0.Localize(czech, harnessutil.FakeTSVersion)
+)
+
 func (o *outputSanitizer) addOutputLine(s string) {
-	if change := strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion)); change != s {
-		s = change
-	}
-	if change := strings.ReplaceAll(s, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion); change != s {
-		s = change
-	}
+	s = strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion))
+	s = strings.ReplaceAll(s, englishVersion, fakeEnglishVersion)
+	s = strings.ReplaceAll(s, czechVersion, fakeCzechVersion)
 	o.outputLines = append(o.outputLines, s)
 }
 
