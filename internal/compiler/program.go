@@ -629,6 +629,10 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
+	if len(options.TsBuildInfoFile) == 0 && options.Incremental.IsTrue() && len(options.ConfigFilePath) == 0 {
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified)
+	}
+
 	p.verifyProjectReferences()
 
 	if options.Composite.IsTrue() {
