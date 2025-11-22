@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
@@ -59,16 +60,21 @@ var ImportFixProvider = &CodeFixProvider{
 }
 
 type fixInfo struct {
-	fix                 *ImportFix
+	fix                 *autoimport.Fix
 	symbolName          string
 	errorIdentifierText string
 	isJsxNamespaceFix   bool
 }
 
-func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) []CodeAction {
-	info := getFixInfos(ctx, fixContext, fixContext.ErrorCode, fixContext.Span.Pos(), true /* useAutoImportProvider */)
+func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]CodeAction, error) {
+	view, err := fixContext.LS.getAutoImportView(ctx, fixContext.SourceFile)
+	if err != nil {
+		return nil, err
+	}
+
+	info := getFixInfos(ctx, fixContext, fixContext.ErrorCode, fixContext.Span.Pos(), view)
 	if len(info) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	var actions []CodeAction
@@ -96,10 +102,10 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) []Cod
 			})
 		}
 	}
-	return actions
+	return actions, nil
 }
 
-func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int32, pos int, useAutoImportProvider bool) []*fixInfo {
+func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int32, pos int, view *autoimport.View) []*fixInfo {
 	symbolToken := astnav.GetTokenAtPosition(fixContext.SourceFile, pos)
 
 	var info []*fixInfo

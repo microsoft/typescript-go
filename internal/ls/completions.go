@@ -1208,7 +1208,7 @@ func (l *LanguageService) getCompletionData(
 		// 	return nil
 		// }
 
-		view, err := l.getAutoImportView(ctx, file, l.GetProgram())
+		view, err := l.getAutoImportView(ctx, file)
 		if err != nil {
 			return err
 		}
