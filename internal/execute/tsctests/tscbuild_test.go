@@ -149,6 +149,11 @@ func TestBuildCommandLine(t *testing.T) {
 				commandLineArgs: []string{"--build", "--help"},
 			},
 			{
+				subScenario:     "locale",
+				files:           FileMap{},
+				commandLineArgs: []string{"--build", "--help", "--locale", "en"},
+			},
+			{
 				subScenario:     "bad locale",
 				files:           FileMap{},
 				commandLineArgs: []string{"--build", "--help", "--locale", "whoops"},
