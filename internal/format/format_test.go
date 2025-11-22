@@ -1,6 +1,7 @@
 package format_test
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -55,6 +56,60 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 			if !strings.HasSuffix(tc.text, "\n") {
 				assert.Assert(t, !strings.HasSuffix(newText, " "), "Formatter should not add space before EOF")
 			}
+		})
+	}
+}
+
+// Test for panic in childStartsOnTheSameLineWithElseInIfStatement
+// when FindPrecedingToken returns nil (Issue: panic handling request textDocument/onTypeFormatting)
+func TestFormatOnEnter_NilPrecedingToken(t *testing.T) {
+	t.Parallel()
+
+	// Test case where else statement is at the beginning of the file
+	// which can cause FindPrecedingToken to return nil
+	testCases := []struct {
+		name     string
+		text     string
+		position int // position where enter is pressed
+	}{
+		{
+			name:     "else at file start - edge case",
+			text:     "if(a){}\nelse{}",
+			position: 9, // After the newline, before 'else'
+		},
+		{
+			name:     "simple if-else with enter after if block",
+			text:     "if (true) {\n}\nelse {\n}",
+			position: 13, // After "}\n", before "else"
+		},
+		{
+			name:     "if-else with enter in else block",
+			text:     "if (true) {\n} else {\n}",
+			position: 21, // Inside else block
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/test.ts",
+				Path:     "/test.ts",
+			}, tc.text, core.ScriptKindTS)
+
+			ctx := format.WithFormatCodeSettings(context.Background(), &format.FormatCodeSettings{
+				EditorSettings: format.EditorSettings{
+					TabSize:             4,
+					IndentSize:          4,
+					NewLineCharacter:    "\n",
+					ConvertTabsToSpaces: true,
+					IndentStyle:         format.IndentStyleSmart,
+				},
+			}, "\n")
+
+			// This should not panic
+			edits := format.FormatOnEnter(ctx, sourceFile, tc.position)
+			_ = edits // Just ensuring no panic
 		})
 	}
 }
