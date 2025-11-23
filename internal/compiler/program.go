@@ -1028,19 +1028,71 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
 
+	supportedExtensions := tsoptions.GetSupportedExtensions(p.opts.Config.CompilerOptions(), nil)
+	supportedExtensionsWithJsonIfResolveJsonModule := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(p.opts.Config.CompilerOptions(), supportedExtensions)
+
 	for _, ref := range sourceFile.ReferencedFiles {
-		resolvedPath := tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(sourceFile.FileName()))
-		missingFile := core.Find(p.missingFiles, func(m missingFile) bool {
-			return m.path == resolvedPath
-		})
-		if missingFile.path != "" {
-			diagnostic := ast.NewDiagnostic(
+		fileName := ref.FileName
+		getSourceFile := func(fileName string) *ast.SourceFile {
+			resolvedPath := tspath.GetNormalizedAbsolutePath(fileName, tspath.GetDirectoryPath(sourceFile.FileName()))
+			canonicalPath := tspath.GetCanonicalFileName(resolvedPath, p.opts.Host.FS().UseCaseSensitiveFileNames())
+			return p.filesByPath[tspath.Path(canonicalPath)]
+		}
+
+		fail := func(diagnostic *diagnostics.Message, args ...string) {
+			argsAny := make([]any, len(args))
+			for i, v := range args {
+				argsAny[i] = v
+			}
+			diags = append(diags, ast.NewDiagnostic(
 				sourceFile,
 				ref.TextRange,
-				diagnostics.File_0_not_found,
-				ref.FileName,
-			)
-			diags = append(diags, diagnostic)
+				diagnostic,
+				argsAny...,
+			))
+		}
+
+		if tspath.HasExtension(fileName) {
+			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
+			if !core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) && !core.Some(core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), func(extension string) bool {
+				return tspath.FileExtensionIs(canonicalFileName, extension)
+			}) {
+				if tspath.HasJSFileExtension(canonicalFileName) {
+					fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, fileName)
+				} else {
+					fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, fileName, "'"+strings.Join(core.Flatten(supportedExtensions), "', '")+"'")
+				}
+				continue
+			}
+
+			referencedFile := getSourceFile(fileName)
+			switch referencedFile {
+			case nil:
+				// !!! check for redirect (getRedirectFromSourceFile)
+				fail(diagnostics.File_0_not_found, fileName)
+			case sourceFile:
+				fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
+			}
+		} else {
+			sourceFileNoExtension := core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) && getSourceFile(fileName) != nil
+			if sourceFileNoExtension {
+				continue
+			}
+
+			if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) {
+				fail(diagnostics.File_0_not_found, fileName)
+				continue
+			}
+
+			// Only try adding extensions from the first supported group (which should be .ts/.tsx/.d.ts)
+			// supportedExtensions[0] corresponds to SupportedTSExtensions[0] in tspath
+			sourceFileWithAddedExtension := core.FirstNonNil(tspath.SupportedTSExtensions[0], func(extension string) *ast.SourceFile {
+				return getSourceFile(fileName + extension)
+			})
+
+			if sourceFileWithAddedExtension == nil {
+				fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(supportedExtensions), "', '")+"'")
+			}
 		}
 	}
 
