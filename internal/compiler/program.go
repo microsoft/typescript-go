@@ -1079,7 +1079,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 			referencedFile := getSourceFile(fileName)
 			switch referencedFile {
 			case nil:
-				// !!! check for redirect (getRedirectFromSourceFile)
+				// !!! check for redirect
 				fail(diagnostics.File_0_not_found, fileName)
 			case sourceFile:
 				fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
@@ -1633,8 +1633,8 @@ func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 
 // Testing only
 func (p *Program) IsMissingPath(path tspath.Path) bool {
-	return slices.ContainsFunc(p.missingFiles, func(missingPath missingFile) bool {
-		return missingPath.path == string(path)
+	return slices.ContainsFunc(p.missingFiles, func(missingPath string) bool {
+		return p.toPath(missingPath) == path
 	})
 }
 

@@ -51,17 +51,12 @@ type fileLoader struct {
 	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
 }
 
-type missingFile struct {
-	path   string
-	reason *FileIncludeReason
-}
-
 type processedFiles struct {
 	resolver                      *module.Resolver
 	files                         []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
 	projectReferenceFileMapper    *projectReferenceFileMapper
-	missingFiles                  []missingFile
+	missingFiles                  []string
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
@@ -141,7 +136,7 @@ func processAllProgramFiles(
 	totalFileCount := int(loader.totalFileCount.Load())
 	libFileCount := int(loader.libFileCount.Load())
 
-	var missingFiles []missingFile
+	var missingFiles []string
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
@@ -176,10 +171,7 @@ func processAllProgramFiles(
 
 		// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 		if file == nil {
-			missingFiles = append(missingFiles, missingFile{
-				path:   task.normalizedFilePath,
-				reason: task.includeReason,
-			})
+			missingFiles = append(missingFiles, task.normalizedFilePath)
 			return
 		}
 
