@@ -169,8 +169,8 @@ func processAllProgramFiles(
 		file := task.file
 		path := task.path
 
-		// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 		if file == nil {
+			// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 			missingFiles = append(missingFiles, task.normalizedFilePath)
 			return
 		}
