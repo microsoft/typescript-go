@@ -1030,17 +1030,17 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 
 	for _, ref := range sourceFile.ReferencedFiles {
 		resolvedPath := tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(sourceFile.FileName()))
-		for _, missingFile := range p.missingFiles {
-			if missingFile.path == resolvedPath {
-				diagnostic := ast.NewDiagnostic(
-					sourceFile,
-					ref.TextRange,
-					diagnostics.File_0_not_found,
-					ref.FileName,
-				)
-				diags = append(diags, diagnostic)
-				break
-			}
+		missingFile := core.Find(p.missingFiles, func(m missingFile) bool {
+			return m.path == resolvedPath
+		})
+		if missingFile.path != "" {
+			diagnostic := ast.NewDiagnostic(
+				sourceFile,
+				ref.TextRange,
+				diagnostics.File_0_not_found,
+				ref.FileName,
+			)
+			diags = append(diags, diagnostic)
 		}
 	}
 
@@ -1237,33 +1237,6 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 		result = append(result, getDiagnostics(ctx, file)...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
-}
-
-func (p *Program) addProgramDiagnostics() {
-	for _, missingFile := range p.missingFiles {
-		missingFileReason := missingFile.reason
-		refData, ok := missingFileReason.data.(*referencedFileData)
-		if !ok {
-			continue
-		}
-
-		parentFile := p.filesByPath[refData.file]
-		if parentFile == nil {
-			continue
-		}
-
-		for _, ref := range parentFile.ReferencedFiles {
-			if tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(parentFile.FileName())) == missingFile.path {
-				diagnostic := ast.NewDiagnostic(
-					parentFile,
-					ref.TextRange,
-					diagnostics.File_0_not_found,
-					ref.FileName,
-				)
-				p.programDiagnostics = append(p.programDiagnostics, diagnostic)
-			}
-		}
-	}
 }
 
 func (p *Program) LineCount() int {
