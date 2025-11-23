@@ -212,7 +212,6 @@ func NewProgram(opts ProgramOptions) *Program {
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.verifyCompilerOptions()
-	p.addProgramDiagnostics()
 	return p
 }
 
@@ -1028,6 +1027,22 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
+
+	for _, ref := range sourceFile.ReferencedFiles {
+		resolvedPath := tspath.GetNormalizedAbsolutePath(ref.FileName, tspath.GetDirectoryPath(sourceFile.FileName()))
+		for _, missingFile := range p.missingFiles {
+			if missingFile.path == resolvedPath {
+				diagnostic := ast.NewDiagnostic(
+					sourceFile,
+					ref.TextRange,
+					diagnostics.File_0_not_found,
+					ref.FileName,
+				)
+				diags = append(diags, diagnostic)
+				break
+			}
+		}
+	}
 
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
