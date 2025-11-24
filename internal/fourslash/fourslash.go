@@ -2,12 +2,14 @@ package fourslash
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
 	"runtime"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 	"unicode/utf8"
 
@@ -61,6 +63,11 @@ type FourslashTest struct {
 	selectionEnd         *lsproto.Position
 
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
+
+	// Async message handling
+	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingRequestsMu sync.Mutex
+	errChan           chan error
 }
 
 type scriptInfo struct {
@@ -239,7 +246,12 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:      converters,
 		baselines:       make(map[baselineCommand]*strings.Builder),
 		openFiles:       make(map[string]struct{}),
+		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		errChan:         make(chan error, 10),
 	}
+
+	// Start async message router
+	go f.messageRouter(t.Context())
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
@@ -259,9 +271,148 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	_, testPath, _, _ := runtime.Caller(1)
 	t.Cleanup(func() {
 		inputWriter.Close()
+		// Check for errors from messageRouter
+		select {
+		case err := <-f.errChan:
+			if err != nil {
+				t.Errorf("messageRouter error: %v", err)
+			}
+		default:
+			// no error to report
+		}
 		f.verifyBaselines(t, testPath)
 	})
 	return f
+}
+
+// messageRouter runs in a goroutine and routes incoming messages from the server.
+// It handles responses to client requests and server-initiated requests.
+func (f *FourslashTest) messageRouter(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			// continue
+		}
+
+		msg, err := f.out.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return
+			}
+			select {
+			case f.errChan <- fmt.Errorf("failed to read message: %w", err):
+				// sent error
+			case <-ctx.Done():
+				// context cancelled
+			}
+			return
+		}
+
+		// Validate message can be marshaled
+		if err := json.MarshalWrite(io.Discard, msg); err != nil {
+			select {
+			case f.errChan <- fmt.Errorf("failed to encode message as JSON: %w", err):
+				// sent error
+			case <-ctx.Done():
+				// context cancelled
+			}
+			return
+		}
+
+		switch msg.Kind {
+		case lsproto.MessageKindResponse:
+			f.handleResponse(ctx, msg.AsResponse())
+		case lsproto.MessageKindRequest:
+			f.handleServerRequest(ctx, msg.AsRequest())
+		case lsproto.MessageKindNotification:
+			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
+			// in fourslash tests
+		}
+	}
+}
+
+// handleResponse routes a response message to the waiting request goroutine.
+func (f *FourslashTest) handleResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
+	if resp.ID == nil {
+		return
+	}
+
+	f.pendingRequestsMu.Lock()
+	respChan, ok := f.pendingRequests[*resp.ID]
+	if ok {
+		delete(f.pendingRequests, *resp.ID)
+	}
+	f.pendingRequestsMu.Unlock()
+
+	if ok {
+		select {
+		case respChan <- resp:
+			// sent response
+		case <-ctx.Done():
+			// context cancelled
+		}
+	}
+}
+
+// handleServerRequest handles requests initiated by the server (e.g., workspace/configuration).
+func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) {
+	var response *lsproto.ResponseMessage
+
+	switch req.Method {
+	case lsproto.MethodWorkspaceConfiguration:
+		// Return current user preferences
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  []any{f.userPreferences},
+		}
+
+	case lsproto.MethodClientRegisterCapability:
+		// Accept all capability registrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	case lsproto.MethodClientUnregisterCapability:
+		// Accept all capability unregistrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	default:
+		// Unknown server request
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Error: &lsproto.ResponseError{
+				Code:    lsproto.ErrMethodNotFound.Code,
+				Message: fmt.Sprintf("Unknown method: %s", req.Method),
+			},
+		}
+	}
+
+	// Send response back to server
+	select {
+	case <-ctx.Done():
+		return
+	default:
+		// continue
+	}
+
+	if err := f.in.Write(response.Message()); err != nil {
+		select {
+		case f.errChan <- fmt.Errorf("failed to write server request response: %w", err):
+			// sent error
+		case <-ctx.Done():
+			// context cancelled
+		}
+	}
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
@@ -392,45 +543,36 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := info.NewRequestMessage(
-		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
-		params,
-	)
+	reqID := lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
+	req := info.NewRequestMessage(reqID, params)
+
+	// Create response channel and register it
+	responseChan := make(chan *lsproto.ResponseMessage, 1)
+	f.pendingRequestsMu.Lock()
+	f.pendingRequests[*reqID] = responseChan
+	f.pendingRequestsMu.Unlock()
+
+	// Send the request
 	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
+
+	// Wait for response with context
+	ctx := t.Context()
+	var resp *lsproto.ResponseMessage
+	select {
+	case <-ctx.Done():
+		f.pendingRequestsMu.Lock()
+		delete(f.pendingRequests, *reqID)
+		f.pendingRequestsMu.Unlock()
+		t.Fatalf("Request cancelled: %v", ctx.Err())
 		return nil, *new(Resp), false
-	}
-
-	// currently, the only request that may be sent by the server during a client request is one `config` request
-	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
-	if resp.Kind == lsproto.MessageKindRequest {
-		req := resp.AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodWorkspaceConfiguration, "Unexpected request received: %s", req.Method)
-		res := lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  []any{f.userPreferences},
+	case resp = <-responseChan:
+		if resp == nil {
+			return nil, *new(Resp), false
 		}
-		f.writeMsg(t, res.Message())
-		req = f.readMsg(t).AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodClientRegisterCapability, "Unexpected request received: %s", req.Method)
-		res = lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  lsproto.Null{},
-		}
-		f.writeMsg(t, res.Message())
-		resp = f.readMsg(t)
 	}
 
-	if resp == nil {
-		return nil, *new(Resp), false
-	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
+	result, ok := resp.Result.(Resp)
+	return resp.Message(), result, ok
 }
 
 func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
@@ -445,16 +587,6 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
-}
-
-func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
-	// !!! filter out response by id etc
-	msg, err := f.out.Read()
-	if err != nil {
-		t.Fatalf("failed to read message: %v", err)
-	}
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	return msg
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
