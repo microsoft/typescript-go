@@ -471,7 +471,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Kind != ast.KindIdentifier && !(ast.IsStringLiteralLike(node) && tryGetImportFromModuleSpecifier(node) != nil && prefs.AllowRenameOfImportPath == core.TSTrue) {
+	if node.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
