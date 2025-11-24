@@ -15,5 +15,5 @@ export const b = 10;
 tsgo src/a.ts
 ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
-[91merror[0m[90m TS5111: [0mtsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
+[91merror[0m[90m TS5112: [0mtsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
 
