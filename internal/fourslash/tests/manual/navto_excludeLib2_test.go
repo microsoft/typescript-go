@@ -5,35 +5,29 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestNavto_serverExcludeLib(t *testing.T) {
+func TestNavto_excludeLib2(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /home/src/workspaces/project/index.ts
-import { weirdName as otherName } from "bar";
-const [|weirdName: number = 1|];
-// @Filename: /home/src/workspaces/project/tsconfig.json
+	const content = `// @filename: /index.ts
+import { [|someName as weirdName|] } from "bar";
+// @filename: /tsconfig.json
 {}
-// @Filename: /home/src/workspaces/project/node_modules/bar/index.d.ts
-export const [|weirdName: number|];
-// @Filename: /home/src/workspaces/project/node_modules/bar/package.json
+// @filename: /node_modules/bar/index.d.ts
+export const someName: number;
+// @filename: /node_modules/bar/package.json
 {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.MarkTestAsStradaServer()
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
 			Pattern:     "weirdName",
-			Preferences: nil,
+			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false},
 			Exact: PtrTo([]*lsproto.SymbolInformation{
-				{
-					Name:     "weirdName",
-					Kind:     lsproto.SymbolKindVariable,
-					Location: f.Ranges()[1].LSLocation(),
-				},
 				{
 					Name:     "weirdName",
 					Kind:     lsproto.SymbolKindVariable,

@@ -36,15 +36,15 @@ var [|point = new Shapes.Point()|];
 			Preferences: nil,
 			Exact: PtrTo([]*lsproto.SymbolInformation{
 				{
-					Name:     "point",
-					Kind:     lsproto.SymbolKindVariable,
-					Location: f.Ranges()[5].LSLocation(),
-				},
-				{
 					Name:          "Point",
 					Kind:          lsproto.SymbolKindClass,
 					Location:      f.Ranges()[0].LSLocation(),
 					ContainerName: PtrTo("Shapes"),
+				},
+				{
+					Name:     "point",
+					Kind:     lsproto.SymbolKindVariable,
+					Location: f.Ranges()[5].LSLocation(),
 				},
 			}),
 		}, {
