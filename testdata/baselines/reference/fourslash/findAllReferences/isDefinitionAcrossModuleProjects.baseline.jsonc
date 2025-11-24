@@ -9,7 +9,7 @@
 //     }
 // }
 // 
-// // --- (line: 10) skipped ---
+// --- (line: 10) skipped ---
 
 // --- (line: 13) skipped ---
 // }
@@ -34,6 +34,27 @@
 // 
 // declare module "../c" {
 //     export interface /*FIND ALL REFS*/[|I|] {
+//         FA();
+//     }
+// }
+// 
+// const ia: [|I|] = {
+//     FA: NS.FA,
+//     FC() { },
+// };
+
+// === /home/src/workspaces/project/a2/index.ts ===
+// import { NS } from "../b";
+// import { [|I|] } from "../c";
+// 
+// declare module "../b" {
+//     export namespace NS {
+//         export function FA();
+//     }
+// }
+// 
+// declare module "../c" {
+//     export interface [|I|] {
 //         FA();
 //     }
 // }
@@ -84,7 +105,7 @@
 //     }
 // }
 // 
-// // --- (line: 10) skipped ---
+// --- (line: 10) skipped ---
 
 // --- (line: 13) skipped ---
 // }
@@ -97,6 +118,27 @@
 
 
 // === findAllReferences ===
+// === /home/src/workspaces/project/a/index.ts ===
+// import { NS } from "../b";
+// import { [|I|] } from "../c";
+// 
+// declare module "../b" {
+//     export namespace NS {
+//         export function FA();
+//     }
+// }
+// 
+// declare module "../c" {
+//     export interface [|I|] {
+//         FA();
+//     }
+// }
+// 
+// const ia: [|I|] = {
+//     FA: NS.FA,
+//     FC() { },
+// };
+
 // === /home/src/workspaces/project/a2/index.ts ===
 // import { NS } from "../b";
 // import { [|I|] } from "../c";
@@ -155,7 +197,7 @@
 // }
 // 
 // export interface I {
-// // --- (line: 6) skipped ---
+// --- (line: 6) skipped ---
 
 
 
@@ -194,11 +236,53 @@
 // }
 // 
 // export interface I {
-// // --- (line: 6) skipped ---
+// --- (line: 6) skipped ---
 
 
 
 // === findAllReferences ===
+// === /home/src/workspaces/project/a/index.ts ===
+// import { NS } from "../b";
+// import { [|I|] } from "../c";
+// 
+// declare module "../b" {
+//     export namespace NS {
+//         export function FA();
+//     }
+// }
+// 
+// declare module "../c" {
+//     export interface [|I|] {
+//         FA();
+//     }
+// }
+// 
+// const ia: [|I|] = {
+//     FA: NS.FA,
+//     FC() { },
+// };
+
+// === /home/src/workspaces/project/a2/index.ts ===
+// import { NS } from "../b";
+// import { [|I|] } from "../c";
+// 
+// declare module "../b" {
+//     export namespace NS {
+//         export function FA();
+//     }
+// }
+// 
+// declare module "../c" {
+//     export interface [|I|] {
+//         FA();
+//     }
+// }
+// 
+// const ia: [|I|] = {
+//     FA: NS.FA,
+//     FC() { },
+// };
+
 // === /home/src/workspaces/project/c/index.ts ===
 // export namespace NS {
 //     export function FC() {}
@@ -213,6 +297,22 @@
 
 
 // === findAllReferences ===
+// === /home/src/workspaces/project/a/index.ts ===
+// --- (line: 14) skipped ---
+// 
+// const ia: I = {
+//     FA: NS.FA,
+//     [|FC|]() { },
+// };
+
+// === /home/src/workspaces/project/a2/index.ts ===
+// --- (line: 14) skipped ---
+// 
+// const ia: I = {
+//     FA: NS.FA,
+//     [|FC|]() { },
+// };
+
 // === /home/src/workspaces/project/c/index.ts ===
 // export namespace NS {
 //     export function FC() {}
