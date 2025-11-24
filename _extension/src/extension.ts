@@ -45,18 +45,29 @@ export async function activate(context: vscode.ExtensionContext) {
     }));
 
     const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
-    if (!useTsgo) {
-        if (context.extensionMode === vscode.ExtensionMode.Development) {
-            if (useTsgo === false) {
-                vscode.window.showInformationMessage(
-                    'TypeScript Native Preview is running in development mode. Ignoring "typescript.experimental.useTsgo": false.',
-                );
+    const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
+
+    if (context.extensionMode === vscode.ExtensionMode.Development) {
+        if (!tsExtension) {
+            if (!useTsgo) {
+                output.appendLine("TypeScript Native Preview: Built-in TypeScript extension is disabled. Using tsgo regardless of setting.");
             }
         }
-        else {
-            output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
-            return;
+        else if (useTsgo === false) {
+            const selected = await vscode.window.showWarningMessage(
+                'TypeScript Native Preview is running in development mode with "typescript.experimental.useTsgo" set to false.',
+                "Enable Setting",
+                "Ignore",
+            );
+            if (selected === "Enable Setting") {
+                await vscode.commands.executeCommand("typescript.native-preview.enable");
+                return;
+            }
         }
+    }
+    else if (!useTsgo) {
+        output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
+        return;
     }
 
     disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
