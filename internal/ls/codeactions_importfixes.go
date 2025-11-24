@@ -58,10 +58,7 @@ var ImportFixProvider = &CodeFixProvider{
 }
 
 type fixInfo struct {
-	// Use new-style fix when available
-	fix *autoimport.Fix
-	// Use old-style fix for features not yet ported (UMD, type-only promotion)
-	oldFix              *ImportFix
+	fix                 *autoimport.Fix
 	symbolName          string
 	errorIdentifierText string
 	isJsxNamespaceFix   bool
@@ -391,7 +388,7 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.
 
 	// Sort by:
 	// 1. JSX namespace fixes last
-	// 2. Fix comparison using view.compareFixes (handles fix kind and module specifier comparison)
+	// 2. Fix comparison using view.CompareFixes
 	slices.SortFunc(sorted, func(a, b *fixInfo) int {
 		// JSX namespace fixes should come last
 		if cmp := core.CompareBooleans(a.isJsxNamespaceFix, b.isJsxNamespaceFix); cmp != 0 {
