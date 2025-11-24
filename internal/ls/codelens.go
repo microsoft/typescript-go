@@ -55,20 +55,28 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 	var lensTitle string
 	switch codeLens.Data.Kind {
 	case lsproto.CodeLensKindReferences:
-		references, err := l.ProvideReferences(ctx, &lsproto.ReferenceParams{
-			TextDocument: textDoc,
-			Position:     codeLens.Range.Start,
-			Context: &lsproto.ReferenceContext{
-				// Don't include the declaration in the references count.
-				IncludeDeclaration: false,
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
+		origNode, symbolsAndEntries, ok := l.ProvideSymbolsAndEntries(ctx, uri, codeLens.Range.Start, false /*isRename*/)
+		if ok {
+			references, err := l.ProvideReferencesFromSymbolAndEntries(
+				ctx,
+				&lsproto.ReferenceParams{
+					TextDocument: textDoc,
+					Position:     codeLens.Range.Start,
+					Context: &lsproto.ReferenceContext{
+						// Don't include the declaration in the references count.
+						IncludeDeclaration: false,
+					},
+				},
+				origNode,
+				symbolsAndEntries,
+			)
+			if err != nil {
+				return nil, err
+			}
 
-		if references.Locations != nil {
-			locs = *references.Locations
+			if references.Locations != nil {
+				locs = *references.Locations
+			}
 		}
 
 		if len(locs) == 1 {
@@ -83,10 +91,14 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 			requireLocationsResult: true,
 			dropOriginNodes:        true,
 		}
-		implementations, err := l.provideImplementationsEx(ctx, &lsproto.ImplementationParams{
-			TextDocument: textDoc,
-			Position:     codeLens.Range.Start,
-		}, findImplsOptions)
+		implementations, err := l.provideImplementationsEx(
+			ctx,
+			&lsproto.ImplementationParams{
+				TextDocument: textDoc,
+				Position:     codeLens.Range.Start,
+			},
+			findImplsOptions,
+		)
 		if err != nil {
 			return nil, err
 		}
