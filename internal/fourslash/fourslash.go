@@ -217,16 +217,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParseCache: &parseCache,
 	})
 
-	go func() {
-		defer func() {
-			outputWriter.Close()
-		}()
-		err := server.Run(context.TODO())
-		if err != nil {
-			t.Error("server error:", err)
-		}
-	}()
-
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
@@ -249,6 +239,22 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 		errChan:         make(chan error, 10),
 	}
+
+	// Start server goroutine
+	go func() {
+		defer func() {
+			outputWriter.Close()
+		}()
+		err := server.Run(t.Context())
+		if err != nil {
+			select {
+			case f.errChan <- fmt.Errorf("server error: %w", err):
+				// sent error
+			case <-t.Context().Done():
+				// context cancelled
+			}
+		}
+	}()
 
 	// Start async message router
 	go f.messageRouter(t.Context())
