@@ -3,16 +3,21 @@ package project
 import (
 	"context"
 	"fmt"
+	"maps"
+	"slices"
 	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -25,13 +30,14 @@ type Snapshot struct {
 	// so can be a pointer.
 	sessionOptions *SessionOptions
 	toPath         func(fileName string) tspath.Path
-	converters     *ls.Converters
+	converters     *lsconv.Converters
 
 	// Immutable state, cloned between snapshots
-	fs                                 *snapshotFS
+	fs                                 *SnapshotFS
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	config                             Config
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -40,12 +46,13 @@ type Snapshot struct {
 // NewSnapshot
 func NewSnapshot(
 	id uint64,
-	fs *snapshotFS,
+	fs *SnapshotFS,
 	sessionOptions *SessionOptions,
 	parseCache *ParseCache,
-	extendedConfigCache *extendedConfigCache,
+	extendedConfigCache *ExtendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	config Config,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -58,8 +65,9 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		config:                             config,
 	}
-	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LineMap)
+	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
 	return s
 }
@@ -70,23 +78,57 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }
 
+func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []*Project {
+	fileName := uri.FileName()
+	path := s.toPath(fileName)
+	// TODO!! sheetal may be change this to handle symlinks!!
+	return s.ProjectCollection.GetProjectsContainingFile(path)
+}
+
 func (s *Snapshot) GetFile(fileName string) FileHandle {
 	return s.fs.GetFile(fileName)
 }
 
-func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
+func (s *Snapshot) LSPLineMap(fileName string) *lsconv.LSPLineMap {
 	if file := s.fs.GetFile(fileName); file != nil {
-		return file.LineMap()
+		return file.LSPLineMap()
 	}
 	return nil
 }
 
-func (s *Snapshot) Converters() *ls.Converters {
+func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	if file := s.fs.GetFile(fileName); file != nil {
+		return file.ECMALineInfo()
+	}
+	return nil
+}
+
+func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
+	return s.config.tsUserPreferences
+}
+
+func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
+	return s.config.formatOptions
+}
+
+func (s *Snapshot) Converters() *lsconv.Converters {
 	return s.converters
 }
 
 func (s *Snapshot) ID() uint64 {
 	return s.id
+}
+
+func (s *Snapshot) UseCaseSensitiveFileNames() bool {
+	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) ReadFile(fileName string) (string, bool) {
+	handle := s.GetFile(fileName)
+	if handle == nil {
+		return "", false
+	}
+	return handle.Content(), true
 }
 
 type APISnapshotRequest struct {
@@ -95,20 +137,45 @@ type APISnapshotRequest struct {
 	UpdateProjects *collections.Set[tspath.Path]
 }
 
+type ProjectTreeRequest struct {
+	// If null, all project trees need to be loaded, otherwise only those that are referenced
+	referencedProjects map[tspath.Path]struct{}
+}
+
+type ResourceRequest struct {
+	// Documents are URIs that were requested by the client.
+	// The new snapshot should ensure projects for these URIs have loaded programs.
+	// If the requested Documents are not open, ensure that their default project is created
+	Documents []lsproto.DocumentUri
+	// Update requested Projects.
+	// this is used when we want to get LS and from all the Projects the file can be part of
+	Projects []tspath.Path
+	// Update and ensure project trees that reference the projects
+	// This is used to compute the solution and project tree so that
+	// we can find references across all the projects in the solution irrespective of which project is open
+	ProjectTree *ProjectTreeRequest
+}
+
 type SnapshotChange struct {
+	ResourceRequest
 	reason UpdateReason
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
-	// requestedURIs are URIs that were requested by the client.
-	// The new snapshot should ensure projects for these URIs have loaded programs.
-	requestedURIs []lsproto.DocumentUri
 	// compilerOptionsForInferredProjects is the compiler options to use for inferred projects.
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	newConfig                          *Config
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
+}
+
+type Config struct {
+	tsUserPreferences *lsutil.UserPreferences
+	// jsUserPreferences *lsutil.UserPreferences
+	formatOptions *format.FormatCodeSettings
+	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -123,7 +190,7 @@ type ATAStateChange struct {
 	Logs                *logging.LogTree
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*overlay, session *Session) *Snapshot {
+func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*Overlay, session *Session) *Snapshot {
 	var logger *logging.LogTree
 
 	// Print in-progress logs immediately if cloning fails
@@ -138,23 +205,54 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	if session.options.LoggingEnabled {
 		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
+		getDetails := func() string {
+			details := ""
+			if len(change.Documents) != 0 {
+				details += fmt.Sprintf(" Documents: %v", change.Documents)
+			}
+			if len(change.Projects) != 0 {
+				details += fmt.Sprintf(" Projects: %v", change.Projects)
+			}
+			if change.ProjectTree != nil {
+				details += fmt.Sprintf(" ProjectTree: %v", slices.Collect(maps.Keys(change.ProjectTree.referencedProjects)))
+			}
+			return details
+		}
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
-			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceProjectNotLoaded:
-			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", getDetails())
+		case UpdateReasonRequestedLanguageServiceForFileNotOpen:
+			logger.Logf("Reason: RequestedLanguageService (file not open) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceProjectDirty:
-			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", getDetails())
+		case UpdateReasonRequestedLoadProjectTree:
+			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		}
 	}
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
-	fs.markDirtyFiles(change.fileChanges)
+	if change.fileChanges.HasExcessiveWatchEvents() {
+		invalidateStart := time.Now()
+		if !fs.watchChangesOverlapCache(change.fileChanges) {
+			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
+			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
+		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
+			fs.invalidateCache()
+			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		} else {
+			fs.invalidateNodeModulesCache()
+			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
+		}
+	} else {
+		fs.markDirtyFiles(change.fileChanges)
+	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
@@ -189,8 +287,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
 	}
 
-	for _, uri := range change.requestedURIs {
+	for _, uri := range change.Documents {
 		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
+	}
+
+	for _, projectId := range change.Projects {
+		projectCollectionBuilder.DidRequestProject(projectId, logger.Fork("DidRequestProject"))
+	}
+
+	if change.ProjectTree != nil {
+		projectCollectionBuilder.DidRequestProjectTrees(change.ProjectTree.referencedProjects, logger.Fork("DidRequestProjectTrees"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
@@ -211,7 +317,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
 				for _, project := range projectCollection.Projects() {
-					if project.host.seenFiles.Has(entry.Key()) {
+					if project.host != nil && project.host.seenFiles.Has(entry.Key()) {
 						return true
 					}
 				}
@@ -225,6 +331,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	config := s.config
+	if change.newConfig != nil {
+		if change.newConfig.tsUserPreferences != nil {
+			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
+		}
+		if change.newConfig.formatOptions != nil {
+			config.formatOptions = change.newConfig.formatOptions
+		}
+	}
+
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
@@ -234,6 +350,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
+		config,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id

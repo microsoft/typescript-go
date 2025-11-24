@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -136,7 +138,7 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
 				baselineContent.WriteString("\n")
 				baselineContent.WriteString("Errors::\n")
-				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, errors, &diagnosticwriter.FormattingOptions{
+				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(errors), &diagnosticwriter.FormattingOptions{
 					NewLine: "\n",
 					ComparePathsOptions: tspath.ComparePathsOptions{
 						CurrentDirectory:          "/",
@@ -835,9 +837,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		configFileName := tspath.CombinePaths(basePath, config.configFileName)
 		allFileLists := make(map[string]string, len(config.allFileList)+1)
-		for file, content := range config.allFileList {
-			allFileLists[file] = content
-		}
+		maps.Copy(allFileLists, config.allFileList)
 		allFileLists[configFileName] = config.jsonText
 		host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 		parsedConfigFileContent := getParsed(config, host, basePath)
@@ -864,7 +864,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("FileNames::\n")
 		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(parsedConfigFileContent.Errors), &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
 			ComparePathsOptions: tspath.ComparePathsOptions{
 				CurrentDirectory:          basePath,
@@ -1026,7 +1026,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}
@@ -1048,7 +1048,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parseConfigFileContent.Errors) > 0 {
 		for _, error := range parseConfigFileContent.Errors {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}

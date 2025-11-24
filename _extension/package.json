@@ -85,6 +85,12 @@
                 "title": "Show LSP Trace",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "TypeScript Native Preview"
+            },
+            {
+                "command": "typescript.native-preview.reportIssue",
+                "title": "Report Issue",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript Native Preview"
             }
         ]
     },
@@ -106,7 +112,7 @@
     },
     "devDependencies": {
         "@types/vscode": "^1.100.0",
-        "@vscode/vsce": "^3.6.0",
-        "esbuild": "^0.25.8"
+        "@vscode/vsce": "^3.7.0",
+        "esbuild": "^0.27.0"
     }
 }

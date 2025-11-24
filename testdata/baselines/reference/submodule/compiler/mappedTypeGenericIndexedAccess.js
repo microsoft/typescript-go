@@ -47,6 +47,8 @@ const onSomeEvent = <T extends keyof TypesMap>(p: P<T>) =>
 
 
 //// [mappedTypeGenericIndexedAccess.js]
+"use strict";
+// Repro from #49242
 class Test {
     entries;
     constructor() {

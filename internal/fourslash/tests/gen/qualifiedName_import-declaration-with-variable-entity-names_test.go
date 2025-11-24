@@ -11,7 +11,7 @@ import (
 
 func TestQualifiedName_import_declaration_with_variable_entity_names(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module Alpha {
     export var [|{| "name" : "def" |}x|] = 100;
@@ -40,5 +40,5 @@ var x = Alpha.[|{| "name" : "mem" |}x|]`
 		},
 	})
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "import")
-	f.VerifyBaselineGoToDefinition(t, "import")
+	f.VerifyBaselineGoToDefinition(t, false, "import")
 }

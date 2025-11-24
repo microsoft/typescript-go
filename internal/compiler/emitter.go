@@ -64,6 +64,7 @@ func getModuleTransformer(opts *transformers.TransformOptions) *transformers.Tra
 		core.ModuleKindES2022,
 		core.ModuleKindES2020,
 		core.ModuleKindES2015,
+		core.ModuleKindNode20,
 		core.ModuleKindNode18,
 		core.ModuleKindNode16,
 		core.ModuleKindNodeNext,
@@ -123,6 +124,8 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	if downleveler != nil {
 		tx = append(tx, downleveler)
 	}
+
+	tx = append(tx, estransforms.NewUseStrictTransformer(&opts))
 
 	// transform module syntax
 	tx = append(tx, getModuleTransformer(&opts))

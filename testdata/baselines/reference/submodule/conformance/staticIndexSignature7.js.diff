@@ -1,19 +1,12 @@
 --- old.staticIndexSignature7.js
 +++ new.staticIndexSignature7.js
-@@= skipped -11, +11 lines =@@
-
-
+@@= skipped -13, +13 lines =@@
  //// [staticIndexSignature7.js]
--"use strict";
--let X = (() => {
--    class X {
--    }
--    X.x = 12; // Should error, incompatible with index signature
--    return X;
--})();
-+class X {
+ "use strict";
+ class X {
 +    static x = 12; // Should error, incompatible with index signature
-+}
+ }
+-X.x = 12; // Should error, incompatible with index signature
  class Y {
      static foo() { } // should error, incompatible with index signature
  }

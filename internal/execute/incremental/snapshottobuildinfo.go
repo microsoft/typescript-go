@@ -128,7 +128,8 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsFromFileNameDiagnostics(diagnostics 
 			End:                d.end,
 			Code:               d.code,
 			Category:           d.category,
-			Message:            d.message,
+			MessageKey:         d.messageKey,
+			MessageArgs:        d.messageArgs,
 			MessageChain:       t.toBuildInfoDiagnosticsFromFileNameDiagnostics(d.messageChain),
 			RelatedInformation: t.toBuildInfoDiagnosticsFromFileNameDiagnostics(d.relatedInformation),
 			ReportsUnnecessary: d.reportsUnnecessary,
@@ -154,7 +155,8 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsFromDiagnostics(filePath tspath.Path
 			End:                d.Loc().End(),
 			Code:               d.Code(),
 			Category:           d.Category(),
-			Message:            d.Message(),
+			MessageKey:         d.MessageKey(),
+			MessageArgs:        d.MessageArgs(),
 			MessageChain:       t.toBuildInfoDiagnosticsFromDiagnostics(filePath, d.MessageChain()),
 			RelatedInformation: t.toBuildInfoDiagnosticsFromDiagnostics(filePath, d.RelatedInformation()),
 			ReportsUnnecessary: d.ReportsUnnecessary(),
@@ -164,7 +166,7 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsFromDiagnostics(filePath tspath.Path
 	})
 }
 
-func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *diagnosticsOrBuildInfoDiagnosticsWithFileName) *BuildInfoDiagnosticsOfFile {
+func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *DiagnosticsOrBuildInfoDiagnosticsWithFileName) *BuildInfoDiagnosticsOfFile {
 	if len(diags.diagnostics) > 0 {
 		return &BuildInfoDiagnosticsOfFile{
 			FileId:      t.toFileId(filePath),

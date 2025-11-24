@@ -6,7 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -26,7 +26,7 @@ type compilerHost struct {
 	seenFiles          *collections.SyncSet[tspath.Path]
 
 	project *Project
-	builder *projectCollectionBuilder
+	builder *ProjectCollectionBuilder
 	logger  *logging.LogTree
 }
 
@@ -48,7 +48,7 @@ func (c *builderFileSource) FS() vfs.FS {
 func newCompilerHost(
 	currentDirectory string,
 	project *Project,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *compilerHost {
 	seenFiles := &collections.SyncSet[tspath.Path]{}
@@ -76,7 +76,7 @@ func newCompilerHost(
 
 // freeze clears references to mutable state to make the compilerHost safe for use
 // after the snapshot has been finalized. See the usage in snapshot.go for more details.
-func (c *compilerHost) freeze(snapshotFS *snapshotFS, configFileRegistry *ConfigFileRegistry) {
+func (c *compilerHost) freeze(snapshotFS *SnapshotFS, configFileRegistry *ConfigFileRegistry) {
 	if c.builder == nil {
 		panic("freeze can only be called once")
 	}
@@ -131,15 +131,8 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	return nil
 }
 
-func (c *compilerHost) GetLineMap(fileName string) *ls.LineMap {
-	if fh := c.compilerFS.source.GetFile(fileName); fh != nil {
-		return fh.LineMap()
-	}
-	return nil
-}
-
 // Trace implements compiler.CompilerHost.
-func (c *compilerHost) Trace(msg string) {
+func (c *compilerHost) Trace(msg *diagnostics.Message, args ...any) {
 	panic("unimplemented")
 }
 

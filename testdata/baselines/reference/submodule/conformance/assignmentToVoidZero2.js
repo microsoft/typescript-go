@@ -21,8 +21,6 @@ j + k
 
 
 //// [assignmentToVoidZero2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 export var j = 1;
 exports.j = 1;
 export var k = void 0;
@@ -45,8 +43,13 @@ assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
 
 
 //// [assignmentToVoidZero2.d.ts]
-export var j = 1;
-export var k = void 0;
-export {};
+export declare var j: number;
+export declare var k: undefined;
+declare namespace o {
+    var x: number;
+}
+declare namespace o {
+    var y: any;
+}
 //// [importer.d.ts]
 export {};

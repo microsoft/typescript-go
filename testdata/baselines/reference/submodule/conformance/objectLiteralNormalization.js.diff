@@ -1,14 +1,6 @@
 --- old.objectLiteralNormalization.js
 +++ new.objectLiteralNormalization.js
-@@= skipped -52, +52 lines =@@
-
-
- //// [objectLiteralNormalization.js]
--"use strict";
- var __assign = (this && this.__assign) || function () {
-     __assign = Object.assign || function(t) {
-         for (var s, i = 1, n = arguments.length; i < n; i++) {
-@@= skipped -105, +104 lines =@@
+@@= skipped -146, +146 lines =@@
      baz?: boolean;
  };
  declare let c1: {
