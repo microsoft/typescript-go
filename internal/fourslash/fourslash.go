@@ -2441,7 +2441,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	if preferences == nil {
 		preferences = lsutil.NewDefaultUserPreferences()
 	}
-	reset := f.ConfigureWithReset(t, testPreferences)
+	reset := f.ConfigureWithReset(t, preferences)
 	defer reset()
 
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)

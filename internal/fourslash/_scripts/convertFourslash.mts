@@ -1816,7 +1816,7 @@ function parseVerifyNavigateTo(args: ts.NodeArray<ts.Expression>): [VerifyNavToC
     return [{
         kind: "verifyNavigateTo",
         args: goArgs,
-    }]
+    }];
 }
 
 function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
@@ -1863,7 +1863,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
             }
             case "excludeLibFiles": {
                 if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
-                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false}`
+                    prefs = `&lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false}`;
                 }
             }
         }
@@ -1875,7 +1875,7 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
         Pattern: ${pattern ? pattern : '""'},
         Preferences: ${prefs},
         Exact: PtrTo([]*lsproto.SymbolInformation{${items.length ? items.join(",\n") + ",\n" : ""}}),
-    }`
+    }`;
 }
 
 function parseNavToItem(arg: ts.Expression): string | undefined {
@@ -1925,7 +1925,7 @@ function parseNavToItem(arg: ts.Expression): string | undefined {
                     }
                 }
                 if (ts.isElementAccessExpression(init) && init.expression.getText() === "test.ranges()") {
-                    itemProps.push(`Location: f.Ranges()[${parseInt(init.argumentExpression.getText())}].LSLocation()`)
+                    itemProps.push(`Location: f.Ranges()[${parseInt(init.argumentExpression.getText())}].LSLocation()`);
                     continue;
                 }
                 console.error(`Expected range variable for range in navigateTo item, got ${init.getText()}`);
