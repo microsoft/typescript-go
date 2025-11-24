@@ -327,26 +327,27 @@ func InsertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	return slices.Insert(slice, i, element)
 }
 
-func Bests[T any](xs []T, cmp func(a, b T) int) []T {
+// MinAllFunc returns all minimum elements from xs according to the comparison function cmp.
+func MinAllFunc[T any](xs []T, cmp func(a, b T) int) []T {
 	if len(xs) == 0 {
 		return nil
 	}
 
-	best := xs[0]
-	bests := []T{best}
+	min := xs[0]
+	mins := []T{min}
 
 	for _, x := range xs[1:] {
-		c := cmp(x, best)
+		c := cmp(x, min)
 		switch {
 		case c < 0:
-			best = x
-			bests = []T{x}
+			min = x
+			mins = []T{x}
 		case c == 0:
-			bests = append(bests, x)
+			mins = append(mins, x)
 		}
 	}
 
-	return bests
+	return mins
 }
 
 func AppendIfUnique[T comparable](slice []T, element T) []T {

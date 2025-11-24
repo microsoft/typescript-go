@@ -34,26 +34,59 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 	}
 }
 
-func (v *View) Search(prefix string) []*Export {
+type QueryKind int
+
+const (
+	QueryKindWordPrefix QueryKind = iota
+	QueryKindExactMatch
+	QueryKindCaseInsensitiveMatch
+)
+
+func (v *View) Search(query string, kind QueryKind) []*Export {
 	// !!! deal with duplicates due to symlinks
 	var results []*Export
-	bucket, ok := v.registry.projects[v.projectKey]
-	if ok {
-		results = append(results, bucket.Index.Search(prefix, nil)...)
+	search := func(bucket *RegistryBucket) []*Export {
+		switch kind {
+		case QueryKindWordPrefix:
+			return bucket.Index.SearchWordPrefix(query)
+		case QueryKindExactMatch:
+			return bucket.Index.Find(query, true)
+		case QueryKindCaseInsensitiveMatch:
+			return bucket.Index.Find(query, false)
+		default:
+			panic("unreachable")
+		}
 	}
 
-	var excludePackages collections.Set[string]
+	if bucket, ok := v.registry.projects[v.projectKey]; ok {
+		exports := search(bucket)
+		results = slices.Grow(results, len(exports))
+		for _, e := range exports {
+			if string(e.ModuleID) == string(v.importingFile.Path()) {
+				// Don't auto-import from the importing file itself
+				continue
+			}
+			results = append(results, e)
+		}
+	}
+
+	var excludePackages *collections.Set[string]
 	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
 		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
-			var filter func(e *Export) bool
+			exports := append(results, search(nodeModulesBucket)...)
 			if excludePackages.Len() > 0 {
-				filter = func(e *Export) bool {
-					return !excludePackages.Has(e.PackageName)
+				results = slices.Grow(results, len(exports))
+				for _, e := range exports {
+					if !excludePackages.Has(e.PackageName) {
+						results = append(results, e)
+					}
 				}
+			} else {
+				results = append(results, exports...)
 			}
 
-			results = append(results, nodeModulesBucket.Index.Search(prefix, filter)...)
-			excludePackages = *excludePackages.Union(nodeModulesBucket.PackageNames)
+			// As we go up the directory tree, exclude packages found in lower node_modules
+			excludePackages = excludePackages.Union(nodeModulesBucket.PackageNames)
 		}
 		return nil, false
 	})
@@ -66,7 +99,7 @@ type FixAndExport struct {
 }
 
 func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) []*FixAndExport {
-	results := v.Search(prefix)
+	results := v.Search(prefix, QueryKindWordPrefix)
 
 	type exportGroupKey struct {
 		target                     ExportID
@@ -75,10 +108,6 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) [
 	}
 	grouped := make(map[exportGroupKey][]*Export, len(results))
 	for _, e := range results {
-		if string(e.ModuleID) == string(v.importingFile.Path()) {
-			// Don't auto-import from the importing file itself
-			continue
-		}
 		name := e.Name()
 		if forJSX && !(unicode.IsUpper(rune(name[0])) || e.IsRenameable()) {
 			continue
@@ -114,7 +143,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) [
 
 	fixes := make([]*FixAndExport, 0, len(results))
 	compareFixes := func(a, b *FixAndExport) int {
-		return v.compareFixes(a.Fix, b.Fix)
+		return v.CompareFixes(a.Fix, b.Fix)
 	}
 
 	for _, exps := range grouped {
@@ -127,7 +156,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) [
 				})
 			}
 		}
-		fixes = append(fixes, core.Bests(fixesForGroup, compareFixes)...)
+		fixes = append(fixes, core.MinAllFunc(fixesForGroup, compareFixes)...)
 	}
 
 	return fixes

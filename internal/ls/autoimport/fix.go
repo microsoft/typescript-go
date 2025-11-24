@@ -35,9 +35,10 @@ type newImportBinding struct {
 type Fix struct {
 	*lsproto.AutoImportFix
 
-	ModuleSpecifierKind modulespecifiers.ResultKind
-	IsReExport          bool
-	ModuleFileName      string
+	ModuleSpecifierKind      modulespecifiers.ResultKind
+	IsReExport               bool
+	ModuleFileName           string
+	TypeOnlyAliasDeclaration *ast.Declaration
 }
 
 func (f *Fix) Edits(
@@ -644,9 +645,9 @@ func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences *lsutil.
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
 }
 
-// compareFixes returns negative if `a` is better than `b`.
+// CompareFixes returns negative if `a` is better than `b`.
 // Sorting with this comparator will place the best fix first.
-func (v *View) compareFixes(a, b *Fix) int {
+func (v *View) CompareFixes(a, b *Fix) int {
 	if res := compareFixKinds(a.Kind, b.Kind); res != 0 {
 		return res
 	}

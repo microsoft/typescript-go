@@ -13,26 +13,51 @@ type Named interface {
 	Name() string
 }
 
-// Index stores entries with an index mapping lowercase letters to entries whose name
-// has a word starting with that letter. This supports efficient fuzzy matching.
+// Index stores entries with an index mapping uppercase letters to entries whose name
+// starts with that letter, and lowercase letters to entries whose name contains a
+// word starting with that letter.
 type Index[T Named] struct {
 	entries []T
 	index   map[rune][]int
 }
 
-// Search returns all entries whose name contains the characters of prefix in order.
-// The search first uses the index to narrow down candidates by the first letter,
-// then filters by checking if the name contains all characters in order.
-func (idx *Index[T]) Search(prefix string, filter func(T) bool) []T {
-	if idx == nil || len(idx.entries) == 0 {
+func (idx *Index[T]) Find(name string, caseSensitive bool) []T {
+	if len(idx.entries) == 0 || len(name) == 0 {
+		return nil
+	}
+	firstRune := core.FirstResult(utf8.DecodeRuneInString(name))
+	if firstRune == utf8.RuneError {
+		return nil
+	}
+	firstRuneUpper := unicode.ToUpper(firstRune)
+	candidates, ok := idx.index[firstRuneUpper]
+	if !ok {
+		return nil
+	}
+
+	var results []T
+	for _, entryIndex := range candidates {
+		entry := idx.entries[entryIndex]
+		entryName := entry.Name()
+		if (caseSensitive && entryName == name) || (!caseSensitive && strings.EqualFold(entryName, name)) {
+			results = append(results, entry)
+		}
+	}
+
+	return results
+}
+
+// SearchWordPrefix returns each entry whose name contains a word beginning with
+// the first character of 'prefix', and whose name contains all characters
+// of 'prefix' in order (case-insensitive). If 'filter' is provided, only entries
+// for which filter(entry) returns true are included.
+func (idx *Index[T]) SearchWordPrefix(prefix string) []T {
+	if len(idx.entries) == 0 {
 		return nil
 	}
 
 	if len(prefix) == 0 {
-		if filter == nil {
-			return idx.entries
-		}
-		return core.Filter(idx.entries, filter)
+		return idx.entries
 	}
 
 	prefix = strings.ToLower(prefix)
@@ -40,20 +65,29 @@ func (idx *Index[T]) Search(prefix string, filter func(T) bool) []T {
 	if firstRune == utf8.RuneError {
 		return nil
 	}
-	firstRune = unicode.ToLower(firstRune)
+
+	firstRuneUpper := unicode.ToUpper(firstRune)
+	firstRuneLower := unicode.ToLower(firstRune)
 
 	// Look up entries that have words starting with this letter
-	indices, ok := idx.index[firstRune]
-	if !ok {
+	var wordStarts []int
+	nameStarts, _ := idx.index[firstRuneUpper]
+	if firstRuneUpper != firstRuneLower {
+		wordStarts, _ = idx.index[firstRuneLower]
+	}
+	count := len(nameStarts) + len(wordStarts)
+	if count == 0 {
 		return nil
 	}
 
 	// Filter entries by checking if they contain all characters in order
-	results := make([]T, 0, len(indices))
-	for _, i := range indices {
-		entry := idx.entries[i]
-		if containsCharsInOrder(entry.Name(), prefix) && (filter == nil || filter(entry)) {
-			results = append(results, entry)
+	results := make([]T, 0, count)
+	for _, starts := range [][]int{nameStarts, wordStarts} {
+		for _, i := range starts {
+			entry := idx.entries[i]
+			if containsCharsInOrder(entry.Name(), prefix) {
+				results = append(results, entry)
+			}
 		}
 	}
 	return results
@@ -83,23 +117,33 @@ func (idx *Index[T]) insertAsWords(value T) {
 	}
 
 	name := value.Name()
+	if len(name) == 0 {
+		panic("Cannot index entry with empty name")
+	}
 	entryIndex := len(idx.entries)
 	idx.entries = append(idx.entries, value)
 
 	indices := wordIndices(name)
 	seenRunes := make(map[rune]bool)
 
-	for _, start := range indices {
+	for i, start := range indices {
 		substr := name[start:]
 		firstRune, _ := utf8.DecodeRuneInString(substr)
 		if firstRune == utf8.RuneError {
 			continue
 		}
-		firstRune = unicode.ToLower(firstRune)
-
-		if !seenRunes[firstRune] {
+		if i == 0 {
+			// Name start keyed by uppercase
+			firstRune = unicode.ToUpper(firstRune)
 			idx.index[firstRune] = append(idx.index[firstRune], entryIndex)
-			seenRunes[firstRune] = true
+			seenRunes[firstRune] = true // (Still set seenRunes in case first character is non-alphabetic)
+		} else {
+			// Subsequent word starts keyed by lowercase
+			firstRune = unicode.ToLower(firstRune)
+			if !seenRunes[firstRune] {
+				idx.index[firstRune] = append(idx.index[firstRune], entryIndex)
+				seenRunes[firstRune] = true
+			}
 		}
 	}
 }

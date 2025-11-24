@@ -14,6 +14,9 @@ func NewSetWithSizeHint[T comparable](hint int) *Set[T] {
 }
 
 func (s *Set[T]) Has(key T) bool {
+	if s == nil {
+		return false
+	}
 	_, ok := s.M[key]
 	return ok
 }
@@ -30,14 +33,23 @@ func (s *Set[T]) Delete(key T) {
 }
 
 func (s *Set[T]) Len() int {
+	if s == nil {
+		return 0
+	}
 	return len(s.M)
 }
 
 func (s *Set[T]) Keys() map[T]struct{} {
+	if s == nil {
+		return nil
+	}
 	return s.M
 }
 
 func (s *Set[T]) Clear() {
+	if s == nil {
+		return
+	}
 	clear(s.M)
 }
 
@@ -64,6 +76,9 @@ func (s *Set[T]) Union(other *Set[T]) *Set[T] {
 	}
 	result := s.Clone()
 	if other != nil {
+		if result == nil {
+			result = &Set[T]{}
+		}
 		if result.M == nil {
 			result.M = make(map[T]struct{}, len(other.M))
 		}

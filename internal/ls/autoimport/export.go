@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -96,4 +97,21 @@ func (e *Export) ModuleFileName() string {
 		return string(e.ModuleID)
 	}
 	return ""
+}
+
+func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
+	if symbol.Parent == nil || !checker.IsExternalModuleSymbol(symbol.Parent) {
+		return nil
+	}
+	moduleID := getModuleIDOfModuleSymbol(symbol.Parent)
+	extractor := newSymbolExtractor("", "", func() (*checker.Checker, func()) {
+		return ch, func() {}
+	})
+
+	var exports []*Export
+	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, ast.GetSourceFileOfModule(symbol.Parent), &exports)
+	if len(exports) > 0 {
+		return exports[0]
+	}
+	return nil
 }

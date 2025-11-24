@@ -28,7 +28,7 @@ func getModuleIDOfModuleSymbol(symbol *ast.Symbol) ModuleID {
 }
 
 // wordIndices splits an identifier into its constituent words based on camelCase and snake_case conventions
-// by returning the starting byte indices of each word.
+// by returning the starting byte indices of each word. The first index is always 0.
 //   - CamelCase
 //     ^    ^
 //   - snake_case

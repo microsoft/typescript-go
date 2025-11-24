@@ -14,15 +14,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type exportExtractor struct {
+type symbolExtractor struct {
 	nodeModulesDirectory tspath.Path
 	packageName          string
 	stats                *extractorStats
 
 	localNameResolver *binder.NameResolver
-	moduleResolver    *module.Resolver
 	getChecker        func() (*checker.Checker, func())
-	toPath            func(fileName string) tspath.Path
+}
+
+type exportExtractor struct {
+	*symbolExtractor
+	moduleResolver *module.Resolver
+	toPath         func(fileName string) tspath.Path
 }
 
 type extractorStats struct {
@@ -58,17 +62,23 @@ func (l *checkerLease) Done() {
 	}
 }
 
-func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) *exportExtractor {
-	return &exportExtractor{
+func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) *symbolExtractor {
+	return &symbolExtractor{
 		nodeModulesDirectory: nodeModulesDirectory,
 		packageName:          packageName,
-		moduleResolver:       b.resolver,
 		getChecker:           getChecker,
-		toPath:               b.base.toPath,
 		localNameResolver: &binder.NameResolver{
 			CompilerOptions: core.EmptyCompilerOptions,
 		},
 		stats: &extractorStats{},
+	}
+}
+
+func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) *exportExtractor {
+	return &exportExtractor{
+		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, getChecker),
+		moduleResolver:  b.resolver,
+		toPath:          b.base.toPath,
 	}
 }
 
@@ -130,7 +140,7 @@ func (e *exportExtractor) extractFromModuleDeclaration(decl *ast.ModuleDeclarati
 	}
 }
 
-func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.SourceFile, exports *[]*Export) {
+func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.SourceFile, exports *[]*Export) {
 	if shouldIgnoreSymbol(symbol) {
 		return
 	}
@@ -162,38 +172,7 @@ func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		return
 	}
 
-	var syntax ExportSyntax
-	for _, decl := range symbol.Declarations {
-		var declSyntax ExportSyntax
-		switch decl.Kind {
-		case ast.KindExportSpecifier:
-			declSyntax = ExportSyntaxNamed
-		case ast.KindExportAssignment:
-			declSyntax = core.IfElse(
-				decl.AsExportAssignment().IsExportEquals,
-				ExportSyntaxEquals,
-				ExportSyntaxDefaultDeclaration,
-			)
-		case ast.KindJSExportAssignment:
-			declSyntax = ExportSyntaxCommonJSModuleExports
-		case ast.KindCommonJSExport:
-			declSyntax = ExportSyntaxCommonJSExportsProperty
-		default:
-			if ast.GetCombinedModifierFlags(decl)&ast.ModifierFlagsDefault != 0 {
-				declSyntax = ExportSyntaxDefaultModifier
-			} else {
-				declSyntax = ExportSyntaxModifier
-			}
-		}
-		if syntax != ExportSyntaxNone && syntax != declSyntax {
-			// !!! this can probably happen in erroring code
-			//     actually, it can probably happen in valid alias/local merges!
-			//     or no wait, maybe only for imports?
-			panic(fmt.Sprintf("mixed export syntaxes for symbol %s: %s", file.FileName(), name))
-		}
-		syntax = declSyntax
-	}
-
+	syntax := getSyntax(symbol)
 	checkerLease := &checkerLease{getChecker: e.getChecker}
 	defer checkerLease.Done()
 	export, target := e.createExport(symbol, moduleID, syntax, file, checkerLease)
@@ -249,7 +228,7 @@ func (e *exportExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 }
 
 // createExport creates an Export for the given symbol, returning the Export and the target symbol if the export is an alias.
-func (e *exportExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, syntax ExportSyntax, file *ast.SourceFile, checkerLease *checkerLease) (*Export, *ast.Symbol) {
+func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, syntax ExportSyntax, file *ast.SourceFile, checkerLease *checkerLease) (*Export, *ast.Symbol) {
 	if shouldIgnoreSymbol(symbol) {
 		return nil, nil
 	}
@@ -309,7 +288,7 @@ func (e *exportExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 	return export, targetSymbol
 }
 
-func (e *exportExtractor) tryResolveSymbol(symbol *ast.Symbol, syntax ExportSyntax, checkerLease *checkerLease) *ast.Symbol {
+func (e *symbolExtractor) tryResolveSymbol(symbol *ast.Symbol, syntax ExportSyntax, checkerLease *checkerLease) *ast.Symbol {
 	if !ast.IsNonLocalAlias(symbol, ast.SymbolFlagsNone) {
 		return symbol
 	}
@@ -358,4 +337,39 @@ func shouldIgnoreSymbol(symbol *ast.Symbol) bool {
 		return true
 	}
 	return false
+}
+
+func getSyntax(symbol *ast.Symbol) ExportSyntax {
+	var syntax ExportSyntax
+	for _, decl := range symbol.Declarations {
+		var declSyntax ExportSyntax
+		switch decl.Kind {
+		case ast.KindExportSpecifier:
+			declSyntax = ExportSyntaxNamed
+		case ast.KindExportAssignment:
+			declSyntax = core.IfElse(
+				decl.AsExportAssignment().IsExportEquals,
+				ExportSyntaxEquals,
+				ExportSyntaxDefaultDeclaration,
+			)
+		case ast.KindJSExportAssignment:
+			declSyntax = ExportSyntaxCommonJSModuleExports
+		case ast.KindCommonJSExport:
+			declSyntax = ExportSyntaxCommonJSExportsProperty
+		default:
+			if ast.GetCombinedModifierFlags(decl)&ast.ModifierFlagsDefault != 0 {
+				declSyntax = ExportSyntaxDefaultModifier
+			} else {
+				declSyntax = ExportSyntaxModifier
+			}
+		}
+		if syntax != ExportSyntaxNone && syntax != declSyntax {
+			// !!! this can probably happen in erroring code
+			//     actually, it can probably happen in valid alias/local merges!
+			//     or no wait, maybe only for imports?
+			panic(fmt.Sprintf("mixed export syntaxes for symbol %s", symbol.Name))
+		}
+		syntax = declSyntax
+	}
+	return syntax
 }
