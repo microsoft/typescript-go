@@ -508,7 +508,7 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined 
                             return undefined;
                     }
                 }
-                props.push(`AutoImportData: &ls.AutoImportData{\n${dataProps.join("\n")}\n},`);
+                props.push(`AutoImportData: &lsproto.AutoImportData{\n${dataProps.join("\n")}\n},`);
                 break;
             case "description":
                 descInit = getStringLiteralLike(init);
@@ -946,16 +946,16 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                     if (sourceInit = getStringLiteralLike(init)) {
                         if (propName === "source" && sourceInit.text.endsWith("/")) {
                             // source: "ClassMemberSnippet/"
-                            itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
+                            itemProps.push(`Data: &lsproto.CompletionItemData{
                                 Source: ${getGoStringLiteral(sourceInit.text)},
-                            })),`);
+                            },`);
                             break;
                         }
-                        itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
-                            AutoImport: &ls.AutoImportData{
+                        itemProps.push(`Data: &lsproto.CompletionItemData{
+                            AutoImport: &lsproto.AutoImportData{
                                 ModuleSpecifier: ${getGoStringLiteral(sourceInit.text)},
                             },
-                        })),`);
+                        },`);
                     }
                     else {
                         console.error(`Expected string literal for source/sourceDisplay, got ${init.getText()}`);
