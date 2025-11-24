@@ -444,8 +444,13 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
-	// !!! check for errors?
-	sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	resp, _, ok := sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	if !ok {
+		t.Fatalf("Initialize request failed")
+	}
+	if resp.AsResponse().Error != nil {
+		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
+	}
 	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 }
 
