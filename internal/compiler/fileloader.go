@@ -788,6 +788,9 @@ func getRawTypeValue(node *ast.Node) *string {
 }
 
 func getModuleLiteralImportAttributeType(node *ast.StringLiteralLike) *string {
+	if node == nil {
+		return nil
+	}
 	parent := node.Parent
 	if parent == nil {
 		return nil
