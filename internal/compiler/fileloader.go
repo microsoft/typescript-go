@@ -350,11 +350,10 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 
 		if resolved.IsResolved() {
 			t.addSubTask(resolvedRef{
-				fileName:              resolved.ResolvedFileName,
-				increaseDepth:         resolved.IsExternalLibraryImport,
-				elideOnDepth:          false,
-				isFromExternalLibrary: resolved.IsExternalLibraryImport,
-				includeReason:         includeReason,
+				fileName:      resolved.ResolvedFileName,
+				increaseDepth: resolved.IsExternalLibraryImport,
+				elideOnDepth:  false,
+				includeReason: includeReason,
 			}, nil)
 		} else {
 			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
@@ -450,10 +449,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 
 			if shouldAddFile {
 				t.addSubTask(resolvedRef{
-					fileName:              resolvedFileName,
-					increaseDepth:         resolvedModule.IsExternalLibraryImport,
-					elideOnDepth:          isJsFileFromNodeModules,
-					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
+					fileName:      resolvedFileName,
+					increaseDepth: resolvedModule.IsExternalLibraryImport,
+					elideOnDepth:  isJsFileFromNodeModules,
 					includeReason: &FileIncludeReason{
 						kind: fileIncludeKindImport,
 						data: &referencedFileData{

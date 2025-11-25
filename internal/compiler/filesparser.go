@@ -32,12 +32,9 @@ type parseTask struct {
 	resolutionDiagnostics        []*ast.Diagnostic
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
-	increaseDepth                bool
-	elideOnDepth                 bool
 
-	// Track if this file is from an external library (node_modules)
-	// This mirrors the TypeScript currentNodeModulesDepth > 0 check
-	fromExternalLibrary bool
+	increaseDepth bool
+	elideOnDepth  bool
 
 	loadedTask        *parseTask
 	allIncludeReasons []*FileIncludeReason
@@ -49,11 +46,6 @@ func (t *parseTask) FileName() string {
 
 func (t *parseTask) Path() tspath.Path {
 	return t.path
-}
-
-func (t *parseTask) isRoot() bool {
-	// Intentionally not checking t.includeReason != nil to ensure we can catch cases for missing include reason
-	return !t.isForAutomaticTypeDirective && (t.includeReason.kind == fileIncludeKindRootFile || t.includeReason.kind == fileIncludeKindLibFile)
 }
 
 func (t *parseTask) load(loader *fileLoader) {
@@ -119,10 +111,9 @@ func (t *parseTask) load(loader *fileLoader) {
 
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.redirectedParseTask = &parseTask{
-		normalizedFilePath:  tspath.NormalizePath(fileName),
-		libFile:             t.libFile,
-		fromExternalLibrary: t.fromExternalLibrary,
-		includeReason:       t.includeReason,
+		normalizedFilePath: tspath.NormalizePath(fileName),
+		libFile:            t.libFile,
+		includeReason:      t.includeReason,
 	}
 	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
 	t.subTasks = []*parseTask{t.redirectedParseTask}
@@ -138,22 +129,20 @@ func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 }
 
 type resolvedRef struct {
-	fileName              string
-	increaseDepth         bool
-	elideOnDepth          bool
-	isFromExternalLibrary bool
-	includeReason         *FileIncludeReason
+	fileName      string
+	increaseDepth bool
+	elideOnDepth  bool
+	includeReason *FileIncludeReason
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
-		normalizedFilePath:  normalizedFilePath,
-		libFile:             libFile,
-		increaseDepth:       ref.increaseDepth,
-		elideOnDepth:        ref.elideOnDepth,
-		fromExternalLibrary: ref.isFromExternalLibrary,
-		includeReason:       ref.includeReason,
+		normalizedFilePath: normalizedFilePath,
+		libFile:            libFile,
+		increaseDepth:      ref.increaseDepth,
+		elideOnDepth:       ref.elideOnDepth,
+		includeReason:      ref.includeReason,
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
@@ -165,32 +154,25 @@ type filesParser struct {
 }
 
 type parseTaskData struct {
-	task                *parseTask
-	mu                  sync.Mutex
-	isRoot              bool
-	lowestDepth         int
-	fromExternalLibrary bool
+	task        *parseTask
+	mu          sync.Mutex
+	lowestDepth int
 }
 
 func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
-	w.start(loader, tasks, 0, false)
+	w.start(loader, tasks, 0)
 	w.wg.RunAndWait()
 }
 
-func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, isFromExternalLibrary bool) {
+func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 	for i, task := range tasks {
 		task.path = loader.toPath(task.normalizedFilePath)
-		taskIsFromExternalLibrary := isFromExternalLibrary || task.fromExternalLibrary
 		data, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), &parseTaskData{
 			task:        task,
-			isRoot:      task.isRoot(),
 			lowestDepth: math.MaxInt,
 		})
-		// task = data.task
 		if loaded {
 			tasks[i].loadedTask = data.task
-			// Add in the loaded task's external-ness.
-			taskIsFromExternalLibrary = taskIsFromExternalLibrary || data.fromExternalLibrary
 		}
 
 		w.wg.Queue(func() {
@@ -207,23 +189,20 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 				startSubtasks = true
 			}
 
-			if !data.isRoot && taskIsFromExternalLibrary && !data.fromExternalLibrary {
-				// If we're seeing this task now as an external library,
-				// reprocess its subtasks to ensure they are also marked as external.
-				data.fromExternalLibrary = true
-				startSubtasks = true
-			}
-
 			if task.elideOnDepth && currentDepth > w.maxDepth {
 				return
 			}
 
 			if !data.task.loaded {
 				data.task.load(loader)
+				if data.task.redirectedParseTask != nil {
+					// Always load redirected task
+					startSubtasks = true
+				}
 			}
 
 			if startSubtasks {
-				w.start(loader, data.task.subTasks, data.lowestDepth, data.fromExternalLibrary)
+				w.start(loader, data.task.subTasks, data.lowestDepth)
 			}
 		})
 	}
@@ -342,7 +321,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 				importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
 			}
-			if data.fromExternalLibrary {
+			if data.lowestDepth > 0 {
 				sourceFilesFoundSearchingNodeModules.Add(path)
 			}
 		}
