@@ -98,7 +98,7 @@ type FixAndExport struct {
 	Export *Export
 }
 
-func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) []*FixAndExport {
+func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, isTypeOnlyLocation bool) []*FixAndExport {
 	results := v.Search(prefix, QueryKindWordPrefix)
 
 	type exportGroupKey struct {
@@ -149,7 +149,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool) [
 	for _, exps := range grouped {
 		fixesForGroup := make([]*FixAndExport, 0, len(exps))
 		for _, e := range exps {
-			for _, fix := range v.GetFixes(ctx, e, forJSX) {
+			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation) {
 				fixesForGroup = append(fixesForGroup, &FixAndExport{
 					Fix:    fix,
 					Export: e,

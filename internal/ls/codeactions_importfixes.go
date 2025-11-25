@@ -144,9 +144,10 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	}
 
 	export := autoimport.SymbolToExport(umdSymbol, ch)
+	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(token)
 
 	var result []*fixInfo
-	for _, fix := range view.GetFixes(ctx, export, false) {
+	for _, fix := range view.GetFixes(ctx, export, false, isValidTypeOnlyUseSite) {
 		errorIdentifierText := ""
 		if ast.IsIdentifier(token) {
 			errorIdentifierText = token.Text()
@@ -200,7 +201,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 	defer done()
 	compilerOptions := fixContext.Program.Options()
 
-	// isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
+	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
 	symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
 	isJSXTagName := ast.IsJsxTagName(symbolToken)
 	var allInfo []*fixInfo
@@ -222,7 +223,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 				continue
 			}
 
-			fixes := view.GetFixes(ctx, export, isJSXTagName)
+			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite)
 			for _, fix := range fixes {
 				allInfo = append(allInfo, &fixInfo{
 					fix:        fix,

@@ -80,8 +80,8 @@ func (f *Fix) Edits(
 		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Format(f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindAddNew:
 		var declarations []*ast.Statement
-		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		var namespaceLikeImport *newImportBinding
 		// qualification := f.qualification()
 		// if f.ImportKind == lsproto.ImportKindNamespace || f.ImportKind == lsproto.ImportKindCommonJS {
@@ -240,7 +240,8 @@ func getNewImports(
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *newImportBinding) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
 			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
-				defaultImport != nil && defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
+				(defaultImport == nil || defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed) &&
+				!core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
@@ -430,9 +431,9 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 }
 
 // !!! when/why could this return multiple?
-func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix {
+func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool) []*Fix {
 	// !!! tryUseExistingNamespaceImport
-	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
+	if fix := v.tryAddToExistingImport(ctx, export, isValidTypeOnlyUseSite); fix != nil {
 		return []*Fix{fix}
 	}
 
@@ -443,7 +444,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 		return nil
 	}
 	importKind := getImportKind(v.importingFile, export, v.program)
-	// !!! JSDoc type import, add as type only
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
 
 	name := export.Name()
 	startsWithUpper := unicode.IsUpper(rune(name[0]))
@@ -462,6 +463,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 				ModuleSpecifier: moduleSpecifier,
 				Name:            export.Name(),
 				UseRequire:      v.shouldUseRequire(),
+				AddAsTypeOnly:   addAsTypeOnly,
 			},
 			ModuleSpecifierKind: moduleSpecifierKind,
 			IsReExport:          export.Target.ModuleID != export.ModuleID,
@@ -470,9 +472,23 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 	}
 }
 
+// getAddAsTypeOnly determines if an import should be type-only based on usage context
+func getAddAsTypeOnly(isValidTypeOnlyUseSite bool, targetFlags ast.SymbolFlags, compilerOptions *core.CompilerOptions) lsproto.AddAsTypeOnly {
+	if !isValidTypeOnlyUseSite {
+		// Can't use a type-only import if the usage is an emitting position
+		return lsproto.AddAsTypeOnlyNotAllowed
+	}
+	if compilerOptions.VerbatimModuleSyntax.IsTrue() && targetFlags&ast.SymbolFlagsValue == 0 {
+		// A type-only import is required for this symbol if under verbatimModuleSyntax and it's purely a type
+		return lsproto.AddAsTypeOnlyRequired
+	}
+	return lsproto.AddAsTypeOnlyAllowed
+}
+
 func (v *View) tryAddToExistingImport(
 	ctx context.Context,
 	export *Export,
+	isValidTypeOnlyUseSite bool,
 ) *Fix {
 	existingImports := v.getExistingImports(ctx)
 	matchingDeclarations := existingImports.Get(export.ModuleID)
@@ -492,6 +508,8 @@ func (v *View) tryAddToExistingImport(
 		return nil
 	}
 
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
+
 	for _, existingImport := range matchingDeclarations {
 		if existingImport.node.Kind == ast.KindImportEqualsDeclaration {
 			continue
@@ -506,16 +524,19 @@ func (v *View) tryAddToExistingImport(
 						ImportKind:      importKind,
 						ImportIndex:     int32(existingImport.index),
 						ModuleSpecifier: existingImport.moduleSpecifier,
+						AddAsTypeOnly:   addAsTypeOnly,
 					},
 				}
 			}
 			continue
 		}
 
-		importClause := existingImport.node.ImportClause().AsImportClause()
-		if importClause == nil || !ast.IsStringLiteralLike(existingImport.node.ModuleSpecifier()) {
+		importClauseNode := existingImport.node.ImportClause()
+		if importClauseNode == nil || !ast.IsStringLiteralLike(existingImport.node.ModuleSpecifier()) {
+			// Side-effect import (no import clause) - can't add to it
 			continue
 		}
+		importClause := importClauseNode.AsImportClause()
 
 		namedBindings := importClause.NamedBindings
 		// A type-only import may not have both a default and named imports, so the only way a name can
@@ -536,6 +557,7 @@ func (v *View) tryAddToExistingImport(
 				ImportKind:      importKind,
 				ImportIndex:     int32(existingImport.index),
 				ModuleSpecifier: existingImport.moduleSpecifier,
+				AddAsTypeOnly:   addAsTypeOnly,
 			},
 		}
 	}
