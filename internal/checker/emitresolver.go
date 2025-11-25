@@ -34,7 +34,7 @@ type DeclarationFileLinks struct {
 
 type EmitResolver struct {
 	checker                 *Checker
-	checkerMu               sync.Mutex
+	checkerMu               *sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
 	aliasMarkingVisitor     func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
@@ -47,6 +47,7 @@ func newEmitResolver(checker *Checker) *EmitResolver {
 	e := &EmitResolver{checker: checker}
 	e.isValueAliasDeclaration = e.isValueAliasDeclarationWorker
 	e.aliasMarkingVisitor = e.aliasMarkingVisitorWorker
+	e.checkerMu = &checker.mu
 	return e
 }
 
@@ -149,7 +150,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		ast.KindImportEqualsDeclaration:
 		if ast.IsVariableDeclaration(node) {
 			if ast.IsBindingPattern(node.Name()) &&
-				len(node.Name().AsBindingPattern().Elements.Nodes) == 0 {
+				len(node.Name().Elements()) == 0 {
 				// If the binding pattern is empty, this variable declaration is not visible
 				return false
 			}
@@ -240,7 +241,7 @@ func (r *EmitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		if node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+		if node.Expression().Kind == ast.KindIdentifier {
 			r.markLinkedAliases(node.Expression())
 		}
 	case ast.KindExportSpecifier:
@@ -254,7 +255,7 @@ func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 	var exportSymbol *ast.Symbol
 	if node.Kind != ast.KindStringLiteral && node.Parent != nil && node.Parent.Kind == ast.KindExportAssignment {
-		exportSymbol = r.checker.resolveName(node, node.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+		exportSymbol = r.checker.resolveName(node, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
 	} else if node.Parent.Kind == ast.KindExportSpecifier {
 		exportSymbol = r.checker.getTargetOfExportSpecifier(node.Parent, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, false)
 	}
@@ -275,7 +276,7 @@ func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 				// Add the referenced top container visible
 				internalModuleReference := declaration.AsImportEqualsDeclaration().ModuleReference
 				firstIdentifier := ast.GetFirstIdentifier(internalModuleReference)
-				importSymbol := r.checker.resolveName(declaration, firstIdentifier.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+				importSymbol := r.checker.resolveName(declaration, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
 				nextSymbol = importSymbol
 			}
 		}
@@ -296,8 +297,8 @@ func getMeaningOfEntityNameReference(entityName *ast.Node) ast.SymbolFlags {
 	if entityName.Kind == ast.KindQualifiedName || entityName.Kind == ast.KindPropertyAccessExpression ||
 		entityName.Parent.Kind == ast.KindImportEqualsDeclaration ||
 		(entityName.Parent.Kind == ast.KindQualifiedName && entityName.Parent.AsQualifiedName().Left == entityName) ||
-		(entityName.Parent.Kind == ast.KindPropertyAccessExpression && (entityName.Parent.AsPropertyAccessExpression()).Expression == entityName) ||
-		(entityName.Parent.Kind == ast.KindElementAccessExpression && (entityName.Parent.AsElementAccessExpression()).Expression == entityName) {
+		(entityName.Parent.Kind == ast.KindPropertyAccessExpression && entityName.Parent.Expression() == entityName) ||
+		(entityName.Parent.Kind == ast.KindElementAccessExpression && entityName.Parent.Expression() == entityName) {
 		// Left identifier from type reference or TypeAlias
 		// Entity name of the import declaration
 		return ast.SymbolFlagsNamespace
@@ -520,7 +521,7 @@ func (r *EmitResolver) IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node)
 		return false
 	}
 	if node.Expression().Kind == ast.KindIdentifier {
-		if node.Expression().AsIdentifier().Text != "Symbol" {
+		if node.Expression().Text() != "Symbol" {
 			return false
 		}
 		r.checkerMu.Lock()
@@ -528,7 +529,7 @@ func (r *EmitResolver) IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node)
 		// Exactly `Symbol.something` and `Symbol` either does not resolve or definitely resolves to the global Symbol
 		return r.checker.getResolvedSymbol(node.Expression()) == r.checker.getGlobalSymbol("Symbol", ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*diagnostic*/)
 	}
-	if node.Expression().Expression().Kind != ast.KindIdentifier || node.Expression().Expression().AsIdentifier().Text != "globalThis" || node.Expression().Name().Text() != "Symbol" {
+	if node.Expression().Expression().Kind != ast.KindIdentifier || node.Expression().Expression().Text() != "globalThis" || node.Expression().Name().Text() != "Symbol" {
 		return false
 	}
 	r.checkerMu.Lock()
@@ -605,7 +606,7 @@ func (r *EmitResolver) isOptionalParameter(node *ast.Node) bool {
 	// if (hasEffectiveQuestionToken(node)) {
 	// 	return true;
 	// }
-	if ast.IsParameter(node) && node.AsParameterDeclaration().QuestionToken != nil {
+	if ast.IsParameter(node) && node.QuestionToken() != nil {
 		return true
 	}
 	if !ast.IsParameter(node) {
@@ -719,9 +720,9 @@ func (r *EmitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 	case ast.KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
-			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
+			core.Some(exportClause.Elements(), r.isValueAliasDeclaration))
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		if node.AsExportAssignment().Expression != nil && node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+		if node.Expression() != nil && node.Expression().Kind == ast.KindIdentifier {
 			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true
@@ -1042,8 +1043,8 @@ func (r *EmitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 				allComponentComputedNamesSerializable := enclosingDeclaration != nil && core.Every(info.components, func(c *ast.Node) bool {
 					return c.Name() != nil &&
 						ast.IsComputedPropertyName(c.Name()) &&
-						ast.IsEntityNameExpression(c.Name().AsComputedPropertyName().Expression) &&
-						r.isEntityNameVisible(c.Name().AsComputedPropertyName().Expression, enclosingDeclaration, false).Accessibility == printer.SymbolAccessibilityAccessible
+						ast.IsEntityNameExpression(c.Name().Expression()) &&
+						r.isEntityNameVisible(c.Name().Expression(), enclosingDeclaration, false).Accessibility == printer.SymbolAccessibilityAccessible
 				})
 				if allComponentComputedNamesSerializable {
 					for _, c := range info.components {
@@ -1078,11 +1079,8 @@ func (r *EmitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 			node := requestNodeBuilder.IndexInfoToIndexSignatureDeclaration(info, enclosingDeclaration, flags, internalFlags, tracker)
 			if node != nil && isStatic {
 				modNodes := []*ast.Node{emitContext.Factory.NewModifier(ast.KindStaticKeyword)}
-				mods := node.Modifiers()
-				if mods != nil {
-					modNodes = append(modNodes, mods.Nodes...)
-				}
-				mods = emitContext.Factory.NewModifierList(modNodes)
+				modNodes = append(modNodes, node.ModifierNodes()...)
+				mods := emitContext.Factory.NewModifierList(modNodes)
 				node = emitContext.Factory.UpdateIndexSignatureDeclaration(
 					node.AsIndexSignatureDeclaration(),
 					mods,

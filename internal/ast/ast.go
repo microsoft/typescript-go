@@ -414,6 +414,18 @@ func (n *Node) Expression() *Node {
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
+func (n *Node) RawText() string {
+	switch n.Kind {
+	case KindTemplateHead:
+		return n.AsTemplateHead().RawText
+	case KindTemplateMiddle:
+		return n.AsTemplateMiddle().RawText
+	case KindTemplateTail:
+		return n.AsTemplateTail().RawText
+	}
+	panic("Unhandled case in Node.RawText: " + n.Kind.String())
+}
+
 func (m *MutableNode) SetExpression(expr *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
@@ -605,6 +617,8 @@ func (n *Node) StatementList() *NodeList {
 		return n.AsBlock().Statements
 	case KindModuleBlock:
 		return n.AsModuleBlock().Statements
+	case KindCaseClause, KindDefaultClause:
+		return n.AsCaseOrDefaultClause().Statements
 	}
 	panic("Unhandled case in Node.StatementList: " + n.Kind.String())
 }
@@ -615,6 +629,15 @@ func (n *Node) Statements() []*Node {
 		return list.Nodes
 	}
 	return nil
+}
+
+func (n *Node) CanHaveStatements() bool {
+	switch n.Kind {
+	case KindSourceFile, KindBlock, KindModuleBlock, KindCaseClause, KindDefaultClause:
+		return true
+	default:
+		return false
+	}
 }
 
 func (n *Node) ModifierFlags() ModifierFlags {
@@ -1026,6 +1049,10 @@ func (n *Node) Statement() *Statement {
 		return n.AsForStatement().Statement
 	case KindForInStatement, KindForOfStatement:
 		return n.AsForInOrOfStatement().Statement
+	case KindWithStatement:
+		return n.AsWithStatement().Statement
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -1056,8 +1083,11 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedExports().Elements
 	case KindObjectBindingPattern, KindArrayBindingPattern:
 		return n.AsBindingPattern().Elements
+	case KindArrayLiteralExpression:
+		return n.AsArrayLiteralExpression().Elements
+	case KindTupleType:
+		return n.AsTupleTypeNode().Elements
 	}
-
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
 
@@ -1069,22 +1099,22 @@ func (n *Node) Elements() []*Node {
 	return nil
 }
 
-func (n *Node) postfixToken() *Node {
+func (n *Node) PostfixToken() *Node {
 	switch n.Kind {
-	case KindEnumMember:
-		return n.AsEnumMember().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
 	case KindMethodDeclaration:
 		return n.AsMethodDeclaration().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	case KindEnumMember:
+		return n.AsEnumMember().PostfixToken
 	case KindGetAccessor:
 		return n.AsGetAccessorDeclaration().PostfixToken
 	case KindSetAccessor:
@@ -1104,7 +1134,7 @@ func (n *Node) QuestionToken() *TokenNode {
 	case KindNamedTupleMember:
 		return n.AsNamedTupleMember().QuestionToken
 	}
-	postfix := n.postfixToken()
+	postfix := n.PostfixToken()
 	if postfix != nil && postfix.Kind == KindQuestionToken {
 		return postfix
 	}
@@ -1149,26 +1179,6 @@ func (n *Node) ClassName() *Node {
 		return n.AsJSDocImplementsTag().ClassName
 	}
 	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
-}
-
-func (n *Node) PostfixToken() *Node {
-	switch n.Kind {
-	case KindParameter:
-		return n.AsParameterDeclaration().QuestionToken
-	case KindMethodDeclaration:
-		return n.AsMethodDeclaration().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	}
-	return nil
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -2059,59 +2069,63 @@ type NodeBase struct {
 // Aliases for Node unions
 
 type (
-	Statement                   = Node // Node with StatementBase
-	Declaration                 = Node // Node with DeclarationBase
-	Expression                  = Node // Node with ExpressionBase
-	TypeNode                    = Node // Node with TypeNodeBase
-	TypeElement                 = Node // Node with TypeElementBase
-	ClassElement                = Node // Node with ClassElementBase
-	NamedMember                 = Node // Node with NamedMemberBase
-	ObjectLiteralElement        = Node // Node with ObjectLiteralElementBase
-	BlockOrExpression           = Node // Block | Expression
-	AccessExpression            = Node // PropertyAccessExpression | ElementAccessExpression
-	DeclarationName             = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
-	ModuleName                  = Node // Identifier | StringLiteral
-	ModuleExportName            = Node // Identifier | StringLiteral
-	PropertyName                = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
-	ModuleBody                  = Node // ModuleBlock | ModuleDeclaration
-	ForInitializer              = Node // Expression | MissingDeclaration | VariableDeclarationList
-	ModuleReference             = Node // Identifier | QualifiedName | ExternalModuleReference
-	NamedImportBindings         = Node // NamespaceImport | NamedImports
-	NamedExportBindings         = Node // NamespaceExport | NamedExports
-	MemberName                  = Node // Identifier | PrivateIdentifier
-	EntityName                  = Node // Identifier | QualifiedName
-	BindingName                 = Node // Identifier | BindingPattern
-	ModifierLike                = Node // Modifier | Decorator
-	JsxChild                    = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxAttributeLike            = Node // JsxAttribute | JsxSpreadAttribute
-	JsxAttributeName            = Node // Identifier | JsxNamespacedName
-	JsxAttributeValue           = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression        = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
-	ClassLikeDeclaration        = Node // ClassDeclaration | ClassExpression
-	AccessorDeclaration         = Node // GetAccessorDeclaration | SetAccessorDeclaration
-	LiteralLikeNode             = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
-	LiteralExpression           = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
-	UnionOrIntersectionTypeNode = Node // UnionTypeNode | IntersectionTypeNode
-	TemplateLiteralLikeNode     = Node // TemplateHead | TemplateMiddle | TemplateTail
-	TemplateMiddleOrTail        = Node // TemplateMiddle | TemplateTail
-	TemplateLiteral             = Node // TemplateExpression | NoSubstitutionTemplateLiteral
-	TypePredicateParameterName  = Node // Identifier | ThisTypeNode
-	ImportAttributeName         = Node // Identifier | StringLiteral
-	LeftHandSideExpression      = Node // subset of Expression
-	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
-	JSDocTag                    = Node // Node with JSDocTagBase
-	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
-	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
-	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
-	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
-	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
-	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
-	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
-	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
-	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
-	NamedImportsOrExports       = Node // NamedImports | NamedExports
-	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
-	CallLikeExpression          = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	Statement                      = Node // Node with StatementBase
+	Declaration                    = Node // Node with DeclarationBase
+	Expression                     = Node // Node with ExpressionBase
+	TypeNode                       = Node // Node with TypeNodeBase
+	TypeElement                    = Node // Node with TypeElementBase
+	ClassElement                   = Node // Node with ClassElementBase
+	NamedMember                    = Node // Node with NamedMemberBase
+	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
+	BlockOrExpression              = Node // Block | Expression
+	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
+	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
+	ModuleName                     = Node // Identifier | StringLiteral
+	ModuleExportName               = Node // Identifier | StringLiteral
+	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
+	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
+	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
+	NamedImportBindings            = Node // NamespaceImport | NamedImports
+	NamedExportBindings            = Node // NamespaceExport | NamedExports
+	MemberName                     = Node // Identifier | PrivateIdentifier
+	EntityName                     = Node // Identifier | QualifiedName
+	BindingName                    = Node // Identifier | BindingPattern
+	ModifierLike                   = Node // Modifier | Decorator
+	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
+	JsxAttributeName               = Node // Identifier | JsxNamespacedName
+	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxTagNameExpression           = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
+	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
+	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralExpression              = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
+	TemplateLiteralLikeNode        = Node // TemplateHead | TemplateMiddle | TemplateTail
+	TemplateMiddleOrTail           = Node // TemplateMiddle | TemplateTail
+	TemplateLiteral                = Node // TemplateExpression | NoSubstitutionTemplateLiteral
+	TypePredicateParameterName     = Node // Identifier | ThisTypeNode
+	ImportAttributeName            = Node // Identifier | StringLiteral
+	LeftHandSideExpression         = Node // subset of Expression
+	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
+	JSDocTag                       = Node // Node with JSDocTagBase
+	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike              = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport       = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode            = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral     = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration      = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike              = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration          = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports          = Node // NamedImports | NamedExports
+	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
+	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	FunctionLikeDeclaration        = Node // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | FunctionExpression | ArrowFunction
+	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
+	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
+	CallOrNewExpression            = Node // CallExpression | NewExpression
 )
 
 // Aliases for node singletons
@@ -2162,6 +2176,7 @@ type (
 	LiteralType                     = Node
 	JSDocNode                       = Node
 	BindingPatternNode              = Node
+	TypePredicateNodeNode           = Node
 )
 
 type (
@@ -10742,7 +10757,9 @@ type SourceFile struct {
 	NodeCount                   int
 	TextCount                   int
 	CommonJSModuleIndicator     *Node
-	ExternalModuleIndicator     *Node
+	// If this is the SourceFile itself, then this module was "forced"
+	// to be an external module (previously "true").
+	ExternalModuleIndicator *Node
 
 	// Fields set by binder
 
@@ -10966,7 +10983,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	result := make(map[string][]*Node)
 
 	addDeclaration := func(declaration *Node) {
-		name := getDeclarationName(declaration)
+		name := GetDeclarationName(declaration)
 		if name != "" {
 			result[name] = append(result[name], declaration)
 		}
@@ -10976,7 +10993,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	visit = func(node *Node) bool {
 		switch node.Kind {
 		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
-			declarationName := getDeclarationName(node)
+			declarationName := GetDeclarationName(node)
 			if declarationName != "" {
 				declarations := result[declarationName]
 				var lastDeclaration *Node
@@ -11008,7 +11025,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				break
 			}
 			fallthrough
-		case KindVariableDeclaration, KindBindingElement:
+		case KindVariableDeclaration, KindBindingElement, KindCommonJSExport:
 			name := node.Name()
 			if name != nil {
 				if IsBindingPattern(name) {
@@ -11028,7 +11045,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 			exportClause := node.AsExportDeclaration().ExportClause
 			if exportClause != nil {
 				if IsNamedExports(exportClause) {
-					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+					for _, element := range exportClause.Elements() {
 						visit(element)
 					}
 				} else {
@@ -11051,12 +11068,18 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					if namedBindings.Kind == KindNamespaceImport {
 						addDeclaration(namedBindings)
 					} else {
-						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+						for _, element := range namedBindings.Elements() {
 							visit(element)
 						}
 					}
 				}
 			}
+		case KindBinaryExpression:
+			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
+				addDeclaration(node)
+			}
+			node.ForEachChild(visit)
 		default:
 			node.ForEachChild(visit)
 		}
@@ -11066,7 +11089,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	return result
 }
 
-func getDeclarationName(declaration *Node) string {
+func GetDeclarationName(declaration *Node) string {
 	name := GetNonAssignedNameOfDeclaration(declaration)
 	if name != nil {
 		if IsComputedPropertyName(name) {

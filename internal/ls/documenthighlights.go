@@ -75,7 +75,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	kind := lsproto.DocumentHighlightKindRead
 	if entry.kind == entryKindRange {
 		return entry.fileName, &lsproto.DocumentHighlight{
-			Range: *entry.textRange,
+			Range: *l.getRangeOfEntry(entry),
 			Kind:  &kind,
 		}
 	}
@@ -86,7 +86,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	}
 
 	dh := &lsproto.DocumentHighlight{
-		Range: *entry.textRange,
+		Range: *l.getRangeOfEntry(entry),
 		Kind:  &kind,
 	}
 
@@ -556,12 +556,9 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 
 	var keywords []*ast.Node
 
-	modifiers := fun.Modifiers()
-	if modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == ast.KindAsyncKeyword {
-				keywords = append(keywords, modifier)
-			}
+	for _, modifier := range fun.ModifierNodes() {
+		if modifier.Kind == ast.KindAsyncKeyword {
+			keywords = append(keywords, modifier)
 		}
 	}
 
@@ -678,11 +675,9 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 }
 
 func findModifier(node *ast.Node, kind ast.Kind) *ast.Node {
-	if modifiers := node.Modifiers(); modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == kind {
-				return modifier
-			}
+	for _, modifier := range node.ModifierNodes() {
+		if modifier.Kind == kind {
+			return modifier
 		}
 	}
 	return nil
