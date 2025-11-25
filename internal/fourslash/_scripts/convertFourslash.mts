@@ -208,6 +208,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
+                case "outliningSpansInCurrentFile":
+                    return parseOutliningSpansArgs(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -1439,6 +1441,62 @@ function parseBaselineSmartSelection(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutliningSpansCmd] | undefined {
+    if (args.length === 0) {
+        console.error("Expected at least one argument in verify.outliningSpansInCurrentFile");
+        return undefined;
+    }
+
+    // First argument should be spans array
+    const spansArg = args[0];
+    let spans: string;
+    
+    if (spansArg.getText() === "test.ranges()") {
+        spans = "f.Ranges()";
+    } else if (ts.isArrayLiteralExpression(spansArg)) {
+        // Handle array of ranges
+        const rangeElements: string[] = [];
+        for (const elem of spansArg.elements) {
+            const rangeArg = parseBaselineMarkerOrRangeArg(elem);
+            if (!rangeArg) {
+                return undefined;
+            }
+            rangeElements.push(rangeArg);
+        }
+        spans = `[]fourslash.Range{${rangeElements.join(", ")}}`;
+    } else {
+        console.error(`Unrecognized spans argument in verify.outliningSpansInCurrentFile: ${spansArg.getText()}`);
+        return undefined;
+    }
+
+    // Optional second argument for kind filter
+    let outliningKind: string | undefined;
+    if (args.length > 1) {
+        const kindArg = getStringLiteralLike(args[1]);
+        if (!kindArg) {
+            console.error(`Expected string literal for outlining kind, got ${args[1].getText()}`);
+            return undefined;
+        }
+        switch (kindArg.text) {
+            case "comment":
+            case "region": 
+            case "code":
+            case "imports":
+                outliningKind = `PtrTo("${kindArg.text}")`;
+                break;
+            default:
+                console.error(`Unknown outlining kind: ${kindArg.text}`);
+                return undefined;
+        }
+    }
+
+    return [{
+        kind: "verifyOutliningSpans",
+        spans,
+        outliningKind,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -1649,6 +1707,12 @@ interface VerifyRenameInfoCmd {
     preferences: string;
 }
 
+interface VerifyOutliningSpansCmd {
+    kind: "verifyOutliningSpans";
+    spans: string; // Go array of ranges
+    outliningKind?: string; // "comment" | "region" | "code" | "imports"
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -1662,7 +1726,13 @@ type Cmd =
     | EditCmd
     | VerifyQuickInfoCmd
     | VerifyBaselineRenameCmd
-    | VerifyRenameInfoCmd;
+    | VerifyRenameInfoCmd
+    | VerifyOutliningSpansCmd;
+
+function generateVerifyOutliningSpans({ spans, outliningKind }: VerifyOutliningSpansCmd): string {
+    const kindArg = outliningKind ? `, ${outliningKind}` : "";
+    return `f.VerifyOutliningSpans(t, ${spans}${kindArg})`;
+}
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1795,6 +1865,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
+        case "verifyOutliningSpans":
+            return generateVerifyOutliningSpans(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

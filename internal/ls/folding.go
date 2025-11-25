@@ -78,9 +78,9 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
 	regions := make([]*lsproto.FoldingRange, 0, 40)
 	out := make([]*lsproto.FoldingRange, 0, 40)
-	lineStarts := scanner.GetLineStarts(sourceFile)
+	lineStarts := scanner.GetECMALineStarts(sourceFile)
 	for _, currentLineStart := range lineStarts {
-		lineEnd := scanner.GetLineEndOfPosition(sourceFile, int(currentLineStart))
+		lineEnd := getLineEndOfPosition(sourceFile, int(currentLineStart))
 		lineText := sourceFile.Text()[currentLineStart:lineEnd]
 		result := parseRegionDelimiter(lineText)
 		if result == nil || isInComment(sourceFile, int(currentLineStart), astnav.GetTokenAtPosition(sourceFile, int(currentLineStart))) != nil {

@@ -361,7 +361,7 @@ func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, inclu
 	return scanner.SkipTriviaEx(sourceFile.Text(), r.Pos(), &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 }
 
-func positionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {
+func PositionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {
 	return GetLinesBetweenPositions(sourceFile, pos1, pos2) == 0
 }
 
