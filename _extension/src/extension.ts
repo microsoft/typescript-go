@@ -50,22 +50,22 @@ export async function activate(context: vscode.ExtensionContext) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
         if (!tsExtension) {
             if (!useTsgo) {
-                await vscode.window.showWarningMessage(
+                vscode.window.showWarningMessage(
                     "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
                     "OK",
                 );
             }
         }
         else if (useTsgo === false) {
-            const selected = await vscode.window.showWarningMessage(
+            vscode.window.showWarningMessage(
                 'TypeScript Native Preview is running in development mode with "typescript.experimental.useTsgo" set to false.',
                 "Enable Setting",
                 "Ignore",
-            );
-            if (selected === "Enable Setting") {
-                await vscode.commands.executeCommand("typescript.native-preview.enable");
-                return;
-            }
+            ).then(selected => {
+                if (selected === "Enable Setting") {
+                    vscode.commands.executeCommand("typescript.native-preview.enable");
+                }
+            });
         }
     }
     else if (!useTsgo) {
