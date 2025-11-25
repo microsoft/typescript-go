@@ -1317,53 +1317,61 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	}
 }
 
-func (f *FourslashTest) VerifyBaselineCodeLensForActiveFile(t *testing.T, preferences *lsutil.UserPreferences) {
+func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
 		reset := f.ConfigureWithReset(t, preferences)
 		defer reset()
 	}
 
-	params := &lsproto.CodeLensParams{
-		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-		},
-	}
-	unresolvedCodeLensList := sendRequest(t, f, lsproto.TextDocumentCodeLensInfo, params)
-
-	if unresolvedCodeLensList.CodeLenses == nil || len(*unresolvedCodeLensList.CodeLenses) == 0 {
-		t.Fatalf("Expected at least one code lens in file %s, but got none.", f.activeFilename)
-	}
-
-	for _, unresolvedCodeLens := range *unresolvedCodeLensList.CodeLenses {
-		assert.Assert(t, unresolvedCodeLens != nil)
-		resolvedCodeLens := sendRequest(t, f, lsproto.CodeLensResolveInfo, unresolvedCodeLens)
-		assert.Assert(t, resolvedCodeLens != nil)
-		assert.Assert(t, resolvedCodeLens.Command != nil, "Expected resolved code lens to have a command.")
-		if len(resolvedCodeLens.Command.Command) > 0 {
-			assert.Equal(t, resolvedCodeLens.Command.Command, showCodeLensLocationsCommandName)
-		}
-
-		var locations []lsproto.Location
-		// commandArgs: (DocumentUri, Position, Location[])
-		if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
-			// TODO: inevitably this would fail if we were actually going over the wire
-			// since the type info will be lost in that `any`.
-			untypedLocs := (*commandArgs)[2]
-			if locs, ok := untypedLocs.([]lsproto.Location); ok {
-				locations = locs
-			} else {
-				t.Fatalf("Expected code lens command arguments to contain a list of locations, but got %T", untypedLocs)
-			}
-		}
-
-		f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
-			marker: &RangeMarker{
-				fileName: f.activeFilename,
-				LSRange:  resolvedCodeLens.Range,
-				Range:    f.converters.FromLSPRange(f.getScriptInfo(f.activeFilename), resolvedCodeLens.Range),
+	foundAtLeastOneCodeLens := false
+	for openFile := range f.openFiles {
+		params := &lsproto.CodeLensParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(openFile),
 			},
-			markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
-		}))
+		}
+
+		unresolvedCodeLensList := sendRequest(t, f, lsproto.TextDocumentCodeLensInfo, params)
+		if unresolvedCodeLensList.CodeLenses == nil || len(*unresolvedCodeLensList.CodeLenses) == 0 {
+			continue
+		}
+		foundAtLeastOneCodeLens = true
+
+		for _, unresolvedCodeLens := range *unresolvedCodeLensList.CodeLenses {
+			assert.Assert(t, unresolvedCodeLens != nil)
+			resolvedCodeLens := sendRequest(t, f, lsproto.CodeLensResolveInfo, unresolvedCodeLens)
+			assert.Assert(t, resolvedCodeLens != nil)
+			assert.Assert(t, resolvedCodeLens.Command != nil, "Expected resolved code lens to have a command.")
+			if len(resolvedCodeLens.Command.Command) > 0 {
+				assert.Equal(t, resolvedCodeLens.Command.Command, showCodeLensLocationsCommandName)
+			}
+
+			var locations []lsproto.Location
+			// commandArgs: (DocumentUri, Position, Location[])
+			if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
+				// TODO: inevitably this would fail if we were actually going over the wire
+				// since the type info will be lost in that `any`.
+				untypedLocs := (*commandArgs)[2]
+				if locs, ok := untypedLocs.([]lsproto.Location); ok {
+					locations = locs
+				} else {
+					t.Fatalf("Expected code lens command arguments to contain a list of locations, but got %T", untypedLocs)
+				}
+			}
+
+			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+				marker: &RangeMarker{
+					fileName: openFile,
+					LSRange:  resolvedCodeLens.Range,
+					Range:    f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range),
+				},
+				markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
+			}))
+		}
+	}
+
+	if !foundAtLeastOneCodeLens {
+		t.Fatalf("Expected at least one code lens in any open file, but got none.")
 	}
 }
 

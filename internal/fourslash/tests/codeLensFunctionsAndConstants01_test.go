@@ -39,7 +39,7 @@ foo(5);
 console.log(bar);
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineCodeLensForActiveFile(t, &lsutil.UserPreferences{
+	f.VerifyBaselineCodeLens(t, &lsutil.UserPreferences{
 		ReferencesCodeLensEnabled:            true,
 		ReferencesCodeLensShowOnAllFunctions: true,
 
