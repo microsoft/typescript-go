@@ -250,71 +250,112 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
-	loader.filesParser.collect(loader, loader.rootTasks, func(task *parseTask) {
-		if task.redirectedParseTask != nil {
-			if !loader.opts.canUseProjectReferenceSource() {
-				outputFileToProjectReferenceSource[task.redirectedParseTask.path] = task.FileName()
+	var collectFiles func(tasks []*parseTask, seen collections.Set[*queuedParseTask])
+	collectFiles = func(tasks []*parseTask, seen collections.Set[*queuedParseTask]) {
+		for _, task := range tasks {
+			// Exclude automatic type directive tasks from include reason processing,
+			// as these are internal implementation details and should not contribute
+			// to the reasons for including files.
+			if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
+				includeReason := task.includeReason
+				if task.loadedTask != nil {
+					task = task.loadedTask
+				}
+				w.addIncludeReason(loader, task, includeReason)
 			}
-			return
-		}
-
-		if task.isForAutomaticTypeDirective {
-			typeResolutionsInFile[task.path] = task.typeResolutionsInFile
-			return
-		}
-		file := task.file
-		path := task.path
-		if file == nil {
-			// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
-			missingFiles = append(missingFiles, task.normalizedFilePath)
-			return
-		}
-
-		// !!! sheetal todo porting file case errors
-		// if _, ok := filesByPath[path]; ok {
-		// 	Check if it differs only in drive letters its ok to ignore that error:
-		// 	const checkedAbsolutePath = getNormalizedAbsolutePathWithoutRoot(checkedName, currentDirectory);
-		// 	const inputAbsolutePath = getNormalizedAbsolutePathWithoutRoot(fileName, currentDirectory);
-		// 	if (checkedAbsolutePath !== inputAbsolutePath) {
-		// 	    reportFileNamesDifferOnlyInCasingError(fileName, file, reason);
-		// 	}
-		// } else if loader.comparePathsOptions.UseCaseSensitiveFileNames {
-		// 	pathIgnoreCase := tspath.ToPath(file.FileName(), loader.comparePathsOptions.CurrentDirectory, false)
-		// 	// for case-sensitsive file systems check if we've already seen some file with similar filename ignoring case
-		// 	if _, ok := filesByNameIgnoreCase[pathIgnoreCase]; ok {
-		// 		reportFileNamesDifferOnlyInCasingError(fileName, existingFile, reason);
-		// 	} else {
-		// 		filesByNameIgnoreCase[pathIgnoreCase] = file
-		// 	}
-		// }
-
-		if task.libFile != nil {
-			libFiles = append(libFiles, file)
-			libFilesMap[path] = task.libFile
-		} else {
-			files = append(files, file)
-		}
-		filesByPath[path] = file
-		resolvedModules[path] = task.resolutionsInFile
-		typeResolutionsInFile[path] = task.typeResolutionsInFile
-		sourceFileMetaDatas[path] = task.metadata
-
-		if task.jsxRuntimeImportSpecifier != nil {
-			if jsxRuntimeImportSpecifiers == nil {
-				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
+			queued, _ := w.tasksByFileName.Load(task.normalizedFilePath)
+			// ensure we only walk each task once
+			if !task.loaded || !seen.AddIfAbsent(queued) {
+				continue
 			}
-			jsxRuntimeImportSpecifiers[path] = task.jsxRuntimeImportSpecifier
-		}
-		if task.importHelpersImportSpecifier != nil {
-			if importHelpersImportSpecifiers == nil {
-				importHelpersImportSpecifiers = make(map[tspath.Path]*ast.Node, totalFileCount)
+			for _, trace := range task.typeResolutionsTrace {
+				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
-			importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
+			for _, trace := range task.resolutionsTrace {
+				loader.opts.Host.Trace(trace.Message, trace.Args...)
+			}
+			if subTasks := task.subTasks; len(subTasks) > 0 {
+				collectFiles(subTasks, seen)
+			}
+
+			// Exclude automatic type directive tasks from include reason processing,
+			// as these are internal implementation details and should not contribute
+			// to the reasons for including files.
+			if task.redirectedParseTask != nil {
+				if !loader.opts.canUseProjectReferenceSource() {
+					outputFileToProjectReferenceSource[task.redirectedParseTask.path] = task.FileName()
+				}
+				continue
+			}
+
+			if task.isForAutomaticTypeDirective {
+				typeResolutionsInFile[task.path] = task.typeResolutionsInFile
+				continue
+			}
+			file := task.file
+			path := task.path
+			if file == nil {
+				// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
+				missingFiles = append(missingFiles, task.normalizedFilePath)
+				continue
+			}
+
+			// !!! sheetal todo porting file case errors
+			// if _, ok := filesByPath[path]; ok {
+			// 	Check if it differs only in drive letters its ok to ignore that error:
+			// 	const checkedAbsolutePath = getNormalizedAbsolutePathWithoutRoot(checkedName, currentDirectory);
+			// 	const inputAbsolutePath = getNormalizedAbsolutePathWithoutRoot(fileName, currentDirectory);
+			// 	if (checkedAbsolutePath !== inputAbsolutePath) {
+			// 	    reportFileNamesDifferOnlyInCasingError(fileName, file, reason);
+			// 	}
+			// } else if loader.comparePathsOptions.UseCaseSensitiveFileNames {
+			// 	pathIgnoreCase := tspath.ToPath(file.FileName(), loader.comparePathsOptions.CurrentDirectory, false)
+			// 	// for case-sensitsive file systems check if we've already seen some file with similar filename ignoring case
+			// 	if _, ok := filesByNameIgnoreCase[pathIgnoreCase]; ok {
+			// 		reportFileNamesDifferOnlyInCasingError(fileName, existingFile, reason);
+			// 	} else {
+			// 		filesByNameIgnoreCase[pathIgnoreCase] = file
+			// 	}
+			// }
+
+			if task.libFile != nil {
+				libFiles = append(libFiles, file)
+				libFilesMap[path] = task.libFile
+			} else {
+				files = append(files, file)
+			}
+			filesByPath[path] = file
+			resolvedModules[path] = task.resolutionsInFile
+			typeResolutionsInFile[path] = task.typeResolutionsInFile
+			sourceFileMetaDatas[path] = task.metadata
+
+			if task.jsxRuntimeImportSpecifier != nil {
+				if jsxRuntimeImportSpecifiers == nil {
+					jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
+				}
+				jsxRuntimeImportSpecifiers[path] = task.jsxRuntimeImportSpecifier
+			}
+			if task.importHelpersImportSpecifier != nil {
+				if importHelpersImportSpecifiers == nil {
+					importHelpersImportSpecifiers = make(map[tspath.Path]*ast.Node, totalFileCount)
+				}
+				importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
+			}
+			if task.fromExternalLibrary {
+				sourceFilesFoundSearchingNodeModules.Add(path)
+			}
 		}
-		if task.fromExternalLibrary {
-			sourceFilesFoundSearchingNodeModules.Add(path)
+	}
+
+	// Mark all tasks we saw as external after the fact.
+	w.tasksByFileName.Range(func(key string, value *queuedParseTask) bool {
+		if value.fromExternalLibrary {
+			value.task.fromExternalLibrary = true
 		}
+		return true
 	})
+
+	collectFiles(loader.rootTasks, collections.Set[*queuedParseTask]{})
 	loader.sortLibs(libFiles)
 
 	allFiles := append(libFiles, files...)
@@ -346,46 +387,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		missingFiles:                         missingFiles,
 		includeProcessor:                     loader.includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
-	}
-}
-
-func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask)) {
-	// Mark all tasks we saw as external after the fact.
-	w.tasksByFileName.Range(func(key string, value *queuedParseTask) bool {
-		if value.fromExternalLibrary {
-			value.task.fromExternalLibrary = true
-		}
-		return true
-	})
-	w.collectWorker(loader, tasks, iterate, collections.Set[*parseTask]{})
-}
-
-func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask), seen collections.Set[*parseTask]) {
-	for _, task := range tasks {
-		// Exclude automatic type directive tasks from include reason processing,
-		// as these are internal implementation details and should not contribute
-		// to the reasons for including files.
-		if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
-			includeReason := task.includeReason
-			if task.loadedTask != nil {
-				task = task.loadedTask
-			}
-			w.addIncludeReason(loader, task, includeReason)
-		}
-		// ensure we only walk each task once
-		if !task.loaded || !seen.AddIfAbsent(task) {
-			continue
-		}
-		for _, trace := range task.typeResolutionsTrace {
-			loader.opts.Host.Trace(trace.Message, trace.Args...)
-		}
-		for _, trace := range task.resolutionsTrace {
-			loader.opts.Host.Trace(trace.Message, trace.Args...)
-		}
-		if subTasks := task.subTasks; len(subTasks) > 0 {
-			w.collectWorker(loader, subTasks, iterate, seen)
-		}
-		iterate(task)
 	}
 }
 
