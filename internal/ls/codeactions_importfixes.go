@@ -147,7 +147,7 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(token)
 
 	var result []*fixInfo
-	for _, fix := range view.GetFixes(ctx, export, false, isValidTypeOnlyUseSite) {
+	for _, fix := range view.GetFixes(ctx, export, false, isValidTypeOnlyUseSite, nil) {
 		errorIdentifierText := ""
 		if ast.IsIdentifier(token) {
 			errorIdentifierText = token.Text()
@@ -206,6 +206,9 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 	isJSXTagName := ast.IsJsxTagName(symbolToken)
 	var allInfo []*fixInfo
 
+	// Compute usage position for JSDoc import type fixes
+	usagePosition := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(symbolToken.Pos()))
+
 	for _, symbolName := range symbolNames {
 		// "default" is a keyword and not a legal identifier for the import
 		if symbolName == "default" {
@@ -223,7 +226,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 				continue
 			}
 
-			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite)
+			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite, &usagePosition)
 			for _, fix := range fixes {
 				allInfo = append(allInfo, &fixInfo{
 					fix:        fix,

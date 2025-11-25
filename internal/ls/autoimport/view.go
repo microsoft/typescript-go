@@ -149,7 +149,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 	for _, exps := range grouped {
 		fixesForGroup := make([]*FixAndExport, 0, len(exps))
 		for _, e := range exps {
-			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation) {
+			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation, nil) {
 				fixesForGroup = append(fixesForGroup, &FixAndExport{
 					Fix:    fix,
 					Export: e,

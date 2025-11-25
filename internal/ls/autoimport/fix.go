@@ -41,6 +41,7 @@ type Fix struct {
 	IsReExport               bool
 	ModuleFileName           string
 	TypeOnlyAliasDeclaration *ast.Declaration
+	UsagePosition            *lsproto.Position // For JSDoc import type fix
 }
 
 func (f *Fix) Edits(
@@ -74,8 +75,8 @@ func (f *Fix) Edits(
 			panic("expected import declaration or variable declaration")
 		}
 
-		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		addToExistingImport(tracker, file, importClauseOrBindingPattern, defaultImport, namedImports, preferences)
 		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Format(f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindAddNew:
@@ -116,6 +117,18 @@ func (f *Fix) Edits(
 		}
 		moduleSpec := getModuleSpecifierText(promotedDeclaration)
 		return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_declaration_from_0.Format(moduleSpec)
+	case lsproto.AutoImportFixKindJsdocTypeImport:
+		if f.UsagePosition == nil {
+			return nil, ""
+		}
+		quotePreference := lsutil.GetQuotePreference(file, preferences)
+		quoteChar := "\""
+		if quotePreference == lsutil.QuotePreferenceSingle {
+			quoteChar = "'"
+		}
+		importTypePrefix := fmt.Sprintf("import(%s%s%s).", quoteChar, f.ModuleSpecifier, quoteChar)
+		tracker.InsertText(file, *f.UsagePosition, importTypePrefix)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Format(f.Name, importTypePrefix+f.Name)
 	default:
 		panic("unimplemented fix edit")
 	}
@@ -159,7 +172,7 @@ func addToExistingImport(
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					false,
+					shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
@@ -431,7 +444,7 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 }
 
 // !!! when/why could this return multiple?
-func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool) []*Fix {
+func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
 	// !!! tryUseExistingNamespaceImport
 	if fix := v.tryAddToExistingImport(ctx, export, isValidTypeOnlyUseSite); fix != nil {
 		return []*Fix{fix}
@@ -443,6 +456,27 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 	if moduleSpecifier == "" {
 		return nil
 	}
+
+	// Check if we need a JSDoc import type fix (for JS files with type-only imports)
+	isJs := tspath.HasJSFileExtension(v.importingFile.FileName())
+	importedSymbolHasValueMeaning := export.Flags&ast.SymbolFlagsValue != 0
+	if !importedSymbolHasValueMeaning && isJs && usagePosition != nil {
+		// For pure types in JS files, use JSDoc import type syntax
+		return []*Fix{
+			{
+				AutoImportFix: &lsproto.AutoImportFix{
+					Kind:            lsproto.AutoImportFixKindJsdocTypeImport,
+					ModuleSpecifier: moduleSpecifier,
+					Name:            export.Name(),
+				},
+				ModuleSpecifierKind: moduleSpecifierKind,
+				IsReExport:          export.Target.ModuleID != export.ModuleID,
+				ModuleFileName:      export.ModuleFileName(),
+				UsagePosition:       usagePosition,
+			},
+		}
+	}
+
 	importKind := getImportKind(v.importingFile, export, v.program)
 	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
 
