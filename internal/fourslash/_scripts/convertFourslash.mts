@@ -209,6 +209,7 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
                 case "outliningSpansInCurrentFile":
+                case "outliningHintSpansInCurrentFile":
                     return parseOutliningSpansArgs(callExpression.arguments);
             }
         }
@@ -260,14 +261,26 @@ function parseEditStatement(funcName: string, args: readonly ts.Expression[]): E
             const arg = args[0];
             if (args[0]) {
                 let arg0;
-                if (!(arg0 = getNumericLiteral(arg))) {
-                    console.error(`Expected numeric literal argument in edit.backspace, got ${arg.getText()}`);
-                    return undefined;
+                if (arg0 = getNumericLiteral(arg)) {
+                    return {
+                        kind: "edit",
+                        goStatement: `f.Backspace(t, ${arg0.text})`,
+                    };
                 }
-                return {
-                    kind: "edit",
-                    goStatement: `f.Backspace(t, ${arg0.text})`,
-                };
+                // Handle test.marker("").position
+                if (ts.isPropertyAccessExpression(arg) && arg.name.text === "position") {
+                    const expr = arg.expression;
+                    if (ts.isCallExpression(expr) && expr.expression.getText() === "test.marker") {
+                        if (expr.arguments.length === 1 && ts.isStringLiteralLike(expr.arguments[0])) {
+                            return {
+                                kind: "edit",
+                                goStatement: `f.Backspace(t, 1)`,
+                            };
+                        }
+                    }
+                }
+                console.error(`Expected numeric literal or a test marker argument in edit.backspace, got ${arg.getText()}`);
+                return undefined;
             }
             return {
                 kind: "edit",
@@ -1447,30 +1460,9 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
         return undefined;
     }
 
-    // First argument should be spans array
-    const spansArg = args[0];
-    let spans: string;
-    
-    if (spansArg.getText() === "test.ranges()") {
-        spans = "f.Ranges()";
-    } else if (ts.isArrayLiteralExpression(spansArg)) {
-        // Handle array of ranges
-        const rangeElements: string[] = [];
-        for (const elem of spansArg.elements) {
-            const rangeArg = parseBaselineMarkerOrRangeArg(elem);
-            if (!rangeArg) {
-                return undefined;
-            }
-            rangeElements.push(rangeArg);
-        }
-        spans = `[]fourslash.Range{${rangeElements.join(", ")}}`;
-    } else {
-        console.error(`Unrecognized spans argument in verify.outliningSpansInCurrentFile: ${spansArg.getText()}`);
-        return undefined;
-    }
-
+    let spans: string = "";
     // Optional second argument for kind filter
-    let outliningKind: string | undefined;
+    let foldingRangeKind: string | undefined;
     if (args.length > 1) {
         const kindArg = getStringLiteralLike(args[1]);
         if (!kindArg) {
@@ -1479,13 +1471,18 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
         }
         switch (kindArg.text) {
             case "comment":
-            case "region": 
-            case "code":
+                foldingRangeKind = "lsproto.FoldingRangeKindComment";
+                break;
+            case "region":
+                foldingRangeKind = "lsproto.FoldingRangeKindRegion";
+                break;
             case "imports":
-                outliningKind = `PtrTo("${kindArg.text}")`;
+                foldingRangeKind = "lsproto.FoldingRangeKindImports";
+                break;
+            case "code":
                 break;
             default:
-                console.error(`Unknown outlining kind: ${kindArg.text}`);
+                console.error(`Unknown folding range kind: ${kindArg.text}`);
                 return undefined;
         }
     }
@@ -1493,7 +1490,7 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
     return [{
         kind: "verifyOutliningSpans",
         spans,
-        outliningKind,
+        foldingRangeKind,
     }];
 }
 
@@ -1708,9 +1705,9 @@ interface VerifyRenameInfoCmd {
 }
 
 interface VerifyOutliningSpansCmd {
-    kind: "verifyOutliningSpans";
-    spans: string; // Go array of ranges
-    outliningKind?: string; // "comment" | "region" | "code" | "imports"
+    kind: "verifyOutliningSpans"
+    spans: string;
+    foldingRangeKind?: string;
 }
 
 type Cmd =
@@ -1729,9 +1726,11 @@ type Cmd =
     | VerifyRenameInfoCmd
     | VerifyOutliningSpansCmd;
 
-function generateVerifyOutliningSpans({ spans, outliningKind }: VerifyOutliningSpansCmd): string {
-    const kindArg = outliningKind ? `, ${outliningKind}` : "";
-    return `f.VerifyOutliningSpans(t, ${spans}${kindArg})`;
+function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
+    if (foldingRangeKind) { 
+        return `f.VerifyOutliningSpans(t, ${foldingRangeKind})`;
+    }
+    return `f.VerifyOutliningSpans(t)`;
 }
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {

@@ -2441,26 +2441,6 @@ func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (
 	return line, character
 }
 
-// func GetLineEndOfPosition(sourceFile ast.SourceFileLike, pos int) int {
-// 	line, _ := GetLineAndCharacterOfPosition(sourceFile, pos)
-// 	lineStarts := GetLineStarts(sourceFile)
-
-// 	var lastCharPos int
-// 	if line+1 >= len(lineStarts) {
-// 		lastCharPos = len(sourceFile.Text())
-// 	} else {
-// 		lastCharPos = int(lineStarts[line+1] - 1)
-// 	}
-
-// 	fullText := sourceFile.Text()
-// 	// if the new line is "\r\n", we should return the last non-new-line-character position
-// 	if len(fullText) > 0 && len(fullText) != lastCharPos && fullText[lastCharPos] == '\n' && fullText[lastCharPos-1] == '\r' {
-// 		return lastCharPos - 1
-// 	} else {
-// 		return lastCharPos
-// 	}
-// }
-
 func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(GetECMALineStarts(sourceFile)[line])
 	for {

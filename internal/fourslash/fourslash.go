@@ -1189,6 +1189,58 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 	}
 }
 
+func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...lsproto.FoldingRangeKind) {
+	params := &lsproto.FoldingRangeParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentFoldingRangeInfo, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for folding range request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for folding range request: %T", resMsg.AsResponse().Result)
+	}
+
+	// Extract actual folding ranges from the result and filter by kind if specified
+	var actualRanges []*lsproto.FoldingRange
+	if result.FoldingRanges != nil {
+		actualRanges = *result.FoldingRanges
+	}
+	if len(foldingRangeKind) > 0 {
+		targetKind := foldingRangeKind[0]
+		var filtered []*lsproto.FoldingRange
+		for _, r := range actualRanges {
+			if r.Kind != nil && *r.Kind == targetKind {
+				filtered = append(filtered, r)
+			}
+		}
+		actualRanges = filtered
+	}
+
+	if len(actualRanges) != len(f.Ranges()) {
+		t.Fatalf("verifyOutliningSpans failed - expected total spans to be %d, but was %d",
+			len(f.Ranges()), len(actualRanges))
+	}
+
+	slices.SortFunc(f.Ranges(), func(a, b *RangeMarker) int {
+		return lsproto.ComparePositions(a.LSPos(), b.LSPos())
+	})
+
+	for i, expectedRange := range f.Ranges() {
+		actualRange := actualRanges[i]
+		startPos := lsproto.Position{Line: actualRange.StartLine, Character: *actualRange.StartCharacter}
+		endPos := lsproto.Position{Line: actualRange.EndLine, Character: *actualRange.EndCharacter}
+
+		if lsproto.ComparePositions(startPos, expectedRange.LSRange.Start) != 0 ||
+			lsproto.ComparePositions(endPos, expectedRange.LSRange.End) != 0 {
+			t.Fatalf("verifyOutliningSpans failed - span %d has invalid positions: start (%d,%d), end (%d,%d)",
+				i+1, actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter)
+		}
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
 		if marker.Name == nil {

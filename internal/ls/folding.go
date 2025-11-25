@@ -124,7 +124,7 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	// cancellationToken.throwIfCancellationRequested();
 	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	// !!! remove !ast.IsBinaryExpression(n) after JSDoc implementation
-	if (!ast.IsBinaryExpression(n) && ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
+	if (ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
 		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile, l)...)
 	}
 	if ast.IsFunctionLike(n) && n.Parent != nil && ast.IsBinaryExpression(n.Parent) && n.Parent.AsBinaryExpression().Left != nil && ast.IsPropertyAccessExpression(n.Parent.AsBinaryExpression().Left) {
@@ -324,9 +324,10 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 			} else if tryStatement.FinallyBlock == n {
 				node := findChildOfKind(n.Parent, ast.KindFinallyKeyword, sourceFile)
 				if node != nil {
-					return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+					return spanForNode(node, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 				}
 			}
+			fallthrough
 		default:
 			// Block was a standalone block.  In this case we want to only collapse
 			// the span of the block, independent of any parent span.
@@ -366,11 +367,12 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 
 func spanForImportExportElements(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	var elements *ast.NodeList
-	if node.Kind == ast.KindNamedImports {
+	switch node.Kind {
+	case ast.KindNamedImports:
 		elements = node.AsNamedImports().Elements
-	} else if node.Kind == ast.KindNamedExports {
+	case ast.KindNamedExports:
 		elements = node.AsNamedExports().Elements
-	} else if node.Kind == ast.KindImportAttributes {
+	case ast.KindImportAttributes:
 		elements = node.AsImportAttributes().Attributes
 	}
 	if elements == nil {
