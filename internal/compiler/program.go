@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -67,6 +68,10 @@ type Program struct {
 	// Cached unresolved imports for ATA
 	unresolvedImportsOnce sync.Once
 	unresolvedImports     *collections.Set[string]
+
+	// Used by workspace/symbol
+	hasTSFileOnce sync.Once
+	hasTSFile     bool
 }
 
 // FileExists implements checker.Program.
@@ -1568,17 +1573,17 @@ func (p *Program) IsMissingPath(path tspath.Path) bool {
 	})
 }
 
-func (p *Program) ExplainFiles(w io.Writer) {
+func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
-			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Message())
+			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
-			fmt.Fprintln(w, "  ", diag.Message())
+			fmt.Fprintln(w, "  ", diag.Localize(locale))
 		}
 	}
 }
@@ -1631,6 +1636,23 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
+}
+
+func (p *Program) IsLibFile(sourceFile *ast.SourceFile) bool {
+	_, ok := p.libFiles[sourceFile.Path()]
+	return ok
+}
+
+func (p *Program) HasTSFile() bool {
+	p.hasTSFileOnce.Do(func() {
+		for _, file := range p.files {
+			if tspath.HasImplementationTSFileExtension(file.FileName()) {
+				p.hasTSFile = true
+				break
+			}
+		}
+	})
+	return p.hasTSFile
 }
 
 var plainJSErrors = collections.NewSetFromItems(
