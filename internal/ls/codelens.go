@@ -20,29 +20,37 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 		return lsproto.CodeLensResponse{}, nil
 	}
 
-	var lenses []*lsproto.CodeLens
+	// Keeps track of the last symbol to avoid duplicating code lenses across overloads.
+	var lastSymbol *ast.Symbol
+	var result []*lsproto.CodeLens
 	var visit func(node *ast.Node) bool
 	visit = func(node *ast.Node) bool {
 		if ctx.Err() != nil {
 			return true
 		}
 
-		if userPrefs.ReferencesCodeLensEnabled && isValidReferenceLensNode(node, userPrefs) {
-			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindReferences))
+		if currentSymbol := node.Symbol(); lastSymbol != currentSymbol {
+			lastSymbol = currentSymbol
+
+			if userPrefs.ReferencesCodeLensEnabled && isValidReferenceLensNode(node, userPrefs) {
+				result = append(result, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindReferences))
+			}
+
+			if userPrefs.ImplementationsCodeLensEnabled && isValidImplementationsCodeLensNode(node, userPrefs) {
+				result = append(result, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindImplementations))
+			}
 		}
 
-		if userPrefs.ImplementationsCodeLensEnabled && isValidImplementationsCodeLensNode(node, userPrefs) {
-			lenses = append(lenses, l.newCodeLensForNode(documentURI, file, node, lsproto.CodeLensKindImplementations))
-		}
-
+		savedLastSymbol := lastSymbol
 		node.ForEachChild(visit)
+		lastSymbol = savedLastSymbol
 		return false
 	}
 
 	visit(file.AsNode())
 
 	return lsproto.CodeLensResponse{
-		CodeLenses: &lenses,
+		CodeLenses: &result,
 	}, nil
 }
 
