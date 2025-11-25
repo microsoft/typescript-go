@@ -144,9 +144,10 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	}
 
 	export := autoimport.SymbolToExport(umdSymbol, ch)
+	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(token)
 
 	var result []*fixInfo
-	for _, fix := range view.GetFixes(ctx, export, false) {
+	for _, fix := range view.GetFixes(ctx, export, false, isValidTypeOnlyUseSite, nil) {
 		errorIdentifierText := ""
 		if ast.IsIdentifier(token) {
 			errorIdentifierText = token.Text()
@@ -200,10 +201,13 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 	defer done()
 	compilerOptions := fixContext.Program.Options()
 
-	// isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
+	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
 	symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
 	isJSXTagName := ast.IsJsxTagName(symbolToken)
 	var allInfo []*fixInfo
+
+	// Compute usage position for JSDoc import type fixes
+	usagePosition := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(symbolToken.Pos()))
 
 	for _, symbolName := range symbolNames {
 		// "default" is a keyword and not a legal identifier for the import
@@ -222,7 +226,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 				continue
 			}
 
-			fixes := view.GetFixes(ctx, export, isJSXTagName)
+			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite, &usagePosition)
 			for _, fix := range fixes {
 				allInfo = append(allInfo, &fixInfo{
 					fix:        fix,
@@ -388,8 +392,7 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.
 
 	// Sort by:
 	// 1. JSX namespace fixes last
-	// 2. Fix kind (UseNamespace and AddToExisting preferred)
-	// 3. Module specifier comparison
+	// 2. Fix comparison using view.CompareFixes
 	slices.SortFunc(sorted, func(a, b *fixInfo) int {
 		// JSX namespace fixes should come last
 		if cmp := core.CompareBooleans(a.isJsxNamespaceFix, b.isJsxNamespaceFix); cmp != 0 {

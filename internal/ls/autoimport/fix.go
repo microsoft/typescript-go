@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -21,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -39,6 +41,7 @@ type Fix struct {
 	IsReExport               bool
 	ModuleFileName           string
 	TypeOnlyAliasDeclaration *ast.Declaration
+	UsagePosition            *lsproto.Position // For JSDoc import type fix
 }
 
 func (f *Fix) Edits(
@@ -72,14 +75,14 @@ func (f *Fix) Edits(
 			panic("expected import declaration or variable declaration")
 		}
 
-		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		addToExistingImport(tracker, file, importClauseOrBindingPattern, defaultImport, namedImports, preferences)
 		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Format(f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindAddNew:
 		var declarations []*ast.Statement
-		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name}, nil)
-		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name}}, nil)
+		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
+		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		var namespaceLikeImport *newImportBinding
 		// qualification := f.qualification()
 		// if f.ImportKind == lsproto.ImportKindNamespace || f.ImportKind == lsproto.ImportKindCommonJS {
@@ -106,6 +109,26 @@ func (f *Fix) Edits(
 		// 	addNamespaceQualifier(tracker, file, qualification)
 		// }
 		return tracker.GetChanges()[file.FileName()], diagnostics.Add_import_from_0.Format(f.ModuleSpecifier)
+	case lsproto.AutoImportFixKindPromoteTypeOnly:
+		promotedDeclaration := promoteFromTypeOnly(tracker, f.TypeOnlyAliasDeclaration, compilerOptions, file, preferences)
+		if promotedDeclaration.Kind == ast.KindImportSpecifier {
+			moduleSpec := getModuleSpecifierText(promotedDeclaration.Parent.Parent)
+			return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_of_0_from_1.Format(f.Name, moduleSpec)
+		}
+		moduleSpec := getModuleSpecifierText(promotedDeclaration)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_declaration_from_0.Format(moduleSpec)
+	case lsproto.AutoImportFixKindJsdocTypeImport:
+		if f.UsagePosition == nil {
+			panic("UsagePosition must be set for JSDoc type import fix")
+		}
+		quotePreference := lsutil.GetQuotePreference(file, preferences)
+		quoteChar := "\""
+		if quotePreference == lsutil.QuotePreferenceSingle {
+			quoteChar = "'"
+		}
+		importTypePrefix := fmt.Sprintf("import(%s%s%s).", quoteChar, f.ModuleSpecifier, quoteChar)
+		tracker.InsertText(file, *f.UsagePosition, importTypePrefix)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Format(f.Name, importTypePrefix+f.Name)
 	default:
 		panic("unimplemented fix edit")
 	}
@@ -119,7 +142,6 @@ func addToExistingImport(
 	namedImports []*newImportBinding,
 	preferences *lsutil.UserPreferences,
 ) {
-
 	switch importClauseOrBindingPattern.Kind {
 	case ast.KindObjectBindingPattern:
 		bindingPattern := importClauseOrBindingPattern.AsBindingPattern()
@@ -150,7 +172,7 @@ func addToExistingImport(
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					false,
+					shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
@@ -231,7 +253,8 @@ func getNewImports(
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *newImportBinding) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
 			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
-				defaultImport != nil && defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
+				(defaultImport == nil || defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed) &&
+				!core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
@@ -421,9 +444,9 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 }
 
 // !!! when/why could this return multiple?
-func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix {
+func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
 	// !!! tryUseExistingNamespaceImport
-	if fix := v.tryAddToExistingImport(ctx, export); fix != nil {
+	if fix := v.tryAddToExistingImport(ctx, export, isValidTypeOnlyUseSite); fix != nil {
 		return []*Fix{fix}
 	}
 
@@ -433,8 +456,29 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 	if moduleSpecifier == "" {
 		return nil
 	}
+
+	// Check if we need a JSDoc import type fix (for JS files with type-only imports)
+	isJs := tspath.HasJSFileExtension(v.importingFile.FileName())
+	importedSymbolHasValueMeaning := export.Flags&ast.SymbolFlagsValue != 0
+	if !importedSymbolHasValueMeaning && isJs && usagePosition != nil {
+		// For pure types in JS files, use JSDoc import type syntax
+		return []*Fix{
+			{
+				AutoImportFix: &lsproto.AutoImportFix{
+					Kind:            lsproto.AutoImportFixKindJsdocTypeImport,
+					ModuleSpecifier: moduleSpecifier,
+					Name:            export.Name(),
+				},
+				ModuleSpecifierKind: moduleSpecifierKind,
+				IsReExport:          export.Target.ModuleID != export.ModuleID,
+				ModuleFileName:      export.ModuleFileName(),
+				UsagePosition:       usagePosition,
+			},
+		}
+	}
+
 	importKind := getImportKind(v.importingFile, export, v.program)
-	// !!! JSDoc type import, add as type only
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
 
 	name := export.Name()
 	startsWithUpper := unicode.IsUpper(rune(name[0]))
@@ -453,6 +497,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 				ModuleSpecifier: moduleSpecifier,
 				Name:            export.Name(),
 				UseRequire:      v.shouldUseRequire(),
+				AddAsTypeOnly:   addAsTypeOnly,
 			},
 			ModuleSpecifierKind: moduleSpecifierKind,
 			IsReExport:          export.Target.ModuleID != export.ModuleID,
@@ -461,9 +506,23 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool) []*Fix
 	}
 }
 
+// getAddAsTypeOnly determines if an import should be type-only based on usage context
+func getAddAsTypeOnly(isValidTypeOnlyUseSite bool, targetFlags ast.SymbolFlags, compilerOptions *core.CompilerOptions) lsproto.AddAsTypeOnly {
+	if !isValidTypeOnlyUseSite {
+		// Can't use a type-only import if the usage is an emitting position
+		return lsproto.AddAsTypeOnlyNotAllowed
+	}
+	if compilerOptions.VerbatimModuleSyntax.IsTrue() && targetFlags&ast.SymbolFlagsValue == 0 {
+		// A type-only import is required for this symbol if under verbatimModuleSyntax and it's purely a type
+		return lsproto.AddAsTypeOnlyRequired
+	}
+	return lsproto.AddAsTypeOnlyAllowed
+}
+
 func (v *View) tryAddToExistingImport(
 	ctx context.Context,
 	export *Export,
+	isValidTypeOnlyUseSite bool,
 ) *Fix {
 	existingImports := v.getExistingImports(ctx)
 	matchingDeclarations := existingImports.Get(export.ModuleID)
@@ -483,6 +542,8 @@ func (v *View) tryAddToExistingImport(
 		return nil
 	}
 
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
+
 	for _, existingImport := range matchingDeclarations {
 		if existingImport.node.Kind == ast.KindImportEqualsDeclaration {
 			continue
@@ -497,16 +558,19 @@ func (v *View) tryAddToExistingImport(
 						ImportKind:      importKind,
 						ImportIndex:     int32(existingImport.index),
 						ModuleSpecifier: existingImport.moduleSpecifier,
+						AddAsTypeOnly:   addAsTypeOnly,
 					},
 				}
 			}
 			continue
 		}
 
-		importClause := existingImport.node.ImportClause().AsImportClause()
-		if importClause == nil || !ast.IsStringLiteralLike(existingImport.node.ModuleSpecifier()) {
+		importClauseNode := existingImport.node.ImportClause()
+		if importClauseNode == nil || !ast.IsStringLiteralLike(existingImport.node.ModuleSpecifier()) {
+			// Side-effect import (no import clause) - can't add to it
 			continue
 		}
+		importClause := importClauseNode.AsImportClause()
 
 		namedBindings := importClause.NamedBindings
 		// A type-only import may not have both a default and named imports, so the only way a name can
@@ -527,6 +591,7 @@ func (v *View) tryAddToExistingImport(
 				ImportKind:      importKind,
 				ImportIndex:     int32(existingImport.index),
 				ModuleSpecifier: existingImport.moduleSpecifier,
+				AddAsTypeOnly:   addAsTypeOnly,
 			},
 		}
 	}
@@ -711,6 +776,186 @@ func isIndexFileName(fileName string) bool {
 		fileName = tspath.RemoveFileExtension(fileName)
 	}
 	return fileName == "index"
+}
+
+func promoteFromTypeOnly(
+	changes *change.Tracker,
+	aliasDeclaration *ast.Declaration,
+	compilerOptions *core.CompilerOptions,
+	sourceFile *ast.SourceFile,
+	preferences *lsutil.UserPreferences,
+) *ast.Declaration {
+	// See comment in `doAddExistingFix` on constant with the same name.
+	convertExistingToTypeOnly := compilerOptions.VerbatimModuleSyntax
+
+	switch aliasDeclaration.Kind {
+	case ast.KindImportSpecifier:
+		spec := aliasDeclaration.AsImportSpecifier()
+		if spec.IsTypeOnly {
+			if spec.Parent != nil && spec.Parent.Kind == ast.KindNamedImports {
+				// TypeScript creates a new specifier with isTypeOnly=false, computes insertion index,
+				// and if different from current position, deletes and re-inserts at new position.
+				// For now, we just delete the range from the first token (type keyword) to the property name or name.
+				firstToken := lsutil.GetFirstToken(aliasDeclaration, sourceFile)
+				typeKeywordPos := scanner.GetTokenPosOfNode(firstToken, sourceFile, false)
+				var targetNode *ast.DeclarationName
+				if spec.PropertyName != nil {
+					targetNode = spec.PropertyName
+				} else {
+					targetNode = spec.Name()
+				}
+				targetPos := scanner.GetTokenPosOfNode(targetNode.AsNode(), sourceFile, false)
+				changes.DeleteRange(sourceFile, core.NewTextRange(typeKeywordPos, targetPos))
+			}
+			return aliasDeclaration
+		} else {
+			// The parent import clause is type-only
+			if spec.Parent == nil || spec.Parent.Kind != ast.KindNamedImports {
+				panic("ImportSpecifier parent must be NamedImports")
+			}
+			if spec.Parent.Parent == nil || spec.Parent.Parent.Kind != ast.KindImportClause {
+				panic("NamedImports parent must be ImportClause")
+			}
+			promoteImportClause(changes, spec.Parent.Parent.AsImportClause(), compilerOptions, sourceFile, preferences, convertExistingToTypeOnly, aliasDeclaration)
+			return spec.Parent.Parent
+		}
+
+	case ast.KindImportClause:
+		promoteImportClause(changes, aliasDeclaration.AsImportClause(), compilerOptions, sourceFile, preferences, convertExistingToTypeOnly, aliasDeclaration)
+		return aliasDeclaration
+
+	case ast.KindNamespaceImport:
+		// Promote the parent import clause
+		if aliasDeclaration.Parent == nil || aliasDeclaration.Parent.Kind != ast.KindImportClause {
+			panic("NamespaceImport parent must be ImportClause")
+		}
+		promoteImportClause(changes, aliasDeclaration.Parent.AsImportClause(), compilerOptions, sourceFile, preferences, convertExistingToTypeOnly, aliasDeclaration)
+		return aliasDeclaration.Parent
+
+	case ast.KindImportEqualsDeclaration:
+		// Remove the 'type' keyword (which is the second token: 'import' 'type' name '=' ...)
+		importEqDecl := aliasDeclaration.AsImportEqualsDeclaration()
+		// The type keyword is after 'import' and before the name
+		scan := scanner.GetScannerForSourceFile(sourceFile, importEqDecl.Pos())
+		// Skip 'import' keyword to get to 'type'
+		scan.Scan()
+		deleteTypeKeyword(changes, sourceFile, scan.TokenStart())
+		return aliasDeclaration
+	default:
+		panic(fmt.Sprintf("Unexpected alias declaration kind: %v", aliasDeclaration.Kind))
+	}
+}
+
+// promoteImportClause removes the type keyword from an import clause
+func promoteImportClause(
+	changes *change.Tracker,
+	importClause *ast.ImportClause,
+	compilerOptions *core.CompilerOptions,
+	sourceFile *ast.SourceFile,
+	preferences *lsutil.UserPreferences,
+	convertExistingToTypeOnly core.Tristate,
+	aliasDeclaration *ast.Declaration,
+) {
+	// Delete the 'type' keyword
+	if importClause.PhaseModifier == ast.KindTypeKeyword {
+		deleteTypeKeyword(changes, sourceFile, importClause.Pos())
+	}
+
+	// Handle .ts extension conversion to .js if necessary
+	if compilerOptions.AllowImportingTsExtensions.IsFalse() {
+		moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(importClause.Parent)
+		if moduleSpecifier != nil {
+			// Note: We can't check ResolvedUsingTsExtension without program, so we'll skip this optimization
+			// The fix will still work, just might not change .ts to .js extensions in all cases
+		}
+	}
+
+	// Handle verbatimModuleSyntax conversion
+	// If convertExistingToTypeOnly is true, we need to add 'type' to other specifiers
+	// in the same import declaration
+	if convertExistingToTypeOnly.IsTrue() {
+		namedImports := importClause.NamedBindings
+		if namedImports != nil && namedImports.Kind == ast.KindNamedImports {
+			namedImportsData := namedImports.AsNamedImports()
+			if len(namedImportsData.Elements.Nodes) > 1 {
+				// Check if the list is sorted and if we need to reorder
+				_, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(
+					importClause.Parent,
+					sourceFile,
+					preferences,
+				)
+
+				// If the alias declaration is an ImportSpecifier and the list is sorted,
+				// move it to index 0 (since it will be the only non-type-only import)
+				if isSorted.IsFalse() == false && // isSorted !== false
+					aliasDeclaration != nil &&
+					aliasDeclaration.Kind == ast.KindImportSpecifier {
+					// Find the index of the alias declaration
+					aliasIndex := -1
+					for i, element := range namedImportsData.Elements.Nodes {
+						if element == aliasDeclaration {
+							aliasIndex = i
+							break
+						}
+					}
+					// If not already at index 0, move it there
+					if aliasIndex > 0 {
+						// Delete the specifier from its current position
+						changes.Delete(sourceFile, aliasDeclaration)
+						// Insert it at index 0
+						changes.InsertImportSpecifierAtIndex(sourceFile, aliasDeclaration, namedImports, 0)
+					}
+				}
+
+				// Add 'type' keyword to all other import specifiers that aren't already type-only
+				for _, element := range namedImportsData.Elements.Nodes {
+					spec := element.AsImportSpecifier()
+					// Skip the specifier being promoted (if aliasDeclaration is an ImportSpecifier)
+					if aliasDeclaration != nil && aliasDeclaration.Kind == ast.KindImportSpecifier {
+						if element == aliasDeclaration {
+							continue
+						}
+					}
+					// Skip if already type-only
+					if !spec.IsTypeOnly {
+						changes.InsertModifierBefore(sourceFile, ast.KindTypeKeyword, element)
+					}
+				}
+			}
+		}
+	}
+}
+
+// deleteTypeKeyword deletes the 'type' keyword token starting at the given position,
+// including any trailing whitespace.
+func deleteTypeKeyword(changes *change.Tracker, sourceFile *ast.SourceFile, startPos int) {
+	scan := scanner.GetScannerForSourceFile(sourceFile, startPos)
+	if scan.Token() != ast.KindTypeKeyword {
+		return
+	}
+	typeStart := scan.TokenStart()
+	typeEnd := scan.TokenEnd()
+	// Skip trailing whitespace
+	text := sourceFile.Text()
+	for typeEnd < len(text) && (text[typeEnd] == ' ' || text[typeEnd] == '\t') {
+		typeEnd++
+	}
+	changes.DeleteRange(sourceFile, core.NewTextRange(typeStart, typeEnd))
+}
+
+func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
+	if promotedDeclaration.Kind == ast.KindImportEqualsDeclaration {
+		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
+		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
+			expr := importEqualsDeclaration.ModuleReference.Expression()
+			if expr != nil && expr.Kind == ast.KindStringLiteral {
+				return expr.Text()
+			}
+
+		}
+		return importEqualsDeclaration.ModuleReference.Text()
+	}
+	return promotedDeclaration.Parent.ModuleSpecifier().Text()
 }
 
 // returns `-1` if `a` is better than `b`

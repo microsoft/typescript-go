@@ -1213,7 +1213,7 @@ func (l *LanguageService) getCompletionData(
 			return err
 		}
 
-		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, isRightOfOpenTag)
+		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, isRightOfOpenTag, isTypeOnlyLocation)
 
 		// l.searchExportInfosForCompletions(ctx,
 		// 	typeChecker,
