@@ -346,14 +346,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		}
 	}
 
-	// Mark all tasks we saw as external after the fact.
-	w.tasksByFileName.Range(func(key string, value *parseTaskData) bool {
-		if value.fromExternalLibrary {
-			value.task.fromExternalLibrary = true
-		}
-		return true
-	})
-
 	collectFiles(loader.rootTasks, collections.Set[*parseTaskData]{})
 	loader.sortLibs(libFiles)
 
