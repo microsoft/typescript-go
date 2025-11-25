@@ -27,12 +27,12 @@ declare namespace Knex {
 }
 
 export = knex;
->knex : typeof import("index.ts")
+>knex : typeof import("knex")
 
 === index.ts ===
 import "knex";
 declare module "knex" {
->"knex" : typeof import("node_modules/knex/index")
+>"knex" : typeof import("knex")
 
   namespace Knex {
 >Knex : typeof Knex

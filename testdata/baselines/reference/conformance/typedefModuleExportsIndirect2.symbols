@@ -7,7 +7,7 @@ const f = function() {};
 
 module.exports = f;
 >module.exports : Symbol(f, Decl(typedefModuleExportsIndirect2.js, 1, 5))
->module : Symbol("typedefModuleExportsIndirect2", Decl(typedefModuleExportsIndirect2.js, 0, 0))
+>module : Symbol("./typedefModuleExportsIndirect2", Decl(typedefModuleExportsIndirect2.js, 0, 0))
 >exports : Symbol(f, Decl(typedefModuleExportsIndirect2.js, 1, 5))
 >f : Symbol(f, Decl(typedefModuleExportsIndirect2.js, 1, 5))
 
