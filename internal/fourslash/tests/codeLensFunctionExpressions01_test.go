@@ -28,11 +28,18 @@ let arrowFn3 = () => {};
 const arrowFn4 = () => {};
 
 // @filename: namedFunctions.ts
-export let namedFn1 = function namedFn1() {}
-export const namedFn2 = function namedFn2() {}
+export let namedFn1 = function namedFn1() {
+    namedFn1();
+}
+namedFn1();
 
-let namedFn3 = function namedFn3() {}
-const namedFn4 = function namedFn4() {}
+export const namedFn2 = function namedFn2() {
+    namedFn2();
+}
+namedFn2();
+
+let namedFn3 = function namedFn3() {};
+const namedFn4 = function namedFn4() {};
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineCodeLens(t, &lsutil.UserPreferences{
