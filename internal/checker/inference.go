@@ -239,6 +239,10 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 	case source.flags&TypeFlagsIndexedAccess != 0 && target.flags&TypeFlagsIndexedAccess != 0:
 		c.inferFromTypes(n, source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType)
 		c.inferFromTypes(n, source.AsIndexedAccessType().indexType, target.AsIndexedAccessType().indexType)
+	case isLiteralType(source) && target.flags&TypeFlagsIndexedAccess != 0:
+		// Handle reverse inference: when source is a literal type and target is T['property'],
+		// try to infer T based on the constraint that T['property'] = source
+		c.inferFromLiteralToIndexedAccess(n, source, target.AsIndexedAccessType())
 	case source.flags&TypeFlagsStringMapping != 0 && target.flags&TypeFlagsStringMapping != 0:
 		if source.symbol == target.symbol {
 			c.inferFromTypes(n, source.AsStringMappingType().target, target.AsStringMappingType().target)
@@ -1615,6 +1619,72 @@ func (c *Checker) mergeInferences(target []*InferenceInfo, source []*InferenceIn
 	for i := range target {
 		if !hasInferenceCandidates(target[i]) && hasInferenceCandidates(source[i]) {
 			target[i] = source[i]
+		}
+	}
+}
+
+// inferFromLiteralToIndexedAccess implements a reverse inference algorithm for indexed access types.
+// This function is used during type inference when a literal value is assigned to an indexed access type.
+// It infers a type parameter from a literal assigned to an indexed access, e.g. T['type'] = 'Declaration'.
+func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Type, target *IndexedAccessType) {
+	// Only proceed if the object type is a type variable that we're inferring
+	objectType := target.objectType
+	if objectType.flags&TypeFlagsTypeVariable != 0 {
+		// Get the inference info for the type parameter
+		inference := getInferenceInfoForType(n, objectType)
+		if inference == nil || inference.isFixed {
+			return
+		}
+
+		// Get the constraint of the type parameter (e.g., ASTNode)
+		constraint := c.getBaseConstraintOfType(inference.typeParameter)
+		if constraint == nil {
+			return
+		}
+
+		// Only handle union constraints (discriminated unions)
+		if constraint.flags&TypeFlagsUnion == 0 {
+			return
+		}
+
+		// Look for a union member where the indexed access type matches the source literal
+		indexType := target.indexType
+		for _, unionMember := range constraint.Types() {
+			// Skip sentinel type used to block string inference
+			if unionMember == c.blockedStringType {
+				continue
+			}
+
+			// Try to get the type of the indexed property from this union member
+			memberIndexedType := c.getIndexedAccessType(unionMember, indexType)
+
+			// Skip if we can't resolve the indexed access
+			if memberIndexedType == nil || c.isErrorType(memberIndexedType) {
+				continue
+			}
+
+			// Check if this member's indexed property type matches our literal source
+			if c.isTypeIdenticalTo(source, memberIndexedType) {
+				// Found a match! Infer this union member as a candidate for the type parameter
+				candidate := unionMember
+
+				if n.priority < inference.priority {
+					inference.candidates = nil
+					inference.contraCandidates = nil
+					inference.topLevel = true
+					inference.priority = n.priority
+				}
+
+				if n.priority == inference.priority {
+					if !slices.Contains(inference.candidates, candidate) {
+						inference.candidates = append(inference.candidates, candidate)
+						clearCachedInferences(n.inferences)
+					}
+				}
+
+				n.inferencePriority = min(n.inferencePriority, n.priority)
+				return
+			}
 		}
 	}
 }
