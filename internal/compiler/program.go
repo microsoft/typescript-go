@@ -60,7 +60,6 @@ type Program struct {
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 
 	programDiagnostics         []*ast.Diagnostic
-	programDiagnosticsOnce     sync.Once
 	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
 
 	sourceFilesToEmitOnce sync.Once
