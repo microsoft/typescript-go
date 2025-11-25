@@ -119,7 +119,7 @@ func (f *Fix) Edits(
 		return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_declaration_from_0.Format(moduleSpec)
 	case lsproto.AutoImportFixKindJsdocTypeImport:
 		if f.UsagePosition == nil {
-			return nil, ""
+			panic("UsagePosition must be set for JSDoc type import fix")
 		}
 		quotePreference := lsutil.GetQuotePreference(file, preferences)
 		quoteChar := "\""
