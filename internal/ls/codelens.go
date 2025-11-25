@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -50,6 +51,7 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 	textDoc := lsproto.TextDocumentIdentifier{
 		Uri: uri,
 	}
+	locale := locale.FromContext(ctx)
 
 	var locs []lsproto.Location
 	var lensTitle string
@@ -80,9 +82,9 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 		}
 
 		if len(locs) == 1 {
-			lensTitle = diagnostics.X_1_reference.Message()
+			lensTitle = diagnostics.X_1_reference.Localize(locale)
 		} else {
-			lensTitle = diagnostics.X_0_references.Format(len(locs))
+			lensTitle = diagnostics.X_0_references.Localize(locale, len(locs))
 		}
 	case lsproto.CodeLensKindImplementations:
 		// "Force" link support to be false so that we only get `Locations` back,
@@ -108,9 +110,9 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 		}
 
 		if len(locs) == 1 {
-			lensTitle = diagnostics.X_1_implementation.Message()
+			lensTitle = diagnostics.X_1_implementation.Localize(locale)
 		} else {
-			lensTitle = diagnostics.X_0_implementations.Format(len(locs))
+			lensTitle = diagnostics.X_0_implementations.Localize(locale, len(locs))
 		}
 	}
 
