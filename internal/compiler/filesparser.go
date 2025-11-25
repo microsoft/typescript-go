@@ -148,13 +148,14 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 }
 
 type filesParser struct {
-	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[string, *parseTaskData]
-	maxDepth        int
+	wg             core.WorkGroup
+	taskDataByPath collections.SyncMap[tspath.Path, *parseTaskData]
+	maxDepth       int
 }
 
 type parseTaskData struct {
-	task        *parseTask
+	// map of tasks by file casing
+	tasks       map[string]*parseTask
 	mu          sync.Mutex
 	lowestDepth int
 }
@@ -167,17 +168,22 @@ func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
 func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 	for i, task := range tasks {
 		task.path = loader.toPath(task.normalizedFilePath)
-		data, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), &parseTaskData{
-			task:        task,
+		data, loaded := w.taskDataByPath.LoadOrStore(task.path, &parseTaskData{
+			tasks:       map[string]*parseTask{task.normalizedFilePath: task},
 			lowestDepth: math.MaxInt,
 		})
-		if loaded {
-			tasks[i].loadedTask = data.task
-		}
 
 		w.wg.Queue(func() {
 			data.mu.Lock()
 			defer data.mu.Unlock()
+
+			if loaded {
+				if existingTask, ok := data.tasks[task.normalizedFilePath]; ok {
+					tasks[i].loadedTask = existingTask
+				} else {
+					data.tasks[task.normalizedFilePath] = task
+				}
+			}
 
 			startSubtasks := false
 
@@ -193,16 +199,18 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 				return
 			}
 
-			if !data.task.loaded {
-				data.task.load(loader)
-				if data.task.redirectedParseTask != nil {
-					// Always load redirected task
-					startSubtasks = true
+			for _, taskByFileName := range data.tasks {
+				loadSubTasks := startSubtasks
+				if !taskByFileName.loaded {
+					taskByFileName.load(loader)
+					if taskByFileName.redirectedParseTask != nil {
+						// Always load redirected task
+						loadSubTasks = true
+					}
 				}
-			}
-
-			if startSubtasks {
-				w.start(loader, data.task.subTasks, data.lowestDepth)
+				if loadSubTasks {
+					w.start(loader, taskByFileName.subTasks, data.lowestDepth)
+				}
 			}
 		})
 	}
@@ -230,8 +238,8 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
-	var collectFiles func(tasks []*parseTask, seen collections.Set[*parseTaskData])
-	collectFiles = func(tasks []*parseTask, seen collections.Set[*parseTaskData]) {
+	var collectFiles func(tasks []*parseTask, seen map[*parseTaskData]string)
+	collectFiles = func(tasks []*parseTask, seen map[*parseTaskData]string) {
 		for _, task := range tasks {
 			// Exclude automatic type directive tasks from include reason processing,
 			// as these are internal implementation details and should not contribute
@@ -243,11 +251,19 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 				w.addIncludeReason(loader, task, includeReason)
 			}
-			data, _ := w.tasksByFileName.Load(task.normalizedFilePath)
-			// ensure we only walk each task once
-			if !task.loaded || !seen.AddIfAbsent(data) {
+			data, _ := w.taskDataByPath.Load(task.path)
+			if !task.loaded {
 				continue
 			}
+
+			// ensure we only walk each task once
+			if _, ok := seen[data]; ok {
+				// !!! already seen verify casing
+				continue
+			} else {
+				seen[data] = task.normalizedFilePath
+			}
+
 			for _, trace := range task.typeResolutionsTrace {
 				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
@@ -327,7 +343,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		}
 	}
 
-	collectFiles(loader.rootTasks, collections.Set[*parseTaskData]{})
+	collectFiles(loader.rootTasks, make(map[*parseTaskData]string, totalFileCount))
 	loader.sortLibs(libFiles)
 
 	allFiles := append(libFiles, files...)
