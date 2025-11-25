@@ -189,7 +189,7 @@ func isValidImplementationsCodeLensNode(node *ast.Node, userPrefs *lsutil.UserPr
 
 func isValidReferenceLensNode(node *ast.Node, userPrefs *lsutil.UserPreferences) bool {
 	switch node.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
+	case ast.KindFunctionDeclaration:
 		if userPrefs.ReferencesCodeLensShowOnAllFunctions {
 			return true
 		}
