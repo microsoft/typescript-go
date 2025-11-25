@@ -11,55 +11,11 @@
 
 // === Code Lenses ===
 // === /anonymousFunctionExpressions.ts ===
-// export let anonFn1 = /*CODELENS: 0 references*/function () {};
-// export const anonFn2 = function () {};
-// 
-// let anonFn3 = function () {};
-// const anonFn4 = function () {};
-// 
-
-
-
-// === Code Lenses ===
-// === /anonymousFunctionExpressions.ts ===
 // export let anonFn1 = function () {};
 // export const /*CODELENS: 0 references*/anonFn2 = function () {};
 // 
 // let anonFn3 = function () {};
 // const anonFn4 = function () {};
-// 
-
-
-
-// === Code Lenses ===
-// === /anonymousFunctionExpressions.ts ===
-// export let anonFn1 = function () {};
-// export const anonFn2 = /*CODELENS: 0 references*/function () {};
-// 
-// let anonFn3 = function () {};
-// const anonFn4 = function () {};
-// 
-
-
-
-// === Code Lenses ===
-// === /anonymousFunctionExpressions.ts ===
-// export let anonFn1 = function () {};
-// export const anonFn2 = function () {};
-// 
-// let anonFn3 = /*CODELENS: 0 references*/function () {};
-// const anonFn4 = function () {};
-// 
-
-
-
-// === Code Lenses ===
-// === /anonymousFunctionExpressions.ts ===
-// export let anonFn1 = function () {};
-// export const anonFn2 = function () {};
-// 
-// let anonFn3 = function () {};
-// const anonFn4 = /*CODELENS: 0 references*/function () {};
 // 
 
 
@@ -99,53 +55,9 @@
 
 // === Code Lenses ===
 // === /namedFunctions.ts ===
-// export let namedFn1 = function /*CODELENS: 0 references*/namedFn1() {}
-// export const namedFn2 = function namedFn2() {}
-// 
-// let namedFn3 = function namedFn3() {}
-// const namedFn4 = function namedFn4() {}
-// 
-
-
-
-// === Code Lenses ===
-// === /namedFunctions.ts ===
 // export let namedFn1 = function namedFn1() {}
 // export const /*CODELENS: 0 references*/namedFn2 = function namedFn2() {}
 // 
 // let namedFn3 = function namedFn3() {}
 // const namedFn4 = function namedFn4() {}
-// 
-
-
-
-// === Code Lenses ===
-// === /namedFunctions.ts ===
-// export let namedFn1 = function namedFn1() {}
-// export const namedFn2 = function /*CODELENS: 0 references*/namedFn2() {}
-// 
-// let namedFn3 = function namedFn3() {}
-// const namedFn4 = function namedFn4() {}
-// 
-
-
-
-// === Code Lenses ===
-// === /namedFunctions.ts ===
-// export let namedFn1 = function namedFn1() {}
-// export const namedFn2 = function namedFn2() {}
-// 
-// let namedFn3 = function /*CODELENS: 0 references*/namedFn3() {}
-// const namedFn4 = function namedFn4() {}
-// 
-
-
-
-// === Code Lenses ===
-// === /namedFunctions.ts ===
-// export let namedFn1 = function namedFn1() {}
-// export const namedFn2 = function namedFn2() {}
-// 
-// let namedFn3 = function namedFn3() {}
-// const namedFn4 = function /*CODELENS: 0 references*/namedFn4() {}
 // 
