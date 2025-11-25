@@ -161,11 +161,11 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 
 type filesParser struct {
 	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[string, *queuedParseTask]
+	tasksByFileName collections.SyncMap[string, *parseTaskData]
 	maxDepth        int
 }
 
-type queuedParseTask struct {
+type parseTaskData struct {
 	task                *parseTask
 	mu                  sync.Mutex
 	lowestDepth         int
@@ -180,9 +180,8 @@ func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
 func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, isFromExternalLibrary bool) {
 	for i, task := range tasks {
 		taskIsFromExternalLibrary := isFromExternalLibrary || task.fromExternalLibrary
-		newTask := &queuedParseTask{task: task, lowestDepth: math.MaxInt}
-		loadedTask, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), newTask)
-		task = loadedTask.task
+		data, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), &parseTaskData{task: task, lowestDepth: math.MaxInt})
+		task = data.task
 		if loaded {
 			tasks[i].loadedTask = task
 			// Add in the loaded task's external-ness.
@@ -190,8 +189,8 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 		}
 
 		w.wg.Queue(func() {
-			loadedTask.mu.Lock()
-			defer loadedTask.mu.Unlock()
+			data.mu.Lock()
+			defer data.mu.Unlock()
 
 			startSubtasks := false
 
@@ -199,17 +198,17 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 			if task.increaseDepth {
 				currentDepth++
 			}
-			if currentDepth < loadedTask.lowestDepth {
+			if currentDepth < data.lowestDepth {
 				// If we're seeing this task at a lower depth than before,
 				// reprocess its subtasks to ensure they are loaded.
-				loadedTask.lowestDepth = currentDepth
+				data.lowestDepth = currentDepth
 				startSubtasks = true
 			}
 
-			if !task.isRoot() && taskIsFromExternalLibrary && !loadedTask.fromExternalLibrary {
+			if !task.isRoot() && taskIsFromExternalLibrary && !data.fromExternalLibrary {
 				// If we're seeing this task now as an external library,
 				// reprocess its subtasks to ensure they are also marked as external.
-				loadedTask.fromExternalLibrary = true
+				data.fromExternalLibrary = true
 				startSubtasks = true
 			}
 
@@ -222,7 +221,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 			}
 
 			if startSubtasks {
-				w.start(loader, task.subTasks, loadedTask.lowestDepth, loadedTask.fromExternalLibrary)
+				w.start(loader, task.subTasks, data.lowestDepth, data.fromExternalLibrary)
 			}
 		})
 	}
@@ -250,8 +249,8 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
-	var collectFiles func(tasks []*parseTask, seen collections.Set[*queuedParseTask])
-	collectFiles = func(tasks []*parseTask, seen collections.Set[*queuedParseTask]) {
+	var collectFiles func(tasks []*parseTask, seen collections.Set[*parseTaskData])
+	collectFiles = func(tasks []*parseTask, seen collections.Set[*parseTaskData]) {
 		for _, task := range tasks {
 			// Exclude automatic type directive tasks from include reason processing,
 			// as these are internal implementation details and should not contribute
@@ -263,9 +262,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 				w.addIncludeReason(loader, task, includeReason)
 			}
-			queued, _ := w.tasksByFileName.Load(task.normalizedFilePath)
+			data, _ := w.tasksByFileName.Load(task.normalizedFilePath)
 			// ensure we only walk each task once
-			if !task.loaded || !seen.AddIfAbsent(queued) {
+			if !task.loaded || !seen.AddIfAbsent(data) {
 				continue
 			}
 			for _, trace := range task.typeResolutionsTrace {
@@ -341,21 +340,21 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 				importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
 			}
-			if task.fromExternalLibrary {
+			if data.fromExternalLibrary {
 				sourceFilesFoundSearchingNodeModules.Add(path)
 			}
 		}
 	}
 
 	// Mark all tasks we saw as external after the fact.
-	w.tasksByFileName.Range(func(key string, value *queuedParseTask) bool {
+	w.tasksByFileName.Range(func(key string, value *parseTaskData) bool {
 		if value.fromExternalLibrary {
 			value.task.fromExternalLibrary = true
 		}
 		return true
 	})
 
-	collectFiles(loader.rootTasks, collections.Set[*queuedParseTask]{})
+	collectFiles(loader.rootTasks, collections.Set[*parseTaskData]{})
 	loader.sortLibs(libFiles)
 
 	allFiles := append(libFiles, files...)
