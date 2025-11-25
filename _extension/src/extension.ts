@@ -50,7 +50,10 @@ export async function activate(context: vscode.ExtensionContext) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
         if (!tsExtension) {
             if (!useTsgo) {
-                output.appendLine("TypeScript Native Preview: Built-in TypeScript extension is disabled. Using tsgo regardless of setting.");
+                await vscode.window.showWarningMessage(
+                    "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
+                    "OK",
+                );
             }
         }
         else if (useTsgo === false) {
