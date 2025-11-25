@@ -1325,7 +1325,7 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 	}
 
 	foundAtLeastOneCodeLens := false
-	for openFile := range f.openFiles {
+	for _, openFile := range slices.Sorted(maps.Keys(f.openFiles)) {
 		params := &lsproto.CodeLensParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(openFile),
