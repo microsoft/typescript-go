@@ -58,7 +58,6 @@ func (t *parseTask) isRoot() bool {
 
 func (t *parseTask) load(loader *fileLoader) {
 	t.loaded = true
-	t.path = loader.toPath(t.normalizedFilePath)
 	if t.isForAutomaticTypeDirective {
 		t.loadAutomaticTypeDirectives(loader)
 		return
@@ -168,6 +167,7 @@ type filesParser struct {
 type parseTaskData struct {
 	task                *parseTask
 	mu                  sync.Mutex
+	isRoot              bool
 	lowestDepth         int
 	fromExternalLibrary bool
 }
@@ -179,13 +179,18 @@ func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
 
 func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, isFromExternalLibrary bool) {
 	for i, task := range tasks {
+		task.path = loader.toPath(task.normalizedFilePath)
 		taskIsFromExternalLibrary := isFromExternalLibrary || task.fromExternalLibrary
-		data, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), &parseTaskData{task: task, lowestDepth: math.MaxInt})
-		task = data.task
+		data, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), &parseTaskData{
+			task:        task,
+			isRoot:      task.isRoot(),
+			lowestDepth: math.MaxInt,
+		})
+		// task = data.task
 		if loaded {
-			tasks[i].loadedTask = task
+			tasks[i].loadedTask = data.task
 			// Add in the loaded task's external-ness.
-			taskIsFromExternalLibrary = taskIsFromExternalLibrary || task.fromExternalLibrary
+			taskIsFromExternalLibrary = taskIsFromExternalLibrary || data.fromExternalLibrary
 		}
 
 		w.wg.Queue(func() {
@@ -194,10 +199,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 
 			startSubtasks := false
 
-			currentDepth := depth
-			if task.increaseDepth {
-				currentDepth++
-			}
+			currentDepth := core.IfElse(task.increaseDepth, depth+1, depth)
 			if currentDepth < data.lowestDepth {
 				// If we're seeing this task at a lower depth than before,
 				// reprocess its subtasks to ensure they are loaded.
@@ -205,7 +207,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 				startSubtasks = true
 			}
 
-			if !task.isRoot() && taskIsFromExternalLibrary && !data.fromExternalLibrary {
+			if !data.isRoot && taskIsFromExternalLibrary && !data.fromExternalLibrary {
 				// If we're seeing this task now as an external library,
 				// reprocess its subtasks to ensure they are also marked as external.
 				data.fromExternalLibrary = true
@@ -216,12 +218,12 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 				return
 			}
 
-			if !task.loaded {
-				task.load(loader)
+			if !data.task.loaded {
+				data.task.load(loader)
 			}
 
 			if startSubtasks {
-				w.start(loader, task.subTasks, data.lowestDepth, data.fromExternalLibrary)
+				w.start(loader, data.task.subTasks, data.lowestDepth, data.fromExternalLibrary)
 			}
 		})
 	}
