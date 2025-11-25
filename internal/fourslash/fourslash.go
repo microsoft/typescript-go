@@ -479,6 +479,19 @@ var (
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
 		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 	}
+	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+			ActiveParameterSupport: ptrTrue,
+		},
+		ContextSupport: ptrTrue,
+	}
+	defaultDocumentSymbolCapabilities = &lsproto.DocumentSymbolClientCapabilities{
+		HierarchicalDocumentSymbolSupport: ptrTrue,
+	}
 )
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -536,16 +549,10 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
-		capabilitiesWithDefaults.TextDocument.SignatureHelp = &lsproto.SignatureHelpClientCapabilities{
-			SignatureInformation: &lsproto.ClientSignatureInformationOptions{
-				DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
-				ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
-					LabelOffsetSupport: ptrTrue,
-				},
-				ActiveParameterSupport: ptrTrue,
-			},
-			ContextSupport: ptrTrue,
-		}
+		capabilitiesWithDefaults.TextDocument.SignatureHelp = defaultSignatureHelpCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.DocumentSymbol == nil {
+		capabilitiesWithDefaults.TextDocument.DocumentSymbol = defaultDocumentSymbolCapabilities
 	}
 	return &capabilitiesWithDefaults
 }
@@ -1173,9 +1180,10 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
-	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
-	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
+	completionIgnoreOpts           = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts           = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	diagnosticsIgnoreOpts          = ignorePaths(".Severity", ".Source", ".RelatedInformation")
+	stradaDocumentSymbolIgnoreOpts = ignorePaths(".Detail", ".Tags", ".Deprecated", ".Range", ".SelectionRange")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
@@ -3664,4 +3672,21 @@ func verifyIncludesSymbols(
 		}
 		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' at location '%v' mismatch", prefix, sym.Name, sym.Location))
 	}
+}
+
+// `verify.navigationTree` in Strada.
+func (f *FourslashTest) VerifyStradaDocumentSymbol(t *testing.T, expected []*lsproto.DocumentSymbol) {
+	params := &lsproto.DocumentSymbolParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
+	if result.DocumentSymbols == nil {
+		if len(expected) != 0 {
+			t.Fatalf("Expected non-nil document symbols array from document symbol request")
+		}
+		return
+	}
+	assertDeepEqual(t, *result.DocumentSymbols, expected, "Document symbols mismatch", stradaDocumentSymbolIgnoreOpts)
 }
