@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCodeLensFunctionsExpressions01(t *testing.T) {
+func TestCodeLensFunctionExpressions01(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
