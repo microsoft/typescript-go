@@ -39,7 +39,7 @@
 //   #methodC(): void {}
 //   protected /*CODELENS: 0 implementations*/methodD(): void {}
 //   private methodE(): void {}
-//   abstract protected methodG(): void;
+//   protected abstract methodG(): void;
 //   public methodH(): void {}
 // --- (line: 9) skipped ---
 
@@ -51,7 +51,7 @@
 //   #methodC(): void {}
 //   protected methodD(): void {}
 //   private methodE(): void {}
-//   abstract protected /*CODELENS: 0 implementations*/methodG(): void;
+//   protected abstract /*CODELENS: 0 implementations*/methodG(): void;
 //   public methodH(): void {}
 // 
 //   static methodStaticA(): void {}
@@ -64,7 +64,7 @@
 // --- (line: 4) skipped ---
 //   protected methodD(): void {}
 //   private methodE(): void {}
-//   abstract protected methodG(): void;
+//   protected abstract methodG(): void;
 //   public /*CODELENS: 0 implementations*/methodH(): void {}
 // 
 //   static methodStaticA(): void {}
@@ -76,7 +76,7 @@
 // === Code Lenses ===
 // === /codeLensReferencesShowOnAllClassMethods=true.ts ===
 // --- (line: 6) skipped ---
-//   abstract protected methodG(): void;
+//   protected abstract methodG(): void;
 //   public methodH(): void {}
 // 
 //   static /*CODELENS: 0 implementations*/methodStaticA(): void {}
