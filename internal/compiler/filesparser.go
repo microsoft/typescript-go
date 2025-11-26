@@ -225,6 +225,13 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
+	// stores 'filename -> file association' ignoring case
+	// used to track cases when two file names differ only in casing
+	var filesByNameIgnoreCase map[string]*ast.SourceFile
+	if loader.comparePathsOptions.UseCaseSensitiveFileNames {
+		filesByNameIgnoreCase = make(map[string]*ast.SourceFile, totalFileCount)
+	}
+
 	loader.includeProcessor.fileIncludeReasons = make(map[tspath.Path][]*FileIncludeReason, totalFileCount)
 	var outputFileToProjectReferenceSource map[tspath.Path]string
 	if !loader.opts.canUseProjectReferenceSource() {
@@ -241,11 +248,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var collectFiles func(tasks []*parseTask, seen map[*parseTaskData]string)
 	collectFiles = func(tasks []*parseTask, seen map[*parseTaskData]string) {
 		for _, task := range tasks {
+			includeReason := task.includeReason
 			// Exclude automatic type directive tasks from include reason processing,
 			// as these are internal implementation details and should not contribute
 			// to the reasons for including files.
 			if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
-				includeReason := task.includeReason
 				if task.loadedTask != nil {
 					task = task.loadedTask
 				}
@@ -257,8 +264,15 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			}
 
 			// ensure we only walk each task once
-			if _, ok := seen[data]; ok {
-				// !!! already seen verify casing
+			if checkedName, ok := seen[data]; ok {
+				if !loader.opts.Config.CompilerOptions().ForceConsistentCasingInFileNames.IsFalse() {
+					// Check if it differs only in drive letters its ok to ignore that error:
+					checkedAbsolutePath := tspath.GetNormalizedAbsolutePathWithoutRoot(checkedName, loader.comparePathsOptions.CurrentDirectory)
+					inputAbsolutePath := tspath.GetNormalizedAbsolutePathWithoutRoot(task.normalizedFilePath, loader.comparePathsOptions.CurrentDirectory)
+					if checkedAbsolutePath != inputAbsolutePath {
+						loader.includeProcessor.addProcessingDiagnosticsForFileCasing(task.path, checkedName, task.normalizedFilePath, includeReason)
+					}
+				}
 				continue
 			} else {
 				seen[data] = task.normalizedFilePath
@@ -296,23 +310,14 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				continue
 			}
 
-			// !!! sheetal todo porting file case errors
-			// if _, ok := filesByPath[path]; ok {
-			// 	Check if it differs only in drive letters its ok to ignore that error:
-			// 	const checkedAbsolutePath = getNormalizedAbsolutePathWithoutRoot(checkedName, currentDirectory);
-			// 	const inputAbsolutePath = getNormalizedAbsolutePathWithoutRoot(fileName, currentDirectory);
-			// 	if (checkedAbsolutePath !== inputAbsolutePath) {
-			// 	    reportFileNamesDifferOnlyInCasingError(fileName, file, reason);
-			// 	}
-			// } else if loader.comparePathsOptions.UseCaseSensitiveFileNames {
-			// 	pathIgnoreCase := tspath.ToPath(file.FileName(), loader.comparePathsOptions.CurrentDirectory, false)
-			// 	// for case-sensitsive file systems check if we've already seen some file with similar filename ignoring case
-			// 	if _, ok := filesByNameIgnoreCase[pathIgnoreCase]; ok {
-			// 		reportFileNamesDifferOnlyInCasingError(fileName, existingFile, reason);
-			// 	} else {
-			// 		filesByNameIgnoreCase[pathIgnoreCase] = file
-			// 	}
-			// }
+			if filesByNameIgnoreCase != nil {
+				pathLowerCase := tspath.ToFileNameLowerCase(string(path))
+				if existingFile, ok := filesByNameIgnoreCase[pathLowerCase]; ok {
+					loader.includeProcessor.addProcessingDiagnosticsForFileCasing(path, existingFile.FileName(), file.FileName(), includeReason)
+				} else {
+					filesByNameIgnoreCase[pathLowerCase] = file
+				}
+			}
 
 			if task.libFile != nil {
 				libFiles = append(libFiles, file)
