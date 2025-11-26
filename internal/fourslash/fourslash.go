@@ -114,8 +114,8 @@ func (w *lspWriter) Write(msg *lsproto.Message) error {
 	return nil
 }
 
-func (r *lspWriter) Close() {
-	close(r.c)
+func (w *lspWriter) Close() {
+	close(w.c)
 }
 
 var (
