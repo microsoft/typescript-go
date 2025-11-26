@@ -630,7 +630,7 @@ func (p *Program) verifyCompilerOptions() {
 	}
 
 	if len(options.TsBuildInfoFile) == 0 && options.Incremental.IsTrue() && len(options.ConfigFilePath) == 0 {
-		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified)
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
 	}
 
 	p.verifyProjectReferences()

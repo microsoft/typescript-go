@@ -42,5 +42,9 @@
     "Project '{0}' is out of date because it has errors.": {
         "category": "Message",
         "code": 6423
+    },
+    "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided.": {
+        "category": "Error",
+        "code": 5074
     }
 }
