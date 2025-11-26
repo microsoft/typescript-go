@@ -1,6 +1,7 @@
 package fourslash_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
@@ -8,10 +9,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func runCodeLensShowOnInterfaceMethods(t *testing.T, showOnInterfaceMethods bool) {
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+func TestCodeLensReferencesShowOnInterfaceMethods(t *testing.T) {
+	t.Parallel()
 
-	const content = `
+	containingTestName := t.Name()
+	for _, value := range []bool{true, false} {
+		t.Run(fmt.Sprintf("%s=%v", containingTestName, value), func(t *testing.T) {
+			defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+			const content = `
 export interface I {
   methodA(): void;
 }
@@ -36,19 +42,11 @@ class AbstractC implements J {
   abstract methodC(): void;
 }
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineCodeLens(t, &lsutil.UserPreferences{
-		ImplementationsCodeLensEnabled:                true,
-		ImplementationsCodeLensShowOnInterfaceMethods: showOnInterfaceMethods,
-	})
-}
-
-func TestCodeLensReferencesShowOnInterfaceMethodsTrue(t *testing.T) {
-	t.Parallel()
-	runCodeLensShowOnInterfaceMethods(t, true)
-}
-
-func TestCodeLensReferencesShowOnInterfaceMethodsFalse(t *testing.T) {
-	t.Parallel()
-	runCodeLensShowOnInterfaceMethods(t, false)
+			f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+			f.VerifyBaselineCodeLens(t, &lsutil.UserPreferences{
+				ImplementationsCodeLensEnabled:                true,
+				ImplementationsCodeLensShowOnInterfaceMethods: value,
+			})
+		})
+	}
 }
