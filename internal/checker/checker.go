@@ -2003,7 +2003,7 @@ func isSameScopeDescendentOf(initial *ast.Node, parent *ast.Node, stopAt *ast.No
 	return false
 }
 
-// stopAtAnyPropertyDeclaration is used for detecting ES-standard class field use-before-def errors
+// isPropertyImmediatelyReferencedWithinDeclaration is used for detecting ES-standard class field use-before-def errors
 func isPropertyImmediatelyReferencedWithinDeclaration(declaration *ast.Node, usage *ast.Node, stopAtAnyPropertyDeclaration bool) bool {
 	// always legal if usage is after declaration
 	if usage.End() > declaration.End() {
@@ -4271,7 +4271,7 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	}
 	c.checkIndexConstraints(classType, symbol, false /*isStaticIndex*/)
 	c.checkIndexConstraints(staticType, symbol, true /*isStaticIndex*/)
-	c.checkTypeForDuplicateIndexSignatures(node)
+	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.checkPropertyInitialization(node)
 }
 
@@ -4758,14 +4758,15 @@ func (c *Checker) checkIndexConstraintForIndexSignature(t *Type, checkInfo *Inde
 	}
 }
 
-func (c *Checker) checkTypeForDuplicateIndexSignatures(node *ast.Node) {
-	if ast.IsInterfaceDeclaration(node) {
-		// in case of merging interface declaration it is possible that we'll enter this check procedure several times for every declaration
-		// to prevent this run check only for the first declaration of a given kind
-		if symbol := c.getSymbolOfDeclaration(node); len(symbol.Declarations) != 0 && symbol.Declarations[0] != node {
-			return
-		}
+func (c *Checker) checkClassOrInterfaceForDuplicateIndexSignatures(node *ast.Node) {
+	// Only check the type once
+	if links := c.declaredTypeLinks.Get(c.getSymbolOfDeclaration(node)); !links.indexSignaturesChecked {
+		links.indexSignaturesChecked = true
+		c.checkTypeForDuplicateIndexSignatures(node)
 	}
+}
+
+func (c *Checker) checkTypeForDuplicateIndexSignatures(node *ast.Node) {
 	// TypeScript 1.0 spec (April 2014)
 	// 3.7.4: An object type can contain at most one string index signature and one numeric index signature.
 	// 8.5: A class declaration can have at most one string index member declaration and one numeric index member declaration
@@ -4865,8 +4866,8 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	c.checkTypeParameterListsIdentical(symbol)
 	// Only check this symbol once
-	firstInterfaceDecl := ast.GetDeclarationOfKind(symbol, ast.KindInterfaceDeclaration)
-	if node == firstInterfaceDecl {
+	if links := c.declaredTypeLinks.Get(symbol); !links.interfaceChecked {
+		links.interfaceChecked = true
 		t := c.getDeclaredTypeOfSymbol(symbol)
 		typeWithThis := c.getTypeWithThisArgument(t, nil, false)
 		// run subsequent checks only if first set succeeded
@@ -4886,7 +4887,7 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 		c.checkTypeReferenceNode(heritageElement)
 	}
 	c.checkSourceElements(node.Members())
-	c.checkTypeForDuplicateIndexSignatures(node)
+	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.registerForUnusedIdentifiersCheck(node)
 }
 
@@ -5539,7 +5540,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	links := c.moduleSymbolLinks.Get(moduleSymbol)
 	if !links.exportsChecked {
 		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
-		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol) {
+		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol, exportEqualsSymbol.ValueDeclaration.Kind == ast.KindJSExportAssignment) {
 			declaration := core.OrElse(c.getDeclarationOfAliasSymbol(exportEqualsSymbol), exportEqualsSymbol.ValueDeclaration)
 			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) {
 				c.error(declaration, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
@@ -5575,10 +5576,17 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	}
 }
 
-func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol) bool {
+func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol, isCommonJS bool) bool {
 	for id := range moduleSymbol.Exports {
 		if id != ast.InternalSymbolNameExportEquals {
-			return true
+			if !isCommonJS {
+				return true
+			}
+			for _, declaration := range moduleSymbol.Exports[id].Declarations {
+				if declaration.Kind != ast.KindJSTypeAliasDeclaration {
+					return true
+				}
+			}
 		}
 	}
 	return false
@@ -14440,7 +14448,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 	}
 
 	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
-	return !ast.IsExternalModule(file.AsSourceFile()) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
+	return (file.AsSourceFile().ExternalModuleIndicator == nil || file.AsSourceFile().ExternalModuleIndicator == file) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
@@ -15333,13 +15341,27 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		if resolveLocation == nil {
 			resolveLocation = name
 		}
-		symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		if meaning == ast.SymbolFlagsNamespace {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, nil, true /*isUse*/, false /*excludeGlobals*/))
+			if symbol == nil {
+				alias := c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/))
+				if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
+					// resolve typedefs exported from commonjs, stored on the module symbol
+					symbol = alias.Parent
+				}
+			}
+			if symbol == nil && message != nil {
+				c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/)
+			}
+		} else {
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+		}
 	case ast.KindQualifiedName:
 		qualified := name.AsQualifiedName()
-		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, dontResolveAlias, location)
+		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, location)
 	case ast.KindPropertyAccessExpression:
 		access := name.AsPropertyAccessExpression()
-		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, dontResolveAlias, location)
+		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, location)
 	default:
 		panic("Unknown entity name kind")
 	}
@@ -15357,7 +15379,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	return symbol
 }
 
-func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, dontResolveAlias bool, location *ast.Node) *ast.Symbol {
+func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, location *ast.Node) *ast.Symbol {
 	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
 	if namespace == nil || ast.NodeIsMissing(right) {
 		return nil
@@ -15713,11 +15735,25 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		}
 		return symbols
 	}
+	var originalModule *ast.Symbol
+	if moduleSymbol != nil {
+		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+			originalModule = moduleSymbol
+		}
+	}
 	// A module defined by an 'export=' consists of one export that needs to be resolved
 	moduleSymbol = c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
 	exports = visit(moduleSymbol, nil, false)
 	if exports == nil {
 		exports = make(ast.SymbolTable)
+	}
+	// A CommonJS module defined by an 'export=' might also export typedefs, stored on the original module
+	if originalModule != nil && len(originalModule.Exports) > 1 {
+		for _, symbol := range originalModule.Exports {
+			if symbol.Flags&ast.SymbolFlagsType != 0 && symbol.Name != ast.InternalSymbolNameExportEquals && exports[symbol.Name] == nil {
+				exports[symbol.Name] = symbol
+			}
+		}
 	}
 	for name := range nonTypeOnlyNames.Keys() {
 		delete(typeOnlyExportStarMap, name)
@@ -23972,6 +24008,13 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), false /*skipObjectFunctionPropertyAugment*/, true /*includeTypeOnlyMembers*/)
 				} else {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
+					if symbolFromModule == nil {
+						// a CommonJS module might have typedefs exported alongside an export=
+						immediateModuleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, true /*dontResolveAlias*/)
+						if immediateModuleSymbol != nil && core.Some(immediateModuleSymbol.Declarations, func(d *ast.Node) bool { return d.Kind == ast.KindJSExportAssignment }) {
+							symbolFromModule = c.getSymbol(c.getExportsOfSymbol(immediateModuleSymbol.Parent), current.Text(), meaning)
+						}
+					}
 				}
 				next := core.OrElse(symbolFromModule, symbolFromVariable)
 				if next == nil {

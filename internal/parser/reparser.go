@@ -132,7 +132,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	case ast.KindConstructor:
 		signature = p.factory.NewConstructorDeclaration(clonedModifiers, nil, nil, nil, nil, nil)
 	case ast.KindJSDocCallbackTag:
-		signature = p.factory.NewFunctionTypeNode(nil, nil, nil)
+		signature = p.factory.NewFunctionTypeNode(nil, nil, p.factory.NewKeywordTypeNode(ast.KindAnyKeyword))
 	default:
 		panic("Unexpected kind " + fun.Kind.String())
 	}
@@ -587,6 +587,10 @@ func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindReturnStatement {
 		fun = host.Expression()
+	} else if host.Kind == ast.KindExpressionStatement {
+		if ast.IsBinaryExpression(host.Expression()) {
+			fun = host.Expression().AsBinaryExpression().Right
+		}
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun, true

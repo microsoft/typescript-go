@@ -23,17 +23,7 @@ func (f *FourslashTest) VerifySemanticTokens(t *testing.T, expected []SemanticTo
 		},
 	}
 
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSemanticTokensFullInfo, params)
-	if resMsg == nil {
-		t.Fatal("Nil response received for semantic tokens request")
-	}
-	if !resultOk {
-		resp := resMsg.AsResponse()
-		if resp.Error != nil {
-			t.Fatalf("Semantic tokens request returned error: code=%d, message=%s", resp.Error.Code, resp.Error.Message)
-		}
-		t.Fatalf("Unexpected response type for semantic tokens request: %T", resp.Result)
-	}
+	result := sendRequest(t, f, lsproto.TextDocumentSemanticTokensFullInfo, params)
 
 	if result.SemanticTokens == nil {
 		if len(expected) == 0 {
