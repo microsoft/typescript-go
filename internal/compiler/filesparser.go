@@ -21,6 +21,7 @@ type parseTask struct {
 	redirectedParseTask         *parseTask
 	subTasks                    []*parseTask
 	loaded                      bool
+	startedSubTasks             bool
 	isForAutomaticTypeDirective bool
 	includeReason               *FileIncludeReason
 
@@ -155,9 +156,10 @@ type filesParser struct {
 
 type parseTaskData struct {
 	// map of tasks by file casing
-	tasks       map[string]*parseTask
-	mu          sync.Mutex
-	lowestDepth int
+	tasks           map[string]*parseTask
+	mu              sync.Mutex
+	lowestDepth     int
+	startedSubTasks bool
 }
 
 func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
@@ -177,15 +179,16 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 			data.mu.Lock()
 			defer data.mu.Unlock()
 
+			startSubtasks := false
 			if loaded {
 				if existingTask, ok := data.tasks[task.normalizedFilePath]; ok {
 					tasks[i].loadedTask = existingTask
 				} else {
 					data.tasks[task.normalizedFilePath] = task
+					// This is new task for file name - so load subtasks if there was loading for any other casing
+					startSubtasks = data.startedSubTasks
 				}
 			}
-
-			startSubtasks := false
 
 			currentDepth := core.IfElse(task.increaseDepth, depth+1, depth)
 			if currentDepth < data.lowestDepth {
@@ -193,6 +196,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 				// reprocess its subtasks to ensure they are loaded.
 				data.lowestDepth = currentDepth
 				startSubtasks = true
+				data.startedSubTasks = true
 			}
 
 			if task.elideOnDepth && currentDepth > w.maxDepth {
@@ -206,9 +210,11 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 					if taskByFileName.redirectedParseTask != nil {
 						// Always load redirected task
 						loadSubTasks = true
+						data.startedSubTasks = true
 					}
 				}
-				if loadSubTasks {
+				if !taskByFileName.startedSubTasks && loadSubTasks {
+					taskByFileName.startedSubTasks = true
 					w.start(loader, taskByFileName.subTasks, data.lowestDepth)
 				}
 			}
