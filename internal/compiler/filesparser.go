@@ -233,9 +233,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
 	// stores 'filename -> file association' ignoring case
 	// used to track cases when two file names differ only in casing
-	var filesByNameIgnoreCase map[string]*ast.SourceFile
+	var tasksSeenByNameIgnoreCase map[string]*parseTask
 	if loader.comparePathsOptions.UseCaseSensitiveFileNames {
-		filesByNameIgnoreCase = make(map[string]*ast.SourceFile, totalFileCount)
+		tasksSeenByNameIgnoreCase = make(map[string]*parseTask, totalFileCount)
 	}
 
 	loader.includeProcessor.fileIncludeReasons = make(map[tspath.Path][]*FileIncludeReason, totalFileCount)
@@ -284,6 +284,15 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				seen[data] = task.normalizedFilePath
 			}
 
+			if tasksSeenByNameIgnoreCase != nil {
+				pathLowerCase := tspath.ToFileNameLowerCase(string(task.path))
+				if taskByIgnoreCase, ok := tasksSeenByNameIgnoreCase[pathLowerCase]; ok {
+					loader.includeProcessor.addProcessingDiagnosticsForFileCasing(taskByIgnoreCase.path, taskByIgnoreCase.normalizedFilePath, task.normalizedFilePath, includeReason)
+				} else {
+					tasksSeenByNameIgnoreCase[pathLowerCase] = task
+				}
+			}
+
 			for _, trace := range task.typeResolutionsTrace {
 				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
@@ -314,15 +323,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 				missingFiles = append(missingFiles, task.normalizedFilePath)
 				continue
-			}
-
-			if filesByNameIgnoreCase != nil {
-				pathLowerCase := tspath.ToFileNameLowerCase(string(path))
-				if existingFile, ok := filesByNameIgnoreCase[pathLowerCase]; ok {
-					loader.includeProcessor.addProcessingDiagnosticsForFileCasing(path, existingFile.FileName(), file.FileName(), includeReason)
-				} else {
-					filesByNameIgnoreCase[pathLowerCase] = file
-				}
 			}
 
 			if task.libFile != nil {
