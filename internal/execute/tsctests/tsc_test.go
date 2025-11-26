@@ -1832,6 +1832,54 @@ func TestTscIncremental(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario:     "Compile incremental with case insensitive file names",
+			commandLineArgs: []string{"-p", "."},
+			files: FileMap{
+				"/home/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"incremental": true
+						},
+					}`),
+				"/home/project/src/index.ts": stringtestutil.Dedent(`
+					import type { Foo1 } from 'lib1';
+					import type { Foo2 } from 'lib2';
+					export const foo1: Foo1 = { foo: "a" };
+					export const foo2: Foo2 = { foo: "b" };`),
+				"/home/node_modules/lib1/index.d.ts": stringtestutil.Dedent(`
+					import type { Foo } from 'someLib';
+					export type { Foo as Foo1 };`),
+				"/home/node_modules/lib1/package.json": stringtestutil.Dedent(`
+					{
+						"name": "lib1"
+					}`),
+				"/home/node_modules/lib2/index.d.ts": stringtestutil.Dedent(`
+					import type { Foo } from 'somelib';
+					export type { Foo as Foo2 };
+					export declare const foo2: Foo;`),
+				"/home/node_modules/lib2/package.json": stringtestutil.Dedent(`
+					{
+						"name": "lib2"
+					}
+					`),
+				"/home/node_modules/someLib/index.d.ts": stringtestutil.Dedent(`
+					import type { Str } from 'otherLib';
+					export type Foo = { foo: Str; };`),
+				"/home/node_modules/someLib/package.json": stringtestutil.Dedent(`
+					{
+						"name": "somelib"
+					}`),
+				"/home/node_modules/otherLib/index.d.ts": stringtestutil.Dedent(`
+					export type Str = string;`),
+				"/home/node_modules/otherLib/package.json": stringtestutil.Dedent(`
+					{
+						"name": "otherlib"
+					}`),
+			},
+			cwd:        "/home/project",
+			ignoreCase: true,
+		},
 	}
 
 	for _, test := range testCases {
