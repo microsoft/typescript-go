@@ -1,5 +1,5 @@
 // === Code Lenses ===
-// === /codeLensReferencesShowOnAllFunctionsFalse.ts ===
+// === /codeLensReferencesShowOnAllFunctions=false.ts ===
 // export function /*CODELENS: 0 references*/f1(): void {}
 // 
 // function f2(): void {}
@@ -9,7 +9,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnAllFunctionsFalse.ts ===
+// === /codeLensReferencesShowOnAllFunctions=false.ts ===
 // export function f1(): void {}
 // 
 // function f2(): void {}

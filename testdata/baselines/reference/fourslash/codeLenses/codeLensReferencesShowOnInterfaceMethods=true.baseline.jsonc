@@ -1,5 +1,5 @@
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // export interface /*CODELENS: 3 implementations*/I {
 //   methodA(): void;
 // }
@@ -28,7 +28,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // export interface I {
 //   /*CODELENS: 1 implementation*/methodA(): void;
 // }
@@ -49,7 +49,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // export interface I {
 //   methodA(): void;
 // }
@@ -78,7 +78,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // --- (line: 4) skipped ---
 //   methodB(): void;
 // }
@@ -104,7 +104,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // --- (line: 5) skipped ---
 // }
 // 
@@ -129,7 +129,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // --- (line: 6) skipped ---
 // 
 // interface J extends I {
@@ -149,7 +149,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // --- (line: 16) skipped ---
 // }
 // 
@@ -163,7 +163,7 @@
 
 
 // === Code Lenses ===
-// === /codeLensReferencesShowOnInterfaceMethodsTrue.ts ===
+// === /codeLensReferencesShowOnInterfaceMethods=true.ts ===
 // --- (line: 18) skipped ---
 // class AbstractC implements J {
 //   abstract methodA(): void;
