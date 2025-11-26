@@ -95,16 +95,25 @@ export class Client {
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        // Get goMemLimit
+        const goMemLimit = config.get<string>("goMemLimit");
+        const env = goMemLimit ? { ...process.env, GOMEMLIMIT: goMemLimit } : process.env;
+        if (goMemLimit) {
+            this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+        }
+
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
             debug: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
         };
 
