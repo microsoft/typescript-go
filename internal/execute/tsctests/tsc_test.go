@@ -981,6 +981,72 @@ func TestTscExtends(t *testing.T) {
 	}
 }
 
+func TestForceConsistentCasingInFileNames(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "with relative and non relative file resolutions",
+			files: FileMap{
+				"/user/username/projects/myproject/src/struct.d.ts": stringtestutil.Dedent(`
+                    import * as xs1 from "fp-ts/lib/Struct";
+                    import * as xs2 from "fp-ts/lib/struct";
+                    import * as xs3 from "./Struct";
+                    import * as xs4 from "./struct";
+                `),
+				"/user/username/projects/myproject/node_modules/fp-ts/lib/struct.d.ts": `export function foo(): void`,
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"/user/username/projects/myproject/src/struct.d.ts", "--forceConsistentCasingInFileNames", "--explainFiles"},
+			ignoreCase:      true,
+		},
+		{
+			subScenario: "when file is included from multiple places with different casing",
+			files: FileMap{
+				"/home/src/projects/project/src/struct.d.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/src/anotherFile.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/src/oneMore.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/tsconfig.json":                      `{}`,
+				"/home/src/projects/project/node_modules/fp-ts/lib/struct.d.ts": `export function foo(): void`,
+			},
+			cwd:             "/home/src/projects/project",
+			commandLineArgs: []string{"--explainFiles"},
+			ignoreCase:      true,
+		},
+		{
+			subScenario: "with type ref from file",
+			files: FileMap{
+				"/user/username/projects/myproject/src/fileOne.d.ts": `declare class c { }`,
+				"/user/username/projects/myproject/src/file2.d.ts": stringtestutil.Dedent(`
+                    /// <reference types="./fileOne.d.ts"/>
+                    declare const y: c;
+                `),
+				"/user/username/projects/myproject/tsconfig.json": "{ }",
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-p", "/user/username/projects/myproject", "--explainFiles", "--traceResolution"},
+			ignoreCase:      true,
+		},
+	}
+	for _, test := range testCases {
+		test.run(t, "forceConsistentCasingInFileNames")
+	}
+}
+
 func TestTscIgnoreConfig(t *testing.T) {
 	t.Parallel()
 	filesWithoutConfig := func() FileMap {
