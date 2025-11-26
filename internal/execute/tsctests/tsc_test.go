@@ -1041,6 +1041,27 @@ func TestForceConsistentCasingInFileNames(t *testing.T) {
 			commandLineArgs: []string{"-p", "/user/username/projects/myproject", "--explainFiles", "--traceResolution"},
 			ignoreCase:      true,
 		},
+		{
+			subScenario: "with triple slash ref from file",
+			files: FileMap{
+				"/home/src/workspaces/project/src/c.ts":      `/// <reference path="./D.ts"/>`,
+				"/home/src/workspaces/project/src/d.ts":      `declare class c { }`,
+				"/home/src/workspaces/project/tsconfig.json": "{ }",
+			},
+			ignoreCase: true,
+		},
+		{
+			subScenario: "two files exist on disk that differs only in casing",
+			files: FileMap{
+				"/home/src/workspaces/project/c.ts": `import {x} from "./D"`,
+				"/home/src/workspaces/project/D.ts": `export const x = 10;`,
+				"/home/src/workspaces/project/d.ts": `export const y = 20;`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"files": ["c.ts", "d.ts"]
+					}`),
+			},
+		},
 	}
 	for _, test := range testCases {
 		test.run(t, "forceConsistentCasingInFileNames")
