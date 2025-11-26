@@ -1350,8 +1350,9 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 			var locations []lsproto.Location
 			// commandArgs: (DocumentUri, Position, Location[])
 			if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
-				// TODO: inevitably this would fail if we were actually going over the wire
-				// since the type info will be lost in that `any`.
+				// TODO: inevitably this would fail if we round-tripped the data over the wire.
+				// While an ordinary client can support this, we can't rehydrate to `Location`s because
+				// the type info will be lost in that `any`.
 				untypedLocs := (*commandArgs)[2]
 				if locs, ok := untypedLocs.([]lsproto.Location); ok {
 					locations = locs
