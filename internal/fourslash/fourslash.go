@@ -1350,15 +1350,11 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 			var locations []lsproto.Location
 			// commandArgs: (DocumentUri, Position, Location[])
 			if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
-				// TODO: inevitably this would fail if we round-tripped the data over the wire.
-				// While an ordinary client can support this, we can't rehydrate to `Location`s because
-				// the type info will be lost in that `any`.
-				untypedLocs := (*commandArgs)[2]
-				if locs, ok := untypedLocs.([]lsproto.Location); ok {
-					locations = locs
-				} else {
-					t.Fatalf("Expected code lens command arguments to contain a list of locations, but got %T", untypedLocs)
+				locs, err := roundtripThroughJson[[]lsproto.Location]((*commandArgs)[2])
+				if err != nil {
+					t.Fatalf("failed to re-encode code lens locations: %v", err)
 				}
+				locations = locs
 			}
 
 			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
@@ -1887,6 +1883,25 @@ func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string)
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+// This function is intended for spots where a complex
+// value needs to be reinterpreted following some prior JSON deserialization.
+// The default deserializer for `any` properties will give us a map at runtime,
+// but we want to validate against, and use, the types as returned from the the language service.
+//
+// Use this function sparingly. You can treat it as a "map-to-struct" converter,
+// but updating the original types is probably better in most cases.
+func roundtripThroughJson[T any](value any) (T, error) {
+	var result T
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return result, fmt.Errorf("failed to marshal value to JSON: %w", err)
+	}
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return result, fmt.Errorf("failed to unmarshal value from JSON: %w", err)
+	}
+	return result, nil
 }
 
 // Insert text at the current caret position.
