@@ -22,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -82,6 +83,11 @@ func (p *Program) FileExists(path string) bool {
 // GetCurrentDirectory implements checker.Program.
 func (p *Program) GetCurrentDirectory() string {
 	return p.Host().GetCurrentDirectory()
+}
+
+// PnpApi implements checker.Program.
+func (p *Program) PnpApi() *pnp.PnpApi {
+	return p.Host().PnpApi()
 }
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
