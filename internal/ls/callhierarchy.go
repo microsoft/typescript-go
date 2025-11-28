@@ -538,6 +538,7 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 type callSite struct {
 	declaration *ast.Node
 	textRange   core.TextRange
+	sourceFile  *ast.Node // The source file containing the call site
 }
 
 func convertEntryToCallSite(program *compiler.Program, entry *ReferenceEntry) *callSite {
@@ -565,6 +566,7 @@ func convertEntryToCallSite(program *compiler.Program, entry *ReferenceEntry) *c
 	return &callSite{
 		declaration: ancestor,
 		textRange:   core.NewTextRange(start, node.End()),
+		sourceFile:  sourceFile.AsNode(),
 	}
 }
 
@@ -575,9 +577,8 @@ func getCallSiteGroupKey(site *callSite) ast.NodeId {
 func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.Program, entries []*callSite) *lsproto.CallHierarchyIncomingCall {
 	fromRanges := make([]lsproto.Range, len(entries))
 	for i, entry := range entries {
-		// Get source file from the declaration node to find the script
-		sourceFile := ast.GetSourceFileOfNode(entry.declaration)
-		script := l.getScript(sourceFile.FileName())
+		// Get source file where the call site is located
+		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
@@ -709,12 +710,14 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 		c.callSites = append(c.callSites, &callSite{
 			declaration: decl,
 			textRange:   textRange,
+			sourceFile:  sourceFile.AsNode(),
 		})
 	case []*ast.Node:
 		for _, d := range decl {
 			c.callSites = append(c.callSites, &callSite{
 				declaration: d,
 				textRange:   textRange,
+				sourceFile:  sourceFile.AsNode(),
 			})
 		}
 	}
@@ -947,8 +950,8 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.Program, entries []*callSite) *lsproto.CallHierarchyOutgoingCall {
 	fromRanges := make([]lsproto.Range, len(entries))
 	for i, entry := range entries {
-		sourceFile := ast.GetSourceFileOfNode(entries[0].declaration)
-		script := l.getScript(sourceFile.FileName())
+		// Get source file where the call site is located
+		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 

@@ -34,9 +34,9 @@
 │ │ │ ╰
 │ │ ╰ outgoing: none
 │ ├ fromSpans:
-│ │ ╭ /main.ts:1:22-1:25
-│ │ │ 1: function bar() {
-│ │ │                         ^^^
+│ │ ╭ /main.ts:2:5-2:8
+│ │ │ 2:     foo();
+│ │ │        ^^^
 │ ╰ ╰
 │ ╭ to:
 │ │ ╭ name: foo
@@ -54,7 +54,7 @@
 │ │ │ ╰
 │ │ ╰ outgoing: none
 │ ├ fromSpans:
-│ │ ╭ /main.ts:1:22-1:25
-│ │ │ 1: function bar() {
-│ │ │                         ^^^
+│ │ ╭ /main.ts:2:5-2:8
+│ │ │ 2:     foo();
+│ │ │        ^^^
 ╰ ╰ ╰
