@@ -1776,12 +1776,14 @@ func (f *FourslashTest) VerifyBaselineCallHierarchy(t *testing.T) {
 		return
 	}
 
-	callHierarchyItem := (*prepareResult.CallHierarchyItems)[0]
-	script := f.getScriptInfo(fileName)
-
 	var result strings.Builder
-	seen := make(map[callHierarchyItemKey]bool)
-	formatCallHierarchyItem(t, f, script, &result, *callHierarchyItem, callHierarchyItemDirectionRoot, seen, "")
+
+	for _, callHierarchyItem := range *prepareResult.CallHierarchyItems {
+		seen := make(map[callHierarchyItemKey]bool)
+		itemFileName := callHierarchyItem.Uri.FileName()
+		script := f.getScriptInfo(itemFileName)
+		formatCallHierarchyItem(t, f, script, &result, *callHierarchyItem, callHierarchyItemDirectionRoot, seen, "")
+	}
 
 	f.addResultToBaseline(t, callHierarchyCmd, strings.TrimSuffix(result.String(), "\n"))
 }
