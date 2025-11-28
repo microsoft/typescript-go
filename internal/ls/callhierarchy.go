@@ -251,14 +251,12 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 			}
 		}
 		// Check for module block
-		if varDecl := parent.AsVariableDeclaration(); varDecl != nil {
-			if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
-				modParent := parent.Parent.Parent.Parent.Parent
-				if ast.IsModuleDeclaration(modParent) {
-					mod := modParent.AsModuleDeclaration()
-					if name := mod.Name(); name != nil && ast.IsIdentifier(name) {
-						return name.Text()
-					}
+		if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
+			modParent := parent.Parent.Parent.Parent.Parent
+			if ast.IsModuleDeclaration(modParent) {
+				mod := modParent.AsModuleDeclaration()
+				if name := mod.Name(); name != nil && ast.IsIdentifier(name) {
+					return name.Text()
 				}
 			}
 		}
@@ -477,7 +475,7 @@ func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.No
 		// Variable declaration with assigned expression
 		if ast.IsVariableDeclaration(location) {
 			varDecl := location.AsVariableDeclaration()
-			if varDecl != nil && varDecl.Initializer != nil && isAssignedExpression(varDecl.Initializer) {
+			if varDecl.Initializer != nil && isAssignedExpression(varDecl.Initializer) {
 				return varDecl.Initializer
 			}
 		}
@@ -734,7 +732,7 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		if ast.IsClassLike(node) {
 			// Collect from computed property names
 			classLike := node.AsClassDeclaration()
-			if classLike != nil && classLike.Members != nil {
+			if classLike.Members != nil {
 				for _, member := range classLike.Members.Nodes {
 					if member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
 						c.collect(member.Name().Expression())
@@ -842,10 +840,8 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 		mod := node.AsModuleDeclaration()
 		if !ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) && mod.Body != nil && ast.IsModuleBlock(mod.Body) {
 			modBlock := mod.Body.AsModuleBlock()
-			if modBlock.Statements != nil {
-				for _, stmt := range modBlock.Statements.Nodes {
-					collector.collect(stmt)
-				}
+			for _, stmt := range modBlock.Statements.Nodes {
+				collector.collect(stmt)
 			}
 		}
 
