@@ -254,8 +254,7 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 		if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
 			modParent := parent.Parent.Parent.Parent.Parent
 			if ast.IsModuleDeclaration(modParent) {
-				mod := modParent.AsModuleDeclaration()
-				if name := mod.Name(); name != nil && ast.IsIdentifier(name) {
+				if name := modParent.Name(); name != nil && ast.IsIdentifier(name) {
 					return name.Text()
 				}
 			}
@@ -276,8 +275,7 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindModuleDeclaration:
 		if ast.IsModuleBlock(node.Parent) {
 			if ast.IsModuleDeclaration(node.Parent.Parent) {
-				mod := node.Parent.Parent.AsModuleDeclaration()
-				if name := mod.Name(); name != nil && ast.IsIdentifier(name) {
+				if name := node.Parent.Parent.Name(); name != nil && ast.IsIdentifier(name) {
 					return name.Text()
 				}
 			}
@@ -474,9 +472,8 @@ func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.No
 
 		// Variable declaration with assigned expression
 		if ast.IsVariableDeclaration(location) {
-			varDecl := location.AsVariableDeclaration()
-			if varDecl.Initializer != nil && isAssignedExpression(varDecl.Initializer) {
-				return varDecl.Initializer
+			if initializer := location.Initializer(); initializer != nil && isAssignedExpression(initializer) {
+				return initializer
 			}
 		}
 
@@ -661,27 +658,21 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 
 	switch {
 	case ast.IsTaggedTemplateExpression(node):
-		tagged := node.AsTaggedTemplateExpression()
-		target = tagged.Tag
+		target = node.Expression()
 	case ast.IsJsxOpeningElement(node):
-		jsxOpen := node.AsJsxOpeningElement()
-		target = jsxOpen.TagName
+		target = node.TagName()
 	case ast.IsJsxSelfClosingElement(node):
-		jsxSelf := node.AsJsxSelfClosingElement()
-		target = jsxSelf.TagName
+		target = node.TagName()
 	case ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node):
 		target = node
 	case ast.IsClassStaticBlockDeclaration(node):
 		target = node
 	case ast.IsCallExpression(node):
-		callExpr := node.AsCallExpression()
-		target = callExpr.Expression
+		target = node.Expression()
 	case ast.IsNewExpression(node):
-		newExpr := node.AsNewExpression()
-		target = newExpr.Expression
+		target = node.Expression()
 	case ast.IsDecorator(node):
-		decorator := node.AsDecorator()
-		target = decorator.Expression
+		target = node.Expression()
 	}
 
 	if target == nil {
@@ -731,12 +722,9 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 	if isValidCallHierarchyDeclaration(node) {
 		if ast.IsClassLike(node) {
 			// Collect from computed property names
-			classLike := node.AsClassDeclaration()
-			if classLike.Members != nil {
-				for _, member := range classLike.Members.Nodes {
-					if member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
-						c.collect(member.Name().Expression())
-					}
+			for _, member := range node.Members() {
+				if member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
+					c.collect(member.Name().Expression())
 				}
 			}
 		}
@@ -783,9 +771,8 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 	case ast.KindTaggedTemplateExpression:
 		// do not descend into the type arguments of a tagged template expression
 		c.recordCallSite(node)
-		tagged := node.AsTaggedTemplateExpression()
-		c.collect(tagged.Tag)
-		c.collect(tagged.Template)
+		c.collect(node.Expression())
+		c.collect(node.Body())
 		return
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		// do not descend into the type arguments of a JsxOpeningLikeElement
@@ -829,18 +816,13 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 
 	switch node.Kind {
 	case ast.KindSourceFile:
-		sourceFile := node.AsSourceFile()
-		if sourceFile.Statements != nil {
-			for _, stmt := range sourceFile.Statements.Nodes {
-				collector.collect(stmt)
-			}
+		for _, stmt := range node.Statements() {
+			collector.collect(stmt)
 		}
 
 	case ast.KindModuleDeclaration:
-		mod := node.AsModuleDeclaration()
-		if !ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) && mod.Body != nil && ast.IsModuleBlock(mod.Body) {
-			modBlock := mod.Body.AsModuleBlock()
-			for _, stmt := range modBlock.Statements.Nodes {
+		if body := node.Body(); !ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) && body != nil && ast.IsModuleBlock(body) {
+			for _, stmt := range body.Statements() {
 				collector.collect(stmt)
 			}
 		}
@@ -885,14 +867,11 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 				if ast.IsPropertyDeclaration(member) {
 					collector.collect(member.Initializer())
 				} else if ast.IsConstructorDeclaration(member) {
-					ctor := member.AsConstructorDeclaration()
-					if ctor.Body != nil {
-						if ctor.Parameters != nil {
-							for _, param := range ctor.Parameters.Nodes {
-								collector.collect(param)
-							}
+					if body := member.Body(); body != nil {
+						for _, param := range member.Parameters() {
+							collector.collect(param)
 						}
-						collector.collect(ctor.Body)
+						collector.collect(body)
 					}
 				} else if ast.IsClassStaticBlockDeclaration(member) {
 					collector.collect(member)
