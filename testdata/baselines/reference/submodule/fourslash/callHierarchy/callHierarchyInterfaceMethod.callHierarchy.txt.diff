@@ -1,0 +1,11 @@
+--- old.callHierarchyInterfaceMethod.callHierarchy.txt
++++ new.callHierarchyInterfaceMethod.callHierarchy.txt
+@@= skipped -14, +14 lines =@@
+ ├ incoming:
+ │ ╭ from:
+ │ │ ╭ name: /callHierarchyInterfaceMethod.ts
+-│ │ ├ kind: script
++│ │ ├ kind: variable
+ │ │ ├ file: /callHierarchyInterfaceMethod.ts
+ │ │ ├ span:
+ │ │ │ ╭ /callHierarchyInterfaceMethod.ts:1:1-7:11

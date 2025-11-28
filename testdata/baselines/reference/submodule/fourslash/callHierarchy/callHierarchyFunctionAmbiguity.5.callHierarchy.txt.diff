@@ -1,0 +1,26 @@
+--- old.callHierarchyFunctionAmbiguity.5.callHierarchy.txt
++++ new.callHierarchyFunctionAmbiguity.5.callHierarchy.txt
+@@= skipped -33, +33 lines =@@
+ │ │ │ ╰
+ │ │ ╰ outgoing: none
+ │ ├ fromSpans:
+-│ │ ╭ /main.ts:2:5-2:8
+-│ │ │ 2:     foo();
+-│ │ │        ^^^
++│ │ ╭ /main.ts:1:22-1:25
++│ │ │ 1: function bar() {
++│ │ │                         ^^^
+ │ ╰ ╰
+ │ ╭ to:
+ │ │ ╭ name: foo
+@@= skipped -20, +20 lines =@@
+ │ │ │ ╰
+ │ │ ╰ outgoing: none
+ │ ├ fromSpans:
+-│ │ ╭ /main.ts:2:5-2:8
+-│ │ │ 2:     foo();
+-│ │ │        ^^^
++│ │ ╭ /main.ts:1:22-1:25
++│ │ │ 1: function bar() {
++│ │ │                         ^^^
+ ╰ ╰ ╰

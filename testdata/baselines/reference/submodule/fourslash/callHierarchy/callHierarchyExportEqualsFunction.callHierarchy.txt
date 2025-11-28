@@ -1,0 +1,26 @@
+// === Call Hierarchy ===
+╭ name: /other.ts
+├ kind: variable
+├ file: /other.ts
+├ span:
+│ ╭ /other.ts:1:1-6:2
+│ │ 1: export = function () {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^
+│ │ 2:     baz();
+│ │    ^^^^^^^^^^
+│ │ 3: }
+│ │    ^
+│ │ 4:
+│ │    ^
+│ │ 5: function baz() {
+│ │    ^^^^^^^^^^^^^^^^
+│ │ 6: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /other.ts:1:1-1:1
+│ │ 1: export = function () {
+│ │    <
+│ ╰
+├ incoming: none
+╰ outgoing: none

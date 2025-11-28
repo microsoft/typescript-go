@@ -2163,7 +2163,7 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if res := fromRoot(symbol); res != nil {
-		return res, entryKindNone
+		return res, entryKindNode
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
@@ -2176,7 +2176,7 @@ func (state *refState) forEachRelatedSymbol(
 		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
 			panic("Expected a parameter and a property")
 		}
-		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNone
+		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNode
 	}
 
 	if exportSpecifier := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier); exportSpecifier != nil && (!isForRenamePopulateSearchSymbolSet || exportSpecifier.PropertyName() == nil) {

@@ -196,6 +196,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [parseBaselineSignatureHelp(callExpression.arguments)];
                 case "baselineSmartSelection":
                     return [parseBaselineSmartSelection(callExpression.arguments)];
+                case "baselineCallHierarchy":
+                    return [parseBaselineCallHierarchy(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
                 case "baselineGoToType":
@@ -1689,6 +1691,15 @@ function parseBaselineSmartSelection(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseBaselineCallHierarchy(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        throw new Error("Expected no arguments in verify.baselineCallHierarchy");
+    }
+    return {
+        kind: "verifyBaselineCallHierarchy",
+    };
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -2063,6 +2074,10 @@ interface VerifyBaselineSmartSelection {
     kind: "verifyBaselineSmartSelection";
 }
 
+interface VerifyBaselineCallHierarchy {
+    kind: "verifyBaselineCallHierarchy";
+}
+
 interface VerifyBaselineRenameCmd {
     kind: "verifyBaselineRename" | "verifyBaselineRenameAtRangesWithText";
     args: string[];
@@ -2135,6 +2150,7 @@ type Cmd =
     | VerifyBaselineQuickInfoCmd
     | VerifyBaselineSignatureHelpCmd
     | VerifyBaselineSmartSelection
+    | VerifyBaselineCallHierarchy
     | GoToCmd
     | EditCmd
     | VerifyQuickInfoCmd
@@ -2283,6 +2299,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyBaselineSignatureHelp(t)`;
         case "verifyBaselineSmartSelection":
             return `f.VerifyBaselineSelectionRanges(t)`;
+        case "verifyBaselineCallHierarchy":
+            return `f.VerifyBaselineCallHierarchy(t)`;
         case "goTo":
             return generateGoToCommand(cmd);
         case "edit":

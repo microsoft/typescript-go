@@ -1,0 +1,38 @@
+--- old.callHierarchyExportEqualsFunction.callHierarchy.txt
++++ new.callHierarchyExportEqualsFunction.callHierarchy.txt
+@@= skipped -0, +0 lines =@@
+ // === Call Hierarchy ===
+ ╭ name: /other.ts
+-├ kind: module
++├ kind: variable
+ ├ file: /other.ts
+ ├ span:
+ │ ╭ /other.ts:1:1-6:2
+@@= skipped -22, +22 lines =@@
+ │ │    <
+ │ ╰
+ ├ incoming: none
+-├ outgoing:
+-│ ╭ to:
+-│ │ ╭ name: baz
+-│ │ ├ kind: function
+-│ │ ├ file: /other.ts
+-│ │ ├ span:
+-│ │ │ ╭ /other.ts:5:1-6:2
+-│ │ │ │ 5: function baz() {
+-│ │ │ │    ^^^^^^^^^^^^^^^^
+-│ │ │ │ 6: }
+-│ │ │ │    ^
+-│ │ │ ╰
+-│ │ ├ selectionSpan:
+-│ │ │ ╭ /other.ts:5:10-5:13
+-│ │ │ │ 5: function baz() {
+-│ │ │ │             ^^^
+-│ │ │ ╰
+-│ │ ╰ outgoing: none
+-│ ├ fromSpans:
+-│ │ ╭ /other.ts:2:5-2:8
+-│ │ │ 2:     baz();
+-│ │ │        ^^^
+-╰ ╰ ╰
++╰ outgoing: none

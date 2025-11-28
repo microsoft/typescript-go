@@ -1,0 +1,10 @@
+--- old.callHierarchyAccessor.callHierarchy.txt
++++ new.callHierarchyAccessor.callHierarchy.txt
+@@= skipped -0, +0 lines =@@
+ // === Call Hierarchy ===
+ ╭ name: bar
+-├ kind: getter
++├ kind: property
+ ├ containerName: C
+ ├ file: /callHierarchyAccessor.ts
+ ├ span:

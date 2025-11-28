@@ -1,0 +1,42 @@
+--- old.callHierarchyContainerNameServer.callHierarchy.txt
++++ new.callHierarchyContainerNameServer.callHierarchy.txt
+@@= skipped -54, +54 lines =@@
+ │ │ │ │ ├ incoming:
+ │ │ │ │ │ ╭ from:
+ │ │ │ │ │ │ ╭ name: sameName
+-│ │ │ │ │ │ ├ kind: getter
+-│ │ │ │ │ │ ├ containerName: Obj
++│ │ │ │ │ │ ├ kind: property
+ │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
+ │ │ │ │ │ │ ├ span:
+ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:16:3-18:4
+@@= skipped -61, +60 lines =@@
+ │ │ │ │ │ │ │ │ │ │ │ │ 26:   export class C {
+ │ │ │ │ │ │ │ │ │ │ │ │                    ^
+ │ │ │ │ │ │ │ │ │ │ │ ╰
+-│ │ │ │ │ │ │ │ │ │ ├ incoming:
+-│ │ │ │ │ │ │ │ │ │ │ ╭ from:
+-│ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
+-│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: function
+-│ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
+-│ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
+-│ │ │ │ │ │ │ │ │ │ │ │ ├ span:
+-│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:20-34:37
+-│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+-│ │ │ │ │ │ │ │ │ │ │ │ │ │                        ^^^^^^^^^^^^^^^^^
+-│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
+-│ │ │ │ │ │ │ │ │ │ │ │ ├ selectionSpan:
+-│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:9-34:17
+-│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+-│ │ │ │ │ │ │ │ │ │ │ │ │ │             ^^^^^^^^
+-│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
+-│ │ │ │ │ │ │ │ │ │ │ │ ╰ incoming: none
+-│ │ │ │ │ │ │ │ │ │ │ ├ fromSpans:
+-│ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:34-34:35
+-│ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+-│ │ │ │ │ │ │ │ │ │ │ │ │                                      ^
+-│ │ │ │ │ │ │ │ │ │ ╰ ╰ ╰
++│ │ │ │ │ │ │ │ │ │ ╰ incoming: none
+ │ │ │ │ │ │ │ │ │ ├ fromSpans:
+ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:28:7-28:15
+ │ │ │ │ │ │ │ │ │ │ │ 28:       sameName();
