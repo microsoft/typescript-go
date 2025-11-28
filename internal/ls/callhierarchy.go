@@ -18,7 +18,7 @@ import (
 
 type CallHierarchyDeclaration = *ast.Node
 
-// Indictates whether a node is named function or class expression.
+// Indicates whether a node is named function or class expression.
 func isNamedExpression(node *ast.Node) bool {
 	if node == nil {
 		return false
@@ -99,8 +99,7 @@ func isValidCallHierarchyDeclaration(node *ast.Node) bool {
 	}
 
 	if ast.IsModuleDeclaration(node) {
-		mod := node.AsModuleDeclaration()
-		return mod != nil && ast.IsIdentifier(mod.Name())
+		return ast.IsIdentifier(node.Name())
 	}
 
 	return ast.IsFunctionDeclaration(node) ||
@@ -209,9 +208,9 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 	} else if ast.IsStringOrNumericLiteralLike(declName) {
 		text = declName.Text()
 	} else if ast.IsComputedPropertyName(declName) {
-		comp := declName.AsComputedPropertyName()
-		if ast.IsStringOrNumericLiteralLike(comp.Expression) {
-			text = comp.Expression.Text()
+		expr := declName.Expression()
+		if ast.IsStringOrNumericLiteralLike(expr) {
+			text = expr.Text()
 		}
 	}
 
@@ -525,9 +524,6 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 		SelectionRange: selectionSpan,
 	}
 
-	// kindModifiers is a Set, not a string - skip for now
-	// TODO: convert modifiers to SymbolTag array
-
 	if containerName != "" {
 		item.Detail = &containerName
 	}
@@ -741,8 +737,7 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 			if classLike != nil && classLike.Members != nil {
 				for _, member := range classLike.Members.Nodes {
 					if member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
-						comp := member.Name().AsComputedPropertyName()
-						c.collect(comp.Expression)
+						c.collect(member.Name().Expression())
 					}
 				}
 			}
@@ -764,49 +759,27 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		return
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		// do not descend into the type side of an assertion
-		var expr *ast.Node
-		if typeAssert := node.AsAsExpression(); typeAssert != nil {
-			expr = typeAssert.Expression
-		} else if asExpr := node.AsAsExpression(); asExpr != nil {
-			expr = asExpr.Expression
-		}
-		c.collect(expr)
+		c.collect(node.Expression())
 		return
 	case ast.KindVariableDeclaration, ast.KindParameter:
 		// do not descend into the type of a variable or parameter declaration
-		var name, initializer *ast.Node
-		if node.Kind == ast.KindVariableDeclaration {
-			varDecl := node.AsVariableDeclaration()
-			name = varDecl.Name()
-			initializer = varDecl.Initializer
-		} else {
-			param := node.AsParameterDeclaration()
-			name = param.Name()
-			initializer = param.Initializer
-		}
-		c.collect(name)
-		c.collect(initializer)
+		c.collect(node.Name())
+		c.collect(node.Initializer())
 		return
 	case ast.KindCallExpression:
 		// do not descend into the type arguments of a call expression
 		c.recordCallSite(node)
-		callExpr := node.AsCallExpression()
-		c.collect(callExpr.Expression)
-		if callExpr.Arguments != nil {
-			for _, arg := range callExpr.Arguments.Nodes {
-				c.collect(arg)
-			}
+		c.collect(node.Expression())
+		for _, arg := range node.Arguments() {
+			c.collect(arg)
 		}
 		return
 	case ast.KindNewExpression:
 		// do not descend into the type arguments of a new expression
 		c.recordCallSite(node)
-		newExpr := node.AsNewExpression()
-		c.collect(newExpr.Expression)
-		if newExpr.Arguments != nil {
-			for _, arg := range newExpr.Arguments.Nodes {
-				c.collect(arg)
-			}
+		c.collect(node.Expression())
+		for _, arg := range node.Arguments() {
+			c.collect(arg)
 		}
 		return
 	case ast.KindTaggedTemplateExpression:
@@ -819,18 +792,12 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		// do not descend into the type arguments of a JsxOpeningLikeElement
 		c.recordCallSite(node)
-		if jsxOpen := node.AsJsxOpeningElement(); jsxOpen != nil {
-			c.collect(jsxOpen.TagName)
-			c.collect(jsxOpen.Attributes)
-		} else if jsxSelf := node.AsJsxSelfClosingElement(); jsxSelf != nil {
-			c.collect(jsxSelf.TagName)
-			c.collect(jsxSelf.Attributes)
-		}
+		c.collect(node.TagName())
+		c.collect(node.Attributes())
 		return
 	case ast.KindDecorator:
 		c.recordCallSite(node)
-		decorator := node.AsDecorator()
-		c.collect(decorator.Expression)
+		c.collect(node.Expression())
 		return
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		c.recordCallSite(node)
@@ -841,8 +808,7 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		return
 	case ast.KindSatisfiesExpression:
 		// do not descend into the type side of an assertion
-		satisfies := node.AsSatisfiesExpression()
-		c.collect(satisfies.Expression)
+		c.collect(node.Expression())
 		return
 	}
 
@@ -921,8 +887,7 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 				}
 
 				if ast.IsPropertyDeclaration(member) {
-					propDecl := member.AsPropertyDeclaration()
-					collector.collect(propDecl.Initializer)
+					collector.collect(member.Initializer())
 				} else if ast.IsConstructorDeclaration(member) {
 					ctor := member.AsConstructorDeclaration()
 					if ctor.Body != nil {
@@ -940,8 +905,7 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 		}
 
 	case ast.KindClassStaticBlockDeclaration:
-		staticBlock := node.AsClassStaticBlockDeclaration()
-		collector.collect(staticBlock.Body)
+		collector.collect(node.Body())
 	}
 
 	return collector.callSites
@@ -968,7 +932,7 @@ func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.P
 
 // Gets the call sites that call out of the provided call hierarchy declaration.
 func (l *LanguageService) getOutgoingCalls(program *compiler.Program, declaration *ast.Node) []*lsproto.CallHierarchyOutgoingCall {
-	if (declaration.Flags & ast.NodeFlagsAmbient) != 0 {
+	if (declaration.Flags&ast.NodeFlagsAmbient) != 0 || ast.IsMethodSignatureDeclaration(declaration) {
 		return nil
 	}
 
