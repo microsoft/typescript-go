@@ -831,10 +831,8 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
 		impl := findImplementation(c, node)
 		if impl != nil {
-			if impl.Parameters() != nil {
-				for _, param := range impl.Parameters() {
-					collector.collect(param)
-				}
+			for _, param := range impl.Parameters() {
+				collector.collect(param)
 			}
 			collector.collect(impl.Body())
 		}
@@ -854,28 +852,24 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 		}
 
 		// Collect from members
-		members := node.Members()
-
-		if members != nil {
-			for _, member := range members {
-				if ast.CanHaveModifiers(member) && member.Modifiers() != nil {
-					for _, mod := range member.Modifiers().Nodes {
-						collector.collect(mod)
-					}
+		for _, member := range node.Members() {
+			if ast.CanHaveModifiers(member) && member.Modifiers() != nil {
+				for _, mod := range member.Modifiers().Nodes {
+					collector.collect(mod)
 				}
+			}
 
-				if ast.IsPropertyDeclaration(member) {
-					collector.collect(member.Initializer())
-				} else if ast.IsConstructorDeclaration(member) {
-					if body := member.Body(); body != nil {
-						for _, param := range member.Parameters() {
-							collector.collect(param)
-						}
-						collector.collect(body)
+			if ast.IsPropertyDeclaration(member) {
+				collector.collect(member.Initializer())
+			} else if ast.IsConstructorDeclaration(member) {
+				if body := member.Body(); body != nil {
+					for _, param := range member.Parameters() {
+						collector.collect(param)
 					}
-				} else if ast.IsClassStaticBlockDeclaration(member) {
-					collector.collect(member)
+					collector.collect(body)
 				}
+			} else if ast.IsClassStaticBlockDeclaration(member) {
+				collector.collect(member)
 			}
 		}
 
