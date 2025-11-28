@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -995,7 +996,7 @@ func (r *resolutionState) loadModuleFromPnpResolution(ext extensions, moduleName
 		packageDirectory, err := pnpApi.ResolveToUnqualified(packageName, issuer)
 		if err != nil {
 			if r.tracer != nil {
-				r.tracer.write(err.Error())
+				r.tracer.write(err.Message, err.Args...)
 			}
 			return nil
 		}
@@ -1806,11 +1807,11 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		var peerDependencyPath string
 
 		if pnpApi != nil {
-			var err error
+			var err *pnp.PnpError
 			peerDependencyPath, err = pnpApi.ResolveToUnqualified(name, packageDirectory)
 			if err != nil {
 				if r.tracer != nil {
-					r.tracer.write(err.Error())
+					r.tracer.write(err.Message, err.Args...)
 				}
 				continue
 			}
