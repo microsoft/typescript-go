@@ -290,7 +290,7 @@ func (r *resolverWrapper) GetPackageScopeForPath(directory string) *packagejson.
 }
 
 // ResolveModuleName implements module.ResolverInterface.
-func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile string, importAttributeType *string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedModule, []string) {
+func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile string, importAttributeType *string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedModule, []DiagAndArgs) {
 	if r.server.CallbackEnabled(CallbackResolveModuleName) {
 		result, err := r.server.call("resolveModuleName", map[string]any{
 			"moduleName":          moduleName,
@@ -314,7 +314,7 @@ func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile st
 }
 
 // ResolveTypeReferenceDirective implements module.ResolverInterface.
-func (r *resolverWrapper) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedTypeReferenceDirective, []string) {
+func (r *resolverWrapper) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedTypeReferenceDirective, []DiagAndArgs) {
 	if r.server.CallbackEnabled(CallbackResolveTypeReferenceDirective) {
 		result, err := r.server.call("resolveTypeReferenceDirective", map[string]any{
 			"typeReferenceDirectiveName": typeReferenceDirectiveName,
