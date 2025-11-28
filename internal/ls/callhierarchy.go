@@ -241,8 +241,14 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 	if isAssignedExpression(node) {
 		parent := node.Parent
 		if ast.IsPropertyDeclaration(parent) && ast.IsClassLike(parent.Parent) {
-			if name := parent.Parent.Name(); name != nil {
-				return name.Text()
+			if ast.IsClassExpression(parent.Parent) {
+				if assignedName := ast.GetAssignedName(parent.Parent); assignedName != nil {
+					return assignedName.Text()
+				}
+			} else {
+				if name := parent.Parent.Name(); name != nil {
+					return name.Text()
+				}
 			}
 		}
 		// Check for module block
@@ -263,7 +269,9 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 	switch node.Kind {
 	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
 		if node.Parent.Kind == ast.KindObjectLiteralExpression {
-			// Skip assigned name check for now
+			if assignedName := ast.GetAssignedName(node.Parent); assignedName != nil {
+				return assignedName.Text()
+			}
 		}
 		if name := ast.GetNameOfDeclaration(node.Parent); name != nil {
 			return name.Text()

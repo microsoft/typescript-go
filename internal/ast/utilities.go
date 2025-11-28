@@ -1386,7 +1386,7 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 		return nonAssignedName
 	}
 	if IsFunctionExpression(declaration) || IsArrowFunction(declaration) || IsClassExpression(declaration) {
-		return getAssignedName(declaration)
+		return GetAssignedName(declaration)
 	}
 	return nil
 }
@@ -1415,7 +1415,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	return declaration.Name()
 }
 
-func getAssignedName(node *Node) *Node {
+func GetAssignedName(node *Node) *Node {
 	parent := node.Parent
 	if parent != nil {
 		switch parent.Kind {

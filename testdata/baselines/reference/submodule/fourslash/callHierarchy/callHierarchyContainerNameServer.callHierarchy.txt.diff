@@ -5,12 +5,11 @@
  │ │ │ │ │ ╭ from:
  │ │ │ │ │ │ ╭ name: sameName
 -│ │ │ │ │ │ ├ kind: getter
--│ │ │ │ │ │ ├ containerName: Obj
 +│ │ │ │ │ │ ├ kind: property
+ │ │ │ │ │ │ ├ containerName: Obj
  │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
  │ │ │ │ │ │ ├ span:
- │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:16:3-18:4
-@@= skipped -64, +63 lines =@@
+@@= skipped -64, +64 lines =@@
  │ │ │ │ │ │ │ │ │ │ ├ incoming:
  │ │ │ │ │ │ │ │ │ │ │ ╭ from:
  │ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
