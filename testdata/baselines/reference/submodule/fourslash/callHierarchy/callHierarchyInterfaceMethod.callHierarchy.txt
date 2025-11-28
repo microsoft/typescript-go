@@ -15,7 +15,7 @@
 ├ incoming:
 │ ╭ from:
 │ │ ╭ name: /callHierarchyInterfaceMethod.ts
-│ │ ├ kind: variable
+│ │ ├ kind: file
 │ │ ├ file: /callHierarchyInterfaceMethod.ts
 │ │ ├ span:
 │ │ │ ╭ /callHierarchyInterfaceMethod.ts:1:1-7:11

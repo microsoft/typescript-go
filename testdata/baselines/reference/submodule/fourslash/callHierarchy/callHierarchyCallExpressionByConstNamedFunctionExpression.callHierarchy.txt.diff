@@ -5,7 +5,7 @@
  │ ╭ from:
  │ │ ╭ name: /callHierarchyCallExpressionByConstNamedFunctionExpression.ts
 -│ │ ├ kind: script
-+│ │ ├ kind: variable
++│ │ ├ kind: file
  │ │ ├ file: /callHierarchyCallExpressionByConstNamedFunctionExpression.ts
  │ │ ├ span:
  │ │ │ ╭ /callHierarchyCallExpressionByConstNamedFunctionExpression.ts:1:1-12:6

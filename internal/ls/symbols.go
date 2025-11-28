@@ -358,7 +358,7 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		if ast.IsExternalModule(node.AsSourceFile()) {
 			return lsproto.SymbolKindModule
 		}
-		return lsproto.SymbolKindVariable // SymbolKindFile?
+		return lsproto.SymbolKindFile
 	case ast.KindModuleDeclaration:
 		return lsproto.SymbolKindModule
 	case ast.KindClassDeclaration, ast.KindClassExpression:
