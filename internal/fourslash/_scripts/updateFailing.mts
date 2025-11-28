@@ -13,7 +13,7 @@ function main() {
     const go = which.sync("go");
     let testOutput: string;
     try {
-        testOutput = cp.execFileSync(go, ["test", "./internal/fourslash/tests/gen"], { encoding: "utf-8" });
+        testOutput = cp.execFileSync(go, ["test", "-v", "./internal/fourslash/tests/gen"], { encoding: "utf-8" });
     }
     catch (error) {
         testOutput = (error as { stdout: string; }).stdout as string;
@@ -21,7 +21,7 @@ function main() {
     const panicRegex = /^panic/m;
     if (panicRegex.test(testOutput)) {
         fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
-        throw new Error("Unrecovered panic detected in tests");
+        throw new Error("Unrecovered panic detected in tests\n" + testOutput);
     }
     const failRegex = /--- FAIL: ([\S]+)/gm;
     const failingTests: string[] = [];
@@ -31,7 +31,7 @@ function main() {
         failingTests.push(match[1]);
     }
 
-    fs.writeFileSync(failingTestsPath, failingTests.sort().join("\n") + "\n", "utf-8");
+    fs.writeFileSync(failingTestsPath, failingTests.sort((a, b) => a.localeCompare(b, "en-US")).join("\n") + "\n", "utf-8");
     convertFourslash();
 }
 

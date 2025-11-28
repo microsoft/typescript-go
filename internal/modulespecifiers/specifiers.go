@@ -81,8 +81,8 @@ func GetModuleSpecifiersWithInfo(
 
 func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker CheckerShape) string {
 	for _, decl := range moduleSymbol.Declarations {
-		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().AsStringLiteral().Text)) {
-			return decl.Name().AsStringLiteral().Text
+		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
+			return decl.Name().Text()
 		}
 	}
 
@@ -123,7 +123,7 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 		}
 		// TODO: Possible strada bug - isn't this insufficient in the presence of merge symbols?
 		if exportSymbol == d.Symbol() {
-			return possibleContainer.Name().AsStringLiteral().Text
+			return possibleContainer.Name().Text()
 		}
 	}
 	return ""
@@ -793,6 +793,8 @@ func tryDirectoryWithPackageJson(
 		fileName := moduleFileToTry[parts.PackageRootIndex+1:]
 		if fileName == "index.d.ts" || fileName == "index.js" || fileName == "index.ts" || fileName == "index.tsx" {
 			return pkgJsonDirAttemptResult{moduleFileToTry: moduleFileToTry, packageRootPath: packageRootPath}
+		} else {
+			return pkgJsonDirAttemptResult{moduleFileToTry: moduleFileToTry}
 		}
 	}
 
@@ -801,11 +803,7 @@ func tryDirectoryWithPackageJson(
 		importMode = host.GetDefaultResolutionModeForFile(importingSourceFile)
 	}
 
-	var packageJsonContent *packagejson.PackageJson
-	if packageJson != nil {
-		packageJsonContent = packageJson.GetContents()
-	}
-
+	packageJsonContent := packageJson.GetContents()
 	if options.GetResolvePackageJsonImports() {
 		// The package name that we found in node_modules could be different from the package
 		// name in the package.json content via url/filepath dependency specifiers. We need to
@@ -1195,9 +1193,7 @@ func tryGetModuleNameFromExportsOrImports(
 				return tspath.CombinePaths(packageName, fragmentWithJsExtension)
 			}
 		case MatchingModePattern:
-			starPos := strings.Index(pathOrPattern, "*")
-			leadingSlice := pathOrPattern[0:starPos]
-			trailingSlice := pathOrPattern[starPos+1:]
+			leadingSlice, trailingSlice, _ := strings.Cut(pathOrPattern, "*")
 			caseSensitive := host.UseCaseSensitiveFileNames()
 			if canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
 				starReplacement := targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]

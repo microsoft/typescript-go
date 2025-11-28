@@ -22,7 +22,20 @@ function eachPerson(callback) {
 
 
 //// [cb_nested.d.ts]
-export type WorksWithPeopleCallback = (person: {
+/**
+ * @callback WorksWithPeopleCallback
+ * @param {Object} person
+ * @param {string} person.name
+ * @param {number} [person.age]
+ * @returns {void}
+ */
+type WorksWithPeopleCallback = (person: {
     name: string;
     age?: number;
 }) => void;
+/**
+ * For each person, calls your callback.
+ * @param {WorksWithPeopleCallback} callback
+ * @returns {void}
+ */
+declare function eachPerson(callback: WorksWithPeopleCallback): void;

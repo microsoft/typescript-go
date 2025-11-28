@@ -9,9 +9,9 @@
  const x = 0;
  exports.x = x;
  //// [c.js]
- "use strict";
+@@= skipped -41, +39 lines =@@
+ })();
  Object.defineProperty(exports, "__esModule", { value: true });
--var b = require("./b");
+ const b = __importStar(require("./b"));
 -var x = b.x;
-+const b = require("./b");
  console.log(x);

@@ -783,10 +783,9 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! TODO: enable multiline emit
-	// if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
-	// 	return true
-	// }
+	if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+		return true
+	}
 	return format&LFPreferNewLine != 0
 }
 
@@ -869,10 +868,9 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindImportAttributes:
 		return true
 	case ast.KindClassExpression,
-		ast.KindClassDeclaration:
-		return list == node.ClassLikeData().TypeParameters
-	case ast.KindInterfaceDeclaration:
-		return list == node.AsInterfaceDeclaration().TypeParameters
+		ast.KindClassDeclaration,
+		ast.KindInterfaceDeclaration:
+		return list == node.TypeParameterList()
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodDeclaration:
@@ -1559,10 +1557,10 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 
 	if p.shouldEmitBlockFunctionBodyOnSingleLine(body) && statementOffset == 0 && pos == p.writer.GetTextPos() {
 		p.decreaseIndent()
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements, statementOffset, -1)
 		p.increaseIndent()
 	} else {
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements, statementOffset, -1)
 	}
 
 	p.emitDetachedCommentsAfterStatementList(body.AsNode(), body.Statements.Loc, detachedState)
@@ -3754,7 +3752,7 @@ func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
 	p.writeSpace()
 	if node.Name().Kind == ast.KindStringLiteral {
 		// TODO: This doesn't work for illegal names.
-		p.write(node.Name().AsStringLiteral().Text)
+		p.write(node.Name().Text())
 	} else {
 		p.emitBindingName(node.Name())
 	}
@@ -4022,7 +4020,7 @@ func (p *Printer) emitJsxOpeningElement(node *ast.JsxOpeningElement) {
 	indented := p.writeLineSeparatorsAndIndentBefore(node.TagName, node.AsNode())
 	p.emitJsxTagName(node.TagName)
 	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	if attributes := node.Attributes.AsJsxAttributes(); len(attributes.Properties.Nodes) > 0 {
+	if len(node.Attributes.Properties()) > 0 {
 		p.writeSpace()
 	}
 	p.emitJsxAttributes(node.Attributes.AsJsxAttributes())
@@ -4385,18 +4383,24 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	state := p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
 
 	index := 0
+	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
@@ -4533,9 +4537,9 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 	originalList := children
 	switch originalParent.Kind {
 	case ast.KindObjectLiteralExpression:
-		originalList = originalParent.AsObjectLiteralExpression().Properties
+		originalList = originalParent.PropertyList()
 	case ast.KindArrayLiteralExpression:
-		originalList = originalParent.AsArrayLiteralExpression().Elements
+		originalList = originalParent.ElementList()
 	case ast.KindCallExpression, ast.KindNewExpression:
 		switch children {
 		case parentNode.TypeArgumentList():
@@ -4567,13 +4571,11 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		switch children {
-		case parentNode.AsBindingPattern().Elements:
-			originalList = originalParent.AsBindingPattern().Elements
+		case parentNode.ElementList():
+			originalList = originalParent.ElementList()
 		}
-	case ast.KindNamedImports:
-		originalList = originalParent.AsNamedImports().Elements
-	case ast.KindNamedExports:
-		originalList = originalParent.AsNamedExports().Elements
+	case ast.KindNamedImports, ast.KindNamedExports:
+		originalList = originalParent.ElementList()
 	case ast.KindImportAttributes:
 		originalList = originalParent.AsImportAttributes().Attributes
 	}
@@ -4949,9 +4951,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	case ast.KindSourceFile:
 		p.emitSourceFile(node.AsSourceFile())
 
-	case ast.KindBundle:
-		panic("not implemented")
-
 	// Transformation nodes
 	case ast.KindNotEmittedTypeElement:
 		p.emitNotEmittedTypeElement(node.AsNotEmittedTypeElement())
@@ -5084,7 +5083,7 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 	containerPos := p.containerPos
 	containerEnd := p.containerEnd
 	declarationListContainerEnd := p.declarationListContainerEnd
-	skipLeadingComments := emitFlags&EFNoLeadingComments == 0 && !ast.PositionIsSynthesized(detachedRange.Pos())
+	skipLeadingComments := ast.PositionIsSynthesized(detachedRange.Pos()) || emitFlags&EFNoLeadingComments != 0
 
 	if !skipLeadingComments {
 		p.emitDetachedCommentsAndUpdateCommentsInfo(detachedRange)
@@ -5645,31 +5644,20 @@ func (p *Printer) generateNames(node *ast.Node) {
 	}
 
 	switch node.Kind {
-	case ast.KindBlock:
-		p.generateAllNames(node.AsBlock().Statements)
-	case ast.KindLabeledStatement:
-		p.generateNames(node.AsLabeledStatement().Statement)
-	case ast.KindWithStatement:
-		p.generateNames(node.AsWithStatement().Statement)
-	case ast.KindDoStatement:
-		p.generateNames(node.AsDoStatement().Statement)
-	case ast.KindWhileStatement:
-		p.generateNames(node.AsWhileStatement().Statement)
+	case ast.KindBlock, ast.KindCaseClause, ast.KindDefaultClause:
+		p.generateAllNames(node.StatementList())
+	case ast.KindLabeledStatement, ast.KindWithStatement, ast.KindDoStatement, ast.KindWhileStatement:
+		p.generateNames(node.Statement())
 	case ast.KindIfStatement:
 		p.generateNames(node.AsIfStatement().ThenStatement)
 		p.generateNames(node.AsIfStatement().ElseStatement)
-	case ast.KindForStatement:
-		p.generateNames(node.AsForStatement().Initializer)
-		p.generateNames(node.AsForStatement().Statement)
-	case ast.KindForOfStatement, ast.KindForInStatement:
-		p.generateNames(node.AsForInOrOfStatement().Initializer)
-		p.generateNames(node.AsForInOrOfStatement().Statement)
+	case ast.KindForStatement, ast.KindForOfStatement, ast.KindForInStatement:
+		p.generateNames(node.Initializer())
+		p.generateNames(node.Statement())
 	case ast.KindSwitchStatement:
 		p.generateNames(node.AsSwitchStatement().CaseBlock)
 	case ast.KindCaseBlock:
 		p.generateAllNames(node.AsCaseBlock().Clauses)
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		p.generateAllNames(node.AsCaseOrDefaultClause().Statements)
 	case ast.KindTryStatement:
 		p.generateNames(node.AsTryStatement().TryBlock)
 		p.generateNames(node.AsTryStatement().CatchClause)
@@ -5690,7 +5678,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 			p.generateNames(node.AsFunctionDeclaration().Body)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		p.generateAllNames(node.AsBindingPattern().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
@@ -5699,7 +5687,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 	case ast.KindNamespaceImport, ast.KindNamespaceExport:
 		p.generateNameIfNeeded(node.Name())
 	case ast.KindNamedImports:
-		p.generateAllNames(node.AsNamedImports().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportSpecifier:
 		n := node.AsImportSpecifier()
 		if n.PropertyName != nil {

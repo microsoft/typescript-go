@@ -3,7 +3,7 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -15,7 +15,7 @@ type CompilerHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
-	Trace(msg string)
+	Trace(msg *diagnostics.Message, args ...any)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 	MakeResolver(host module.ResolutionHost, options *core.CompilerOptions, typingsLocation string, projectName string) module.ResolverInterface
@@ -30,7 +30,7 @@ type compilerHost struct {
 	fs                  vfs.FS
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
-	trace               func(msg string)
+	trace               func(msg *diagnostics.Message, args ...any)
 }
 
 func NewCachedFSCompilerHost(
@@ -38,7 +38,7 @@ func NewCachedFSCompilerHost(
 	fs vfs.FS,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
-	trace func(msg string),
+	trace func(msg *diagnostics.Message, args ...any),
 ) CompilerHost {
 	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
 }
@@ -48,10 +48,10 @@ func NewCompilerHost(
 	fs vfs.FS,
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
-	trace func(msg string),
+	trace func(msg *diagnostics.Message, args ...any),
 ) CompilerHost {
 	if trace == nil {
-		trace = func(msg string) {}
+		trace = func(msg *diagnostics.Message, args ...any) {}
 	}
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
@@ -74,8 +74,8 @@ func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
 
-func (h *compilerHost) Trace(msg string) {
-	h.trace(msg)
+func (h *compilerHost) Trace(msg *diagnostics.Message, args ...any) {
+	h.trace(msg, args...)
 }
 
 func (h *compilerHost) IsNodeSourceFile(path tspath.Path) bool {

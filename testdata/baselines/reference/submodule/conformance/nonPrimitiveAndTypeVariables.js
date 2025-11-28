@@ -16,6 +16,8 @@ function foo<T, U>(x: T) {
 
 
 //// [nonPrimitiveAndTypeVariables.js]
+"use strict";
+// Repros from #23800
 let a = { a: 0 };
 let b = { a: 0 };
 function foo(x) {

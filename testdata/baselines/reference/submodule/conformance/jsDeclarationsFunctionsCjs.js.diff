@@ -4,8 +4,6 @@
 
 
  //// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
 +export var a = function a() { };
  module.exports.a = function a() { };
 +export var b = function b() { };
@@ -15,7 +13,7 @@
  module.exports.c = function c() { };
  module.exports.c.Cls = class {
  };
-@@= skipped -11, +16 lines =@@
+@@= skipped -11, +14 lines =@@
   * @param {number} b
   * @return {string}
   */
@@ -27,7 +25,7 @@
 - * @return {T & U}
 - */
 -module.exports.e = function e(a, b) { return /** @type {*} */ (null); };
-+export var d = function d(a, b) { return /** @type {*} */ (null as ); };
++export var d = function d(a: number, b: number): string { return /** @type {*} */ (null as ); };
 +/**
 + * @param {number} a
 + * @param {number} b
@@ -40,7 +38,7 @@
 + * @param {U} b
 + * @return {T & U}
 + */
-+export var e = function e(a, b) { return /** @type {*} */ (null as ); };
++export var e = function e<T, U>(a: T, b: U): T & U { return /** @type {*} */ (null as ); };
 +/**
 + * @template T,U
 + * @param {T} a
@@ -52,7 +50,7 @@
 + * @template T
 + * @param {T} a
 + */
-+export var f = function f(a) {
++export var f = function f<T>(a: T) {
 +    return a;
 +};
  /**
@@ -105,56 +103,45 @@
 -export function j(): void;
 -declare class Cls {
 -}
--/**
-- * @param {{x: string}} a
-- * @param {{y: typeof module.exports.b}} b
-- */
++export declare var a: () => void;
++export declare var b: () => void;
++export declare var c: () => void;
++export declare var d: (a: number, b: number) => string;
++export declare var e: <T, U>(a: T, b: U) => T & U;
++export declare var f: <T>(a: T) => T;
+ /**
+  * @param {{x: string}} a
+  * @param {{y: typeof module.exports.b}} b
+  */
 -export function g(a: {
--    x: string;
--}, b: {
++declare function g(a: {
+     x: string;
+ }, b: {
 -    y: {
 -        (): void;
 -        cat: string;
 -    };
 -}): void;
--/**
-- * @param {{x: string}} a
-- * @param {{y: typeof module.exports.b}} b
-- */
--declare function hh(a: {
--    x: string;
--}, b: {
++    y: typeof module.exports.b;
++}): any;
++export declare var g: typeof g;
+ /**
+  * @param {{x: string}} a
+  * @param {{y: typeof module.exports.b}} b
+@@= skipped -48, +38 lines =@@
+ declare function hh(a: {
+     x: string;
+ }, b: {
 -    y: {
 -        (): void;
 -        cat: string;
 -    };
 -}): void;
 -export { hh as h, i as ii, j as jj };
-+export var a = function a();;
-+export var b = function b();;
-+export var c = function c();;
-+/**
-+ * @param {number} a
-+ * @param {number} b
-+ * @return {string}
-+ */
-+export var d = function d(a, b);;
-+/**
-+ * @template T,U
-+ * @param {T} a
-+ * @param {U} b
-+ * @return {T & U}
-+ */
-+export var e = function e(a, b);;
-+/**
-+ * @template T
-+ * @param {T} a
-+ */
-+export var f = function f(a);;
-+export var g = g;
-+export var h = hh;
-+export var i = function i();;
-+export var ii = module.exports.i;
-+export var jj = module.exports.j;
-+export var j = function j();;
-+export {};
++    y: typeof module.exports.b;
++}): any;
++export declare var h: typeof hh;
++export declare var i: () => void;
++export declare var ii: () => void;
++export declare var jj: () => void;
++export declare var j: () => void;

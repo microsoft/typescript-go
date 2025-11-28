@@ -277,7 +277,7 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 			}
 		}
 	}
-	return c.getNamedMembers(propsByName)
+	return c.getNamedMembers(propsByName, nil)
 }
 
 func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, moduleSymbol *ast.Symbol) *ast.Symbol {
@@ -456,7 +456,7 @@ func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbo
 	// node should be ExportSpecifier | Identifier
 	switch node.Kind {
 	case ast.KindExportSpecifier:
-		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
+		if node.Parent.Parent.ModuleSpecifier() != nil {
 			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
 		}
 		name := node.PropertyNameOrName()
@@ -805,7 +805,7 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 	if ast.IsPropertyAssignment(expr.Parent) {
 		node := expr.Parent.Parent
 		typeOfParentObjectLiteral := core.OrElse(c.getTypeOfAssignmentPattern(node), c.errorType)
-		propertyIndex := slices.Index(node.AsObjectLiteralExpression().Properties.Nodes, expr.Parent)
+		propertyIndex := slices.Index(node.Properties(), expr.Parent)
 		return c.checkObjectLiteralDestructuringPropertyAssignment(node, typeOfParentObjectLiteral, propertyIndex, nil, false)
 	}
 	// Array literal assignment - array destructuring pattern
@@ -813,5 +813,9 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 	//    [{ property1: p1, property2 }] = elems;
 	typeOfArrayLiteral := core.OrElse(c.getTypeOfAssignmentPattern(node), c.errorType)
 	elementType := core.OrElse(c.checkIteratedTypeOrElementType(IterationUseDestructuring, typeOfArrayLiteral, c.undefinedType, expr.Parent), c.errorType)
-	return c.checkArrayLiteralDestructuringElementAssignment(node, typeOfArrayLiteral, slices.Index(node.AsArrayLiteralExpression().Elements.Nodes, expr), elementType, CheckModeNormal)
+	return c.checkArrayLiteralDestructuringElementAssignment(node, typeOfArrayLiteral, slices.Index(node.Elements(), expr), elementType, CheckModeNormal)
+}
+
+func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
+	return c.getSignatureFromDeclaration(node)
 }
