@@ -532,67 +532,18 @@ type callSite struct {
 	textRange   core.TextRange
 }
 
-func isCallLikeTarget(node *ast.Node) bool {
-	if node == nil || node.Parent == nil {
-		return false
-	}
-
-	parent := node.Parent
-
-	// CallExpression or NewExpression: node.expression === parent
-	if ast.IsCallExpression(parent) {
-		callExpr := parent.AsCallExpression()
-		return callExpr != nil && callExpr.Expression == node
-	}
-	if ast.IsNewExpression(parent) {
-		newExpr := parent.AsNewExpression()
-		return newExpr != nil && newExpr.Expression == node
-	}
-
-	// TaggedTemplateExpression: node.tag === parent
-	if ast.IsTaggedTemplateExpression(parent) {
-		taggedTemplate := parent.AsTaggedTemplateExpression()
-		return taggedTemplate != nil && taggedTemplate.Tag == node
-	}
-
-	// Decorator: node.expression === parent
-	if ast.IsDecorator(parent) {
-		decorator := parent.AsDecorator()
-		return decorator != nil && decorator.Expression == node
-	}
-
-	// JsxOpeningElement or JsxSelfClosingElement: node.tagName === parent
-	if ast.IsJsxOpeningElement(parent) {
-		jsxOpen := parent.AsJsxOpeningElement()
-		return jsxOpen != nil && jsxOpen.TagName == node
-	}
-	if ast.IsJsxSelfClosingElement(parent) {
-		jsxSelf := parent.AsJsxSelfClosingElement()
-		return jsxSelf != nil && jsxSelf.TagName == node
-	}
-
-	// PropertyAccessExpression: is right side
-	if ast.IsPropertyAccessExpression(parent) {
-		propAccess := parent.AsPropertyAccessExpression()
-		return propAccess != nil && propAccess.Name() == node
-	}
-
-	// ElementAccessExpression: is argument expression
-	if ast.IsElementAccessExpression(parent) {
-		elemAccess := parent.AsElementAccessExpression()
-		return elemAccess != nil && elemAccess.ArgumentExpression == node
-	}
-
-	return false
-}
-
 func convertEntryToCallSite(program *compiler.Program, entry *ReferenceEntry) *callSite {
 	if entry.kind != entryKindNode {
 		return nil
 	}
 
 	node := entry.node
-	if !isCallLikeTarget(node) {
+	if !ast.IsCallOrNewExpressionTarget(node, true /*includeElementAccess*/, true /*skipPastOuterExpressions*/) &&
+		!ast.IsTaggedTemplateTag(node, true, true) &&
+		!ast.IsDecoratorTarget(node, true, true) &&
+		!ast.IsJsxOpeningLikeElementTagName(node, true, true) &&
+		!ast.IsRightSideOfPropertyAccess(node) &&
+		!ast.IsArgumentExpressionOfElementAccess(node) {
 		return nil
 	}
 
@@ -648,7 +599,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 	// Find all references using getReferencedSymbolsForNode
 	sourceFiles := program.GetSourceFiles()
 	options := refOptions{use: referenceUseReferences}
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, location.Pos(), location, program, sourceFiles, options, nil)
+	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, 0, location, program, sourceFiles, options, nil)
 
 	// Flatten to get all reference entries
 	var refEntries []*ReferenceEntry

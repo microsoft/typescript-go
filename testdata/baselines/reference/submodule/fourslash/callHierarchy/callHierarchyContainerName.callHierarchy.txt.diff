@@ -10,33 +10,12 @@
  │ │ │ │ │ │ ├ file: /callHierarchyContainerName.ts
  │ │ │ │ │ │ ├ span:
  │ │ │ │ │ │ │ ╭ /callHierarchyContainerName.ts:16:3-18:4
-@@= skipped -61, +60 lines =@@
- │ │ │ │ │ │ │ │ │ │ │ │ 26:   export class C {
- │ │ │ │ │ │ │ │ │ │ │ │                    ^
- │ │ │ │ │ │ │ │ │ │ │ ╰
--│ │ │ │ │ │ │ │ │ │ ├ incoming:
--│ │ │ │ │ │ │ │ │ │ │ ╭ from:
--│ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
+@@= skipped -64, +63 lines =@@
+ │ │ │ │ │ │ │ │ │ │ ├ incoming:
+ │ │ │ │ │ │ │ │ │ │ │ ╭ from:
+ │ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
 -│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: function
--│ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
--│ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerName.ts
--│ │ │ │ │ │ │ │ │ │ │ │ ├ span:
--│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerName.ts:34:20-34:37
--│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
--│ │ │ │ │ │ │ │ │ │ │ │ │ │                        ^^^^^^^^^^^^^^^^^
--│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
--│ │ │ │ │ │ │ │ │ │ │ │ ├ selectionSpan:
--│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerName.ts:34:9-34:17
--│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
--│ │ │ │ │ │ │ │ │ │ │ │ │ │             ^^^^^^^^
--│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
--│ │ │ │ │ │ │ │ │ │ │ │ ╰ incoming: none
--│ │ │ │ │ │ │ │ │ │ │ ├ fromSpans:
--│ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerName.ts:34:34-34:35
--│ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
--│ │ │ │ │ │ │ │ │ │ │ │ │                                      ^
--│ │ │ │ │ │ │ │ │ │ ╰ ╰ ╰
-+│ │ │ │ │ │ │ │ │ │ ╰ incoming: none
- │ │ │ │ │ │ │ │ │ ├ fromSpans:
- │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerName.ts:28:7-28:15
- │ │ │ │ │ │ │ │ │ │ │ 28:       sameName();
++│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: variable
+ │ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
+ │ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerName.ts
+ │ │ │ │ │ │ │ │ │ │ │ │ ├ span:

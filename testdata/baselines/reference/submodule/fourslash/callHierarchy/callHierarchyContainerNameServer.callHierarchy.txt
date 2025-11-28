@@ -115,7 +115,28 @@
 │ │ │ │ │ │ │ │ │ │ │ │ 26:   export class C {
 │ │ │ │ │ │ │ │ │ │ │ │                    ^
 │ │ │ │ │ │ │ │ │ │ │ ╰
-│ │ │ │ │ │ │ │ │ │ ╰ incoming: none
+│ │ │ │ │ │ │ │ │ │ ├ incoming:
+│ │ │ │ │ │ │ │ │ │ │ ╭ from:
+│ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
+│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: variable
+│ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
+│ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
+│ │ │ │ │ │ │ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:20-34:37
+│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+│ │ │ │ │ │ │ │ │ │ │ │ │ │                        ^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:9-34:17
+│ │ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+│ │ │ │ │ │ │ │ │ │ │ │ │ │             ^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ │ │ │ │ ╰ incoming: none
+│ │ │ │ │ │ │ │ │ │ │ ├ fromSpans:
+│ │ │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:34:34-34:35
+│ │ │ │ │ │ │ │ │ │ │ │ │ 34:   const sameName = () => new Foo.C();
+│ │ │ │ │ │ │ │ │ │ │ │ │                                      ^
+│ │ │ │ │ │ │ │ │ │ ╰ ╰ ╰
 │ │ │ │ │ │ │ │ │ ├ fromSpans:
 │ │ │ │ │ │ │ │ │ │ ╭ /callHierarchyContainerNameServer.ts:28:7-28:15
 │ │ │ │ │ │ │ │ │ │ │ 28:       sameName();
