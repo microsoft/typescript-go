@@ -1,6 +1,6 @@
 // === Call Hierarchy ===
 ╭ name: bar
-├ kind: variable
+├ kind: function
 ├ file: /callHierarchyConstNamedArrowFunction.ts
 ├ span:
 │ ╭ /callHierarchyConstNamedArrowFunction.ts:5:13-7:2

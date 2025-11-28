@@ -9,12 +9,3 @@
  │ │ │ │ │ │ ├ containerName: Obj
  │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
  │ │ │ │ │ │ ├ span:
-@@= skipped -64, +64 lines =@@
- │ │ │ │ │ │ │ │ │ │ ├ incoming:
- │ │ │ │ │ │ │ │ │ │ │ ╭ from:
- │ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
--│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: function
-+│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: variable
- │ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
- │ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
- │ │ │ │ │ │ │ │ │ │ │ │ ├ span:

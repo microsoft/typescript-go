@@ -42,7 +42,7 @@
 │ │ ├ incoming:
 │ │ │ ╭ from:
 │ │ │ │ ╭ name: static {}
-│ │ │ │ ├ kind: variable
+│ │ │ │ ├ kind: constructor
 │ │ │ │ ├ file: /callHierarchyClassStaticBlock.ts
 │ │ │ │ ├ span:
 │ │ │ │ │ ╭ /callHierarchyClassStaticBlock.ts:2:5-14:6

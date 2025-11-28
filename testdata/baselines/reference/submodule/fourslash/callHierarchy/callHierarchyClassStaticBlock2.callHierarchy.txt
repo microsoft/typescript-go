@@ -1,6 +1,6 @@
 // === Call Hierarchy ===
 ╭ name: static {}
-├ kind: variable
+├ kind: constructor
 ├ file: /callHierarchyClassStaticBlock2.ts
 ├ span:
 │ ╭ /callHierarchyClassStaticBlock2.ts:2:5-14:6

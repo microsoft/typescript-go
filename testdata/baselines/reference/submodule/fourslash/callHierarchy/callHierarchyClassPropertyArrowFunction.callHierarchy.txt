@@ -1,6 +1,6 @@
 // === Call Hierarchy ===
 ╭ name: callee
-├ kind: variable
+├ kind: function
 ├ containerName: C
 ├ file: /callHierarchyClassPropertyArrowFunction.ts
 ├ span:
@@ -18,7 +18,7 @@
 ├ incoming:
 │ ╭ from:
 │ │ ╭ name: caller
-│ │ ├ kind: variable
+│ │ ├ kind: function
 │ │ ├ containerName: C
 │ │ ├ file: /callHierarchyClassPropertyArrowFunction.ts
 │ │ ├ span:

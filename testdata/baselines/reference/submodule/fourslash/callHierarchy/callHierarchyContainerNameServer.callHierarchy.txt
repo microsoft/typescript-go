@@ -119,7 +119,7 @@
 │ │ │ │ │ │ │ │ │ │ ├ incoming:
 │ │ │ │ │ │ │ │ │ │ │ ╭ from:
 │ │ │ │ │ │ │ │ │ │ │ │ ╭ name: sameName
-│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: variable
+│ │ │ │ │ │ │ │ │ │ │ │ ├ kind: function
 │ │ │ │ │ │ │ │ │ │ │ │ ├ containerName: Bar
 │ │ │ │ │ │ │ │ │ │ │ │ ├ file: /callHierarchyContainerNameServer.ts
 │ │ │ │ │ │ │ │ │ │ │ │ ├ span:
