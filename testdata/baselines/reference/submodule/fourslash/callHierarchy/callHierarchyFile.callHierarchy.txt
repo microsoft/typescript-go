@@ -33,31 +33,7 @@
 │ │ │ │ 1: foo();
 │ │ │ │    <
 │ │ │ ╰
-│ │ ├ incoming:
-│ │ │ ╭ from:
-│ │ │ │ ╭ name: /callHierarchyFile.ts
-│ │ │ │ ├ kind: variable
-│ │ │ │ ├ file: /callHierarchyFile.ts
-│ │ │ │ ├ span:
-│ │ │ │ │ ╭ /callHierarchyFile.ts:1:1-3:2
-│ │ │ │ │ │ 1: foo();
-│ │ │ │ │ │    ^^^^^^
-│ │ │ │ │ │ 2: function foo() {
-│ │ │ │ │ │    ^^^^^^^^^^^^^^^^
-│ │ │ │ │ │ 3: }
-│ │ │ │ │ │    ^
-│ │ │ │ │ ╰
-│ │ │ │ ├ selectionSpan:
-│ │ │ │ │ ╭ /callHierarchyFile.ts:1:1-1:1
-│ │ │ │ │ │ 1: foo();
-│ │ │ │ │ │    <
-│ │ │ │ │ ╰
-│ │ │ │ ╰ incoming: ...
-│ │ │ ├ fromSpans:
-│ │ │ │ ╭ /callHierarchyFile.ts:1:1-1:4
-│ │ │ │ │ 1: foo();
-│ │ │ │ │    ^^^
-│ │ ╰ ╰ ╰
+│ │ ╰ incoming: none
 │ ├ fromSpans:
 │ │ ╭ /callHierarchyFile.ts:1:1-1:4
 │ │ │ 1: foo();

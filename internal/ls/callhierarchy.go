@@ -1093,7 +1093,12 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 
 	// Get the node at the selection range
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
-	node := astnav.GetTokenAtPosition(file, pos)
+	var node *ast.Node
+	if pos == 0 {
+		node = file.AsNode()
+	} else {
+		node = astnav.GetTokenAtPosition(file, pos)
+	}
 
 	if node == nil {
 		return nil, nil
@@ -1135,7 +1140,12 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 
 	// Get the node at the selection range
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
-	node := astnav.GetTokenAtPosition(file, pos)
+	var node *ast.Node
+	if pos == 0 {
+		node = file.AsNode()
+	} else {
+		node = astnav.GetTokenAtPosition(file, pos)
+	}
 
 	if node == nil {
 		return nil, nil
