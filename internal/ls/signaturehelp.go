@@ -255,6 +255,11 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 		return nil
 	}
 
+	// Check client capabilities for activeParameter handling
+	sigInfoCaps := caps.TextDocument.SignatureHelp.SignatureInformation
+	supportsPerSignatureActiveParam := sigInfoCaps.ActiveParameterSupport
+	supportsNullActiveParam := sigInfoCaps.NoActiveParameterSupport
+
 	// Converting []signatureInformation to []*lsproto.SignatureInformation
 	signatureInformation := make([]*lsproto.SignatureInformation, len(flattenedSignatures))
 	for i, item := range flattenedSignatures {
@@ -271,39 +276,64 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 				},
 			}
 		}
-		signatureInformation[i] = &lsproto.SignatureInformation{
+		sigInfo := &lsproto.SignatureInformation{
 			Label:         item.Label,
 			Documentation: documentation,
 			Parameters:    &parameters,
 		}
+
+		// If client supports per-signature activeParameter, set it on each SignatureInformation
+		if supportsPerSignatureActiveParam {
+			sigInfo.ActiveParameter = l.computeActiveParameter(item, argumentInfo.argumentIndex, supportsNullActiveParam)
+		}
+
+		signatureInformation[i] = sigInfo
 	}
 
 	help := &lsproto.SignatureHelp{
 		Signatures:      signatureInformation,
 		ActiveSignature: ptrTo(uint32(selectedItemIndex)),
-		ActiveParameter: &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(argumentInfo.argumentIndex))},
 	}
 
-	activeSignature := flattenedSignatures[selectedItemIndex]
-	if activeSignature.IsVariadic {
-		firstRest := core.FindIndex(activeSignature.Parameters, func(p signatureHelpParameter) bool {
+	// If client doesn't support per-signature activeParameter, set it on the top-level SignatureHelp
+	if !supportsPerSignatureActiveParam {
+		activeSignature := flattenedSignatures[selectedItemIndex]
+		help.ActiveParameter = l.computeActiveParameter(activeSignature, argumentInfo.argumentIndex, supportsNullActiveParam)
+	}
+
+	return help
+}
+
+// computeActiveParameter calculates the active parameter index for a signature,
+// handling variadic signatures and null support appropriately.
+func (l *LanguageService) computeActiveParameter(sig signatureInformation, argumentIndex int, supportsNull bool) *lsproto.UintegerOrNull {
+	paramCount := len(sig.Parameters)
+	if paramCount == 0 {
+		// No parameters, return nil (omit the field)
+		return nil
+	}
+
+	activeParam := uint32(argumentIndex)
+
+	if sig.IsVariadic {
+		firstRest := core.FindIndex(sig.Parameters, func(p signatureHelpParameter) bool {
 			return p.isRest
 		})
-		if -1 < firstRest && firstRest < len(activeSignature.Parameters)-1 {
-			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
-			if caps.TextDocument.SignatureHelp.SignatureInformation.NoActiveParameterSupport {
-				// Client supports null activeParameter, meaning "no parameter is active"
-				help.ActiveParameter = &lsproto.UintegerOrNull{}
-			} else {
-				// Client doesn't support null, use out-of-range index
-				help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(len(activeSignature.Parameters)))}
+		if -1 < firstRest && firstRest < paramCount-1 {
+			// Middle rest parameter - we can't accurately highlight, so indicate "no active parameter"
+			if supportsNull {
+				return &lsproto.UintegerOrNull{} // null means "no parameter is active"
 			}
-		} else if *help.ActiveParameter.Uinteger > uint32(len(activeSignature.Parameters)-1) {
-			// Clamp to last parameter for variadic signatures
-			help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(len(activeSignature.Parameters) - 1))}
+			// Client doesn't support null, use out-of-range index (defaults to 0 per LSP spec)
+			return &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(paramCount))}
+		}
+		// Clamp to last parameter for trailing rest parameters
+		if activeParam > uint32(paramCount-1) {
+			activeParam = uint32(paramCount - 1)
 		}
 	}
-	return help
+
+	return &lsproto.UintegerOrNull{Uinteger: ptrTo(activeParam)}
 }
 
 func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind) []signatureInformation {

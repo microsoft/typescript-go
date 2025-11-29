@@ -1547,9 +1547,18 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		signatureLine := sig.Label
 		activeParamLine := ""
 
+		// Determine active parameter: per-signature takes precedence over top-level per LSP spec
+		// "If provided (or `null`), this is used in place of `SignatureHelp.activeParameter`."
+		var activeParamPtr *lsproto.UintegerOrNull
+		if sig.ActiveParameter != nil {
+			activeParamPtr = sig.ActiveParameter
+		} else {
+			activeParamPtr = item.ActiveParameter
+		}
+
 		// Show active parameter if specified, and the signature text.
-		if item.ActiveParameter != nil && item.ActiveParameter.Uinteger != nil && sig.Parameters != nil {
-			activeParamIndex := int(*item.ActiveParameter.Uinteger)
+		if activeParamPtr != nil && activeParamPtr.Uinteger != nil && sig.Parameters != nil {
+			activeParamIndex := int(*activeParamPtr.Uinteger)
 			if activeParamIndex >= 0 && activeParamIndex < len(*sig.Parameters) {
 				activeParam := (*sig.Parameters)[activeParamIndex]
 
