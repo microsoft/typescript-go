@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/regularExpressionBackslashK.ts] ////
+
+=== regularExpressionBackslashK.ts ===
+// Test that \k without < is an error when named groups are present
+
+// Valid: \k followed by <name> with named groups
+const validBackref = /(?<foo>a)\k<foo>/;
+>validBackref : Symbol(validBackref, Decl(regularExpressionBackslashK.ts, 3, 5))
+
+// Invalid: \k not followed by < when named groups are present (even in non-Unicode mode)
+const invalidK = /(?<foo>a)\k/;
+>invalidK : Symbol(invalidK, Decl(regularExpressionBackslashK.ts, 6, 5))
+
+// Invalid: \k followed by other chars when named groups are present
+const invalidKWithText = /(?<bar>x)\kb/;
+>invalidKWithText : Symbol(invalidKWithText, Decl(regularExpressionBackslashK.ts, 9, 5))
+
+// Valid: \k without < is OK when there are NO named groups (identity escape)
+const validIdentityEscape = /a\kb/;
+>validIdentityEscape : Symbol(validIdentityEscape, Decl(regularExpressionBackslashK.ts, 12, 5))
+
+// Invalid: \k without < in Unicode mode (regardless of named groups)
+const invalidKUnicode = /a\kb/u;
+>invalidKUnicode : Symbol(invalidKUnicode, Decl(regularExpressionBackslashK.ts, 15, 5))
+
+// Edge cases
+
+// Multiple named groups, valid backreferences
+const multiGroup = /(?<a>x)(?<b>y)\k<a>\k<b>/;
+>multiGroup : Symbol(multiGroup, Decl(regularExpressionBackslashK.ts, 20, 5))
+
+// Named group in alternation with \k in different branch
+const alternation = /(?<foo>a)|\k<foo>/;
+>alternation : Symbol(alternation, Decl(regularExpressionBackslashK.ts, 23, 5))
+
+// Named group with \k in lookahead
+const lookahead = /(?<bar>b)(?=\k<bar>)/;
+>lookahead : Symbol(lookahead, Decl(regularExpressionBackslashK.ts, 26, 5))
+
+// Named group with bare \k - should error
+const bareKWithGroups = /(?<x>.)(?<y>.)\k/;
+>bareKWithGroups : Symbol(bareKWithGroups, Decl(regularExpressionBackslashK.ts, 29, 5))
+
+// Bare \k at start when named group comes later - should still error
+const bareKBeforeGroup = /\k(?<name>pattern)/;
+>bareKBeforeGroup : Symbol(bareKBeforeGroup, Decl(regularExpressionBackslashK.ts, 32, 5))
+
+// Identity escape \k is valid when no named groups at all
+const noNamedGroups = /\ka\kb/;
+>noNamedGroups : Symbol(noNamedGroups, Decl(regularExpressionBackslashK.ts, 35, 5))
+
+// Unicode characters
+
+// Unicode characters before named group
+const unicodeBefore = /😀(?<foo>a)\k<foo>/;
+>unicodeBefore : Symbol(unicodeBefore, Decl(regularExpressionBackslashK.ts, 40, 5))
+
+// Unicode characters after named group
+const unicodeAfter = /(?<bar>b)\k<bar>😀/;
+>unicodeAfter : Symbol(unicodeAfter, Decl(regularExpressionBackslashK.ts, 43, 5))
+
+// Unicode characters in between
+const unicodeMiddle = /(?<x>.)😀\k<x>/;
+>unicodeMiddle : Symbol(unicodeMiddle, Decl(regularExpressionBackslashK.ts, 46, 5))
+
+// Unicode with bare \k - should error
+const unicodeWithBareK = /😀(?<name>.)\k/;
+>unicodeWithBareK : Symbol(unicodeWithBareK, Decl(regularExpressionBackslashK.ts, 49, 5))
+
+// Unicode without named groups and \k - should be OK
+const unicodeNoGroups = /😀\k😀/;
+>unicodeNoGroups : Symbol(unicodeNoGroups, Decl(regularExpressionBackslashK.ts, 52, 5))
+
