@@ -11,6 +11,11 @@
 -    [7m [0m [96m~~~~~~~[0m
 -    Conflicts are in this file.
 -[96mfile2.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS6200: [0mDefinitions of the following identifiers conflict with those in another file: duplicate1, duplicate2, duplicate3, duplicate4, duplicate5, duplicate6, duplicate7, duplicate8, duplicate9
++[96mfile2.ts[0m:[93m1[0m:[93m22[0m - [91merror[0m[90m TS6231: [0mCould not resolve the path './file1' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
++
++[7m1[0m /// <reference path="./file1" />
++[7m [0m [91m                     ~~~~~~~[0m
++
 +[96mfile2.ts[0m:[93m3[0m:[93m16[0m - [91merror[0m[90m TS2664: [0mInvalid module name in augmentation, module 'someMod' cannot be found.
 
  [7m3[0m declare module "someMod" {
@@ -20,11 +25,16 @@
 -    [7m1[0m declare module "someMod" {
 -    [7m [0m [96m~~~~~~~[0m
 -    Conflicts are in this file.
+-
+-
+-==== file2.ts (1 errors) ====
 +[7m [0m [91m               ~~~~~~~~~[0m
-
-
- ==== file2.ts (1 errors) ====
++
++
++==== file2.ts (2 errors) ====
      /// <reference path="./file1" />
++                         ~~~~~~~
++!!! error TS6231: Could not resolve the path './file1' with the extensions: '.ts', '.tsx', '.d.ts', '.cts', '.d.cts', '.mts', '.d.mts'.
      
      declare module "someMod" {
 -    ~~~~~~~
@@ -35,7 +45,7 @@
          export interface TopLevel {
              duplicate1(): number;
              duplicate2(): number;
-@@= skipped -38, +23 lines =@@
+@@= skipped -38, +30 lines =@@
      }
      export {};
      
@@ -53,7 +63,7 @@
          }
      }
 -Found 2 errors in 2 files.
-+Found 1 error in file2.ts[90m:3[0m
++Found 2 errors in the same file, starting at: file2.ts[90m:1[0m
 
 -Errors  Files
 -     1  file1.ts[90m:1[0m

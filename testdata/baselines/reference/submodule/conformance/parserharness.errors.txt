@@ -1,3 +1,7 @@
+parserharness.ts(16,21): error TS6053: File '..\compiler\io.ts' not found.
+parserharness.ts(17,21): error TS6053: File '..\compiler\typescript.ts' not found.
+parserharness.ts(18,21): error TS6053: File '..\services\typescriptServices.ts' not found.
+parserharness.ts(19,21): error TS6053: File 'diff.ts' not found.
 parserharness.ts(21,21): error TS2749: 'Harness.Assert' refers to a value, but is being used as a type here. Did you mean 'typeof Harness.Assert'?
 parserharness.ts(25,17): error TS2304: Cannot find name 'IIO'.
 parserharness.ts(41,12): error TS2304: Cannot find name 'ActiveXObject'.
@@ -106,7 +110,7 @@ parserharness.ts(1787,68): error TS2503: Cannot find namespace 'Services'.
 parserharness.ts(2030,32): error TS2552: Cannot find name 'Diff'. Did you mean 'diff'?
 
 
-==== parserharness.ts (106 errors) ====
+==== parserharness.ts (110 errors) ====
     //﻿
     // Copyright (c) Microsoft Corporation.  All rights reserved.
     // 
@@ -123,9 +127,17 @@ parserharness.ts(2030,32): error TS2552: Cannot find name 'Diff'. Did you mean '
     //
     
     ///<reference path='..\compiler\io.ts'/>
+                        ~~~~~~~~~~~~~~~~~
+!!! error TS6053: File '..\compiler\io.ts' not found.
     ///<reference path='..\compiler\typescript.ts'/>
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6053: File '..\compiler\typescript.ts' not found.
     ///<reference path='..\services\typescriptServices.ts' />
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS6053: File '..\services\typescriptServices.ts' not found.
     ///<reference path='diff.ts'/>
+                        ~~~~~~~
+!!! error TS6053: File 'diff.ts' not found.
     
     declare var assert: Harness.Assert;
                         ~~~~~~~~~~~~~~
