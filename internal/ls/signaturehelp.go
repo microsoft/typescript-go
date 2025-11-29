@@ -139,34 +139,49 @@ func (l *LanguageService) GetSignatureHelpItems(
 	if candidateInfo.candidateInfo != nil {
 		return l.createSignatureHelpItems(ctx, candidateInfo.candidateInfo.candidates, candidateInfo.candidateInfo.resolvedSignature, argumentInfo, sourceFile, typeChecker, onlyUseSyntacticOwners)
 	}
-	return createTypeHelpItems(candidateInfo.typeInfo, argumentInfo, sourceFile, typeChecker)
+	return createTypeHelpItems(ctx, candidateInfo.typeInfo, argumentInfo, sourceFile, typeChecker)
 }
 
-func createTypeHelpItems(symbol *ast.Symbol, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker) *lsproto.SignatureHelp {
+func createTypeHelpItems(ctx context.Context, symbol *ast.Symbol, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker) *lsproto.SignatureHelp {
 	typeParameters := c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	if typeParameters == nil {
 		return nil
 	}
 	item := getTypeHelpItem(symbol, typeParameters, getEnclosingDeclarationFromInvocation(argumentInfo.invocation), sourceFile, c)
 
+	// Check client capabilities for activeParameter handling
+	caps := lsproto.GetClientCapabilities(ctx)
+	sigInfoCaps := caps.TextDocument.SignatureHelp.SignatureInformation
+	supportsPerSignatureActiveParam := sigInfoCaps.ActiveParameterSupport
+
 	// Converting signatureHelpParameter to *lsproto.ParameterInformation
 	parameters := make([]*lsproto.ParameterInformation, len(item.Parameters))
 	for i, param := range item.Parameters {
 		parameters[i] = param.parameterInfo
 	}
-	signatureInformation := []*lsproto.SignatureInformation{
-		{
-			Label:         item.Label,
-			Documentation: nil,
-			Parameters:    &parameters,
-		},
+
+	sigInfo := &lsproto.SignatureInformation{
+		Label:         item.Label,
+		Documentation: nil,
+		Parameters:    &parameters,
 	}
 
-	return &lsproto.SignatureHelp{
-		Signatures:      signatureInformation,
-		ActiveSignature: ptrTo(uint32(0)),
-		ActiveParameter: &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(argumentInfo.argumentIndex))},
+	// If client supports per-signature activeParameter, set it on SignatureInformation
+	if supportsPerSignatureActiveParam && len(item.Parameters) > 0 {
+		sigInfo.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(argumentInfo.argumentIndex))}
 	}
+
+	help := &lsproto.SignatureHelp{
+		Signatures:      []*lsproto.SignatureInformation{sigInfo},
+		ActiveSignature: ptrTo(uint32(0)),
+	}
+
+	// If client doesn't support per-signature activeParameter, set it on the top-level SignatureHelp
+	if !supportsPerSignatureActiveParam && len(item.Parameters) > 0 {
+		help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(argumentInfo.argumentIndex))}
+	}
+
+	return help
 }
 
 func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) signatureInformation {
