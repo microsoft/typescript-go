@@ -224,6 +224,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [{ kind: "verifyBaselineDiagnostics" }];
                 case "navigateTo":
                     return parseVerifyNavigateTo(callExpression.arguments);
+                case "outliningSpansInCurrentFile":
+                case "outliningHintSpansInCurrentFile":
+                    return parseOutliningSpansArgs(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -274,14 +277,26 @@ function parseEditStatement(funcName: string, args: readonly ts.Expression[]): E
             const arg = args[0];
             if (args[0]) {
                 let arg0;
-                if (!(arg0 = getNumericLiteral(arg))) {
-                    console.error(`Expected numeric literal argument in edit.backspace, got ${arg.getText()}`);
-                    return undefined;
+                if (arg0 = getNumericLiteral(arg)) {
+                    return {
+                        kind: "edit",
+                        goStatement: `f.Backspace(t, ${arg0.text})`,
+                    };
                 }
-                return {
-                    kind: "edit",
-                    goStatement: `f.Backspace(t, ${arg0.text})`,
-                };
+                // Handle test.marker("").position
+                if (ts.isPropertyAccessExpression(arg) && arg.name.text === "position") {
+                    const expr = arg.expression;
+                    if (ts.isCallExpression(expr) && expr.expression.getText() === "test.marker") {
+                        if (expr.arguments.length === 1 && ts.isStringLiteralLike(expr.arguments[0])) {
+                            return {
+                                kind: "edit",
+                                goStatement: `f.Backspace(t, 1)`,
+                            };
+                        }
+                    }
+                }
+                console.error(`Expected numeric literal or a test marker argument in edit.backspace, got ${arg.getText()}`);
+                return undefined;
             }
             return {
                 kind: "edit",
@@ -1689,6 +1704,46 @@ function parseBaselineSmartSelection(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutliningSpansCmd] | undefined {
+    if (args.length === 0) {
+        console.error("Expected at least one argument in verify.outliningSpansInCurrentFile");
+        return undefined;
+    }
+
+    let spans: string = "";
+    // Optional second argument for kind filter
+    let foldingRangeKind: string | undefined;
+    if (args.length > 1) {
+        const kindArg = getStringLiteralLike(args[1]);
+        if (!kindArg) {
+            console.error(`Expected string literal for outlining kind, got ${args[1].getText()}`);
+            return undefined;
+        }
+        switch (kindArg.text) {
+            case "comment":
+                foldingRangeKind = "lsproto.FoldingRangeKindComment";
+                break;
+            case "region":
+                foldingRangeKind = "lsproto.FoldingRangeKindRegion";
+                break;
+            case "imports":
+                foldingRangeKind = "lsproto.FoldingRangeKindImports";
+                break;
+            case "code":
+                break;
+            default:
+                console.error(`Unknown folding range kind: ${kindArg.text}`);
+                return undefined;
+        }
+    }
+
+    return [{
+        kind: "verifyOutliningSpans",
+        spans,
+        foldingRangeKind,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -2126,6 +2181,12 @@ interface VerifyNavToCmd {
     args: string[];
 }
 
+interface VerifyOutliningSpansCmd {
+    kind: "verifyOutliningSpans"
+    spans: string;
+    foldingRangeKind?: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -2145,6 +2206,14 @@ type Cmd =
     | VerifyImportFixAtPositionCmd
     | VerifyDiagnosticsCmd
     | VerifyBaselineDiagnosticsCmd;
+    | VerifyOutliningSpansCmd;
+
+function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
+    if (foldingRangeKind) { 
+        return `f.VerifyOutliningSpans(t, ${foldingRangeKind})`;
+    }
+    return `f.VerifyOutliningSpans(t)`;
+}
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -2310,6 +2379,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyBaselineNonSuggestionDiagnostics(t)`;
         case "verifyNavigateTo":
             return generateNavigateTo(cmd);
+        case "verifyOutliningSpans":
+            return generateVerifyOutliningSpans(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
