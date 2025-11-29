@@ -1548,7 +1548,7 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		activeParamLine := ""
 
 		// Show active parameter if specified, and the signature text.
-		if item.ActiveParameter != nil && sig.Parameters != nil {
+		if item.ActiveParameter != nil && item.ActiveParameter.Uinteger != nil && sig.Parameters != nil {
 			activeParamIndex := int(*item.ActiveParameter.Uinteger)
 			if activeParamIndex >= 0 && activeParamIndex < len(*sig.Parameters) {
 				activeParam := (*sig.Parameters)[activeParamIndex]

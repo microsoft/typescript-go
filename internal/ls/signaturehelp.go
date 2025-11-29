@@ -291,9 +291,15 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 		})
 		if -1 < firstRest && firstRest < len(activeSignature.Parameters)-1 {
 			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
-			help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(len(activeSignature.Parameters)))}
-		}
-		if help.ActiveParameter != nil && help.ActiveParameter.Uinteger != nil && *help.ActiveParameter.Uinteger > uint32(len(activeSignature.Parameters)-1) {
+			if caps.TextDocument.SignatureHelp.SignatureInformation.NoActiveParameterSupport {
+				// Client supports null activeParameter, meaning "no parameter is active"
+				help.ActiveParameter = &lsproto.UintegerOrNull{}
+			} else {
+				// Client doesn't support null, use out-of-range index
+				help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(len(activeSignature.Parameters)))}
+			}
+		} else if *help.ActiveParameter.Uinteger > uint32(len(activeSignature.Parameters)-1) {
+			// Clamp to last parameter for variadic signatures
 			help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(len(activeSignature.Parameters) - 1))}
 		}
 	}
