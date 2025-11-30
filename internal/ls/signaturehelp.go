@@ -649,7 +649,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 	return nil
 }
 
-func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sourceFile *ast.SourceFile) bool { // !!! not tested
+func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sourceFile *ast.SourceFile) bool {
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
@@ -1017,7 +1017,7 @@ func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFi
 	}
 }
 
-func getChildListThatStartsWithOpenerToken(parent *ast.Node, openerToken *ast.Node) *ast.NodeList { //!!!
+func getChildListThatStartsWithOpenerToken(parent *ast.Node, openerToken *ast.Node) *ast.NodeList {
 	if ast.IsCallExpression(parent) {
 		parentCallExpression := parent.AsCallExpression()
 		if openerToken.Kind == ast.KindLessThanToken {
