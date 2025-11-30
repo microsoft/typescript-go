@@ -121,11 +121,16 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
-	// cancellationToken.throwIfCancellationRequested();
+	if ctx.Err() != nil {
+		return nil
+	}
 
 	// Extra syntactic and semantic filtering of signature help
 	candidateInfo := getCandidateOrTypeInfo(argumentInfo, typeChecker, sourceFile, startingToken, onlyUseSyntacticOwners)
-	// cancellationToken.throwIfCancellationRequested();
+
+	if ctx.Err() != nil {
+		return nil
+	}
 
 	if candidateInfo == nil {
 		// For JS files, try a fallback that searches all source files for declarations
@@ -735,13 +740,12 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 	// multiple nested levels.
 	currentParent := startingToken.Parent
 	for currentParent != nil {
-		precedingToken := astnav.FindPrecedingToken(sourceFile, pos)
+		precedingToken := astnav.FindPrecedingTokenEx(sourceFile, pos, currentParent, true /*excludeJSDoc*/)
 		if precedingToken != nil {
 			return RangeContainsRange(container.Loc, precedingToken.Loc)
 		}
 		currentParent = currentParent.Parent
 	}
-	// return Debug.fail("Could not find preceding token");
 	return false
 }
 
