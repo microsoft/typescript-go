@@ -111,7 +111,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 	onlyUseSyntacticOwners := triggerReasonKind == signatureHelpTriggerReasonKindCharacterTyped
 
 	// Bail out quickly in the middle of a string or comment, don't provide signature help unless the user explicitly requested it.
-	if onlyUseSyntacticOwners && IsInString(sourceFile, position, startingToken) { // isInComment(sourceFile, position) needs formatting implemented
+	if onlyUseSyntacticOwners && (IsInString(sourceFile, position, startingToken) || isInComment(sourceFile, position, startingToken) != nil) {
 		return nil
 	}
 
