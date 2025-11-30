@@ -128,10 +128,11 @@ func (l *LanguageService) GetSignatureHelpItems(
 	// cancellationToken.throwIfCancellationRequested();
 
 	if candidateInfo == nil {
-		//  !!!
-		// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
-		// 	// file, then see if we can figure out anything better.
-		// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
+		// For JS files, try a fallback that searches all source files for declarations
+		// with matching names that have call signatures. This is a heuristic for untyped JS code.
+		if ast.IsSourceFileJS(sourceFile) {
+			return l.createJSSignatureHelpItems(ctx, argumentInfo, program, typeChecker)
+		}
 		return nil
 	}
 
@@ -214,6 +215,60 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 	}
 }
 
+// createJSSignatureHelpItems is a fallback for JavaScript files when normal signature help
+// doesn't produce results. It searches all source files for declarations with matching names
+// that have call signatures.
+func (l *LanguageService) createJSSignatureHelpItems(ctx context.Context, argumentInfo *argumentListInfo, program *compiler.Program, c *checker.Checker) *lsproto.SignatureHelp {
+	if argumentInfo.invocation.contextualInvocation != nil {
+		return nil
+	}
+	// See if we can find some symbol with the call expression name that has call signatures.
+	expression := getExpressionFromInvocation(argumentInfo)
+	if !ast.IsPropertyAccessExpression(expression) {
+		return nil
+	}
+	name := expression.AsPropertyAccessExpression().Name().Text()
+	if name == "" {
+		return nil
+	}
+
+	for _, sf := range program.GetSourceFiles() {
+		result := l.findSignatureHelpFromNamedDeclarations(ctx, sf, name, argumentInfo, c)
+		if result != nil {
+			return result
+		}
+	}
+	return nil
+}
+
+func (l *LanguageService) findSignatureHelpFromNamedDeclarations(ctx context.Context, sourceFile *ast.SourceFile, name string, argumentInfo *argumentListInfo, c *checker.Checker) *lsproto.SignatureHelp {
+	var result *lsproto.SignatureHelp
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if result != nil {
+			return true
+		}
+		if ast.GetDeclarationName(node) == name {
+			if symbol := node.Symbol(); symbol != nil {
+				if t := c.GetTypeOfSymbolAtLocation(symbol, node); t != nil {
+					if callSignatures := c.GetCallSignatures(t); len(callSignatures) > 0 {
+						result = l.createSignatureHelpItems(ctx, callSignatures, callSignatures[0], argumentInfo, sourceFile, c, true /*useFullPrefix*/)
+						if result != nil {
+							return true
+						}
+					}
+				}
+			}
+		}
+		node.ForEachChild(func(child *ast.Node) bool {
+			return visit(child)
+		})
+		return result != nil
+	}
+	visit(sourceFile.AsNode())
+	return result
+}
+
 func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool) *lsproto.SignatureHelp {
 	caps := lsproto.GetClientCapabilities(ctx)
 	docFormat := lsproto.PreferredMarkupKind(caps.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat)
@@ -234,7 +289,11 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 
 	var callTargetDisplayParts strings.Builder
 	if callTargetSymbol != nil {
-		callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
+		if useFullPrefix {
+			callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, sourceFile.AsNode(), ast.SymbolFlagsNone, checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope))
+		} else {
+			callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
+		}
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {
@@ -607,6 +666,9 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 			return nil
 		}
 		resolvedSignature, candidates := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, info.argumentCount, c)
+		if len(candidates) == 0 {
+			return nil
+		}
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
 				candidates:        candidates,
