@@ -341,6 +341,7 @@ TestJsDocFunctionSignatures10
 TestJsDocFunctionSignatures11
 TestJsDocFunctionSignatures12
 TestJsDocFunctionSignatures13
+TestJsDocFunctionSignatures2
 TestJsDocFunctionSignatures7
 TestJsDocFunctionSignatures8
 TestJsDocGenerics2
