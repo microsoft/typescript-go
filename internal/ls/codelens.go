@@ -66,7 +66,7 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 		// or the file itself could have been removed from the session entirely.
 		// Note this won't bail out on every change, but will prevent crashing
 		// based on non-existent files and line maps from shortened files.
-		return codeLens, lsproto.ErrContentModified
+		return codeLens, lsproto.ErrorCodeContentModified
 	}
 
 	textDoc := lsproto.TextDocumentIdentifier{
