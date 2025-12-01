@@ -16,44 +16,44 @@ import (
 )
 
 // tokenTypes defines the order of token types for encoding
-var tokenTypes = []lsproto.SemanticTokenTypes{
-	lsproto.SemanticTokenTypesnamespace,
-	lsproto.SemanticTokenTypesclass,
-	lsproto.SemanticTokenTypesenum,
-	lsproto.SemanticTokenTypesinterface,
-	lsproto.SemanticTokenTypesstruct,
-	lsproto.SemanticTokenTypestypeParameter,
-	lsproto.SemanticTokenTypestype,
-	lsproto.SemanticTokenTypesparameter,
-	lsproto.SemanticTokenTypesvariable,
-	lsproto.SemanticTokenTypesproperty,
-	lsproto.SemanticTokenTypesenumMember,
-	lsproto.SemanticTokenTypesdecorator,
-	lsproto.SemanticTokenTypesevent,
-	lsproto.SemanticTokenTypesfunction,
-	lsproto.SemanticTokenTypesmethod,
-	lsproto.SemanticTokenTypesmacro,
-	lsproto.SemanticTokenTypeslabel,
-	lsproto.SemanticTokenTypescomment,
-	lsproto.SemanticTokenTypesstring,
-	lsproto.SemanticTokenTypeskeyword,
-	lsproto.SemanticTokenTypesnumber,
-	lsproto.SemanticTokenTypesregexp,
-	lsproto.SemanticTokenTypesoperator,
+var tokenTypes = []lsproto.SemanticTokenType{
+	lsproto.SemanticTokenTypeNamespace,
+	lsproto.SemanticTokenTypeClass,
+	lsproto.SemanticTokenTypeEnum,
+	lsproto.SemanticTokenTypeInterface,
+	lsproto.SemanticTokenTypeStruct,
+	lsproto.SemanticTokenTypeTypeParameter,
+	lsproto.SemanticTokenTypeType,
+	lsproto.SemanticTokenTypeParameter,
+	lsproto.SemanticTokenTypeVariable,
+	lsproto.SemanticTokenTypeProperty,
+	lsproto.SemanticTokenTypeEnumMember,
+	lsproto.SemanticTokenTypeDecorator,
+	lsproto.SemanticTokenTypeEvent,
+	lsproto.SemanticTokenTypeFunction,
+	lsproto.SemanticTokenTypeMethod,
+	lsproto.SemanticTokenTypeMacro,
+	lsproto.SemanticTokenTypeLabel,
+	lsproto.SemanticTokenTypeComment,
+	lsproto.SemanticTokenTypeString,
+	lsproto.SemanticTokenTypeKeyword,
+	lsproto.SemanticTokenTypeNumber,
+	lsproto.SemanticTokenTypeRegexp,
+	lsproto.SemanticTokenTypeOperator,
 }
 
 // tokenModifiers defines the order of token modifiers for encoding
-var tokenModifiers = []lsproto.SemanticTokenModifiers{
-	lsproto.SemanticTokenModifiersdeclaration,
-	lsproto.SemanticTokenModifiersdefinition,
-	lsproto.SemanticTokenModifiersreadonly,
-	lsproto.SemanticTokenModifiersstatic,
-	lsproto.SemanticTokenModifiersdeprecated,
-	lsproto.SemanticTokenModifiersabstract,
-	lsproto.SemanticTokenModifiersasync,
-	lsproto.SemanticTokenModifiersmodification,
-	lsproto.SemanticTokenModifiersdocumentation,
-	lsproto.SemanticTokenModifiersdefaultLibrary,
+var tokenModifiers = []lsproto.SemanticTokenModifier{
+	lsproto.SemanticTokenModifierDeclaration,
+	lsproto.SemanticTokenModifierDefinition,
+	lsproto.SemanticTokenModifierReadonly,
+	lsproto.SemanticTokenModifierStatic,
+	lsproto.SemanticTokenModifierDeprecated,
+	lsproto.SemanticTokenModifierAbstract,
+	lsproto.SemanticTokenModifierAsync,
+	lsproto.SemanticTokenModifierModification,
+	lsproto.SemanticTokenModifierDocumentation,
+	lsproto.SemanticTokenModifierDefaultLibrary,
 	"local",
 }
 
@@ -477,7 +477,7 @@ func isInfinityOrNaNString(text string) bool {
 func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast.SourceFile, converters *lsconv.Converters) []uint32 {
 	// Build mapping from server token types/modifiers to client indices
 	typeMapping := make(map[tokenType]uint32)
-	modifierMapping := make(map[lsproto.SemanticTokenModifiers]uint32)
+	modifierMapping := make(map[lsproto.SemanticTokenModifier]uint32)
 
 	clientCapabilities := lsproto.GetClientCapabilities(ctx).TextDocument.SemanticTokens
 
