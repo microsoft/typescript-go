@@ -56,11 +56,23 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 
 func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens, showLocationsCommandName *string) (*lsproto.CodeLens, error) {
 	uri := codeLens.Data.Uri
+	_, sourceFile := l.tryGetProgramAndFile(uri.FileName())
+	if sourceFile == nil ||
+		l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(sourceFile.End())).Line < codeLens.Range.Start.Line {
+		// This can happen if a codeLens/resolve request comes in after a program change.
+		// While it's true that handlers should latch onto a specific snapshot
+		// while processing requests, we just set `Data.Uri` based on
+		// some older snapshot's contents. The content could have been modified,
+		// or the file itself could have been removed from the session entirely.
+		// Note this won't bail out on every change, but will prevent crashing
+		// based on non-existent files and line maps from shortened files.
+		return codeLens, lsproto.ErrContentModified
+	}
+
 	textDoc := lsproto.TextDocumentIdentifier{
 		Uri: uri,
 	}
 	locale := locale.FromContext(ctx)
-
 	var locs []lsproto.Location
 	var lensTitle string
 	switch codeLens.Data.Kind {
