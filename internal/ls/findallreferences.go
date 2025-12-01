@@ -731,6 +731,7 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool) []lsproto.Location {
 	references := s.references
 
+	// !!! includeDeclarations
 	if !includeDeclarations && s.definition != nil {
 		references = core.Filter(references, func(entry *ReferenceEntry) bool {
 			return !isDeclarationOfSymbol(entry.node, s.definition.symbol)
