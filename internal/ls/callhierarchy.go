@@ -517,7 +517,7 @@ type callSite struct {
 	sourceFile  *ast.Node
 }
 
-func convertEntryToCallSite(program *compiler.Program, entry *ReferenceEntry) *callSite {
+func convertEntryToCallSite(entry *ReferenceEntry) *callSite {
 	if entry.kind != entryKindNode {
 		return nil
 	}
@@ -590,7 +590,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 
 	var callSites []*callSite
 	for _, entry := range refEntries {
-		if site := convertEntryToCallSite(program, entry); site != nil {
+		if site := convertEntryToCallSite(entry); site != nil {
 			callSites = append(callSites, site)
 		}
 	}
@@ -960,7 +960,7 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 	if pos == 0 {
 		node = file.AsNode()
 	} else {
-		node = astnav.GetTokenAtPosition(file, pos)
+		node = astnav.GetTouchingPropertyName(file, pos)
 	}
 
 	if node == nil {
@@ -1009,7 +1009,7 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 	if pos == 0 {
 		node = file.AsNode()
 	} else {
-		node = astnav.GetTokenAtPosition(file, pos)
+		node = astnav.GetTouchingPropertyName(file, pos)
 	}
 
 	if node == nil {
