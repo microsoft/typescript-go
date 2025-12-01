@@ -2111,6 +2111,10 @@ type VerifySignatureHelpOptions struct {
 	OverloadsCount int
 	// OverrideSelectedItemIndex overrides which signature to check (default: ActiveSignature)
 	OverrideSelectedItemIndex int
+	// IsVariadic indicates if the signature has a rest parameter
+	IsVariadic bool
+	// IsVariadicSet is true when IsVariadic was explicitly set (to distinguish from default false)
+	IsVariadicSet bool
 }
 
 // VerifySignatureHelp verifies signature help at the current position matches the expected options.
@@ -2204,12 +2208,14 @@ func (f *FourslashTest) VerifySignatureHelp(t *testing.T, expected VerifySignatu
 			// Parameter name is extracted from the label
 			actualName := ""
 			if activeParam.Label.String != nil {
-				// Extract name from label like "x: string" -> "x" or "T extends Foo" -> "T"
+				// Extract name from label like "x: string" -> "x" or "T extends Foo" -> "T" or "...x: any[]" -> "x"
 				label := *activeParam.Label.String
-				if colonIdx := strings.Index(label, ":"); colonIdx > 0 {
-					actualName = strings.TrimSpace(label[:colonIdx])
-				} else if extendsIdx := strings.Index(label, " extends "); extendsIdx > 0 {
-					actualName = strings.TrimSpace(label[:extendsIdx])
+				// Strip leading "..." for rest parameters
+				label = strings.TrimPrefix(label, "...")
+				if name, _, found := strings.Cut(label, ":"); found {
+					actualName = strings.TrimSpace(name)
+				} else if name, _, found := strings.Cut(label, " extends "); found {
+					actualName = strings.TrimSpace(name)
 				} else {
 					actualName = label
 				}
@@ -2251,6 +2257,22 @@ func (f *FourslashTest) VerifySignatureHelp(t *testing.T, expected VerifySignatu
 			if actualDoc != expected.ParameterDocComment {
 				t.Errorf("%sExpected parameter doc comment %q, got %q", prefix, expected.ParameterDocComment, actualDoc)
 			}
+		}
+	}
+
+	// Verify isVariadic (check if any parameter starts with "...")
+	if expected.IsVariadicSet {
+		actualIsVariadic := false
+		if selectedSig.Parameters != nil {
+			for _, param := range *selectedSig.Parameters {
+				if param.Label.String != nil && strings.HasPrefix(*param.Label.String, "...") {
+					actualIsVariadic = true
+					break
+				}
+			}
+		}
+		if actualIsVariadic != expected.IsVariadic {
+			t.Errorf("%sExpected isVariadic=%v, got %v", prefix, expected.IsVariadic, actualIsVariadic)
 		}
 	}
 }

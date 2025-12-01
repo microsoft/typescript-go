@@ -1801,11 +1801,24 @@ function parseSignatureHelpOptions(obj: ts.ObjectLiteralExpression): VerifySigna
                 break;
             }
             case "argumentCount":
-            case "isVariadic":
+                // ignore
+                break;
+            case "isVariadic": {
+                if (value.kind === ts.SyntaxKind.TrueKeyword) {
+                    options.isVariadic = true;
+                }
+                else if (value.kind === ts.SyntaxKind.FalseKeyword) {
+                    options.isVariadic = false;
+                }
+                else {
+                    console.error(`Expected boolean for isVariadic, got ${value.getText()}`);
+                    return undefined;
+                }
+                break;
+            }
             case "tags":
-                // These are not supported in LSP, skip them
-                console.error(`signatureHelp option '${name}' is not supported in LSP, skipping`);
-                return undefined;
+                // ignore
+                break;
             default:
                 console.error(`Unknown signatureHelp option: ${name}`);
                 return undefined;
@@ -2460,6 +2473,7 @@ interface VerifySignatureHelpOptions {
     overloadsCount?: number;
     overrideSelectedItemIndex?: number;
     triggerReason?: string;
+    isVariadic?: boolean;
 }
 
 interface VerifySignatureHelpCmd {
@@ -2647,6 +2661,10 @@ function generateSignatureHelpExpected(opts: VerifySignatureHelpOptions): string
     if (opts.overrideSelectedItemIndex !== undefined) {
         fields.push(`OverrideSelectedItemIndex: ${opts.overrideSelectedItemIndex}`);
     }
+    if (opts.isVariadic !== undefined) {
+        fields.push(`IsVariadic: ${opts.isVariadic}`);
+        fields.push(`IsVariadicSet: true`);
+    }
 
     return `fourslash.VerifySignatureHelpOptions{${fields.join(", ")}}`;
 }
@@ -2657,15 +2675,24 @@ function generateSignatureHelp({ options }: VerifySignatureHelpCmd): string {
     for (const opts of options) {
         const expected = generateSignatureHelpExpected(opts);
 
+        // Add comments for unsupported options
+        const unsupportedComments: string[] = [];
+
         if (opts.marker !== undefined) {
             const markers = Array.isArray(opts.marker) ? opts.marker : [opts.marker];
             for (const marker of markers) {
                 lines.push(`f.GoToMarker(t, ${getGoStringLiteral(marker)})`);
+                for (const comment of unsupportedComments) {
+                    lines.push(comment);
+                }
                 lines.push(`f.VerifySignatureHelp(t, ${expected})`);
             }
         }
         else {
             // No marker specified, use current position
+            for (const comment of unsupportedComments) {
+                lines.push(comment);
+            }
             lines.push(`f.VerifySignatureHelp(t, ${expected})`);
         }
     }
