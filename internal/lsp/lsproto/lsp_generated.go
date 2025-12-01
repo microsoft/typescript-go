@@ -21748,34 +21748,34 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 type SemanticTokenType string
 
 const (
-	SemanticTokenTypenamespace SemanticTokenType = "namespace"
+	SemanticTokenTypeNamespace SemanticTokenType = "namespace"
 	// Represents a generic type. Acts as a fallback for types which can't be mapped to
 	// a specific type like class or enum.
-	SemanticTokenTypetype          SemanticTokenType = "type"
-	SemanticTokenTypeclass         SemanticTokenType = "class"
-	SemanticTokenTypeenum          SemanticTokenType = "enum"
-	SemanticTokenTypeinterface     SemanticTokenType = "interface"
-	SemanticTokenTypestruct        SemanticTokenType = "struct"
-	SemanticTokenTypetypeParameter SemanticTokenType = "typeParameter"
-	SemanticTokenTypeparameter     SemanticTokenType = "parameter"
-	SemanticTokenTypevariable      SemanticTokenType = "variable"
-	SemanticTokenTypeproperty      SemanticTokenType = "property"
-	SemanticTokenTypeenumMember    SemanticTokenType = "enumMember"
-	SemanticTokenTypeevent         SemanticTokenType = "event"
-	SemanticTokenTypefunction      SemanticTokenType = "function"
-	SemanticTokenTypemethod        SemanticTokenType = "method"
-	SemanticTokenTypemacro         SemanticTokenType = "macro"
-	SemanticTokenTypekeyword       SemanticTokenType = "keyword"
-	SemanticTokenTypemodifier      SemanticTokenType = "modifier"
-	SemanticTokenTypecomment       SemanticTokenType = "comment"
-	SemanticTokenTypestring        SemanticTokenType = "string"
-	SemanticTokenTypenumber        SemanticTokenType = "number"
-	SemanticTokenTyperegexp        SemanticTokenType = "regexp"
-	SemanticTokenTypeoperator      SemanticTokenType = "operator"
+	SemanticTokenTypeType          SemanticTokenType = "type"
+	SemanticTokenTypeClass         SemanticTokenType = "class"
+	SemanticTokenTypeEnum          SemanticTokenType = "enum"
+	SemanticTokenTypeInterface     SemanticTokenType = "interface"
+	SemanticTokenTypeStruct        SemanticTokenType = "struct"
+	SemanticTokenTypeTypeParameter SemanticTokenType = "typeParameter"
+	SemanticTokenTypeParameter     SemanticTokenType = "parameter"
+	SemanticTokenTypeVariable      SemanticTokenType = "variable"
+	SemanticTokenTypeProperty      SemanticTokenType = "property"
+	SemanticTokenTypeEnumMember    SemanticTokenType = "enumMember"
+	SemanticTokenTypeEvent         SemanticTokenType = "event"
+	SemanticTokenTypeFunction      SemanticTokenType = "function"
+	SemanticTokenTypeMethod        SemanticTokenType = "method"
+	SemanticTokenTypeMacro         SemanticTokenType = "macro"
+	SemanticTokenTypeKeyword       SemanticTokenType = "keyword"
+	SemanticTokenTypeModifier      SemanticTokenType = "modifier"
+	SemanticTokenTypeComment       SemanticTokenType = "comment"
+	SemanticTokenTypeString        SemanticTokenType = "string"
+	SemanticTokenTypeNumber        SemanticTokenType = "number"
+	SemanticTokenTypeRegexp        SemanticTokenType = "regexp"
+	SemanticTokenTypeOperator      SemanticTokenType = "operator"
 	// Since: 3.17.0
-	SemanticTokenTypedecorator SemanticTokenType = "decorator"
+	SemanticTokenTypeDecorator SemanticTokenType = "decorator"
 	// Since: 3.18.0
-	SemanticTokenTypelabel SemanticTokenType = "label"
+	SemanticTokenTypeLabel SemanticTokenType = "label"
 )
 
 // A set of predefined token modifiers. This set is not fixed
@@ -21786,16 +21786,16 @@ const (
 type SemanticTokenModifier string
 
 const (
-	SemanticTokenModifierdeclaration    SemanticTokenModifier = "declaration"
-	SemanticTokenModifierdefinition     SemanticTokenModifier = "definition"
-	SemanticTokenModifierreadonly       SemanticTokenModifier = "readonly"
-	SemanticTokenModifierstatic         SemanticTokenModifier = "static"
-	SemanticTokenModifierdeprecated     SemanticTokenModifier = "deprecated"
-	SemanticTokenModifierabstract       SemanticTokenModifier = "abstract"
-	SemanticTokenModifierasync          SemanticTokenModifier = "async"
-	SemanticTokenModifiermodification   SemanticTokenModifier = "modification"
-	SemanticTokenModifierdocumentation  SemanticTokenModifier = "documentation"
-	SemanticTokenModifierdefaultLibrary SemanticTokenModifier = "defaultLibrary"
+	SemanticTokenModifierDeclaration    SemanticTokenModifier = "declaration"
+	SemanticTokenModifierDefinition     SemanticTokenModifier = "definition"
+	SemanticTokenModifierReadonly       SemanticTokenModifier = "readonly"
+	SemanticTokenModifierStatic         SemanticTokenModifier = "static"
+	SemanticTokenModifierDeprecated     SemanticTokenModifier = "deprecated"
+	SemanticTokenModifierAbstract       SemanticTokenModifier = "abstract"
+	SemanticTokenModifierAsync          SemanticTokenModifier = "async"
+	SemanticTokenModifierModification   SemanticTokenModifier = "modification"
+	SemanticTokenModifierDocumentation  SemanticTokenModifier = "documentation"
+	SemanticTokenModifierDefaultLibrary SemanticTokenModifier = "defaultLibrary"
 )
 
 // The document diagnostic report kinds.
@@ -21968,15 +21968,15 @@ type UniquenessLevel string
 
 const (
 	// The moniker is only unique inside a document
-	UniquenessLeveldocument UniquenessLevel = "document"
+	UniquenessLevelDocument UniquenessLevel = "document"
 	// The moniker is unique inside a project for which a dump got created
-	UniquenessLevelproject UniquenessLevel = "project"
+	UniquenessLevelProject UniquenessLevel = "project"
 	// The moniker is unique inside the group to which a project belongs
-	UniquenessLevelgroup UniquenessLevel = "group"
+	UniquenessLevelGroup UniquenessLevel = "group"
 	// The moniker is unique inside the moniker scheme.
-	UniquenessLevelscheme UniquenessLevel = "scheme"
+	UniquenessLevelScheme UniquenessLevel = "scheme"
 	// The moniker is globally unique
-	UniquenessLevelglobal UniquenessLevel = "global"
+	UniquenessLevelGlobal UniquenessLevel = "global"
 )
 
 // The moniker kind.
@@ -21986,12 +21986,12 @@ type MonikerKind string
 
 const (
 	// The moniker represent a symbol that is imported into a project
-	MonikerKindimport MonikerKind = "import"
+	MonikerKindImport MonikerKind = "import"
 	// The moniker represents a symbol that is exported from a project
-	MonikerKindexport MonikerKind = "export"
+	MonikerKindExport MonikerKind = "export"
 	// The moniker represents a symbol that is local to a project (e.g. a local
 	// variable of a function, a class not visible outside the project, ...)
-	MonikerKindlocal MonikerKind = "local"
+	MonikerKindLocal MonikerKind = "local"
 )
 
 // Inlay hint kinds.
@@ -22211,7 +22211,7 @@ const (
 	// inserted using the indentation defined in the string value.
 	// The client will not apply any kind of adjustments to the
 	// string.
-	InsertTextModeasIs InsertTextMode = 1
+	InsertTextModeAsIs InsertTextMode = 1
 	// The editor adjusts leading whitespace of new lines so that
 	// they match the indentation up to the cursor of the line for
 	// which the item is accepted.
@@ -22219,7 +22219,7 @@ const (
 	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
 	// multi line completion item is indented using 2 tabs and all
 	// following lines inserted will be indented using 2 tabs as well.
-	InsertTextModeadjustIndentation InsertTextMode = 2
+	InsertTextModeAdjustIndentation InsertTextMode = 2
 )
 
 const _InsertTextMode_name = "asIsadjustIndentation"
@@ -22733,9 +22733,9 @@ type FileOperationPatternKind string
 
 const (
 	// The pattern matches a file only.
-	FileOperationPatternKindfile FileOperationPatternKind = "file"
+	FileOperationPatternKindFile FileOperationPatternKind = "file"
 	// The pattern matches a folder only.
-	FileOperationPatternKindfolder FileOperationPatternKind = "folder"
+	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
 )
 
 // A notebook cell kind.

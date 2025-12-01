@@ -1074,7 +1074,7 @@ function generateCode() {
             value: String(value.value),
             numericValue: Number(value.value),
             name: value.name,
-            identifier: `${enumeration.name}${value.name}`,
+            identifier: `${enumeration.name}${titleCase(value.name)}`,
             documentation: value.documentation,
             deprecated: value.deprecated,
         }));
