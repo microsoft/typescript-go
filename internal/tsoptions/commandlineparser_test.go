@@ -114,7 +114,7 @@ func TestCustomConditionsNullOverride(t *testing.T) {
 	}
 
 	// Now parse the config file with the command line options
-	parsedConfig, errors := tsoptions.GetParsedCommandLineOfConfigFileWithRaw(
+	parsedConfig, errors := tsoptions.GetParsedCommandLineOfConfigFile(
 		"/project/tsconfig.json",
 		cmdLine.CompilerOptions(),
 		cmdLine.Raw.(*collections.OrderedMap[string, any]),

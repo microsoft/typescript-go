@@ -181,7 +181,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		if raw, ok := commandLine.Raw.(*collections.OrderedMap[string, any]); ok {
 			commandLineRaw = raw
 		}
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFileWithRaw(configFileName, compilerOptionsFromCommandLine, commandLineRaw, sys, extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, commandLineRaw, sys, extendedConfigCache)
 		compileTimes.ConfigTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics

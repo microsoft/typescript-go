@@ -695,22 +695,6 @@ func ParseJsonSourceFileConfigFileContent(
 	host ParseConfigHost,
 	basePath string,
 	existingOptions *core.CompilerOptions,
-	configFileName string,
-	resolutionStack []tspath.Path,
-	extraFileExtensions []FileExtensionInfo,
-	extendedConfigCache ExtendedConfigCache,
-) *ParsedCommandLine {
-	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
-	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, nil /*existingOptionsRaw*/, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
-	// tracing?.pop();
-	return result
-}
-
-func ParseJsonSourceFileConfigFileContentWithRaw(
-	sourceFile *TsConfigSourceFile,
-	host ParseConfigHost,
-	basePath string,
-	existingOptions *core.CompilerOptions,
 	existingOptionsRaw *collections.OrderedMap[string, any],
 	configFileName string,
 	resolutionStack []tspath.Path,
@@ -1767,16 +1751,6 @@ func GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions *core.Com
 func GetParsedCommandLineOfConfigFile(
 	configFileName string,
 	options *core.CompilerOptions,
-	sys ParseConfigHost,
-	extendedConfigCache ExtendedConfigCache,
-) (*ParsedCommandLine, []*ast.Diagnostic) {
-	configFileName = tspath.GetNormalizedAbsolutePath(configFileName, sys.GetCurrentDirectory())
-	return GetParsedCommandLineOfConfigFilePath(configFileName, tspath.ToPath(configFileName, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()), options, nil /*optionsRaw*/, sys, extendedConfigCache)
-}
-
-func GetParsedCommandLineOfConfigFileWithRaw(
-	configFileName string,
-	options *core.CompilerOptions,
 	optionsRaw *collections.OrderedMap[string, any],
 	sys ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
@@ -1803,24 +1777,12 @@ func GetParsedCommandLineOfConfigFilePath(
 	tsConfigSourceFile := NewTsconfigSourceFileFromFilePath(configFileName, path, configFileText)
 	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
 	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
-	if optionsRaw != nil {
-		return ParseJsonSourceFileConfigFileContentWithRaw(
-			tsConfigSourceFile,
-			sys,
-			tspath.GetDirectoryPath(configFileName),
-			options,
-			optionsRaw,
-			configFileName,
-			nil,
-			nil,
-			extendedConfigCache,
-		), nil
-	}
 	return ParseJsonSourceFileConfigFileContent(
 		tsConfigSourceFile,
 		sys,
 		tspath.GetDirectoryPath(configFileName),
 		options,
+		optionsRaw,
 		configFileName,
 		nil,
 		nil,
