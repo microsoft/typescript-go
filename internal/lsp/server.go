@@ -1297,14 +1297,7 @@ func (s *Server) handlePrepareCallHierarchy(
 	languageService *ls.LanguageService,
 	params *lsproto.CallHierarchyPrepareParams,
 ) (lsproto.CallHierarchyPrepareResponse, error) {
-	items, err := languageService.ProvidePrepareCallHierarchy(ctx, params.TextDocument.Uri, params.Position)
-	if err != nil {
-		return lsproto.CallHierarchyItemsOrNull{}, err
-	}
-	if items == nil {
-		return lsproto.CallHierarchyItemsOrNull{}, nil
-	}
-	return lsproto.CallHierarchyItemsOrNull{CallHierarchyItems: &items}, nil
+	return languageService.ProvidePrepareCallHierarchy(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleCallHierarchyIncomingCalls(
@@ -1316,15 +1309,7 @@ func (s *Server) handleCallHierarchyIncomingCalls(
 	if err != nil {
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
 	}
-
-	calls, err := languageService.ProvideCallHierarchyIncomingCalls(ctx, params.Item)
-	if err != nil {
-		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
-	}
-	if calls == nil {
-		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
-	}
-	return lsproto.CallHierarchyIncomingCallsOrNull{CallHierarchyIncomingCalls: &calls}, nil
+	return languageService.ProvideCallHierarchyIncomingCalls(ctx, params.Item)
 }
 
 func (s *Server) handleCallHierarchyOutgoingCalls(
@@ -1336,15 +1321,7 @@ func (s *Server) handleCallHierarchyOutgoingCalls(
 	if err != nil {
 		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
 	}
-
-	calls, err := languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
-	if err != nil {
-		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
-	}
-	if calls == nil {
-		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
-	}
-	return lsproto.CallHierarchyOutgoingCallsOrNull{CallHierarchyOutgoingCalls: &calls}, nil
+	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
 }
 
 func (s *Server) Log(msg ...any) {

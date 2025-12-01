@@ -914,42 +914,45 @@ func (l *LanguageService) ProvidePrepareCallHierarchy(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
-) ([]*lsproto.CallHierarchyItem, error) {
+) (lsproto.CallHierarchyPrepareResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 
 	if node.Kind == ast.KindSourceFile {
-		return nil, nil
+		return lsproto.CallHierarchyItemsOrNull{}, nil
 	}
 
 	declaration := resolveCallHierarchyDeclaration(program, node)
 	if declaration == nil {
-		return nil, nil
+		return lsproto.CallHierarchyItemsOrNull{}, nil
 	}
 
+	var items []*lsproto.CallHierarchyItem
 	switch decl := declaration.(type) {
 	case *ast.Node:
-		return []*lsproto.CallHierarchyItem{l.createCallHierarchyItem(program, decl)}, nil
+		items = []*lsproto.CallHierarchyItem{l.createCallHierarchyItem(program, decl)}
 	case []*ast.Node:
-		items := make([]*lsproto.CallHierarchyItem, len(decl))
+		items = make([]*lsproto.CallHierarchyItem, len(decl))
 		for i, d := range decl {
 			items[i] = l.createCallHierarchyItem(program, d)
 		}
-		return items, nil
 	}
 
-	return nil, nil
+	if items == nil {
+		return lsproto.CallHierarchyItemsOrNull{}, nil
+	}
+	return lsproto.CallHierarchyItemsOrNull{CallHierarchyItems: &items}, nil
 }
 
 func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 	ctx context.Context,
 	item *lsproto.CallHierarchyItem,
-) ([]*lsproto.CallHierarchyIncomingCall, error) {
+) (lsproto.CallHierarchyIncomingCallsResponse, error) {
 	program := l.GetProgram()
 	fileName := item.Uri.FileName()
 	file := program.GetSourceFile(fileName)
 	if file == nil {
-		return nil, nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
@@ -961,12 +964,12 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 	}
 
 	if node == nil {
-		return nil, nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
 	declaration := resolveCallHierarchyDeclaration(program, node)
 	if declaration == nil {
-		return nil, nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
 	var decl *ast.Node
@@ -980,21 +983,25 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 	}
 
 	if decl == nil {
-		return nil, nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
-	return l.getIncomingCalls(ctx, program, decl), nil
+	calls := l.getIncomingCalls(ctx, program, decl)
+	if calls == nil {
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
+	}
+	return lsproto.CallHierarchyIncomingCallsOrNull{CallHierarchyIncomingCalls: &calls}, nil
 }
 
 func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 	ctx context.Context,
 	item *lsproto.CallHierarchyItem,
-) ([]*lsproto.CallHierarchyOutgoingCall, error) {
+) (lsproto.CallHierarchyOutgoingCallsResponse, error) {
 	program := l.GetProgram()
 	fileName := item.Uri.FileName()
 	file := program.GetSourceFile(fileName)
 	if file == nil {
-		return nil, nil
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
 	}
 
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
@@ -1006,12 +1013,12 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 	}
 
 	if node == nil {
-		return nil, nil
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
 	}
 
 	declaration := resolveCallHierarchyDeclaration(program, node)
 	if declaration == nil {
-		return nil, nil
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
 	}
 
 	var decl *ast.Node
@@ -1025,8 +1032,12 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 	}
 
 	if decl == nil {
-		return nil, nil
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
 	}
 
-	return l.getOutgoingCalls(program, decl), nil
+	calls := l.getOutgoingCalls(program, decl)
+	if calls == nil {
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, nil
+	}
+	return lsproto.CallHierarchyOutgoingCallsOrNull{CallHierarchyOutgoingCalls: &calls}, nil
 }
