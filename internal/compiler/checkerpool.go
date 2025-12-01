@@ -32,7 +32,16 @@ type checkerPool struct {
 
 var _ CheckerPool = (*checkerPool)(nil)
 
-func newCheckerPool(checkerCount int, program *Program) *checkerPool {
+func newCheckerPool(program *Program) *checkerPool {
+	checkerCount := 4
+	if program.SingleThreaded() {
+		checkerCount = 1
+	} else if c := program.Options().Checkers; c != nil {
+		checkerCount = *c
+	}
+
+	checkerCount = min(max(checkerCount, 1), len(program.files), 256)
+
 	pool := &checkerPool{
 		program:      program,
 		checkerCount: checkerCount,

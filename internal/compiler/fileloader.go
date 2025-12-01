@@ -69,6 +69,7 @@ type processedFiles struct {
 	// if file was included using source file and its output is actually part of program
 	// this contains mapping from output to source file
 	outputFileToProjectReferenceSource map[tspath.Path]string
+	finishedProcessing                 bool
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -236,6 +237,7 @@ func processAllProgramFiles(
 	}
 
 	return processedFiles{
+		finishedProcessing:                   true,
 		resolver:                             loader.resolver,
 		files:                                allFiles,
 		filesByPath:                          filesByPath,
