@@ -19,7 +19,7 @@ import (
 
 type CallHierarchyDeclaration = *ast.Node
 
-// Indicates whether a node is named function or class expression.
+// Indictates whether a node is named function or class expression.
 func isNamedExpression(node *ast.Node) bool {
 	if node == nil {
 		return false
@@ -27,7 +27,6 @@ func isNamedExpression(node *ast.Node) bool {
 	if !ast.IsFunctionExpression(node) && !ast.IsClassExpression(node) {
 		return false
 	}
-	// Check if it has a name
 	name := node.Name()
 	return name != nil && ast.IsIdentifier(name)
 }
@@ -47,7 +46,6 @@ func isAssignedExpression(node *ast.Node) bool {
 	if !(ast.IsFunctionExpression(node) || ast.IsArrowFunction(node) || ast.IsClassExpression(node)) {
 		return false
 	}
-	// The expression must not have a name (otherwise it would be a NamedExpression)
 	if node.Name() != nil {
 		return false
 	}
@@ -56,18 +54,15 @@ func isAssignedExpression(node *ast.Node) bool {
 		return false
 	}
 
-	// Check if it's the initializer: node === node.parent.initializer
 	if parent.Initializer() != node {
 		return false
 	}
 
-	// Check if the name is an identifier: isIdentifier(node.parent.name)
 	name := parent.Name()
 	if !ast.IsIdentifier(name) {
 		return false
 	}
 
-	// (!!(getCombinedNodeFlags(node.parent) & NodeFlags.Const) || isPropertyDeclaration(node.parent))
 	return (ast.GetCombinedNodeFlags(parent)&ast.NodeFlagsConst) != 0 || ast.IsPropertyDeclaration(parent)
 }
 
@@ -128,7 +123,6 @@ func getCallHierarchyDeclarationReferenceNode(node *ast.Node) *ast.Node {
 		return node
 	}
 
-	// Check if node has a Name() method and it returns non-nil
 	if name := node.Name(); name != nil {
 		return name
 	}
@@ -137,7 +131,6 @@ func getCallHierarchyDeclarationReferenceNode(node *ast.Node) *ast.Node {
 		return node.Parent.Name()
 	}
 
-	// Find default modifier
 	if modifiers := node.Modifiers(); modifiers != nil {
 		for _, mod := range modifiers.Nodes {
 			if mod.Kind == ast.KindDefaultKeyword {
@@ -169,7 +162,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		return sourceFile.FileName(), 0, 0
 	}
 
-	// Check for unnamed function or class declaration with default modifier
 	if (ast.IsFunctionDeclaration(node) || ast.IsClassDeclaration(node)) && node.Name() == nil {
 		if modifiers := node.Modifiers(); modifiers != nil {
 			for _, mod := range modifiers.Nodes {
@@ -182,7 +174,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		}
 	}
 
-	// Class static block
 	if ast.IsClassStaticBlockDeclaration(node) {
 		sourceFile := ast.GetSourceFileOfNode(node)
 		pos := scanner.SkipTrivia(sourceFile.Text(), moveRangePastModifiers(node).Pos())
@@ -197,7 +188,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		return prefix + "static {}", pos, end
 	}
 
-	// Get the declaration name
 	var declName *ast.Node
 	if isAssignedExpression(node) {
 		declName = node.Parent.Name()
@@ -207,7 +197,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 
 	debug.AssertIsDefined(declName, "Expected call hierarchy item to have a name")
 
-	// Get text from the name
 	if ast.IsIdentifier(declName) {
 		text = declName.Text()
 	} else if ast.IsStringOrNumericLiteralLike(declName) {
@@ -219,7 +208,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		}
 	}
 
-	// Try to get text from symbol if undefined
 	if text == "" {
 		c, done := program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node))
 		defer done()
@@ -229,7 +217,7 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		}
 	}
 
-	// Last resort: print the node on a single line without comments
+	// get the text from printing the node on a single line without comments...
 	if text == "" {
 		sourceFile := ast.GetSourceFileOfNode(node)
 		writer, putWriter := printer.GetSingleLineStringWriter()
@@ -239,7 +227,6 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		text = writer.String()
 	}
 
-	// Use getStart() behavior (skip trivia) for selection span
 	sourceFile := ast.GetSourceFileOfNode(node)
 	namePos := scanner.SkipTrivia(sourceFile.Text(), declName.Pos())
 
@@ -260,7 +247,6 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 				}
 			}
 		}
-		// Check for module block
 		if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
 			modParent := parent.Parent.Parent.Parent.Parent
 			if ast.IsModuleDeclaration(modParent) {
@@ -313,17 +299,14 @@ func findImplementation(c *checker.Checker, node *ast.Node) *ast.Node {
 		return node
 	}
 
-	// If it has a body, it's already the implementation
 	if node.Body() != nil {
 		return node
 	}
 
-	// For constructors, find the first constructor with a body
 	if ast.IsConstructorDeclaration(node) {
 		return ast.GetFirstConstructorWithBody(node.Parent)
 	}
 
-	// For function or method declarations, look for the implementation in the symbol
 	if ast.IsFunctionDeclaration(node) || ast.IsMethodDeclaration(node) {
 		symbol := getSymbolOfCallHierarchyDeclaration(c, node)
 		if symbol != nil && symbol.ValueDeclaration != nil {
@@ -347,13 +330,11 @@ func findAllInitialDeclarations(c *checker.Checker, node *ast.Node) []*ast.Node 
 		return nil
 	}
 
-	// Sort declarations by file and position
 	type declKey struct {
 		file string
 		pos  int
 	}
 
-	// Create indices for declarations
 	indices := make([]int, len(symbol.Declarations))
 	for i := range indices {
 		indices[i] = i
@@ -379,7 +360,6 @@ func findAllInitialDeclarations(c *checker.Checker, node *ast.Node) []*ast.Node 
 	for _, i := range indices {
 		decl := symbol.Declarations[i]
 		if isValidCallHierarchyDeclaration(decl) {
-			// Only add if it's not adjacent to the last declaration
 			if lastDecl == nil || lastDecl.Parent != decl.Parent || lastDecl.End() != decl.Pos() {
 				declarations = append(declarations, decl)
 			}
@@ -413,21 +393,21 @@ func findImplementationOrAllInitialDeclarations(c *checker.Checker, node *ast.No
 }
 
 // Resolves the call hierarchy declaration for a node.
-//
-// A call hierarchy item must refer to either a SourceFile, Module Declaration, Class Static Block, or something intrinsically callable that has a name:
-// - Class Declarations
-// - Class Expressions (with a name)
-// - Function Declarations
-// - Function Expressions (with a name or assigned to a const variable)
-// - Arrow Functions (assigned to a const variable)
-// - Constructors
-// - Class `static {}` initializer blocks
-// - Methods
-// - Accessors
-//
-// If a call is contained in a non-named callable Node (function expression, arrow function, etc.), then
-// its containing `CallHierarchyItem` is a containing function or SourceFile that matches the above list.
 func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.Node) (result any) {
+	// A call hierarchy item must refer to either a SourceFile, Module Declaration, Class Static Block, or something intrinsically callable that has a name:
+	// - Class Declarations
+	// - Class Expressions (with a name)
+	// - Function Declarations
+	// - Function Expressions (with a name or assigned to a const variable)
+	// - Arrow Functions (assigned to a const variable)
+	// - Constructors
+	// - Class `static {}` initializer blocks
+	// - Methods
+	// - Accessors
+	//
+	// If a call is contained in a non-named callable Node (function expression, arrow function, etc.), then
+	// its containing `CallHierarchyItem` is a containing function or SourceFile that matches the above list.
+
 	c, done := program.GetTypeChecker(context.Background())
 	defer done()
 
@@ -471,20 +451,18 @@ func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.No
 			return nil
 		}
 
-		// Check for static keyword in class static block
 		if location.Kind == ast.KindStaticKeyword && ast.IsClassStaticBlockDeclaration(location.Parent) {
 			location = location.Parent
 			continue
 		}
 
-		// Variable declaration with assigned expression
+		// #39453
 		if ast.IsVariableDeclaration(location) {
 			if initializer := location.Initializer(); initializer != nil && isAssignedExpression(initializer) {
 				return initializer
 			}
 		}
 
-		// Follow symbol if we haven't already
 		if !followingSymbol {
 			symbol := c.GetSymbolAtLocation(location)
 			if symbol != nil {
@@ -536,7 +514,7 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 type callSite struct {
 	declaration *ast.Node
 	textRange   core.TextRange
-	sourceFile  *ast.Node // The source file containing the call site
+	sourceFile  *ast.Node
 }
 
 func convertEntryToCallSite(program *compiler.Program, entry *ReferenceEntry) *callSite {
@@ -575,12 +553,10 @@ func getCallSiteGroupKey(site *callSite) ast.NodeId {
 func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.Program, entries []*callSite) *lsproto.CallHierarchyIncomingCall {
 	fromRanges := make([]lsproto.Range, len(entries))
 	for i, entry := range entries {
-		// Get source file where the call site is located
 		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	// Sort fromRanges for consistent ordering
 	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
 		return lsproto.CompareRanges(&a, &b)
 	})
@@ -603,18 +579,15 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 		return nil
 	}
 
-	// Find all references using getReferencedSymbolsForNode
 	sourceFiles := program.GetSourceFiles()
 	options := refOptions{use: referenceUseReferences}
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, 0, location, program, sourceFiles, options, nil)
 
-	// Flatten to get all reference entries
 	var refEntries []*ReferenceEntry
 	for _, symbolAndEntry := range symbolsAndEntries {
 		refEntries = append(refEntries, symbolAndEntry.references...)
 	}
 
-	// Convert to call sites
 	var callSites []*callSite
 	for _, entry := range refEntries {
 		if site := convertEntryToCallSite(program, entry); site != nil {
@@ -626,26 +599,21 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 		return nil
 	}
 
-	// Group by declaration
 	grouped := make(map[ast.NodeId][]*callSite)
 	for _, site := range callSites {
 		key := getCallSiteGroupKey(site)
 		grouped[key] = append(grouped[key], site)
 	}
 
-	// Convert groups to incoming calls
 	var result []*lsproto.CallHierarchyIncomingCall
 	for _, sites := range grouped {
 		result = append(result, l.convertCallSiteGroupToIncomingCall(program, sites))
 	}
 
-	// Sort result by file first, then position for deterministic order
 	slices.SortFunc(result, func(a, b *lsproto.CallHierarchyIncomingCall) int {
-		// Compare by file URI first
 		if uriComp := strings.Compare(string(a.From.Uri), string(b.From.Uri)); uriComp != 0 {
 			return uriComp
 		}
-		// Then compare by first fromRange
 		if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 			return 0
 		}
@@ -691,12 +659,10 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 		return
 	}
 
-	// Skip trivia to get the actual start position (equivalent to getStart())
 	sourceFile := ast.GetSourceFileOfNode(target)
 	start := scanner.SkipTrivia(sourceFile.Text(), target.Pos())
 	textRange := core.NewTextRange(start, target.End())
 
-	// Handle both single node and array of nodes
 	switch decl := declaration.(type) {
 	case *ast.Node:
 		c.callSites = append(c.callSites, &callSite{
@@ -720,15 +686,14 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		return
 	}
 
-	// Do not descend into ambient nodes
+	// do not descend into ambient nodes.
 	if (node.Flags & ast.NodeFlagsAmbient) != 0 {
 		return
 	}
 
-	// Do not descend into other call site declarations, except class member names
+	// do not descend into other call site declarations, other than class member names
 	if isValidCallHierarchyDeclaration(node) {
 		if ast.IsClassLike(node) {
-			// Collect from computed property names
 			for _, member := range node.Members() {
 				if member.Name() != nil && ast.IsComputedPropertyName(member.Name()) {
 					c.collect(member.Name().Expression())
@@ -846,20 +811,17 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 		}
 
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		// Collect from modifiers
 		if modifiers := node.Modifiers(); modifiers != nil {
 			for _, mod := range modifiers.Nodes {
 				collector.collect(mod)
 			}
 		}
 
-		// Collect from heritage
 		heritage := ast.GetClassExtendsHeritageElement(node)
 		if heritage != nil {
 			collector.collect(heritage.Expression())
 		}
 
-		// Collect from members
 		for _, member := range node.Members() {
 			if ast.CanHaveModifiers(member) && member.Modifiers() != nil {
 				for _, mod := range member.Modifiers().Nodes {
@@ -895,12 +857,10 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.Program, entries []*callSite) *lsproto.CallHierarchyOutgoingCall {
 	fromRanges := make([]lsproto.Range, len(entries))
 	for i, entry := range entries {
-		// Get source file where the call site is located
 		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	// Sort fromRanges for consistent ordering
 	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
 		return lsproto.CompareRanges(&a, &b)
 	})
@@ -926,26 +886,21 @@ func (l *LanguageService) getOutgoingCalls(program *compiler.Program, declaratio
 		return nil
 	}
 
-	// Group by declaration
 	grouped := make(map[ast.NodeId][]*callSite)
 	for _, site := range callSites {
 		key := getCallSiteGroupKey(site)
 		grouped[key] = append(grouped[key], site)
 	}
 
-	// Convert groups to outgoing calls
 	var result []*lsproto.CallHierarchyOutgoingCall
 	for _, sites := range grouped {
 		result = append(result, l.convertCallSiteGroupToOutgoingCall(program, sites))
 	}
 
-	// Sort result by file first, then position for deterministic order
 	slices.SortFunc(result, func(a, b *lsproto.CallHierarchyOutgoingCall) int {
-		// Compare by file URI first
 		if uriComp := strings.Compare(string(a.To.Uri), string(b.To.Uri)); uriComp != 0 {
 			return uriComp
 		}
-		// Then compare by first fromRange
 		if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 			return 0
 		}
@@ -972,7 +927,6 @@ func (l *LanguageService) ProvidePrepareCallHierarchy(
 		return nil, nil
 	}
 
-	// Handle both single node and array of nodes
 	switch decl := declaration.(type) {
 	case *ast.Node:
 		return []*lsproto.CallHierarchyItem{l.createCallHierarchyItem(program, decl)}, nil
@@ -998,7 +952,6 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 		return nil, nil
 	}
 
-	// Get the node at the selection range
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
 	var node *ast.Node
 	if pos == 0 {
@@ -1016,7 +969,6 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 		return nil, nil
 	}
 
-	// Get the first declaration (or the single one)
 	var decl *ast.Node
 	switch d := declaration.(type) {
 	case *ast.Node:
@@ -1045,7 +997,6 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 		return nil, nil
 	}
 
-	// Get the node at the selection range
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
 	var node *ast.Node
 	if pos == 0 {
@@ -1063,7 +1014,6 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 		return nil, nil
 	}
 
-	// Get the first declaration (or the single one)
 	var decl *ast.Node
 	switch d := declaration.(type) {
 	case *ast.Node:
