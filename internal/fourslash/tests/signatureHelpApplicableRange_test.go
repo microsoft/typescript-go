@@ -26,7 +26,7 @@ func TestSignatureHelpApplicableRangeBasic(t *testing.T) {
 let s =/*a*/ /*b*/obj/*c*/./*d*/foo/*e*/(/*1*/"Hello, world!"/*2*/)/*3*/  
   /*4*/;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	
+
 	// Use VerifyBaselineSignatureHelp to check behavior at all markers
 	f.VerifyBaselineSignatureHelp(t)
 }
@@ -40,7 +40,7 @@ func TestSignatureHelpNestedCalls(t *testing.T) {
 function bar(s: string) { return s; }
 let s = foo(/*a*//*b*/bar/*c*/(/*d*/"hello"/*e*/)/*f*/);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	
+
 	// Use VerifyBaselineSignatureHelp to check behavior at all markers
 	f.VerifyBaselineSignatureHelp(t)
 }

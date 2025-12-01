@@ -46,11 +46,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -71,11 +71,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -96,11 +96,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -121,11 +121,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -146,11 +146,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -171,11 +171,11 @@
             {
               "label": "s: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]
