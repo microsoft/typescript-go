@@ -878,6 +878,9 @@ func collectCallSites(program *compiler.Program, c *checker.Checker, node *ast.N
 	case ast.KindClassStaticBlockDeclaration:
 		staticBlock := node.AsClassStaticBlockDeclaration()
 		collector.collect(staticBlock.Body)
+
+	default:
+		debug.AssertNever(node)
 	}
 
 	return collector.callSites
