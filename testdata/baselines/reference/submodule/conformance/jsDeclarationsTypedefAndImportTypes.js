@@ -35,8 +35,6 @@ module.exports = {
 
 
 //// [conn.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {string | number} Whatever
  */
@@ -45,11 +43,8 @@ class Conn {
     item = 3;
     method() { }
 }
-export = Conn;
 module.exports = Conn;
 //// [usage.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {import("./conn")} Conn
  */
@@ -69,13 +64,16 @@ module.exports = {
 
 
 //// [conn.d.ts]
+/**
+ * @typedef {string | number} Whatever
+ */
 export type Whatever = string | number;
 export = Conn;
 //// [usage.d.ts]
-export type Conn = import("./conn");
 /**
  * @typedef {import("./conn")} Conn
  */
+export type Conn = import("./conn");
 declare class Wrap {
     /**
      * @param {Conn} c
@@ -86,3 +84,45 @@ declare const _default: {
     Wrap: typeof Wrap;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+out/conn.d.ts(5,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+out/conn.d.ts(5,10): error TS2304: Cannot find name 'Conn'.
+out/usage.d.ts(4,20): error TS1340: Module './conn' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./conn')'?
+out/usage.d.ts(14,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+
+
+==== out/conn.d.ts (2 errors) ====
+    /**
+     * @typedef {string | number} Whatever
+     */
+    export type Whatever = string | number;
+    export = Conn;
+    ~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+             ~~~~
+!!! error TS2304: Cannot find name 'Conn'.
+    
+==== out/usage.d.ts (2 errors) ====
+    /**
+     * @typedef {import("./conn")} Conn
+     */
+    export type Conn = import("./conn");
+                       ~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './conn' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./conn')'?
+    declare class Wrap {
+        /**
+         * @param {Conn} c
+         */
+        constructor(c: Conn);
+    }
+    declare const _default: {
+        Wrap: typeof Wrap;
+    };
+    export = _default;
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    

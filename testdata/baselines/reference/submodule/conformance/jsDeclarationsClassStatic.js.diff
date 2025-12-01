@@ -1,33 +1,23 @@
 --- old.jsDeclarationsClassStatic.js
 +++ new.jsDeclarationsClassStatic.js
-@@= skipped -25, +25 lines =@@
-
-
- //// [source.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- class Handler {
-     static get OPTIONS() {
-         return 1;
-@@= skipped -12, +14 lines =@@
-     a: "A",
+@@= skipped -38, +38 lines =@@
      b: "B"
  };
-+export = Handler;
  module.exports = Handler;
 +export var Strings = Strings;
  module.exports.Strings = Strings;
  /**
   * @typedef {Object} HandlerOptions
-@@= skipped -11, +13 lines =@@
+@@= skipped -9, +10 lines =@@
+
 
  //// [source.d.ts]
- export = Handler;
+-export = Handler;
 -declare class Handler {
 -    static get OPTIONS(): number;
 -    process(): void;
 -}
--declare namespace Handler {
+ declare namespace Handler {
 -    export { statische, Strings, HandlerOptions };
 -}
 -declare function statische(): void;
@@ -40,10 +30,17 @@
 -     * Should be able to export a type alias at the same time.
 -     */
 -    name: string;
-+export var Strings = Strings;
+-};
++    var statische: () => void;
++}
++export = Handler;
++export declare var Strings: {
++    a: string;
++    b: string;
++};
 +export type HandlerOptions = {
 +    name: String;
- };
++};
 +/**
 + * @typedef {Object} HandlerOptions
 + * @property {String} name

@@ -1,11 +1,10 @@
 // === QuickInfo ===
 === /quickInfoJsDocTagsFunctionOverload05.ts ===
 // declare function foo(): void;
-//                  ^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function foo(): void
-// | function foo(x: number): void
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -14,12 +13,14 @@
 //  * @tag Tag text
 //  */
 // declare function foo(x: number): void
-//                  ^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function foo(): void
 // | function foo(x: number): void
 // | ```
+// | 
+// | 
+// | *@tag* — Tag text
 // | 
 // | ----------------------------------------------------------------------
 [
@@ -36,7 +37,17 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\n"
+        "value": "```tsx\nfunction foo(): void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 17
+        },
+        "end": {
+          "line": 0,
+          "character": 20
+        }
       }
     }
   },
@@ -53,7 +64,17 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\n"
+        "value": "```tsx\nfunction foo(x: number): void\n```\n\n\n*@tag* — Tag text\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 17
+        },
+        "end": {
+          "line": 5,
+          "character": 20
+        }
       }
     }
   }

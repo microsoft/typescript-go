@@ -30,6 +30,8 @@ function assignmentWithComplexRest3<T extends any[]>() {
 }
 
 //// [genericRestTypes.js]
+"use strict";
+// Repro from #25793
 function assignmentWithComplexRest() {
     const fn1 = (x, ..._) => x;
     const fn2 = fn1;

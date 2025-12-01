@@ -25,7 +25,7 @@ var (
 // all changes have been made.
 type configFileRegistryBuilder struct {
 	fs                  *snapshotFSBuilder
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	sessionOptions      *SessionOptions
 
 	base            *ConfigFileRegistry
@@ -36,7 +36,7 @@ type configFileRegistryBuilder struct {
 func newConfigFileRegistryBuilder(
 	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
-	extendedConfigCache *extendedConfigCache,
+	extendedConfigCache *ExtendedConfigCache,
 	sessionOptions *SessionOptions,
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
@@ -76,10 +76,10 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	return newRegistry
 }
 
-func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
+func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
 	configFileName string,
 	configFilePath tspath.Path,
-	openFilePath tspath.Path,
+	filePath tspath.Path,
 	loadKind projectLoadKind,
 	logger *logging.LogTree,
 ) *tsoptions.ParsedCommandLine {
@@ -90,7 +90,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 		}
 		return nil
 	case projectLoadKindCreate:
-		return c.acquireConfigForOpenFile(configFileName, configFilePath, openFilePath, logger)
+		return c.acquireConfigForFile(configFileName, configFilePath, filePath, logger)
 	default:
 		panic(fmt.Sprintf("unknown project load kind: %d", loadKind))
 	}
@@ -122,7 +122,7 @@ func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath t
 		for _, extendedConfig := range newCommandLine.ExtendedSourceFiles() {
 			extendedConfigPath := c.fs.toPath(extendedConfig)
 			newExtendedConfigPaths.Add(extendedConfigPath)
-			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, newExtendedConfigFileEntry(extendingConfigPath))
+			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, newExtendedConfigFileEntry(extendedConfig, extendingConfigPath))
 			if loaded {
 				entry.ChangeIf(
 					func(config *configFileEntry) bool {
@@ -216,7 +216,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	slices.Sort(globs)
-	entry.rootFilesWatch = entry.rootFilesWatch.Clone(patternsAndIgnored{
+	entry.rootFilesWatch = entry.rootFilesWatch.Clone(PatternsAndIgnored{
 		patterns: globs,
 		ignored:  ignored,
 	})
@@ -248,17 +248,19 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 	return entry.Value().commandLine
 }
 
-// acquireConfigForOpenFile loads a config file entry from the cache, or parses it if not already
+// acquireConfigForFile loads a config file entry from the cache, or parses it if not already
 // cached, then adds the open file to `retainingOpenFiles` to keep it alive in the cache.
-// Each `acquireConfigForOpenFile` call that passes an `openFilePath`
+// Each `acquireConfigForFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
-func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
+func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, configFilePath tspath.Path, filePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
-			_, alreadyRetaining := config.retainingOpenFiles[openFilePath]
-			needsRetainOpenFile = !alreadyRetaining
+			if c.fs.isOpenFile(filePath) {
+				_, alreadyRetaining := config.retainingOpenFiles[filePath]
+				needsRetainOpenFile = !alreadyRetaining
+			}
 			return needsRetainOpenFile || config.pendingReload != PendingReloadNone
 		},
 		func(config *configFileEntry) {
@@ -266,7 +268,7 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 				if config.retainingOpenFiles == nil {
 					config.retainingOpenFiles = make(map[tspath.Path]struct{})
 				}
-				config.retainingOpenFiles[openFilePath] = struct{}{}
+				config.retainingOpenFiles[filePath] = struct{}{}
 			}
 			c.reloadIfNeeded(config, configFileName, configFilePath, logger)
 		},
@@ -317,10 +319,48 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
+func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) changeFileResult {
+	var affectedProjects map[tspath.Path]struct{}
+	var affectedFiles map[tspath.Path]struct{}
+
+	logger.Log("Too many files changed; marking all configs for reload")
+	c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+		if affectedFiles == nil {
+			affectedFiles = make(map[tspath.Path]struct{})
+		}
+		affectedFiles[entry.Key()] = struct{}{}
+		return true
+	})
+	c.configFileNames.Clear()
+
+	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+		entry.Change(func(entry *configFileEntry) {
+			affectedProjects = core.CopyMapInto(affectedProjects, entry.retainingProjects)
+			if entry.pendingReload != PendingReloadFull {
+				text, ok := c.FS().ReadFile(entry.fileName)
+				if !ok || text != entry.commandLine.ConfigFile.SourceFile.Text() {
+					entry.pendingReload = PendingReloadFull
+				} else {
+					entry.pendingReload = PendingReloadFileNames
+				}
+			}
+		})
+		return true
+	})
+
+	return changeFileResult{
+		affectedProjects: affectedProjects,
+		affectedFiles:    affectedFiles,
+	}
+}
+
 func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
+	var shouldInvalidateCache bool
+
 	logger.Log("Summarizing file changes")
+	hasExcessiveChanges := summary.HasExcessiveWatchEvents() && summary.IncludesWatchChangeOutsideNodeModules
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
 	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
@@ -366,6 +406,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	logger.Log("Checking if any changed files are config files")
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
+			if hasExcessiveChanges {
+				return c.invalidateCache(logger)
+			}
+
 			affectedProjects = core.CopyMapInto(affectedProjects, c.handleConfigChange(entry, logger))
 			for extendingConfigPath := range entry.Value().retainingConfigs {
 				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
@@ -374,6 +418,27 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 			}
 			// This was a config file, so assume it's not also a root file
 			delete(createdFiles, path)
+		}
+	}
+
+	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
+	for path := range createdOrDeletedFiles {
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			if hasExcessiveChanges {
+				return c.invalidateCache(logger)
+			}
+			directoryPath := path.GetDirectoryPath()
+			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+				if directoryPath.ContainsPath(entry.Key()) {
+					if affectedFiles == nil {
+						affectedFiles = make(map[tspath.Path]struct{})
+					}
+					affectedFiles[entry.Key()] = struct{}{}
+					entry.Delete()
+				}
+				return true
+			})
 		}
 	}
 
@@ -400,27 +465,13 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 					}
 					maps.Copy(affectedProjects, config.retainingProjects)
 					logger.Logf("Root files for config %s changed", entry.Key())
+					shouldInvalidateCache = hasExcessiveChanges
 				},
 			)
-			return true
+			return !shouldInvalidateCache
 		})
-	}
-
-	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
-	for path := range createdOrDeletedFiles {
-		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
-			directoryPath := path.GetDirectoryPath()
-			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
-				if directoryPath.ContainsPath(entry.Key()) {
-					if affectedFiles == nil {
-						affectedFiles = make(map[tspath.Path]struct{})
-					}
-					affectedFiles[entry.Key()] = struct{}{}
-					entry.Delete()
-				}
-				return true
-			})
+		if shouldInvalidateCache {
+			return c.invalidateCache(logger)
 		}
 	}
 
@@ -465,7 +516,7 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 	return result
 }
 
-func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind, logger *logging.LogTree) string {
+func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
@@ -474,13 +525,8 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 		return entry.Value().nearestConfigFileName
 	}
 
-	if loadKind == projectLoadKindFind {
-		return ""
-	}
-
 	configName := c.computeConfigFileName(fileName, false, logger)
-
-	if _, ok := c.fs.overlays[path]; ok {
+	if c.fs.isOpenFile(path) {
 		c.configFileNames.Add(path, &configFileNames{
 			nearestConfigFileName: configName,
 		})
@@ -488,7 +534,25 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	return configName
 }
 
-func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind, logger *logging.LogTree) string {
+func (c *configFileRegistryBuilder) forEachConfigFileNameFor(fileName string, path tspath.Path, cb func(configFileName string)) {
+	if isDynamicFileName(fileName) {
+		return
+	}
+
+	if entry, ok := c.configFileNames.Get(path); ok {
+		configFileName := entry.Value().nearestConfigFileName
+		for configFileName != "" {
+			cb(configFileName)
+			if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
+				configFileName = ancestorConfigName
+			} else {
+				return
+			}
+		}
+	}
+}
+
+func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
@@ -497,18 +561,15 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	if !ok {
 		return ""
 	}
+
 	if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
 		return ancestorConfigName
-	}
-
-	if loadKind == projectLoadKindFind {
-		return ""
 	}
 
 	// Look for config in parent folders of config file
 	result := c.computeConfigFileName(configFileName, true, logger)
 
-	if _, ok := c.fs.overlays[path]; ok {
+	if c.fs.isOpenFile(path) {
 		entry.Change(func(value *configFileNames) {
 			if value.ancestors == nil {
 				value.ancestors = make(map[string]string)

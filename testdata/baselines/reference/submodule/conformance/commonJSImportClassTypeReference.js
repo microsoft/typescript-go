@@ -18,7 +18,6 @@ exports.K = K;
 
 //// [mod1.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class K {
     values() {
         return new K();
@@ -36,7 +35,9 @@ function f(k) {
 
 
 //// [mod1.d.ts]
-export var K = K;
-export {};
+declare class K {
+    values(): K;
+}
+export declare var K: typeof K;
 //// [main.d.ts]
 export {};

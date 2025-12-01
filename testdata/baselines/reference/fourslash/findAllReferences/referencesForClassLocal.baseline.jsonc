@@ -3,11 +3,18 @@
 // var n = 14;
 // 
 // class foo {
-//     /*FIND ALL REFS*/private n = 0;
+//     /*FIND ALL REFS*/private [|n|] = 0;
 // 
 //     public bar() {
-//         this.n = 9;
-// // --- (line: 8) skipped ---
+//         this.[|n|] = 9;
+//     }
+// 
+//     constructor() {
+//         this.[|n|] = 4;
+//     }
+// 
+//     public bar2() {
+// --- (line: 15) skipped ---
 
 
 
@@ -27,7 +34,7 @@
 //     }
 // 
 //     public bar2() {
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---
 
 
 
@@ -47,7 +54,7 @@
 //     }
 // 
 //     public bar2() {
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---
 
 
 
@@ -67,4 +74,4 @@
 //     }
 // 
 //     public bar2() {
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---

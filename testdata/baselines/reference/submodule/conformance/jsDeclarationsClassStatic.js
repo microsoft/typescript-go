@@ -26,8 +26,6 @@ module.exports.Strings = Strings
 
 
 //// [source.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class Handler {
     static get OPTIONS() {
         return 1;
@@ -40,7 +38,6 @@ const Strings = {
     a: "A",
     b: "B"
 };
-export = Handler;
 module.exports = Handler;
 export var Strings = Strings;
 module.exports.Strings = Strings;
@@ -52,8 +49,14 @@ module.exports.Strings = Strings;
 
 
 //// [source.d.ts]
+declare namespace Handler {
+    var statische: () => void;
+}
 export = Handler;
-export var Strings = Strings;
+export declare var Strings: {
+    a: string;
+    b: string;
+};
 export type HandlerOptions = {
     name: String;
 };
