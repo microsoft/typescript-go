@@ -103,6 +103,9 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 				// Handle /server/ subdirectory - need to remove both prefixes
 				s = strings.ReplaceAll(s, "/tests/cases/fourslash/server/", "/")
 				s = strings.ReplaceAll(s, "/tests/cases/fourslash/", "/")
+				// SymbolKind enum differences between Strada and tsgo
+				s = strings.ReplaceAll(s, "kind: getter", "kind: property")
+				s = strings.ReplaceAll(s, "kind: script", "kind: file")
 				return s
 			},
 		}
