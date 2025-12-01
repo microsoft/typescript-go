@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -228,9 +229,14 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 		}
 	}
 
-	// Last resort: use a generic name
+	// Last resort: print the node on a single line without comments
 	if text == "" {
-		text = "(anonymous)"
+		sourceFile := ast.GetSourceFileOfNode(node)
+		writer, putWriter := printer.GetSingleLineStringWriter()
+		defer putWriter()
+		p := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+		p.Write(node, sourceFile, writer, nil)
+		text = writer.String()
 	}
 
 	// Use getStart() behavior (skip trivia) for selection span
