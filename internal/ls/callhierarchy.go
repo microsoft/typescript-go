@@ -46,6 +46,10 @@ func isAssignedExpression(node *ast.Node) bool {
 	if !(ast.IsFunctionExpression(node) || ast.IsArrowFunction(node) || ast.IsClassExpression(node)) {
 		return false
 	}
+	// The expression must not have a name (otherwise it would be a NamedExpression)
+	if node.Name() != nil {
+		return false
+	}
 	parent := node.Parent
 	if !isVariableLike(parent) {
 		return false
@@ -310,10 +314,7 @@ func findImplementation(c *checker.Checker, node *ast.Node) *ast.Node {
 
 	// For constructors, find the first constructor with a body
 	if ast.IsConstructorDeclaration(node) {
-		ctor := ast.GetFirstConstructorWithBody(node.Parent)
-		if ctor != nil {
-			return ctor
-		}
+		return ast.GetFirstConstructorWithBody(node.Parent)
 	}
 
 	// For function or method declarations, look for the implementation in the symbol
@@ -506,7 +507,7 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 
 	kind := getSymbolKindFromNode(node)
 
-	fullStart := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
+	fullStart := scanner.SkipTriviaEx(sourceFile.Text(), node.Pos(), &scanner.SkipTriviaOptions{StopAtComments: true})
 	script := l.getScript(sourceFile.FileName())
 	span := l.converters.ToLSPRange(script, core.NewTextRange(fullStart, node.End()))
 	selectionSpan := l.converters.ToLSPRange(script, core.NewTextRange(namePos, nameEnd))
@@ -658,7 +659,7 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 
 	switch {
 	case ast.IsTaggedTemplateExpression(node):
-		target = node.Expression()
+		target = node.AsTaggedTemplateExpression().Tag
 	case ast.IsJsxOpeningElement(node):
 		target = node.TagName()
 	case ast.IsJsxSelfClosingElement(node):
@@ -771,8 +772,9 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 	case ast.KindTaggedTemplateExpression:
 		// do not descend into the type arguments of a tagged template expression
 		c.recordCallSite(node)
-		c.collect(node.Expression())
-		c.collect(node.Body())
+		taggedTemplate := node.AsTaggedTemplateExpression()
+		c.collect(taggedTemplate.Tag)
+		c.collect(taggedTemplate.Template)
 		return
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		// do not descend into the type arguments of a JsxOpeningLikeElement
