@@ -14647,11 +14647,11 @@ func (c *Checker) markSymbolOfAliasDeclarationIfTypeOnly(aliasDeclaration *ast.N
 	// If the declaration itself is type-only, mark it and return. No need to check what it resolves to.
 	sourceSymbol := c.getSymbolOfDeclaration(aliasDeclaration)
 	links := c.aliasSymbolLinks.Get(sourceSymbol)
-	if ast.IsTypeOnlyImportOrExportDeclaration(aliasDeclaration) {
+	if links.typeOnlyDeclaration == nil && ast.IsTypeOnlyImportOrExportDeclaration(aliasDeclaration) {
 		links.typeOnlyDeclaration = aliasDeclaration
 		return true
 	}
-	if exportStarDeclaration != nil {
+	if links.typeOnlyDeclaration == nil && exportStarDeclaration != nil {
 		links.typeOnlyDeclaration = exportStarDeclaration
 		return true
 	}
@@ -15799,11 +15799,12 @@ func (c *Checker) resolveAlias(symbol *ast.Symbol) *ast.Symbol {
 	return links.aliasTarget
 }
 
-func (c *Checker) resolveIndirectionAlias(symbol *ast.Symbol, target *ast.Symbol) *ast.Symbol {
+func (c *Checker) resolveIndirectionAlias(source *ast.Symbol, target *ast.Symbol) *ast.Symbol {
 	result := c.resolveAlias(target)
-	targetLinks := c.aliasSymbolLinks.Get(target)
-	if targetLinks.typeOnlyDeclaration != nil {
-		c.aliasSymbolLinks.Get(symbol).typeOnlyDeclaration = targetLinks.typeOnlyDeclaration
+	if targetLinks := c.aliasSymbolLinks.Get(target); targetLinks.typeOnlyDeclaration != nil {
+		if sourceLinks := c.aliasSymbolLinks.Get(source); sourceLinks.typeOnlyDeclaration == nil {
+			sourceLinks.typeOnlyDeclaration = targetLinks.typeOnlyDeclaration
+		}
 	}
 	return result
 }
