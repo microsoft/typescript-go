@@ -40,7 +40,7 @@ func newCheckerPool(program *Program) *checkerPool {
 		checkerCount = *c
 	}
 
-	checkerCount = min(max(checkerCount, 1), len(program.files), 256)
+	checkerCount = max(min(checkerCount, len(program.files), 256), 1)
 
 	pool := &checkerPool{
 		program:      program,
