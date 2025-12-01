@@ -19,7 +19,6 @@ exports.K = NS.K;
 
 //// [mod1.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var NS = {};
 NS.K = class {
     values() {
@@ -45,7 +44,10 @@ declare namespace NS {
         };
     };
 }
-export var K = NS.K;
-export {};
+export declare var K: {
+    new (): {
+        values(): /*elided*/ any;
+    };
+};
 //// [main.d.ts]
 export {};

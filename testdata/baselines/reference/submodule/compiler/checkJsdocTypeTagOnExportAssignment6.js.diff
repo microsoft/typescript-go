@@ -1,9 +1,0 @@
---- old.checkJsdocTypeTagOnExportAssignment6.js
-+++ new.checkJsdocTypeTagOnExportAssignment6.js
-@@= skipped -30, +30 lines =@@
- //// [b.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--var a_1 = require("./a");
-+const a_1 = require("./a");
- a_1.default;

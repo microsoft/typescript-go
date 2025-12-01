@@ -12,7 +12,7 @@ import (
 
 func TestImportSuggestionsCache_exportUndefined(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 { "compilerOptions": { "module": "esnext" } }
@@ -24,6 +24,7 @@ export = x;
 // @Filename: /home/src/workspaces/project/index.ts
  /**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -37,11 +38,11 @@ export = x;
 					Label:               "x",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/home/src/workspaces/project/undefinedAlias",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./undefinedAlias",
 						},
-					})),
+					},
 				},
 			},
 		},
@@ -58,11 +59,11 @@ export = x;
 					Label:               "x",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/home/src/workspaces/project/undefinedAlias",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./undefinedAlias",
 						},
-					})),
+					},
 				},
 			},
 		},

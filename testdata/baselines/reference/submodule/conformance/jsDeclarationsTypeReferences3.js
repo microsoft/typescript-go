@@ -15,9 +15,7 @@ module.exports.A.B = {
 
 
 //// [index.js]
-"use strict";
 /// <reference types="node" />
-Object.defineProperty(exports, "__esModule", { value: true });
 const Something = require("fs").Something;
 export var A = {};
 module.exports.A = {};
@@ -27,5 +25,4 @@ module.exports.A.B = {
 
 
 //// [index.d.ts]
-export var A = {};
-export {};
+export declare var A: {};

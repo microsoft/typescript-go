@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_multipleWithSameName(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @noLib: true
@@ -43,11 +43,11 @@ fo/**/`
 					},
 					&lsproto.CompletionItem{
 						Label: "foo",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/a",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
+								ModuleSpecifier: "./a",
 							},
-						})),
+						},
 						Detail:              PtrTo("const foo: 0"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -55,11 +55,11 @@ fo/**/`
 					},
 					&lsproto.CompletionItem{
 						Label: "foo",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/b",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
+								ModuleSpecifier: "./b",
 							},
-						})),
+						},
 						Detail:              PtrTo("const foo: 1"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -70,7 +70,7 @@ fo/**/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/b",
+		Source:      "./b",
 		Description: "Add import from \"./b\"",
 		NewFileContent: PtrTo(`import { foo } from "./b";
 

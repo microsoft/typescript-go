@@ -12,10 +12,9 @@ import (
 
 func TestCompletionsImport_ofAlias_preferShortPath(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @moduleResolution: node10
-// @module: commonJs
+	const content = `// @module: commonJs
 // @noLib: true
 // @Filename: /foo/index.ts
 export { foo } from "./lib/foo";
@@ -35,12 +34,12 @@ fo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "foo",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/foo/lib/foo",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
+								ModuleSpecifier: "./foo",
 							},
-						})),
-						Detail:              PtrTo("const foo: 0"),
+						},
+						Detail:              PtrTo("(alias) const foo: 0\nexport foo"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
@@ -50,7 +49,7 @@ fo/**/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/foo/lib/foo",
+		Source:      "./foo",
 		Description: "Add import from \"./foo\"",
 		NewFileContent: PtrTo(`import { foo } from "./foo";
 

@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_default_didNotExistBefore(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts
@@ -30,11 +30,11 @@ f/**/;`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					Detail:              PtrTo("function foo(): void"),
 					Kind:                PtrTo(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -45,7 +45,7 @@ f/**/;`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import foo from "./a";
 

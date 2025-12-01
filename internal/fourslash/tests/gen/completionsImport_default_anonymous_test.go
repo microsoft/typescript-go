@@ -44,11 +44,11 @@ fooB/*1*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "fooBar",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/src/foo-bar",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./foo-bar",
 						},
-					})),
+					},
 					Detail:              PtrTo("(property) default: 0"),
 					Kind:                PtrTo(lsproto.CompletionItemKindField),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -59,7 +59,7 @@ fooB/*1*/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "fooBar",
-		Source:      "/src/foo-bar",
+		Source:      "./foo-bar",
 		Description: "Add import from \"./foo-bar\"",
 		NewFileContent: PtrTo(`import fooBar from "./foo-bar"
 

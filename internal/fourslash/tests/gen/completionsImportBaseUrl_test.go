@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImportBaseUrl(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tsconfig.json
 {
@@ -36,11 +36,11 @@ fo/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/src/a",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					Detail:              PtrTo("const foo: 0"),
 					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

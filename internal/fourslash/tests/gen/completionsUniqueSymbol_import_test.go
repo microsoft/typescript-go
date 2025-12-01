@@ -43,11 +43,11 @@ i[|./**/|];`
 				&lsproto.CompletionItem{
 					Label:      "publicSym",
 					InsertText: PtrTo("[publicSym]"),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
+							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
@@ -62,7 +62,7 @@ i[|./**/|];`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "publicSym",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Update import from \"./a\"",
 		NewFileContent: PtrTo(`import { i, publicSym } from "./a";
 i.;`),

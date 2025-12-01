@@ -4,14 +4,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type LanguageService struct {
 	host                    Host
 	program                 *compiler.Program
-	converters              *Converters
+	converters              *lsconv.Converters
 	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
 }
 
@@ -27,11 +30,15 @@ func NewLanguageService(
 	}
 }
 
+func (l *LanguageService) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, l.program.GetCurrentDirectory(), l.UseCaseSensitiveFileNames())
+}
+
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.program
 }
 
-func (l *LanguageService) UserPreferences() *UserPreferences {
+func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
 	return l.host.UserPreferences()
 }
 

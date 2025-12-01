@@ -16,18 +16,9 @@ module.exports.Strings = Strings;
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const Strings = {
     a: "A",
     b: "B"
-};
-export = {
-    thing: "ok",
-    also: "ok",
-    desc: {
-        item: "ok"
-    }
 };
 module.exports = {
     thing: "ok",
@@ -49,4 +40,7 @@ declare const _default: {
     };
 };
 export = _default;
-export var Strings = Strings;
+export declare var Strings: {
+    a: string;
+    b: string;
+};

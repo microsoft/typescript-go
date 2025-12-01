@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testrunner"
@@ -44,6 +44,13 @@ func (r *RangeMarker) GetName() *string {
 	return r.Marker.Name
 }
 
+func (r *RangeMarker) LSLocation() lsproto.Location {
+	return lsproto.Location{
+		Uri:   lsconv.FileNameToDocumentURI(r.fileName),
+		Range: r.LSRange,
+	}
+}
+
 type Marker struct {
 	fileName   string
 	Position   int
@@ -64,6 +71,16 @@ func (m *Marker) GetName() *string {
 	return m.Name
 }
 
+func (m *Marker) MakerWithSymlink(fileName string) *Marker {
+	return &Marker{
+		fileName:   fileName,
+		Position:   m.Position,
+		LSPosition: m.LSPosition,
+		Name:       m.Name,
+		Data:       m.Data,
+	}
+}
+
 type MarkerOrRange interface {
 	FileName() string
 	LSPos() lsproto.Position
@@ -79,10 +96,18 @@ type TestData struct {
 	Ranges          []*RangeMarker
 }
 
+func (t *TestData) isStateBaseliningEnabled() bool {
+	return isStateBaseliningEnabled(t.GlobalOptions)
+}
+
 type testFileWithMarkers struct {
 	file    *TestFileInfo
 	markers []*Marker
 	ranges  []*RangeMarker
+}
+
+func isStateBaseliningEnabled(globalOptions map[string]string) bool {
+	return globalOptions["statebaseline"] == "true"
 }
 
 func ParseTestData(t *testing.T, contents string, fileName string) TestData {
@@ -93,10 +118,13 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	var markers []*Marker
 	var ranges []*RangeMarker
 
-	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinks(
+	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinksWithOptions(
 		contents,
 		fileName,
 		parseFileContent,
+		testrunner.ParseTestFilesOptions{
+			AllowImplicitFirstFile: true,
+		},
 	)
 	if e != nil {
 		t.Fatalf("Error parsing fourslash data: %s", e.Error())
@@ -125,7 +153,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 
 	}
 
-	if hasTSConfig && len(globalOptions) > 0 {
+	if hasTSConfig && len(globalOptions) > 0 && !isStateBaseliningEnabled(globalOptions) {
 		t.Fatalf("It is not allowed to use global options along with config files.")
 	}
 
@@ -163,17 +191,17 @@ type TestFileInfo struct {
 	emit    bool
 }
 
-// FileName implements ls.Script.
+// FileName implements lsconv.Script.
 func (t *TestFileInfo) FileName() string {
 	return t.fileName
 }
 
-// Text implements ls.Script.
+// Text implements lsconv.Script.
 func (t *TestFileInfo) Text() string {
 	return t.Content
 }
 
-var _ ls.Script = (*TestFileInfo)(nil)
+var _ lsconv.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
 
@@ -368,8 +396,8 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 	outputString := output.String()
 	// Set LS positions for markers
-	lineMap := ls.ComputeLSPLineStarts(outputString)
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
+	lineMap := lsconv.ComputeLSPLineStarts(outputString)
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -407,13 +435,13 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 
 func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, error) {
 	// Attempt to parse the marker value as JSON
-	var v interface{}
+	var v any
 	e := json.Unmarshal([]byte("{ "+text+" }"), &v)
 
 	if e != nil {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text "+text)
 	}
-	markerValue, ok := v.(map[string]interface{})
+	markerValue, ok := v.(map[string]any)
 	if !ok || len(markerValue) == 0 {
 		return nil, reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty")
 	}

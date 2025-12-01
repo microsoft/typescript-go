@@ -381,7 +381,7 @@ func (f *NodeFactory) RestoreOuterExpressions(outerExpression *ast.Expression, i
 // Ensures `"use strict"` is the first statement of a slice of statements.
 func (f *NodeFactory) EnsureUseStrict(statements []*ast.Statement) []*ast.Statement {
 	for _, statement := range statements {
-		if ast.IsPrologueDirective(statement) && statement.AsExpressionStatement().Expression.Text() == "use strict" {
+		if ast.IsPrologueDirective(statement) && statement.Expression().Text() == "use strict" {
 			return statements
 		} else {
 			break
@@ -399,7 +399,7 @@ func (f *NodeFactory) SplitStandardPrologue(source []*ast.Statement) (prologue [
 			return source[:i], source[i:]
 		}
 	}
-	return nil, source
+	return source, nil
 }
 
 // Splits a slice of statements into two parts: custom prologue statements (e.g., with `EFCustomPrologue` set) and the rest of the statements
@@ -548,17 +548,7 @@ func (f *NodeFactory) NewDisposeResourcesHelper(envBinding *ast.Expression) *ast
 // !!! ES2018 Helpers
 // Chains a sequence of expressions using the __assign helper or Object.assign if available in the target
 func (f *NodeFactory) NewAssignHelper(attributesSegments []*ast.Expression, scriptTarget core.ScriptTarget) *ast.Expression {
-	if scriptTarget >= core.ScriptTargetES2015 {
-		return f.NewCallExpression(f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("assign"), ast.NodeFlagsNone), nil, nil, f.NewNodeList(attributesSegments), ast.NodeFlagsNone)
-	}
-	f.emitContext.RequestEmitHelper(assignHelper)
-	return f.NewCallExpression(
-		f.NewUnscopedHelperName("__assign"),
-		nil,
-		nil,
-		f.NewNodeList(attributesSegments),
-		ast.NodeFlagsNone,
-	)
+	return f.NewCallExpression(f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("assign"), ast.NodeFlagsNone), nil, nil, f.NewNodeList(attributesSegments), ast.NodeFlagsNone)
 }
 
 // ES2018 Destructuring Helpers

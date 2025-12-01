@@ -12,10 +12,9 @@ import (
 
 func TestCompletionsImport_reExportDefault(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
-// @moduleResolution: node10
 // @Filename: /a/b/impl.ts
 export default function foo() {}
 // @Filename: /a/index.ts
@@ -34,13 +33,13 @@ fo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "foo",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/a/b/impl",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
+								ModuleSpecifier: "./a",
 							},
-						})),
-						Detail:              PtrTo("function foo(): void"),
-						Kind:                PtrTo(lsproto.CompletionItemKindFunction),
+						},
+						Detail:              PtrTo("(alias) function foo(): void\nexport foo"),
+						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
@@ -49,7 +48,7 @@ fo/**/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/a/b/impl",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { foo } from "./a";
 
