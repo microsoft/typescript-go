@@ -127,7 +127,7 @@ var (
 	// The server detected that the content of a document got
 	// modified outside normal conditions. A server should
 	// NOT send this error code if it detects a content change
-	// in its unprocessed messages. The result even computed
+	// in it unprocessed messages. The result even computed
 	// on an older state might still be useful for the client.
 	//
 	// If a client decides that a result is not of any use anymore
