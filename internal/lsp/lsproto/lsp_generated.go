@@ -21745,37 +21745,37 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 // corresponding client capabilities.
 //
 // Since: 3.16.0
-type SemanticTokenTypes string
+type SemanticTokenType string
 
 const (
-	SemanticTokenTypesnamespace SemanticTokenTypes = "namespace"
+	SemanticTokenTypenamespace SemanticTokenType = "namespace"
 	// Represents a generic type. Acts as a fallback for types which can't be mapped to
 	// a specific type like class or enum.
-	SemanticTokenTypestype          SemanticTokenTypes = "type"
-	SemanticTokenTypesclass         SemanticTokenTypes = "class"
-	SemanticTokenTypesenum          SemanticTokenTypes = "enum"
-	SemanticTokenTypesinterface     SemanticTokenTypes = "interface"
-	SemanticTokenTypesstruct        SemanticTokenTypes = "struct"
-	SemanticTokenTypestypeParameter SemanticTokenTypes = "typeParameter"
-	SemanticTokenTypesparameter     SemanticTokenTypes = "parameter"
-	SemanticTokenTypesvariable      SemanticTokenTypes = "variable"
-	SemanticTokenTypesproperty      SemanticTokenTypes = "property"
-	SemanticTokenTypesenumMember    SemanticTokenTypes = "enumMember"
-	SemanticTokenTypesevent         SemanticTokenTypes = "event"
-	SemanticTokenTypesfunction      SemanticTokenTypes = "function"
-	SemanticTokenTypesmethod        SemanticTokenTypes = "method"
-	SemanticTokenTypesmacro         SemanticTokenTypes = "macro"
-	SemanticTokenTypeskeyword       SemanticTokenTypes = "keyword"
-	SemanticTokenTypesmodifier      SemanticTokenTypes = "modifier"
-	SemanticTokenTypescomment       SemanticTokenTypes = "comment"
-	SemanticTokenTypesstring        SemanticTokenTypes = "string"
-	SemanticTokenTypesnumber        SemanticTokenTypes = "number"
-	SemanticTokenTypesregexp        SemanticTokenTypes = "regexp"
-	SemanticTokenTypesoperator      SemanticTokenTypes = "operator"
+	SemanticTokenTypetype          SemanticTokenType = "type"
+	SemanticTokenTypeclass         SemanticTokenType = "class"
+	SemanticTokenTypeenum          SemanticTokenType = "enum"
+	SemanticTokenTypeinterface     SemanticTokenType = "interface"
+	SemanticTokenTypestruct        SemanticTokenType = "struct"
+	SemanticTokenTypetypeParameter SemanticTokenType = "typeParameter"
+	SemanticTokenTypeparameter     SemanticTokenType = "parameter"
+	SemanticTokenTypevariable      SemanticTokenType = "variable"
+	SemanticTokenTypeproperty      SemanticTokenType = "property"
+	SemanticTokenTypeenumMember    SemanticTokenType = "enumMember"
+	SemanticTokenTypeevent         SemanticTokenType = "event"
+	SemanticTokenTypefunction      SemanticTokenType = "function"
+	SemanticTokenTypemethod        SemanticTokenType = "method"
+	SemanticTokenTypemacro         SemanticTokenType = "macro"
+	SemanticTokenTypekeyword       SemanticTokenType = "keyword"
+	SemanticTokenTypemodifier      SemanticTokenType = "modifier"
+	SemanticTokenTypecomment       SemanticTokenType = "comment"
+	SemanticTokenTypestring        SemanticTokenType = "string"
+	SemanticTokenTypenumber        SemanticTokenType = "number"
+	SemanticTokenTyperegexp        SemanticTokenType = "regexp"
+	SemanticTokenTypeoperator      SemanticTokenType = "operator"
 	// Since: 3.17.0
-	SemanticTokenTypesdecorator SemanticTokenTypes = "decorator"
+	SemanticTokenTypedecorator SemanticTokenType = "decorator"
 	// Since: 3.18.0
-	SemanticTokenTypeslabel SemanticTokenTypes = "label"
+	SemanticTokenTypelabel SemanticTokenType = "label"
 )
 
 // A set of predefined token modifiers. This set is not fixed
@@ -21783,19 +21783,19 @@ const (
 // corresponding client capabilities.
 //
 // Since: 3.16.0
-type SemanticTokenModifiers string
+type SemanticTokenModifier string
 
 const (
-	SemanticTokenModifiersdeclaration    SemanticTokenModifiers = "declaration"
-	SemanticTokenModifiersdefinition     SemanticTokenModifiers = "definition"
-	SemanticTokenModifiersreadonly       SemanticTokenModifiers = "readonly"
-	SemanticTokenModifiersstatic         SemanticTokenModifiers = "static"
-	SemanticTokenModifiersdeprecated     SemanticTokenModifiers = "deprecated"
-	SemanticTokenModifiersabstract       SemanticTokenModifiers = "abstract"
-	SemanticTokenModifiersasync          SemanticTokenModifiers = "async"
-	SemanticTokenModifiersmodification   SemanticTokenModifiers = "modification"
-	SemanticTokenModifiersdocumentation  SemanticTokenModifiers = "documentation"
-	SemanticTokenModifiersdefaultLibrary SemanticTokenModifiers = "defaultLibrary"
+	SemanticTokenModifierdeclaration    SemanticTokenModifier = "declaration"
+	SemanticTokenModifierdefinition     SemanticTokenModifier = "definition"
+	SemanticTokenModifierreadonly       SemanticTokenModifier = "readonly"
+	SemanticTokenModifierstatic         SemanticTokenModifier = "static"
+	SemanticTokenModifierdeprecated     SemanticTokenModifier = "deprecated"
+	SemanticTokenModifierabstract       SemanticTokenModifier = "abstract"
+	SemanticTokenModifierasync          SemanticTokenModifier = "async"
+	SemanticTokenModifiermodification   SemanticTokenModifier = "modification"
+	SemanticTokenModifierdocumentation  SemanticTokenModifier = "documentation"
+	SemanticTokenModifierdefaultLibrary SemanticTokenModifier = "defaultLibrary"
 )
 
 // The document diagnostic report kinds.
@@ -21813,59 +21813,31 @@ const (
 )
 
 // Predefined error codes.
-type ErrorCodes int32
+type ErrorCode int32
 
 const (
-	ErrorCodesParseError     ErrorCodes = -32700
-	ErrorCodesInvalidRequest ErrorCodes = -32600
-	ErrorCodesMethodNotFound ErrorCodes = -32601
-	ErrorCodesInvalidParams  ErrorCodes = -32602
-	ErrorCodesInternalError  ErrorCodes = -32603
+	ErrorCodeParseError     ErrorCode = -32700
+	ErrorCodeInvalidRequest ErrorCode = -32600
+	ErrorCodeMethodNotFound ErrorCode = -32601
+	ErrorCodeInvalidParams  ErrorCode = -32602
+	ErrorCodeInternalError  ErrorCode = -32603
 	// Error code indicating that a server received a notification or
 	// request before the server has received the `initialize` request.
-	ErrorCodesServerNotInitialized ErrorCodes = -32002
-	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
-)
-
-const _ErrorCodes_name = "ParseErrorInternalErrorInvalidParamsMethodNotFoundInvalidRequestServerNotInitializedUnknownErrorCode"
-
-var (
-	_ErrorCodes_index_0 = [...]uint16{0, 10}
-	_ErrorCodes_index_1 = [...]uint16{0, 13, 26, 40, 54}
-	_ErrorCodes_index_2 = [...]uint16{0, 20, 36}
-)
-
-func (e ErrorCodes) String() string {
-	switch {
-	case e == -32700:
-		return _ErrorCodes_name[0:10]
-	case -32603 <= e && e <= -32600:
-		i := int(e) - -32603
-		return _ErrorCodes_name[10+_ErrorCodes_index_1[i] : 10+_ErrorCodes_index_1[i+1]]
-	case -32002 <= e && e <= -32001:
-		i := int(e) - -32002
-		return _ErrorCodes_name[64+_ErrorCodes_index_2[i] : 64+_ErrorCodes_index_2[i+1]]
-	default:
-		return fmt.Sprintf("ErrorCodes(%d)", e)
-	}
-}
-
-type LSPErrorCodes int32
-
-const (
+	ErrorCodeServerNotInitialized ErrorCode = -32002
+	ErrorCodeUnknownErrorCode     ErrorCode = -32001
 	// A request failed but it was syntactically correct, e.g the
 	// method name was known and the parameters were valid. The error
 	// message should contain human readable information about why
 	// the request failed.
 	//
 	// Since: 3.17.0
-	LSPErrorCodesRequestFailed LSPErrorCodes = -32803
+	ErrorCodeRequestFailed ErrorCode = -32803
 	// The server cancelled the request. This error code should
 	// only be used for requests that explicitly support being
 	// server cancellable.
 	//
 	// Since: 3.17.0
-	LSPErrorCodesServerCancelled LSPErrorCodes = -32802
+	ErrorCodeServerCancelled ErrorCode = -32802
 	// The server detected that the content of a document got
 	// modified outside normal conditions. A server should
 	// NOT send this error code if it detects a content change
@@ -21874,22 +21846,41 @@ const (
 	//
 	// If a client decides that a result is not of any use anymore
 	// the client should cancel the request.
-	LSPErrorCodesContentModified LSPErrorCodes = -32801
+	ErrorCodeContentModified ErrorCode = -32801
 	// The client has canceled a request and a server has detected
 	// the cancel.
-	LSPErrorCodesRequestCancelled LSPErrorCodes = -32800
+	ErrorCodeRequestCancelled ErrorCode = -32800
 )
 
-const _LSPErrorCodes_name = "RequestFailedServerCancelledContentModifiedRequestCancelled"
+const _ErrorCode_name = "RequestFailedServerCancelledContentModifiedRequestCancelledParseErrorInternalErrorInvalidParamsMethodNotFoundInvalidRequestServerNotInitializedUnknownErrorCode"
 
-var _LSPErrorCodes_index = [...]uint16{0, 13, 28, 43, 59}
+var (
+	_ErrorCode_index_0 = [...]uint16{0, 13, 28, 43, 59}
+	_ErrorCode_index_1 = [...]uint16{0, 10}
+	_ErrorCode_index_2 = [...]uint16{0, 13, 26, 40, 54}
+	_ErrorCode_index_3 = [...]uint16{0, 20, 36}
+)
 
-func (e LSPErrorCodes) String() string {
-	i := int(e) - -32803
-	if i < 0 || i >= len(_LSPErrorCodes_index)-1 {
-		return fmt.Sprintf("LSPErrorCodes(%d)", e)
+func (e ErrorCode) String() string {
+	switch {
+	case -32803 <= e && e <= -32800:
+		i := int(e) - -32803
+		return _ErrorCode_name[0+_ErrorCode_index_0[i] : 0+_ErrorCode_index_0[i+1]]
+	case e == -32700:
+		return _ErrorCode_name[59:69]
+	case -32603 <= e && e <= -32600:
+		i := int(e) - -32603
+		return _ErrorCode_name[69+_ErrorCode_index_2[i] : 69+_ErrorCode_index_2[i+1]]
+	case -32002 <= e && e <= -32001:
+		i := int(e) - -32002
+		return _ErrorCode_name[123+_ErrorCode_index_3[i] : 123+_ErrorCode_index_3[i+1]]
+	default:
+		return fmt.Sprintf("ErrorCode(%d)", e)
 	}
-	return _LSPErrorCodes_name[_LSPErrorCodes_index[i]:_LSPErrorCodes_index[i+1]]
+}
+
+func (e ErrorCode) Error() string {
+	return e.String()
 }
 
 // A set of predefined range kinds.
