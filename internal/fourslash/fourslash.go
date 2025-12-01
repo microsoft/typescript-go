@@ -2092,13 +2092,255 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
+// VerifySignatureHelpOptions contains options for verifying signature help.
+// All fields are optional - only specified fields will be verified.
+type VerifySignatureHelpOptions struct {
+	// Text is the full signature text (e.g., "fn(x: string, y: number): void")
+	Text string
+	// DocComment is the documentation comment for the signature
+	DocComment string
+	// ParameterCount is the expected number of parameters
+	ParameterCount int
+	// ParameterName is the expected name of the active parameter
+	ParameterName string
+	// ParameterSpan is the expected label of the active parameter (e.g., "x: string")
+	ParameterSpan string
+	// ParameterDocComment is the documentation for the active parameter
+	ParameterDocComment string
+	// OverloadsCount is the expected number of overloads (signatures)
+	OverloadsCount int
+	// OverrideSelectedItemIndex overrides which signature to check (default: ActiveSignature)
+	OverrideSelectedItemIndex int
+}
+
+// VerifySignatureHelp verifies signature help at the current position matches the expected options.
+func (f *FourslashTest) VerifySignatureHelp(t *testing.T, expected VerifySignatureHelpOptions) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	help := result.SignatureHelp
+	if help == nil {
+		t.Fatalf("%sCould not get signature help", prefix)
+	}
+
+	// Determine which signature to check
+	selectedIndex := 0
+	if expected.OverrideSelectedItemIndex > 0 {
+		selectedIndex = expected.OverrideSelectedItemIndex
+	} else if help.ActiveSignature != nil {
+		selectedIndex = int(*help.ActiveSignature)
+	}
+
+	if selectedIndex >= len(help.Signatures) {
+		t.Fatalf("%sSelected signature index %d out of range (have %d signatures)", prefix, selectedIndex, len(help.Signatures))
+	}
+
+	selectedSig := help.Signatures[selectedIndex]
+
+	// Verify overloads count
+	if expected.OverloadsCount > 0 {
+		if len(help.Signatures) != expected.OverloadsCount {
+			t.Errorf("%sExpected %d overloads, got %d", prefix, expected.OverloadsCount, len(help.Signatures))
+		}
+	}
+
+	// Verify signature text
+	if expected.Text != "" {
+		if selectedSig.Label != expected.Text {
+			t.Errorf("%sExpected signature text %q, got %q", prefix, expected.Text, selectedSig.Label)
+		}
+	}
+
+	// Verify doc comment
+	if expected.DocComment != "" {
+		actualDoc := ""
+		if selectedSig.Documentation != nil {
+			if selectedSig.Documentation.MarkupContent != nil {
+				actualDoc = selectedSig.Documentation.MarkupContent.Value
+			} else if selectedSig.Documentation.String != nil {
+				actualDoc = *selectedSig.Documentation.String
+			}
+		}
+		if actualDoc != expected.DocComment {
+			t.Errorf("%sExpected doc comment %q, got %q", prefix, expected.DocComment, actualDoc)
+		}
+	}
+
+	// Verify parameter count
+	if expected.ParameterCount > 0 {
+		paramCount := 0
+		if selectedSig.Parameters != nil {
+			paramCount = len(*selectedSig.Parameters)
+		}
+		if paramCount != expected.ParameterCount {
+			t.Errorf("%sExpected %d parameters, got %d", prefix, expected.ParameterCount, paramCount)
+		}
+	}
+
+	// Get active parameter
+	var activeParamIndex int
+	if selectedSig.ActiveParameter != nil && selectedSig.ActiveParameter.Uinteger != nil {
+		activeParamIndex = int(*selectedSig.ActiveParameter.Uinteger)
+	} else if help.ActiveParameter != nil && help.ActiveParameter.Uinteger != nil {
+		activeParamIndex = int(*help.ActiveParameter.Uinteger)
+	}
+
+	var activeParam *lsproto.ParameterInformation
+	if selectedSig.Parameters != nil && activeParamIndex < len(*selectedSig.Parameters) {
+		activeParam = (*selectedSig.Parameters)[activeParamIndex]
+	}
+
+	// Verify parameter name
+	if expected.ParameterName != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter name %q, but no active parameter", prefix, expected.ParameterName)
+		} else {
+			// Parameter name is extracted from the label
+			actualName := ""
+			if activeParam.Label.String != nil {
+				// Extract name from label like "x: string" -> "x" or "T extends Foo" -> "T"
+				label := *activeParam.Label.String
+				if colonIdx := strings.Index(label, ":"); colonIdx > 0 {
+					actualName = strings.TrimSpace(label[:colonIdx])
+				} else if extendsIdx := strings.Index(label, " extends "); extendsIdx > 0 {
+					actualName = strings.TrimSpace(label[:extendsIdx])
+				} else {
+					actualName = label
+				}
+			}
+			if actualName != expected.ParameterName {
+				t.Errorf("%sExpected parameter name %q, got %q", prefix, expected.ParameterName, actualName)
+			}
+		}
+	}
+
+	// Verify parameter span (label)
+	if expected.ParameterSpan != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter span %q, but no active parameter", prefix, expected.ParameterSpan)
+		} else {
+			actualSpan := ""
+			if activeParam.Label.String != nil {
+				actualSpan = *activeParam.Label.String
+			}
+			if actualSpan != expected.ParameterSpan {
+				t.Errorf("%sExpected parameter span %q, got %q", prefix, expected.ParameterSpan, actualSpan)
+			}
+		}
+	}
+
+	// Verify parameter doc comment
+	if expected.ParameterDocComment != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter doc comment %q, but no active parameter", prefix, expected.ParameterDocComment)
+		} else {
+			actualDoc := ""
+			if activeParam.Documentation != nil {
+				if activeParam.Documentation.MarkupContent != nil {
+					actualDoc = activeParam.Documentation.MarkupContent.Value
+				} else if activeParam.Documentation.String != nil {
+					actualDoc = *activeParam.Documentation.String
+				}
+			}
+			if actualDoc != expected.ParameterDocComment {
+				t.Errorf("%sExpected parameter doc comment %q, got %q", prefix, expected.ParameterDocComment, actualDoc)
+			}
+		}
+	}
+}
+
+// VerifyNoSignatureHelp verifies that no signature help is available at the current position.
+func (f *FourslashTest) VerifyNoSignatureHelp(t *testing.T) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp != nil && len(result.SignatureHelp.Signatures) > 0 {
+		t.Errorf("%sExpected no signature help, but got %d signatures", prefix, len(result.SignatureHelp.Signatures))
+	}
+}
+
+// VerifyNoSignatureHelpWithContext verifies that no signature help is available at the current position with a given context.
+func (f *FourslashTest) VerifyNoSignatureHelpWithContext(t *testing.T, context *lsproto.SignatureHelpContext) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  context,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp != nil && len(result.SignatureHelp.Signatures) > 0 {
+		t.Errorf("%sExpected no signature help, but got %d signatures", prefix, len(result.SignatureHelp.Signatures))
+	}
+}
+
+// VerifyNoSignatureHelpForMarkersWithContext verifies that no signature help is available at the given markers with a given context.
+func (f *FourslashTest) VerifyNoSignatureHelpForMarkersWithContext(t *testing.T, context *lsproto.SignatureHelpContext, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifyNoSignatureHelpWithContext(t, context)
+	}
+}
+
+// VerifySignatureHelpPresent verifies that signature help is available at the current position with a given context.
+func (f *FourslashTest) VerifySignatureHelpPresent(t *testing.T, context *lsproto.SignatureHelpContext) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  context,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp == nil || len(result.SignatureHelp.Signatures) == 0 {
+		t.Errorf("%sExpected signature help to be present, but got none", prefix)
+	}
+}
+
+// VerifySignatureHelpPresentForMarkers verifies that signature help is available at the given markers with a given context.
+func (f *FourslashTest) VerifySignatureHelpPresentForMarkers(t *testing.T, context *lsproto.SignatureHelpContext, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifySignatureHelpPresent(t, context)
+	}
+}
+
+// VerifyNoSignatureHelpForMarkers verifies that no signature help is available at the given markers.
+func (f *FourslashTest) VerifyNoSignatureHelpForMarkers(t *testing.T, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifyNoSignatureHelp(t)
+	}
+}
+
 type SignatureHelpCase struct {
 	Context     *lsproto.SignatureHelpContext
 	MarkerInput MarkerInput
 	Expected    *lsproto.SignatureHelp
 }
 
-func (f *FourslashTest) VerifySignatureHelp(t *testing.T, signatureHelpCases ...*SignatureHelpCase) {
+// VerifySignatureHelpWithCases verifies signature help using detailed SignatureHelpCase structs.
+// This is useful for more complex tests that need to verify the full signature help response.
+func (f *FourslashTest) VerifySignatureHelpWithCases(t *testing.T, signatureHelpCases ...*SignatureHelpCase) {
 	for _, option := range signatureHelpCases {
 		switch marker := option.MarkerInput.(type) {
 		case string:
