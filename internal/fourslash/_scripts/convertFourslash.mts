@@ -222,6 +222,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | SkipStatement
                     return parseNoSignatureHelpForTriggerReason(callExpression.arguments);
                 case "baselineSmartSelection":
                     return [parseBaselineSmartSelection(callExpression.arguments)];
+                case "baselineCallHierarchy":
+                    return [parseBaselineCallHierarchy(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
                 case "baselineGoToType":
@@ -2047,6 +2049,15 @@ function parseBaselineSmartSelection(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseBaselineCallHierarchy(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        throw new Error("Expected no arguments in verify.baselineCallHierarchy");
+    }
+    return {
+        kind: "verifyBaselineCallHierarchy",
+    };
+}
+
 function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [VerifySemanticClassificationsCmd] | SkipStatement | undefined {
     if (args.length < 1) {
         console.error("semanticClassificationsAre requires at least a format argument");
@@ -2486,6 +2497,10 @@ interface VerifyBaselineSmartSelection {
     kind: "verifyBaselineSmartSelection";
 }
 
+interface VerifyBaselineCallHierarchy {
+    kind: "verifyBaselineCallHierarchy";
+}
+
 interface VerifyBaselineRenameCmd {
     kind: "verifyBaselineRename" | "verifyBaselineRenameAtRangesWithText";
     args: string[];
@@ -2604,6 +2619,7 @@ type Cmd =
     | VerifyNoSignatureHelpCmd
     | VerifySignatureHelpPresentCmd
     | VerifyNoSignatureHelpForTriggerReasonCmd
+    | VerifyBaselineCallHierarchy
     | GoToCmd
     | EditCmd
     | VerifyQuickInfoCmd
@@ -2879,6 +2895,8 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyBaselineSignatureHelp(t)`;
         case "verifyBaselineSmartSelection":
             return `f.VerifyBaselineSelectionRanges(t)`;
+        case "verifyBaselineCallHierarchy":
+            return `f.VerifyBaselineCallHierarchy(t)`;
         case "goTo":
             return generateGoToCommand(cmd);
         case "edit":
