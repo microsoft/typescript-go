@@ -1,3 +1,4 @@
+// @module: commonjs
 // @Filename: a.ts
 const foo = {
   a: 1
