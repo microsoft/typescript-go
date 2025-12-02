@@ -101,19 +101,19 @@ func (settings *FormatCodeSettings) Parse(prefs any) bool {
 func (settings *FormatCodeSettings) Set(name string, value any) bool {
 	switch strings.ToLower(name) {
 	case "baseindentsize":
-		settings.BaseIndentSize = ParseIntWithDefault(value, 0)
+		settings.BaseIndentSize = parseIntWithDefault(value, 0)
 	case "indentsize":
-		settings.IndentSize = ParseIntWithDefault(value, 4)
+		settings.IndentSize = parseIntWithDefault(value, 4)
 	case "tabsize":
-		settings.TabSize = ParseIntWithDefault(value, 4)
+		settings.TabSize = parseIntWithDefault(value, 4)
 	case "newlinecharacter":
 		settings.NewLineCharacter = core.GetNewLineKind(tsoptions.ParseString(value)).GetNewLineCharacter()
 	case "converttabstospaces":
-		settings.ConvertTabsToSpaces = ParseBoolWithDefault(value, true)
+		settings.ConvertTabsToSpaces = parseBoolWithDefault(value, true)
 	case "indentstyle":
 		settings.IndentStyle = parseIndentStyle(value)
 	case "trimtrailingwhitespace":
-		settings.TrimTrailingWhitespace = ParseBoolWithDefault(value, true)
+		settings.TrimTrailingWhitespace = parseBoolWithDefault(value, true)
 	case "insertspaceaftercommadelimiter":
 		settings.InsertSpaceAfterCommaDelimiter = tsoptions.ParseTristate(value)
 	case "insertspaceaftersemicoloninformstatements":

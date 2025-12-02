@@ -270,7 +270,6 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*project.Config, err
 	if err != nil {
 		return &project.Config{}, fmt.Errorf("configure request failed: %w", err)
 	}
-	configs := result.([]any)
 	s.Log(fmt.Sprintf("\n\nconfiguration received: %+v, %T\n\n", configs, configs))
 	return project.ParseConfiguration(configs), nil
 }
@@ -1078,7 +1077,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	} else if settings, ok := params.Settings.([]any); ok {
 		s.session.Configure(project.ParseConfiguration(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
-		s.session.Configure(project.ParseConfiguration([]any{settings["typescript", "ts", "javascript", "js"]}))
+		s.session.Configure(project.ParseConfiguration([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
 	}
 	return nil
 }
