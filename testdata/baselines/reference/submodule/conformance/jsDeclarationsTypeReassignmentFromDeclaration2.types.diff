@@ -1,10 +1,15 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration2.types
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration2.types
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+
  module.exports = items;
  >module.exports = items : Item[]
- >module.exports : Item[]
+->module.exports : Item[]
 ->module : { exports: Item[]; }
+->exports : Item[]
++>module.exports : any
 +>module : { readonly items: Item[]; }
- >exports : Item[]
++>exports : any
  >items : Item[]
+
+ === some-mod.d.ts ===

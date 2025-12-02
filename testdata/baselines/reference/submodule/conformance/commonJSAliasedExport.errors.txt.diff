@@ -4,6 +4,7 @@
 -<no content>
 +bug43713.js(1,9): error TS2305: Module '"./commonJSAliasedExport"' has no exported member 'funky'.
 +commonJSAliasedExport.js(6,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
++commonJSAliasedExport.js(6,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
 +commonJSAliasedExport.js(7,16): error TS2339: Property 'funky' does not exist on type '(ast: any) => any'.
 +
 +
@@ -16,7 +17,7 @@
 +    var diddy = funky(1)
 +    
 +    
-+==== commonJSAliasedExport.js (2 errors) ====
++==== commonJSAliasedExport.js (3 errors) ====
 +    const donkey = (ast) =>  ast;
 +    
 +    function funky(declaration) {
@@ -25,6 +26,8 @@
 +    module.exports = donkey;
 +    ~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
++           ~~~~~~~
++!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
 +    module.exports.funky = funky;
 +                   ~~~~~
 +!!! error TS2339: Property 'funky' does not exist on type '(ast: any) => any'.

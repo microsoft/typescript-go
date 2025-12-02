@@ -40,9 +40,9 @@ A.bar = class Q {}
 
 module.exports = A;
 >module.exports = A : { bar: typeof Q; }
->module.exports : { bar: typeof Q; }
+>module.exports : any
 >module : { readonly A: { bar: typeof Q; }; }
->exports : { bar: typeof Q; }
+>exports : any
 >A : { bar: typeof Q; }
 
 === namespacer.js ===
@@ -74,8 +74,8 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 
 module.exports = B;
 >module.exports = B : { NS: { bar: typeof Q; }; }
->module.exports : { NS: { bar: typeof Q; }; }
+>module.exports : any
 >module : { readonly B: { NS: { bar: typeof Q; }; }; }
->exports : { NS: { bar: typeof Q; }; }
+>exports : any
 >B : { NS: { bar: typeof Q; }; }
 

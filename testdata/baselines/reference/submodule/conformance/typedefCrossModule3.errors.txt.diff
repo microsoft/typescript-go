@@ -6,16 +6,21 @@
 -
 -
 -==== mod2.js (2 errors) ====
--    /** @typedef {number} Foo */
++mod2.js(4,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
++
++
++==== mod2.js (1 errors) ====
+     /** @typedef {number} Foo */
 -                          ~~~
 -!!! error TS2300: Duplicate identifier 'Foo'.
 -!!! related TS6203 mod2.js:3:4: 'Foo' was also declared here.
--    const ns = {};
--    ns.Foo = class {}
+     const ns = {};
+     ns.Foo = class {}
 -       ~~~
 -!!! error TS2300: Duplicate identifier 'Foo'.
 -!!! related TS6203 mod2.js:1:23: 'Foo' was also declared here.
--    module.exports = ns;
--    
--    
-+<no content>
+     module.exports = ns;
++           ~~~~~~~
++!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
+     
+     

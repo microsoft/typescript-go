@@ -287,7 +287,7 @@
 ->exports : typeof x
 ->x : typeof x
 +>module.exports = x : {}
-+>module.exports : {}
++>module.exports : any
 +>module : { readonly x: {}; }
-+>exports : {}
++>exports : any
 +>x : {}

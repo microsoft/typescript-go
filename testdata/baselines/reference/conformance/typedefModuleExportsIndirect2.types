@@ -8,9 +8,9 @@ const f = function() {};
 
 module.exports = f;
 >module.exports = f : () => void
->module.exports : () => void
+>module.exports : any
 >module : { readonly f: () => void; }
->exports : () => void
+>exports : any
 >f : () => void
 
 === use.js ===
