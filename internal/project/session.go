@@ -81,8 +81,9 @@ type Session struct {
 	programCounter *programCounter
 
 	// read-only after initialization
-	initialPreferences                 *lsutil.UserPreferences
-	userPreferences                    *lsutil.UserPreferences // !!! update to Config
+	initialConfig *Config
+	// current config
+	workspaceConfig                    *Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -158,9 +159,11 @@ func NewSession(init *SessionInit) *Session {
 			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
-			Config{},
+			nil,
 			toPath,
 		),
+		initialConfig:     &Config{},
+		workspaceConfig:   &Config{},
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 		watches:           make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}
@@ -185,16 +188,25 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-// Gets current UserPreferences, always a copy
+// Gets current configuration, always a copy
+func (s *Session) Config() Config {
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	return *s.workspaceConfig.Copy()
+}
+
+// !!! ts/js preferences
+// Gets current configuration, always a copy
 func (s *Session) UserPreferences() *lsutil.UserPreferences {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
-	return s.userPreferences.Copy()
+	return s.workspaceConfig.ts.Copy()
 }
 
+// !!! ts/js preferences
 // Gets original UserPreferences of the session
 func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
-	return s.initialPreferences.CopyOrDefault()
+	return s.initialConfig.ts.CopyOrDefault()
 }
 
 // Trace implements module.ResolutionHost
@@ -202,16 +214,17 @@ func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
 }
 
-func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
+func (s *Session) Configure(config *Config) {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
-	s.userPreferences = userPreferences
+	s.workspaceConfig = s.workspaceConfig.CopyInto(config)
 }
 
-func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
-	s.initialPreferences = userPreferences.CopyOrDefault()
-	s.Configure(s.initialPreferences)
+func (s *Session) InitializeWithConfig(config *Config) {
+	config.ts = config.ts.CopyOrDefault()
+	s.initialConfig = config
+	s.Configure(s.initialConfig)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -599,9 +612,7 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	defer s.configRWMu.Unlock()
 	var newConfig *Config
 	if s.pendingConfigChanges {
-		newConfig = &Config{
-			tsUserPreferences: s.userPreferences.Copy(),
-		}
+		newConfig = s.workspaceConfig.Copy()
 	}
 	s.pendingConfigChanges = false
 	return fileChanges, overlays, pendingATAChanges, newConfig

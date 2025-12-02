@@ -11,6 +11,8 @@ import (
 
 func NewDefaultUserPreferences() *UserPreferences {
 	return &UserPreferences{
+		FormatCodeSettings: GetDefaultFormatCodeSettings(),
+
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 
@@ -23,6 +25,8 @@ func NewDefaultUserPreferences() *UserPreferences {
 }
 
 type UserPreferences struct {
+	*FormatCodeSettings
+
 	QuotePreference                           QuotePreference
 	LazyConfiguredProjectsFromExternalProject bool // !!!
 
@@ -349,37 +353,25 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 
 // ------ Parsing Config Response -------
 
-// returns non-nil if should break loop
-func (p *UserPreferences) Parse(item any) *UserPreferences {
-	if item == nil {
-		// continue
-	} else if config, ok := item.(map[string]any); ok {
-		p.parseWorker(config)
-	} else if item, ok := item.(*UserPreferences); ok {
-		// case for fourslash
-		return item.CopyOrDefault()
-	}
-	return nil
-}
-
-func (p *UserPreferences) parseWorker(config map[string]any) {
+func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 	// Process unstable preferences first so that they do not overwrite stable properties
 	if unstable, ok := config["unstable"]; ok {
 		// unstable properties must be named the same as userPreferences
-		p.parseAll(unstable)
+		p.ParseAll(unstable)
 	}
+	formatSettingsParsed := false
 	for name, values := range config {
 		switch name {
 		case "unstable":
 			continue
 		case "inlayHints":
-			p.parseInlayHints(values)
+			p.ParseInlayHints(values)
 		case "suggest":
-			p.parseSuggest(values)
+			p.ParseSuggest(values)
 		case "preferences":
-			p.parsePreferences(values)
+			p.ParsePreferences(values)
 		case "format":
-			// !!!
+			formatSettingsParsed = p.FormatCodeSettings.Parse(values) || formatSettingsParsed
 		case "tsserver":
 			// !!!
 		case "tsc":
@@ -387,175 +379,24 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		case "experimental":
 			// !!!
 		default:
-			p.set(name, values)
+			p.Set(name, values)
+			formatSettingsParsed = p.FormatCodeSettings.Set(name, values) || formatSettingsParsed
 		}
 	}
+	if !formatSettingsParsed {
+		p.FormatCodeSettings = nil
+	}
+	return p
 }
 
-func (p *UserPreferences) parseAll(prefs any) {
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range prefsMap {
-		p.set(name, value)
-	}
-}
-
-func (p *UserPreferences) parseInlayHints(prefs any) {
-	inlayHintsPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range inlayHintsPreferences {
-		if v, ok := value.(map[string]any); ok {
-			// vscode's inlay hints settings are nested objects with "enabled" and other properties
-			switch name {
-			case "parameterNames":
-				if enabled, ok := v["enabled"]; ok {
-					p.set("includeInlayParameterNameHints", enabled)
-				}
-				p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSupress(v, "supressWhenArgumentMatchesName")
-			case "parameterTypes":
-				p.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
-			case "variableTypes":
-				p.IncludeInlayVariableTypeHints = parseEnabledBool(v)
-				p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSupress(v, "supressWhenTypeMatchesName")
-			case "propertyDeclarationTypes":
-				p.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
-			case "functionLikeReturnTypes":
-				p.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
-			case "enumMemberValues":
-				p.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
-			}
-		} else {
-			// non-vscode case
-			p.set(name, v)
-		}
-	}
-}
-
-func (p *UserPreferences) parseSuggest(prefs any) {
-	completionsPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range completionsPreferences {
-		switch name {
-		case "autoImports":
-			p.set("includeCompletionsForModuleExports", value)
-		case "objectLiteralMethodSnippets":
-			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithObjectLiteralMethodSnippets", parseEnabledBool(v))
-			}
-		case "classMemberSnippets":
-			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithClassMemberSnippets", parseEnabledBool(v))
-			}
-		case "includeAutomaticOptionalChainCompletions":
-			p.set("includeAutomaticOptionalChainCompletions", value)
-		case "includeCompletionsForImportStatements":
-			p.set("includeCompletionsForImportStatements", value)
-		}
-	}
-}
-
-func (p *UserPreferences) parsePreferences(prefs any) {
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range prefsMap {
-		if name == "organizeImports" {
-			p.parseOrganizeImportsPreferences(value)
-		} else {
-			p.set(name, value)
-		}
-	}
-}
-
-func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
-	// !!! this used to be in the typescript-language-features extension
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	if typeOrder, ok := prefsMap["typeOrder"]; ok {
-		p.set("organizeimportstypeorder", parseOrganizeImportsTypeOrder(typeOrder))
-	}
-	if caseSensitivity, ok := prefsMap["caseSensitivity"]; ok {
-		if caseSensitivityStr, ok := caseSensitivity.(string); ok {
-			// default is already "auto"
-			switch caseSensitivityStr {
-			case "caseInsensitive":
-				p.OrganizeImportsIgnoreCase = core.TSTrue
-			case "caseSensitive":
-				p.OrganizeImportsIgnoreCase = core.TSFalse
-			}
-		}
-	}
-	if collation, ok := prefsMap["unicodeCollation"]; ok {
-		// The rest of the settings are only applicable when using unicode collation
-		if collationStr, ok := collation.(string); ok && collationStr == "unicode" {
-			p.set("organizeimportscollation", OrganizeImportsCollationUnicode)
-			if locale, ok := prefsMap["locale"]; ok {
-				p.set("organizeimportslocale", locale)
-			}
-			if numeric, ok := prefsMap["numericCollation"]; ok {
-				p.set("organizeimportsnumericcollation", numeric)
-			}
-			if accent, ok := prefsMap["accentCollation"]; ok {
-				p.set("organizeimportsaccentcollation", accent)
-			}
-			if caseFirst, ok := prefsMap["caseFirst"]; ok && !p.OrganizeImportsIgnoreCase.IsTrue() {
-				p.set("organizeimportscasefirst", caseFirst)
-			}
-		}
-	}
-}
-
-func parseEnabledBool(v map[string]any) bool {
-	// vscode nested option
-	if enabled, ok := v["enabled"]; ok {
-		if e, ok := enabled.(bool); ok {
-			return e
-		}
-	}
-	return false
-}
-
-func parseSupress(v map[string]any, name string) bool {
-	// vscode nested option
-	if val, ok := v[name]; ok {
-		if suppress, ok := val.(bool); ok {
-			return !suppress
-		}
-	}
-	return false
-}
-
-func parseBoolWithDefault(val any, defaultV bool) bool {
-	if v, ok := val.(bool); ok {
-		return v
-	}
-	return defaultV
-}
-
-func parseIntWithDefault(val any, defaultV int) int {
-	if v, ok := val.(int); ok {
-		return v
-	}
-	return defaultV
-}
-
-func (p *UserPreferences) set(name string, value any) {
+func (p *UserPreferences) Set(name string, value any) bool {
 	switch strings.ToLower(name) {
 	case "quotePreference":
 		p.QuotePreference = parseQuotePreference(value)
 	case "lazyconfiguredprojectsfromexternalproject":
-		p.LazyConfiguredProjectsFromExternalProject = parseBoolWithDefault(value, false)
+		p.LazyConfiguredProjectsFromExternalProject = ParseBoolWithDefault(value, false)
 	case "maximumhoverlength":
-		p.MaximumHoverLength = parseIntWithDefault(value, 500)
+		p.MaximumHoverLength = ParseIntWithDefault(value, 500)
 	case "includecompletionsformoduleexports":
 		p.IncludeCompletionsForModuleExports = tsoptions.ParseTristate(value)
 	case "includecompletionsforimportstatements":
@@ -581,7 +422,7 @@ func (p *UserPreferences) set(name string, value any) {
 	case "autoimportfileexcludepatterns":
 		p.AutoImportFileExcludePatterns = tsoptions.ParseStringArray(value)
 	case "prefertypeonlyautoimports":
-		p.PreferTypeOnlyAutoImports = parseBoolWithDefault(value, false)
+		p.PreferTypeOnlyAutoImports = ParseBoolWithDefault(value, false)
 	case "organizeimportsignorecase":
 		p.OrganizeImportsIgnoreCase = tsoptions.ParseTristate(value)
 	case "organizeimportscollation":
@@ -589,44 +430,206 @@ func (p *UserPreferences) set(name string, value any) {
 	case "organizeimportslocale":
 		p.OrganizeImportsLocale = tsoptions.ParseString(value)
 	case "organizeimportsnumericcollation":
-		p.OrganizeImportsNumericCollation = parseBoolWithDefault(value, false)
+		p.OrganizeImportsNumericCollation = ParseBoolWithDefault(value, false)
 	case "organizeimportsaccentcollation":
-		p.OrganizeImportsAccentCollation = parseBoolWithDefault(value, true)
+		p.OrganizeImportsAccentCollation = ParseBoolWithDefault(value, true)
 	case "organizeimportscasefirst":
 		p.OrganizeImportsCaseFirst = parseOrganizeImportsCaseFirst(value)
 	case "organizeimportstypeorder":
 		p.OrganizeImportsTypeOrder = parseOrganizeImportsTypeOrder(value)
 	case "allowtextchangesinnewfiles":
-		p.AllowTextChangesInNewFiles = parseBoolWithDefault(value, true) // !!!
+		p.AllowTextChangesInNewFiles = ParseBoolWithDefault(value, true) // !!!
 	case "usealiasesforrename", "provideprefixandsuffixtextforrename":
 		p.UseAliasesForRename = tsoptions.ParseTristate(value)
 	case "allowrenameofimportpath":
-		p.AllowRenameOfImportPath = parseBoolWithDefault(value, true)
+		p.AllowRenameOfImportPath = ParseBoolWithDefault(value, true)
 	case "providerefactornotapplicablereason":
-		p.ProvideRefactorNotApplicableReason = parseBoolWithDefault(value, true)
+		p.ProvideRefactorNotApplicableReason = ParseBoolWithDefault(value, true)
 	case "includeinlayparameternamehints":
 		p.IncludeInlayParameterNameHints = parseInlayParameterNameHints(value)
 	case "includeinlayparameternamehintswhenargumentmatchesname":
-		p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseBoolWithDefault(value, false)
+		p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = ParseBoolWithDefault(value, false)
 	case "includeinlayfunctionparametertypeHints":
-		p.IncludeInlayFunctionParameterTypeHints = parseBoolWithDefault(value, false)
+		p.IncludeInlayFunctionParameterTypeHints = ParseBoolWithDefault(value, false)
 	case "includeinlayvariabletypehints":
-		p.IncludeInlayVariableTypeHints = parseBoolWithDefault(value, false)
+		p.IncludeInlayVariableTypeHints = ParseBoolWithDefault(value, false)
 	case "includeinlayvariabletypehintswhentypematchesname":
-		p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseBoolWithDefault(value, false)
+		p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = ParseBoolWithDefault(value, false)
 	case "includeinlaypropertydeclarationtypehints":
-		p.IncludeInlayPropertyDeclarationTypeHints = parseBoolWithDefault(value, false)
+		p.IncludeInlayPropertyDeclarationTypeHints = ParseBoolWithDefault(value, false)
 	case "includeinlayfunctionlikereturntypehints":
-		p.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
+		p.IncludeInlayFunctionLikeReturnTypeHints = ParseBoolWithDefault(value, false)
 	case "includeinlayenummembervaluehints":
-		p.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
+		p.IncludeInlayEnumMemberValueHints = ParseBoolWithDefault(value, false)
 	case "excludelibrarysymbolsinnavto":
-		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, false)
+		p.ExcludeLibrarySymbolsInNavTo = ParseBoolWithDefault(value, false)
 	case "disablesuggestions":
-		p.DisableSuggestions = parseBoolWithDefault(value, false)
+		p.DisableSuggestions = ParseBoolWithDefault(value, false)
 	case "disablelinetextinreferences":
-		p.DisableLineTextInReferences = parseBoolWithDefault(value, true)
+		p.DisableLineTextInReferences = ParseBoolWithDefault(value, true)
 	case "displaypartsforjsdoc":
-		p.DisplayPartsForJSDoc = parseBoolWithDefault(value, true)
+		p.DisplayPartsForJSDoc = ParseBoolWithDefault(value, true)
+	default:
+		if p.FormatCodeSettings == nil {
+			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
+		}
+		return p.FormatCodeSettings.Set(name, value)
 	}
+	return true
+}
+
+func (p *UserPreferences) ParseOrganizeImportsPreferences(prefs any) {
+	// !!! this used to be in the typescript-language-features extension
+	prefsMap, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	if typeOrder, ok := prefsMap["typeOrder"]; ok {
+		p.Set("organizeimportstypeorder", parseOrganizeImportsTypeOrder(typeOrder))
+	}
+	if caseSensitivity, ok := prefsMap["caseSensitivity"]; ok {
+		if caseSensitivityStr, ok := caseSensitivity.(string); ok {
+			// default is already "auto"
+			switch caseSensitivityStr {
+			case "caseInsensitive":
+				p.OrganizeImportsIgnoreCase = core.TSTrue
+			case "caseSensitive":
+				p.OrganizeImportsIgnoreCase = core.TSFalse
+			}
+		}
+	}
+	if collation, ok := prefsMap["unicodeCollation"]; ok {
+		// The rest of the settings are only applicable when using unicode collation
+		if collationStr, ok := collation.(string); ok && collationStr == "unicode" {
+			p.Set("organizeimportscollation", OrganizeImportsCollationUnicode)
+			if locale, ok := prefsMap["locale"]; ok {
+				p.Set("organizeimportslocale", locale)
+			}
+			if numeric, ok := prefsMap["numericCollation"]; ok {
+				p.Set("organizeimportsnumericcollation", numeric)
+			}
+			if accent, ok := prefsMap["accentCollation"]; ok {
+				p.Set("organizeimportsaccentcollation", accent)
+			}
+			if caseFirst, ok := prefsMap["caseFirst"]; ok && !p.OrganizeImportsIgnoreCase.IsTrue() {
+				p.Set("organizeimportscasefirst", caseFirst)
+			}
+		}
+	}
+}
+
+func (p *UserPreferences) ParseAll(prefs any) {
+	prefsMap, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range prefsMap {
+		p.Set(name, value)
+	}
+}
+
+func (p *UserPreferences) ParseInlayHints(prefs any) {
+	inlayHintsPreferences, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range inlayHintsPreferences {
+		if v, ok := value.(map[string]any); ok {
+			// vscode's inlay hints settings are nested objects with "enabled" and other properties
+			switch name {
+			case "parameterNames":
+				if enabled, ok := v["enabled"]; ok {
+					p.Set("includeInlayParameterNameHints", enabled)
+				}
+				p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSupress(v, "supressWhenArgumentMatchesName")
+			case "parameterTypes":
+				p.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
+			case "variableTypes":
+				p.IncludeInlayVariableTypeHints = parseEnabledBool(v)
+				p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSupress(v, "supressWhenTypeMatchesName")
+			case "propertyDeclarationTypes":
+				p.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
+			case "functionLikeReturnTypes":
+				p.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
+			case "enumMemberValues":
+				p.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
+			}
+		} else {
+			// non-vscode case
+			p.Set(name, v)
+		}
+	}
+}
+
+func (p *UserPreferences) ParseSuggest(prefs any) {
+	completionsPreferences, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range completionsPreferences {
+		switch name {
+		case "autoImports":
+			p.Set("includeCompletionsForModuleExports", value)
+		case "objectLiteralMethodSnippets":
+			if v, ok := value.(map[string]any); ok {
+				p.Set("includeCompletionsWithObjectLiteralMethodSnippets", parseEnabledBool(v))
+			}
+		case "classMemberSnippets":
+			if v, ok := value.(map[string]any); ok {
+				p.Set("includeCompletionsWithClassMemberSnippets", parseEnabledBool(v))
+			}
+		case "includeAutomaticOptionalChainCompletions":
+			p.Set("includeAutomaticOptionalChainCompletions", value)
+		case "includeCompletionsForImportStatements":
+			p.Set("includeCompletionsForImportStatements", value)
+		}
+	}
+}
+
+func (p *UserPreferences) ParsePreferences(prefs any) {
+	prefsMap, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range prefsMap {
+		if name == "organizeImports" {
+			p.ParseOrganizeImportsPreferences(value)
+		} else {
+			p.Set(name, value)
+		}
+	}
+}
+
+func parseEnabledBool(v map[string]any) bool {
+	// vscode nested option
+	if enabled, ok := v["enabled"]; ok {
+		if e, ok := enabled.(bool); ok {
+			return e
+		}
+	}
+	return false
+}
+
+func parseSupress(v map[string]any, name string) bool {
+	// vscode nested option
+	if val, ok := v[name]; ok {
+		if suppress, ok := val.(bool); ok {
+			return !suppress
+		}
+	}
+	return false
+}
+
+func ParseBoolWithDefault(val any, defaultV bool) bool {
+	if v, ok := val.(bool); ok {
+		return v
+	}
+	return defaultV
+}
+
+func ParseIntWithDefault(val any, defaultV int) int {
+	if v, ok := val.(int); ok {
+		return v
+	}
+	return defaultV
 }

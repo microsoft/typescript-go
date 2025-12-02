@@ -3,7 +3,6 @@ package ls
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -37,11 +36,11 @@ func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
 	return l.host.UserPreferences()
 }
 
-func (l *LanguageService) FormatOptions() *format.FormatCodeSettings {
+func (l *LanguageService) FormatOptions() *lsutil.FormatCodeSettings {
 	if formatOptions := l.host.FormatOptions(); formatOptions != nil {
 		return formatOptions
 	}
-	return format.GetDefaultFormatCodeSettings(l.GetProgram().Options().NewLine.GetNewLineCharacter())
+	return lsutil.GetDefaultFormatCodeSettings()
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {

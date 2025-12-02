@@ -16,7 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
@@ -220,31 +219,34 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
+func (s *Server) RequestConfiguration(ctx context.Context) (*project.Config, error) {
 	if s.initializeParams.Capabilities == nil || s.initializeParams.Capabilities.Workspace == nil ||
 		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Configuration) {
 		// if no configuration request capapbility, return default preferences
-		return s.session.NewUserPreferences(), nil
+		return project.NewConfig(s.session.NewUserPreferences()), nil
 	}
 	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
 				Section: ptrTo("typescript"),
 			},
+			{
+				Section: ptrTo("ts"),
+			},
+			{
+				Section: ptrTo("javascript"),
+			},
+			{
+				Section: ptrTo("js"),
+			},
 		},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("configure request failed: %w", err)
+		return &project.Config{}, fmt.Errorf("configure request failed: %w", err)
 	}
 	configs := result.([]any)
-	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
-	userPreferences := s.session.NewUserPreferences()
-	for _, item := range configs {
-		if parsed := userPreferences.Parse(item); parsed != nil {
-			return parsed, nil
-		}
-	}
-	return userPreferences, nil
+	s.Log(fmt.Sprintf("\n\nconfiguration received: %+v, %T\n\n", configs, configs))
+	return project.ParseConfiguration(configs), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -732,9 +734,11 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
 		// handle userPreferences from initializationOptions
-		userPreferences := s.session.NewUserPreferences()
-		userPreferences.Parse(*s.initializeParams.InitializationOptions)
-		s.session.InitializeWithConfig(userPreferences)
+		if v, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
+			// currently assume that preferences initalization options are ts options, so we parse them into config.ts.
+			// This is fine because if js options are never provided, they default to the ts options.
+			s.session.InitializeWithConfig(project.ParseConfiguration([]any{v}))
+		}
 	} else {
 		// request userPreferences if not provided at initialization
 		userPreferences, err := s.RequestConfiguration(ctx)
@@ -763,11 +767,13 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
 	// !!! only implemented because needed for fourslash
-	userPreferences := s.session.UserPreferences()
-	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
-		userPreferences = parsed
+	if params.Settings == nil {
+		return nil
+	} else if settings, ok := params.Settings.([]any); ok {
+		s.session.Configure(project.ParseConfiguration(settings))
+	} else {
+		s.session.Configure(project.ParseConfiguration([]any{params.Settings}))
 	}
-	s.session.Configure(userPreferences)
 	return nil
 }
 

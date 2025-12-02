@@ -8,12 +8,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func toFormatCodeSettings(opt *lsproto.FormattingOptions, newLine string) *format.FormatCodeSettings {
-	initial := format.GetDefaultFormatCodeSettings(newLine)
+func toFormatCodeSettings(opt *lsproto.FormattingOptions) *lsutil.FormatCodeSettings {
+	initial := lsutil.GetDefaultFormatCodeSettings()
 	initial.TabSize = int(opt.TabSize)
 	initial.IndentSize = int(opt.TabSize)
 	initial.ConvertTabsToSpaces = opt.InsertSpaces
@@ -46,7 +47,7 @@ func (l *LanguageService) ProvideFormatDocument(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForDocument(
 		ctx,
 		file,
-		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
+		toFormatCodeSettings(options),
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
@@ -61,7 +62,7 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
-		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
+		toFormatCodeSettings(options),
 		l.converters.FromLSPRange(file, r),
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
@@ -78,7 +79,7 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,
-		toFormatCodeSettings(options, l.GetProgram().Options().NewLine.GetNewLineCharacter()),
+		toFormatCodeSettings(options),
 		int(l.converters.LineAndCharacterToPosition(file, position)),
 		character,
 	))
@@ -88,7 +89,7 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 func (l *LanguageService) getFormattingEditsForRange(
 	ctx context.Context,
 	file *ast.SourceFile,
-	options *format.FormatCodeSettings,
+	options *lsutil.FormatCodeSettings,
 	r core.TextRange,
 ) []core.TextChange {
 	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
@@ -98,7 +99,7 @@ func (l *LanguageService) getFormattingEditsForRange(
 func (l *LanguageService) getFormattingEditsForDocument(
 	ctx context.Context,
 	file *ast.SourceFile,
-	options *format.FormatCodeSettings,
+	options *lsutil.FormatCodeSettings,
 ) []core.TextChange {
 	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 	return format.FormatDocument(ctx, file)
@@ -107,7 +108,7 @@ func (l *LanguageService) getFormattingEditsForDocument(
 func (l *LanguageService) getFormattingEditsAfterKeystroke(
 	ctx context.Context,
 	file *ast.SourceFile,
-	options *format.FormatCodeSettings,
+	options *lsutil.FormatCodeSettings,
 	position int,
 	key string,
 ) []core.TextChange {
