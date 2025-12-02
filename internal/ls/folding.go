@@ -52,7 +52,7 @@ func (l *LanguageService) addNodeOutliningSpans(ctx context.Context, sourceFile 
 		if lastImport != firstImport {
 			foldingRangeKind := lsproto.FoldingRangeKindImports
 			foldingRange = append(foldingRange, createFoldingRangeFromBounds(
-				astnav.GetStartOfNode(findChildOfKind(statements.Nodes[firstImport],
+				astnav.GetStartOfNode(astnav.FindChildOfKind(statements.Nodes[firstImport],
 					ast.KindImportKeyword, sourceFile), sourceFile, false /*includeJSDoc*/),
 				statements.Nodes[lastImport].End(),
 				foldingRangeKind,
@@ -318,16 +318,16 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 		// to be the entire span of the parent.
 		switch n.Parent.Kind {
 		case ast.KindDoStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindForStatement, ast.KindIfStatement, ast.KindWhileStatement, ast.KindWithStatement, ast.KindCatchClause:
-			return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+			return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 		case ast.KindTryStatement:
 			// Could be the try-block, or the finally-block.
 			tryStatement := n.Parent.AsTryStatement()
 			if tryStatement.TryBlock == n {
-				return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+				return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 			} else if tryStatement.FinallyBlock == n {
-				node := findChildOfKind(n.Parent, ast.KindFinallyKeyword, sourceFile)
-				if node != nil {
-					return spanForNode(node, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+				finallyKeyword := astnav.FindChildOfKind(n.Parent, ast.KindFinallyKeyword, sourceFile)
+				if finallyKeyword != nil {
+					return spanForNodeWithHintSpan(n, finallyKeyword, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 				}
 			}
 			fallthrough
@@ -337,7 +337,7 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 			return createFoldingRange(l.createLspRangeFromNode(n, sourceFile), "", "")
 		}
 	case ast.KindModuleBlock:
-		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+		return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration, ast.KindCaseBlock, ast.KindTypeLiteral, ast.KindObjectBindingPattern:
 		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindTupleType:
@@ -378,15 +378,15 @@ func spanForImportExportElements(node *ast.Node, sourceFile *ast.SourceFile, l *
 	case ast.KindImportAttributes:
 		elements = node.AsImportAttributes().Attributes
 	}
-	if elements == nil {
+	if elements == nil || len(elements.Nodes) == 0 {
 		return nil
 	}
-	openToken := findChildOfKind(node, ast.KindOpenBraceToken, sourceFile)
-	closeToken := findChildOfKind(node, ast.KindCloseBraceToken, sourceFile)
+	openToken := astnav.FindChildOfKind(node, ast.KindOpenBraceToken, sourceFile)
+	closeToken := astnav.FindChildOfKind(node, ast.KindCloseBraceToken, sourceFile)
 	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.Pos(), sourceFile) {
 		return nil
 	}
-	return rangeBetweenTokens(openToken, closeToken, sourceFile, false /*useFullStart*/, l)
+	return rangeBetweenTokens(openToken, closeToken, node, sourceFile, false /*useFullStart*/, l)
 }
 
 func spanForParenthesizedExpression(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -399,16 +399,16 @@ func spanForParenthesizedExpression(node *ast.Node, sourceFile *ast.SourceFile, 
 }
 
 func spanForCallExpression(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	if node.AsCallExpression().Arguments == nil {
+	if node.AsCallExpression().Arguments == nil || len(node.AsCallExpression().Arguments.Nodes) == 0 {
 		return nil
 	}
-	openToken := findChildOfKind(node, ast.KindOpenParenToken, sourceFile)
-	closeToken := findChildOfKind(node, ast.KindCloseParenToken, sourceFile)
+	openToken := astnav.FindChildOfKind(node, ast.KindOpenParenToken, sourceFile)
+	closeToken := astnav.FindChildOfKind(node, ast.KindCloseParenToken, sourceFile)
 	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.Pos(), sourceFile) {
 		return nil
 	}
 
-	return rangeBetweenTokens(openToken, closeToken, sourceFile, true /*useFullStart*/, l)
+	return rangeBetweenTokens(openToken, closeToken, node, sourceFile, true /*useFullStart*/, l)
 }
 
 func spanForArrowFunction(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -428,26 +428,17 @@ func spanForTemplateLiteral(node *ast.Node, sourceFile *ast.SourceFile, l *Langu
 }
 
 func spanForJSXElement(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	var openingElement *ast.Node
 	if node.Kind == ast.KindJsxElement {
-		openingElement = node.AsJsxElement().OpeningElement
-	} else {
-		openingElement = node.AsJsxFragment().OpeningFragment
+		jsxElement := node.AsJsxElement()
+		textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(jsxElement.OpeningElement, sourceFile, false /*includeJSDoc*/), jsxElement.ClosingElement.End(), sourceFile)
+		tagName := jsxElement.OpeningElement.TagName().Text()
+		bannerText := "<" + tagName + ">...</" + tagName + ">"
+		return createFoldingRange(textRange, "", bannerText)
 	}
-	textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(openingElement, sourceFile, false /*includeJSDoc*/), openingElement.End(), sourceFile)
-	tagName := openingElement.TagName().Text()
-	var bannerText strings.Builder
-	if node.Kind == ast.KindJsxElement {
-		bannerText.WriteString("<")
-		bannerText.WriteString(tagName)
-		bannerText.WriteString(">...</")
-		bannerText.WriteString(tagName)
-		bannerText.WriteString(">")
-	} else {
-		bannerText.WriteString("<>...</>")
-	}
-
-	return createFoldingRange(textRange, "", bannerText.String())
+	// JsxFragment
+	jsxFragment := node.AsJsxFragment()
+	textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(jsxFragment.OpeningFragment, sourceFile, false /*includeJSDoc*/), jsxFragment.ClosingFragment.End(), sourceFile)
+	return createFoldingRange(textRange, "", "<>...</>")
 }
 
 func spanForJSXAttributes(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -471,19 +462,24 @@ func spanForNodeArray(statements *ast.NodeList, sourceFile *ast.SourceFile, l *L
 }
 
 func spanForNode(node *ast.Node, open ast.Kind, useFullStart bool, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
+	return spanForNodeWithHintSpan(node, node, open, useFullStart, sourceFile, l)
+}
+
+func spanForNodeWithHintSpan(node *ast.Node, hintSpanNode *ast.Node, open ast.Kind, useFullStart bool, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	closeBrace := ast.KindCloseBraceToken
 	if open != ast.KindOpenBraceToken {
 		closeBrace = ast.KindCloseBracketToken
 	}
-	openToken := findChildOfKind(node, open, sourceFile)
-	closeToken := findChildOfKind(node, closeBrace, sourceFile)
+	openToken := astnav.FindChildOfKind(node, open, sourceFile)
+	closeToken := astnav.FindChildOfKind(node, closeBrace, sourceFile)
 	if openToken != nil && closeToken != nil {
-		return rangeBetweenTokens(openToken, closeToken, sourceFile, useFullStart, l)
+		return rangeBetweenTokens(openToken, closeToken, hintSpanNode, sourceFile, useFullStart, l)
 	}
 	return nil
 }
 
-func rangeBetweenTokens(openToken *ast.Node, closeToken *ast.Node, sourceFile *ast.SourceFile, useFullStart bool, l *LanguageService) *lsproto.FoldingRange {
+func rangeBetweenTokens(openToken *ast.Node, closeToken *ast.Node, hintSpanNode *ast.Node, sourceFile *ast.SourceFile, useFullStart bool, l *LanguageService) *lsproto.FoldingRange {
+	_ = hintSpanNode // hintSpan is used in TypeScript but not needed for LSP FoldingRange
 	var textRange *lsproto.Range
 	if useFullStart {
 		textRange = l.createLspRangeFromBounds(openToken.Pos(), closeToken.End(), sourceFile)
@@ -518,21 +514,21 @@ func createFoldingRangeFromBounds(pos int, end int, foldingRangeKind lsproto.Fol
 
 func functionSpan(node *ast.Node, body *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	openToken := tryGetFunctionOpenToken(node, body, sourceFile)
-	closeToken := findChildOfKind(body, ast.KindCloseBraceToken, sourceFile)
+	closeToken := astnav.FindChildOfKind(body, ast.KindCloseBraceToken, sourceFile)
 	if openToken != nil && closeToken != nil {
-		return rangeBetweenTokens(openToken, closeToken, sourceFile, true /*useFullStart*/, l)
+		return rangeBetweenTokens(openToken, closeToken, node, sourceFile, true /*useFullStart*/, l)
 	}
 	return nil
 }
 
 func tryGetFunctionOpenToken(node *ast.SignatureDeclaration, body *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 	if isNodeArrayMultiLine(node.Parameters(), sourceFile) {
-		openParenToken := findChildOfKind(node, ast.KindOpenParenToken, sourceFile)
+		openParenToken := astnav.FindChildOfKind(node, ast.KindOpenParenToken, sourceFile)
 		if openParenToken != nil {
 			return openParenToken
 		}
 	}
-	return findChildOfKind(body, ast.KindOpenBraceToken, sourceFile)
+	return astnav.FindChildOfKind(body, ast.KindOpenBraceToken, sourceFile)
 }
 
 func isNodeArrayMultiLine(list []*ast.Node, sourceFile *ast.SourceFile) bool {
