@@ -20,19 +20,10 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	res := l.addNodeOutliningSpans(ctx, sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
 	slices.SortFunc(res, func(a, b *lsproto.FoldingRange) int {
-		if a.StartLine != b.StartLine {
-			return cmp.Compare(a.StartLine, b.StartLine)
+		if c := cmp.Compare(a.StartLine, b.StartLine); c != 0 {
+			return c
 		}
-		if a.StartCharacter != nil && b.StartCharacter != nil && *a.StartCharacter != *b.StartCharacter {
-			return cmp.Compare(*a.StartCharacter, *b.StartCharacter)
-		}
-		if a.EndLine != b.EndLine {
-			return cmp.Compare(a.EndLine, b.EndLine)
-		}
-		if a.EndCharacter != nil && b.EndCharacter != nil && *a.EndCharacter != *b.EndCharacter {
-			return cmp.Compare(*a.EndCharacter, *b.EndCharacter)
-		}
-		return 0
+		return cmp.Compare(*a.StartCharacter, *b.StartCharacter)
 	})
 	return lsproto.FoldingRangesOrNull{FoldingRanges: &res}, nil
 }
