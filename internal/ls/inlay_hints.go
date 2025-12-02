@@ -107,7 +107,7 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | FunctionExpression | ArrowFunction
 func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(decl *ast.FunctionLikeDeclaration) {
 	if ast.IsArrowFunction(decl) {
-		if findChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
+		if astnav.FindChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
 			return
 		}
 	}
@@ -892,7 +892,7 @@ func (s *inlayHintState) leadingCommentsContainsParameterName(node *ast.Node, na
 }
 
 func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclaration) int {
-	closeParenToken := findChildOfKind(decl, ast.KindCloseParenToken, s.file)
+	closeParenToken := astnav.FindChildOfKind(decl, ast.KindCloseParenToken, s.file)
 	if closeParenToken != nil {
 		return closeParenToken.End()
 	}

@@ -234,6 +234,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [{ kind: "verifyBaselineDiagnostics" }];
                 case "navigateTo":
                     return parseVerifyNavigateTo(callExpression.arguments);
+                case "outliningSpansInCurrentFile":
+                case "outliningHintSpansInCurrentFile":
+                    return parseOutliningSpansArgs(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -2041,6 +2044,46 @@ function parseBaselineCallHierarchy(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutliningSpansCmd] | undefined {
+    if (args.length === 0) {
+        console.error("Expected at least one argument in verify.outliningSpansInCurrentFile");
+        return undefined;
+    }
+
+    let spans: string = "";
+    // Optional second argument for kind filter
+    let foldingRangeKind: string | undefined;
+    if (args.length > 1) {
+        const kindArg = getStringLiteralLike(args[1]);
+        if (!kindArg) {
+            console.error(`Expected string literal for outlining kind, got ${args[1].getText()}`);
+            return undefined;
+        }
+        switch (kindArg.text) {
+            case "comment":
+                foldingRangeKind = "lsproto.FoldingRangeKindComment";
+                break;
+            case "region":
+                foldingRangeKind = "lsproto.FoldingRangeKindRegion";
+                break;
+            case "imports":
+                foldingRangeKind = "lsproto.FoldingRangeKindImports";
+                break;
+            case "code":
+                break;
+            default:
+                console.error(`Unknown folding range kind: ${kindArg.text}`);
+                return undefined;
+        }
+    }
+
+    return [{
+        kind: "verifyOutliningSpans",
+        spans,
+        foldingRangeKind,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -2518,6 +2561,12 @@ interface VerifyNoSignatureHelpForTriggerReasonCmd {
     markers: string[];
 }
 
+interface VerifyOutliningSpansCmd {
+    kind: "verifyOutliningSpans";
+    spans: string;
+    foldingRangeKind?: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -2541,7 +2590,15 @@ type Cmd =
     | VerifyBaselineInlayHintsCmd
     | VerifyImportFixAtPositionCmd
     | VerifyDiagnosticsCmd
-    | VerifyBaselineDiagnosticsCmd;
+    | VerifyBaselineDiagnosticsCmd
+    | VerifyOutliningSpansCmd;
+
+function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
+    if (foldingRangeKind) {
+        return `f.VerifyOutliningSpans(t, ${foldingRangeKind})`;
+    }
+    return `f.VerifyOutliningSpans(t)`;
+}
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -2835,6 +2892,8 @@ function generateCmd(cmd: Cmd): string {
             return generateSignatureHelpPresent(cmd);
         case "verifyNoSignatureHelpForTriggerReason":
             return generateNoSignatureHelpForTriggerReason(cmd);
+        case "verifyOutliningSpans":
+            return generateVerifyOutliningSpans(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
