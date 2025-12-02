@@ -1,6 +1,4 @@
 index.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-namespacer.js(4,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
-namespacey.js(3,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
 
 
 ==== index.js (1 errors) ====
@@ -10,17 +8,13 @@ namespacey.js(3,8): error TS2540: Cannot assign to 'exports' because it is a rea
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     
-==== namespacey.js (1 errors) ====
+==== namespacey.js (0 errors) ====
     const A = {}
     A.bar = class Q {}
     module.exports = A;
-           ~~~~~~~
-!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
-==== namespacer.js (1 errors) ====
+==== namespacer.js (0 errors) ====
     const B = {}
     B.NS = require("./namespacey");
     Object.defineProperty(B, "NS", { value: "why though", writable: true });
     module.exports = B;
-           ~~~~~~~
-!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
     

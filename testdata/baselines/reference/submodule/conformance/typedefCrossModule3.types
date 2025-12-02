@@ -15,9 +15,9 @@ ns.Foo = class {}
 
 module.exports = ns;
 >module.exports = ns : { Foo: typeof Foo; }
->module.exports : any
+>module.exports : { Foo: typeof Foo; }
 >module : { readonly ns: { Foo: typeof Foo; }; }
->exports : any
+>exports : { Foo: typeof Foo; }
 >ns : { Foo: typeof Foo; }
 
 

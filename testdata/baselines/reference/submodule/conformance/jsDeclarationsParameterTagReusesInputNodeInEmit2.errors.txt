@@ -1,8 +1,7 @@
 base.js(11,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-base.js(11,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
 
 
-==== base.js (2 errors) ====
+==== base.js (1 errors) ====
     class Base {
         constructor() {}
     }
@@ -16,8 +15,6 @@ base.js(11,8): error TS2540: Cannot assign to 'exports' because it is a read-onl
     module.exports = BaseFactory;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-           ~~~~~~~
-!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
     
 ==== file.js (0 errors) ====
     /** @typedef {typeof import('./base')} BaseFactory */

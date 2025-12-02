@@ -58,9 +58,9 @@
 ->exports : typeof A
 ->A : typeof A
 +>module.exports = A : { bar: typeof Q; }
-+>module.exports : any
++>module.exports : { bar: typeof Q; }
 +>module : { readonly A: { bar: typeof Q; }; }
-+>exports : any
++>exports : { bar: typeof Q; }
 +>A : { bar: typeof Q; }
 
  === namespacer.js ===
@@ -105,7 +105,7 @@
 ->exports : typeof B
 ->B : typeof B
 +>module.exports = B : { NS: { bar: typeof Q; }; }
-+>module.exports : any
++>module.exports : { NS: { bar: typeof Q; }; }
 +>module : { readonly B: { NS: { bar: typeof Q; }; }; }
-+>exports : any
++>exports : { NS: { bar: typeof Q; }; }
 +>B : { NS: { bar: typeof Q; }; }

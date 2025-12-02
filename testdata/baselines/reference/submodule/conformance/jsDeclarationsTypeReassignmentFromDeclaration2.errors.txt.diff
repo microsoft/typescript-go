@@ -2,16 +2,17 @@
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration2.errors.txt
 @@= skipped -0, +0 lines =@@
 -index.js(1,1): error TS9006: Declaration emit for this file requires using private name 'Item' from module '"some-mod"'. An explicit type annotation may unblock declaration emit.
-+index.js(2,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
-
-
- ==== index.js (1 errors) ====
-     const items = require("./some-mod")();
+-
+-
+-==== index.js (1 errors) ====
+-    const items = require("./some-mod")();
 -    ~~~~~
 -!!! error TS9006: Declaration emit for this file requires using private name 'Item' from module '"some-mod"'. An explicit type annotation may unblock declaration emit.
-     module.exports = items;
-+           ~~~~~~~
-+!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
- ==== some-mod.d.ts (0 errors) ====
-     interface Item {
-         x: string;
+-    module.exports = items;
+-==== some-mod.d.ts (0 errors) ====
+-    interface Item {
+-        x: string;
+-    }
+-    declare function getItems(): Item[];
+-    export = getItems;
++<no content>

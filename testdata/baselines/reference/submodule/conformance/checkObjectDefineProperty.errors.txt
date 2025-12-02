@@ -1,7 +1,6 @@
 index.js(19,10): error TS2741: Property 'name' is missing in type '{}' but required in type '{ name: string; }'.
 index.js(23,11): error TS2339: Property 'zip' does not exist on type '{}'.
 index.js(28,11): error TS2339: Property 'houseNumber' does not exist on type '{}'.
-index.js(44,8): error TS2540: Cannot assign to 'exports' because it is a read-only property.
 validate.ts(3,3): error TS2339: Property 'name' does not exist on type '{}'.
 validate.ts(4,3): error TS2339: Property 'middleInit' does not exist on type '{}'.
 validate.ts(5,3): error TS2339: Property 'lastName' does not exist on type '{}'.
@@ -62,7 +61,7 @@ validate.ts(17,3): error TS2339: Property 'middleInit' does not exist on type '{
       ~~~~~~~~~~
 !!! error TS2339: Property 'middleInit' does not exist on type '{}'.
     
-==== index.js (4 errors) ====
+==== index.js (3 errors) ====
     const x = {};
     Object.defineProperty(x, "name", { value: "Charles", writable: true });
     Object.defineProperty(x, "middleInit", { value: "H" });
@@ -114,6 +113,4 @@ validate.ts(17,3): error TS2339: Property 'middleInit' does not exist on type '{
     match(() => expected, (x = expected) => void 0);
     
     module.exports = x;
-           ~~~~~~~
-!!! error TS2540: Cannot assign to 'exports' because it is a read-only property.
     

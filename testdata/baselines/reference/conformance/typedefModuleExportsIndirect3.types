@@ -8,9 +8,9 @@ const o = {};
 
 module.exports = o;
 >module.exports = o : {}
->module.exports : any
+>module.exports : {}
 >module : { readonly o: {}; }
->exports : any
+>exports : {}
 >o : {}
 
 === use.js ===

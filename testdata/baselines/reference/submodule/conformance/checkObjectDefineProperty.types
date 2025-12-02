@@ -249,8 +249,8 @@ match(() => expected, (x = expected) => void 0);
 
 module.exports = x;
 >module.exports = x : {}
->module.exports : any
+>module.exports : {}
 >module : { readonly x: {}; }
->exports : any
+>exports : {}
 >x : {}
 

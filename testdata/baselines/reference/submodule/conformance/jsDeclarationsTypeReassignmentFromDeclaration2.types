@@ -10,9 +10,9 @@ const items = require("./some-mod")();
 
 module.exports = items;
 >module.exports = items : Item[]
->module.exports : any
+>module.exports : Item[]
 >module : { readonly items: Item[]; }
->exports : any
+>exports : Item[]
 >items : Item[]
 
 === some-mod.d.ts ===
