@@ -26592,21 +26592,6 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 		// no assignment means it doesn't matter whether the entity is readonly
 		return false
 	}
-	if ast.IsAccessExpression(expr) {
-		node := ast.SkipParentheses(expr.Expression())
-		if ast.IsIdentifier(node) {
-			expressionSymbol := c.getResolvedSymbol(node)
-			// CommonJS module.exports is never readonly
-			if expressionSymbol.Flags&ast.SymbolFlagsModuleExports != 0 {
-				return false
-			}
-			// references through namespace import should be readonly
-			if expressionSymbol.Flags&ast.SymbolFlagsAlias != 0 {
-				declaration := c.getDeclarationOfAliasSymbol(expressionSymbol)
-				return declaration != nil && ast.IsNamespaceImport(declaration)
-			}
-		}
-	}
 	if c.isReadonlySymbol(symbol) {
 		// Allow assignments to readonly properties within constructors of the same class declaration.
 		if symbol.Flags&ast.SymbolFlagsProperty != 0 && ast.IsAccessExpression(expr) && expr.Expression().Kind == ast.KindThisKeyword {
@@ -26626,6 +26611,21 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 			}
 		}
 		return true
+	}
+	if ast.IsAccessExpression(expr) {
+		// references through namespace import should be readonly
+		node := ast.SkipParentheses(expr.Expression())
+		if ast.IsIdentifier(node) {
+			expressionSymbol := c.getResolvedSymbol(node)
+			// CommonJS module.exports is never readonly
+			if expressionSymbol.Flags&ast.SymbolFlagsModuleExports != 0 {
+				return false
+			}
+			if expressionSymbol.Flags&ast.SymbolFlagsAlias != 0 {
+				declaration := c.getDeclarationOfAliasSymbol(expressionSymbol)
+				return declaration != nil && ast.IsNamespaceImport(declaration)
+			}
+		}
 	}
 	return false
 }
