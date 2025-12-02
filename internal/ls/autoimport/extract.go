@@ -186,11 +186,22 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			namedSymbol = s
 		}
 		export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-		if export.localName == "" {
+		if isUnusableName(export.localName) {
 			export.localName = export.Target.ExportName
 		}
-		if export.localName == "" || export.localName == ast.InternalSymbolNameDefault || export.localName == ast.InternalSymbolNameExportEquals || export.localName == ast.InternalSymbolNameExportStar {
-			export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
+		if isUnusableName(export.localName) {
+			if target != nil {
+				namedSymbol = target
+				if s := binder.GetLocalSymbolForExportDefault(target); s != nil {
+					namedSymbol = s
+				}
+				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
+				if isUnusableName(export.localName) {
+					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), core.ScriptTargetESNext, false)
+				}
+			} else {
+				export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
+			}
 		}
 	}
 
@@ -239,7 +250,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 			ModuleID:   moduleID,
 		},
 		Syntax:               syntax,
-		Flags:                symbol.Flags,
+		Flags:                symbol.CombinedLocalAndExportSymbolFlags(),
 		Path:                 file.Path(),
 		NodeModulesDirectory: e.nodeModulesDirectory,
 		PackageName:          e.packageName,
@@ -266,6 +277,11 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 				panic("no declaration for aliased symbol")
 			}
 
+			if checker := checkerLease.TryChecker(); checker != nil {
+				export.Flags = checker.GetSymbolFlags(targetSymbol)
+			} else {
+				export.Flags = targetSymbol.Flags
+			}
 			export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), targetSymbol, decl)
 			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), targetSymbol)
 			// !!! completely wrong, write a test for this
@@ -372,4 +388,8 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 		syntax = declSyntax
 	}
 	return syntax
+}
+
+func isUnusableName(name string) bool {
+	return name == "" || name == ast.InternalSymbolNameExportStar || name == ast.InternalSymbolNameDefault || name == ast.InternalSymbolNameExportEquals
 }

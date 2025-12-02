@@ -1,6 +1,7 @@
 package autoimport
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"slices"
@@ -85,12 +86,12 @@ func (f *Fix) Edits(
 		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		var namespaceLikeImport *newImportBinding
 		// qualification := f.qualification()
-		// if f.ImportKind == lsproto.ImportKindNamespace || f.ImportKind == lsproto.ImportKindCommonJS {
-		// 	namespaceLikeImport = &newImportBinding{kind: f.ImportKind, name: f.Name}
-		// 	if qualification != nil && qualification.namespacePref != "" {
-		// 		namespaceLikeImport.name = qualification.namespacePref
-		// 	}
-		// }
+		if f.ImportKind == lsproto.ImportKindNamespace || f.ImportKind == lsproto.ImportKindCommonJS {
+			namespaceLikeImport = &newImportBinding{kind: f.ImportKind, name: f.Name}
+			// if qualification != nil && qualification.namespacePref != "" {
+			// 	namespaceLikeImport.name = qualification.namespacePref
+			// }
+		}
 
 		if f.UseRequire {
 			declarations = getNewRequires(tracker, f.ModuleSpecifier, defaultImport, namedImports, namespaceLikeImport, compilerOptions)
@@ -459,7 +460,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 
 	// Check if we need a JSDoc import type fix (for JS files with type-only imports)
 	isJs := tspath.HasJSFileExtension(v.importingFile.FileName())
-	importedSymbolHasValueMeaning := export.Flags&ast.SymbolFlagsValue != 0
+	importedSymbolHasValueMeaning := export.Flags&ast.SymbolFlagsValue != 0 || export.IsUnresolvedAlias()
 	if !importedSymbolHasValueMeaning && isJs && usagePosition != nil {
 		// For pure types in JS files, use JSDoc import type syntax
 		return []*Fix{
@@ -485,8 +486,9 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 	if forJSX && !startsWithUpper {
 		if export.IsRenameable() {
 			name = fmt.Sprintf("%c%s", unicode.ToUpper(rune(name[0])), name[1:])
+		} else {
+			return nil
 		}
-		return nil
 	}
 
 	return []*Fix{
@@ -495,7 +497,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 				Kind:            lsproto.AutoImportFixKindAddNew,
 				ImportKind:      importKind,
 				ModuleSpecifier: moduleSpecifier,
-				Name:            export.Name(),
+				Name:            name,
 				UseRequire:      v.shouldUseRequire(),
 				AddAsTypeOnly:   addAsTypeOnly,
 			},
@@ -606,11 +608,27 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 	switch export.Syntax {
 	case ExportSyntaxDefaultModifier, ExportSyntaxDefaultDeclaration:
 		return lsproto.ImportKindDefault
-	case ExportSyntaxNamed, ExportSyntaxModifier, ExportSyntaxStar, ExportSyntaxCommonJSExportsProperty:
+	case ExportSyntaxNamed:
+		if export.ExportName == ast.InternalSymbolNameDefault {
+			return lsproto.ImportKindDefault
+		}
+		fallthrough
+	case ExportSyntaxModifier, ExportSyntaxStar, ExportSyntaxCommonJSExportsProperty:
 		return lsproto.ImportKindNamed
 	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports:
 		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.
-		return core.IfElse(export.ExportName == ast.InternalSymbolNameExportEquals, lsproto.ImportKindDefault, lsproto.ImportKindNamed)
+		if export.ExportName != ast.InternalSymbolNameExportEquals {
+			return lsproto.ImportKindNamed
+		}
+		// !!! this logic feels weird; we're basically trying to predict if shouldUseRequire is going to
+		//     be true. The meaning of "default import" is different depending on whether we write it as
+		//     a require or an es6 import. The latter, compiled to CJS, has interop built in that will
+		//     avoid accessing .default, but if we write a require directly and call it a default import,
+		//     we emit an unconditional .default access.
+		if importingFile.ExternalModuleIndicator != nil || !ast.IsSourceFileJS(importingFile) {
+			return lsproto.ImportKindDefault
+		}
+		return lsproto.ImportKindCommonJS
 	default:
 		panic("unhandled export syntax kind: " + export.Syntax.String())
 	}
@@ -737,6 +755,12 @@ func (v *View) compareModuleSpecifiers(a, b *Fix) int {
 		return comparison
 	}
 	if comparison := tspath.CompareNumberOfDirectorySeparators(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
+		return comparison
+	}
+	if comparison := strings.Compare(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
+		return comparison
+	}
+	if comparison := cmp.Compare(a.ImportKind, b.ImportKind); comparison != 0 {
 		return comparison
 	}
 	return 0

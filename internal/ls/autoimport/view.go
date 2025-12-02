@@ -73,7 +73,7 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 	var excludePackages *collections.Set[string]
 	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
 		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
-			exports := append(results, search(nodeModulesBucket)...)
+			exports := search(nodeModulesBucket)
 			if excludePackages.Len() > 0 {
 				results = slices.Grow(results, len(exports))
 				for _, e := range exports {

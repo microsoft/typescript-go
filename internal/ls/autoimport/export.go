@@ -99,6 +99,10 @@ func (e *Export) ModuleFileName() string {
 	return ""
 }
 
+func (e *Export) IsUnresolvedAlias() bool {
+	return e.Flags == ast.SymbolFlagsAlias
+}
+
 func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 	if symbol.Parent == nil || !checker.IsExternalModuleSymbol(symbol.Parent) {
 		return nil

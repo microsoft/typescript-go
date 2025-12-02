@@ -3264,6 +3264,7 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 	if result == stringutil.ComparisonEqual {
 		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 	}
+	// !!! duplicated with autoimport.CompareFixes, can we remove?
 	if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
 		sliceEntryData := entryInSlice.Data
 		insertEntryData := entryToInsert.Data
