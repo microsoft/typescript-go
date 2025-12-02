@@ -179,7 +179,10 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		configStart := sys.Now()
 		var commandLineRaw *collections.OrderedMap[string, any]
 		if raw, ok := commandLine.Raw.(*collections.OrderedMap[string, any]); ok {
-			commandLineRaw = raw
+			// Wrap command line options in a "compilerOptions" key to match tsconfig.json structure
+			wrapped := &collections.OrderedMap[string, any]{}
+			wrapped.Set("compilerOptions", raw)
+			commandLineRaw = wrapped
 		}
 		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, commandLineRaw, sys, extendedConfigCache)
 		compileTimes.ConfigTime = sys.Now().Sub(configStart)

@@ -1005,11 +1005,11 @@ func parseConfig(
 		var result *parsedTsconfig
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Circularity_detected_while_resolving_configuration_Colon_0))
 		if json.Size() == 0 {
-			result = &parsedTsconfig{raw: json, options: &core.CompilerOptions{}}
+			result = &parsedTsconfig{raw: json}
 		} else {
 			rawResult, err := convertToObject(sourceFile.SourceFile)
 			errors = append(errors, err...)
-			result = &parsedTsconfig{raw: rawResult, options: &core.CompilerOptions{}}
+			result = &parsedTsconfig{raw: rawResult}
 		}
 		return result, errors
 	}

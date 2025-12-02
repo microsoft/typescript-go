@@ -114,10 +114,13 @@ func TestCustomConditionsNullOverride(t *testing.T) {
 	}
 
 	// Now parse the config file with the command line options
+	// Wrap command line options in "compilerOptions" key to match tsconfig.json structure
+	wrappedRaw := &collections.OrderedMap[string, any]{}
+	wrappedRaw.Set("compilerOptions", cmdLine.Raw.(*collections.OrderedMap[string, any]))
 	parsedConfig, errors := tsoptions.GetParsedCommandLineOfConfigFile(
 		"/project/tsconfig.json",
 		cmdLine.CompilerOptions(),
-		cmdLine.Raw.(*collections.OrderedMap[string, any]),
+		wrappedRaw,
 		host,
 		nil,
 	)
