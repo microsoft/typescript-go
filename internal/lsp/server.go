@@ -246,6 +246,17 @@ func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.Publish
 	return nil
 }
 
+func (s *Server) RefreshCodeLens(ctx context.Context) error {
+	if !s.clientCapabilities.Workspace.CodeLens.RefreshSupport {
+		return nil
+	}
+
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, nil); err != nil {
+		return fmt.Errorf("failed to refresh code lens: %w", err)
+	}
+	return nil
+}
+
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {

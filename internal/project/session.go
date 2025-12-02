@@ -211,7 +211,14 @@ func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
+
+	// Inform the client to re-request certain commands
+	// depending on user preference changes.
+	oldUserPreferences := s.userPreferences
 	s.userPreferences = userPreferences
+	if oldUserPreferences != userPreferences && oldUserPreferences != nil && userPreferences != nil {
+		s.refreshCodeLensIfNeeded(oldUserPreferences, userPreferences)
+	}
 }
 
 func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
@@ -786,6 +793,20 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
+}
+
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+	prefsDiffer := oldPrefs.ImplementationsCodeLensEnabled != newPrefs.ImplementationsCodeLensEnabled ||
+		oldPrefs.ImplementationsCodeLensShowOnAllClassMethods != newPrefs.ImplementationsCodeLensShowOnAllClassMethods ||
+		oldPrefs.ImplementationsCodeLensShowOnInterfaceMethods != newPrefs.ImplementationsCodeLensShowOnInterfaceMethods ||
+		oldPrefs.ReferencesCodeLensEnabled != newPrefs.ReferencesCodeLensEnabled ||
+		oldPrefs.ReferencesCodeLensShowOnAllFunctions != newPrefs.ReferencesCodeLensShowOnAllFunctions
+
+	if prefsDiffer {
+		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error refreshing code lens: %v", err)
+		}
+	}
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {

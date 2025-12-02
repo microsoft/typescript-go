@@ -24,6 +24,9 @@ var _ project.Client = &ClientMock{}
 //			PublishDiagnosticsFunc: func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 //				panic("mock out the PublishDiagnostics method")
 //			},
+//			RefreshCodeLensFunc: func(ctx context.Context) error {
+//				panic("mock out the RefreshCodeLens method")
+//			},
 //			RefreshDiagnosticsFunc: func(ctx context.Context) error {
 //				panic("mock out the RefreshDiagnostics method")
 //			},
@@ -43,6 +46,9 @@ type ClientMock struct {
 	// PublishDiagnosticsFunc mocks the PublishDiagnostics method.
 	PublishDiagnosticsFunc func(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error
 
+	// RefreshCodeLensFunc mocks the RefreshCodeLens method.
+	RefreshCodeLensFunc func(ctx context.Context) error
+
 	// RefreshDiagnosticsFunc mocks the RefreshDiagnostics method.
 	RefreshDiagnosticsFunc func(ctx context.Context) error
 
@@ -60,6 +66,11 @@ type ClientMock struct {
 			Ctx context.Context
 			// Params is the params argument value.
 			Params *lsproto.PublishDiagnosticsParams
+		}
+		// RefreshCodeLens holds details about calls to the RefreshCodeLens method.
+		RefreshCodeLens []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
 		}
 		// RefreshDiagnostics holds details about calls to the RefreshDiagnostics method.
 		RefreshDiagnostics []struct {
@@ -84,6 +95,7 @@ type ClientMock struct {
 		}
 	}
 	lockPublishDiagnostics sync.RWMutex
+	lockRefreshCodeLens    sync.RWMutex
 	lockRefreshDiagnostics sync.RWMutex
 	lockUnwatchFiles       sync.RWMutex
 	lockWatchFiles         sync.RWMutex
@@ -123,6 +135,39 @@ func (mock *ClientMock) PublishDiagnosticsCalls() []struct {
 	mock.lockPublishDiagnostics.RLock()
 	calls = mock.calls.PublishDiagnostics
 	mock.lockPublishDiagnostics.RUnlock()
+	return calls
+}
+
+// RefreshCodeLens calls RefreshCodeLensFunc.
+func (mock *ClientMock) RefreshCodeLens(ctx context.Context) error {
+	callInfo := struct {
+		Ctx context.Context
+	}{
+		Ctx: ctx,
+	}
+	mock.lockRefreshCodeLens.Lock()
+	mock.calls.RefreshCodeLens = append(mock.calls.RefreshCodeLens, callInfo)
+	mock.lockRefreshCodeLens.Unlock()
+	if mock.RefreshCodeLensFunc == nil {
+		var errOut error
+		return errOut
+	}
+	return mock.RefreshCodeLensFunc(ctx)
+}
+
+// RefreshCodeLensCalls gets all the calls that were made to RefreshCodeLens.
+// Check the length with:
+//
+//	len(mockedClient.RefreshCodeLensCalls())
+func (mock *ClientMock) RefreshCodeLensCalls() []struct {
+	Ctx context.Context
+} {
+	var calls []struct {
+		Ctx context.Context
+	}
+	mock.lockRefreshCodeLens.RLock()
+	calls = mock.calls.RefreshCodeLens
+	mock.lockRefreshCodeLens.RUnlock()
 	return calls
 }
 
