@@ -256,6 +256,11 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 		PackageName:          e.packageName,
 	}
 
+	if syntax == ExportSyntaxUMD {
+		export.ExportName = ast.InternalSymbolNameExportEquals
+		export.localName = symbol.Name
+	}
+
 	var targetSymbol *ast.Symbol
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		// !!! try localNameResolver first?
@@ -279,8 +284,10 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 
 			if checker := checkerLease.TryChecker(); checker != nil {
 				export.Flags = checker.GetSymbolFlags(targetSymbol)
+				export.IsTypeOnly = checker.GetTypeOnlyAliasDeclaration(symbol) != nil
 			} else {
 				export.Flags = targetSymbol.Flags
+				export.IsTypeOnly = core.Some(symbol.Declarations, ast.IsPartOfTypeOnlyImportOrExportDeclaration)
 			}
 			export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), targetSymbol, decl)
 			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), targetSymbol)
@@ -368,6 +375,8 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 				ExportSyntaxEquals,
 				ExportSyntaxDefaultDeclaration,
 			)
+		case ast.KindNamespaceExportDeclaration:
+			declSyntax = ExportSyntaxUMD
 		case ast.KindJSExportAssignment:
 			declSyntax = ExportSyntaxCommonJSModuleExports
 		case ast.KindCommonJSExport:
@@ -391,5 +400,9 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 }
 
 func isUnusableName(name string) bool {
-	return name == "" || name == ast.InternalSymbolNameExportStar || name == ast.InternalSymbolNameDefault || name == ast.InternalSymbolNameExportEquals
+	return name == "" ||
+		name == "_default" ||
+		name == ast.InternalSymbolNameExportStar ||
+		name == ast.InternalSymbolNameDefault ||
+		name == ast.InternalSymbolNameExportEquals
 }

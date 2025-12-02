@@ -81,6 +81,16 @@ const customStructures: Structure[] = [
                 type: { kind: "base", name: "integer" },
                 documentation: "Index of the import to modify when adding to an existing import declaration.",
             },
+            {
+                name: "usagePosition",
+                type: { kind: "reference", name: "Position" },
+                optional: true,
+            },
+            {
+                name: "namespacePrefix",
+                type: { kind: "base", name: "string" },
+                omitzeroValue: true,
+            },
         ],
         documentation: "AutoImportFix contains information about an auto-import suggestion.",
     },

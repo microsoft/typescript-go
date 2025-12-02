@@ -203,11 +203,10 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
 	symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
-	isJSXTagName := ast.IsJsxTagName(symbolToken)
 	var allInfo []*fixInfo
 
 	// Compute usage position for JSDoc import type fixes
-	usagePosition := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(symbolToken.Pos()))
+	usagePosition := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)))
 
 	for _, symbolName := range symbolNames {
 		// "default" is a keyword and not a legal identifier for the import
@@ -215,6 +214,7 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 			continue
 		}
 
+		isJSXTagName := symbolName == symbolToken.Text() && ast.IsJsxTagName(symbolToken)
 		queryKind := autoimport.QueryKindExactMatch
 		if isJSXTagName {
 			queryKind = autoimport.QueryKindCaseInsensitiveMatch

@@ -38,6 +38,8 @@ const (
 	ExportSyntaxDefaultDeclaration
 	// export = x
 	ExportSyntaxEquals
+	// export as namespace x
+	ExportSyntaxUMD
 	// export * from "module"
 	ExportSyntaxStar
 	// module.exports = {}
@@ -58,6 +60,7 @@ type Export struct {
 	// Checker-set fields
 
 	Target                     ExportID
+	IsTypeOnly                 bool
 	ScriptElementKind          lsutil.ScriptElementKind
 	ScriptElementKindModifiers collections.Set[lsutil.ScriptElementKindModifier]
 

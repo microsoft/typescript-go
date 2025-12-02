@@ -42,7 +42,6 @@ type Fix struct {
 	IsReExport               bool
 	ModuleFileName           string
 	TypeOnlyAliasDeclaration *ast.Declaration
-	UsagePosition            *lsproto.Position // For JSDoc import type fix
 }
 
 func (f *Fix) Edits(
@@ -55,6 +54,13 @@ func (f *Fix) Edits(
 ) ([]*lsproto.TextEdit, string) {
 	tracker := change.NewTracker(ctx, compilerOptions, formatOptions, converters)
 	switch f.Kind {
+	case lsproto.AutoImportFixKindUseNamespace:
+		if f.UsagePosition == nil || f.NamespacePrefix == "" {
+			panic("namespace fix requires usage position and prefix")
+		}
+		qualified := fmt.Sprintf("%s.%s", f.NamespacePrefix, f.Name)
+		tracker.InsertText(file, *f.UsagePosition, f.NamespacePrefix+".")
+		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Format(f.Name, qualified)
 	case lsproto.AutoImportFixKindAddToExisting:
 		if len(file.Imports()) <= int(f.ImportIndex) {
 			panic("import index out of range")
@@ -446,15 +452,22 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 
 // !!! when/why could this return multiple?
 func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
-	// !!! tryUseExistingNamespaceImport
+	var fixes []*Fix
+	if namespaceFix := v.tryUseExistingNamespaceImport(ctx, export, usagePosition); namespaceFix != nil {
+		fixes = append(fixes, namespaceFix)
+	}
+
 	if fix := v.tryAddToExistingImport(ctx, export, isValidTypeOnlyUseSite); fix != nil {
-		return []*Fix{fix}
+		return append(fixes, fix)
 	}
 
 	// !!! getNewImportFromExistingSpecifier - even worth it?
 
 	moduleSpecifier, moduleSpecifierKind := v.GetModuleSpecifier(export, v.preferences)
 	if moduleSpecifier == "" {
+		if len(fixes) > 0 {
+			return fixes
+		}
 		return nil
 	}
 
@@ -469,17 +482,17 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 					Kind:            lsproto.AutoImportFixKindJsdocTypeImport,
 					ModuleSpecifier: moduleSpecifier,
 					Name:            export.Name(),
+					UsagePosition:   usagePosition,
 				},
 				ModuleSpecifierKind: moduleSpecifierKind,
 				IsReExport:          export.Target.ModuleID != export.ModuleID,
 				ModuleFileName:      export.ModuleFileName(),
-				UsagePosition:       usagePosition,
 			},
 		}
 	}
 
 	importKind := getImportKind(v.importingFile, export, v.program)
-	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
 	name := export.Name()
 	startsWithUpper := unicode.IsUpper(rune(name[0]))
@@ -491,34 +504,87 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 		}
 	}
 
-	return []*Fix{
-		{
-			AutoImportFix: &lsproto.AutoImportFix{
-				Kind:            lsproto.AutoImportFixKindAddNew,
-				ImportKind:      importKind,
-				ModuleSpecifier: moduleSpecifier,
-				Name:            name,
-				UseRequire:      v.shouldUseRequire(),
-				AddAsTypeOnly:   addAsTypeOnly,
-			},
-			ModuleSpecifierKind: moduleSpecifierKind,
-			IsReExport:          export.Target.ModuleID != export.ModuleID,
-			ModuleFileName:      export.ModuleFileName(),
+	return append(fixes, &Fix{
+		AutoImportFix: &lsproto.AutoImportFix{
+			Kind:            lsproto.AutoImportFixKindAddNew,
+			ImportKind:      importKind,
+			ModuleSpecifier: moduleSpecifier,
+			Name:            name,
+			UseRequire:      v.shouldUseRequire(),
+			AddAsTypeOnly:   addAsTypeOnly,
 		},
-	}
+		ModuleSpecifierKind: moduleSpecifierKind,
+		IsReExport:          export.Target.ModuleID != export.ModuleID,
+		ModuleFileName:      export.ModuleFileName(),
+	})
 }
 
 // getAddAsTypeOnly determines if an import should be type-only based on usage context
-func getAddAsTypeOnly(isValidTypeOnlyUseSite bool, targetFlags ast.SymbolFlags, compilerOptions *core.CompilerOptions) lsproto.AddAsTypeOnly {
+func getAddAsTypeOnly(isValidTypeOnlyUseSite bool, export *Export, compilerOptions *core.CompilerOptions) lsproto.AddAsTypeOnly {
 	if !isValidTypeOnlyUseSite {
 		// Can't use a type-only import if the usage is an emitting position
 		return lsproto.AddAsTypeOnlyNotAllowed
 	}
-	if compilerOptions.VerbatimModuleSyntax.IsTrue() && targetFlags&ast.SymbolFlagsValue == 0 {
+	if compilerOptions.VerbatimModuleSyntax.IsTrue() && (export.IsTypeOnly || export.Flags&ast.SymbolFlagsValue == 0) ||
+		export.IsTypeOnly && export.Flags&ast.SymbolFlagsValue != 0 {
 		// A type-only import is required for this symbol if under verbatimModuleSyntax and it's purely a type
 		return lsproto.AddAsTypeOnlyRequired
 	}
 	return lsproto.AddAsTypeOnlyAllowed
+}
+
+func (v *View) tryUseExistingNamespaceImport(ctx context.Context, export *Export, usagePosition *lsproto.Position) *Fix {
+	if usagePosition == nil {
+		return nil
+	}
+
+	if getImportKind(v.importingFile, export, v.program) != lsproto.ImportKindNamed {
+		return nil
+	}
+
+	existingImports := v.getExistingImports(ctx)
+	matchingDeclarations := existingImports.Get(export.ModuleID)
+	for _, existingImport := range matchingDeclarations {
+		namespacePrefix := getNamespaceLikeImportText(existingImport.node)
+		if namespacePrefix == "" || existingImport.moduleSpecifier == "" {
+			continue
+		}
+		return &Fix{
+			AutoImportFix: &lsproto.AutoImportFix{
+				Kind:            lsproto.AutoImportFixKindUseNamespace,
+				Name:            export.Name(),
+				ModuleSpecifier: existingImport.moduleSpecifier,
+				ImportKind:      lsproto.ImportKindNamespace,
+				AddAsTypeOnly:   lsproto.AddAsTypeOnlyAllowed,
+				ImportIndex:     int32(existingImport.index),
+				UsagePosition:   usagePosition,
+				NamespacePrefix: namespacePrefix,
+			},
+		}
+	}
+
+	return nil
+}
+
+func getNamespaceLikeImportText(declaration *ast.Node) string {
+	switch declaration.Kind {
+	case ast.KindVariableDeclaration:
+		name := declaration.Name()
+		if name != nil && name.Kind == ast.KindIdentifier {
+			return name.Text()
+		}
+		return ""
+	case ast.KindImportEqualsDeclaration:
+		return declaration.Name().Text()
+	case ast.KindJSDocImportTag, ast.KindImportDeclaration:
+		importClause := declaration.ImportClause()
+		if importClause != nil && importClause.AsImportClause().NamedBindings != nil && importClause.AsImportClause().NamedBindings.Kind == ast.KindNamespaceImport {
+			return importClause.AsImportClause().NamedBindings.Name().Text()
+		}
+		return ""
+	default:
+		return ""
+	}
 }
 
 func (v *View) tryAddToExistingImport(
@@ -544,7 +610,7 @@ func (v *View) tryAddToExistingImport(
 		return nil
 	}
 
-	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export.Flags, v.program.Options())
+	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
 	for _, existingImport := range matchingDeclarations {
 		if existingImport.node.Kind == ast.KindImportEqualsDeclaration {
@@ -615,10 +681,17 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 		fallthrough
 	case ExportSyntaxModifier, ExportSyntaxStar, ExportSyntaxCommonJSExportsProperty:
 		return lsproto.ImportKindNamed
-	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports:
+	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports, ExportSyntaxUMD:
 		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.
 		if export.ExportName != ast.InternalSymbolNameExportEquals {
 			return lsproto.ImportKindNamed
+		}
+		// !!! cache this?
+		for _, statement := range importingFile.Statements.Nodes {
+			// `import foo` parses as an ImportEqualsDeclaration even though it could be an ImportDeclaration
+			if ast.IsImportEqualsDeclaration(statement) && !ast.NodeIsMissing(statement.AsImportEqualsDeclaration().ModuleReference) {
+				return lsproto.ImportKindCommonJS
+			}
 		}
 		// !!! this logic feels weird; we're basically trying to predict if shouldUseRequire is going to
 		//     be true. The meaning of "default import" is different depending on whether we write it as

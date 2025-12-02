@@ -21753,6 +21753,10 @@ type AutoImportFix struct {
 
 	// Index of the import to modify when adding to an existing import declaration.
 	ImportIndex int32 `json:"importIndex"`
+
+	UsagePosition *Position `json:"usagePosition,omitzero"`
+
+	NamespacePrefix string `json:"namespacePrefix,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*AutoImportFix)(nil)
@@ -21808,6 +21812,14 @@ func (s *AutoImportFix) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		case `"importIndex"`:
 			missing &^= missingImportIndex
 			if err := json.UnmarshalDecode(dec, &s.ImportIndex); err != nil {
+				return err
+			}
+		case `"usagePosition"`:
+			if err := json.UnmarshalDecode(dec, &s.UsagePosition); err != nil {
+				return err
+			}
+		case `"namespacePrefix"`:
+			if err := json.UnmarshalDecode(dec, &s.NamespacePrefix); err != nil {
 				return err
 			}
 		default:
