@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -104,33 +105,52 @@ type ReferenceEntry struct {
 	node      *ast.Node
 	context   *ast.Node // !!! ContextWithStartAndEndNode, optional
 	fileName  string
-	textRange *lsproto.Range
+	textRange *core.TextRange
+	lspRange  *lsproto.Location
+}
+
+func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
+	if entry.definition == nil {
+		return false
+	}
+
+	switch entry.definition.Kind {
+	case definitionKindSymbol, definitionKindThis:
+		return entry.definition.symbol != nil
+	case definitionKindTripleSlashReference:
+		// !!! TODO : need to find file reference instead?
+		// May need to return true to indicate this to be file search instead and might need to do for import stuff as well
+		// For now
+		return false
+	default:
+		return false
+	}
 }
 
 func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) *lsproto.Range {
-	return l.resolveEntry(entry).textRange
+	return &l.resolveEntry(entry).lspRange.Range
 }
 
-func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) string {
-	return l.resolveEntry(entry).fileName
+func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.DocumentUri {
+	return l.resolveEntry(entry).lspRange.Uri
+}
+
+func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) *lsproto.Location {
+	return l.resolveEntry(entry).lspRange
 }
 
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
 	if entry.textRange == nil {
 		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		entry.textRange = l.getLspRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		textRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = &textRange
 		entry.fileName = sourceFile.FileName()
 	}
-	return entry
-}
-
-func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *ReferenceEntry {
-	// !!! used in not-yet implemented features
-	return &ReferenceEntry{
-		kind:      entryKindRange,
-		fileName:  file.FileName(),
-		textRange: l.createLspRangeFromBounds(start, end, file),
+	if entry.lspRange == nil {
+		location := l.getMappedLocation(entry.fileName, *entry.textRange)
+		entry.lspRange = &location
 	}
+	return entry
 }
 
 func newNodeEntryWithKind(node *ast.Node, kind entryKind) *ReferenceEntry {
@@ -266,10 +286,9 @@ func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.Sour
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
 	textRange := getRangeOfNode(node, sourceFile, endNode)
-	return l.createLspRangeFromRange(textRange, sourceFile)
+	return l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), sourceFile)
 }
 
-// `getTextSpan`
 func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
@@ -416,21 +435,188 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 
 // === functions on (*ls) ===
 
-func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
+type position struct {
+	uri lsproto.DocumentUri
+	pos lsproto.Position
+}
+
+var _ lsproto.HasTextDocumentPosition = (*position)(nil)
+
+func (nld *position) TextDocumentURI() lsproto.DocumentUri   { return nld.uri }
+func (nld *position) TextDocumentPosition() lsproto.Position { return nld.pos }
+
+type NonLocalDefinition struct {
+	position
+	GetSourcePosition    func() lsproto.HasTextDocumentPosition
+	GetGeneratedPosition func() lsproto.HasTextDocumentPosition
+}
+
+func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, core.TextPos) {
+	file := ast.GetSourceFileOfNode(declaration)
+	name := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
+	textRange := getRangeOfNode(name, file, nil /*endNode*/)
+
+	return file, core.TextPos(textRange.Pos())
+}
+
+func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) *NonLocalDefinition {
+	if !entry.canUseDefinitionSymbol() {
+		return nil
+	}
+
+	program := l.GetProgram()
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+	emitResolver := checker.GetEmitResolver()
+	for _, d := range entry.definition.symbol.Declarations {
+		if isDefinitionVisible(emitResolver, d) {
+			file, startPos := getFileAndStartPosFromDeclaration(d)
+			fileName := file.FileName()
+			return &NonLocalDefinition{
+				position: position{
+					uri: lsconv.FileNameToDocumentURI(fileName),
+					pos: l.converters.PositionToLineAndCharacter(file, startPos),
+				},
+				GetSourcePosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
+					mapped := l.tryGetSourcePosition(fileName, startPos)
+					if mapped != nil {
+						return &position{
+							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
+							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+						}
+					}
+					return nil
+				}),
+				GetGeneratedPosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
+					mapped := l.tryGetGeneratedPosition(fileName, startPos)
+					if mapped != nil {
+						return &position{
+							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
+							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+						}
+					}
+					return nil
+				}),
+			}
+		}
+	}
+	return nil
+}
+
+// This is special handling to determine if we should load up more projects and find location in other projects
+// By default arrows (and such other ast kinds) are not visible as declaration emitter doesnt need them
+// But we want to handle them specially so that they are visible if their parent is visible
+func isDefinitionVisible(emitResolver *checker.EmitResolver, declaration *ast.Node) bool {
+	if emitResolver.IsDeclarationVisible(declaration) {
+		return true
+	}
+	if declaration.Parent == nil {
+		return false
+	}
+
+	// Variable initializers are visible if variable is visible
+	if ast.HasInitializer(declaration.Parent) && declaration.Parent.Initializer() == declaration {
+		return isDefinitionVisible(emitResolver, declaration.Parent)
+	}
+
+	// Handle some exceptions here like arrow function, members of class and object literal expression which are technically not visible but we want the definition to be determined by its parent
+	switch declaration.Kind {
+	case ast.KindPropertyDeclaration,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindMethodDeclaration:
+		// Private/protected properties/methods are not visible
+		if ast.HasModifier(declaration, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifier(declaration.Name()) {
+			return false
+		}
+		// Public properties/methods are visible if its parents are visible, so:
+		// falls through
+		fallthrough
+	case ast.KindConstructor,
+		ast.KindPropertyAssignment,
+		ast.KindShorthandPropertyAssignment,
+		ast.KindObjectLiteralExpression,
+		ast.KindClassExpression,
+		ast.KindArrowFunction,
+		ast.KindFunctionExpression:
+		return isDefinitionVisible(emitResolver, declaration.Parent)
+	default:
+		return false
+	}
+}
+
+func (l *LanguageService) ForEachOriginalDefinitionLocation(
+	ctx context.Context,
+	entry *SymbolAndEntries,
+	cb func(lsproto.DocumentUri, lsproto.Position),
+) {
+	if !entry.canUseDefinitionSymbol() {
+		return
+	}
+
+	program := l.GetProgram()
+	for _, d := range entry.definition.symbol.Declarations {
+		file, startPos := getFileAndStartPosFromDeclaration(d)
+		fileName := file.FileName()
+		if tspath.IsDeclarationFileName(fileName) {
+			// Map to ts position
+			mapped := l.tryGetSourcePosition(file.FileName(), startPos)
+			if mapped != nil {
+				cb(
+					lsconv.FileNameToDocumentURI(mapped.FileName),
+					l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+				)
+			}
+		} else if program.IsSourceFromProjectReference(l.toPath(fileName)) {
+			cb(
+				lsconv.FileNameToDocumentURI(fileName),
+				l.converters.PositionToLineAndCharacter(file, startPos),
+			)
+		}
+	}
+}
+
+func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool) (*ast.Node, []*SymbolAndEntries, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
-	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
+	program, sourceFile := l.getProgramAndFile(uri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	options := refOptions{use: referenceUseReferences}
+	if isRename && node.Kind != ast.KindIdentifier {
+		return node, nil, false
+	}
 
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+	var options refOptions
+	if !isRename {
+		options.use = referenceUseReferences
+	} else {
+		options.use = referenceUseRename
+		options.useAliasesForRename = true
+	}
 
-	locations := core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntriesToLocations)
+	return node, l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil), true
+}
+
+func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
+	// `findReferencedSymbols` except only computes the information needed to return reference locations
+	locations := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
+		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
+	})
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
 func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
+	return l.provideImplementationsEx(ctx, params, provideImplementationsOpts{})
+}
+
+type provideImplementationsOpts struct {
+	// Force the result to be Location objects.
+	requireLocationsResult bool
+	// Omit node(s) containing the original position.
+	dropOriginNodes bool
+}
+
+func (l *LanguageService) provideImplementationsEx(ctx context.Context, params *lsproto.ImplementationParams, opts provideImplementationsOpts) (lsproto.ImplementationResponse, error) {
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
@@ -447,12 +633,14 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 		queue = queue[1:]
 		if !seenNodes.Has(entry.node) {
 			seenNodes.Add(entry.node)
-			entries = append(entries, entry)
+			if !(opts.dropOriginNodes && entry.node.Loc.ContainsInclusive(position)) {
+				entries = append(entries, entry)
+			}
 			queue = append(queue, l.getImplementationReferenceEntries(ctx, program, entry.node, entry.node.Pos())...)
 		}
 	}
 
-	if lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
+	if !opts.requireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
 		links := l.convertEntriesToLocationLinks(entries)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
@@ -466,24 +654,21 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 }
 
-func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams) (lsproto.WorkspaceEditOrNull, error) {
-	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Kind != ast.KindIdentifier {
+func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
+	if originalNode.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
-	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+
+	program := l.GetProgram()
 	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 	for _, entry := range entries {
-		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		uri := l.getFileNameOfEntry(entry)
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
-			NewText: l.getTextForRename(node, entry, params.NewName, checker),
+			NewText: l.getTextForRename(originalNode, entry, params.NewName, checker),
 		}
 		changes[uri] = append(changes[uri], textEdit)
 	}
@@ -543,17 +728,47 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 }
 
 // == functions for conversions ==
-func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries) []lsproto.Location {
-	return l.convertEntriesToLocations(s.references)
+func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool) []lsproto.Location {
+	references := s.references
+
+	// !!! includeDeclarations
+	if !includeDeclarations && s.definition != nil {
+		references = core.Filter(references, func(entry *ReferenceEntry) bool {
+			return !isDeclarationOfSymbol(entry.node, s.definition.symbol)
+		})
+	}
+
+	return l.convertEntriesToLocations(references)
+}
+
+func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
+	if target == nil {
+		return false
+	}
+
+	var source *ast.Node
+	if decl := ast.GetDeclarationFromName(node); decl != nil {
+		source = decl
+	} else if node.Kind == ast.KindDefaultKeyword {
+		source = node.Parent
+	} else if ast.IsLiteralComputedPropertyDeclarationName(node) {
+		source = node.Parent.Parent
+	} else if node.Kind == ast.KindConstructorKeyword && ast.IsConstructorDeclaration(node.Parent) {
+		source = node.Parent.Parent
+	}
+
+	// !!!
+	// const commonjsSource = source && isBinaryExpression(source) ? source.left as unknown as Declaration : undefined;
+
+	return source != nil && core.Some(target.Declarations, func(decl *ast.Node) bool {
+		return decl == source
+	})
 }
 
 func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
-		locations[i] = lsproto.Location{
-			Uri:   lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
-			Range: *l.getRangeOfEntry(entry),
-		}
+		locations[i] = *l.getLocationOfEntry(entry)
 	}
 	return locations
 }
@@ -561,30 +776,19 @@ func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) [
 func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
 	links := make([]*lsproto.LocationLink, len(entries))
 	for i, entry := range entries {
-		var targetSelectionRange, targetRange *lsproto.Range
+
+		// Get the selection range (the actual reference)
+		targetSelectionRange := &l.getLocationOfEntry(entry).Range
+		targetRange := targetSelectionRange
 
 		// For entries with nodes, compute ranges directly from the node
 		if entry.node != nil {
-			sourceFile := ast.GetSourceFileOfNode(entry.node)
-			entry.fileName = sourceFile.FileName()
-
-			// Get the selection range (the actual reference)
-			selectionTextRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
-			targetSelectionRange = l.createLspRangeFromRange(selectionTextRange, sourceFile)
-
 			// Get the context range (broader scope including declaration context)
-			contextNode := core.OrElse(getContextNode(entry.node), entry.node)
-			contextTextRange := toContextRange(&selectionTextRange, sourceFile, contextNode)
+			contextTextRange := toContextRange(entry.textRange, l.program.GetSourceFile(entry.fileName), entry.context)
 			if contextTextRange != nil {
-				targetRange = l.createLspRangeFromRange(*contextTextRange, sourceFile)
-			} else {
-				targetRange = targetSelectionRange
+				contextLocation := l.getMappedLocation(entry.fileName, *contextTextRange)
+				targetRange = &contextLocation.Range
 			}
-		} else {
-			// For range entries, use the pre-computed range
-			l.resolveEntry(entry)
-			targetSelectionRange = entry.textRange
-			targetRange = targetSelectionRange
 		}
 
 		links[i] = &lsproto.LocationLink{
@@ -903,7 +1107,7 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	if thisParameter == nil {
 		thisParameter = thisOrSuperKeyword
 	}
-	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, nil, references)}
+	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, searchSpaceNode.Symbol(), references)}
 }
 
 func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
@@ -1117,7 +1321,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			return &ReferenceEntry{
 				kind:      entryKindRange,
 				fileName:  reference.referencingFile.FileName(),
-				textRange: l.createLspRangeFromBounds(reference.ref.Pos(), reference.ref.End(), reference.referencingFile),
+				textRange: &reference.ref.TextRange,
 			}
 		}
 		return nil
@@ -1153,7 +1357,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 					node = decl.AsBinaryExpression().Left.Expression()
 				} else if ast.IsExportAssignment(decl) {
 					// Find the export keyword
-					node = findChildOfKind(decl, ast.KindExportKeyword, sourceFile)
+					node = astnav.FindChildOfKind(decl, ast.KindExportKeyword, sourceFile)
 					debug.Assert(node != nil, "Expected to find export keyword")
 				} else {
 					node = ast.GetNameOfDeclaration(decl)
@@ -1265,7 +1469,7 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 		// When renaming at an export specifier, rename the export and not the thing being exported.
 		// state.getReferencesAtExportSpecifier(exportSpecifier.Name(), symbol, exportSpecifier.AsExportSpecifier(), state.createSearch(node, originalSymbol, comingFromUnknown /*comingFrom*/, "", nil), true /*addReferencesHere*/, true /*alwaysGetReferences*/)
 	} else if node != nil && node.Kind == ast.KindDefaultKeyword && symbol.Name == ast.InternalSymbolNameDefault && symbol.Parent != nil {
-		state.addReference(node, symbol, entryKindNone)
+		state.addReference(node, symbol, entryKindNode)
 		state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
 	} else {
 		search := state.createSearch(node, symbol, ImpExpKindUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.useAliasesForRename, options.implementations))
@@ -1417,33 +1621,12 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 	}
 }
 
-func climbPastPropertyAccess(node *ast.Node) *ast.Node {
-	if ast.IsRightSideOfPropertyAccess(node) {
-		return node.Parent
-	}
-	return node
-}
-
-func isNewExpressionTarget(node *ast.Node) bool {
-	if node.Parent == nil {
-		return false
-	}
-	return node.Parent.Kind == ast.KindNewExpression && node.Parent.Expression() == node
-}
-
-func isCallExpressionTarget(node *ast.Node) bool {
-	if node.Parent == nil {
-		return false
-	}
-	return node.Parent.Kind == ast.KindCallExpression && node.Parent.Expression() == node
-}
-
 func isMethodOrAccessor(node *ast.Node) bool {
 	return node.Kind == ast.KindMethodDeclaration || node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor
 }
 
 func tryGetClassByExtendingIdentifier(node *ast.Node) *ast.ClassLikeDeclaration {
-	return ast.TryGetClassExtendingExpressionWithTypeArguments(climbPastPropertyAccess(node).Parent)
+	return ast.TryGetClassExtendingExpressionWithTypeArguments(ast.ClimbPastPropertyAccess(node).Parent)
 }
 
 func getClassConstructorSymbol(classSymbol *ast.Symbol) *ast.Symbol {
@@ -1462,7 +1645,7 @@ func findOwnConstructorReferences(classSymbol *ast.Symbol, sourceFile *ast.Sourc
 	if constructorSymbol != nil && len(constructorSymbol.Declarations) > 0 {
 		for _, decl := range constructorSymbol.Declarations {
 			if decl.Kind == ast.KindConstructor {
-				if ctrKeyword := findChildOfKind(decl, ast.KindConstructorKeyword, sourceFile); ctrKeyword != nil {
+				if ctrKeyword := astnav.FindChildOfKind(decl, ast.KindConstructorKeyword, sourceFile); ctrKeyword != nil {
 					addNode(ctrKeyword)
 				}
 			}
@@ -1476,7 +1659,7 @@ func findOwnConstructorReferences(classSymbol *ast.Symbol, sourceFile *ast.Sourc
 				body := decl.Body()
 				if body != nil {
 					forEachDescendantOfKind(body, ast.KindThisKeyword, func(thisKeyword *ast.Node) {
-						if isNewExpressionTarget(thisKeyword) {
+						if ast.IsNewExpressionTarget(thisKeyword, false, false) {
 							addNode(thisKeyword)
 						}
 					})
@@ -1497,7 +1680,7 @@ func findSuperConstructorAccesses(classDeclaration *ast.ClassLikeDeclaration, ad
 			body := decl.Body()
 			if body != nil {
 				forEachDescendantOfKind(body, ast.KindSuperKeyword, func(node *ast.Node) {
-					if isCallExpressionTarget(node) {
+					if ast.IsCallExpressionTarget(node, false, false) {
 						addNode(node)
 					}
 				})
@@ -1580,7 +1763,8 @@ func (state *refState) getReferencesInContainerOrFiles(symbol *ast.Symbol, searc
 	// Try to get the smallest valid scope that we can limit our search to;
 	// otherwise we'll need to search globally (i.e. include each file).
 	if scope := getSymbolScope(symbol); scope != nil {
-		state.getReferencesInContainer(scope, ast.GetSourceFileOfNode(scope), search /*addReferencesHere*/, !(scope.Kind == ast.KindSourceFile && !slices.Contains(state.sourceFiles, scope.AsSourceFile())))
+		addReferencesHere := scope.Kind != ast.KindSourceFile || slices.Contains(state.sourceFiles, scope.AsSourceFile())
+		state.getReferencesInContainer(scope, ast.GetSourceFileOfNode(scope), search, addReferencesHere)
 	} else {
 		// Global search
 		for _, sourceFile := range state.sourceFiles {
@@ -1697,8 +1881,8 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 }
 
 func (state *refState) addConstructorReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
-	if isNewExpressionTarget(referenceLocation) && addReferencesHere {
-		state.addReference(referenceLocation, symbol, entryKindNone)
+	if ast.IsNewExpressionTarget(referenceLocation, false, false) && addReferencesHere {
+		state.addReference(referenceLocation, symbol, entryKindNode)
 	}
 
 	pusher := func() func(*ast.Node, entryKind) {
@@ -1709,13 +1893,13 @@ func (state *refState) addConstructorReferences(referenceLocation *ast.Node, sym
 		// This is the class declaration containing the constructor.
 		sourceFile := ast.GetSourceFileOfNode(referenceLocation)
 		findOwnConstructorReferences(search.symbol, sourceFile, func(n *ast.Node) {
-			pusher()(n, entryKindNone)
+			pusher()(n, entryKindNode)
 		})
 	} else {
 		// If this class appears in `extends C`, then the extending class' "super" calls are references.
 		if classExtending := tryGetClassByExtendingIdentifier(referenceLocation); classExtending != nil {
 			findSuperConstructorAccesses(classExtending, func(n *ast.Node) {
-				pusher()(n, entryKindNone)
+				pusher()(n, entryKindNode)
 			})
 			state.findInheritedConstructorReferences(classExtending)
 		}
@@ -1724,7 +1908,7 @@ func (state *refState) addConstructorReferences(referenceLocation *ast.Node, sym
 
 func (state *refState) addClassStaticThisReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
 	if addReferencesHere {
-		state.addReference(referenceLocation, symbol, entryKindNone)
+		state.addReference(referenceLocation, symbol, entryKindNode)
 	}
 
 	classLike := referenceLocation.Parent
@@ -1746,7 +1930,7 @@ func (state *refState) addClassStaticThisReferences(referenceLocation *ast.Node,
 			var cb func(*ast.Node)
 			cb = func(node *ast.Node) {
 				if node.Kind == ast.KindThisKeyword {
-					addRef(node, entryKindNone)
+					addRef(node, entryKindNode)
 				} else if !ast.IsFunctionLike(node) && !ast.IsClassLike(node) {
 					node.ForEachChild(func(child *ast.Node) bool {
 						cb(child)
@@ -1861,7 +2045,7 @@ func (state *refState) getReferenceForShorthandProperty(referenceSymbol *ast.Sym
 	// the position in short-hand property assignment excluding property accessing. However, if we do findAllReference at the
 	// position of property accessing, the referenceEntry of such position will be handled in the first case.
 	if name != nil && search.includes(shorthandValueSymbol) {
-		state.addReference(name, shorthandValueSymbol, entryKindNone)
+		state.addReference(name, shorthandValueSymbol, entryKindNode)
 	}
 }
 
@@ -2007,7 +2191,7 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if res := fromRoot(symbol); res != nil {
-		return res, entryKindNone
+		return res, entryKindNode
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
@@ -2020,7 +2204,7 @@ func (state *refState) forEachRelatedSymbol(
 		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
 			panic("Expected a parameter and a property")
 		}
-		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNone
+		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNode
 	}
 
 	if exportSpecifier := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier); exportSpecifier != nil && (!isForRenamePopulateSearchSymbolSet || exportSpecifier.PropertyName() == nil) {
