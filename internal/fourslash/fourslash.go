@@ -1457,9 +1457,7 @@ func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...l
 
 	// Extract actual folding ranges from the result and filter by kind if specified
 	var actualRanges []*lsproto.FoldingRange
-	if result.FoldingRanges != nil {
-		actualRanges = *result.FoldingRanges
-	}
+	actualRanges = *result.FoldingRanges
 	if len(foldingRangeKind) > 0 {
 		targetKind := foldingRangeKind[0]
 		var filtered []*lsproto.FoldingRange
@@ -1487,8 +1485,10 @@ func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...l
 
 		if lsproto.ComparePositions(startPos, expectedRange.LSRange.Start) != 0 ||
 			lsproto.ComparePositions(endPos, expectedRange.LSRange.End) != 0 {
-			t.Fatalf("verifyOutliningSpans failed - span %d has invalid positions: start (%d,%d), end (%d,%d)",
-				i+1, actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter)
+			t.Fatalf("verifyOutliningSpans failed - span %d has invalid positions:\n  actual: start (%d,%d), end (%d,%d)\n  expected: start (%d,%d), end (%d,%d)",
+				i+1,
+				actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter,
+				expectedRange.LSRange.Start.Line, expectedRange.LSRange.Start.Character, expectedRange.LSRange.End.Line, expectedRange.LSRange.End.Character)
 		}
 	}
 }

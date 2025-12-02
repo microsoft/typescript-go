@@ -3,13 +3,13 @@ package ls
 import (
 	"cmp"
 	"context"
-	"regexp"
 	"slices"
 	"strings"
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -17,7 +17,7 @@ import (
 
 func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.FoldingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(documentURI)
-	res := l.addNodeOutliningSpans(sourceFile)
+	res := l.addNodeOutliningSpans(ctx, sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
 	slices.SortFunc(res, func(a, b *lsproto.FoldingRange) int {
 		if a.StartLine != b.StartLine {
@@ -37,7 +37,7 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	return lsproto.FoldingRangesOrNull{FoldingRanges: &res}, nil
 }
 
-func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
+func (l *LanguageService) addNodeOutliningSpans(ctx context.Context, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
 	depthRemaining := 40
 	current := 0
 
@@ -46,7 +46,7 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	for current < n {
 		for current < n && !ast.IsAnyImportSyntax(statements.Nodes[current]) {
-			foldingRange = append(foldingRange, visitNode(statements.Nodes[current], depthRemaining, sourceFile, l)...)
+			foldingRange = append(foldingRange, visitNode(ctx, statements.Nodes[current], depthRemaining, sourceFile, l)...)
 			current++
 		}
 		if current == n {
@@ -54,7 +54,7 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 		}
 		firstImport := current
 		for current < n && ast.IsAnyImportSyntax(statements.Nodes[current]) {
-			foldingRange = append(foldingRange, visitNode(statements.Nodes[current], depthRemaining, sourceFile, l)...)
+			foldingRange = append(foldingRange, visitNode(ctx, statements.Nodes[current], depthRemaining, sourceFile, l)...)
 			current++
 		}
 		lastImport := current - 1
@@ -71,7 +71,7 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 	}
 
 	// Visit the EOF Token so that comments which aren't attached to statements are included.
-	foldingRange = append(foldingRange, visitNode(sourceFile.EndOfFileToken, depthRemaining, sourceFile, l)...)
+	foldingRange = append(foldingRange, visitNode(ctx, sourceFile.EndOfFileToken, depthRemaining, sourceFile, l)...)
 	return foldingRange
 }
 
@@ -117,29 +117,30 @@ func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []
 	return out
 }
 
-func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
+func visitNode(ctx context.Context, n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	if depthRemaining == 0 {
 		return nil
 	}
-	// cancellationToken.throwIfCancellationRequested();
+	if ctx.Err() != nil {
+		return nil
+	}
 	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
-	// !!! remove !ast.IsBinaryExpression(n) after JSDoc implementation
-	if (ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile, l)...)
+	if (!ast.IsBinaryExpression(n) && ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
+		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(ctx, n, sourceFile, l)...)
 	}
 	if ast.IsFunctionLike(n) && n.Parent != nil && ast.IsBinaryExpression(n.Parent) && n.Parent.AsBinaryExpression().Left != nil && ast.IsPropertyAccessExpression(n.Parent.AsBinaryExpression().Left) {
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n.Parent.AsBinaryExpression().Left, sourceFile, l)...)
+		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(ctx, n.Parent.AsBinaryExpression().Left, sourceFile, l)...)
 	}
 	if ast.IsBlock(n) {
 		statements := n.AsBlock().Statements
 		if statements != nil {
-			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(statements.End(), sourceFile, l)...)
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(ctx, statements.End(), sourceFile, l)...)
 		}
 	}
 	if ast.IsModuleBlock(n) {
 		statements := n.AsModuleBlock().Statements
 		if statements != nil {
-			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(statements.End(), sourceFile, l)...)
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(ctx, statements.End(), sourceFile, l)...)
 		}
 	}
 	if ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) {
@@ -152,7 +153,7 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 			members = n.AsInterfaceDeclaration().Members
 		}
 		if members != nil {
-			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(members.End(), sourceFile, l)...)
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(ctx, members.End(), sourceFile, l)...)
 		}
 	}
 
@@ -164,42 +165,42 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	depthRemaining--
 	if ast.IsCallExpression(n) {
 		depthRemaining++
-		expressionNodes := visitNode(n.Expression(), depthRemaining, sourceFile, l)
+		expressionNodes := visitNode(ctx, n.Expression(), depthRemaining, sourceFile, l)
 		if expressionNodes != nil {
 			foldingRange = append(foldingRange, expressionNodes...)
 		}
 		depthRemaining--
 		for _, arg := range n.Arguments() {
 			if arg != nil {
-				foldingRange = append(foldingRange, visitNode(arg, depthRemaining, sourceFile, l)...)
+				foldingRange = append(foldingRange, visitNode(ctx, arg, depthRemaining, sourceFile, l)...)
 			}
 		}
 		typeArguments := n.TypeArguments()
 		for _, typeArg := range typeArguments {
 			if typeArg != nil {
-				foldingRange = append(foldingRange, visitNode(typeArg, depthRemaining, sourceFile, l)...)
+				foldingRange = append(foldingRange, visitNode(ctx, typeArg, depthRemaining, sourceFile, l)...)
 			}
 		}
 	} else if ast.IsIfStatement(n) && n.AsIfStatement().ElseStatement != nil && ast.IsIfStatement(n.AsIfStatement().ElseStatement) {
 		// Consider an 'else if' to be on the same depth as the 'if'.
 		ifStatement := n.AsIfStatement()
-		expressionNodes := visitNode(n.Expression(), depthRemaining, sourceFile, l)
+		expressionNodes := visitNode(ctx, n.Expression(), depthRemaining, sourceFile, l)
 		if expressionNodes != nil {
 			foldingRange = append(foldingRange, expressionNodes...)
 		}
-		thenNode := visitNode(ifStatement.ThenStatement, depthRemaining, sourceFile, l)
+		thenNode := visitNode(ctx, ifStatement.ThenStatement, depthRemaining, sourceFile, l)
 		if thenNode != nil {
 			foldingRange = append(foldingRange, thenNode...)
 		}
 		depthRemaining++
-		elseNode := visitNode(ifStatement.ElseStatement, depthRemaining, sourceFile, l)
+		elseNode := visitNode(ctx, ifStatement.ElseStatement, depthRemaining, sourceFile, l)
 		if elseNode != nil {
 			foldingRange = append(foldingRange, elseNode...)
 		}
 		depthRemaining--
 	} else {
 		visit := func(node *ast.Node) bool {
-			childNode := visitNode(node, depthRemaining, sourceFile, l)
+			childNode := visitNode(ctx, node, depthRemaining, sourceFile, l)
 			if childNode != nil {
 				foldingRange = append(foldingRange, childNode...)
 			}
@@ -211,14 +212,14 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	return foldingRange
 }
 
-func addOutliningForLeadingCommentsForNode(n *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
+func addOutliningForLeadingCommentsForNode(ctx context.Context, n *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	if ast.IsJsxText(n) {
 		return nil
 	}
-	return addOutliningForLeadingCommentsForPos(n.Pos(), sourceFile, l)
+	return addOutliningForLeadingCommentsForPos(ctx, n.Pos(), sourceFile, l)
 }
 
-func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
+func addOutliningForLeadingCommentsForPos(ctx context.Context, pos int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	p := &printer.EmitContext{}
 	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	firstSingleLineCommentStart := -1
@@ -238,7 +239,10 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l
 	for comment := range scanner.GetLeadingCommentRanges(&printer.NewNodeFactory(p).NodeFactory, sourceText, pos) {
 		commentPos := comment.Pos()
 		commentEnd := comment.End()
-		// cancellationToken.throwIfCancellationRequested();
+
+		if ctx.Err() != nil {
+			return nil
+		}
 		switch comment.Kind {
 		case ast.KindSingleLineCommentTrivia:
 			// never fold region delimiters into single-line comment regions
@@ -269,7 +273,7 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l
 			singleLineCommentCount = 0
 			break
 		default:
-			// Debug.assertNever(kind);
+			debug.AssertNever(comment.Kind)
 		}
 	}
 	addedComments := combineAndAddMultipleSingleLineComments()
@@ -278,8 +282,6 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l
 	}
 	return foldingRange
 }
-
-var regionDelimiterRegExp = regexp.MustCompile(`^#(end)?region(.*)\r?$`)
 
 type regionDelimiterResult struct {
 	isStart bool
@@ -294,14 +296,24 @@ func parseRegionDelimiter(lineText string) *regionDelimiterResult {
 		return nil
 	}
 	lineText = strings.TrimSpace(lineText[2:])
-	result := regionDelimiterRegExp.FindStringSubmatch(lineText)
-	if result != nil {
-		return &regionDelimiterResult{
-			isStart: result[1] == "",
-			name:    strings.TrimSpace(result[2]),
-		}
+	lineText = strings.TrimSuffix(lineText, "\r")
+	if !strings.HasPrefix(lineText, "#") {
+		return nil
 	}
-	return nil
+	lineText = lineText[1:]
+	isStart := true
+	if strings.HasPrefix(lineText, "end") {
+		isStart = false
+		lineText = lineText[3:]
+	}
+	if !strings.HasPrefix(lineText, "region") {
+		return nil
+	}
+	lineText = lineText[6:]
+	return &regionDelimiterResult{
+		isStart: isStart,
+		name:    strings.TrimSpace(lineText),
+	}
 }
 
 func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {

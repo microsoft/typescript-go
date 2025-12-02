@@ -11,7 +11,7 @@ func TestOutliningForNonCompleteInterfaceDeclaration(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface I[||]`
+	const content = `interface I`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyOutliningSpans(t)
 }

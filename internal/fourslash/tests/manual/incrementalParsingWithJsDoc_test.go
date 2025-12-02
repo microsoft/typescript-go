@@ -14,7 +14,6 @@ func TestIncrementalParsingWithJsDoc(t *testing.T) {
 	const content = `[|import a from 'a/aaaaaaa/aaaaaaa/aaaaaa/aaaaaaa';
 /**/import b from 'b';
 import c from 'c';|]
-
 [|/** @internal */|]
 export class LanguageIdentifier[| { }|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)

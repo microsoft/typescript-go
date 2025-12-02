@@ -84,7 +84,7 @@ class ClassFooWithTrivia[| /*  some comments */
    /* more trivia */ {
 
 
-    /*some trailing trivia */
+    [|/*some trailing trivia */|]
 }|] /* even more */
 
 // object literals

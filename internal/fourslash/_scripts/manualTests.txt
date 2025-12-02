@@ -13,4 +13,7 @@ quickInfoForOverloadOnConst1
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
-OutliningHintSpansForFunction
+outliningHintSpansForFunction
+getOutliningSpans
+outliningForNonCompleteInterfaceDeclaration
+incrementalParsingWithJsDoc

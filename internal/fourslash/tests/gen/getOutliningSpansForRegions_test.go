@@ -60,5 +60,6 @@ test // #endregion
 // #endregion
 */`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyOutliningSpans(t, lsproto.FoldingRangeKindRegion)
 }

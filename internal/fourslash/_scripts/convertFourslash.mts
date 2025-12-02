@@ -277,26 +277,14 @@ function parseEditStatement(funcName: string, args: readonly ts.Expression[]): E
             const arg = args[0];
             if (args[0]) {
                 let arg0;
-                if (arg0 = getNumericLiteral(arg)) {
-                    return {
-                        kind: "edit",
-                        goStatement: `f.Backspace(t, ${arg0.text})`,
-                    };
+                if (!(arg0 = getNumericLiteral(arg))) {
+                    console.error(`Expected numeric literal argument in edit.backspace, got ${arg.getText()}`);
+                    return undefined;
                 }
-                // Handle test.marker("").position
-                if (ts.isPropertyAccessExpression(arg) && arg.name.text === "position") {
-                    const expr = arg.expression;
-                    if (ts.isCallExpression(expr) && expr.expression.getText() === "test.marker") {
-                        if (expr.arguments.length === 1 && ts.isStringLiteralLike(expr.arguments[0])) {
-                            return {
-                                kind: "edit",
-                                goStatement: `f.Backspace(t, 1)`,
-                            };
-                        }
-                    }
-                }
-                console.error(`Expected numeric literal or a test marker argument in edit.backspace, got ${arg.getText()}`);
-                return undefined;
+                return {
+                    kind: "edit",
+                    goStatement: `f.Backspace(t, ${arg0.text})`,
+                };
             }
             return {
                 kind: "edit",
@@ -2182,7 +2170,7 @@ interface VerifyNavToCmd {
 }
 
 interface VerifyOutliningSpansCmd {
-    kind: "verifyOutliningSpans"
+    kind: "verifyOutliningSpans";
     spans: string;
     foldingRangeKind?: string;
 }
@@ -2205,11 +2193,11 @@ type Cmd =
     | VerifyBaselineInlayHintsCmd
     | VerifyImportFixAtPositionCmd
     | VerifyDiagnosticsCmd
-    | VerifyBaselineDiagnosticsCmd;
+    | VerifyBaselineDiagnosticsCmd
     | VerifyOutliningSpansCmd;
 
 function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
-    if (foldingRangeKind) { 
+    if (foldingRangeKind) {
         return `f.VerifyOutliningSpans(t, ${foldingRangeKind})`;
     }
     return `f.VerifyOutliningSpans(t)`;
