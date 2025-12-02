@@ -6,6 +6,7 @@ import path from "node:path";
 import url from "node:url";
 import which from "which";
 import type {
+    Enumeration,
     MetaModel,
     Notification,
     OrType,
@@ -39,6 +40,12 @@ const customStructures: Structure[] = [
                 type: { kind: "base", name: "boolean" },
                 optional: true,
                 documentation: "DisablePushDiagnostics disables automatic pushing of diagnostics to the client.",
+            },
+            {
+                name: "codeLensShowLocationsCommandName",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.",
             },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
@@ -151,6 +158,41 @@ const customStructures: Structure[] = [
         ],
         documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
     },
+    {
+        name: "CodeLensData",
+        properties: [
+            {
+                name: "kind",
+                type: { kind: "reference", name: "CodeLensKind" },
+                documentation: `The kind of the code lens ("references" or "implementations").`,
+            },
+            {
+                name: "uri",
+                type: { kind: "base", name: "DocumentUri" },
+                documentation: `The document in which the code lens and its range are located.`,
+            },
+        ],
+    },
+];
+
+const customEnumerations: Enumeration[] = [
+    {
+        name: "CodeLensKind",
+        type: {
+            kind: "base",
+            name: "string",
+        },
+        values: [
+            {
+                name: "References",
+                value: "references",
+            },
+            {
+                name: "Implementations",
+                value: "implementations",
+            },
+        ],
+    },
 ];
 
 // Track which custom Data structures were declared explicitly
@@ -251,7 +293,8 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom structures and synthetic structures to the model
+    // Add custom enumerations, custom structures, and synthetic structures to the model
+    model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
 
     // Build structure map for preprocessing
@@ -306,6 +349,29 @@ function patchAndPreprocessModel() {
 
     // Remove _InitializeParams structure after flattening (it was only needed for inheritance)
     model.structures = model.structures.filter(s => s.name !== "_InitializeParams");
+
+    // Merge LSPErrorCodes into ErrorCodes and remove LSPErrorCodes
+    const errorCodesEnum = model.enumerations.find(e => e.name === "ErrorCodes");
+    const lspErrorCodesEnum = model.enumerations.find(e => e.name === "LSPErrorCodes");
+    if (errorCodesEnum && lspErrorCodesEnum) {
+        // Merge LSPErrorCodes values into ErrorCodes
+        errorCodesEnum.values.push(...lspErrorCodesEnum.values);
+        // Remove LSPErrorCodes from the model
+        model.enumerations = model.enumerations.filter(e => e.name !== "LSPErrorCodes");
+    }
+
+    // Singularize plural enum names (e.g., "ErrorCodes" -> "ErrorCode")
+    for (const enumeration of model.enumerations) {
+        if (enumeration.name.endsWith("Codes")) {
+            enumeration.name = enumeration.name.slice(0, -1); // "Codes" -> "Code"
+        }
+        else if (enumeration.name.endsWith("Modifiers")) {
+            enumeration.name = enumeration.name.slice(0, -1); // "Modifiers" -> "Modifier"
+        }
+        else if (enumeration.name.endsWith("Types")) {
+            enumeration.name = enumeration.name.slice(0, -1); // "Types" -> "Type"
+        }
+    }
 }
 
 patchAndPreprocessModel();
@@ -1051,7 +1117,7 @@ function generateCode() {
             value: String(value.value),
             numericValue: Number(value.value),
             name: value.name,
-            identifier: `${enumeration.name}${value.name}`,
+            identifier: `${enumeration.name}${titleCase(value.name)}`,
             documentation: value.documentation,
             deprecated: value.deprecated,
         }));
@@ -1263,6 +1329,14 @@ function generateCode() {
                     writeLine("");
                 }
             }
+        }
+
+        // Generate Error() method for ErrorCode to implement the error interface
+        if (enumeration.name === "ErrorCode") {
+            writeLine(`func (e ${enumeration.name}) Error() string {`);
+            writeLine(`\treturn e.String()`);
+            writeLine(`}`);
+            writeLine("");
         }
     }
 
