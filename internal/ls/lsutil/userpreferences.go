@@ -444,12 +444,12 @@ func (p *UserPreferences) parseInlayHints(prefs any) {
 				if enabled, ok := v["enabled"]; ok {
 					p.set("includeInlayParameterNameHints", enabled)
 				}
-				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSupress(v, "supressWhenArgumentMatchesName")
+				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSuppress(v, "suppressWhenArgumentMatchesName")
 			case "parameterTypes":
 				p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
 			case "variableTypes":
 				p.InlayHints.IncludeInlayVariableTypeHints = parseEnabledBool(v)
-				p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSupress(v, "supressWhenTypeMatchesName")
+				p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSuppress(v, "suppressWhenTypeMatchesName")
 			case "propertyDeclarationTypes":
 				p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
 			case "functionLikeReturnTypes":
@@ -601,7 +601,7 @@ func parseEnabledBool(v map[string]any) bool {
 	return false
 }
 
-func parseSupress(v map[string]any, name string) bool {
+func parseSuppress(v map[string]any, name string) bool {
 	// vscode nested option
 	if val, ok := v[name]; ok {
 		if suppress, ok := val.(bool); ok {
