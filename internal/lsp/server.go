@@ -246,6 +246,17 @@ func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.Publish
 	return nil
 }
 
+func (s *Server) RefreshInlayHints(ctx context.Context) error {
+	if !s.clientCapabilities.Workspace.InlayHint.RefreshSupport {
+		return nil
+	}
+
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, nil); err != nil {
+		return fmt.Errorf("failed to refresh inlay hints: %w", err)
+	}
+	return nil
+}
+
 func (s *Server) RefreshCodeLens(ctx context.Context) error {
 	if !s.clientCapabilities.Workspace.CodeLens.RefreshSupport {
 		return nil

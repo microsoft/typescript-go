@@ -212,11 +212,11 @@ func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
 
-	// Inform the client to re-request certain commands
-	// depending on user preference changes.
+	// Tell the client to re-request certain commands depending on user preference changes.
 	oldUserPreferences := s.userPreferences
 	s.userPreferences = userPreferences
 	if oldUserPreferences != userPreferences && oldUserPreferences != nil && userPreferences != nil {
+		s.refreshInlayHintsIfNeeded(oldUserPreferences, userPreferences)
 		s.refreshCodeLensIfNeeded(oldUserPreferences, userPreferences)
 	}
 }
@@ -793,6 +793,14 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
+}
+
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+	if oldPrefs.InlayHints != newPrefs.InlayHints {
+		if err := s.client.RefreshInlayHints(context.Background()); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error refreshing inlay hints: %v", err)
+		}
+	}
 }
 
 func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
