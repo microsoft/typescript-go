@@ -750,7 +750,7 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 }
 
 func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, checker *checker.Checker, isManuallyInvoked bool, position int) *argumentListInfo {
-	var lastArgumentInfo *argumentListInfo
+	var firstArgumentInfo *argumentListInfo
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
@@ -765,22 +765,23 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 				return argumentInfo
 			}
 
-			// For regular call expressions, check if the position is actually within the applicable span.
-			// This ensures that for nested calls, the outer call takes precedence
-			// when the position is outside the inner call's argument list.
+			// Remember the first (innermost) argument info we find
+			if firstArgumentInfo == nil {
+				firstArgumentInfo = argumentInfo
+			}
+			
+			// If any call's span contains the position, return it.
+			// We walk from inner to outer, so this naturally prefers the innermost call
+			// when multiple calls contain the position.
 			if argumentInfo.argumentsSpan.Contains(position) {
 				return argumentInfo
 			}
-			// Remember this argument info in case we don't find an outer call
-			if lastArgumentInfo == nil {
-				lastArgumentInfo = argumentInfo
-			}
-			// Continue looking for an outer call if position is outside this call's applicable span
 		}
 	}
-	// If we didn't find a call that contains the position, return the last call we found.
-	// This handles cases where the cursor is at the edge of a call (e.g., right after a parameter).
-	return lastArgumentInfo
+	
+	// No call's span contains the position. Return the innermost call as fallback.
+	// This handles cases like foo(bar(|)) where bar's span might be empty.
+	return firstArgumentInfo
 }
 
 func getImmediatelyContainingArgumentOrContextualParameterInfo(node *ast.Node, position int, sourceFile *ast.SourceFile, checker *checker.Checker) *argumentListInfo {
