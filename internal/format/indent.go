@@ -242,6 +242,9 @@ func findFirstNonWhitespaceCharacterAndColumn(startPos int, endPos int, sourceFi
 func childStartsOnTheSameLineWithElseInIfStatement(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
 	if parent.Kind == ast.KindIfStatement && parent.AsIfStatement().ElseStatement == child {
 		elseKeyword := astnav.FindPrecedingToken(sourceFile, child.Pos())
+		if elseKeyword == nil {
+			return false
+		}
 		debug.AssertIsDefined(elseKeyword)
 		elseKeywordStartLine, _ := getStartLineAndCharacterForNode(elseKeyword, sourceFile)
 		return elseKeywordStartLine == childStartLine
@@ -533,8 +536,12 @@ func childIsUnindentedBranchOfConditionalExpression(parent *ast.Node, child *ast
 			//   ? 1 : (          L1: whenTrue indented because it's on a new line
 			//     0              L2: indented two stops, one because whenTrue was indented
 			//   );                   and one because of the parentheses spanning multiple lines
-			trueStartLine, _ := getStartLineAndCharacterForNode(parent.AsConditionalExpression().WhenTrue, sourceFile)
-			trueEndLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, parent.AsConditionalExpression().WhenTrue.End())
+			whenTrue := parent.AsConditionalExpression().WhenTrue
+			if whenTrue == nil {
+				return false
+			}
+			trueStartLine, _ := getStartLineAndCharacterForNode(whenTrue, sourceFile)
+			trueEndLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, whenTrue.End())
 			return conditionEndLine == trueStartLine && trueEndLine == childStartLine
 		}
 	}
