@@ -632,6 +632,10 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
+	if options.TsBuildInfoFile == "" && options.Incremental.IsTrue() && options.ConfigFilePath == "" {
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
+	}
+
 	p.verifyProjectReferences()
 
 	if options.Composite.IsTrue() {
@@ -1039,15 +1043,12 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
-
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
 	checkerDiags := make([][]*ast.Diagnostic, p.checkerPool.Count())
 	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
 		if sourceFile == nil || checker == fileChecker {
 			checkerDiags[idx] = checker.GetDiagnostics(ctx, sourceFile)
-		} else {
-			checkerDiags[idx] = checker.GetDiagnosticsWithoutCheck(sourceFile)
 		}
 	})
 	if ctx.Err() != nil {

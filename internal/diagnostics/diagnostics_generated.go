@@ -2288,7 +2288,7 @@ var Unknown_build_option_0 = &Message{code: 5072, category: CategoryError, key: 
 
 var Build_option_0_requires_a_value_of_type_1 = &Message{code: 5073, category: CategoryError, key: "Build_option_0_requires_a_value_of_type_1_5073", text: "Build option '{0}' requires a value of type {1}."}
 
-var Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified = &Message{code: 5074, category: CategoryError, key: "Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBui_5074", text: "Option '--incremental' can only be specified using tsconfig, emitting to single file or when option '--tsBuildInfoFile' is specified."}
+var Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided = &Message{code: 5074, category: CategoryError, key: "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildI_5074", text: "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided."}
 
 var X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2 = &Message{code: 5075, category: CategoryError, key: "_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_5075", text: "'{0}' is assignable to the constraint of type '{1}', but '{1}' could be instantiated with a different subtype of constraint '{2}'."}
 
@@ -4261,6 +4261,14 @@ var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{co
 var Set_the_number_of_checkers_per_project = &Message{code: 100003, category: CategoryMessage, key: "Set_the_number_of_checkers_per_project_100003", text: "Set the number of checkers per project."}
 
 var X_4_unless_singleThreaded_is_passed = &Message{code: 100004, category: CategoryMessage, key: "4_unless_singleThreaded_is_passed_100004", text: "4, unless --singleThreaded is passed."}
+
+var X_0_references = &Message{code: 100005, category: CategoryMessage, key: "_0_references_100005", text: "{0} references"}
+
+var X_1_reference = &Message{code: 100006, category: CategoryMessage, key: "1_reference_100006", text: "1 reference"}
+
+var X_0_implementations = &Message{code: 100007, category: CategoryMessage, key: "_0_implementations_100007", text: "{0} implementations"}
+
+var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: "1_implementation_100008", text: "1 implementation"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -6550,8 +6558,8 @@ func keyToMessage(key Key) *Message {
 		return Unknown_build_option_0
 	case "Build_option_0_requires_a_value_of_type_1_5073":
 		return Build_option_0_requires_a_value_of_type_1
-	case "Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBui_5074":
-		return Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified
+	case "Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildI_5074":
+		return Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided
 	case "_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_5075":
 		return X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2
 	case "_0_and_1_operations_cannot_be_mixed_without_parentheses_5076":
@@ -8524,6 +8532,14 @@ func keyToMessage(key Key) *Message {
 		return Set_the_number_of_checkers_per_project
 	case "4_unless_singleThreaded_is_passed_100004":
 		return X_4_unless_singleThreaded_is_passed
+	case "_0_references_100005":
+		return X_0_references
+	case "1_reference_100006":
+		return X_1_reference
+	case "_0_implementations_100007":
+		return X_0_implementations
+	case "1_implementation_100008":
+		return X_1_implementation
 	default:
 		return nil
 	}
