@@ -318,16 +318,15 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 		// to be the entire span of the parent.
 		switch n.Parent.Kind {
 		case ast.KindDoStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindForStatement, ast.KindIfStatement, ast.KindWhileStatement, ast.KindWithStatement, ast.KindCatchClause:
-			return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+			return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 		case ast.KindTryStatement:
 			// Could be the try-block, or the finally-block.
 			tryStatement := n.Parent.AsTryStatement()
 			if tryStatement.TryBlock == n {
-				return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+				return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 			} else if tryStatement.FinallyBlock == n {
-				finallyKeyword := astnav.FindChildOfKind(n.Parent, ast.KindFinallyKeyword, sourceFile)
-				if finallyKeyword != nil {
-					return spanForNodeWithHintSpan(n, finallyKeyword, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+				if span := spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l); span != nil {
+					return span
 				}
 			}
 			fallthrough
@@ -337,7 +336,7 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 			return createFoldingRange(l.createLspRangeFromNode(n, sourceFile), "", "")
 		}
 	case ast.KindModuleBlock:
-		return spanForNodeWithHintSpan(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration, ast.KindCaseBlock, ast.KindTypeLiteral, ast.KindObjectBindingPattern:
 		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindTupleType:
@@ -386,7 +385,7 @@ func spanForImportExportElements(node *ast.Node, sourceFile *ast.SourceFile, l *
 	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.Pos(), sourceFile) {
 		return nil
 	}
-	return rangeBetweenTokens(openToken, closeToken, node, sourceFile, false /*useFullStart*/, l)
+	return rangeBetweenTokens(openToken, closeToken, sourceFile, false /*useFullStart*/, l)
 }
 
 func spanForParenthesizedExpression(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -408,7 +407,7 @@ func spanForCallExpression(node *ast.Node, sourceFile *ast.SourceFile, l *Langua
 		return nil
 	}
 
-	return rangeBetweenTokens(openToken, closeToken, node, sourceFile, true /*useFullStart*/, l)
+	return rangeBetweenTokens(openToken, closeToken, sourceFile, true /*useFullStart*/, l)
 }
 
 func spanForArrowFunction(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -462,10 +461,6 @@ func spanForNodeArray(statements *ast.NodeList, sourceFile *ast.SourceFile, l *L
 }
 
 func spanForNode(node *ast.Node, open ast.Kind, useFullStart bool, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	return spanForNodeWithHintSpan(node, node, open, useFullStart, sourceFile, l)
-}
-
-func spanForNodeWithHintSpan(node *ast.Node, hintSpanNode *ast.Node, open ast.Kind, useFullStart bool, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	closeBrace := ast.KindCloseBraceToken
 	if open != ast.KindOpenBraceToken {
 		closeBrace = ast.KindCloseBracketToken
@@ -473,13 +468,12 @@ func spanForNodeWithHintSpan(node *ast.Node, hintSpanNode *ast.Node, open ast.Ki
 	openToken := astnav.FindChildOfKind(node, open, sourceFile)
 	closeToken := astnav.FindChildOfKind(node, closeBrace, sourceFile)
 	if openToken != nil && closeToken != nil {
-		return rangeBetweenTokens(openToken, closeToken, hintSpanNode, sourceFile, useFullStart, l)
+		return rangeBetweenTokens(openToken, closeToken, sourceFile, useFullStart, l)
 	}
 	return nil
 }
 
-func rangeBetweenTokens(openToken *ast.Node, closeToken *ast.Node, hintSpanNode *ast.Node, sourceFile *ast.SourceFile, useFullStart bool, l *LanguageService) *lsproto.FoldingRange {
-	_ = hintSpanNode // hintSpan is used in TypeScript but not needed for LSP FoldingRange
+func rangeBetweenTokens(openToken *ast.Node, closeToken *ast.Node, sourceFile *ast.SourceFile, useFullStart bool, l *LanguageService) *lsproto.FoldingRange {
 	var textRange *lsproto.Range
 	if useFullStart {
 		textRange = l.createLspRangeFromBounds(openToken.Pos(), closeToken.End(), sourceFile)
@@ -516,7 +510,7 @@ func functionSpan(node *ast.Node, body *ast.Node, sourceFile *ast.SourceFile, l 
 	openToken := tryGetFunctionOpenToken(node, body, sourceFile)
 	closeToken := astnav.FindChildOfKind(body, ast.KindCloseBraceToken, sourceFile)
 	if openToken != nil && closeToken != nil {
-		return rangeBetweenTokens(openToken, closeToken, node, sourceFile, true /*useFullStart*/, l)
+		return rangeBetweenTokens(openToken, closeToken, sourceFile, true /*useFullStart*/, l)
 	}
 	return nil
 }
