@@ -706,12 +706,12 @@ func (p *UserPreferences) set(name string, value any) {
 	case "referencescodelensenabled":
 		p.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "implementationscodelensenabled":
-		p.ImplementationsEnabled = parseBoolWithDefault(value, false)
+		p.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "referencescodelensshowonallfunctions":
-		p.ReferencesShowOnAllFunctions = parseBoolWithDefault(value, false)
+		p.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowoninterfacemethods":
-		p.ImplementationsShowOnInterfaceMethods = parseBoolWithDefault(value, false)
+		p.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
-		p.ImplementationsShowOnAllClassMethods = parseBoolWithDefault(value, false)
+		p.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	}
 }
