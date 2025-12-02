@@ -147,11 +147,7 @@ type UserPreferences struct {
 
 	// ------- CodeLens -------
 
-	ReferencesCodeLensEnabled                     bool
-	ImplementationsCodeLensEnabled                bool
-	ReferencesCodeLensShowOnAllFunctions          bool
-	ImplementationsCodeLensShowOnInterfaceMethods bool
-	ImplementationsCodeLensShowOnAllClassMethods  bool
+	CodeLensUserPreferences
 
 	// ------- Symbols -------
 
@@ -163,6 +159,14 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool // !!!
 	DisplayPartsForJSDoc        bool // !!!
 	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+}
+
+type CodeLensUserPreferences struct {
+	ReferencesCodeLensEnabled                     bool
+	ImplementationsCodeLensEnabled                bool
+	ReferencesCodeLensShowOnAllFunctions          bool
+	ImplementationsCodeLensShowOnInterfaceMethods bool
+	ImplementationsCodeLensShowOnAllClassMethods  bool
 }
 
 type JsxAttributeCompletionStyle string
@@ -702,12 +706,12 @@ func (p *UserPreferences) set(name string, value any) {
 	case "referencescodelensenabled":
 		p.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "implementationscodelensenabled":
-		p.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
+		p.ImplementationsEnabled = parseBoolWithDefault(value, false)
 	case "referencescodelensshowonallfunctions":
-		p.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
+		p.ReferencesShowOnAllFunctions = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowoninterfacemethods":
-		p.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
+		p.ImplementationsShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
-		p.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+		p.ImplementationsShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	}
 }
