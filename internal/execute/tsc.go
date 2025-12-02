@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -24,7 +25,6 @@ import (
 
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
-		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			return tscBuildCompilation(sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
@@ -63,11 +63,8 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 }
 
 func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
-	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), buildCommand.CompilerOptions)
-
-	// if (buildOptions.locale) {
-	//     validateLocaleAndSetLanguage(buildOptions.locale, sys, errors);
-	// }
+	locale := buildCommand.Locale()
+	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, buildCommand.CompilerOptions)
 
 	if len(buildCommand.Errors) > 0 {
 		for _, err := range buildCommand.Errors {
@@ -83,8 +80,8 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 	}
 
 	if buildCommand.CompilerOptions.Help.IsTrue() {
-		tsc.PrintVersion(sys)
-		tsc.PrintBuildHelp(sys, tsoptions.BuildOpts)
+		tsc.PrintVersion(sys, locale)
+		tsc.PrintBuildHelp(sys, locale, tsoptions.BuildOpts)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
@@ -98,8 +95,8 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
-	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
-	// if commandLine.Options().Locale != nil
+	locale := commandLine.Locale()
+	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
 
 	if len(commandLine.Errors) > 0 {
 		for _, e := range commandLine.Errors {
@@ -115,17 +112,17 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		tsc.WriteConfigFile(sys, reportDiagnostic, commandLine.Raw.(*collections.OrderedMap[string, any]))
+		tsc.WriteConfigFile(sys, locale, reportDiagnostic, commandLine.Raw.(*collections.OrderedMap[string, any]))
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
-		tsc.PrintVersion(sys)
+		tsc.PrintVersion(sys, locale)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Help.IsTrue() || commandLine.CompilerOptions().All.IsTrue() {
-		tsc.PrintHelp(sys, commandLine)
+		tsc.PrintHelp(sys, locale, commandLine)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
@@ -154,19 +151,24 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 				return tsc.CommandLineResult{Status: tsc.ExitStatusDiagnosticsPresent_OutputsSkipped}
 			}
 		}
-	} else if len(commandLine.FileNames()) == 0 {
+	} else if !commandLine.CompilerOptions().IgnoreConfig.IsTrue() || len(commandLine.FileNames()) == 0 {
 		searchPath := tspath.NormalizePath(sys.GetCurrentDirectory())
 		configFileName = findConfigFile(searchPath, sys.FS().FileExists, "tsconfig.json")
-	}
-
-	if configFileName == "" && len(commandLine.FileNames()) == 0 {
-		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
-			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
-		} else {
-			tsc.PrintVersion(sys)
-			tsc.PrintHelp(sys, commandLine)
+		if len(commandLine.FileNames()) != 0 {
+			if configFileName != "" {
+				// Error to not specify config file
+				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error))
+				return tsc.CommandLineResult{Status: tsc.ExitStatusDiagnosticsPresent_OutputsSkipped}
+			}
+		} else if configFileName == "" {
+			if commandLine.CompilerOptions().ShowConfig.IsTrue() {
+				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
+			} else {
+				tsc.PrintVersion(sys, locale)
+				tsc.PrintHelp(sys, locale, commandLine)
+			}
+			return tsc.CommandLineResult{Status: tsc.ExitStatusDiagnosticsPresent_OutputsSkipped}
 		}
-		return tsc.CommandLineResult{Status: tsc.ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
 
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
@@ -187,10 +189,10 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		}
 		configForCompilation = configParseResult
 		// Updater to reflect pretty
-		reportDiagnostic = tsc.CreateDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
+		reportDiagnostic = tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
 	}
 
-	reportErrorSummary := tsc.CreateReportErrorSummary(sys, configForCompilation.CompilerOptions())
+	reportErrorSummary := tsc.CreateReportErrorSummary(sys, locale, configForCompilation.CompilerOptions())
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 		showConfig(sys, configForCompilation.CompilerOptions())
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
@@ -242,8 +244,8 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
-func getTraceFromSys(sys tsc.System, testing tsc.CommandLineTesting) func(msg string) {
-	return tsc.GetTraceWithWriterFromSys(sys.Writer(), testing)
+func getTraceFromSys(sys tsc.System, locale locale.Locale, testing tsc.CommandLineTesting) func(msg *diagnostics.Message, args ...any) {
+	return tsc.GetTraceWithWriterFromSys(sys.Writer(), locale, testing)
 }
 
 func performIncrementalCompilation(
@@ -255,7 +257,7 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -298,7 +300,7 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type LanguageService struct {
@@ -26,6 +27,10 @@ func NewLanguageService(
 		converters:              host.Converters(),
 		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
 	}
+}
+
+func (l *LanguageService) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, l.program.GetCurrentDirectory(), l.UseCaseSensitiveFileNames())
 }
 
 func (l *LanguageService) GetProgram() *compiler.Program {

@@ -3802,8 +3802,12 @@ func (p *Printer) emitImportAttribute(node *ast.ImportAttribute) {
 	p.emitImportAttributeName(node.Name())
 	p.writePunctuation(":")
 	p.writeSpace()
-	/// !!! emit trailing comments of value
-	p.emitExpression(node.Value, ast.OperatorPrecedenceDisallowComma)
+	value := node.Value
+	if p.emitContext.EmitFlags(node.Value)&EFNoLeadingComments == 0 {
+		commentRange := getCommentRange(value)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
+	p.emitExpression(value, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -4272,9 +4276,10 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	// "comment1" is not considered to be leading comment for node.initializer
 	// but rather a trailing comment on the previous node.
 	initializer := node.Initializer
-
-	// !!! emit trailing comments of initializer
-
+	if p.emitContext.EmitFlags(initializer)&EFNoLeadingComments == 0 {
+		commentRange := getCommentRange(initializer)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
 	p.emitExpression(initializer, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
@@ -4951,9 +4956,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	case ast.KindSourceFile:
 		p.emitSourceFile(node.AsSourceFile())
 
-	case ast.KindBundle:
-		panic("not implemented")
-
 	// Transformation nodes
 	case ast.KindNotEmittedTypeElement:
 		p.emitNotEmittedTypeElement(node.AsNotEmittedTypeElement())
@@ -5057,7 +5059,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 
 	if contextNode.Pos() != startPos {
 		indentLeading := flags&tefIndentLeadingComments != 0
-		needsIndent := indentLeading && p.currentSourceFile != nil && !positionsAreOnSameLine(startPos, pos, p.currentSourceFile)
+		needsIndent := indentLeading && p.currentSourceFile != nil && !PositionsAreOnSameLine(startPos, pos, p.currentSourceFile)
 		p.increaseIndentIf(needsIndent)
 		p.emitLeadingComments(startPos, false /*elided*/)
 		p.decreaseIndentIf(needsIndent)
