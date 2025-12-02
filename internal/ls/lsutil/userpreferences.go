@@ -147,7 +147,7 @@ type UserPreferences struct {
 
 	// ------- CodeLens -------
 
-	CodeLensUserPreferences
+	CodeLens CodeLensUserPreferences
 
 	// ------- Symbols -------
 
@@ -704,14 +704,14 @@ func (p *UserPreferences) set(name string, value any) {
 	case "reportstylechecksaswarnings":
 		p.ReportStyleChecksAsWarnings = parseBoolWithDefault(value, true)
 	case "referencescodelensenabled":
-		p.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
+		p.CodeLens.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "implementationscodelensenabled":
-		p.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "referencescodelensshowonallfunctions":
-		p.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
+		p.CodeLens.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowoninterfacemethods":
-		p.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
-		p.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	}
 }

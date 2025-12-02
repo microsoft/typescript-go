@@ -796,7 +796,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
-	if oldPrefs.CodeLensUserPreferences != newPrefs.CodeLensUserPreferences {
+	if oldPrefs.CodeLens != newPrefs.CodeLens {
 		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
