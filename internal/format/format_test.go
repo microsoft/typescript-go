@@ -60,32 +60,42 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 	}
 }
 
-// Test for panic in childStartsOnTheSameLineWithElseInIfStatement
-// when FindPrecedingToken returns nil (Issue: panic handling request textDocument/onTypeFormatting)
-func TestFormatOnEnter_NilPrecedingToken(t *testing.T) {
+// Test for panic handling request textDocument/onTypeFormatting (issue #2042)
+// The panic occurs when getStartLineAndCharacterForNode is called with a nil node
+func TestFormatOnEnter_NilNodeHandling(t *testing.T) {
 	t.Parallel()
 
-	// Test case where else statement is at the beginning of the file
-	// which can cause FindPrecedingToken to return nil
+	// Test various edge cases that could lead to nil nodes being passed
+	// to getStartLineAndCharacterForNode
 	testCases := []struct {
 		name     string
 		text     string
 		position int // position where enter is pressed
 	}{
 		{
-			name:     "else at file start - edge case",
-			text:     "if(a){}\nelse{}",
-			position: 9, // After the newline, before 'else'
+			name:     "empty file",
+			text:     "",
+			position: 0,
 		},
 		{
-			name:     "simple if-else with enter after if block",
-			text:     "if (true) {\n}\nelse {\n}",
-			position: 13, // After "}\n", before "else"
+			name:     "simple statement",
+			text:     "const x = 1;",
+			position: 12,
 		},
 		{
-			name:     "if-else with enter in else block",
-			text:     "if (true) {\n} else {\n}",
-			position: 21, // Inside else block
+			name:     "file with newline",
+			text:     "const x = 1;\n",
+			position: 13,
+		},
+		{
+			name:     "incomplete code",
+			text:     "if (",
+			position: 4,
+		},
+		{
+			name:     "malformed if-else",
+			text:     "if(a){}\nelse",
+			position: 12,
 		},
 	}
 
@@ -107,7 +117,7 @@ func TestFormatOnEnter_NilPrecedingToken(t *testing.T) {
 				},
 			}, "\n")
 
-			// This should not panic
+			// This should not panic even with nil nodes
 			edits := format.FormatOnEnter(ctx, sourceFile, tc.position)
 			_ = edits // Just ensuring no panic
 		})
