@@ -1589,3 +1589,7 @@ func toContextRange(textRange *core.TextRange, contextFile *ast.SourceFile, cont
 	}
 	return nil
 }
+
+func ptrTo[T any](v T) *T {
+	return &v
+}

@@ -25,6 +25,16 @@ type ImportExportSymbol struct {
 	exportInfo *ExportInfo
 }
 
+type ExportKind int
+
+const (
+	ExportKindNamed        ExportKind = 0
+	ExportKindDefault      ExportKind = 1
+	ExportKindExportEquals ExportKind = 2
+	ExportKindUMD          ExportKind = 3
+	ExportKindModule       ExportKind = 4
+)
+
 type ExportInfo struct {
 	exportingModuleSymbol *ast.Symbol
 	exportKind            ExportKind

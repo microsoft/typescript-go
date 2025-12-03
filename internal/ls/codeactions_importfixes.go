@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -298,87 +297,6 @@ func needsJsxNamespaceFix(jsxNamespace string, symbolToken *ast.Node, ch *checke
 
 func jsxModeNeedsExplicitImport(jsx core.JsxEmit) bool {
 	return jsx == core.JsxEmitReact || jsx == core.JsxEmitReactNative
-}
-
-func getExportInfos(
-	ctx context.Context,
-	symbolName string,
-	isJsxTagName bool,
-	currentTokenMeaning ast.SemanticMeaning,
-	fromFile *ast.SourceFile,
-	program *compiler.Program,
-	ls *LanguageService,
-) *collections.MultiMap[ast.SymbolId, *SymbolExportInfo] {
-	// For each original symbol, keep all re-exports of that symbol together
-	// Maps symbol id to info for modules providing that symbol (original export + re-exports)
-	originalSymbolToExportInfos := &collections.MultiMap[ast.SymbolId, *SymbolExportInfo]{}
-
-	ch, done := program.GetTypeChecker(ctx)
-	defer done()
-
-	packageJsonFilter := ls.createPackageJsonImportFilter(fromFile)
-
-	// Helper to add a symbol to the results map
-	addSymbol := func(moduleSymbol *ast.Symbol, toFile *ast.SourceFile, exportedSymbol *ast.Symbol, exportKind ExportKind, isFromPackageJson bool) {
-		if !ls.isImportable(fromFile, toFile, moduleSymbol, packageJsonFilter) {
-			return
-		}
-
-		// Get unique ID for the exported symbol
-		symbolID := ast.GetSymbolId(exportedSymbol)
-
-		moduleFileName := ""
-		if toFile != nil {
-			moduleFileName = toFile.FileName()
-		}
-
-		originalSymbolToExportInfos.Add(symbolID, &SymbolExportInfo{
-			symbol:            exportedSymbol,
-			moduleSymbol:      moduleSymbol,
-			moduleFileName:    moduleFileName,
-			exportKind:        exportKind,
-			targetFlags:       ch.SkipAlias(exportedSymbol).Flags,
-			isFromPackageJson: isFromPackageJson,
-		})
-	}
-
-	// Iterate through all external modules
-	forEachExternalModuleToImportFrom(
-		ch,
-		program,
-		func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool) {
-			// Check for cancellation
-			if ctx.Err() != nil {
-				return
-			}
-
-			compilerOptions := program.Options()
-
-			// Check default export
-			defaultInfo := getDefaultLikeExportInfo(moduleSymbol, checker)
-			if defaultInfo != nil &&
-				symbolFlagsHaveMeaning(checker.GetSymbolFlags(defaultInfo.exportingModuleSymbol), currentTokenMeaning) &&
-				forEachNameOfDefaultExport(defaultInfo.exportingModuleSymbol, checker, compilerOptions.GetEmitScriptTarget(), func(name, capitalizedName string) string {
-					actualName := name
-					if isJsxTagName && capitalizedName != "" {
-						actualName = capitalizedName
-					}
-					if actualName == symbolName {
-						return actualName
-					}
-					return ""
-				}) != "" {
-				addSymbol(moduleSymbol, sourceFile, defaultInfo.exportingModuleSymbol, defaultInfo.exportKind, isFromPackageJson)
-			}
-			// Check for named export with identical name
-			exportSymbol := checker.TryGetMemberInModuleExportsAndProperties(symbolName, moduleSymbol)
-			if exportSymbol != nil && symbolFlagsHaveMeaning(checker.GetSymbolFlags(exportSymbol), currentTokenMeaning) {
-				addSymbol(moduleSymbol, sourceFile, exportSymbol, ExportKindNamed, isFromPackageJson)
-			}
-		},
-	)
-
-	return originalSymbolToExportInfos
 }
 
 func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.View) []*fixInfo {
