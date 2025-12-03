@@ -1134,6 +1134,7 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
 
+	// Getting a checker will force a bind, so this will be populated.
 	diags := slices.Clip(sourceFile.BindSuggestionDiagnostics)
 	diags = append(diags, fileChecker.GetSuggestionDiagnostics(ctx, sourceFile)...)
 
