@@ -1562,7 +1562,12 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 
 // Testing only
 func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
-	return p.includeProcessor.fileIncludeReasons
+	p.includeProcessor.mu.Lock()
+	defer p.includeProcessor.mu.Unlock()
+	// Return a copy to avoid concurrent access issues
+	result := make(map[tspath.Path][]*FileIncludeReason, len(p.includeProcessor.fileIncludeReasons))
+	maps.Copy(result, p.includeProcessor.fileIncludeReasons)
+	return result
 }
 
 // Testing only
@@ -1578,7 +1583,7 @@ func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	}
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
-		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
+		for _, reason := range p.includeProcessor.getFileIncludeReasons(file.Path()) {
 			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {

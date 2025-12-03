@@ -97,7 +97,7 @@ func (d *processingDiagnostic) createDiagnosticExplainingFile(program *Program) 
 	// !!! todo sheetal caching
 
 	if diag.file != "" {
-		reasons := program.includeProcessor.fileIncludeReasons[diag.file]
+		reasons := program.includeProcessor.getFileIncludeReasons(diag.file)
 		includeDetails = make([]*ast.Diagnostic, 0, len(reasons))
 		for _, reason := range reasons {
 			processInclude(reason)

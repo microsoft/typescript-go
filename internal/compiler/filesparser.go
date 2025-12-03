@@ -427,10 +427,6 @@ func (w *filesParser) addIncludeReason(loader *fileLoader, task *parseTask, reas
 	if task.redirectedParseTask != nil {
 		w.addIncludeReason(loader, task.redirectedParseTask, reason)
 	} else if task.loaded {
-		if existing, ok := loader.includeProcessor.fileIncludeReasons[task.path]; ok {
-			loader.includeProcessor.fileIncludeReasons[task.path] = append(existing, reason)
-		} else {
-			loader.includeProcessor.fileIncludeReasons[task.path] = []*FileIncludeReason{reason}
-		}
+		loader.includeProcessor.addFileIncludeReason(task.path, reason)
 	}
 }
