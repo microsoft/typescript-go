@@ -420,20 +420,20 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 // collectDiagnostics collects diagnostics from a single file or all files.
 // If sourceFile is non-nil, returns diagnostics for just that file.
 // If sourceFile is nil, returns diagnostics for all files in the program.
-func (p *Program) collectDiagnostics(sourceFile *ast.SourceFile, collect func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	var result []*ast.Diagnostic
 	if sourceFile != nil {
-		result = collect(sourceFile)
+		result = collect(ctx, sourceFile)
 	} else {
 		for _, file := range p.files {
-			result = append(result, collect(file)...)
+			result = append(result, collect(ctx, file)...)
 		}
 	}
 	return SortAndDeduplicateDiagnostics(result)
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
 	})
 }
@@ -444,15 +444,13 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 	} else {
 		p.BindSourceFiles()
 	}
-	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return file.BindDiagnostics()
 	})
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
-		return p.getSemanticDiagnosticsForFile(ctx, file)
-	})
+	return p.collectDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsForFile)
 }
 
 // GetSemanticDiagnosticsForFiles returns semantic diagnostics for the given files, without
@@ -466,9 +464,7 @@ func (p *Program) GetSemanticDiagnosticsForFiles(ctx context.Context, sourceFile
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
-		return p.getSuggestionDiagnosticsForFile(ctx, file)
-	})
+	return p.collectDiagnostics(ctx, sourceFile, p.getSuggestionDiagnosticsForFile)
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
@@ -1012,9 +1008,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
-		return p.getDeclarationDiagnosticsForFile(ctx, file)
-	})
+	return p.collectDiagnostics(ctx, sourceFile, p.getDeclarationDiagnosticsForFile)
 }
 
 func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
