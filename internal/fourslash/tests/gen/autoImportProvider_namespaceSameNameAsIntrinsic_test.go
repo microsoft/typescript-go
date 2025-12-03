@@ -28,6 +28,7 @@ export type SafeString = string;
 // @Filename: /home/src/workspaces/project/index.ts
 type A = { name: string/**/ }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -44,11 +45,11 @@ type A = { name: string/**/ }`
 				&lsproto.CompletionItem{
 					Label:    "string",
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "fp-ts",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 			},

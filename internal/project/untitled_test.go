@@ -71,7 +71,9 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	resp, err := languageService.ProvideReferences(ctx, refParams)
+	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false)
+	assert.Assert(t, ok)
+	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
 	assert.NilError(t, err)
 
 	refs := *resp.Locations
@@ -87,7 +89,7 @@ x++;`
 	assert.Assert(t, len(refs) == 3, "Expected 3 references, got %d", len(refs))
 
 	// Also test definition using ProvideDefinition
-	definition, err := languageService.ProvideDefinition(ctx, uri, lspPosition, false)
+	definition, err := languageService.ProvideDefinition(ctx, uri, lspPosition)
 	assert.NilError(t, err)
 	if definition.Locations != nil {
 		t.Logf("Definition found: %d locations", len(*definition.Locations))
@@ -144,7 +146,9 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	resp, err := languageService.ProvideReferences(ctx, refParams)
+	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false)
+	assert.Assert(t, ok)
+	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
 	assert.NilError(t, err)
 
 	refs := *resp.Locations
