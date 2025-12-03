@@ -35,7 +35,6 @@ export default function getExePath() {
                 exeDir = path.join(path.dirname(packageJsonPath), "lib");
             }
         } catch (e) {
-            console.error(e);
             throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
         }
     }
@@ -48,3 +47,4 @@ export default function getExePath() {
 
     return exe;
 }
+
