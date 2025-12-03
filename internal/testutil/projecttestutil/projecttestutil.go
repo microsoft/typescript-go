@@ -3,6 +3,7 @@ package projecttestutil
 import (
 	"context"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -16,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -187,6 +189,38 @@ func (h *SessionUtils) appendTypesRegistryConfig(builder *strings.Builder, index
 
 func Setup(files map[string]any) (*project.Session, *SessionUtils) {
 	return SetupWithTypingsInstaller(files, &TypingsInstallerOptions{})
+}
+
+func SetupWithRealFS() (*project.Session, *SessionUtils) {
+	fs := bundled.WrapFS(osvfs.FS())
+	clientMock := &ClientMock{}
+	npmExecutorMock := &NpmExecutorMock{}
+	sessionUtils := &SessionUtils{
+		fs:          fs,
+		client:      clientMock,
+		npmExecutor: npmExecutorMock,
+		logger:      logging.NewTestLogger(),
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return project.NewSession(&project.SessionInit{
+		FS:          fs,
+		Client:      clientMock,
+		NpmExecutor: npmExecutorMock,
+		Logger:      sessionUtils.logger,
+		Options: &project.SessionOptions{
+			CurrentDirectory:       wd,
+			DefaultLibraryPath:     bundled.LibPath(),
+			PositionEncoding:       lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:           true,
+			LoggingEnabled:         true,
+			PushDiagnosticsEnabled: true,
+		},
+	}), sessionUtils
 }
 
 func SetupWithOptions(files map[string]any, options *project.SessionOptions) (*project.Session, *SessionUtils) {
