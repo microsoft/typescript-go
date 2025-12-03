@@ -144,13 +144,16 @@ var parseCache = project.ParseCache{
 	},
 }
 
-func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+
+	ctx, cancel := context.WithCancel(t.Context())
+
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]any)
 	scriptInfos := make(map[string]*scriptInfo)
@@ -246,23 +249,21 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		defer func() {
 			outputWriter.Close()
 		}()
-		err := server.Run(t.Context())
+		err := server.Run(ctx)
 		if err != nil {
-			select {
-			case f.errChan <- fmt.Errorf("server error: %w", err):
-				// sent error
-			case <-t.Context().Done():
-				// context cancelled
+			if ctx.Err() != nil {
+				return
 			}
+			f.errChan <- fmt.Errorf("server error: %w", err)
 		}
 	}()
 
 	// Start async message router
-	go f.messageRouter(t.Context())
+	go f.messageRouter(ctx)
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
+	f.server.SetCompilerOptionsForInferredProjects(ctx, compilerOptions)
 	f.initialize(t, capabilities)
 
 	if testData.isStateBaseliningEnabled() {
@@ -276,7 +277,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 
 	_, testPath, _, _ := runtime.Caller(1)
-	t.Cleanup(func() {
+	return f, func() {
+		t.Helper()
+		defer cancel()
+
 		inputWriter.Close()
 		// Check for errors from messageRouter
 		select {
@@ -288,43 +292,33 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 			// no error to report
 		}
 		f.verifyBaselines(t, testPath)
-	})
-	return f
+	}
 }
 
 // messageRouter runs in a goroutine and routes incoming messages from the server.
 // It handles responses to client requests and server-initiated requests.
 func (f *FourslashTest) messageRouter(ctx context.Context) {
 	for {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			return
-		default:
-			// continue
 		}
 
 		msg, err := f.out.Read()
 		if err != nil {
-			if errors.Is(err, io.EOF) {
+			if errors.Is(err, io.EOF) || ctx.Err() != nil {
 				return
 			}
-			select {
-			case f.errChan <- fmt.Errorf("failed to read message: %w", err):
-				// sent error
-			case <-ctx.Done():
-				// context cancelled
-			}
+			f.errChan <- fmt.Errorf("failed to read message: %w", err)
 			return
 		}
 
 		// Validate message can be marshaled
 		if err := json.MarshalWrite(io.Discard, msg); err != nil {
-			select {
-			case f.errChan <- fmt.Errorf("failed to encode message as JSON: %w", err):
-				// sent error
-			case <-ctx.Done():
-				// context cancelled
+			if ctx.Err() != nil {
+				return
 			}
+
+			f.errChan <- fmt.Errorf("failed to encode message as JSON: %w", err)
 			return
 		}
 
@@ -405,20 +399,16 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 	}
 
 	// Send response back to server
-	select {
-	case <-ctx.Done():
+	if ctx.Err() != nil {
 		return
-	default:
-		// continue
 	}
 
 	if err := f.in.Write(response.Message()); err != nil {
-		select {
-		case f.errChan <- fmt.Errorf("failed to write server request response: %w", err):
-			// sent error
-		case <-ctx.Done():
-			// context cancelled
+		if ctx.Err() != nil {
+			return
 		}
+
+		f.errChan <- fmt.Errorf("failed to write server request response: %w", err)
 	}
 }
 
