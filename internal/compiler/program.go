@@ -368,8 +368,10 @@ func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func())
 	return p.checkerPool.GetChecker(ctx)
 }
 
-func (p *Program) ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker)) {
-	p.checkerPool.ForEachCheckerParallel(ctx, cb)
+func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
+	if pool, ok := p.checkerPool.(*checkerPool); ok {
+		pool.ForEachCheckerParallel(cb)
+	}
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
@@ -988,7 +990,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	}
 
 	globalDiagnostics := make([][]*ast.Diagnostic, p.checkerPool.Count())
-	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
+	p.ForEachCheckerParallel(func(idx int, checker *checker.Checker) {
 		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
 	})
 
@@ -1202,7 +1204,7 @@ func (p *Program) SymbolCount() int {
 	}
 	var val atomic.Uint32
 	val.Store(uint32(count))
-	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
 		val.Add(c.SymbolCount)
 	})
 	return int(val.Load())
@@ -1210,7 +1212,7 @@ func (p *Program) SymbolCount() int {
 
 func (p *Program) TypeCount() int {
 	var val atomic.Uint32
-	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
 		val.Add(c.TypeCount)
 	})
 	return int(val.Load())
@@ -1218,7 +1220,7 @@ func (p *Program) TypeCount() int {
 
 func (p *Program) InstantiationCount() int {
 	var val atomic.Uint32
-	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
 		val.Add(c.TotalInstantiationCount)
 	})
 	return int(val.Load())
