@@ -450,15 +450,6 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if sourceFile != nil {
-		binder.BindSourceFile(sourceFile)
-	} else {
-		p.BindSourceFiles()
-		p.CheckSourceFiles(ctx, nil)
-		if ctx.Err() != nil {
-			return nil
-		}
-	}
 	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
 		return p.getSemanticDiagnosticsForFile(ctx, file)
 	})
@@ -467,11 +458,6 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 // GetSemanticDiagnosticsForFiles returns semantic diagnostics for the given files, without
 // applying noEmit filtering. Used by incremental builds.
 func (p *Program) GetSemanticDiagnosticsForFiles(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
-	p.BindSourceFiles()
-	p.CheckSourceFiles(ctx, sourceFiles)
-	if ctx.Err() != nil {
-		return nil
-	}
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
 	for _, file := range sourceFiles {
 		result[file] = SortAndDeduplicateDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, file))
@@ -480,15 +466,6 @@ func (p *Program) GetSemanticDiagnosticsForFiles(ctx context.Context, sourceFile
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if sourceFile != nil {
-		binder.BindSourceFile(sourceFile)
-	} else {
-		p.BindSourceFiles()
-		p.CheckSourceFiles(ctx, nil)
-		if ctx.Err() != nil {
-			return nil
-		}
-	}
 	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
 		return p.getSuggestionDiagnosticsForFile(ctx, file)
 	})
@@ -1035,15 +1012,6 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if sourceFile != nil {
-		binder.BindSourceFile(sourceFile)
-	} else {
-		p.BindSourceFiles()
-		p.CheckSourceFiles(ctx, nil)
-		if ctx.Err() != nil {
-			return nil
-		}
-	}
 	return p.collectDiagnostics(sourceFile, func(file *ast.SourceFile) []*ast.Diagnostic {
 		return p.getDeclarationDiagnosticsForFile(ctx, file)
 	})
@@ -1083,6 +1051,8 @@ func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceF
 	if checker.SkipTypeChecking(sourceFile, compilerOptions, p, false) {
 		return nil
 	}
+
+	binder.BindSourceFile(sourceFile)
 
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
@@ -1169,6 +1139,8 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
 		return nil
 	}
+
+	binder.BindSourceFile(sourceFile)
 
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
