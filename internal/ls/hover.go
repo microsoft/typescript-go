@@ -71,7 +71,7 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 }
 
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind) string {
-	// Handle binding elements specially - we need to get the documentation from the property type
+	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type
 	// The declaration passed in might be the binding element itself, but we need the interface property declaration
 	if symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
 		bindingElement := symbol.ValueDeclaration
@@ -84,19 +84,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 			propertyName := name.Text()
 			objectType := c.GetTypeAtLocation(parent)
 			if objectType != nil {
-				// For union types, try to find the property in any of the constituent types
-				var propertySymbol *ast.Symbol
-				if objectType.Flags()&checker.TypeFlagsUnion != 0 {
-					for _, t := range objectType.AsUnionType().Types() {
-						prop := c.GetPropertyOfType(t, propertyName)
-						if prop != nil {
-							propertySymbol = prop
-							break
-						}
-					}
-				} else {
-					propertySymbol = c.GetPropertyOfType(objectType, propertyName)
-				}
+				propertySymbol := findPropertyInType(c, objectType, propertyName)
 				if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
 					declaration = propertySymbol.ValueDeclaration
 				}
@@ -613,6 +601,20 @@ func writeQuotedString(b *strings.Builder, str string, quote bool) {
 	} else {
 		b.WriteString(str)
 	}
+}
+
+// findPropertyInType finds a property in a type, handling union types by searching constituent types
+func findPropertyInType(c *checker.Checker, objectType *checker.Type, propertyName string) *ast.Symbol {
+	// For union types, try to find the property in any of the constituent types
+	if objectType.Flags()&checker.TypeFlagsUnion != 0 {
+		for _, t := range objectType.AsUnionType().Types() {
+			if prop := c.GetPropertyOfType(t, propertyName); prop != nil {
+				return prop
+			}
+		}
+		return nil
+	}
+	return c.GetPropertyOfType(objectType, propertyName)
 }
 
 func getEntityNameString(name *ast.Node) string {
