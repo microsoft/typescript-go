@@ -15705,10 +15705,8 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		return symbols
 	}
 	var originalModule *ast.Symbol
-	if moduleSymbol != nil {
-		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
-			originalModule = moduleSymbol
-		}
+	if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+		originalModule = moduleSymbol
 	}
 	// A module defined by an 'export=' consists of one export that needs to be resolved
 	moduleSymbol = c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
