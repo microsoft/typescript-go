@@ -981,6 +981,146 @@ func TestTscExtends(t *testing.T) {
 	}
 }
 
+func TestForceConsistentCasingInFileNames(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "with relative and non relative file resolutions",
+			files: FileMap{
+				"/user/username/projects/myproject/src/struct.d.ts": stringtestutil.Dedent(`
+                    import * as xs1 from "fp-ts/lib/Struct";
+                    import * as xs2 from "fp-ts/lib/struct";
+                    import * as xs3 from "./Struct";
+                    import * as xs4 from "./struct";
+                `),
+				"/user/username/projects/myproject/node_modules/fp-ts/lib/struct.d.ts": `export function foo(): void`,
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"/user/username/projects/myproject/src/struct.d.ts", "--forceConsistentCasingInFileNames", "--explainFiles"},
+			ignoreCase:      true,
+		},
+		{
+			subScenario: "when file is included from multiple places with different casing",
+			files: FileMap{
+				"/home/src/projects/project/src/struct.d.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/src/anotherFile.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/src/oneMore.ts": stringtestutil.Dedent(`
+					import * as xs1 from "fp-ts/lib/Struct";
+					import * as xs2 from "fp-ts/lib/struct";
+					import * as xs3 from "./Struct";
+					import * as xs4 from "./struct";
+				`),
+				"/home/src/projects/project/tsconfig.json":                      `{}`,
+				"/home/src/projects/project/node_modules/fp-ts/lib/struct.d.ts": `export function foo(): void`,
+			},
+			cwd:             "/home/src/projects/project",
+			commandLineArgs: []string{"--explainFiles"},
+			ignoreCase:      true,
+		},
+		{
+			subScenario: "with type ref from file",
+			files: FileMap{
+				"/user/username/projects/myproject/src/fileOne.d.ts": `declare class c { }`,
+				"/user/username/projects/myproject/src/file2.d.ts": stringtestutil.Dedent(`
+                    /// <reference types="./fileOne.d.ts"/>
+                    declare const y: c;
+                `),
+				"/user/username/projects/myproject/tsconfig.json": "{ }",
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-p", "/user/username/projects/myproject", "--explainFiles", "--traceResolution"},
+			ignoreCase:      true,
+		},
+		{
+			subScenario: "with triple slash ref from file",
+			files: FileMap{
+				"/home/src/workspaces/project/src/c.ts":      `/// <reference path="./D.ts"/>`,
+				"/home/src/workspaces/project/src/d.ts":      `declare class c { }`,
+				"/home/src/workspaces/project/tsconfig.json": "{ }",
+			},
+			ignoreCase: true,
+		},
+		{
+			subScenario: "two files exist on disk that differs only in casing",
+			files: FileMap{
+				"/home/src/workspaces/project/c.ts": `import {x} from "./D"`,
+				"/home/src/workspaces/project/D.ts": `export const x = 10;`,
+				"/home/src/workspaces/project/d.ts": `export const y = 20;`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"files": ["c.ts", "d.ts"]
+					}`),
+			},
+		},
+	}
+	for _, test := range testCases {
+		test.run(t, "forceConsistentCasingInFileNames")
+	}
+}
+
+func TestTscIgnoreConfig(t *testing.T) {
+	t.Parallel()
+	filesWithoutConfig := func() FileMap {
+		return FileMap{
+			"/home/src/workspaces/project/src/a.ts": "export const a = 10;",
+			"/home/src/workspaces/project/src/b.ts": "export const b = 10;",
+			"/home/src/workspaces/project/c.ts":     "export const c = 10;",
+		}
+	}
+	filesWithConfig := func() FileMap {
+		files := filesWithoutConfig()
+		files["/home/src/workspaces/project/tsconfig.json"] = stringtestutil.Dedent(`
+			{
+                "include": ["src"],
+			}`)
+		return files
+	}
+	getScenarios := func(subScenario string, commandLineArgs []string) []*tscInput {
+		commandLineArgsIgnoreConfig := append(commandLineArgs, "--ignoreConfig")
+		return []*tscInput{
+			{
+				subScenario:     subScenario,
+				files:           filesWithConfig(),
+				commandLineArgs: commandLineArgs,
+			},
+			{
+				subScenario:     subScenario + " with --ignoreConfig",
+				files:           filesWithConfig(),
+				commandLineArgs: commandLineArgsIgnoreConfig,
+			},
+			{
+				subScenario:     subScenario + " when config file absent",
+				files:           filesWithoutConfig(),
+				commandLineArgs: commandLineArgs,
+			},
+			{
+				subScenario:     subScenario + " when config file absent with --ignoreConfig",
+				files:           filesWithoutConfig(),
+				commandLineArgs: commandLineArgsIgnoreConfig,
+			},
+		}
+	}
+	testCases := slices.Concat(
+		getScenarios("without any options", nil),
+		getScenarios("specifying files", []string{"src/a.ts"}),
+		getScenarios("specifying project", []string{"-p", "."}),
+		getScenarios("mixing project and files", []string{"-p", ".", "src/a.ts", "c.ts"}),
+	)
+	for _, test := range testCases {
+		test.run(t, "ignoreConfig")
+	}
+}
+
 func TestTscIncremental(t *testing.T) {
 	t.Parallel()
 	getConstEnumTest := func(bdsContents string, changeEnumFile string, testSuffix string) *tscInput {
@@ -1691,6 +1831,54 @@ func TestTscIncremental(t *testing.T) {
 					commandLineArgs: []string{"-b", "-v"},
 				},
 			},
+		},
+		{
+			subScenario:     "Compile incremental with case insensitive file names",
+			commandLineArgs: []string{"-p", "."},
+			files: FileMap{
+				"/home/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"incremental": true
+						},
+					}`),
+				"/home/project/src/index.ts": stringtestutil.Dedent(`
+					import type { Foo1 } from 'lib1';
+					import type { Foo2 } from 'lib2';
+					export const foo1: Foo1 = { foo: "a" };
+					export const foo2: Foo2 = { foo: "b" };`),
+				"/home/node_modules/lib1/index.d.ts": stringtestutil.Dedent(`
+					import type { Foo } from 'someLib';
+					export type { Foo as Foo1 };`),
+				"/home/node_modules/lib1/package.json": stringtestutil.Dedent(`
+					{
+						"name": "lib1"
+					}`),
+				"/home/node_modules/lib2/index.d.ts": stringtestutil.Dedent(`
+					import type { Foo } from 'somelib';
+					export type { Foo as Foo2 };
+					export declare const foo2: Foo;`),
+				"/home/node_modules/lib2/package.json": stringtestutil.Dedent(`
+					{
+						"name": "lib2"
+					}
+					`),
+				"/home/node_modules/someLib/index.d.ts": stringtestutil.Dedent(`
+					import type { Str } from 'otherLib';
+					export type Foo = { foo: Str; };`),
+				"/home/node_modules/someLib/package.json": stringtestutil.Dedent(`
+					{
+						"name": "somelib"
+					}`),
+				"/home/node_modules/otherLib/index.d.ts": stringtestutil.Dedent(`
+					export type Str = string;`),
+				"/home/node_modules/otherLib/package.json": stringtestutil.Dedent(`
+					{
+						"name": "otherlib"
+					}`),
+			},
+			cwd:        "/home/project",
+			ignoreCase: true,
 		},
 	}
 

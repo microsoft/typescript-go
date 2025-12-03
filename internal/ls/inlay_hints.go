@@ -25,18 +25,21 @@ func (l *LanguageService) ProvideInlayHint(
 	ctx context.Context,
 	params *lsproto.InlayHintParams,
 ) (lsproto.InlayHintResponse, error) {
-	if !isAnyInlayHintEnabled(l.UserPreferences()) {
+	userPreferences := l.UserPreferences()
+	inlayHintPreferences := &userPreferences.InlayHints
+	if !isAnyInlayHintEnabled(inlayHintPreferences) {
 		return lsproto.InlayHintsOrNull{InlayHints: nil}, nil
 	}
+
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	quotePreference := getQuotePreference(file, l.UserPreferences())
+	quotePreference := getQuotePreference(file, userPreferences)
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	inlayHintState := &inlayHintState{
 		ctx:             ctx,
 		span:            l.converters.FromLSPRange(file, params.Range),
-		preferences:     l.UserPreferences(),
+		preferences:     inlayHintPreferences,
 		quotePreference: quotePreference,
 		file:            file,
 		checker:         checker,
@@ -49,7 +52,7 @@ func (l *LanguageService) ProvideInlayHint(
 type inlayHintState struct {
 	ctx             context.Context
 	span            core.TextRange
-	preferences     *lsutil.UserPreferences
+	preferences     *lsutil.InlayHintsPreferences
 	quotePreference quotePreference
 	file            *ast.SourceFile
 	checker         *checker.Checker
@@ -104,7 +107,7 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | FunctionExpression | ArrowFunction
 func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(decl *ast.FunctionLikeDeclaration) {
 	if ast.IsArrowFunction(decl) {
-		if findChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
+		if astnav.FindChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
 			return
 		}
 	}
@@ -366,12 +369,12 @@ func (s *inlayHintState) addParameterHints(text string, parameter *ast.Identifie
 	})
 }
 
-func shouldShowParameterNameHints(preferences *lsutil.UserPreferences) bool {
+func shouldShowParameterNameHints(preferences *lsutil.InlayHintsPreferences) bool {
 	return (preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals ||
 		preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsAll)
 }
 
-func shouldShowLiteralParameterNameHintsOnly(preferences *lsutil.UserPreferences) bool {
+func shouldShowLiteralParameterNameHintsOnly(preferences *lsutil.InlayHintsPreferences) bool {
 	return preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals
 }
 
@@ -889,18 +892,13 @@ func (s *inlayHintState) leadingCommentsContainsParameterName(node *ast.Node, na
 }
 
 func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclaration) int {
-	closeParenToken := findChildOfKind(decl, ast.KindCloseParenToken, s.file)
+	closeParenToken := astnav.FindChildOfKind(decl, ast.KindCloseParenToken, s.file)
 	if closeParenToken != nil {
 		return closeParenToken.End()
 	}
 	return decl.ParameterList().End()
 }
 
-func isAnyInlayHintEnabled(preferences *lsutil.UserPreferences) bool {
-	return preferences.IncludeInlayParameterNameHints != lsutil.IncludeInlayParameterNameHintsNone ||
-		preferences.IncludeInlayFunctionParameterTypeHints ||
-		preferences.IncludeInlayVariableTypeHints ||
-		preferences.IncludeInlayPropertyDeclarationTypeHints ||
-		preferences.IncludeInlayFunctionLikeReturnTypeHints ||
-		preferences.IncludeInlayEnumMemberValueHints
+func isAnyInlayHintEnabled(preferences *lsutil.InlayHintsPreferences) bool {
+	return *preferences != lsutil.InlayHintsPreferences{}
 }

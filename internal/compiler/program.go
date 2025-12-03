@@ -68,6 +68,10 @@ type Program struct {
 	// Cached unresolved imports for ATA
 	unresolvedImportsOnce sync.Once
 	unresolvedImports     *collections.Set[string]
+
+	// Used by workspace/symbol
+	hasTSFileOnce sync.Once
+	hasTSFile     bool
 }
 
 // FileExists implements checker.Program.
@@ -218,8 +222,8 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
-	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
+	p.initCheckerPool()
 	p.verifyCompilerOptions()
 	return p
 }
@@ -255,16 +259,14 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 }
 
 func (p *Program) initCheckerPool() {
+	if !p.finishedProcessing {
+		panic("Program must finish processing files before initializing checker pool")
+	}
+
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		checkers := 4
-		if p.SingleThreaded() {
-			checkers = 1
-		} else if p.Options().Checkers != nil {
-			checkers = min(max(*p.Options().Checkers, 1), 256)
-		}
-		p.checkerPool = newCheckerPool(checkers, p)
+		p.checkerPool = newCheckerPool(p)
 	}
 }
 
@@ -628,6 +630,10 @@ func (p *Program) verifyCompilerOptions() {
 		if options.Incremental.IsFalse() {
 			createDiagnosticForOptionName(diagnostics.Composite_projects_may_not_disable_incremental_compilation, "declaration", "")
 		}
+	}
+
+	if options.TsBuildInfoFile == "" && options.Incremental.IsTrue() && options.ConfigFilePath == "" {
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
 	}
 
 	p.verifyProjectReferences()
@@ -1037,15 +1043,12 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
-
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
 	checkerDiags := make([][]*ast.Diagnostic, p.checkerPool.Count())
 	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
 		if sourceFile == nil || checker == fileChecker {
 			checkerDiags[idx] = checker.GetDiagnostics(ctx, sourceFile)
-		} else {
-			checkerDiags[idx] = checker.GetDiagnosticsWithoutCheck(sourceFile)
 		}
 	})
 	if ctx.Err() != nil {
@@ -1632,6 +1635,23 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
+}
+
+func (p *Program) IsLibFile(sourceFile *ast.SourceFile) bool {
+	_, ok := p.libFiles[sourceFile.Path()]
+	return ok
+}
+
+func (p *Program) HasTSFile() bool {
+	p.hasTSFileOnce.Do(func() {
+		for _, file := range p.files {
+			if tspath.HasImplementationTSFileExtension(file.FileName()) {
+				p.hasTSFile = true
+				break
+			}
+		}
+	})
+	return p.hasTSFile
 }
 
 var plainJSErrors = collections.NewSetFromItems(
