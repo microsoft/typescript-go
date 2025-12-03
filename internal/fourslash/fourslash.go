@@ -434,9 +434,6 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	params := &lsproto.InitializeParams{
 		Locale: ptrTo("en-US"),
 		InitializationOptions: &lsproto.InitializationOptions{
-			// Hack: disable push diagnostics entirely, since the fourslash runner does not
-			// yet gracefully handle non-request messages.
-			DisablePushDiagnostics:           ptrTo(true),
 			CodeLensShowLocationsCommandName: ptrTo(showCodeLensLocationsCommandName),
 		},
 	}
