@@ -1049,6 +1049,7 @@ func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceF
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
 
+	// Getting a checker will force a bind, so this will be populated.
 	diags := slices.Clip(sourceFile.BindDiagnostics())
 	diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
 
