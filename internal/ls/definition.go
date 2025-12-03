@@ -171,7 +171,11 @@ func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, t
 
 func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node {
 	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		// For shorthand property assignments, return both the value symbol's declarations
+		// Because name in short-hand property assignment has two different meanings: property name and property value,
+		// using go-to-definition at such position should go to the variable declaration of the property value rather than
+		// go to the declaration of the property name (in this case stay at the same position). However, if go-to-definition
+		// is performed at the location of property access, we would like to go to definition of the property in the short-hand
+		// assignment. This case and others are handled by the following code.
 		// and the contextual type's property declarations
 		shorthandSymbol := c.GetResolvedSymbol(node)
 		var declarations []*ast.Node
