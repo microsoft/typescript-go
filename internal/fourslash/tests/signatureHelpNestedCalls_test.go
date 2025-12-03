@@ -14,7 +14,8 @@ func TestSignatureHelpNestedCalls(t *testing.T) {
 	const content = `function foo(s: string) { return s; }
 function bar(s: string) { return s; }
 let s = foo(/*a*/ /*b*/bar/*c*/(/*d*/"hello"/*e*/)/*f*/);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 
 	// Markers a, b, c should show foo (outer call)
 	f.GoToMarker(t, "a")
