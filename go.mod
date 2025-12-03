@@ -1,10 +1,11 @@
 module github.com/microsoft/typescript-go
 
-go 1.25
+go 1.25.1
 
 require (
 	github.com/dlclark/regexp2 v1.11.5
 	github.com/go-json-experiment/json v0.0.0-20251027170946-4849db3c2f7e
+	github.com/go4org/hashtriemap v0.0.0-20251130024219-545ba229f689
 	github.com/google/go-cmp v0.7.0
 	github.com/peter-evans/patience v0.3.0
 	github.com/zeebo/xxh3 v1.0.2
