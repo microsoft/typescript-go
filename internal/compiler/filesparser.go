@@ -63,11 +63,9 @@ func (t *parseTask) load(loader *fileLoader) {
 		return
 	}
 
-	// Check if file has unsupported extension (similar to getSourceFileFromReferenceWorker in TypeScript)
-	// Do this check before incrementing file counts
 	if tspath.HasExtension(t.normalizedFilePath) {
 		compilerOptions := loader.opts.Config.CompilerOptions()
-		allowNonTsExtensions := core.Tristate.IsTrue(compilerOptions.AllowNonTsExtensions)
+		allowNonTsExtensions := compilerOptions.AllowNonTsExtensions.IsTrue()
 		if !allowNonTsExtensions {
 			canonicalFileName := tspath.GetCanonicalFileName(t.normalizedFilePath, loader.opts.Host.FS().UseCaseSensitiveFileNames())
 			supported := false
@@ -78,7 +76,6 @@ func (t *parseTask) load(loader *fileLoader) {
 				}
 			}
 			if !supported {
-				// Store diagnostic on task - it will be added to includeProcessor during collection phase
 				if tspath.HasJSFileExtension(canonicalFileName) {
 					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 						kind: processingDiagnosticKindExplainingFileInclude,
@@ -89,7 +86,6 @@ func (t *parseTask) load(loader *fileLoader) {
 						},
 					})
 				}
-				// File has unsupported extension, don't try to parse it
 				return
 			}
 		}
@@ -354,7 +350,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			file := task.file
 			path := task.path
 
-			// Add any processing diagnostics from this task to the includeProcessor
 			if len(task.processingDiagnostics) > 0 {
 				loader.includeProcessor.processingDiagnostics = append(loader.includeProcessor.processingDiagnostics, task.processingDiagnostics...)
 			}

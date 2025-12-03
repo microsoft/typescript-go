@@ -144,10 +144,7 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 
 func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
 	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
-	// Add task if allowNonTsExtensions is true OR if the file has an extension
-	// Files with extensions will be validated in parseTask.load() to check if they're supported
-	// and report appropriate diagnostics for unsupported file types (e.g., JS files without allowJs)
-	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || tspath.HasExtension(absPath) {
+	if p.opts.Config.CompilerOptions().AllowNonTsExtensions.IsTrue() || tspath.HasExtension(absPath) {
 		p.rootTasks = append(p.rootTasks, &parseTask{
 			normalizedFilePath: absPath,
 			libFile:            libFile,
