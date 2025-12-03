@@ -453,9 +453,7 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 	return p.collectDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsForFile)
 }
 
-// GetSemanticDiagnosticsForFiles returns semantic diagnostics for the given files, without
-// applying noEmit filtering. Used by incremental builds.
-func (p *Program) GetSemanticDiagnosticsForFiles(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
+func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
 	for _, file := range sourceFiles {
 		result[file] = SortAndDeduplicateDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, file))
