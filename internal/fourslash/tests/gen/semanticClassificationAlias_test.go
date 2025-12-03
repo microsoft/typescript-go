@@ -17,7 +17,8 @@ export class y {};
 // @Filename: /b.ts
 import { /*0*/x, /*1*/y } from "./a";
 const v: /*2*/x = /*3*/y;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/b.ts")
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration.readonly", Text: "v"},

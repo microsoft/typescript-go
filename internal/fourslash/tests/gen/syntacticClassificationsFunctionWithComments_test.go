@@ -19,7 +19,8 @@ function myFunction(/* x */ x: any) {
     var y = x ? x++ : ++x;
 }
 // end of file`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "function.declaration", Text: "myFunction"},
 		{Type: "parameter.declaration", Text: "x"},

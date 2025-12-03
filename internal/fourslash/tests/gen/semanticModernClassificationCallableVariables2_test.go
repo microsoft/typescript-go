@@ -18,7 +18,8 @@ require.resolve.paths;
 interface LanguageMode { getFoldingRanges?: (d: string) => number[]; };
 function (mode: LanguageMode | undefined) { if (mode && mode.getFoldingRanges) { return mode.getFoldingRanges('a'); }};
 function b(a: () => void) { a(); };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration", Text: "fs"},
 		{Type: "interface.declaration", Text: "LanguageMode"},

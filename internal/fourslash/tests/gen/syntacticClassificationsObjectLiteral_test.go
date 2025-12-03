@@ -21,7 +21,8 @@ var x = {
     void: void 0,
     v: v += v,
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration", Text: "v"},
 		{Type: "variable.declaration", Text: "x"},

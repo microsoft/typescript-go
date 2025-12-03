@@ -17,7 +17,8 @@ func TestSemanticModernClassificationClassProperties(t *testing.T) {
   get z() : number { return this.x + this.y; }
   set a(v: number) { }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.declaration", Text: "A"},
 		{Type: "property.declaration", Text: "y"},

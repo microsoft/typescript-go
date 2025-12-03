@@ -14,7 +14,8 @@ func TestSemanticModernClassificationInterfaces(t *testing.T) {
 	const content = `interface Pos { x: number, y: number };
 const p = { x: 1, y: 2 } as Pos;
 const foo = (o: Pos) => o.x + o.y;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "interface.declaration", Text: "Pos"},
 		{Type: "property.declaration", Text: "x"},

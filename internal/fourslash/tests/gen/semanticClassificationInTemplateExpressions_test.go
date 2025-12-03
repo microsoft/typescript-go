@@ -20,7 +20,8 @@ func TestSemanticClassificationInTemplateExpressions(t *testing.T) {
     }
 }
 ` + "`" + `abcd${ /*3*/M./*4*/C.x + /*5*/M./*6*/E.E1}efg` + "`" + ``
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "namespace.declaration", Text: "M"},
 		{Type: "class.declaration", Text: "C"},

@@ -24,7 +24,8 @@ var /*2*/M = {
 var v: /*3*/M./*4*/I;
 
 var x = /*5*/M;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable", Text: "M"},
 		{Type: "interface.declaration", Text: "I"},

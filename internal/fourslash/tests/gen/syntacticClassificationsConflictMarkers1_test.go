@@ -18,7 +18,8 @@ func TestSyntacticClassificationsConflictMarkers1(t *testing.T) {
     v = 2;
 >>>>>>> Branch - a
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.declaration", Text: "C"},
 		{Type: "property.declaration", Text: "v"},

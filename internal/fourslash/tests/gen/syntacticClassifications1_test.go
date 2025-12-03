@@ -28,7 +28,8 @@ module M {
     module M1.M2 {
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "namespace.declaration", Text: "M"},
 		{Type: "variable.declaration.local", Text: "v"},

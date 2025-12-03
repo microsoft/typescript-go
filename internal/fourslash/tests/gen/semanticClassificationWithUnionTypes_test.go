@@ -23,7 +23,8 @@ class /*3*/C {
 
 var M: /*4*/M./*5*/I | /*6*/I | /*7*/C;
 var I: typeof M | typeof /*8*/C;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable", Text: "M"},
 		{Type: "interface.declaration", Text: "I"},

@@ -14,7 +14,8 @@ func TestSyntacticClassificationsTemplates2(t *testing.T) {
 	const content = `var tiredOfCanonicalExamples =
 ` + "`" + `goodbye "${ ` + "`" + `hello world` + "`" + ` }" 
 and ${ ` + "`" + `good${ " " }riddance` + "`" + ` }` + "`" + `;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration", Text: "tiredOfCanonicalExamples"},
 	})

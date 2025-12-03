@@ -18,7 +18,8 @@ func TestIncrementalJsDocAdjustsLengthsRight(t *testing.T) {
  *
  * @param {String} str
  * @param {Number} wid/*1*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "1")
 	f.Insert(t, "th\n@")
 }

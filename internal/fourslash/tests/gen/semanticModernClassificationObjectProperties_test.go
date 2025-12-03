@@ -14,7 +14,8 @@ func TestSemanticModernClassificationObjectProperties(t *testing.T) {
 	const content = `let x = 1, y = 1;
 const a1 = { e: 1 };
 var a2 = { x };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration", Text: "x"},
 		{Type: "variable.declaration", Text: "y"},

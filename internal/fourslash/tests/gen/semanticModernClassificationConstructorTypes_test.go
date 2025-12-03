@@ -14,7 +14,8 @@ func TestSemanticModernClassificationConstructorTypes(t *testing.T) {
 	const content = `Object.create(null);
 const x = Promise.resolve(Number.MAX_VALUE);
 if (x instanceof Promise) {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.defaultLibrary", Text: "Object"},
 		{Type: "method.defaultLibrary", Text: "create"},

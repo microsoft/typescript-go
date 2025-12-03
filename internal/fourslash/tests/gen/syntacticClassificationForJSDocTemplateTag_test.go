@@ -14,7 +14,8 @@ func TestSyntacticClassificationForJSDocTemplateTag(t *testing.T) {
 	const content = `/** @template T baring strait */
 function ident<T>: T {
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "function.declaration", Text: "ident"},
 		{Type: "typeParameter.declaration", Text: "T"},

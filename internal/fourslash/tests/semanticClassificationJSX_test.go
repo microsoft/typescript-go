@@ -15,7 +15,8 @@ func TestSemanticClassificationJSX(t *testing.T) {
 const Component = () => <div>Hello</div>;
 const afterJSX = 42;
 const alsoAfterJSX = "test";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/a.tsx")
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "function.declaration.readonly", Text: "Component"},

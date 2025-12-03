@@ -15,7 +15,8 @@ func TestSemanticClassificatonTypeAlias(t *testing.T) {
 var x: /*1*/Alias;
 var y = </*2*/Alias>{};
 function f(x: /*3*/Alias): /*4*/Alias { return undefined; }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "type.declaration", Text: "Alias"},
 		{Type: "variable.declaration", Text: "x"},

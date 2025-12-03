@@ -19,7 +19,8 @@ func TestSemanticClassificationModules(t *testing.T) {
 
 var x: /*2*/M./*3*/I = /*4*/M.v;
 var y = /*5*/M;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "namespace.declaration", Text: "M"},
 		{Type: "variable.declaration.local", Text: "v"},

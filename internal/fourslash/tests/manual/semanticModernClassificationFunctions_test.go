@@ -15,7 +15,8 @@ func TestSemanticModernClassificationFunctions(t *testing.T) {
   return foo(Math.abs(p1))
 }
 ` + "`" + `/${window.location}` + "`" + `.split("/").forEach(s => foo(s));`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "function.declaration", Text: "foo"},
 		{Type: "parameter.declaration", Text: "p1"},

@@ -15,7 +15,8 @@ func TestSyntacticClassificationWithErrors(t *testing.T) {
     a:
 }
 c =`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.declaration", Text: "A"},
 		{Type: "property.declaration", Text: "a"},

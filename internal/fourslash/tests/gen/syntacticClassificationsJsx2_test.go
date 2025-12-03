@@ -17,7 +17,8 @@ let x  = <div.name b = "some-value" c = {1}>
 </div.name>;
 
 let y = <element.name attr="123"/>`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "variable.declaration", Text: "x"},
 		{Type: "variable.declaration", Text: "y"},

@@ -19,7 +19,8 @@ match({ other });
 interface B = { (): string; }; var b: B
 var s: String;
 var t: { (): string; foo: string};`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.declaration", Text: "A"},
 		{Type: "method.declaration", Text: "onEvent"},

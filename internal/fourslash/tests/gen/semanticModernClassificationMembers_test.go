@@ -19,7 +19,8 @@ func TestSemanticModernClassificationMembers(t *testing.T) {
   static t() { return new A().f; };
   constructor() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
 		{Type: "class.declaration", Text: "A"},
 		{Type: "property.declaration.static", Text: "x"},
