@@ -146,12 +146,10 @@ type DeferredSymbolLinks struct {
 // Links for alias symbols
 
 type AliasSymbolLinks struct {
-	immediateTarget             *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
-	aliasTarget                 *ast.Symbol // Resolved (non-alias) target of an alias
-	referenced                  bool        // True if alias symbol has been referenced as a value that can be emitted
-	typeOnlyDeclarationResolved bool        // True when typeOnlyDeclaration resolution in process
-	typeOnlyDeclaration         *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
-	typeOnlyExportStarName      string      // Set to the name of the symbol re-exported by an 'export type *' declaration, when different from the symbol name
+	immediateTarget     *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
+	aliasTarget         *ast.Symbol // Resolved (non-alias) target of an alias
+	referenced          bool        // True if alias symbol has been referenced as a value that can be emitted
+	typeOnlyDeclaration *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
 }
 
 // Links for module symbols
@@ -193,8 +191,10 @@ type TypeAliasLinks struct {
 // Links for declared types (type parameters, class types, interface types, enums)
 
 type DeclaredTypeLinks struct {
-	declaredType          *Type
-	typeParametersChecked bool
+	declaredType           *Type
+	interfaceChecked       bool
+	indexSignaturesChecked bool
+	typeParametersChecked  bool
 }
 
 // Links for switch clauses
@@ -715,6 +715,10 @@ func (t *Type) IsIndex() bool {
 	return t.flags&TypeFlagsIndex != 0
 }
 
+func (t *Type) IsTupleType() bool {
+	return isTupleType(t)
+}
+
 // TypeData
 
 type TypeData interface {
@@ -924,6 +928,7 @@ type TupleElementInfo struct {
 }
 
 func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
+func (t *TupleElementInfo) LabeledDeclaration() *ast.Node   { return t.labeledDeclaration }
 
 type TupleType struct {
 	InterfaceType
@@ -942,6 +947,7 @@ func (t *TupleType) ElementFlags() []ElementFlags {
 	}
 	return elementFlags
 }
+func (t *TupleType) ElementInfos() []TupleElementInfo { return t.elementInfos }
 
 // InstantiationExpressionType
 
@@ -1178,6 +1184,10 @@ type TypePredicate struct {
 	parameterIndex int32
 	parameterName  string
 	t              *Type
+}
+
+func (typePredicate *TypePredicate) Type() *Type {
+	return typePredicate.t
 }
 
 // IndexInfo

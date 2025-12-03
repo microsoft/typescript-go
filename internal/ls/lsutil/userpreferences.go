@@ -19,7 +19,9 @@ func NewDefaultUserPreferences() *UserPreferences {
 		IncludeCompletionsWithSnippetText:  core.TSTrue,
 		DisplayPartsForJSDoc:               true,
 		DisableLineTextInReferences:        true,
-		InteractiveInlayHints:              true,
+		ReportStyleChecksAsWarnings:        true,
+
+		ExcludeLibrarySymbolsInNavTo: true,
 	}
 }
 
@@ -142,14 +144,25 @@ type UserPreferences struct {
 	IncludeInlayPropertyDeclarationTypeHints              bool
 	IncludeInlayFunctionLikeReturnTypeHints               bool
 	IncludeInlayEnumMemberValueHints                      bool
-	InteractiveInlayHints                                 bool
+
+	// ------- CodeLens -------
+
+	ReferencesCodeLensEnabled                     bool
+	ImplementationsCodeLensEnabled                bool
+	ReferencesCodeLensShowOnAllFunctions          bool
+	ImplementationsCodeLensShowOnInterfaceMethods bool
+	ImplementationsCodeLensShowOnAllClassMethods  bool
+
+	// ------- Symbols -------
+
+	ExcludeLibrarySymbolsInNavTo bool
 
 	// ------- Misc -------
 
-	ExcludeLibrarySymbolsInNavTo bool // !!!
-	DisableSuggestions           bool // !!!
-	DisableLineTextInReferences  bool // !!!
-	DisplayPartsForJSDoc         bool // !!!
+	DisableSuggestions          bool // !!!
+	DisableLineTextInReferences bool // !!!
+	DisplayPartsForJSDoc        bool // !!!
+	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
 }
 
 type JsxAttributeCompletionStyle string
@@ -364,7 +377,7 @@ func (p *UserPreferences) Parse(item any) *UserPreferences {
 	return nil
 }
 
-func (p *UserPreferences) parseWorker(config map[string]interface{}) {
+func (p *UserPreferences) parseWorker(config map[string]any) {
 	// Process unstable preferences first so that they do not overwrite stable properties
 	if unstable, ok := config["unstable"]; ok {
 		// unstable properties must be named the same as userPreferences
@@ -376,10 +389,16 @@ func (p *UserPreferences) parseWorker(config map[string]interface{}) {
 			continue
 		case "inlayHints":
 			p.parseInlayHints(values)
+		case "referencesCodeLens":
+			p.parseReferencesCodeLens(values)
+		case "implementationsCodeLens":
+			p.parseImplementationsCodeLens(values)
 		case "suggest":
 			p.parseSuggest(values)
 		case "preferences":
 			p.parsePreferences(values)
+		case "workspaceSymbols":
+			p.parseWorkspaceSymbols(values)
 		case "format":
 			// !!!
 		case "tsserver":
@@ -433,6 +452,38 @@ func (p *UserPreferences) parseInlayHints(prefs any) {
 		} else {
 			// non-vscode case
 			p.set(name, v)
+		}
+	}
+}
+
+func (p *UserPreferences) parseReferencesCodeLens(prefs any) {
+	referencesCodeLens, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range referencesCodeLens {
+		switch name {
+		case "enabled":
+			p.set("referencesCodeLensEnabled", value)
+		case "showOnAllFunctions":
+			p.set("referencesCodeLensShowOnAllFunctions", value)
+		}
+	}
+}
+
+func (p *UserPreferences) parseImplementationsCodeLens(prefs any) {
+	implementationsCodeLens, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range implementationsCodeLens {
+		switch name {
+		case "enabled":
+			p.set("implementationsCodeLensEnabled", value)
+		case "showOnInterfaceMethods":
+			p.set("implementationsCodeLensShowOnInterfaceMethods", value)
+		case "showOnAllClassMethods":
+			p.set("implementationsCodeLensShowOnAllClassMethods", value)
 		}
 	}
 }
@@ -512,6 +563,22 @@ func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
 			if caseFirst, ok := prefsMap["caseFirst"]; ok && !p.OrganizeImportsIgnoreCase.IsTrue() {
 				p.set("organizeimportscasefirst", caseFirst)
 			}
+		}
+	}
+}
+
+func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
+	symbolPreferences, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range symbolPreferences {
+		switch name {
+		// !!! scope
+		case "excludeLibrarySymbols":
+			p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
+		default:
+			p.set(name, value)
 		}
 	}
 }
@@ -622,15 +689,25 @@ func (p *UserPreferences) set(name string, value any) {
 		p.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayenummembervaluehints":
 		p.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
-	case "interactiveinlayhints":
-		p.InteractiveInlayHints = parseBoolWithDefault(value, true)
 	case "excludelibrarysymbolsinnavto":
-		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, false)
+		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
 	case "disablesuggestions":
 		p.DisableSuggestions = parseBoolWithDefault(value, false)
 	case "disablelinetextinreferences":
 		p.DisableLineTextInReferences = parseBoolWithDefault(value, true)
 	case "displaypartsforjsdoc":
 		p.DisplayPartsForJSDoc = parseBoolWithDefault(value, true)
+	case "reportstylechecksaswarnings":
+		p.ReportStyleChecksAsWarnings = parseBoolWithDefault(value, true)
+	case "referencescodelensenabled":
+		p.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
+	case "implementationscodelensenabled":
+		p.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
+	case "referencescodelensshowonallfunctions":
+		p.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
+	case "implementationscodelensshowoninterfacemethods":
+		p.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
+	case "implementationscodelensshowonallclassmethods":
+		p.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	}
 }

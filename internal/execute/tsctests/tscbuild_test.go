@@ -149,6 +149,16 @@ func TestBuildCommandLine(t *testing.T) {
 				commandLineArgs: []string{"--build", "--help"},
 			},
 			{
+				subScenario:     "locale",
+				files:           FileMap{},
+				commandLineArgs: []string{"--build", "--help", "--locale", "en"},
+			},
+			{
+				subScenario:     "bad locale",
+				files:           FileMap{},
+				commandLineArgs: []string{"--build", "--help", "--locale", "whoops"},
+			},
+			{
 				subScenario:     "different options",
 				files:           getBuildCommandLineDifferentOptionsMap("composite"),
 				commandLineArgs: []string{"--build", "--verbose"},
@@ -1535,7 +1545,7 @@ func TestBuildOutputPaths(t *testing.T) {
 		t.Run("GetOutputFileNames/"+s.subScenario, func(t *testing.T) {
 			t.Parallel()
 			sys := newTestSys(input, false)
-			config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, sys, nil)
+			config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, nil, sys, nil)
 			assert.DeepEqual(t, slices.Collect(config.GetOutputFileNames()), s.expectedDtsNames)
 		})
 	}
@@ -1949,6 +1959,7 @@ func TestBuildProgramUpdates(t *testing.T) {
 						sys.writeFileNoError("/user/username/projects/project/project2.tsconfig.json", stringtestutil.Dedent(`
 						{
                             "extends": "./alpha.tsconfig.json",
+                            "files": ["other.ts"]
                         }`), false)
 					},
 				},

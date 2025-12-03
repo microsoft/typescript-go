@@ -75,7 +75,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	kind := lsproto.DocumentHighlightKindRead
 	if entry.kind == entryKindRange {
 		return entry.fileName, &lsproto.DocumentHighlight{
-			Range: *entry.textRange,
+			Range: *l.getRangeOfEntry(entry),
 			Kind:  &kind,
 		}
 	}
@@ -86,7 +86,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	}
 
 	dh := &lsproto.DocumentHighlight{
-		Range: *entry.textRange,
+		Range: *l.getRangeOfEntry(entry),
 		Kind:  &kind,
 	}
 
@@ -276,7 +276,7 @@ func getReturnOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Nod
 	body := funcNode.Body()
 	if body != nil {
 		ast.ForEachReturnStatement(body, func(ret *ast.Node) bool {
-			keyword := findChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -286,7 +286,7 @@ func getReturnOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Nod
 		// Get all throw statements not in a try block
 		throwStatements := aggregateOwnedThrowStatements(body, sourceFile)
 		for _, throw := range throwStatements {
-			keyword := findChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -348,7 +348,7 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 	// Aggregate all throw statements "owned" by this owner.
 	throwStatements := aggregateOwnedThrowStatements(owner, sourceFile)
 	for _, throw := range throwStatements {
-		keyword := findChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
+		keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
 		if keyword != nil {
 			keywords = append(keywords, keyword)
 		}
@@ -358,7 +358,7 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 	// ability to "jump out" of the function, and include occurrences for both
 	if ast.IsFunctionBlock(owner) {
 		ast.ForEachReturnStatement(owner, func(ret *ast.Node) bool {
-			keyword := findChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -412,7 +412,7 @@ func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) [
 	}
 
 	if tryStatement.FinallyBlock != nil {
-		finallyKeyword := findChildOfKind(node, ast.KindFinallyKeyword, sourceFile)
+		finallyKeyword := astnav.FindChildOfKind(node, ast.KindFinallyKeyword, sourceFile)
 		if finallyKeyword.Kind == ast.KindFinallyKeyword {
 			keywords = append(keywords, finallyKeyword)
 		}
@@ -556,12 +556,9 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 
 	var keywords []*ast.Node
 
-	modifiers := fun.Modifiers()
-	if modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == ast.KindAsyncKeyword {
-				keywords = append(keywords, modifier)
-			}
+	for _, modifier := range fun.ModifierNodes() {
+		if modifier.Kind == ast.KindAsyncKeyword {
+			keywords = append(keywords, modifier)
 		}
 	}
 
@@ -678,11 +675,9 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 }
 
 func findModifier(node *ast.Node, kind ast.Kind) *ast.Node {
-	if modifiers := node.Modifiers(); modifiers != nil {
-		for _, modifier := range modifiers.Nodes {
-			if modifier.Kind == kind {
-				return modifier
-			}
+	for _, modifier := range node.ModifierNodes() {
+		if modifier.Kind == kind {
+			return modifier
 		}
 	}
 	return nil
