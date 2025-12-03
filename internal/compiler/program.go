@@ -1562,12 +1562,7 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 
 // Testing only
 func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
-	p.includeProcessor.mu.Lock()
-	defer p.includeProcessor.mu.Unlock()
-	// Return a copy to avoid concurrent access issues
-	result := make(map[tspath.Path][]*FileIncludeReason, len(p.includeProcessor.fileIncludeReasons))
-	maps.Copy(result, p.includeProcessor.fileIncludeReasons)
-	return result
+	return p.includeProcessor.fileIncludeReasons
 }
 
 // Testing only

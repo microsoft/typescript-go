@@ -32,6 +32,7 @@ type parseTask struct {
 	typeResolutionsInFile        module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	typeResolutionsTrace         []module.DiagAndArgs
 	resolutionDiagnostics        []*ast.Diagnostic
+	processingDiagnostics        []*processingDiagnostic
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
 
@@ -77,9 +78,9 @@ func (t *parseTask) load(loader *fileLoader) {
 				}
 			}
 			if !supported {
-				// Report appropriate diagnostic for unsupported extension
+				// Store diagnostic on task - it will be added to includeProcessor during collection phase
 				if tspath.HasJSFileExtension(canonicalFileName) {
-					loader.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+					t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 						kind: processingDiagnosticKindExplainingFileInclude,
 						data: &includeExplainingDiagnostic{
 							diagnosticReason: t.includeReason,
@@ -352,6 +353,12 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			}
 			file := task.file
 			path := task.path
+
+			// Add any processing diagnostics from this task to the includeProcessor
+			if len(task.processingDiagnostics) > 0 {
+				loader.includeProcessor.processingDiagnostics = append(loader.includeProcessor.processingDiagnostics, task.processingDiagnostics...)
+			}
+
 			if file == nil {
 				// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 				missingFiles = append(missingFiles, task.normalizedFilePath)

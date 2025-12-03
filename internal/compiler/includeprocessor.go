@@ -15,7 +15,6 @@ import (
 type includeProcessor struct {
 	fileIncludeReasons    map[tspath.Path][]*FileIncludeReason
 	processingDiagnostics []*processingDiagnostic
-	mu                    sync.Mutex // protects fileIncludeReasons and processingDiagnostics
 
 	reasonToReferenceLocation  collections.SyncMap[*FileIncludeReason, *referenceFileLocation]
 	includeReasonToRelatedInfo collections.SyncMap[*FileIncludeReason, *ast.Diagnostic]
@@ -36,13 +35,7 @@ func updateFileIncludeProcessor(p *Program) {
 func (i *includeProcessor) getDiagnostics(p *Program) *ast.DiagnosticsCollection {
 	i.computedDiagnosticsOnce.Do(func() {
 		i.computedDiagnostics = &ast.DiagnosticsCollection{}
-
-		i.mu.Lock()
-		diagnostics := make([]*processingDiagnostic, len(i.processingDiagnostics))
-		copy(diagnostics, i.processingDiagnostics)
-		i.mu.Unlock()
-
-		for _, d := range diagnostics {
+		for _, d := range i.processingDiagnostics {
 			i.computedDiagnostics.Add(d.toDiagnostic(p))
 		}
 		for _, resolutions := range p.resolvedModules {
@@ -64,27 +57,18 @@ func (i *includeProcessor) getDiagnostics(p *Program) *ast.DiagnosticsCollection
 }
 
 func (i *includeProcessor) addProcessingDiagnostic(d ...*processingDiagnostic) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
 	i.processingDiagnostics = append(i.processingDiagnostics, d...)
 }
 
 func (i *includeProcessor) addFileIncludeReason(path tspath.Path, reason *FileIncludeReason) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
 	i.fileIncludeReasons[path] = append(i.fileIncludeReasons[path], reason)
 }
 
 func (i *includeProcessor) getFileIncludeReasons(path tspath.Path) []*FileIncludeReason {
-	i.mu.Lock()
-	defer i.mu.Unlock()
 	return i.fileIncludeReasons[path]
 }
 
 func (i *includeProcessor) addProcessingDiagnosticsForFileCasing(file tspath.Path, existingCasing string, currentCasing string, reason *FileIncludeReason) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
 	if !reason.isReferencedFile() && slices.ContainsFunc(i.fileIncludeReasons[file], func(r *FileIncludeReason) bool {
 		return r.isReferencedFile()
 	}) {

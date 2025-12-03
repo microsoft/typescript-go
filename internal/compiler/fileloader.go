@@ -144,20 +144,10 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 
 func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
 	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
-	// Check if file should be included based on extension
-	// This mirrors the logic from getSourceFileFromReferenceWorker in TypeScript
-	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-		p.rootTasks = append(p.rootTasks, &parseTask{
-			normalizedFilePath: absPath,
-			libFile:            libFile,
-			includeReason:      includeReason,
-		})
-	} else if tspath.HasExtension(absPath) {
-		// File has an extension but it's not in the supported extensions list
-		// Check if it's a JavaScript file and report the appropriate diagnostic
-		// This will be caught later in parseTask.load() for consistency with other file inclusion paths
-		// But for root files, we need to add them to rootTasks so they can be processed
-		// The diagnostic will be reported in load() before attempting to parse
+	// Add task if allowNonTsExtensions is true OR if the file has an extension
+	// Files with extensions will be validated in parseTask.load() to check if they're supported
+	// and report appropriate diagnostics for unsupported file types (e.g., JS files without allowJs)
+	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || tspath.HasExtension(absPath) {
 		p.rootTasks = append(p.rootTasks, &parseTask{
 			normalizedFilePath: absPath,
 			libFile:            libFile,
