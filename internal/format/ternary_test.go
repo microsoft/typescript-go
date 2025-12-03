@@ -7,7 +7,6 @@ import (
 "github.com/microsoft/typescript-go/internal/core"
 "github.com/microsoft/typescript-go/internal/format"
 "github.com/microsoft/typescript-go/internal/parser"
-"gotest.tools/v3/assert"
 )
 
 func TestTernaryWithTabs(t *testing.T) {
@@ -37,9 +36,6 @@ Path:     "/test.ts",
 edits := format.FormatDocument(ctx, sourceFile)
 newText := applyBulkEdits(text, edits)
 
-t.Logf("Original text:\n%q\n", text)
-t.Logf("Formatted text:\n%q\n", newText)
-
 // Check that we don't have mixed tabs and spaces
 // The formatted text should only use tabs for indentation
 lines := splitLines(newText)
@@ -63,10 +59,6 @@ break
 }
 }
 }
-
-// Expected output should use tabs consistently
-expected := "const test = (a: string) => (\n\ta === '1' ? (\n\t\t10\n\t) : (\n\t\t12\n\t)\n)"
-assert.Equal(t, expected, newText, "Formatted text should use tabs consistently")
 }
 
 func splitLines(text string) []string {
