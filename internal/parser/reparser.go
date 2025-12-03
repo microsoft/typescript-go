@@ -29,12 +29,9 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 	case ast.JSDeclarationKindModuleExports:
 		export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(bin.Right))
 	case ast.JSDeclarationKindExportsProperty:
-		mod := p.factory.NewModifier(ast.KindExportKeyword)
-		mod.Flags = p.contextFlags | ast.NodeFlagsReparsed
-		mod.Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 		export = p.factory.NewCommonJSExport(
-			p.newModifierList(bin.Loc, p.nodeSlicePool.NewSlice1(mod)),
+			nil,
 			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(bin.Left)),
 			nil, /*typeNode*/
 			p.factory.DeepCloneReparse(bin.Right))
@@ -135,7 +132,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	case ast.KindConstructor:
 		signature = p.factory.NewConstructorDeclaration(clonedModifiers, nil, nil, nil, nil, nil)
 	case ast.KindJSDocCallbackTag:
-		signature = p.factory.NewFunctionTypeNode(nil, nil, nil)
+		signature = p.factory.NewFunctionTypeNode(nil, nil, p.factory.NewKeywordTypeNode(ast.KindAnyKeyword))
 	default:
 		panic("Unexpected kind " + fun.Kind.String())
 	}
@@ -590,6 +587,10 @@ func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindReturnStatement {
 		fun = host.Expression()
+	} else if host.Kind == ast.KindExpressionStatement {
+		if ast.IsBinaryExpression(host.Expression()) {
+			fun = host.Expression().AsBinaryExpression().Right
+		}
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun, true

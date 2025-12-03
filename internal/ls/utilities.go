@@ -166,62 +166,7 @@ func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) 
 }
 
 func hasChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) bool {
-	return findChildOfKind(containingNode, kind, sourceFile) != nil
-}
-
-func findChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
-	lastNodePos := containingNode.Pos()
-	scanner := scanner.GetScannerForSourceFile(sourceFile, lastNodePos)
-
-	var foundChild *ast.Node
-	visitNode := func(node *ast.Node) bool {
-		if node == nil || node.Flags&ast.NodeFlagsReparsed != 0 {
-			return false
-		}
-		// Look for child in preceding tokens.
-		startPos := lastNodePos
-		for startPos < node.Pos() {
-			tokenKind := scanner.Token()
-			tokenFullStart := scanner.TokenFullStart()
-			tokenEnd := scanner.TokenEnd()
-			token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode)
-			if tokenKind == kind {
-				foundChild = token
-				return true
-			}
-			startPos = tokenEnd
-			scanner.Scan()
-		}
-		if node.Kind == kind {
-			foundChild = node
-			return true
-		}
-
-		lastNodePos = node.End()
-		scanner.ResetPos(lastNodePos)
-		return false
-	}
-
-	ast.ForEachChildAndJSDoc(containingNode, sourceFile, visitNode)
-
-	if foundChild != nil {
-		return foundChild
-	}
-
-	// Look for child in trailing tokens.
-	startPos := lastNodePos
-	for startPos < containingNode.End() {
-		tokenKind := scanner.Token()
-		tokenFullStart := scanner.TokenFullStart()
-		tokenEnd := scanner.TokenEnd()
-		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode)
-		if tokenKind == kind {
-			return token
-		}
-		startPos = tokenEnd
-		scanner.Scan()
-	}
-	return nil
+	return astnav.FindChildOfKind(containingNode, kind, sourceFile) != nil
 }
 
 type PossibleTypeArgumentInfo struct {
@@ -914,7 +859,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		// export /**/type * from "[|module|]";
 		// export /**/type * as ... from "[|module|]";
 		if ast.IsExportDeclaration(parent) && parent.IsTypeOnly() {
-			if location := getAdjustedLocationForExportDeclaration(parent.Parent.AsExportDeclaration(), forRename); location != nil {
+			if location := getAdjustedLocationForExportDeclaration(parent.AsExportDeclaration(), forRename); location != nil {
 				return location
 			}
 		}
@@ -1095,10 +1040,10 @@ func getAdjustedLocationForDeclaration(node *ast.Node, forRename bool, sourceFil
 		return core.Find(node.ModifierNodes(), func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
 	case ast.KindClassExpression:
 		// for class expressions, use the `class` keyword when the class is unnamed
-		return findChildOfKind(node, ast.KindClassKeyword, sourceFile)
+		return astnav.FindChildOfKind(node, ast.KindClassKeyword, sourceFile)
 	case ast.KindFunctionExpression:
 		// for function expressions, use the `function` keyword when the function is unnamed
-		return findChildOfKind(node, ast.KindFunctionKeyword, sourceFile)
+		return astnav.FindChildOfKind(node, ast.KindFunctionKeyword, sourceFile)
 	case ast.KindConstructor:
 		return node
 	}
@@ -1174,6 +1119,22 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 		return node.ModuleSpecifier
 	}
 	return nil
+}
+
+func symbolFlagsHaveMeaning(flags ast.SymbolFlags, meaning ast.SemanticMeaning) bool {
+	if meaning == ast.SemanticMeaningAll {
+		return true
+	}
+	if meaning&ast.SemanticMeaningValue != 0 {
+		return flags&ast.SymbolFlagsValue != 0
+	}
+	if meaning&ast.SemanticMeaningType != 0 {
+		return flags&ast.SymbolFlagsType != 0
+	}
+	if meaning&ast.SemanticMeaningNamespace != 0 {
+		return flags&ast.SymbolFlagsNamespace != 0
+	}
+	return false
 }
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {

@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoFromContextualType(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: quickInfoExportAssignmentOfGenericInterface_0.ts
 interface I {
@@ -17,6 +17,7 @@ interface I {
     x: number;
 }
 const i: I = { /**/x: 0 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(property) I.x: number", "Documentation")
 }

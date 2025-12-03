@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -18,7 +19,10 @@ const (
 	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position, contentFormat lsproto.MarkupKind) (lsproto.HoverResponse, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.HoverResponse, error) {
+	caps := lsproto.GetClientCapabilities(ctx)
+	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
+
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
@@ -28,7 +32,8 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	rangeNode := getNodeForQuickInfo(node)
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode, contentFormat)
+	symbol := getSymbolAtLocationForQuickInfo(c, node)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -55,6 +60,9 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 }
 
 func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) (string, string) {
+	if symbol == nil {
+		return "", ""
+	}
 	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node)
 	if quickInfo == "" {
 		return "", ""
@@ -68,7 +76,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 	}
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
+	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
 		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
 		if jsdoc.Kind == ast.KindJSDoc {
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
@@ -127,140 +135,164 @@ func formatQuickInfo(quickInfo string) string {
 }
 
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
+	var b strings.Builder
+	var visitedAliases collections.Set[*ast.Symbol]
 	container := getContainerNode(node)
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) {
 		return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 	}
-	isAlias := symbol != nil && symbol.Flags&ast.SymbolFlagsAlias != 0
-	if isAlias {
-		symbol = c.GetAliasedSymbol(symbol)
-	}
-	if symbol == nil || symbol == c.GetUnknownSymbol() {
-		return "", nil
-	}
-	declaration := symbol.ValueDeclaration
-	if symbol.Flags&ast.SymbolFlagsClass != 0 && inConstructorContext(node) {
-		if s := symbol.Members[ast.InternalSymbolNameConstructor]; s != nil {
-			symbol = s
-			declaration = core.Find(symbol.Declarations, func(d *ast.Node) bool {
-				return ast.IsConstructorDeclaration(d) || ast.IsConstructSignatureDeclaration(d)
-			})
+	writeSymbolMeaning := func(symbol *ast.Symbol, meaning ast.SymbolFlags, isAlias bool) *ast.Node {
+		flags := symbol.Flags & meaning
+		if flags == 0 {
+			return nil
 		}
-	}
-	flags := symbol.Flags
-	if flags&ast.SymbolFlagsProperty != 0 && declaration != nil && ast.IsMethodDeclaration(declaration) {
-		flags = ast.SymbolFlagsMethod
-	}
-	if flags&ast.SymbolFlagsType != 0 && (ast.IsPartOfTypeNode(node) || ast.IsTypeDeclarationName(node)) {
-		// If the symbol has a type meaning and we're in a type context, remove value-only meanings
-		flags &^= ast.SymbolFlagsVariable | ast.SymbolFlagsFunction
-	}
-	var b strings.Builder
-	if isAlias {
-		b.WriteString("(alias) ")
-	}
-	switch {
-	case flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0:
+		declaration := symbol.ValueDeclaration
+		if flags&ast.SymbolFlagsProperty != 0 && declaration != nil && ast.IsMethodDeclaration(declaration) {
+			flags = ast.SymbolFlagsMethod
+		}
+		if b.Len() != 0 {
+			b.WriteString("\n")
+		}
+		if isAlias {
+			b.WriteString("(alias) ")
+		}
 		switch {
-		case flags&ast.SymbolFlagsProperty != 0:
-			b.WriteString("(property) ")
-		case flags&ast.SymbolFlagsAccessor != 0:
-			b.WriteString("(accessor) ")
-		default:
-			decl := symbol.ValueDeclaration
-			if decl != nil {
-				switch {
-				case ast.IsParameter(decl):
-					b.WriteString("(parameter) ")
-				case ast.IsVarLet(decl):
-					b.WriteString("let ")
-				case ast.IsVarConst(decl):
-					b.WriteString("const ")
-				case ast.IsVarUsing(decl):
-					b.WriteString("using ")
-				case ast.IsVarAwaitUsing(decl):
-					b.WriteString("await using ")
-				default:
-					b.WriteString("var ")
+		case flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0:
+			switch {
+			case flags&ast.SymbolFlagsProperty != 0:
+				b.WriteString("(property) ")
+			case flags&ast.SymbolFlagsAccessor != 0:
+				b.WriteString("(accessor) ")
+			default:
+				decl := symbol.ValueDeclaration
+				if decl != nil {
+					switch {
+					case ast.IsParameter(decl):
+						b.WriteString("(parameter) ")
+					case ast.IsVarLet(decl):
+						b.WriteString("let ")
+					case ast.IsVarConst(decl):
+						b.WriteString("const ")
+					case ast.IsVarUsing(decl):
+						b.WriteString("using ")
+					case ast.IsVarAwaitUsing(decl):
+						b.WriteString("await using ")
+					default:
+						b.WriteString("var ")
+					}
 				}
 			}
-		}
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-		b.WriteString(": ")
-		if callNode := getCallOrNewExpression(node); callNode != nil {
-			b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
-		} else {
-			b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbolAtLocation(symbol, node), container, typeFormatFlags))
-		}
-	case flags&ast.SymbolFlagsEnumMember != 0:
-		b.WriteString("(enum member) ")
-		t := c.GetTypeOfSymbol(symbol)
-		b.WriteString(c.TypeToStringEx(t, container, typeFormatFlags))
-		if t.Flags()&checker.TypeFlagsLiteral != 0 {
-			b.WriteString(" = ")
-			b.WriteString(t.AsLiteralType().String())
-		}
-	case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
-		signatures := getSignaturesAtLocation(c, symbol, checker.SignatureKindCall, node)
-		if len(signatures) == 1 {
-			if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
-				declaration = d
+			if symbol.Name == ast.InternalSymbolNameExportEquals && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsModule != 0 {
+				b.WriteString("exports")
+			} else {
+				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 			}
-		}
-		prefix := core.IfElse(flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
-		writeSignatures(&b, c, signatures, container, prefix, symbol)
-	case flags&ast.SymbolFlagsConstructor != 0:
-		signatures := getSignaturesAtLocation(c, symbol.Parent, checker.SignatureKindConstruct, node)
-		if len(signatures) == 1 {
-			if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
-				declaration = d
+			b.WriteString(": ")
+			if callNode := getCallOrNewExpression(node); callNode != nil {
+				b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
+			} else {
+				b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbolAtLocation(symbol, node), container, typeFormatFlags))
 			}
-		}
-		writeSignatures(&b, c, signatures, container, "constructor ", symbol.Parent)
-	case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
-		if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
-			b.WriteString("this")
-		} else {
-			b.WriteString(core.IfElse(flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
+		case flags&ast.SymbolFlagsEnumMember != 0:
+			b.WriteString("(enum member) ")
+			t := c.GetTypeOfSymbol(symbol)
+			b.WriteString(c.TypeToStringEx(t, container, typeFormatFlags))
+			if t.Flags()&checker.TypeFlagsLiteral != 0 {
+				b.WriteString(" = ")
+				b.WriteString(t.AsLiteralType().String())
+			}
+		case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
+			prefix := core.IfElse(flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
+			if ast.IsIdentifier(node) && ast.IsFunctionLikeDeclaration(node.Parent) && node.Parent.Name() == node {
+				declaration = node.Parent
+				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(declaration)}
+				writeSignatures(&b, c, signatures, container, isAlias, prefix, symbol)
+			} else {
+				signatures := getSignaturesAtLocation(c, symbol, checker.SignatureKindCall, node)
+				if len(signatures) == 1 {
+					if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
+						declaration = d
+					}
+				}
+				writeSignatures(&b, c, signatures, container, isAlias, prefix, symbol)
+			}
+		case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
+			if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
+				b.WriteString("this")
+			} else if node.Kind == ast.KindConstructorKeyword && (ast.IsConstructorDeclaration(node.Parent) || ast.IsConstructSignatureDeclaration(node.Parent)) {
+				declaration = node.Parent
+				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(declaration)}
+				writeSignatures(&b, c, signatures, container, isAlias, "constructor ", symbol)
+			} else {
+				var signatures []*checker.Signature
+				if flags&ast.SymbolFlagsClass != 0 && getCallOrNewExpression(node) != nil {
+					signatures = getSignaturesAtLocation(c, symbol, checker.SignatureKindConstruct, node)
+				}
+				if len(signatures) == 1 {
+					if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
+						declaration = d
+					}
+					writeSignatures(&b, c, signatures, container, isAlias, "constructor ", symbol)
+				} else {
+					b.WriteString(core.IfElse(flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
+					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+					params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
+					writeTypeParams(&b, c, params)
+				}
+			}
+			if flags&ast.SymbolFlagsInterface != 0 {
+				declaration = core.Find(symbol.Declarations, ast.IsInterfaceDeclaration)
+			}
+		case flags&ast.SymbolFlagsEnum != 0:
+			b.WriteString("enum ")
 			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-			params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
-			writeTypeParams(&b, c, params)
+		case flags&ast.SymbolFlagsModule != 0:
+			b.WriteString(core.IfElse(symbol.ValueDeclaration != nil && ast.IsSourceFile(symbol.ValueDeclaration), "module ", "namespace "))
+			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+		case flags&ast.SymbolFlagsTypeParameter != 0:
+			b.WriteString("(type parameter) ")
+			tp := c.GetDeclaredTypeOfSymbol(symbol)
+			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			cons := c.GetConstraintOfTypeParameter(tp)
+			if cons != nil {
+				b.WriteString(" extends ")
+				b.WriteString(c.TypeToStringEx(cons, container, typeFormatFlags))
+			}
+			declaration = core.Find(symbol.Declarations, ast.IsTypeParameterDeclaration)
+		case flags&ast.SymbolFlagsTypeAlias != 0:
+			b.WriteString("type ")
+			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			writeTypeParams(&b, c, c.GetTypeAliasTypeParameters(symbol))
+			if len(symbol.Declarations) != 0 {
+				b.WriteString(" = ")
+				b.WriteString(c.TypeToStringEx(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
+			}
+			declaration = core.Find(symbol.Declarations, ast.IsTypeAliasDeclaration)
+		default:
+			b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbol(symbol), container, typeFormatFlags))
 		}
-		if flags&ast.SymbolFlagsInterface != 0 {
-			declaration = core.Find(symbol.Declarations, ast.IsInterfaceDeclaration)
-		}
-	case flags&ast.SymbolFlagsEnum != 0:
-		b.WriteString("enum ")
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-	case flags&ast.SymbolFlagsModule != 0:
-		b.WriteString(core.IfElse(symbol.ValueDeclaration != nil && ast.IsSourceFile(symbol.ValueDeclaration), "module ", "namespace "))
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-	case flags&ast.SymbolFlagsTypeParameter != 0:
-		b.WriteString("(type parameter) ")
-		tp := c.GetDeclaredTypeOfSymbol(symbol)
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-		cons := c.GetConstraintOfTypeParameter(tp)
-		if cons != nil {
-			b.WriteString(" extends ")
-			b.WriteString(c.TypeToStringEx(cons, container, typeFormatFlags))
-		}
-		declaration = core.Find(symbol.Declarations, ast.IsTypeParameterDeclaration)
-	case flags&ast.SymbolFlagsTypeAlias != 0:
-		b.WriteString("type ")
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-		writeTypeParams(&b, c, c.GetTypeAliasTypeParameters(symbol))
-		if len(symbol.Declarations) != 0 {
-			b.WriteString(" = ")
-			b.WriteString(c.TypeToStringEx(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
-		}
-		declaration = core.Find(symbol.Declarations, ast.IsTypeAliasDeclaration)
-	case flags&ast.SymbolFlagsAlias != 0:
-		b.WriteString("import ")
-		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-	default:
-		b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbol(symbol), container, typeFormatFlags))
+		return declaration
 	}
-	return b.String(), declaration
+	var writeSymbol func(*ast.Symbol, bool) *ast.Node
+	writeSymbol = func(symbol *ast.Symbol, isAlias bool) *ast.Node {
+		var declaration *ast.Node
+		// Recursively write all meanings of alias
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 && visitedAliases.AddIfAbsent(symbol) {
+			if aliasedSymbol := c.GetAliasedSymbol(symbol); aliasedSymbol != c.GetUnknownSymbol() {
+				declaration = writeSymbol(aliasedSymbol, true /*isAlias*/)
+			}
+		}
+		// Write the value meaning, if any
+		declaration = core.OrElse(declaration, writeSymbolMeaning(symbol, ast.SymbolFlagsValue|ast.SymbolFlagsSignature, isAlias))
+		// Write the type meaning, if any
+		declaration = core.OrElse(declaration, writeSymbolMeaning(symbol, ast.SymbolFlagsType&^ast.SymbolFlagsValue, isAlias))
+		// Write the namespace meaning, if any
+		declaration = core.OrElse(declaration, writeSymbolMeaning(symbol, ast.SymbolFlagsNamespace&^ast.SymbolFlagsValue, isAlias))
+		// Return the first declaration
+		return declaration
+	}
+	firstDeclaration := writeSymbol(symbol, false /*isAlias*/)
+	return b.String(), firstDeclaration
 }
 
 func getNodeForQuickInfo(node *ast.Node) *ast.Node {
@@ -282,19 +314,15 @@ func getNodeForQuickInfo(node *ast.Node) *ast.Node {
 	return node
 }
 
-func inConstructorContext(node *ast.Node) bool {
-	if node.Kind == ast.KindConstructorKeyword {
-		return true
-	}
-	if ast.IsIdentifier(node) {
-		for ast.IsRightSideOfQualifiedNameOrPropertyAccess(node) {
-			node = node.Parent
-		}
-		if ast.IsNewExpression(node.Parent) {
-			return true
+func getSymbolAtLocationForQuickInfo(c *checker.Checker, node *ast.Node) *ast.Symbol {
+	if objectElement := getContainingObjectLiteralElement(node); objectElement != nil {
+		if contextualType := c.GetContextualType(objectElement.Parent, checker.ContextFlagsNone); contextualType != nil {
+			if properties := c.GetPropertySymbolsFromContextualType(objectElement, contextualType, false /*unionSymbolOk*/); len(properties) == 1 {
+				return properties[0]
+			}
 		}
 	}
-	return false
+	return c.GetSymbolAtLocation(node)
 }
 
 func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checker.SignatureKind, node *ast.Node) []*checker.Signature {
@@ -343,10 +371,13 @@ func writeTypeParams(b *strings.Builder, c *checker.Checker, params []*checker.T
 	}
 }
 
-func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*checker.Signature, container *ast.Node, prefix string, symbol *ast.Symbol) {
+func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*checker.Signature, container *ast.Node, isAlias bool, prefix string, symbol *ast.Symbol) {
 	for i, sig := range signatures {
 		if i != 0 {
 			b.WriteString("\n")
+			if isAlias {
+				b.WriteString("(alias) ")
+			}
 		}
 		if i == 3 && len(signatures) >= 5 {
 			b.WriteString(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
@@ -362,7 +393,7 @@ func containsTypedefTag(jsdoc *ast.Node) bool {
 	if jsdoc.Kind == ast.KindJSDoc {
 		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 			for _, tag := range tags.Nodes {
-				if tag.Kind == ast.KindJSDocTypedefTag {
+				if tag.Kind == ast.KindJSDocTypedefTag || tag.Kind == ast.KindJSDocCallbackTag {
 					return true
 				}
 			}
@@ -379,26 +410,40 @@ func getJSDoc(node *ast.Node) *ast.Node {
 	return core.LastOrNil(node.JSDoc(nil))
 }
 
-func getJSDocOrTag(node *ast.Node) *ast.Node {
+func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 	if jsdoc := getJSDoc(node); jsdoc != nil {
 		return jsdoc
 	}
 	switch {
 	case ast.IsParameter(node):
-		return getMatchingJSDocTag(node.Parent, node.Name().Text(), isMatchingParameterTag)
+		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingParameterTag)
 	case ast.IsTypeParameterDeclaration(node):
-		return getMatchingJSDocTag(node.Parent, node.Name().Text(), isMatchingTemplateTag)
+		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingTemplateTag)
 	case ast.IsVariableDeclaration(node) && ast.IsVariableDeclarationList(node.Parent) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
-		return getJSDocOrTag(node.Parent.Parent)
+		return getJSDocOrTag(c, node.Parent.Parent)
 	case (ast.IsFunctionExpressionOrArrowFunction(node) || ast.IsClassExpression(node)) &&
 		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
-		return getJSDocOrTag(node.Parent)
+		return getJSDocOrTag(c, node.Parent)
+	}
+	if symbol := node.Symbol(); symbol != nil && node.Parent != nil && ast.IsClassOrInterfaceLike(node.Parent) {
+		isStatic := ast.HasStaticModifier(node)
+		for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
+			t := baseType
+			if isStatic {
+				t = c.GetTypeOfSymbol(baseType.Symbol())
+			}
+			if prop := c.GetPropertyOfType(t, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+				if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+					return jsDoc
+				}
+			}
+		}
 	}
 	return nil
 }
 
-func getMatchingJSDocTag(node *ast.Node, name string, match func(*ast.Node, string) bool) *ast.Node {
-	if jsdoc := getJSDocOrTag(node); jsdoc != nil && jsdoc.Kind == ast.KindJSDoc {
+func getMatchingJSDocTag(c *checker.Checker, node *ast.Node, name string, match func(*ast.Node, string) bool) *ast.Node {
+	if jsdoc := getJSDocOrTag(c, node); jsdoc != nil && jsdoc.Kind == ast.KindJSDoc {
 		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 			for _, tag := range tags.Nodes {
 				if match(tag, name) {

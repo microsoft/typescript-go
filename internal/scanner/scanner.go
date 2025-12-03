@@ -1629,6 +1629,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -2337,8 +2344,8 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
 	body := node.Body()
 	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.End())
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
@@ -2434,9 +2441,15 @@ func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.ECMALineMap()
 }
 
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
+	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
 	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return line, character
 }
@@ -2452,7 +2465,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
+func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
 	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 

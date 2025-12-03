@@ -10,7 +10,7 @@ import (
 
 func TestTsxCompletion15(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@module: commonjs
 //@jsx: preserve
@@ -38,7 +38,8 @@ var x9  = <Exp.M.SFCComp></[|Exp.M./*9*/|]>;
 var x10 = <Exp.M.SFCComp></      [|/*10*/Exp.M.Foo.Bar.Baz.Wut|]>;
 var x11 = <Exp.M.SFCComp></[|Exp./*11*/M.SFCComp|]>;
 var x12 = <Exp.M.SFCComp><div><span /></div></[|Exp.M./*12*/SFCComp|]>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

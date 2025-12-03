@@ -25,7 +25,8 @@ func TestCompletionsImportBaseUrl(t *testing.T) {
 export const foo = 0;
 // @Filename: /src/b.ts
 fo/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -36,11 +37,11 @@ fo/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					Detail:              PtrTo("const foo: 0"),
 					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

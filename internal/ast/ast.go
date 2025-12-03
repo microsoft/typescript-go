@@ -631,6 +631,15 @@ func (n *Node) Statements() []*Node {
 	return nil
 }
 
+func (n *Node) CanHaveStatements() bool {
+	switch n.Kind {
+	case KindSourceFile, KindBlock, KindModuleBlock, KindCaseClause, KindDefaultClause:
+		return true
+	default:
+		return false
+	}
+}
+
 func (n *Node) ModifierFlags() ModifierFlags {
 	modifiers := n.Modifiers()
 	if modifiers != nil {
@@ -2205,11 +2214,11 @@ func IsWriteAccess(node *Node) bool {
 }
 
 func IsWriteAccessForReference(node *Node) bool {
-	decl := getDeclarationFromName(node)
+	decl := GetDeclarationFromName(node)
 	return (decl != nil && declarationIsWriteAccess(decl)) || node.Kind == KindDefaultKeyword || IsWriteAccess(node)
 }
 
-func getDeclarationFromName(name *Node) *Declaration {
+func GetDeclarationFromName(name *Node) *Declaration {
 	if name == nil || name.Parent == nil {
 		return nil
 	}
@@ -10748,7 +10757,9 @@ type SourceFile struct {
 	NodeCount                   int
 	TextCount                   int
 	CommonJSModuleIndicator     *Node
-	ExternalModuleIndicator     *Node
+	// If this is the SourceFile itself, then this module was "forced"
+	// to be an external module (previously "true").
+	ExternalModuleIndicator *Node
 
 	// Fields set by binder
 
@@ -10972,7 +10983,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	result := make(map[string][]*Node)
 
 	addDeclaration := func(declaration *Node) {
-		name := getDeclarationName(declaration)
+		name := GetDeclarationName(declaration)
 		if name != "" {
 			result[name] = append(result[name], declaration)
 		}
@@ -10982,7 +10993,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	visit = func(node *Node) bool {
 		switch node.Kind {
 		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
-			declarationName := getDeclarationName(node)
+			declarationName := GetDeclarationName(node)
 			if declarationName != "" {
 				declarations := result[declarationName]
 				var lastDeclaration *Node
@@ -11014,7 +11025,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				break
 			}
 			fallthrough
-		case KindVariableDeclaration, KindBindingElement:
+		case KindVariableDeclaration, KindBindingElement, KindCommonJSExport:
 			name := node.Name()
 			if name != nil {
 				if IsBindingPattern(name) {
@@ -11063,6 +11074,12 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					}
 				}
 			}
+		case KindBinaryExpression:
+			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
+				addDeclaration(node)
+			}
+			node.ForEachChild(visit)
 		default:
 			node.ForEachChild(visit)
 		}
@@ -11072,7 +11089,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	return result
 }
 
-func getDeclarationName(declaration *Node) string {
+func GetDeclarationName(declaration *Node) string {
 	name := GetNonAssignedNameOfDeclaration(declaration)
 	if name != nil {
 		if IsComputedPropertyName(name) {

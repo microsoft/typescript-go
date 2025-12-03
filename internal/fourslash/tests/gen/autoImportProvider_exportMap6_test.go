@@ -65,7 +65,9 @@ export declare function fooFromAtTypesIndex(): void;
 export declare function fooFromAtTypesLol(): void;
 // @Filename: /home/src/workspaces/project/src/foo.ts
 fooFrom/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -77,21 +79,21 @@ fooFrom/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "fooFromIndex",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dependency",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
 				&lsproto.CompletionItem{
 					Label: "fooFromLol",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dependency/lol",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
