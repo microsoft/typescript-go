@@ -67,10 +67,43 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat)
+	return quickInfo, l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat)
 }
 
-func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind) string {
+func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind) string {
+	// Handle binding elements specially - we need to get the documentation from the property type
+	// The declaration passed in might be the binding element itself, but we need the interface property declaration
+	if symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
+		bindingElement := symbol.ValueDeclaration
+		parent := bindingElement.Parent
+		name := bindingElement.PropertyName()
+		if name == nil {
+			name = bindingElement.Name()
+		}
+		if ast.IsIdentifier(name) && ast.IsObjectBindingPattern(parent) {
+			propertyName := name.Text()
+			objectType := c.GetTypeAtLocation(parent)
+			if objectType != nil {
+				// For union types, try to find the property in any of the constituent types
+				var propertySymbol *ast.Symbol
+				if objectType.Flags()&checker.TypeFlagsUnion != 0 {
+					for _, t := range objectType.AsUnionType().Types() {
+						prop := c.GetPropertyOfType(t, propertyName)
+						if prop != nil {
+							propertySymbol = prop
+							break
+						}
+					}
+				} else {
+					propertySymbol = c.GetPropertyOfType(objectType, propertyName)
+				}
+				if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
+					declaration = propertySymbol.ValueDeclaration
+				}
+			}
+		}
+	}
+
 	if declaration == nil {
 		return ""
 	}
