@@ -223,7 +223,14 @@ func (s *Session) Configure(config *Config) {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
+	oldConfig := s.workspaceConfig
 	s.workspaceConfig = s.workspaceConfig.CopyInto(config)
+
+	// Tell the client to re-request certain commands depending on user preference changes.
+	if oldUserPreferences != config && oldUserPreferences != nil && config != nil {
+		s.refreshInlayHintsIfNeeded(oldUserPreferences, config)
+		s.refreshCodeLensIfNeeded(oldUserPreferences, config)
+	}
 }
 
 func (s *Session) InitializeWithConfig(config *Config) {
@@ -797,6 +804,22 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
+}
+
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+	if oldPrefs.InlayHints != newPrefs.InlayHints {
+		if err := s.client.RefreshInlayHints(context.Background()); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error refreshing inlay hints: %v", err)
+		}
+	}
+}
+
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
+	if oldPrefs.CodeLens != newPrefs.CodeLens {
+		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error refreshing code lens: %v", err)
+		}
+	}
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {

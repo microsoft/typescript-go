@@ -140,22 +140,11 @@ type UserPreferences struct {
 
 	// ------- InlayHints -------
 
-	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints
-	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool
-	IncludeInlayFunctionParameterTypeHints                bool
-	IncludeInlayVariableTypeHints                         bool
-	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool
-	IncludeInlayPropertyDeclarationTypeHints              bool
-	IncludeInlayFunctionLikeReturnTypeHints               bool
-	IncludeInlayEnumMemberValueHints                      bool
+	InlayHints InlayHintsPreferences
 
 	// ------- CodeLens -------
 
-	ReferencesCodeLensEnabled                     bool
-	ImplementationsCodeLensEnabled                bool
-	ReferencesCodeLensShowOnAllFunctions          bool
-	ImplementationsCodeLensShowOnInterfaceMethods bool
-	ImplementationsCodeLensShowOnAllClassMethods  bool
+	CodeLens CodeLensUserPreferences
 
 	// ------- Symbols -------
 
@@ -167,6 +156,25 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool // !!!
 	DisplayPartsForJSDoc        bool // !!!
 	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+}
+
+type InlayHintsPreferences struct {
+	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool
+	IncludeInlayFunctionParameterTypeHints                bool
+	IncludeInlayVariableTypeHints                         bool
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool
+	IncludeInlayPropertyDeclarationTypeHints              bool
+	IncludeInlayFunctionLikeReturnTypeHints               bool
+	IncludeInlayEnumMemberValueHints                      bool
+}
+
+type CodeLensUserPreferences struct {
+	ReferencesCodeLensEnabled                     bool
+	ImplementationsCodeLensEnabled                bool
+	ReferencesCodeLensShowOnAllFunctions          bool
+	ImplementationsCodeLensShowOnInterfaceMethods bool
+	ImplementationsCodeLensShowOnAllClassMethods  bool
 }
 
 type JsxAttributeCompletionStyle string
@@ -433,18 +441,18 @@ func (p *UserPreferences) parseInlayHints(prefs any) {
 				if enabled, ok := v["enabled"]; ok {
 					p.set("includeInlayParameterNameHints", enabled)
 				}
-				p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSupress(v, "supressWhenArgumentMatchesName")
+				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSuppress(v, "suppressWhenArgumentMatchesName")
 			case "parameterTypes":
-				p.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
 			case "variableTypes":
-				p.IncludeInlayVariableTypeHints = parseEnabledBool(v)
-				p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSupress(v, "supressWhenTypeMatchesName")
+				p.InlayHints.IncludeInlayVariableTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSuppress(v, "suppressWhenTypeMatchesName")
 			case "propertyDeclarationTypes":
-				p.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
 			case "functionLikeReturnTypes":
-				p.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
 			case "enumMemberValues":
-				p.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
 			}
 		} else {
 			// non-vscode case
@@ -590,7 +598,7 @@ func parseEnabledBool(v map[string]any) bool {
 	return false
 }
 
-func parseSupress(v map[string]any, name string) bool {
+func parseSuppress(v map[string]any, name string) bool {
 	// vscode nested option
 	if val, ok := v[name]; ok {
 		if suppress, ok := val.(bool); ok {
@@ -671,21 +679,21 @@ func (p *UserPreferences) set(name string, value any) bool {
 	case "providerefactornotapplicablereason":
 		p.ProvideRefactorNotApplicableReason = parseBoolWithDefault(value, true)
 	case "includeinlayparameternamehints":
-		p.IncludeInlayParameterNameHints = parseInlayParameterNameHints(value)
+		p.InlayHints.IncludeInlayParameterNameHints = parseInlayParameterNameHints(value)
 	case "includeinlayparameternamehintswhenargumentmatchesname":
-		p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseBoolWithDefault(value, false)
 	case "includeinlayfunctionparametertypeHints":
-		p.IncludeInlayFunctionParameterTypeHints = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayvariabletypehints":
-		p.IncludeInlayVariableTypeHints = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayVariableTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayvariabletypehintswhentypematchesname":
-		p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseBoolWithDefault(value, false)
 	case "includeinlaypropertydeclarationtypehints":
-		p.IncludeInlayPropertyDeclarationTypeHints = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayfunctionlikereturntypehints":
-		p.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayenummembervaluehints":
-		p.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
+		p.InlayHints.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
 	case "excludelibrarysymbolsinnavto":
 		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, false)
 	case "disablesuggestions":
@@ -697,15 +705,15 @@ func (p *UserPreferences) set(name string, value any) bool {
 	case "reportstylechecksaswarnings":
 		p.ReportStyleChecksAsWarnings = parseBoolWithDefault(value, true)
 	case "referencescodelensenabled":
-		p.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
+		p.CodeLens.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "implementationscodelensenabled":
-		p.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
 	case "referencescodelensshowonallfunctions":
-		p.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
+		p.CodeLens.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowoninterfacemethods":
-		p.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
-		p.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
 	default:
 		if p.FormatCodeSettings == nil {
 			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
@@ -778,18 +786,18 @@ func (p *UserPreferences) ParseInlayHints(prefs any) {
 				if enabled, ok := v["enabled"]; ok {
 					p.Set("includeInlayParameterNameHints", enabled)
 				}
-				p.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSupress(v, "supressWhenArgumentMatchesName")
+				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSuppress(v, "supressWhenArgumentMatchesName")
 			case "parameterTypes":
-				p.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
 			case "variableTypes":
-				p.IncludeInlayVariableTypeHints = parseEnabledBool(v)
-				p.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSupress(v, "supressWhenTypeMatchesName")
+				p.InlayHints.IncludeInlayVariableTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSuppress(v, "supressWhenTypeMatchesName")
 			case "propertyDeclarationTypes":
-				p.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
 			case "functionLikeReturnTypes":
-				p.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
 			case "enumMemberValues":
-				p.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
+				p.InlayHints.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
 			}
 		} else {
 			// non-vscode case
