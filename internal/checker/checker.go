@@ -10395,7 +10395,7 @@ func (c *Checker) checkReflectCollision(node *ast.Node) {
 
 func (c *Checker) checkClassNameCollisionWithObject(name *ast.Node) {
 	if name.Text() == "Object" && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(name)) < core.ModuleKindES2015 {
-		c.error(name, diagnostics.Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0, core.ModuleKind(c.moduleKind).String())
+		c.error(name, diagnostics.Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0, c.moduleKind.String())
 	}
 }
 
