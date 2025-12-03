@@ -1066,10 +1066,24 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 		// If the user has just opened a list, and there are no arguments.
 		// For example, foo(    )
 		//                  |  |
-		return core.NewTextRange(node.End(), scanner.SkipTrivia(sourceFile.Text(), node.End()))
+		// The span should include positions inside the parentheses.
+		spanStart := node.End()
+		spanEnd := scanner.SkipTrivia(sourceFile.Text(), node.End())
+		// Ensure the span includes at least the position right after the opening paren
+		if spanEnd <= spanStart {
+			spanEnd = spanStart + 1
+		}
+		return core.NewTextRange(spanStart, spanEnd)
 	}
 	applicableSpanStart := argumentList.Pos()
 	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
+	
+	// If the argument list is empty (Pos == End), extend the span to include at least
+	// one position. This handles foo(|) where the cursor is right after the opening paren.
+	if applicableSpanEnd <= applicableSpanStart {
+		applicableSpanEnd = applicableSpanStart + 1
+	}
+	
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
 
