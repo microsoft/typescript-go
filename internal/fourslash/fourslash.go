@@ -398,7 +398,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
 			Error: &lsproto.ResponseError{
-				Code:    lsproto.ErrMethodNotFound.Code,
+				Code:    int32(lsproto.ErrorCodeMethodNotFound),
 				Message: fmt.Sprintf("Unknown method: %s", req.Method),
 			},
 		}
