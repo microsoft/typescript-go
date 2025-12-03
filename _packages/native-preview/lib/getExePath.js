@@ -21,16 +21,22 @@ export default function getExePath() {
     else {
         // We're actually running from an installed package.
         const platformPackageName = "@typescript/" + expectedPackage;
-        let packageJson;
         try {
             // v20.6.0, v18.19.0
-            packageJson = import.meta.resolve(platformPackageName + "/package.json");
+            const packageJson = import.meta.resolve(platformPackageName + "/package.json");
+            const packageJsonPath = fileURLToPath(packageJson);
+            exeDir = path.join(path.dirname(packageJsonPath), "lib");
         }
         catch (e) {
-            throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
+            // Failed to resolve: this might be due to an older Node version that doesn't support import.meta.resolve.
+            if (e instanceof TypeError && e.message?.includes("resolve is not a function")) {
+                // v16.20.1
+                exeDir = path.resolve(__dirname, "..", "node_modules", platformPackageName, "lib");
+            } else {
+                throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
+            }
         }
-        const packageJsonPath = fileURLToPath(packageJson);
-        exeDir = path.join(path.dirname(packageJsonPath), "lib");
+        
     }
 
     const exe = path.join(exeDir, "tsgo" + (process.platform === "win32" ? ".exe" : ""));
@@ -41,3 +47,4 @@ export default function getExePath() {
 
     return exe;
 }
+
