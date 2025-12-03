@@ -606,8 +606,8 @@ func writeQuotedString(b *strings.Builder, str string, quote bool) {
 // findPropertyInType finds a property in a type, handling union types by searching constituent types
 func findPropertyInType(c *checker.Checker, objectType *checker.Type, propertyName string) *ast.Symbol {
 	// For union types, try to find the property in any of the constituent types
-	if objectType.Flags()&checker.TypeFlagsUnion != 0 {
-		for _, t := range objectType.AsUnionType().Types() {
+	if objectType.IsUnion() {
+		for _, t := range objectType.Types() {
 			if prop := c.GetPropertyOfType(t, propertyName); prop != nil {
 				return prop
 			}
