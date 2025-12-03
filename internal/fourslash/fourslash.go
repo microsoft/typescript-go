@@ -38,6 +38,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/sync/errgroup"
 	"gotest.tools/v3/assert"
 )
 
@@ -68,7 +69,6 @@ type FourslashTest struct {
 	// Async message handling
 	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
 	pendingRequestsMu sync.Mutex
-	errChan           chan error
 }
 
 type scriptInfo struct {
@@ -151,8 +151,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
-
-	ctx, cancel := context.WithCancel(t.Context())
 
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]any)
@@ -241,25 +239,21 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		baselines:       make(map[baselineCommand]*strings.Builder),
 		openFiles:       make(map[string]struct{}),
 		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
-		errChan:         make(chan error, 10),
 	}
 
+	ctx, cancel := context.WithCancel(t.Context())
+	g, ctx := errgroup.WithContext(ctx)
+
 	// Start server goroutine
-	go func() {
-		defer func() {
-			outputWriter.Close()
-		}()
-		err := server.Run(ctx)
-		if err != nil {
-			if ctx.Err() != nil {
-				return
-			}
-			f.errChan <- fmt.Errorf("server error: %w", err)
-		}
-	}()
+	g.Go(func() error {
+		defer outputWriter.Close()
+		return server.Run(ctx)
+	})
 
 	// Start async message router
-	go f.messageRouter(ctx)
+	g.Go(func() error {
+		return f.messageRouter(ctx)
+	})
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
@@ -279,17 +273,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	_, testPath, _, _ := runtime.Caller(1)
 	return f, func() {
 		t.Helper()
-		defer cancel()
-
+		cancel()
 		inputWriter.Close()
-		// Check for errors from messageRouter
-		select {
-		case err := <-f.errChan:
-			if err != nil {
-				t.Errorf("messageRouter error: %v", err)
-			}
-		default:
-			// no error to report
+		if err := g.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+			t.Errorf("goroutine error: %v", err)
 		}
 		f.verifyBaselines(t, testPath)
 	}
@@ -297,36 +284,36 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 // messageRouter runs in a goroutine and routes incoming messages from the server.
 // It handles responses to client requests and server-initiated requests.
-func (f *FourslashTest) messageRouter(ctx context.Context) {
+func (f *FourslashTest) messageRouter(ctx context.Context) error {
 	for {
 		if ctx.Err() != nil {
-			return
+			return nil
 		}
 
 		msg, err := f.out.Read()
 		if err != nil {
 			if errors.Is(err, io.EOF) || ctx.Err() != nil {
-				return
+				return nil
 			}
-			f.errChan <- fmt.Errorf("failed to read message: %w", err)
-			return
+			return fmt.Errorf("failed to read message: %w", err)
 		}
 
 		// Validate message can be marshaled
 		if err := json.MarshalWrite(io.Discard, msg); err != nil {
 			if ctx.Err() != nil {
-				return
+				return nil
 			}
 
-			f.errChan <- fmt.Errorf("failed to encode message as JSON: %w", err)
-			return
+			return fmt.Errorf("failed to encode message as JSON: %w", err)
 		}
 
 		switch msg.Kind {
 		case lsproto.MessageKindResponse:
 			f.handleResponse(ctx, msg.AsResponse())
 		case lsproto.MessageKindRequest:
-			f.handleServerRequest(ctx, msg.AsRequest())
+			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
+				return err
+			}
 		case lsproto.MessageKindNotification:
 			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
 			// in fourslash tests
@@ -358,7 +345,7 @@ func (f *FourslashTest) handleResponse(ctx context.Context, resp *lsproto.Respon
 }
 
 // handleServerRequest handles requests initiated by the server (e.g., workspace/configuration).
-func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) {
+func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) error {
 	var response *lsproto.ResponseMessage
 
 	switch req.Method {
@@ -400,16 +387,16 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 
 	// Send response back to server
 	if ctx.Err() != nil {
-		return
+		return nil
 	}
 
 	if err := f.in.Write(response.Message()); err != nil {
 		if ctx.Err() != nil {
-			return
+			return nil
 		}
-
-		f.errChan <- fmt.Errorf("failed to write server request response: %w", err)
+		return fmt.Errorf("failed to write server request response: %w", err)
 	}
+	return nil
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
