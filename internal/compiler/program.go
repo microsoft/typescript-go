@@ -1052,8 +1052,6 @@ func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceF
 		return nil
 	}
 
-	binder.BindSourceFile(sourceFile)
-
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
 
@@ -1139,8 +1137,6 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
 		return nil
 	}
-
-	binder.BindSourceFile(sourceFile)
 
 	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 	defer done()
@@ -1334,7 +1330,6 @@ type SourceMapEmitResult struct {
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	// !!! performance measurement
-	p.BindSourceFiles()
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
