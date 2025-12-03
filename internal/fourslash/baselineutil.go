@@ -35,6 +35,7 @@ const (
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
 	smartSelectionCmd           baselineCommand = "Smart Selection"
 	codeLensesCmd               baselineCommand = "Code Lenses"
+	documentSymbolsCmd          baselineCommand = "Document Symbols"
 )
 
 type baselineCommand string
@@ -75,7 +76,7 @@ func getBaselineExtension(command baselineCommand) string {
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
-	case autoImportsCmd:
+	case autoImportsCmd, documentSymbolsCmd:
 		return "baseline.md"
 	default:
 		return "baseline.jsonc"

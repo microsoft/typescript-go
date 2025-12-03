@@ -15,6 +15,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -3758,4 +3759,34 @@ func assertDocumentSymbolIsEqual(
 			prefix+" (in children of symbol "+actual.Name+")",
 		)
 	}
+}
+
+var marshalSymbolKind = func(v lsproto.SymbolKind) ([]byte, error) {
+	return []byte(`"` + v.String() + `"`), nil
+}
+
+func (f *FourslashTest) VerifyBaselineDocumentSymbols(t *testing.T) {
+	params := &lsproto.DocumentSymbolParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
+	var content strings.Builder
+	ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
+	lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
+	content.WriteString(codeFence(lang, "// @FileName: "+f.activeFilename+"\n"+f.scriptInfos[f.activeFilename].content))
+	content.WriteString("\n\n# Symbols\n\n")
+	content.WriteString("```json\n")
+	err := json.MarshalWrite(
+		&content,
+		result.DocumentSymbols,
+		jsontext.Multiline(true),
+		json.WithMarshalers(json.MarshalFunc(marshalSymbolKind)),
+	)
+	if err != nil {
+		t.Fatalf("Failed to marshal document symbols for baseline: %v", err)
+	}
+	content.WriteString("\n```")
+	f.addResultToBaseline(t, documentSymbolsCmd, content.String())
 }
