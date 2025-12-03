@@ -167,6 +167,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testfs[filePath] = vfstest.Symlink(tspath.GetNormalizedAbsolutePath(target, rootDir))
 	}
 
+	// !!! use default compiler options for inferred project as base
 	compilerOptions := &core.CompilerOptions{
 		SkipDefaultLibCheck: core.TSTrue,
 	}
@@ -1183,7 +1184,7 @@ var (
 	completionIgnoreOpts           = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
 	autoImportIgnoreOpts           = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 	diagnosticsIgnoreOpts          = ignorePaths(".Severity", ".Source", ".RelatedInformation")
-	stradaDocumentSymbolIgnoreOpts = ignorePaths(".Detail", ".Tags", ".Deprecated", ".Range", ".SelectionRange")
+	stradaDocumentSymbolIgnoreOpts = ignorePaths(".Detail", ".Tags", ".Deprecated", ".Range", ".SelectionRange", ".Children")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
@@ -2997,7 +2998,7 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 	if f.lastKnownMarkerName != nil {
 		return fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
 	}
-	return fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+	return fmt.Sprintf("At position %s(Ln %d, Col %d): ", f.activeFilename, f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
@@ -3688,5 +3689,73 @@ func (f *FourslashTest) VerifyStradaDocumentSymbol(t *testing.T, expected []*lsp
 		}
 		return
 	}
-	assertDeepEqual(t, *result.DocumentSymbols, expected, "Document symbols mismatch", stradaDocumentSymbolIgnoreOpts)
+	assertDocumentSymbolsAreEqual(
+		t,
+		*result.DocumentSymbols,
+		expected,
+		fmt.Sprintf("At file %s: Document symbols mismatch", f.activeFilename),
+	)
+}
+
+func assertDocumentSymbolsAreEqual(
+	t *testing.T,
+	actual []*lsproto.DocumentSymbol,
+	expected []*lsproto.DocumentSymbol,
+	prefix string,
+) {
+	slices.SortFunc(actual, compareDocumentSymbols)
+	slices.SortFunc(expected, compareDocumentSymbols)
+	if len(actual) != len(expected) {
+		t.Fatalf(
+			"%s: Expected %d document symbols, but got %d:\n%s",
+			prefix,
+			len(expected),
+			len(actual),
+			cmp.Diff(
+				core.Map(actual, func(d *lsproto.DocumentSymbol) string { return d.Name }),
+				core.Map(expected, func(d *lsproto.DocumentSymbol) string { return d.Name }),
+			),
+		)
+	}
+	for i := range actual {
+		assertDocumentSymbolIsEqual(t, actual[i], expected[i], prefix)
+	}
+}
+
+func compareDocumentSymbols(d1, d2 *lsproto.DocumentSymbol) int {
+	c := stringutil.CompareStringsCaseInsensitive(d1.Name, d2.Name)
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d2.Name, d1.Name)
+	if c != 0 {
+		return c
+	}
+	c = lsproto.CompareRanges(&d1.Range, &d2.Range)
+	return c
+}
+
+func assertDocumentSymbolIsEqual(
+	t *testing.T,
+	actual *lsproto.DocumentSymbol,
+	expected *lsproto.DocumentSymbol,
+	prefix string,
+) {
+	assertDeepEqual(t, actual, expected, prefix, stradaDocumentSymbolIgnoreOpts)
+	if actual.Children != nil && len(*actual.Children) > 0 || expected.Children != nil && len(*expected.Children) > 0 {
+		var actualChildren []*lsproto.DocumentSymbol
+		var expectedChildren []*lsproto.DocumentSymbol
+		if actual.Children != nil {
+			actualChildren = *actual.Children
+		}
+		if expected.Children != nil {
+			expectedChildren = *expected.Children
+		}
+		assertDocumentSymbolsAreEqual(
+			t,
+			actualChildren,
+			expectedChildren,
+			prefix+" (in children of symbol "+actual.Name+")",
+		)
+	}
 }

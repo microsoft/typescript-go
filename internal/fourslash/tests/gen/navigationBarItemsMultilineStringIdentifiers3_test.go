@@ -23,7 +23,7 @@ MoreThanOneHundredAndFiftyCharacters' { }`
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name:     "'MoreThanOneHundredAndFiftyCharactersMoreThanOneHundredAndFiftyCharactersMoreThanOneHundredAndFiftyCharactersMoreThanOneHundredAndFiftyCharacter...",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 	})

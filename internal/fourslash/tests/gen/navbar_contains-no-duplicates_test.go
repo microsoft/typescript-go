@@ -55,7 +55,7 @@ module ABC {
 		},
 		{
 			Name: "ABC",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "x",
@@ -66,11 +66,11 @@ module ABC {
 		},
 		{
 			Name: "Windows",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name: "Foundation",
-					Kind: lsproto.SymbolKindModule,
+					Kind: lsproto.SymbolKindNamespace,
 					Children: PtrTo([]*lsproto.DocumentSymbol{
 						{
 							Name:     "A",
@@ -95,7 +95,7 @@ module ABC {
 						},
 						{
 							Name: "Test",
-							Kind: lsproto.SymbolKindModule,
+							Kind: lsproto.SymbolKindNamespace,
 							Children: PtrTo([]*lsproto.DocumentSymbol{
 								{
 									Name:     "Boom",

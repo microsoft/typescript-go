@@ -22,12 +22,12 @@ namespace Test.B {
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name:     "Test.A",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name: "Test.B",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "Foo",

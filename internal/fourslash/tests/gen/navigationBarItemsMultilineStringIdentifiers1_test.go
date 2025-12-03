@@ -45,17 +45,17 @@ class Bar implements Foo {
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name:     "\"MultilineMadness\"",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name:     "\"MultilineMadness2\"",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name:     "\"Multiline\\r\\nMadness\"",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{

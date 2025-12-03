@@ -25,7 +25,7 @@ func TestNavigationBarItemsItems2(t *testing.T) {
 		},
 		{
 			Name:     "A",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 	})

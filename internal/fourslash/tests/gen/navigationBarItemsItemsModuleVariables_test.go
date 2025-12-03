@@ -33,7 +33,7 @@ module Module1 {
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name: "Module1",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "x",
@@ -47,7 +47,7 @@ module Module1 {
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name: "Module1.SubModule",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "y",

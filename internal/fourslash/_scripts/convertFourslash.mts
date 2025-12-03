@@ -2459,7 +2459,7 @@ function getSymbolKindWorker(kind: string): string {
         case "script":
             return "SymbolKindFile";
         case "module":
-            return "SymbolKindModule";
+            return "SymbolKindNamespace";
         case "class":
         case "local class":
             return "SymbolKindClass";
@@ -2507,6 +2507,8 @@ function getSymbolKindWorker(kind: string): string {
             return "SymbolKindModule";
         case "string":
             return "SymbolKindString";
+        case "type":
+            return "SymbolKindInterface";
         default:
             return "SymbolKindVariable";
     }

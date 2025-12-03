@@ -42,30 +42,30 @@ module A {
 	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
 		{
 			Name:     "'X2.Y2.Z2'",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name:     "\"foo\"",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name:     "\"X.Y.Z\"",
-			Kind:     lsproto.SymbolKindModule,
+			Kind:     lsproto.SymbolKindNamespace,
 			Children: nil,
 		},
 		{
 			Name: "A",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name: "B",
-					Kind: lsproto.SymbolKindModule,
+					Kind: lsproto.SymbolKindNamespace,
 					Children: PtrTo([]*lsproto.DocumentSymbol{
 						{
 							Name: "C",
-							Kind: lsproto.SymbolKindModule,
+							Kind: lsproto.SymbolKindNamespace,
 							Children: PtrTo([]*lsproto.DocumentSymbol{
 								{
 									Name:     "x",
@@ -85,7 +85,7 @@ module A {
 		},
 		{
 			Name: "A.B",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "y",
@@ -96,7 +96,7 @@ module A {
 		},
 		{
 			Name: "A.B.C",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name:     "x",

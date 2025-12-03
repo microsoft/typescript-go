@@ -96,7 +96,7 @@ var dist = p.getDist();`
 		},
 		{
 			Name: "Shapes",
-			Kind: lsproto.SymbolKindModule,
+			Kind: lsproto.SymbolKindNamespace,
 			Children: PtrTo([]*lsproto.DocumentSymbol{
 				{
 					Name: "Point",
