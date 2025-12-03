@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -16,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -66,6 +68,10 @@ type Program struct {
 	// Cached unresolved imports for ATA
 	unresolvedImportsOnce sync.Once
 	unresolvedImports     *collections.Set[string]
+
+	// Used by workspace/symbol
+	hasTSFileOnce sync.Once
+	hasTSFile     bool
 }
 
 // FileExists implements checker.Program.
@@ -144,10 +150,19 @@ func (p *Program) GetParseFileRedirect(fileName string) string {
 	return p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, p.toPath(fileName)))
 }
 
-func (p *Program) ForEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
-) {
-	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
+func (p *Program) GetResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
+	return p.projectReferenceFileMapper.getResolvedProjectReferences()
+}
+
+func (p *Program) RangeResolvedProjectReference(f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool) bool {
+	return p.projectReferenceFileMapper.rangeResolvedProjectReference(f)
+}
+
+func (p *Program) RangeResolvedProjectReferenceInChildConfig(
+	childConfig *tsoptions.ParsedCommandLine,
+	f func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+) bool {
+	return p.projectReferenceFileMapper.rangeResolvedProjectReferenceInChildConfig(childConfig, f)
 }
 
 // UseCaseSensitiveFileNames implements checker.Program.
@@ -207,8 +222,8 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
-	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
+	p.initCheckerPool()
 	p.verifyCompilerOptions()
 	return p
 }
@@ -244,16 +259,14 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 }
 
 func (p *Program) initCheckerPool() {
+	if !p.finishedProcessing {
+		panic("Program must finish processing files before initializing checker pool")
+	}
+
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		checkers := 4
-		if p.SingleThreaded() {
-			checkers = 1
-		} else if p.Options().Checkers != nil {
-			checkers = min(max(*p.Options().Checkers, 1), 256)
-		}
-		p.checkerPool = newCheckerPool(checkers, p)
+		p.checkerPool = newCheckerPool(p)
 	}
 }
 
@@ -351,19 +364,13 @@ func (p *Program) BindSourceFiles() {
 }
 
 func (p *Program) CheckSourceFiles(ctx context.Context, files []*ast.SourceFile) {
-	wg := core.NewWorkGroup(p.SingleThreaded())
-	checkers, done := p.checkerPool.GetAllCheckers(ctx)
-	defer done()
-	for _, checker := range checkers {
-		wg.Queue(func() {
-			for file := range p.checkerPool.Files(checker) {
-				if files == nil || slices.Contains(files, file) {
-					checker.CheckSourceFile(ctx, file)
-				}
+	p.checkerPool.ForEachCheckerParallel(ctx, func(_ int, checker *checker.Checker) {
+		for file := range p.checkerPool.Files(checker) {
+			if files == nil || slices.Contains(files, file) {
+				checker.CheckSourceFile(ctx, file)
 			}
-		})
-	}
-	wg.RunAndWait()
+		}
+	})
 }
 
 // Return the type checker associated with the program.
@@ -371,8 +378,8 @@ func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func())
 	return p.checkerPool.GetChecker(ctx)
 }
 
-func (p *Program) GetTypeCheckers(ctx context.Context) ([]*checker.Checker, func()) {
-	return p.checkerPool.GetAllCheckers(ctx)
+func (p *Program) ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker)) {
+	p.checkerPool.ForEachCheckerParallel(ctx, cb)
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
@@ -623,6 +630,10 @@ func (p *Program) verifyCompilerOptions() {
 		if options.Incremental.IsFalse() {
 			createDiagnosticForOptionName(diagnostics.Composite_projects_may_not_disable_incremental_compilation, "declaration", "")
 		}
+	}
+
+	if options.TsBuildInfoFile == "" && options.Incremental.IsTrue() && options.ConfigFilePath == "" {
+		createCompilerOptionsDiagnostic(diagnostics.Option_incremental_is_only_valid_with_a_known_configuration_file_like_tsconfig_json_or_when_tsBuildInfoFile_is_explicitly_provided)
 	}
 
 	p.verifyProjectReferences()
@@ -910,13 +921,13 @@ func (p *Program) verifyProjectReferences() {
 		p.programDiagnostics = append(p.programDiagnostics, diag)
 	}
 
-	p.ForEachResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
+	p.RangeResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool {
 		ref := parent.ProjectReferences()[index]
 		// !!! Deprecated in 5.0 and removed since 5.5
 		// verifyRemovedProjectReference(ref, parent, index);
 		if config == nil {
 			createDiagnosticForReference(parent, index, diagnostics.File_0_not_found, ref.Path)
-			return
+			return true
 		}
 		refOptions := config.CompilerOptions()
 		if !refOptions.Composite.IsTrue() || refOptions.NoEmit.IsTrue() {
@@ -933,6 +944,7 @@ func (p *Program) verifyProjectReferences() {
 			createDiagnosticForReference(parent, index, diagnostics.Cannot_write_file_0_because_it_will_overwrite_tsbuildinfo_file_generated_by_referenced_project_1, buildInfoFileName, ref.Path)
 			p.hasEmitBlockingDiagnostics.Add(p.toPath(buildInfoFileName))
 		}
+		return true
 	})
 }
 
@@ -965,14 +977,12 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 		return nil
 	}
 
-	var globalDiagnostics []*ast.Diagnostic
-	checkers, done := p.checkerPool.GetAllCheckers(ctx)
-	defer done()
-	for _, checker := range checkers {
-		globalDiagnostics = append(globalDiagnostics, checker.GetGlobalDiagnostics()...)
-	}
+	globalDiagnostics := make([][]*ast.Diagnostic, p.checkerPool.Count())
+	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
+		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
+	})
 
-	return SortAndDeduplicateDiagnostics(globalDiagnostics)
+	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -1033,21 +1043,19 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
-	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
-	defer closeCheckers()
-
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
-	for _, checker := range checkers {
+	checkerDiags := make([][]*ast.Diagnostic, p.checkerPool.Count())
+	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
 		if sourceFile == nil || checker == fileChecker {
-			diags = append(diags, checker.GetDiagnostics(ctx, sourceFile)...)
-		} else {
-			diags = append(diags, checker.GetDiagnosticsWithoutCheck(sourceFile)...)
+			checkerDiags[idx] = checker.GetDiagnostics(ctx, sourceFile)
 		}
-	}
+	})
 	if ctx.Err() != nil {
 		return nil
 	}
+
+	diags = append(diags, slices.Concat(checkerDiags...)...)
 
 	// !!! This should be rewritten to work like getBindAndCheckDiagnosticsForFileNoCache.
 
@@ -1140,21 +1148,19 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 
 	diags := slices.Clip(sourceFile.BindSuggestionDiagnostics)
 
-	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
-	defer closeCheckers()
-
-	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
-	// These are deduplicated later.
-	for _, checker := range checkers {
+	checkerDiags := make([][]*ast.Diagnostic, p.checkerPool.Count())
+	p.checkerPool.ForEachCheckerParallel(ctx, func(idx int, checker *checker.Checker) {
 		if sourceFile == nil || checker == fileChecker {
-			diags = append(diags, checker.GetSuggestionDiagnostics(ctx, sourceFile)...)
+			checkerDiags[idx] = checker.GetSuggestionDiagnostics(ctx, sourceFile)
 		} else {
 			// !!! is there any case where suggestion diagnostics are produced in other checkers?
 		}
-	}
+	})
 	if ctx.Err() != nil {
 		return nil
 	}
+
+	diags = append(diags, slices.Concat(checkerDiags...)...)
 
 	return diags
 }
@@ -1251,32 +1257,28 @@ func (p *Program) SymbolCount() int {
 	for _, file := range p.files {
 		count += file.SymbolCount
 	}
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
-	defer done()
-	for _, checker := range checkers {
-		count += int(checker.SymbolCount)
-	}
-	return count
+	var val atomic.Uint32
+	val.Store(uint32(count))
+	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+		val.Add(c.SymbolCount)
+	})
+	return int(val.Load())
 }
 
 func (p *Program) TypeCount() int {
-	var count int
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
-	defer done()
-	for _, checker := range checkers {
-		count += int(checker.TypeCount)
-	}
-	return count
+	var val atomic.Uint32
+	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+		val.Add(c.TypeCount)
+	})
+	return int(val.Load())
 }
 
 func (p *Program) InstantiationCount() int {
-	var count int
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
-	defer done()
-	for _, checker := range checkers {
-		count += int(checker.TotalInstantiationCount)
-	}
-	return count
+	var val atomic.Uint32
+	p.checkerPool.ForEachCheckerParallel(context.Background(), func(idx int, c *checker.Checker) {
+		val.Add(c.TotalInstantiationCount)
+	})
+	return int(val.Load())
 }
 
 func (p *Program) Program() *Program {
@@ -1570,17 +1572,17 @@ func (p *Program) IsMissingPath(path tspath.Path) bool {
 	})
 }
 
-func (p *Program) ExplainFiles(w io.Writer) {
+func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
-			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Message())
+			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
-			fmt.Fprintln(w, "  ", diag.Message())
+			fmt.Fprintln(w, "  ", diag.Localize(locale))
 		}
 	}
 }
@@ -1633,6 +1635,23 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
+}
+
+func (p *Program) IsLibFile(sourceFile *ast.SourceFile) bool {
+	_, ok := p.libFiles[sourceFile.Path()]
+	return ok
+}
+
+func (p *Program) HasTSFile() bool {
+	p.hasTSFileOnce.Do(func() {
+		for _, file := range p.files {
+			if tspath.HasImplementationTSFileExtension(file.FileName()) {
+				p.hasTSFile = true
+				break
+			}
+		}
+	})
+	return p.hasTSFile
 }
 
 var plainJSErrors = collections.NewSetFromItems(

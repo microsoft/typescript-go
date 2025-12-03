@@ -43,6 +43,7 @@ export function test(): void;
 // @Filename: /home/src/workspaces/project/main.ts
 /**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -53,11 +54,11 @@ export function test(): void;
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "test",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "pkg/core/test",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
