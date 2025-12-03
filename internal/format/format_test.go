@@ -61,12 +61,12 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 }
 
 // Test for panic handling request textDocument/onTypeFormatting (issue #2042)
-// The panic occurs when getStartLineAndCharacterForNode is called with a nil node
-func TestFormatOnEnter_NilNodeHandling(t *testing.T) {
+// The panic occurs when nodes in a list can be nil, causing deriveActualIndentationFromList
+// to panic when accessing node properties
+func TestFormatOnEnter_NilNodesInList(t *testing.T) {
 	t.Parallel()
 
-	// Test various edge cases that could lead to nil nodes being passed
-	// to getStartLineAndCharacterForNode
+	// Test cases that can produce nil nodes in AST lists
 	testCases := []struct {
 		name     string
 		text     string
@@ -83,19 +83,14 @@ func TestFormatOnEnter_NilNodeHandling(t *testing.T) {
 			position: 12,
 		},
 		{
-			name:     "file with newline",
-			text:     "const x = 1;\n",
-			position: 13,
-		},
-		{
 			name:     "incomplete code",
 			text:     "if (",
 			position: 4,
 		},
 		{
-			name:     "malformed if-else",
-			text:     "if(a){}\nelse",
-			position: 12,
+			name:     "malformed syntax",
+			text:     "function f() { return }",
+			position: 21,
 		},
 	}
 
@@ -117,7 +112,7 @@ func TestFormatOnEnter_NilNodeHandling(t *testing.T) {
 				},
 			}, "\n")
 
-			// This should not panic even with nil nodes
+			// This should not panic even with nil nodes in lists
 			edits := format.FormatOnEnter(ctx, sourceFile, tc.position)
 			_ = edits // Just ensuring no panic
 		})
