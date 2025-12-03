@@ -1633,6 +1633,14 @@ func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmi
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
 }
 
+func (p *Program) ResolvedPackageNames() *collections.Set[string] {
+	return &p.resolvedPackageNames
+}
+
+func (p *Program) UnresolvedPackageNames() *collections.Set[string] {
+	return &p.unresolvedPackageNames
+}
+
 var plainJSErrors = collections.NewSetFromItems(
 	// binder errors
 	diagnostics.Cannot_redeclare_block_scoped_variable_0.Code(),

@@ -70,7 +70,21 @@ func (s *Set[T]) Clone() *Set[T] {
 	return clone
 }
 
-func (s *Set[T]) Union(other *Set[T]) *Set[T] {
+func (s *Set[T]) Union(other *Set[T]) {
+	if s.Len() == 0 && other.Len() == 0 {
+		return
+	}
+	if s == nil {
+		panic("cannot modify nil Set")
+	}
+	if s.M == nil {
+		s.M = maps.Clone(other.M)
+		return
+	}
+	maps.Copy(s.M, other.M)
+}
+
+func (s *Set[T]) UnionedWith(other *Set[T]) *Set[T] {
 	if s == nil && other == nil {
 		return nil
 	}

@@ -86,7 +86,7 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 			}
 
 			// As we go up the directory tree, exclude packages found in lower node_modules
-			excludePackages = excludePackages.Union(nodeModulesBucket.PackageNames)
+			excludePackages = excludePackages.UnionedWith(nodeModulesBucket.PackageNames)
 		}
 		return nil, false
 	})
@@ -129,7 +129,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 						Syntax:                     e.Syntax,
 						Flags:                      e.Flags | ex.Flags,
 						ScriptElementKind:          min(e.ScriptElementKind, ex.ScriptElementKind),
-						ScriptElementKindModifiers: *e.ScriptElementKindModifiers.Union(&ex.ScriptElementKindModifiers),
+						ScriptElementKindModifiers: *e.ScriptElementKindModifiers.UnionedWith(&ex.ScriptElementKindModifiers),
 						localName:                  e.localName,
 						Target:                     e.Target,
 						Path:                       e.Path,

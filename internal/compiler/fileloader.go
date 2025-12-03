@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -65,6 +66,8 @@ type processedFiles struct {
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
+	resolvedPackageNames                 collections.Set[string]
+	unresolvedPackageNames               collections.Set[string]
 	includeProcessor                     *includeProcessor
 	// if file was included using source file and its output is actually part of program
 	// this contains mapping from output to source file
@@ -149,6 +152,8 @@ func processAllProgramFiles(
 	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount+1)
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
+	var resolvedPackageNames collections.Set[string]
+	var unresolvedPackageNames collections.Set[string]
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
@@ -202,6 +207,8 @@ func processAllProgramFiles(
 		resolvedModules[path] = task.resolutionsInFile
 		typeResolutionsInFile[path] = task.typeResolutionsInFile
 		sourceFileMetaDatas[path] = task.metadata
+		resolvedPackageNames.Union(&task.resolvedPackageNames)
+		unresolvedPackageNames.Union(&task.unresolvedPackageNames)
 
 		if task.jsxRuntimeImportSpecifier != nil {
 			if jsxRuntimeImportSpecifiers == nil {
@@ -243,6 +250,8 @@ func processAllProgramFiles(
 		resolvedModules:                      resolvedModules,
 		typeResolutionsInFile:                typeResolutionsInFile,
 		sourceFileMetaDatas:                  sourceFileMetaDatas,
+		resolvedPackageNames:                 resolvedPackageNames,
+		unresolvedPackageNames:               unresolvedPackageNames,
 		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
@@ -539,6 +548,20 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			resolvedModule, trace := p.resolver.ResolveModuleName(moduleName, fileName, mode, redirect)
 			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode}] = resolvedModule
 			resolutionsTrace = append(resolutionsTrace, trace...)
+			if !t.fromExternalLibrary {
+				if resolvedModule.IsExternalLibraryImport {
+					name := resolvedModule.PackageId.Name
+					if name == "" {
+						// No package.json name but found in node_modules - possible in monorepo workspace, and lots of fourslash tests
+						name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
+					}
+					if name != "" {
+						t.resolvedPackageNames.Add(name)
+					}
+				} else if !resolvedModule.IsResolved() && !tspath.IsExternalModuleNameRelative(moduleName) {
+					t.unresolvedPackageNames.Add(moduleName)
+				}
+			}
 
 			if !resolvedModule.IsResolved() {
 				continue

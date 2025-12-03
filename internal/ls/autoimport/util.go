@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -18,11 +17,15 @@ func getModuleIDOfModuleSymbol(symbol *ast.Symbol) ModuleID {
 	if !symbol.IsExternalModule() {
 		panic("symbol is not an external module")
 	}
-	if sourceFile := ast.GetSourceFileOfModule(symbol); sourceFile != nil {
-		return ModuleID(sourceFile.Path())
+	decl := ast.GetNonAugmentationDeclaration(symbol)
+	if decl == nil {
+		panic("module symbol has no non-augmentation declaration")
 	}
-	if ast.IsModuleWithStringLiteralName(symbol.ValueDeclaration) {
-		return ModuleID(stringutil.StripQuotes(symbol.Name))
+	if decl.Kind == ast.KindSourceFile {
+		return ModuleID(decl.AsSourceFile().Path())
+	}
+	if ast.IsModuleWithStringLiteralName(decl) {
+		return ModuleID(decl.Name().Text())
 	}
 	panic("could not determine module ID of module symbol")
 }
