@@ -363,16 +363,6 @@ func (p *Program) BindSourceFiles() {
 	wg.RunAndWait()
 }
 
-func (p *Program) CheckSourceFiles(ctx context.Context, files []*ast.SourceFile) {
-	p.checkerPool.ForEachCheckerParallel(ctx, func(_ int, checker *checker.Checker) {
-		for file := range p.checkerPool.Files(checker) {
-			if files == nil || slices.Contains(files, file) {
-				checker.CheckSourceFile(ctx, file)
-			}
-		}
-	})
-}
-
 // Return the type checker associated with the program.
 func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
 	return p.checkerPool.GetChecker(ctx)
