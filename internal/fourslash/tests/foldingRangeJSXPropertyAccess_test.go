@@ -13,13 +13,13 @@ func TestFoldingRangeJSXPropertyAccess(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @Filename: /a.tsx
-	const Components = {
+const Components =[| {
   Nested: () => null
-};
+}|];
 
-export const Test = () => {
-  return <Components.Nested></Components.Nested>;
-};`
+export const Test = () =>[| {
+  return [|<Components.Nested></Components.Nested>|];
+}|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOutliningSpans(t)
