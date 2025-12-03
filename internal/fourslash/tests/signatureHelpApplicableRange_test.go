@@ -20,7 +20,7 @@ func TestSignatureHelpApplicableRange(t *testing.T) {
 let s =/*a*/ obj.foo("Hello, world!")/*b*/  
   /*c*/;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	
+
 	// Markers a, b, c should NOT show signature help (outside the call)
 	f.VerifyNoSignatureHelpForMarkers(t, "a", "b", "c")
 }

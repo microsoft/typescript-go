@@ -15,25 +15,25 @@ func TestSignatureHelpNestedCalls(t *testing.T) {
 function bar(s: string) { return s; }
 let s = foo(/*a*/ /*b*/bar/*c*/(/*d*/"hello"/*e*/)/*f*/);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	
+
 	// Markers a, b, c should show foo (outer call)
 	f.GoToMarker(t, "a")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(s: string): string"})
-	
+
 	f.GoToMarker(t, "b")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(s: string): string"})
-	
+
 	f.GoToMarker(t, "c")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(s: string): string"})
-	
+
 	// Marker d should show bar (inside inner call)
 	f.GoToMarker(t, "d")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "bar(s: string): string"})
-	
+
 	// Markers e, f should show foo (after inner call)
 	f.GoToMarker(t, "e")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(s: string): string"})
-	
+
 	f.GoToMarker(t, "f")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(s: string): string"})
 }

@@ -769,7 +769,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 			if firstArgumentInfo == nil {
 				firstArgumentInfo = argumentInfo
 			}
-			
+
 			// If any call's span contains the position, return it.
 			// We walk from inner to outer, so this naturally prefers the innermost call
 			// when multiple calls contain the position.
@@ -778,7 +778,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 			}
 		}
 	}
-	
+
 	// No call's span contains the position. Return the innermost call as fallback.
 	// This handles cases like foo(bar(|)) where bar's span might be empty.
 	return firstArgumentInfo
@@ -1075,11 +1075,11 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 	}
 	applicableSpanStart := argumentList.Pos()
 	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
-	
+
 	// If the argument list is empty (Pos == End), extend the span to include at least
 	// one position. This handles foo(|) where the cursor is right after the opening paren.
 	applicableSpanEnd = ensureMinimumSpanSize(applicableSpanStart, applicableSpanEnd)
-	
+
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
 
