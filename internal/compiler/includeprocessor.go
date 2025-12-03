@@ -60,19 +60,11 @@ func (i *includeProcessor) addProcessingDiagnostic(d ...*processingDiagnostic) {
 	i.processingDiagnostics = append(i.processingDiagnostics, d...)
 }
 
-func (i *includeProcessor) addFileIncludeReason(path tspath.Path, reason *FileIncludeReason) {
-	i.fileIncludeReasons[path] = append(i.fileIncludeReasons[path], reason)
-}
-
-func (i *includeProcessor) getFileIncludeReasons(path tspath.Path) []*FileIncludeReason {
-	return i.fileIncludeReasons[path]
-}
-
 func (i *includeProcessor) addProcessingDiagnosticsForFileCasing(file tspath.Path, existingCasing string, currentCasing string, reason *FileIncludeReason) {
 	if !reason.isReferencedFile() && slices.ContainsFunc(i.fileIncludeReasons[file], func(r *FileIncludeReason) bool {
 		return r.isReferencedFile()
 	}) {
-		i.processingDiagnostics = append(i.processingDiagnostics, &processingDiagnostic{
+		i.addProcessingDiagnostic(&processingDiagnostic{
 			kind: processingDiagnosticKindExplainingFileInclude,
 			data: &includeExplainingDiagnostic{
 				file:             file,
@@ -82,7 +74,7 @@ func (i *includeProcessor) addProcessingDiagnosticsForFileCasing(file tspath.Pat
 			},
 		})
 	} else {
-		i.processingDiagnostics = append(i.processingDiagnostics, &processingDiagnostic{
+		i.addProcessingDiagnostic(&processingDiagnostic{
 			kind: processingDiagnosticKindExplainingFileInclude,
 			data: &includeExplainingDiagnostic{
 				file:             file,

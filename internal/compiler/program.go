@@ -1578,7 +1578,7 @@ func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	}
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
-		for _, reason := range p.includeProcessor.getFileIncludeReasons(file.Path()) {
+		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
 			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
