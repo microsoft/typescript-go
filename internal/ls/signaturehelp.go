@@ -1070,9 +1070,7 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 		spanStart := node.End()
 		spanEnd := scanner.SkipTrivia(sourceFile.Text(), node.End())
 		// Ensure the span includes at least the position right after the opening paren
-		if spanEnd <= spanStart {
-			spanEnd = spanStart + 1
-		}
+		spanEnd = ensureMinimumSpanSize(spanStart, spanEnd)
 		return core.NewTextRange(spanStart, spanEnd)
 	}
 	applicableSpanStart := argumentList.Pos()
@@ -1080,11 +1078,19 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 	
 	// If the argument list is empty (Pos == End), extend the span to include at least
 	// one position. This handles foo(|) where the cursor is right after the opening paren.
-	if applicableSpanEnd <= applicableSpanStart {
-		applicableSpanEnd = applicableSpanStart + 1
-	}
+	applicableSpanEnd = ensureMinimumSpanSize(applicableSpanStart, applicableSpanEnd)
 	
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
+}
+
+// ensureMinimumSpanSize ensures that a span includes at least one position.
+// This is necessary for empty argument lists where start == end would create
+// a span that doesn't contain any position.
+func ensureMinimumSpanSize(start, end int) int {
+	if end <= start {
+		return start + 1
+	}
+	return end
 }
 
 type argumentOrParameterListAndIndex struct {
