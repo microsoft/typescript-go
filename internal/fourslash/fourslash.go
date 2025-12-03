@@ -2,6 +2,7 @@ package fourslash
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -9,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"unicode/utf8"
 
@@ -36,6 +38,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/sync/errgroup"
 	"gotest.tools/v3/assert"
 )
 
@@ -62,6 +65,10 @@ type FourslashTest struct {
 	selectionEnd         *lsproto.Position
 
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
+
+	// Async message handling
+	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingRequestsMu sync.Mutex
 }
 
 type scriptInfo struct {
@@ -115,8 +122,8 @@ func (w *lspWriter) Write(msg *lsproto.Message) error {
 	return nil
 }
 
-func (r *lspWriter) Close() {
-	close(r.c)
+func (w *lspWriter) Close() {
+	close(w.c)
 }
 
 var (
@@ -137,13 +144,14 @@ var parseCache = project.ParseCache{
 	},
 }
 
-func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]any)
 	scriptInfos := make(map[string]*scriptInfo)
@@ -211,16 +219,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParseCache: &parseCache,
 	})
 
-	go func() {
-		defer func() {
-			outputWriter.Close()
-		}()
-		err := server.Run(context.TODO())
-		if err != nil {
-			t.Error("server error:", err)
-		}
-	}()
-
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
@@ -240,11 +238,26 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:      converters,
 		baselines:       make(map[baselineCommand]*strings.Builder),
 		openFiles:       make(map[string]struct{}),
+		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 	}
+
+	ctx, cancel := context.WithCancel(t.Context())
+	g, ctx := errgroup.WithContext(ctx)
+
+	// Start server goroutine
+	g.Go(func() error {
+		defer outputWriter.Close()
+		return server.Run(ctx)
+	})
+
+	// Start async message router
+	g.Go(func() error {
+		return f.messageRouter(ctx)
+	})
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
+	f.server.SetCompilerOptionsForInferredProjects(ctx, compilerOptions)
 	f.initialize(t, capabilities)
 
 	if testData.isStateBaseliningEnabled() {
@@ -258,11 +271,132 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 
 	_, testPath, _, _ := runtime.Caller(1)
-	t.Cleanup(func() {
+	return f, func() {
+		t.Helper()
+		cancel()
 		inputWriter.Close()
+		if err := g.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+			t.Errorf("goroutine error: %v", err)
+		}
 		f.verifyBaselines(t, testPath)
-	})
-	return f
+	}
+}
+
+// messageRouter runs in a goroutine and routes incoming messages from the server.
+// It handles responses to client requests and server-initiated requests.
+func (f *FourslashTest) messageRouter(ctx context.Context) error {
+	for {
+		if ctx.Err() != nil {
+			return nil
+		}
+
+		msg, err := f.out.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) || ctx.Err() != nil {
+				return nil
+			}
+			return fmt.Errorf("failed to read message: %w", err)
+		}
+
+		// Validate message can be marshaled
+		if err := json.MarshalWrite(io.Discard, msg); err != nil {
+			if ctx.Err() != nil {
+				return nil
+			}
+
+			return fmt.Errorf("failed to encode message as JSON: %w", err)
+		}
+
+		switch msg.Kind {
+		case lsproto.MessageKindResponse:
+			f.handleResponse(ctx, msg.AsResponse())
+		case lsproto.MessageKindRequest:
+			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
+				return err
+			}
+		case lsproto.MessageKindNotification:
+			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
+			// in fourslash tests
+		}
+	}
+}
+
+// handleResponse routes a response message to the waiting request goroutine.
+func (f *FourslashTest) handleResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
+	if resp.ID == nil {
+		return
+	}
+
+	f.pendingRequestsMu.Lock()
+	respChan, ok := f.pendingRequests[*resp.ID]
+	if ok {
+		delete(f.pendingRequests, *resp.ID)
+	}
+	f.pendingRequestsMu.Unlock()
+
+	if ok {
+		select {
+		case respChan <- resp:
+			// sent response
+		case <-ctx.Done():
+			// context cancelled
+		}
+	}
+}
+
+// handleServerRequest handles requests initiated by the server (e.g., workspace/configuration).
+func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) error {
+	var response *lsproto.ResponseMessage
+
+	switch req.Method {
+	case lsproto.MethodWorkspaceConfiguration:
+		// Return current user preferences
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  []any{f.userPreferences},
+		}
+
+	case lsproto.MethodClientRegisterCapability:
+		// Accept all capability registrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	case lsproto.MethodClientUnregisterCapability:
+		// Accept all capability unregistrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	default:
+		// Unknown server request
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Error: &lsproto.ResponseError{
+				Code:    int32(lsproto.ErrorCodeMethodNotFound),
+				Message: fmt.Sprintf("Unknown method: %s", req.Method),
+			},
+		}
+	}
+
+	// Send response back to server
+	if ctx.Err() != nil {
+		return nil
+	}
+
+	if err := f.in.Write(response.Message()); err != nil {
+		if ctx.Err() != nil {
+			return nil
+		}
+		return fmt.Errorf("failed to write server request response: %w", err)
+	}
+	return nil
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
@@ -294,19 +428,28 @@ func (f *FourslashTest) nextID() int32 {
 	return id
 }
 
+const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
+
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
 		Locale: ptrTo("en-US"),
 		InitializationOptions: &lsproto.InitializationOptions{
-			// Hack: disable push diagnostics entirely, since the fourslash runner does not
-			// yet gracefully handle non-request messages.
-			DisablePushDiagnostics: ptrTo(true),
+			CodeLensShowLocationsCommandName: ptrTo(showCodeLensLocationsCommandName),
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
-	// !!! check for errors?
-	sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	resp, _, ok := sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	if !ok {
+		t.Fatalf("Initialize request failed")
+	}
+	if resp.AsResponse().Error != nil {
+		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
+	}
 	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
+
+	// Wait for the initial configuration exchange to complete
+	// The server will send workspace/configuration as part of handleInitialized
+	<-f.server.InitComplete()
 }
 
 var (
@@ -409,45 +552,36 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := info.NewRequestMessage(
-		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
-		params,
-	)
+	reqID := lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
+	req := info.NewRequestMessage(reqID, params)
+
+	// Create response channel and register it
+	responseChan := make(chan *lsproto.ResponseMessage, 1)
+	f.pendingRequestsMu.Lock()
+	f.pendingRequests[*reqID] = responseChan
+	f.pendingRequestsMu.Unlock()
+
+	// Send the request
 	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
+
+	// Wait for response with context
+	ctx := t.Context()
+	var resp *lsproto.ResponseMessage
+	select {
+	case <-ctx.Done():
+		f.pendingRequestsMu.Lock()
+		delete(f.pendingRequests, *reqID)
+		f.pendingRequestsMu.Unlock()
+		t.Fatalf("Request cancelled: %v", ctx.Err())
 		return nil, *new(Resp), false
-	}
-
-	// currently, the only request that may be sent by the server during a client request is one `config` request
-	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
-	if resp.Kind == lsproto.MessageKindRequest {
-		req := resp.AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodWorkspaceConfiguration, "Unexpected request received: %s", req.Method)
-		res := lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  []any{f.userPreferences},
+	case resp = <-responseChan:
+		if resp == nil {
+			return nil, *new(Resp), false
 		}
-		f.writeMsg(t, res.Message())
-		req = f.readMsg(t).AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodClientRegisterCapability, "Unexpected request received: %s", req.Method)
-		res = lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  lsproto.Null{},
-		}
-		f.writeMsg(t, res.Message())
-		resp = f.readMsg(t)
 	}
 
-	if resp == nil {
-		return nil, *new(Resp), false
-	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
+	result, ok := resp.Result.(Resp)
+	return resp.Message(), result, ok
 }
 
 func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
@@ -462,16 +596,6 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
-}
-
-func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
-	// !!! filter out response by id etc
-	msg, err := f.out.Read()
-	if err != nil {
-		t.Fatalf("failed to read message: %v", err)
-	}
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	return msg
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
@@ -1319,7 +1443,9 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
-			Context:  &lsproto.ReferenceContext{},
+			Context: &lsproto.ReferenceContext{
+				IncludeDeclaration: true,
+			},
 		}
 		result := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		f.addResultToBaseline(t, findAllReferencesCmd, f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
@@ -1327,6 +1453,61 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			markerName: "/*FIND ALL REFS*/",
 		}))
 
+	}
+}
+
+func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	foundAtLeastOneCodeLens := false
+	for _, openFile := range slices.Sorted(maps.Keys(f.openFiles)) {
+		params := &lsproto.CodeLensParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(openFile),
+			},
+		}
+
+		unresolvedCodeLensList := sendRequest(t, f, lsproto.TextDocumentCodeLensInfo, params)
+		if unresolvedCodeLensList.CodeLenses == nil || len(*unresolvedCodeLensList.CodeLenses) == 0 {
+			continue
+		}
+		foundAtLeastOneCodeLens = true
+
+		for _, unresolvedCodeLens := range *unresolvedCodeLensList.CodeLenses {
+			assert.Assert(t, unresolvedCodeLens != nil)
+			resolvedCodeLens := sendRequest(t, f, lsproto.CodeLensResolveInfo, unresolvedCodeLens)
+			assert.Assert(t, resolvedCodeLens != nil)
+			assert.Assert(t, resolvedCodeLens.Command != nil, "Expected resolved code lens to have a command.")
+			if len(resolvedCodeLens.Command.Command) > 0 {
+				assert.Equal(t, resolvedCodeLens.Command.Command, showCodeLensLocationsCommandName)
+			}
+
+			var locations []lsproto.Location
+			// commandArgs: (DocumentUri, Position, Location[])
+			if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
+				locs, err := roundtripThroughJson[[]lsproto.Location]((*commandArgs)[2])
+				if err != nil {
+					t.Fatalf("failed to re-encode code lens locations: %v", err)
+				}
+				locations = locs
+			}
+
+			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+				marker: &RangeMarker{
+					fileName: openFile,
+					LSRange:  resolvedCodeLens.Range,
+					Range:    f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range),
+				},
+				markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
+			}))
+		}
+	}
+
+	if !foundAtLeastOneCodeLens {
+		t.Fatalf("Expected at least one code lens in any open file, but got none.")
 	}
 }
 
@@ -1459,6 +1640,55 @@ func (f *FourslashTest) VerifyBaselineWorkspaceSymbol(t *testing.T, query string
 			getLocationData: func(span documentSpan) string { return symbolInformationToData(locationToText[span]) },
 		},
 	))
+}
+
+func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...lsproto.FoldingRangeKind) {
+	params := &lsproto.FoldingRangeParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentFoldingRangeInfo, params)
+	if result.FoldingRanges == nil {
+		t.Fatalf("Nil response received for folding range request")
+	}
+
+	// Extract actual folding ranges from the result and filter by kind if specified
+	var actualRanges []*lsproto.FoldingRange
+	actualRanges = *result.FoldingRanges
+	if len(foldingRangeKind) > 0 {
+		targetKind := foldingRangeKind[0]
+		var filtered []*lsproto.FoldingRange
+		for _, r := range actualRanges {
+			if r.Kind != nil && *r.Kind == targetKind {
+				filtered = append(filtered, r)
+			}
+		}
+		actualRanges = filtered
+	}
+
+	if len(actualRanges) != len(f.Ranges()) {
+		t.Fatalf("verifyOutliningSpans failed - expected total spans to be %d, but was %d",
+			len(f.Ranges()), len(actualRanges))
+	}
+
+	slices.SortFunc(f.Ranges(), func(a, b *RangeMarker) int {
+		return lsproto.ComparePositions(a.LSPos(), b.LSPos())
+	})
+
+	for i, expectedRange := range f.Ranges() {
+		actualRange := actualRanges[i]
+		startPos := lsproto.Position{Line: actualRange.StartLine, Character: *actualRange.StartCharacter}
+		endPos := lsproto.Position{Line: actualRange.EndLine, Character: *actualRange.EndCharacter}
+
+		if lsproto.ComparePositions(startPos, expectedRange.LSRange.Start) != 0 ||
+			lsproto.ComparePositions(endPos, expectedRange.LSRange.End) != 0 {
+			t.Fatalf("verifyOutliningSpans failed - span %d has invalid positions:\n  actual: start (%d,%d), end (%d,%d)\n  expected: start (%d,%d), end (%d,%d)",
+				i+1,
+				actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter,
+				expectedRange.LSRange.Start.Line, expectedRange.LSRange.Start.Character, expectedRange.LSRange.End.Line, expectedRange.LSRange.End.Character)
+		}
+	}
 }
 
 func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
@@ -2153,6 +2383,25 @@ func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string)
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+// This function is intended for spots where a complex
+// value needs to be reinterpreted following some prior JSON deserialization.
+// The default deserializer for `any` properties will give us a map at runtime,
+// but we want to validate against, and use, the types as returned from the the language service.
+//
+// Use this function sparingly. You can treat it as a "map-to-struct" converter,
+// but updating the original types is probably better in most cases.
+func roundtripThroughJson[T any](value any) (T, error) {
+	var result T
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return result, fmt.Errorf("failed to marshal value to JSON: %w", err)
+	}
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return result, fmt.Errorf("failed to unmarshal value from JSON: %w", err)
+	}
+	return result, nil
 }
 
 // Insert text at the current caret position.

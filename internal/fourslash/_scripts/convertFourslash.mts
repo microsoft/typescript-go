@@ -234,6 +234,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [{ kind: "verifyBaselineDiagnostics" }];
                 case "navigateTo":
                     return parseVerifyNavigateTo(callExpression.arguments);
+                case "outliningSpansInCurrentFile":
+                case "outliningHintSpansInCurrentFile":
+                    return parseOutliningSpansArgs(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -1396,6 +1399,7 @@ function stringToTristate(s: string): string {
 }
 
 function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefined {
+    const inlayHintPreferences: string[] = [];
     const preferences: string[] = [];
     for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop)) {
@@ -1438,28 +1442,28 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                             paramHint = "lsutil.IncludeInlayParameterNameHintsAll";
                             break;
                     }
-                    preferences.push(`IncludeInlayParameterNameHints: ${paramHint}`);
+                    inlayHintPreferences.push(`IncludeInlayParameterNameHints: ${paramHint}`);
                     break;
                 case "includeInlayParameterNameHintsWhenArgumentMatchesName":
-                    preferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayParameterNameHintsWhenArgumentMatchesName: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayFunctionParameterTypeHints":
-                    preferences.push(`IncludeInlayFunctionParameterTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayFunctionParameterTypeHints: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayVariableTypeHints":
-                    preferences.push(`IncludeInlayVariableTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayVariableTypeHints: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayVariableTypeHintsWhenTypeMatchesName":
-                    preferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayVariableTypeHintsWhenTypeMatchesName: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayPropertyDeclarationTypeHints":
-                    preferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayPropertyDeclarationTypeHints: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayFunctionLikeReturnTypeHints":
-                    preferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayFunctionLikeReturnTypeHints: ${prop.initializer.getText()}`);
                     break;
                 case "includeInlayEnumMemberValueHints":
-                    preferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
+                    inlayHintPreferences.push(`IncludeInlayEnumMemberValueHints: ${prop.initializer.getText()}`);
                     break;
                 case "interactiveInlayHints":
                     // Ignore, deprecated
@@ -1469,6 +1473,10 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
         else {
             return undefined;
         }
+    }
+
+    if (inlayHintPreferences.length > 0) {
+        preferences.push(`InlayHints: lsutil.InlayHintsPreferences{${inlayHintPreferences.join(",")}}`);
     }
     if (preferences.length === 0) {
         return "nil /*preferences*/";
@@ -2036,6 +2044,46 @@ function parseBaselineCallHierarchy(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutliningSpansCmd] | undefined {
+    if (args.length === 0) {
+        console.error("Expected at least one argument in verify.outliningSpansInCurrentFile");
+        return undefined;
+    }
+
+    let spans: string = "";
+    // Optional second argument for kind filter
+    let foldingRangeKind: string | undefined;
+    if (args.length > 1) {
+        const kindArg = getStringLiteralLike(args[1]);
+        if (!kindArg) {
+            console.error(`Expected string literal for outlining kind, got ${args[1].getText()}`);
+            return undefined;
+        }
+        switch (kindArg.text) {
+            case "comment":
+                foldingRangeKind = "lsproto.FoldingRangeKindComment";
+                break;
+            case "region":
+                foldingRangeKind = "lsproto.FoldingRangeKindRegion";
+                break;
+            case "imports":
+                foldingRangeKind = "lsproto.FoldingRangeKindImports";
+                break;
+            case "code":
+                break;
+            default:
+                console.error(`Unknown folding range kind: ${kindArg.text}`);
+                return undefined;
+        }
+    }
+
+    return [{
+        kind: "verifyOutliningSpans",
+        spans,
+        foldingRangeKind,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -2513,6 +2561,12 @@ interface VerifyNoSignatureHelpForTriggerReasonCmd {
     markers: string[];
 }
 
+interface VerifyOutliningSpansCmd {
+    kind: "verifyOutliningSpans";
+    spans: string;
+    foldingRangeKind?: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -2536,7 +2590,15 @@ type Cmd =
     | VerifyBaselineInlayHintsCmd
     | VerifyImportFixAtPositionCmd
     | VerifyDiagnosticsCmd
-    | VerifyBaselineDiagnosticsCmd;
+    | VerifyBaselineDiagnosticsCmd
+    | VerifyOutliningSpansCmd;
+
+function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
+    if (foldingRangeKind) {
+        return `f.VerifyOutliningSpans(t, ${foldingRangeKind})`;
+    }
+    return `f.VerifyOutliningSpans(t)`;
+}
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -2830,6 +2892,8 @@ function generateCmd(cmd: Cmd): string {
             return generateSignatureHelpPresent(cmd);
         case "verifyNoSignatureHelpForTriggerReason":
             return generateNoSignatureHelpForTriggerReason(cmd);
+        case "verifyOutliningSpans":
+            return generateVerifyOutliningSpans(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
@@ -2877,7 +2941,8 @@ func Test${testName}(t *testing.T) {
     ${failingTests.has(testName) ? "t.Skip()" : ""}
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
-    f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+    f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+    defer done()
     ${isServer ? `f.MarkTestAsStradaServer()\n` : ""}${commands}
 }`;
     return template;
