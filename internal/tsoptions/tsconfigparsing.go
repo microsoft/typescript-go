@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -359,13 +360,22 @@ func validateJsonOptionValue(
 	if val == nil {
 		return nil, nil
 	}
-	errors := []*ast.Diagnostic{}
-	if opt.extraValidation {
-		diag := specToDiagnostic(val.(string), false)
-		if diag != nil {
+
+	var errors []*ast.Diagnostic
+
+	switch opt.extraValidation {
+	case extraValidationSpec:
+		if diag := specToDiagnostic(val.(string), false); diag != nil {
 			errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diag))
-			return nil, errors
 		}
+	case extraValidationLocale:
+		if _, ok := locale.Parse(val.(string)); !ok {
+			errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Locale_must_be_an_IETF_BCP_47_language_tag_Examples_Colon_0_1, "en", "ja-jp"))
+		}
+	}
+
+	if len(errors) > 0 {
+		return nil, errors
 	}
 	return val, nil
 }
@@ -685,13 +695,14 @@ func ParseJsonSourceFileConfigFileContent(
 	host ParseConfigHost,
 	basePath string,
 	existingOptions *core.CompilerOptions,
+	existingOptionsRaw *collections.OrderedMap[string, any],
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []FileExtensionInfo,
 	extendedConfigCache ExtendedConfigCache,
 ) *ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
-	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
+	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, existingOptionsRaw, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	// tracing?.pop();
 	return result
 }
@@ -829,7 +840,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
 func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache ExtendedConfigCache) *ParsedCommandLine {
-	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
+	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, nil /*existingOptionsRaw*/, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
 
@@ -1127,6 +1138,7 @@ func parseJsonConfigFileContentWorker(
 	host ParseConfigHost,
 	basePath string,
 	existingOptions *core.CompilerOptions,
+	existingOptionsRaw *collections.OrderedMap[string, any],
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []FileExtensionInfo,
@@ -1144,7 +1156,7 @@ func parseJsonConfigFileContentWorker(
 	var errors []*ast.Diagnostic
 	resolutionStackString := []string{}
 	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStackString, extendedConfigCache)
-	mergeCompilerOptions(parsedConfig.options, existingOptions, nil)
+	mergeCompilerOptions(parsedConfig.options, existingOptions, existingOptionsRaw)
 	handleOptionConfigDirTemplateSubstitution(parsedConfig.options, basePathForFileNames)
 	rawConfig := parseJsonToStringKey(parsedConfig.raw)
 	if configFileName != "" && parsedConfig.options != nil {
@@ -1739,17 +1751,19 @@ func GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions *core.Com
 func GetParsedCommandLineOfConfigFile(
 	configFileName string,
 	options *core.CompilerOptions,
+	optionsRaw *collections.OrderedMap[string, any],
 	sys ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
 ) (*ParsedCommandLine, []*ast.Diagnostic) {
 	configFileName = tspath.GetNormalizedAbsolutePath(configFileName, sys.GetCurrentDirectory())
-	return GetParsedCommandLineOfConfigFilePath(configFileName, tspath.ToPath(configFileName, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()), options, sys, extendedConfigCache)
+	return GetParsedCommandLineOfConfigFilePath(configFileName, tspath.ToPath(configFileName, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()), options, optionsRaw, sys, extendedConfigCache)
 }
 
 func GetParsedCommandLineOfConfigFilePath(
 	configFileName string,
 	path tspath.Path,
 	options *core.CompilerOptions,
+	optionsRaw *collections.OrderedMap[string, any],
 	sys ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
 ) (*ParsedCommandLine, []*ast.Diagnostic) {
@@ -1768,6 +1782,7 @@ func GetParsedCommandLineOfConfigFilePath(
 		sys,
 		tspath.GetDirectoryPath(configFileName),
 		options,
+		optionsRaw,
 		configFileName,
 		nil,
 		nil,
