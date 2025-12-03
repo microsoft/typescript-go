@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import module from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,21 +23,21 @@ export default function getExePath() {
         // We're actually running from an installed package.
         const platformPackageName = "@typescript/" + expectedPackage;
         try {
-            // v20.6.0, v18.19.0
-            const packageJson = import.meta.resolve(platformPackageName + "/package.json");
-            const packageJsonPath = fileURLToPath(packageJson);
-            exeDir = path.join(path.dirname(packageJsonPath), "lib");
-        }
-        catch (e) {
-            // Failed to resolve: this might be due to an older Node version that doesn't support import.meta.resolve.
-            if (e instanceof TypeError && e.message?.includes("resolve is not a function")) {
+            if (typeof import.meta.resolve === "undefined") {
                 // v16.20.1
-                exeDir = path.resolve(__dirname, "..", "node_modules", platformPackageName, "lib");
+                const require = module.createRequire(import.meta.url);
+                const packageJson = require.resolve(platformPackageName + "/package.json");
+                exeDir = path.join(path.dirname(packageJson), "lib");
             } else {
-                throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
+                // v20.6.0, v18.19.0
+                const packageJson = import.meta.resolve(platformPackageName + "/package.json");
+                const packageJsonPath = fileURLToPath(packageJson);
+                exeDir = path.join(path.dirname(packageJsonPath), "lib");
             }
+        } catch (e) {
+            console.error(e);
+            throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
         }
-        
     }
 
     const exe = path.join(exeDir, "tsgo" + (process.platform === "win32" ? ".exe" : ""));
@@ -47,4 +48,3 @@ export default function getExePath() {
 
     return exe;
 }
-
