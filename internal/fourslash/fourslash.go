@@ -462,6 +462,10 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
 	}
 	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
+
+	// Wait for the initial configuration exchange to complete
+	// The server will send workspace/configuration as part of handleInitialized
+	<-f.server.InitComplete()
 }
 
 var (
