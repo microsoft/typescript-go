@@ -42,10 +42,13 @@ class AbstractC implements J {
   abstract methodC(): void;
 }
 `
-			f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+			f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+			defer done()
 			f.VerifyBaselineCodeLens(t, &lsutil.UserPreferences{
-				ImplementationsCodeLensEnabled:                true,
-				ImplementationsCodeLensShowOnInterfaceMethods: value,
+				CodeLens: lsutil.CodeLensUserPreferences{
+					ImplementationsCodeLensEnabled:                true,
+					ImplementationsCodeLensShowOnInterfaceMethods: value,
+				},
 			})
 		})
 	}
