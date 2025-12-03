@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -17,16 +16,5 @@ func TestNavigationBarItemsItems2(t *testing.T) {
 	f.GoToMarker(t, "")
 	f.InsertLine(t, "module A")
 	f.Insert(t, "export class ")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "<class>",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-		{
-			Name:     "A",
-			Kind:     lsproto.SymbolKindNamespace,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

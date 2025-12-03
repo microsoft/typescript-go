@@ -28,7 +28,7 @@ class Foo {
 }
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineDocumentSymbols(t)
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "second.ts")
-	f.VerifyBaselineDocumentSymbols(t)
+	f.VerifyBaselineDocumentSymbol(t)
 }

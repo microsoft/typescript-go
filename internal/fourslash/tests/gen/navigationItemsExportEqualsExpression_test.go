@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -42,96 +40,5 @@ export = {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "export=",
-			Kind:     lsproto.SymbolKindFunction,
-			Children: nil,
-		},
-		{
-			Name: "export=",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "Foo",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name:     "export=",
-			Kind:     lsproto.SymbolKindFunction,
-			Children: nil,
-		},
-		{
-			Name: "export=",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "Foo",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name:     "export=",
-			Kind:     lsproto.SymbolKindFunction,
-			Children: nil,
-		},
-		{
-			Name: "export=",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "Foo",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name:     "export=",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-		{
-			Name: "export=",
-			Kind: lsproto.SymbolKindVariable,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "a",
-					Kind:     lsproto.SymbolKindProperty,
-					Children: nil,
-				},
-				{
-					Name:     "b",
-					Kind:     lsproto.SymbolKindProperty,
-					Children: nil,
-				},
-				{
-					Name: "c",
-					Kind: lsproto.SymbolKindProperty,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name:     "d",
-							Kind:     lsproto.SymbolKindProperty,
-							Children: nil,
-						},
-					}),
-				},
-			}),
-		},
-		{
-			Name:     "abc",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "export=",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

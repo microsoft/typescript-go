@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -30,31 +28,7 @@ module Module1 {
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "file1")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name: "Module1",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "x",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToMarker(t, "file2")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name: "Module1.SubModule",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "y",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

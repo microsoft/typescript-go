@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -23,26 +22,5 @@ var NumberLike2;
 var numberLike;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.MarkTestAsStradaServer()
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "numberLike",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "NumberLike",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-		{
-			Name:     "NumberLike2",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "NumberLike2",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

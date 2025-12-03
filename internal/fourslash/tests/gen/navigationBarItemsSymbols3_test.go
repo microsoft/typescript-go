@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -17,11 +16,5 @@ func TestNavigationBarItemsSymbols3(t *testing.T) {
     [Symbol.isRegExp] = 0
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "E",
-			Kind:     lsproto.SymbolKindEnum,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

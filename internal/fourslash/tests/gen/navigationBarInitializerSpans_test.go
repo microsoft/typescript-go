@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -18,45 +16,5 @@ const [|[|x|] = () => { var [|a|]; }|];
 const [|[|f|] = function f() { var [|b|]; }|];
 const [|[|y|] = { [|[|z|]: function z() { var [|c|]; }|] }|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name: "f",
-			Kind: lsproto.SymbolKindVariable,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "b",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "x",
-			Kind: lsproto.SymbolKindVariable,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "a",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "y",
-			Kind: lsproto.SymbolKindVariable,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name: "z",
-					Kind: lsproto.SymbolKindMethod,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name:     "c",
-							Kind:     lsproto.SymbolKindVariable,
-							Children: nil,
-						},
-					}),
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

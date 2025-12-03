@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -14,11 +13,5 @@ func TestNavigationBarItemsTypeAlias(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type T = number | string;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "T",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

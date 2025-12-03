@@ -2283,97 +2283,10 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
 }
 
 function parseVerifyNavTree(args: readonly ts.Expression[]): [VerifyNavTreeCmd] | undefined {
-    // Ignore `{ checkSpans: true }`.
-    if (!ts.isObjectLiteralExpression(args[0])) {
-        console.error(`Expected object literal expression for verify.navigationTree argument, got ${args[0].getText()}`);
-        return undefined;
-    }
-    let expectedItems: string[] = [];
-    for (const prop of args[0].properties) {
-        if (!ts.isPropertyAssignment(prop) || !(ts.isIdentifier(prop.name) || ts.isStringLiteralLike(prop.name))) {
-            console.error(`Expected property assignment with identifier or string literal name for verify.navigationTree argument, got ${prop.getText()}`);
-            return undefined;
-        }
-        if (prop.name.text === "childItems") {
-            const init = prop.initializer;
-            if (!ts.isArrayLiteralExpression(init)) {
-                console.error(`Expected array literal expression for childItems in verify.navigationTree argument, got ${init.getText()}`);
-                return undefined;
-            }
-            for (const elem of init.elements) {
-                if (!ts.isObjectLiteralExpression(elem)) {
-                    console.error(`Expected object literal expression for navigation tree item, got ${elem.getText()}`);
-                    return undefined;
-                }
-                const item = parseNavTreeItem(elem);
-                if (!item) {
-                    return undefined;
-                }
-                expectedItems.push(item);
-            }
-        }
-    }
+    // Ignore arguments and use baseline tests intead.
     return [{
         kind: "verifyNavigationTree",
-        arg: expectedItems.length ? `[]*lsproto.DocumentSymbol{\n${expectedItems.join(",\n")},\n}` : "nil",
     }];
-}
-
-function parseNavTreeItem(item: ts.ObjectLiteralExpression): string | undefined {
-    let children: string | undefined;
-    let name: string;
-    let kind: string | undefined;
-    for (const prop of item.properties) {
-        if (!ts.isPropertyAssignment(prop) || !(ts.isIdentifier(prop.name) || ts.isStringLiteralLike(prop.name))) {
-            console.error(`Expected property assignment with identifier or string name for navigation tree item, got ${prop.getText()}`);
-            return undefined;
-        }
-        switch (prop.name.text) {
-            case "text": {
-                if (!ts.isStringLiteralLike(prop.initializer)) {
-                    console.error(`Expected string literal for text in navigation tree item, got ${prop.initializer.getText()}`);
-                    return undefined;
-                }
-                name = getGoStringLiteral(prop.initializer.text);
-                break;
-            }
-            case "kind": {
-                const goKind = getSymbolKind(prop.initializer);
-                if (!goKind) {
-                    return undefined;
-                }
-                kind = goKind;
-                break;
-            }
-            case "childItems": {
-                const init = prop.initializer;
-                if (!ts.isArrayLiteralExpression(init)) {
-                    console.error(`Expected array literal expression for childItems in navigation tree item, got ${init.getText()}`);
-                    return undefined;
-                }
-                const childItems: string[] = [];
-                for (const elem of init.elements) {
-                    if (!ts.isObjectLiteralExpression(elem)) {
-                        console.error(`Expected object literal expression for navigation tree child item, got ${elem.getText()}`);
-                        return undefined;
-                    }
-                    const childItem = parseNavTreeItem(elem);
-                    if (!childItem) {
-                        return undefined;
-                    }
-                    childItems.push(childItem);
-                }
-                if (childItems.length > 0) {
-                    children = `PtrTo([]*lsproto.DocumentSymbol{\n${childItems.join(",\n")},\n})`;
-                }
-            }
-        }
-    }
-    return `&lsproto.DocumentSymbol{
-        Name: ${name!},
-        Kind: lsproto.${kind || "SymbolKindProperty"},
-        Children: ${children ? children : "nil"},
-    }`
 }
 
 function parseNavToItem(arg: ts.Expression): string | undefined {
@@ -2678,7 +2591,6 @@ interface VerifyOutliningSpansCmd {
 
 interface VerifyNavTreeCmd {
     kind: "verifyNavigationTree";
-    arg: string;
 }
 
 type Cmd =
@@ -3010,7 +2922,7 @@ function generateCmd(cmd: Cmd): string {
         case "verifyOutliningSpans":
             return generateVerifyOutliningSpans(cmd);
         case "verifyNavigationTree":
-            return `f.VerifyStradaDocumentSymbol(t, ${cmd.arg})`;
+            return `f.VerifyBaselineDocumentSymbol(t)`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

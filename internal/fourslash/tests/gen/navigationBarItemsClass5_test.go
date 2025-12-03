@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -15,16 +14,5 @@ func TestNavigationBarItemsClass5(t *testing.T) {
 	const content = `class Foo {}
 let Foo = 1;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "Foo",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "Foo",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

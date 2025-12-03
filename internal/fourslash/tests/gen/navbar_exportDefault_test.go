@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -22,35 +21,11 @@ export default function { }
 export default function Func { }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "a.ts")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "default",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "b.ts")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "C",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "c.ts")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "default",
-			Kind:     lsproto.SymbolKindFunction,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "d.ts")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "Func",
-			Kind:     lsproto.SymbolKindFunction,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

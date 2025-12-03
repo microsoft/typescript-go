@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -41,97 +39,5 @@ func TestNavigationBarAnonymousClassAndFunctionExpressions(t *testing.T) {
     (class { });
 })`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name: "<function>",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name: "nest",
-					Kind: lsproto.SymbolKindFunction,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name:     "moreNest",
-							Kind:     lsproto.SymbolKindFunction,
-							Children: nil,
-						},
-					}),
-				},
-				{
-					Name: "x",
-					Kind: lsproto.SymbolKindVariable,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name:     "xx",
-							Kind:     lsproto.SymbolKindFunction,
-							Children: nil,
-						},
-					}),
-				},
-				{
-					Name: "y",
-					Kind: lsproto.SymbolKindVariable,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name:     "foo",
-							Kind:     lsproto.SymbolKindMethod,
-							Children: nil,
-						},
-					}),
-				},
-			}),
-		},
-		{
-			Name: "<function>",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "console.log() callback",
-					Kind:     lsproto.SymbolKindFunction,
-					Children: nil,
-				},
-				{
-					Name:     "describe(\"this\", 'function', `is a function`, `with template literal ${\"a\"}`) callback",
-					Kind:     lsproto.SymbolKindFunction,
-					Children: nil,
-				},
-				{
-					Name:     "map() callback",
-					Kind:     lsproto.SymbolKindFunction,
-					Children: nil,
-				},
-				{
-					Name:     "z",
-					Kind:     lsproto.SymbolKindFunction,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "classes",
-			Kind: lsproto.SymbolKindFunction,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "<class>",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-				{
-					Name:     "cls2",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-				{
-					Name:     "cls3",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name:     "cls",
-			Kind:     lsproto.SymbolKindClass,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

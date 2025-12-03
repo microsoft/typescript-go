@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -20,39 +19,7 @@ var {a} = 0;
 let {a: b} = 0;
 const [c] = 0;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "x",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "y",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "z",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "file2.ts")
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "a",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "b",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name:     "c",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

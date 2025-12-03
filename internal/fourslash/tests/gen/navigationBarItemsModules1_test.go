@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -39,71 +37,5 @@ module A {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "'X2.Y2.Z2'",
-			Kind:     lsproto.SymbolKindNamespace,
-			Children: nil,
-		},
-		{
-			Name:     "\"foo\"",
-			Kind:     lsproto.SymbolKindNamespace,
-			Children: nil,
-		},
-		{
-			Name:     "\"X.Y.Z\"",
-			Kind:     lsproto.SymbolKindNamespace,
-			Children: nil,
-		},
-		{
-			Name: "A",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name: "B",
-					Kind: lsproto.SymbolKindNamespace,
-					Children: PtrTo([]*lsproto.DocumentSymbol{
-						{
-							Name: "C",
-							Kind: lsproto.SymbolKindNamespace,
-							Children: PtrTo([]*lsproto.DocumentSymbol{
-								{
-									Name:     "x",
-									Kind:     lsproto.SymbolKindVariable,
-									Children: nil,
-								},
-							}),
-						},
-					}),
-				},
-				{
-					Name:     "z",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "A.B",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "y",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "A.B.C",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "x",
-					Kind:     lsproto.SymbolKindVariable,
-					Children: nil,
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

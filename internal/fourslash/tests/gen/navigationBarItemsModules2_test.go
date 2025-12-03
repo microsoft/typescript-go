@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -19,22 +17,5 @@ namespace Test.B {
     class Foo { }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "Test.A",
-			Kind:     lsproto.SymbolKindNamespace,
-			Children: nil,
-		},
-		{
-			Name: "Test.B",
-			Kind: lsproto.SymbolKindNamespace,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "Foo",
-					Kind:     lsproto.SymbolKindClass,
-					Children: nil,
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }

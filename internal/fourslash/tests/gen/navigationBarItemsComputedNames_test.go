@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -36,48 +34,5 @@ class C {
     },
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyStradaDocumentSymbol(t, []*lsproto.DocumentSymbol{
-		{
-			Name:     "a",
-			Kind:     lsproto.SymbolKindVariable,
-			Children: nil,
-		},
-		{
-			Name: "C",
-			Kind: lsproto.SymbolKindClass,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "[a]",
-					Kind:     lsproto.SymbolKindMethod,
-					Children: nil,
-				},
-				{
-					Name:     "[E.A]",
-					Kind:     lsproto.SymbolKindMethod,
-					Children: nil,
-				},
-				{
-					Name:     "[1]",
-					Kind:     lsproto.SymbolKindMethod,
-					Children: nil,
-				},
-				{
-					Name:     "[\"foo\"]",
-					Kind:     lsproto.SymbolKindMethod,
-					Children: nil,
-				},
-			}),
-		},
-		{
-			Name: "E",
-			Kind: lsproto.SymbolKindEnum,
-			Children: PtrTo([]*lsproto.DocumentSymbol{
-				{
-					Name:     "A",
-					Kind:     lsproto.SymbolKindEnumMember,
-					Children: nil,
-				},
-			}),
-		},
-	})
+	f.VerifyBaselineDocumentSymbol(t)
 }
