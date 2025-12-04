@@ -65,6 +65,10 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 }
 
 func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node) {
+	// Note: JSDocOverloadTag is intentionally not handled in this function.
+	// Overload information should remain in the JSDoc structure and be
+	// retrieved by the checker when needed, rather than creating synthetic
+	// top-level declarations that result in invalid AST structures.
 	switch tag.Kind {
 	case ast.KindJSDocTypedefTag:
 		typeExpression := tag.TypeExpression()
@@ -110,10 +114,6 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		)
 		p.finishReparsedNode(importDeclaration, tag)
 		p.reparseList = append(p.reparseList, importDeclaration)
-		// Note: JSDocOverloadTag is intentionally not handled here.
-		// Overload information should remain in the JSDoc structure and be
-		// retrieved by the checker when needed, rather than creating synthetic
-		// top-level declarations that result in invalid AST structures.
 	}
 }
 
