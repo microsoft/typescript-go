@@ -119,7 +119,7 @@
         "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --minify"
     },
     "dependencies": {
-        "vscode-languageclient": "^10.0.0-next.17"
+        "vscode-languageclient": "^10.0.0-next.18"
     },
     "devDependencies": {
         "@types/vscode": "^1.100.0",
