@@ -24325,9 +24325,6 @@ func (c *Checker) getConditionalFlowTypeOfType(t *Type, node *ast.Node) *Type {
 	covariant := true
 	for node != nil && !ast.IsStatement(node) && node.Kind != ast.KindJSDoc {
 		parent := node.Parent
-		if parent == nil {
-			break
-		}
 		// only consider variance flipped by parameter locations - `keyof` types would usually be considered variance inverting, but
 		// often get used in indexed accesses where they behave sortof invariantly, but our checking is lax
 		if ast.IsParameter(parent) {

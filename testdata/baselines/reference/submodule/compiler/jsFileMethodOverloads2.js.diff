@@ -29,37 +29,55 @@
 -     * @returns {string}
 -     */
 -    getTypeName(this: Example<string>): "string";
-+    /**
-+     * @overload
-+     * @param {Example<number>} this
-+     * @returns {'number'}
-+     *
-+     * @overload
-+     * @param {Example<string>} this
-+     * @returns {'string'}
-+     *
-+     * @returns {string}
-+     */
-+    getTypeName(this: Example<number>): 'number';
-+    /**
-+     * @overload
-+     * @param {Example<number>} this
-+     * @returns {'number'}
-+     *
-+     * @overload
-+     * @param {Example<string>} this
-+     * @returns {'string'}
-+     *
-+     * @returns {string}
-+     */
-+    getTypeName(this: Example<string>): 'string';
-     /**
-      * @template U
-      * @overload
-@@= skipped -50, +49 lines =@@
-      * @param {(y: T) => unknown} [fn]
-      * @returns {unknown}
-      */
+-    /**
+-     * @template U
+-     * @overload
+-     * @param {(y: T) => U} fn
+-     * @returns {U}
+-     *
+-     * @overload
+-     * @returns {T}
+-     *
+-     * @param {(y: T) => unknown} [fn]
+-     * @returns {unknown}
+-     */
+-    transform<U>(fn: (y: T) => U): U;
+-    /**
+-     * @template U
+-     * @overload
+-     * @param {(y: T) => U} fn
+-     * @returns {U}
+-     *
+-     * @overload
+-     * @returns {T}
+-     *
+-     * @param {(y: T) => unknown} [fn]
+-     * @returns {unknown}
+-     */
 -    transform<U>(): T;
-+    transform(): T;
++    /**
++     * @overload
++     * @param {Example<number>} this
++     * @returns {'number'}
++     *
++     * @overload
++     * @param {Example<string>} this
++     * @returns {'string'}
++     *
++     * @returns {string}
++     */
++    getTypeName(): string;
++    /**
++     * @template U
++     * @overload
++     * @param {(y: T) => U} fn
++     * @returns {U}
++     *
++     * @overload
++     * @returns {T}
++     *
++     * @param {(y: T) => unknown} [fn]
++     * @returns {unknown}
++     */
++    transform(fn?: (y: T) => unknown): unknown;
  }

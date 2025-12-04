@@ -74,7 +74,25 @@ var d = new Foo('str', 2);
 //// [overloadTag2.d.ts]
 export declare class Foo {
     #private;
-    constructor(a: string, b: number);
-    constructor(a: number);
-    constructor(a: string);
+    /**
+     * Should not have an implicit any error, because constructor's return type is always implicit
+     * @constructor
+     * @overload
+     * @param {string} a
+     * @param {number} b
+     */
+    /**
+     * @constructor
+     * @overload
+     * @param {number} a
+     */
+    /**
+     * @constructor
+     * @overload
+     * @param {string} a
+     */ /**
+    * @constructor
+    * @param {number | string} a
+    */
+    constructor(a: number | string, b: any);
 }

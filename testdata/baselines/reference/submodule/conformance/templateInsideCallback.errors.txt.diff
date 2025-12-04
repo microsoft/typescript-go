@@ -9,11 +9,9 @@
 +templateInsideCallback.js(15,16): error TS2304: Cannot find name 'T'.
  templateInsideCallback.js(17,18): error TS7006: Parameter 'x' implicitly has an 'any' type.
  templateInsideCallback.js(23,5): error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
-+templateInsideCallback.js(29,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
  templateInsideCallback.js(30,5): error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
 -templateInsideCallback.js(32,12): error TS2304: Cannot find name 'T'.
 -templateInsideCallback.js(33,16): error TS2304: Cannot find name 'T'.
-+templateInsideCallback.js(37,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
  templateInsideCallback.js(38,5): error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
 -templateInsideCallback.js(39,12): error TS2304: Cannot find name 'T'.
 -
@@ -25,7 +23,7 @@
 -==== templateInsideCallback.js (11 errors) ====
 +
 +
-+==== templateInsideCallback.js (9 errors) ====
++==== templateInsideCallback.js (7 errors) ====
      /**
       * @typedef Oops
 -                ~~~~
@@ -33,7 +31,7 @@
       * @template T
       * @property {T} a
       * @property {T} b
-@@= skipped -30, +21 lines =@@
+@@= skipped -30, +19 lines =@@
          ~~~~~~~~
  !!! error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
       * @param {T} x
@@ -51,14 +49,7 @@
       */
      const identity = x => x;
                       ~
-@@= skipped -18, +20 lines =@@
-     
-     /**
-      * @overload
-+        ~~~~~~~~
-+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-      * @template T
-         ~~~~~~~~
+@@= skipped -23, +25 lines =@@
  !!! error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
       * @template U
       * @param {T[]} array
@@ -70,10 +61,7 @@
       * @returns {U[]}
       */
      /**
-      * @overload
-+        ~~~~~~~~
-+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-      * @template T
+@@= skipped -13, +9 lines =@@
          ~~~~~~~~
  !!! error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
       * @param {T[][]} array

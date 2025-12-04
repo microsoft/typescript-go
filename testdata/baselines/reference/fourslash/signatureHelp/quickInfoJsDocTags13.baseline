@@ -23,12 +23,22 @@
 // f(1);
 //   ^
 // | ----------------------------------------------------------------------
-// | f(**a: number**): void
+// | f(**a: string | number**): void
+// | 
+// | 
+// | *@param* `a`
+// | 
+// | *@returns*
 // | ----------------------------------------------------------------------
 // f("");
 //   ^
 // | ----------------------------------------------------------------------
-// | f(**a: string**): void
+// | f(**a: string | number**): void
+// | 
+// | 
+// | *@param* `a`
+// | 
+// | *@returns*
 // | ----------------------------------------------------------------------
 [
   {
@@ -44,19 +54,14 @@
     "item": {
       "signatures": [
         {
-          "label": "f(a: number): void",
+          "label": "f(a: string | number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "\n\n*@param* `a`\n\n*@returns*"
+          },
           "parameters": [
             {
-              "label": "a: number"
-            }
-          ],
-          "activeParameter": 0
-        },
-        {
-          "label": "f(a: string): void",
-          "parameters": [
-            {
-              "label": "a: string"
+              "label": "a: string | number"
             }
           ],
           "activeParameter": 0
@@ -78,25 +83,20 @@
     "item": {
       "signatures": [
         {
-          "label": "f(a: number): void",
+          "label": "f(a: string | number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "\n\n*@param* `a`\n\n*@returns*"
+          },
           "parameters": [
             {
-              "label": "a: number"
-            }
-          ],
-          "activeParameter": 0
-        },
-        {
-          "label": "f(a: string): void",
-          "parameters": [
-            {
-              "label": "a: string"
+              "label": "a: string | number"
             }
           ],
           "activeParameter": 0
         }
       ],
-      "activeSignature": 1
+      "activeSignature": 0
     }
   }
 ]

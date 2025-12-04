@@ -110,10 +110,10 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		)
 		p.finishReparsedNode(importDeclaration, tag)
 		p.reparseList = append(p.reparseList, importDeclaration)
-	case ast.KindJSDocOverloadTag:
-		if fun, ok := getFunctionLikeHost(parent); ok {
-			p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
-		}
+		// Note: JSDocOverloadTag is intentionally not handled here.
+		// Overload information should remain in the JSDoc structure and be
+		// retrieved by the checker when needed, rather than creating synthetic
+		// top-level declarations that result in invalid AST structures.
 	}
 }
 
