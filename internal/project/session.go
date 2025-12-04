@@ -404,6 +404,8 @@ func (s *Session) getSnapshot(
 		updateReason = UpdateReasonRequestedLanguageServiceProjectDirty
 	} else if request.ProjectTree != nil {
 		updateReason = UpdateReasonRequestedLoadProjectTree
+	} else if request.AutoImports != "" {
+		updateReason = UpdateReasonRequestedLanguageServiceWithAutoImports
 	} else {
 		for _, document := range request.Documents {
 			if snapshot.fs.isOpenFile(document.FileName()) {
@@ -509,9 +511,8 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 // default project of that URI. It should only be called after GetLanguageService.
 // !!! take snapshot that GetLanguageService initially returned
 func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
-	snapshot := s.UpdateSnapshot(ctx, s.fs.Overlays(), SnapshotChange{
-		reason:             UpdateReasonRequestedLanguageServiceWithAutoImports,
-		prepareAutoImports: uri,
+	snapshot := s.getSnapshot(ctx, ResourceRequest{
+		AutoImports: uri,
 	})
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {

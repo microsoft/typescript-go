@@ -28,13 +28,15 @@ import (
 )
 
 type RegistryBucket struct {
-	// !!! determine if dirty is only a package.json change, possible no-op if dependencies match
-	dirty              bool
-	Paths              map[tspath.Path]struct{}
+	dirty     bool
+	dirtyFile tspath.Path
+	Paths     map[tspath.Path]struct{}
+	// !!! only need to store locations outside the current node_modules directory
+	//     if we always rebuild whole directory on any change inside
 	LookupLocations    map[tspath.Path]struct{}
 	PackageNames       *collections.Set[string]
-	AmbientModuleNames map[string][]string
 	DependencyNames    *collections.Set[string]
+	AmbientModuleNames map[string][]string
 	Entrypoints        map[tspath.Path][]*module.ResolvedEntrypoint
 	Index              *Index[*Export]
 }
@@ -42,13 +44,34 @@ type RegistryBucket struct {
 func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
 		dirty:              b.dirty,
+		dirtyFile:          b.dirtyFile,
 		Paths:              b.Paths,
 		LookupLocations:    b.LookupLocations,
-		AmbientModuleNames: b.AmbientModuleNames,
+		PackageNames:       b.PackageNames,
 		DependencyNames:    b.DependencyNames,
+		AmbientModuleNames: b.AmbientModuleNames,
 		Entrypoints:        b.Entrypoints,
 		Index:              b.Index,
 	}
+}
+
+// markFileDirty should only be called within a Change call on the dirty map.
+// Buckets are considered immutable once in a finalized registry.
+func (b *RegistryBucket) markFileDirty(file tspath.Path) {
+	if !b.dirty && b.dirtyFile == "" {
+		b.dirtyFile = file
+	} else if b.dirtyFile != file {
+		b.dirtyFile = ""
+	}
+	b.dirty = true
+}
+
+func (b *RegistryBucket) hasDirtyFileBesides(file tspath.Path) bool {
+	return b.dirty && b.dirtyFile != file
+}
+
+func (b *RegistryBucket) canGetDirtier() bool {
+	return !b.dirty || b.dirty && b.dirtyFile != ""
 }
 
 type directory struct {
@@ -129,10 +152,13 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 }
 
 type BucketStats struct {
-	Path        tspath.Path
-	ExportCount int
-	FileCount   int
-	Dirty       bool
+	Path            tspath.Path
+	ExportCount     int
+	FileCount       int
+	Dirty           bool
+	DirtyFile       tspath.Path
+	DependencyNames *collections.Set[string]
+	PackageNames    *collections.Set[string]
 }
 
 type CacheStats struct {
@@ -149,10 +175,13 @@ func (r *Registry) GetCacheStats() *CacheStats {
 			exportCount = len(bucket.Index.entries)
 		}
 		stats.ProjectBuckets = append(stats.ProjectBuckets, BucketStats{
-			Path:        path,
-			ExportCount: exportCount,
-			FileCount:   len(bucket.Paths),
-			Dirty:       bucket.dirty,
+			Path:            path,
+			ExportCount:     exportCount,
+			FileCount:       len(bucket.Paths),
+			Dirty:           bucket.dirty,
+			DirtyFile:       bucket.dirtyFile,
+			DependencyNames: bucket.DependencyNames,
+			PackageNames:    bucket.PackageNames,
 		})
 	}
 
@@ -162,10 +191,13 @@ func (r *Registry) GetCacheStats() *CacheStats {
 			exportCount = len(bucket.Index.entries)
 		}
 		stats.NodeModulesBuckets = append(stats.NodeModulesBuckets, BucketStats{
-			Path:        path,
-			ExportCount: exportCount,
-			FileCount:   len(bucket.Paths),
-			Dirty:       bucket.dirty,
+			Path:            path,
+			ExportCount:     exportCount,
+			FileCount:       len(bucket.Paths),
+			Dirty:           bucket.dirty,
+			DirtyFile:       bucket.dirtyFile,
+			DependencyNames: bucket.DependencyNames,
+			PackageNames:    bucket.PackageNames,
 		})
 	}
 
@@ -291,27 +323,33 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 	}
 
-	updateDirectory := func(dirPath tspath.Path, dirName string) {
+	updateDirectory := func(dirPath tspath.Path, dirName string, packageJsonChanged bool) {
 		packageJsonFileName := tspath.CombinePaths(dirName, "package.json")
-		packageJson := b.host.GetPackageJson(packageJsonFileName)
 		hasNodeModules := b.host.FS().DirectoryExists(tspath.CombinePaths(dirName, "node_modules"))
 		if entry, ok := b.directories.Get(dirPath); ok {
 			entry.ChangeIf(func(dir *directory) bool {
-				return dir.packageJson != packageJson || dir.hasNodeModules != hasNodeModules
+				return packageJsonChanged || dir.hasNodeModules != hasNodeModules
 			}, func(dir *directory) {
-				dir.packageJson = packageJson
+				dir.packageJson = b.host.GetPackageJson(packageJsonFileName)
 				dir.hasNodeModules = hasNodeModules
 			})
 		} else {
 			b.directories.Add(dirPath, &directory{
 				name:           dirName,
-				packageJson:    packageJson,
+				packageJson:    b.host.GetPackageJson(packageJsonFileName),
 				hasNodeModules: hasNodeModules,
 			})
 		}
+
+		if packageJsonChanged {
+			// package.json changes affecting node_modules are handled by comparing dependencies in updateIndexes
+			return
+		}
+
+		// !!! this function is called updateBucketAndDirectoryExistence but it's marking buckets dirty too...
 		if hasNodeModules {
-			if hasNodeModulesEntry, ok := b.nodeModules.Get(dirPath); ok {
-				hasNodeModulesEntry.ChangeIf(func(bucket *RegistryBucket) bool {
+			if nodeModulesEntry, ok := b.nodeModules.Get(dirPath); ok {
+				nodeModulesEntry.ChangeIf(func(bucket *RegistryBucket) bool {
 					return !bucket.dirty
 				}, func(bucket *RegistryBucket) {
 					bucket.dirty = true
@@ -335,7 +373,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		func(dirPath tspath.Path, dirName string) {
 			// Need and don't have
 			hadNodeModules := b.base.nodeModules[dirPath] != nil
-			updateDirectory(dirPath, dirName)
+			updateDirectory(dirPath, dirName, false)
 			if logger != nil {
 				logger.Logf("Added directory: %s", dirPath)
 			}
@@ -357,7 +395,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		},
 		func(dirPath tspath.Path, dir *directory, dirName string) {
 			// package.json may have changed
-			updateDirectory(dirPath, dirName)
+			updateDirectory(dirPath, dirName, true)
 			if logger != nil {
 				logger.Logf("Changed directory: %s", dirPath)
 			}
@@ -379,13 +417,13 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 	cleanNodeModulesBuckets := make(map[tspath.Path]struct{})
 	cleanProjectBuckets := make(map[tspath.Path]struct{})
 	b.nodeModules.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
-		if !entry.Value().dirty {
+		if entry.Value().canGetDirtier() {
 			cleanNodeModulesBuckets[entry.Key()] = struct{}{}
 		}
 		return true
 	})
 	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
-		if !entry.Value().dirty {
+		if entry.Value().canGetDirtier() {
 			cleanProjectBuckets[entry.Key()] = struct{}{}
 		}
 		return true
@@ -403,20 +441,27 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 				if nodeModulesIndex := strings.Index(string(path), "/node_modules/"); nodeModulesIndex != -1 {
 					dirPath := path[:nodeModulesIndex]
 					if _, ok := cleanNodeModulesBuckets[dirPath]; ok {
-						b.nodeModules.Change(dirPath, func(bucket *RegistryBucket) { bucket.dirty = true })
-						delete(cleanNodeModulesBuckets, dirPath)
+						entry := core.FirstResult(b.nodeModules.Get(dirPath))
+						entry.Change(func(bucket *RegistryBucket) { bucket.markFileDirty(path) })
+						if !entry.Value().canGetDirtier() {
+							delete(cleanNodeModulesBuckets, dirPath)
+						}
 					}
 				}
 			}
 			// For projects, mark the bucket dirty if the bucket contains the file directly or as a lookup location
 			for projectDirPath := range cleanProjectBuckets {
 				entry, _ := b.projects.Get(projectDirPath)
-				if _, ok := entry.Value().Paths[path]; ok {
-					b.projects.Change(projectDirPath, func(bucket *RegistryBucket) { bucket.dirty = true })
-					delete(cleanProjectBuckets, projectDirPath)
-				} else if _, ok := entry.Value().LookupLocations[path]; ok {
-					b.projects.Change(projectDirPath, func(bucket *RegistryBucket) { bucket.dirty = true })
-					delete(cleanProjectBuckets, projectDirPath)
+				var update bool
+				_, update = entry.Value().Paths[path]
+				if !update {
+					_, update = entry.Value().LookupLocations[path]
+				}
+				if update {
+					entry.Change(func(bucket *RegistryBucket) { bucket.markFileDirty(path) })
+					if !entry.Value().canGetDirtier() {
+						delete(cleanProjectBuckets, projectDirPath)
+					}
 				}
 			}
 		}
@@ -442,9 +487,17 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 		})
 		for _, path := range dirtyNodeModulesPaths {
 			logger.Logf("Dirty node_modules bucket: %s", path)
+			dirtyFile := core.FirstResult(b.nodeModules.Get(path)).Value().dirtyFile
+			if dirtyFile != "" {
+				logger.Logf("\tedits in: %s", dirtyFile)
+			}
 		}
 		for _, path := range dirtyProjectPaths {
 			logger.Logf("Dirty project bucket: %s", path)
+			dirtyFile := core.FirstResult(b.projects.Get(path)).Value().dirtyFile
+			if dirtyFile != "" {
+				logger.Logf("\tedits in: %s", dirtyFile)
+			}
 		}
 		logger.Logf("Marked buckets dirty in %v", time.Since(start))
 	}
@@ -468,9 +521,11 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 
 	tspath.ForEachAncestorDirectoryPath(change.RequestedFile, func(dirPath tspath.Path) (any, bool) {
 		if nodeModulesBucket, ok := b.nodeModules.Get(dirPath); ok {
+			// !!! don't do this unless dependencies could have possibly changed?
+			//     I don't know, it's probably pretty cheap
 			dirName := core.FirstResult(b.directories.Get(dirPath)).Value().name
 			dependencies := b.computeDependenciesForNodeModulesDirectory(change, dirName, dirPath)
-			if nodeModulesBucket.Value().dirty || !nodeModulesBucket.Value().DependencyNames.Equals(dependencies) {
+			if nodeModulesBucket.Value().hasDirtyFileBesides(change.RequestedFile) || !nodeModulesBucket.Value().DependencyNames.Equals(dependencies) {
 				task := &task{entry: nodeModulesBucket, dependencyNames: dependencies}
 				tasks = append(tasks, task)
 				wg.Go(func() {
@@ -496,7 +551,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 
 	if project, ok := b.projects.Get(projectPath); ok {
-		if project.Value().dirty {
+		if project.Value().hasDirtyFileBesides(change.RequestedFile) {
 			task := &task{entry: project}
 			tasks = append(tasks, task)
 			wg.Go(func() {

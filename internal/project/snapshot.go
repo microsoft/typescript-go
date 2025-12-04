@@ -156,6 +156,8 @@ type ResourceRequest struct {
 	// This is used to compute the solution and project tree so that
 	// we can find references across all the projects in the solution irrespective of which project is open
 	ProjectTree *ProjectTreeRequest
+	// AutoImports is the document URI for which auto imports should be prepared.
+	AutoImports lsproto.DocumentUri
 }
 
 type SnapshotChange struct {
@@ -169,9 +171,8 @@ type SnapshotChange struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	newConfig                          *Config
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
-	ataChanges         map[tspath.Path]*ATAStateChange
-	apiRequest         *APISnapshotRequest
-	prepareAutoImports lsproto.DocumentUri
+	ataChanges map[tspath.Path]*ATAStateChange
+	apiRequest *APISnapshotRequest
 }
 
 type Config struct {
@@ -360,8 +361,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		oldAutoImports = autoimport.NewRegistry(s.toPath)
 	}
 	prepareAutoImports := tspath.Path("")
-	if change.prepareAutoImports != "" {
-		prepareAutoImports = change.prepareAutoImports.Path(s.UseCaseSensitiveFileNames())
+	if change.ResourceRequest.AutoImports != "" {
+		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
 	}
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
 		RequestedFile: prepareAutoImports,
