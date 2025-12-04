@@ -606,12 +606,12 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 	}
 
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
-	
+
 	// When renaming, check if the result is nil (e.g., due to other errors)
 	if isRename && symbolsAndEntries == nil {
 		return node, nil, false
 	}
-	
+
 	return node, symbolsAndEntries, true
 }
 
