@@ -49,5 +49,3 @@ export default function getExePath() {
 
     return exe;
 }
-
-
