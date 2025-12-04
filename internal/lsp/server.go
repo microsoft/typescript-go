@@ -555,6 +555,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareRenameInfo, (*Server).handlePrepareRename)
 
 	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
@@ -979,7 +980,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Boolean: ptrTo(true),
 			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
-				Boolean: ptrTo(true),
+				RenameOptions: &lsproto.RenameOptions{
+					PrepareProvider: ptrTo(true),
+				},
 			},
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: ptrTo(true),
@@ -1280,6 +1283,10 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.RenameResponse, error) {
 	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+}
+
+func (s *Server) handlePrepareRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.PrepareRenameParams) (lsproto.PrepareRenameResponse, error) {
+	return ls.ProvidePrepareRename(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
