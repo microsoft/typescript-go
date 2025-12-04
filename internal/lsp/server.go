@@ -1347,14 +1347,13 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	defer s.recover(reqMsg)
-
 	// For references code lens, use multi-project search to find all references across projects
 	if codeLens.Data.Kind == lsproto.CodeLensKindReferences {
 		return s.resolveReferencesCodeLensAcrossProjects(ctx, codeLens)
 	}
 
 	// For other code lens kinds (like implementations), use the single-project resolution
+	defer s.recover(reqMsg)
 	ls, err := s.session.GetLanguageService(ctx, codeLens.Data.Uri)
 	if err != nil {
 		return nil, err
@@ -1447,7 +1446,7 @@ func (s *Server) resolveReferencesCodeLensAcrossProjects(ctx context.Context, co
 			} else {
 				errMu.Lock()
 				defer errMu.Unlock()
-				if err != nil {
+				if err == nil {
 					err = errSearch
 				}
 			}
