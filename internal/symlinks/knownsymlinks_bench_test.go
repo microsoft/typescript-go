@@ -15,8 +15,7 @@ func BenchmarkPopulateSymlinksFromResolutions(b *testing.B) {
 		deps[i].resolved = "/real/pkg" + string(rune('A'+i)) + "/index.js"
 	}
 
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		for _, dep := range deps {
 			cache.ProcessResolution(dep.orig, dep.resolved)
 		}
@@ -27,8 +26,7 @@ func BenchmarkSetFile(b *testing.B) {
 	cache := NewKnownSymlink("/project", true)
 	path := tspath.ToPath("/project/file.ts", "/project", true)
 
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		cache.SetFile(path, "/real/file.ts")
 	}
 }
@@ -41,8 +39,7 @@ func BenchmarkSetDirectory(b *testing.B) {
 		RealPath: tspath.ToPath("/real/path", "/project", true).EnsureTrailingDirectorySeparator(),
 	}
 
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		cache.SetDirectory("/project/symlink", symlinkPath, realDir)
 	}
 }
@@ -50,8 +47,7 @@ func BenchmarkSetDirectory(b *testing.B) {
 func BenchmarkGuessDirectorySymlink(b *testing.B) {
 	cache := NewKnownSymlink("/project", true)
 
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		cache.guessDirectorySymlink(
 			"/real/node_modules/package/dist/index.js",
 			"/project/symlink/package/dist/index.js",
