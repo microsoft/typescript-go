@@ -1,8 +1,6 @@
 package autoimport
 
 import (
-	"sync"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -14,35 +12,29 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type failedAmbientModuleLookupSource struct {
-	mu          sync.Mutex
-	fileName    string
-	packageName string
-}
-
 type aliasResolver struct {
 	toPath         func(fileName string) tspath.Path
 	host           RegistryCloneHost
 	moduleResolver *module.Resolver
 
-	rootFiles []*ast.SourceFile
-
-	// !!! if I make an aliasResolver per file, this probably becomes less kludgy
-	resolvedModules                          collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
-	possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
-	possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
+	rootFiles                   []*ast.SourceFile
+	onFailedAmbientModuleLookup func(source ast.HasFileName, moduleName string)
+	resolvedModules             collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
 }
 
-func newAliasResolver(rootFileNames []string, host RegistryCloneHost, moduleResolver *module.Resolver, toPath func(fileName string) tspath.Path) *aliasResolver {
+func newAliasResolver(
+	rootFiles []*ast.SourceFile,
+	host RegistryCloneHost,
+	moduleResolver *module.Resolver,
+	toPath func(fileName string) tspath.Path,
+	onFailedAmbientModuleLookup func(source ast.HasFileName, moduleName string),
+) *aliasResolver {
 	r := &aliasResolver{
-		toPath:         toPath,
-		host:           host,
-		moduleResolver: moduleResolver,
-		rootFiles:      make([]*ast.SourceFile, 0, len(rootFileNames)),
-	}
-	for _, fileName := range rootFileNames {
-		// !!! if we don't end up storing files in the ParseCache, this would be repeated
-		r.rootFiles = append(r.rootFiles, r.GetSourceFile(fileName))
+		toPath:                      toPath,
+		host:                        host,
+		moduleResolver:              moduleResolver,
+		rootFiles:                   rootFiles,
+		onFailedAmbientModuleLookup: onFailedAmbientModuleLookup,
 	}
 	return r
 }
@@ -119,10 +111,7 @@ func (r *aliasResolver) GetResolvedModule(currentSourceFile ast.HasFileName, mod
 	// !!! failed lookup locations
 	// !!! also successful lookup locations, for that matter, need to cause invalidation
 	if !resolved.IsResolved() && !tspath.PathIsRelative(moduleReference) {
-		r.possibleFailedAmbientModuleLookupTargets.Add(moduleReference)
-		r.possibleFailedAmbientModuleLookupSources.LoadOrStore(currentSourceFile.Path(), &failedAmbientModuleLookupSource{
-			fileName: currentSourceFile.FileName(),
-		})
+		r.onFailedAmbientModuleLookup(currentSourceFile, moduleReference)
 	}
 	return resolved
 }

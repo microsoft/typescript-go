@@ -527,22 +527,25 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		if t.result.possibleFailedAmbientModuleLookupTargets == nil {
 			continue
 		}
-		rootFiles := make(map[string]struct{})
+		rootFiles := make(map[string]*ast.SourceFile)
 		for target := range t.result.possibleFailedAmbientModuleLookupTargets.Keys() {
 			for _, fileName := range b.resolveAmbientModuleName(target, t.entry.Key()) {
-				rootFiles[fileName] = struct{}{}
+				if _, exists := rootFiles[fileName]; exists {
+					continue
+				}
+				// !!! parallelize?
+				rootFiles[fileName] = b.host.GetSourceFile(fileName, b.base.toPath(fileName))
 				secondPassFileCount++
 			}
 		}
 		if len(rootFiles) > 0 {
-			// !!! parallelize?
-			aliasResolver := newAliasResolver(slices.Collect(maps.Keys(rootFiles)), b.host, b.resolver, b.base.toPath)
+			aliasResolver := newAliasResolver(slices.Collect(maps.Values(rootFiles)), b.host, b.resolver, b.base.toPath, func(source ast.HasFileName, moduleName string) {
+				// no-op
+			})
 			ch, _ := checker.NewChecker(aliasResolver)
 			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
-				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, func() (*checker.Checker, func()) {
-					return ch, func() {}
-				})
+				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, ch)
 				fileExports := extractor.extractFromFile(sourceFile)
 				t.result.bucket.Paths[path] = struct{}{}
 				for _, exp := range fileExports {
@@ -559,6 +562,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		logger.Logf("Built %d indexes in %v", len(tasks), time.Since(start))
 	}
+}
+
+type failedAmbientModuleLookupSource struct {
+	mu          sync.Mutex
+	fileName    string
+	packageName string
 }
 
 type bucketBuildResult struct {
@@ -578,15 +587,15 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	var mu sync.Mutex
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
-	exports := make(map[tspath.Path][]*Export)
-	var wg sync.WaitGroup
 	getChecker, closePool := b.createCheckerPool(program)
 	defer closePool()
-	extractor := b.newExportExtractor("", "", getChecker)
+	exports := make(map[tspath.Path][]*Export)
+	var wg sync.WaitGroup
 	var ambientIncludedPackages collections.Set[string]
+	var combinedStats extractorStats
 	unresolvedPackageNames := program.UnresolvedPackageNames()
 	if unresolvedPackageNames.Len() > 0 {
-		checker, done := getChecker()
+		checker, done := program.GetTypeChecker(ctx)
 		for name := range unresolvedPackageNames.Keys() {
 			if symbol := checker.TryFindAmbientModule(name); symbol != nil {
 				declaringFile := ast.GetSourceFileOfModule(symbol)
@@ -620,10 +629,16 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 			if ctx.Err() == nil {
 				// !!! we could consider doing ambient modules / augmentations more directly
 				// from the program checker, instead of doing the syntax-based collection
+				checker, done := getChecker()
+				defer done()
+				extractor := b.newExportExtractor("", "", checker)
 				fileExports := extractor.extractFromFile(file)
 				mu.Lock()
 				exports[file.Path()] = fileExports
 				mu.Unlock()
+				stats := extractor.Stats()
+				atomic.AddInt32(&combinedStats.exports, stats.exports)
+				atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
 			}
 		})
 	}
@@ -645,8 +660,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	result.bucket.Index = idx
 
 	if logger != nil {
-		stats := extractor.Stats()
-		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), stats.exports, stats.usedChecker)
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker)
 		logger.Logf("Built index: %v", time.Since(indexStart))
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
@@ -693,10 +707,8 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 		return nil, err
 	}
 
+	extractorStart := time.Now()
 	packageNames := core.Coalesce(dependencies, directoryPackageNames)
-	aliasResolver := newAliasResolver(nil, b.host, b.resolver, b.base.toPath)
-	getChecker, closePool := b.createCheckerPool(aliasResolver)
-	defer closePool()
 
 	var exportsMu sync.Mutex
 	exports := make(map[tspath.Path][]*Export)
@@ -705,34 +717,32 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 	var entrypointsMu sync.Mutex
 	var entrypoints []*module.ResolvedEntrypoints
 	var combinedStats extractorStats
+	var possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
+	var possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 
-	processFile := func(fileName string, path tspath.Path, packageName string) {
-		sourceFile := b.host.GetSourceFile(fileName, path)
-		binder.BindSourceFile(sourceFile)
-		extractor := b.newExportExtractor(dirPath, packageName, getChecker)
-		fileExports := extractor.extractFromFile(sourceFile)
-		if logger != nil {
-			stats := extractor.Stats()
-			atomic.AddInt32(&combinedStats.exports, stats.exports)
-			atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
+	createAliasResolver := func(packageName string, entrypoints []*module.ResolvedEntrypoint) *aliasResolver {
+		rootFiles := make([]*ast.SourceFile, len(entrypoints))
+		var wg sync.WaitGroup
+		for i, entrypoint := range entrypoints {
+			wg.Go(func() {
+				// !!! if we don't end up storing files in the ParseCache, this would be repeated during second-pass extraction
+				file := b.host.GetSourceFile(entrypoint.ResolvedFileName, b.base.toPath(entrypoint.ResolvedFileName))
+				binder.BindSourceFile(file)
+				rootFiles[i] = file
+			})
 		}
-		exportsMu.Lock()
-		defer exportsMu.Unlock()
-		for _, name := range sourceFile.AmbientModuleNames {
-			ambientModuleNames[name] = append(ambientModuleNames[name], fileName)
-		}
-		if source, ok := aliasResolver.possibleFailedAmbientModuleLookupSources.Load(sourceFile.Path()); !ok {
-			// If we failed to resolve any ambient modules from this file, we'll try the
-			// whole file again later, so don't add anything now.
-			exports[path] = fileExports
-		} else {
-			// Record the package name so we can use it later during the second pass
-			// !!! perhaps we could store the whole set of partial exports and avoid
-			//     repeating some work
-			source.mu.Lock()
-			source.packageName = packageName
-			source.mu.Unlock()
-		}
+		wg.Wait()
+
+		rootFiles = slices.DeleteFunc(rootFiles, func(f *ast.SourceFile) bool {
+			return f == nil
+		})
+
+		return newAliasResolver(rootFiles, b.host, b.resolver, b.base.toPath, func(source ast.HasFileName, moduleName string) {
+			possibleFailedAmbientModuleLookupTargets.Add(moduleName)
+			possibleFailedAmbientModuleLookupSources.LoadOrStore(source.Path(), &failedAmbientModuleLookupSource{
+				fileName: source.FileName(),
+			})
+		})
 	}
 
 	var wg sync.WaitGroup
@@ -749,31 +759,53 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 				packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			}
 			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
-			if packageEntrypoints == nil {
+			if packageEntrypoints == nil || len(packageEntrypoints.Entrypoints) == 0 {
 				return
 			}
 			entrypointsMu.Lock()
 			entrypoints = append(entrypoints, packageEntrypoints)
 			entrypointsMu.Unlock()
 
+			aliasResolver := createAliasResolver(packageName, packageEntrypoints.Entrypoints)
+			checker, _ := checker.NewChecker(aliasResolver)
+			extractor := b.newExportExtractor(dirPath, packageName, checker)
 			seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
-			for _, entrypoint := range packageEntrypoints.Entrypoints {
-				path := b.base.toPath(entrypoint.ResolvedFileName)
-				if !seenFiles.AddIfAbsent(path) {
+			for _, entrypoint := range aliasResolver.rootFiles {
+				if !seenFiles.AddIfAbsent(entrypoint.Path()) {
 					continue
 				}
 
-				wg.Go(func() {
-					if ctx.Err() != nil {
-						return
-					}
-					processFile(entrypoint.ResolvedFileName, path, packageName)
-				})
+				if ctx.Err() != nil {
+					return
+				}
+
+				fileExports := extractor.extractFromFile(entrypoint)
+				exportsMu.Lock()
+				for _, name := range entrypoint.AmbientModuleNames {
+					ambientModuleNames[name] = append(ambientModuleNames[name], entrypoint.FileName())
+				}
+				if source, ok := possibleFailedAmbientModuleLookupSources.Load(entrypoint.Path()); !ok {
+					// If we failed to resolve any ambient modules from this file, we'll try the
+					// whole file again later, so don't add anything now.
+					exports[entrypoint.Path()] = fileExports
+				} else {
+					// Record the package name so we can use it later during the second pass
+					// !!! perhaps we could store the whole set of partial exports and avoid
+					//     repeating some work
+					source.mu.Lock()
+					source.packageName = packageName
+					source.mu.Unlock()
+				}
+				exportsMu.Unlock()
+			}
+			if logger != nil {
+				stats := extractor.Stats()
+				atomic.AddInt32(&combinedStats.exports, stats.exports)
+				atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
 			}
 		})
 	}
 
-	extractorStart := time.Now()
 	wg.Wait()
 
 	indexStart := time.Now()
@@ -787,8 +819,8 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
 			LookupLocations:    make(map[tspath.Path]struct{}),
 		},
-		possibleFailedAmbientModuleLookupSources: &aliasResolver.possibleFailedAmbientModuleLookupSources,
-		possibleFailedAmbientModuleLookupTargets: &aliasResolver.possibleFailedAmbientModuleLookupTargets,
+		possibleFailedAmbientModuleLookupSources: &possibleFailedAmbientModuleLookupSources,
+		possibleFailedAmbientModuleLookupTargets: &possibleFailedAmbientModuleLookupTargets,
 	}
 	for path, fileExports := range exports {
 		result.bucket.Paths[path] = struct{}{}

@@ -20,7 +20,7 @@ type symbolExtractor struct {
 	stats                *extractorStats
 
 	localNameResolver *binder.NameResolver
-	getChecker        func() (*checker.Checker, func())
+	checker           *checker.Checker
 }
 
 type exportExtractor struct {
@@ -39,34 +39,27 @@ func (e *exportExtractor) Stats() extractorStats {
 }
 
 type checkerLease struct {
-	getChecker func() (*checker.Checker, func())
-	checker    *checker.Checker
-	release    func()
+	used    bool
+	checker *checker.Checker
 }
 
 func (l *checkerLease) GetChecker() *checker.Checker {
-	if l.checker == nil {
-		l.checker, l.release = l.getChecker()
-	}
+	l.used = true
 	return l.checker
 }
 
 func (l *checkerLease) TryChecker() *checker.Checker {
-	return l.checker
-}
-
-func (l *checkerLease) Done() {
-	if l.release != nil {
-		l.release()
-		l.release = nil
+	if l.used {
+		return l.checker
 	}
+	return nil
 }
 
-func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) *symbolExtractor {
+func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker) *symbolExtractor {
 	return &symbolExtractor{
 		nodeModulesDirectory: nodeModulesDirectory,
 		packageName:          packageName,
-		getChecker:           getChecker,
+		checker:              checker,
 		localNameResolver: &binder.NameResolver{
 			CompilerOptions: core.EmptyCompilerOptions,
 		},
@@ -74,9 +67,9 @@ func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, ge
 	}
 }
 
-func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, getChecker func() (*checker.Checker, func())) *exportExtractor {
+func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker) *exportExtractor {
 	return &exportExtractor{
-		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, getChecker),
+		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, checker),
 		moduleResolver:  b.resolver,
 		toPath:          b.base.toPath,
 	}
@@ -146,10 +139,8 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 	}
 
 	if name == ast.InternalSymbolNameExportStar {
-		checkerLease := &checkerLease{getChecker: e.getChecker}
-		defer checkerLease.Done()
-		checker := checkerLease.GetChecker()
-		allExports := checker.GetExportsOfModule(symbol.Parent)
+		checkerLease := &checkerLease{checker: e.checker}
+		allExports := e.checker.GetExportsOfModule(symbol.Parent)
 		// allExports includes named exports from the file that will be processed separately;
 		// we want to add only the ones that come from the star
 		for name, namedExport := range symbol.Parent.Exports {
@@ -173,8 +164,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 	}
 
 	syntax := getSyntax(symbol)
-	checkerLease := &checkerLease{getChecker: e.getChecker}
-	defer checkerLease.Done()
+	checkerLease := &checkerLease{checker: e.checker}
 	export, target := e.createExport(symbol, moduleID, syntax, file, checkerLease)
 	if export == nil {
 		return
