@@ -71,7 +71,7 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false)
+	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
 	assert.Assert(t, ok)
 	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
 	assert.NilError(t, err)
@@ -146,7 +146,7 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false)
+	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
 	assert.Assert(t, ok)
 	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
 	assert.NilError(t, err)

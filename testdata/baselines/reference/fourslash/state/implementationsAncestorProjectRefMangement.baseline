@@ -162,10 +162,74 @@ Config File Names::
   }
 }
 
+Projects::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *new*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
+  [/projects/container/lib/tsconfig.json] 
+    /projects/container/lib/index.ts  
+    /projects/container/lib/bar.ts    
+  [/projects/container/tsconfig.json] *modified*
+  [/projects/temp/tsconfig.json] 
+    /projects/temp/temp.ts  
+Open Files::
+  [/projects/container/lib/index.ts] *modified*
+    /projects/container/compositeExec/tsconfig.json  *new*
+    /projects/container/exec/tsconfig.json           *new*
+    /projects/container/lib/tsconfig.json            (default) 
+  [/projects/temp/temp.ts] 
+    /projects/temp/tsconfig.json  (default) 
+Config::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/compositeExec/tsconfig.json  
+      /projects/container/tsconfig.json                
+  [/projects/container/exec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/exec/tsconfig.json  
+      /projects/container/tsconfig.json       
+  [/projects/container/lib/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /projects/container/compositeExec/tsconfig.json  *new*
+      /projects/container/exec/tsconfig.json           *new*
+      /projects/container/lib/tsconfig.json            
+      /projects/container/tsconfig.json                *new*
+    RetainingOpenFiles:
+      /projects/container/lib/index.ts  
+  [/projects/container/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/tsconfig.json  
+  [/projects/temp/tsconfig.json] 
+    RetainingProjects:
+      /projects/temp/tsconfig.json  
+    RetainingOpenFiles:
+      /projects/temp/temp.ts  
+
 
 
 
 // === goToImplementation ===
+// === /projects/container/compositeExec/index.ts ===
+// import { Foo } from "../lib";
+// <|class [|A2|] implements Foo {
+//     func() {}
+// }|>
+// <|class [|B2|] implements Foo {
+//     func() {}
+// }|>
+
+// === /projects/container/exec/index.ts ===
+// import { Foo } from "../lib";
+// <|class [|A1|] implements Foo {
+//     func() {}
+// }|>
+// <|class [|B1|] implements Foo {
+//     func() {}
+// }|>
+
 // === /projects/container/lib/bar.ts ===
 // import {Foo} from './index'
 // <|class [|A|] implements Foo {
@@ -191,7 +255,9 @@ Config File Names::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *closed*
 
 {
@@ -208,7 +274,9 @@ Open Files::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 
@@ -251,6 +319,12 @@ Open Files::
 }
 
 Projects::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
   [/projects/container/lib/tsconfig.json] *deleted*
     /projects/container/lib/index.ts  
     /projects/container/lib/bar.ts    
@@ -261,7 +335,10 @@ Open Files::
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 Config::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+  [/projects/container/exec/tsconfig.json] *deleted*
   [/projects/container/lib/tsconfig.json] *deleted*
+  [/projects/container/tsconfig.json] *deleted*
   [/projects/temp/tsconfig.json] 
     RetainingProjects:
       /projects/temp/tsconfig.json  

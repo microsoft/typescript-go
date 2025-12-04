@@ -576,7 +576,7 @@ func (l *LanguageService) ForEachOriginalDefinitionLocation(
 	}
 }
 
-func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool) (*ast.Node, []*SymbolAndEntries, bool) {
+func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (*ast.Node, []*SymbolAndEntries, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
@@ -586,15 +586,57 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		return node, nil, false
 	}
 
+	entries := l.getSymbolAndEntries(ctx, position, node, program, isRename, implementations)
+	if !implementations {
+		return node, entries, true
+	}
+
+	var implementationEntries []*SymbolAndEntries
+	var queue []*ReferenceEntry
+	var seenNodes collections.Set[*ast.Node]
+	addToQueue := func(symbolAndEntries []*SymbolAndEntries) {
+		implementationEntries = core.Concatenate(implementationEntries, symbolAndEntries)
+		for _, s := range symbolAndEntries {
+			queue = append(queue, s.references...)
+		}
+	}
+
+	addToQueue(entries)
+	for len(queue) != 0 {
+		if ctx.Err() != nil {
+			return nil, nil, false
+		}
+
+		entry := queue[0]
+		queue = queue[1:]
+		if !seenNodes.Has(entry.node) {
+			seenNodes.Add(entry.node)
+			addToQueue(l.getSymbolAndEntries(ctx, entry.node.Pos(), entry.node, program, isRename, implementations))
+		}
+	}
+
+	return node, implementationEntries, true
+}
+
+func (l *LanguageService) getSymbolAndEntries(
+	ctx context.Context,
+	position int,
+	node *ast.Node,
+	program *compiler.Program,
+	isRename bool,
+	implementations bool,
+) []*SymbolAndEntries {
 	var options refOptions
 	if !isRename {
 		options.use = referenceUseReferences
+		if implementations {
+			options.implementations = true
+		}
 	} else {
 		options.use = referenceUseRename
 		options.useAliasesForRename = true
 	}
-
-	return node, l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil), true
+	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 }
 
 func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
@@ -605,8 +647,23 @@ func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Cont
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
-	return l.provideImplementationsEx(ctx, params, provideImplementationsOpts{})
+func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context.Context, params *lsproto.ImplementationParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ImplementationResponse, error) {
+	var seenNodes collections.Set[*ast.Node]
+	var entries []*ReferenceEntry
+	for _, entry := range symbolsAndEntries {
+		for _, ref := range entry.references {
+			if seenNodes.AddIfAbsent(ref.node) {
+				entries = append(entries, ref)
+			}
+		}
+	}
+
+	if lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
+		links := l.convertEntriesToLocationLinks(entries)
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
+	}
+	locations := l.convertEntriesToLocations(entries)
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
 type provideImplementationsOpts struct {

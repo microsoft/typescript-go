@@ -539,7 +539,6 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
@@ -555,6 +554,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations, combineImplementations)
 
 	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
@@ -656,7 +656,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*Server, context.Context, *ls.LanguageService, Req, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
-	combineResults func(iter.Seq[Resp]) Resp,
+	combineResults func(iter.Seq[*Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
@@ -699,7 +699,10 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 						return
 					}
 				}
-				originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename)
+				originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename, info.Method == lsproto.MethodTextDocumentImplementation)
+				if ctx.Err() != nil {
+					return
+				}
 				if ok {
 					for _, entry := range symbolsAndEntries {
 						// Find the default definition that can be in another project
@@ -760,11 +763,11 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			}
 		}
 
-		getResultsIterator := func() iter.Seq[Resp] {
-			return func(yield func(Resp) bool) {
+		getResultsIterator := func() iter.Seq[*Resp] {
+			return func(yield func(*Resp) bool) {
 				var seenProjects collections.SyncSet[tspath.Path]
 				if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-					if !yield(response.result) {
+					if !yield(&response.result) {
 						return
 					}
 				}
@@ -772,7 +775,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				for _, project := range allProjects {
 					if seenProjects.AddIfAbsent(project.Id()) {
 						if response, loaded := results.Load(project.Id()); loaded && response.complete {
-							if !yield(response.result) {
+							if !yield(&response.result) {
 								return
 							}
 						}
@@ -781,14 +784,14 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				// Prefer the searches from locations for default definition
 				results.Range(func(key tspath.Path, response *response[Resp]) bool {
 					if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-						return yield(response.result)
+						return yield(&response.result)
 					}
 					return true
 				})
 				// Then the searches from original locations
 				results.Range(func(key tspath.Path, response *response[Resp]) bool {
 					if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-						return yield(response.result)
+						return yield(&response.result)
 					}
 					return true
 				})
@@ -865,7 +868,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		} else {
 			// Single result, return that directly
 			for value := range getResultsIterator() {
-				resp = value
+				resp = *value
 				break
 			}
 		}
@@ -1190,25 +1193,54 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
+func combineLocationArray[T lsproto.HasLocation](
+	combined []T,
+	locations *[]T,
+	seen *collections.Set[lsproto.Location],
+) []T {
+	for _, loc := range *locations {
+		if seen.AddIfAbsent(loc.GetLocation()) {
+			combined = append(combined, loc)
+		}
+	}
+	return combined
+}
+
+func combineResponseLocations[T lsproto.HasLocations](results iter.Seq[T]) *[]lsproto.Location {
 	var combined []lsproto.Location
 	var seenLocations collections.Set[lsproto.Location]
 	for resp := range results {
-		if resp.Locations != nil {
-			for _, loc := range *resp.Locations {
-				if !seenLocations.Has(loc) {
-					seenLocations.Add(loc)
+		if locations := resp.GetLocations(); locations != nil {
+			for _, loc := range *locations {
+				if seenLocations.AddIfAbsent(loc) {
 					combined = append(combined, loc)
 				}
 			}
 		}
 	}
-	return lsproto.LocationsOrNull{Locations: &combined}
+	return &combined
 }
 
-func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
+func combineReferences(results iter.Seq[*lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
+	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
+}
+
+func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params)
+	return ls.ProvideImplementationsFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+}
+
+func combineImplementations(results iter.Seq[*lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
+	var combined []*lsproto.LocationLink
+	var seenLocations collections.Set[lsproto.Location]
+	for resp := range results {
+		if definitionLinks := resp.DefinitionLinks; definitionLinks != nil {
+			combined = combineLocationArray(combined, definitionLinks, &seenLocations)
+		} else if locations := resp.Locations; locations != nil {
+			return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: combineResponseLocations(results)}
+		}
+	}
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &combined}
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -1282,7 +1314,7 @@ func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, param
 	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
+func combineRenameResponse(results iter.Seq[*lsproto.RenameResponse]) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
 	// !!! this is not used any more so we will skip this part of deduplication and combining

@@ -77,7 +77,7 @@ func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto
 	var lensTitle string
 	switch codeLens.Data.Kind {
 	case lsproto.CodeLensKindReferences:
-		origNode, symbolsAndEntries, ok := l.ProvideSymbolsAndEntries(ctx, uri, codeLens.Range.Start, false /*isRename*/)
+		origNode, symbolsAndEntries, ok := l.ProvideSymbolsAndEntries(ctx, uri, codeLens.Range.Start, false /*isRename*/, false /*implementations*/)
 		if ok {
 			references, err := l.ProvideReferencesFromSymbolAndEntries(
 				ctx,
