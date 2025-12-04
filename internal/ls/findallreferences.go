@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -583,11 +584,14 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
-	// For rename, check eligibility after adjusting location
-	// Note: getReferencedSymbolsForNode will also call getAdjustedLocation, but we need
-	// to check eligibility here first to fail fast
+	// For rename, check if node could potentially be eligible after adjustment
+	// This is a preliminary check; full validation happens later
 	if isRename {
+		// Apply location adjustment to handle keywords shifting to identifiers
 		adjustedNode := getAdjustedLocation(node, true /*forRename*/, sourceFile)
+		// Only reject nodes that are definitely not renameable (like syntax tokens)
+		// Allow nodes that might be renameable (identifiers, literals, this, etc.)
+		// The detailed symbol validation will happen later in the flow
 		if !nodeIsEligibleForRename(adjustedNode) {
 			return adjustedNode, nil, false
 		}
@@ -662,8 +666,10 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 }
 
 func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
-	if originalNode.Kind != ast.KindIdentifier {
-		return lsproto.WorkspaceEditOrNull{}, nil
+	// Check if ProvideSymbolsAndEntries returned ok=false or no symbols found
+	// Return an error to inform the user that rename is not available
+	if symbolsAndEntries == nil || len(symbolsAndEntries) == 0 {
+		return lsproto.WorkspaceEditOrNull{}, fmt.Errorf("%s", diagnostics.You_cannot_rename_this_element)
 	}
 
 	program := l.GetProgram()
@@ -683,64 +689,6 @@ func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context,
 		WorkspaceEdit: &lsproto.WorkspaceEdit{
 			Changes: &changes,
 		},
-	}, nil
-}
-
-// ProvidePrepareRename provides information for rename preparation.
-// This checks if the location is eligible for renaming and returns the range and placeholder.
-func (l *LanguageService) ProvidePrepareRename(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position) (lsproto.PrepareRenameResponse, error) {
-	program, sourceFile := l.getProgramAndFile(uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
-
-	// Get the node at the position (can include keywords)
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
-
-	// Adjust the location for rename (e.g., from 'class' keyword to class name)
-	adjustedNode := getAdjustedLocation(node, true /*forRename*/, sourceFile)
-
-	// Check if the adjusted node is eligible for rename
-	if !nodeIsEligibleForRename(adjustedNode) {
-		// Return null to indicate rename is not available
-		return lsproto.PrepareRenameResponse{}, nil
-	}
-
-	// Get the symbol to validate this is renameable
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-	symbol := checker.GetSymbolAtLocation(adjustedNode)
-
-	// Check special cases like string literals and labels
-	if symbol == nil {
-		if ast.IsStringLiteralLike(adjustedNode) {
-			// For string literals, we could check contextual type, but for now
-			// we allow rename if nodeIsEligibleForRename already passed
-			textRange := core.NewTextRange(adjustedNode.Pos(), adjustedNode.End())
-			lspRange := l.converters.ToLSPRange(sourceFile, textRange)
-			return lsproto.PrepareRenameResponse{
-				Range: &lspRange,
-			}, nil
-		} else if ast.IsLabelName(adjustedNode) {
-			// Allow rename for labels
-			textRange := core.NewTextRange(adjustedNode.Pos(), adjustedNode.End())
-			lspRange := l.converters.ToLSPRange(sourceFile, textRange)
-			return lsproto.PrepareRenameResponse{
-				Range: &lspRange,
-			}, nil
-		}
-		// No symbol and not a special case - cannot rename
-		return lsproto.PrepareRenameResponse{}, nil
-	}
-
-	// Check if symbol has declarations
-	if symbol.Declarations == nil || len(symbol.Declarations) == 0 {
-		return lsproto.PrepareRenameResponse{}, nil
-	}
-
-	// Return the range for renaming
-	textRange := core.NewTextRange(adjustedNode.Pos(), adjustedNode.End())
-	lspRange := l.converters.ToLSPRange(sourceFile, textRange)
-	return lsproto.PrepareRenameResponse{
-		Range: &lspRange,
 	}, nil
 }
 
