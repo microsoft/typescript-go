@@ -1,0 +1,5 @@
+// === Code Lenses ===
+// === /a/src/foo.ts ===
+// export function /*CODELENS: 1 reference*/aaa() {}
+// [|aaa|]();
+// 
