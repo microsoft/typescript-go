@@ -14,6 +14,7 @@ func TestNavigationBarImports(t *testing.T) {
 	const content = `import a, {b} from "m";
 import c = require("m");
 import * as d from "m";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

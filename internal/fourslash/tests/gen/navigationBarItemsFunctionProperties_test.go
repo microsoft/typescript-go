@@ -16,6 +16,7 @@ var A;
 A/*1*/
 .a = function() { };
 })();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

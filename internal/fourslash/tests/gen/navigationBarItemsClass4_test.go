@@ -15,6 +15,7 @@ func TestNavigationBarItemsClass4(t *testing.T) {
 // @filename: /foo.js
 class Foo {}
 function Foo() {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

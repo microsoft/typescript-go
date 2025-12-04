@@ -19,7 +19,8 @@ export default class C { }
 export default function { }
 // @Filename: d.ts
 export default function Func { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "a.ts")
 	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "b.ts")

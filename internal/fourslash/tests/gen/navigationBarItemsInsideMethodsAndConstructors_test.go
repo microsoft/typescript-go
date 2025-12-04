@@ -28,6 +28,7 @@ func TestNavigationBarItemsInsideMethodsAndConstructors(t *testing.T) {
 
     emptyMethod() { } // Non child functions method should not be duplicated
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

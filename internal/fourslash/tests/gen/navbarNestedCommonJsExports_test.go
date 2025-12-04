@@ -14,6 +14,7 @@ func TestNavbarNestedCommonJsExports(t *testing.T) {
 	const content = `// @allowJs: true
 // @Filename: /a.js
 exports.a = exports.b = exports.c = 0;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

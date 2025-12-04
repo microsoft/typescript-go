@@ -16,6 +16,7 @@ func TestNavigationBarItemsSymbols1(t *testing.T) {
     [Symbol.iterator]() { }
     get [Symbol.isConcatSpreadable]() { }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

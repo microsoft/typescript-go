@@ -49,6 +49,7 @@ module Shapes {
 // Local variables
 var p: IPoint = new Shapes.Point(3, 4);
 var dist = p.getDist();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

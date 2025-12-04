@@ -15,6 +15,7 @@ func TestNavigationBarInitializerSpans(t *testing.T) {
 const [|[|x|] = () => { var [|a|]; }|];
 const [|[|f|] = function f() { var [|b|]; }|];
 const [|[|y|] = { [|[|z|]: function z() { var [|c|]; }|] }|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

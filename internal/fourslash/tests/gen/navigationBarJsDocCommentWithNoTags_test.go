@@ -13,6 +13,7 @@ func TestNavigationBarJsDocCommentWithNoTags(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** Test */
 export const Test = {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

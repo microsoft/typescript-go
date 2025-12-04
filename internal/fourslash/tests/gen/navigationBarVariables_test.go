@@ -18,7 +18,8 @@ const z = 2;
 var {a} = 0;
 let {a: b} = 0;
 const [c] = 0;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "file2.ts")
 	f.VerifyBaselineDocumentSymbol(t)

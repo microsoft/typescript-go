@@ -16,6 +16,7 @@ func TestNavigationBarItemsClass6(t *testing.T) {
 Z.foo = 42
 
 class Z { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

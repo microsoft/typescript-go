@@ -24,6 +24,7 @@ class c1 {
 f(() => { }, ` + "`" + `unterminated backtick 1
 unterminated backtick 2
 unterminated backtick 3`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

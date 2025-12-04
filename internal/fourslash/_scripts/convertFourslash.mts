@@ -2421,7 +2421,7 @@ function getSymbolKindWorker(kind: string): string {
         case "string":
             return "SymbolKindString";
         case "type":
-            return "SymbolKindInterface";
+            return "SymbolKindClass";
         default:
             return "SymbolKindVariable";
     }

@@ -18,6 +18,7 @@ let foo1, {a, b}
 const bar1, [c, d]
 var {e, x: [f, g]} = {a:1, x:[]};
 var { h: i = function j() {} } = obj;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

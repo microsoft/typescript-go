@@ -22,6 +22,7 @@ import d2, { c, d as D } from "a"
 import e = require("a");
 
 import * as ns from "a";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

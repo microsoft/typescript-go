@@ -27,7 +27,8 @@ class Foo {
 	#privateMethod() {}
 }
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "second.ts")
 	f.VerifyBaselineDocumentSymbol(t)

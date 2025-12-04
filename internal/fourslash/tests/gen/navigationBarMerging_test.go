@@ -38,7 +38,8 @@ module a {
 // @Filename: file4.ts
 module A { export var x; }
 module A.B { export var y; }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToFile(t, "file2.ts")
 	f.VerifyBaselineDocumentSymbol(t)

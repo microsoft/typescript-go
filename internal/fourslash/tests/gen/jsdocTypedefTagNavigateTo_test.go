@@ -20,7 +20,8 @@ var NumberLike2;
 
 /** @type {/*1*/NumberLike} */
 var numberLike;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.MarkTestAsStradaServer()
 	f.VerifyBaselineDocumentSymbol(t)
 }

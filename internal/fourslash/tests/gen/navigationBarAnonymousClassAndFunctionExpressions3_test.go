@@ -20,6 +20,7 @@ const b = 2;
 describe('foo', () => {
     test(` + "`" + `a ${a} b {b}` + "`" + `, () => {})
 })`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

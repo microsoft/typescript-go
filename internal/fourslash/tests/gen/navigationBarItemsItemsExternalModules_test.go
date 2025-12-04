@@ -14,6 +14,7 @@ func TestNavigationBarItemsItemsExternalModules(t *testing.T) {
 	const content = `export class Bar {
     public s: string;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

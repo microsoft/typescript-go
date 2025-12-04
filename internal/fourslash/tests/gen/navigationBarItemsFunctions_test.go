@@ -27,6 +27,7 @@ func TestNavigationBarItemsFunctions(t *testing.T) {
 function baz() {
     var v = 10;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

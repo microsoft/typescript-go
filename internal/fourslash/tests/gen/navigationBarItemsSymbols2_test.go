@@ -15,6 +15,7 @@ func TestNavigationBarItemsSymbols2(t *testing.T) {
     [Symbol.isRegExp]: string;
     [Symbol.iterator](): string;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

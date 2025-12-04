@@ -15,6 +15,7 @@ func TestNavigationBarItemsNamedArrowFunctions(t *testing.T) {
 export const func = () => 2;
 export const func2 = function() { };
 export function exportedFunction() { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

@@ -26,7 +26,8 @@ module Module1.SubModule {
 module Module1 {
     export var z = 0;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "file1")
 	f.VerifyBaselineDocumentSymbol(t)
 	f.GoToMarker(t, "file2")
