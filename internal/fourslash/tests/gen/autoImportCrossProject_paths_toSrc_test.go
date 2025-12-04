@@ -44,7 +44,9 @@ import "./sub/folder";
 export const dep1 = 0;
 // @Filename: /home/src/workspaces/project/packages/dep/src/sub/folder/index.ts
 export const dep2 = 0;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "1")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { dep1 } from "dep";
