@@ -607,7 +607,7 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 
-	// When renaming, check if the result is nil (e.g., due to other errors)
+	// When renaming, if symbolsAndEntries is nil (e.g., from blocking a library symbol rename), return false
 	if isRename && symbolsAndEntries == nil {
 		return node, nil, false
 	}
@@ -673,11 +673,12 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 }
 
 func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
+	// Early return if the node is not an identifier (can't be renamed)
 	if originalNode.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
-	// If symbolsAndEntries is nil (e.g., due to attempting to rename a standard library symbol), return null
+	// Early return if symbolsAndEntries is nil (e.g., rename was blocked for a standard library symbol)
 	if symbolsAndEntries == nil {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
