@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -669,7 +670,7 @@ func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context,
 	// Check if ProvideSymbolsAndEntries returned ok=false or no symbols found
 	// Return an error to inform the user that rename is not available
 	if symbolsAndEntries == nil || len(symbolsAndEntries) == 0 {
-		return lsproto.WorkspaceEditOrNull{}, fmt.Errorf("%s", diagnostics.You_cannot_rename_this_element)
+		return lsproto.WorkspaceEditOrNull{}, fmt.Errorf(diagnostics.You_cannot_rename_this_element.Localize(locale.FromContext(ctx)))
 	}
 
 	program := l.GetProgram()
