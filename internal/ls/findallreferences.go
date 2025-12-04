@@ -586,6 +586,17 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		return node, nil, false
 	}
 
+	// For rename operations, check if we're trying to rename a standard library symbol
+	if isRename {
+		checker, done := program.GetTypeChecker(ctx)
+		symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
+		done()
+		if symbol != nil && isDefinedInLibraryFile(program, symbol) {
+			// Disallow rename for elements that are defined in the standard TypeScript library
+			return node, nil, false
+		}
+	}
+
 	var options refOptions
 	if !isRename {
 		options.use = referenceUseReferences
@@ -594,7 +605,14 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		options.useAliasesForRename = true
 	}
 
-	return node, l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil), true
+	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+	
+	// When renaming, check if the result is nil (e.g., due to other errors)
+	if isRename && symbolsAndEntries == nil {
+		return node, nil, false
+	}
+	
+	return node, symbolsAndEntries, true
 }
 
 func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
@@ -656,6 +674,11 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 
 func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
 	if originalNode.Kind != ast.KindIdentifier {
+		return lsproto.WorkspaceEditOrNull{}, nil
+	}
+
+	// If symbolsAndEntries is nil (e.g., due to attempting to rename a standard library symbol), return null
+	if symbolsAndEntries == nil {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -942,6 +965,27 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 
 	references := getReferencedSymbolsForSymbol(symbol, node, sourceFiles, sourceFilesSet, checker, options) // !!! cancellationToken
 	return l.mergeReferences(program, moduleReferences, references, moduleReferencesOfExportTarget)
+}
+
+// isDefinedInLibraryFile checks if a symbol is defined ONLY in the standard TypeScript library.
+// Returns true only if ALL declarations are in library files.
+func isDefinedInLibraryFile(program *compiler.Program, symbol *ast.Symbol) bool {
+	if symbol.Declarations == nil || len(symbol.Declarations) == 0 {
+		return false
+	}
+	// Check if ALL declarations are in library files
+	for _, declaration := range symbol.Declarations {
+		sourceFile := ast.GetSourceFileOfNode(declaration)
+		if sourceFile == nil {
+			return false
+		}
+		if !program.IsSourceFileDefaultLibrary(sourceFile.Path()) || !tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionDts) {
+			// Found a non-library declaration, so it's not purely a library symbol
+			return false
+		}
+	}
+	// All declarations are in library files
+	return true
 }
 
 func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx context.Context, symbol *ast.Symbol, program *compiler.Program, sourceFiles []*ast.SourceFile, checker *checker.Checker, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
