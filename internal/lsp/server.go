@@ -893,7 +893,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	}
 
 	s.initializeParams = params
-	s.clientCapabilities = resolveClientCapabilities(params.Capabilities)
+	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
 
 	if _, err := fmt.Fprint(s.stderr, "Resolved client capabilities: "); err != nil {
 		return nil, err
@@ -1422,30 +1422,4 @@ func isBlockingMethod(method lsproto.Method) bool {
 
 func ptrTo[T any](v T) *T {
 	return &v
-}
-
-func resolveClientCapabilities(caps *lsproto.ClientCapabilities) lsproto.ResolvedClientCapabilities {
-	resolved := lsproto.ResolveClientCapabilities(caps)
-
-	// Some clients claim that push and pull diagnostics have different capabilities,
-	// including vscode-languageclient v9. Work around this by defaulting any missing
-	// pull diagnostic caps with the pull diagnostic equivalents.
-	//
-	// TODO: remove when we upgrade to vscode-languageclient v10, which fixes this issue.
-	publish := resolved.TextDocument.PublishDiagnostics
-	diagnostic := &resolved.TextDocument.Diagnostic
-	if !diagnostic.RelatedInformation && publish.RelatedInformation {
-		diagnostic.RelatedInformation = true
-	}
-	if !diagnostic.CodeDescriptionSupport && publish.CodeDescriptionSupport {
-		diagnostic.CodeDescriptionSupport = true
-	}
-	if !diagnostic.DataSupport && publish.DataSupport {
-		diagnostic.DataSupport = true
-	}
-	if len(diagnostic.TagSupport.ValueSet) == 0 && len(publish.TagSupport.ValueSet) > 0 {
-		diagnostic.TagSupport.ValueSet = publish.TagSupport.ValueSet
-	}
-
-	return resolved
 }
