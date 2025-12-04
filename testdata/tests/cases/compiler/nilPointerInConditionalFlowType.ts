@@ -1,17 +1,28 @@
 // @allowJs: true
 // @checkJs: true
-// @declaration: true
 // @outDir: ./out
 // @filename: test.js
-class MyClass {
-    /**
-     * @param {string | undefined} param1
-     * @param {number} param2
-     * @param {boolean} param3
-     */
-    myMethod(param1, param2, param3) {
-        if (param1) {
-            console.log(param1);
-        }
-    }
-}
+
+const foo = {
+	/**
+	 * @overload
+	 * @param {string} termCode
+	 * @param {string[]} crnList
+	 * @param {string} sis
+	 * @returns {Record<string, string>}
+	 */
+	/**
+	 * @overload
+	 * @param {string} termCode
+	 * @param {string} crn
+	 * @param {string} sis
+	 * @returns {string}
+	 */
+	/**
+	 * @param {string} termCode
+	 * @param {string | string[]} crnList
+	 * @param {string} sis
+	 * @returns {string | Record<string, string>}
+	 */
+	getStatus(termCode, crnList, sis) {},
+};

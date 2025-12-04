@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/nilPointerInConditionalFlowType.ts] ////
+
+=== test.js ===
+const foo = {
+>foo : Symbol(foo, Decl(test.js, 0, 5))
+
+	/**
+	 * @overload
+	 * @param {string} termCode
+	 * @param {string[]} crnList
+	 * @param {string} sis
+	 * @returns {Record<string, string>}
+	 */
+	/**
+	 * @overload
+	 * @param {string} termCode
+	 * @param {string} crn
+	 * @param {string} sis
+	 * @returns {string}
+	 */
+	/**
+	 * @param {string} termCode
+	 * @param {string | string[]} crnList
+	 * @param {string} sis
+	 * @returns {string | Record<string, string>}
+	 */
+	getStatus(termCode, crnList, sis) {},
+>getStatus : Symbol(getStatus, Decl(test.js, 0, 13))
+>termCode : Symbol(termCode, Decl(test.js, 21, 11))
+>crnList : Symbol(crnList, Decl(test.js, 21, 20))
+>sis : Symbol(sis, Decl(test.js, 21, 29))
+
+};
+

@@ -1,0 +1,30 @@
+test.js(20,15): error TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+
+
+==== test.js (1 errors) ====
+    const foo = {
+    	/**
+    	 * @overload
+    	 * @param {string} termCode
+    	 * @param {string[]} crnList
+    	 * @param {string} sis
+    	 * @returns {Record<string, string>}
+    	 */
+    	/**
+    	 * @overload
+    	 * @param {string} termCode
+    	 * @param {string} crn
+    	 * @param {string} sis
+    	 * @returns {string}
+    	 */
+    	/**
+    	 * @param {string} termCode
+    	 * @param {string | string[]} crnList
+    	 * @param {string} sis
+    	 * @returns {string | Record<string, string>}
+    	             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+    	 */
+    	getStatus(termCode, crnList, sis) {},
+    };
+    
