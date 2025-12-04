@@ -26,7 +26,7 @@ foo(/*1*/);
 bar(a, a == '' ? /*2*/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	
+
 	// Test marker 1 - should have Foo preselected
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -44,7 +44,7 @@ bar(a, a == '' ? /*2*/);`
 			},
 		},
 	})
-	
+
 	// Test marker 2 - should have Foo preselected (this is the bug)
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
