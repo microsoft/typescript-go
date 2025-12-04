@@ -69,6 +69,10 @@ type FourslashTest struct {
 	// Async message handling
 	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
 	pendingRequestsMu sync.Mutex
+
+	// Semantic token configuration
+	semanticTokenTypes     []string
+	semanticTokenModifiers []string
 }
 
 type scriptInfo struct {
@@ -228,17 +232,19 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:          server,
-		in:              inputWriter,
-		out:             outputReader,
-		testData:        &testData,
-		userPreferences: lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
-		vfs:             fs,
-		scriptInfos:     scriptInfos,
-		converters:      converters,
-		baselines:       make(map[baselineCommand]*strings.Builder),
-		openFiles:       make(map[string]struct{}),
-		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		server:                 server,
+		in:                     inputWriter,
+		out:                    outputReader,
+		testData:               &testData,
+		userPreferences:        lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		vfs:                    fs,
+		scriptInfos:            scriptInfos,
+		converters:             converters,
+		baselines:              make(map[baselineCommand]*strings.Builder),
+		openFiles:              make(map[string]struct{}),
+		pendingRequests:        make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		semanticTokenTypes:     defaultSemanticTokenTypes(),
+		semanticTokenModifiers: defaultSemanticTokenModifiers(),
 	}
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -452,6 +458,50 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	<-f.server.InitComplete()
 }
 
+func defaultSemanticTokenTypes() []string {
+	return []string{
+		string(lsproto.SemanticTokenTypeNamespace),
+		string(lsproto.SemanticTokenTypeClass),
+		string(lsproto.SemanticTokenTypeEnum),
+		string(lsproto.SemanticTokenTypeInterface),
+		string(lsproto.SemanticTokenTypeStruct),
+		string(lsproto.SemanticTokenTypeTypeParameter),
+		string(lsproto.SemanticTokenTypeType),
+		string(lsproto.SemanticTokenTypeParameter),
+		string(lsproto.SemanticTokenTypeVariable),
+		string(lsproto.SemanticTokenTypeProperty),
+		string(lsproto.SemanticTokenTypeEnumMember),
+		string(lsproto.SemanticTokenTypeDecorator),
+		string(lsproto.SemanticTokenTypeEvent),
+		string(lsproto.SemanticTokenTypeFunction),
+		string(lsproto.SemanticTokenTypeMethod),
+		string(lsproto.SemanticTokenTypeMacro),
+		string(lsproto.SemanticTokenTypeLabel),
+		string(lsproto.SemanticTokenTypeComment),
+		string(lsproto.SemanticTokenTypeString),
+		string(lsproto.SemanticTokenTypeKeyword),
+		string(lsproto.SemanticTokenTypeNumber),
+		string(lsproto.SemanticTokenTypeRegexp),
+		string(lsproto.SemanticTokenTypeOperator),
+	}
+}
+
+func defaultSemanticTokenModifiers() []string {
+	return []string{
+		string(lsproto.SemanticTokenModifierDeclaration),
+		string(lsproto.SemanticTokenModifierDefinition),
+		string(lsproto.SemanticTokenModifierReadonly),
+		string(lsproto.SemanticTokenModifierStatic),
+		string(lsproto.SemanticTokenModifierDeprecated),
+		string(lsproto.SemanticTokenModifierAbstract),
+		string(lsproto.SemanticTokenModifierAsync),
+		string(lsproto.SemanticTokenModifierModification),
+		string(lsproto.SemanticTokenModifierDocumentation),
+		string(lsproto.SemanticTokenModifierDefaultLibrary),
+		"local",
+	}
+}
+
 var (
 	ptrTrue                       = ptrTo(true)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
@@ -515,6 +565,18 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 					lsproto.DiagnosticTagDeprecated,
 				},
 			},
+		}
+	}
+	if capabilitiesWithDefaults.TextDocument.SemanticTokens == nil {
+		capabilitiesWithDefaults.TextDocument.SemanticTokens = &lsproto.SemanticTokensClientCapabilities{
+			Requests: &lsproto.ClientSemanticTokensRequestOptions{
+				Full: &lsproto.BooleanOrClientSemanticTokensRequestFullDelta{
+					Boolean: ptrTrue,
+				},
+			},
+			TokenTypes:     defaultSemanticTokenTypes(),
+			TokenModifiers: defaultSemanticTokenModifiers(),
+			Formats:        []lsproto.TokenFormat{lsproto.TokenFormatRelative},
 		}
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
