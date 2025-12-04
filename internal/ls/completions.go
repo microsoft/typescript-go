@@ -2952,6 +2952,23 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 			return typeChecker.GetContextualTypeForJsxAttribute(parent.Parent)
 		}
 		return nil
+	case ast.KindQuestionToken:
+		// When completing after `?` in a ternary conditional (e.g., `foo(a ? /*here*/)`),
+		// we need to look at the parent conditional expression to find the contextual type.
+		if ast.IsConditionalExpression(parent) {
+			// Use the conditional expression itself to get contextual type
+			argInfo := getArgumentInfoForCompletions(parent, position, file, typeChecker)
+			if argInfo != nil {
+				return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
+			}
+			// Fall through to regular contextual type logic if not in an argument
+			contextualType := typeChecker.GetContextualType(parent, checker.ContextFlagsCompletions)
+			if contextualType != nil {
+				return contextualType
+			}
+			return typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+		}
+		return nil
 	default:
 		argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
 		if argInfo != nil {
