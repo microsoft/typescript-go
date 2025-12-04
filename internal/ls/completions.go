@@ -2923,6 +2923,21 @@ func isStaticProperty(symbol *ast.Symbol) bool {
 		ast.IsClassLike(symbol.ValueDeclaration.Parent)
 }
 
+// getContextualTypeForConditionalExpression handles completion within a conditional expression
+// (ternary operator) by using the parent expression to find the contextual type.
+func getContextualTypeForConditionalExpression(conditionalExpr *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *checker.Type {
+	argInfo := getArgumentInfoForCompletions(conditionalExpr, position, file, typeChecker)
+	if argInfo != nil {
+		return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
+	}
+	// Fall through to regular contextual type logic if not in an argument
+	contextualType := typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsCompletions)
+	if contextualType != nil {
+		return contextualType
+	}
+	return typeChecker.GetContextualType(conditionalExpr, checker.ContextFlagsNone)
+}
+
 func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *checker.Type {
 	parent := previousToken.Parent
 	switch previousToken.Kind {
@@ -2956,17 +2971,7 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		// When completing after `?` in a ternary conditional (e.g., `foo(a ? /*here*/)`),
 		// we need to look at the parent conditional expression to find the contextual type.
 		if ast.IsConditionalExpression(parent) {
-			// Use the conditional expression itself to get contextual type
-			argInfo := getArgumentInfoForCompletions(parent, position, file, typeChecker)
-			if argInfo != nil {
-				return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
-			}
-			// Fall through to regular contextual type logic if not in an argument
-			contextualType := typeChecker.GetContextualType(parent, checker.ContextFlagsCompletions)
-			if contextualType != nil {
-				return contextualType
-			}
-			return typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+			return getContextualTypeForConditionalExpression(parent, position, file, typeChecker)
 		}
 		return nil
 	case ast.KindColonToken:
@@ -2975,17 +2980,7 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		// Only handle this if parent is ConditionalExpression, otherwise fall through to default
 		// (colons are used in other contexts like object literals, type annotations, etc.)
 		if ast.IsConditionalExpression(parent) {
-			// Use the conditional expression itself to get contextual type
-			argInfo := getArgumentInfoForCompletions(parent, position, file, typeChecker)
-			if argInfo != nil {
-				return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
-			}
-			// Fall through to regular contextual type logic if not in an argument
-			contextualType := typeChecker.GetContextualType(parent, checker.ContextFlagsCompletions)
-			if contextualType != nil {
-				return contextualType
-			}
-			return typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+			return getContextualTypeForConditionalExpression(parent, position, file, typeChecker)
 		}
 		// Fall through to default for other colon contexts (object literals, etc.)
 		fallthrough
