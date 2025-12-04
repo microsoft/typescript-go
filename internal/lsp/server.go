@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -1346,13 +1347,264 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
+	defer s.recover(reqMsg)
+
+	// For references code lens, use multi-project search to find all references across projects
+	if codeLens.Data.Kind == lsproto.CodeLensKindReferences {
+		return s.resolveReferencesCodeLensAcrossProjects(ctx, codeLens)
+	}
+
+	// For other code lens kinds (like implementations), use the single-project resolution
 	ls, err := s.session.GetLanguageService(ctx, codeLens.Data.Uri)
 	if err != nil {
 		return nil, err
 	}
-	defer s.recover(reqMsg)
 
 	return ls.ResolveCodeLens(ctx, codeLens, s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName)
+}
+
+func (s *Server) resolveReferencesCodeLensAcrossProjects(ctx context.Context, codeLens *lsproto.CodeLens) (*lsproto.CodeLens, error) {
+	// Use multi-project search similar to handleReferences
+	uri := codeLens.Data.Uri
+	position := codeLens.Range.Start
+
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+
+	// Collect references from all relevant projects
+	var results collections.SyncMap[tspath.Path, *response[lsproto.ReferencesResponse]]
+	var defaultDefinition *ls.NonLocalDefinition
+	canSearchProject := func(project *project.Project) bool {
+		_, searched := results.Load(project.Id())
+		return !searched
+	}
+	wg := core.NewWorkGroup(false)
+	var errMu sync.Mutex
+	var enqueueItem func(item projectAndTextDocumentPosition)
+	enqueueItem = func(item projectAndTextDocumentPosition) {
+		var response response[lsproto.ReferencesResponse]
+		if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
+			return
+		}
+		wg.Queue(func() {
+			if ctx.Err() != nil {
+				return
+			}
+			// Process the item
+			ls := item.ls
+			if ls == nil {
+				// Get it now
+				ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
+				if ls == nil {
+					return
+				}
+			}
+			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, false /*isRename*/)
+			if ok {
+				for _, entry := range symbolsAndEntries {
+					// Find the default definition that can be in another project
+					if item.project == defaultProject && defaultDefinition == nil {
+						defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
+					}
+					ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
+						// Get default configured project for this file
+						defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
+						if errProjects != nil {
+							return
+						}
+						for _, defProject := range defProjects {
+							// Optimization: don't enqueue if will be discarded
+							if canSearchProject(defProject) {
+								enqueueItem(projectAndTextDocumentPosition{
+									project:             defProject,
+									Uri:                 uri,
+									Position:            position,
+									forOriginalLocation: true,
+								})
+							}
+						}
+					})
+				}
+			}
+
+			if references, errSearch := ls.ProvideReferencesFromSymbolAndEntries(
+				ctx,
+				&lsproto.ReferenceParams{
+					TextDocument: lsproto.TextDocumentIdentifier{Uri: item.Uri},
+					Position:     item.Position,
+					Context: &lsproto.ReferenceContext{
+						IncludeDeclaration: false, // Don't include the declaration in the references count
+					},
+				},
+				originalNode,
+				symbolsAndEntries,
+			); errSearch == nil {
+				response.complete = true
+				response.result = references
+				response.forOriginalLocation = item.forOriginalLocation
+			} else {
+				errMu.Lock()
+				defer errMu.Unlock()
+				if err != nil {
+					err = errSearch
+				}
+			}
+		})
+	}
+
+	// Initial set of projects and locations in the queue, starting with default project
+	enqueueItem(projectAndTextDocumentPosition{
+		project:  defaultProject,
+		ls:       defaultLs,
+		Uri:      uri,
+		Position: position,
+	})
+	for _, proj := range allProjects {
+		if proj != defaultProject {
+			enqueueItem(projectAndTextDocumentPosition{
+				project:  proj,
+				Uri:      uri,
+				Position: position,
+			})
+		}
+	}
+
+	// Process existing known projects first
+	for {
+		wg.RunAndWait()
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		wg = core.NewWorkGroup(false)
+		hasMoreWork := false
+		if defaultDefinition != nil {
+			requestedProjectTrees := make(map[tspath.Path]struct{})
+			results.Range(func(key tspath.Path, response *response[lsproto.ReferencesResponse]) bool {
+				if response.complete {
+					requestedProjectTrees[key] = struct{}{}
+				}
+				return true
+			})
+
+			// Load more projects based on default definition found
+			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+				if ctx.Err() != nil {
+					return nil, ctx.Err()
+				}
+
+				// Can loop forever without this (enqueue here, dequeue above, repeat)
+				if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
+					continue
+				}
+
+				// Enqueue the project and location for further processing
+				if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      defaultDefinition.TextDocumentURI(),
+						Position: defaultDefinition.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      sourcePos.TextDocumentURI(),
+						Position: sourcePos.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      generatedPos.TextDocumentURI(),
+						Position: generatedPos.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				}
+			}
+		}
+		if !hasMoreWork {
+			break
+		}
+	}
+
+	// Combine all references from all projects
+	var combined []lsproto.Location
+	var seenLocations collections.Set[lsproto.Location]
+	var seenProjects collections.Set[tspath.Path]
+
+	// Add default project results first
+	if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
+		if response.result.Locations != nil {
+			for _, loc := range *response.result.Locations {
+				if !seenLocations.Has(loc) {
+					seenLocations.Add(loc)
+					combined = append(combined, loc)
+				}
+			}
+		}
+	}
+	seenProjects.Add(defaultProject.Id())
+
+	// Add other project results
+	for _, proj := range allProjects {
+		if seenProjects.AddIfAbsent(proj.Id()) {
+			if response, loaded := results.Load(proj.Id()); loaded && response.complete {
+				if response.result.Locations != nil {
+					for _, loc := range *response.result.Locations {
+						if !seenLocations.Has(loc) {
+							seenLocations.Add(loc)
+							combined = append(combined, loc)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Add remaining project results
+	results.Range(func(key tspath.Path, response *response[lsproto.ReferencesResponse]) bool {
+		if seenProjects.AddIfAbsent(key) && response.complete {
+			if response.result.Locations != nil {
+				for _, loc := range *response.result.Locations {
+					if !seenLocations.Has(loc) {
+						seenLocations.Add(loc)
+						combined = append(combined, loc)
+					}
+				}
+			}
+		}
+		return true
+	})
+
+	// Build the code lens with the combined references count
+	locale := locale.FromContext(ctx)
+	var lensTitle string
+	if len(combined) == 1 {
+		lensTitle = diagnostics.X_1_reference.Localize(locale)
+	} else {
+		lensTitle = diagnostics.X_0_references.Localize(locale, len(combined))
+	}
+
+	cmd := &lsproto.Command{
+		Title: lensTitle,
+	}
+	if len(combined) > 0 && s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName != nil {
+		cmd.Command = *s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName
+		cmd.Arguments = &[]any{
+			uri,
+			position,
+			combined,
+		}
+	}
+
+	codeLens.Command = cmd
+	return codeLens, nil
 }
 
 func (s *Server) handlePrepareCallHierarchy(
