@@ -128,6 +128,10 @@ export class Client {
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
 
+        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
+            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
+        }
+
         const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
             if (args.length !== 3) {
                 throw new Error("Unexpected number of arguments.");
