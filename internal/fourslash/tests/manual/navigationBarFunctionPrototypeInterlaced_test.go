@@ -22,6 +22,7 @@ b = 2
 A.prototype.c = function() { }
 var b = 2
 A.prototype.d = function() { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }

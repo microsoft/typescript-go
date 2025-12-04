@@ -21,6 +21,7 @@ Object.defineProperty(A.B.prototype, "x", {
 })
 A.prototype.D = function () {  } 
 A.prototype.D.prototype.d = function () {  } `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentSymbol(t)
 }
