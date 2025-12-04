@@ -121,7 +121,7 @@ var dist = p.getDist();
 			},
 			{
 				"name": "()",
-				"kind": "Function",
+				"kind": "Method",
 				"range": {
 					"start": {
 						"line": 4,

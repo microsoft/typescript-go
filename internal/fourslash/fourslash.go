@@ -3675,7 +3675,7 @@ func verifyIncludesSymbols(
 	}
 }
 
-var marshalSymbolKind = func(v lsproto.SymbolKind) ([]byte, error) {
+func marshalSymbolKind(v lsproto.SymbolKind) ([]byte, error) {
 	return []byte(`"` + v.String() + `"`), nil
 }
 
