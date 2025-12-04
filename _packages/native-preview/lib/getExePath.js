@@ -28,13 +28,15 @@ export default function getExePath() {
                 const require = module.createRequire(import.meta.url);
                 const packageJson = require.resolve(platformPackageName + "/package.json");
                 exeDir = path.join(path.dirname(packageJson), "lib");
-            } else {
+            }
+            else {
                 // v20.6.0, v18.19.0
                 const packageJson = import.meta.resolve(platformPackageName + "/package.json");
                 const packageJsonPath = fileURLToPath(packageJson);
                 exeDir = path.join(path.dirname(packageJsonPath), "lib");
             }
-        } catch (e) {
+        }
+        catch (e) {
             throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
         }
     }
@@ -47,4 +49,5 @@ export default function getExePath() {
 
     return exe;
 }
+
 
