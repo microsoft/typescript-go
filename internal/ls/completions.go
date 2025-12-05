@@ -1892,7 +1892,20 @@ func (l *LanguageService) completionInfoFromData(
 		)
 	}
 
-	// !!! exhaustive case completions
+	if contextToken != nil && !data.isRightOfOpenTag && !data.isRightOfDotOrQuestionDot {
+		if caseBlock := ast.FindAncestorKind(contextToken, ast.KindCaseBlock); caseBlock != nil {
+			if casesItem := l.getExhaustiveCaseSnippets(
+				ctx,
+				caseBlock.AsCaseBlock(),
+				file,
+				compilerOptions,
+				l.program,
+				typeChecker,
+			); casesItem != nil {
+				sortedEntries = append(sortedEntries, casesItem)
+			}
+		}
+	}
 
 	itemDefaults := l.setItemDefaults(
 		ctx,
@@ -3001,6 +3014,7 @@ func isEqualityOperatorKind(kind ast.Kind) bool {
 	}
 }
 
+// We disregard boolean literals for completion purposes.
 func isLiteral(t *checker.Type) bool {
 	return t.IsStringLiteral() || t.IsNumberLiteral() || t.IsBigIntLiteral()
 }
@@ -6094,4 +6108,305 @@ func getJSDocParameterNameCompletions(tag *ast.JSDocParameterTag) []*lsproto.Com
 			SortText: ptrTo(string(SortTextLocationPriority)),
 		}
 	})
+}
+
+func (l *LanguageService) getExhaustiveCaseSnippets(
+	ctx context.Context,
+	caseBlock *ast.CaseBlock,
+	file *ast.SourceFile,
+	options *core.CompilerOptions,
+	program *compiler.Program,
+	c *checker.Checker,
+) *lsproto.CompletionItem {
+	clauses := caseBlock.Clauses.Nodes
+	switchType := c.GetTypeAtLocation(caseBlock.AsNode().Parent.Expression())
+	if switchType != nil && switchType.IsUnion() && core.Every(switchType.Types(), isLiteral) {
+		// Collect constant values in existing clauses.
+		tracker := newCaseClauseTracker(c, clauses)
+		target := options.GetEmitScriptTarget()
+		quotePreference := getQuotePreference(file, l.UserPreferences())
+		// !!! importAdder
+		var elements []*ast.Expression
+		factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
+		for _, t := range switchType.Types() {
+			// Enums
+			if t.IsEnumLiteral() {
+				debug.Assert(t.Symbol() != nil, "An enum member type should have a symbol")
+				debug.Assert(t.Symbol().Parent != nil, "An enum member type should have a parent symbol (the enum symbol)")
+				// Filter existing enums by their values
+				var enumValue any
+				if t.Symbol().ValueDeclaration != nil {
+					enumValue = c.GetConstantValue(t.Symbol().ValueDeclaration)
+				}
+				if enumValue != nil {
+					if tracker.hasValue(enumValue) {
+						continue
+					}
+					tracker.addValue(enumValue)
+				}
+				// !!! importAdder
+				typeNode := c.TypeToTypeNode(t, caseBlock.AsNode(), nodebuilder.FlagsNone)
+				if typeNode == nil {
+					return nil
+				}
+				expr := typeNodeToExpression(typeNode, target, quotePreference, factory)
+				if expr == nil {
+					return nil
+				}
+				elements = append(elements, expr)
+			} else if value := t.AsLiteralType().Value(); !tracker.hasValue(value) { // Literals
+				switch v := value.(type) {
+				case jsnum.PseudoBigInt:
+					var bigInt *ast.Node
+					if v.Negative {
+						v.Negative = false
+						bigInt = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewBigIntLiteral(v.String()))
+					} else {
+						bigInt = factory.NewBigIntLiteral(v.String())
+					}
+					elements = append(elements, bigInt)
+				case jsnum.Number:
+					var number *ast.Node
+					if v < 0 {
+						number = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewNumericLiteral(v.Abs().String()))
+					} else {
+						number = factory.NewNumericLiteral(v.String())
+					}
+					elements = append(elements, number)
+				case string:
+					literal := factory.NewStringLiteral(v)
+					literal.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+					elements = append(elements, literal)
+				}
+			}
+		}
+		if len(elements) == 0 {
+			return nil
+		}
+
+		newClauses := core.Map(elements, func(element *ast.Node) *ast.CaseClauseNode {
+			return factory.NewCaseOrDefaultClause(ast.KindCaseClause, element, factory.NewNodeList(nil))
+		})
+		newLineChar := l.host.FormatOptions().NewLineCharacter
+		printer := createSnippetPrinter(printer.PrinterOptions{
+			RemoveComments: true,
+			NewLine:        core.GetNewLineKind(newLineChar),
+		})
+		var printNode func(node *ast.Node) string
+		// !!! format context
+		if formatContext == nil {
+			printNode = func(node *ast.Node) string { return printer.printNode(node, file) }
+		} else {
+			printNode = func(node *ast.Node) string { return printer.printAndFormatNode(node, file, formatContext) }
+		}
+		insertText := strings.Join(core.MapIndex(newClauses, func(clause *ast.Node, i int) string {
+			if clientSupportsItemSnippet(ctx) {
+				return fmt.Sprintf("%s$%d", printNode(clause), i+1)
+			}
+			return printNode(clause)
+		}), newLineChar)
+
+		firstClause := printer.printNode(newClauses[0], file)
+		return &lsproto.CompletionItem{
+			Label:      firstClause + " ...",
+			Kind:       ptrTo(lsproto.CompletionItemKindSnippet),
+			SortText:   ptrTo(string(SortTextGlobalsOrKeywords)),
+			InsertText: strPtrTo(insertText),
+			// AdditionalTextEdits !!! importAdder
+			InsertTextFormat: core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
+		}
+	}
+	return nil
+}
+
+func typeNodeToExpression(
+	typeNode *ast.TypeNode,
+	target core.ScriptTarget,
+	quotePreference quotePreference,
+	factory *ast.NodeFactory,
+) *ast.Expression {
+	switch typeNode.Kind {
+	case ast.KindTypeReference:
+		typeName := typeNode.AsTypeReference().TypeName
+		return entityNameToExpression(typeName, target, quotePreference, factory)
+	case ast.KindIndexedAccessType:
+		objectExpression := typeNodeToExpression(
+			typeNode.AsIndexedAccessTypeNode().ObjectType,
+			target,
+			quotePreference,
+			factory,
+		)
+		indexExpression := typeNodeToExpression(
+			typeNode.AsIndexedAccessTypeNode().IndexType,
+			target,
+			quotePreference,
+			factory,
+		)
+		if objectExpression != nil && indexExpression != nil {
+			return factory.NewElementAccessExpression(objectExpression, nil /*questionDotToken*/, indexExpression, ast.NodeFlagsNone)
+		}
+		return nil
+	case ast.KindLiteralType:
+		literal := typeNode.AsLiteralTypeNode().Literal
+		switch literal.Kind {
+		case ast.KindStringLiteral:
+			expr := factory.NewStringLiteral(literal.Text())
+			expr.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+			return expr
+		case ast.KindNumericLiteral:
+			expr := factory.NewNumericLiteral(literal.Text())
+			expr.LiteralLikeData().TokenFlags |= literal.AsNumericLiteral().TokenFlags & ast.TokenFlagsNumericLiteralFlags
+			return expr
+		default:
+			return nil
+		}
+	case ast.KindParenthesizedType:
+		expr := typeNodeToExpression(
+			typeNode.AsParenthesizedTypeNode().Type,
+			target,
+			quotePreference,
+			factory,
+		)
+		if expr == nil {
+			return nil
+		}
+		if ast.IsIdentifier(expr) {
+			return expr
+		}
+		return factory.NewParenthesizedExpression(expr)
+	case ast.KindTypeQuery:
+		return entityNameToExpression(typeNode.AsTypeQueryNode().ExprName, target, quotePreference, factory)
+	case ast.KindImportType:
+		// !!! importAdder
+		// debug.Fail(`We should not get an import type after calling 'codefix.typeToAutoImportableTypeNode'.`)
+		return nil
+	}
+	return nil
+}
+
+func entityNameToExpression(
+	entityName *ast.EntityName,
+	target core.ScriptTarget,
+	quotePreference quotePreference,
+	factory *ast.NodeFactory,
+) *ast.Expression {
+	if ast.IsIdentifier(entityName) {
+		return entityName
+	}
+	return factory.NewPropertyAccessExpression(
+		entityNameToExpression(entityName.AsQualifiedName().Left, target, quotePreference, factory),
+		nil, /*questionDotToken*/
+		entityName.AsQualifiedName().Right,
+		ast.NodeFlagsNone,
+	)
+}
+
+type snippetPrinter struct {
+	baseWriter *printer.ChangeTrackerWriter
+	printer    *printer.Printer
+	writer     *snippetEmitTextWriter
+}
+
+/** Snippet-escaping version of `printer.printNode`. */
+func (p *snippetPrinter) printNode(node *ast.Node, sourceFile *ast.SourceFile) string {
+	unescaped := p.printUnescapedNode(node, sourceFile)
+	if len(p.writer.escapes) > 0 {
+		return core.ApplyBulkEdits(unescaped, p.writer.escapes)
+	}
+	return unescaped
+}
+
+func (p *snippetPrinter) printUnescapedNode(node *ast.Node, sourceFile *ast.SourceFile) string {
+	p.writer.escapes = nil
+	p.writer.Clear()
+	p.printer.Write(node, sourceFile, p.writer, nil /*sourceMapGenerator*/)
+	return p.writer.String()
+}
+
+func (p *snippetPrinter) printAndFormatNode(node *ast.Node, sourceFile *ast.SourceFile, formatContext context.Context) string {
+	syntheticFile := 1  // !!! HERE: refactor formatter to accept source file like interface
+	nodeWithPos := node // !!! assignPositionsToNode
+	changes := format.FormatNodeGivenIndentation(
+		formatContext,
+		nodeWithPos,
+		syntheticFile,
+		sourceFile.LanguageVariant,
+		0, /*initialIndentation*/
+		0, /*delta*/
+	)
+
+	allChanges := changes
+	if len(p.writer.escapes) > 0 {
+		allChanges = append(changes, p.writer.escapes...)
+		slices.SortFunc(allChanges, func(a, b core.TextChange) int { return core.CompareTextRanges(a.TextRange, b.TextRange) })
+	}
+
+	return core.ApplyBulkEdits(syntheticFile.text, allChanges)
+}
+
+func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
+	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter())
+	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), nil /*emitContext*/)
+	writer := &snippetEmitTextWriter{}
+	return &snippetPrinter{
+		baseWriter: baseWriter,
+		printer:    printer,
+		writer:     writer,
+	}
+}
+
+// Override base writer methods to perform snippet escaping.
+type snippetEmitTextWriter struct {
+	*printer.ChangeTrackerWriter
+	escapes []core.TextChange
+}
+
+func (w *snippetEmitTextWriter) nonEscapingWrite(s string) {
+	w.ChangeTrackerWriter.Write(s)
+}
+
+func (w *snippetEmitTextWriter) Write(s string) {
+	w.escapingWrite(s, func() { w.ChangeTrackerWriter.Write(s) })
+}
+
+func (w *snippetEmitTextWriter) WriteComment(text string) {
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteComment(text) })
+}
+
+func (w *snippetEmitTextWriter) WriteStringLiteral(text string) {
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteLiteral(text) })
+}
+
+func (w *snippetEmitTextWriter) WriteParameter(text string) {
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteParameter(text) })
+}
+
+func (w *snippetEmitTextWriter) WriteProperty(text string) {
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteProperty(text) })
+}
+
+func (w *snippetEmitTextWriter) WriteSymbol(text string, symbol *ast.Symbol) {
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteSymbol(text, symbol) })
+}
+
+// The formatter/scanner will have issues with snippet-escaped text,
+// so instead of writing the escaped text directly to the writer,
+// generate a set of changes that can be applied to the unescaped text
+// to escape it post-formatting.
+func (w *snippetEmitTextWriter) escapingWrite(s string, write func()) {
+	escaped := escapeSnippetText(s)
+	if escaped != s {
+		start := w.GetTextPos()
+		write()
+		end := w.GetTextPos()
+		w.escapes = append(
+			w.escapes,
+			core.TextChange{
+				NewText:   escaped,
+				TextRange: core.NewTextRange(start, end),
+			},
+		)
+	} else {
+		write()
+	}
 }

@@ -739,7 +739,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		return b.newStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
 	}
 
-	if index == 0 || canUsePropertyAccess(symbolName) {
+	if index == 0 || CanUsePropertyAccess(symbolName) {
 		identifier := b.f.NewIdentifier(symbolName)
 		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
 		// !!! TODO: smuggle type arguments out
@@ -774,7 +774,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
 }
 
-func canUsePropertyAccess(name string) bool {
+func CanUsePropertyAccess(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
