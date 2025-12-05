@@ -6300,6 +6300,7 @@ type snippetPrinter struct {
 	baseWriter *printer.ChangeTrackerWriter
 	printer    *printer.Printer
 	writer     *snippetEmitTextWriter
+	factory    *ast.NodeFactory
 }
 
 /** Snippet-escaping version of `printer.printNode`. */
@@ -6319,8 +6320,8 @@ func (p *snippetPrinter) printUnescapedNode(node *ast.Node, sourceFile *ast.Sour
 }
 
 func (p *snippetPrinter) printAndFormatNode(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile) string {
-	syntheticFile := 1  // !!! HERE: refactor formatter to accept source file like interface
-	nodeWithPos := node // !!! assignPositionsToNode
+	syntheticFile := 1 // !!! HERE: refactor formatter to accept source file like interface
+	nodeWithPos := p.baseWriter.AssignPositionsToNode(node, p.factory)
 	changes := format.FormatNodeGivenIndentation(
 		ctx,
 		nodeWithPos,
@@ -6347,6 +6348,7 @@ func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
 		baseWriter: baseWriter,
 		printer:    printer,
 		writer:     writer,
+		factory:    ast.NewNodeFactory(ast.NodeFactoryHooks{}),
 	}
 }
 
