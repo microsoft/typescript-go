@@ -552,9 +552,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations, combineImplementations)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferencesFromSymbolAndEntries, combineReferences)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRenameFromSymbolAndEntries, combineRenameResponse)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementationsFromSymbolAndEntries, combineImplementations)
 
 	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
@@ -655,7 +655,7 @@ type response[Resp any] struct {
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
+	fn func(*ls.LanguageService, context.Context, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
 	combineResults func(iter.Seq[Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
@@ -672,7 +672,7 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 	s *Server,
 	ctx context.Context,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
+	fn func(*ls.LanguageService, context.Context, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
 	combineResults func(iter.Seq[Resp]) Resp,
 	req *lsproto.RequestMessage,
 	options ls.SymbolEntryTransformOptions,
@@ -750,7 +750,7 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 				}
 			}
 
-			if result, errSearch := fn(s, ctx, ls, params, data, options); errSearch == nil {
+			if result, errSearch := fn(ls, ctx, params, data, options); errSearch == nil {
 				response.complete = true
 				response.result = result
 				response.forOriginalLocation = item.forOriginalLocation
@@ -1203,11 +1203,6 @@ func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
-func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
-	// findAllReferences
-	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, data, options)
-}
-
 func combineLocationArray[T lsproto.HasLocation](
 	combined []T,
 	locations *[]T,
@@ -1234,11 +1229,6 @@ func combineResponseLocations[T lsproto.HasLocations](results iter.Seq[T]) *[]ls
 
 func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
 	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
-}
-
-func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.ImplementationResponse, error) {
-	// goToImplementation
-	return ls.ProvideImplementationsFromSymbolAndEntries(ctx, params, data, options)
 }
 
 func combineImplementations(results iter.Seq[lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
@@ -1321,10 +1311,6 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.RenameResponse, error) {
-	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, data, options)
-}
-
 func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
@@ -1399,7 +1385,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 			s,
 			ctx,
 			lsproto.TextDocumentReferencesInfo,
-			(*Server).handleReferences,
+			(*ls.LanguageService).ProvideReferencesFromSymbolAndEntries,
 			combineReferences,
 			&lsproto.RequestMessage{
 				ID: reqMsg.ID,
@@ -1441,7 +1427,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 			s,
 			ctx,
 			lsproto.TextDocumentImplementationInfo,
-			(*Server).handleImplementations,
+			(*ls.LanguageService).ProvideImplementationsFromSymbolAndEntries,
 			combineImplementations,
 			&lsproto.RequestMessage{
 				ID: reqMsg.ID,
