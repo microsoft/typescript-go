@@ -5,6 +5,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -50,6 +52,81 @@ func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsp
 	return lsproto.CodeLensResponse{
 		CodeLenses: &result,
 	}, nil
+}
+
+func (l *LanguageService) ResolveCodeLens(ctx context.Context, codeLens *lsproto.CodeLens, showLocationsCommandName *string, orchestrator CrossProjectOrchestrator) (*lsproto.CodeLens, error) {
+	uri := codeLens.Data.Uri
+	textDoc := lsproto.TextDocumentIdentifier{Uri: uri}
+	locale := locale.FromContext(ctx)
+	var locs []lsproto.Location
+	var lensTitle string
+	switch codeLens.Data.Kind {
+	case lsproto.CodeLensKindReferences:
+		referencesResp, err := l.ProvideReferences(ctx, &lsproto.ReferenceParams{
+			TextDocument: textDoc,
+			Position:     codeLens.Range.Start,
+			Context: &lsproto.ReferenceContext{
+				// Don't include the declaration in the references count.
+				IncludeDeclaration: false,
+			},
+		}, orchestrator)
+		if err != nil {
+			return nil, err
+		}
+		if referencesResp.Locations != nil {
+			locs = *referencesResp.Locations
+		}
+
+		if len(locs) == 1 {
+			lensTitle = diagnostics.X_1_reference.Localize(locale)
+		} else {
+			lensTitle = diagnostics.X_0_references.Localize(locale, len(locs))
+		}
+	case lsproto.CodeLensKindImplementations:
+
+		implementations, err := l.provideImplementationsEx(
+			ctx,
+			&lsproto.ImplementationParams{
+				TextDocument: textDoc,
+				Position:     codeLens.Range.Start,
+			},
+			// "Force" link support to be false so that we only get `Locations` back,
+			// and don't include the "current" node in the results.
+			symbolEntryTransformOptions{
+				requireLocationsResult: true,
+				dropOriginNodes:        true,
+			},
+			orchestrator,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if implementations.Locations != nil {
+			locs = *implementations.Locations
+		}
+
+		if len(locs) == 1 {
+			lensTitle = diagnostics.X_1_implementation.Localize(locale)
+		} else {
+			lensTitle = diagnostics.X_0_implementations.Localize(locale, len(locs))
+		}
+	}
+
+	cmd := &lsproto.Command{
+		Title: lensTitle,
+	}
+	if len(locs) > 0 && showLocationsCommandName != nil {
+		cmd.Command = *showLocationsCommandName
+		cmd.Arguments = &[]any{
+			uri,
+			codeLens.Range.Start,
+			locs,
+		}
+	}
+
+	codeLens.Command = cmd
+	return codeLens, nil
 }
 
 func (l *LanguageService) newCodeLensForNode(fileUri lsproto.DocumentUri, file *ast.SourceFile, node *ast.Node, kind lsproto.CodeLensKind) *lsproto.CodeLens {

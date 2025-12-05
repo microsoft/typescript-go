@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -85,6 +86,8 @@ type Project struct {
 	// typingsFiles are the root files added by the typings installer.
 	typingsFiles []string
 }
+
+var _ ls.Project = (*Project)(nil)
 
 func NewConfiguredProject(
 	configFileName string,

@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -78,7 +79,7 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }
 
-func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []*Project {
+func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []ls.Project {
 	fileName := uri.FileName()
 	path := s.toPath(fileName)
 	// TODO!! sheetal may be change this to handle symlinks!!

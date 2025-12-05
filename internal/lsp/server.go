@@ -15,7 +15,6 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -552,9 +551,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferencesFromSymbolAndEntries, combineReferences)
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRenameFromSymbolAndEntries, combineRenameResponse)
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementationsFromSymbolAndEntries, combineImplementations)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementations)
 
 	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
@@ -638,28 +637,24 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 	}
 }
 
-type projectAndTextDocumentPosition struct {
-	project             *project.Project
-	ls                  *ls.LanguageService
-	Uri                 lsproto.DocumentUri
-	Position            lsproto.Position
-	forOriginalLocation bool
-}
-
-type response[Resp any] struct {
-	complete            bool
-	result              Resp
-	forOriginalLocation bool
-}
-
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*ls.LanguageService, context.Context, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
-	combineResults func(iter.Seq[Resp]) Resp,
+	fn func(*ls.LanguageService, context.Context, Req, ls.CrossProjectOrchestrator) (Resp, error),
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
-		resp, err := handleMultiProjectRequest(s, ctx, info, fn, combineResults, req, ls.SymbolEntryTransformOptions{})
+		var params Req
+		// Ignore empty params.
+		if req.Params != nil {
+			params = req.Params.(Req)
+		}
+		// !!! sheetal: multiple projects that contain the file through symlinks
+		defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.TextDocumentURI())
+		if err != nil {
+			return err
+		}
+		defer s.recover(req)
+		resp, err := fn(defaultLs, ctx, params, &crossProjectOrchestrator{s, req, defaultProject, allProjects})
 		if err != nil {
 			return err
 		}
@@ -668,229 +663,43 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	}
 }
 
-func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
-	s *Server,
-	ctx context.Context,
-	info lsproto.RequestInfo[Req, Resp],
-	fn func(*ls.LanguageService, context.Context, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
-	combineResults func(iter.Seq[Resp]) Resp,
-	req *lsproto.RequestMessage,
-	options ls.SymbolEntryTransformOptions,
-) (Resp, error) {
-	var resp Resp
-	var params Req
-	// Ignore empty params.
-	if req.Params != nil {
-		params = req.Params.(Req)
-	}
-	// !!! sheetal: multiple projects that contain the file through symlinks
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.TextDocumentURI())
-	if err != nil {
-		return resp, err
-	}
-	defer s.recover(req)
+type crossProjectOrchestrator struct {
+	server         *Server
+	req            *lsproto.RequestMessage
+	defaultProject *project.Project
+	allProjects    []ls.Project
+}
 
-	var results collections.SyncMap[tspath.Path, *response[Resp]]
-	var defaultDefinition *ls.NonLocalDefinition
-	canSearchProject := func(project *project.Project) bool {
-		_, searched := results.Load(project.Id())
-		return !searched
-	}
-	wg := core.NewWorkGroup(false)
-	var errMu sync.Mutex
-	var enqueueItem func(item projectAndTextDocumentPosition)
-	enqueueItem = func(item projectAndTextDocumentPosition) {
-		var response response[Resp]
-		if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
-			return
-		}
-		wg.Queue(func() {
-			if ctx.Err() != nil {
+var _ ls.CrossProjectOrchestrator = (*crossProjectOrchestrator)(nil)
+
+func (c *crossProjectOrchestrator) GetDefaultProject() ls.Project {
+	return c.defaultProject
+}
+
+func (c *crossProjectOrchestrator) GetAllProjectsForInitialRequest() []ls.Project {
+	return c.allProjects
+}
+
+func (c *crossProjectOrchestrator) GetLanguageServiceForProjectWithFile(ctx context.Context, p ls.Project, uri lsproto.DocumentUri) *ls.LanguageService {
+	return c.server.session.GetLanguageServiceForProjectWithFile(ctx, p.(*project.Project), uri)
+}
+
+func (c *crossProjectOrchestrator) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
+	return c.server.session.GetProjectsForFile(ctx, uri)
+}
+
+func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[ls.Project] {
+	return func(yield func(ls.Project) bool) {
+		for _, p := range c.server.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+			if !yield(p) {
 				return
 			}
-			defer s.recover(req)
-			// Process the item
-			ls := item.ls
-			if ls == nil {
-				// Get it now
-				ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
-				if ls == nil {
-					return
-				}
-			}
-			data, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename, info.Method == lsproto.MethodTextDocumentImplementation)
-			if ctx.Err() != nil {
-				return
-			}
-			if ok {
-				for _, entry := range data.SymbolsAndEntries {
-					// Find the default definition that can be in another project
-					// Later we will use this load ancestor tree that references this location and expand search
-					if item.project == defaultProject && defaultDefinition == nil {
-						defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
-					}
-					ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
-						// Get default configured project for this file
-						defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
-						if errProjects != nil {
-							return
-						}
-						for _, defProject := range defProjects {
-							// Optimization: don't enqueue if will be discarded
-							if canSearchProject(defProject) {
-								enqueueItem(projectAndTextDocumentPosition{
-									project:             defProject,
-									Uri:                 uri,
-									Position:            position,
-									forOriginalLocation: true,
-								})
-							}
-						}
-					})
-				}
-			}
-
-			if result, errSearch := fn(ls, ctx, params, data, options); errSearch == nil {
-				response.complete = true
-				response.result = result
-				response.forOriginalLocation = item.forOriginalLocation
-			} else {
-				errMu.Lock()
-				defer errMu.Unlock()
-				if err != nil {
-					err = errSearch
-				}
-			}
-		})
-	}
-
-	// Initial set of projects and locations in the queue, starting with default project
-	enqueueItem(projectAndTextDocumentPosition{
-		project:  defaultProject,
-		ls:       defaultLs,
-		Uri:      params.TextDocumentURI(),
-		Position: params.TextDocumentPosition(),
-	})
-	for _, project := range allProjects {
-		if project != defaultProject {
-			enqueueItem(projectAndTextDocumentPosition{
-				project: project,
-				// TODO!! symlinks need to change the URI
-				Uri:      params.TextDocumentURI(),
-				Position: params.TextDocumentPosition(),
-			})
 		}
 	}
+}
 
-	getResultsIterator := func() iter.Seq[Resp] {
-		return func(yield func(Resp) bool) {
-			var seenProjects collections.SyncSet[tspath.Path]
-			if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-				if !yield(response.result) {
-					return
-				}
-			}
-			seenProjects.Add(defaultProject.Id())
-			for _, project := range allProjects {
-				if seenProjects.AddIfAbsent(project.Id()) {
-					if response, loaded := results.Load(project.Id()); loaded && response.complete {
-						if !yield(response.result) {
-							return
-						}
-					}
-				}
-			}
-			// Prefer the searches from locations for default definition
-			results.Range(func(key tspath.Path, response *response[Resp]) bool {
-				if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(response.result)
-				}
-				return true
-			})
-			// Then the searches from original locations
-			results.Range(func(key tspath.Path, response *response[Resp]) bool {
-				if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(response.result)
-				}
-				return true
-			})
-		}
-	}
-
-	// Outer loop - to complete work if more is added after completing existing queue
-	for {
-		// Process existing known projects first
-		wg.RunAndWait()
-		if ctx.Err() != nil {
-			return resp, ctx.Err()
-		}
-		// No need to use mu here since we are not in parallel at this point
-		if err != nil {
-			return resp, err
-		}
-
-		wg = core.NewWorkGroup(false)
-		hasMoreWork := false
-		if defaultDefinition != nil {
-			var requestedProjectTrees collections.Set[tspath.Path]
-			results.Range(func(key tspath.Path, response *response[Resp]) bool {
-				if response.complete {
-					requestedProjectTrees.Add(key)
-				}
-				return true
-			})
-
-			// Load more projects based on default definition found
-			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, &requestedProjectTrees).ProjectCollection.Projects() {
-				if ctx.Err() != nil {
-					return resp, ctx.Err()
-				}
-
-				// Can loop forever without this (enqueue here, dequeue above, repeat)
-				if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
-					continue
-				}
-
-				// Enqueue the project and location for further processing
-				if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      defaultDefinition.TextDocumentURI(),
-						Position: defaultDefinition.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      sourcePos.TextDocumentURI(),
-						Position: sourcePos.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      generatedPos.TextDocumentURI(),
-						Position: generatedPos.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				}
-			}
-		}
-		if !hasMoreWork {
-			break
-		}
-	}
-
-	if results.Size() > 1 {
-		resp = combineResults(getResultsIterator())
-	} else {
-		// Single result, return that directly
-		for value := range getResultsIterator() {
-			resp = value
-			break
-		}
-	}
-	return resp, nil
+func (c *crossProjectOrchestrator) Recover() {
+	c.server.recover(c.req)
 }
 
 func (s *Server) recover(req *lsproto.RequestMessage) {
@@ -1203,47 +1012,6 @@ func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
-func combineLocationArray[T lsproto.HasLocation](
-	combined []T,
-	locations *[]T,
-	seen *collections.Set[lsproto.Location],
-) []T {
-	for _, loc := range *locations {
-		if seen.AddIfAbsent(loc.GetLocation()) {
-			combined = append(combined, loc)
-		}
-	}
-	return combined
-}
-
-func combineResponseLocations[T lsproto.HasLocations](results iter.Seq[T]) *[]lsproto.Location {
-	var combined []lsproto.Location
-	var seenLocations collections.Set[lsproto.Location]
-	for resp := range results {
-		if locations := resp.GetLocations(); locations != nil {
-			combined = combineLocationArray(combined, locations, &seenLocations)
-		}
-	}
-	return &combined
-}
-
-func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
-	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
-}
-
-func combineImplementations(results iter.Seq[lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
-	var combined []*lsproto.LocationLink
-	var seenLocations collections.Set[lsproto.Location]
-	for resp := range results {
-		if definitionLinks := resp.DefinitionLinks; definitionLinks != nil {
-			combined = combineLocationArray(combined, definitionLinks, &seenLocations)
-		} else if locations := resp.Locations; locations != nil {
-			return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: combineResponseLocations(results)}
-		}
-	}
-	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &combined}
-}
-
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
 	return languageService.ProvideCompletion(
 		ctx,
@@ -1311,45 +1079,6 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 }
 
-func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
-	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
-	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
-	// !!! this is not used any more so we will skip this part of deduplication and combining
-	// 	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
-	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
-
-	for resp := range results {
-		if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
-			for doc, changes := range *resp.WorkspaceEdit.Changes {
-				seenSet, ok := seenChanges[doc]
-				if !ok {
-					seenSet = &collections.Set[lsproto.Range]{}
-					seenChanges[doc] = seenSet
-				}
-				changesForDoc, exists := combined[doc]
-				if !exists {
-					changesForDoc = []*lsproto.TextEdit{}
-				}
-				for _, change := range changes {
-					if !seenSet.Has(change.Range) {
-						seenSet.Add(change.Range)
-						changesForDoc = append(changesForDoc, change)
-					}
-				}
-				combined[doc] = changesForDoc
-			}
-		}
-	}
-	if len(combined) > 0 {
-		return lsproto.RenameResponse{
-			WorkspaceEdit: &lsproto.WorkspaceEdit{
-				Changes: &combined,
-			},
-		}
-	}
-	return lsproto.RenameResponse{}
-}
-
 func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {
 	return ls.ProvideDocumentHighlights(ctx, params.TextDocument.Uri, params.Position)
 }
@@ -1375,110 +1104,27 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	textDocument := lsproto.TextDocumentIdentifier{Uri: codeLens.Data.Uri}
-	position := codeLens.Range.Start
-	var locs []lsproto.Location
-	var lensTitle string
-	switch codeLens.Data.Kind {
-	case lsproto.CodeLensKindReferences:
-		referencesResp, err := handleMultiProjectRequest(
-			s,
-			ctx,
-			lsproto.TextDocumentReferencesInfo,
-			(*ls.LanguageService).ProvideReferencesFromSymbolAndEntries,
-			combineReferences,
-			&lsproto.RequestMessage{
-				ID: reqMsg.ID,
-				Params: &lsproto.ReferenceParams{
-					TextDocument: textDocument,
-					Position:     position,
-					Context: &lsproto.ReferenceContext{
-						// Don't include the declaration in the references count.
-						IncludeDeclaration: false,
-					},
-				},
-			},
-			ls.SymbolEntryTransformOptions{},
-		)
-		if ctx.Err() != nil {
-			return nil, ctx.Err()
-		}
-		if err != nil {
-			// This can happen if a codeLens/resolve request comes in after a program change.
-			// While it's true that handlers should latch onto a specific snapshot
-			// while processing requests, we just set `Data.Uri` based on
-			// some older snapshot's contents. The content could have been modified,
-			// or the file itself could have been removed from the session entirely.
-			// Note this won't bail out on every change, but will prevent crashing
-			// based on non-existent files and line maps from shortened files.
-			return codeLens, lsproto.ErrorCodeContentModified
-		}
-		if referencesResp.Locations != nil {
-			locs = *referencesResp.Locations
-			if len(locs) == 1 {
-				lensTitle = diagnostics.X_1_reference.Localize(locale.FromContext(ctx))
-			} else {
-				lensTitle = diagnostics.X_0_references.Localize(locale.FromContext(ctx), len(locs))
-			}
-		}
-
-	case lsproto.CodeLensKindImplementations:
-		implResp, err := handleMultiProjectRequest(
-			s,
-			ctx,
-			lsproto.TextDocumentImplementationInfo,
-			(*ls.LanguageService).ProvideImplementationsFromSymbolAndEntries,
-			combineImplementations,
-			&lsproto.RequestMessage{
-				ID: reqMsg.ID,
-				Params: &lsproto.ImplementationParams{
-					TextDocument: textDocument,
-					Position:     position,
-				},
-			},
-			// "Force" link support to be false so that we only get `Locations` back,
-			// and don't include the "current" node in the results.
-			ls.SymbolEntryTransformOptions{
-				RequireLocationsResult: true,
-				DropOriginNodes:        true,
-			},
-		)
-		if ctx.Err() != nil {
-			return nil, ctx.Err()
-		}
-		if err != nil {
-			// This can happen if a codeLens/resolve request comes in after a program change.
-			// While it's true that handlers should latch onto a specific snapshot
-			// while processing requests, we just set `Data.Uri` based on
-			// some older snapshot's contents. The content could have been modified,
-			// or the file itself could have been removed from the session entirely.
-			// Note this won't bail out on every change, but will prevent crashing
-			// based on non-existent files and line maps from shortened files.
-			return codeLens, lsproto.ErrorCodeContentModified
-		}
-		if implResp.Locations != nil {
-			locs = *implResp.Locations
-			if len(locs) == 1 {
-				lensTitle = diagnostics.X_1_implementation.Localize(locale.FromContext(ctx))
-			} else {
-				lensTitle = diagnostics.X_0_implementations.Localize(locale.FromContext(ctx), len(locs))
-			}
-		}
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, codeLens.Data.Uri)
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
 	}
-
-	cmd := &lsproto.Command{
-		Title: lensTitle,
+	if err != nil {
+		// This can happen if a codeLens/resolve request comes in after a program change.
+		// While it's true that handlers should latch onto a specific snapshot
+		// while processing requests, we just set `Data.Uri` based on
+		// some older snapshot's contents. The content could have been modified,
+		// or the file itself could have been removed from the session entirely.
+		// Note this won't bail out on every change, but will prevent crashing
+		// based on non-existent files and line maps from shortened files.
+		return codeLens, lsproto.ErrorCodeContentModified
 	}
-	if len(locs) > 0 && s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName != nil {
-		cmd.Command = *s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName
-		cmd.Arguments = &[]any{
-			codeLens.Data.Uri,
-			codeLens.Range.Start,
-			locs,
-		}
-	}
-	codeLens.Command = cmd
-	return codeLens, nil
+	defer s.recover(reqMsg)
+	return defaultLs.ResolveCodeLens(
+		ctx,
+		codeLens,
+		s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName,
+		&crossProjectOrchestrator{s, reqMsg, defaultProject, allProjects},
+	)
 }
 
 func (s *Server) handlePrepareCallHierarchy(

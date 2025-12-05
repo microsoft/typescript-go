@@ -445,7 +445,7 @@ var _ lsproto.HasTextDocumentPosition = (*position)(nil)
 func (nld *position) TextDocumentURI() lsproto.DocumentUri   { return nld.uri }
 func (nld *position) TextDocumentPosition() lsproto.Position { return nld.pos }
 
-type NonLocalDefinition struct {
+type nonLocalDefinition struct {
 	position
 	GetSourcePosition    func() lsproto.HasTextDocumentPosition
 	GetGeneratedPosition func() lsproto.HasTextDocumentPosition
@@ -459,7 +459,7 @@ func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, 
 	return file, core.TextPos(textRange.Pos())
 }
 
-func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) *NonLocalDefinition {
+func (l *LanguageService) getNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) *nonLocalDefinition {
 	if !entry.canUseDefinitionSymbol() {
 		return nil
 	}
@@ -472,7 +472,7 @@ func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *Symb
 		if isDefinitionVisible(emitResolver, d) {
 			file, startPos := getFileAndStartPosFromDeclaration(d)
 			fileName := file.FileName()
-			return &NonLocalDefinition{
+			return &nonLocalDefinition{
 				position: position{
 					uri: lsconv.FileNameToDocumentURI(fileName),
 					pos: l.converters.PositionToLineAndCharacter(file, startPos),
@@ -545,7 +545,7 @@ func isDefinitionVisible(emitResolver *checker.EmitResolver, declaration *ast.No
 	}
 }
 
-func (l *LanguageService) ForEachOriginalDefinitionLocation(
+func (l *LanguageService) forEachOriginalDefinitionLocation(
 	ctx context.Context,
 	entry *SymbolAndEntries,
 	cb func(lsproto.DocumentUri, lsproto.Position),
@@ -576,11 +576,11 @@ func (l *LanguageService) ForEachOriginalDefinitionLocation(
 	}
 }
 
-type SymbolEntryTransformOptions struct {
+type symbolEntryTransformOptions struct {
 	// Force the result to be Location objects.
-	RequireLocationsResult bool
+	requireLocationsResult bool
 	// Omit node(s) containing the original position.
-	DropOriginNodes bool
+	dropOriginNodes bool
 }
 
 type SymbolAndEntriesData struct {
@@ -589,7 +589,7 @@ type SymbolAndEntriesData struct {
 	Position          int
 }
 
-func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
+func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
@@ -651,7 +651,21 @@ func (l *LanguageService) getSymbolAndEntries(
 	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 }
 
-func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
+func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto.ReferenceParams, orchestrator CrossProjectOrchestrator) (lsproto.ReferencesResponse, error) {
+	return handleCrossProject(
+		l,
+		ctx,
+		params,
+		orchestrator,
+		(*LanguageService).symbolAndEntriesToReferences,
+		combineReferences,
+		false, /*isRename*/
+		false, /*implementations*/
+		symbolEntryTransformOptions{},
+	)
+}
+
+func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	locations := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
 		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
@@ -659,18 +673,36 @@ func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Cont
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context.Context, params *lsproto.ImplementationParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.ImplementationResponse, error) {
+func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams, orchestrator CrossProjectOrchestrator) (lsproto.ImplementationResponse, error) {
+	return l.provideImplementationsEx(ctx, params, symbolEntryTransformOptions{}, orchestrator)
+}
+
+func (l *LanguageService) provideImplementationsEx(ctx context.Context, params *lsproto.ImplementationParams, options symbolEntryTransformOptions, orchestrator CrossProjectOrchestrator) (lsproto.ImplementationResponse, error) {
+	return handleCrossProject(
+		l,
+		ctx,
+		params,
+		orchestrator,
+		(*LanguageService).symbolAndEntriesToImplementations,
+		combineImplementations,
+		false, /*isRename*/
+		true,  /*implementations*/
+		options,
+	)
+}
+
+func (l *LanguageService) symbolAndEntriesToImplementations(ctx context.Context, params *lsproto.ImplementationParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.ImplementationResponse, error) {
 	var seenNodes collections.Set[*ast.Node]
 	var entries []*ReferenceEntry
 	for _, entry := range data.SymbolsAndEntries {
 		for _, ref := range entry.references {
-			if seenNodes.AddIfAbsent(ref.node) && (!options.DropOriginNodes || !ref.node.Loc.ContainsInclusive(data.Position)) {
+			if seenNodes.AddIfAbsent(ref.node) && (!options.dropOriginNodes || !ref.node.Loc.ContainsInclusive(data.Position)) {
 				entries = append(entries, ref)
 			}
 		}
 	}
 
-	if !options.RequireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
+	if !options.requireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
 		links := l.convertEntriesToLocationLinks(entries)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
@@ -678,7 +710,21 @@ func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
+func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, orchestrator CrossProjectOrchestrator) (lsproto.WorkspaceEditOrNull, error) {
+	return handleCrossProject(
+		l,
+		ctx,
+		params,
+		orchestrator,
+		(*LanguageService).symbolAndEntriesToRename,
+		combineRenameResponse,
+		true,  /*isRename*/
+		false, /*implementations*/
+		symbolEntryTransformOptions{},
+	)
+}
+
+func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
 	if data.OriginalNode.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
