@@ -37,13 +37,10 @@
 -// 
  // /** @typedef {(string | number)} */
 -// var [|NumberLikeRENAME|];
--// 
--// [|NumberLikeRENAME|] = 10;
--// 
--// /** @type {/*RENAME*/[|NumberLikeRENAME|]} */
 +// var NumberLike;
-+// 
+ // 
+-// [|NumberLikeRENAME|] = 10;
 +// NumberLike = 10;
-+// 
-+// /** @type {/*RENAME*/NumberLike} */
+ // 
+ // /** @type {/*RENAME*/[|NumberLikeRENAME|]} */
  // var numberLike;

@@ -961,11 +961,6 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
-	// Only allow a symbol to be renamed if it actually has at least one declaration.
-	if options.use == referenceUseRename && len(symbol.Declarations) == 0 {
-		return nil
-	}
-
 	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
 	if moduleReferences != nil && symbol.Flags&ast.SymbolFlagsTransient == 0 {
 		return moduleReferences
