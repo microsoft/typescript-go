@@ -22,6 +22,7 @@ import (
 
 const (
 	autoImportsCmd              baselineCommand = "Auto Imports"
+	callHierarchyCmd            baselineCommand = "Call Hierarchy"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
 	goToDefinitionCmd           baselineCommand = "goToDefinition"
@@ -33,6 +34,7 @@ const (
 	renameCmd                   baselineCommand = "findRenameLocations"
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
 	smartSelectionCmd           baselineCommand = "Smart Selection"
+	codeLensesCmd               baselineCommand = "Code Lenses"
 )
 
 type baselineCommand string
@@ -71,6 +73,8 @@ func getBaselineExtension(command baselineCommand) string {
 	switch command {
 	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd:
 		return "baseline"
+	case callHierarchyCmd:
+		return "callHierarchy.txt"
 	case autoImportsCmd:
 		return "baseline.md"
 	default:
@@ -90,6 +94,21 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 		return baseline.Options{
 			Subfolder:   subfolder,
 			IsSubmodule: true,
+		}
+	case callHierarchyCmd:
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				// TypeScript baselines have "/tests/cases/fourslash/" prefix in file paths
+				// Handle /server/ subdirectory - need to remove both prefixes
+				s = strings.ReplaceAll(s, "/tests/cases/fourslash/server/", "/")
+				s = strings.ReplaceAll(s, "/tests/cases/fourslash/", "/")
+				// SymbolKind enum differences between Strada and tsgo
+				s = strings.ReplaceAll(s, "kind: getter", "kind: property")
+				s = strings.ReplaceAll(s, "kind: script", "kind: file")
+				return s
+			},
 		}
 	case renameCmd:
 		return baseline.Options{
@@ -904,62 +923,5 @@ func codeFence(lang string, code string) string {
 }
 
 func symbolInformationToData(symbol *lsproto.SymbolInformation) string {
-	var symbolKindToString string
-	switch symbol.Kind {
-	case lsproto.SymbolKindFile:
-		symbolKindToString = "file"
-	case lsproto.SymbolKindModule:
-		symbolKindToString = "module"
-	case lsproto.SymbolKindNamespace:
-		symbolKindToString = "namespace"
-	case lsproto.SymbolKindPackage:
-		symbolKindToString = "package"
-	case lsproto.SymbolKindClass:
-		symbolKindToString = "class"
-	case lsproto.SymbolKindMethod:
-		symbolKindToString = "method"
-	case lsproto.SymbolKindProperty:
-		symbolKindToString = "property"
-	case lsproto.SymbolKindField:
-		symbolKindToString = "field"
-	case lsproto.SymbolKindConstructor:
-		symbolKindToString = "constructor"
-	case lsproto.SymbolKindEnum:
-		symbolKindToString = "enum"
-	case lsproto.SymbolKindInterface:
-		symbolKindToString = "interface"
-	case lsproto.SymbolKindFunction:
-		symbolKindToString = "function"
-	case lsproto.SymbolKindVariable:
-		symbolKindToString = "variable"
-	case lsproto.SymbolKindConstant:
-		symbolKindToString = "constant"
-	case lsproto.SymbolKindString:
-		symbolKindToString = "string"
-	case lsproto.SymbolKindNumber:
-		symbolKindToString = "number"
-	case lsproto.SymbolKindBoolean:
-		symbolKindToString = "boolean"
-	case lsproto.SymbolKindArray:
-		symbolKindToString = "array"
-	case lsproto.SymbolKindObject:
-		symbolKindToString = "object"
-	case lsproto.SymbolKindKey:
-		symbolKindToString = "key"
-	case lsproto.SymbolKindNull:
-		symbolKindToString = "null"
-	case lsproto.SymbolKindEnumMember:
-		symbolKindToString = "enumMember"
-	case lsproto.SymbolKindStruct:
-		symbolKindToString = "struct"
-	case lsproto.SymbolKindEvent:
-		symbolKindToString = "event"
-	case lsproto.SymbolKindOperator:
-		symbolKindToString = "operator"
-	case lsproto.SymbolKindTypeParameter:
-		symbolKindToString = "typeParameter"
-	default:
-		symbolKindToString = "unknown"
-	}
-	return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbolKindToString)
+	return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbol.Kind.String())
 }

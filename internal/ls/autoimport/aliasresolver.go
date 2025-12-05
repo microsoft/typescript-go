@@ -7,7 +7,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -129,6 +130,11 @@ func (r *aliasResolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCac
 
 // ---
 
+// GetSymlinkCache implements checker.Program.
+func (r *aliasResolver) GetSymlinkCache() *symlinks.KnownSymlinks {
+	panic("unimplemented")
+}
+
 // GetSourceFileMetaData implements checker.Program.
 func (r *aliasResolver) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
 	panic("unimplemented")
@@ -165,7 +171,7 @@ func (r *aliasResolver) GetNearestAncestorDirectoryWithPackageJson(dirname strin
 }
 
 // GetPackageJsonInfo implements checker.Program.
-func (r *aliasResolver) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (r *aliasResolver) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	panic("unimplemented")
 }
 

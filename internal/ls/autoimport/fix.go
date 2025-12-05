@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -52,6 +53,7 @@ func (f *Fix) Edits(
 	converters *lsconv.Converters,
 	preferences *lsutil.UserPreferences,
 ) ([]*lsproto.TextEdit, string) {
+	locale := locale.FromContext(ctx)
 	tracker := change.NewTracker(ctx, compilerOptions, formatOptions, converters)
 	switch f.Kind {
 	case lsproto.AutoImportFixKindUseNamespace:
@@ -60,7 +62,7 @@ func (f *Fix) Edits(
 		}
 		qualified := fmt.Sprintf("%s.%s", f.NamespacePrefix, f.Name)
 		tracker.InsertText(file, *f.UsagePosition, f.NamespacePrefix+".")
-		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Format(f.Name, qualified)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Localize(locale, f.Name, qualified)
 	case lsproto.AutoImportFixKindAddToExisting:
 		if len(file.Imports()) <= int(f.ImportIndex) {
 			panic("import index out of range")
@@ -85,7 +87,7 @@ func (f *Fix) Edits(
 		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
 		namedImports := core.IfElse(f.ImportKind == lsproto.ImportKindNamed, []*newImportBinding{{kind: lsproto.ImportKindNamed, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}}, nil)
 		addToExistingImport(tracker, file, importClauseOrBindingPattern, defaultImport, namedImports, preferences)
-		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Format(f.ModuleSpecifier)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Localize(locale, f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindAddNew:
 		var declarations []*ast.Statement
 		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
@@ -115,15 +117,15 @@ func (f *Fix) Edits(
 		// if qualification != nil {
 		// 	addNamespaceQualifier(tracker, file, qualification)
 		// }
-		return tracker.GetChanges()[file.FileName()], diagnostics.Add_import_from_0.Format(f.ModuleSpecifier)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Add_import_from_0.Localize(locale, f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindPromoteTypeOnly:
 		promotedDeclaration := promoteFromTypeOnly(tracker, f.TypeOnlyAliasDeclaration, compilerOptions, file, preferences)
 		if promotedDeclaration.Kind == ast.KindImportSpecifier {
 			moduleSpec := getModuleSpecifierText(promotedDeclaration.Parent.Parent)
-			return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_of_0_from_1.Format(f.Name, moduleSpec)
+			return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_of_0_from_1.Localize(locale, f.Name, moduleSpec)
 		}
 		moduleSpec := getModuleSpecifierText(promotedDeclaration)
-		return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_declaration_from_0.Format(moduleSpec)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Remove_type_from_import_declaration_from_0.Localize(locale, moduleSpec)
 	case lsproto.AutoImportFixKindJsdocTypeImport:
 		if f.UsagePosition == nil {
 			panic("UsagePosition must be set for JSDoc type import fix")
@@ -135,7 +137,7 @@ func (f *Fix) Edits(
 		}
 		importTypePrefix := fmt.Sprintf("import(%s%s%s).", quoteChar, f.ModuleSpecifier, quoteChar)
 		tracker.InsertText(file, *f.UsagePosition, importTypePrefix)
-		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Format(f.Name, importTypePrefix+f.Name)
+		return tracker.GetChanges()[file.FileName()], diagnostics.Change_0_to_1.Localize(locale, f.Name, importTypePrefix+f.Name)
 	default:
 		panic("unimplemented fix edit")
 	}

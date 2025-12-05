@@ -2,11 +2,26 @@ completionListInClosedFunction05
 completionsAtIncompleteObjectLiteralProperty
 completionsSelfDeclaring1
 completionsWithDeprecatedTag4
+navigationItemsExactMatch2
+navigationItemsSpecialPropertyAssignment
+navto_excludeLib1
+navto_excludeLib2
+navto_excludeLib4
+navto_serverExcludeLib
 parserCorruptionAfterMapInClass
 quickInfoForOverloadOnConst1
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
+<<<<<<< HEAD
 completionsImportDefaultExportCrash2
 completionsImport_reExportDefault
 completionsImport_reexportTransient
+=======
+jsDocFunctionSignatures2
+jsDocFunctionSignatures12
+outliningHintSpansForFunction
+getOutliningSpans
+outliningForNonCompleteInterfaceDeclaration
+incrementalParsingWithJsDoc
+>>>>>>> @{-1}

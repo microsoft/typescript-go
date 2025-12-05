@@ -15,8 +15,11 @@ func TestInlayHintsTupleTypeCrash(t *testing.T) {
 	const content = `function iterateTuples(tuples: [string][]): void {
   tuples.forEach((l) => {})
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{
-		IncludeInlayFunctionParameterTypeHints: true,
+		InlayHints: lsutil.InlayHintsPreferences{
+			IncludeInlayFunctionParameterTypeHints: true,
+		},
 	})
 }

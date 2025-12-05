@@ -21734,6 +21734,9 @@ type ClientSemanticTokensRequestFullDelta struct {
 type InitializationOptions struct {
 	// DisablePushDiagnostics disables automatic pushing of diagnostics to the client.
 	DisablePushDiagnostics *bool `json:"disablePushDiagnostics,omitzero"`
+
+	// The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.
+	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
 }
 
 // AutoImportFix contains information about an auto-import suggestion.
@@ -21866,6 +21869,70 @@ type CompletionItemData struct {
 	AutoImport *AutoImportFix `json:"autoImport,omitzero"`
 }
 
+type CodeLensData struct {
+	// The kind of the code lens ("references" or "implementations").
+	Kind CodeLensKind `json:"kind"`
+
+	// The document in which the code lens and its range are located.
+	Uri DocumentUri `json:"uri"`
+}
+
+var _ json.UnmarshalerFrom = (*CodeLensData)(nil)
+
+func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingKind uint = 1 << iota
+		missingUri
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"kind"`:
+			missing &^= missingKind
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case `"uri"`:
+			missing &^= missingUri
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingKind != 0 {
+			missingProps = append(missingProps, "kind")
+		}
+		if missing&missingUri != 0 {
+			missingProps = append(missingProps, "uri")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
 type CallHierarchyItemData struct{}
 
@@ -21880,9 +21947,6 @@ type CodeActionData struct{}
 
 // WorkspaceSymbolData is a placeholder for custom data preserved on a WorkspaceSymbol.
 type WorkspaceSymbolData struct{}
-
-// CodeLensData is a placeholder for custom data preserved on a CodeLens.
-type CodeLensData struct{}
 
 // DocumentLinkData is a placeholder for custom data preserved on a DocumentLink.
 type DocumentLinkData struct{}
@@ -21960,37 +22024,37 @@ func (s *ColorPresentationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 // corresponding client capabilities.
 //
 // Since: 3.16.0
-type SemanticTokenTypes string
+type SemanticTokenType string
 
 const (
-	SemanticTokenTypesnamespace SemanticTokenTypes = "namespace"
+	SemanticTokenTypeNamespace SemanticTokenType = "namespace"
 	// Represents a generic type. Acts as a fallback for types which can't be mapped to
 	// a specific type like class or enum.
-	SemanticTokenTypestype          SemanticTokenTypes = "type"
-	SemanticTokenTypesclass         SemanticTokenTypes = "class"
-	SemanticTokenTypesenum          SemanticTokenTypes = "enum"
-	SemanticTokenTypesinterface     SemanticTokenTypes = "interface"
-	SemanticTokenTypesstruct        SemanticTokenTypes = "struct"
-	SemanticTokenTypestypeParameter SemanticTokenTypes = "typeParameter"
-	SemanticTokenTypesparameter     SemanticTokenTypes = "parameter"
-	SemanticTokenTypesvariable      SemanticTokenTypes = "variable"
-	SemanticTokenTypesproperty      SemanticTokenTypes = "property"
-	SemanticTokenTypesenumMember    SemanticTokenTypes = "enumMember"
-	SemanticTokenTypesevent         SemanticTokenTypes = "event"
-	SemanticTokenTypesfunction      SemanticTokenTypes = "function"
-	SemanticTokenTypesmethod        SemanticTokenTypes = "method"
-	SemanticTokenTypesmacro         SemanticTokenTypes = "macro"
-	SemanticTokenTypeskeyword       SemanticTokenTypes = "keyword"
-	SemanticTokenTypesmodifier      SemanticTokenTypes = "modifier"
-	SemanticTokenTypescomment       SemanticTokenTypes = "comment"
-	SemanticTokenTypesstring        SemanticTokenTypes = "string"
-	SemanticTokenTypesnumber        SemanticTokenTypes = "number"
-	SemanticTokenTypesregexp        SemanticTokenTypes = "regexp"
-	SemanticTokenTypesoperator      SemanticTokenTypes = "operator"
+	SemanticTokenTypeType          SemanticTokenType = "type"
+	SemanticTokenTypeClass         SemanticTokenType = "class"
+	SemanticTokenTypeEnum          SemanticTokenType = "enum"
+	SemanticTokenTypeInterface     SemanticTokenType = "interface"
+	SemanticTokenTypeStruct        SemanticTokenType = "struct"
+	SemanticTokenTypeTypeParameter SemanticTokenType = "typeParameter"
+	SemanticTokenTypeParameter     SemanticTokenType = "parameter"
+	SemanticTokenTypeVariable      SemanticTokenType = "variable"
+	SemanticTokenTypeProperty      SemanticTokenType = "property"
+	SemanticTokenTypeEnumMember    SemanticTokenType = "enumMember"
+	SemanticTokenTypeEvent         SemanticTokenType = "event"
+	SemanticTokenTypeFunction      SemanticTokenType = "function"
+	SemanticTokenTypeMethod        SemanticTokenType = "method"
+	SemanticTokenTypeMacro         SemanticTokenType = "macro"
+	SemanticTokenTypeKeyword       SemanticTokenType = "keyword"
+	SemanticTokenTypeModifier      SemanticTokenType = "modifier"
+	SemanticTokenTypeComment       SemanticTokenType = "comment"
+	SemanticTokenTypeString        SemanticTokenType = "string"
+	SemanticTokenTypeNumber        SemanticTokenType = "number"
+	SemanticTokenTypeRegexp        SemanticTokenType = "regexp"
+	SemanticTokenTypeOperator      SemanticTokenType = "operator"
 	// Since: 3.17.0
-	SemanticTokenTypesdecorator SemanticTokenTypes = "decorator"
+	SemanticTokenTypeDecorator SemanticTokenType = "decorator"
 	// Since: 3.18.0
-	SemanticTokenTypeslabel SemanticTokenTypes = "label"
+	SemanticTokenTypeLabel SemanticTokenType = "label"
 )
 
 // A set of predefined token modifiers. This set is not fixed
@@ -21998,19 +22062,19 @@ const (
 // corresponding client capabilities.
 //
 // Since: 3.16.0
-type SemanticTokenModifiers string
+type SemanticTokenModifier string
 
 const (
-	SemanticTokenModifiersdeclaration    SemanticTokenModifiers = "declaration"
-	SemanticTokenModifiersdefinition     SemanticTokenModifiers = "definition"
-	SemanticTokenModifiersreadonly       SemanticTokenModifiers = "readonly"
-	SemanticTokenModifiersstatic         SemanticTokenModifiers = "static"
-	SemanticTokenModifiersdeprecated     SemanticTokenModifiers = "deprecated"
-	SemanticTokenModifiersabstract       SemanticTokenModifiers = "abstract"
-	SemanticTokenModifiersasync          SemanticTokenModifiers = "async"
-	SemanticTokenModifiersmodification   SemanticTokenModifiers = "modification"
-	SemanticTokenModifiersdocumentation  SemanticTokenModifiers = "documentation"
-	SemanticTokenModifiersdefaultLibrary SemanticTokenModifiers = "defaultLibrary"
+	SemanticTokenModifierDeclaration    SemanticTokenModifier = "declaration"
+	SemanticTokenModifierDefinition     SemanticTokenModifier = "definition"
+	SemanticTokenModifierReadonly       SemanticTokenModifier = "readonly"
+	SemanticTokenModifierStatic         SemanticTokenModifier = "static"
+	SemanticTokenModifierDeprecated     SemanticTokenModifier = "deprecated"
+	SemanticTokenModifierAbstract       SemanticTokenModifier = "abstract"
+	SemanticTokenModifierAsync          SemanticTokenModifier = "async"
+	SemanticTokenModifierModification   SemanticTokenModifier = "modification"
+	SemanticTokenModifierDocumentation  SemanticTokenModifier = "documentation"
+	SemanticTokenModifierDefaultLibrary SemanticTokenModifier = "defaultLibrary"
 )
 
 // The document diagnostic report kinds.
@@ -22028,36 +22092,31 @@ const (
 )
 
 // Predefined error codes.
-type ErrorCodes int32
+type ErrorCode int32
 
 const (
-	ErrorCodesParseError     ErrorCodes = -32700
-	ErrorCodesInvalidRequest ErrorCodes = -32600
-	ErrorCodesMethodNotFound ErrorCodes = -32601
-	ErrorCodesInvalidParams  ErrorCodes = -32602
-	ErrorCodesInternalError  ErrorCodes = -32603
+	ErrorCodeParseError     ErrorCode = -32700
+	ErrorCodeInvalidRequest ErrorCode = -32600
+	ErrorCodeMethodNotFound ErrorCode = -32601
+	ErrorCodeInvalidParams  ErrorCode = -32602
+	ErrorCodeInternalError  ErrorCode = -32603
 	// Error code indicating that a server received a notification or
 	// request before the server has received the `initialize` request.
-	ErrorCodesServerNotInitialized ErrorCodes = -32002
-	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
-)
-
-type LSPErrorCodes int32
-
-const (
+	ErrorCodeServerNotInitialized ErrorCode = -32002
+	ErrorCodeUnknownErrorCode     ErrorCode = -32001
 	// A request failed but it was syntactically correct, e.g the
 	// method name was known and the parameters were valid. The error
 	// message should contain human readable information about why
 	// the request failed.
 	//
 	// Since: 3.17.0
-	LSPErrorCodesRequestFailed LSPErrorCodes = -32803
+	ErrorCodeRequestFailed ErrorCode = -32803
 	// The server cancelled the request. This error code should
 	// only be used for requests that explicitly support being
 	// server cancellable.
 	//
 	// Since: 3.17.0
-	LSPErrorCodesServerCancelled LSPErrorCodes = -32802
+	ErrorCodeServerCancelled ErrorCode = -32802
 	// The server detected that the content of a document got
 	// modified outside normal conditions. A server should
 	// NOT send this error code if it detects a content change
@@ -22066,11 +22125,42 @@ const (
 	//
 	// If a client decides that a result is not of any use anymore
 	// the client should cancel the request.
-	LSPErrorCodesContentModified LSPErrorCodes = -32801
+	ErrorCodeContentModified ErrorCode = -32801
 	// The client has canceled a request and a server has detected
 	// the cancel.
-	LSPErrorCodesRequestCancelled LSPErrorCodes = -32800
+	ErrorCodeRequestCancelled ErrorCode = -32800
 )
+
+const _ErrorCode_name = "RequestFailedServerCancelledContentModifiedRequestCancelledParseErrorInternalErrorInvalidParamsMethodNotFoundInvalidRequestServerNotInitializedUnknownErrorCode"
+
+var (
+	_ErrorCode_index_0 = [...]uint16{0, 13, 28, 43, 59}
+	_ErrorCode_index_1 = [...]uint16{0, 10}
+	_ErrorCode_index_2 = [...]uint16{0, 13, 26, 40, 54}
+	_ErrorCode_index_3 = [...]uint16{0, 20, 36}
+)
+
+func (e ErrorCode) String() string {
+	switch {
+	case -32803 <= e && e <= -32800:
+		i := int(e) - -32803
+		return _ErrorCode_name[0+_ErrorCode_index_0[i] : 0+_ErrorCode_index_0[i+1]]
+	case e == -32700:
+		return _ErrorCode_name[59:69]
+	case -32603 <= e && e <= -32600:
+		i := int(e) - -32603
+		return _ErrorCode_name[69+_ErrorCode_index_2[i] : 69+_ErrorCode_index_2[i+1]]
+	case -32002 <= e && e <= -32001:
+		i := int(e) - -32002
+		return _ErrorCode_name[123+_ErrorCode_index_3[i] : 123+_ErrorCode_index_3[i+1]]
+	default:
+		return fmt.Sprintf("ErrorCode(%d)", e)
+	}
+}
+
+func (e ErrorCode) Error() string {
+	return e.String()
+}
 
 // A set of predefined range kinds.
 type FoldingRangeKind string
@@ -22116,6 +22206,18 @@ const (
 	SymbolKindTypeParameter SymbolKind = 26
 )
 
+const _SymbolKind_name = "FileModuleNamespacePackageClassMethodPropertyFieldConstructorEnumInterfaceFunctionVariableConstantStringNumberBooleanArrayObjectKeyNullEnumMemberStructEventOperatorTypeParameter"
+
+var _SymbolKind_index = [...]uint16{0, 4, 10, 19, 26, 31, 37, 45, 50, 61, 65, 74, 82, 90, 98, 104, 110, 117, 122, 128, 131, 135, 145, 151, 156, 164, 177}
+
+func (e SymbolKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_SymbolKind_index)-1 {
+		return fmt.Sprintf("SymbolKind(%d)", e)
+	}
+	return _SymbolKind_name[_SymbolKind_index[i]:_SymbolKind_index[i+1]]
+}
+
 // Symbol tags are extra annotations that tweak the rendering of a symbol.
 //
 // Since: 3.16
@@ -22126,6 +22228,18 @@ const (
 	SymbolTagDeprecated SymbolTag = 1
 )
 
+const _SymbolTag_name = "Deprecated"
+
+var _SymbolTag_index = [...]uint16{0, 10}
+
+func (e SymbolTag) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_SymbolTag_index)-1 {
+		return fmt.Sprintf("SymbolTag(%d)", e)
+	}
+	return _SymbolTag_name[_SymbolTag_index[i]:_SymbolTag_index[i+1]]
+}
+
 // Moniker uniqueness level to define scope of the moniker.
 //
 // Since: 3.16.0
@@ -22133,15 +22247,15 @@ type UniquenessLevel string
 
 const (
 	// The moniker is only unique inside a document
-	UniquenessLeveldocument UniquenessLevel = "document"
+	UniquenessLevelDocument UniquenessLevel = "document"
 	// The moniker is unique inside a project for which a dump got created
-	UniquenessLevelproject UniquenessLevel = "project"
+	UniquenessLevelProject UniquenessLevel = "project"
 	// The moniker is unique inside the group to which a project belongs
-	UniquenessLevelgroup UniquenessLevel = "group"
+	UniquenessLevelGroup UniquenessLevel = "group"
 	// The moniker is unique inside the moniker scheme.
-	UniquenessLevelscheme UniquenessLevel = "scheme"
+	UniquenessLevelScheme UniquenessLevel = "scheme"
 	// The moniker is globally unique
-	UniquenessLevelglobal UniquenessLevel = "global"
+	UniquenessLevelGlobal UniquenessLevel = "global"
 )
 
 // The moniker kind.
@@ -22151,12 +22265,12 @@ type MonikerKind string
 
 const (
 	// The moniker represent a symbol that is imported into a project
-	MonikerKindimport MonikerKind = "import"
+	MonikerKindImport MonikerKind = "import"
 	// The moniker represents a symbol that is exported from a project
-	MonikerKindexport MonikerKind = "export"
+	MonikerKindExport MonikerKind = "export"
 	// The moniker represents a symbol that is local to a project (e.g. a local
 	// variable of a function, a class not visible outside the project, ...)
-	MonikerKindlocal MonikerKind = "local"
+	MonikerKindLocal MonikerKind = "local"
 )
 
 // Inlay hint kinds.
@@ -22170,6 +22284,18 @@ const (
 	// An inlay hint that is for a parameter.
 	InlayHintKindParameter InlayHintKind = 2
 )
+
+const _InlayHintKind_name = "TypeParameter"
+
+var _InlayHintKind_index = [...]uint16{0, 4, 13}
+
+func (e InlayHintKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_InlayHintKind_index)-1 {
+		return fmt.Sprintf("InlayHintKind(%d)", e)
+	}
+	return _InlayHintKind_name[_InlayHintKind_index[i]:_InlayHintKind_index[i+1]]
+}
 
 // The message type
 type MessageType uint32
@@ -22191,6 +22317,18 @@ const (
 	MessageTypeDebug MessageType = 5
 )
 
+const _MessageType_name = "ErrorWarningInfoLogDebug"
+
+var _MessageType_index = [...]uint16{0, 5, 12, 16, 19, 24}
+
+func (e MessageType) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_MessageType_index)-1 {
+		return fmt.Sprintf("MessageType(%d)", e)
+	}
+	return _MessageType_name[_MessageType_index[i]:_MessageType_index[i+1]]
+}
+
 // Defines how the host (editor) should sync
 // document changes to the language server.
 type TextDocumentSyncKind uint32
@@ -22207,6 +22345,18 @@ const (
 	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
 )
 
+const _TextDocumentSyncKind_name = "NoneFullIncremental"
+
+var _TextDocumentSyncKind_index = [...]uint16{0, 4, 8, 19}
+
+func (e TextDocumentSyncKind) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_TextDocumentSyncKind_index)-1 {
+		return fmt.Sprintf("TextDocumentSyncKind(%d)", e)
+	}
+	return _TextDocumentSyncKind_name[_TextDocumentSyncKind_index[i]:_TextDocumentSyncKind_index[i+1]]
+}
+
 // Represents reasons why a text document is saved.
 type TextDocumentSaveReason uint32
 
@@ -22219,6 +22369,18 @@ const (
 	// When the editor lost focus.
 	TextDocumentSaveReasonFocusOut TextDocumentSaveReason = 3
 )
+
+const _TextDocumentSaveReason_name = "ManualAfterDelayFocusOut"
+
+var _TextDocumentSaveReason_index = [...]uint16{0, 6, 16, 24}
+
+func (e TextDocumentSaveReason) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_TextDocumentSaveReason_index)-1 {
+		return fmt.Sprintf("TextDocumentSaveReason(%d)", e)
+	}
+	return _TextDocumentSaveReason_name[_TextDocumentSaveReason_index[i]:_TextDocumentSaveReason_index[i+1]]
+}
 
 // The kind of a completion entry.
 type CompletionItemKind uint32
@@ -22251,6 +22413,18 @@ const (
 	CompletionItemKindTypeParameter CompletionItemKind = 25
 )
 
+const _CompletionItemKind_name = "TextMethodFunctionConstructorFieldVariableClassInterfaceModulePropertyUnitValueEnumKeywordSnippetColorFileReferenceFolderEnumMemberConstantStructEventOperatorTypeParameter"
+
+var _CompletionItemKind_index = [...]uint16{0, 4, 10, 18, 29, 34, 42, 47, 56, 62, 70, 74, 79, 83, 90, 97, 102, 106, 115, 121, 131, 139, 145, 150, 158, 171}
+
+func (e CompletionItemKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_CompletionItemKind_index)-1 {
+		return fmt.Sprintf("CompletionItemKind(%d)", e)
+	}
+	return _CompletionItemKind_name[_CompletionItemKind_index[i]:_CompletionItemKind_index[i+1]]
+}
+
 // Completion item tags are extra annotations that tweak the rendering of a completion
 // item.
 //
@@ -22261,6 +22435,18 @@ const (
 	// Render a completion as obsolete, usually using a strike-out.
 	CompletionItemTagDeprecated CompletionItemTag = 1
 )
+
+const _CompletionItemTag_name = "Deprecated"
+
+var _CompletionItemTag_index = [...]uint16{0, 10}
+
+func (e CompletionItemTag) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_CompletionItemTag_index)-1 {
+		return fmt.Sprintf("CompletionItemTag(%d)", e)
+	}
+	return _CompletionItemTag_name[_CompletionItemTag_index[i]:_CompletionItemTag_index[i+1]]
+}
 
 // Defines whether the insert text in a completion item should be interpreted as
 // plain text or a snippet.
@@ -22280,6 +22466,18 @@ const (
 	InsertTextFormatSnippet InsertTextFormat = 2
 )
 
+const _InsertTextFormat_name = "PlainTextSnippet"
+
+var _InsertTextFormat_index = [...]uint16{0, 9, 16}
+
+func (e InsertTextFormat) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_InsertTextFormat_index)-1 {
+		return fmt.Sprintf("InsertTextFormat(%d)", e)
+	}
+	return _InsertTextFormat_name[_InsertTextFormat_index[i]:_InsertTextFormat_index[i+1]]
+}
+
 // How whitespace and indentation is handled during completion
 // item insertion.
 //
@@ -22292,7 +22490,7 @@ const (
 	// inserted using the indentation defined in the string value.
 	// The client will not apply any kind of adjustments to the
 	// string.
-	InsertTextModeasIs InsertTextMode = 1
+	InsertTextModeAsIs InsertTextMode = 1
 	// The editor adjusts leading whitespace of new lines so that
 	// they match the indentation up to the cursor of the line for
 	// which the item is accepted.
@@ -22300,8 +22498,20 @@ const (
 	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
 	// multi line completion item is indented using 2 tabs and all
 	// following lines inserted will be indented using 2 tabs as well.
-	InsertTextModeadjustIndentation InsertTextMode = 2
+	InsertTextModeAdjustIndentation InsertTextMode = 2
 )
+
+const _InsertTextMode_name = "asIsadjustIndentation"
+
+var _InsertTextMode_index = [...]uint16{0, 4, 21}
+
+func (e InsertTextMode) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_InsertTextMode_index)-1 {
+		return fmt.Sprintf("InsertTextMode(%d)", e)
+	}
+	return _InsertTextMode_name[_InsertTextMode_index[i]:_InsertTextMode_index[i+1]]
+}
 
 // A document highlight kind.
 type DocumentHighlightKind uint32
@@ -22314,6 +22524,18 @@ const (
 	// Write-access of a symbol, like writing to a variable.
 	DocumentHighlightKindWrite DocumentHighlightKind = 3
 )
+
+const _DocumentHighlightKind_name = "TextReadWrite"
+
+var _DocumentHighlightKind_index = [...]uint16{0, 4, 8, 13}
+
+func (e DocumentHighlightKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_DocumentHighlightKind_index)-1 {
+		return fmt.Sprintf("DocumentHighlightKind(%d)", e)
+	}
+	return _DocumentHighlightKind_name[_DocumentHighlightKind_index[i]:_DocumentHighlightKind_index[i+1]]
+}
 
 // A set of predefined code action kinds
 type CodeActionKind string
@@ -22397,6 +22619,18 @@ const (
 	// Marks the code action as LLM-generated.
 	CodeActionTagLLMGenerated CodeActionTag = 1
 )
+
+const _CodeActionTag_name = "LLMGenerated"
+
+var _CodeActionTag_index = [...]uint16{0, 12}
+
+func (e CodeActionTag) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_CodeActionTag_index)-1 {
+		return fmt.Sprintf("CodeActionTag(%d)", e)
+	}
+	return _CodeActionTag_name[_CodeActionTag_index[i]:_CodeActionTag_index[i+1]]
+}
 
 type TraceValue string
 
@@ -22515,6 +22749,18 @@ const (
 	InlineCompletionTriggerKindAutomatic InlineCompletionTriggerKind = 2
 )
 
+const _InlineCompletionTriggerKind_name = "InvokedAutomatic"
+
+var _InlineCompletionTriggerKind_index = [...]uint16{0, 7, 16}
+
+func (e InlineCompletionTriggerKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_InlineCompletionTriggerKind_index)-1 {
+		return fmt.Sprintf("InlineCompletionTriggerKind(%d)", e)
+	}
+	return _InlineCompletionTriggerKind_name[_InlineCompletionTriggerKind_index[i]:_InlineCompletionTriggerKind_index[i+1]]
+}
+
 // A set of predefined position encoding kinds.
 //
 // Since: 3.17.0
@@ -22548,6 +22794,18 @@ const (
 	FileChangeTypeDeleted FileChangeType = 3
 )
 
+const _FileChangeType_name = "CreatedChangedDeleted"
+
+var _FileChangeType_index = [...]uint16{0, 7, 14, 21}
+
+func (e FileChangeType) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_FileChangeType_index)-1 {
+		return fmt.Sprintf("FileChangeType(%d)", e)
+	}
+	return _FileChangeType_name[_FileChangeType_index[i]:_FileChangeType_index[i+1]]
+}
+
 type WatchKind uint32
 
 const (
@@ -22558,6 +22816,30 @@ const (
 	// Interested in delete events
 	WatchKindDelete WatchKind = 4
 )
+
+const _WatchKind_name = "CreateChangeDelete"
+
+var _WatchKind_index = [...]uint16{0, 6, 12, 18}
+
+func (e WatchKind) String() string {
+	if e == 0 {
+		return "0"
+	}
+	var parts []string
+	if e&1 != 0 {
+		parts = append(parts, _WatchKind_name[_WatchKind_index[0]:_WatchKind_index[1]])
+	}
+	if e&2 != 0 {
+		parts = append(parts, _WatchKind_name[_WatchKind_index[1]:_WatchKind_index[2]])
+	}
+	if e&4 != 0 {
+		parts = append(parts, _WatchKind_name[_WatchKind_index[2]:_WatchKind_index[3]])
+	}
+	if len(parts) == 0 {
+		return fmt.Sprintf("WatchKind(%d)", e)
+	}
+	return strings.Join(parts, "|")
+}
 
 // The diagnostic's severity.
 type DiagnosticSeverity uint32
@@ -22572,6 +22854,18 @@ const (
 	// Reports a hint.
 	DiagnosticSeverityHint DiagnosticSeverity = 4
 )
+
+const _DiagnosticSeverity_name = "ErrorWarningInformationHint"
+
+var _DiagnosticSeverity_index = [...]uint16{0, 5, 12, 23, 27}
+
+func (e DiagnosticSeverity) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_DiagnosticSeverity_index)-1 {
+		return fmt.Sprintf("DiagnosticSeverity(%d)", e)
+	}
+	return _DiagnosticSeverity_name[_DiagnosticSeverity_index[i]:_DiagnosticSeverity_index[i+1]]
+}
 
 // The diagnostic tags.
 //
@@ -22590,6 +22884,18 @@ const (
 	DiagnosticTagDeprecated DiagnosticTag = 2
 )
 
+const _DiagnosticTag_name = "UnnecessaryDeprecated"
+
+var _DiagnosticTag_index = [...]uint16{0, 11, 21}
+
+func (e DiagnosticTag) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_DiagnosticTag_index)-1 {
+		return fmt.Sprintf("DiagnosticTag(%d)", e)
+	}
+	return _DiagnosticTag_name[_DiagnosticTag_index[i]:_DiagnosticTag_index[i+1]]
+}
+
 // How a completion was triggered
 type CompletionTriggerKind uint32
 
@@ -22603,6 +22909,18 @@ const (
 	// Completion was re-triggered as current completion list is incomplete
 	CompletionTriggerKindTriggerForIncompleteCompletions CompletionTriggerKind = 3
 )
+
+const _CompletionTriggerKind_name = "InvokedTriggerCharacterTriggerForIncompleteCompletions"
+
+var _CompletionTriggerKind_index = [...]uint16{0, 7, 23, 54}
+
+func (e CompletionTriggerKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_CompletionTriggerKind_index)-1 {
+		return fmt.Sprintf("CompletionTriggerKind(%d)", e)
+	}
+	return _CompletionTriggerKind_name[_CompletionTriggerKind_index[i]:_CompletionTriggerKind_index[i+1]]
+}
 
 // Defines how values from a set of defaults and an individual item will be
 // merged.
@@ -22621,6 +22939,18 @@ const (
 	ApplyKindMerge ApplyKind = 2
 )
 
+const _ApplyKind_name = "ReplaceMerge"
+
+var _ApplyKind_index = [...]uint16{0, 7, 12}
+
+func (e ApplyKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_ApplyKind_index)-1 {
+		return fmt.Sprintf("ApplyKind(%d)", e)
+	}
+	return _ApplyKind_name[_ApplyKind_index[i]:_ApplyKind_index[i+1]]
+}
+
 // How a signature help was triggered.
 //
 // Since: 3.15.0
@@ -22634,6 +22964,18 @@ const (
 	// Signature help was triggered by the cursor moving or by the document content changing.
 	SignatureHelpTriggerKindContentChange SignatureHelpTriggerKind = 3
 )
+
+const _SignatureHelpTriggerKind_name = "InvokedTriggerCharacterContentChange"
+
+var _SignatureHelpTriggerKind_index = [...]uint16{0, 7, 23, 36}
+
+func (e SignatureHelpTriggerKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_SignatureHelpTriggerKind_index)-1 {
+		return fmt.Sprintf("SignatureHelpTriggerKind(%d)", e)
+	}
+	return _SignatureHelpTriggerKind_name[_SignatureHelpTriggerKind_index[i]:_SignatureHelpTriggerKind_index[i+1]]
+}
 
 // The reason why code actions were requested.
 //
@@ -22650,6 +22992,18 @@ const (
 	CodeActionTriggerKindAutomatic CodeActionTriggerKind = 2
 )
 
+const _CodeActionTriggerKind_name = "InvokedAutomatic"
+
+var _CodeActionTriggerKind_index = [...]uint16{0, 7, 16}
+
+func (e CodeActionTriggerKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_CodeActionTriggerKind_index)-1 {
+		return fmt.Sprintf("CodeActionTriggerKind(%d)", e)
+	}
+	return _CodeActionTriggerKind_name[_CodeActionTriggerKind_index[i]:_CodeActionTriggerKind_index[i+1]]
+}
+
 // A pattern kind describing if a glob pattern matches a file a folder or
 // both.
 //
@@ -22658,9 +23012,9 @@ type FileOperationPatternKind string
 
 const (
 	// The pattern matches a file only.
-	FileOperationPatternKindfile FileOperationPatternKind = "file"
+	FileOperationPatternKindFile FileOperationPatternKind = "file"
 	// The pattern matches a folder only.
-	FileOperationPatternKindfolder FileOperationPatternKind = "folder"
+	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
 )
 
 // A notebook cell kind.
@@ -22674,6 +23028,18 @@ const (
 	// A code-cell is source code.
 	NotebookCellKindCode NotebookCellKind = 2
 )
+
+const _NotebookCellKind_name = "MarkupCode"
+
+var _NotebookCellKind_index = [...]uint16{0, 6, 10}
+
+func (e NotebookCellKind) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_NotebookCellKind_index)-1 {
+		return fmt.Sprintf("NotebookCellKind(%d)", e)
+	}
+	return _NotebookCellKind_name[_NotebookCellKind_index[i]:_NotebookCellKind_index[i+1]]
+}
 
 type ResourceOperationKind string
 
@@ -22712,10 +23078,29 @@ const (
 	PrepareSupportDefaultBehaviorIdentifier PrepareSupportDefaultBehavior = 1
 )
 
+const _PrepareSupportDefaultBehavior_name = "Identifier"
+
+var _PrepareSupportDefaultBehavior_index = [...]uint16{0, 10}
+
+func (e PrepareSupportDefaultBehavior) String() string {
+	i := int(e) - 1
+	if i < 0 || i >= len(_PrepareSupportDefaultBehavior_index)-1 {
+		return fmt.Sprintf("PrepareSupportDefaultBehavior(%d)", e)
+	}
+	return _PrepareSupportDefaultBehavior_name[_PrepareSupportDefaultBehavior_index[i]:_PrepareSupportDefaultBehavior_index[i+1]]
+}
+
 type TokenFormat string
 
 const (
 	TokenFormatRelative TokenFormat = "relative"
+)
+
+type CodeLensKind string
+
+const (
+	CodeLensKindReferences      CodeLensKind = "references"
+	CodeLensKindImplementations CodeLensKind = "implementations"
 )
 
 type AutoImportFixKind int32
@@ -22733,6 +23118,18 @@ const (
 	AutoImportFixKindPromoteTypeOnly AutoImportFixKind = 4
 )
 
+const _AutoImportFixKind_name = "UseNamespaceJsdocTypeImportAddToExistingAddNewPromoteTypeOnly"
+
+var _AutoImportFixKind_index = [...]uint16{0, 12, 27, 40, 46, 61}
+
+func (e AutoImportFixKind) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_AutoImportFixKind_index)-1 {
+		return fmt.Sprintf("AutoImportFixKind(%d)", e)
+	}
+	return _AutoImportFixKind_name[_AutoImportFixKind_index[i]:_AutoImportFixKind_index[i+1]]
+}
+
 type ImportKind int32
 
 const (
@@ -22746,6 +23143,18 @@ const (
 	ImportKindCommonJS ImportKind = 3
 )
 
+const _ImportKind_name = "NamedDefaultNamespaceCommonJS"
+
+var _ImportKind_index = [...]uint16{0, 5, 12, 21, 29}
+
+func (e ImportKind) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_ImportKind_index)-1 {
+		return fmt.Sprintf("ImportKind(%d)", e)
+	}
+	return _ImportKind_name[_ImportKind_index[i]:_ImportKind_index[i+1]]
+}
+
 type AddAsTypeOnly int32
 
 const (
@@ -22756,6 +23165,25 @@ const (
 	// Import cannot be marked type-only.
 	AddAsTypeOnlyNotAllowed AddAsTypeOnly = 4
 )
+
+const _AddAsTypeOnly_name = "AllowedRequiredNotAllowed"
+
+var (
+	_AddAsTypeOnly_index_0 = [...]uint16{0, 7, 15}
+	_AddAsTypeOnly_index_1 = [...]uint16{0, 10}
+)
+
+func (e AddAsTypeOnly) String() string {
+	switch {
+	case 1 <= e && e <= 2:
+		i := int(e) - 1
+		return _AddAsTypeOnly_name[0+_AddAsTypeOnly_index_0[i] : 0+_AddAsTypeOnly_index_0[i+1]]
+	case e == 4:
+		return _AddAsTypeOnly_name[15:25]
+	default:
+		return fmt.Sprintf("AddAsTypeOnly(%d)", e)
+	}
+}
 
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {

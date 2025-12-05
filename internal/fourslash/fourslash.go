@@ -2,12 +2,15 @@ package fourslash
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"unicode/utf8"
 
@@ -19,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -34,6 +38,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/sync/errgroup"
 	"gotest.tools/v3/assert"
 )
 
@@ -60,6 +65,10 @@ type FourslashTest struct {
 	selectionEnd         *lsproto.Position
 
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
+
+	// Async message handling
+	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingRequestsMu sync.Mutex
 }
 
 type scriptInfo struct {
@@ -113,8 +122,8 @@ func (w *lspWriter) Write(msg *lsproto.Message) error {
 	return nil
 }
 
-func (r *lspWriter) Close() {
-	close(r.c)
+func (w *lspWriter) Close() {
+	close(w.c)
 }
 
 var (
@@ -135,13 +144,14 @@ var parseCache = project.ParseCache{
 	},
 }
 
-func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+
 	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]any)
 	scriptInfos := make(map[string]*scriptInfo)
@@ -209,16 +219,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParseCache: &parseCache,
 	})
 
-	go func() {
-		defer func() {
-			outputWriter.Close()
-		}()
-		err := server.Run(context.TODO())
-		if err != nil {
-			t.Error("server error:", err)
-		}
-	}()
-
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
@@ -238,11 +238,26 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:      converters,
 		baselines:       make(map[baselineCommand]*strings.Builder),
 		openFiles:       make(map[string]struct{}),
+		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 	}
+
+	ctx, cancel := context.WithCancel(t.Context())
+	g, ctx := errgroup.WithContext(ctx)
+
+	// Start server goroutine
+	g.Go(func() error {
+		defer outputWriter.Close()
+		return server.Run(ctx)
+	})
+
+	// Start async message router
+	g.Go(func() error {
+		return f.messageRouter(ctx)
+	})
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
+	f.server.SetCompilerOptionsForInferredProjects(ctx, compilerOptions)
 	f.initialize(t, capabilities)
 
 	if testData.isStateBaseliningEnabled() {
@@ -256,18 +271,155 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 
 	_, testPath, _, _ := runtime.Caller(1)
-	t.Cleanup(func() {
+	return f, func() {
+		t.Helper()
+		cancel()
 		inputWriter.Close()
+		if err := g.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+			t.Errorf("goroutine error: %v", err)
+		}
 		f.verifyBaselines(t, testPath)
-	})
-	return f
+	}
+}
+
+// messageRouter runs in a goroutine and routes incoming messages from the server.
+// It handles responses to client requests and server-initiated requests.
+func (f *FourslashTest) messageRouter(ctx context.Context) error {
+	for {
+		if ctx.Err() != nil {
+			return nil
+		}
+
+		msg, err := f.out.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) || ctx.Err() != nil {
+				return nil
+			}
+			return fmt.Errorf("failed to read message: %w", err)
+		}
+
+		// Validate message can be marshaled
+		if err := json.MarshalWrite(io.Discard, msg); err != nil {
+			if ctx.Err() != nil {
+				return nil
+			}
+
+			return fmt.Errorf("failed to encode message as JSON: %w", err)
+		}
+
+		switch msg.Kind {
+		case lsproto.MessageKindResponse:
+			f.handleResponse(ctx, msg.AsResponse())
+		case lsproto.MessageKindRequest:
+			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
+				return err
+			}
+		case lsproto.MessageKindNotification:
+			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
+			// in fourslash tests
+		}
+	}
+}
+
+// handleResponse routes a response message to the waiting request goroutine.
+func (f *FourslashTest) handleResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
+	if resp.ID == nil {
+		return
+	}
+
+	f.pendingRequestsMu.Lock()
+	respChan, ok := f.pendingRequests[*resp.ID]
+	if ok {
+		delete(f.pendingRequests, *resp.ID)
+	}
+	f.pendingRequestsMu.Unlock()
+
+	if ok {
+		select {
+		case respChan <- resp:
+			// sent response
+		case <-ctx.Done():
+			// context cancelled
+		}
+	}
+}
+
+// handleServerRequest handles requests initiated by the server (e.g., workspace/configuration).
+func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.RequestMessage) error {
+	var response *lsproto.ResponseMessage
+
+	switch req.Method {
+	case lsproto.MethodWorkspaceConfiguration:
+		// Return current user preferences
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  []any{f.userPreferences},
+		}
+
+	case lsproto.MethodClientRegisterCapability:
+		// Accept all capability registrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	case lsproto.MethodClientUnregisterCapability:
+		// Accept all capability unregistrations
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Result:  lsproto.Null{},
+		}
+
+	default:
+		// Unknown server request
+		response = &lsproto.ResponseMessage{
+			ID:      req.ID,
+			JSONRPC: req.JSONRPC,
+			Error: &lsproto.ResponseError{
+				Code:    int32(lsproto.ErrorCodeMethodNotFound),
+				Message: fmt.Sprintf("Unknown method: %s", req.Method),
+			},
+		}
+	}
+
+	// Send response back to server
+	if ctx.Err() != nil {
+		return nil
+	}
+
+	if err := f.in.Write(response.Message()); err != nil {
+		if ctx.Err() != nil {
+			return nil
+		}
+		return fmt.Errorf("failed to write server request response: %w", err)
+	}
+	return nil
 }
 
 func getBaseFileNameFromTest(t *testing.T) string {
 	name := t.Name()
 	name = core.LastOrNil(strings.Split(name, "/"))
 	name = strings.TrimPrefix(name, "Test")
-	return stringutil.LowerFirstChar(name)
+	name = stringutil.LowerFirstChar(name)
+
+	// Special case: TypeScript has "callHierarchyFunctionAmbiguity.N" with periods
+	switch name {
+	case "callHierarchyFunctionAmbiguity1":
+		name = "callHierarchyFunctionAmbiguity.1"
+	case "callHierarchyFunctionAmbiguity2":
+		name = "callHierarchyFunctionAmbiguity.2"
+	case "callHierarchyFunctionAmbiguity3":
+		name = "callHierarchyFunctionAmbiguity.3"
+	case "callHierarchyFunctionAmbiguity4":
+		name = "callHierarchyFunctionAmbiguity.4"
+	case "callHierarchyFunctionAmbiguity5":
+		name = "callHierarchyFunctionAmbiguity.5"
+	}
+
+	return name
 }
 
 func (f *FourslashTest) nextID() int32 {
@@ -276,19 +428,28 @@ func (f *FourslashTest) nextID() int32 {
 	return id
 }
 
+const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
+
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
 		Locale: ptrTo("en-US"),
 		InitializationOptions: &lsproto.InitializationOptions{
-			// Hack: disable push diagnostics entirely, since the fourslash runner does not
-			// yet gracefully handle non-request messages.
-			DisablePushDiagnostics: ptrTo(true),
+			CodeLensShowLocationsCommandName: ptrTo(showCodeLensLocationsCommandName),
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
-	// !!! check for errors?
-	sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	resp, _, ok := sendRequestWorker(t, f, lsproto.InitializeInfo, params)
+	if !ok {
+		t.Fatalf("Initialize request failed")
+	}
+	if resp.AsResponse().Error != nil {
+		t.Fatalf("Initialize request returned error: %s", resp.AsResponse().Error.String())
+	}
 	sendNotificationWorker(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
+
+	// Wait for the initial configuration exchange to complete
+	// The server will send workspace/configuration as part of handleInitialized
+	<-f.server.InitComplete()
 }
 
 var (
@@ -391,45 +552,36 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 
 func sendRequestWorker[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
-	req := info.NewRequestMessage(
-		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
-		params,
-	)
+	reqID := lsproto.NewID(lsproto.IntegerOrString{Integer: &id})
+	req := info.NewRequestMessage(reqID, params)
+
+	// Create response channel and register it
+	responseChan := make(chan *lsproto.ResponseMessage, 1)
+	f.pendingRequestsMu.Lock()
+	f.pendingRequests[*reqID] = responseChan
+	f.pendingRequestsMu.Unlock()
+
+	// Send the request
 	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
+
+	// Wait for response with context
+	ctx := t.Context()
+	var resp *lsproto.ResponseMessage
+	select {
+	case <-ctx.Done():
+		f.pendingRequestsMu.Lock()
+		delete(f.pendingRequests, *reqID)
+		f.pendingRequestsMu.Unlock()
+		t.Fatalf("Request cancelled: %v", ctx.Err())
 		return nil, *new(Resp), false
-	}
-
-	// currently, the only request that may be sent by the server during a client request is one `config` request
-	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
-	if resp.Kind == lsproto.MessageKindRequest {
-		req := resp.AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodWorkspaceConfiguration, "Unexpected request received: %s", req.Method)
-		res := lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  []any{f.userPreferences},
+	case resp = <-responseChan:
+		if resp == nil {
+			return nil, *new(Resp), false
 		}
-		f.writeMsg(t, res.Message())
-		req = f.readMsg(t).AsRequest()
-
-		assert.Equal(t, req.Method, lsproto.MethodClientRegisterCapability, "Unexpected request received: %s", req.Method)
-		res = lsproto.ResponseMessage{
-			ID:      req.ID,
-			JSONRPC: req.JSONRPC,
-			Result:  lsproto.Null{},
-		}
-		f.writeMsg(t, res.Message())
-		resp = f.readMsg(t)
 	}
 
-	if resp == nil {
-		return nil, *new(Resp), false
-	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
+	result, ok := resp.Result.(Resp)
+	return resp.Message(), result, ok
 }
 
 func sendNotificationWorker[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
@@ -444,16 +596,6 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
-}
-
-func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
-	// !!! filter out response by id etc
-	msg, err := f.out.Read()
-	if err != nil {
-		t.Fatalf("failed to read message: %v", err)
-	}
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	return msg
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
@@ -1302,7 +1444,9 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
-			Context:  &lsproto.ReferenceContext{},
+			Context: &lsproto.ReferenceContext{
+				IncludeDeclaration: true,
+			},
 		}
 		result := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		f.addResultToBaseline(t, findAllReferencesCmd, f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
@@ -1310,6 +1454,61 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			markerName: "/*FIND ALL REFS*/",
 		}))
 
+	}
+}
+
+func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	foundAtLeastOneCodeLens := false
+	for _, openFile := range slices.Sorted(maps.Keys(f.openFiles)) {
+		params := &lsproto.CodeLensParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(openFile),
+			},
+		}
+
+		unresolvedCodeLensList := sendRequest(t, f, lsproto.TextDocumentCodeLensInfo, params)
+		if unresolvedCodeLensList.CodeLenses == nil || len(*unresolvedCodeLensList.CodeLenses) == 0 {
+			continue
+		}
+		foundAtLeastOneCodeLens = true
+
+		for _, unresolvedCodeLens := range *unresolvedCodeLensList.CodeLenses {
+			assert.Assert(t, unresolvedCodeLens != nil)
+			resolvedCodeLens := sendRequest(t, f, lsproto.CodeLensResolveInfo, unresolvedCodeLens)
+			assert.Assert(t, resolvedCodeLens != nil)
+			assert.Assert(t, resolvedCodeLens.Command != nil, "Expected resolved code lens to have a command.")
+			if len(resolvedCodeLens.Command.Command) > 0 {
+				assert.Equal(t, resolvedCodeLens.Command.Command, showCodeLensLocationsCommandName)
+			}
+
+			var locations []lsproto.Location
+			// commandArgs: (DocumentUri, Position, Location[])
+			if commandArgs := resolvedCodeLens.Command.Arguments; commandArgs != nil {
+				locs, err := roundtripThroughJson[[]lsproto.Location]((*commandArgs)[2])
+				if err != nil {
+					t.Fatalf("failed to re-encode code lens locations: %v", err)
+				}
+				locations = locs
+			}
+
+			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+				marker: &RangeMarker{
+					fileName: openFile,
+					LSRange:  resolvedCodeLens.Range,
+					Range:    f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range),
+				},
+				markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
+			}))
+		}
+	}
+
+	if !foundAtLeastOneCodeLens {
+		t.Fatalf("Expected at least one code lens in any open file, but got none.")
 	}
 }
 
@@ -1444,6 +1643,55 @@ func (f *FourslashTest) VerifyBaselineWorkspaceSymbol(t *testing.T, query string
 	))
 }
 
+func (f *FourslashTest) VerifyOutliningSpans(t *testing.T, foldingRangeKind ...lsproto.FoldingRangeKind) {
+	params := &lsproto.FoldingRangeParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentFoldingRangeInfo, params)
+	if result.FoldingRanges == nil {
+		t.Fatalf("Nil response received for folding range request")
+	}
+
+	// Extract actual folding ranges from the result and filter by kind if specified
+	var actualRanges []*lsproto.FoldingRange
+	actualRanges = *result.FoldingRanges
+	if len(foldingRangeKind) > 0 {
+		targetKind := foldingRangeKind[0]
+		var filtered []*lsproto.FoldingRange
+		for _, r := range actualRanges {
+			if r.Kind != nil && *r.Kind == targetKind {
+				filtered = append(filtered, r)
+			}
+		}
+		actualRanges = filtered
+	}
+
+	if len(actualRanges) != len(f.Ranges()) {
+		t.Fatalf("verifyOutliningSpans failed - expected total spans to be %d, but was %d",
+			len(f.Ranges()), len(actualRanges))
+	}
+
+	slices.SortFunc(f.Ranges(), func(a, b *RangeMarker) int {
+		return lsproto.ComparePositions(a.LSPos(), b.LSPos())
+	})
+
+	for i, expectedRange := range f.Ranges() {
+		actualRange := actualRanges[i]
+		startPos := lsproto.Position{Line: actualRange.StartLine, Character: *actualRange.StartCharacter}
+		endPos := lsproto.Position{Line: actualRange.EndLine, Character: *actualRange.EndCharacter}
+
+		if lsproto.ComparePositions(startPos, expectedRange.LSRange.Start) != 0 ||
+			lsproto.ComparePositions(endPos, expectedRange.LSRange.End) != 0 {
+			t.Fatalf("verifyOutliningSpans failed - span %d has invalid positions:\n  actual: start (%d,%d), end (%d,%d)\n  expected: start (%d,%d), end (%d,%d)",
+				i+1,
+				actualRange.StartLine, *actualRange.StartCharacter, actualRange.EndLine, *actualRange.EndCharacter,
+				expectedRange.LSRange.Start.Line, expectedRange.LSRange.Start.Character, expectedRange.LSRange.End.Line, expectedRange.LSRange.End.Character)
+		}
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
 		if marker.Name == nil {
@@ -1516,7 +1764,7 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 
 		params := &lsproto.SignatureHelpParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
 			},
 			Position: marker.LSPosition,
 		}
@@ -1547,9 +1795,18 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		signatureLine := sig.Label
 		activeParamLine := ""
 
+		// Determine active parameter: per-signature takes precedence over top-level per LSP spec
+		// "If provided (or `null`), this is used in place of `SignatureHelp.activeParameter`."
+		var activeParamPtr *lsproto.UintegerOrNull
+		if sig.ActiveParameter != nil {
+			activeParamPtr = sig.ActiveParameter
+		} else {
+			activeParamPtr = item.ActiveParameter
+		}
+
 		// Show active parameter if specified, and the signature text.
-		if item.ActiveParameter != nil && sig.Parameters != nil {
-			activeParamIndex := int(*item.ActiveParameter.Uinteger)
+		if activeParamPtr != nil && activeParamPtr.Uinteger != nil && sig.Parameters != nil {
+			activeParamIndex := int(*activeParamPtr.Uinteger)
 			if activeParamIndex >= 0 && activeParamIndex < len(*sig.Parameters) {
 				activeParam := (*sig.Parameters)[activeParamIndex]
 
@@ -1742,6 +1999,310 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 	f.addResultToBaseline(t, smartSelectionCmd, strings.TrimSuffix(result.String(), "\n"))
 }
 
+func (f *FourslashTest) VerifyBaselineCallHierarchy(t *testing.T) {
+	fileName := f.activeFilename
+	position := f.currentCaretPosition
+
+	params := &lsproto.CallHierarchyPrepareParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+		Position: position,
+	}
+
+	prepareResult := sendRequest(t, f, lsproto.TextDocumentPrepareCallHierarchyInfo, params)
+	if prepareResult.CallHierarchyItems == nil || len(*prepareResult.CallHierarchyItems) == 0 {
+		f.addResultToBaseline(t, callHierarchyCmd, "No call hierarchy items available")
+		return
+	}
+
+	var result strings.Builder
+
+	for _, callHierarchyItem := range *prepareResult.CallHierarchyItems {
+		seen := make(map[callHierarchyItemKey]bool)
+		itemFileName := callHierarchyItem.Uri.FileName()
+		script := f.getScriptInfo(itemFileName)
+		formatCallHierarchyItem(t, f, script, &result, *callHierarchyItem, callHierarchyItemDirectionRoot, seen, "")
+	}
+
+	f.addResultToBaseline(t, callHierarchyCmd, strings.TrimSuffix(result.String(), "\n"))
+}
+
+type callHierarchyItemDirection int
+
+const (
+	callHierarchyItemDirectionRoot callHierarchyItemDirection = iota
+	callHierarchyItemDirectionIncoming
+	callHierarchyItemDirectionOutgoing
+)
+
+type callHierarchyItemKey struct {
+	uri       lsproto.DocumentUri
+	range_    lsproto.Range
+	direction callHierarchyItemDirection
+}
+
+func symbolKindToLowercase(kind lsproto.SymbolKind) string {
+	return strings.ToLower(kind.String())
+}
+
+func formatCallHierarchyItem(
+	t *testing.T,
+	f *FourslashTest,
+	file *scriptInfo,
+	result *strings.Builder,
+	callHierarchyItem lsproto.CallHierarchyItem,
+	direction callHierarchyItemDirection,
+	seen map[callHierarchyItemKey]bool,
+	prefix string,
+) {
+	key := callHierarchyItemKey{
+		uri:       callHierarchyItem.Uri,
+		range_:    callHierarchyItem.Range,
+		direction: direction,
+	}
+	alreadySeen := seen[key]
+	seen[key] = true
+
+	type incomingCallResult struct {
+		skip   bool
+		seen   bool
+		values []*lsproto.CallHierarchyIncomingCall
+	}
+	type outgoingCallResult struct {
+		skip   bool
+		seen   bool
+		values []*lsproto.CallHierarchyOutgoingCall
+	}
+
+	var incomingCalls incomingCallResult
+	var outgoingCalls outgoingCallResult
+
+	if direction == callHierarchyItemDirectionOutgoing {
+		incomingCalls.skip = true
+	} else if alreadySeen {
+		incomingCalls.seen = true
+	} else {
+		incomingParams := &lsproto.CallHierarchyIncomingCallsParams{
+			Item: &callHierarchyItem,
+		}
+		incomingResult := sendRequest(t, f, lsproto.CallHierarchyIncomingCallsInfo, incomingParams)
+		if incomingResult.CallHierarchyIncomingCalls != nil {
+			incomingCalls.values = *incomingResult.CallHierarchyIncomingCalls
+		}
+	}
+
+	if direction == callHierarchyItemDirectionIncoming {
+		outgoingCalls.skip = true
+	} else if alreadySeen {
+		outgoingCalls.seen = true
+	} else {
+		outgoingParams := &lsproto.CallHierarchyOutgoingCallsParams{
+			Item: &callHierarchyItem,
+		}
+		outgoingResult := sendRequest(t, f, lsproto.CallHierarchyOutgoingCallsInfo, outgoingParams)
+		if outgoingResult.CallHierarchyOutgoingCalls != nil {
+			outgoingCalls.values = *outgoingResult.CallHierarchyOutgoingCalls
+		}
+	}
+
+	trailingPrefix := prefix
+	result.WriteString(fmt.Sprintf("%s╭ name: %s\n", prefix, callHierarchyItem.Name))
+	result.WriteString(fmt.Sprintf("%s├ kind: %s\n", prefix, symbolKindToLowercase(callHierarchyItem.Kind)))
+	if callHierarchyItem.Detail != nil && *callHierarchyItem.Detail != "" {
+		result.WriteString(fmt.Sprintf("%s├ containerName: %s\n", prefix, *callHierarchyItem.Detail))
+	}
+	result.WriteString(fmt.Sprintf("%s├ file: %s\n", prefix, callHierarchyItem.Uri.FileName()))
+	result.WriteString(prefix + "├ span:\n")
+	formatCallHierarchyItemSpan(f, file, result, callHierarchyItem.Range, prefix+"│ ", prefix+"│ ")
+	result.WriteString(prefix + "├ selectionSpan:\n")
+	formatCallHierarchyItemSpan(f, file, result, callHierarchyItem.SelectionRange, prefix+"│ ", prefix+"│ ")
+
+	// Handle incoming calls
+	if incomingCalls.seen {
+		if outgoingCalls.skip {
+			result.WriteString(trailingPrefix + "╰ incoming: ...\n")
+		} else {
+			result.WriteString(prefix + "├ incoming: ...\n")
+		}
+	} else if !incomingCalls.skip {
+		if len(incomingCalls.values) == 0 {
+			if outgoingCalls.skip {
+				result.WriteString(trailingPrefix + "╰ incoming: none\n")
+			} else {
+				result.WriteString(prefix + "├ incoming: none\n")
+			}
+		} else {
+			result.WriteString(prefix + "├ incoming:\n")
+			for i, incomingCall := range incomingCalls.values {
+				fromFileName := incomingCall.From.Uri.FileName()
+				fromFile := f.getScriptInfo(fromFileName)
+				result.WriteString(prefix + "│ ╭ from:\n")
+				formatCallHierarchyItem(t, f, fromFile, result, *incomingCall.From, callHierarchyItemDirectionIncoming, seen, prefix+"│ │ ")
+				result.WriteString(prefix + "│ ├ fromSpans:\n")
+
+				fromSpansTrailingPrefix := trailingPrefix + "╰ ╰ "
+				if i < len(incomingCalls.values)-1 {
+					fromSpansTrailingPrefix = prefix + "│ ╰ "
+				} else if !outgoingCalls.skip && (!outgoingCalls.seen || len(outgoingCalls.values) > 0) {
+					fromSpansTrailingPrefix = prefix + "│ ╰ "
+				}
+				formatCallHierarchyItemSpans(f, fromFile, result, incomingCall.FromRanges, prefix+"│ │ ", fromSpansTrailingPrefix)
+			}
+		}
+	}
+
+	// Handle outgoing calls
+	if outgoingCalls.seen {
+		result.WriteString(trailingPrefix + "╰ outgoing: ...\n")
+	} else if !outgoingCalls.skip {
+		if len(outgoingCalls.values) == 0 {
+			result.WriteString(trailingPrefix + "╰ outgoing: none\n")
+		} else {
+			result.WriteString(prefix + "├ outgoing:\n")
+			for i, outgoingCall := range outgoingCalls.values {
+				toFileName := outgoingCall.To.Uri.FileName()
+				toFile := f.getScriptInfo(toFileName)
+				result.WriteString(prefix + "│ ╭ to:\n")
+				formatCallHierarchyItem(t, f, toFile, result, *outgoingCall.To, callHierarchyItemDirectionOutgoing, seen, prefix+"│ │ ")
+				result.WriteString(prefix + "│ ├ fromSpans:\n")
+
+				fromSpansTrailingPrefix := trailingPrefix + "╰ ╰ "
+				if i < len(outgoingCalls.values)-1 {
+					fromSpansTrailingPrefix = prefix + "│ ╰ "
+				}
+				formatCallHierarchyItemSpans(f, file, result, outgoingCall.FromRanges, prefix+"│ │ ", fromSpansTrailingPrefix)
+			}
+		}
+	}
+}
+
+func formatCallHierarchyItemSpan(
+	f *FourslashTest,
+	file *scriptInfo,
+	result *strings.Builder,
+	span lsproto.Range,
+	prefix string,
+	closingPrefix string,
+) {
+	startLc := span.Start
+	endLc := span.End
+	startPos := f.converters.LineAndCharacterToPosition(file, span.Start)
+	endPos := f.converters.LineAndCharacterToPosition(file, span.End)
+
+	// Compute line starts for the file
+	lineStarts := computeLineStarts(file.content)
+
+	// Find the line boundaries - expand to full lines
+	contextStart := int(startPos)
+	contextEnd := int(endPos)
+
+	// Expand to start of first line
+	for contextStart > 0 && file.content[contextStart-1] != '\n' && file.content[contextStart-1] != '\r' {
+		contextStart--
+	}
+
+	// Expand to end of last line
+	for contextEnd < len(file.content) && file.content[contextEnd] != '\n' && file.content[contextEnd] != '\r' {
+		contextEnd++
+	}
+
+	// Get actual line and character positions for the context
+	contextStartLine := int(startLc.Line)
+	contextEndLine := int(endLc.Line)
+
+	// Calculate line number padding
+	lineNumWidth := len(strconv.Itoa(contextEndLine+1)) + 2
+
+	result.WriteString(fmt.Sprintf("%s╭ %s:%d:%d-%d:%d\n", prefix, file.fileName, startLc.Line+1, startLc.Character+1, endLc.Line+1, endLc.Character+1))
+
+	for lineNum := contextStartLine; lineNum <= contextEndLine; lineNum++ {
+		lineStart := lineStarts[lineNum]
+		lineEnd := len(file.content)
+		if lineNum+1 < len(lineStarts) {
+			lineEnd = lineStarts[lineNum+1]
+		}
+
+		// Get the line content, trimming trailing newlines
+		lineContent := file.content[lineStart:lineEnd]
+		lineContent = strings.TrimRight(lineContent, "\r\n")
+
+		// Format with line number
+		lineNumStr := fmt.Sprintf("%d:", lineNum+1)
+		paddedLineNum := strings.Repeat(" ", lineNumWidth-len(lineNumStr)-1) + lineNumStr
+		if lineContent == "" {
+			result.WriteString(fmt.Sprintf("%s│ %s\n", prefix, paddedLineNum))
+		} else {
+			result.WriteString(fmt.Sprintf("%s│ %s %s\n", prefix, paddedLineNum, lineContent))
+		}
+
+		// Add selection carets if this line contains part of the span
+		if lineNum >= int(startLc.Line) && lineNum <= int(endLc.Line) {
+			selStart := 0
+			selEnd := len(lineContent)
+
+			if lineNum == int(startLc.Line) {
+				selStart = int(startLc.Character)
+			}
+			if lineNum == int(endLc.Line) {
+				selEnd = int(endLc.Character)
+			}
+
+			// Don't show carets for empty selections
+			isEmpty := startLc.Line == endLc.Line && startLc.Character == endLc.Character
+			if isEmpty {
+				// For empty selections, show a single "<" character
+				padding := strings.Repeat(" ", lineNumWidth+selStart)
+				result.WriteString(fmt.Sprintf("%s│ %s<\n", prefix, padding))
+			} else {
+				// Calculate selection length (at least 1)
+				selLength := selEnd - selStart
+				selLength = max(selLength, 1) // Trim to actual content on the line
+				if lineNum < int(endLc.Line) {
+					// For lines before the last, trim to line content length
+					if selEnd > len(lineContent) {
+						selEnd = len(lineContent)
+						selLength = selEnd - selStart
+					}
+				}
+
+				padding := strings.Repeat(" ", lineNumWidth+selStart)
+				carets := strings.Repeat("^", selLength)
+				result.WriteString(fmt.Sprintf("%s│ %s%s\n", prefix, padding, carets))
+			}
+		}
+	}
+
+	result.WriteString(closingPrefix + "╰\n")
+}
+
+func computeLineStarts(content string) []int {
+	lineStarts := []int{0}
+	for i, ch := range content {
+		if ch == '\n' {
+			lineStarts = append(lineStarts, i+1)
+		}
+	}
+	return lineStarts
+}
+
+func formatCallHierarchyItemSpans(
+	f *FourslashTest,
+	file *scriptInfo,
+	result *strings.Builder,
+	spans []lsproto.Range,
+	prefix string,
+	trailingPrefix string,
+) {
+	for i, span := range spans {
+		closingPrefix := prefix
+		if i == len(spans)-1 {
+			closingPrefix = trailingPrefix
+		}
+		formatCallHierarchyItemSpan(f, file, result, span, prefix, closingPrefix)
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 	t *testing.T,
 	preferences *lsutil.UserPreferences,
@@ -1823,6 +2384,25 @@ func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string)
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+// This function is intended for spots where a complex
+// value needs to be reinterpreted following some prior JSON deserialization.
+// The default deserializer for `any` properties will give us a map at runtime,
+// but we want to validate against, and use, the types as returned from the the language service.
+//
+// Use this function sparingly. You can treat it as a "map-to-struct" converter,
+// but updating the original types is probably better in most cases.
+func roundtripThroughJson[T any](value any) (T, error) {
+	var result T
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return result, fmt.Errorf("failed to marshal value to JSON: %w", err)
+	}
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return result, fmt.Errorf("failed to unmarshal value from JSON: %w", err)
+	}
+	return result, nil
 }
 
 // Insert text at the current caret position.
@@ -2083,13 +2663,277 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
+// VerifySignatureHelpOptions contains options for verifying signature help.
+// All fields are optional - only specified fields will be verified.
+type VerifySignatureHelpOptions struct {
+	// Text is the full signature text (e.g., "fn(x: string, y: number): void")
+	Text string
+	// DocComment is the documentation comment for the signature
+	DocComment string
+	// ParameterCount is the expected number of parameters
+	ParameterCount int
+	// ParameterName is the expected name of the active parameter
+	ParameterName string
+	// ParameterSpan is the expected label of the active parameter (e.g., "x: string")
+	ParameterSpan string
+	// ParameterDocComment is the documentation for the active parameter
+	ParameterDocComment string
+	// OverloadsCount is the expected number of overloads (signatures)
+	OverloadsCount int
+	// OverrideSelectedItemIndex overrides which signature to check (default: ActiveSignature)
+	OverrideSelectedItemIndex int
+	// IsVariadic indicates if the signature has a rest parameter
+	IsVariadic bool
+	// IsVariadicSet is true when IsVariadic was explicitly set (to distinguish from default false)
+	IsVariadicSet bool
+}
+
+// VerifySignatureHelp verifies signature help at the current position matches the expected options.
+func (f *FourslashTest) VerifySignatureHelp(t *testing.T, expected VerifySignatureHelpOptions) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	help := result.SignatureHelp
+	if help == nil {
+		t.Fatalf("%sCould not get signature help", prefix)
+	}
+
+	// Determine which signature to check
+	selectedIndex := 0
+	if expected.OverrideSelectedItemIndex > 0 {
+		selectedIndex = expected.OverrideSelectedItemIndex
+	} else if help.ActiveSignature != nil {
+		selectedIndex = int(*help.ActiveSignature)
+	}
+
+	if selectedIndex >= len(help.Signatures) {
+		t.Fatalf("%sSelected signature index %d out of range (have %d signatures)", prefix, selectedIndex, len(help.Signatures))
+	}
+
+	selectedSig := help.Signatures[selectedIndex]
+
+	// Verify overloads count
+	if expected.OverloadsCount > 0 {
+		if len(help.Signatures) != expected.OverloadsCount {
+			t.Errorf("%sExpected %d overloads, got %d", prefix, expected.OverloadsCount, len(help.Signatures))
+		}
+	}
+
+	// Verify signature text
+	if expected.Text != "" {
+		if selectedSig.Label != expected.Text {
+			t.Errorf("%sExpected signature text %q, got %q", prefix, expected.Text, selectedSig.Label)
+		}
+	}
+
+	// Verify doc comment
+	if expected.DocComment != "" {
+		actualDoc := ""
+		if selectedSig.Documentation != nil {
+			if selectedSig.Documentation.MarkupContent != nil {
+				actualDoc = selectedSig.Documentation.MarkupContent.Value
+			} else if selectedSig.Documentation.String != nil {
+				actualDoc = *selectedSig.Documentation.String
+			}
+		}
+		if actualDoc != expected.DocComment {
+			t.Errorf("%sExpected doc comment %q, got %q", prefix, expected.DocComment, actualDoc)
+		}
+	}
+
+	// Verify parameter count
+	if expected.ParameterCount > 0 {
+		paramCount := 0
+		if selectedSig.Parameters != nil {
+			paramCount = len(*selectedSig.Parameters)
+		}
+		if paramCount != expected.ParameterCount {
+			t.Errorf("%sExpected %d parameters, got %d", prefix, expected.ParameterCount, paramCount)
+		}
+	}
+
+	// Get active parameter
+	var activeParamIndex int
+	if selectedSig.ActiveParameter != nil && selectedSig.ActiveParameter.Uinteger != nil {
+		activeParamIndex = int(*selectedSig.ActiveParameter.Uinteger)
+	} else if help.ActiveParameter != nil && help.ActiveParameter.Uinteger != nil {
+		activeParamIndex = int(*help.ActiveParameter.Uinteger)
+	}
+
+	var activeParam *lsproto.ParameterInformation
+	if selectedSig.Parameters != nil && activeParamIndex < len(*selectedSig.Parameters) {
+		activeParam = (*selectedSig.Parameters)[activeParamIndex]
+	}
+
+	// Verify parameter name
+	if expected.ParameterName != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter name %q, but no active parameter", prefix, expected.ParameterName)
+		} else {
+			// Parameter name is extracted from the label
+			actualName := ""
+			if activeParam.Label.String != nil {
+				// Extract name from label like "x: string" -> "x" or "T extends Foo" -> "T" or "...x: any[]" -> "x"
+				label := *activeParam.Label.String
+				// Strip leading "..." for rest parameters
+				label = strings.TrimPrefix(label, "...")
+				if name, _, found := strings.Cut(label, ":"); found {
+					actualName = strings.TrimSpace(name)
+				} else if name, _, found := strings.Cut(label, " extends "); found {
+					actualName = strings.TrimSpace(name)
+				} else {
+					actualName = label
+				}
+			}
+			if actualName != expected.ParameterName {
+				t.Errorf("%sExpected parameter name %q, got %q", prefix, expected.ParameterName, actualName)
+			}
+		}
+	}
+
+	// Verify parameter span (label)
+	if expected.ParameterSpan != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter span %q, but no active parameter", prefix, expected.ParameterSpan)
+		} else {
+			actualSpan := ""
+			if activeParam.Label.String != nil {
+				actualSpan = *activeParam.Label.String
+			}
+			if actualSpan != expected.ParameterSpan {
+				t.Errorf("%sExpected parameter span %q, got %q", prefix, expected.ParameterSpan, actualSpan)
+			}
+		}
+	}
+
+	// Verify parameter doc comment
+	if expected.ParameterDocComment != "" {
+		if activeParam == nil {
+			t.Errorf("%sExpected parameter doc comment %q, but no active parameter", prefix, expected.ParameterDocComment)
+		} else {
+			actualDoc := ""
+			if activeParam.Documentation != nil {
+				if activeParam.Documentation.MarkupContent != nil {
+					actualDoc = activeParam.Documentation.MarkupContent.Value
+				} else if activeParam.Documentation.String != nil {
+					actualDoc = *activeParam.Documentation.String
+				}
+			}
+			if actualDoc != expected.ParameterDocComment {
+				t.Errorf("%sExpected parameter doc comment %q, got %q", prefix, expected.ParameterDocComment, actualDoc)
+			}
+		}
+	}
+
+	// Verify isVariadic (check if any parameter starts with "...")
+	if expected.IsVariadicSet {
+		actualIsVariadic := false
+		if selectedSig.Parameters != nil {
+			for _, param := range *selectedSig.Parameters {
+				if param.Label.String != nil && strings.HasPrefix(*param.Label.String, "...") {
+					actualIsVariadic = true
+					break
+				}
+			}
+		}
+		if actualIsVariadic != expected.IsVariadic {
+			t.Errorf("%sExpected isVariadic=%v, got %v", prefix, expected.IsVariadic, actualIsVariadic)
+		}
+	}
+}
+
+// VerifyNoSignatureHelp verifies that no signature help is available at the current position.
+func (f *FourslashTest) VerifyNoSignatureHelp(t *testing.T) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp != nil && len(result.SignatureHelp.Signatures) > 0 {
+		t.Errorf("%sExpected no signature help, but got %d signatures", prefix, len(result.SignatureHelp.Signatures))
+	}
+}
+
+// VerifyNoSignatureHelpWithContext verifies that no signature help is available at the current position with a given context.
+func (f *FourslashTest) VerifyNoSignatureHelpWithContext(t *testing.T, context *lsproto.SignatureHelpContext) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  context,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp != nil && len(result.SignatureHelp.Signatures) > 0 {
+		t.Errorf("%sExpected no signature help, but got %d signatures", prefix, len(result.SignatureHelp.Signatures))
+	}
+}
+
+// VerifyNoSignatureHelpForMarkersWithContext verifies that no signature help is available at the given markers with a given context.
+func (f *FourslashTest) VerifyNoSignatureHelpForMarkersWithContext(t *testing.T, context *lsproto.SignatureHelpContext, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifyNoSignatureHelpWithContext(t, context)
+	}
+}
+
+// VerifySignatureHelpPresent verifies that signature help is available at the current position with a given context.
+func (f *FourslashTest) VerifySignatureHelpPresent(t *testing.T, context *lsproto.SignatureHelpContext) {
+	t.Helper()
+	prefix := f.getCurrentPositionPrefix()
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  context,
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if result.SignatureHelp == nil || len(result.SignatureHelp.Signatures) == 0 {
+		t.Errorf("%sExpected signature help to be present, but got none", prefix)
+	}
+}
+
+// VerifySignatureHelpPresentForMarkers verifies that signature help is available at the given markers with a given context.
+func (f *FourslashTest) VerifySignatureHelpPresentForMarkers(t *testing.T, context *lsproto.SignatureHelpContext, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifySignatureHelpPresent(t, context)
+	}
+}
+
+// VerifyNoSignatureHelpForMarkers verifies that no signature help is available at the given markers.
+func (f *FourslashTest) VerifyNoSignatureHelpForMarkers(t *testing.T, markers ...string) {
+	t.Helper()
+	for _, marker := range markers {
+		f.GoToMarker(t, marker)
+		f.VerifyNoSignatureHelp(t)
+	}
+}
+
 type SignatureHelpCase struct {
 	Context     *lsproto.SignatureHelpContext
 	MarkerInput MarkerInput
 	Expected    *lsproto.SignatureHelp
 }
 
-func (f *FourslashTest) VerifySignatureHelp(t *testing.T, signatureHelpCases ...*SignatureHelpCase) {
+// VerifySignatureHelpWithCases verifies signature help using detailed SignatureHelpCase structs.
+// This is useful for more complex tests that need to verify the full signature help response.
+func (f *FourslashTest) VerifySignatureHelpWithCases(t *testing.T, signatureHelpCases ...*SignatureHelpCase) {
 	for _, option := range signatureHelpCases {
 		switch marker := option.MarkerInput.(type) {
 		case string:
@@ -2422,7 +3266,7 @@ func (f *FourslashTest) verifyBaselines(t *testing.T, testPath string) {
 func (f *FourslashTest) VerifyBaselineInlayHints(
 	t *testing.T,
 	span *lsproto.Range,
-	userPreferences *lsutil.UserPreferences,
+	testPreferences *lsutil.UserPreferences,
 ) {
 	fileName := f.activeFilename
 	var lspRange lsproto.Range
@@ -2437,10 +3281,12 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		Range:        lspRange,
 	}
 
-	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, userPreferences)
-		defer reset()
+	preferences := testPreferences
+	if preferences == nil {
+		preferences = lsutil.NewDefaultUserPreferences()
 	}
+	reset := f.ConfigureWithReset(t, preferences)
+	defer reset()
 
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
 	result := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
@@ -2614,7 +3460,7 @@ func (d *fourslashDiagnostic) Category() diagnostics.Category {
 	return d.category
 }
 
-func (d *fourslashDiagnostic) Message() string {
+func (d *fourslashDiagnostic) Localize(locale locale.Locale) string {
 	return d.message
 }
 
@@ -2746,4 +3592,77 @@ func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNam
 		false, /*includeOriginalSelectionRange*/
 		markerNames...,
 	)
+}
+
+type VerifyWorkspaceSymbolCase struct {
+	Pattern     string
+	Includes    *[]*lsproto.SymbolInformation
+	Exact       *[]*lsproto.SymbolInformation
+	Preferences *lsutil.UserPreferences
+}
+
+// `verify.navigateTo` in Strada.
+func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
+	originalPreferences := f.userPreferences.Copy()
+	for _, testCase := range cases {
+		preferences := testCase.Preferences
+		if preferences == nil {
+			preferences = lsutil.NewDefaultUserPreferences()
+		}
+		f.Configure(t, preferences)
+		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
+		if result.SymbolInformations == nil {
+			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
+		}
+		if testCase.Includes != nil {
+			if testCase.Exact != nil {
+				t.Fatalf("Test case cannot have both 'Includes' and 'Exact' fields set")
+			}
+			verifyIncludesSymbols(t, *result.SymbolInformations, *testCase.Includes, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
+		} else {
+			if testCase.Exact == nil {
+				t.Fatalf("Test case must have either 'Includes' or 'Exact' field set")
+			}
+			verifyExactSymbols(t, *result.SymbolInformations, *testCase.Exact, "Workspace symbols mismatch with pattern '"+testCase.Pattern+"'")
+		}
+	}
+	f.Configure(t, originalPreferences)
+}
+
+func verifyExactSymbols(
+	t *testing.T,
+	actual []*lsproto.SymbolInformation,
+	expected []*lsproto.SymbolInformation,
+	prefix string,
+) {
+	if len(actual) != len(expected) {
+		t.Fatalf("%s: Expected %d symbols, but got %d:\n%s", prefix, len(expected), len(actual), cmp.Diff(actual, expected))
+	}
+	for i := range actual {
+		assertDeepEqual(t, actual[i], expected[i], prefix)
+	}
+}
+
+func verifyIncludesSymbols(
+	t *testing.T,
+	actual []*lsproto.SymbolInformation,
+	includes []*lsproto.SymbolInformation,
+	prefix string,
+) {
+	type key struct {
+		name string
+		loc  lsproto.Location
+	}
+	nameAndLocToActualSymbol := make(map[key]*lsproto.SymbolInformation, len(actual))
+	for _, sym := range actual {
+		nameAndLocToActualSymbol[key{name: sym.Name, loc: sym.Location}] = sym
+	}
+
+	for _, sym := range includes {
+		actualSym, ok := nameAndLocToActualSymbol[key{name: sym.Name, loc: sym.Location}]
+		if !ok {
+			t.Fatalf("%s: Expected symbol '%s' at location '%v' not found", prefix, sym.Name, sym.Location)
+		}
+		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' at location '%v' mismatch", prefix, sym.Name, sym.Location))
+	}
 }
