@@ -3522,6 +3522,8 @@ var Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear
 
 var A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag = &Message{code: 8039, category: CategoryError, key: "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039", text: "A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag"}
 
+var A_JSDoc_overload_tag_is_not_allowed_in_this_context = &Message{code: 8110, category: CategoryError, key: "A_JSDoc_overload_tag_is_not_allowed_in_this_context_8110", text: "A JSDoc '@overload' tag is not allowed in this context."}
+
 var Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9005, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005", text: "Declaration emit for this file requires using private name '{0}'. An explicit type annotation may unblock declaration emit."}
 
 var Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9006, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotati_9006", text: "Declaration emit for this file requires using private name '{0}' from module '{1}'. An explicit type annotation may unblock declaration emit."}
@@ -7792,6 +7794,8 @@ func keyToMessage(key Key) *Message {
 		return Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export
 	case "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039":
 		return A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag
+	case "A_JSDoc_overload_tag_is_not_allowed_in_this_context_8110":
+		return A_JSDoc_overload_tag_is_not_allowed_in_this_context
 	case "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005":
 		return Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit
 	case "Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotati_9006":

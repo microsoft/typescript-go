@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node, locationNode *ast.Node) {
@@ -112,28 +113,20 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		p.reparseList = append(p.reparseList, importDeclaration)
 	case ast.KindJSDocOverloadTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
-			// Only allow @overload on function declarations and class/interface methods.
-			// Disallow on object literal methods.
-			isLegalContext := false
-			switch parent.Kind {
-			case ast.KindFunctionDeclaration, ast.KindMethodSignature:
-				isLegalContext = true
-			case ast.KindMethodDeclaration:
-				// Allow class methods, but not object literal methods
-				// Object literal methods have ObjectLiteralExpression as parent
-				if parent.Parent == nil {
-					// Orphaned method declaration - shouldn't happen, but allow it
-					isLegalContext = true
-				} else {
-					isLegalContext = parent.Parent.Kind != ast.KindObjectLiteralExpression
-				}
-			}
+			// Only allow @overload on function declarations and class/interface method declarations.
+			// Disallow on object literal methods by checking if we're in the ObjectLiteralMembers parsing context.
+			isObjectLiteralMethod := parent.Kind == ast.KindMethodDeclaration &&
+				p.parsingContexts&(1<<PCObjectLiteralMembers) != 0
 
-			if isLegalContext {
+			if !isObjectLiteralMethod &&
+				(parent.Kind == ast.KindFunctionDeclaration ||
+					parent.Kind == ast.KindMethodDeclaration ||
+					parent.Kind == ast.KindMethodSignature) {
 				p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
+			} else {
+				// Report error for @overload on object literal methods
+				p.parseErrorAtRange(tag.TagName().Loc, diagnostics.A_JSDoc_overload_tag_is_not_allowed_in_this_context)
 			}
-			// Silently ignore @overload in other contexts (e.g., object literal methods)
-			// to avoid breaking existing code that uses alternative @overload syntax
 		}
 	}
 }
