@@ -40,6 +40,7 @@ func (l *LanguageService) ProvideCompletion(
 	if context != nil {
 		triggerCharacter = context.TriggerCharacter
 	}
+	ctx = format.WithFormatCodeSettings(ctx, l.FormatOptions(), l.FormatOptions().NewLineCharacter)
 	position := int(l.converters.LineAndCharacterToPosition(file, LSPPosition))
 	completionList := l.getCompletionsAtPosition(
 		ctx,
@@ -6187,18 +6188,12 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		newClauses := core.Map(elements, func(element *ast.Node) *ast.CaseClauseNode {
 			return factory.NewCaseOrDefaultClause(ast.KindCaseClause, element, factory.NewNodeList(nil))
 		})
-		newLineChar := l.host.FormatOptions().NewLineCharacter
+		newLineChar := l.FormatOptions().NewLineCharacter
 		printer := createSnippetPrinter(printer.PrinterOptions{
 			RemoveComments: true,
 			NewLine:        core.GetNewLineKind(newLineChar),
 		})
-		var printNode func(node *ast.Node) string
-		// !!! format context
-		if formatContext == nil {
-			printNode = func(node *ast.Node) string { return printer.printNode(node, file) }
-		} else {
-			printNode = func(node *ast.Node) string { return printer.printAndFormatNode(node, file, formatContext) }
-		}
+		printNode := func(node *ast.Node) string { return printer.printAndFormatNode(ctx, node, file) }
 		insertText := strings.Join(core.MapIndex(newClauses, func(clause *ast.Node, i int) string {
 			if clientSupportsItemSnippet(ctx) {
 				return fmt.Sprintf("%s$%d", printNode(clause), i+1)
@@ -6323,11 +6318,11 @@ func (p *snippetPrinter) printUnescapedNode(node *ast.Node, sourceFile *ast.Sour
 	return p.writer.String()
 }
 
-func (p *snippetPrinter) printAndFormatNode(node *ast.Node, sourceFile *ast.SourceFile, formatContext context.Context) string {
+func (p *snippetPrinter) printAndFormatNode(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile) string {
 	syntheticFile := 1  // !!! HERE: refactor formatter to accept source file like interface
 	nodeWithPos := node // !!! assignPositionsToNode
 	changes := format.FormatNodeGivenIndentation(
-		formatContext,
+		ctx,
 		nodeWithPos,
 		syntheticFile,
 		sourceFile.LanguageVariant,
