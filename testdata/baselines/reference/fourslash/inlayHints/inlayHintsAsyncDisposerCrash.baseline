@@ -1,0 +1,104 @@
+// === Inlay Hints ===
+const func = async () => {
+          ^
+{
+  "position": {
+    "line": 0,
+    "character": 10
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "Promise"
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "void"
+    },
+    {
+      "value": ">"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+  await using _defer = {
+                    ^
+{
+  "position": {
+    "line": 1,
+    "character": 20
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "{"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "["
+    },
+    {
+      "value": "x"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    },
+    {
+      "value": "]"
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": ")"
+    },
+    {
+      "value": " => "
+    },
+    {
+      "value": "Promise"
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "void"
+    },
+    {
+      "value": ">"
+    },
+    {
+      "value": " "
+    },
+    {
+      "value": "}"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
