@@ -53,6 +53,16 @@ module.exports = {};
   }
 }
 
+// @filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "exclude": [".pnp.cjs"],
+    "rootDir": ".",
+    "declaration": true,
+    "outDir": "./dist"
+  }
+}
+
 // @filename: /.yarn/cache/server-lib-npm-2.0.0-ijkl9012/node_modules/server-lib/package.json
 {
   "name": "server-lib",

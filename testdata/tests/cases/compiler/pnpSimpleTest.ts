@@ -59,11 +59,6 @@ module.exports = {};
   "types": "index.d.ts"
 }
 
-// @filename: /.yarn/cache/package-a-npm-1.0.0-abcd1234/node_modules/package-a/index.js
-exports.helperA = function(value) {
-  return "Helper A: " + value;
-};
-
 // @filename: /.yarn/cache/package-a-npm-1.0.0-abcd1234/node_modules/package-a/index.d.ts
 export declare function helperA(value: string): string;
 
@@ -77,13 +72,18 @@ export declare function helperA(value: string): string;
   "types": "index.d.ts"
 }
 
-// @filename: /.yarn/cache/package-b-npm-2.0.0-efgh5678/node_modules/package-b/index.js
-exports.helperB = function(value) {
-  return "Helper B: " + value;
-};
-
 // @filename: /.yarn/cache/package-b-npm-2.0.0-efgh5678/node_modules/package-b/index.d.ts
 export declare function helperB(value: number): string;
+
+// @filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "exclude": [".pnp.cjs"],
+    "rootDir": ".",
+    "declaration": true,
+    "outDir": "./dist"
+  }
+}
 
 // @filename: /src/index.ts
 // Workspace package that imports both third-party dependencies

@@ -64,6 +64,15 @@ module.exports = {};
   }
 }
 
+//// [package.json]
+{
+  "name": "package-b",
+  "version": "2.0.0",
+  "exports": {
+    ".": "./index.ts"
+  }
+}
+
 //// [index.ts]
 import type { ConfigOptions } from 'package-b';
 
@@ -77,15 +86,6 @@ export function helperA(value: string, config: ConfigOptions): HelperResult {
     message: "Helper A: " + value,
     config: config
   };
-}
-
-//// [package.json]
-{
-  "name": "package-b",
-  "version": "2.0.0",
-  "exports": {
-    ".": "./index.ts"
-  }
 }
 
 //// [index.ts]
@@ -151,3 +151,23 @@ function useDirectDependency(text) {
 function attemptDirectImport() {
     return { enabled: false, timeout: 1000 };
 }
+
+
+//// [index.d.ts]
+export interface ConfigOptions {
+    enabled: boolean;
+    timeout: number;
+}
+export declare function helperB(value: number): string;
+//// [index.d.ts]
+import type { ConfigOptions } from 'package-b';
+export interface HelperResult {
+    message: string;
+    config: ConfigOptions;
+}
+export declare function helperA(value: string, config: ConfigOptions): HelperResult;
+//// [index.d.ts]
+import type { HelperResult } from 'package-a';
+import type { ConfigOptions } from 'package-b';
+export declare function useDirectDependency(text: string): HelperResult;
+export declare function attemptDirectImport(): ConfigOptions;

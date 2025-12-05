@@ -52,6 +52,16 @@ module.exports = {};
   }
 }
 
+// @filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "exclude": [".pnp.cjs"],
+    "rootDir": ".",
+    "declaration": true,
+    "outDir": "./dist"
+  }
+}
+
 // @filename: /packages/package-a/package.json
 {
   "name": "package-a",

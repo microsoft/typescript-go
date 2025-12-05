@@ -59,11 +59,6 @@ module.exports = {};
   "types": "index.d.ts"
 }
 
-//// [index.js]
-exports.helperA = function(value) {
-  return "Helper A: " + value;
-};
-
 //// [index.d.ts]
 export declare function helperA(value: string): string;
 
@@ -76,11 +71,6 @@ export declare function helperA(value: string): string;
   },
   "types": "index.d.ts"
 }
-
-//// [index.js]
-exports.helperB = function(value) {
-  return "Helper B: " + value;
-};
 
 //// [index.d.ts]
 export declare function helperB(value: number): string;
@@ -108,3 +98,7 @@ function processData(text, num) {
     const resultB = (0, package_b_1.helperB)(num);
     return `${resultA} | ${resultB}`;
 }
+
+
+//// [index.d.ts]
+export declare function processData(text: string, num: number): string;

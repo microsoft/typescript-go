@@ -101,3 +101,9 @@ function handleRequest(req, res) {
     res.json({ data: 'Hello, world!' });
 }
 exports.server = (0, server_lib_1.createServer)();
+
+
+//// [index.d.ts]
+import type { Request, Response } from 'server-lib';
+export declare function handleRequest(req: Request, res: Response): void;
+export declare const server: Record<string, unknown>;

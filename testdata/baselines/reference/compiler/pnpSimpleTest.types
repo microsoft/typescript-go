@@ -1,15 +1,5 @@
 //// [tests/cases/compiler/pnpSimpleTest.ts] ////
 
-=== /.yarn/cache/package-a-npm-1.0.0-abcd1234/node_modules/package-a/index.d.ts ===
-export declare function helperA(value: string): string;
->helperA : (value: string) => string
->value : string
-
-=== /.yarn/cache/package-b-npm-2.0.0-efgh5678/node_modules/package-b/index.d.ts ===
-export declare function helperB(value: number): string;
->helperB : (value: number) => string
->value : number
-
 === /src/index.ts ===
 // Workspace package that imports both third-party dependencies
 import { helperA } from 'package-a';
@@ -40,3 +30,13 @@ export function processData(text: string, num: number): string {
 >resultA : string
 >resultB : string
 }
+=== /.yarn/cache/package-a-npm-1.0.0-abcd1234/node_modules/package-a/index.d.ts ===
+export declare function helperA(value: string): string;
+>helperA : (value: string) => string
+>value : string
+
+=== /.yarn/cache/package-b-npm-2.0.0-efgh5678/node_modules/package-b/index.d.ts ===
+export declare function helperB(value: number): string;
+>helperB : (value: number) => string
+>value : number
+
