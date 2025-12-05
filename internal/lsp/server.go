@@ -54,6 +54,7 @@ func NewServer(opts *ServerOptions) *Server {
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		stderr:                opts.Err,
 		cwd:                   opts.Cwd,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
@@ -133,6 +134,7 @@ type Server struct {
 	w Writer
 
 	logger                  *logger
+	initStarted             atomic.Bool
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
@@ -141,6 +143,7 @@ type Server struct {
 	pendingServerRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
 	pendingServerRequestsMu sync.Mutex
 
+	stderr             io.Writer
 	cwd                string
 	fs                 vfs.FS
 	defaultLibraryPath string
@@ -879,6 +882,8 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	if s.initializeParams != nil {
 		return nil, lsproto.ErrorCodeInvalidRequest
 	}
+
+	s.initStarted.Store(true)
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)

@@ -26,6 +26,12 @@ func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {
 	if l == nil {
 		return
 	}
+
+	if !l.server.initStarted.Load() {
+		fmt.Fprintln(l.server.stderr, message)
+		return
+	}
+
 	notification := lsproto.WindowLogMessageInfo.NewNotificationMessage(&lsproto.LogMessageParams{
 		Type:    msgType,
 		Message: message,
