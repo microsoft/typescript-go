@@ -1,14 +1,15 @@
 package lsutil
 
 import (
+	"reflect"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
 func NewDefaultUserPreferences() *UserPreferences {
@@ -27,490 +28,82 @@ func NewDefaultUserPreferences() *UserPreferences {
 	}
 }
 
+// UserPreferences represents TypeScript language service preferences.
+//
+// Fields can be populated from two sources:
+//  1. Direct property names (from VS Code's "unstable" config or direct tsserver protocol)
+//     These are matched case-insensitively by Go field name.
+//  2. VS Code's nested config structure (e.g., "suggest.autoImports", "inlayHints.parameterNames.enabled")
+//     These use the `pref` tag to specify the dotted path.
+//
+// The `pref` tag format: "path.to.setting" or "path.to.setting,invert" for boolean inversion.
 type UserPreferences struct {
-	QuotePreference                           QuotePreference
-	LazyConfiguredProjectsFromExternalProject bool // !!!
+	QuotePreference                           QuotePreference `pref:"preferences.quoteStyle"`
+	LazyConfiguredProjectsFromExternalProject bool
+	MaximumHoverLength                        int
 
-	// A positive integer indicating the maximum length of a hover text before it is truncated.
-	//
-	// Default: `500`
-	MaximumHoverLength int // !!!
+	IncludeCompletionsForModuleExports                core.Tristate `pref:"suggest.autoImports"`
+	IncludeCompletionsForImportStatements             core.Tristate `pref:"suggest.includeCompletionsForImportStatements"`
+	IncludeAutomaticOptionalChainCompletions          core.Tristate `pref:"suggest.includeAutomaticOptionalChainCompletions"`
+	IncludeCompletionsWithSnippetText                 core.Tristate
+	IncludeCompletionsWithClassMemberSnippets         core.Tristate               `pref:"suggest.classMemberSnippets.enabled"`
+	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `pref:"suggest.objectLiteralMethodSnippets.enabled"`
+	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `pref:"preferences.jsxAttributeCompletionStyle"`
 
-	// ------- Completions -------
+	ImportModuleSpecifierPreference   modulespecifiers.ImportModuleSpecifierPreference       `pref:"preferences.importModuleSpecifier"`
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`
+	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          `pref:"preferences.includePackageJsonAutoImports"`
+	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"`
+	AutoImportFileExcludePatterns     []string                                               `pref:"preferences.autoImportFileExcludePatterns"`
+	PreferTypeOnlyAutoImports         bool                                                   `pref:"preferences.preferTypeOnlyAutoImports"`
 
-	// If enabled, TypeScript will search through all external modules' exports and add them to the completions list.
-	// This affects lone identifier completions but not completions on the right hand side of `obj.`.
-	IncludeCompletionsForModuleExports core.Tristate
-	// Enables auto-import-style completions on partially-typed import statements. E.g., allows
-	// `import write|` to be completed to `import { writeFile } from "fs"`.
-	IncludeCompletionsForImportStatements core.Tristate
-	// Unless this option is `false`,  member completion lists triggered with `.` will include entries
-	// on potentially-null and potentially-undefined values, with insertion text to replace
-	// preceding `.` tokens with `?.`.
-	IncludeAutomaticOptionalChainCompletions core.Tristate
-	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
-	IncludeCompletionsWithSnippetText core.Tristate // !!!
-	// If enabled, completions for class members (e.g. methods and properties) will include
-	// a whole declaration for the member.
-	// E.g., `class A { f| }` could be completed to `class A { foo(): number {} }`, instead of
-	// `class A { foo }`.
-	IncludeCompletionsWithClassMemberSnippets core.Tristate // !!!
-	// If enabled, object literal methods will have a method declaration completion entry in addition
-	// to the regular completion entry containing just the method name.
-	// E.g., `const objectLiteral: T = { f| }` could be completed to `const objectLiteral: T = { foo(): void {} }`,
-	// in addition to `const objectLiteral: T = { foo }`.
-	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate // !!!
-	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle
+	OrganizeImportsIgnoreCase       core.Tristate            `pref:"preferences.organizeImports.caseSensitivity"`
+	OrganizeImportsCollation        OrganizeImportsCollation `pref:"preferences.organizeImports.unicodeCollation"`
+	OrganizeImportsLocale           string                   `pref:"preferences.organizeImports.locale"`
+	OrganizeImportsNumericCollation bool                     `pref:"preferences.organizeImports.numericCollation"`
+	OrganizeImportsAccentCollation  bool                     `pref:"preferences.organizeImports.accentCollation"`
+	OrganizeImportsCaseFirst        OrganizeImportsCaseFirst `pref:"preferences.organizeImports.caseFirst"`
+	OrganizeImportsTypeOrder        OrganizeImportsTypeOrder `pref:"preferences.organizeImports.typeOrder"`
 
-	// ------- AutoImports --------
+	AllowTextChangesInNewFiles bool
 
-	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference // !!!
-	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference // !!!
-	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               // !!!
-	AutoImportFileExcludePatterns     []string                                               // !!!
-	PreferTypeOnlyAutoImports         bool                                                   // !!!
+	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames,alias:providePrefixAndSuffixTextForRename"`
+	AllowRenameOfImportPath bool
 
-	// ------- OrganizeImports -------
-
-	// Indicates whether imports should be organized in a case-insensitive manner.
-	//
-	// Default: TSUnknown ("auto" in strada), will perform detection
-	OrganizeImportsIgnoreCase core.Tristate // !!!
-	// Indicates whether imports should be organized via an "ordinal" (binary) comparison using the numeric value of their
-	// code points, or via "unicode" collation (via the Unicode Collation Algorithm (https://unicode.org/reports/tr10/#Scope))
-	//
-	// using rules associated with the locale specified in organizeImportsCollationLocale.
-	//
-	// Default: Ordinal
-	OrganizeImportsCollation OrganizeImportsCollation // !!!
-	// Indicates the locale to use for "unicode" collation. If not specified, the locale `"en"` is used as an invariant
-	// for the sake of consistent sorting. Use `"auto"` to use the detected UI locale.
-	//
-	// This preference is ignored if organizeImportsCollation is not `unicode`.
-	//
-	// Default: `"en"`
-	OrganizeImportsLocale string // !!!
-	// Indicates whether numeric collation should be used for digit sequences in strings. When `true`, will collate
-	// strings such that `a1z < a2z < a100z`. When `false`, will collate strings such that `a1z < a100z < a2z`.
-	//
-	// This preference is ignored if organizeImportsCollation is not `unicode`.
-	//
-	// Default: `false`
-	OrganizeImportsNumericCollation bool // !!!
-	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
-	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
-	// in organizeImportsCollationLocale.
-	//
-	// This preference is ignored if organizeImportsCollation is not `unicode`.
-	//
-	// Default: `true`
-	OrganizeImportsAccentCollation bool // !!!
-	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
-	// specified in organizeImportsCollationLocale is used.
-	//
-	// This preference is ignored if:
-	// 		- organizeImportsCollation is not `unicode`
-	// 		- organizeImportsIgnoreCase is `true`
-	// 		- organizeImportsIgnoreCase is `auto` and the auto-detected case sensitivity is case-insensitive.
-	//
-	// Default: `false`
-	OrganizeImportsCaseFirst OrganizeImportsCaseFirst // !!!
-	// Indicates where named type-only imports should sort. "inline" sorts named imports without regard to if the import is type-only.
-	//
-	// Default: `auto`, which defaults to `last`
-	OrganizeImportsTypeOrder OrganizeImportsTypeOrder // !!!
-
-	// ------- MoveToFile -------
-
-	AllowTextChangesInNewFiles bool // !!!
-
-	// ------- Rename -------
-
-	// renamed from `providePrefixAndSuffixTextForRename`
-	UseAliasesForRename     core.Tristate
-	AllowRenameOfImportPath bool // !!!
-
-	// ------- CodeFixes/Refactors -------
-
-	ProvideRefactorNotApplicableReason bool // !!!
-
-	// ------- InlayHints -------
+	ProvideRefactorNotApplicableReason bool
 
 	InlayHints InlayHintsPreferences
 
-	// ------- CodeLens -------
-
 	CodeLens CodeLensUserPreferences
 
-	// ------- Symbols -------
+	ExcludeLibrarySymbolsInNavTo bool `pref:"workspaceSymbols.excludeLibrarySymbols"`
 
-	ExcludeLibrarySymbolsInNavTo bool
-
-	// ------- Misc -------
-
-	DisableSuggestions          bool // !!!
-	DisableLineTextInReferences bool // !!!
-	DisplayPartsForJSDoc        bool // !!!
-	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+	DisableSuggestions          bool
+	DisableLineTextInReferences bool
+	DisplayPartsForJSDoc        bool
+	ReportStyleChecksAsWarnings bool
 }
 
 type InlayHintsPreferences struct {
-	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints
-	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool
-	IncludeInlayFunctionParameterTypeHints                bool
-	IncludeInlayVariableTypeHints                         bool
-	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool
-	IncludeInlayPropertyDeclarationTypeHints              bool
-	IncludeInlayFunctionLikeReturnTypeHints               bool
-	IncludeInlayEnumMemberValueHints                      bool
+	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints `pref:"inlayHints.parameterNames.enabled"`
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool                           `pref:"inlayHints.parameterNames.suppressWhenArgumentMatchesName,invert"`
+	IncludeInlayFunctionParameterTypeHints                bool                           `pref:"inlayHints.parameterTypes.enabled"`
+	IncludeInlayVariableTypeHints                         bool                           `pref:"inlayHints.variableTypes.enabled"`
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool                           `pref:"inlayHints.variableTypes.suppressWhenTypeMatchesName,invert"`
+	IncludeInlayPropertyDeclarationTypeHints              bool                           `pref:"inlayHints.propertyDeclarationTypes.enabled"`
+	IncludeInlayFunctionLikeReturnTypeHints               bool                           `pref:"inlayHints.functionLikeReturnTypes.enabled"`
+	IncludeInlayEnumMemberValueHints                      bool                           `pref:"inlayHints.enumMemberValues.enabled"`
 }
 
 type CodeLensUserPreferences struct {
-	ReferencesCodeLensEnabled                     bool
-	ImplementationsCodeLensEnabled                bool
-	ReferencesCodeLensShowOnAllFunctions          bool
-	ImplementationsCodeLensShowOnInterfaceMethods bool
-	ImplementationsCodeLensShowOnAllClassMethods  bool
+	ReferencesCodeLensEnabled                     bool `pref:"referencesCodeLens.enabled"`
+	ImplementationsCodeLensEnabled                bool `pref:"implementationsCodeLens.enabled"`
+	ReferencesCodeLensShowOnAllFunctions          bool `pref:"referencesCodeLens.showOnAllFunctions"`
+	ImplementationsCodeLensShowOnInterfaceMethods bool `pref:"implementationsCodeLens.showOnInterfaceMethods"`
+	ImplementationsCodeLensShowOnAllClassMethods  bool `pref:"implementationsCodeLens.showOnAllClassMethods"`
 }
 
-type jsonWriter struct {
-	enc *jsontext.Encoder
-	err error
-}
-
-func (w *jsonWriter) token(t jsontext.Token) {
-	if w.err == nil {
-		w.err = w.enc.WriteToken(t)
-	}
-}
-
-func (w *jsonWriter) key(k string)              { w.token(jsontext.String(k)) }
-func (w *jsonWriter) str(s string)              { w.token(jsontext.String(s)) }
-func (w *jsonWriter) boolean(b bool)            { w.token(jsontext.Bool(b)) }
-func (w *jsonWriter) beginObject()              { w.token(jsontext.BeginObject) }
-func (w *jsonWriter) endObject()                { w.token(jsontext.EndObject) }
-func (w *jsonWriter) beginArray()               { w.token(jsontext.BeginArray) }
-func (w *jsonWriter) endArray()                 { w.token(jsontext.EndArray) }
-func (w *jsonWriter) prop(k string, v string)   { w.key(k); w.str(v) }
-func (w *jsonWriter) boolProp(k string, v bool) { w.key(k); w.boolean(v) }
-
-func (w *jsonWriter) intProp(k string, v int) {
-	w.key(k)
-	if w.err == nil {
-		w.err = w.enc.WriteToken(jsontext.Int(int64(v)))
-	}
-}
-
-func (w *jsonWriter) tristateProp(k string, v core.Tristate) {
-	w.key(k)
-	switch v {
-	case core.TSTrue:
-		w.boolean(true)
-	case core.TSFalse:
-		w.boolean(false)
-	default:
-		w.token(jsontext.Null)
-	}
-}
-
-func (w *jsonWriter) stringArray(arr []string) {
-	w.beginArray()
-	for _, s := range arr {
-		w.str(s)
-	}
-	w.endArray()
-}
-
-func (w *jsonWriter) object(key string, fn func()) {
-	w.key(key)
-	w.beginObject()
-	fn()
-	w.endObject()
-}
-
-func (u *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
-	w := &jsonWriter{enc: enc}
-	w.beginObject()
-
-	w.object("unstable", func() {
-		w.boolProp("lazyConfiguredProjectsFromExternalProject", u.LazyConfiguredProjectsFromExternalProject)
-		w.intProp("maximumHoverLength", u.MaximumHoverLength)
-		w.tristateProp("includeCompletionsWithSnippetText", u.IncludeCompletionsWithSnippetText)
-		w.boolProp("allowTextChangesInNewFiles", u.AllowTextChangesInNewFiles)
-		w.boolProp("allowRenameOfImportPath", u.AllowRenameOfImportPath)
-		w.boolProp("provideRefactorNotApplicableReason", u.ProvideRefactorNotApplicableReason)
-		w.boolProp("disableSuggestions", u.DisableSuggestions)
-		w.boolProp("disableLineTextInReferences", u.DisableLineTextInReferences)
-		w.boolProp("displayPartsForJSDoc", u.DisplayPartsForJSDoc)
-	})
-
-	w.object("referencesCodeLens", func() {
-		w.boolProp("enabled", u.CodeLens.ReferencesCodeLensEnabled)
-		w.boolProp("showOnAllFunctions", u.CodeLens.ReferencesCodeLensShowOnAllFunctions)
-	})
-
-	w.object("implementationsCodeLens", func() {
-		w.boolProp("enabled", u.CodeLens.ImplementationsCodeLensEnabled)
-		w.boolProp("showOnInterfaceMethods", u.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods)
-		w.boolProp("showOnAllClassMethods", u.CodeLens.ImplementationsCodeLensShowOnAllClassMethods)
-	})
-
-	w.object("inlayHints", func() {
-		w.object("parameterNames", func() {
-			enabledVal := string(u.InlayHints.IncludeInlayParameterNameHints)
-			if enabledVal == "" {
-				enabledVal = "none"
-			}
-			w.prop("enabled", enabledVal)
-			w.boolProp("suppressWhenArgumentMatchesName", !u.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName)
-		})
-		w.object("parameterTypes", func() {
-			w.boolProp("enabled", u.InlayHints.IncludeInlayFunctionParameterTypeHints)
-		})
-		w.object("variableTypes", func() {
-			w.boolProp("enabled", u.InlayHints.IncludeInlayVariableTypeHints)
-			w.boolProp("suppressWhenTypeMatchesName", !u.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName)
-		})
-		w.object("propertyDeclarationTypes", func() {
-			w.boolProp("enabled", u.InlayHints.IncludeInlayPropertyDeclarationTypeHints)
-		})
-		w.object("functionLikeReturnTypes", func() {
-			w.boolProp("enabled", u.InlayHints.IncludeInlayFunctionLikeReturnTypeHints)
-		})
-		w.object("enumMemberValues", func() {
-			w.boolProp("enabled", u.InlayHints.IncludeInlayEnumMemberValueHints)
-		})
-	})
-
-	w.object("preferences", func() {
-		w.prop("quoteStyle", string(u.QuotePreference))
-		w.prop("importModuleSpecifier", string(u.ImportModuleSpecifierPreference))
-		w.prop("importModuleSpecifierEnding", string(u.ImportModuleSpecifierEnding))
-		w.prop("includePackageJsonAutoImports", string(u.IncludePackageJsonAutoImports))
-		w.key("autoImportFileExcludePatterns")
-		w.stringArray(u.AutoImportFileExcludePatterns)
-		w.key("autoImportSpecifierExcludeRegexes")
-		w.stringArray(u.AutoImportSpecifierExcludeRegexes)
-		w.boolProp("preferTypeOnlyAutoImports", u.PreferTypeOnlyAutoImports)
-		w.prop("jsxAttributeCompletionStyle", string(u.JsxAttributeCompletionStyle))
-		w.tristateProp("useAliasesForRenames", u.UseAliasesForRename)
-
-		w.object("organizeImports", func() {
-			if u.OrganizeImportsIgnoreCase == core.TSTrue {
-				w.prop("caseSensitivity", "caseInsensitive")
-			} else if u.OrganizeImportsIgnoreCase == core.TSFalse {
-				w.prop("caseSensitivity", "caseSensitive")
-			}
-			typeOrderStr := "auto"
-			switch u.OrganizeImportsTypeOrder {
-			case OrganizeImportsTypeOrderLast:
-				typeOrderStr = "last"
-			case OrganizeImportsTypeOrderInline:
-				typeOrderStr = "inline"
-			case OrganizeImportsTypeOrderFirst:
-				typeOrderStr = "first"
-			}
-			w.prop("typeOrder", typeOrderStr)
-			if u.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
-				w.prop("unicodeCollation", "unicode")
-			} else {
-				w.prop("unicodeCollation", "ordinal")
-			}
-			w.prop("locale", u.OrganizeImportsLocale)
-			w.boolProp("numericCollation", u.OrganizeImportsNumericCollation)
-			w.boolProp("accentCollation", u.OrganizeImportsAccentCollation)
-			caseFirstStr := "default"
-			switch u.OrganizeImportsCaseFirst {
-			case OrganizeImportsCaseFirstLower:
-				caseFirstStr = "lower"
-			case OrganizeImportsCaseFirstUpper:
-				caseFirstStr = "upper"
-			}
-			w.prop("caseFirst", caseFirstStr)
-		})
-	})
-
-	w.object("suggest", func() {
-		w.tristateProp("autoImports", u.IncludeCompletionsForModuleExports)
-		w.tristateProp("includeCompletionsForImportStatements", u.IncludeCompletionsForImportStatements)
-		w.tristateProp("includeAutomaticOptionalChainCompletions", u.IncludeAutomaticOptionalChainCompletions)
-		w.object("classMemberSnippets", func() {
-			w.tristateProp("enabled", u.IncludeCompletionsWithClassMemberSnippets)
-		})
-		w.object("objectLiteralMethodSnippets", func() {
-			w.tristateProp("enabled", u.IncludeCompletionsWithObjectLiteralMethodSnippets)
-		})
-	})
-
-	w.object("workspaceSymbols", func() {
-		w.boolProp("excludeLibrarySymbols", u.ExcludeLibrarySymbolsInNavTo)
-	})
-
-	w.boolProp("reportStyleChecksAsWarnings", u.ReportStyleChecksAsWarnings)
-
-	w.endObject()
-	return w.err
-}
-
-func (u *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	var config map[string]any
-	if err := json.UnmarshalDecode(dec, &config); err != nil {
-		return err
-	}
-	u.parseWorker(config)
-	return nil
-}
-
-type JsxAttributeCompletionStyle string
-
-const (
-	JsxAttributeCompletionStyleUnknown JsxAttributeCompletionStyle = "" // !!!
-	JsxAttributeCompletionStyleAuto    JsxAttributeCompletionStyle = "auto"
-	JsxAttributeCompletionStyleBraces  JsxAttributeCompletionStyle = "braces"
-	JsxAttributeCompletionStyleNone    JsxAttributeCompletionStyle = "none"
-)
-
-func parseJsxAttributeCompletionStyle(val any) JsxAttributeCompletionStyle {
-	if s, ok := val.(string); ok {
-		switch strings.ToLower(s) {
-		case "braces":
-			return JsxAttributeCompletionStyleBraces
-		case "none":
-			return JsxAttributeCompletionStyleNone
-		}
-	}
-	return JsxAttributeCompletionStyleAuto
-}
-
-func parseImportModuleSpecifierPreference(val any) modulespecifiers.ImportModuleSpecifierPreference {
-	if s, ok := val.(string); ok {
-		switch strings.ToLower(s) {
-		case "project-relative":
-			return modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
-		case "relative":
-			return modulespecifiers.ImportModuleSpecifierPreferenceRelative
-		case "non-relative":
-			return modulespecifiers.ImportModuleSpecifierPreferenceNonRelative
-		}
-	}
-	return modulespecifiers.ImportModuleSpecifierPreferenceShortest
-}
-
-func parseImportModuleSpecifierEndingPreference(val any) modulespecifiers.ImportModuleSpecifierEndingPreference {
-	if s, ok := val.(string); ok {
-		switch strings.ToLower(s) {
-		case "minimal":
-			return modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal
-		case "index":
-			return modulespecifiers.ImportModuleSpecifierEndingPreferenceIndex
-		case "js":
-			return modulespecifiers.ImportModuleSpecifierEndingPreferenceJs
-		}
-	}
-	return modulespecifiers.ImportModuleSpecifierEndingPreferenceAuto
-}
-
-type IncludeInlayParameterNameHints string
-
-const (
-	IncludeInlayParameterNameHintsNone     IncludeInlayParameterNameHints = ""
-	IncludeInlayParameterNameHintsAll      IncludeInlayParameterNameHints = "all"
-	IncludeInlayParameterNameHintsLiterals IncludeInlayParameterNameHints = "literals"
-)
-
-func parseInlayParameterNameHints(val any) IncludeInlayParameterNameHints {
-	if prefStr, ok := val.(string); ok {
-		switch prefStr {
-		case "all":
-			return IncludeInlayParameterNameHintsAll
-		case "literals":
-			return IncludeInlayParameterNameHintsLiterals
-		}
-	}
-	return IncludeInlayParameterNameHintsNone
-}
-
-type IncludePackageJsonAutoImports string
-
-const (
-	IncludePackageJsonAutoImportsUnknown IncludePackageJsonAutoImports = "" // !!!
-	IncludePackageJsonAutoImportsAuto    IncludePackageJsonAutoImports = "auto"
-	IncludePackageJsonAutoImportsOn      IncludePackageJsonAutoImports = "on"
-	IncludePackageJsonAutoImportsOff     IncludePackageJsonAutoImports = "off"
-)
-
-func parseIncludePackageJsonAutoImports(val any) IncludePackageJsonAutoImports {
-	if s, ok := val.(string); ok {
-		switch strings.ToLower(s) {
-		case "on":
-			return IncludePackageJsonAutoImportsOn
-		case "off":
-			return IncludePackageJsonAutoImportsOff
-		default:
-			return IncludePackageJsonAutoImportsAuto
-		}
-	}
-	return IncludePackageJsonAutoImportsUnknown
-}
-
-type OrganizeImportsCollation bool
-
-const (
-	OrganizeImportsCollationOrdinal OrganizeImportsCollation = false
-	OrganizeImportsCollationUnicode OrganizeImportsCollation = true
-)
-
-func parseOrganizeImportsCollation(val any) OrganizeImportsCollation {
-	if b, ok := val.(string); ok && strings.ToLower(b) == "unicode" {
-		return OrganizeImportsCollationUnicode
-	}
-	return OrganizeImportsCollationOrdinal
-}
-
-type OrganizeImportsCaseFirst int
-
-const (
-	OrganizeImportsCaseFirstFalse OrganizeImportsCaseFirst = 0
-	OrganizeImportsCaseFirstLower OrganizeImportsCaseFirst = 1
-	OrganizeImportsCaseFirstUpper OrganizeImportsCaseFirst = 2
-)
-
-func parseOrganizeImportsCaseFirst(caseFirst any) OrganizeImportsCaseFirst {
-	if caseFirstStr, ok := caseFirst.(string); ok {
-		switch caseFirstStr {
-		case "lower":
-			return OrganizeImportsCaseFirstLower
-		case "upper":
-			return OrganizeImportsCaseFirstUpper
-		}
-	}
-	return OrganizeImportsCaseFirstFalse
-}
-
-type OrganizeImportsTypeOrder int
-
-const (
-	OrganizeImportsTypeOrderAuto   OrganizeImportsTypeOrder = 0
-	OrganizeImportsTypeOrderLast   OrganizeImportsTypeOrder = 1
-	OrganizeImportsTypeOrderInline OrganizeImportsTypeOrder = 2
-	OrganizeImportsTypeOrderFirst  OrganizeImportsTypeOrder = 3
-)
-
-func parseOrganizeImportsTypeOrder(typeOrder any) OrganizeImportsTypeOrder {
-	if typeOrderStr, ok := typeOrder.(string); ok {
-		switch typeOrderStr {
-		case "last":
-			return OrganizeImportsTypeOrderLast
-		case "inline":
-			return OrganizeImportsTypeOrderInline
-		case "first":
-			return OrganizeImportsTypeOrderFirst
-		}
-	}
-	return OrganizeImportsTypeOrderAuto
-}
+// --- Enum Types ---
 
 type QuotePreference string
 
@@ -521,19 +114,490 @@ const (
 	QuotePreferenceSingle  QuotePreference = "single"
 )
 
-func parseQuotePreference(val any) QuotePreference {
-	if s, ok := val.(string); ok {
-		switch strings.ToLower(s) {
-		case "auto":
-			return QuotePreferenceAuto
-		case "double":
-			return QuotePreferenceDouble
-		case "single":
-			return QuotePreferenceSingle
+type JsxAttributeCompletionStyle string
+
+const (
+	JsxAttributeCompletionStyleUnknown JsxAttributeCompletionStyle = ""
+	JsxAttributeCompletionStyleAuto    JsxAttributeCompletionStyle = "auto"
+	JsxAttributeCompletionStyleBraces  JsxAttributeCompletionStyle = "braces"
+	JsxAttributeCompletionStyleNone    JsxAttributeCompletionStyle = "none"
+)
+
+type IncludeInlayParameterNameHints string
+
+const (
+	IncludeInlayParameterNameHintsNone     IncludeInlayParameterNameHints = ""
+	IncludeInlayParameterNameHintsAll      IncludeInlayParameterNameHints = "all"
+	IncludeInlayParameterNameHintsLiterals IncludeInlayParameterNameHints = "literals"
+)
+
+type IncludePackageJsonAutoImports string
+
+const (
+	IncludePackageJsonAutoImportsUnknown IncludePackageJsonAutoImports = ""
+	IncludePackageJsonAutoImportsAuto    IncludePackageJsonAutoImports = "auto"
+	IncludePackageJsonAutoImportsOn      IncludePackageJsonAutoImports = "on"
+	IncludePackageJsonAutoImportsOff     IncludePackageJsonAutoImports = "off"
+)
+
+type OrganizeImportsCollation bool
+
+const (
+	OrganizeImportsCollationOrdinal OrganizeImportsCollation = false
+	OrganizeImportsCollationUnicode OrganizeImportsCollation = true
+)
+
+type OrganizeImportsCaseFirst int
+
+const (
+	OrganizeImportsCaseFirstFalse OrganizeImportsCaseFirst = 0
+	OrganizeImportsCaseFirstLower OrganizeImportsCaseFirst = 1
+	OrganizeImportsCaseFirstUpper OrganizeImportsCaseFirst = 2
+)
+
+type OrganizeImportsTypeOrder int
+
+const (
+	OrganizeImportsTypeOrderAuto   OrganizeImportsTypeOrder = 0
+	OrganizeImportsTypeOrderLast   OrganizeImportsTypeOrder = 1
+	OrganizeImportsTypeOrderInline OrganizeImportsTypeOrder = 2
+	OrganizeImportsTypeOrderFirst  OrganizeImportsTypeOrder = 3
+)
+
+// --- Reflection-based parsing infrastructure ---
+
+// typeParsers maps reflect.Type to a function that parses a value into that type.
+var typeParsers = map[reflect.Type]func(any) any{
+	reflect.TypeFor[core.Tristate](): func(val any) any {
+		if b, ok := val.(bool); ok {
+			if b {
+				return core.TSTrue
+			}
+			return core.TSFalse
+		}
+		return core.TSUnknown
+	},
+	reflect.TypeFor[QuotePreference](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "auto":
+				return QuotePreferenceAuto
+			case "double":
+				return QuotePreferenceDouble
+			case "single":
+				return QuotePreferenceSingle
+			}
+		}
+		return QuotePreferenceUnknown
+	},
+	reflect.TypeFor[JsxAttributeCompletionStyle](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "braces":
+				return JsxAttributeCompletionStyleBraces
+			case "none":
+				return JsxAttributeCompletionStyleNone
+			}
+		}
+		return JsxAttributeCompletionStyleAuto
+	},
+	reflect.TypeFor[IncludeInlayParameterNameHints](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch s {
+			case "all":
+				return IncludeInlayParameterNameHintsAll
+			case "literals":
+				return IncludeInlayParameterNameHintsLiterals
+			}
+		}
+		return IncludeInlayParameterNameHintsNone
+	},
+	reflect.TypeFor[IncludePackageJsonAutoImports](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "on":
+				return IncludePackageJsonAutoImportsOn
+			case "off":
+				return IncludePackageJsonAutoImportsOff
+			default:
+				return IncludePackageJsonAutoImportsAuto
+			}
+		}
+		return IncludePackageJsonAutoImportsUnknown
+	},
+	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
+		if s, ok := val.(string); ok && strings.ToLower(s) == "unicode" {
+			return OrganizeImportsCollationUnicode
+		}
+		return OrganizeImportsCollationOrdinal
+	},
+	reflect.TypeFor[OrganizeImportsCaseFirst](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch s {
+			case "lower":
+				return OrganizeImportsCaseFirstLower
+			case "upper":
+				return OrganizeImportsCaseFirstUpper
+			}
+		}
+		return OrganizeImportsCaseFirstFalse
+	},
+	reflect.TypeFor[OrganizeImportsTypeOrder](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch s {
+			case "last":
+				return OrganizeImportsTypeOrderLast
+			case "inline":
+				return OrganizeImportsTypeOrderInline
+			case "first":
+				return OrganizeImportsTypeOrderFirst
+			}
+		}
+		return OrganizeImportsTypeOrderAuto
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierPreference](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "project-relative":
+				return modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
+			case "relative":
+				return modulespecifiers.ImportModuleSpecifierPreferenceRelative
+			case "non-relative":
+				return modulespecifiers.ImportModuleSpecifierPreferenceNonRelative
+			}
+		}
+		return modulespecifiers.ImportModuleSpecifierPreferenceShortest
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierEndingPreference](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "minimal":
+				return modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal
+			case "index":
+				return modulespecifiers.ImportModuleSpecifierEndingPreferenceIndex
+			case "js":
+				return modulespecifiers.ImportModuleSpecifierEndingPreferenceJs
+			}
+		}
+		return modulespecifiers.ImportModuleSpecifierEndingPreferenceAuto
+	},
+}
+
+// typeSerializers maps reflect.Type to a function that serializes a value of that type.
+var typeSerializers = map[reflect.Type]func(any) any{
+	reflect.TypeFor[core.Tristate](): func(val any) any {
+		switch val.(core.Tristate) {
+		case core.TSTrue:
+			return true
+		case core.TSFalse:
+			return false
+		default:
+			return nil
+		}
+	},
+	reflect.TypeFor[IncludeInlayParameterNameHints](): func(val any) any {
+		s := val.(IncludeInlayParameterNameHints)
+		if s == "" {
+			return "none"
+		}
+		return string(s)
+	},
+	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
+		if val.(OrganizeImportsCollation) == OrganizeImportsCollationUnicode {
+			return "unicode"
+		}
+		return "ordinal"
+	},
+	reflect.TypeFor[OrganizeImportsCaseFirst](): func(val any) any {
+		switch val.(OrganizeImportsCaseFirst) {
+		case OrganizeImportsCaseFirstLower:
+			return "lower"
+		case OrganizeImportsCaseFirstUpper:
+			return "upper"
+		default:
+			return "default"
+		}
+	},
+	reflect.TypeFor[OrganizeImportsTypeOrder](): func(val any) any {
+		switch val.(OrganizeImportsTypeOrder) {
+		case OrganizeImportsTypeOrderLast:
+			return "last"
+		case OrganizeImportsTypeOrderInline:
+			return "inline"
+		case OrganizeImportsTypeOrderFirst:
+			return "first"
+		default:
+			return "auto"
+		}
+	},
+}
+
+type fieldInfo struct {
+	lowerName string   // lowercase Go field name for direct matching
+	aliases   []string // additional lowercase names (e.g., "provideprefixandsuffixtextforrename")
+	path      string   // dotted path for VS Code config (e.g., "preferences.quoteStyle")
+	fieldPath []int    // index path to field in struct
+	invert    bool     // whether to invert boolean values
+}
+
+var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
+	var infos []fieldInfo
+	collectFieldInfos(reflect.TypeFor[UserPreferences](), nil, &infos)
+	return infos
+})
+
+// lowerNameIndex maps lowercase field names to fieldInfo index for O(1) lookup
+var lowerNameIndex = sync.OnceValue(func() map[string]int {
+	infos := fieldInfoCache()
+	index := make(map[string]int, len(infos)*2)
+	for i, info := range infos {
+		index[info.lowerName] = i
+		for _, alias := range info.aliases {
+			index[alias] = i
 		}
 	}
-	return QuotePreferenceUnknown
+	return index
+})
+
+func collectFieldInfos(t reflect.Type, indexPath []int, infos *[]fieldInfo) {
+	for i := range t.NumField() {
+		field := t.Field(i)
+		currentPath := append(slices.Clone(indexPath), i)
+
+		if field.Type.Kind() == reflect.Struct && field.Tag.Get("pref") == "" {
+			collectFieldInfos(field.Type, currentPath, infos)
+			continue
+		}
+
+		info := fieldInfo{
+			lowerName: strings.ToLower(field.Name),
+			fieldPath: currentPath,
+		}
+
+		tag := field.Tag.Get("pref")
+		if tag != "" {
+			// Parse tag: "path" or "path,invert" or "path,alias:name"
+			parts := strings.Split(tag, ",")
+			info.path = parts[0]
+			for _, part := range parts[1:] {
+				if part == "invert" {
+					info.invert = true
+				} else if alias, ok := strings.CutPrefix(part, "alias:"); ok {
+					info.aliases = append(info.aliases, strings.ToLower(alias))
+				}
+			}
+		}
+
+		*infos = append(*infos, info)
+	}
 }
+
+func getNestedValue(config map[string]any, path string) (any, bool) {
+	parts := strings.Split(path, ".")
+	current := any(config)
+	for _, part := range parts {
+		m, ok := current.(map[string]any)
+		if !ok {
+			return nil, false
+		}
+		current, ok = m[part]
+		if !ok {
+			return nil, false
+		}
+	}
+	return current, true
+}
+
+func setNestedValue(config map[string]any, path string, value any) {
+	parts := strings.Split(path, ".")
+	current := config
+	for _, part := range parts[:len(parts)-1] {
+		next, ok := current[part].(map[string]any)
+		if !ok {
+			next = make(map[string]any)
+			current[part] = next
+		}
+		current = next
+	}
+	current[parts[len(parts)-1]] = value
+}
+
+func (p *UserPreferences) parseWorker(config map[string]any) {
+	v := reflect.ValueOf(p).Elem()
+	infos := fieldInfoCache()
+	index := lowerNameIndex()
+
+	// Process "unstable" first - these are spread directly by field name
+	if unstable, ok := config["unstable"].(map[string]any); ok {
+		for name, value := range unstable {
+			if idx, found := index[strings.ToLower(name)]; found {
+				info := infos[idx]
+				field := getFieldByPath(v, info.fieldPath)
+				if info.invert {
+					if b, ok := value.(bool); ok {
+						value = !b
+					}
+				}
+				setFieldFromValue(field, value)
+			}
+		}
+	}
+
+	// Process path-based config (VS Code style)
+	for _, info := range infos {
+		if info.path == "" {
+			continue
+		}
+		val, ok := getNestedValue(config, info.path)
+		if !ok {
+			continue
+		}
+
+		field := getFieldByPath(v, info.fieldPath)
+		if info.invert {
+			if b, ok := val.(bool); ok {
+				val = !b
+			}
+		}
+		setFieldFromValue(field, val)
+	}
+
+	// Process direct field names at root level (non-VS Code clients, fourslash tests)
+	for name, value := range config {
+		if name == "unstable" {
+			continue
+		}
+		// Skip known VS Code config sections that are handled by path-based parsing
+		switch name {
+		case "preferences", "suggest", "inlayHints", "referencesCodeLens",
+			"implementationsCodeLens", "workspaceSymbols", "format", "tsserver", "tsc", "experimental":
+			continue
+		}
+		if idx, found := index[strings.ToLower(name)]; found {
+			info := infos[idx]
+			field := getFieldByPath(v, info.fieldPath)
+			if info.invert {
+				if b, ok := value.(bool); ok {
+					value = !b
+				}
+			}
+			setFieldFromValue(field, value)
+		}
+	}
+}
+
+func getFieldByPath(v reflect.Value, path []int) reflect.Value {
+	for _, idx := range path {
+		v = v.Field(idx)
+	}
+	return v
+}
+
+func setFieldFromValue(field reflect.Value, val any) {
+	if val == nil {
+		return
+	}
+
+	// Check custom parsers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	if parser, ok := typeParsers[field.Type()]; ok {
+		field.Set(reflect.ValueOf(parser(val)))
+		return
+	}
+
+	switch field.Kind() {
+	case reflect.Bool:
+		if b, ok := val.(bool); ok {
+			field.SetBool(b)
+		}
+	case reflect.Int:
+		switch v := val.(type) {
+		case int:
+			field.SetInt(int64(v))
+		case float64:
+			field.SetInt(int64(v))
+		}
+	case reflect.String:
+		if s, ok := val.(string); ok {
+			field.SetString(s)
+		}
+	case reflect.Slice:
+		if arr, ok := val.([]any); ok {
+			result := reflect.MakeSlice(field.Type(), 0, len(arr))
+			for _, item := range arr {
+				if s, ok := item.(string); ok {
+					result = reflect.Append(result, reflect.ValueOf(s))
+				}
+			}
+			field.Set(result)
+		}
+	}
+}
+
+func (p *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
+	config := make(map[string]any)
+	v := reflect.ValueOf(p).Elem()
+
+	for _, info := range fieldInfoCache() {
+		field := getFieldByPath(v, info.fieldPath)
+
+		val := serializeField(field)
+		if val == nil {
+			continue
+		}
+		if info.invert {
+			if b, ok := val.(bool); ok {
+				val = !b
+			}
+		}
+
+		// Use the path if available, otherwise use the lowercase field name at root level
+		if info.path != "" {
+			setNestedValue(config, info.path, val)
+		} else {
+			config[info.lowerName] = val
+		}
+	}
+
+	return json.MarshalEncode(enc, config)
+}
+
+func serializeField(field reflect.Value) any {
+	// Check custom serializers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	if serializer, ok := typeSerializers[field.Type()]; ok {
+		return serializer(field.Interface())
+	}
+
+	switch field.Kind() {
+	case reflect.Bool:
+		return field.Bool()
+	case reflect.Int:
+		return int(field.Int())
+	case reflect.String:
+		return field.String()
+	case reflect.Slice:
+		if field.IsNil() {
+			return nil
+		}
+		result := make([]string, field.Len())
+		for i := range field.Len() {
+			result[i] = field.Index(i).String()
+		}
+		return result
+	default:
+		return field.Interface()
+	}
+}
+
+func (p *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var config map[string]any
+	if err := json.UnmarshalDecode(dec, &config); err != nil {
+		return err
+	}
+	p.parseWorker(config)
+	return nil
+}
+
+// --- Helper methods ---
 
 func (p *UserPreferences) Copy() *UserPreferences {
 	if p == nil {
@@ -560,354 +624,16 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 	}
 }
 
-// ------ Parsing Config Response -------
-
-// returns non-nil if should break loop
 func (p *UserPreferences) Parse(item any) *UserPreferences {
 	if item == nil {
-		// continue
-	} else if config, ok := item.(map[string]any); ok {
+		return nil
+	}
+	if config, ok := item.(map[string]any); ok {
 		p.parseWorker(config)
-	} else if item, ok := item.(*UserPreferences); ok {
-		// case for fourslash
+		return nil
+	}
+	if item, ok := item.(*UserPreferences); ok {
 		return item.CopyOrDefault()
 	}
 	return nil
-}
-
-func (p *UserPreferences) parseWorker(config map[string]any) {
-	// Process unstable preferences first so that they do not overwrite stable properties
-	if unstable, ok := config["unstable"]; ok {
-		// unstable properties must be named the same as userPreferences
-		p.parseAll(unstable)
-	}
-	for name, values := range config {
-		switch name {
-		case "unstable":
-			continue
-		case "inlayHints":
-			p.parseInlayHints(values)
-		case "referencesCodeLens":
-			p.parseReferencesCodeLens(values)
-		case "implementationsCodeLens":
-			p.parseImplementationsCodeLens(values)
-		case "suggest":
-			p.parseSuggest(values)
-		case "preferences":
-			p.parsePreferences(values)
-		case "workspaceSymbols":
-			p.parseWorkspaceSymbols(values)
-		case "format":
-			// !!!
-		case "tsserver":
-			// !!!
-		case "tsc":
-			// !!!
-		case "experimental":
-			// !!!
-		default:
-			p.set(name, values)
-		}
-	}
-}
-
-func (p *UserPreferences) parseAll(prefs any) {
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range prefsMap {
-		p.set(name, value)
-	}
-}
-
-func (p *UserPreferences) parseInlayHints(prefs any) {
-	inlayHintsPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range inlayHintsPreferences {
-		if v, ok := value.(map[string]any); ok {
-			// vscode's inlay hints settings are nested objects with "enabled" and other properties
-			switch name {
-			case "parameterNames":
-				if enabled, ok := v["enabled"]; ok {
-					p.set("includeInlayParameterNameHints", enabled)
-				}
-				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSuppress(v, "suppressWhenArgumentMatchesName")
-			case "parameterTypes":
-				p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseEnabledBool(v)
-			case "variableTypes":
-				p.InlayHints.IncludeInlayVariableTypeHints = parseEnabledBool(v)
-				p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseSuppress(v, "suppressWhenTypeMatchesName")
-			case "propertyDeclarationTypes":
-				p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseEnabledBool(v)
-			case "functionLikeReturnTypes":
-				p.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = parseEnabledBool(v)
-			case "enumMemberValues":
-				p.InlayHints.IncludeInlayEnumMemberValueHints = parseEnabledBool(v)
-			}
-		} else {
-			// non-vscode case
-			p.set(name, v)
-		}
-	}
-}
-
-func (p *UserPreferences) parseReferencesCodeLens(prefs any) {
-	referencesCodeLens, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range referencesCodeLens {
-		switch name {
-		case "enabled":
-			p.set("referencesCodeLensEnabled", value)
-		case "showOnAllFunctions":
-			p.set("referencesCodeLensShowOnAllFunctions", value)
-		}
-	}
-}
-
-func (p *UserPreferences) parseImplementationsCodeLens(prefs any) {
-	implementationsCodeLens, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range implementationsCodeLens {
-		switch name {
-		case "enabled":
-			p.set("implementationsCodeLensEnabled", value)
-		case "showOnInterfaceMethods":
-			p.set("implementationsCodeLensShowOnInterfaceMethods", value)
-		case "showOnAllClassMethods":
-			p.set("implementationsCodeLensShowOnAllClassMethods", value)
-		}
-	}
-}
-
-func (p *UserPreferences) parseSuggest(prefs any) {
-	completionsPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range completionsPreferences {
-		switch name {
-		case "autoImports":
-			p.set("includeCompletionsForModuleExports", value)
-		case "objectLiteralMethodSnippets":
-			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithObjectLiteralMethodSnippets", v["enabled"])
-			}
-		case "classMemberSnippets":
-			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithClassMemberSnippets", v["enabled"])
-			}
-		case "includeAutomaticOptionalChainCompletions":
-			p.set("includeAutomaticOptionalChainCompletions", value)
-		case "includeCompletionsForImportStatements":
-			p.set("includeCompletionsForImportStatements", value)
-		}
-	}
-}
-
-func (p *UserPreferences) parsePreferences(prefs any) {
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range prefsMap {
-		if name == "organizeImports" {
-			p.parseOrganizeImportsPreferences(value)
-		} else {
-			p.set(name, value)
-		}
-	}
-}
-
-func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
-	// !!! this used to be in the typescript-language-features extension
-	prefsMap, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	if typeOrder, ok := prefsMap["typeOrder"]; ok {
-		p.OrganizeImportsTypeOrder = parseOrganizeImportsTypeOrder(typeOrder)
-	}
-	if caseSensitivity, ok := prefsMap["caseSensitivity"]; ok {
-		if caseSensitivityStr, ok := caseSensitivity.(string); ok {
-			// default is already "auto"
-			switch caseSensitivityStr {
-			case "caseInsensitive":
-				p.OrganizeImportsIgnoreCase = core.TSTrue
-			case "caseSensitive":
-				p.OrganizeImportsIgnoreCase = core.TSFalse
-			}
-		}
-	}
-	if collation, ok := prefsMap["unicodeCollation"]; ok {
-		if collationStr, ok := collation.(string); ok && collationStr == "unicode" {
-			p.OrganizeImportsCollation = OrganizeImportsCollationUnicode
-		}
-	}
-	if locale, ok := prefsMap["locale"]; ok {
-		p.OrganizeImportsLocale = tsoptions.ParseString(locale)
-	}
-	if numeric, ok := prefsMap["numericCollation"]; ok {
-		p.OrganizeImportsNumericCollation = parseBoolWithDefault(numeric, false)
-	}
-	if accent, ok := prefsMap["accentCollation"]; ok {
-		p.OrganizeImportsAccentCollation = parseBoolWithDefault(accent, true)
-	}
-	if caseFirst, ok := prefsMap["caseFirst"]; ok {
-		p.OrganizeImportsCaseFirst = parseOrganizeImportsCaseFirst(caseFirst)
-	}
-}
-
-func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
-	symbolPreferences, ok := prefs.(map[string]any)
-	if !ok {
-		return
-	}
-	for name, value := range symbolPreferences {
-		switch name {
-		// !!! scope
-		case "excludeLibrarySymbols":
-			p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
-		default:
-			p.set(name, value)
-		}
-	}
-}
-
-func parseEnabledBool(v map[string]any) bool {
-	// vscode nested option
-	if enabled, ok := v["enabled"]; ok {
-		if e, ok := enabled.(bool); ok {
-			return e
-		}
-	}
-	return false
-}
-
-func parseSuppress(v map[string]any, name string) bool {
-	// vscode nested option
-	if val, ok := v[name]; ok {
-		if suppress, ok := val.(bool); ok {
-			return !suppress
-		}
-	}
-	return false
-}
-
-func parseBoolWithDefault(val any, defaultV bool) bool {
-	if v, ok := val.(bool); ok {
-		return v
-	}
-	return defaultV
-}
-
-func parseIntWithDefault(val any, defaultV int) int {
-	switch v := val.(type) {
-	case int:
-		return v
-	case float64:
-		return int(v)
-	}
-	return defaultV
-}
-
-func (p *UserPreferences) set(name string, value any) {
-	switch strings.ToLower(name) {
-	case "quotepreference", "quotestyle":
-		p.QuotePreference = parseQuotePreference(value)
-	case "lazyconfiguredprojectsfromexternalproject":
-		p.LazyConfiguredProjectsFromExternalProject = parseBoolWithDefault(value, false)
-	case "maximumhoverlength":
-		p.MaximumHoverLength = parseIntWithDefault(value, 500)
-	case "includecompletionsformoduleexports":
-		p.IncludeCompletionsForModuleExports = tsoptions.ParseTristate(value)
-	case "includecompletionsforimportstatements":
-		p.IncludeCompletionsForImportStatements = tsoptions.ParseTristate(value)
-	case "includeautomaticoptionalchaincompletions":
-		p.IncludeAutomaticOptionalChainCompletions = tsoptions.ParseTristate(value)
-	case "includecompletionswithsnippettext":
-		p.IncludeCompletionsWithSnippetText = tsoptions.ParseTristate(value)
-	case "includecompletionswithclassmembersnippets":
-		p.IncludeCompletionsWithClassMemberSnippets = tsoptions.ParseTristate(value)
-	case "includecompletionswithobjectliteralmethodsnippets":
-		p.IncludeCompletionsWithObjectLiteralMethodSnippets = tsoptions.ParseTristate(value)
-	case "jsxattributecompletionstyle":
-		p.JsxAttributeCompletionStyle = parseJsxAttributeCompletionStyle(value)
-	case "importmodulespecifier", "importmodulespecifierpreference":
-		p.ImportModuleSpecifierPreference = parseImportModuleSpecifierPreference(value)
-	case "importmodulespecifierending":
-		p.ImportModuleSpecifierEnding = parseImportModuleSpecifierEndingPreference(value)
-	case "includepackagejsonautoimports":
-		p.IncludePackageJsonAutoImports = parseIncludePackageJsonAutoImports(value)
-	case "autoimportspecifierexcluderegexes":
-		p.AutoImportSpecifierExcludeRegexes = tsoptions.ParseStringArray(value)
-	case "autoimportfileexcludepatterns":
-		p.AutoImportFileExcludePatterns = tsoptions.ParseStringArray(value)
-	case "prefertypeonlyautoimports":
-		p.PreferTypeOnlyAutoImports = parseBoolWithDefault(value, false)
-	case "organizeimportsignorecase":
-		p.OrganizeImportsIgnoreCase = tsoptions.ParseTristate(value)
-	case "organizeimportscollation":
-		p.OrganizeImportsCollation = parseOrganizeImportsCollation(value)
-	case "organizeimportslocale":
-		p.OrganizeImportsLocale = tsoptions.ParseString(value)
-	case "organizeimportsnumericcollation":
-		p.OrganizeImportsNumericCollation = parseBoolWithDefault(value, false)
-	case "organizeimportsaccentcollation":
-		p.OrganizeImportsAccentCollation = parseBoolWithDefault(value, true)
-	case "organizeimportscasefirst":
-		p.OrganizeImportsCaseFirst = parseOrganizeImportsCaseFirst(value)
-	case "organizeimportstypeorder":
-		p.OrganizeImportsTypeOrder = parseOrganizeImportsTypeOrder(value)
-	case "allowtextchangesinnewfiles":
-		p.AllowTextChangesInNewFiles = parseBoolWithDefault(value, true) // !!!
-	case "usealiasesforrename", "usealiasesforrenames", "provideprefixandsuffixtextforrename":
-		p.UseAliasesForRename = tsoptions.ParseTristate(value)
-	case "allowrenameofimportpath":
-		p.AllowRenameOfImportPath = parseBoolWithDefault(value, true)
-	case "providerefactornotapplicablereason":
-		p.ProvideRefactorNotApplicableReason = parseBoolWithDefault(value, true)
-	case "includeinlayparameternamehints":
-		p.InlayHints.IncludeInlayParameterNameHints = parseInlayParameterNameHints(value)
-	case "includeinlayparameternamehintswhenargumentmatchesname":
-		p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseBoolWithDefault(value, false)
-	case "includeinlayfunctionparametertypeHints":
-		p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseBoolWithDefault(value, false)
-	case "includeinlayvariabletypehints":
-		p.InlayHints.IncludeInlayVariableTypeHints = parseBoolWithDefault(value, false)
-	case "includeinlayvariabletypehintswhentypematchesname":
-		p.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName = parseBoolWithDefault(value, false)
-	case "includeinlaypropertydeclarationtypehints":
-		p.InlayHints.IncludeInlayPropertyDeclarationTypeHints = parseBoolWithDefault(value, false)
-	case "includeinlayfunctionlikereturntypehints":
-		p.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = parseBoolWithDefault(value, false)
-	case "includeinlayenummembervaluehints":
-		p.InlayHints.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
-	case "excludelibrarysymbolsinnavto":
-		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
-	case "disablesuggestions":
-		p.DisableSuggestions = parseBoolWithDefault(value, false)
-	case "disablelinetextinreferences":
-		p.DisableLineTextInReferences = parseBoolWithDefault(value, true)
-	case "displaypartsforjsdoc":
-		p.DisplayPartsForJSDoc = parseBoolWithDefault(value, true)
-	case "reportstylechecksaswarnings":
-		p.ReportStyleChecksAsWarnings = parseBoolWithDefault(value, true)
-	case "referencescodelensenabled":
-		p.CodeLens.ReferencesCodeLensEnabled = parseBoolWithDefault(value, false)
-	case "implementationscodelensenabled":
-		p.CodeLens.ImplementationsCodeLensEnabled = parseBoolWithDefault(value, false)
-	case "referencescodelensshowonallfunctions":
-		p.CodeLens.ReferencesCodeLensShowOnAllFunctions = parseBoolWithDefault(value, false)
-	case "implementationscodelensshowoninterfacemethods":
-		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
-	case "implementationscodelensshowonallclassmethods":
-		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
-	}
 }

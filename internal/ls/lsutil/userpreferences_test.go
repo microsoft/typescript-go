@@ -70,16 +70,16 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 	t.Run("UnmarshalJSONFrom", func(t *testing.T) {
 		t.Parallel()
 		parsed := &UserPreferences{}
-		err := json.Unmarshal(jsonBytes, parsed)
-		assert.NilError(t, err)
+		err2 := json.Unmarshal(jsonBytes, parsed)
+		assert.NilError(t, err2)
 		assert.DeepEqual(t, original, parsed)
 	})
 
 	t.Run("parseWorker", func(t *testing.T) {
 		t.Parallel()
 		var config map[string]any
-		err := json.Unmarshal(jsonBytes, &config)
-		assert.NilError(t, err)
+		err2 := json.Unmarshal(jsonBytes, &config)
+		assert.NilError(t, err2)
 		parsed := &UserPreferences{}
 		parsed.parseWorker(config)
 		assert.DeepEqual(t, original, parsed)
