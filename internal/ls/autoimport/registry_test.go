@@ -168,9 +168,48 @@ func TestRegistryLifecycle(t *testing.T) {
 		stats = autoImportStats(t, session)
 		assert.Check(t, singleBucket(t, stats.NodeModulesBuckets).DependencyNames.Has("newpkg"))
 	})
+
+	t.Run("nodeModulesBucketsDeletedWhenNoOpenFilesReferThem", func(t *testing.T) {
+		t.Parallel()
+		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, monorepoProjectRoot, 1, []autoimporttestutil.MonorepoConfig{
+			{Name: "package-a", FileCount: 1, NodeModulePackageCount: 1},
+			{Name: "package-b", FileCount: 1, NodeModulePackageCount: 1},
+		})
+		session := fixture.Session()
+		monorepo := fixture.Monorepo()
+		pkgA := monorepo.Package(0)
+		pkgB := monorepo.Package(1)
+		fileA := pkgA.File(0)
+		fileB := pkgB.File(0)
+		ctx := context.Background()
+
+		// Open file in package-a, should create buckets for root and package-a node_modules
+		session.DidOpenFile(ctx, fileA.URI(), 1, fileA.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, fileA.URI())
+		assert.NilError(t, err)
+
+		// Open file in package-b, should also create buckets for package-b
+		session.DidOpenFile(ctx, fileB.URI(), 1, fileB.Content(), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, fileB.URI())
+		assert.NilError(t, err)
+		stats := autoImportStats(t, session)
+		assert.Equal(t, len(stats.NodeModulesBuckets), 3)
+		assert.Equal(t, len(stats.ProjectBuckets), 2)
+
+		// Close file in package-a, package-a's node_modules bucket and project bucket should be removed
+		session.DidCloseFile(ctx, fileA.URI())
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, fileB.URI())
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		assert.Equal(t, len(stats.NodeModulesBuckets), 2)
+		assert.Equal(t, len(stats.ProjectBuckets), 1)
+	})
 }
 
-const lifecycleProjectRoot = "/home/src/autoimport-lifecycle"
+const (
+	lifecycleProjectRoot = "/home/src/autoimport-lifecycle"
+	monorepoProjectRoot  = "/home/src/autoimport-monorepo"
+)
 
 func autoImportStats(t *testing.T, session *project.Session) *autoimport.CacheStats {
 	t.Helper()

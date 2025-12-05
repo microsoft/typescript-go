@@ -44,6 +44,29 @@ type NodeModulesPackageHandle struct {
 func (p NodeModulesPackageHandle) PackageJSONFile() FileHandle { return p.packageJSON }
 func (p NodeModulesPackageHandle) DeclarationFile() FileHandle { return p.declaration }
 
+// MonorepoHandle exposes the generated monorepo layout including root and packages.
+type MonorepoHandle struct {
+	root            string
+	rootNodeModules []NodeModulesPackageHandle
+	packages        []ProjectHandle
+	rootTSConfig    FileHandle
+	rootPackageJSON FileHandle
+}
+
+func (m MonorepoHandle) Root() string { return m.root }
+func (m MonorepoHandle) RootNodeModules() []NodeModulesPackageHandle {
+	return slices.Clone(m.rootNodeModules)
+}
+func (m MonorepoHandle) Packages() []ProjectHandle { return slices.Clone(m.packages) }
+func (m MonorepoHandle) Package(index int) ProjectHandle {
+	if index < 0 || index >= len(m.packages) {
+		panic(fmt.Sprintf("package index %d out of range", index))
+	}
+	return m.packages[index]
+}
+func (m MonorepoHandle) RootTSConfig() FileHandle        { return m.rootTSConfig }
+func (m MonorepoHandle) RootPackageJSONFile() FileHandle { return m.rootPackageJSON }
+
 // ProjectHandle exposes the generated project layout for a fixture project root.
 type ProjectHandle struct {
 	root        string
@@ -66,6 +89,7 @@ func (p ProjectHandle) PackageJSONFile() FileHandle { return p.packageJSON }
 func (p ProjectHandle) NodeModules() []NodeModulesPackageHandle {
 	return slices.Clone(p.nodeModules)
 }
+
 func (p ProjectHandle) NodeModuleByName(name string) *NodeModulesPackageHandle {
 	for i := range p.nodeModules {
 		if p.nodeModules[i].Name == name {
@@ -92,6 +116,109 @@ func (f *Fixture) Project(index int) ProjectHandle {
 	return f.projects[index]
 }
 func (f *Fixture) SingleProject() ProjectHandle { return f.Project(0) }
+
+// MonorepoFixture encapsulates a fully-initialized monorepo lifecycle test session.
+type MonorepoFixture struct {
+	session  *project.Session
+	utils    *projecttestutil.SessionUtils
+	monorepo MonorepoHandle
+}
+
+func (f *MonorepoFixture) Session() *project.Session            { return f.session }
+func (f *MonorepoFixture) Utils() *projecttestutil.SessionUtils { return f.utils }
+func (f *MonorepoFixture) Monorepo() MonorepoHandle             { return f.monorepo }
+
+// MonorepoConfig describes a monorepo package.
+type MonorepoConfig struct {
+	Name                   string // e.g., "package-a" becomes directory name under packages/
+	FileCount              int    // Number of TypeScript source files
+	NodeModulePackageCount int    // Number of packages in this package's node_modules
+}
+
+// SetupMonorepoLifecycleSession builds a monorepo workspace with root-level node_modules
+// and multiple packages, each potentially with their own node_modules.
+// The structure is:
+//
+//	monorepoRoot/
+//	├── tsconfig.json (base config)
+//	├── package.json
+//	├── node_modules/
+//	│   └── <rootNodeModuleCount packages>
+//	└── packages/
+//	    ├── package-a/
+//	    │   ├── tsconfig.json
+//	    │   ├── package.json
+//	    │   ├── node_modules/
+//	    │   │   └── <package-specific packages>
+//	    │   └── *.ts files
+//	    └── package-b/
+//	        └── ...
+func SetupMonorepoLifecycleSession(t *testing.T, monorepoRoot string, rootNodeModuleCount int, packages []MonorepoConfig) *MonorepoFixture {
+	t.Helper()
+	builder := newFileMapBuilder(nil)
+
+	// Add root tsconfig.json
+	rootTSConfigPath := tspath.CombinePaths(monorepoRoot, "tsconfig.json")
+	rootTSConfigContent := "{\n  \"compilerOptions\": {\n    \"module\": \"esnext\",\n    \"target\": \"esnext\",\n    \"strict\": true,\n    \"baseUrl\": \".\"\n  }\n}\n"
+	builder.AddTextFile(rootTSConfigPath, rootTSConfigContent)
+	rootTSConfig := FileHandle{fileName: rootTSConfigPath, content: rootTSConfigContent}
+
+	// Add root node_modules
+	rootNodeModulesDir := tspath.CombinePaths(monorepoRoot, "node_modules")
+	rootNodeModules := builder.AddNodeModulesPackages(rootNodeModulesDir, rootNodeModuleCount)
+
+	// Add root package.json with dependencies
+	rootPackageJSON := builder.addRootPackageJSON(monorepoRoot, rootNodeModules)
+
+	// Build each package in packages/
+	packagesDir := tspath.CombinePaths(monorepoRoot, "packages")
+	packageHandles := make([]ProjectHandle, 0, len(packages))
+	for _, pkg := range packages {
+		pkgDir := tspath.CombinePaths(packagesDir, pkg.Name)
+		builder.AddLocalProject(pkgDir, pkg.FileCount)
+
+		// Add package-specific node_modules if requested
+		var pkgNodeModules []NodeModulesPackageHandle
+		if pkg.NodeModulePackageCount > 0 {
+			pkgNodeModulesDir := tspath.CombinePaths(pkgDir, "node_modules")
+			pkgNodeModules = builder.AddNodeModulesPackages(pkgNodeModulesDir, pkg.NodeModulePackageCount)
+		}
+
+		// Combine root and package-level dependencies for package.json
+		allDeps := append(slices.Clone(rootNodeModules), pkgNodeModules...)
+		builder.AddPackageJSONWithDependencies(pkgDir, allDeps)
+	}
+
+	// Build project handles after all packages are created
+	for _, pkg := range packages {
+		pkgDir := tspath.CombinePaths(packagesDir, pkg.Name)
+		if record, ok := builder.projects[pkgDir]; ok {
+			packageHandles = append(packageHandles, record.toHandles())
+		}
+	}
+
+	session, sessionUtils := projecttestutil.Setup(builder.Files())
+	t.Cleanup(session.Close)
+
+	// Build root node_modules handle by looking at the project record for the root
+	// (created as side effect of AddNodeModulesPackages)
+	var rootNodeModulesHandles []NodeModulesPackageHandle
+	if rootRecord, ok := builder.projects[monorepoRoot]; ok {
+		rootNodeModulesHandles = rootRecord.nodeModules
+	}
+
+	return &MonorepoFixture{
+		session: session,
+		utils:   sessionUtils,
+		monorepo: MonorepoHandle{
+			root:            monorepoRoot,
+			rootNodeModules: rootNodeModulesHandles,
+			packages:        packageHandles,
+			rootTSConfig:    rootTSConfig,
+			rootPackageJSON: rootPackageJSON,
+		},
+	}
+}
 
 // SetupLifecycleSession builds a basic single-project workspace configured with the
 // requested number of TypeScript files and a single synthetic node_modules package.
@@ -278,6 +405,31 @@ func (b *fileMapBuilder) AddPackageJSONWithDependencies(projectDir string, deps 
 	packageHandle := FileHandle{fileName: packageJSONPath, content: content}
 	record.packageJSON = &packageHandle
 	return packageHandle
+}
+
+// addRootPackageJSON creates a root package.json for a monorepo without creating a project record.
+// This is used to set up the root workspace config without treating it as a project.
+func (b *fileMapBuilder) addRootPackageJSON(rootDir string, deps []NodeModulesPackageHandle) FileHandle {
+	b.ensureFiles()
+	dir := normalizeAbsolutePath(rootDir)
+	packageJSONPath := tspath.CombinePaths(dir, "package.json")
+	dependencyLines := make([]string, 0, len(deps))
+	for _, dep := range deps {
+		dependencyLines = append(dependencyLines, fmt.Sprintf("\"%s\": \"*\"", dep.Name))
+	}
+	var builder strings.Builder
+	builder.WriteString("{\n  \"name\": \"monorepo-root\",\n  \"private\": true")
+	if len(dependencyLines) > 0 {
+		builder.WriteString(",\n  \"dependencies\": {\n    ")
+		builder.WriteString(strings.Join(dependencyLines, ",\n    "))
+		builder.WriteString("\n  }\n")
+	} else {
+		builder.WriteString("\n")
+	}
+	builder.WriteString("}\n")
+	content := builder.String()
+	b.files[packageJSONPath] = content
+	return FileHandle{fileName: packageJSONPath, content: content}
 }
 
 func (b *fileMapBuilder) ensureFiles() {
