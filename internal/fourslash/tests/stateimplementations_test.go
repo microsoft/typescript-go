@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestImplementationsAncestorProjectRefMangement(t *testing.T) {
+func TestImplementationsAcrossProjects(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	content := `
