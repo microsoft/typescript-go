@@ -591,9 +591,13 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		checker, done := program.GetTypeChecker(ctx)
 		symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
 		done()
-		if symbol != nil && isDefinedInLibraryFile(program, symbol) {
-			// Disallow rename for elements that are defined in the standard TypeScript library
-			return node, nil, false
+		if symbol != nil {
+			// Disallow rename for elements that are defined in the standard TypeScript library.
+			if symbol.Declarations != nil && core.Some(symbol.Declarations, func(declaration *ast.Node) bool {
+				return isDefinedInLibraryFile(program, declaration)
+			}) {
+				return node, nil, false
+			}
 		}
 	}
 
@@ -968,25 +972,9 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	return l.mergeReferences(program, moduleReferences, references, moduleReferencesOfExportTarget)
 }
 
-// isDefinedInLibraryFile checks if a symbol is defined ONLY in the standard TypeScript library.
-// Returns true only if ALL declarations are in library files.
-func isDefinedInLibraryFile(program *compiler.Program, symbol *ast.Symbol) bool {
-	if symbol.Declarations == nil || len(symbol.Declarations) == 0 {
-		return false
-	}
-	// Check if ALL declarations are in library files
-	for _, declaration := range symbol.Declarations {
-		sourceFile := ast.GetSourceFileOfNode(declaration)
-		if sourceFile == nil {
-			return false
-		}
-		if !program.IsSourceFileDefaultLibrary(sourceFile.Path()) || !tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionDts) {
-			// Found a non-library declaration, so it's not purely a library symbol
-			return false
-		}
-	}
-	// All declarations are in library files
-	return true
+func isDefinedInLibraryFile(program *compiler.Program, declaration *ast.Node) bool {
+	sourceFile := ast.GetSourceFileOfNode(declaration)
+	return sourceFile != nil && program.IsSourceFileDefaultLibrary(sourceFile.Path()) && tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionDts)
 }
 
 func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx context.Context, symbol *ast.Symbol, program *compiler.Program, sourceFiles []*ast.SourceFile, checker *checker.Checker, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
