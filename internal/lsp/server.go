@@ -1226,7 +1226,7 @@ func combineResponseLocations[T lsproto.HasLocations](results iter.Seq[T]) *[]ls
 	var seenLocations collections.Set[lsproto.Location]
 	for resp := range results {
 		if locations := resp.GetLocations(); locations != nil {
-			combineLocationArray(combined, locations, &seenLocations)
+			combined = combineLocationArray(combined, locations, &seenLocations)
 		}
 	}
 	return &combined
