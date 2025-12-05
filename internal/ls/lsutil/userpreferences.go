@@ -4,6 +4,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -171,6 +173,194 @@ type CodeLensUserPreferences struct {
 	ReferencesCodeLensShowOnAllFunctions          bool
 	ImplementationsCodeLensShowOnInterfaceMethods bool
 	ImplementationsCodeLensShowOnAllClassMethods  bool
+}
+
+type jsonWriter struct {
+	enc *jsontext.Encoder
+	err error
+}
+
+func (w *jsonWriter) token(t jsontext.Token) {
+	if w.err == nil {
+		w.err = w.enc.WriteToken(t)
+	}
+}
+
+func (w *jsonWriter) key(k string)              { w.token(jsontext.String(k)) }
+func (w *jsonWriter) str(s string)              { w.token(jsontext.String(s)) }
+func (w *jsonWriter) boolean(b bool)            { w.token(jsontext.Bool(b)) }
+func (w *jsonWriter) beginObject()              { w.token(jsontext.BeginObject) }
+func (w *jsonWriter) endObject()                { w.token(jsontext.EndObject) }
+func (w *jsonWriter) beginArray()               { w.token(jsontext.BeginArray) }
+func (w *jsonWriter) endArray()                 { w.token(jsontext.EndArray) }
+func (w *jsonWriter) prop(k string, v string)   { w.key(k); w.str(v) }
+func (w *jsonWriter) boolProp(k string, v bool) { w.key(k); w.boolean(v) }
+
+func (w *jsonWriter) intProp(k string, v int) {
+	w.key(k)
+	if w.err == nil {
+		w.err = w.enc.WriteToken(jsontext.Int(int64(v)))
+	}
+}
+
+func (w *jsonWriter) tristateProp(k string, v core.Tristate) {
+	w.key(k)
+	switch v {
+	case core.TSTrue:
+		w.boolean(true)
+	case core.TSFalse:
+		w.boolean(false)
+	default:
+		w.token(jsontext.Null)
+	}
+}
+
+func (w *jsonWriter) stringArray(arr []string) {
+	w.beginArray()
+	for _, s := range arr {
+		w.str(s)
+	}
+	w.endArray()
+}
+
+func (w *jsonWriter) object(key string, fn func()) {
+	w.key(key)
+	w.beginObject()
+	fn()
+	w.endObject()
+}
+
+func (u *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
+	w := &jsonWriter{enc: enc}
+	w.beginObject()
+
+	w.object("unstable", func() {
+		w.boolProp("lazyConfiguredProjectsFromExternalProject", u.LazyConfiguredProjectsFromExternalProject)
+		w.intProp("maximumHoverLength", u.MaximumHoverLength)
+		w.tristateProp("includeCompletionsWithSnippetText", u.IncludeCompletionsWithSnippetText)
+		w.boolProp("allowTextChangesInNewFiles", u.AllowTextChangesInNewFiles)
+		w.boolProp("allowRenameOfImportPath", u.AllowRenameOfImportPath)
+		w.boolProp("provideRefactorNotApplicableReason", u.ProvideRefactorNotApplicableReason)
+		w.boolProp("disableSuggestions", u.DisableSuggestions)
+		w.boolProp("disableLineTextInReferences", u.DisableLineTextInReferences)
+		w.boolProp("displayPartsForJSDoc", u.DisplayPartsForJSDoc)
+	})
+
+	w.object("referencesCodeLens", func() {
+		w.boolProp("enabled", u.CodeLens.ReferencesCodeLensEnabled)
+		w.boolProp("showOnAllFunctions", u.CodeLens.ReferencesCodeLensShowOnAllFunctions)
+	})
+
+	w.object("implementationsCodeLens", func() {
+		w.boolProp("enabled", u.CodeLens.ImplementationsCodeLensEnabled)
+		w.boolProp("showOnInterfaceMethods", u.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods)
+		w.boolProp("showOnAllClassMethods", u.CodeLens.ImplementationsCodeLensShowOnAllClassMethods)
+	})
+
+	w.object("inlayHints", func() {
+		w.object("parameterNames", func() {
+			enabledVal := string(u.InlayHints.IncludeInlayParameterNameHints)
+			if enabledVal == "" {
+				enabledVal = "none"
+			}
+			w.prop("enabled", enabledVal)
+			w.boolProp("suppressWhenArgumentMatchesName", !u.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName)
+		})
+		w.object("parameterTypes", func() {
+			w.boolProp("enabled", u.InlayHints.IncludeInlayFunctionParameterTypeHints)
+		})
+		w.object("variableTypes", func() {
+			w.boolProp("enabled", u.InlayHints.IncludeInlayVariableTypeHints)
+			w.boolProp("suppressWhenTypeMatchesName", !u.InlayHints.IncludeInlayVariableTypeHintsWhenTypeMatchesName)
+		})
+		w.object("propertyDeclarationTypes", func() {
+			w.boolProp("enabled", u.InlayHints.IncludeInlayPropertyDeclarationTypeHints)
+		})
+		w.object("functionLikeReturnTypes", func() {
+			w.boolProp("enabled", u.InlayHints.IncludeInlayFunctionLikeReturnTypeHints)
+		})
+		w.object("enumMemberValues", func() {
+			w.boolProp("enabled", u.InlayHints.IncludeInlayEnumMemberValueHints)
+		})
+	})
+
+	w.object("preferences", func() {
+		w.prop("quoteStyle", string(u.QuotePreference))
+		w.prop("importModuleSpecifier", string(u.ImportModuleSpecifierPreference))
+		w.prop("importModuleSpecifierEnding", string(u.ImportModuleSpecifierEnding))
+		w.prop("includePackageJsonAutoImports", string(u.IncludePackageJsonAutoImports))
+		w.key("autoImportFileExcludePatterns")
+		w.stringArray(u.AutoImportFileExcludePatterns)
+		w.key("autoImportSpecifierExcludeRegexes")
+		w.stringArray(u.AutoImportSpecifierExcludeRegexes)
+		w.boolProp("preferTypeOnlyAutoImports", u.PreferTypeOnlyAutoImports)
+		w.prop("jsxAttributeCompletionStyle", string(u.JsxAttributeCompletionStyle))
+		w.tristateProp("useAliasesForRenames", u.UseAliasesForRename)
+
+		w.object("organizeImports", func() {
+			if u.OrganizeImportsIgnoreCase == core.TSTrue {
+				w.prop("caseSensitivity", "caseInsensitive")
+			} else if u.OrganizeImportsIgnoreCase == core.TSFalse {
+				w.prop("caseSensitivity", "caseSensitive")
+			}
+			typeOrderStr := "auto"
+			switch u.OrganizeImportsTypeOrder {
+			case OrganizeImportsTypeOrderLast:
+				typeOrderStr = "last"
+			case OrganizeImportsTypeOrderInline:
+				typeOrderStr = "inline"
+			case OrganizeImportsTypeOrderFirst:
+				typeOrderStr = "first"
+			}
+			w.prop("typeOrder", typeOrderStr)
+			if u.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
+				w.prop("unicodeCollation", "unicode")
+			} else {
+				w.prop("unicodeCollation", "ordinal")
+			}
+			w.prop("locale", u.OrganizeImportsLocale)
+			w.boolProp("numericCollation", u.OrganizeImportsNumericCollation)
+			w.boolProp("accentCollation", u.OrganizeImportsAccentCollation)
+			caseFirstStr := "default"
+			switch u.OrganizeImportsCaseFirst {
+			case OrganizeImportsCaseFirstLower:
+				caseFirstStr = "lower"
+			case OrganizeImportsCaseFirstUpper:
+				caseFirstStr = "upper"
+			}
+			w.prop("caseFirst", caseFirstStr)
+		})
+	})
+
+	w.object("suggest", func() {
+		w.tristateProp("autoImports", u.IncludeCompletionsForModuleExports)
+		w.tristateProp("includeCompletionsForImportStatements", u.IncludeCompletionsForImportStatements)
+		w.tristateProp("includeAutomaticOptionalChainCompletions", u.IncludeAutomaticOptionalChainCompletions)
+		w.object("classMemberSnippets", func() {
+			w.tristateProp("enabled", u.IncludeCompletionsWithClassMemberSnippets)
+		})
+		w.object("objectLiteralMethodSnippets", func() {
+			w.tristateProp("enabled", u.IncludeCompletionsWithObjectLiteralMethodSnippets)
+		})
+	})
+
+	w.object("workspaceSymbols", func() {
+		w.boolProp("excludeLibrarySymbols", u.ExcludeLibrarySymbolsInNavTo)
+	})
+
+	w.boolProp("reportStyleChecksAsWarnings", u.ReportStyleChecksAsWarnings)
+
+	w.endObject()
+	return w.err
+}
+
+func (u *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var config map[string]any
+	if err := json.UnmarshalDecode(dec, &config); err != nil {
+		return err
+	}
+	u.parseWorker(config)
+	return nil
 }
 
 type JsxAttributeCompletionStyle string
@@ -507,11 +697,11 @@ func (p *UserPreferences) parseSuggest(prefs any) {
 			p.set("includeCompletionsForModuleExports", value)
 		case "objectLiteralMethodSnippets":
 			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithObjectLiteralMethodSnippets", parseEnabledBool(v))
+				p.set("includeCompletionsWithObjectLiteralMethodSnippets", v["enabled"])
 			}
 		case "classMemberSnippets":
 			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithClassMemberSnippets", parseEnabledBool(v))
+				p.set("includeCompletionsWithClassMemberSnippets", v["enabled"])
 			}
 		case "includeAutomaticOptionalChainCompletions":
 			p.set("includeAutomaticOptionalChainCompletions", value)
@@ -542,7 +732,7 @@ func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
 		return
 	}
 	if typeOrder, ok := prefsMap["typeOrder"]; ok {
-		p.set("organizeimportstypeorder", parseOrganizeImportsTypeOrder(typeOrder))
+		p.OrganizeImportsTypeOrder = parseOrganizeImportsTypeOrder(typeOrder)
 	}
 	if caseSensitivity, ok := prefsMap["caseSensitivity"]; ok {
 		if caseSensitivityStr, ok := caseSensitivity.(string); ok {
@@ -556,22 +746,21 @@ func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
 		}
 	}
 	if collation, ok := prefsMap["unicodeCollation"]; ok {
-		// The rest of the settings are only applicable when using unicode collation
 		if collationStr, ok := collation.(string); ok && collationStr == "unicode" {
-			p.set("organizeimportscollation", OrganizeImportsCollationUnicode)
-			if locale, ok := prefsMap["locale"]; ok {
-				p.set("organizeimportslocale", locale)
-			}
-			if numeric, ok := prefsMap["numericCollation"]; ok {
-				p.set("organizeimportsnumericcollation", numeric)
-			}
-			if accent, ok := prefsMap["accentCollation"]; ok {
-				p.set("organizeimportsaccentcollation", accent)
-			}
-			if caseFirst, ok := prefsMap["caseFirst"]; ok && !p.OrganizeImportsIgnoreCase.IsTrue() {
-				p.set("organizeimportscasefirst", caseFirst)
-			}
+			p.OrganizeImportsCollation = OrganizeImportsCollationUnicode
 		}
+	}
+	if locale, ok := prefsMap["locale"]; ok {
+		p.OrganizeImportsLocale = tsoptions.ParseString(locale)
+	}
+	if numeric, ok := prefsMap["numericCollation"]; ok {
+		p.OrganizeImportsNumericCollation = parseBoolWithDefault(numeric, false)
+	}
+	if accent, ok := prefsMap["accentCollation"]; ok {
+		p.OrganizeImportsAccentCollation = parseBoolWithDefault(accent, true)
+	}
+	if caseFirst, ok := prefsMap["caseFirst"]; ok {
+		p.OrganizeImportsCaseFirst = parseOrganizeImportsCaseFirst(caseFirst)
 	}
 }
 
@@ -619,15 +808,18 @@ func parseBoolWithDefault(val any, defaultV bool) bool {
 }
 
 func parseIntWithDefault(val any, defaultV int) int {
-	if v, ok := val.(int); ok {
+	switch v := val.(type) {
+	case int:
 		return v
+	case float64:
+		return int(v)
 	}
 	return defaultV
 }
 
 func (p *UserPreferences) set(name string, value any) {
 	switch strings.ToLower(name) {
-	case "quotePreference":
+	case "quotepreference", "quotestyle":
 		p.QuotePreference = parseQuotePreference(value)
 	case "lazyconfiguredprojectsfromexternalproject":
 		p.LazyConfiguredProjectsFromExternalProject = parseBoolWithDefault(value, false)
@@ -647,7 +839,7 @@ func (p *UserPreferences) set(name string, value any) {
 		p.IncludeCompletionsWithObjectLiteralMethodSnippets = tsoptions.ParseTristate(value)
 	case "jsxattributecompletionstyle":
 		p.JsxAttributeCompletionStyle = parseJsxAttributeCompletionStyle(value)
-	case "importmodulespecifierpreference":
+	case "importmodulespecifier", "importmodulespecifierpreference":
 		p.ImportModuleSpecifierPreference = parseImportModuleSpecifierPreference(value)
 	case "importmodulespecifierending":
 		p.ImportModuleSpecifierEnding = parseImportModuleSpecifierEndingPreference(value)
@@ -675,7 +867,7 @@ func (p *UserPreferences) set(name string, value any) {
 		p.OrganizeImportsTypeOrder = parseOrganizeImportsTypeOrder(value)
 	case "allowtextchangesinnewfiles":
 		p.AllowTextChangesInNewFiles = parseBoolWithDefault(value, true) // !!!
-	case "usealiasesforrename", "provideprefixandsuffixtextforrename":
+	case "usealiasesforrename", "usealiasesforrenames", "provideprefixandsuffixtextforrename":
 		p.UseAliasesForRename = tsoptions.ParseTristate(value)
 	case "allowrenameofimportpath":
 		p.AllowRenameOfImportPath = parseBoolWithDefault(value, true)
