@@ -1006,7 +1006,7 @@ function generateCode() {
         const locationUriProperty = getLocationUriProperty(structure);
         if (locationUriProperty) {
             // Generate Location method
-            writeLine(`func (s *${structure.name}) GetLocation() Location {`);
+            writeLine(`func (s ${structure.name}) GetLocation() Location {`);
             writeLine(`\treturn Location{`);
             writeLine(`\t\tUri:   s.${locationUriProperty},`);
             writeLine(`\t\tRange: s.${locationUriProperty.replace(/Uri$/, "Range")},`);
@@ -1584,7 +1584,7 @@ function generateCode() {
 
         // Generate GetLocations method
         if (hasLocations) {
-            writeLine(`func (o *${name}) GetLocations() *[]Location {`);
+            writeLine(`func (o ${name}) GetLocations() *[]Location {`);
             writeLine(`\treturn o.Locations`);
             writeLine(`}`);
             writeLine("");

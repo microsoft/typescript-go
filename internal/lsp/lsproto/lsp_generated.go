@@ -109,7 +109,7 @@ type Location struct {
 	Range Range `json:"range"`
 }
 
-func (s *Location) GetLocation() Location {
+func (s Location) GetLocation() Location {
 	return Location{
 		Uri:   s.Uri,
 		Range: s.Range,
@@ -1818,7 +1818,7 @@ type CallHierarchyItem struct {
 	Data *CallHierarchyItemData `json:"data,omitzero"`
 }
 
-func (s *CallHierarchyItem) GetLocation() Location {
+func (s CallHierarchyItem) GetLocation() Location {
 	return Location{
 		Uri:   s.Uri,
 		Range: s.Range,
@@ -3786,7 +3786,7 @@ type TypeHierarchyItem struct {
 	Data *TypeHierarchyItemData `json:"data,omitzero"`
 }
 
-func (s *TypeHierarchyItem) GetLocation() Location {
+func (s TypeHierarchyItem) GetLocation() Location {
 	return Location{
 		Uri:   s.Uri,
 		Range: s.Range,
@@ -11937,7 +11937,7 @@ type LocationLink struct {
 	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
-func (s *LocationLink) GetLocation() Location {
+func (s LocationLink) GetLocation() Location {
 	return Location{
 		Uri:   s.TargetUri,
 		Range: s.TargetRange,
@@ -27101,7 +27101,7 @@ func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSONFrom(dec *json
 	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
 }
 
-func (o *LocationOrLocationsOrDefinitionLinksOrNull) GetLocations() *[]Location {
+func (o LocationOrLocationsOrDefinitionLinksOrNull) GetLocations() *[]Location {
 	return o.Locations
 }
 
@@ -27195,7 +27195,7 @@ func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSONFrom(dec *jso
 	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
 }
 
-func (o *LocationOrLocationsOrDeclarationLinksOrNull) GetLocations() *[]Location {
+func (o LocationOrLocationsOrDeclarationLinksOrNull) GetLocations() *[]Location {
 	return o.Locations
 }
 
@@ -27951,7 +27951,7 @@ func (o *LocationsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return fmt.Errorf("invalid LocationsOrNull: %s", data)
 }
 
-func (o *LocationsOrNull) GetLocations() *[]Location {
+func (o LocationsOrNull) GetLocations() *[]Location {
 	return o.Locations
 }
 

@@ -656,7 +656,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
-	combineResults func(iter.Seq[*Resp]) Resp,
+	combineResults func(iter.Seq[Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		resp, err := handleMultiProjectRequest(s, ctx, info, fn, combineResults, req, ls.SymbolEntryTransformOptions{})
@@ -673,7 +673,7 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 	ctx context.Context,
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
-	combineResults func(iter.Seq[*Resp]) Resp,
+	combineResults func(iter.Seq[Resp]) Resp,
 	req *lsproto.RequestMessage,
 	options ls.SymbolEntryTransformOptions,
 ) (Resp, error) {
@@ -782,11 +782,11 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 		}
 	}
 
-	getResultsIterator := func() iter.Seq[*Resp] {
-		return func(yield func(*Resp) bool) {
+	getResultsIterator := func() iter.Seq[Resp] {
+		return func(yield func(Resp) bool) {
 			var seenProjects collections.SyncSet[tspath.Path]
 			if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-				if !yield(&response.result) {
+				if !yield(response.result) {
 					return
 				}
 			}
@@ -794,7 +794,7 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 			for _, project := range allProjects {
 				if seenProjects.AddIfAbsent(project.Id()) {
 					if response, loaded := results.Load(project.Id()); loaded && response.complete {
-						if !yield(&response.result) {
+						if !yield(response.result) {
 							return
 						}
 					}
@@ -803,14 +803,14 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 			// Prefer the searches from locations for default definition
 			results.Range(func(key tspath.Path, response *response[Resp]) bool {
 				if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(&response.result)
+					return yield(response.result)
 				}
 				return true
 			})
 			// Then the searches from original locations
 			results.Range(func(key tspath.Path, response *response[Resp]) bool {
 				if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(&response.result)
+					return yield(response.result)
 				}
 				return true
 			})
@@ -886,7 +886,7 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 	} else {
 		// Single result, return that directly
 		for value := range getResultsIterator() {
-			resp = *value
+			resp = value
 			break
 		}
 	}
@@ -1226,17 +1226,13 @@ func combineResponseLocations[T lsproto.HasLocations](results iter.Seq[T]) *[]ls
 	var seenLocations collections.Set[lsproto.Location]
 	for resp := range results {
 		if locations := resp.GetLocations(); locations != nil {
-			for _, loc := range *locations {
-				if seenLocations.AddIfAbsent(loc) {
-					combined = append(combined, loc)
-				}
-			}
+			combineLocationArray(combined, locations, &seenLocations)
 		}
 	}
 	return &combined
 }
 
-func combineReferences(results iter.Seq[*lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
+func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
 	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
 }
 
@@ -1245,7 +1241,7 @@ func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageServi
 	return ls.ProvideImplementationsFromSymbolAndEntries(ctx, params, data, options)
 }
 
-func combineImplementations(results iter.Seq[*lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
+func combineImplementations(results iter.Seq[lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
 	var combined []*lsproto.LocationLink
 	var seenLocations collections.Set[lsproto.Location]
 	for resp := range results {
@@ -1329,7 +1325,7 @@ func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, param
 	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, data, options)
 }
 
-func combineRenameResponse(results iter.Seq[*lsproto.RenameResponse]) lsproto.RenameResponse {
+func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
 	// !!! this is not used any more so we will skip this part of deduplication and combining
