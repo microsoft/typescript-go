@@ -130,8 +130,9 @@ var (
 )
 
 type Server struct {
-	r      Reader
-	w      Writer
+	r Reader
+	w Writer
+
 	stderr io.Writer
 
 	logger                  *logger
