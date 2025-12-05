@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/go-json-experiment/json"
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -655,11 +655,11 @@ type response[Resp any] struct {
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*Server, context.Context, *ls.LanguageService, Req, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
+	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
 	combineResults func(iter.Seq[*Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
-		resp, err := multiProjectRequestHandling(s, ctx, info, fn, combineResults, req)
+		resp, err := multiProjectRequestHandling(s, ctx, info, fn, combineResults, req, ls.SymbolEntryTransformOptions{})
 		if err != nil {
 			return err
 		}
@@ -672,9 +672,10 @@ func multiProjectRequestHandling[Req lsproto.HasTextDocumentPosition, Resp any](
 	s *Server,
 	ctx context.Context,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*Server, context.Context, *ls.LanguageService, Req, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
+	fn func(*Server, context.Context, *ls.LanguageService, Req, ls.SymbolAndEntriesData, ls.SymbolEntryTransformOptions) (Resp, error),
 	combineResults func(iter.Seq[*Resp]) Resp,
 	req *lsproto.RequestMessage,
+	options ls.SymbolEntryTransformOptions,
 ) (Resp, error) {
 	var resp Resp
 	var params Req
@@ -717,12 +718,12 @@ func multiProjectRequestHandling[Req lsproto.HasTextDocumentPosition, Resp any](
 					return
 				}
 			}
-			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename, info.Method == lsproto.MethodTextDocumentImplementation)
+			data, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename, info.Method == lsproto.MethodTextDocumentImplementation)
 			if ctx.Err() != nil {
 				return
 			}
 			if ok {
-				for _, entry := range symbolsAndEntries {
+				for _, entry := range data.SymbolsAndEntries {
 					// Find the default definition that can be in another project
 					// Later we will use this load ancestor tree that references this location and expand search
 					if item.project == defaultProject && defaultDefinition == nil {
@@ -749,7 +750,7 @@ func multiProjectRequestHandling[Req lsproto.HasTextDocumentPosition, Resp any](
 				}
 			}
 
-			if result, errSearch := fn(s, ctx, ls, params, originalNode, symbolsAndEntries); errSearch == nil {
+			if result, errSearch := fn(s, ctx, ls, params, data, options); errSearch == nil {
 				response.complete = true
 				response.result = result
 				response.forOriginalLocation = item.forOriginalLocation
@@ -1202,9 +1203,9 @@ func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
-func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.ReferencesResponse, error) {
+func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
 	// findAllReferences
-	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, data, options)
 }
 
 func combineLocationArray[T lsproto.HasLocation](
@@ -1239,9 +1240,9 @@ func combineReferences(results iter.Seq[*lsproto.ReferencesResponse]) lsproto.Re
 	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
 }
 
-func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.ImplementationResponse, error) {
+func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementationsFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+	return ls.ProvideImplementationsFromSymbolAndEntries(ctx, params, data, options)
 }
 
 func combineImplementations(results iter.Seq[*lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
@@ -1324,8 +1325,8 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.RenameResponse, error) {
-	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, data ls.SymbolAndEntriesData, options ls.SymbolEntryTransformOptions) (lsproto.RenameResponse, error) {
+	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, data, options)
 }
 
 func combineRenameResponse(results iter.Seq[*lsproto.RenameResponse]) lsproto.RenameResponse {
@@ -1392,13 +1393,110 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	ls, err := s.session.GetLanguageService(ctx, codeLens.Data.Uri)
-	if err != nil {
-		return nil, err
-	}
-	defer s.recover(reqMsg)
+	textDocument := lsproto.TextDocumentIdentifier{Uri: codeLens.Data.Uri}
+	position := codeLens.Range.Start
+	var locs []lsproto.Location
+	var lensTitle string
+	switch codeLens.Data.Kind {
+	case lsproto.CodeLensKindReferences:
+		referencesResp, err := multiProjectRequestHandling(
+			s,
+			ctx,
+			lsproto.TextDocumentReferencesInfo,
+			(*Server).handleReferences,
+			combineReferences,
+			&lsproto.RequestMessage{
+				ID: reqMsg.ID,
+				Params: &lsproto.ReferenceParams{
+					TextDocument: textDocument,
+					Position:     position,
+					Context: &lsproto.ReferenceContext{
+						// Don't include the declaration in the references count.
+						IncludeDeclaration: false,
+					},
+				},
+			},
+			ls.SymbolEntryTransformOptions{},
+		)
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		if err != nil {
+			// This can happen if a codeLens/resolve request comes in after a program change.
+			// While it's true that handlers should latch onto a specific snapshot
+			// while processing requests, we just set `Data.Uri` based on
+			// some older snapshot's contents. The content could have been modified,
+			// or the file itself could have been removed from the session entirely.
+			// Note this won't bail out on every change, but will prevent crashing
+			// based on non-existent files and line maps from shortened files.
+			return codeLens, lsproto.ErrorCodeContentModified
+		}
+		if referencesResp.Locations != nil {
+			locs = *referencesResp.Locations
+			if len(locs) == 1 {
+				lensTitle = diagnostics.X_1_reference.Localize(locale.FromContext(ctx))
+			} else {
+				lensTitle = diagnostics.X_0_references.Localize(locale.FromContext(ctx), len(locs))
+			}
+		}
 
-	return ls.ResolveCodeLens(ctx, codeLens, s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName)
+	case lsproto.CodeLensKindImplementations:
+		implResp, err := multiProjectRequestHandling(
+			s,
+			ctx,
+			lsproto.TextDocumentImplementationInfo,
+			(*Server).handleImplementations,
+			combineImplementations,
+			&lsproto.RequestMessage{
+				ID: reqMsg.ID,
+				Params: &lsproto.ImplementationParams{
+					TextDocument: textDocument,
+					Position:     position,
+				},
+			},
+			// "Force" link support to be false so that we only get `Locations` back,
+			// and don't include the "current" node in the results.
+			ls.SymbolEntryTransformOptions{
+				RequireLocationsResult: true,
+				DropOriginNodes:        true,
+			},
+		)
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		if err != nil {
+			// This can happen if a codeLens/resolve request comes in after a program change.
+			// While it's true that handlers should latch onto a specific snapshot
+			// while processing requests, we just set `Data.Uri` based on
+			// some older snapshot's contents. The content could have been modified,
+			// or the file itself could have been removed from the session entirely.
+			// Note this won't bail out on every change, but will prevent crashing
+			// based on non-existent files and line maps from shortened files.
+			return codeLens, lsproto.ErrorCodeContentModified
+		}
+		if implResp.Locations != nil {
+			locs = *implResp.Locations
+			if len(locs) == 1 {
+				lensTitle = diagnostics.X_1_implementation.Localize(locale.FromContext(ctx))
+			} else {
+				lensTitle = diagnostics.X_0_implementations.Localize(locale.FromContext(ctx), len(locs))
+			}
+		}
+	}
+
+	cmd := &lsproto.Command{
+		Title: lensTitle,
+	}
+	if len(locs) > 0 && s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName != nil {
+		cmd.Command = *s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName
+		cmd.Arguments = &[]any{
+			codeLens.Data.Uri,
+			codeLens.Range.Start,
+			locs,
+		}
+	}
+	codeLens.Command = cmd
+	return codeLens, nil
 }
 
 func (s *Server) handlePrepareCallHierarchy(

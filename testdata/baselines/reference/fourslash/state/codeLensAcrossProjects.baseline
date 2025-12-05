@@ -245,10 +245,72 @@ Config File Names::
   }
 }
 
+Projects::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *new*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
+  [/projects/container/lib/tsconfig.json] 
+    /projects/container/lib/index.ts  
+    /projects/container/lib/bar.ts    
+  [/projects/container/tsconfig.json] *modified*
+  [/projects/temp/tsconfig.json] 
+    /projects/temp/temp.ts  
+Open Files::
+  [/projects/container/lib/index.ts] *modified*
+    /projects/container/compositeExec/tsconfig.json  *new*
+    /projects/container/exec/tsconfig.json           *new*
+    /projects/container/lib/tsconfig.json            (default) 
+  [/projects/temp/temp.ts] 
+    /projects/temp/tsconfig.json  (default) 
+Config::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/compositeExec/tsconfig.json  
+      /projects/container/tsconfig.json                
+  [/projects/container/exec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/exec/tsconfig.json  
+      /projects/container/tsconfig.json       
+  [/projects/container/lib/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /projects/container/compositeExec/tsconfig.json  *new*
+      /projects/container/exec/tsconfig.json           *new*
+      /projects/container/lib/tsconfig.json            
+      /projects/container/tsconfig.json                *new*
+    RetainingOpenFiles:
+      /projects/container/lib/index.ts  
+  [/projects/container/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/tsconfig.json  
+  [/projects/temp/tsconfig.json] 
+    RetainingProjects:
+      /projects/temp/tsconfig.json  
+    RetainingOpenFiles:
+      /projects/temp/temp.ts  
+
 
 
 
 // === Code Lenses ===
+// === /projects/container/compositeExec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point2 implements [|Pointable|] {
+//   getX(): number {
+//     return 0;
+//   }
+// --- (line: 6) skipped ---
+
+// === /projects/container/exec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point1 implements [|Pointable|] {
+//   getX(): number {
+//     return 0;
+//   }
+// --- (line: 6) skipped ---
+
 // === /projects/container/lib/bar.ts ===
 // import { Pointable } from "./index";
 // class Point implements [|Pointable|] {
@@ -259,7 +321,7 @@ Config File Names::
 
 // === /projects/container/lib/index.ts ===
 // 
-// export interface /*CODELENS: 1 reference*/Pointable {
+// export interface /*CODELENS: 3 references*/Pointable {
 //   getX(): number;
 //   getY(): number;
 // }
@@ -288,6 +350,22 @@ Config File Names::
 
 
 // === Code Lenses ===
+// === /projects/container/compositeExec/index.ts ===
+// import { Pointable } from "../lib";
+// class [|Point2|] implements Pointable {
+//   getX(): number {
+//     return 0;
+//   }
+// --- (line: 6) skipped ---
+
+// === /projects/container/exec/index.ts ===
+// import { Pointable } from "../lib";
+// class [|Point1|] implements Pointable {
+//   getX(): number {
+//     return 0;
+//   }
+// --- (line: 6) skipped ---
+
 // === /projects/container/lib/bar.ts ===
 // import { Pointable } from "./index";
 // class [|Point|] implements Pointable {
@@ -298,7 +376,7 @@ Config File Names::
 
 // === /projects/container/lib/index.ts ===
 // 
-// export interface /*CODELENS: 1 implementation*/Pointable {
+// export interface /*CODELENS: 3 implementations*/Pointable {
 //   getX(): number;
 //   getY(): number;
 // }
@@ -358,6 +436,24 @@ Config File Names::
 
 
 // === Code Lenses ===
+// === /projects/container/compositeExec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point2 implements Pointable {
+//   [|getX|](): number {
+//     return 0;
+//   }
+//   getY(): number {
+// --- (line: 7) skipped ---
+
+// === /projects/container/exec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point1 implements Pointable {
+//   [|getX|](): number {
+//     return 0;
+//   }
+//   getY(): number {
+// --- (line: 7) skipped ---
+
 // === /projects/container/lib/bar.ts ===
 // import { Pointable } from "./index";
 // class Point implements Pointable {
@@ -370,7 +466,7 @@ Config File Names::
 // === /projects/container/lib/index.ts ===
 // 
 // export interface Pointable {
-//   /*CODELENS: 1 implementation*/getX(): number;
+//   /*CODELENS: 3 implementations*/getX(): number;
 //   getY(): number;
 // }
 // export const val = 42;
@@ -429,6 +525,28 @@ Config File Names::
 
 
 // === Code Lenses ===
+// === /projects/container/compositeExec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point2 implements Pointable {
+//   getX(): number {
+//     return 0;
+//   }
+//   [|getY|](): number {
+//     return 0;
+//   }
+// }
+
+// === /projects/container/exec/index.ts ===
+// import { Pointable } from "../lib";
+// class Point1 implements Pointable {
+//   getX(): number {
+//     return 0;
+//   }
+//   [|getY|](): number {
+//     return 0;
+//   }
+// }
+
 // === /projects/container/lib/bar.ts ===
 // import { Pointable } from "./index";
 // class Point implements Pointable {
@@ -444,7 +562,7 @@ Config File Names::
 // 
 // export interface Pointable {
 //   getX(): number;
-//   /*CODELENS: 1 implementation*/getY(): number;
+//   /*CODELENS: 3 implementations*/getY(): number;
 // }
 // export const val = 42;
 {
@@ -557,7 +675,9 @@ Config File Names::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *closed*
 
 {
@@ -574,7 +694,9 @@ Open Files::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 
@@ -617,6 +739,12 @@ Open Files::
 }
 
 Projects::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
   [/projects/container/lib/tsconfig.json] *deleted*
     /projects/container/lib/index.ts  
     /projects/container/lib/bar.ts    
@@ -627,7 +755,10 @@ Open Files::
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 Config::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+  [/projects/container/exec/tsconfig.json] *deleted*
   [/projects/container/lib/tsconfig.json] *deleted*
+  [/projects/container/tsconfig.json] *deleted*
   [/projects/temp/tsconfig.json] 
     RetainingProjects:
       /projects/temp/tsconfig.json  

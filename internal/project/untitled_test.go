@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
@@ -71,9 +72,9 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
+	data, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
 	assert.Assert(t, ok)
-	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
+	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, data, ls.SymbolEntryTransformOptions{})
 	assert.NilError(t, err)
 
 	refs := *resp.Locations
@@ -146,9 +147,9 @@ x++;`
 		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
 	}
 
-	originalNode, symbolAndEntries, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
+	data, ok := languageService.ProvideSymbolsAndEntries(ctx, refParams.TextDocumentURI(), refParams.Position, false, false)
 	assert.Assert(t, ok)
-	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, originalNode, symbolAndEntries)
+	resp, err := languageService.ProvideReferencesFromSymbolAndEntries(ctx, refParams, data, ls.SymbolEntryTransformOptions{})
 	assert.NilError(t, err)
 
 	refs := *resp.Locations

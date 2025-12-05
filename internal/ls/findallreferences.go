@@ -576,19 +576,32 @@ func (l *LanguageService) ForEachOriginalDefinitionLocation(
 	}
 }
 
-func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (*ast.Node, []*SymbolAndEntries, bool) {
+type SymbolEntryTransformOptions struct {
+	// Force the result to be Location objects.
+	RequireLocationsResult bool
+	// Omit node(s) containing the original position.
+	DropOriginNodes bool
+}
+
+type SymbolAndEntriesData struct {
+	OriginalNode      *ast.Node
+	SymbolsAndEntries []*SymbolAndEntries
+	Position          int
+}
+
+func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 	if isRename && node.Kind != ast.KindIdentifier {
-		return node, nil, false
+		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
 	entries := l.getSymbolAndEntries(ctx, position, node, program, isRename, implementations)
 	if !implementations {
-		return node, entries, true
+		return SymbolAndEntriesData{OriginalNode: node, SymbolsAndEntries: entries, Position: position}, true
 	}
 
 	var implementationEntries []*SymbolAndEntries
@@ -604,7 +617,7 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 	addToQueue(entries)
 	for len(queue) != 0 {
 		if ctx.Err() != nil {
-			return nil, nil, false
+			return SymbolAndEntriesData{}, false
 		}
 
 		entry := queue[0]
@@ -614,8 +627,7 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 			addToQueue(l.getSymbolAndEntries(ctx, entry.node.Pos(), entry.node, program, isRename, implementations))
 		}
 	}
-
-	return node, implementationEntries, true
+	return SymbolAndEntriesData{OriginalNode: node, SymbolsAndEntries: implementationEntries, Position: position}, true
 }
 
 func (l *LanguageService) getSymbolAndEntries(
@@ -639,26 +651,26 @@ func (l *LanguageService) getSymbolAndEntries(
 	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 }
 
-func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
+func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
-	locations := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
+	locations := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
 		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
 	})
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context.Context, params *lsproto.ImplementationParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ImplementationResponse, error) {
+func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context.Context, params *lsproto.ImplementationParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.ImplementationResponse, error) {
 	var seenNodes collections.Set[*ast.Node]
 	var entries []*ReferenceEntry
-	for _, entry := range symbolsAndEntries {
+	for _, entry := range data.SymbolsAndEntries {
 		for _, ref := range entry.references {
-			if seenNodes.AddIfAbsent(ref.node) {
+			if seenNodes.AddIfAbsent(ref.node) && (!options.DropOriginNodes || !ref.node.Loc.ContainsInclusive(data.Position)) {
 				entries = append(entries, ref)
 			}
 		}
 	}
 
-	if lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
+	if !options.RequireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
 		links := l.convertEntriesToLocationLinks(entries)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
@@ -666,58 +678,13 @@ func (l *LanguageService) ProvideImplementationsFromSymbolAndEntries(ctx context
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
-type provideImplementationsOpts struct {
-	// Force the result to be Location objects.
-	requireLocationsResult bool
-	// Omit node(s) containing the original position.
-	dropOriginNodes bool
-}
-
-func (l *LanguageService) provideImplementationsEx(ctx context.Context, params *lsproto.ImplementationParams, opts provideImplementationsOpts) (lsproto.ImplementationResponse, error) {
-	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
-
-	var seenNodes collections.Set[*ast.Node]
-	var entries []*ReferenceEntry
-	queue := l.getImplementationReferenceEntries(ctx, program, node, position)
-	for len(queue) != 0 {
-		if ctx.Err() != nil {
-			return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, ctx.Err()
-		}
-
-		entry := queue[0]
-		queue = queue[1:]
-		if !seenNodes.Has(entry.node) {
-			seenNodes.Add(entry.node)
-			if !(opts.dropOriginNodes && entry.node.Loc.ContainsInclusive(position)) {
-				entries = append(entries, entry)
-			}
-			queue = append(queue, l.getImplementationReferenceEntries(ctx, program, entry.node, entry.node.Pos())...)
-		}
-	}
-
-	if !opts.requireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
-		links := l.convertEntriesToLocationLinks(entries)
-		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
-	}
-	locations := l.convertEntriesToLocations(entries)
-	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
-}
-
-func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context, program *compiler.Program, node *ast.Node, position int) []*ReferenceEntry {
-	options := refOptions{use: referenceUseReferences, implementations: true}
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
-	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
-}
-
-func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
-	if originalNode.Kind != ast.KindIdentifier {
+func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options SymbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
+	if data.OriginalNode.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
 	program := l.GetProgram()
-	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
+	entries := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
@@ -725,7 +692,7 @@ func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context,
 		uri := l.getFileNameOfEntry(entry)
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
-			NewText: l.getTextForRename(originalNode, entry, params.NewName, checker),
+			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, checker),
 		}
 		changes[uri] = append(changes[uri], textEdit)
 	}
