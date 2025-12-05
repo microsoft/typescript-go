@@ -50,11 +50,11 @@ func NewServer(opts *ServerOptions) *Server {
 	s := &Server{
 		r:                     opts.In,
 		w:                     opts.Out,
+		stderr:                opts.Err,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
-		stderr:                opts.Err,
 		cwd:                   opts.Cwd,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
@@ -130,8 +130,9 @@ var (
 )
 
 type Server struct {
-	r Reader
-	w Writer
+	r      Reader
+	w      Writer
+	stderr io.Writer
 
 	logger                  *logger
 	initStarted             atomic.Bool
@@ -143,7 +144,6 @@ type Server struct {
 	pendingServerRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
 	pendingServerRequestsMu sync.Mutex
 
-	stderr             io.Writer
 	cwd                string
 	fs                 vfs.FS
 	defaultLibraryPath string
