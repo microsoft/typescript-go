@@ -350,19 +350,8 @@ func newCompilerTest(
 	}
 }
 
-var concurrentSkippedErrorBaselines = map[string]string{
-	"typeOnlyMerge2.ts": "Type-only merging is not detected when files are checked on different checkers.",
-	"typeOnlyMerge3.ts": "Type-only merging is not detected when files are checked on different checkers.",
-}
-
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("error", func(t *testing.T) {
-		if !testutil.TestProgramIsSingleThreaded() {
-			if msg, ok := concurrentSkippedErrorBaselines[c.basename]; ok {
-				t.Skipf("Skipping in concurrent mode: %s", msg)
-			}
-		}
-
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
@@ -529,7 +518,7 @@ func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil
 func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	t.Run("union ordering", func(t *testing.T) {
 		p := c.result.Program.Program()
-		p.ForEachCheckerParallel(t.Context(), func(_ int, c *checker.Checker) {
+		p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
 			for union := range c.UnionTypes() {
 				types := union.Types()
 

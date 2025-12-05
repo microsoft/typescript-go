@@ -19,29 +19,21 @@
         "category": "Message",
         "code": 100004
     },
-    "Non-relative paths are not allowed. Did you forget a leading './'?": {
-        "category": "Error",
-        "code": 5090
-    },
-    "A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.": {
-        "category": "Error",
-        "code": 8030
-    },
-    "Failed to delete file '{0}'.": {
+    "{0} references": {
         "category": "Message",
-        "code": 6353
+        "code": 100005
     },
-    "Project '{0}' is out of date because config file does not exist.": {
+    "1 reference": {
         "category": "Message",
-        "code": 6401
+        "code": 100006
     },
-    "Project '{0}' is out of date because input '{1}' does not exist.": {
+    "{0} implementations": {
         "category": "Message",
-        "code": 6420
+        "code": 100007
     },
-    "Project '{0}' is out of date because it has errors.": {
+    "1 implementation": {
         "category": "Message",
-        "code": 6423
+        "code": 100008
     },
     "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}": {
         "category": "Error",
@@ -78,5 +70,45 @@
     "Invalid specifier: '{0}'": {
         "category": "Error",
         "code": 110009
+    },
+    "Non-relative paths are not allowed. Did you forget a leading './'?": {
+        "category": "Error",
+        "code": 5090
+    },
+    "A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.": {
+        "category": "Error",
+        "code": 8030
+    },
+    "Failed to delete file '{0}'.": {
+        "category": "Message",
+        "code": 6353
+    },
+    "Project '{0}' is out of date because config file does not exist.": {
+        "category": "Message",
+        "code": 6401
+    },
+    "Project '{0}' is out of date because input '{1}' does not exist.": {
+        "category": "Message",
+        "code": 6420
+    },
+    "Project '{0}' is out of date because it has errors.": {
+        "category": "Message",
+        "code": 6423
+    },
+    "Locale must be an IETF BCP 47 language tag. Examples: '{0}', '{1}'.": {
+        "category": "Error",
+        "code": 6048
+    },
+    "Ignore the tsconfig found and build with commandline options and files.": {
+        "category": "Message",
+        "code": 1549
+    },
+    "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
+        "category": "Error",
+        "code": 5112
+    },
+    "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided.": {
+        "category": "Error",
+        "code": 5074
     }
 }

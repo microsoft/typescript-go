@@ -45,7 +45,8 @@ func TestCompletionsImport_umdDefaultNoCrash1(t *testing.T) {
 })();
 // @Filename: /src/index.js
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -57,11 +58,11 @@ func TestCompletionsImport_umdDefaultNoCrash1(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:               "Dottie",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dottie",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},

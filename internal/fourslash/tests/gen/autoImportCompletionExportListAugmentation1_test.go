@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -37,7 +36,8 @@ import { Piece } from "@sapphire/pieces";
 class FullPiece extends Piece {
   /*1*/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -51,9 +51,9 @@ class FullPiece extends Piece {
 					InsertText:          PtrTo("container: Container;"),
 					FilterText:          PtrTo("container"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
+					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					})),
+					},
 				},
 			},
 		},

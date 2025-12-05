@@ -25,7 +25,8 @@ declare module "m" {
 }
 // @Filename: /c.ts
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -36,11 +37,11 @@ declare module "m" {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "M",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "m",
 						},
-					})),
+					},
 					Detail:              PtrTo("class M\ninterface M"),
 					Kind:                PtrTo(lsproto.CompletionItemKindClass),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

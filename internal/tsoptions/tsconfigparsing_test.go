@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -819,6 +820,7 @@ func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfi
 		host,
 		host.GetCurrentDirectory(),
 		nil,
+		nil,
 		configFileName,
 		/*resolutionStack*/ nil,
 		/*extraFileExtensions*/ nil,
@@ -1025,7 +1027,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}
@@ -1039,6 +1041,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		host,
 		host.GetCurrentDirectory(),
 		nil,
+		nil,
 		tsconfigFileName,
 		/*resolutionStack*/ nil,
 		/*extraFileExtensions*/ nil,
@@ -1047,7 +1050,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parseConfigFileContent.Errors) > 0 {
 		for _, error := range parseConfigFileContent.Errors {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}
@@ -1201,6 +1204,7 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 			host,
 			host.GetCurrentDirectory(),
 			nil,
+			nil,
 			tsconfigFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
@@ -1261,6 +1265,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 				host,
 				host.GetCurrentDirectory(),
 				nil,
+				nil,
 				configFileName,
 				nil,
 				nil,
@@ -1304,6 +1309,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 				tsConfigSourceFile,
 				host,
 				host.GetCurrentDirectory(),
+				nil,
 				nil,
 				configFileName,
 				nil,

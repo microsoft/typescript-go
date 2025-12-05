@@ -6,10 +6,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -72,7 +73,7 @@ func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string)
 	return host.program.GetNearestAncestorDirectoryWithPackageJson(dirname)
 }
 
-func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 
@@ -128,4 +129,13 @@ func (host *emitHost) GetEmitResolver() printer.EmitResolver {
 
 func (host *emitHost) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return host.program.IsSourceFileFromExternalLibrary(file)
+}
+
+func (host *emitHost) GetSymlinkCache() *symlinks.KnownSymlinks {
+	return host.program.GetSymlinkCache()
+}
+
+func (host *emitHost) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+	resolved, _ := host.program.resolver.ResolveModuleName(moduleName, containingFile, resolutionMode, nil)
+	return resolved
 }

@@ -38,7 +38,8 @@ fo/*dcheck*/
 // @Filename: /d2.ts
 const a = import("./a"); // Does not make this an external module
 fo/*dts*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"b", "c", "ccheck", "cts", "d", "dcheck", "dts"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -49,11 +50,11 @@ fo/*dts*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "a",
 						},
-					})),
+					},
 					Detail:              PtrTo("const foo: 0"),
 					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
