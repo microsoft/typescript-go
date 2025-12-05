@@ -592,12 +592,7 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
 		done()
 		if symbol != nil {
-			// Only allow a symbol to be renamed if it actually has at least one declaration.
 			declarations := symbol.Declarations
-			if len(declarations) == 0 {
-				return node, nil, false
-			}
-
 			// Disallow rename for elements that are defined in the standard TypeScript library.
 			if core.Some(declarations, func(declaration *ast.Node) bool {
 				return isDefinedInLibraryFile(program, declaration)
@@ -964,6 +959,11 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
 		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
+	}
+
+	// Only allow a symbol to be renamed if it actually has at least one declaration.
+	if options.use == referenceUseRename && len(symbol.Declarations) == 0 {
+		return nil
 	}
 
 	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
