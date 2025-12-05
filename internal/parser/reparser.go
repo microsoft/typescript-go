@@ -65,10 +65,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 }
 
 func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node) {
-	// Note: JSDocOverloadTag is intentionally not handled in this function.
-	// Overload information should remain in the JSDoc structure and be
-	// retrieved by the checker when needed, rather than creating synthetic
-	// top-level declarations that result in invalid AST structures.
 	switch tag.Kind {
 	case ast.KindJSDocTypedefTag:
 		typeExpression := tag.TypeExpression()
@@ -114,6 +110,23 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		)
 		p.finishReparsedNode(importDeclaration, tag)
 		p.reparseList = append(p.reparseList, importDeclaration)
+	case ast.KindJSDocOverloadTag:
+		if fun, ok := getFunctionLikeHost(parent); ok {
+			// Only allow @overload on function declarations and class/interface methods.
+			// Disallow on object literal methods.
+			isObjectLiteralMethod := parent.Kind == ast.KindMethodDeclaration &&
+				parent.Parent != nil &&
+				parent.Parent.Kind == ast.KindObjectLiteralExpression
+			
+			if !isObjectLiteralMethod &&
+				(parent.Kind == ast.KindFunctionDeclaration ||
+					parent.Kind == ast.KindMethodDeclaration ||
+					parent.Kind == ast.KindMethodSignature) {
+				p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
+			}
+			// Silently ignore @overload in other contexts (e.g., object literal methods)
+			// to avoid breaking existing code that uses alternative @overload syntax
+		}
 	}
 }
 

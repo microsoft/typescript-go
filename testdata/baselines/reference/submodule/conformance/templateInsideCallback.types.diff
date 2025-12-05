@@ -5,7 +5,7 @@
   */
  function flatMap(array, iterable = identity) {
 ->flatMap : { <U>(): any; (): any; }
-+>flatMap : (array: unknown[], iterable?: (x: unknown) => unknown) => unknown[]
++>flatMap : { (): any; (): any; }
  >array : unknown[]
  >iterable : (x: unknown) => unknown
  >identity : any

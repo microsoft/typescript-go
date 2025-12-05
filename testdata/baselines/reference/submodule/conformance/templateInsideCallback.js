@@ -137,30 +137,5 @@ type Nested = {
         noooooo: string;
     };
 };
-/**
- * @typedef Nested
- * @property {Object} oh
- * @property {number} oh.no
- * @template T
- * @property {string} oh.noooooo
- */
-/**
- * @overload
- * @template T
- * @template U
- * @param {T[]} array
- * @param {(x: T) => U[]} iterable
- * @returns {U[]}
- */
-/**
- * @overload
- * @template T
- * @param {T[][]} array
- * @returns {T[]}
- */
-/**
- * @param {unknown[]} array
- * @param {(x: unknown) => unknown} iterable
- * @returns {unknown[]}
- */
-declare function flatMap(array: unknown[], iterable?: (x: unknown) => unknown): unknown[];
+declare function flatMap(): any;
+declare function flatMap(): any;

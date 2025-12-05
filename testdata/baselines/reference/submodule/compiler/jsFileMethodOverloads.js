@@ -118,7 +118,21 @@ declare class Example<T> {
     /**
      * @returns {string}
      */
-    getTypeName(): string;
+    getTypeName(this: Example<number>): 'number';
+    /**
+     * @overload
+     * @param {Example<number>} this
+     * @returns {'number'}
+     */
+    /**
+     * @overload
+     * @param {Example<string>} this
+     * @returns {'string'}
+     */
+    /**
+     * @returns {string}
+     */
+    getTypeName(this: Example<string>): 'string';
     /**
      * @template U
      * @overload
@@ -133,5 +147,20 @@ declare class Example<T> {
      * @param {(y: T) => unknown} [fn]
      * @returns {unknown}
      */
-    transform(fn?: (y: T) => unknown): unknown;
+    transform<U>(fn: (y: T) => U): U;
+    /**
+     * @template U
+     * @overload
+     * @param {(y: T) => U} fn
+     * @returns {U}
+     */
+    /**
+     * @overload
+     * @returns {T}
+     */
+    /**
+     * @param {(y: T) => unknown} [fn]
+     * @returns {unknown}
+     */
+    transform(): T;
 }
