@@ -644,6 +644,24 @@ func (f *FourslashTest) getBaselineContentForFile(
 			return -1
 		}
 
+		// <| ... [| ... |]|>
+		if d1.kind.isEnd() && d2.kind.isEnd() {
+			c := lsproto.ComparePositions(d2.getRange().Start, d1.getRange().Start)
+			if c != 0 {
+				return c
+			}
+			return int(d1.kind - d2.kind)
+		}
+
+		// <|[| ... |] ... |>
+		if d1.kind.isStart() && d2.kind.isStart() {
+			c := lsproto.ComparePositions(d2.getRange().End, d2.getRange().End)
+			if c != 0 {
+				return c
+			}
+			return int(d1.kind - d2.kind)
+		}
+
 		return 0
 	})
 	// !!! if canDetermineContextIdInline
@@ -691,13 +709,6 @@ func (f *FourslashTest) getBaselineContentForFile(
 				if canDetermineContextIdInline {
 					spanToContextId[*detail.span] = len(spanToContextId)
 				}
-			}
-
-			if deferredMarkerIndex != nil && *deferredMarkerIndex == index {
-				// Write the marker
-				textWithContext.newContent.WriteString(options.markerName)
-				deferredMarkerIndex = nil
-				detail = details[0] // Marker detail
 			}
 		}
 		if suffix, ok := detailSuffixes[detail]; ok {
