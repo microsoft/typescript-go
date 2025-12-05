@@ -659,7 +659,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	combineResults func(iter.Seq[*Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
-		resp, err := multiProjectRequestHandling(s, ctx, info, fn, combineResults, req, ls.SymbolEntryTransformOptions{})
+		resp, err := handleMultiProjectRequest(s, ctx, info, fn, combineResults, req, ls.SymbolEntryTransformOptions{})
 		if err != nil {
 			return err
 		}
@@ -668,7 +668,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	}
 }
 
-func multiProjectRequestHandling[Req lsproto.HasTextDocumentPosition, Resp any](
+func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 	s *Server,
 	ctx context.Context,
 	info lsproto.RequestInfo[Req, Resp],
@@ -1399,7 +1399,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 	var lensTitle string
 	switch codeLens.Data.Kind {
 	case lsproto.CodeLensKindReferences:
-		referencesResp, err := multiProjectRequestHandling(
+		referencesResp, err := handleMultiProjectRequest(
 			s,
 			ctx,
 			lsproto.TextDocumentReferencesInfo,
@@ -1441,7 +1441,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		}
 
 	case lsproto.CodeLensKindImplementations:
-		implResp, err := multiProjectRequestHandling(
+		implResp, err := handleMultiProjectRequest(
 			s,
 			ctx,
 			lsproto.TextDocumentImplementationInfo,
