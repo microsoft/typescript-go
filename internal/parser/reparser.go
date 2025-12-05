@@ -115,13 +115,20 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 			// Only allow @overload on function declarations and class/interface methods.
 			// Disallow on object literal methods.
 			isLegalContext := false
-			if parent.Kind == ast.KindFunctionDeclaration || parent.Kind == ast.KindMethodSignature {
+			switch parent.Kind {
+			case ast.KindFunctionDeclaration, ast.KindMethodSignature:
 				isLegalContext = true
-			} else if parent.Kind == ast.KindMethodDeclaration {
+			case ast.KindMethodDeclaration:
 				// Allow class methods, but not object literal methods
-				isLegalContext = parent.Parent == nil || parent.Parent.Kind != ast.KindObjectLiteralExpression
+				// Object literal methods have ObjectLiteralExpression as parent
+				if parent.Parent == nil {
+					// Orphaned method declaration - shouldn't happen, but allow it
+					isLegalContext = true
+				} else {
+					isLegalContext = parent.Parent.Kind != ast.KindObjectLiteralExpression
+				}
 			}
-			
+
 			if isLegalContext {
 				p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
 			}
