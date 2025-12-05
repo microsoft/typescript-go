@@ -592,11 +592,15 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
 		done()
 		if symbol != nil {
-			// Disallow rename for elements that are defined in the standard TypeScript library.
-			if symbol.Declarations != nil && core.Some(symbol.Declarations, func(declaration *ast.Node) bool {
-				return isDefinedInLibraryFile(program, declaration)
-			}) {
-				return node, nil, false
+			// Only allow a symbol to be renamed if it actually has at least one declaration.
+			declarations := symbol.Declarations
+			if len(declarations) > 0 {
+				// Disallow rename for elements that are defined in the standard TypeScript library.
+				if core.Some(declarations, func(declaration *ast.Node) bool {
+					return isDefinedInLibraryFile(program, declaration)
+				}) {
+					return node, nil, false
+				}
 			}
 		}
 	}
