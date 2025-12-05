@@ -1135,13 +1135,13 @@ func (s *Server) handlePrepareCallHierarchy(
 func (s *Server) handleCallHierarchyIncomingCalls(
 	ctx context.Context,
 	params *lsproto.CallHierarchyIncomingCallsParams,
-	_ *lsproto.RequestMessage,
+	reqMsg *lsproto.RequestMessage,
 ) (lsproto.CallHierarchyIncomingCallsResponse, error) {
-	languageService, err := s.session.GetLanguageService(ctx, params.Item.Uri)
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.Item.Uri)
 	if err != nil {
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
 	}
-	return languageService.ProvideCallHierarchyIncomingCalls(ctx, params.Item)
+	return defaultLs.ProvideCallHierarchyIncomingCalls(ctx, params.Item, &crossProjectOrchestrator{s, reqMsg, defaultProject, allProjects})
 }
 
 func (s *Server) handleCallHierarchyOutgoingCalls(

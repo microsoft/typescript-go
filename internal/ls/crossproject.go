@@ -345,3 +345,18 @@ func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.Ren
 	}
 	return lsproto.RenameResponse{}
 }
+
+func combineIncomingCalls(results iter.Seq[lsproto.CallHierarchyIncomingCallsResponse]) lsproto.CallHierarchyIncomingCallsResponse {
+	var combined []*lsproto.CallHierarchyIncomingCall
+	var seenCalls collections.Set[lsproto.Location]
+	for resp := range results {
+		if resp.CallHierarchyIncomingCalls != nil {
+			for _, call := range *resp.CallHierarchyIncomingCalls {
+				if seenCalls.AddIfAbsent(call.From.GetLocation()) {
+					combined = append(combined, call)
+				}
+			}
+		}
+	}
+	return lsproto.CallHierarchyIncomingCallsResponse{CallHierarchyIncomingCalls: &combined}
+}

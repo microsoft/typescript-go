@@ -188,6 +188,53 @@ Config File Names::
   }
 }
 
+Projects::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *new*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
+  [/projects/container/lib/tsconfig.json] 
+    /projects/container/lib/index.ts  
+    /projects/container/lib/bar.ts    
+    /projects/container/lib/baz.ts    
+  [/projects/container/tsconfig.json] *modified*
+  [/projects/temp/tsconfig.json] 
+    /projects/temp/temp.ts  
+Open Files::
+  [/projects/container/lib/index.ts] *modified*
+    /projects/container/compositeExec/tsconfig.json  *new*
+    /projects/container/exec/tsconfig.json           *new*
+    /projects/container/lib/tsconfig.json            (default) 
+  [/projects/temp/temp.ts] 
+    /projects/temp/tsconfig.json  (default) 
+Config::
+  [/projects/container/compositeExec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/compositeExec/tsconfig.json  
+      /projects/container/tsconfig.json                
+  [/projects/container/exec/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/exec/tsconfig.json  
+      /projects/container/tsconfig.json       
+  [/projects/container/lib/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /projects/container/compositeExec/tsconfig.json  *new*
+      /projects/container/exec/tsconfig.json           *new*
+      /projects/container/lib/tsconfig.json            
+      /projects/container/tsconfig.json                *new*
+    RetainingOpenFiles:
+      /projects/container/lib/index.ts  
+  [/projects/container/tsconfig.json] *new*
+    RetainingProjects:
+      /projects/container/tsconfig.json  
+  [/projects/temp/tsconfig.json] 
+    RetainingProjects:
+      /projects/temp/tsconfig.json  
+    RetainingOpenFiles:
+      /projects/temp/temp.ts  
+
 {
   "method": "callHierarchy/outgoingCalls",
   "params": {
@@ -281,6 +328,68 @@ Config File Names::
   }
 }
 
+{
+  "method": "callHierarchy/incomingCalls",
+  "params": {
+    "item": {
+      "name": "openElementsAtEditor2",
+      "kind": 12,
+      "uri": "file:///projects/container/compositeExec/index.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 9
+        },
+        "end": {
+          "line": 1,
+          "character": 30
+        }
+      }
+    }
+  }
+}
+
+{
+  "method": "callHierarchy/incomingCalls",
+  "params": {
+    "item": {
+      "name": "openElementsAtEditor1",
+      "kind": 12,
+      "uri": "file:///projects/container/exec/index.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 9
+        },
+        "end": {
+          "line": 1,
+          "character": 30
+        }
+      }
+    }
+  }
+}
+
 
 
 
@@ -347,6 +456,54 @@ Config File Names::
 │ │ │ 3:   createModelReference();
 │ │ │      ^^^^^^^^^^^^^^^^^^^^
 │ ╰ ╰
+│ ╭ from:
+│ │ ╭ name: openElementsAtEditor2
+│ │ ├ kind: function
+│ │ ├ file: /projects/container/compositeExec/index.ts
+│ │ ├ span:
+│ │ │ ╭ /projects/container/compositeExec/index.ts:2:1-4:2
+│ │ │ │ 2: function openElementsAtEditor2() {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3:   createModelReference();
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 4: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /projects/container/compositeExec/index.ts:2:10-2:31
+│ │ │ │ 2: function openElementsAtEditor2() {
+│ │ │ │             ^^^^^^^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /projects/container/compositeExec/index.ts:3:3-3:23
+│ │ │ 3:   createModelReference();
+│ │ │      ^^^^^^^^^^^^^^^^^^^^
+│ ╰ ╰
+│ ╭ from:
+│ │ ╭ name: openElementsAtEditor1
+│ │ ├ kind: function
+│ │ ├ file: /projects/container/exec/index.ts
+│ │ ├ span:
+│ │ │ ╭ /projects/container/exec/index.ts:2:1-4:2
+│ │ │ │ 2: function openElementsAtEditor1() {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3:   createModelReference();
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 4: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /projects/container/exec/index.ts:2:10-2:31
+│ │ │ │ 2: function openElementsAtEditor1() {
+│ │ │ │             ^^^^^^^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /projects/container/exec/index.ts:3:3-3:23
+│ │ │ 3:   createModelReference();
+│ │ │      ^^^^^^^^^^^^^^^^^^^^
+│ ╰ ╰
 ╰ outgoing: none
 {
   "method": "textDocument/didClose",
@@ -359,7 +516,9 @@ Config File Names::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *closed*
 
 {
@@ -376,7 +535,9 @@ Open Files::
 
 Open Files::
   [/projects/container/lib/index.ts] 
-    /projects/container/lib/tsconfig.json  (default) 
+    /projects/container/compositeExec/tsconfig.json  
+    /projects/container/exec/tsconfig.json           
+    /projects/container/lib/tsconfig.json            (default) 
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 
@@ -419,6 +580,12 @@ Open Files::
 }
 
 Projects::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
   [/projects/container/lib/tsconfig.json] *deleted*
     /projects/container/lib/index.ts  
     /projects/container/lib/bar.ts    
@@ -430,7 +597,10 @@ Open Files::
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 Config::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+  [/projects/container/exec/tsconfig.json] *deleted*
   [/projects/container/lib/tsconfig.json] *deleted*
+  [/projects/container/tsconfig.json] *deleted*
   [/projects/temp/tsconfig.json] 
     RetainingProjects:
       /projects/temp/tsconfig.json  

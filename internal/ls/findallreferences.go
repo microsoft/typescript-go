@@ -648,7 +648,7 @@ func (l *LanguageService) getSymbolAndEntries(
 		options.use = referenceUseRename
 		options.useAliasesForRename = true
 	}
-	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options)
 }
 
 func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto.ReferenceParams, orchestrator CrossProjectOrchestrator) (lsproto.ReferencesResponse, error) {
@@ -928,13 +928,11 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 
 // === functions for find all ref implementation ===
 
-func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
+func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile, options refOptions) []*SymbolAndEntries {
 	// !!! cancellationToken
-	if sourceFilesSet == nil || sourceFilesSet.Len() == 0 {
-		sourceFilesSet = collections.NewSetWithSizeHint[string](len(sourceFiles))
-		for _, file := range sourceFiles {
-			sourceFilesSet.Add(file.FileName())
-		}
+	sourceFilesSet := collections.NewSetWithSizeHint[string](len(sourceFiles))
+	for _, file := range sourceFiles {
+		sourceFilesSet.Add(file.FileName())
 	}
 
 	if options.use == referenceUseReferences || options.use == referenceUseRename {
