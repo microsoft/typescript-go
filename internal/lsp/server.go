@@ -653,6 +653,211 @@ type response[Resp any] struct {
 	forOriginalLocation bool
 }
 
+// multiProjectSearchHelper performs a multi-project search for symbols at a given position.
+// It returns an iterator that yields results from all relevant projects.
+func multiProjectSearchHelper[Resp any](
+	s *Server,
+	ctx context.Context,
+	uri lsproto.DocumentUri,
+	position lsproto.Position,
+	isRename bool,
+	processFn func(context.Context, *ls.LanguageService, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
+) (iter.Seq[Resp], error) {
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+
+	var results collections.SyncMap[tspath.Path, *response[Resp]]
+	var defaultDefinition *ls.NonLocalDefinition
+	canSearchProject := func(project *project.Project) bool {
+		_, searched := results.Load(project.Id())
+		return !searched
+	}
+	wg := core.NewWorkGroup(false)
+	var errMu sync.Mutex
+	var enqueueItem func(item projectAndTextDocumentPosition)
+	enqueueItem = func(item projectAndTextDocumentPosition) {
+		var response response[Resp]
+		if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
+			return
+		}
+		wg.Queue(func() {
+			if ctx.Err() != nil {
+				return
+			}
+			// Process the item
+			ls := item.ls
+			if ls == nil {
+				// Get it now
+				ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
+				if ls == nil {
+					return
+				}
+			}
+			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, isRename)
+			if ok {
+				for _, entry := range symbolsAndEntries {
+					// Find the default definition that can be in another project
+					// Later we will use this load ancestor tree that references this location and expand search
+					if item.project == defaultProject && defaultDefinition == nil {
+						defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
+					}
+					ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
+						// Get default configured project for this file
+						defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
+						if errProjects != nil {
+							return
+						}
+						for _, defProject := range defProjects {
+							// Optimization: don't enqueue if will be discarded
+							if canSearchProject(defProject) {
+								enqueueItem(projectAndTextDocumentPosition{
+									project:             defProject,
+									Uri:                 uri,
+									Position:            position,
+									forOriginalLocation: true,
+								})
+							}
+						}
+					})
+				}
+			}
+
+			if result, errSearch := processFn(ctx, ls, originalNode, symbolsAndEntries); errSearch == nil {
+				response.complete = true
+				response.result = result
+				response.forOriginalLocation = item.forOriginalLocation
+			} else {
+				errMu.Lock()
+				defer errMu.Unlock()
+				if err == nil {
+					err = errSearch
+				}
+			}
+		})
+	}
+
+	// Initial set of projects and locations in the queue, starting with default project
+	enqueueItem(projectAndTextDocumentPosition{
+		project:  defaultProject,
+		ls:       defaultLs,
+		Uri:      uri,
+		Position: position,
+	})
+	for _, project := range allProjects {
+		if project != defaultProject {
+			enqueueItem(projectAndTextDocumentPosition{
+				project: project,
+				// TODO!! symlinks need to change the URI
+				Uri:      uri,
+				Position: position,
+			})
+		}
+	}
+
+	// Outer loop - to complete work if more is added after completing existing queue
+	for {
+		// Process existing known projects first
+		wg.RunAndWait()
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		// No need to use mu here since we are not in parallel at this point
+		if err != nil {
+			return nil, err
+		}
+
+		wg = core.NewWorkGroup(false)
+		hasMoreWork := false
+		if defaultDefinition != nil {
+			requestedProjectTrees := make(map[tspath.Path]struct{})
+			results.Range(func(key tspath.Path, response *response[Resp]) bool {
+				if response.complete {
+					requestedProjectTrees[key] = struct{}{}
+				}
+				return true
+			})
+
+			// Load more projects based on default definition found
+			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+				if ctx.Err() != nil {
+					return nil, ctx.Err()
+				}
+
+				// Can loop forever without this (enqueue here, dequeue above, repeat)
+				if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
+					continue
+				}
+
+				// Enqueue the project and location for further processing
+				if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      defaultDefinition.TextDocumentURI(),
+						Position: defaultDefinition.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      sourcePos.TextDocumentURI(),
+						Position: sourcePos.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
+					enqueueItem(projectAndTextDocumentPosition{
+						project:  loadedProject,
+						Uri:      generatedPos.TextDocumentURI(),
+						Position: generatedPos.TextDocumentPosition(),
+					})
+					hasMoreWork = true
+				}
+			}
+		}
+		if !hasMoreWork {
+			break
+		}
+	}
+
+	getResultsIterator := func() iter.Seq[Resp] {
+		return func(yield func(Resp) bool) {
+			var seenProjects collections.SyncSet[tspath.Path]
+			if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
+				if !yield(response.result) {
+					return
+				}
+			}
+			seenProjects.Add(defaultProject.Id())
+			for _, project := range allProjects {
+				if seenProjects.AddIfAbsent(project.Id()) {
+					if response, loaded := results.Load(project.Id()); loaded && response.complete {
+						if !yield(response.result) {
+							return
+						}
+					}
+				}
+			}
+			// Prefer the searches from locations for default definition
+			results.Range(func(key tspath.Path, response *response[Resp]) bool {
+				if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
+					return yield(response.result)
+				}
+				return true
+			})
+			// Then the searches from original locations
+			results.Range(func(key tspath.Path, response *response[Resp]) bool {
+				if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
+					return yield(response.result)
+				}
+				return true
+			})
+		}
+	}
+
+	return getResultsIterator(), nil
+}
+
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
@@ -665,210 +870,40 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		// !!! sheetal: multiple projects that contain the file through symlinks
-		defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.TextDocumentURI())
+		defer s.recover(req)
+
+		isRename := info.Method == lsproto.MethodTextDocumentRename
+		resultsIter, err := multiProjectSearchHelper(
+			s,
+			ctx,
+			params.TextDocumentURI(),
+			params.TextDocumentPosition(),
+			isRename,
+			func(ctx context.Context, ls *ls.LanguageService, originalNode *ast.Node, symbolsAndEntries []*ls.SymbolAndEntries) (Resp, error) {
+				return fn(s, ctx, ls, params, originalNode, symbolsAndEntries)
+			},
+		)
 		if err != nil {
 			return err
 		}
-		defer s.recover(req)
 
-		var results collections.SyncMap[tspath.Path, *response[Resp]]
-		var defaultDefinition *ls.NonLocalDefinition
-		canSearchProject := func(project *project.Project) bool {
-			_, searched := results.Load(project.Id())
-			return !searched
-		}
-		wg := core.NewWorkGroup(false)
-		var errMu sync.Mutex
-		var enqueueItem func(item projectAndTextDocumentPosition)
-		enqueueItem = func(item projectAndTextDocumentPosition) {
-			var response response[Resp]
-			if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
-				return
-			}
-			wg.Queue(func() {
-				if ctx.Err() != nil {
-					return
-				}
-				defer s.recover(req)
-				// Process the item
-				ls := item.ls
-				if ls == nil {
-					// Get it now
-					ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
-					if ls == nil {
-						return
-					}
-				}
-				originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, info.Method == lsproto.MethodTextDocumentRename)
-				if ok {
-					for _, entry := range symbolsAndEntries {
-						// Find the default definition that can be in another project
-						// Later we will use this load ancestor tree that references this location and expand search
-						if item.project == defaultProject && defaultDefinition == nil {
-							defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
-						}
-						ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
-							// Get default configured project for this file
-							defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
-							if errProjects != nil {
-								return
-							}
-							for _, defProject := range defProjects {
-								// Optimization: don't enqueue if will be discarded
-								if canSearchProject(defProject) {
-									enqueueItem(projectAndTextDocumentPosition{
-										project:             defProject,
-										Uri:                 uri,
-										Position:            position,
-										forOriginalLocation: true,
-									})
-								}
-							}
-						})
-					}
-				}
-
-				if result, errSearch := fn(s, ctx, ls, params, originalNode, symbolsAndEntries); errSearch == nil {
-					response.complete = true
-					response.result = result
-					response.forOriginalLocation = item.forOriginalLocation
-				} else {
-					errMu.Lock()
-					defer errMu.Unlock()
-					if err != nil {
-						err = errSearch
-					}
-				}
-			})
-		}
-
-		// Initial set of projects and locations in the queue, starting with default project
-		enqueueItem(projectAndTextDocumentPosition{
-			project:  defaultProject,
-			ls:       defaultLs,
-			Uri:      params.TextDocumentURI(),
-			Position: params.TextDocumentPosition(),
-		})
-		for _, project := range allProjects {
-			if project != defaultProject {
-				enqueueItem(projectAndTextDocumentPosition{
-					project: project,
-					// TODO!! symlinks need to change the URI
-					Uri:      params.TextDocumentURI(),
-					Position: params.TextDocumentPosition(),
-				})
-			}
-		}
-
-		getResultsIterator := func() iter.Seq[Resp] {
-			return func(yield func(Resp) bool) {
-				var seenProjects collections.SyncSet[tspath.Path]
-				if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-					if !yield(response.result) {
-						return
-					}
-				}
-				seenProjects.Add(defaultProject.Id())
-				for _, project := range allProjects {
-					if seenProjects.AddIfAbsent(project.Id()) {
-						if response, loaded := results.Load(project.Id()); loaded && response.complete {
-							if !yield(response.result) {
-								return
-							}
-						}
-					}
-				}
-				// Prefer the searches from locations for default definition
-				results.Range(func(key tspath.Path, response *response[Resp]) bool {
-					if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-						return yield(response.result)
-					}
-					return true
-				})
-				// Then the searches from original locations
-				results.Range(func(key tspath.Path, response *response[Resp]) bool {
-					if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-						return yield(response.result)
-					}
-					return true
-				})
-			}
-		}
-
-		// Outer loop - to complete work if more is added after completing existing queue
-		for {
-			// Process existing known projects first
-			wg.RunAndWait()
-			if ctx.Err() != nil {
-				return ctx.Err()
-			}
-			// No need to use mu here since we are not in parallel at this point
-			if err != nil {
-				return err
-			}
-
-			wg = core.NewWorkGroup(false)
-			hasMoreWork := false
-			if defaultDefinition != nil {
-				requestedProjectTrees := make(map[tspath.Path]struct{})
-				results.Range(func(key tspath.Path, response *response[Resp]) bool {
-					if response.complete {
-						requestedProjectTrees[key] = struct{}{}
-					}
-					return true
-				})
-
-				// Load more projects based on default definition found
-				for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
-					if ctx.Err() != nil {
-						return ctx.Err()
-					}
-
-					// Can loop forever without this (enqueue here, dequeue above, repeat)
-					if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
-						continue
-					}
-
-					// Enqueue the project and location for further processing
-					if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
-						enqueueItem(projectAndTextDocumentPosition{
-							project:  loadedProject,
-							Uri:      defaultDefinition.TextDocumentURI(),
-							Position: defaultDefinition.TextDocumentPosition(),
-						})
-						hasMoreWork = true
-					} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
-						enqueueItem(projectAndTextDocumentPosition{
-							project:  loadedProject,
-							Uri:      sourcePos.TextDocumentURI(),
-							Position: sourcePos.TextDocumentPosition(),
-						})
-						hasMoreWork = true
-					} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
-						enqueueItem(projectAndTextDocumentPosition{
-							project:  loadedProject,
-							Uri:      generatedPos.TextDocumentURI(),
-							Position: generatedPos.TextDocumentPosition(),
-						})
-						hasMoreWork = true
-					}
-				}
-			}
-			if !hasMoreWork {
-				break
-			}
+		// Collect results to determine if we need to combine
+		var results []Resp
+		for result := range resultsIter {
+			results = append(results, result)
 		}
 
 		var resp Resp
-		if results.Size() > 1 {
-			resp = combineResults(getResultsIterator())
-		} else {
-			// Single result, return that directly
-			for value := range getResultsIterator() {
-				resp = value
-				break
-			}
+		if len(results) > 1 {
+			resp = combineResults(func(yield func(Resp) bool) {
+				for _, r := range results {
+					if !yield(r) {
+						return
+					}
+				}
+			})
+		} else if len(results) == 1 {
+			resp = results[0]
 		}
 
 		s.sendResult(req.ID, resp)
@@ -1363,242 +1398,60 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 }
 
 func (s *Server) resolveReferencesCodeLensAcrossProjects(ctx context.Context, codeLens *lsproto.CodeLens) (*lsproto.CodeLens, error) {
-	// Use multi-project search similar to handleReferences
 	uri := codeLens.Data.Uri
 	position := codeLens.Range.Start
 
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
-	if err != nil {
-		return nil, err
-	}
-
-	// Collect references from all relevant projects
-	var results collections.SyncMap[tspath.Path, *response[lsproto.ReferencesResponse]]
-	var defaultDefinition *ls.NonLocalDefinition
-	canSearchProject := func(project *project.Project) bool {
-		_, searched := results.Load(project.Id())
-		return !searched
-	}
-	wg := core.NewWorkGroup(false)
-	var errMu sync.Mutex
-	var enqueueItem func(item projectAndTextDocumentPosition)
-	enqueueItem = func(item projectAndTextDocumentPosition) {
-		var response response[lsproto.ReferencesResponse]
-		if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
-			return
-		}
-		wg.Queue(func() {
-			if ctx.Err() != nil {
-				return
-			}
-			// Process the item
-			ls := item.ls
-			if ls == nil {
-				// Get it now
-				ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
-				if ls == nil {
-					return
-				}
-			}
-			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, item.Uri, item.Position, false /*isRename*/)
-			if ok {
-				for _, entry := range symbolsAndEntries {
-					// Find the default definition that can be in another project
-					if item.project == defaultProject && defaultDefinition == nil {
-						defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
-					}
-					ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
-						// Get default configured project for this file
-						defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
-						if errProjects != nil {
-							return
-						}
-						for _, defProject := range defProjects {
-							// Optimization: don't enqueue if will be discarded
-							if canSearchProject(defProject) {
-								enqueueItem(projectAndTextDocumentPosition{
-									project:             defProject,
-									Uri:                 uri,
-									Position:            position,
-									forOriginalLocation: true,
-								})
-							}
-						}
-					})
-				}
-			}
-
-			if references, errSearch := ls.ProvideReferencesFromSymbolAndEntries(
+	// Use the common multi-project search helper
+	resultsIter, err := multiProjectSearchHelper(
+		s,
+		ctx,
+		uri,
+		position,
+		false, // isRename
+		func(ctx context.Context, ls *ls.LanguageService, originalNode *ast.Node, symbolsAndEntries []*ls.SymbolAndEntries) (lsproto.ReferencesResponse, error) {
+			return ls.ProvideReferencesFromSymbolAndEntries(
 				ctx,
 				&lsproto.ReferenceParams{
-					TextDocument: lsproto.TextDocumentIdentifier{Uri: item.Uri},
-					Position:     item.Position,
+					TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+					Position:     position,
 					Context: &lsproto.ReferenceContext{
 						IncludeDeclaration: false, // Don't include the declaration in the references count
 					},
 				},
 				originalNode,
 				symbolsAndEntries,
-			); errSearch == nil {
-				response.complete = true
-				response.result = references
-				response.forOriginalLocation = item.forOriginalLocation
-			} else {
-				errMu.Lock()
-				defer errMu.Unlock()
-				if err == nil {
-					err = errSearch
-				}
-			}
-		})
+			)
+		},
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	// Initial set of projects and locations in the queue, starting with default project
-	enqueueItem(projectAndTextDocumentPosition{
-		project:  defaultProject,
-		ls:       defaultLs,
-		Uri:      uri,
-		Position: position,
-	})
-	for _, proj := range allProjects {
-		if proj != defaultProject {
-			enqueueItem(projectAndTextDocumentPosition{
-				project:  proj,
-				Uri:      uri,
-				Position: position,
-			})
-		}
+	// Combine all references from all projects using the same logic as combineReferences
+	combined := combineReferences(resultsIter)
+	var locs []lsproto.Location
+	if combined.Locations != nil {
+		locs = *combined.Locations
 	}
-
-	// Process existing known projects first
-	for {
-		wg.RunAndWait()
-		if ctx.Err() != nil {
-			return nil, ctx.Err()
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		wg = core.NewWorkGroup(false)
-		hasMoreWork := false
-		if defaultDefinition != nil {
-			requestedProjectTrees := make(map[tspath.Path]struct{})
-			results.Range(func(key tspath.Path, response *response[lsproto.ReferencesResponse]) bool {
-				if response.complete {
-					requestedProjectTrees[key] = struct{}{}
-				}
-				return true
-			})
-
-			// Load more projects based on default definition found
-			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
-				if ctx.Err() != nil {
-					return nil, ctx.Err()
-				}
-
-				// Can loop forever without this (enqueue here, dequeue above, repeat)
-				if !canSearchProject(loadedProject) || loadedProject.GetProgram() == nil {
-					continue
-				}
-
-				// Enqueue the project and location for further processing
-				if loadedProject.HasFile(defaultDefinition.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      defaultDefinition.TextDocumentURI(),
-						Position: defaultDefinition.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && loadedProject.HasFile(sourcePos.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      sourcePos.TextDocumentURI(),
-						Position: sourcePos.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && loadedProject.HasFile(generatedPos.TextDocumentURI().FileName()) {
-					enqueueItem(projectAndTextDocumentPosition{
-						project:  loadedProject,
-						Uri:      generatedPos.TextDocumentURI(),
-						Position: generatedPos.TextDocumentPosition(),
-					})
-					hasMoreWork = true
-				}
-			}
-		}
-		if !hasMoreWork {
-			break
-		}
-	}
-
-	// Combine all references from all projects
-	var combined []lsproto.Location
-	var seenLocations collections.Set[lsproto.Location]
-	var seenProjects collections.Set[tspath.Path]
-
-	// Add default project results first
-	if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-		if response.result.Locations != nil {
-			for _, loc := range *response.result.Locations {
-				if !seenLocations.Has(loc) {
-					seenLocations.Add(loc)
-					combined = append(combined, loc)
-				}
-			}
-		}
-	}
-	seenProjects.Add(defaultProject.Id())
-
-	// Add other project results
-	for _, proj := range allProjects {
-		if seenProjects.AddIfAbsent(proj.Id()) {
-			if response, loaded := results.Load(proj.Id()); loaded && response.complete {
-				if response.result.Locations != nil {
-					for _, loc := range *response.result.Locations {
-						if !seenLocations.Has(loc) {
-							seenLocations.Add(loc)
-							combined = append(combined, loc)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Add remaining project results
-	results.Range(func(key tspath.Path, response *response[lsproto.ReferencesResponse]) bool {
-		if seenProjects.AddIfAbsent(key) && response.complete {
-			if response.result.Locations != nil {
-				for _, loc := range *response.result.Locations {
-					if !seenLocations.Has(loc) {
-						seenLocations.Add(loc)
-						combined = append(combined, loc)
-					}
-				}
-			}
-		}
-		return true
-	})
 
 	// Build the code lens with the combined references count
 	locale := locale.FromContext(ctx)
 	var lensTitle string
-	if len(combined) == 1 {
+	if len(locs) == 1 {
 		lensTitle = diagnostics.X_1_reference.Localize(locale)
 	} else {
-		lensTitle = diagnostics.X_0_references.Localize(locale, len(combined))
+		lensTitle = diagnostics.X_0_references.Localize(locale, len(locs))
 	}
 
 	cmd := &lsproto.Command{
 		Title: lensTitle,
 	}
-	if len(combined) > 0 && s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName != nil {
+	if len(locs) > 0 && s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName != nil {
 		cmd.Command = *s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName
 		cmd.Arguments = &[]any{
 			uri,
 			position,
-			combined,
+			locs,
 		}
 	}
 
