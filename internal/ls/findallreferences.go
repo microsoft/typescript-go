@@ -3,6 +3,7 @@ package ls
 import (
 	"cmp"
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -670,7 +671,7 @@ func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context,
 	// Check if ProvideSymbolsAndEntries returned ok=false or no symbols found
 	// Return an error to inform the user that rename is not available
 	if symbolsAndEntries == nil || len(symbolsAndEntries) == 0 {
-		return lsproto.WorkspaceEditOrNull{}, fmt.Errorf(diagnostics.You_cannot_rename_this_element.Localize(locale.FromContext(ctx)))
+		return lsproto.WorkspaceEditOrNull{}, errors.New(diagnostics.You_cannot_rename_this_element.Localize(locale.FromContext(ctx)))
 	}
 
 	program := l.GetProgram()
