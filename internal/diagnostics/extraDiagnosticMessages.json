@@ -55,21 +55,17 @@
         "category": "Error",
         "code": 110005
     },
-    "no PnP manifest found": {
+    "no package found for path '{0}'": {
         "category": "Error",
         "code": 110006
     },
-    "no package found for path '{0}'": {
+    "Empty specifier: '{0}'": {
         "category": "Error",
         "code": 110007
     },
-    "Empty specifier: '{0}'": {
-        "category": "Error",
-        "code": 110008
-    },
     "Invalid specifier: '{0}'": {
         "category": "Error",
-        "code": 110009
+        "code": 110008
     },
     "Non-relative paths are not allowed. Did you forget a leading './'?": {
         "category": "Error",

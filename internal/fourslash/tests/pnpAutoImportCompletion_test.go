@@ -146,7 +146,8 @@ import { aValue } from 'package-a';
 aValue;
 /**/
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		UserPreferences: &lsutil.UserPreferences{
 			IncludeCompletionsForModuleExports:    core.TSTrue,
@@ -162,11 +163,11 @@ aValue;
 				// Verify that helperA completion creates an import from 'package-a/subpath'
 				&lsproto.CompletionItem{
 					Label: "helperA",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "package-a/subpath",
 						},
-					})),
+					},
 					Kind:                PtrTo(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
@@ -174,11 +175,11 @@ aValue;
 				// Verify that workspaceHelper completion creates an import from 'workspace-lib'
 				&lsproto.CompletionItem{
 					Label: "workspaceHelper",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "workspace-lib",
 						},
-					})),
+					},
 					Kind:                PtrTo(lsproto.CompletionItemKindFunction),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),

@@ -4280,13 +4280,11 @@ var Your_application_tried_to_access_0_a_peer_dependency_this_isn_t_allowed_as_t
 
 var X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_Required_by_Colon_2 = &Message{code: 110005, category: CategoryError, key: "_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application__110005", text: "{0} tried to access '{1}' (a peer dependency) but it isn't provided by its ancestors/your application; this makes the require call ambiguous and unsound.\n\nRequired package: {1}\nRequired by: {2}"}
 
-var X_no_PnP_manifest_found = &Message{code: 110006, category: CategoryError, key: "no_PnP_manifest_found_110006", text: "no PnP manifest found"}
+var X_no_package_found_for_path_0 = &Message{code: 110006, category: CategoryError, key: "no_package_found_for_path_0_110006", text: "no package found for path '{0}'"}
 
-var X_no_package_found_for_path_0 = &Message{code: 110007, category: CategoryError, key: "no_package_found_for_path_0_110007", text: "no package found for path '{0}'"}
+var Empty_specifier_Colon_0 = &Message{code: 110007, category: CategoryError, key: "Empty_specifier_Colon_0_110007", text: "Empty specifier: '{0}'"}
 
-var Empty_specifier_Colon_0 = &Message{code: 110008, category: CategoryError, key: "Empty_specifier_Colon_0_110008", text: "Empty specifier: '{0}'"}
-
-var Invalid_specifier_Colon_0 = &Message{code: 110009, category: CategoryError, key: "Invalid_specifier_Colon_0_110009", text: "Invalid specifier: '{0}'"}
+var Invalid_specifier_Colon_0 = &Message{code: 110008, category: CategoryError, key: "Invalid_specifier_Colon_0_110008", text: "Invalid specifier: '{0}'"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8568,13 +8566,11 @@ func keyToMessage(key Key) *Message {
 		return Your_application_tried_to_access_0_a_peer_dependency_this_isn_t_allowed_as_there_is_no_ancestor_to_satisfy_the_requirement_Use_a_devDependency_if_needed_Required_package_Colon_0_Required_by_Colon_1
 	case "_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application__110005":
 		return X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_Required_by_Colon_2
-	case "no_PnP_manifest_found_110006":
-		return X_no_PnP_manifest_found
-	case "no_package_found_for_path_0_110007":
+	case "no_package_found_for_path_0_110006":
 		return X_no_package_found_for_path_0
-	case "Empty_specifier_Colon_0_110008":
+	case "Empty_specifier_Colon_0_110007":
 		return Empty_specifier_Colon_0
-	case "Invalid_specifier_Colon_0_110009":
+	case "Invalid_specifier_Colon_0_110008":
 		return Invalid_specifier_Colon_0
 	default:
 		return nil

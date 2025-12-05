@@ -64,7 +64,12 @@ func (p *PnpApi) RefreshManifest() error {
 	return nil
 }
 
-func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (string, error) {
+type PnpError struct {
+	Message *diagnostics.Message
+	Args    []any
+}
+
+func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (string, *PnpError) {
 	if p.manifest == nil {
 		panic("ResolveToUnqualified called with no PnP manifest available")
 	}
@@ -112,13 +117,13 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 	if referenceOrAlias == nil {
 		if isNodeJSBuiltin(specifier) {
 			if isDependencyTreeRoot(p.manifest, parentLocator) {
-				return "", errors.New(diagnostics.Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, ident, viaSuffix(specifier, ident), parentPath))
+				return "", &PnpError{Message: diagnostics.Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2, Args: []any{ident, ident, viaSuffix(specifier, ident), parentPath}}
 			}
-			return "", errors.New(diagnostics.X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3.Format(parentLocator.Name, ident, ident, parentLocator.Name, ident, viaSuffix(specifier, ident), parentPath))
+			return "", &PnpError{Message: diagnostics.X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3, Args: []any{parentLocator.Name, ident, ident, parentLocator.Name, ident, viaSuffix(specifier, ident), parentPath}}
 		}
 
 		if isDependencyTreeRoot(p.manifest, parentLocator) {
-			return "", errors.New(diagnostics.Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, ident, viaSuffix(specifier, ident), parentPath))
+			return "", &PnpError{Message: diagnostics.Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2, Args: []any{ident, ident, viaSuffix(specifier, ident), parentPath}}
 		}
 
 		brokenAncestors := findBrokenPeerDependencies(specifier, parentLocator)
@@ -133,9 +138,9 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 		}
 
 		if len(brokenAncestors) > 0 && allBrokenAreRoots {
-			return "", errors.New(diagnostics.Your_application_tried_to_access_0_a_peer_dependency_this_isn_t_allowed_as_there_is_no_ancestor_to_satisfy_the_requirement_Use_a_devDependency_if_needed_Required_package_Colon_0_Required_by_Colon_1.Format(ident, ident, parentPath))
+			return "", &PnpError{Message: diagnostics.Your_application_tried_to_access_0_a_peer_dependency_this_isn_t_allowed_as_there_is_no_ancestor_to_satisfy_the_requirement_Use_a_devDependency_if_needed_Required_package_Colon_0_Required_by_Colon_1, Args: []any{ident, ident, parentPath}}
 		} else {
-			return "", errors.New(diagnostics.X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_Required_by_Colon_2.Format(parentLocator.Name, ident, ident, parentPath))
+			return "", &PnpError{Message: diagnostics.X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_Required_by_Colon_2, Args: []any{parentLocator.Name, ident, ident, parentPath}}
 		}
 	}
 
@@ -159,7 +164,7 @@ func (p *PnpApi) findClosestPnpManifest() (*PnpManifestData, error) {
 		}
 
 		if tspath.IsDiskPathRoot(directoryPath) {
-			return nil, errors.New(diagnostics.X_no_PnP_manifest_found.Format())
+			return nil, errors.New("no PnP manifest found")
 		}
 
 		directoryPath = tspath.GetDirectoryPath(directoryPath)
@@ -176,7 +181,7 @@ func (p *PnpApi) GetPackage(locator *Locator) *PackageInfo {
 	return packageInfo
 }
 
-func (p *PnpApi) FindLocator(parentPath string) (*Locator, error) {
+func (p *PnpApi) FindLocator(parentPath string) (*Locator, *PnpError) {
 	if parentPath == "" {
 		return nil, nil
 	}
@@ -186,11 +191,8 @@ func (p *PnpApi) FindLocator(parentPath string) (*Locator, error) {
 
 	if p.manifest.ignorePatternData != nil {
 		match, err := p.manifest.ignorePatternData.MatchString(relativePath)
-		if err != nil {
-			return nil, err
-		}
 
-		if match {
+		if err == nil && match {
 			return nil, nil
 		}
 	}
@@ -222,7 +224,7 @@ func (p *PnpApi) FindLocator(parentPath string) (*Locator, error) {
 	}
 
 	if bestLocator == nil {
-		return nil, errors.New(diagnostics.X_no_package_found_for_path_0.Format(relativePath))
+		return nil, &PnpError{Message: diagnostics.X_no_package_found_for_path_0, Args: []any{relativePath}}
 	}
 
 	return bestLocator, nil
@@ -252,16 +254,16 @@ func (p *PnpApi) ResolveViaFallback(name string) *PackageDependency {
 	return nil
 }
 
-func (p *PnpApi) ParseBareIdentifier(specifier string) (ident string, modulePath string, err error) {
+func (p *PnpApi) ParseBareIdentifier(specifier string) (ident string, modulePath string, err *PnpError) {
 	if len(specifier) == 0 {
-		return "", "", errors.New(diagnostics.Empty_specifier_Colon_0.Format(specifier))
+		return "", "", &PnpError{Message: diagnostics.Empty_specifier_Colon_0, Args: []any{specifier}}
 	}
 
 	firstSlash := strings.Index(specifier, "/")
 
 	if specifier[0] == '@' {
 		if firstSlash == -1 {
-			return "", "", errors.New(diagnostics.Invalid_specifier_Colon_0.Format(specifier))
+			return "", "", &PnpError{Message: diagnostics.Invalid_specifier_Colon_0, Args: []any{specifier}}
 		}
 
 		secondSlash := strings.Index(specifier[firstSlash+1:], "/")
