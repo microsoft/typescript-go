@@ -6,17 +6,17 @@
 //     }|>
 // }|]|>|>
 // 
-// <|[|{| name: export=, kind: Variable |}export = <|[|{| name: export=, kind: Function |}|]() => ""|]|>|>
+// <|[|{| name: export=, kind: Variable |}export = <|[|{| name: export=, kind: Function |}|]() => ""|>|]|>
 // <|[|{| name: export=, kind: Variable |}export = <|[|{| name: export=, kind: Function |}|]() => {
 //     return <|class [|{| name: Foo, kind: Class |}Foo|] {
 //     }|>
-// }|>|]|>
+// }|]|>|>
 // 
 // <|[|{| name: export=, kind: Variable |}export = <|function [|{| name: f1, kind: Function |}f1|]() {}|]|>|>
 // <|[|{| name: export=, kind: Variable |}export = <|function [|{| name: f2, kind: Function |}f2|]() {
 //     return <|class [|{| name: Foo, kind: Class |}Foo|] {
 //     }|>
-// }|>|]|>
+// }|]|>|>
 // 
 // const <|[|{| name: abc, kind: Variable |}abc|] = 12|>;
 // <|export = [|{| name: export=, kind: Variable |}abc|];|>
