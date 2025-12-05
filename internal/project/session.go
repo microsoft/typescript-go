@@ -505,7 +505,7 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 func (s *Session) GetSnapshotLoadingProjectTree(
 	ctx context.Context,
 	// If null, all project trees need to be loaded, otherwise only those that are referenced
-	requestedProjectTrees map[tspath.Path]struct{},
+	requestedProjectTrees *collections.Set[tspath.Path],
 ) *Snapshot {
 	snapshot := s.getSnapshot(
 		ctx,

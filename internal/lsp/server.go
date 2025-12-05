@@ -832,16 +832,16 @@ func handleMultiProjectRequest[Req lsproto.HasTextDocumentPosition, Resp any](
 		wg = core.NewWorkGroup(false)
 		hasMoreWork := false
 		if defaultDefinition != nil {
-			requestedProjectTrees := make(map[tspath.Path]struct{})
+			var requestedProjectTrees collections.Set[tspath.Path]
 			results.Range(func(key tspath.Path, response *response[Resp]) bool {
 				if response.complete {
-					requestedProjectTrees[key] = struct{}{}
+					requestedProjectTrees.Add(key)
 				}
 				return true
 			})
 
 			// Load more projects based on default definition found
-			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
+			for _, loadedProject := range s.session.GetSnapshotLoadingProjectTree(ctx, &requestedProjectTrees).ProjectCollection.Projects() {
 				if ctx.Err() != nil {
 					return resp, ctx.Err()
 				}
