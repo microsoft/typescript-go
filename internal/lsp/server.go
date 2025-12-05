@@ -73,6 +73,7 @@ func NewServer(opts *ServerOptions) *Server {
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
 		client:                opts.Client,
+		initComplete:          make(chan struct{}),
 	}
 }
 
@@ -110,7 +111,7 @@ func (r *lspReader) Read() (*lsproto.Message, error) {
 
 	req := &lsproto.Message{}
 	if err := json.Unmarshal(data, req); err != nil {
-		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", lsproto.ErrorCodeInvalidRequest, err)
 	}
 
 	return req, nil
@@ -171,6 +172,10 @@ type Server struct {
 	// Test options for initializing session
 	client project.Client
 
+	// initComplete is closed when handleInitialized completes.
+	// Used by tests to wait for full initialization.
+	initComplete chan struct{}
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// parseCache can be passed in so separate tests can share ASTs
@@ -180,6 +185,11 @@ type Server struct {
 }
 
 func (s *Server) Session() *project.Session { return s.session }
+
+// InitComplete returns a channel that is closed when the server has finished
+// processing the initialized notification, including the initial configuration
+// exchange with the client.
+func (s *Server) InitComplete() <-chan struct{} { return s.initComplete }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
@@ -246,6 +256,28 @@ func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.Publish
 	return nil
 }
 
+func (s *Server) RefreshInlayHints(ctx context.Context) error {
+	if !s.clientCapabilities.Workspace.InlayHint.RefreshSupport {
+		return nil
+	}
+
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, nil); err != nil {
+		return fmt.Errorf("failed to refresh inlay hints: %w", err)
+	}
+	return nil
+}
+
+func (s *Server) RefreshCodeLens(ctx context.Context) error {
+	if !s.clientCapabilities.Workspace.CodeLens.RefreshSupport {
+		return nil
+	}
+
+	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, nil); err != nil {
+		return fmt.Errorf("failed to refresh code lens: %w", err)
+	}
+	return nil
+}
+
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
@@ -302,7 +334,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 		}
 		msg, err := s.read()
 		if err != nil {
-			if errors.Is(err, lsproto.ErrInvalidRequest) {
+			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
 				s.sendError(nil, err)
 				continue
 			}
@@ -318,7 +350,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 				}
 				s.sendResult(req.ID, resp)
 			} else {
-				s.sendError(req.ID, lsproto.ErrServerNotInitialized)
+				s.sendError(req.ID, lsproto.ErrorCodeServerNotInitialized)
 			}
 			continue
 		}
@@ -380,7 +412,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			handle := func() {
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
 					if errors.Is(err, context.Canceled) {
-						s.sendError(req.ID, lsproto.ErrRequestCancelled)
+						s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled)
 					} else if errors.Is(err, io.EOF) {
 						lspExit()
 					} else {
@@ -453,15 +485,15 @@ func (s *Server) sendResult(id *lsproto.ID, result any) {
 }
 
 func (s *Server) sendError(id *lsproto.ID, err error) {
-	code := lsproto.ErrInternalError.Code
-	if errCode := (*lsproto.ErrorCode)(nil); errors.As(err, &errCode) {
-		code = errCode.Code
+	code := lsproto.ErrorCodeInternalError
+	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
+		code = errCode
 	}
 	// TODO(jakebailey): error data
 	s.sendResponse(&lsproto.ResponseMessage{
 		ID: id,
 		Error: &lsproto.ResponseError{
-			Code:    code,
+			Code:    int32(code),
 			Message: err.Error(),
 		},
 	})
@@ -479,7 +511,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	}
 	s.Log("unknown method", req.Method)
 	if req.ID != nil {
-		s.sendError(req.ID, lsproto.ErrInvalidRequest)
+		s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
 	return nil
 }
@@ -516,13 +548,23 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentInlayHintInfo, (*Server).handleInlayHint)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeLensInfo, (*Server).handleCodeLens)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
 
+	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
+	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
+
+	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
+	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
+
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
 
 	return handlers
 })
@@ -530,7 +572,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		if s.session == nil && req.Method != lsproto.MethodInitialized {
-			return lsproto.ErrServerNotInitialized
+			return lsproto.ErrorCodeServerNotInitialized
 		}
 
 		var params Req
@@ -552,7 +594,7 @@ func registerRequestHandler[Req, Resp any](
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		if s.session == nil && req.Method != lsproto.MethodInitialize {
-			return lsproto.ErrServerNotInitialized
+			return lsproto.ErrorCodeServerNotInitialized
 		}
 
 		var params Req
@@ -838,7 +880,7 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.Log("panic handling request", req.Method, r, string(stack))
 		if req.ID != nil {
-			s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrInternalError, req.Method, r))
+			s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.Log("unhandled panic in notification", req.Method, r)
 		}
@@ -847,7 +889,7 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 
 func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams, _ *lsproto.RequestMessage) (lsproto.InitializeResponse, error) {
 	if s.initializeParams != nil {
-		return nil, lsproto.ErrInvalidRequest
+		return nil, lsproto.ErrorCodeInvalidRequest
 	}
 
 	s.initializeParams = params
@@ -933,6 +975,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			DocumentSymbolProvider: &lsproto.BooleanOrDocumentSymbolOptions{
 				Boolean: ptrTo(true),
 			},
+			FoldingRangeProvider: &lsproto.BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
 				Boolean: ptrTo(true),
 			},
@@ -945,12 +990,18 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
 				Boolean: ptrTo(true),
 			},
+			CodeLensProvider: &lsproto.CodeLensOptions{
+				ResolveProvider: ptrTo(true),
+			},
 			CodeActionProvider: &lsproto.BooleanOrCodeActionOptions{
 				CodeActionOptions: &lsproto.CodeActionOptions{
 					CodeActionKinds: &[]lsproto.CodeActionKind{
 						lsproto.CodeActionKindQuickFix,
 					},
 				},
+			},
+			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
+				Boolean: ptrTo(true),
 			},
 		},
 	}
@@ -1037,6 +1088,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
 	}
 
+	close(s.initComplete)
 	return nil
 }
 
@@ -1119,6 +1171,10 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 		params.Position,
 		params.Context,
 	)
+}
+
+func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.FoldingRangeParams) (lsproto.FoldingRangeResponse, error) {
+	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
@@ -1210,7 +1266,12 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 	defer s.recover(reqMsg)
 
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
-	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
+	return ls.ProvideWorkspaceSymbols(
+		ctx,
+		programs,
+		snapshot.Converters(),
+		snapshot.UserPreferences(),
+		params.Query)
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
@@ -1278,6 +1339,52 @@ func (s *Server) handleInlayHint(
 	params *lsproto.InlayHintParams,
 ) (lsproto.InlayHintResponse, error) {
 	return languageService.ProvideInlayHint(ctx, params)
+}
+
+func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, params *lsproto.CodeLensParams) (lsproto.CodeLensResponse, error) {
+	return ls.ProvideCodeLenses(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
+	ls, err := s.session.GetLanguageService(ctx, codeLens.Data.Uri)
+	if err != nil {
+		return nil, err
+	}
+	defer s.recover(reqMsg)
+
+	return ls.ResolveCodeLens(ctx, codeLens, s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName)
+}
+
+func (s *Server) handlePrepareCallHierarchy(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.CallHierarchyPrepareParams,
+) (lsproto.CallHierarchyPrepareResponse, error) {
+	return languageService.ProvidePrepareCallHierarchy(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handleCallHierarchyIncomingCalls(
+	ctx context.Context,
+	params *lsproto.CallHierarchyIncomingCallsParams,
+	_ *lsproto.RequestMessage,
+) (lsproto.CallHierarchyIncomingCallsResponse, error) {
+	languageService, err := s.session.GetLanguageService(ctx, params.Item.Uri)
+	if err != nil {
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
+	}
+	return languageService.ProvideCallHierarchyIncomingCalls(ctx, params.Item)
+}
+
+func (s *Server) handleCallHierarchyOutgoingCalls(
+	ctx context.Context,
+	params *lsproto.CallHierarchyOutgoingCallsParams,
+	_ *lsproto.RequestMessage,
+) (lsproto.CallHierarchyOutgoingCallsResponse, error) {
+	languageService, err := s.session.GetLanguageService(ctx, params.Item.Uri)
+	if err != nil {
+		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
+	}
+	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
 }
 
 func (s *Server) Log(msg ...any) {
