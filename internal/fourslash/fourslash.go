@@ -15,7 +15,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -3675,10 +3674,6 @@ func verifyIncludesSymbols(
 	}
 }
 
-func marshalSymbolKind(v lsproto.SymbolKind) ([]byte, error) {
-	return []byte(`"` + v.String() + `"`), nil
-}
-
 func (f *FourslashTest) VerifyBaselineDocumentSymbol(t *testing.T) {
 	params := &lsproto.DocumentSymbolParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -3686,21 +3681,54 @@ func (f *FourslashTest) VerifyBaselineDocumentSymbol(t *testing.T) {
 		},
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
-	var content strings.Builder
-	ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
-	lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
-	content.WriteString(codeFence(lang, "// @FileName: "+f.activeFilename+"\n"+f.scriptInfos[f.activeFilename].content))
-	content.WriteString("\n\n# Symbols\n\n")
-	content.WriteString("```json\n")
-	err := json.MarshalWrite(
-		&content,
-		result.DocumentSymbols,
-		jsontext.Multiline(true),
-		json.WithMarshalers(json.MarshalFunc(marshalSymbolKind)),
-	)
-	if err != nil {
-		t.Fatalf("Failed to marshal document symbols for baseline: %v", err)
+	uri := lsconv.FileNameToDocumentURI(f.activeFilename)
+	spansToSymbol := make(map[documentSpan]*lsproto.DocumentSymbol)
+	if result.DocumentSymbols != nil {
+		for _, symbol := range *result.DocumentSymbols {
+			collectDocumentSymbolSpans(uri, symbol, spansToSymbol)
+		}
 	}
-	content.WriteString("\n```")
-	f.addResultToBaseline(t, documentSymbolsCmd, content.String())
+	f.addResultToBaseline(
+		t,
+		documentSymbolsCmd,
+		f.getBaselineForSpansWithFileContents(slices.Collect(maps.Keys(spansToSymbol)), baselineFourslashLocationsOptions{
+			getLocationData: func(span documentSpan) string {
+				symbol := spansToSymbol[span]
+				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbol.Kind.String())
+			},
+		}),
+	)
+
+	var detailsBuilder strings.Builder
+	if result.DocumentSymbols != nil {
+		writeDocumentSymbolDetails(*result.DocumentSymbols, 0, &detailsBuilder)
+	}
+	f.writeToBaseline(documentSymbolsCmd, "\n\n// === Details ===\n"+detailsBuilder.String())
+}
+
+func writeDocumentSymbolDetails(symbols []*lsproto.DocumentSymbol, indent int, builder *strings.Builder) {
+	for _, symbol := range symbols {
+		fmt.Fprintf(builder, "%s(%s) %s\n", strings.Repeat("  ", indent), symbol.Kind.String(), symbol.Name)
+		if symbol.Children != nil {
+			writeDocumentSymbolDetails(*symbol.Children, indent+1, builder)
+		}
+	}
+}
+
+func collectDocumentSymbolSpans(
+	uri lsproto.DocumentUri,
+	symbol *lsproto.DocumentSymbol,
+	spansToSymbol map[documentSpan]*lsproto.DocumentSymbol,
+) {
+	span := documentSpan{
+		uri:         uri,
+		textSpan:    symbol.SelectionRange,
+		contextSpan: &symbol.Range,
+	}
+	spansToSymbol[span] = symbol
+	if symbol.Children != nil {
+		for _, child := range *symbol.Children {
+			collectDocumentSymbolSpans(uri, child, spansToSymbol)
+		}
+	}
 }

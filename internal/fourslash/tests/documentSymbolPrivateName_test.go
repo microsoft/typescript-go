@@ -13,18 +13,23 @@ func TestDocumentSymbolPrivateName(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: first.ts
 class A {
-  #foo: () => {
+  #foo() {
     class B {
-      #bar: () => {   
+      #bar() {   
          function baz () {
          }
       }
     }
   }
 }
+
+class B {
+	constructor(private prop: string) {}
+}
+
 // @Filename: second.ts
 class Foo {
-	#privateMethod() {}
+	#privateProp: string;
 }
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

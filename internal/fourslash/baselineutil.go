@@ -72,11 +72,11 @@ func getBaselineFileName(t *testing.T, command baselineCommand) string {
 
 func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd:
+	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd:
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
-	case autoImportsCmd, documentSymbolsCmd:
+	case autoImportsCmd:
 		return "baseline.md"
 	default:
 		return "baseline.jsonc"
