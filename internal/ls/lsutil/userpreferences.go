@@ -599,14 +599,53 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 // --- Helper methods ---
 
-func (p *UserPreferences) Copy() *UserPreferences {
-	if p == nil {
-		return nil
+func deepCopy[T any](src T) T {
+	var dst T
+	deepCopyValue(reflect.ValueOf(&dst).Elem(), reflect.ValueOf(src))
+	return dst
+}
+
+func deepCopyValue(dst, src reflect.Value) {
+	switch src.Kind() {
+	case reflect.Pointer:
+		if src.IsNil() {
+			dst.SetZero()
+			return
+		}
+		dst.Set(reflect.New(src.Type().Elem()))
+		deepCopyValue(dst.Elem(), src.Elem())
+	case reflect.Struct:
+		for i := 0; i < src.NumField(); i++ {
+			deepCopyValue(dst.Field(i), src.Field(i))
+		}
+	case reflect.Slice:
+		if src.IsNil() {
+			dst.SetZero()
+			return
+		}
+		dst.Set(reflect.MakeSlice(src.Type(), src.Len(), src.Len()))
+		for i := 0; i < src.Len(); i++ {
+			deepCopyValue(dst.Index(i), src.Index(i))
+		}
+	case reflect.Map:
+		if src.IsNil() {
+			dst.SetZero()
+			return
+		}
+		dst.Set(reflect.MakeMapWithSize(src.Type(), src.Len()))
+		for _, key := range src.MapKeys() {
+			val := src.MapIndex(key)
+			copiedVal := reflect.New(val.Type()).Elem()
+			deepCopyValue(copiedVal, val)
+			dst.SetMapIndex(key, copiedVal)
+		}
+	default:
+		dst.Set(src)
 	}
-	prefCopy := *p
-	prefCopy.AutoImportSpecifierExcludeRegexes = slices.Clone(p.AutoImportSpecifierExcludeRegexes)
-	prefCopy.AutoImportFileExcludePatterns = slices.Clone(p.AutoImportFileExcludePatterns)
-	return &prefCopy
+}
+
+func (p *UserPreferences) Copy() *UserPreferences {
+	return deepCopy(p)
 }
 
 func (p *UserPreferences) CopyOrDefault() *UserPreferences {
