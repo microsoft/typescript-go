@@ -305,18 +305,18 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
+	var projectsWithNewProgramStructure collections.Set[tspath.Path]
+	for _, project := range projectCollection.Projects() {
+		if project.ProgramLastUpdate == newSnapshotID && project.ProgramUpdateKind != ProgramUpdateKindCloned {
+			projectsWithNewProgramStructure.Add(project.configFilePath)
+		}
+	}
+
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
 	if len(change.fileChanges.Opened) != 0 {
-		var changedFiles bool
-		for _, project := range projectCollection.Projects() {
-			if project.ProgramLastUpdate == newSnapshotID && project.ProgramUpdateKind != ProgramUpdateKindCloned {
-				changedFiles = true
-				break
-			}
-		}
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
-		if changedFiles {
+		if projectsWithNewProgramStructure.Len() > 0 {
 			cleanFilesStart := time.Now()
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
@@ -365,11 +365,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
 	}
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
-		RequestedFile: prepareAutoImports,
-		OpenFiles:     openFiles,
-		Changed:       change.fileChanges.Changed,
-		Created:       change.fileChanges.Created,
-		Deleted:       change.fileChanges.Deleted,
+		RequestedFile:   prepareAutoImports,
+		OpenFiles:       openFiles,
+		Changed:         change.fileChanges.Changed,
+		Created:         change.fileChanges.Created,
+		Deleted:         change.fileChanges.Deleted,
+		RebuiltPrograms: projectsWithNewProgramStructure,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 
 	snapshotFS, _ := fs.Finalize()

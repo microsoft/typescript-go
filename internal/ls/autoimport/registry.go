@@ -27,31 +27,59 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+type BucketState struct {
+	dirtyFile           tspath.Path
+	multipleFilesDirty  bool
+	newProgramStructure bool
+}
+
 type RegistryBucket struct {
 	dirty     bool
 	dirtyFile tspath.Path
-	Paths     map[tspath.Path]struct{}
+
+	Paths map[tspath.Path]struct{}
 	// !!! only need to store locations outside the current node_modules directory
 	//     if we always rebuild whole directory on any change inside
-	LookupLocations    map[tspath.Path]struct{}
-	PackageNames       *collections.Set[string]
-	DependencyNames    *collections.Set[string]
+	LookupLocations map[tspath.Path]struct{}
+	// IgnoredPackageNames is only defined for project buckets. It is the set of
+	// package names that were present in the project's program, and not included
+	// in a node_modules bucket, and ultimately not included in the project bucket
+	// because they were only imported transitively. If an updated program's
+	// ResolvedPackageNames contains one of these, the bucket should be rebuilt
+	// because that package will be included.
+	IgnoredPackageNames *collections.Set[string]
+	// PackageNames is only defined for node_modules buckets. It is the full set of
+	// package directory names in the node_modules directory (but not necessarily
+	// inclued in the bucket).
+	PackageNames *collections.Set[string]
+	// DependencyNames is only defined for node_modules buckets. It is the set of
+	// package names that will be included in the bucket if present in the directory,
+	// computed from package.json dependencies. If nil, all packages are included
+	// because at least one open file has access to this node_modules directory without
+	// being filtered by a package.json.
+	DependencyNames *collections.Set[string]
+	// AmbientModuleNames is only defined for node_modules buckets. It is the set of
+	// ambient module names found while extracting exports in the bucket.
 	AmbientModuleNames map[string][]string
-	Entrypoints        map[tspath.Path][]*module.ResolvedEntrypoint
-	Index              *Index[*Export]
+	// Entrypoints is only defined for node_modules buckets. Keys are package entrypoint
+	// file paths, and values describe the ways of importing the package that would resolve
+	// to that file.
+	Entrypoints map[tspath.Path][]*module.ResolvedEntrypoint
+	Index       *Index[*Export]
 }
 
 func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
-		dirty:              b.dirty,
-		dirtyFile:          b.dirtyFile,
-		Paths:              b.Paths,
-		LookupLocations:    b.LookupLocations,
-		PackageNames:       b.PackageNames,
-		DependencyNames:    b.DependencyNames,
-		AmbientModuleNames: b.AmbientModuleNames,
-		Entrypoints:        b.Entrypoints,
-		Index:              b.Index,
+		dirty:               b.dirty,
+		dirtyFile:           b.dirtyFile,
+		Paths:               b.Paths,
+		LookupLocations:     b.LookupLocations,
+		IgnoredPackageNames: b.IgnoredPackageNames,
+		PackageNames:        b.PackageNames,
+		DependencyNames:     b.DependencyNames,
+		AmbientModuleNames:  b.AmbientModuleNames,
+		Entrypoints:         b.Entrypoints,
+		Index:               b.Index,
 	}
 }
 
@@ -64,6 +92,12 @@ func (b *RegistryBucket) markFileDirty(file tspath.Path) {
 		b.dirtyFile = ""
 	}
 	b.dirty = true
+}
+
+// markDirty should only be called within a Change call on the dirty map.
+func (b *RegistryBucket) markDirty() {
+	b.dirty = true
+	b.dirtyFile = ""
 }
 
 func (b *RegistryBucket) hasDirtyFileBesides(file tspath.Path) bool {
@@ -113,21 +147,23 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 	if !ok {
 		panic("project bucket missing")
 	}
-	if projectBucket.dirty {
+	path := r.toPath(fileName)
+	if projectBucket.hasDirtyFileBesides(path) {
 		return false
 	}
-	path := r.toPath(fileName).GetDirectoryPath()
+
+	dirPath := path.GetDirectoryPath()
 	for {
-		if dirBucket, ok := r.nodeModules[path]; ok {
+		if dirBucket, ok := r.nodeModules[dirPath]; ok {
 			if dirBucket.dirty {
 				return false
 			}
 		}
-		parent := path.GetDirectoryPath()
-		if parent == path {
+		parent := dirPath.GetDirectoryPath()
+		if parent == dirPath {
 			break
 		}
-		path = parent
+		dirPath = parent
 	}
 	return true
 }
@@ -212,11 +248,12 @@ func (r *Registry) GetCacheStats() *CacheStats {
 }
 
 type RegistryChange struct {
-	RequestedFile tspath.Path
-	OpenFiles     map[tspath.Path]string
-	Changed       collections.Set[lsproto.DocumentUri]
-	Created       collections.Set[lsproto.DocumentUri]
-	Deleted       collections.Set[lsproto.DocumentUri]
+	RequestedFile   tspath.Path
+	OpenFiles       map[tspath.Path]string
+	Changed         collections.Set[lsproto.DocumentUri]
+	Created         collections.Set[lsproto.DocumentUri]
+	Deleted         collections.Set[lsproto.DocumentUri]
+	RebuiltPrograms collections.Set[tspath.Path]
 }
 
 type RegistryCloneHost interface {
@@ -352,7 +389,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 				nodeModulesEntry.ChangeIf(func(bucket *RegistryBucket) bool {
 					return !bucket.dirty
 				}, func(bucket *RegistryBucket) {
-					bucket.dirty = true
+					bucket.markDirty()
 				})
 			} else {
 				b.nodeModules.Add(dirPath, &RegistryBucket{dirty: true})
@@ -414,6 +451,13 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 
 func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *logging.LogTree) {
 	start := time.Now()
+
+	for projectPath := range change.RebuiltPrograms.Keys() {
+		if bucket, ok := b.projects.Get(projectPath); ok {
+			bucket.Change(func(bucket *RegistryBucket) { bucket.markDirty() })
+		}
+	}
+
 	cleanNodeModulesBuckets := make(map[tspath.Path]struct{})
 	cleanProjectBuckets := make(map[tspath.Path]struct{})
 	b.nodeModules.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
@@ -551,11 +595,18 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 
 	if project, ok := b.projects.Get(projectPath); ok {
-		if project.Value().hasDirtyFileBesides(change.RequestedFile) {
+		shouldRebuild := project.Value().hasDirtyFileBesides(change.RequestedFile)
+		if shouldRebuild {
 			task := &task{entry: project}
 			tasks = append(tasks, task)
 			wg.Go(func() {
-				index, err := b.buildProjectBucket(ctx, projectPath, nodeModulesContainsDependency, logger.Fork("Building project bucket "+string(projectPath)))
+				index, err := b.buildProjectBucket(
+					ctx,
+					projectPath,
+					getResolvedPackageNames(ctx, b.host.GetProgramForProject(projectPath)),
+					nodeModulesContainsDependency,
+					logger.Fork("Building project bucket "+string(projectPath)),
+				)
 				task.result = index
 				task.err = err
 			})
@@ -633,7 +684,13 @@ type bucketBuildResult struct {
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 }
 
-func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath tspath.Path, nodeModulesContainsDependency func(nodeModulesDir tspath.Path, packageName string) bool, logger *logging.LogTree) (*bucketBuildResult, error) {
+func (b *registryBuilder) buildProjectBucket(
+	ctx context.Context,
+	projectPath tspath.Path,
+	resolvedPackageNames *collections.Set[string],
+	nodeModulesContainsDependency func(nodeModulesDir tspath.Path, packageName string) bool,
+	logger *logging.LogTree,
+) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
 	}
@@ -646,21 +703,8 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	defer closePool()
 	exports := make(map[tspath.Path][]*Export)
 	var wg sync.WaitGroup
-	var ambientIncludedPackages collections.Set[string]
+	var ignoredPackageNames collections.Set[string]
 	var combinedStats extractorStats
-	unresolvedPackageNames := program.UnresolvedPackageNames()
-	if unresolvedPackageNames.Len() > 0 {
-		checker, done := program.GetTypeChecker(ctx)
-		for name := range unresolvedPackageNames.Keys() {
-			if symbol := checker.TryFindAmbientModule(name); symbol != nil {
-				declaringFile := ast.GetSourceFileOfModule(symbol)
-				if packageName := modulespecifiers.GetPackageNameFromDirectory(declaringFile.FileName()); packageName != "" {
-					ambientIncludedPackages.Add(packageName)
-				}
-			}
-		}
-		done()
-	}
 
 	for _, file := range program.GetSourceFiles() {
 		if program.IsSourceFileDefaultLibrary(file.Path()) {
@@ -671,12 +715,13 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 			// Only process this file if it is not going to be processed as part of a node_modules bucket
 			// *and* if it was imported directly (not transitively) by a project file (i.e., this is part
 			// of a package not listed in package.json, but imported anyway).
-			if !program.ResolvedPackageNames().Has(packageName) && !ambientIncludedPackages.Has(packageName) {
-				continue
-			}
 			pathComponents := tspath.GetPathComponents(string(file.Path()), "")
 			nodeModulesDir := tspath.GetPathFromPathComponents(pathComponents[:slices.Index(pathComponents, "node_modules")])
 			if nodeModulesContainsDependency(tspath.Path(nodeModulesDir), packageName) {
+				continue
+			}
+			if !resolvedPackageNames.Has(packageName) {
+				ignoredPackageNames.Add(packageName)
 				continue
 			}
 		}
@@ -713,6 +758,7 @@ func (b *registryBuilder) buildProjectBucket(ctx context.Context, projectPath ts
 	}
 
 	result.bucket.Index = idx
+	result.bucket.IgnoredPackageNames = &ignoredPackageNames
 
 	if logger != nil {
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker)

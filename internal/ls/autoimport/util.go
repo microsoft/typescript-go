@@ -1,14 +1,17 @@
 package autoimport
 
 import (
+	"context"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -115,4 +118,22 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 		}
 	}
 	return ""
+}
+
+func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *collections.Set[string] {
+	resolvedPackageNames := program.ResolvedPackageNames().Clone()
+	unresolvedPackageNames := program.UnresolvedPackageNames()
+	if unresolvedPackageNames.Len() > 0 {
+		checker, done := program.GetTypeChecker(ctx)
+		for name := range unresolvedPackageNames.Keys() {
+			if symbol := checker.TryFindAmbientModule(name); symbol != nil {
+				declaringFile := ast.GetSourceFileOfModule(symbol)
+				if packageName := modulespecifiers.GetPackageNameFromDirectory(declaringFile.FileName()); packageName != "" {
+					resolvedPackageNames.Add(packageName)
+				}
+			}
+		}
+		done()
+	}
+	return resolvedPackageNames
 }

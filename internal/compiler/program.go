@@ -256,6 +256,8 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
 		unresolvedImports:           p.unresolvedImports,
+		resolvedPackageNames:        p.resolvedPackageNames,
+		unresolvedPackageNames:      p.unresolvedPackageNames,
 		knownSymlinks:               p.knownSymlinks,
 	}
 	result.initCheckerPool()
@@ -1619,7 +1621,7 @@ func (p *Program) collectPackageNames() {
 					}
 					if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
 						key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
-						if resolvedModule, ok := resolvedModules[key]; ok {
+						if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
 							if !resolvedModule.IsExternalLibraryImport {
 								continue
 							}
@@ -1627,7 +1629,7 @@ func (p *Program) collectPackageNames() {
 							if name == "" {
 								// node_modules package, but no name in package.json - this can happen in a monorepo package,
 								// and unfortunately in lots of fourslash tests
-								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.OriginalPath)
+								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
 							}
 							p.resolvedPackageNames.Add(name)
 							continue
