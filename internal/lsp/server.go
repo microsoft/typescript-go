@@ -287,13 +287,12 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 		return nil, fmt.Errorf("configure request failed: %w", err)
 	}
 	s.logger.Infof("configuration: %+v, %T", configs, configs)
-	userPreferences := s.session.NewUserPreferences()
 	for _, item := range configs {
-		if parsed := userPreferences.Parse(item); parsed != nil {
+		if parsed := lsutil.ParseUserPreferences(item); parsed != nil {
 			return parsed, nil
 		}
 	}
-	return userPreferences, nil
+	return s.session.NewUserPreferences(), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -1101,11 +1100,9 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	}
 	// !!! Both the 'javascript' and 'js/ts' scopes need to be checked for settings as well.
 	tsSettings := settings["typescript"]
-	userPreferences := s.session.UserPreferences()
-	if parsed := userPreferences.Parse(tsSettings); parsed != nil {
-		userPreferences = parsed
+	if parsed := lsutil.ParseUserPreferences(tsSettings); parsed != nil {
+		s.session.Configure(parsed)
 	}
-	s.session.Configure(userPreferences)
 	return nil
 }
 

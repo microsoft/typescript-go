@@ -598,6 +598,8 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err := json.UnmarshalDecode(dec, &config); err != nil {
 		return err
 	}
+	// Start with defaults, then overlay parsed values
+	*p = *NewDefaultUserPreferences()
 	p.parseWorker(config)
 	return nil
 }
@@ -664,16 +666,20 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 	return modulespecifiers.UserPreferences(p.ModuleSpecifier)
 }
 
-func (p *UserPreferences) Parse(item any) *UserPreferences {
+// ParseUserPreferences parses user preferences from a config map or copies from existing preferences.
+// Always returns a fresh *UserPreferences with defaults applied, then overlaid with parsed values.
+// Returns nil if item is nil.
+func ParseUserPreferences(item any) *UserPreferences {
 	if item == nil {
 		return nil
 	}
 	if config, ok := item.(map[string]any); ok {
+		p := NewDefaultUserPreferences()
 		p.parseWorker(config)
-		return nil
+		return p
 	}
-	if item, ok := item.(*UserPreferences); ok {
-		return item.CopyOrDefault()
+	if prefs, ok := item.(*UserPreferences); ok {
+		return prefs.CopyOrDefault()
 	}
 	return nil
 }
