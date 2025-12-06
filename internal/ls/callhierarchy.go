@@ -4,6 +4,7 @@ import (
 	"context"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -567,24 +568,78 @@ func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.P
 	}
 }
 
+type incomingEntry struct {
+	ls   *LanguageService
+	node *ast.Node
+
+	sourceFileOnce sync.Once
+	sourceFile     *ast.SourceFile
+
+	documentUriOnce sync.Once
+	documentUri     lsproto.DocumentUri
+
+	positionOnce sync.Once
+	position     lsproto.Position
+}
+
+var _ lsproto.HasTextDocumentPosition = (*incomingEntry)(nil)
+
+func (d *incomingEntry) getSourceFile() *ast.SourceFile {
+	d.sourceFileOnce.Do(func() {
+		d.sourceFile = ast.GetSourceFileOfNode(d.node)
+	})
+	return d.sourceFile
+}
+
+func (d *incomingEntry) TextDocumentURI() lsproto.DocumentUri {
+	d.documentUriOnce.Do(func() {
+		d.documentUri = lsconv.FileNameToDocumentURI(d.getSourceFile().FileName())
+	})
+	return d.documentUri
+}
+
+func (d *incomingEntry) TextDocumentPosition() lsproto.Position {
+	d.positionOnce.Do(func() {
+		start := scanner.GetTokenPosOfNode(d.node, d.getSourceFile(), false /*includeJsDoc*/)
+		d.position = d.ls.createLspPosition(start, d.getSourceFile())
+	})
+	return d.position
+}
+
 // Gets the call sites that call into the provided call hierarchy declaration.
-func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compiler.Program, declaration *ast.Node) []*lsproto.CallHierarchyIncomingCall {
+func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compiler.Program, declaration *ast.Node, orchestrator CrossProjectOrchestrator) (lsproto.CallHierarchyIncomingCallsResponse, error) {
 	// Source files and modules have no incoming calls.
 	if ast.IsSourceFile(declaration) || ast.IsModuleDeclaration(declaration) || ast.IsClassStaticBlockDeclaration(declaration) {
-		return nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
 	location := getCallHierarchyDeclarationReferenceNode(declaration)
 	if location == nil {
-		return nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
-	sourceFiles := program.GetSourceFiles()
-	options := refOptions{use: referenceUseReferences}
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, 0, location, program, sourceFiles, options, nil)
+	incomingEntry := &incomingEntry{
+		ls:   l,
+		node: location,
+	}
 
+	return handleCrossProject(
+		l,
+		ctx,
+		incomingEntry,
+		orchestrator,
+		(*LanguageService).symbolAndEntriesToIncomingCalls,
+		combineIncomingCalls,
+		false,
+		false,
+		symbolEntryTransformOptions{},
+	)
+}
+
+func (l *LanguageService) symbolAndEntriesToIncomingCalls(ctx context.Context, params *incomingEntry, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.CallHierarchyIncomingCallsResponse, error) {
+	program := l.GetProgram()
 	var refEntries []*ReferenceEntry
-	for _, symbolAndEntry := range symbolsAndEntries {
+	for _, symbolAndEntry := range data.SymbolsAndEntries {
 		refEntries = append(refEntries, symbolAndEntry.references...)
 	}
 
@@ -596,7 +651,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 	}
 
 	if len(callSites) == 0 {
-		return nil
+		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
 	grouped := make(map[ast.NodeId][]*callSite)
@@ -620,7 +675,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 		return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
 	})
 
-	return result
+	return lsproto.CallHierarchyIncomingCallsOrNull{CallHierarchyIncomingCalls: &result}, nil
 }
 
 type callSiteCollector struct {
@@ -947,6 +1002,7 @@ func (l *LanguageService) ProvidePrepareCallHierarchy(
 func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 	ctx context.Context,
 	item *lsproto.CallHierarchyItem,
+	orchestrator CrossProjectOrchestrator,
 ) (lsproto.CallHierarchyIncomingCallsResponse, error) {
 	program := l.GetProgram()
 	fileName := item.Uri.FileName()
@@ -986,11 +1042,7 @@ func (l *LanguageService) ProvideCallHierarchyIncomingCalls(
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
-	calls := l.getIncomingCalls(ctx, program, decl)
-	if calls == nil {
-		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
-	}
-	return lsproto.CallHierarchyIncomingCallsOrNull{CallHierarchyIncomingCalls: &calls}, nil
+	return l.getIncomingCalls(ctx, program, decl, orchestrator)
 }
 
 func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
