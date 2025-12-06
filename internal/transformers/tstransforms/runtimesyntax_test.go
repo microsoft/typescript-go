@@ -3,7 +3,9 @@ package tstransforms_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
@@ -49,29 +51,23 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "autonumber enum #4", input: "enum E {A = x,B,C}", output: `var E;
 (function (E) {
-    var auto;
-    E[E["A"] = auto = x] = "A";
-    E[E["B"] = ++auto] = "B";
-    E[E["C"] = ++auto] = "C";
+    E[E["A"] = x] = "A";
+    E[E["B"] = void 0] = "B";
+    E[E["C"] = void 0] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #5", input: "enum E {A = x,B,C = y}", output: `var E;
 (function (E) {
-    var auto;
-    E[E["A"] = auto = x] = "A";
-    E[E["B"] = ++auto] = "B";
-    E["C"] = y;
-    if (typeof E.C !== "string") E[E.C] = "C";
+    E[E["A"] = x] = "A";
+    E[E["B"] = void 0] = "B";
+    E[E["C"] = y] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #6", input: "enum E {A = x,B = y,C = z}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E.A !== "string") E[E.A] = "A";
-    E["B"] = y;
-    if (typeof E.B !== "string") E[E.B] = "B";
-    E["C"] = z;
-    if (typeof E.C !== "string") E[E.C] = "C";
+    E[E["A"] = x] = "A";
+    E[E["B"] = y] = "B";
+    E[E["C"] = z] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #7", input: "enum E {A = 1,B,C,D='x'}", output: `var E;
@@ -98,20 +94,18 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "autonumber enum #10", input: "enum E {A='x',B=y,C}", output: `var E;
 (function (E) {
-    var auto;
     E["A"] = "x";
-    E[E["B"] = auto = y] = "B";
-    E[E["C"] = ++auto] = "C";
+    E[E["B"] = y] = "B";
+    E[E["C"] = void 0] = "C";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #11", input: "enum E {A='x',B=1,C,D=y,E,F=3,G}", output: `var E;
 (function (E) {
-    var auto;
     E["A"] = "x";
     E[E["B"] = 1] = "B";
     E[E["C"] = 2] = "C";
-    E[E["D"] = auto = y] = "D";
-    E[E["E"] = ++auto] = "E";
+    E[E["D"] = y] = "D";
+    E[E["E"] = void 0] = "E";
     E[E["F"] = 3] = "F";
     E[E["G"] = 4] = "G";
 })(E || (E = {}));`},
@@ -125,7 +119,7 @@ func TestEnumTransformer(t *testing.T) {
 		{title: "autonumber enum #13", input: "enum E {A='x',B}", output: `var E;
 (function (E) {
     E["A"] = "x";
-    E["B"] = void 0;
+    E[E["B"] = void 0] = "B";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #14", input: "enum E {A,B,C=A|B,D}", output: `var E;
@@ -165,26 +159,20 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "enum self reference #2", input: "enum E {A=x,B=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E.A !== "string") E[E.A] = "A";
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["A"] = x] = "A";
+    E[E["B"] = E.A] = "B";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #3", input: "enum E {'A'=x,B=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E["A"] !== "string") E[E["A"]] = "A";
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["A"] = x] = "A";
+    E[E["B"] = E.A] = "B";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #4", input: "enum E {'A'=x,'B '=A}", output: `var E;
 (function (E) {
-    E["A"] = x;
-    if (typeof E["A"] !== "string") E[E["A"]] = "A";
-    E["B "] = E.A;
-    if (typeof E["B "] !== "string") E[E["B "]] = "B ";
+    E[E["A"] = x] = "A";
+    E[E["B "] = E.A] = "B ";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #5", input: "enum E {A,B=E.A}", output: `var E;
@@ -207,8 +195,7 @@ var E;
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 (function (E) {
-    E["B"] = A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["B"] = 0] = "B";
 })(E || (E = {}));`},
 
 		{title: "reverse map enum", input: `enum E {
@@ -233,7 +220,7 @@ var E;
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
-			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
+			resolver := GetEmitResolver(options, file)
 			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
@@ -399,7 +386,7 @@ func TestNamespaceTransformer(t *testing.T) {
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
-			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
+			resolver := GetEmitResolver(options, file)
 			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
@@ -435,11 +422,26 @@ func TestParameterPropertyTransformer(t *testing.T) {
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
-			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
+			resolver := GetEmitResolver(options, file)
 			opts := &transformers.TransformOptions{Context: emitContext, CompilerOptions: options, Resolver: resolver}
 			file = tstransforms.NewTypeEraserTransformer(opts).TransformSourceFile(file)
 			file = tstransforms.NewRuntimeSyntaxTransformer(opts).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}
+}
+
+func GetEmitResolver(options *core.CompilerOptions, sourceFile *ast.SourceFile) binder.ReferenceResolver {
+	c, _ := checker.NewChecker(&fakeProgram{
+		singleThreaded:  true,
+		compilerOptions: options,
+		files:           []*ast.SourceFile{sourceFile},
+		getEmitModuleFormatOfFile: func(sourceFile ast.HasFileName) core.ModuleKind {
+			return core.ModuleKindESNext
+		},
+		getImpliedNodeFormatForEmit: func(sourceFile ast.HasFileName) core.ModuleKind {
+			return core.ModuleKindESNext
+		},
+	})
+	return c.GetEmitResolver()
 }

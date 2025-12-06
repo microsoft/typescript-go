@@ -835,6 +835,7 @@ func (r *EmitResolver) getReferenceResolver() binder.ReferenceResolver {
 			GetTypeOnlyAliasDeclaration:            r.checker.getTypeOnlyAliasDeclarationEx,
 			GetExportSymbolOfValueSymbolIfExported: r.checker.getExportSymbolOfValueSymbolIfExported,
 			GetElementAccessExpressionName:         r.checker.tryGetElementAccessExpressionName,
+			GetEnumMemberValue:                     r.checker.getEnumMemberValue,
 		})
 	}
 	return r.referenceResolver
