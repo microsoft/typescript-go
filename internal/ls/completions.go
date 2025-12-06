@@ -1444,7 +1444,7 @@ func (l *LanguageService) getCompletionData(
 		completionKind = CompletionKindMemberLike
 		// Declaring new property/method/accessor
 		isNewIdentifierLocation = true
-		if contextToken.Kind == ast.KindAsteriskToken {
+		if contextToken != nil && contextToken.Kind == ast.KindAsteriskToken {
 			keywordFilters = KeywordCompletionFiltersNone
 		} else if ast.IsClassLike(decl) {
 			keywordFilters = KeywordCompletionFiltersClassElementKeywords
@@ -1458,9 +1458,9 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		var classElement *ast.Node
-		if contextToken.Kind == ast.KindSemicolonToken {
+		if contextToken != nil && contextToken.Kind == ast.KindSemicolonToken {
 			classElement = contextToken.Parent.Parent
-		} else {
+		} else if contextToken != nil {
 			classElement = contextToken.Parent
 		}
 		var classElementModifierFlags ast.ModifierFlags
@@ -1468,7 +1468,7 @@ func (l *LanguageService) getCompletionData(
 			classElementModifierFlags = classElement.ModifierFlags()
 		}
 		// If this is context token is not something we are editing now, consider if this would lead to be modifier.
-		if contextToken.Kind == ast.KindIdentifier && !isCurrentlyEditingNode(contextToken, file, position) {
+		if contextToken != nil && contextToken.Kind == ast.KindIdentifier && !isCurrentlyEditingNode(contextToken, file, position) {
 			switch contextToken.Text() {
 			case "private":
 				classElementModifierFlags |= ast.ModifierFlagsPrivate
@@ -2750,7 +2750,7 @@ func getSourceFromOrigin(origin *symbolOriginInfo) string {
 func getRelevantTokens(position int, file *ast.SourceFile) (contextToken *ast.Node, previousToken *ast.Node) {
 	previousToken = astnav.FindPrecedingToken(file, position)
 	if previousToken != nil && position <= previousToken.End() && (ast.IsMemberName(previousToken) || ast.IsKeywordKind(previousToken.Kind)) {
-		contextToken := astnav.FindPrecedingToken(file, previousToken.Pos())
+		contextToken = astnav.FindPrecedingToken(file, previousToken.Pos())
 		return contextToken, previousToken
 	}
 	return previousToken, previousToken
