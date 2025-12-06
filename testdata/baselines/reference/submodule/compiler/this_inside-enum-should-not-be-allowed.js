@@ -14,14 +14,12 @@ module ModuleEnum {
 //// [this_inside-enum-should-not-be-allowed.js]
 var TopLevelEnum;
 (function (TopLevelEnum) {
-    TopLevelEnum["ThisWasAllowedButShouldNotBe"] = this; // Should not be allowed
-    if (typeof TopLevelEnum.ThisWasAllowedButShouldNotBe !== "string") TopLevelEnum[TopLevelEnum.ThisWasAllowedButShouldNotBe] = "ThisWasAllowedButShouldNotBe";
+    TopLevelEnum[TopLevelEnum["ThisWasAllowedButShouldNotBe"] = this] = "ThisWasAllowedButShouldNotBe"; // Should not be allowed
 })(TopLevelEnum || (TopLevelEnum = {}));
 var ModuleEnum;
 (function (ModuleEnum) {
     let EnumInModule;
     (function (EnumInModule) {
-        EnumInModule["WasADifferentError"] = this; // this was handled as if this was in a module
-        if (typeof EnumInModule.WasADifferentError !== "string") EnumInModule[EnumInModule.WasADifferentError] = "WasADifferentError";
+        EnumInModule[EnumInModule["WasADifferentError"] = this] = "WasADifferentError"; // this was handled as if this was in a module
     })(EnumInModule || (EnumInModule = {}));
 })(ModuleEnum || (ModuleEnum = {}));

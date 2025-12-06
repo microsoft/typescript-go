@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/evaluator"
 )
 
 type ReferenceResolver interface {
@@ -12,6 +13,7 @@ type ReferenceResolver interface {
 	GetReferencedValueDeclaration(node *ast.IdentifierNode) *ast.Declaration
 	GetReferencedValueDeclarations(node *ast.IdentifierNode) []*ast.Declaration
 	GetElementAccessExpressionName(expression *ast.ElementAccessExpression) string
+	GetEnumMemberValue(node *ast.Node) evaluator.Result
 }
 
 type ReferenceResolverHooks struct {
@@ -23,6 +25,7 @@ type ReferenceResolverHooks struct {
 	GetTypeOnlyAliasDeclaration            func(symbol *ast.Symbol, include ast.SymbolFlags) *ast.Declaration
 	GetExportSymbolOfValueSymbolIfExported func(*ast.Symbol) *ast.Symbol
 	GetElementAccessExpressionName         func(*ast.ElementAccessExpression) (string, bool)
+	GetEnumMemberValue                     func(node *ast.Node) evaluator.Result
 }
 
 var _ ReferenceResolver = &referenceResolver{}
@@ -248,4 +251,13 @@ func (r *referenceResolver) GetElementAccessExpressionName(expression *ast.Eleme
 		}
 	}
 	return ""
+}
+
+func (r *referenceResolver) GetEnumMemberValue(node *ast.Node) evaluator.Result {
+	if node != nil {
+		if r.hooks.GetEnumMemberValue != nil {
+			return r.hooks.GetEnumMemberValue(node)
+		}
+	}
+	return evaluator.NewResult(nil, false, false, false)
 }

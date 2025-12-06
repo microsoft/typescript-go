@@ -57,12 +57,8 @@ const d = 'd';
 //// [enum2.js]
 var Enum;
 (function (Enum) {
-    Enum["D"] = d;
-    if (typeof Enum.D !== "string") Enum[Enum.D] = "D";
-    Enum["E"] = A;
-    if (typeof Enum.E !== "string") Enum[Enum.E] = "E";
-    Enum["Y"] = X;
-    if (typeof Enum.Y !== "string") Enum[Enum.Y] = "Y";
-    Enum["Z"] = Enum.A;
-    if (typeof Enum.Z !== "string") Enum[Enum.Z] = "Z";
+    Enum["D"] = "d";
+    Enum[Enum["E"] = 0] = "E";
+    Enum[Enum["Y"] = 1000000] = "Y";
+    Enum[Enum["Z"] = 0] = "Z";
 })(Enum || (Enum = {}));
