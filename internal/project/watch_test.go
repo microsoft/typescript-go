@@ -24,5 +24,5 @@ func TestNilWatchedFilesClone(t *testing.T) {
 
 	var w *WatchedFiles[int]
 	result := w.Clone(42)
-	assert.Equal(t, result, nil, "clone on a nil `WatchedFiles` should return nil")
+	assert.Assert(t, result == nil, "clone on a nil `WatchedFiles` should return nil")
 }
