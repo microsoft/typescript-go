@@ -273,8 +273,8 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		// if no configuration request capapbility, return default preferences
-		return s.session.NewUserPreferences(), nil
+		// if no configuration request capability, return default preferences
+		return lsutil.NewDefaultUserPreferences(), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
@@ -292,7 +292,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 			return parsed, nil
 		}
 	}
-	return s.session.NewUserPreferences(), nil
+	return lsutil.NewDefaultUserPreferences(), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
