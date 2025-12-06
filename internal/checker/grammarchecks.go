@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/regexpchecker"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -54,43 +55,30 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 	return false
 }
 
-func (c *Checker) checkGrammarRegularExpressionLiteral(_ *ast.RegularExpressionLiteral) bool {
-	// !!!
-	// Unclear if this is needed until regular expression parsing is more thoroughly implemented.
+func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressionLiteral) bool {
+	sourceFile := ast.GetSourceFileOfNode(node.AsNode())
+	if !c.hasParseDiagnostics(sourceFile) && node.TokenFlags&ast.TokenFlagsUnterminated == 0 {
+		var lastError *ast.Diagnostic
+
+		nodeStart := scanner.GetTokenPosOfNode(node.AsNode(), sourceFile, false)
+		onError := func(message *diagnostics.Message, start int, length int, args ...any) {
+			start += nodeStart
+
+			if message.Category() == diagnostics.CategoryMessage && lastError != nil &&
+				start == lastError.Pos() && length == lastError.Len() {
+				err := ast.NewDiagnostic(nil, core.NewTextRange(start, start+length), message, args...)
+				lastError.AddRelatedInfo(err)
+			} else if lastError == nil || start != lastError.Pos() {
+				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...)
+				c.diagnostics.Add(lastError)
+			}
+		}
+
+		regexpchecker.Check(node, sourceFile, c.languageVersion, onError)
+
+		return lastError != nil
+	}
 	return false
-	// sourceFile := ast.GetSourceFileOfNode(node.AsNode())
-	// if !c.hasParseDiagnostics(sourceFile) && !node.IsUnterminated {
-	// 	var lastError *ast.Diagnostic
-	// 	scanner := NewScanner()
-	// 	scanner.skipTrivia = true
-	// 	scanner.SetScriptTarget(sourceFile.LanguageVersion)
-	// 	scanner.SetLanguageVariant(sourceFile.LanguageVariant)
-	// 	scanner.SetOnError(func(message *diagnostics.Message, start int, length int, args ...any) {
-	// 		// !!!
-	// 		// Original uses `tokenEnd()` - unclear if this is the same as the `start` passed in here.
-	// 		// const start = scanner.TokenEnd()
-
-	// 		// The scanner is operating on a slice of the original source text, so we need to adjust the start
-	// 		// for error reporting.
-	// 		start = start + node.Pos()
-
-	// 		// For providing spelling suggestions
-	// 		if message.Category() == diagnostics.CategoryMessage && lastError != nil && start == lastError.Pos() && length == lastError.Len() {
-	// 			err := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args)
-	// 			lastError.AddRelatedInfo(err)
-	// 		} else if !(lastError != nil) || start != lastError.Pos() {
-	// 			lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args)
-	// 			c.diagnostics.Add(lastError)
-	// 		}
-	// 	})
-	// 	scanner.SetText(sourceFile.Text[node.Pos():node.Loc.Len()])
-	// 	scanner.Scan()
-	// 	if scanner.ReScanSlashToken() != ast.KindRegularExpressionLiteral {
-	// 		panic("Expected to rescan RegularExpressionLiteral")
-	// 	}
-	// 	return lastError != nil
-	// }
-	// return false
 }
 
 func (c *Checker) checkGrammarPrivateIdentifierExpression(privId *ast.PrivateIdentifier) bool {
