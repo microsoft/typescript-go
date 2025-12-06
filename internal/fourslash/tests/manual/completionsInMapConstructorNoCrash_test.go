@@ -10,7 +10,8 @@ import (
 
 // Test for issue: Completions crash in call to `new Map(...)`.
 // When requesting completions inside a Map constructor's array literal,
-// IndexOfNode returns -1 causing a panic when trying to access array elements.
+// IndexOfNode returns -1 causing a panic in getContextualTypeForElementExpression
+// when trying to access array elements without a bounds check.
 func TestCompletionsInMapConstructorNoCrash(t *testing.T) {
 	t.Parallel()
 
