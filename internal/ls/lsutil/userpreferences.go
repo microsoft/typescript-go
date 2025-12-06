@@ -50,12 +50,11 @@ type UserPreferences struct {
 	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `pref:"suggest.objectLiteralMethodSnippets.enabled"`
 	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `pref:"preferences.jsxAttributeCompletionStyle"`
 
-	ImportModuleSpecifierPreference   modulespecifiers.ImportModuleSpecifierPreference       `pref:"preferences.importModuleSpecifier"`
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`
-	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          `pref:"preferences.includePackageJsonAutoImports"`
-	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"`
-	AutoImportFileExcludePatterns     []string                                               `pref:"preferences.autoImportFileExcludePatterns"`
-	PreferTypeOnlyAutoImports         bool                                                   `pref:"preferences.preferTypeOnlyAutoImports"`
+	ModuleSpecifier ModuleSpecifierUserPreferences
+
+	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `pref:"preferences.includePackageJsonAutoImports"`
+	AutoImportFileExcludePatterns []string                      `pref:"preferences.autoImportFileExcludePatterns"`
+	PreferTypeOnlyAutoImports     bool                          `pref:"preferences.preferTypeOnlyAutoImports"`
 
 	OrganizeImportsIgnoreCase       core.Tristate            `pref:"preferences.organizeImports.caseSensitivity"`
 	OrganizeImportsCollation        OrganizeImportsCollation `pref:"preferences.organizeImports.unicodeCollation"`
@@ -101,6 +100,12 @@ type CodeLensUserPreferences struct {
 	ReferencesCodeLensShowOnAllFunctions          bool `pref:"referencesCodeLens.showOnAllFunctions"`
 	ImplementationsCodeLensShowOnInterfaceMethods bool `pref:"implementationsCodeLens.showOnInterfaceMethods"`
 	ImplementationsCodeLensShowOnAllClassMethods  bool `pref:"implementationsCodeLens.showOnAllClassMethods"`
+}
+
+type ModuleSpecifierUserPreferences struct {
+	ImportModuleSpecifierPreference   modulespecifiers.ImportModuleSpecifierPreference       `pref:"preferences.importModuleSpecifier"`
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`
+	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"`
 }
 
 // --- Enum Types ---
@@ -656,11 +661,7 @@ func (p *UserPreferences) CopyOrDefault() *UserPreferences {
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
-	return modulespecifiers.UserPreferences{
-		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,
-		ImportModuleSpecifierEnding:       p.ImportModuleSpecifierEnding,
-		AutoImportSpecifierExcludeRegexes: p.AutoImportSpecifierExcludeRegexes,
-	}
+	return modulespecifiers.UserPreferences(p.ModuleSpecifier)
 }
 
 func (p *UserPreferences) Parse(item any) *UserPreferences {
