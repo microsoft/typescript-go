@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"iter"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -88,10 +87,6 @@ func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func())
 	defer p.mu.Unlock()
 	checker, index := p.getCheckerLocked(core.GetRequestID(ctx))
 	return checker, p.createRelease(core.GetRequestID(ctx), index, checker)
-}
-
-func (p *CheckerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {
-	panic("unimplemented")
 }
 
 func (p *CheckerPool) Count() int {

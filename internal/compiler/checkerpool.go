@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"context"
-	"iter"
 	"slices"
 	"sync"
 
@@ -16,7 +15,6 @@ type CheckerPool interface {
 	GetChecker(ctx context.Context) (*checker.Checker, func())
 	GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
 	GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func())
-	Files(checker *checker.Checker) iter.Seq[*ast.SourceFile]
 }
 
 type checkerPool struct {
@@ -107,19 +105,6 @@ func (p *checkerPool) ForEachCheckerParallel(cb func(idx int, c *checker.Checker
 		})
 	}
 	wg.RunAndWait()
-}
-
-func (p *checkerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {
-	checkerIndex := slices.Index(p.checkers, checker)
-	return func(yield func(*ast.SourceFile) bool) {
-		for i, file := range p.program.files {
-			if i%p.checkerCount == checkerIndex {
-				if !yield(file) {
-					return
-				}
-			}
-		}
-	}
 }
 
 func noop() {}
