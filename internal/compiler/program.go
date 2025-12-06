@@ -420,20 +420,32 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 // collectDiagnostics collects diagnostics from a single file or all files.
 // If sourceFile is non-nil, returns diagnostics for just that file.
 // If sourceFile is nil, returns diagnostics for all files in the program.
-func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	var result []*ast.Diagnostic
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		for _, file := range p.files {
-			result = append(result, collect(ctx, file)...)
+		if concurrent {
+			diagnostics := make([][]*ast.Diagnostic, 0, len(p.files))
+			wg := core.NewWorkGroup(p.SingleThreaded())
+			for _, file := range p.files {
+				wg.Queue(func() {
+					diagnostics = append(diagnostics, collect(ctx, file))
+				})
+			}
+			wg.RunAndWait()
+			result = slices.Concat(diagnostics...)
+		} else {
+			for _, file := range p.files {
+				result = append(result, collect(ctx, file)...)
+			}
 		}
 	}
 	return SortAndDeduplicateDiagnostics(result)
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
 	})
 }
@@ -444,13 +456,13 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 	} else {
 		p.BindSourceFiles()
 	}
-	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return file.BindDiagnostics()
 	})
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSemanticDiagnosticsForFile)
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
@@ -462,7 +474,7 @@ func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Conte
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getSuggestionDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSuggestionDiagnosticsForFile)
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
@@ -1006,7 +1018,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getDeclarationDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getDeclarationDiagnosticsForFile)
 }
 
 func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
@@ -1044,7 +1056,7 @@ func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceF
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+	fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
 	defer done()
 
 	// Getting a checker will force a bind, so this will be populated.
@@ -1131,7 +1143,7 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+	fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
 	defer done()
 
 	// Getting a checker will force a bind, so this will be populated.

@@ -57,17 +57,16 @@ func (p *checkerPool) Count() int {
 
 func (p *checkerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	p.createCheckers()
-	checker := p.fileAssociations[file]
-	return checker, noop
+	return p.fileAssociations[file], noop
 }
 
 func (p *checkerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	c, done := p.GetCheckerForFile(ctx, file)
+	p.createCheckers()
+	c := p.fileAssociations[file]
 	idx := slices.Index(p.checkers, c)
 	p.locks[idx].Lock()
 	return c, sync.OnceFunc(func() {
 		p.locks[idx].Unlock()
-		done()
 	})
 }
 
