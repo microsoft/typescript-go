@@ -38,7 +38,7 @@ type CrossProjectOrchestrator interface {
 	GetLanguageServiceForProjectWithFile(ctx context.Context, project Project, uri lsproto.DocumentUri) *LanguageService
 	GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]Project, error)
 	GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[Project]
-	Recover()
+	RecoverWith(r any)
 }
 
 func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
@@ -81,7 +81,11 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 			if ctx.Err() != nil {
 				return
 			}
-			defer orchestrator.Recover()
+			defer func() {
+				if r := recover(); r != nil {
+					orchestrator.RecoverWith(r)
+				}
+			}()
 			// Process the item
 			ls := item.ls
 			if ls == nil {
