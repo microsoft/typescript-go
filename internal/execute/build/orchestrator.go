@@ -167,7 +167,6 @@ func (o *Orchestrator) setupBuildTask(
 				}
 			}
 		}
-		circularityStack = circularityStack[:len(circularityStack)-1]
 		completed.Add(path)
 		task.reportDone = make(chan struct{})
 		prev := core.LastOrNil(o.order)
