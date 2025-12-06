@@ -37,7 +37,7 @@ func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Us
 		return nil
 	}
 	return core.Map(specs, func(spec string) string {
-		return getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+		return GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	})
 }
 
@@ -149,7 +149,7 @@ func GetPatternFromSpec(
 	basePath string,
 	usage Usage,
 ) string {
-	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+	pattern := GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	if pattern == "" {
 		return ""
 	}
@@ -157,7 +157,7 @@ func GetPatternFromSpec(
 	return fmt.Sprintf("^(%s)%s", pattern, ending)
 }
 
-func getSubPatternFromSpec(
+func GetSubPatternFromSpec(
 	spec string,
 	basePath string,
 	usage Usage,

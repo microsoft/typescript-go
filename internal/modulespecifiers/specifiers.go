@@ -587,7 +587,7 @@ func getLocalModuleSpecifier(
 	}
 
 	// Prefer a relative import over a baseUrl import if it has fewer components.
-	if isPathRelativeToParent(maybeNonRelative) || strings.Count(relativePath, "/") < strings.Count(maybeNonRelative, "/") {
+	if isPathRelativeToParent(maybeNonRelative) || CountPathComponents(relativePath) < CountPathComponents(maybeNonRelative) {
 		return relativePath
 	}
 	return maybeNonRelative

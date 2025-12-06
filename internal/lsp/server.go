@@ -1272,7 +1272,7 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 }
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.RenameResponse, error) {
-	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
+	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries, ls.UserPreferences())
 }
 
 func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
