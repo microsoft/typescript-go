@@ -67,10 +67,31 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat)
+	return quickInfo, l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat)
 }
 
-func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind) string {
+func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind) string {
+	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type
+	// The declaration passed in might be the binding element itself, but we need the interface property declaration
+	if symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
+		bindingElement := symbol.ValueDeclaration
+		parent := bindingElement.Parent
+		name := bindingElement.PropertyName()
+		if name == nil {
+			name = bindingElement.Name()
+		}
+		if ast.IsIdentifier(name) && ast.IsObjectBindingPattern(parent) {
+			propertyName := name.Text()
+			objectType := c.GetTypeAtLocation(parent)
+			if objectType != nil {
+				propertySymbol := findPropertyInType(c, objectType, propertyName)
+				if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
+					declaration = propertySymbol.ValueDeclaration
+				}
+			}
+		}
+	}
+
 	if declaration == nil {
 		return ""
 	}
@@ -580,6 +601,20 @@ func writeQuotedString(b *strings.Builder, str string, quote bool) {
 	} else {
 		b.WriteString(str)
 	}
+}
+
+// findPropertyInType finds a property in a type, handling union types by searching constituent types
+func findPropertyInType(c *checker.Checker, objectType *checker.Type, propertyName string) *ast.Symbol {
+	// For union types, try to find the property in any of the constituent types
+	if objectType.IsUnion() {
+		for _, t := range objectType.Types() {
+			if prop := c.GetPropertyOfType(t, propertyName); prop != nil {
+				return prop
+			}
+		}
+		return nil
+	}
+	return c.GetPropertyOfType(objectType, propertyName)
 }
 
 func getEntityNameString(name *ast.Node) string {
