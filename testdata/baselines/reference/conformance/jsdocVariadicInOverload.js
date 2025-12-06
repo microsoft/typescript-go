@@ -131,27 +131,6 @@ export declare class Processor<ParseTree extends Node | undefined = undefined, H
      * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
      *   Current processor.
      */
-    use(preset?: string | null | undefined): Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>;
-    /**
-     * @overload
-     * @param {string | null | undefined} [preset]
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *
-     * @template {Array<unknown>} [Parameters=[]]
-     * @template {Node | string | undefined} [Input=undefined]
-     * @template [Output=Input]
-     * @overload
-     * @param {number} plugin
-     * @param {...(Parameters | [boolean])} parameters
-     * @returns {Processor}
-     *
-     * @param {string | number | boolean | null | undefined} value
-     *   Usable value.
-     * @param {...unknown} parameters
-     *   Parameters, when a plugin is given as a usable value.
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *   Current processor.
-     */
-    use<Parameters extends Array<unknown> = [], Input extends Node | string | undefined = undefined, Output = Input>(plugin: number, ...parameters: (Parameters | [boolean])): Processor;
+    use(value: string | number | boolean | null | undefined, ...parameters: unknown[]): Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>;
 }
 export {};

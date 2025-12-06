@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node, locationNode *ast.Node) {
@@ -112,7 +113,20 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		p.reparseList = append(p.reparseList, importDeclaration)
 	case ast.KindJSDocOverloadTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
-			p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
+			// Only allow @overload on function declarations and class/interface method declarations.
+			// Disallow on object literal methods by checking if we're in the ObjectLiteralMembers parsing context.
+			isObjectLiteralMethod := parent.Kind == ast.KindMethodDeclaration &&
+				p.parsingContexts&(1<<PCObjectLiteralMembers) != 0
+
+			if !isObjectLiteralMethod &&
+				(parent.Kind == ast.KindFunctionDeclaration ||
+					parent.Kind == ast.KindMethodDeclaration ||
+					parent.Kind == ast.KindMethodSignature) {
+				p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag, fun.Modifiers()))
+			} else {
+				// Report error for @overload on object literal methods
+				p.parseErrorAtRange(tag.TagName().Loc, diagnostics.A_JSDoc_overload_tag_is_not_allowed_in_this_context)
+			}
 		}
 	}
 }
