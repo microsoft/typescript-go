@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/zeebo/xxh3"
 )
 
 type SignatureCheckMode uint32
@@ -97,16 +98,16 @@ func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
 }
 
 type Relation struct {
-	results map[string]RelationComparisonResult
+	results map[xxh3.Uint128]RelationComparisonResult
 }
 
-func (r *Relation) get(key string) RelationComparisonResult {
+func (r *Relation) get(key xxh3.Uint128) RelationComparisonResult {
 	return r.results[key]
 }
 
-func (r *Relation) set(key string, result RelationComparisonResult) {
+func (r *Relation) set(key xxh3.Uint128, result RelationComparisonResult) {
 	if r.results == nil {
-		r.results = make(map[string]RelationComparisonResult)
+		r.results = make(map[xxh3.Uint128]RelationComparisonResult)
 	}
 	r.results[key] = result
 }
@@ -191,7 +192,8 @@ func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation
 		}
 	}
 	if source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsObject != 0 {
-		related := relation.get(getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false))
+		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false)
+		related := relation.get(id)
 		if related != RelationComparisonResultNone {
 			return related&RelationComparisonResultSucceeded != 0
 		}
@@ -370,7 +372,7 @@ func (c *Checker) checkTypeRelatedToEx(
 	result := r.isRelatedToEx(source, target, RecursionFlagsBoth, errorNode != nil /*reportErrors*/, headMessage, IntersectionStateNone)
 	if r.overflow {
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
-		id := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
+		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
 		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
 		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
@@ -2504,8 +2506,8 @@ type Relater struct {
 	errorNode      *ast.Node
 	errorChain     *ErrorChain
 	relatedInfo    []*ast.Diagnostic
-	maybeKeys      []string
-	maybeKeysSet   collections.Set[string]
+	maybeKeys      []xxh3.Uint128
+	maybeKeysSet   collections.Set[xxh3.Uint128]
 	sourceStack    []*Type
 	targetStack    []*Type
 	maybeCount     int
@@ -3014,7 +3016,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	if r.overflow {
 		return TernaryFalse
 	}
-	id := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
+	id, constrained := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
 	if entry := r.relation.get(id); entry != RelationComparisonResultNone {
 		if reportErrors && entry&RelationComparisonResultFailed != 0 && entry&RelationComparisonResultOverflow == 0 {
 			// We are elaborating errors and the cached result is a failure not due to a comparison overflow,
@@ -3041,11 +3043,11 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	if r.maybeKeysSet.Has(id) {
 		return TernaryMaybe
 	}
-	// A key that ends with "*" is an indication that we have type references that reference constrained
+	// A constrained key indicates that we have type references that reference constrained
 	// type parameters. For such keys we also check against the key we would have gotten if all type parameters
 	// were unconstrained.
-	if strings.HasSuffix(id, "*") {
-		broadestEquivalentId := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, true /*ignoreConstraints*/)
+	if constrained {
+		broadestEquivalentId, _ := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, true /*ignoreConstraints*/)
 		if r.maybeKeysSet.Has(broadestEquivalentId) {
 			return TernaryMaybe
 		}
