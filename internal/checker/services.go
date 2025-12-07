@@ -677,8 +677,9 @@ func (c *Checker) GetContextualTypeForArrayElement(contextualArrayType *Type, el
 	if contextualArrayType == nil {
 		return nil
 	}
-	// Get spread indices - since we don't have access to the actual array literal,
-	// we'll assume no spreads for now (firstSpreadIndex = -1, lastSpreadIndex = -1)
+	// Pass -1 for length, firstSpreadIndex, and lastSpreadIndex since we don't have
+	// access to the actual array literal. This falls back to getting the iterated type
+	// or checking numeric properties, which is appropriate for completion contexts.
 	return c.getContextualTypeForElementExpression(contextualArrayType, elementIndex, -1, -1, -1)
 }
 
