@@ -22,6 +22,21 @@
 // | ```tsx
 // | (method) Bar.method(x: any, y: any): number
 // | ```
+// | comment
+// | 
+// | *@author* — Me <me@domain.tld>
+// | 
+// | 
+// | *@see* `x` — (the parameter)
+// | 
+// | 
+// | *@param* `x` - x comment
+// | 
+// | 
+// | *@param* `y` - y comment
+// | 
+// | 
+// | *@returns* — The result
 // | 
 // | 
 // | *@inheritDoc*
@@ -44,7 +59,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) Bar.method(x: any, y: any): number\n```\n\n\n*@inheritDoc*"
+        "value": "```tsx\n(method) Bar.method(x: any, y: any): number\n```\ncomment\n\n*@author* — Me <me@domain.tld>\n\n\n*@see* `x` — (the parameter)\n\n\n*@param* `x` - x comment\n\n\n*@param* `y` - y comment\n\n\n*@returns* — The result\n\n\n*@inheritDoc*"
       },
       "range": {
         "start": {

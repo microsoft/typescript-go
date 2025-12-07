@@ -40,6 +40,9 @@
 // | ```tsx
 // | (method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string
 // | ```
+// | Useful description always applicable
+// | 
+// | *@returns* — Useful description of return value always applicable.
 // | 
 // | 
 // | *@inheritDoc*
@@ -65,6 +68,12 @@
 // | ```tsx
 // | (method) SubClass.func1(stuff1: any): void
 // | ```
+// | BaseClass.func1
+// | 
+// | *@param* `stuff1` — BaseClass.func1.stuff1
+// | 
+// | 
+// | *@returns* — BaseClass.func1.returns
 // | 
 // | 
 // | *@inheritDoc*
@@ -88,7 +97,7 @@
 // | ```tsx
 // | (property) SubClass.someProperty: string
 // | ```
-// | text over tag
+// | Applicable description always.text over tag
 // | 
 // | *@inheritDoc* — text after tag
 // | 
@@ -108,7 +117,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string\n```\n\n\n*@inheritDoc*\n\n*@param* `mySpecificStuff` — Description of my specific parameter.\n"
+        "value": "```tsx\n(method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string\n```\nUseful description always applicable\n\n*@returns* — Useful description of return value always applicable.\n\n\n*@inheritDoc*\n\n*@param* `mySpecificStuff` — Description of my specific parameter.\n"
       },
       "range": {
         "start": {
@@ -135,7 +144,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) SubClass.func1(stuff1: any): void\n```\n\n\n*@inheritDoc*\n\n*@param* `stuff1` — SubClass.func1.stuff1\n\n\n*@returns* — SubClass.func1.returns\n"
+        "value": "```tsx\n(method) SubClass.func1(stuff1: any): void\n```\nBaseClass.func1\n\n*@param* `stuff1` — BaseClass.func1.stuff1\n\n\n*@returns* — BaseClass.func1.returns\n\n\n*@inheritDoc*\n\n*@param* `stuff1` — SubClass.func1.stuff1\n\n\n*@returns* — SubClass.func1.returns\n"
       },
       "range": {
         "start": {
@@ -162,7 +171,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) SubClass.someProperty: string\n```\ntext over tag\n\n*@inheritDoc* — text after tag\n"
+        "value": "```tsx\n(property) SubClass.someProperty: string\n```\nApplicable description always.text over tag\n\n*@inheritDoc* — text after tag\n"
       },
       "range": {
         "start": {

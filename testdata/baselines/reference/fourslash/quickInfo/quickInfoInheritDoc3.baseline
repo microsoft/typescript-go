@@ -19,7 +19,7 @@
 // | ```tsx
 // | (property) SubClass.prop: string
 // | ```
-// | 
+// | Base.prop
 // | 
 // | *@inheritdoc* — SubClass.prop
 // | 
@@ -39,7 +39,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) SubClass.prop: string\n```\n\n\n*@inheritdoc* — SubClass.prop\n"
+        "value": "```tsx\n(property) SubClass.prop: string\n```\nBase.prop\n\n*@inheritdoc* — SubClass.prop\n"
       },
       "range": {
         "start": {

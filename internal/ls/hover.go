@@ -75,56 +75,85 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 		return ""
 	}
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
+
+	jsdoc := getJSDocOrTag(c, declaration)
+	if jsdoc == nil {
+		return l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown)
+	}
+	if containsTypedefTag(jsdoc) {
+		return ""
+	}
+
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
-		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
-		if jsdoc.Kind == ast.KindJSDoc {
-			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-				for _, tag := range tags.Nodes {
-					if tag.Kind == ast.KindJSDocTypeTag {
-						continue
+
+	if jsdoc.Kind == ast.KindJSDoc {
+		tags := jsdoc.AsJSDoc().Tags
+		if len(jsdoc.AsJSDoc().Comments()) == 0 || tags == nil || len(tags.Nodes) == 0 || core.Some(tags.Nodes, isInheritDocTag) {
+			b.WriteString(l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown))
+		}
+	}
+
+	b.WriteString(l.getDocumentation(c, jsdoc, isMarkdown))
+	return b.String()
+}
+
+func (l *LanguageService) getDocumentation(c *checker.Checker, jsdoc *ast.Node, isMarkdown bool) string {
+	if jsdoc == nil {
+		return ""
+	}
+
+	var b strings.Builder
+	l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
+	if jsdoc.Kind == ast.KindJSDoc {
+		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+			for _, tag := range tags.Nodes {
+				if tag.Kind == ast.KindJSDocTypeTag {
+					continue
+				}
+				b.WriteString("\n\n")
+				if isMarkdown {
+					b.WriteString("*@")
+					b.WriteString(tag.TagName().Text())
+					b.WriteString("*")
+				} else {
+					b.WriteString("@")
+					b.WriteString(tag.TagName().Text())
+				}
+				switch tag.Kind {
+				case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+					writeOptionalEntityName(&b, tag.Name())
+				case ast.KindJSDocAugmentsTag:
+					writeOptionalEntityName(&b, tag.ClassName())
+				case ast.KindJSDocSeeTag:
+					writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
+				case ast.KindJSDocTemplateTag:
+					for i, tp := range tag.TypeParameters() {
+						if i != 0 {
+							b.WriteString(",")
+						}
+						writeOptionalEntityName(&b, tp.Name())
 					}
-					b.WriteString("\n\n")
-					if isMarkdown {
-						b.WriteString("*@")
-						b.WriteString(tag.TagName().Text())
-						b.WriteString("*")
+				}
+				comments := tag.Comments()
+				if len(comments) != 0 {
+					if commentHasPrefix(comments, "```") {
+						b.WriteString("\n")
 					} else {
-						b.WriteString("@")
-						b.WriteString(tag.TagName().Text())
-					}
-					switch tag.Kind {
-					case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-						writeOptionalEntityName(&b, tag.Name())
-					case ast.KindJSDocAugmentsTag:
-						writeOptionalEntityName(&b, tag.ClassName())
-					case ast.KindJSDocSeeTag:
-						writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
-					case ast.KindJSDocTemplateTag:
-						for i, tp := range tag.TypeParameters() {
-							if i != 0 {
-								b.WriteString(",")
-							}
-							writeOptionalEntityName(&b, tp.Name())
+						b.WriteString(" ")
+						if !commentHasPrefix(comments, "-") {
+							b.WriteString("— ")
 						}
 					}
-					comments := tag.Comments()
-					if len(comments) != 0 {
-						if commentHasPrefix(comments, "```") {
-							b.WriteString("\n")
-						} else {
-							b.WriteString(" ")
-							if !commentHasPrefix(comments, "-") {
-								b.WriteString("— ")
-							}
-						}
-						l.writeComments(&b, c, comments, isMarkdown)
-					}
+					l.writeComments(&b, c, comments, isMarkdown)
 				}
 			}
 		}
 	}
 	return b.String()
+}
+
+func isInheritDocTag(tag *ast.JSDocTag) bool {
+	return tag.TagName().Text() == "inheritDoc" || tag.TagName().Text() == "inheritdoc"
 }
 
 func formatQuickInfo(quickInfo string) string {
@@ -425,17 +454,33 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
 		return getJSDocOrTag(c, node.Parent)
 	}
+	return nil
+}
+
+func getInheritedJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
+	if ast.IsGetAccessorDeclaration(node) || ast.IsSetAccessorDeclaration(node) {
+		return nil
+	}
 	if symbol := node.Symbol(); symbol != nil && node.Parent != nil && ast.IsClassOrInterfaceLike(node.Parent) {
 		isStatic := ast.HasStaticModifier(node)
 		for _, baseType := range c.GetBaseTypes(c.GetDeclaredTypeOfSymbol(node.Parent.Symbol())) {
 			t := baseType
-			if isStatic {
+			if isStatic && baseType.Symbol() != nil {
 				t = c.GetTypeOfSymbol(baseType.Symbol())
 			}
 			if prop := c.GetPropertyOfType(t, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-				if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
-					return jsDoc
+				jsdoc := getJSDocOrTag(c, prop.ValueDeclaration)
+				if jsdoc == nil {
+					return getInheritedJSDocOrTag(c, prop.ValueDeclaration)
 				}
+				tags := jsdoc.AsJSDoc().Tags
+				if tags == nil {
+					return jsdoc
+				}
+				if containsTypedefTag(jsdoc) {
+					return nil
+				}
+				return jsdoc
 			}
 		}
 	}
