@@ -671,6 +671,17 @@ func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral
 	return result
 }
 
+// GetContextualTypeForArrayElement returns the contextual type for an element at the given index
+// in an array with the given contextual type.
+func (c *Checker) GetContextualTypeForArrayElement(contextualArrayType *Type, elementIndex int) *Type {
+	if contextualArrayType == nil {
+		return nil
+	}
+	// Get spread indices - since we don't have access to the actual array literal,
+	// we'll assume no spreads for now (firstSpreadIndex = -1, lastSpreadIndex = -1)
+	return c.getContextualTypeForElementExpression(contextualArrayType, elementIndex, -1, -1, -1)
+}
+
 var knownGenericTypeNames = map[string]struct{}{
 	"Array":            {},
 	"ArrayLike":        {},

@@ -28911,7 +28911,7 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 		if isTupleType(t) {
 			// If index is before any spread element and within the fixed part of the contextual tuple type, return
 			// the type of the contextual tuple element.
-			if index >= 0 && (firstSpreadIndex < 0 || index < firstSpreadIndex) && index < t.TargetTupleType().fixedLength {
+			if (firstSpreadIndex < 0 || index < firstSpreadIndex) && index < t.TargetTupleType().fixedLength {
 				return c.removeMissingType(c.getTypeArguments(t)[index], t.TargetTupleType().elementInfos[index].flags&ElementFlagsOptional != 0)
 			}
 			// When the length is known and the index is after all spread elements we compute the offset from the element
