@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -39,6 +40,7 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
+	Tracing                     *tracing.Tracing
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -309,7 +311,7 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(p)
+		p.checkerPool = newCheckerPoolWithTracing(p, p.opts.Tracing)
 	}
 }
 
