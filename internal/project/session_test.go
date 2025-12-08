@@ -866,7 +866,6 @@ func TestSession(t *testing.T) {
 		session.Configure(&lsutil.UserPreferences{})
 
 		// Change user preferences for code lens and inlay hints.
-		// Create a copy since prefs are immutable - Configure uses pointer comparison to detect changes.
 		newPrefs := session.UserPreferences().Copy()
 		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
 		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints

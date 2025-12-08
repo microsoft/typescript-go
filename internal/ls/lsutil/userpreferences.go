@@ -39,48 +39,129 @@ func NewDefaultUserPreferences() *UserPreferences {
 // The `pref` tag format: "path.to.setting" or "path.to.setting,invert" for boolean inversion.
 type UserPreferences struct {
 	QuotePreference                           QuotePreference `pref:"preferences.quoteStyle"`
-	LazyConfiguredProjectsFromExternalProject bool
-	MaximumHoverLength                        int
+	LazyConfiguredProjectsFromExternalProject bool            // !!!
 
-	IncludeCompletionsForModuleExports                core.Tristate `pref:"suggest.autoImports"`
-	IncludeCompletionsForImportStatements             core.Tristate `pref:"suggest.includeCompletionsForImportStatements"`
-	IncludeAutomaticOptionalChainCompletions          core.Tristate `pref:"suggest.includeAutomaticOptionalChainCompletions"`
-	IncludeCompletionsWithSnippetText                 core.Tristate
-	IncludeCompletionsWithClassMemberSnippets         core.Tristate               `pref:"suggest.classMemberSnippets.enabled"`
-	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `pref:"suggest.objectLiteralMethodSnippets.enabled"`
+	// A positive integer indicating the maximum length of a hover text before it is truncated.
+	//
+	// Default: `500`
+	MaximumHoverLength int // !!!
+
+	// ------- Completions -------
+
+	// If enabled, TypeScript will search through all external modules' exports and add them to the completions list.
+	// This affects lone identifier completions but not completions on the right hand side of `obj.`.
+	IncludeCompletionsForModuleExports core.Tristate `pref:"suggest.autoImports"`
+	// Enables auto-import-style completions on partially-typed import statements. E.g., allows
+	// `import write|` to be completed to `import { writeFile } from "fs"`.
+	IncludeCompletionsForImportStatements core.Tristate `pref:"suggest.includeCompletionsForImportStatements"`
+	// Unless this option is `false`,  member completion lists triggered with `.` will include entries
+	// on potentially-null and potentially-undefined values, with insertion text to replace
+	// preceding `.` tokens with `?.`.
+	IncludeAutomaticOptionalChainCompletions core.Tristate `pref:"suggest.includeAutomaticOptionalChainCompletions"`
+	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
+	IncludeCompletionsWithSnippetText core.Tristate // !!!
+	// If enabled, completions for class members (e.g. methods and properties) will include
+	// a whole declaration for the member.
+	// E.g., `class A { f| }` could be completed to `class A { foo(): number {} }`, instead of
+	// `class A { foo }`.
+	IncludeCompletionsWithClassMemberSnippets core.Tristate `pref:"suggest.classMemberSnippets.enabled"` // !!!
+	// If enabled, object literal methods will have a method declaration completion entry in addition
+	// to the regular completion entry containing just the method name.
+	// E.g., `const objectLiteral: T = { f| }` could be completed to `const objectLiteral: T = { foo(): void {} }`,
+	// in addition to `const objectLiteral: T = { foo }`.
+	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `pref:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
 	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `pref:"preferences.jsxAttributeCompletionStyle"`
+
+	// ------- AutoImports --------
 
 	ModuleSpecifier ModuleSpecifierUserPreferences
 
-	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `pref:"preferences.includePackageJsonAutoImports"`
-	AutoImportFileExcludePatterns []string                      `pref:"preferences.autoImportFileExcludePatterns"`
-	PreferTypeOnlyAutoImports     bool                          `pref:"preferences.preferTypeOnlyAutoImports"`
+	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `pref:"preferences.includePackageJsonAutoImports"` // !!!
+	AutoImportFileExcludePatterns []string                      `pref:"preferences.autoImportFileExcludePatterns"` // !!!
+	PreferTypeOnlyAutoImports     bool                          `pref:"preferences.preferTypeOnlyAutoImports"`     // !!!
 
-	OrganizeImportsIgnoreCase       core.Tristate            `pref:"preferences.organizeImports.caseSensitivity"`
-	OrganizeImportsCollation        OrganizeImportsCollation `pref:"preferences.organizeImports.unicodeCollation"`
-	OrganizeImportsLocale           string                   `pref:"preferences.organizeImports.locale"`
-	OrganizeImportsNumericCollation bool                     `pref:"preferences.organizeImports.numericCollation"`
-	OrganizeImportsAccentCollation  bool                     `pref:"preferences.organizeImports.accentCollation"`
-	OrganizeImportsCaseFirst        OrganizeImportsCaseFirst `pref:"preferences.organizeImports.caseFirst"`
-	OrganizeImportsTypeOrder        OrganizeImportsTypeOrder `pref:"preferences.organizeImports.typeOrder"`
+	// ------- OrganizeImports -------
 
-	AllowTextChangesInNewFiles bool
+	// Indicates whether imports should be organized in a case-insensitive manner.
+	//
+	// Default: TSUnknown ("auto" in strada), will perform detection
+	OrganizeImportsIgnoreCase core.Tristate `pref:"preferences.organizeImports.caseSensitivity"` // !!!
+	// Indicates whether imports should be organized via an "ordinal" (binary) comparison using the numeric value of their
+	// code points, or via "unicode" collation (via the Unicode Collation Algorithm (https://unicode.org/reports/tr10/#Scope))
+	//
+	// using rules associated with the locale specified in organizeImportsCollationLocale.
+	//
+	// Default: Ordinal
+	OrganizeImportsCollation OrganizeImportsCollation `pref:"preferences.organizeImports.unicodeCollation"` // !!!
+	// Indicates the locale to use for "unicode" collation. If not specified, the locale `"en"` is used as an invariant
+	// for the sake of consistent sorting. Use `"auto"` to use the detected UI locale.
+	//
+	// This preference is ignored if organizeImportsCollation is not `unicode`.
+	//
+	// Default: `"en"`
+	OrganizeImportsLocale string `pref:"preferences.organizeImports.locale"` // !!!
+	// Indicates whether numeric collation should be used for digit sequences in strings. When `true`, will collate
+	// strings such that `a1z < a2z < a100z`. When `false`, will collate strings such that `a1z < a100z < a2z`.
+	//
+	// This preference is ignored if organizeImportsCollation is not `unicode`.
+	//
+	// Default: `false`
+	OrganizeImportsNumericCollation bool `pref:"preferences.organizeImports.numericCollation"` // !!!
+	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
+	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
+	// in organizeImportsCollationLocale.
+	//
+	// This preference is ignored if organizeImportsCollation is not `unicode`.
+	//
+	// Default: `true`
+	OrganizeImportsAccentCollation bool `pref:"preferences.organizeImports.accentCollation"` // !!!
+	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
+	// specified in organizeImportsCollationLocale is used.
+	//
+	// This preference is ignored if:
+	//	- organizeImportsCollation is not `unicode`
+	//	- organizeImportsIgnoreCase is `true`
+	//	- organizeImportsIgnoreCase is `auto` and the auto-detected case sensitivity is case-insensitive.
+	//
+	// Default: `false`
+	OrganizeImportsCaseFirst OrganizeImportsCaseFirst `pref:"preferences.organizeImports.caseFirst"` // !!!
+	// Indicates where named type-only imports should sort. "inline" sorts named imports without regard to if the import is type-only.
+	//
+	// Default: `auto`, which defaults to `last`
+	OrganizeImportsTypeOrder OrganizeImportsTypeOrder `pref:"preferences.organizeImports.typeOrder"` // !!!
 
+	// ------- MoveToFile -------
+
+	AllowTextChangesInNewFiles bool // !!!
+
+	// ------- Rename -------
+
+	// renamed from `providePrefixAndSuffixTextForRename`
 	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames,alias:providePrefixAndSuffixTextForRename"`
-	AllowRenameOfImportPath bool
+	AllowRenameOfImportPath bool          // !!!
 
-	ProvideRefactorNotApplicableReason bool
+	// ------- CodeFixes/Refactors -------
+
+	ProvideRefactorNotApplicableReason bool // !!!
+
+	// ------- InlayHints -------
 
 	InlayHints InlayHintsPreferences
 
+	// ------- CodeLens -------
+
 	CodeLens CodeLensUserPreferences
+
+	// ------- Symbols -------
 
 	ExcludeLibrarySymbolsInNavTo bool `pref:"workspaceSymbols.excludeLibrarySymbols"`
 
-	DisableSuggestions          bool
-	DisableLineTextInReferences bool
-	DisplayPartsForJSDoc        bool
-	ReportStyleChecksAsWarnings bool
+	// ------- Misc -------
+
+	DisableSuggestions          bool // !!!
+	DisableLineTextInReferences bool // !!!
+	DisplayPartsForJSDoc        bool // !!!
+	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
 }
 
 type InlayHintsPreferences struct {
@@ -103,9 +184,10 @@ type CodeLensUserPreferences struct {
 }
 
 type ModuleSpecifierUserPreferences struct {
-	ImportModuleSpecifierPreference   modulespecifiers.ImportModuleSpecifierPreference       `pref:"preferences.importModuleSpecifier"`
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`
-	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"`
+	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `pref:"preferences.importModuleSpecifier"` // !!!
+	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`       // !!!
+	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
 }
 
 // --- Enum Types ---
