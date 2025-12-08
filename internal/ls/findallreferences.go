@@ -3,6 +3,7 @@ package ls
 import (
 	"cmp"
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -16,6 +17,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -582,8 +585,18 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && node.Kind != ast.KindIdentifier {
-		return node, nil, false
+
+	// For rename, check if node could potentially be eligible after adjustment
+	// This is a preliminary check; full validation happens later
+	if isRename {
+		// Apply location adjustment to handle keywords shifting to identifiers
+		adjustedNode := getAdjustedLocation(node, true /*forRename*/, sourceFile)
+		// Only reject nodes that are definitely not renameable (like syntax tokens)
+		// Allow nodes that might be renameable (identifiers, literals, this, etc.)
+		// The detailed symbol validation will happen later in the flow
+		if !nodeIsEligibleForRename(adjustedNode) {
+			return adjustedNode, nil, false
+		}
 	}
 
 	var options refOptions
@@ -655,8 +668,10 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 }
 
 func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
-	if originalNode.Kind != ast.KindIdentifier {
-		return lsproto.WorkspaceEditOrNull{}, nil
+	// Check if ProvideSymbolsAndEntries returned ok=false or no symbols found
+	// Return an error to inform the user that rename is not available
+	if symbolsAndEntries == nil || len(symbolsAndEntries) == 0 {
+		return lsproto.WorkspaceEditOrNull{}, errors.New(diagnostics.You_cannot_rename_this_element.Localize(locale.FromContext(ctx)))
 	}
 
 	program := l.GetProgram()

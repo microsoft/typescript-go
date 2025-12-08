@@ -1121,6 +1121,48 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 	return nil
 }
 
+// nodeIsEligibleForRename checks if a node can be renamed.
+// This matches the TypeScript implementation in services/rename.ts
+func nodeIsEligibleForRename(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier,
+		ast.KindPrivateIdentifier,
+		ast.KindStringLiteral,
+		ast.KindNoSubstitutionTemplateLiteral,
+		ast.KindThisKeyword:
+		return true
+	case ast.KindNumericLiteral:
+		// For numeric literals, check if they're used as property names
+		parent := node.Parent
+		if parent == nil {
+			return false
+		}
+		switch parent.Kind {
+		case ast.KindPropertyDeclaration,
+			ast.KindPropertySignature,
+			ast.KindPropertyAssignment,
+			ast.KindEnumMember,
+			ast.KindMethodDeclaration,
+			ast.KindMethodSignature,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindModuleDeclaration:
+			return parent.Name() == node
+		case ast.KindElementAccessExpression:
+			return parent.AsElementAccessExpression().ArgumentExpression == node
+		case ast.KindComputedPropertyName:
+			return true
+		case ast.KindLiteralType:
+			grandParent := parent.Parent
+			return grandParent != nil && grandParent.Kind == ast.KindIndexedAccessType
+		default:
+			return false
+		}
+	default:
+		return false
+	}
+}
+
 func symbolFlagsHaveMeaning(flags ast.SymbolFlags, meaning ast.SemanticMeaning) bool {
 	if meaning == ast.SemanticMeaningAll {
 		return true
