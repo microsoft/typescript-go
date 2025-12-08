@@ -232,7 +232,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		in:              inputWriter,
 		out:             outputReader,
 		testData:        &testData,
-		userPreferences: lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		userPreferences: lsutil.DefaultUserPreferences, // !!! parse default preferences for fourslash case?
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
@@ -1260,7 +1260,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		userPreferences = options.UserPreferences
 	} else {
 		// Default preferences: enables auto-imports
-		userPreferences = lsutil.NewDefaultUserPreferences()
+		userPreferences = lsutil.DefaultUserPreferences
 	}
 
 	reset := f.ConfigureWithReset(t, userPreferences)
@@ -3282,7 +3282,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 
 	preferences := testPreferences
 	if preferences == nil {
-		preferences = lsutil.NewDefaultUserPreferences()
+		preferences = lsutil.DefaultUserPreferences
 	}
 	reset := f.ConfigureWithReset(t, preferences)
 	defer reset()
@@ -3606,7 +3606,7 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 	for _, testCase := range cases {
 		preferences := testCase.Preferences
 		if preferences == nil {
-			preferences = lsutil.NewDefaultUserPreferences()
+			preferences = lsutil.DefaultUserPreferences
 		}
 		f.Configure(t, preferences)
 		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})

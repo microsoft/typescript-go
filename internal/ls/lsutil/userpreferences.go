@@ -12,20 +12,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
 
-func NewDefaultUserPreferences() *UserPreferences {
-	return &UserPreferences{
-		IncludeCompletionsForModuleExports:    core.TSTrue,
-		IncludeCompletionsForImportStatements: core.TSTrue,
+var DefaultUserPreferences = &UserPreferences{
+	IncludeCompletionsForModuleExports:    core.TSTrue,
+	IncludeCompletionsForImportStatements: core.TSTrue,
 
-		AllowRenameOfImportPath:            true,
-		ProvideRefactorNotApplicableReason: true,
-		IncludeCompletionsWithSnippetText:  core.TSTrue,
-		DisplayPartsForJSDoc:               true,
-		DisableLineTextInReferences:        true,
-		ReportStyleChecksAsWarnings:        true,
+	AllowRenameOfImportPath:            true,
+	ProvideRefactorNotApplicableReason: true,
+	IncludeCompletionsWithSnippetText:  core.TSTrue,
+	DisplayPartsForJSDoc:               true,
+	DisableLineTextInReferences:        true,
+	ReportStyleChecksAsWarnings:        true,
 
-		ExcludeLibrarySymbolsInNavTo: true,
-	}
+	ExcludeLibrarySymbolsInNavTo: true,
 }
 
 // UserPreferences represents TypeScript language service preferences.
@@ -681,7 +679,7 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return err
 	}
 	// Start with defaults, then overlay parsed values
-	*p = *NewDefaultUserPreferences()
+	*p = *DefaultUserPreferences.Copy()
 	p.parseWorker(config)
 	return nil
 }
@@ -750,7 +748,7 @@ func ParseUserPreferences(item any) *UserPreferences {
 		return nil
 	}
 	if config, ok := item.(map[string]any); ok {
-		p := NewDefaultUserPreferences()
+		p := DefaultUserPreferences.Copy()
 		p.parseWorker(config)
 		return p
 	}
