@@ -638,18 +638,27 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			params = req.Params.(Req)
 		}
 		// !!! sheetal: multiple projects that contain the file through symlinks
-		defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.TextDocumentURI())
+		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
 		if err != nil {
 			return err
 		}
 		defer s.recover(req)
-		resp, err := fn(defaultLs, ctx, params, &crossProjectOrchestrator{s, req, defaultProject, allProjects})
+		resp, err := fn(defaultLs, ctx, params, orchestrator)
 		if err != nil {
 			return err
 		}
 		s.sendResult(req.ID, resp)
 		return nil
 	}
+}
+
+func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Context, uri lsproto.DocumentUri, req *lsproto.RequestMessage) (*ls.LanguageService, ls.CrossProjectOrchestrator, error) {
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	var orchestrator ls.CrossProjectOrchestrator
+	if err == nil {
+		orchestrator = &crossProjectOrchestrator{s, req, defaultProject, allProjects}
+	}
+	return defaultLs, orchestrator, err
 }
 
 type crossProjectOrchestrator struct {
@@ -1099,7 +1108,7 @@ func (s *Server) handleCodeLens(ctx context.Context, ls *ls.LanguageService, par
 }
 
 func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.CodeLens, reqMsg *lsproto.RequestMessage) (*lsproto.CodeLens, error) {
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, codeLens.Data.Uri)
+	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, codeLens.Data.Uri, reqMsg)
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
 	}
@@ -1118,7 +1127,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		ctx,
 		codeLens,
 		s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName,
-		&crossProjectOrchestrator{s, reqMsg, defaultProject, allProjects},
+		orchestrator,
 	)
 }
 
@@ -1135,11 +1144,11 @@ func (s *Server) handleCallHierarchyIncomingCalls(
 	params *lsproto.CallHierarchyIncomingCallsParams,
 	reqMsg *lsproto.RequestMessage,
 ) (lsproto.CallHierarchyIncomingCallsResponse, error) {
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.Item.Uri)
+	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.Item.Uri, reqMsg)
 	if err != nil {
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, err
 	}
-	return defaultLs.ProvideCallHierarchyIncomingCalls(ctx, params.Item, &crossProjectOrchestrator{s, reqMsg, defaultProject, allProjects})
+	return defaultLs.ProvideCallHierarchyIncomingCalls(ctx, params.Item, orchestrator)
 }
 
 func (s *Server) handleCallHierarchyOutgoingCalls(
