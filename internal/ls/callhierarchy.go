@@ -623,7 +623,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 		node: location,
 	}
 
-	return handleCrossProject(
+	result, err := handleCrossProject(
 		l,
 		ctx,
 		incomingEntry,
@@ -634,6 +634,18 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 		false,
 		symbolEntryTransformOptions{},
 	)
+	if result.CallHierarchyIncomingCalls != nil {
+		slices.SortFunc(*result.CallHierarchyIncomingCalls, func(a, b *lsproto.CallHierarchyIncomingCall) int {
+			if uriComp := strings.Compare(string(a.From.Uri), string(b.From.Uri)); uriComp != 0 {
+				return uriComp
+			}
+			if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
+				return 0
+			}
+			return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
+		})
+	}
+	return result, err
 }
 
 func (l *LanguageService) symbolAndEntriesToIncomingCalls(ctx context.Context, params *incomingEntry, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.CallHierarchyIncomingCallsResponse, error) {
@@ -664,17 +676,6 @@ func (l *LanguageService) symbolAndEntriesToIncomingCalls(ctx context.Context, p
 	for _, sites := range grouped {
 		result = append(result, l.convertCallSiteGroupToIncomingCall(program, sites))
 	}
-
-	slices.SortFunc(result, func(a, b *lsproto.CallHierarchyIncomingCall) int {
-		if uriComp := strings.Compare(string(a.From.Uri), string(b.From.Uri)); uriComp != 0 {
-			return uriComp
-		}
-		if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
-			return 0
-		}
-		return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
-	})
-
 	return lsproto.CallHierarchyIncomingCallsOrNull{CallHierarchyIncomingCalls: &result}, nil
 }
 
