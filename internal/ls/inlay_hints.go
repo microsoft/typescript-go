@@ -720,6 +720,10 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.Inlay
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
 			visitForDisplayParts(node.Expression())
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
+		case ast.KindPropertyAccessExpression:
+			visitForDisplayParts(node.Expression())
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "."})
+			visitForDisplayParts(node.Name())
 		default:
 			debug.FailBadSyntaxKind(node)
 		}
