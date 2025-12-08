@@ -78,78 +78,93 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 
 	jsdoc := getJSDocOrTag(c, declaration)
 	if jsdoc == nil {
-		return l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown)
+		docComments, docTags := l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown)
+		return docComments + docTags
 	}
+
 	if containsTypedefTag(jsdoc) {
 		return ""
 	}
 
-	var b strings.Builder
+	var commentsBuilder strings.Builder
+	var tagsBuilder strings.Builder
 
 	if jsdoc.Kind == ast.KindJSDoc {
 		tags := jsdoc.AsJSDoc().Tags
 		if len(jsdoc.AsJSDoc().Comments()) == 0 || tags == nil || len(tags.Nodes) == 0 || core.Some(tags.Nodes, isInheritDocTag) {
-			b.WriteString(l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown))
+			docComments, docTags := l.getDocumentation(c, getInheritedJSDocOrTag(c, declaration), isMarkdown)
+			commentsBuilder.WriteString(docComments)
+			tagsBuilder.WriteString(docTags)
 		}
 	}
 
-	b.WriteString(l.getDocumentation(c, jsdoc, isMarkdown))
-	return b.String()
+	docComments, docTags := l.getDocumentation(c, jsdoc, isMarkdown)
+	if commentsBuilder.Len() > 0 && len(docComments) > 0 {
+		commentsBuilder.WriteString(" ")
+	}
+	commentsBuilder.WriteString(docComments)
+	tagsBuilder.WriteString(docTags)
+
+	commentsBuilder.WriteString(tagsBuilder.String())
+	return commentsBuilder.String()
 }
 
-func (l *LanguageService) getDocumentation(c *checker.Checker, jsdoc *ast.Node, isMarkdown bool) string {
+func (l *LanguageService) getDocumentation(c *checker.Checker, jsdoc *ast.Node, isMarkdown bool) (comments, tags string) {
 	if jsdoc == nil {
-		return ""
+		return "", ""
 	}
 
-	var b strings.Builder
-	l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
+	var commnetsBuilder strings.Builder
+	var tagsBuilder strings.Builder
+
+	l.writeComments(&commnetsBuilder, c, jsdoc.Comments(), isMarkdown)
+
 	if jsdoc.Kind == ast.KindJSDoc {
 		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 			for _, tag := range tags.Nodes {
 				if tag.Kind == ast.KindJSDocTypeTag {
 					continue
 				}
-				b.WriteString("\n\n")
+				tagsBuilder.WriteString("\n\n")
 				if isMarkdown {
-					b.WriteString("*@")
-					b.WriteString(tag.TagName().Text())
-					b.WriteString("*")
+					tagsBuilder.WriteString("*@")
+					tagsBuilder.WriteString(tag.TagName().Text())
+					tagsBuilder.WriteString("*")
 				} else {
-					b.WriteString("@")
-					b.WriteString(tag.TagName().Text())
+					tagsBuilder.WriteString("@")
+					tagsBuilder.WriteString(tag.TagName().Text())
 				}
 				switch tag.Kind {
 				case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-					writeOptionalEntityName(&b, tag.Name())
+					writeOptionalEntityName(&tagsBuilder, tag.Name())
 				case ast.KindJSDocAugmentsTag:
-					writeOptionalEntityName(&b, tag.ClassName())
+					writeOptionalEntityName(&tagsBuilder, tag.ClassName())
 				case ast.KindJSDocSeeTag:
-					writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
+					writeOptionalEntityName(&tagsBuilder, tag.AsJSDocSeeTag().NameExpression)
 				case ast.KindJSDocTemplateTag:
 					for i, tp := range tag.TypeParameters() {
 						if i != 0 {
-							b.WriteString(",")
+							tagsBuilder.WriteString(",")
 						}
-						writeOptionalEntityName(&b, tp.Name())
+						writeOptionalEntityName(&tagsBuilder, tp.Name())
 					}
 				}
 				comments := tag.Comments()
 				if len(comments) != 0 {
 					if commentHasPrefix(comments, "```") {
-						b.WriteString("\n")
+						tagsBuilder.WriteString("\n")
 					} else {
-						b.WriteString(" ")
+						tagsBuilder.WriteString(" ")
 						if !commentHasPrefix(comments, "-") {
-							b.WriteString("— ")
+							tagsBuilder.WriteString("— ")
 						}
 					}
-					l.writeComments(&b, c, comments, isMarkdown)
+					l.writeComments(&tagsBuilder, c, comments, isMarkdown)
 				}
 			}
 		}
 	}
-	return b.String()
+	return commnetsBuilder.String(), tagsBuilder.String()
 }
 
 func isInheritDocTag(tag *ast.JSDocTag) bool {

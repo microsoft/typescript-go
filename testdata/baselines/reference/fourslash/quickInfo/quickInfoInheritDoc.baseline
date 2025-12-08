@@ -97,7 +97,7 @@
 // | ```tsx
 // | (property) SubClass.someProperty: string
 // | ```
-// | Applicable description always.text over tag
+// | Applicable description always. text over tag
 // | 
 // | *@inheritDoc* — text after tag
 // | 
@@ -171,7 +171,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) SubClass.someProperty: string\n```\nApplicable description always.text over tag\n\n*@inheritDoc* — text after tag\n"
+        "value": "```tsx\n(property) SubClass.someProperty: string\n```\nApplicable description always. text over tag\n\n*@inheritDoc* — text after tag\n"
       },
       "range": {
         "start": {

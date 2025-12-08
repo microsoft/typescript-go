@@ -1,0 +1,65 @@
+// === QuickInfo ===
+=== /quickInfoJsDocInheritDocTag.js ===
+// abstract class A {
+//   /**
+//    * A.f description
+//    * @returns {string} A.f return value.
+//    */
+//   public static f(props?: any): string {
+//     throw new Error("Must be implemented by subclass");
+//   }
+// }
+// 
+// class B extends A {
+//   /**
+//    * B.f description
+//    * @inheritDoc
+//    * @param {{ a: string; b: string; }} [props] description of props
+//    */
+//   public static f(props?: { a: string; b: string }): string {}
+//                 ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (method) B.f(props?: { a: string; b: string; }): string
+// | ```
+// | A.f description B.f description
+// | 
+// | *@returns* — A.f return value.
+// | 
+// | 
+// | *@inheritDoc*
+// | 
+// | *@param* `props` — description of props
+// | 
+// | ----------------------------------------------------------------------
+// }
+// 
+[
+  {
+    "marker": {
+      "Position": 352,
+      "LSPosition": {
+        "line": 16,
+        "character": 16
+      },
+      "Name": "",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) B.f(props?: { a: string; b: string; }): string\n```\nA.f description B.f description\n\n*@returns* — A.f return value.\n\n\n*@inheritDoc*\n\n*@param* `props` — description of props\n"
+      },
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 16
+        },
+        "end": {
+          "line": 16,
+          "character": 17
+        }
+      }
+    }
+  }
+]
