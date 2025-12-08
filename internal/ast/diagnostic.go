@@ -122,9 +122,9 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 }
 
 type DiagnosticsCollection struct {
-	fileDiagnostics    map[string][]*Diagnostic
-	fileDiagnosticsSorted map[string]bool
-	nonFileDiagnostics []*Diagnostic
+	fileDiagnostics          map[string][]*Diagnostic
+	fileDiagnosticsSorted    map[string]bool
+	nonFileDiagnostics       []*Diagnostic
 	nonFileDiagnosticsSorted bool
 }
 
@@ -135,7 +135,7 @@ func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
 		if c.fileDiagnosticsSorted == nil {
-		    c.fileDiagnosticsSorted = make(map[string]bool)
+			c.fileDiagnosticsSorted = make(map[string]bool)
 		}
 		c.fileDiagnostics[fileName] = append(c.fileDiagnostics[fileName], diagnostic)
 		c.fileDiagnosticsSorted[fileName] = false
@@ -159,7 +159,7 @@ func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
 }
 
 func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*Diagnostic {
-	if (!c.nonFileDiagnosticsSorted) {
+	if !c.nonFileDiagnosticsSorted {
 		slices.SortStableFunc(c.nonFileDiagnostics, CompareDiagnostics)
 		c.nonFileDiagnosticsSorted = true
 	}
@@ -170,7 +170,7 @@ func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagno
 	if c.fileDiagnosticsSorted == nil {
 		c.fileDiagnosticsSorted = make(map[string]bool)
 	}
-	if (!c.fileDiagnosticsSorted[fileName]) {
+	if !c.fileDiagnosticsSorted[fileName] {
 		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
 		c.fileDiagnosticsSorted[fileName] = true
 	}
