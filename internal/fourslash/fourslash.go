@@ -646,7 +646,7 @@ func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) 
 }
 
 func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *lsutil.UserPreferences) (reset func()) {
-	originalConfig := f.userPreferences.Copy()
+	originalConfig := f.userPreferences
 	f.Configure(t, config)
 	return func() {
 		f.Configure(t, originalConfig)
@@ -3602,7 +3602,7 @@ type VerifyWorkspaceSymbolCase struct {
 
 // `verify.navigateTo` in Strada.
 func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
-	originalPreferences := f.userPreferences.Copy()
+	originalPreferences := f.userPreferences
 	for _, testCase := range cases {
 		preferences := testCase.Preferences
 		if preferences == nil {
