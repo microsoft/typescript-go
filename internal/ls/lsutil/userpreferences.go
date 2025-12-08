@@ -369,6 +369,7 @@ var typeParsers = map[reflect.Type]func(any) any{
 }
 
 // typeSerializers maps reflect.Type to a function that serializes a value of that type.
+// For types which do not serialize as-is (tristate, enums, etc).
 var typeSerializers = map[reflect.Type]func(any) any{
 	reflect.TypeFor[core.Tristate](): func(val any) any {
 		switch val.(core.Tristate) {
@@ -379,13 +380,6 @@ var typeSerializers = map[reflect.Type]func(any) any{
 		default:
 			return nil
 		}
-	},
-	reflect.TypeFor[IncludeInlayParameterNameHints](): func(val any) any {
-		s := val.(IncludeInlayParameterNameHints)
-		if s == "" {
-			return "none"
-		}
-		return string(s)
 	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
 		if val.(OrganizeImportsCollation) == OrganizeImportsCollationUnicode {
