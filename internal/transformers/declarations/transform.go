@@ -94,8 +94,11 @@ func (tx *DeclarationTransformer) shouldStripInternal(node *ast.Node) bool {
 }
 
 func (tx *DeclarationTransformer) isInternalDeclaration(node *ast.Node, sourceFile *ast.SourceFile) bool {
-	parseTreeNode := node
-	if node == nil || !ast.IsParseTreeNode(node) {
+	if node == nil {
+		return false
+	}
+	parseTreeNode := tx.EmitContext().MostOriginal(node)
+	if !ast.IsParseTreeNode(parseTreeNode) {
 		return false
 	}
 	if parseTreeNode.Kind == ast.KindParameter {
