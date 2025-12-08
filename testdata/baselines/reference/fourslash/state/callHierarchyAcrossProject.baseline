@@ -270,68 +270,6 @@ Config::
   "method": "callHierarchy/incomingCalls",
   "params": {
     "item": {
-      "name": "openElementsAtEditor",
-      "kind": 12,
-      "uri": "file:///projects/container/lib/bar.ts",
-      "range": {
-        "start": {
-          "line": 1,
-          "character": 0
-        },
-        "end": {
-          "line": 3,
-          "character": 1
-        }
-      },
-      "selectionRange": {
-        "start": {
-          "line": 1,
-          "character": 9
-        },
-        "end": {
-          "line": 1,
-          "character": 29
-        }
-      }
-    }
-  }
-}
-
-{
-  "method": "callHierarchy/incomingCalls",
-  "params": {
-    "item": {
-      "name": "registerDefaultLanguageCommand",
-      "kind": 12,
-      "uri": "file:///projects/container/lib/baz.ts",
-      "range": {
-        "start": {
-          "line": 1,
-          "character": 0
-        },
-        "end": {
-          "line": 3,
-          "character": 1
-        }
-      },
-      "selectionRange": {
-        "start": {
-          "line": 1,
-          "character": 9
-        },
-        "end": {
-          "line": 1,
-          "character": 39
-        }
-      }
-    }
-  }
-}
-
-{
-  "method": "callHierarchy/incomingCalls",
-  "params": {
-    "item": {
       "name": "openElementsAtEditor2",
       "kind": 12,
       "uri": "file:///projects/container/compositeExec/index.ts",
@@ -390,6 +328,68 @@ Config::
   }
 }
 
+{
+  "method": "callHierarchy/incomingCalls",
+  "params": {
+    "item": {
+      "name": "openElementsAtEditor",
+      "kind": 12,
+      "uri": "file:///projects/container/lib/bar.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 9
+        },
+        "end": {
+          "line": 1,
+          "character": 29
+        }
+      }
+    }
+  }
+}
+
+{
+  "method": "callHierarchy/incomingCalls",
+  "params": {
+    "item": {
+      "name": "registerDefaultLanguageCommand",
+      "kind": 12,
+      "uri": "file:///projects/container/lib/baz.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 9
+        },
+        "end": {
+          "line": 1,
+          "character": 39
+        }
+      }
+    }
+  }
+}
+
 
 
 
@@ -408,54 +408,6 @@ Config::
 │ │                    ^^^^^^^^^^^^^^^^^^^^
 │ ╰
 ├ incoming:
-│ ╭ from:
-│ │ ╭ name: openElementsAtEditor
-│ │ ├ kind: function
-│ │ ├ file: /projects/container/lib/bar.ts
-│ │ ├ span:
-│ │ │ ╭ /projects/container/lib/bar.ts:2:1-4:2
-│ │ │ │ 2: function openElementsAtEditor() {
-│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-│ │ │ │ 3:   createModelReference();
-│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
-│ │ │ │ 4: }
-│ │ │ │    ^
-│ │ │ ╰
-│ │ ├ selectionSpan:
-│ │ │ ╭ /projects/container/lib/bar.ts:2:10-2:30
-│ │ │ │ 2: function openElementsAtEditor() {
-│ │ │ │             ^^^^^^^^^^^^^^^^^^^^
-│ │ │ ╰
-│ │ ╰ incoming: none
-│ ├ fromSpans:
-│ │ ╭ /projects/container/lib/bar.ts:3:3-3:23
-│ │ │ 3:   createModelReference();
-│ │ │      ^^^^^^^^^^^^^^^^^^^^
-│ ╰ ╰
-│ ╭ from:
-│ │ ╭ name: registerDefaultLanguageCommand
-│ │ ├ kind: function
-│ │ ├ file: /projects/container/lib/baz.ts
-│ │ ├ span:
-│ │ │ ╭ /projects/container/lib/baz.ts:2:1-4:2
-│ │ │ │ 2: function registerDefaultLanguageCommand() {
-│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-│ │ │ │ 3:   createModelReference();
-│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
-│ │ │ │ 4: }
-│ │ │ │    ^
-│ │ │ ╰
-│ │ ├ selectionSpan:
-│ │ │ ╭ /projects/container/lib/baz.ts:2:10-2:40
-│ │ │ │ 2: function registerDefaultLanguageCommand() {
-│ │ │ │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-│ │ │ ╰
-│ │ ╰ incoming: none
-│ ├ fromSpans:
-│ │ ╭ /projects/container/lib/baz.ts:3:3-3:23
-│ │ │ 3:   createModelReference();
-│ │ │      ^^^^^^^^^^^^^^^^^^^^
-│ ╰ ╰
 │ ╭ from:
 │ │ ╭ name: openElementsAtEditor2
 │ │ ├ kind: function
@@ -501,6 +453,54 @@ Config::
 │ │ ╰ incoming: none
 │ ├ fromSpans:
 │ │ ╭ /projects/container/exec/index.ts:3:3-3:23
+│ │ │ 3:   createModelReference();
+│ │ │      ^^^^^^^^^^^^^^^^^^^^
+│ ╰ ╰
+│ ╭ from:
+│ │ ╭ name: openElementsAtEditor
+│ │ ├ kind: function
+│ │ ├ file: /projects/container/lib/bar.ts
+│ │ ├ span:
+│ │ │ ╭ /projects/container/lib/bar.ts:2:1-4:2
+│ │ │ │ 2: function openElementsAtEditor() {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3:   createModelReference();
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 4: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /projects/container/lib/bar.ts:2:10-2:30
+│ │ │ │ 2: function openElementsAtEditor() {
+│ │ │ │             ^^^^^^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /projects/container/lib/bar.ts:3:3-3:23
+│ │ │ 3:   createModelReference();
+│ │ │      ^^^^^^^^^^^^^^^^^^^^
+│ ╰ ╰
+│ ╭ from:
+│ │ ╭ name: registerDefaultLanguageCommand
+│ │ ├ kind: function
+│ │ ├ file: /projects/container/lib/baz.ts
+│ │ ├ span:
+│ │ │ ╭ /projects/container/lib/baz.ts:2:1-4:2
+│ │ │ │ 2: function registerDefaultLanguageCommand() {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3:   createModelReference();
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 4: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /projects/container/lib/baz.ts:2:10-2:40
+│ │ │ │ 2: function registerDefaultLanguageCommand() {
+│ │ │ │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ incoming: none
+│ ├ fromSpans:
+│ │ ╭ /projects/container/lib/baz.ts:3:3-3:23
 │ │ │ 3:   createModelReference();
 │ │ │      ^^^^^^^^^^^^^^^^^^^^
 │ ╰ ╰
