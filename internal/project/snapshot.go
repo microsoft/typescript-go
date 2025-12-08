@@ -334,7 +334,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	config := s.config
 	if change.newConfig != nil {
 		if change.newConfig.tsUserPreferences != nil {
-			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
+			config.tsUserPreferences = change.newConfig.tsUserPreferences
 		}
 		if change.newConfig.formatOptions != nil {
 			config.formatOptions = change.newConfig.formatOptions

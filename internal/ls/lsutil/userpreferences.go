@@ -622,7 +622,7 @@ func deepCopyValue(dst, src reflect.Value) {
 		dst.Set(reflect.New(src.Type().Elem()))
 		deepCopyValue(dst.Elem(), src.Elem())
 	case reflect.Struct:
-		for i := 0; i < src.NumField(); i++ {
+		for i := range src.NumField() {
 			deepCopyValue(dst.Field(i), src.Field(i))
 		}
 	case reflect.Slice:
@@ -631,7 +631,7 @@ func deepCopyValue(dst, src reflect.Value) {
 			return
 		}
 		dst.Set(reflect.MakeSlice(src.Type(), src.Len(), src.Len()))
-		for i := 0; i < src.Len(); i++ {
+		for i := range src.Len() {
 			deepCopyValue(dst.Index(i), src.Index(i))
 		}
 	case reflect.Map:
@@ -655,20 +655,14 @@ func (p *UserPreferences) Copy() *UserPreferences {
 	return deepCopy(p)
 }
 
-func (p *UserPreferences) CopyOrDefault() *UserPreferences {
-	if p == nil {
-		return NewDefaultUserPreferences()
-	}
-	return p.Copy()
-}
-
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences(p.ModuleSpecifier)
 }
 
-// ParseUserPreferences parses user preferences from a config map or copies from existing preferences.
-// Always returns a fresh *UserPreferences with defaults applied, then overlaid with parsed values.
-// Returns nil if item is nil.
+// ParseUserPreferences parses user preferences from a config map or returns existing preferences.
+// For config maps: returns a fresh *UserPreferences with defaults applied, then overlaid with parsed values.
+// For *UserPreferences: returns the same pointer (caller should not mutate).
+// Returns nil if item is nil or unrecognized type.
 func ParseUserPreferences(item any) *UserPreferences {
 	if item == nil {
 		return nil
@@ -679,7 +673,7 @@ func ParseUserPreferences(item any) *UserPreferences {
 		return p
 	}
 	if prefs, ok := item.(*UserPreferences); ok {
-		return prefs.CopyOrDefault()
+		return prefs
 	}
 	return nil
 }
