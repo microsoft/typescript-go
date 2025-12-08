@@ -232,7 +232,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		in:              inputWriter,
 		out:             outputReader,
 		testData:        &testData,
-		userPreferences: lsutil.DefaultUserPreferences, // !!! parse default preferences for fourslash case?
+		userPreferences: lsutil.DefaultUserPreferences,
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
