@@ -89,10 +89,6 @@ func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func())
 	return checker, p.createRelease(core.GetRequestID(ctx), index, checker)
 }
 
-func (p *CheckerPool) Count() int {
-	return p.maxCheckers
-}
-
 func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
 	if checker, index := p.getImmediatelyAvailableChecker(); checker != nil {
 		p.inUse[checker] = true

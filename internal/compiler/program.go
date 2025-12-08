@@ -378,7 +378,7 @@ func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func())
 
 func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
 	if pool, ok := p.checkerPool.(*checkerPool); ok {
-		pool.ForEachCheckerParallel(cb)
+		pool.forEachCheckerParallel(cb)
 	}
 }
 
@@ -1009,8 +1009,10 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 		return nil
 	}
 
-	globalDiagnostics := make([][]*ast.Diagnostic, p.checkerPool.Count())
-	p.ForEachCheckerParallel(func(idx int, checker *checker.Checker) {
+	pool := p.checkerPool.(*checkerPool)
+
+	globalDiagnostics := make([][]*ast.Diagnostic, len(pool.checkers))
+	pool.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
 		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
 	})
 
