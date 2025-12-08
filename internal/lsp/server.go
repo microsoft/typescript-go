@@ -652,15 +652,6 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	}
 }
 
-func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Context, uri lsproto.DocumentUri, req *lsproto.RequestMessage) (*ls.LanguageService, ls.CrossProjectOrchestrator, error) {
-	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
-	var orchestrator ls.CrossProjectOrchestrator
-	if err == nil {
-		orchestrator = &crossProjectOrchestrator{s, req, defaultProject, allProjects}
-	}
-	return defaultLs, orchestrator, err
-}
-
 type crossProjectOrchestrator struct {
 	server         *Server
 	req            *lsproto.RequestMessage
@@ -696,13 +687,13 @@ func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Con
 	}
 }
 
-func (c *crossProjectOrchestrator) RecoverWith(r any) string {
-	stack := debug.Stack()
-	c.server.logger.Error("panic handling request", c.req.Method, r, string(stack))
-	if c.req.ID == nil {
-		c.server.logger.Error("unhandled panic in notification", c.req.Method, r)
+func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Context, uri lsproto.DocumentUri, req *lsproto.RequestMessage) (*ls.LanguageService, ls.CrossProjectOrchestrator, error) {
+	defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, uri)
+	var orchestrator ls.CrossProjectOrchestrator
+	if err == nil {
+		orchestrator = &crossProjectOrchestrator{s, req, defaultProject, allProjects}
 	}
-	return fmt.Sprintf("panic handling request %s: %v", c.req.Method, r)
+	return defaultLs, orchestrator, err
 }
 
 func (s *Server) recover(req *lsproto.RequestMessage) {

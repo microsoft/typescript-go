@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"runtime/debug"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -39,7 +40,6 @@ type CrossProjectOrchestrator interface {
 	GetLanguageServiceForProjectWithFile(ctx context.Context, project Project, uri lsproto.DocumentUri) *LanguageService
 	GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]Project, error)
 	GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[Project]
-	RecoverWith(r any) string
 }
 
 func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
@@ -86,7 +86,8 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 			}
 			defer func() {
 				if r := recover(); r != nil {
-					panicOccured := orchestrator.RecoverWith(r)
+					stack := debug.Stack()
+					panicOccured := fmt.Sprintf("panic handling request: %v\n%s", r, string(stack))
 					panicMu.Lock()
 					panicsOccured = append(panicsOccured, panicOccured)
 					panicMu.Unlock()
@@ -206,7 +207,7 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 		wg.RunAndWait()
 		// No need to use mu here since we are not in parallel at this point
 		if panicsOccured != nil {
-			panic(fmt.Sprintf("Panics occured during cross-project handling: %v", panicsOccured))
+			panic(fmt.Sprintf("Panics occurred during cross-project handling: %v", panicsOccured))
 		}
 		if ctx.Err() != nil {
 			return resp, ctx.Err()
