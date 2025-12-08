@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"fmt"
 	"iter"
 	"sync"
 
@@ -38,7 +39,7 @@ type CrossProjectOrchestrator interface {
 	GetLanguageServiceForProjectWithFile(ctx context.Context, project Project, uri lsproto.DocumentUri) *LanguageService
 	GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]Project, error)
 	GetProjectsLoadingProjectTree(ctx context.Context, requestedProjectTrees *collections.Set[tspath.Path]) iter.Seq[Project]
-	RecoverWith(r any)
+	RecoverWith(r any) string
 }
 
 func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
@@ -72,6 +73,8 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 	wg := core.NewWorkGroup(false)
 	var errMu sync.Mutex
 	var enqueueItem func(item projectAndTextDocumentPosition)
+	var panicsOccured []string
+	var panicMu sync.Mutex
 	enqueueItem = func(item projectAndTextDocumentPosition) {
 		var response response[Resp]
 		if _, loaded := results.LoadOrStore(item.project.Id(), &response); loaded {
@@ -83,7 +86,10 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 			}
 			defer func() {
 				if r := recover(); r != nil {
-					orchestrator.RecoverWith(r)
+					panicOccured := orchestrator.RecoverWith(r)
+					panicMu.Lock()
+					panicsOccured = append(panicsOccured, panicOccured)
+					panicMu.Unlock()
 				}
 			}()
 			// Process the item
@@ -198,10 +204,13 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 	for {
 		// Process existing known projects first
 		wg.RunAndWait()
+		// No need to use mu here since we are not in parallel at this point
+		if panicsOccured != nil {
+			panic(fmt.Sprintf("Panics occured during cross-project handling: %v", panicsOccured))
+		}
 		if ctx.Err() != nil {
 			return resp, ctx.Err()
 		}
-		// No need to use mu here since we are not in parallel at this point
 		if err != nil {
 			return resp, err
 		}

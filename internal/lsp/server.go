@@ -687,23 +687,24 @@ func (c *crossProjectOrchestrator) GetProjectsLoadingProjectTree(ctx context.Con
 	}
 }
 
-func (c *crossProjectOrchestrator) RecoverWith(r any) {
-	c.server.recoverWith(c.req, r)
-}
-
-func (s *Server) recoverWith(req *lsproto.RequestMessage, r any) {
+func (c *crossProjectOrchestrator) RecoverWith(r any) string {
 	stack := debug.Stack()
-	s.logger.Error("panic handling request", req.Method, r, string(stack))
-	if req.ID != nil {
-		s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
-	} else {
-		s.logger.Error("unhandled panic in notification", req.Method, r)
+	c.server.logger.Error("panic handling request", c.req.Method, r, string(stack))
+	if c.req.ID == nil {
+		c.server.logger.Error("unhandled panic in notification", c.req.Method, r)
 	}
+	return fmt.Sprintf("panic handling request %s: %v", c.req.Method, r)
 }
 
 func (s *Server) recover(req *lsproto.RequestMessage) {
 	if r := recover(); r != nil {
-		s.recoverWith(req, r)
+		stack := debug.Stack()
+		s.logger.Error("panic handling request", req.Method, r, string(stack))
+		if req.ID != nil {
+			s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+		} else {
+			s.logger.Error("unhandled panic in notification", req.Method, r)
+		}
 	}
 }
 
