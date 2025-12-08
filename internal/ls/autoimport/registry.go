@@ -34,7 +34,7 @@ import (
 // However, two exceptions cause the bucket to be rebuilt after a change to a
 // single file:
 //
-//  1. Local files are newly added to the project by a manual import
+//  1. Local files are newly added to the project by a manual import (!!! not implemented yet)
 //  2. A node_modules dependency normally filtered out by package.json dependencies
 //     is added to the project by a manual import
 //
