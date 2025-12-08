@@ -586,6 +586,22 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		return node, nil, false
 	}
 
+	// For rename operations, check if we're trying to rename a standard library symbol
+	if isRename {
+		checker, done := program.GetTypeChecker(ctx)
+		symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
+		done()
+		if symbol != nil {
+			declarations := symbol.Declarations
+			// Disallow rename for elements that are defined in the standard TypeScript library.
+			if core.Some(declarations, func(declaration *ast.Node) bool {
+				return isDefinedInLibraryFile(program, declaration)
+			}) {
+				return node, nil, false
+			}
+		}
+	}
+
 	var options refOptions
 	if !isRename {
 		options.use = referenceUseReferences
@@ -594,7 +610,14 @@ func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lspr
 		options.useAliasesForRename = true
 	}
 
-	return node, l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil), true
+	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+
+	// When renaming, if symbolsAndEntries is nil (e.g., from blocking a library symbol rename), return false
+	if isRename && symbolsAndEntries == nil {
+		return node, nil, false
+	}
+
+	return node, symbolsAndEntries, true
 }
 
 func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
@@ -655,7 +678,13 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 }
 
 func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
+	// Early return if the node is not an identifier (can't be renamed)
 	if originalNode.Kind != ast.KindIdentifier {
+		return lsproto.WorkspaceEditOrNull{}, nil
+	}
+
+	// Early return if symbolsAndEntries is nil (e.g., rename was blocked for a standard library symbol)
+	if symbolsAndEntries == nil {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -942,6 +971,11 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 
 	references := getReferencedSymbolsForSymbol(symbol, node, sourceFiles, sourceFilesSet, checker, options) // !!! cancellationToken
 	return l.mergeReferences(program, moduleReferences, references, moduleReferencesOfExportTarget)
+}
+
+func isDefinedInLibraryFile(program *compiler.Program, declaration *ast.Node) bool {
+	sourceFile := ast.GetSourceFileOfNode(declaration)
+	return sourceFile != nil && program.IsSourceFileDefaultLibrary(sourceFile.Path()) && tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionDts)
 }
 
 func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx context.Context, symbol *ast.Symbol, program *compiler.Program, sourceFiles []*ast.SourceFile, checker *checker.Checker, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
