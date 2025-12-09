@@ -27,11 +27,11 @@ export default {};
 	// Test completion at empty attributes
 	// This should not panic
 	f.VerifyCompletions(t, "attr", nil)
-	
+
 	// Test completion after attribute name
 	// This should not panic
 	f.VerifyCompletions(t, "attrEnd1", nil)
-	
+
 	// Test completion at attribute value position
 	// This should not panic
 	f.VerifyCompletions(t, "attrValue", nil)
