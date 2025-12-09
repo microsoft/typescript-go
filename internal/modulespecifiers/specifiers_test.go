@@ -280,7 +280,6 @@ func TestTryGetModuleNameFromExportsOrImports(t *testing.T) {
 		}
 
 		for _, tt := range tests {
-			t.Parallel()
 			t.Run(tt.name, func(t *testing.T) {
 				result := tryGetModuleNameFromExportsOrImports(
 					&core.CompilerOptions{},
