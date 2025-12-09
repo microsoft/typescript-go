@@ -85,6 +85,85 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 	})
 }
 
+func TestUserPreferencesSerialize(t *testing.T) {
+	t.Parallel()
+
+	t.Run("config path field serializes to nested path", func(t *testing.T) {
+		t.Parallel()
+		prefs := &UserPreferences{
+			QuotePreference: QuotePreferenceSingle,
+		}
+		jsonBytes, err := json.Marshal(prefs)
+		assert.NilError(t, err)
+
+		var actual map[string]any
+		err = json.Unmarshal(jsonBytes, &actual)
+		assert.NilError(t, err)
+
+		preferences := actual["preferences"].(map[string]any)
+		assert.Equal(t, "single", preferences["quoteStyle"])
+	})
+
+	t.Run("raw-only field serializes to unstable section", func(t *testing.T) {
+		t.Parallel()
+		prefs := &UserPreferences{
+			DisableSuggestions: true,
+		}
+		jsonBytes, err := json.Marshal(prefs)
+		assert.NilError(t, err)
+
+		var actual map[string]any
+		err = json.Unmarshal(jsonBytes, &actual)
+		assert.NilError(t, err)
+
+		unstable := actual["unstable"].(map[string]any)
+		assert.Equal(t, true, unstable["disableSuggestions"])
+	})
+
+	t.Run("inlay hint inversion on serialize", func(t *testing.T) {
+		t.Parallel()
+		prefs := &UserPreferences{
+			InlayHints: InlayHintsPreferences{
+				IncludeInlayParameterNameHints:                        IncludeInlayParameterNameHintsAll,
+				IncludeInlayParameterNameHintsWhenArgumentMatchesName: true,
+			},
+		}
+		jsonBytes, err := json.Marshal(prefs)
+		assert.NilError(t, err)
+
+		var actual map[string]any
+		err = json.Unmarshal(jsonBytes, &actual)
+		assert.NilError(t, err)
+
+		inlayHints := actual["inlayHints"].(map[string]any)
+		parameterNames := inlayHints["parameterNames"].(map[string]any)
+		assert.Equal(t, "all", parameterNames["enabled"])
+		assert.Equal(t, false, parameterNames["suppressWhenArgumentMatchesName"]) // inverted
+	})
+
+	t.Run("mixed config and unstable fields", func(t *testing.T) {
+		t.Parallel()
+		prefs := &UserPreferences{
+			QuotePreference:      QuotePreferenceSingle,
+			DisableSuggestions:   true,
+			DisplayPartsForJSDoc: true,
+		}
+		jsonBytes, err := json.Marshal(prefs)
+		assert.NilError(t, err)
+
+		var actual map[string]any
+		err = json.Unmarshal(jsonBytes, &actual)
+		assert.NilError(t, err)
+
+		preferences := actual["preferences"].(map[string]any)
+		assert.Equal(t, "single", preferences["quoteStyle"])
+
+		unstable := actual["unstable"].(map[string]any)
+		assert.Equal(t, true, unstable["disableSuggestions"])
+		assert.Equal(t, true, unstable["displayPartsForJSDoc"])
+	})
+}
+
 func TestUserPreferencesParseUnstable(t *testing.T) {
 	t.Parallel()
 
@@ -176,7 +255,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			name: "stable config overrides unstable",
 			json: `{
 				"unstable": {
-					"quoteStyle": "double"
+					"quotePreference": "double"
 				},
 				"preferences": {
 					"quoteStyle": "single"
@@ -198,18 +277,39 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			},
 		},
 		{
-			name: "any field can be passed via unstable by its camelCase name",
+			name: "any field can be passed via unstable by its raw name",
 			json: `{
 				"unstable": {
-					"quoteStyle": "double",
-					"autoImports": true,
-					"excludeLibrarySymbols": true
+					"quotePreference": "double",
+					"includeCompletionsForModuleExports": true,
+					"excludeLibrarySymbolsInNavTo": true
 				}
 			}`,
 			expected: &UserPreferences{
 				QuotePreference:                    QuotePreferenceDouble,
 				IncludeCompletionsForModuleExports: core.TSTrue,
 				ExcludeLibrarySymbolsInNavTo:       true,
+			},
+		},
+		{
+			name: "TypeScript raw names work in unstable section",
+			json: `{
+				"unstable": {
+					"includeCompletionsForModuleExports": true,
+					"quotePreference": "single",
+					"providePrefixAndSuffixTextForRename": true,
+					"includeInlayParameterNameHints": "all",
+					"organizeImportsLocale": "en"
+				}
+			}`,
+			expected: &UserPreferences{
+				IncludeCompletionsForModuleExports: core.TSTrue,
+				QuotePreference:                    QuotePreferenceSingle,
+				UseAliasesForRename:                core.TSTrue,
+				OrganizeImportsLocale:              "en",
+				InlayHints: InlayHintsPreferences{
+					IncludeInlayParameterNameHints: IncludeInlayParameterNameHintsAll,
+				},
 			},
 		},
 	}

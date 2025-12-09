@@ -28,79 +28,82 @@ var DefaultUserPreferences = &UserPreferences{
 
 // UserPreferences represents TypeScript language service preferences.
 //
-// Fields are populated from VS Code's nested config structure using the `pref` tag.
-// The `pref` tag format: "path.to.setting" or "path.to.setting,invert" for boolean inversion.
-// Fields under "unstable.*" are experimental and may change.
+// Fields are populated using two tags:
+//   - `raw:"name"` or `raw:"name,invert"` - TypeScript/raw name for unstable section lookup
+//   - `config:"path.to.setting"` or `config:"path.to.setting,invert"` - VS Code nested config path
+//
+// At least one tag must be present on each preference field.
+// The `,invert` modifier inverts boolean values (e.g., VS Code's "suppress" -> our "include").
 type UserPreferences struct {
-	QuotePreference                           QuotePreference `pref:"preferences.quoteStyle"`
-	LazyConfiguredProjectsFromExternalProject bool            `pref:"unstable.lazyConfiguredProjectsFromExternalProject"` // !!!
+	QuotePreference                           QuotePreference `raw:"quotePreference" config:"preferences.quoteStyle"`
+	LazyConfiguredProjectsFromExternalProject bool            `raw:"lazyConfiguredProjectsFromExternalProject"` // !!!
 
 	// A positive integer indicating the maximum length of a hover text before it is truncated.
 	//
 	// Default: `500`
-	MaximumHoverLength int `pref:"unstable.maximumHoverLength"` // !!!
+	MaximumHoverLength int `raw:"maximumHoverLength"` // !!!
 
 	// ------- Completions -------
 
 	// If enabled, TypeScript will search through all external modules' exports and add them to the completions list.
 	// This affects lone identifier completions but not completions on the right hand side of `obj.`.
-	IncludeCompletionsForModuleExports core.Tristate `pref:"suggest.autoImports"`
+	IncludeCompletionsForModuleExports core.Tristate `raw:"includeCompletionsForModuleExports" config:"suggest.autoImports"`
 	// Enables auto-import-style completions on partially-typed import statements. E.g., allows
 	// `import write|` to be completed to `import { writeFile } from "fs"`.
-	IncludeCompletionsForImportStatements core.Tristate `pref:"suggest.includeCompletionsForImportStatements"`
+	IncludeCompletionsForImportStatements core.Tristate `raw:"includeCompletionsForImportStatements" config:"suggest.includeCompletionsForImportStatements"`
 	// Unless this option is `false`,  member completion lists triggered with `.` will include entries
 	// on potentially-null and potentially-undefined values, with insertion text to replace
 	// preceding `.` tokens with `?.`.
-	IncludeAutomaticOptionalChainCompletions core.Tristate `pref:"suggest.includeAutomaticOptionalChainCompletions"`
+	IncludeAutomaticOptionalChainCompletions core.Tristate `raw:"includeAutomaticOptionalChainCompletions" config:"suggest.includeAutomaticOptionalChainCompletions"`
 	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
-	IncludeCompletionsWithSnippetText core.Tristate `pref:"unstable.includeCompletionsWithSnippetText"` // !!!
+	IncludeCompletionsWithSnippetText core.Tristate `raw:"includeCompletionsWithSnippetText"` // !!!
 	// If enabled, completions for class members (e.g. methods and properties) will include
 	// a whole declaration for the member.
 	// E.g., `class A { f| }` could be completed to `class A { foo(): number {} }`, instead of
 	// `class A { foo }`.
-	IncludeCompletionsWithClassMemberSnippets core.Tristate `pref:"suggest.classMemberSnippets.enabled"` // !!!
+	IncludeCompletionsWithClassMemberSnippets core.Tristate `raw:"includeCompletionsWithClassMemberSnippets" config:"suggest.classMemberSnippets.enabled"` // !!!
 	// If enabled, object literal methods will have a method declaration completion entry in addition
 	// to the regular completion entry containing just the method name.
 	// E.g., `const objectLiteral: T = { f| }` could be completed to `const objectLiteral: T = { foo(): void {} }`,
 	// in addition to `const objectLiteral: T = { foo }`.
-	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `pref:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
-	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `pref:"preferences.jsxAttributeCompletionStyle"`
+	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `raw:"includeCompletionsWithObjectLiteralMethodSnippets" config:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
+	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `raw:"jsxAttributeCompletionStyle" config:"preferences.jsxAttributeCompletionStyle"`
 
 	// ------- AutoImports --------
 
 	ModuleSpecifier ModuleSpecifierUserPreferences
 
-	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `pref:"preferences.includePackageJsonAutoImports"` // !!!
-	AutoImportFileExcludePatterns []string                      `pref:"preferences.autoImportFileExcludePatterns"` // !!!
-	PreferTypeOnlyAutoImports     bool                          `pref:"preferences.preferTypeOnlyAutoImports"`     // !!!
+	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"` // !!!
+	AutoImportFileExcludePatterns []string                      `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"` // !!!
+	PreferTypeOnlyAutoImports     bool                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`         // !!!
 
 	// ------- OrganizeImports -------
 
 	// Indicates whether imports should be organized in a case-insensitive manner.
 	//
 	// Default: TSUnknown ("auto" in strada), will perform detection
-	OrganizeImportsIgnoreCase core.Tristate `pref:"preferences.organizeImports.caseSensitivity"` // !!!
+	OrganizeImportsIgnoreCase core.Tristate `raw:"organizeImportsIgnoreCase" config:"preferences.organizeImports.caseSensitivity"` // !!!
 	// Indicates whether imports should be organized via an "ordinal" (binary) comparison using the numeric value of their
 	// code points, or via "unicode" collation (via the Unicode Collation Algorithm (https://unicode.org/reports/tr10/#Scope))
 	//
 	// using rules associated with the locale specified in organizeImportsCollationLocale.
 	//
 	// Default: Ordinal
-	OrganizeImportsCollation OrganizeImportsCollation `pref:"preferences.organizeImports.unicodeCollation"` // !!!
+	OrganizeImportsCollation OrganizeImportsCollation `raw:"organizeImportsCollation" config:"preferences.organizeImports.unicodeCollation"` // !!!
 	// Indicates the locale to use for "unicode" collation. If not specified, the locale `"en"` is used as an invariant
 	// for the sake of consistent sorting. Use `"auto"` to use the detected UI locale.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `"en"`
-	OrganizeImportsLocale string `pref:"preferences.organizeImports.locale"` // !!!
+	OrganizeImportsLocale string `raw:"organizeImportsLocale" config:"preferences.organizeImports.locale"` // !!!
 	// Indicates whether numeric collation should be used for digit sequences in strings. When `true`, will collate
 	// strings such that `a1z < a2z < a100z`. When `false`, will collate strings such that `a1z < a100z < a2z`.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `false`
-	OrganizeImportsNumericCollation bool `pref:"preferences.organizeImports.numericCollation"` // !!!
+	OrganizeImportsNumericCollation bool `raw:"organizeImportsNumericCollation" config:"preferences.organizeImports.numericCollation"` // !!!
 	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
 	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
 	// in organizeImportsCollationLocale.
@@ -108,7 +111,7 @@ type UserPreferences struct {
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `true`
-	OrganizeImportsAccentCollation bool `pref:"preferences.organizeImports.accentCollation"` // !!!
+	OrganizeImportsAccentCollation bool `raw:"organizeImportsAccentCollation" config:"preferences.organizeImports.accentCollation"` // !!!
 	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
 	// specified in organizeImportsCollationLocale is used.
 	//
@@ -118,24 +121,24 @@ type UserPreferences struct {
 	//	- organizeImportsIgnoreCase is `auto` and the auto-detected case sensitivity is case-insensitive.
 	//
 	// Default: `false`
-	OrganizeImportsCaseFirst OrganizeImportsCaseFirst `pref:"preferences.organizeImports.caseFirst"` // !!!
+	OrganizeImportsCaseFirst OrganizeImportsCaseFirst `raw:"organizeImportsCaseFirst" config:"preferences.organizeImports.caseFirst"` // !!!
 	// Indicates where named type-only imports should sort. "inline" sorts named imports without regard to if the import is type-only.
 	//
 	// Default: `auto`, which defaults to `last`
-	OrganizeImportsTypeOrder OrganizeImportsTypeOrder `pref:"preferences.organizeImports.typeOrder"` // !!!
+	OrganizeImportsTypeOrder OrganizeImportsTypeOrder `raw:"organizeImportsTypeOrder" config:"preferences.organizeImports.typeOrder"` // !!!
 
 	// ------- MoveToFile -------
 
-	AllowTextChangesInNewFiles bool `pref:"unstable.allowTextChangesInNewFiles"` // !!!
+	AllowTextChangesInNewFiles bool `raw:"allowTextChangesInNewFiles"` // !!!
 
 	// ------- Rename -------
 
-	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames"`
-	AllowRenameOfImportPath bool          `pref:"unstable.allowRenameOfImportPath"` // !!!
+	UseAliasesForRename     core.Tristate `raw:"providePrefixAndSuffixTextForRename" config:"preferences.useAliasesForRenames"`
+	AllowRenameOfImportPath bool          `raw:"allowRenameOfImportPath"` // !!!
 
 	// ------- CodeFixes/Refactors -------
 
-	ProvideRefactorNotApplicableReason bool `pref:"unstable.provideRefactorNotApplicableReason"` // !!!
+	ProvideRefactorNotApplicableReason bool `raw:"provideRefactorNotApplicableReason"` // !!!
 
 	// ------- InlayHints -------
 
@@ -147,40 +150,40 @@ type UserPreferences struct {
 
 	// ------- Symbols -------
 
-	ExcludeLibrarySymbolsInNavTo bool `pref:"workspaceSymbols.excludeLibrarySymbols"`
+	ExcludeLibrarySymbolsInNavTo bool `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
 
 	// ------- Misc -------
 
-	DisableSuggestions          bool `pref:"unstable.disableSuggestions"`          // !!!
-	DisableLineTextInReferences bool `pref:"unstable.disableLineTextInReferences"` // !!!
-	DisplayPartsForJSDoc        bool `pref:"unstable.displayPartsForJSDoc"`        // !!!
-	ReportStyleChecksAsWarnings bool `pref:"unstable.reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
+	DisableSuggestions          bool `raw:"disableSuggestions"`          // !!!
+	DisableLineTextInReferences bool `raw:"disableLineTextInReferences"` // !!!
+	DisplayPartsForJSDoc        bool `raw:"displayPartsForJSDoc"`        // !!!
+	ReportStyleChecksAsWarnings bool `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
 }
 
 type InlayHintsPreferences struct {
-	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints `pref:"inlayHints.parameterNames.enabled"`
-	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool                           `pref:"inlayHints.parameterNames.suppressWhenArgumentMatchesName,invert"`
-	IncludeInlayFunctionParameterTypeHints                bool                           `pref:"inlayHints.parameterTypes.enabled"`
-	IncludeInlayVariableTypeHints                         bool                           `pref:"inlayHints.variableTypes.enabled"`
-	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool                           `pref:"inlayHints.variableTypes.suppressWhenTypeMatchesName,invert"`
-	IncludeInlayPropertyDeclarationTypeHints              bool                           `pref:"inlayHints.propertyDeclarationTypes.enabled"`
-	IncludeInlayFunctionLikeReturnTypeHints               bool                           `pref:"inlayHints.functionLikeReturnTypes.enabled"`
-	IncludeInlayEnumMemberValueHints                      bool                           `pref:"inlayHints.enumMemberValues.enabled"`
+	IncludeInlayParameterNameHints                        IncludeInlayParameterNameHints `raw:"includeInlayParameterNameHints" config:"inlayHints.parameterNames.enabled"`
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName bool                           `raw:"includeInlayParameterNameHintsWhenArgumentMatchesName" config:"inlayHints.parameterNames.suppressWhenArgumentMatchesName,invert"`
+	IncludeInlayFunctionParameterTypeHints                bool                           `raw:"includeInlayFunctionParameterTypeHints" config:"inlayHints.parameterTypes.enabled"`
+	IncludeInlayVariableTypeHints                         bool                           `raw:"includeInlayVariableTypeHints" config:"inlayHints.variableTypes.enabled"`
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      bool                           `raw:"includeInlayVariableTypeHintsWhenTypeMatchesName" config:"inlayHints.variableTypes.suppressWhenTypeMatchesName,invert"`
+	IncludeInlayPropertyDeclarationTypeHints              bool                           `raw:"includeInlayPropertyDeclarationTypeHints" config:"inlayHints.propertyDeclarationTypes.enabled"`
+	IncludeInlayFunctionLikeReturnTypeHints               bool                           `raw:"includeInlayFunctionLikeReturnTypeHints" config:"inlayHints.functionLikeReturnTypes.enabled"`
+	IncludeInlayEnumMemberValueHints                      bool                           `raw:"includeInlayEnumMemberValueHints" config:"inlayHints.enumMemberValues.enabled"`
 }
 
 type CodeLensUserPreferences struct {
-	ReferencesCodeLensEnabled                     bool `pref:"referencesCodeLens.enabled"`
-	ImplementationsCodeLensEnabled                bool `pref:"implementationsCodeLens.enabled"`
-	ReferencesCodeLensShowOnAllFunctions          bool `pref:"referencesCodeLens.showOnAllFunctions"`
-	ImplementationsCodeLensShowOnInterfaceMethods bool `pref:"implementationsCodeLens.showOnInterfaceMethods"`
-	ImplementationsCodeLensShowOnAllClassMethods  bool `pref:"implementationsCodeLens.showOnAllClassMethods"`
+	ReferencesCodeLensEnabled                     bool `raw:"referencesCodeLensEnabled" config:"referencesCodeLens.enabled"`
+	ImplementationsCodeLensEnabled                bool `raw:"implementationsCodeLensEnabled" config:"implementationsCodeLens.enabled"`
+	ReferencesCodeLensShowOnAllFunctions          bool `raw:"referencesCodeLensShowOnAllFunctions" config:"referencesCodeLens.showOnAllFunctions"`
+	ImplementationsCodeLensShowOnInterfaceMethods bool `raw:"implementationsCodeLensShowOnInterfaceMethods" config:"implementationsCodeLens.showOnInterfaceMethods"`
+	ImplementationsCodeLensShowOnAllClassMethods  bool `raw:"implementationsCodeLensShowOnAllClassMethods" config:"implementationsCodeLens.showOnAllClassMethods"`
 }
 
 type ModuleSpecifierUserPreferences struct {
-	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `pref:"preferences.importModuleSpecifier"` // !!!
+	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `raw:"importModuleSpecifierPreference" config:"preferences.importModuleSpecifier"` // !!!
 	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `pref:"preferences.importModuleSpecifierEnding"`       // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               `pref:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
+	AutoImportSpecifierExcludeRegexes []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
 }
 
 // --- Enum Types ---
@@ -407,28 +410,24 @@ var typeSerializers = map[reflect.Type]func(any) any{
 }
 
 type fieldInfo struct {
-	path      string // dotted path for config (e.g., "preferences.quoteStyle" or "unstable.disableSuggestions")
-	fieldPath []int  // index path to field in struct
-	invert    bool   // whether to invert boolean values
+	rawName      string // raw name for unstable section lookup (e.g., "quotePreference")
+	configPath   string // dotted path for config (e.g., "preferences.quoteStyle")
+	fieldPath    []int  // index path to field in struct
+	rawInvert    bool   // whether to invert boolean values for raw name
+	configInvert bool   // whether to invert boolean values for config path
 }
 
 var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
 	return collectFieldInfos(reflect.TypeFor[UserPreferences](), nil)
 })
 
-// unstableNameIndex maps the camelCase name (from "unstable.name" paths) to fieldInfo index.
-// This allows any field to be set via the unstable section using its camelCase name.
+// unstableNameIndex maps raw names to fieldInfo index for unstable section lookup.
 var unstableNameIndex = sync.OnceValue(func() map[string]int {
 	infos := fieldInfoCache()
 	index := make(map[string]int, len(infos))
 	for i, info := range infos {
-		// Extract the last part of any path as the unstable key
-		// e.g., "preferences.quoteStyle" -> "quoteStyle"
-		// e.g., "unstable.disableSuggestions" -> "disableSuggestions"
-		if idx := strings.LastIndex(info.path, "."); idx >= 0 {
-			index[info.path[idx+1:]] = i
-		} else {
-			index[info.path] = i
+		if info.rawName != "" {
+			index[info.rawName] = i
 		}
 	}
 	return index
@@ -440,25 +439,41 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 		field := t.Field(i)
 		currentPath := append(slices.Clone(indexPath), i)
 
-		tag := field.Tag.Get("pref")
-		if tag == "" {
-			// Embedded struct without pref tag - recurse into it
+		rawTag := field.Tag.Get("raw")
+		configTag := field.Tag.Get("config")
+
+		if rawTag == "" && configTag == "" {
+			// Embedded struct without tags - recurse into it
 			if field.Type.Kind() == reflect.Struct {
 				infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
 				continue
 			}
-			panic("pref tag required for field " + field.Name)
+			panic("raw or vscode tag required for field " + field.Name)
 		}
 
-		// Parse tag: "path" or "path,invert"
-		parts := strings.Split(tag, ",")
 		info := fieldInfo{
-			path:      parts[0],
 			fieldPath: currentPath,
 		}
-		for _, part := range parts[1:] {
-			if part == "invert" {
-				info.invert = true
+
+		// Parse raw tag: "name" or "name,invert"
+		if rawTag != "" {
+			parts := strings.Split(rawTag, ",")
+			info.rawName = parts[0]
+			for _, part := range parts[1:] {
+				if part == "invert" {
+					info.rawInvert = true
+				}
+			}
+		}
+
+		// Parse config tag: "path.to.setting" or "path.to.setting,invert"
+		if configTag != "" {
+			parts := strings.Split(configTag, ",")
+			info.configPath = parts[0]
+			for _, part := range parts[1:] {
+				if part == "invert" {
+					info.configInvert = true
+				}
 			}
 		}
 
@@ -501,7 +516,7 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 	v := reflect.ValueOf(p).Elem()
 	infos := fieldInfoCache()
 
-	// Process "unstable" section first - allows any field to be set by camelCase name.
+	// Process "unstable" section first - allows any field to be set by raw name.
 	// This mirrors VS Code's behavior: { ...config.get('unstable'), ...stableOptions }
 	// where stable options are spread after and take precedence.
 	if unstable, ok := config["unstable"].(map[string]any); ok {
@@ -510,7 +525,7 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 			if idx, found := index[name]; found {
 				info := infos[idx]
 				field := getFieldByPath(v, info.fieldPath)
-				if info.invert {
+				if info.rawInvert {
 					if b, ok := value.(bool); ok {
 						value = !b
 					}
@@ -523,13 +538,16 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 	// Process path-based config (VS Code style nested paths).
 	// These run after unstable, so stable config values take precedence.
 	for _, info := range infos {
-		val, ok := getNestedValue(config, info.path)
+		if info.configPath == "" {
+			continue
+		}
+		val, ok := getNestedValue(config, info.configPath)
 		if !ok {
 			continue
 		}
 
 		field := getFieldByPath(v, info.fieldPath)
-		if info.invert {
+		if info.configInvert {
 			if b, ok := val.(bool); ok {
 				val = !b
 			}
@@ -596,16 +614,26 @@ func (p *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
 		if val == nil {
 			continue
 		}
-		if info.invert {
-			if b, ok := val.(bool); ok {
-				val = !b
-			}
-		}
 
-		setNestedValue(config, info.path, val)
+		// Prefer config path if available, otherwise use unstable section
+		if info.configPath != "" {
+			if info.configInvert {
+				if b, ok := val.(bool); ok {
+					val = !b
+				}
+			}
+			setNestedValue(config, info.configPath, val)
+		} else if info.rawName != "" {
+			if info.rawInvert {
+				if b, ok := val.(bool); ok {
+					val = !b
+				}
+			}
+			setNestedValue(config, "unstable."+info.rawName, val)
+		}
 	}
 
-	return json.MarshalEncode(enc, config)
+	return json.MarshalEncode(enc, config, json.Deterministic(true))
 }
 
 func serializeField(field reflect.Value) any {

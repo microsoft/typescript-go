@@ -162,50 +162,16 @@ Config File Names::
   "params": {
     "settings": {
       "typescript": {
-        "referencesCodeLens": {
-          "enabled": true,
-          "showOnAllFunctions": true
-        },
         "implementationsCodeLens": {
           "enabled": true,
-          "showOnInterfaceMethods": true,
-          "showOnAllClassMethods": true
-        },
-        "workspaceSymbols": {
-          "excludeLibrarySymbols": false
-        },
-        "preferences": {
-          "importModuleSpecifier": "",
-          "importModuleSpecifierEnding": "",
-          "includePackageJsonAutoImports": "",
-          "preferTypeOnlyAutoImports": false,
-          "organizeImports": {
-            "accentCollation": false,
-            "caseFirst": "default",
-            "typeOrder": "auto",
-            "unicodeCollation": "ordinal",
-            "locale": "",
-            "numericCollation": false
-          },
-          "quoteStyle": "",
-          "jsxAttributeCompletionStyle": ""
-        },
-        "unstable": {
-          "disableLineTextInReferences": false,
-          "reportStyleChecksAsWarnings": false,
-          "maximumHoverLength": 0,
-          "allowRenameOfImportPath": false,
-          "provideRefactorNotApplicableReason": false,
-          "displayPartsForJSDoc": false,
-          "lazyConfiguredProjectsFromExternalProject": false,
-          "allowTextChangesInNewFiles": false,
-          "disableSuggestions": false
+          "showOnAllClassMethods": true,
+          "showOnInterfaceMethods": true
         },
         "inlayHints": {
-          "functionLikeReturnTypes": {
+          "enumMemberValues": {
             "enabled": false
           },
-          "enumMemberValues": {
+          "functionLikeReturnTypes": {
             "enabled": false
           },
           "parameterNames": {
@@ -215,13 +181,47 @@ Config File Names::
           "parameterTypes": {
             "enabled": false
           },
+          "propertyDeclarationTypes": {
+            "enabled": false
+          },
           "variableTypes": {
             "enabled": false,
             "suppressWhenTypeMatchesName": true
-          },
-          "propertyDeclarationTypes": {
-            "enabled": false
           }
+        },
+        "preferences": {
+          "importModuleSpecifier": "",
+          "importModuleSpecifierEnding": "",
+          "includePackageJsonAutoImports": "",
+          "jsxAttributeCompletionStyle": "",
+          "organizeImports": {
+            "accentCollation": false,
+            "caseFirst": "default",
+            "locale": "",
+            "numericCollation": false,
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          },
+          "preferTypeOnlyAutoImports": false,
+          "quoteStyle": ""
+        },
+        "referencesCodeLens": {
+          "enabled": true,
+          "showOnAllFunctions": true
+        },
+        "unstable": {
+          "allowRenameOfImportPath": false,
+          "allowTextChangesInNewFiles": false,
+          "disableLineTextInReferences": false,
+          "disableSuggestions": false,
+          "displayPartsForJSDoc": false,
+          "lazyConfiguredProjectsFromExternalProject": false,
+          "maximumHoverLength": 0,
+          "provideRefactorNotApplicableReason": false,
+          "reportStyleChecksAsWarnings": false
+        },
+        "workspaceSymbols": {
+          "excludeLibrarySymbols": false
         }
       }
     }
@@ -622,24 +622,16 @@ Config::
   "params": {
     "settings": {
       "typescript": {
-        "unstable": {
-          "maximumHoverLength": 0,
-          "includeCompletionsWithSnippetText": true,
-          "allowRenameOfImportPath": true,
-          "reportStyleChecksAsWarnings": true,
-          "allowTextChangesInNewFiles": false,
-          "provideRefactorNotApplicableReason": true,
-          "disableSuggestions": false,
-          "disableLineTextInReferences": true,
-          "displayPartsForJSDoc": true,
-          "lazyConfiguredProjectsFromExternalProject": false
-        },
-        "suggest": {
-          "autoImports": true,
-          "includeCompletionsForImportStatements": true
+        "implementationsCodeLens": {
+          "enabled": false,
+          "showOnAllClassMethods": false,
+          "showOnInterfaceMethods": false
         },
         "inlayHints": {
           "enumMemberValues": {
+            "enabled": false
+          },
+          "functionLikeReturnTypes": {
             "enabled": false
           },
           "parameterNames": {
@@ -649,44 +641,52 @@ Config::
           "parameterTypes": {
             "enabled": false
           },
-          "variableTypes": {
-            "enabled": false,
-            "suppressWhenTypeMatchesName": true
-          },
           "propertyDeclarationTypes": {
             "enabled": false
           },
-          "functionLikeReturnTypes": {
-            "enabled": false
+          "variableTypes": {
+            "enabled": false,
+            "suppressWhenTypeMatchesName": true
           }
+        },
+        "preferences": {
+          "importModuleSpecifier": "",
+          "importModuleSpecifierEnding": "",
+          "includePackageJsonAutoImports": "",
+          "jsxAttributeCompletionStyle": "",
+          "organizeImports": {
+            "accentCollation": false,
+            "caseFirst": "default",
+            "locale": "",
+            "numericCollation": false,
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          },
+          "preferTypeOnlyAutoImports": false,
+          "quoteStyle": ""
         },
         "referencesCodeLens": {
           "enabled": false,
           "showOnAllFunctions": false
         },
-        "implementationsCodeLens": {
-          "showOnAllClassMethods": false,
-          "enabled": false,
-          "showOnInterfaceMethods": false
+        "suggest": {
+          "autoImports": true,
+          "includeCompletionsForImportStatements": true
+        },
+        "unstable": {
+          "allowRenameOfImportPath": true,
+          "allowTextChangesInNewFiles": false,
+          "disableLineTextInReferences": true,
+          "disableSuggestions": false,
+          "displayPartsForJSDoc": true,
+          "includeCompletionsWithSnippetText": true,
+          "lazyConfiguredProjectsFromExternalProject": false,
+          "maximumHoverLength": 0,
+          "provideRefactorNotApplicableReason": true,
+          "reportStyleChecksAsWarnings": true
         },
         "workspaceSymbols": {
           "excludeLibrarySymbols": true
-        },
-        "preferences": {
-          "importModuleSpecifierEnding": "",
-          "includePackageJsonAutoImports": "",
-          "preferTypeOnlyAutoImports": false,
-          "organizeImports": {
-            "numericCollation": false,
-            "accentCollation": false,
-            "caseFirst": "default",
-            "typeOrder": "auto",
-            "unicodeCollation": "ordinal",
-            "locale": ""
-          },
-          "quoteStyle": "",
-          "jsxAttributeCompletionStyle": "",
-          "importModuleSpecifier": ""
         }
       }
     }
