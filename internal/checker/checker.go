@@ -16876,26 +16876,26 @@ func (c *Checker) isThislessInterface(symbol *ast.Symbol) bool {
 
 func hashWrite32[T ~int32 | ~uint32](h *xxh3.Hasher, value T) {
 	v := uint32(value)
-	var buf [4]byte
-	buf[0] = byte(v)
-	buf[1] = byte(v >> 8)
-	buf[2] = byte(v >> 16)
-	buf[3] = byte(v >> 24)
-	_, _ = h.Write(buf[:])
+	_, _ = h.Write([]byte{
+		byte(v),
+		byte(v >> 8),
+		byte(v >> 16),
+		byte(v >> 24),
+	})
 }
 
-func hashWrite64[T ~int | ~int64 | ~uint64](h *xxh3.Hasher, value T) {
+func hashWrite64[T ~int | ~uint | ~int64 | ~uint64](h *xxh3.Hasher, value T) {
 	v := uint64(value)
-	var buf [8]byte
-	buf[0] = byte(v)
-	buf[1] = byte(v >> 8)
-	buf[2] = byte(v >> 16)
-	buf[3] = byte(v >> 24)
-	buf[4] = byte(v >> 32)
-	buf[5] = byte(v >> 40)
-	buf[6] = byte(v >> 48)
-	buf[7] = byte(v >> 56)
-	_, _ = h.Write(buf[:])
+	_, _ = h.Write([]byte{
+		byte(v),
+		byte(v >> 8),
+		byte(v >> 16),
+		byte(v >> 24),
+		byte(v >> 32),
+		byte(v >> 40),
+		byte(v >> 48),
+		byte(v >> 56),
+	})
 }
 
 type keyBuilder struct {
