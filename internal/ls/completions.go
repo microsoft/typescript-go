@@ -1447,7 +1447,7 @@ func (l *LanguageService) getCompletionData(
 		completionKind = CompletionKindMemberLike
 		// Declaring new property/method/accessor
 		isNewIdentifierLocation = true
-		if contextToken != nil && contextToken.Kind == ast.KindAsteriskToken {
+		if contextToken.Kind == ast.KindAsteriskToken {
 			keywordFilters = KeywordCompletionFiltersNone
 		} else if ast.IsClassLike(decl) {
 			keywordFilters = KeywordCompletionFiltersClassElementKeywords
@@ -1461,9 +1461,9 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		var classElement *ast.Node
-		if contextToken != nil && contextToken.Kind == ast.KindSemicolonToken {
+		if contextToken.Kind == ast.KindSemicolonToken {
 			classElement = contextToken.Parent.Parent
-		} else if contextToken != nil {
+		} else {
 			classElement = contextToken.Parent
 		}
 		var classElementModifierFlags ast.ModifierFlags
@@ -1471,7 +1471,7 @@ func (l *LanguageService) getCompletionData(
 			classElementModifierFlags = classElement.ModifierFlags()
 		}
 		// If this is context token is not something we are editing now, consider if this would lead to be modifier.
-		if contextToken != nil && contextToken.Kind == ast.KindIdentifier && !isCurrentlyEditingNode(contextToken, file, position) {
+		if contextToken.Kind == ast.KindIdentifier && !isCurrentlyEditingNode(contextToken, file, position) {
 			switch contextToken.Text() {
 			case "private":
 				classElementModifierFlags |= ast.ModifierFlagsPrivate
