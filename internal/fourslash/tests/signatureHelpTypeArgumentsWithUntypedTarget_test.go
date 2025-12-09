@@ -7,16 +7,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestRenameForAliasingExport02(t *testing.T) {
+func TestSignatureHelpOnTypeArgumentsWithUnresolvedTarget(t *testing.T) {
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: foo.ts
-let x = 1;
-
-export { x as /**/[|y|] };`
+	const content = `
+/*1*/un/*2*/resolvedVal/*3*/</*4*/Un/*5*/resolvedType/*6*/>/*7*/(/*8*/un/*9*/resolvedVal/*10*/);
+`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.GoToMarker(t, "")
-	f.VerifyRenameSucceeded(t, nil /*preferences*/)
+
+	f.GoToEachMarker(t, nil, func(marker *fourslash.Marker, index int) {
+		f.VerifyNoSignatureHelp(t)
+	})
 }
