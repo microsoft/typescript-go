@@ -134,8 +134,7 @@ type UserPreferences struct {
 
 	// ------- Rename -------
 
-	// renamed from `providePrefixAndSuffixTextForRename`
-	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames,alias:providePrefixAndSuffixTextForRename"`
+	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames"`
 	AllowRenameOfImportPath bool          // !!!
 
 	// ------- CodeFixes/Refactors -------
@@ -412,11 +411,10 @@ var typeSerializers = map[reflect.Type]func(any) any{
 }
 
 type fieldInfo struct {
-	lowerName string   // lowercase Go field name for direct matching
-	aliases   []string // additional lowercase names (e.g., "provideprefixandsuffixtextforrename")
-	path      string   // dotted path for VS Code config (e.g., "preferences.quoteStyle")
-	fieldPath []int    // index path to field in struct
-	invert    bool     // whether to invert boolean values
+	lowerName string // lowercase Go field name for direct matching
+	path      string // dotted path for VS Code config (e.g., "preferences.quoteStyle")
+	fieldPath []int  // index path to field in struct
+	invert    bool   // whether to invert boolean values
 }
 
 var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
@@ -426,12 +424,9 @@ var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
 // lowerNameIndex maps lowercase field names to fieldInfo index for O(1) lookup
 var lowerNameIndex = sync.OnceValue(func() map[string]int {
 	infos := fieldInfoCache()
-	index := make(map[string]int, len(infos)*2)
+	index := make(map[string]int, len(infos))
 	for i, info := range infos {
 		index[info.lowerName] = i
-		for _, alias := range info.aliases {
-			index[alias] = i
-		}
 	}
 	return index
 })
@@ -454,14 +449,12 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 
 		tag := field.Tag.Get("pref")
 		if tag != "" {
-			// Parse tag: "path" or "path,invert" or "path,alias:name"
+			// Parse tag: "path" or "path,invert"
 			parts := strings.Split(tag, ",")
 			info.path = parts[0]
 			for _, part := range parts[1:] {
 				if part == "invert" {
 					info.invert = true
-				} else if alias, ok := strings.CutPrefix(part, "alias:"); ok {
-					info.aliases = append(info.aliases, strings.ToLower(alias))
 				}
 			}
 		}
