@@ -1369,7 +1369,10 @@ func (l *LanguageService) getCompletionData(
 		if importAttributes.AsImportAttributes().Attributes != nil {
 			elements = importAttributes.AsImportAttributes().Attributes.Nodes
 		}
-		existing := collections.NewSetFromItems(core.Map(elements, (*ast.Node).Text)...)
+		attributeNames := core.Map(elements, func(el *ast.Node) string {
+			return el.AsImportAttribute().Name().Text()
+		})
+		existing := collections.NewSetFromItems(attributeNames...)
 		uniques := core.Filter(
 			typeChecker.GetApparentProperties(typeChecker.GetTypeAtLocation(importAttributes)),
 			func(symbol *ast.Symbol) bool {
@@ -2966,6 +2969,44 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		if ast.IsJsxExpression(parent) && !ast.IsJsxElement(parent.Parent) && !ast.IsJsxFragment(parent.Parent) {
 			return typeChecker.GetContextualTypeForJsxAttribute(parent.Parent)
 		}
+		return nil
+	case ast.KindOpenBracketToken:
+		// When completing after `[` in an array literal (e.g., `[/*here*/]`),
+		// we should provide contextual type for the first element
+		if ast.IsArrayLiteralExpression(parent) {
+			contextualArrayType := typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+			if contextualArrayType != nil {
+				// Get the type for the first element (index 0)
+				return typeChecker.GetContextualTypeForArrayElement(contextualArrayType, 0)
+			}
+		}
+		return nil
+	case ast.KindCommaToken:
+		// When completing after `,` in an array literal (e.g., `[x, /*here*/]`),
+		// we should provide contextual type for the element after the comma
+		if ast.IsArrayLiteralExpression(parent) {
+			contextualArrayType := typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+			if contextualArrayType != nil {
+				// Count how many elements come before the cursor position
+				arrayLiteral := parent.AsArrayLiteralExpression()
+				elementIndex := 0
+				for _, elem := range arrayLiteral.Elements.Nodes {
+					if elem.Pos() < position {
+						elementIndex++
+					} else {
+						break
+					}
+				}
+				return typeChecker.GetContextualTypeForArrayElement(contextualArrayType, elementIndex)
+			}
+		}
+		return nil
+	case ast.KindCloseBracketToken:
+		// When completing after `]` (e.g., `[x]/*here*/`), we should not provide a contextual type
+		// for the closing bracket token itself. Without this case, CloseBracketToken would fall through
+		// to the default case, and if the parent is an array literal, GetContextualType would try to
+		// find the token's index in the array elements (returning -1), leading to an out-of-bounds panic
+		// in getContextualTypeForElementExpression.
 		return nil
 	case ast.KindQuestionToken:
 		// When completing after `?` in a ternary conditional (e.g., `foo(a ? /*here*/)`),
