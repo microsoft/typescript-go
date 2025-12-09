@@ -1490,14 +1490,7 @@ func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
 						for _, edit := range changeEdits {
 							moduleSpec := extractModuleSpecifier(edit.NewText)
 							if moduleSpec != "" {
-								found := false
-								for _, existing := range actualModuleSpecifiers {
-									if existing == moduleSpec {
-										found = true
-										break
-									}
-								}
-								if !found {
+								if !slices.Contains(actualModuleSpecifiers, moduleSpec) {
 									actualModuleSpecifiers = append(actualModuleSpecifiers, moduleSpec)
 								}
 							}
