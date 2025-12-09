@@ -22,13 +22,14 @@ interface FooBar {
 
 declare const fubar: FooBar;
 
-const {/*1*/foo, /*2*/bar, baz: /*3*/biz} = fubar;
+const {/*1*/foo, /*2*/bar, /*3*/baz: /*4*/biz} = fubar;
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyQuickInfoAt(t, "1", "const foo: number", "foo comment")
 	f.VerifyQuickInfoAt(t, "2", "const bar: string", "bar comment")
-	f.VerifyQuickInfoAt(t, "3", "const biz: string", "baz comment")
+	f.VerifyQuickInfoAt(t, "3", "(property) FooBar.baz: string", "baz comment")
+	f.VerifyQuickInfoAt(t, "4", "const biz: string", "baz comment")
 }
 
 func TestDestructuredInterfaceJSDocWithRename(t *testing.T) {
