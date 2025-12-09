@@ -73,20 +73,26 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind) string {
 	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type
 	// The declaration passed in might be the binding element itself, but we need the interface property declaration
-	if symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
-		bindingElement := symbol.ValueDeclaration
-		parent := bindingElement.Parent
-		name := bindingElement.PropertyName()
-		if name == nil {
-			name = bindingElement.Name()
-		}
-		if ast.IsIdentifier(name) && ast.IsObjectBindingPattern(parent) {
-			propertyName := name.Text()
-			objectType := c.GetTypeAtLocation(parent)
-			if objectType != nil {
-				propertySymbol := findPropertyInType(c, objectType, propertyName)
-				if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
-					declaration = propertySymbol.ValueDeclaration
+	// Check all declarations to see if any is a binding element
+	if symbol != nil && ast.IsIdentifier(location) {
+		for _, decl := range symbol.Declarations {
+			if decl != nil && ast.IsBindingElement(decl) {
+				bindingElement := decl
+				parent := bindingElement.Parent
+				name := bindingElement.PropertyName()
+				if name == nil {
+					name = bindingElement.Name()
+				}
+				if ast.IsIdentifier(name) && ast.IsObjectBindingPattern(parent) {
+					propertyName := name.Text()
+					objectType := c.GetTypeAtLocation(parent)
+					if objectType != nil {
+						propertySymbol := findPropertyInType(c, objectType, propertyName)
+						if propertySymbol != nil && propertySymbol.ValueDeclaration != nil {
+							declaration = propertySymbol.ValueDeclaration
+							break
+						}
+					}
 				}
 			}
 		}
