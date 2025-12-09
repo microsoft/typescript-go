@@ -48,4 +48,22 @@ func TestCompletionsInArrayLiteralWithContextualType(t *testing.T) {
 			},
 		},
 	})
+
+	// Test 3: Verify that properties named "-1" are NOT suggested in array literals
+	// This was a bug in the old implementation where passing -1 as an index would
+	// check for a property named "-1" and suggest its value
+	const content3 = `let x: { "-1": "hello" } = [/*c*/];`
+	f3, done3 := fourslash.NewFourslash(t, nil /*capabilities*/, content3)
+	defer done3()
+	f3.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Excludes: []string{
+				"\"hello\"",
+			},
+		},
+	})
 }
