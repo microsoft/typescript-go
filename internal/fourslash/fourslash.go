@@ -139,7 +139,7 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 const rootDir = "/"
 
 var parseCache = project.ParseCache{
-	Options: project.ParseCacheOptions{
+	Options: project.VersionedCacheOptions{
 		DisableDeletion: true,
 	},
 }
