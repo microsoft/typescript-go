@@ -9,15 +9,13 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func fillNonZeroValues(v reflect.Value, path string) {
+func fillNonZeroValues(v reflect.Value) {
 	t := v.Type()
 	for i := range t.NumField() {
 		field := v.Field(i)
-		fieldType := t.Field(i)
 		if !field.CanSet() {
 			continue
 		}
-		fieldPath := path + "." + fieldType.Name
 		switch field.Kind() {
 		case reflect.Bool:
 			field.SetBool(true)
@@ -26,19 +24,19 @@ func fillNonZeroValues(v reflect.Value, path string) {
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 			field.SetUint(1)
 		case reflect.String:
-			val := getValidStringValue(field.Type(), fieldPath)
+			val := getValidStringValue(field.Type())
 			field.SetString(val)
 		case reflect.Slice:
 			if field.Type().Elem().Kind() == reflect.String {
 				field.Set(reflect.ValueOf([]string{"test"}))
 			}
 		case reflect.Struct:
-			fillNonZeroValues(field, fieldPath)
+			fillNonZeroValues(field)
 		}
 	}
 }
 
-func getValidStringValue(t reflect.Type, path string) string {
+func getValidStringValue(t reflect.Type) string {
 	typeName := t.String()
 	switch typeName {
 	case "lsutil.QuotePreference":
@@ -62,7 +60,7 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 	t.Parallel()
 
 	original := &UserPreferences{}
-	fillNonZeroValues(reflect.ValueOf(original).Elem(), "UserPreferences")
+	fillNonZeroValues(reflect.ValueOf(original).Elem())
 
 	jsonBytes, err := json.Marshal(original)
 	assert.NilError(t, err)
