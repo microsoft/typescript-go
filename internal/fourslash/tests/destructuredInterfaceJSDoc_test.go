@@ -52,3 +52,30 @@ const {foo: /*1*/myFoo, bar: /*2*/myBar} = fubar;
 	f.VerifyQuickInfoAt(t, "1", "const myFoo: number", "foo comment")
 	f.VerifyQuickInfoAt(t, "2", "const myBar: string", "bar comment")
 }
+
+func TestDestructuredWithOwnJSDoc(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `
+interface Foo {
+    /** This is bar from the interface */
+    bar: string;
+    /** This is baz from the interface */
+    baz: number;
+}
+
+declare var foo: Foo;
+
+/** Comment on the variable statement. */
+const {
+    /** Comment on bar destructuring. */ /*1*/bar,
+    /** Comment on baz destructuring. */ /*2*/baz
+} = foo;
+`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	// When binding elements have their own JSDoc, TypeScript doesn't currently show it in hover
+	// Instead, it falls back to the property's JSDoc from the interface
+	f.VerifyQuickInfoAt(t, "1", "const bar: string", "This is bar from the interface")
+	f.VerifyQuickInfoAt(t, "2", "const baz: number", "This is baz from the interface")
+}
