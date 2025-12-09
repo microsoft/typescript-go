@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
+// !!! can delete, there are similar tests that haven't been ported yet.
 func TestCompletionImportAttributes(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
