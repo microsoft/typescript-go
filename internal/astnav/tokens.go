@@ -195,10 +195,10 @@ func getTokenAtPosition(
 						}
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
-					return sourceFile.GetOrCreateTokenEx(token, tokenFullStart, tokenEnd, current, flags)
+					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, flags)
 				}
 				if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
-					prevToken := sourceFile.GetOrCreateTokenEx(token, tokenFullStart, tokenEnd, current, flags)
+					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, flags)
 					if includePrecedingTokenAtEndPosition(prevToken) {
 						return prevToken
 					}
@@ -516,7 +516,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 					tokenEnd := scanner.TokenEnd()
 					startPos = tokenEnd
 					flags := scanner.TokenFlags()
-					tokens = append(tokens, sourceFile.GetOrCreateTokenEx(token, tokenFullStart, tokenEnd, n, flags))
+					tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags))
 					scanner.Scan()
 				}
 				startPos = visitedNode.End()
@@ -534,7 +534,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				tokenEnd := scanner.TokenEnd()
 				startPos = tokenEnd
 				flags := scanner.TokenFlags()
-				tokens = append(tokens, sourceFile.GetOrCreateTokenEx(token, tokenFullStart, tokenEnd, n, flags))
+				tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags))
 				scanner.Scan()
 			}
 
@@ -621,7 +621,7 @@ func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFi
 			tokenEnd := scanner.TokenEnd()
 			flags := scanner.TokenFlags()
 			if tokenStart == previousToken.End() {
-				return file.GetOrCreateTokenEx(token, tokenFullStart, tokenEnd, n, flags)
+				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags)
 			}
 			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
 		}
@@ -695,7 +695,7 @@ func FindChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.So
 			tokenFullStart := scan.TokenFullStart()
 			tokenEnd := scan.TokenEnd()
 			flags := scan.TokenFlags()
-			token := sourceFile.GetOrCreateTokenEx(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
+			token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
 			if tokenKind == kind {
 				foundChild = token
 				return true
@@ -726,7 +726,7 @@ func FindChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.So
 		tokenFullStart := scan.TokenFullStart()
 		tokenEnd := scan.TokenEnd()
 		flags := scan.TokenFlags()
-		token := sourceFile.GetOrCreateTokenEx(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
+		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
 		if tokenKind == kind {
 			return token
 		}

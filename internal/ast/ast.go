@@ -10781,7 +10781,6 @@ type SourceFile struct {
 
 	tokenCacheMu     sync.Mutex
 	tokenCache       map[core.TextRange]*Node
-	tokenFactoryMu   sync.Mutex
 	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
@@ -10944,15 +10943,6 @@ func (node *SourceFile) GetOrCreateToken(
 	pos int,
 	end int,
 	parent *Node,
-) *TokenNode {
-	return node.GetOrCreateTokenEx(kind, pos, end, parent, TokenFlagsNone)
-}
-
-func (node *SourceFile) GetOrCreateTokenEx(
-	kind Kind,
-	pos int,
-	end int,
-	parent *Node,
 	flags TokenFlags,
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
@@ -10980,8 +10970,6 @@ func (node *SourceFile) GetOrCreateTokenEx(
 
 // `kind` should be a token kind.
 func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *Node {
-	file.tokenFactoryMu.Lock()
-	defer file.tokenFactoryMu.Unlock()
 	if file.tokenFactory == nil {
 		file.tokenFactory = NewNodeFactory(NodeFactoryHooks{})
 	}
