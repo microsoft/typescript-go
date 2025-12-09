@@ -2998,6 +2998,16 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 			}
 		}
 		return nil
+	case ast.KindCloseBracketToken:
+		// When completing after `]` in an array literal (e.g., `[x]/*here*/`),
+		// we should NOT provide an array element contextual type since we're outside the array.
+		// Without this case, the CloseBracketToken falls through to the default case which
+		// calls GetContextualType on the token, causing the checker to look up the token's
+		// index in the array elements (which returns -1), leading to an out-of-bounds panic.
+		if ast.IsArrayLiteralExpression(parent) {
+			return nil
+		}
+		return nil
 	case ast.KindQuestionToken:
 		// When completing after `?` in a ternary conditional (e.g., `foo(a ? /*here*/)`),
 		// we need to look at the parent conditional expression to find the contextual type.
