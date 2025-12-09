@@ -88,11 +88,36 @@ func stringToRegex(pattern string) *regexp2.Regexp {
 			}
 		}
 	}
+	key := regexPatternCacheKey{pattern, options}
+
+	regexPatternCacheMu.RLock()
+	re, ok := regexPatternCache[key]
+	regexPatternCacheMu.RUnlock()
+	if ok {
+		return re
+	}
+
+	regexPatternCacheMu.Lock()
+	defer regexPatternCacheMu.Unlock()
+
+	re, ok = regexPatternCache[key]
+	if ok {
+		return re
+	}
+
+	if len(regexPatternCache) > 1000 {
+		clear(regexPatternCache)
+	}
+
+	pattern = strings.Clone(pattern)
+	key.pattern = pattern
 
 	compiled, err := regexp2.Compile(pattern, options)
 	if err != nil {
+		regexPatternCache[key] = nil
 		return nil
 	}
+	regexPatternCache[key] = compiled
 	return compiled
 }
 
