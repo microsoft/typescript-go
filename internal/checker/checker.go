@@ -16874,6 +16874,30 @@ func (c *Checker) isThislessInterface(symbol *ast.Symbol) bool {
 	return true
 }
 
+func hashWrite32[T ~int32 | ~uint32](h *xxh3.Hasher, value T) {
+	v := uint32(value)
+	var buf [4]byte
+	buf[0] = byte(v)
+	buf[1] = byte(v >> 8)
+	buf[2] = byte(v >> 16)
+	buf[3] = byte(v >> 24)
+	_, _ = h.Write(buf[:])
+}
+
+func hashWrite64[T ~int | ~int64 | ~uint64](h *xxh3.Hasher, value T) {
+	v := uint64(value)
+	var buf [8]byte
+	buf[0] = byte(v)
+	buf[1] = byte(v >> 8)
+	buf[2] = byte(v >> 16)
+	buf[3] = byte(v >> 24)
+	buf[4] = byte(v >> 32)
+	buf[5] = byte(v >> 40)
+	buf[6] = byte(v >> 48)
+	buf[7] = byte(v >> 56)
+	_, _ = h.Write(buf[:])
+}
+
 type keyBuilder struct {
 	h xxh3.Hasher
 }
@@ -16890,25 +16914,12 @@ func (b *keyBuilder) writeString(s string) {
 	_, _ = b.h.WriteString(s)
 }
 
-func (b *keyBuilder) writeUint64(value uint64) {
-	var buf [8]byte
-	buf[0] = byte(value)
-	buf[1] = byte(value >> 8)
-	buf[2] = byte(value >> 16)
-	buf[3] = byte(value >> 24)
-	buf[4] = byte(value >> 32)
-	buf[5] = byte(value >> 40)
-	buf[6] = byte(value >> 48)
-	buf[7] = byte(value >> 56)
-	_, _ = b.h.Write(buf[:])
-}
-
 func (b *keyBuilder) writeInt(value int) {
-	b.writeUint64(uint64(int64(value)))
+	hashWrite64(&b.h, value)
 }
 
 func (b *keyBuilder) writeSymbolId(id ast.SymbolId) {
-	b.writeUint64(uint64(id))
+	hashWrite64(&b.h, id)
 }
 
 func (b *keyBuilder) writeSymbol(s *ast.Symbol) {
@@ -16916,7 +16927,7 @@ func (b *keyBuilder) writeSymbol(s *ast.Symbol) {
 }
 
 func (b *keyBuilder) writeTypeId(id TypeId) {
-	b.writeUint64(uint64(id))
+	hashWrite32(&b.h, id)
 }
 
 func (b *keyBuilder) writeType(t *Type) {
@@ -16976,7 +16987,7 @@ func (b *keyBuilder) writeGenericTypeReferences(source *Type, target *Type, igno
 }
 
 func (b *keyBuilder) writeNodeId(id ast.NodeId) {
-	b.writeUint64(uint64(id))
+	hashWrite64(&b.h, id)
 }
 
 func (b *keyBuilder) writeNode(node *ast.Node) {
@@ -17075,7 +17086,7 @@ func getIndexedAccessKey(objectType *Type, indexType *Type, accessFlags AccessFl
 	b.writeByte(',')
 	b.writeType(indexType)
 	b.writeByte(',')
-	b.writeUint64(uint64(accessFlags))
+	hashWrite32(&b.h, accessFlags)
 	b.writeAlias(alias)
 	return b.hash()
 }
@@ -17122,7 +17133,7 @@ func getRelationKey(source *Type, target *Type, intersectionState IntersectionSt
 	}
 	if intersectionState != IntersectionStateNone {
 		b.writeByte(':')
-		b.writeUint64(uint64(intersectionState))
+		hashWrite32(&b.h, intersectionState)
 	}
 	return b.hash(), constrained
 }
