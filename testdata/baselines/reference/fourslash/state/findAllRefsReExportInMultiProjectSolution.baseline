@@ -154,6 +154,16 @@ Config::
 // === /project-a/private.ts ===
 // export const /*FIND ALL REFS*/[|symbolA|] = 'some-symbol';
 // console.log([|symbolA|]);
+
+// === /project-a/public.ts ===
+// export { [|symbolA|] } from './private';
+
+// === /project-c/index.ts ===
+// import { symbolB } from '../project-b/public';
+// import { [|symbolA|] } from '../project-a/public';
+// console.log(symbolB);
+// console.log([|symbolA|]);
+// 
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -342,6 +352,13 @@ Config File Names::
 
 
 // === findAllReferences ===
+// === /project-a/private.ts ===
+// export const [|symbolA|] = 'some-symbol';
+// console.log([|symbolA|]);
+
+// === /project-a/public.ts ===
+// export { [|symbolA|] } from './private';
+
 // === /project-c/index.ts ===
 // import { symbolB } from '../project-b/public';
 // import { /*FIND ALL REFS*/[|symbolA|] } from '../project-a/public';

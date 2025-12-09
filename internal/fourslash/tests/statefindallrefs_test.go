@@ -1044,8 +1044,6 @@ import * as shared from "../../shared/dist"
 func TestFindAllRefsReExportInMultiProjectSolution(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	// Repro from https://github.com/mjames-c/tsgo-playground
-	// Tests that find-all-references can follow re-exports across projects
 	content := `
 // @stateBaseline: true
 // @Filename: /tsconfig.base.json
