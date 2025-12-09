@@ -46,32 +46,33 @@ type Binder struct {
 	bindFunc        func(*ast.Node) bool
 	unreachableFlow *ast.FlowNode
 
-	container              *ast.Node
-	thisContainer          *ast.Node
-	blockScopeContainer    *ast.Node
-	lastContainer          *ast.Node
-	currentFlow            *ast.FlowNode
-	currentBreakTarget     *ast.FlowLabel
-	currentContinueTarget  *ast.FlowLabel
-	currentReturnTarget    *ast.FlowLabel
-	currentTrueTarget      *ast.FlowLabel
-	currentFalseTarget     *ast.FlowLabel
-	currentExceptionTarget *ast.FlowLabel
-	preSwitchCaseFlow      *ast.FlowNode
-	activeLabelList        *ActiveLabel
-	emitFlags              ast.NodeFlags
-	seenThisKeyword        bool
-	hasExplicitReturn      bool
-	hasFlowEffects         bool
-	inStrictMode           bool
-	inAssignmentPattern    bool
-	seenParseError         bool
-	symbolCount            int
-	classifiableNames      collections.Set[string]
-	symbolPool             core.Pool[ast.Symbol]
-	flowNodePool           core.Pool[ast.FlowNode]
-	flowListPool           core.Pool[ast.FlowList]
-	singleDeclarationsPool core.Pool[*ast.Node]
+	container               *ast.Node
+	thisContainer           *ast.Node
+	blockScopeContainer     *ast.Node
+	lastContainer           *ast.Node
+	currentFlow             *ast.FlowNode
+	currentBreakTarget      *ast.FlowLabel
+	currentContinueTarget   *ast.FlowLabel
+	currentReturnTarget     *ast.FlowLabel
+	currentTrueTarget       *ast.FlowLabel
+	currentFalseTarget      *ast.FlowLabel
+	currentExceptionTarget  *ast.FlowLabel
+	preSwitchCaseFlow       *ast.FlowNode
+	activeLabelList         *ActiveLabel
+	emitFlags               ast.NodeFlags
+	seenThisKeyword         bool
+	hasExplicitReturn       bool
+	hasFlowEffects          bool
+	inStrictMode            bool
+	inAssignmentPattern     bool
+	seenParseError          bool
+	symbolCount             int
+	classifiableNames       collections.Set[string]
+	notConstEnumOnlyModules collections.Set[*ast.Symbol]
+	symbolPool              core.Pool[ast.Symbol]
+	flowNodePool            core.Pool[ast.FlowNode]
+	flowListPool            core.Pool[ast.FlowList]
+	singleDeclarationsPool  core.Pool[*ast.Node]
 }
 
 func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
@@ -794,12 +795,14 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		state := b.declareModuleSymbol(node)
 		if state != ast.ModuleInstanceStateNonInstantiated {
 			symbol := node.Symbol()
-			if (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) &&
+			constEnumOnlyModule := (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) &&
 				state == ast.ModuleInstanceStateConstEnumOnly &&
-				symbol.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
+				!b.notConstEnumOnlyModules.Has(symbol)
+			if constEnumOnlyModule {
 				symbol.Flags |= ast.SymbolFlagsConstEnumOnlyModule
 			} else {
 				symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
+				b.notConstEnumOnlyModules.Add(symbol)
 			}
 		}
 	}
@@ -2427,6 +2430,7 @@ func (b *Binder) addDeclarationToSymbol(symbol *ast.Symbol, node *ast.Node, symb
 	// On merge of const enum module with class or function, reset const enum only flag (namespaces will already recalculate)
 	if symbol.Flags&ast.SymbolFlagsConstEnumOnlyModule != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
 		symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
+		b.notConstEnumOnlyModules.Add(symbol)
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {
 		SetValueDeclaration(symbol, node)
