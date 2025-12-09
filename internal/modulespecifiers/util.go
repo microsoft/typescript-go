@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -14,6 +15,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+)
+
+type regexPatternCacheKey struct {
+	pattern string
+	opts    regexp2.RegexOptions
+}
+
+var (
+	regexPatternCacheMu sync.RWMutex
+	regexPatternCache   = make(map[regexPatternCacheKey]*regexp2.Regexp)
 )
 
 func isNonGlobalAmbientModule(node *ast.Node) bool {
@@ -72,6 +83,8 @@ func stringToRegex(pattern string) *regexp2.Regexp {
 						options |= regexp2.IgnoreCase
 					case 'u':
 						options |= regexp2.Unicode
+					case 's':
+						options |= regexp2.ECMAScript
 					}
 				}
 			}

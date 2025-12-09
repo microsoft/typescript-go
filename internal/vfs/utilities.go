@@ -27,9 +27,9 @@ type FileMatcherPatterns struct {
 type Usage string
 
 const (
-	usageFiles       Usage = "files"
-	usageDirectories Usage = "directories"
-	usageExclude     Usage = "exclude"
+	UsageFiles       Usage = "files"
+	UsageDirectories Usage = "directories"
+	UsageExclude     Usage = "exclude"
 )
 
 func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
@@ -139,9 +139,9 @@ var excludeMatcher = WildcardMatcher{
 }
 
 var wildcardMatchers = map[Usage]WildcardMatcher{
-	usageFiles:       filesMatcher,
-	usageDirectories: directoriesMatcher,
-	usageExclude:     excludeMatcher,
+	UsageFiles:       filesMatcher,
+	UsageDirectories: directoriesMatcher,
+	UsageExclude:     excludeMatcher,
 }
 
 func GetPatternFromSpec(

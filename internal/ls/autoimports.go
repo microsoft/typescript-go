@@ -1420,9 +1420,7 @@ func getIsExcludedPatterns(preferences *lsutil.UserPreferences, useCaseSensitive
 	}
 	var patterns []*regexp2.Regexp
 	for _, spec := range preferences.AutoImportFileExcludePatterns {
-		// The client is expected to send rooted path specs since we don't know
-		// what directory a relative path is relative to.
-		pattern := vfs.GetSubPatternFromSpec(spec, "", "exclude", vfs.WildcardMatcher{})
+		pattern := vfs.GetSubPatternFromSpec(spec, "", vfs.UsageExclude, vfs.WildcardMatcher{})
 		if pattern != "" {
 			if re := vfs.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
 				patterns = append(patterns, re)
