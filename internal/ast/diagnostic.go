@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
@@ -123,7 +124,7 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 
 type DiagnosticsCollection struct {
 	fileDiagnostics          map[string][]*Diagnostic
-	fileDiagnosticsSorted    map[string]bool
+	fileDiagnosticsSorted    collections.Set[string]
 	nonFileDiagnostics       []*Diagnostic
 	nonFileDiagnosticsSorted bool
 }
@@ -134,11 +135,8 @@ func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		if c.fileDiagnosticsSorted == nil {
-			c.fileDiagnosticsSorted = make(map[string]bool)
-		}
 		c.fileDiagnostics[fileName] = append(c.fileDiagnostics[fileName], diagnostic)
-		c.fileDiagnosticsSorted[fileName] = false
+		c.fileDiagnosticsSorted.Delete(fileName)
 	} else {
 		c.nonFileDiagnostics = append(c.nonFileDiagnostics, diagnostic)
 		c.nonFileDiagnosticsSorted = false
@@ -167,12 +165,9 @@ func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*Diagnostic {
 }
 
 func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagnostic {
-	if c.fileDiagnosticsSorted == nil {
-		c.fileDiagnosticsSorted = make(map[string]bool)
-	}
-	if !c.fileDiagnosticsSorted[fileName] {
+	if !c.fileDiagnosticsSorted.Has(fileName) {
 		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
-		c.fileDiagnosticsSorted[fileName] = true
+		c.fileDiagnosticsSorted.Add(fileName)
 	}
 	return c.fileDiagnostics[fileName]
 }
