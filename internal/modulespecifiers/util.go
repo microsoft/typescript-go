@@ -60,7 +60,7 @@ func isExcludedByRegex(moduleSpecifier string, excludes []string) bool {
 }
 
 func stringToRegex(pattern string) *regexp2.Regexp {
-	options := regexp2.None
+	options := regexp2.RegexOptions(regexp2.ECMAScript)
 
 	if len(pattern) > 2 && pattern[0] == '/' {
 		lastSlash := strings.LastIndex(pattern, "/")
@@ -83,8 +83,6 @@ func stringToRegex(pattern string) *regexp2.Regexp {
 						options |= regexp2.IgnoreCase
 					case 'u':
 						options |= regexp2.Unicode
-					case 's':
-						options |= regexp2.ECMAScript
 					}
 				}
 			}
