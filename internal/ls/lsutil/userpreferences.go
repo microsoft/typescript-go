@@ -420,9 +420,7 @@ type fieldInfo struct {
 }
 
 var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
-	var infos []fieldInfo
-	collectFieldInfos(reflect.TypeFor[UserPreferences](), nil, &infos)
-	return infos
+	return collectFieldInfos(reflect.TypeFor[UserPreferences](), nil)
 })
 
 // lowerNameIndex maps lowercase field names to fieldInfo index for O(1) lookup
@@ -438,13 +436,14 @@ var lowerNameIndex = sync.OnceValue(func() map[string]int {
 	return index
 })
 
-func collectFieldInfos(t reflect.Type, indexPath []int, infos *[]fieldInfo) {
+func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
+	var infos []fieldInfo
 	for i := range t.NumField() {
 		field := t.Field(i)
 		currentPath := append(slices.Clone(indexPath), i)
 
 		if field.Type.Kind() == reflect.Struct && field.Tag.Get("pref") == "" {
-			collectFieldInfos(field.Type, currentPath, infos)
+			infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
 			continue
 		}
 
@@ -467,8 +466,9 @@ func collectFieldInfos(t reflect.Type, indexPath []int, infos *[]fieldInfo) {
 			}
 		}
 
-		*infos = append(*infos, info)
+		infos = append(infos, info)
 	}
+	return infos
 }
 
 func getNestedValue(config map[string]any, path string) (any, bool) {
