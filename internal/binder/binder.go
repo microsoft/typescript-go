@@ -795,8 +795,11 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		state := b.declareModuleSymbol(node)
 		if state != ast.ModuleInstanceStateNonInstantiated {
 			symbol := node.Symbol()
+			// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
 			constEnumOnlyModule := (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) &&
+				// Current must be `const enum` only
 				state == ast.ModuleInstanceStateConstEnumOnly &&
+				// Can't have been set to 'false' in a previous merged symbol. ('undefined' OK)
 				!b.notConstEnumOnlyModules.Has(symbol)
 			if constEnumOnlyModule {
 				symbol.Flags |= ast.SymbolFlagsConstEnumOnlyModule
