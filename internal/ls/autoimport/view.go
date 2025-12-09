@@ -43,7 +43,6 @@ const (
 )
 
 func (v *View) Search(query string, kind QueryKind) []*Export {
-	// !!! deal with duplicates due to symlinks
 	var results []*Export
 	search := func(bucket *RegistryBucket) []*Export {
 		switch kind {

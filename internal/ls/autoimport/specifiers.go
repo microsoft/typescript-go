@@ -43,7 +43,7 @@ func (v *View) GetModuleSpecifier(
 		}
 	}
 
-	cache := v.registry.relativeSpecifierCache[v.importingFile.Path()]
+	cache := v.registry.specifierCache[v.importingFile.Path()]
 	if export.NodeModulesDirectory == "" {
 		if specifier, ok := cache[export.Path]; ok {
 			return specifier, modulespecifiers.ResultKindRelative

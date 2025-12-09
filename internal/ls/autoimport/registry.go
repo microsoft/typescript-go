@@ -160,8 +160,8 @@ type Registry struct {
 	nodeModules map[tspath.Path]*RegistryBucket
 	projects    map[tspath.Path]*RegistryBucket
 
-	// relativeSpecifierCache maps from importing file to target file to specifier
-	relativeSpecifierCache map[tspath.Path]map[tspath.Path]string
+	// specifierCache maps from importing file to target file to specifier
+	specifierCache map[tspath.Path]map[tspath.Path]string
 }
 
 func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
@@ -312,17 +312,17 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		directories:            dirty.NewMap(registry.directories),
 		nodeModules:            dirty.NewMap(registry.nodeModules),
 		projects:               dirty.NewMap(registry.projects),
-		relativeSpecifierCache: dirty.NewMapBuilder(registry.relativeSpecifierCache, core.Identity, core.Identity),
+		relativeSpecifierCache: dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
 	}
 }
 
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
-		toPath:                 b.base.toPath,
-		directories:            core.FirstResult(b.directories.Finalize()),
-		nodeModules:            core.FirstResult(b.nodeModules.Finalize()),
-		projects:               core.FirstResult(b.projects.Finalize()),
-		relativeSpecifierCache: core.FirstResult(b.relativeSpecifierCache.Build()),
+		toPath:         b.base.toPath,
+		directories:    core.FirstResult(b.directories.Finalize()),
+		nodeModules:    core.FirstResult(b.nodeModules.Finalize()),
+		projects:       core.FirstResult(b.projects.Finalize()),
+		specifierCache: core.FirstResult(b.relativeSpecifierCache.Build()),
 	}
 }
 
@@ -347,12 +347,12 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 			neededDirectories[dirPath] = dir
 		}
 
-		if _, ok := b.base.relativeSpecifierCache[path]; !ok {
+		if _, ok := b.base.specifierCache[path]; !ok {
 			b.relativeSpecifierCache.Set(path, make(map[tspath.Path]string))
 		}
 	}
 
-	for path := range b.base.relativeSpecifierCache {
+	for path := range b.base.specifierCache {
 		if _, ok := change.OpenFiles[path]; !ok {
 			b.relativeSpecifierCache.Delete(path)
 		}
@@ -726,7 +726,6 @@ func (b *registryBuilder) buildProjectBucket(
 		if program.IsSourceFileDefaultLibrary(file.Path()) {
 			continue
 		}
-		// !!! symlink danger - FileName() is realpath like node_modules/.pnpm/foo@1.2.3/node_modules/foo/...?
 		if packageName := modulespecifiers.GetPackageNameFromDirectory(file.FileName()); packageName != "" {
 			// Only process this file if it is not going to be processed as part of a node_modules bucket
 			// *and* if it was imported directly (not transitively) by a project file (i.e., this is part

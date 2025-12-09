@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -171,9 +172,16 @@ func TestRegistryLifecycle(t *testing.T) {
 
 	t.Run("nodeModulesBucketsDeletedWhenNoOpenFilesReferThem", func(t *testing.T) {
 		t.Parallel()
-		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, monorepoProjectRoot, 1, []autoimporttestutil.MonorepoConfig{
-			{Name: "package-a", FileCount: 1, NodeModulePackageCount: 1},
-			{Name: "package-b", FileCount: 1, NodeModulePackageCount: 1},
+		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, autoimporttestutil.MonorepoSetupConfig{
+			Root: monorepoProjectRoot,
+			MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+				Name:            "monorepo",
+				NodeModuleNames: []string{"pkg-root"},
+			},
+			Packages: []autoimporttestutil.MonorepoPackageConfig{
+				{FileCount: 1, MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{Name: "package-a", NodeModuleNames: []string{"pkg-a"}}},
+				{FileCount: 1, MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{Name: "package-b", NodeModuleNames: []string{"pkg-b"}}},
+			},
 		})
 		session := fixture.Session()
 		monorepo := fixture.Monorepo()
@@ -203,6 +211,67 @@ func TestRegistryLifecycle(t *testing.T) {
 		stats = autoImportStats(t, session)
 		assert.Equal(t, len(stats.NodeModulesBuckets), 2)
 		assert.Equal(t, len(stats.ProjectBuckets), 1)
+	})
+
+	t.Run("dependencyAggregationChangesAsFilesOpenAndClose", func(t *testing.T) {
+		t.Parallel()
+		monorepoRoot := "/home/src/monorepo"
+		packageADir := tspath.CombinePaths(monorepoRoot, "packages", "a")
+		monorepoIndex := tspath.CombinePaths(monorepoRoot, "index.js")
+		packageAIndex := tspath.CombinePaths(packageADir, "index.js")
+
+		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, autoimporttestutil.MonorepoSetupConfig{
+			Root: monorepoRoot,
+			MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+				Name:            "monorepo",
+				NodeModuleNames: []string{"pkg1", "pkg2", "pkg3"},
+				DependencyNames: []string{"pkg1"},
+			},
+			Packages: []autoimporttestutil.MonorepoPackageConfig{
+				{
+					FileCount: 0,
+					MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+						Name:            "a",
+						DependencyNames: []string{"pkg1", "pkg2"},
+					},
+				},
+			},
+			ExtraFiles: []autoimporttestutil.TextFileSpec{
+				{Path: monorepoIndex, Content: "export const monorepoIndex = 1;\n"},
+				{Path: packageAIndex, Content: "export const pkgA = 2;\n"},
+			},
+		})
+		session := fixture.Session()
+		monorepoHandle := fixture.ExtraFile(monorepoIndex)
+		packageAHandle := fixture.ExtraFile(packageAIndex)
+
+		ctx := context.Background()
+
+		// Open monorepo root file: expect dependencies restricted to pkg1
+		session.DidOpenFile(ctx, monorepoHandle.URI(), 1, monorepoHandle.Content(), lsproto.LanguageKindJavaScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, monorepoHandle.URI())
+		assert.NilError(t, err)
+		stats := autoImportStats(t, session)
+		assert.Assert(t, singleBucket(t, stats.NodeModulesBuckets).DependencyNames.Equals(collections.NewSetFromItems("pkg1")))
+
+		// Open package-a file: pkg2 should be added to existing bucket
+		session.DidOpenFile(ctx, packageAHandle.URI(), 1, packageAHandle.Content(), lsproto.LanguageKindJavaScript)
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, packageAHandle.URI())
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		assert.Assert(t, singleBucket(t, stats.NodeModulesBuckets).DependencyNames.Equals(collections.NewSetFromItems("pkg1", "pkg2")))
+
+		// Close package-a file; only monorepo bucket should remain
+		session.DidCloseFile(ctx, packageAHandle.URI())
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, monorepoHandle.URI())
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		assert.Assert(t, singleBucket(t, stats.NodeModulesBuckets).DependencyNames.Equals(collections.NewSetFromItems("pkg1")))
+
+		// Close monorepo file; no node_modules buckets should remain
+		session.DidCloseFile(ctx, monorepoHandle.URI())
+		stats = autoImportStats(t, session)
+		assert.Equal(t, len(stats.NodeModulesBuckets), 0)
 	})
 }
 
