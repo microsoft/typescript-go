@@ -19,7 +19,8 @@ export const helperFunc = () => {};
 // @Filename: /project/index.ts
 helper/**/`
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
@@ -45,7 +46,8 @@ export const helperFunc = () => {};
 // @Filename: /project/index.ts
 helper/**/`
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
@@ -71,7 +73,8 @@ export const helperFunc = () => {};
 // @Filename: /project/index.ts
 helper/**/`
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
@@ -97,7 +100,8 @@ export const helperFunc = () => {};
 // @Filename: /project/index.ts
 helper/**/`
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,

@@ -24,7 +24,8 @@ import * as dir2 from "./dir/[|index|]";
 const a = require("./[|a|]");
 `
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	prefsTrue := &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,

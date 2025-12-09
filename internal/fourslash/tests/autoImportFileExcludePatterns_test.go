@@ -21,7 +21,8 @@ export const ignoredSymbol = 2;
 mySym/*1*/
 ignoredSym/*2*/`
 
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
 		AutoImportFileExcludePatterns:         []string{"*ignoreme.ts"},
 		IncludeCompletionsForModuleExports:    core.TSTrue,

@@ -36,16 +36,53 @@ func PathIsBareSpecifier(path string) bool {
 
 func isExcludedByRegex(moduleSpecifier string, excludes []string) bool {
 	for _, pattern := range excludes {
-		compiled, err := regexp2.Compile(pattern, regexp2.None)
-		if err != nil {
+		re := stringToRegex(pattern)
+		if re == nil {
 			continue
 		}
-		match, _ := compiled.MatchString(moduleSpecifier)
+		match, _ := re.MatchString(moduleSpecifier)
 		if match {
 			return true
 		}
 	}
 	return false
+}
+
+func stringToRegex(pattern string) *regexp2.Regexp {
+	options := regexp2.None
+
+	if len(pattern) > 2 && pattern[0] == '/' {
+		lastSlash := strings.LastIndex(pattern, "/")
+		if lastSlash > 0 {
+			hasUnescapedMiddleSlash := false
+			for i := 1; i < lastSlash; i++ {
+				if pattern[i] == '/' && (i == 0 || pattern[i-1] != '\\') {
+					hasUnescapedMiddleSlash = true
+					break
+				}
+			}
+
+			if !hasUnescapedMiddleSlash {
+				flags := pattern[lastSlash+1:]
+				pattern = pattern[1:lastSlash]
+
+				for _, flag := range flags {
+					switch flag {
+					case 'i':
+						options |= regexp2.IgnoreCase
+					case 'u':
+						options |= regexp2.Unicode
+					}
+				}
+			}
+		}
+	}
+
+	compiled, err := regexp2.Compile(pattern, options)
+	if err != nil {
+		return nil
+	}
+	return compiled
 }
 
 /**
@@ -157,7 +194,7 @@ func getPathsRelativeToRootDirs(path string, rootDirs []string, useCaseSensitive
 	var results []string
 	for _, rootDir := range rootDirs {
 		relativePath := getRelativePathIfInSameVolume(path, rootDir, useCaseSensitiveFileNames)
-		if len(relativePath) > 0 && isPathRelativeToParent(relativePath) {
+		if !isPathRelativeToParent(relativePath) {
 			results = append(results, relativePath)
 		}
 	}
