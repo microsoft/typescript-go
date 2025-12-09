@@ -28,21 +28,17 @@ var DefaultUserPreferences = &UserPreferences{
 
 // UserPreferences represents TypeScript language service preferences.
 //
-// Fields can be populated from two sources:
-//  1. Direct property names (from VS Code's "unstable" config or direct tsserver protocol)
-//     These are matched case-insensitively by Go field name.
-//  2. VS Code's nested config structure (e.g., "suggest.autoImports", "inlayHints.parameterNames.enabled")
-//     These use the `pref` tag to specify the dotted path.
-//
+// Fields are populated from VS Code's nested config structure using the `pref` tag.
 // The `pref` tag format: "path.to.setting" or "path.to.setting,invert" for boolean inversion.
+// Fields under "unstable.*" are experimental and may change.
 type UserPreferences struct {
 	QuotePreference                           QuotePreference `pref:"preferences.quoteStyle"`
-	LazyConfiguredProjectsFromExternalProject bool            // !!!
+	LazyConfiguredProjectsFromExternalProject bool            `pref:"unstable.lazyConfiguredProjectsFromExternalProject"` // !!!
 
 	// A positive integer indicating the maximum length of a hover text before it is truncated.
 	//
 	// Default: `500`
-	MaximumHoverLength int // !!!
+	MaximumHoverLength int `pref:"unstable.maximumHoverLength"` // !!!
 
 	// ------- Completions -------
 
@@ -57,7 +53,7 @@ type UserPreferences struct {
 	// preceding `.` tokens with `?.`.
 	IncludeAutomaticOptionalChainCompletions core.Tristate `pref:"suggest.includeAutomaticOptionalChainCompletions"`
 	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
-	IncludeCompletionsWithSnippetText core.Tristate // !!!
+	IncludeCompletionsWithSnippetText core.Tristate `pref:"unstable.includeCompletionsWithSnippetText"` // !!!
 	// If enabled, completions for class members (e.g. methods and properties) will include
 	// a whole declaration for the member.
 	// E.g., `class A { f| }` could be completed to `class A { foo(): number {} }`, instead of
@@ -130,16 +126,16 @@ type UserPreferences struct {
 
 	// ------- MoveToFile -------
 
-	AllowTextChangesInNewFiles bool // !!!
+	AllowTextChangesInNewFiles bool `pref:"unstable.allowTextChangesInNewFiles"` // !!!
 
 	// ------- Rename -------
 
 	UseAliasesForRename     core.Tristate `pref:"preferences.useAliasesForRenames"`
-	AllowRenameOfImportPath bool          // !!!
+	AllowRenameOfImportPath bool          `pref:"unstable.allowRenameOfImportPath"` // !!!
 
 	// ------- CodeFixes/Refactors -------
 
-	ProvideRefactorNotApplicableReason bool // !!!
+	ProvideRefactorNotApplicableReason bool `pref:"unstable.provideRefactorNotApplicableReason"` // !!!
 
 	// ------- InlayHints -------
 
@@ -155,10 +151,10 @@ type UserPreferences struct {
 
 	// ------- Misc -------
 
-	DisableSuggestions          bool // !!!
-	DisableLineTextInReferences bool // !!!
-	DisplayPartsForJSDoc        bool // !!!
-	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+	DisableSuggestions          bool `pref:"unstable.disableSuggestions"`          // !!!
+	DisableLineTextInReferences bool `pref:"unstable.disableLineTextInReferences"` // !!!
+	DisplayPartsForJSDoc        bool `pref:"unstable.displayPartsForJSDoc"`        // !!!
+	ReportStyleChecksAsWarnings bool `pref:"unstable.reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
 }
 
 type InlayHintsPreferences struct {
@@ -411,8 +407,8 @@ var typeSerializers = map[reflect.Type]func(any) any{
 }
 
 type fieldInfo struct {
-	lowerName string // lowercase Go field name for direct matching
-	path      string // dotted path for VS Code config (e.g., "preferences.quoteStyle")
+	fieldName string // Go field name for unstable section lookup
+	path      string // dotted path for config (e.g., "preferences.quoteStyle" or "unstable.fieldName")
 	fieldPath []int  // index path to field in struct
 	invert    bool   // whether to invert boolean values
 }
@@ -421,12 +417,12 @@ var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
 	return collectFieldInfos(reflect.TypeFor[UserPreferences](), nil)
 })
 
-// lowerNameIndex maps lowercase field names to fieldInfo index for O(1) lookup
-var lowerNameIndex = sync.OnceValue(func() map[string]int {
+// fieldNameIndex maps lowercase field names to fieldInfo index
+var fieldNameIndex = sync.OnceValue(func() map[string]int {
 	infos := fieldInfoCache()
 	index := make(map[string]int, len(infos))
 	for i, info := range infos {
-		index[info.lowerName] = i
+		index[strings.ToLower(info.fieldName)] = i
 	}
 	return index
 })
@@ -437,25 +433,26 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 		field := t.Field(i)
 		currentPath := append(slices.Clone(indexPath), i)
 
-		if field.Type.Kind() == reflect.Struct && field.Tag.Get("pref") == "" {
-			infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
-			continue
+		tag := field.Tag.Get("pref")
+		if tag == "" {
+			// Embedded struct without pref tag - recurse into it
+			if field.Type.Kind() == reflect.Struct {
+				infos = append(infos, collectFieldInfos(field.Type, currentPath)...)
+				continue
+			}
+			panic("pref tag required for field " + field.Name)
 		}
 
+		// Parse tag: "path" or "path,invert"
+		parts := strings.Split(tag, ",")
 		info := fieldInfo{
-			lowerName: strings.ToLower(field.Name),
+			fieldName: field.Name,
+			path:      parts[0],
 			fieldPath: currentPath,
 		}
-
-		tag := field.Tag.Get("pref")
-		if tag != "" {
-			// Parse tag: "path" or "path,invert"
-			parts := strings.Split(tag, ",")
-			info.path = parts[0]
-			for _, part := range parts[1:] {
-				if part == "invert" {
-					info.invert = true
-				}
+		for _, part := range parts[1:] {
+			if part == "invert" {
+				info.invert = true
 			}
 		}
 
@@ -497,10 +494,12 @@ func setNestedValue(config map[string]any, path string, value any) {
 func (p *UserPreferences) parseWorker(config map[string]any) {
 	v := reflect.ValueOf(p).Elem()
 	infos := fieldInfoCache()
-	index := lowerNameIndex()
 
-	// Process "unstable" first - these are spread directly by field name
+	// Process "unstable" section first - allows any field to be set by Go field name.
+	// This mirrors VS Code's behavior: { ...config.get('unstable'), ...stableOptions }
+	// where stable options are spread after and take precedence.
 	if unstable, ok := config["unstable"].(map[string]any); ok {
+		index := fieldNameIndex()
 		for name, value := range unstable {
 			if idx, found := index[strings.ToLower(name)]; found {
 				info := infos[idx]
@@ -515,11 +514,9 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		}
 	}
 
-	// Process path-based config (VS Code style)
+	// Process path-based config (VS Code style nested paths).
+	// These run after unstable, so stable config values take precedence.
 	for _, info := range infos {
-		if info.path == "" {
-			continue
-		}
 		val, ok := getNestedValue(config, info.path)
 		if !ok {
 			continue
@@ -532,29 +529,6 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 			}
 		}
 		setFieldFromValue(field, val)
-	}
-
-	// Process direct field names at root level (non-VS Code clients, fourslash tests)
-	for name, value := range config {
-		if name == "unstable" {
-			continue
-		}
-		// Skip known VS Code config sections that are handled by path-based parsing
-		switch name {
-		case "preferences", "suggest", "inlayHints", "referencesCodeLens",
-			"implementationsCodeLens", "workspaceSymbols", "format", "tsserver", "tsc", "experimental":
-			continue
-		}
-		if idx, found := index[strings.ToLower(name)]; found {
-			info := infos[idx]
-			field := getFieldByPath(v, info.fieldPath)
-			if info.invert {
-				if b, ok := value.(bool); ok {
-					value = !b
-				}
-			}
-			setFieldFromValue(field, value)
-		}
 	}
 }
 
@@ -622,12 +596,7 @@ func (p *UserPreferences) MarshalJSONTo(enc *jsontext.Encoder) error {
 			}
 		}
 
-		// Use the path if available, otherwise use the lowercase field name at root level
-		if info.path != "" {
-			setNestedValue(config, info.path, val)
-		} else {
-			config[info.lowerName] = val
-		}
+		setNestedValue(config, info.path, val)
 	}
 
 	return json.MarshalEncode(enc, config)

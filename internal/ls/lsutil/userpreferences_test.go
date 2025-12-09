@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"gotest.tools/v3/assert"
 )
@@ -82,4 +83,148 @@ func TestUserPreferencesRoundtrip(t *testing.T) {
 		parsed.parseWorker(config)
 		assert.DeepEqual(t, original, parsed)
 	})
+}
+
+func TestUserPreferencesParseUnstable(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		json     string
+		expected *UserPreferences
+	}{
+		{
+			name: "unstable fields with correct casing",
+			json: `{
+				"unstable": {
+					"disableSuggestions": true,
+					"maximumHoverLength": 100,
+					"allowRenameOfImportPath": true
+				}
+			}`,
+			expected: &UserPreferences{
+				DisableSuggestions:      true,
+				MaximumHoverLength:      100,
+				AllowRenameOfImportPath: true,
+			},
+		},
+		{
+			name: "nested preferences path",
+			json: `{
+				"preferences": {
+					"quoteStyle": "single",
+					"useAliasesForRenames": true
+				}
+			}`,
+			expected: &UserPreferences{
+				QuotePreference:     QuotePreferenceSingle,
+				UseAliasesForRename: core.TSTrue,
+			},
+		},
+		{
+			name: "suggest section",
+			json: `{
+				"suggest": {
+					"autoImports": false,
+					"includeCompletionsForImportStatements": true
+				}
+			}`,
+			expected: &UserPreferences{
+				IncludeCompletionsForModuleExports:    core.TSFalse,
+				IncludeCompletionsForImportStatements: core.TSTrue,
+			},
+		},
+		{
+			name: "inlayHints with invert",
+			json: `{
+				"inlayHints": {
+					"parameterNames": {
+						"enabled": "all",
+						"suppressWhenArgumentMatchesName": true
+					}
+				}
+			}`,
+			expected: &UserPreferences{
+				InlayHints: InlayHintsPreferences{
+					IncludeInlayParameterNameHints:                        IncludeInlayParameterNameHintsAll,
+					IncludeInlayParameterNameHintsWhenArgumentMatchesName: false, // inverted
+				},
+			},
+		},
+		{
+			name: "mixed config",
+			json: `{
+				"unstable": {
+					"displayPartsForJSDoc": true
+				},
+				"preferences": {
+					"importModuleSpecifier": "relative"
+				},
+				"workspaceSymbols": {
+					"excludeLibrarySymbols": true
+				}
+			}`,
+			expected: &UserPreferences{
+				DisplayPartsForJSDoc: true,
+				ModuleSpecifier: ModuleSpecifierUserPreferences{
+					ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
+				},
+				ExcludeLibrarySymbolsInNavTo: true,
+			},
+		},
+		{
+			name: "stable config overrides unstable",
+			json: `{
+				"unstable": {
+					"quotePreference": "double"
+				},
+				"preferences": {
+					"quoteStyle": "single"
+				}
+			}`,
+			expected: &UserPreferences{
+				QuotePreference: QuotePreferenceSingle, // stable wins
+			},
+		},
+		{
+			name: "unstable sets value when no stable config",
+			json: `{
+				"unstable": {
+					"includeCompletionsWithSnippetText": false
+				}
+			}`,
+			expected: &UserPreferences{
+				IncludeCompletionsWithSnippetText: core.TSFalse,
+			},
+		},
+		{
+			name: "any field can be passed via unstable by Go field name",
+			json: `{
+				"unstable": {
+					"quotePreference": "double",
+					"includeCompletionsForModuleExports": true,
+					"excludeLibrarySymbolsInNavTo": true
+				}
+			}`,
+			expected: &UserPreferences{
+				QuotePreference:                    QuotePreferenceDouble,
+				IncludeCompletionsForModuleExports: core.TSTrue,
+				ExcludeLibrarySymbolsInNavTo:       true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			var config map[string]any
+			err := json.Unmarshal([]byte(tt.json), &config)
+			assert.NilError(t, err)
+
+			parsed := &UserPreferences{}
+			parsed.parseWorker(config)
+
+			assert.DeepEqual(t, tt.expected, parsed)
+		})
+	}
 }
