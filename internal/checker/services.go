@@ -680,18 +680,18 @@ func (c *Checker) GetContextualTypeForArrayLiteralAtPosition(contextualArrayType
 	firstSpreadIndex, lastSpreadIndex := -1, -1
 	elementIndex := 0
 	elements := arrayLiteral.Elements()
-	for _, elem := range elements {
+	for i, elem := range elements {
 		if elem.Pos() < position {
 			elementIndex++
 		}
 		if ast.IsSpreadElement(elem) {
 			if firstSpreadIndex == -1 {
-				firstSpreadIndex = elementIndex
+				firstSpreadIndex = i
 			}
-			lastSpreadIndex = elementIndex
+			lastSpreadIndex = i
 		}
 	}
-	// The array may be incomplete, so we don't know its the final length.
+	// The array may be incomplete, so we don't know its final length.
 	return c.getContextualTypeForElementExpression(
 		contextualArrayType,
 		elementIndex,
