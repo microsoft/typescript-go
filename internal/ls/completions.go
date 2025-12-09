@@ -6198,7 +6198,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if clientSupportsItemSnippet(ctx) {
 				return fmt.Sprintf("%s$%d", printNode(clause), i+1)
 			}
-			return printNode(clause)
+			return printNode(clause) // !!! HERE: should we print unescaped here?
 		}), newLineChar)
 
 		firstClause := printer.printNode(newClauses[0], file)
@@ -6315,13 +6315,14 @@ func (p *snippetPrinter) printNode(node *ast.Node, sourceFile *ast.SourceFile) s
 func (p *snippetPrinter) printUnescapedNode(node *ast.Node, sourceFile *ast.SourceFile) string {
 	p.writer.escapes = nil
 	p.writer.Clear()
-	p.printer.Write(node, sourceFile, p.writer, nil /*sourceMapGenerator*/)
+	p.printer.Write(node, nil /*sourceFile*/, p.writer, nil /*sourceMapGenerator*/) // !!! HERE: get rid of source file params
 	return p.writer.String()
 }
 
 func (p *snippetPrinter) printAndFormatNode(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile) string {
-	syntheticFile := 1 // !!! HERE: refactor formatter to accept source file like interface
+	text := p.printUnescapedNode(node, sourceFile)
 	nodeWithPos := p.baseWriter.AssignPositionsToNode(node, p.factory)
+	syntheticFile := p.createSyntheticFile(nodeWithPos, text, sourceFile)
 	changes := format.FormatNodeGivenIndentation(
 		ctx,
 		nodeWithPos,
@@ -6337,13 +6338,34 @@ func (p *snippetPrinter) printAndFormatNode(ctx context.Context, node *ast.Node,
 		slices.SortFunc(allChanges, func(a, b core.TextChange) int { return core.CompareTextRanges(a.TextRange, b.TextRange) })
 	}
 
-	return core.ApplyBulkEdits(syntheticFile.text, allChanges)
+	return core.ApplyBulkEdits(syntheticFile.Text(), allChanges)
+}
+
+// Creates a source file containing `node` for formatting purposes.
+// `node` and descendants need to be synthetic nodes with positions assigned.
+// This function also assigns parent pointers.
+func (p *snippetPrinter) createSyntheticFile(node *ast.Node, text string, targetFile *ast.SourceFile) *ast.SourceFile {
+	eof := p.factory.NewToken(ast.KindEndOfFile)
+	eof.Loc = core.NewTextRange(len(text), len(text))
+	statements := p.factory.NewNodeList([]*ast.Node{node})
+	statements.Loc = core.NewTextRange(node.Pos(), node.End())
+	syntheticFile := p.factory.NewSourceFile(
+		targetFile.ParseOptions(),
+		text,
+		statements,
+		eof,
+	)
+	syntheticFile.Loc = core.NewTextRange(0, len(text))
+	ast.SetParentInChildren(syntheticFile) // !!! HERE: verify that this works
+	return syntheticFile.AsSourceFile()
 }
 
 func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
 	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter())
 	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), nil /*emitContext*/)
-	writer := &snippetEmitTextWriter{}
+	writer := &snippetEmitTextWriter{
+		ChangeTrackerWriter: baseWriter,
+	}
 	return &snippetPrinter{
 		baseWriter: baseWriter,
 		printer:    printer,
@@ -6371,7 +6393,7 @@ func (w *snippetEmitTextWriter) WriteComment(text string) {
 }
 
 func (w *snippetEmitTextWriter) WriteStringLiteral(text string) {
-	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteLiteral(text) })
+	w.escapingWrite(text, func() { w.ChangeTrackerWriter.WriteStringLiteral(text) })
 }
 
 func (w *snippetEmitTextWriter) WriteParameter(text string) {
