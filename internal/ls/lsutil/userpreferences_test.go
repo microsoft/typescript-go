@@ -176,7 +176,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			name: "stable config overrides unstable",
 			json: `{
 				"unstable": {
-					"quotePreference": "double"
+					"quoteStyle": "double"
 				},
 				"preferences": {
 					"quoteStyle": "single"
@@ -198,12 +198,12 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			},
 		},
 		{
-			name: "any field can be passed via unstable by Go field name",
+			name: "any field can be passed via unstable by its camelCase name",
 			json: `{
 				"unstable": {
-					"quotePreference": "double",
-					"includeCompletionsForModuleExports": true,
-					"excludeLibrarySymbolsInNavTo": true
+					"quoteStyle": "double",
+					"autoImports": true,
+					"excludeLibrarySymbols": true
 				}
 			}`,
 			expected: &UserPreferences{

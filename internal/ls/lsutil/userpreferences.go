@@ -407,8 +407,7 @@ var typeSerializers = map[reflect.Type]func(any) any{
 }
 
 type fieldInfo struct {
-	fieldName string // Go field name for unstable section lookup
-	path      string // dotted path for config (e.g., "preferences.quoteStyle" or "unstable.fieldName")
+	path      string // dotted path for config (e.g., "preferences.quoteStyle" or "unstable.disableSuggestions")
 	fieldPath []int  // index path to field in struct
 	invert    bool   // whether to invert boolean values
 }
@@ -417,12 +416,20 @@ var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
 	return collectFieldInfos(reflect.TypeFor[UserPreferences](), nil)
 })
 
-// fieldNameIndex maps lowercase field names to fieldInfo index
-var fieldNameIndex = sync.OnceValue(func() map[string]int {
+// unstableNameIndex maps the camelCase name (from "unstable.name" paths) to fieldInfo index.
+// This allows any field to be set via the unstable section using its camelCase name.
+var unstableNameIndex = sync.OnceValue(func() map[string]int {
 	infos := fieldInfoCache()
 	index := make(map[string]int, len(infos))
 	for i, info := range infos {
-		index[strings.ToLower(info.fieldName)] = i
+		// Extract the last part of any path as the unstable key
+		// e.g., "preferences.quoteStyle" -> "quoteStyle"
+		// e.g., "unstable.disableSuggestions" -> "disableSuggestions"
+		if idx := strings.LastIndex(info.path, "."); idx >= 0 {
+			index[info.path[idx+1:]] = i
+		} else {
+			index[info.path] = i
+		}
 	}
 	return index
 })
@@ -446,7 +453,6 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 		// Parse tag: "path" or "path,invert"
 		parts := strings.Split(tag, ",")
 		info := fieldInfo{
-			fieldName: field.Name,
 			path:      parts[0],
 			fieldPath: currentPath,
 		}
@@ -495,13 +501,13 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 	v := reflect.ValueOf(p).Elem()
 	infos := fieldInfoCache()
 
-	// Process "unstable" section first - allows any field to be set by Go field name.
+	// Process "unstable" section first - allows any field to be set by camelCase name.
 	// This mirrors VS Code's behavior: { ...config.get('unstable'), ...stableOptions }
 	// where stable options are spread after and take precedence.
 	if unstable, ok := config["unstable"].(map[string]any); ok {
-		index := fieldNameIndex()
+		index := unstableNameIndex()
 		for name, value := range unstable {
-			if idx, found := index[strings.ToLower(name)]; found {
+			if idx, found := index[name]; found {
 				info := infos[idx]
 				field := getFieldByPath(v, info.fieldPath)
 				if info.invert {
