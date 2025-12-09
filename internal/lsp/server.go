@@ -497,6 +497,11 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
 	ctx = lsproto.WithClientCapabilities(ctx, &s.clientCapabilities)
 
+	switch req.Params.(type) {
+	case *lsproto.HandleCustomLspApiCommandParams:
+		return s.handleCustomTsServerCommand(ctx, req)
+	}
+
 	if handler := handlers()[req.Method]; handler != nil {
 		return handler(s, ctx, req)
 	}

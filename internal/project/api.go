@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (s *Session) OpenProject(ctx context.Context, configFileName string) (*Project, error) {
@@ -26,4 +27,18 @@ func (s *Session) OpenProject(ctx context.Context, configFileName string) (*Proj
 	}
 
 	return project, nil
+}
+
+// Because flushChanges is private
+func (s *Session) CloseProject(ctx context.Context, configFileName string) error {
+	fileChanges, overlays, ataChanges, _ := s.flushChanges(ctx)
+	newSnapshot := s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		fileChanges: fileChanges,
+		ataChanges:  ataChanges,
+		apiRequest:  &APISnapshotRequest{
+			CloseProjects: collections.NewSetFromItems[tspath.Path](s.toPath(configFileName)),
+		},
+	})
+
+	return newSnapshot.apiError
 }
