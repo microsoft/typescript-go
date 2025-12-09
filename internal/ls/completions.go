@@ -4163,7 +4163,7 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 			return nil
 		}
 		// class c extends React.Component { a: () => 1\n compon| }
-		if isFromObjectTypeDeclaration(location) {
+		if contextToken != nil && isFromObjectTypeDeclaration(location) {
 			return ast.FindAncestor(location, ast.IsObjectTypeDeclaration)
 		}
 	}
