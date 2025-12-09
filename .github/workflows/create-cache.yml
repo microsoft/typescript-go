@@ -29,22 +29,26 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macos-latest
-        go-version:
-          - '>=1.25.0'
 
     runs-on: ${{ matrix.os }}
 
     steps:
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
+
       - run: git config --system core.longpaths true
         if: ${{ matrix.os == 'windows-latest' }}
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
       - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
 
       - uses: ./.github/actions/setup-go
         with:
-          go-version: ${{ matrix.go-version }}
           create: 'true'

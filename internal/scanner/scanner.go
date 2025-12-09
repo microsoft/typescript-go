@@ -1629,6 +1629,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -2057,14 +2064,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2458,7 +2464,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
+func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
 	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 

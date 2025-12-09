@@ -30,7 +30,8 @@ export const i: I;
 // @Filename: /user.ts
 import { i } from "./a";
 i[|./**/|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -43,11 +44,11 @@ i[|./**/|];`
 				&lsproto.CompletionItem{
 					Label:      "publicSym",
 					InsertText: PtrTo("[publicSym]"),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{

@@ -44,6 +44,13 @@ func (r *RangeMarker) GetName() *string {
 	return r.Marker.Name
 }
 
+func (r *RangeMarker) LSLocation() lsproto.Location {
+	return lsproto.Location{
+		Uri:   lsconv.FileNameToDocumentURI(r.fileName),
+		Range: r.LSRange,
+	}
+}
+
 type Marker struct {
 	fileName   string
 	Position   int
@@ -64,6 +71,16 @@ func (m *Marker) GetName() *string {
 	return m.Name
 }
 
+func (m *Marker) MakerWithSymlink(fileName string) *Marker {
+	return &Marker{
+		fileName:   fileName,
+		Position:   m.Position,
+		LSPosition: m.LSPosition,
+		Name:       m.Name,
+		Data:       m.Data,
+	}
+}
+
 type MarkerOrRange interface {
 	FileName() string
 	LSPos() lsproto.Position
@@ -79,10 +96,18 @@ type TestData struct {
 	Ranges          []*RangeMarker
 }
 
+func (t *TestData) isStateBaseliningEnabled() bool {
+	return isStateBaseliningEnabled(t.GlobalOptions)
+}
+
 type testFileWithMarkers struct {
 	file    *TestFileInfo
 	markers []*Marker
 	ranges  []*RangeMarker
+}
+
+func isStateBaseliningEnabled(globalOptions map[string]string) bool {
+	return globalOptions["statebaseline"] == "true"
 }
 
 func ParseTestData(t *testing.T, contents string, fileName string) TestData {
@@ -93,10 +118,13 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	var markers []*Marker
 	var ranges []*RangeMarker
 
-	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinks(
+	filesWithMarker, symlinks, _, globalOptions, e := testrunner.ParseTestFilesAndSymlinksWithOptions(
 		contents,
 		fileName,
 		parseFileContent,
+		testrunner.ParseTestFilesOptions{
+			AllowImplicitFirstFile: true,
+		},
 	)
 	if e != nil {
 		t.Fatalf("Error parsing fourslash data: %s", e.Error())
@@ -125,7 +153,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 
 	}
 
-	if hasTSConfig && len(globalOptions) > 0 {
+	if hasTSConfig && len(globalOptions) > 0 && !isStateBaseliningEnabled(globalOptions) {
 		t.Fatalf("It is not allowed to use global options along with config files.")
 	}
 

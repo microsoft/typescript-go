@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 	"unicode"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -334,6 +335,12 @@ func GetNormalizedPathComponents(path string, currentDirectory string) []string 
 	return reducePathComponents(GetPathComponents(path, currentDirectory))
 }
 
+func GetNormalizedAbsolutePathWithoutRoot(fileName string, currentDirectory string) string {
+	absolutePath := GetNormalizedAbsolutePath(fileName, currentDirectory)
+	rootLength := GetRootLength(absolutePath)
+	return absolutePath[rootLength:]
+}
+
 func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
 	rootLength := GetRootLength(fileName)
 	if rootLength == 0 && currentDirectory != "" {
@@ -607,7 +614,17 @@ func ToFileNameLowerCase(fileName string) string {
 			}
 			b[i] = c
 		}
-		return string(b)
+		// SAFETY: We construct a string that aliases b’s backing array without copying.
+		// (1) Lifetime: The address of b’s elements escapes via the returned string,
+		//     so escape analysis allocates b’s backing array on the heap. The string
+		//     header points to that heap allocation, ensuring it remains live for the
+		//     string’s lifetime.
+		// (2) Initialization: We assign to every b[i] before creating the string.
+		//     (Note: Go zeroes all allocated memory, so “uninitialized” bytes cannot occur.)
+		// (3) Immutability: We do not modify b after this point, so the string view
+		//     observes immutable data.
+		// (4) Non-empty: On this path len(b) > 0, so &b[0] is a valid, non-nil pointer.
+		return unsafe.String(&b[0], len(b))
 	}
 
 	return strings.Map(func(r rune) rune {
@@ -1126,6 +1143,20 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	}
 
 	return [][]string{componentGroups[0][:maxDepth]}
+}
+
+func StartsWithDirectory(fileName string, directoryName string, useCaseSensitiveFileNames bool) bool {
+	if directoryName == "" {
+		return false
+	}
+
+	canonicalFileName := GetCanonicalFileName(fileName, useCaseSensitiveFileNames)
+	canonicalDirectoryName := GetCanonicalFileName(directoryName, useCaseSensitiveFileNames)
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "/")
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "\\")
+
+	return strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"/") ||
+		strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"\\")
 }
 
 func CompareNumberOfDirectorySeparators(path1, path2 string) int {

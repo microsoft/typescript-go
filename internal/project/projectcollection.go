@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -28,6 +29,8 @@ type ProjectCollection struct {
 	// API clients.
 	apiOpenedProjects map[tspath.Path]struct{}
 }
+
+func (c *ProjectCollection) ConfigFileRegistry() *ConfigFileRegistry { return c.configFileRegistry }
 
 func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {
 	return c.configuredProjects[path]
@@ -89,6 +92,19 @@ func (c *ProjectCollection) Projects() []*Project {
 
 func (c *ProjectCollection) InferredProject() *Project {
 	return c.inferredProject
+}
+
+func (c *ProjectCollection) GetProjectsContainingFile(path tspath.Path) []ls.Project {
+	var projects []ls.Project
+	for _, project := range c.ConfiguredProjects() {
+		if project.containsFile(path) {
+			projects = append(projects, project)
+		}
+	}
+	if c.inferredProject != nil && c.inferredProject.containsFile(path) {
+		projects = append(projects, c.inferredProject)
+	}
+	return projects
 }
 
 // !!! result could be cached

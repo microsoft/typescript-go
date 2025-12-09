@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -46,13 +45,13 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	if len(documentHighlights) == 0 {
 		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
 	}
-	// if nil is passed here we never generate an error, just pass an empty higlight
+	// if nil is passed here we never generate an error, just pass an empty highlight
 	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	options := refOptions{use: referenceUseNone}
-	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options, &collections.Set[string]{})
+	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options)
 	if referenceEntries == nil {
 		return nil
 	}
@@ -75,7 +74,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	kind := lsproto.DocumentHighlightKindRead
 	if entry.kind == entryKindRange {
 		return entry.fileName, &lsproto.DocumentHighlight{
-			Range: *entry.textRange,
+			Range: *l.getRangeOfEntry(entry),
 			Kind:  &kind,
 		}
 	}
@@ -86,7 +85,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	}
 
 	dh := &lsproto.DocumentHighlight{
-		Range: *entry.textRange,
+		Range: *l.getRangeOfEntry(entry),
 		Kind:  &kind,
 	}
 
@@ -276,7 +275,7 @@ func getReturnOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Nod
 	body := funcNode.Body()
 	if body != nil {
 		ast.ForEachReturnStatement(body, func(ret *ast.Node) bool {
-			keyword := findChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -286,7 +285,7 @@ func getReturnOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Nod
 		// Get all throw statements not in a try block
 		throwStatements := aggregateOwnedThrowStatements(body, sourceFile)
 		for _, throw := range throwStatements {
-			keyword := findChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -348,7 +347,7 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 	// Aggregate all throw statements "owned" by this owner.
 	throwStatements := aggregateOwnedThrowStatements(owner, sourceFile)
 	for _, throw := range throwStatements {
-		keyword := findChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
+		keyword := astnav.FindChildOfKind(throw, ast.KindThrowKeyword, sourceFile)
 		if keyword != nil {
 			keywords = append(keywords, keyword)
 		}
@@ -358,7 +357,7 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 	// ability to "jump out" of the function, and include occurrences for both
 	if ast.IsFunctionBlock(owner) {
 		ast.ForEachReturnStatement(owner, func(ret *ast.Node) bool {
-			keyword := findChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
+			keyword := astnav.FindChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
 			if keyword != nil {
 				keywords = append(keywords, keyword)
 			}
@@ -412,7 +411,7 @@ func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) [
 	}
 
 	if tryStatement.FinallyBlock != nil {
-		finallyKeyword := findChildOfKind(node, ast.KindFinallyKeyword, sourceFile)
+		finallyKeyword := astnav.FindChildOfKind(node, ast.KindFinallyKeyword, sourceFile)
 		if finallyKeyword.Kind == ast.KindFinallyKeyword {
 			keywords = append(keywords, finallyKeyword)
 		}

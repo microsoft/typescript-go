@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -68,6 +69,9 @@ type Project struct {
 	ProgramUpdateKind ProgramUpdateKind
 	// The ID of the snapshot that created the program stored in this project.
 	ProgramLastUpdate uint64
+	// Set of projects that this project could be referencing.
+	// Only set before actually loading config file to get actual project references
+	potentialProjectReferences *collections.Set[tspath.Path]
 
 	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
@@ -82,6 +86,8 @@ type Project struct {
 	// typingsFiles are the root files added by the typings installer.
 	typingsFiles []string
 }
+
+var _ ls.Project = (*Project)(nil)
 
 func NewConfiguredProject(
 	configFileName string,
@@ -192,8 +198,16 @@ func (p *Project) ConfigFilePath() tspath.Path {
 	return p.configFilePath
 }
 
+func (p *Project) Id() tspath.Path {
+	return p.configFilePath
+}
+
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
+}
+
+func (p *Project) HasFile(fileName string) bool {
+	return p.containsFile(p.toPath(fileName))
 }
 
 func (p *Project) containsFile(path tspath.Path) bool {
@@ -220,6 +234,7 @@ func (p *Project) Clone() *Project {
 		Program:                     p.Program,
 		ProgramUpdateKind:           ProgramUpdateKindNone,
 		ProgramLastUpdate:           p.ProgramLastUpdate,
+		potentialProjectReferences:  p.potentialProjectReferences,
 
 		programFilesWatch:       p.programFilesWatch,
 		failedLookupsWatch:      p.failedLookupsWatch,
@@ -265,6 +280,32 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 		}
 	})
 	return p.commandLineWithTypingsFiles
+}
+
+func (p *Project) setPotentialProjectReference(configFilePath tspath.Path) {
+	if p.potentialProjectReferences == nil {
+		p.potentialProjectReferences = &collections.Set[tspath.Path]{}
+	} else {
+		p.potentialProjectReferences = p.potentialProjectReferences.Clone()
+	}
+	p.potentialProjectReferences.Add(configFilePath)
+}
+
+func (p *Project) hasPotentialProjectReference(projectTreeRequest *ProjectTreeRequest) bool {
+	if p.CommandLine != nil {
+		for _, path := range p.CommandLine.ResolvedProjectReferencePaths() {
+			if projectTreeRequest.IsProjectReferenced(p.toPath(path)) {
+				return true
+			}
+		}
+	} else if p.potentialProjectReferences != nil {
+		for path := range p.potentialProjectReferences.Keys() {
+			if projectTreeRequest.IsProjectReferenced(path) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 type CreateProgramResult struct {

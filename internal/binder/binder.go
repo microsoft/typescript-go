@@ -42,10 +42,9 @@ const (
 )
 
 type Binder struct {
-	file                    *ast.SourceFile
-	bindFunc                func(*ast.Node) bool
-	unreachableFlow         *ast.FlowNode
-	reportedUnreachableFlow *ast.FlowNode
+	file            *ast.SourceFile
+	bindFunc        func(*ast.Node) bool
+	unreachableFlow *ast.FlowNode
 
 	container              *ast.Node
 	thisContainer          *ast.Node
@@ -122,7 +121,6 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.file = file
 		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
-		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
@@ -685,7 +683,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
 	case ast.KindCallExpression:
-		b.bindCallExpression(node)
+		if ast.IsInJSFile(node) {
+			b.bindCallExpression(node)
+		}
 	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 	case ast.KindEnumDeclaration:
@@ -915,16 +915,24 @@ func (b *Binder) bindFunctionExpression(node *ast.Node) {
 }
 
 func (b *Binder) bindCallExpression(node *ast.Node) {
-	// !!! for ModuleDetectionKind.Force, external module indicator is forced to `true` in Strada for source files, in which case
-	//  we should set the commonjs module indicator but not call b.bindSourceFileAsExternalModule
-	// !!! && file.externalModuleIndicator !== true (used for ModuleDetectionKind.Force)
-	if ast.IsInJSFile(node) &&
-		b.file.ExternalModuleIndicator == nil &&
-		b.file.CommonJSModuleIndicator == nil &&
-		ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
-		b.file.CommonJSModuleIndicator = node
-		b.bindSourceFileAsExternalModule()
+	// We're only inspecting call expressions to detect CommonJS modules, so we can skip
+	// this check if we've already seen the module indicator
+	if b.file.CommonJSModuleIndicator == nil && ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
+		b.setCommonJSModuleIndicator(node)
 	}
+}
+
+func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
+	if b.file.ExternalModuleIndicator != nil && b.file.ExternalModuleIndicator != b.file.AsNode() {
+		return false
+	}
+	if b.file.CommonJSModuleIndicator == nil {
+		b.file.CommonJSModuleIndicator = node
+		if b.file.ExternalModuleIndicator == nil {
+			b.bindSourceFileAsExternalModule()
+		}
+	}
+	return true
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
@@ -1538,18 +1546,25 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// Most nodes aren't valid in an assignment pattern, so we clear the value here
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
-	if b.checkUnreachable(node) {
+
+	if b.currentFlow == b.unreachableFlow {
+		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
+			flowNodeData.FlowNode = nil
+		}
+		if ast.IsPotentiallyExecutableNode(node) {
+			node.Flags |= ast.NodeFlagsUnreachable
+		}
 		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
-	kind := node.Kind
-	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement && (b.options().AllowUnreachableCode != core.TSTrue || kind == ast.KindReturnStatement) {
-		hasFlowNodeData := node.FlowNodeData()
-		if hasFlowNodeData != nil {
-			hasFlowNodeData.FlowNode = b.currentFlow
+
+	if ast.KindFirstStatement <= node.Kind && node.Kind <= ast.KindLastStatement {
+		if flowNodeData := node.FlowNodeData(); flowNodeData != nil {
+			flowNodeData.FlowNode = b.currentFlow
 		}
 	}
+
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1657,94 +1672,6 @@ func (b *Binder) bindEachStatementFunctionsFirst(statements *ast.NodeList) {
 		if node.Kind != ast.KindFunctionDeclaration {
 			b.bind(node)
 		}
-	}
-}
-
-func (b *Binder) checkUnreachable(node *ast.Node) bool {
-	if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 {
-		return false
-	}
-	if b.currentFlow == b.unreachableFlow {
-		// report errors on all statements except empty ones
-		// report errors on class declarations
-		// report errors on enums with preserved emit
-		// report errors on instantiated modules
-		reportError := ast.IsStatementButNotDeclaration(node) && !ast.IsEmptyStatement(node) ||
-			ast.IsClassDeclaration(node) ||
-			isEnumDeclarationWithPreservedEmit(node, b.options()) ||
-			ast.IsModuleDeclaration(node) && b.shouldReportErrorOnModuleDeclaration(node)
-		if reportError {
-			b.currentFlow = b.reportedUnreachableFlow
-			if b.options().AllowUnreachableCode != core.TSTrue {
-				// unreachable code is reported if
-				// - user has explicitly asked about it AND
-				// - statement is in not ambient context (statements in ambient context is already an error
-				//   so we should not report extras) AND
-				//   - node is not variable statement OR
-				//   - node is block scoped variable statement OR
-				//   - node is not block scoped variable statement and at least one variable declaration has initializer
-				//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
-				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
-				isError := unreachableCodeIsError(b.options()) && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
-					ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
-					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-						return d.Initializer() != nil
-					}))
-				b.errorOnEachUnreachableRange(node, isError)
-			}
-		}
-	}
-	return true
-}
-
-func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
-	instanceState := ast.GetModuleInstanceState(node)
-	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options().ShouldPreserveConstEnums)
-}
-
-func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
-	if b.isExecutableStatement(node) && ast.IsBlock(node.Parent) {
-		statements := node.Parent.Statements()
-		index := slices.Index(statements, node)
-		var first, last *ast.Node
-		for _, s := range statements[index:] {
-			if b.isExecutableStatement(s) {
-				if first == nil {
-					first = s
-				}
-				last = s
-			} else if first != nil {
-				b.errorOrSuggestionOnRange(isError, first, last, diagnostics.Unreachable_code_detected)
-				first = nil
-			}
-		}
-		if first != nil {
-			b.errorOrSuggestionOnRange(isError, first, last, diagnostics.Unreachable_code_detected)
-		}
-	} else {
-		b.errorOrSuggestionOnNode(isError, node, diagnostics.Unreachable_code_detected)
-	}
-}
-
-// As opposed to a pure declaration like an `interface`
-func (b *Binder) isExecutableStatement(s *ast.Node) bool {
-	// Don't remove statements that can validly be used before they appear.
-	return !ast.IsFunctionDeclaration(s) && !b.isPurelyTypeDeclaration(s) && !(ast.IsVariableStatement(s) && ast.GetCombinedNodeFlags(s)&ast.NodeFlagsBlockScoped == 0 &&
-		core.Some(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
-			return d.Initializer() == nil
-		}))
-}
-
-func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
-	switch s.Kind {
-	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
-		return true
-	case ast.KindModuleDeclaration:
-		return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
-	case ast.KindEnumDeclaration:
-		return !isEnumDeclarationWithPreservedEmit(s, b.options())
-	default:
-		return false
 	}
 }
 
@@ -2134,8 +2061,9 @@ func (b *Binder) bindLabeledStatement(node *ast.Node) {
 	}
 	b.bind(stmt.Label)
 	b.bind(stmt.Statement)
-	if !b.activeLabelList.referenced && b.options().AllowUnusedLabels != core.TSTrue {
-		b.errorOrSuggestionOnNode(unusedLabelIsError(b.options()), stmt.Label, diagnostics.Unused_label)
+	if !b.activeLabelList.referenced {
+		// Mark the label as unused; the checker will decide whether to report it
+		stmt.Label.Flags |= ast.NodeFlagsUnreachable
 	}
 	b.activeLabelList = b.activeLabelList.next
 	b.addAntecedent(postStatementLabel, b.currentFlow)
@@ -2457,10 +2385,6 @@ func (b *Binder) bindInitializer(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(exitFlow)
 }
 
-func isEnumDeclarationWithPreservedEmit(node *ast.Node, options core.SourceFileAffectingCompilerOptions) bool {
-	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums)
-}
-
 func setFlowNode(node *ast.Node, flowNode *ast.FlowNode) {
 	data := node.FlowNodeData()
 	if data != nil {
@@ -2750,14 +2674,6 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 		}
 	}
 	return false
-}
-
-func unreachableCodeIsError(options core.SourceFileAffectingCompilerOptions) bool {
-	return options.AllowUnreachableCode == core.TSFalse
-}
-
-func unusedLabelIsError(options core.SourceFileAffectingCompilerOptions) bool {
-	return options.AllowUnusedLabels == core.TSFalse
 }
 
 func isStatementCondition(node *ast.Node) bool {

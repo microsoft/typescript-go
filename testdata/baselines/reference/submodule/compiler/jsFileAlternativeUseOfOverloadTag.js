@@ -106,7 +106,6 @@ const example3 = {
 
 
 //// [jsFileAlternativeUseOfOverloadTag.d.ts]
-declare function Example1(value: any): any;
 declare const example1: {
     /**
      * @overload Example1(value)
@@ -115,8 +114,6 @@ declare const example1: {
      */
     constructor: (value: any, options: any) => void;
 };
-declare function Example2(value: any, secretAccessKey: any, sessionToken: any): any;
-declare function Example2(): any;
 declare const example2: {
     /**
      * Example 2
@@ -138,8 +135,7 @@ declare const example2: {
      */
     constructor: () => void;
 };
-declare function evaluate(): any;
-type callback = (error: any, result: any) ;
+type callback = (error: any, result: any) => any;
 declare const example3: {
     /**
      * @overload evaluate(options = {}, [callback])
@@ -156,65 +152,3 @@ declare const example3: {
      */
     evaluate: (options: any, callback: any) => void;
 };
-
-
-//// [DtsFileErrors]
-
-
-dist/jsFileAlternativeUseOfOverloadTag.d.ts(34,43): error TS1005: '=>' expected.
-
-
-==== dist/jsFileAlternativeUseOfOverloadTag.d.ts (1 errors) ====
-    declare function Example1(value: any): any;
-    declare const example1: {
-        /**
-         * @overload Example1(value)
-         *   Creates Example1
-         *   @param value [String]
-         */
-        constructor: (value: any, options: any) => void;
-    };
-    declare function Example2(value: any, secretAccessKey: any, sessionToken: any): any;
-    declare function Example2(): any;
-    declare const example2: {
-        /**
-         * Example 2
-         *
-         * @overload Example2(value)
-         *   Creates Example2
-         *   @param value [String]
-         *   @param secretAccessKey [String]
-         *   @param sessionToken [String]
-         *   @example Creates with string value
-         *     const example = new Example('');
-         * @overload Example2(options)
-         *   Creates Example2
-         *   @option options value [String]
-         *   @example Creates with options object
-         *     const example = new Example2({
-         *       value: '',
-         *     });
-         */
-        constructor: () => void;
-    };
-    declare function evaluate(): any;
-    type callback = (error: any, result: any) ;
-                                              ~
-!!! error TS1005: '=>' expected.
-    declare const example3: {
-        /**
-         * @overload evaluate(options = {}, [callback])
-         *   Evaluate something
-         *   @note Something interesting
-         *   @param options [map]
-         *   @return [string] returns evaluation result
-         *   @return [null] returns nothing if callback provided
-         *   @callback callback function (error, result)
-         *     If callback is provided it will be called with evaluation result
-         *     @param error [Error]
-         *     @param result [String]
-         *   @see callback
-         */
-        evaluate: (options: any, callback: any) => void;
-    };
-    

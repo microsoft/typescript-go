@@ -345,7 +345,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	if len(p.reparseList) > 0 {
+	if len(p.reparseList) != 0 {
 		statements = append(statements, p.reparseList...)
 		p.reparseList = nil
 	}
@@ -504,7 +504,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			elt := parseElement(p, len(list))
-			if len(p.reparseList) > 0 {
+			if len(p.reparseList) != 0 {
 				for _, e := range p.reparseList {
 					// Propagate @typedef type alias declarations outwards to a context that permits them.
 					if (ast.IsJSTypeAliasDeclaration(e) || ast.IsJSImportDeclaration(e)) && kind != PCSourceElements && kind != PCBlockStatements {
@@ -6457,7 +6457,7 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			case typesOk:
 				var parsed core.ResolutionMode
 				if resolutionModeOk {
-					parsed = parseResolutionMode(resolutionMode.Value, resolutionMode.Pos(), resolutionMode.End() /*, reportDiagnostic*/)
+					parsed = p.parseResolutionMode(resolutionMode.Value, resolutionMode.Pos(), resolutionMode.End())
 				}
 				context.TypeReferenceDirectives = append(context.TypeReferenceDirectives, &ast.FileReference{
 					TextRange:      types.TextRange,
@@ -6498,16 +6498,17 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 	}
 }
 
-func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: PragmaDiagnosticReporter*/) (resolutionKind core.ResolutionMode) {
+func (p *Parser) parseResolutionMode(mode string, pos int, end int) (resolutionKind core.ResolutionMode) {
 	if mode == "import" {
 		resolutionKind = core.ModuleKindESNext
+		return resolutionKind
 	}
 	if mode == "require" {
 		resolutionKind = core.ModuleKindCommonJS
+		return resolutionKind
 	}
+	p.parseErrorAt(pos, end, diagnostics.X_resolution_mode_should_be_either_require_or_import)
 	return resolutionKind
-	// reportDiagnostic(pos, end - pos, Diagnostics.resolution_mode_should_be_either_require_or_import);
-	// return undefined;
 }
 
 func (p *Parser) jsErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) {

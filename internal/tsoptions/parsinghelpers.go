@@ -259,6 +259,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.GenerateTrace = ParseString(value)
 	case "isolatedModules":
 		allOptions.IsolatedModules = ParseTristate(value)
+	case "ignoreConfig":
+		allOptions.IgnoreConfig = ParseTristate(value)
 	case "ignoreDeprecations":
 		allOptions.IgnoreDeprecations = ParseString(value)
 	case "importHelpers":
@@ -546,7 +548,8 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	// Collect explicitly null field names from raw JSON
 	var explicitNullFields collections.Set[string]
 	if rawSource != nil {
-		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
+		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok && rawMap != nil {
+			// Options are nested under "compilerOptions" in both tsconfig.json and wrapped command line options
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
 					for key, value := range compilerOptionsMap.Entries() {

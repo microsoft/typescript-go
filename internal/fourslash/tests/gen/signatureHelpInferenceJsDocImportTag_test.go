@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpInferenceJsDocImportTag(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJS: true
 // @checkJs: true
@@ -28,6 +28,7 @@ export interface Foo {}
  */
 function foo(a) {}
 foo(/**/)`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

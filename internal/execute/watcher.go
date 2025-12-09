@@ -54,7 +54,7 @@ func createWatcher(
 }
 
 func (w *Watcher) start() {
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing))
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(w.host), w.host)
 
 	if w.testing == nil {
@@ -117,7 +117,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	if w.configFileName != "" {
 		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, w.sys, extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, nil, w.sys, extendedConfigCache)
 		if len(errors) > 0 {
 			for _, e := range errors {
 				w.reportDiagnostic(e)
@@ -131,7 +131,7 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		}
 		w.config = configParseResult
 	}
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.testing))
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	return false
 }
 
