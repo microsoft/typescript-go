@@ -10976,23 +10976,33 @@ func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *N
 	text := file.text[pos:end]
 	switch kind {
 	case KindNumericLiteral:
-		return file.tokenFactory.NewNumericLiteral(text)
+		literal := file.tokenFactory.NewNumericLiteral(text)
+		literal.AsNumericLiteral().TokenFlags = flags & TokenFlagsNumericLiteralFlags
+		return literal
 	case KindBigIntLiteral:
-		return file.tokenFactory.NewBigIntLiteral(text)
+		literal := file.tokenFactory.NewBigIntLiteral(text)
+		literal.AsBigIntLiteral().TokenFlags = flags & TokenFlagsNumericLiteralFlags
+		return literal
 	case KindStringLiteral:
-		return file.tokenFactory.NewStringLiteral(text)
+		literal := file.tokenFactory.NewStringLiteral(text)
+		literal.AsStringLiteral().TokenFlags = flags & TokenFlagsStringLiteralFlags
+		return literal
 	case KindJsxText, KindJsxTextAllWhiteSpaces:
 		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
 	case KindRegularExpressionLiteral:
-		return file.tokenFactory.NewRegularExpressionLiteral(text)
+		literal := file.tokenFactory.NewRegularExpressionLiteral(text)
+		literal.AsRegularExpressionLiteral().TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
+		return literal
 	case KindNoSubstitutionTemplateLiteral:
-		return file.tokenFactory.NewNoSubstitutionTemplateLiteral(text)
+		literal := file.tokenFactory.NewNoSubstitutionTemplateLiteral(text)
+		literal.AsNoSubstitutionTemplateLiteral().TokenFlags = flags & TokenFlagsTemplateLiteralLikeFlags
+		return literal
 	case KindTemplateHead:
-		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags)
+		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
 	case KindTemplateMiddle:
-		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags)
+		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
 	case KindTemplateTail:
-		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags)
+		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
 	case KindIdentifier:
 		return file.tokenFactory.NewIdentifier(text)
 	case KindPrivateIdentifier:
