@@ -681,6 +681,7 @@ func compileFilesWithHost(
 	diagnostics = append(diagnostics, program.GetProgramDiagnostics()...)
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
+	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
 	if config.CompilerOptions().GetEmitDeclarations() {
 		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
 	}

@@ -456,11 +456,7 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	diags := p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSemanticDiagnosticsForFile)
-	if sourceFile == nil {
-		diags = core.Concatenate(diags, p.getGlobalDiagnostics())
-	}
-	return SortAndDeduplicateDiagnostics(diags)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSemanticDiagnosticsForFile)
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
@@ -1030,7 +1026,7 @@ func emitModuleKindIsNonNodeESM(moduleKind core.ModuleKind) bool {
 	return moduleKind >= core.ModuleKindES2015 && moduleKind <= core.ModuleKindESNext
 }
 
-func (p *Program) getGlobalDiagnostics() []*ast.Diagnostic {
+func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	if len(p.files) == 0 {
 		return nil
 	}
@@ -1045,7 +1041,7 @@ func (p *Program) getGlobalDiagnostics() []*ast.Diagnostic {
 		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
 	})
 
-	return slices.Concat(globalDiagnostics...)
+	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -1442,6 +1438,7 @@ type ProgramLike interface {
 	GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetProgramDiagnostics() []*ast.Diagnostic
+	GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic
 	GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetSuggestionDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
@@ -1492,11 +1489,15 @@ func GetDiagnosticsOfAnyProgram(
 		getBindDiagnostics(ctx, file)
 
 		if program.Options().ListFilesOnly.IsFalseOrUnknown() {
+			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
+
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
+				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 
-			if len(allDiagnostics) == configFileParsingDiagnosticsLength && (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() {
+			if (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, file)...)
 			}
 		}
