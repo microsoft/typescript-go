@@ -9648,6 +9648,16 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		}
 		return diagnostic
 	default:
+		// Handle edge case where maxCount >= len(args)
+		// This can happen when signature resolution fails for reasons other than argument count,
+		// such as when trailing commas create OmittedExpressions that affect type inference.
+		if maxCount >= len(args) {
+			diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, len(args))
+			if headMessage != nil {
+				diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+			}
+			return diagnostic
+		}
 		sourceFile := ast.GetSourceFileOfNode(node)
 		pos := scanner.SkipTrivia(sourceFile.Text(), args[maxCount].Pos())
 		end := args[len(args)-1].End()
