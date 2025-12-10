@@ -1076,7 +1076,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 // including bind diagnostics, checker diagnostics, and handling of @ts-ignore/@ts-expect-error directives.
 func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
-	if p.SkipTypeChecking(sourceFile,  false) {
+	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 
