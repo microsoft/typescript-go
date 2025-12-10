@@ -425,21 +425,15 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		if concurrent {
-			diagnostics := make([][]*ast.Diagnostic, 0, len(p.files))
-			wg := core.NewWorkGroup(p.SingleThreaded())
-			for _, file := range p.files {
-				wg.Queue(func() {
-					diagnostics = append(diagnostics, collect(ctx, file))
-				})
-			}
-			wg.RunAndWait()
-			result = slices.Concat(diagnostics...)
-		} else {
-			for _, file := range p.files {
-				result = append(result, collect(ctx, file)...)
-			}
+		diagnostics := make([][]*ast.Diagnostic, len(p.files))
+		wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
+		for i, file := range p.files {
+			wg.Queue(func() {
+				diagnostics[i] = collect(ctx, file)
+			})
 		}
+		wg.RunAndWait()
+		result = slices.Concat(diagnostics...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
 }

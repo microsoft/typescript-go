@@ -930,8 +930,6 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.unionTypes = make(map[string]*Type)
 	c.unionOfUnionTypes = make(map[UnionOfUnionKey]*Type)
 	c.intersectionTypes = make(map[string]*Type)
-	c.diagnostics = ast.DiagnosticsCollection{}
-	c.suggestionDiagnostics = ast.DiagnosticsCollection{}
 	c.mergedSymbols = make(map[*ast.Symbol]*ast.Symbol)
 	c.patternForType = make(map[*Type]*ast.Node)
 	c.contextFreeTypes = make(map[*ast.Node]*Type)

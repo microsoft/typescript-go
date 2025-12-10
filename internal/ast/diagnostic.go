@@ -1,9 +1,9 @@
 package ast
 
 import (
-	"maps"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -141,6 +141,8 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 }
 
 type DiagnosticsCollection struct {
+	mu                       sync.Mutex
+	count                    int
 	fileDiagnostics          map[string][]*Diagnostic
 	fileDiagnosticsSorted    collections.Set[string]
 	nonFileDiagnostics       []*Diagnostic
@@ -148,6 +150,11 @@ type DiagnosticsCollection struct {
 }
 
 func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.count++
+
 	if diagnostic.File() != nil {
 		fileName := diagnostic.File().FileName()
 		if c.fileDiagnostics == nil {
@@ -162,11 +169,14 @@ func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
 }
 
 func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	var diagnostics []*Diagnostic
 	if diagnostic.File() != nil {
-		diagnostics = c.GetDiagnosticsForFile(diagnostic.File().FileName())
+		diagnostics = c.getDiagnosticsForFile(diagnostic.File().FileName())
 	} else {
-		diagnostics = c.GetGlobalDiagnostics()
+		diagnostics = c.getGlobalDiagnostics()
 	}
 	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
 		return diagnostics[i]
@@ -175,28 +185,45 @@ func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
 }
 
 func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*Diagnostic {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.getGlobalDiagnostics()
+}
+
+func (c *DiagnosticsCollection) getGlobalDiagnostics() []*Diagnostic {
 	if !c.nonFileDiagnosticsSorted {
 		slices.SortStableFunc(c.nonFileDiagnostics, CompareDiagnostics)
 		c.nonFileDiagnosticsSorted = true
 	}
-	return c.nonFileDiagnostics
+	return slices.Clone(c.nonFileDiagnostics)
 }
 
 func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagnostic {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.getDiagnosticsForFile(fileName)
+}
+
+func (c *DiagnosticsCollection) getDiagnosticsForFile(fileName string) []*Diagnostic {
 	if !c.fileDiagnosticsSorted.Has(fileName) {
 		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
 		c.fileDiagnosticsSorted.Add(fileName)
 	}
-	return c.fileDiagnostics[fileName]
+	return slices.Clone(c.fileDiagnostics[fileName])
 }
 
 func (c *DiagnosticsCollection) GetDiagnostics() []*Diagnostic {
-	fileNames := slices.Collect(maps.Keys(c.fileDiagnostics))
-	slices.Sort(fileNames)
-	diagnostics := slices.Clip(c.nonFileDiagnostics)
-	for _, fileName := range fileNames {
-		diagnostics = append(diagnostics, c.fileDiagnostics[fileName]...)
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	diagnostics := make([]*Diagnostic, 0, c.count)
+	diagnostics = append(diagnostics, c.nonFileDiagnostics...)
+	for _, diags := range c.fileDiagnostics {
+		diagnostics = append(diagnostics, diags...)
 	}
+	slices.SortFunc(diagnostics, CompareDiagnostics)
 	return diagnostics
 }
 
