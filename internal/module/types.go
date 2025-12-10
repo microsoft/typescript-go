@@ -33,12 +33,14 @@ const (
 	NodeResolutionFeaturesSelfName
 	NodeResolutionFeaturesExports
 	NodeResolutionFeaturesExportsPatternTrailers
+	NodeResolutionFeaturesEsmMode
+	NodeResolutionFeaturesImportsPatternRoot
 
 	NodeResolutionFeaturesNone            NodeResolutionFeatures = 0
-	NodeResolutionFeaturesAll                                    = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
+	NodeResolutionFeaturesAll                                    = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers | NodeResolutionFeaturesImportsPatternRoot
 	NodeResolutionFeaturesNode16Default                          = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
 	NodeResolutionFeaturesNodeNextDefault                        = NodeResolutionFeaturesAll
-	NodeResolutionFeaturesBundlerDefault                         = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
+	NodeResolutionFeaturesBundlerDefault                         = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers | NodeResolutionFeaturesImportsPatternRoot
 )
 
 type PackageId struct {
