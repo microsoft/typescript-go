@@ -33,7 +33,10 @@ const (
 	NodeResolutionFeaturesSelfName
 	NodeResolutionFeaturesExports
 	NodeResolutionFeaturesExportsPatternTrailers
-	NodeResolutionFeaturesEsmMode
+	_ // bit 4 is unused
+	_ // bit 5 is reserved for EsmMode (stored separately as a boolean field)
+	// allowing `#/` root imports in package.json imports field
+	// not supported until mass adoption - https://github.com/nodejs/node/pull/60864
 	NodeResolutionFeaturesImportsPatternRoot
 
 	NodeResolutionFeaturesNone            NodeResolutionFeatures = 0
