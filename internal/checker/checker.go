@@ -9648,9 +9648,10 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		}
 		return diagnostic
 	default:
-		// Handle edge case where maxCount >= len(args)
-		// This can happen when signature resolution fails for reasons other than argument count,
-		// such as when trailing commas create OmittedExpressions that affect type inference.
+		// Guard against out-of-bounds access when maxCount >= len(args).
+		// This can happen when we reach this fallback error path but the argument
+		// count actually matches the parameter count (e.g., due to trailing commas
+		// causing signature resolution to fail for other reasons).
 		if maxCount >= len(args) {
 			diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, len(args))
 			if headMessage != nil {
