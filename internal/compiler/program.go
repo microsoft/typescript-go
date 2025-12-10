@@ -1493,6 +1493,8 @@ func GetDiagnosticsOfAnyProgram(
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
+				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 
 			if (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
