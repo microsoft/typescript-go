@@ -17,6 +17,7 @@ exports.default = {
 
 
 //// [jsdocCommentDefaultExport.d.ts]
+/** Some comment */
 declare const _default: {
     fn(): void;
 };
