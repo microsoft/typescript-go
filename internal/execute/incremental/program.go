@@ -137,11 +137,6 @@ func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 	return p.program.GetProgramDiagnostics()
 }
 
-func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	p.panicIfNoProgram("GetGlobalDiagnostics")
-	return p.program.GetGlobalDiagnostics(ctx)
-}
-
 // GetSemanticDiagnostics implements compiler.AnyProgram interface.
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 	p.panicIfNoProgram("GetSemanticDiagnostics")
@@ -358,8 +353,7 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 	if hasIncludeProcessingDiagnostics() ||
 		len(program.GetConfigFileParsingDiagnostics()) > 0 ||
 		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||
-		len(program.GetProgramDiagnostics()) > 0 ||
-		len(program.GetGlobalDiagnostics(ctx)) > 0 {
+		len(program.GetProgramDiagnostics()) > 0 {
 		p.snapshot.hasErrors = core.TSTrue
 		// Dont need to encode semantic errors state since the syntax and program diagnostics are encoded as present
 		p.snapshot.hasSemanticErrors = false
