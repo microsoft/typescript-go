@@ -10938,6 +10938,8 @@ func (node *SourceFile) BindOnce(bind func()) {
 	})
 }
 
+// Gets a token from the file's token cache, or creates it if it does not already exist.
+// This function should NOT be used for creating synthetic tokens that are not in the file in the first place.
 func (node *SourceFile) GetOrCreateToken(
 	kind Kind,
 	pos int,
