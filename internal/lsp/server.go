@@ -639,7 +639,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if err != nil {
 			return err
 		}
-		// defer s.recover(req)
+		defer s.recover(req)
 		resp, err := fn(s, ctx, languageService, params)
 		if errors.Is(err, ls.ErrNeedsAutoImports) {
 			languageService, err = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())

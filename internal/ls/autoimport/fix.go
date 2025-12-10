@@ -163,6 +163,15 @@ func addToExistingImport(
 		return
 	case ast.KindImportClause:
 		importClause := importClauseOrBindingPattern.AsImportClause()
+
+		// promoteFromTypeOnly = true if we need to promote the entire original clause from type only
+		promoteFromTypeOnly := importClause.IsTypeOnly() && core.Some(append(namedImports, defaultImport), func(i *newImportBinding) bool {
+			if i == nil {
+				return false
+			}
+			return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed
+		})
+
 		var existingSpecifiers []*ast.Node
 		if importClause.NamedBindings != nil && importClause.NamedBindings.Kind == ast.KindNamedImports {
 			existingSpecifiers = importClause.NamedBindings.Elements()
@@ -188,8 +197,33 @@ func addToExistingImport(
 			})
 			slices.SortFunc(newSpecifiers, specifierComparer)
 			if len(existingSpecifiers) > 0 && isSorted != core.TSFalse {
+				// The sorting preference computed earlier may or may not have validated that these particular
+				// import specifiers are sorted. If they aren't, `getImportSpecifierInsertionIndex` will return
+				// nonsense. So if there are existing specifiers, even if we know the sorting preference, we
+				// need to ensure that the existing specifiers are sorted according to the preference in order
+				// to do a sorted insertion.
+
+				// If we're promoting the clause from type-only, we need to transform the existing imports
+				// before attempting to insert the new named imports (for comparison purposes only)
+				specsToCompareAgainst := existingSpecifiers
+				if promoteFromTypeOnly && len(existingSpecifiers) > 0 {
+					specsToCompareAgainst = core.Map(existingSpecifiers, func(e *ast.Node) *ast.Node {
+						spec := e.AsImportSpecifier()
+						var propertyName *ast.Node
+						if spec.PropertyName != nil {
+							propertyName = spec.PropertyName
+						}
+						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
+							true, // isTypeOnly
+							propertyName,
+							spec.Name(),
+						)
+						return syntheticSpec
+					})
+				}
+
 				for _, spec := range newSpecifiers {
-					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(file, spec, importClause.NamedBindings, insertionIndex)
 				}
 			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
@@ -223,7 +257,36 @@ func addToExistingImport(
 				}
 			}
 		}
+
+		if promoteFromTypeOnly {
+			// Delete the 'type' keyword from the import clause
+			typeKeyword := getTypeKeywordOfTypeOnlyImport(importClause, file)
+			ct.Delete(file, typeKeyword)
+
+			// Add 'type' modifier to existing specifiers (not newly added ones)
+			// We preserve the type-onlyness of existing specifiers regardless of whether
+			// it would make a difference in emit (user preference).
+			if len(existingSpecifiers) > 0 {
+				for _, specifier := range existingSpecifiers {
+					if !specifier.AsImportSpecifier().IsTypeOnly {
+						ct.InsertModifierBefore(file, ast.KindTypeKeyword, specifier)
+					}
+				}
+			}
+		}
+	default:
+		panic("Unsupported clause kind: " + importClauseOrBindingPattern.KindString() + " for addToExistingImport")
 	}
+}
+
+func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *ast.SourceFile) *ast.Node {
+	debug.Assert(importClause.IsTypeOnly(), "import clause must be type-only")
+	// The first child of a type-only import clause is the 'type' keyword
+	// import type { foo } from './bar'
+	//        ^^^^
+	typeKeyword := astnav.FindChildOfKind(importClause.AsNode(), ast.KindTypeKeyword, sourceFile)
+	debug.Assert(typeKeyword != nil, "type-only import clause should have a type keyword")
+	return typeKeyword
 }
 
 func addElementToBindingPattern(

@@ -1315,6 +1315,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 }
 
 func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []string, preferences *lsutil.UserPreferences) {
+	t.Helper()
 	fileName := f.activeFilename
 	ranges := f.Ranges()
 	var filteredRanges []*RangeMarker

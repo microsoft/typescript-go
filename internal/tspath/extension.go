@@ -23,8 +23,8 @@ const (
 )
 
 var (
-	supportedDeclarationExtensions                 = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
-	supportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+	SupportedDeclarationExtensions                 = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
+	SupportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 	supportedTSExtensionsForExtractExtension       = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 	AllSupportedExtensions                         = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionJs, ExtensionJsx}, {ExtensionCts, ExtensionDcts, ExtensionCjs}, {ExtensionMts, ExtensionDmts, ExtensionMjs}}
 	SupportedTSExtensions                          = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts}, {ExtensionCts, ExtensionDcts}, {ExtensionMts, ExtensionDmts}}
@@ -90,7 +90,7 @@ func HasTSFileExtension(path string) bool {
 }
 
 func HasImplementationTSFileExtension(path string) bool {
-	return FileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
+	return FileExtensionIsOneOf(path, SupportedTSImplementationExtensions) && !IsDeclarationFileName(path)
 }
 
 func HasJSFileExtension(path string) bool {
@@ -111,7 +111,7 @@ func ExtensionIsOneOf(ext string, extensions []string) bool {
 
 func GetDeclarationFileExtension(fileName string) string {
 	base := GetBaseFileName(fileName)
-	for _, ext := range supportedDeclarationExtensions {
+	for _, ext := range SupportedDeclarationExtensions {
 		if strings.HasSuffix(base, ext) {
 			return ext
 		}
