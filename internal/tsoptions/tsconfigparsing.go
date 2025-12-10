@@ -20,7 +20,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/zeebo/xxh3"
 )
 
 type extendsResult struct {
@@ -163,8 +162,6 @@ type ExtendedConfigCacheEntry struct {
 	extendedResult *TsConfigSourceFile
 	extendedConfig *parsedTsconfig
 	errors         []*ast.Diagnostic
-	// Set by LSP for long-term caching
-	Hash xxh3.Uint128
 }
 
 func (e *ExtendedConfigCacheEntry) ExtendedFileNames() []string {

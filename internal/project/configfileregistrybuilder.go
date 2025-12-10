@@ -606,7 +606,7 @@ func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspa
 		ResolutionStack: resolutionStack,
 		Host:            host,
 		Cache:           c,
-	})
+	}).ExtendedConfigCacheEntry
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {

@@ -15,18 +15,25 @@ type ExtendedConfigParseArgs struct {
 	Cache           tsoptions.ExtendedConfigCache
 }
 
-type ExtendedConfigCache = RefCountCache[tspath.Path, *tsoptions.ExtendedConfigCacheEntry, ExtendedConfigParseArgs]
+type ExtendedConfigCacheEntry struct {
+	*tsoptions.ExtendedConfigCacheEntry
+	Hash xxh3.Uint128
+}
+
+type ExtendedConfigCache = RefCountCache[tspath.Path, *ExtendedConfigCacheEntry, ExtendedConfigParseArgs]
 
 func NewExtendedConfigCache() *ExtendedConfigCache {
 	return NewRefCountCache(
 		RefCountCacheOptions{},
-		func(path tspath.Path, args ExtendedConfigParseArgs) *tsoptions.ExtendedConfigCacheEntry {
-			result := tsoptions.ParseExtendedConfig(args.FileName, path, args.ResolutionStack, args.Host, args.Cache)
-			result.Hash = hash(result, args)
+		func(path tspath.Path, args ExtendedConfigParseArgs) *ExtendedConfigCacheEntry {
+			result := &ExtendedConfigCacheEntry{
+				ExtendedConfigCacheEntry: tsoptions.ParseExtendedConfig(args.FileName, path, args.ResolutionStack, args.Host, args.Cache),
+			}
+			result.Hash = hash(result.ExtendedConfigCacheEntry, args)
 			return result
 		},
-		func(path tspath.Path, entry *tsoptions.ExtendedConfigCacheEntry, args ExtendedConfigParseArgs) bool {
-			return entry.Hash == xxh3.Uint128{} || entry.Hash != hash(entry, args)
+		func(path tspath.Path, entry *ExtendedConfigCacheEntry, args ExtendedConfigParseArgs) bool {
+			return entry.Hash == xxh3.Uint128{} || entry.Hash != hash(entry.ExtendedConfigCacheEntry, args)
 		},
 	)
 }
