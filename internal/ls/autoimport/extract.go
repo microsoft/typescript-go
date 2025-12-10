@@ -382,7 +382,11 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 			// !!! this can probably happen in erroring code
 			//     actually, it can probably happen in valid alias/local merges!
 			//     or no wait, maybe only for imports?
-			panic(fmt.Sprintf("mixed export syntaxes for symbol %s", symbol.Name))
+			var fileName string
+			if len(symbol.Declarations) > 0 {
+				fileName = ast.GetSourceFileOfNode(symbol.Declarations[0]).FileName()
+			}
+			panic(fmt.Sprintf("mixed export syntaxes for symbol %s in %s", symbol.Name, fileName))
 		}
 		syntax = declSyntax
 	}
