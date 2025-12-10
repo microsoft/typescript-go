@@ -43,6 +43,9 @@ func hash(entry *tsoptions.ExtendedConfigCacheEntry, args ExtendedConfigParseArg
 	_, _ = hasher.WriteString(args.Content)
 	for _, fileName := range entry.ExtendedFileNames() {
 		fh := args.FS.GetFile(fileName)
+		if fh == nil {
+			return xxh3.Uint128{}
+		}
 		_, _ = hasher.WriteString(fh.Content())
 	}
 	return hasher.Sum128()
