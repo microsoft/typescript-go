@@ -1,9 +1,0 @@
-//// [tests/cases/compiler/jsdocCommentDefaultExport.ts] ////
-
-=== jsdocCommentDefaultExport.ts ===
-/** Some comment */
-export default {
-    fn() {}
->fn : Symbol(fn, Decl(jsdocCommentDefaultExport.ts, 1, 16))
-}
-
