@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -387,4 +388,110 @@ func GetPackageNameFromDirectory(fileOrDirectoryPath string) string {
 	}
 
 	return basename[:nextSlash+1+secondSlash]
+}
+
+// ProcessEntrypointEnding processes a pre-computed module specifier from a package.json exports
+// entrypoint according to the entrypoint's Ending type and the user's preferred endings.
+func ProcessEntrypointEnding(
+	entrypoint *module.ResolvedEntrypoint,
+	prefs UserPreferences,
+	host ModuleSpecifierGenerationHost,
+	options *core.CompilerOptions,
+	importingSourceFile SourceFileForSpecifierGeneration,
+	allowedEndings []ModuleSpecifierEnding,
+) string {
+	specifier := entrypoint.ModuleSpecifier
+	if entrypoint.Ending == module.EndingFixed {
+		return specifier
+	}
+
+	if len(allowedEndings) == 0 {
+		allowedEndings = GetAllowedEndingsInPreferredOrder(
+			prefs,
+			host,
+			options,
+			importingSourceFile,
+			"",
+			host.GetDefaultResolutionModeForFile(importingSourceFile),
+		)
+	}
+
+	preferredEnding := allowedEndings[0]
+
+	// Handle declaration file extensions
+	dtsExtension := tspath.GetDeclarationFileExtension(specifier)
+	if dtsExtension != "" {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension, ModuleSpecifierEndingJsExtension:
+			// Map .d.ts -> .js, .d.mts -> .mjs, .d.cts -> .cjs
+			jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+			return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				// .d.mts/.d.cts must keep an extension; rewrite to .mjs/.cjs instead of dropping
+				if dtsExtension == tspath.ExtensionDts {
+					specifier = tspath.RemoveExtension(specifier, dtsExtension)
+					if preferredEnding == ModuleSpecifierEndingMinimal {
+						specifier = strings.TrimSuffix(specifier, "/index")
+					}
+					return specifier
+				}
+				jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+				return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+			}
+			// EndingExtensionChangeable - can only change extension, not remove it
+			jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+			return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+		}
+		return specifier
+	}
+
+	// Handle .ts/.tsx/.mts/.cts extensions
+	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionMts, tspath.ExtensionCts}) {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension:
+			return specifier
+		case ModuleSpecifierEndingJsExtension:
+			if jsExtension := tryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+				return tspath.RemoveFileExtension(specifier) + jsExtension
+			}
+			return specifier
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				specifier = tspath.RemoveFileExtension(specifier)
+				if preferredEnding == ModuleSpecifierEndingMinimal {
+					specifier = strings.TrimSuffix(specifier, "/index")
+				}
+				return specifier
+			}
+			// EndingExtensionChangeable - can only change extension, not remove it
+			if jsExtension := tryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+				return tspath.RemoveFileExtension(specifier) + jsExtension
+			}
+			return specifier
+		}
+		return specifier
+	}
+
+	// Handle .js/.jsx/.mjs/.cjs extensions
+	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension, ModuleSpecifierEndingJsExtension:
+			return specifier
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				specifier = tspath.RemoveFileExtension(specifier)
+				if preferredEnding == ModuleSpecifierEndingMinimal {
+					specifier = strings.TrimSuffix(specifier, "/index")
+				}
+				return specifier
+			}
+			// EndingExtensionChangeable - keep the extension
+			return specifier
+		}
+		return specifier
+	}
+
+	// For other extensions (like .json), return as-is
+	return specifier
 }

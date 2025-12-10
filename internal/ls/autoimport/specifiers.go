@@ -4,7 +4,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (v *View) GetModuleSpecifier(
@@ -27,22 +26,14 @@ func (v *View) GetModuleSpecifier(
 			conditions := collections.NewSetFromItems(module.GetConditions(v.program.Options(), v.program.GetDefaultResolutionModeForFile(v.importingFile))...)
 			for _, entrypoint := range entrypoints {
 				if entrypoint.IncludeConditions.IsSubsetOf(conditions) && !conditions.Intersects(entrypoint.ExcludeConditions) {
-					// !!! modulespecifiers.processEnding
-					var specifier string
-					switch entrypoint.Ending {
-					case module.EndingFixed:
-						specifier = entrypoint.ModuleSpecifier
-					case module.EndingExtensionChangeable:
-						dtsExtension := tspath.GetDeclarationFileExtension(entrypoint.ModuleSpecifier)
-						if dtsExtension != "" {
-							specifier = tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false)
-						} else {
-							specifier = entrypoint.ModuleSpecifier
-						}
-					default:
-						// !!! definitely wrong, lazy
-						specifier = tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false)
-					}
+					specifier := modulespecifiers.ProcessEntrypointEnding(
+						entrypoint,
+						userPreferences,
+						v.program,
+						v.program.Options(),
+						v.importingFile,
+						v.getAllowedEndings(),
+					)
 
 					if !modulespecifiers.IsExcludedByRegex(specifier, userPreferences.AutoImportSpecifierExcludeRegexes) {
 						return specifier, modulespecifiers.ResultKindNodeModules

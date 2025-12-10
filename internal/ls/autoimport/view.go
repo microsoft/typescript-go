@@ -14,11 +14,12 @@ import (
 )
 
 type View struct {
-	registry      *Registry
-	importingFile *ast.SourceFile
-	program       *compiler.Program
-	preferences   modulespecifiers.UserPreferences
-	projectKey    tspath.Path
+	registry       *Registry
+	importingFile  *ast.SourceFile
+	program        *compiler.Program
+	preferences    modulespecifiers.UserPreferences
+	projectKey     tspath.Path
+	allowedEndings []modulespecifiers.ModuleSpecifierEnding
 
 	existingImports          *collections.MultiMap[ModuleID, existingImport]
 	shouldUseRequireForFixes *bool
@@ -32,6 +33,21 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 		projectKey:    projectKey,
 		preferences:   preferences,
 	}
+}
+
+func (v *View) getAllowedEndings() []modulespecifiers.ModuleSpecifierEnding {
+	if v.allowedEndings == nil {
+		resolutionMode := v.program.GetDefaultResolutionModeForFile(v.importingFile)
+		v.allowedEndings = modulespecifiers.GetAllowedEndingsInPreferredOrder(
+			v.preferences,
+			v.program,
+			v.program.Options(),
+			v.importingFile,
+			"",
+			resolutionMode,
+		)
+	}
+	return v.allowedEndings
 }
 
 type QueryKind int

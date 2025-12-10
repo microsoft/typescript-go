@@ -9,42 +9,24 @@ TestAutoImportCompletionExportListAugmentation1
 TestAutoImportCompletionExportListAugmentation2
 TestAutoImportCompletionExportListAugmentation3
 TestAutoImportCompletionExportListAugmentation4
-TestAutoImportCrossPackage_pathsAndSymlink
 TestAutoImportCrossProject_symlinks_stripSrc
 TestAutoImportCrossProject_symlinks_toDist
-TestAutoImportCrossProject_symlinks_toSrc
 TestAutoImportFileExcludePatterns2
 TestAutoImportFileExcludePatterns3
 TestAutoImportJsDocImport1
 TestAutoImportModuleNone1
 TestAutoImportNodeModuleSymlinkRenamed
 TestAutoImportNodeNextJSRequire
-<<<<<<< HEAD
-TestAutoImportPathsAliasesAndBarrels
-<<<<<<< HEAD
-TestAutoImportPnpm
-=======
-||||||| f16a4b74c
-TestAutoImportPathsAliasesAndBarrels
-=======
 TestAutoImportPackageJsonImportsCaseSensitivity
->>>>>>> @{-1}
-TestAutoImportProvider_exportMap1
->>>>>>> @{-1}
+TestAutoImportPathsAliasesAndBarrels
+TestAutoImportPathsNodeModules
 TestAutoImportProvider_exportMap2
-TestAutoImportProvider_exportMap5
 TestAutoImportProvider_exportMap9
 TestAutoImportProvider_globalTypingsCache
 TestAutoImportProvider_wildcardExports1
 TestAutoImportProvider_wildcardExports2
 TestAutoImportProvider_wildcardExports3
-<<<<<<< HEAD
-||||||| f16a4b74c
-TestAutoImportProvider4
-=======
-TestAutoImportProvider4
 TestAutoImportProvider9
->>>>>>> @{-1}
 TestAutoImportSortCaseSensitivity1
 TestAutoImportTypeImport1
 TestAutoImportTypeImport2
@@ -297,7 +279,6 @@ TestImportCompletionsPackageJsonImportsPattern_js_ts
 TestImportCompletionsPackageJsonImportsPattern_ts
 TestImportCompletionsPackageJsonImportsPattern_ts_ts
 TestImportCompletionsPackageJsonImportsPattern2
-TestImportFixesGlobalTypingsCache
 TestImportNameCodeFix_avoidRelativeNodeModules
 TestImportNameCodeFix_fileWithNoTrailingNewline
 TestImportNameCodeFix_HeaderComment1
@@ -317,14 +298,8 @@ TestImportNameCodeFix_trailingComma
 TestImportNameCodeFix_uriStyleNodeCoreModules2
 TestImportNameCodeFix_uriStyleNodeCoreModules3
 TestImportNameCodeFix_withJson
-<<<<<<< HEAD
-TestImportNameCodeFixConvertTypeOnly1
 TestImportNameCodeFixDefaultExport4
 TestImportNameCodeFixDefaultExport7
-||||||| f16a4b74c
-TestImportNameCodeFixConvertTypeOnly1
-=======
->>>>>>> @{-1}
 TestImportNameCodeFixExistingImport10
 TestImportNameCodeFixExistingImport11
 TestImportNameCodeFixExistingImport8
