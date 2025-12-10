@@ -119,7 +119,6 @@ func (p *CheckerPool) ForEachCheckerParallel(ctx context.Context, cb func(idx in
 	c, release := p.GetChecker(ctx)
 	defer release()
 	cb(0, c)
-	return
 }
 
 func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
