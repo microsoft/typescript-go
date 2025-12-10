@@ -1080,12 +1080,16 @@ func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceF
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
-	defer done()
+	// IIFE to release checker as soon as possible.
+	diags := func() []*ast.Diagnostic {
+		fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
+		defer done()
 
-	// Getting a checker will force a bind, so this will be populated.
-	diags := slices.Clip(sourceFile.BindDiagnostics())
-	diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
+		// Getting a checker will force a bind, so this will be populated.
+		diags := slices.Clip(sourceFile.BindDiagnostics())
+		diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
+		return diags
+	}()
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
