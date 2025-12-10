@@ -1,0 +1,11 @@
+//// [tests/cases/compiler/jsdocCommentDefaultExport.ts] ////
+
+=== jsdocCommentDefaultExport.ts ===
+/** Some comment */
+export default {
+>{    fn() {}} : { fn(): void; }
+
+    fn() {}
+>fn : () => void
+}
+
