@@ -3,21 +3,38 @@ package project
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/zeebo/xxh3"
 )
 
-type parseCacheKey struct {
+type ParseCacheKey struct {
 	ast.SourceFileParseOptions
-	scriptKind core.ScriptKind
+	ScriptKind core.ScriptKind
+	Hash       xxh3.Uint128
 }
 
-func newParseCacheKey(
+func NewParseCacheKey(
 	options ast.SourceFileParseOptions,
+	hash xxh3.Uint128,
 	scriptKind core.ScriptKind,
-) parseCacheKey {
-	return parseCacheKey{
+) ParseCacheKey {
+	return ParseCacheKey{
 		SourceFileParseOptions: options,
-		scriptKind:             scriptKind,
+		Hash:                   hash,
+		ScriptKind:             scriptKind,
 	}
 }
 
-type ParseCache = VersionedCache[parseCacheKey, *ast.SourceFile, FileHandle]
+type ParseCache = RefCountCache[ParseCacheKey, *ast.SourceFile, FileHandle]
+
+func NewParseCache(options RefCountCacheOptions) *ParseCache {
+	return NewRefCountCache(
+		options,
+		func(key ParseCacheKey, fh FileHandle) *ast.SourceFile {
+			file := parser.ParseSourceFile(key.SourceFileParseOptions, fh.Content(), key.ScriptKind)
+			file.Hash = fh.Hash()
+			return file
+		},
+		nil,
+	)
+}

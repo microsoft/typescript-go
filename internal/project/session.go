@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -137,9 +138,9 @@ func NewSession(init *SessionInit) *Session {
 	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*Overlay), init.Options.PositionEncoding, toPath)
 	parseCache := init.ParseCache
 	if parseCache == nil {
-		parseCache = &ParseCache{}
+		parseCache = NewParseCache(RefCountCacheOptions{})
 	}
-	extendedConfigCache := &ExtendedConfigCache{}
+	extendedConfigCache := NewExtendedConfigCache()
 
 	session := &Session{
 		options:             init.Options,
@@ -766,7 +767,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var programCount int
 	var extendedConfigCount int
 	if s.logger.IsVerbose() {
-		s.parseCache.entries.Range(func(_ parseCacheKey, _ *parseCacheEntry) bool {
+		s.parseCache.entries.Range(func(_ ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
 			parseCacheSize++
 			return true
 		})
@@ -774,7 +775,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 			programCount++
 			return true
 		})
-		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *extendedConfigCacheEntry) bool {
+		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*tsoptions.ExtendedConfigCacheEntry]) bool {
 			extendedConfigCount++
 			return true
 		})
