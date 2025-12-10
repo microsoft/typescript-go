@@ -174,9 +174,9 @@ func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
 
 	var diagnostics []*Diagnostic
 	if diagnostic.File() != nil {
-		diagnostics = c.getDiagnosticsForFile(diagnostic.File().FileName())
+		diagnostics = c.getDiagnosticsForFileLocked(diagnostic.File().FileName())
 	} else {
-		diagnostics = c.getGlobalDiagnostics()
+		diagnostics = c.getGlobalDiagnosticsLocked()
 	}
 	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
 		return diagnostics[i]
@@ -188,10 +188,10 @@ func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*Diagnostic {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	return c.getGlobalDiagnostics()
+	return c.getGlobalDiagnosticsLocked()
 }
 
-func (c *DiagnosticsCollection) getGlobalDiagnostics() []*Diagnostic {
+func (c *DiagnosticsCollection) getGlobalDiagnosticsLocked() []*Diagnostic {
 	if !c.nonFileDiagnosticsSorted {
 		slices.SortStableFunc(c.nonFileDiagnostics, CompareDiagnostics)
 		c.nonFileDiagnosticsSorted = true
@@ -203,10 +203,10 @@ func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagno
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	return c.getDiagnosticsForFile(fileName)
+	return c.getDiagnosticsForFileLocked(fileName)
 }
 
-func (c *DiagnosticsCollection) getDiagnosticsForFile(fileName string) []*Diagnostic {
+func (c *DiagnosticsCollection) getDiagnosticsForFileLocked(fileName string) []*Diagnostic {
 	if !c.fileDiagnosticsSorted.Has(fileName) {
 		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
 		c.fileDiagnosticsSorted.Add(fileName)
