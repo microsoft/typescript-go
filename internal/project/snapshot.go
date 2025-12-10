@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -76,7 +77,7 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(uri.Path(s.UseCaseSensitiveFileNames()))
 }
 
-func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []*Project {
+func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []ls.Project {
 	fileName := uri.FileName()
 	path := s.toPath(fileName)
 	// TODO!! sheetal may be change this to handle symlinks!!
@@ -141,7 +142,22 @@ type APISnapshotRequest struct {
 
 type ProjectTreeRequest struct {
 	// If null, all project trees need to be loaded, otherwise only those that are referenced
-	referencedProjects map[tspath.Path]struct{}
+	referencedProjects *collections.Set[tspath.Path]
+}
+
+func (p *ProjectTreeRequest) IsAllProjects() bool {
+	return p.referencedProjects == nil
+}
+
+func (p *ProjectTreeRequest) IsProjectReferenced(projectID tspath.Path) bool {
+	return p.referencedProjects.Has(projectID)
+}
+
+func (p *ProjectTreeRequest) Projects() []tspath.Path {
+	if p.referencedProjects == nil {
+		return nil
+	}
+	return slices.Collect(maps.Keys(p.referencedProjects.Keys()))
 }
 
 type ResourceRequest struct {
@@ -218,7 +234,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 				details += fmt.Sprintf(" Projects: %v", change.Projects)
 			}
 			if change.ProjectTree != nil {
-				details += fmt.Sprintf(" ProjectTree: %v", slices.Collect(maps.Keys(change.ProjectTree.referencedProjects)))
+				details += fmt.Sprintf(" ProjectTree: %v", change.ProjectTree.Projects())
 			}
 			return details
 		}
@@ -300,7 +316,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	if change.ProjectTree != nil {
-		projectCollectionBuilder.DidRequestProjectTrees(change.ProjectTree.referencedProjects, logger.Fork("DidRequestProjectTrees"))
+		projectCollectionBuilder.DidRequestProjectTrees(change.ProjectTree, logger.Fork("DidRequestProjectTrees"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
@@ -440,7 +456,7 @@ func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Deref(file)
+				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}
 		}
 	}

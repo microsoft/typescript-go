@@ -99,12 +99,12 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		return nil
 	}
 	// !!! andrewbranch/autoimport: this should usually/always be a peek instead of an acquire
-	return a.parseCache.Acquire(fh, ast.SourceFileParseOptions{
+	return a.parseCache.Acquire(NewParseCacheKey(ast.SourceFileParseOptions{
 		FileName:         fileName,
 		Path:             path,
 		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 		// !!! wrong if we load non-.d.ts files here
 		ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{},
-	}, core.GetScriptKindFromFileName(fileName))
+	}, fh.Hash(), core.GetScriptKindFromFileName(fileName)), fh)
 }

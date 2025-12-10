@@ -261,7 +261,7 @@ func getNewImports(
 		// even though it's not an error, it would add unnecessary runtime emit.
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *newImportBinding) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
-			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
+			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports.IsTrue()) &&
 				(defaultImport == nil || defaultImport.addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed) &&
 				!core.Some(namedImports, func(i *newImportBinding) bool { return i.addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed })
 
@@ -800,7 +800,7 @@ func needsTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly) bool {
 }
 
 func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
-	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
+	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports.IsTrue()
 }
 
 // CompareFixes returns negative if `a` is better than `b`.

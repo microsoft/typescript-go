@@ -1011,6 +1011,18 @@ function generateCode() {
             }
         }
 
+        const locationUriProperty = getLocationUriProperty(structure);
+        if (locationUriProperty) {
+            // Generate Location method
+            writeLine(`func (s ${structure.name}) GetLocation() Location {`);
+            writeLine(`\treturn Location{`);
+            writeLine(`\t\tUri:   s.${locationUriProperty},`);
+            writeLine(`\t\tRange: s.${locationUriProperty.replace(/Uri$/, "Range")},`);
+            writeLine(`\t}`);
+            writeLine(`}`);
+            writeLine("");
+        }
+
         // Generate UnmarshalJSONFrom method for structure validation
         // Skip properties marked with omitzeroValue since they're optional by nature
         const requiredProps = structure.properties?.filter(p => {
@@ -1482,6 +1494,7 @@ function generateCode() {
         writeLine(`type ${name} struct {`);
         const uniqueTypeFields = new Map(); // Maps type name -> field name
 
+        let hasLocations = false;
         for (const member of members) {
             const type = resolveType(member.type);
             const memberType = type.name;
@@ -1491,6 +1504,9 @@ function generateCode() {
                 const fieldName = titleCase(member.name);
                 uniqueTypeFields.set(memberType, fieldName);
                 writeLine(`\t${fieldName} *${memberType}`);
+                if (fieldName === "Locations" && memberType === "[]Location") {
+                    hasLocations = true;
+                }
             }
         }
 
@@ -1573,6 +1589,14 @@ function generateCode() {
         writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
         writeLine(`}`);
         writeLine("");
+
+        // Generate GetLocations method
+        if (hasLocations) {
+            writeLine(`func (o ${name}) GetLocations() *[]Location {`);
+            writeLine(`\treturn o.Locations`);
+            writeLine(`}`);
+            writeLine("");
+        }
     }
 
     // Generate literal types
@@ -1668,6 +1692,26 @@ function hasTextDocumentURI(structure: Structure) {
 
 function hasTextDocumentPosition(structure: Structure) {
     return hasSomeProp(structure, "position", "Position");
+}
+
+function getLocationUriProperty(structure: Structure) {
+    const prop = structure.properties?.find(p =>
+        !p.optional &&
+        titleCase(p.name).endsWith("Uri") &&
+        p.type.kind === "base" &&
+        p.type.name === "DocumentUri"
+    );
+    if (
+        prop &&
+        structure.properties.some(p =>
+            !p.optional &&
+            titleCase(p.name) === titleCase(prop.name).replace(/Uri$/, "Range") &&
+            p.type.kind === "reference" &&
+            p.type.name === "Range"
+        )
+    ) {
+        return titleCase(prop.name);
+    }
 }
 
 /**

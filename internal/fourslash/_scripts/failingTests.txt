@@ -3,22 +3,32 @@ TestAmbientShorthandGotoDefinition
 TestArgumentsAreAvailableAfterEditsAtEndOfFunction
 TestAugmentedTypesClass1
 TestAugmentedTypesClass3Fourslash
+TestAutoImportAllowImportingTsExtensionsPackageJsonImports1
 TestAutoImportCompletionAmbientMergedModule1
 TestAutoImportCompletionExportListAugmentation1
 TestAutoImportCompletionExportListAugmentation2
 TestAutoImportCompletionExportListAugmentation3
 TestAutoImportCompletionExportListAugmentation4
+TestAutoImportCrossPackage_pathsAndSymlink
 TestAutoImportCrossProject_symlinks_stripSrc
 TestAutoImportCrossProject_symlinks_toDist
 TestAutoImportCrossProject_symlinks_toSrc
+TestAutoImportFileExcludePatterns2
 TestAutoImportFileExcludePatterns3
 TestAutoImportJsDocImport1
 TestAutoImportModuleNone1
+TestAutoImportNodeModuleSymlinkRenamed
 TestAutoImportNodeNextJSRequire
+<<<<<<< HEAD
 TestAutoImportPathsAliasesAndBarrels
 <<<<<<< HEAD
 TestAutoImportPnpm
 =======
+||||||| f16a4b74c
+TestAutoImportPathsAliasesAndBarrels
+=======
+TestAutoImportPackageJsonImportsCaseSensitivity
+>>>>>>> @{-1}
 TestAutoImportProvider_exportMap1
 >>>>>>> @{-1}
 TestAutoImportProvider_exportMap2
@@ -28,6 +38,13 @@ TestAutoImportProvider_globalTypingsCache
 TestAutoImportProvider_wildcardExports1
 TestAutoImportProvider_wildcardExports2
 TestAutoImportProvider_wildcardExports3
+<<<<<<< HEAD
+||||||| f16a4b74c
+TestAutoImportProvider4
+=======
+TestAutoImportProvider4
+TestAutoImportProvider9
+>>>>>>> @{-1}
 TestAutoImportSortCaseSensitivity1
 TestAutoImportTypeImport1
 TestAutoImportTypeImport2
@@ -183,6 +200,7 @@ TestCompletionsImport_require_addToExisting
 TestCompletionsImport_typeOnly
 TestCompletionsImport_umdDefaultNoCrash1
 TestCompletionsImport_uriStyleNodeCoreModules2
+TestCompletionsImport_uriStyleNodeCoreModules3
 TestCompletionsImport_windowsPathsProjectRelative
 TestCompletionsImportOrExportSpecifier
 TestCompletionsInExport
@@ -286,20 +304,27 @@ TestImportNameCodeFix_HeaderComment1
 TestImportNameCodeFix_HeaderComment2
 TestImportNameCodeFix_importType1
 TestImportNameCodeFix_importType2
-TestImportNameCodeFix_importType4
 TestImportNameCodeFix_importType7
 TestImportNameCodeFix_importType8
 TestImportNameCodeFix_jsx1
+TestImportNameCodeFix_noDestructureNonObjectLiteral
 TestImportNameCodeFix_order
 TestImportNameCodeFix_order2
 TestImportNameCodeFix_preferBaseUrl
 TestImportNameCodeFix_reExportDefault
 TestImportNameCodeFix_symlink
 TestImportNameCodeFix_trailingComma
+TestImportNameCodeFix_uriStyleNodeCoreModules2
+TestImportNameCodeFix_uriStyleNodeCoreModules3
 TestImportNameCodeFix_withJson
+<<<<<<< HEAD
 TestImportNameCodeFixConvertTypeOnly1
 TestImportNameCodeFixDefaultExport4
 TestImportNameCodeFixDefaultExport7
+||||||| f16a4b74c
+TestImportNameCodeFixConvertTypeOnly1
+=======
+>>>>>>> @{-1}
 TestImportNameCodeFixExistingImport10
 TestImportNameCodeFixExistingImport11
 TestImportNameCodeFixExistingImport8
@@ -317,7 +342,6 @@ TestImportNameCodeFixNewImportFileQuoteStyle1
 TestImportNameCodeFixNewImportFileQuoteStyle2
 TestImportNameCodeFixNewImportFileQuoteStyleMixed0
 TestImportNameCodeFixNewImportFileQuoteStyleMixed1
-TestImportNameCodeFixNewImportRootDirs0
 TestImportNameCodeFixNewImportTypeRoots1
 TestImportNameCodeFixOptionalImport0
 TestImportTypeCompletions1
@@ -374,8 +398,6 @@ TestMemberListInReopenedEnum
 TestMemberListInWithBlock
 TestMemberListOfExportedClass
 TestMemberListOnContextualThis
-TestModuleNodeNextAutoImport2
-TestModuleNodeNextAutoImport3
 TestNgProxy1
 TestNodeModulesImportCompletions1
 TestNoQuickInfoForLabel
@@ -540,7 +562,6 @@ TestQuickinfoWrongComment
 TestRecursiveInternalModuleImport
 TestReferencesInEmptyFile
 TestRegexDetection
-TestRenameForAliasingExport02
 TestRenameFromNodeModulesDep1
 TestRenameFromNodeModulesDep2
 TestRenameFromNodeModulesDep3
