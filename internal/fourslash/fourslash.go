@@ -1446,6 +1446,7 @@ func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
 	expectedModuleSpecifiers []string,
 	preferences *lsutil.UserPreferences,
 ) {
+	t.Helper()
 	f.GoToMarker(t, markerName)
 
 	if preferences != nil {

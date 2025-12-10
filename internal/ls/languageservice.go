@@ -93,7 +93,7 @@ func (l *LanguageService) GetECMALineInfo(fileName string) *sourcemap.ECMALineIn
 // to provide up-to-date auto-imports for it. If not, it returns ErrNeedsAutoImports.
 func (l *LanguageService) getPreparedAutoImportView(fromFile *ast.SourceFile) (*autoimport.View, error) {
 	registry := l.host.AutoImportRegistry()
-	if !registry.IsPreparedForImportingFile(fromFile.FileName(), l.projectPath) {
+	if !registry.IsPreparedForImportingFile(fromFile.FileName(), l.projectPath, l.UserPreferences()) {
 		return nil, ErrNeedsAutoImports
 	}
 

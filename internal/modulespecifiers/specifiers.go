@@ -51,7 +51,7 @@ func GetModuleSpecifiersWithInfo(
 ) ([]string, ResultKind) {
 	ambient := tryGetModuleNameFromAmbientModule(moduleSymbol, checker)
 	if len(ambient) > 0 {
-		if forAutoImports && isExcludedByRegex(ambient, userPreferences.AutoImportSpecifierExcludeRegexes) {
+		if forAutoImports && IsExcludedByRegex(ambient, userPreferences.AutoImportSpecifierExcludeRegexes) {
 			return nil, ResultKindAmbient
 		}
 		return []string{ambient}, ResultKindAmbient
@@ -410,7 +410,7 @@ func computeModuleSpecifiers(
 		if modulePath.IsInNodeModules {
 			specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
 		}
-		if len(specifier) > 0 && !(forAutoImport && isExcludedByRegex(specifier, preferences.excludeRegexes)) {
+		if len(specifier) > 0 && !(forAutoImport && IsExcludedByRegex(specifier, preferences.excludeRegexes)) {
 			nodeModulesSpecifiers = append(nodeModulesSpecifiers, specifier)
 			if modulePath.IsRedirect {
 				// If we got a specifier for a redirect, it was a bare package specifier (e.g. "@foo/bar",
@@ -432,7 +432,7 @@ func computeModuleSpecifiers(
 			preferences,
 			/*pathsOnly*/ modulePath.IsRedirect || len(specifier) > 0,
 		)
-		if len(local) == 0 || forAutoImport && isExcludedByRegex(local, preferences.excludeRegexes) {
+		if len(local) == 0 || forAutoImport && IsExcludedByRegex(local, preferences.excludeRegexes) {
 			continue
 		}
 		if modulePath.IsRedirect {
@@ -558,8 +558,8 @@ func getLocalModuleSpecifier(
 		return relativePath
 	}
 
-	relativeIsExcluded := isExcludedByRegex(relativePath, preferences.excludeRegexes)
-	nonRelativeIsExcluded := isExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
+	relativeIsExcluded := IsExcludedByRegex(relativePath, preferences.excludeRegexes)
+	nonRelativeIsExcluded := IsExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
 	if !relativeIsExcluded && nonRelativeIsExcluded {
 		return relativePath
 	}

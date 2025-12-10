@@ -21,15 +21,13 @@ quickInfoForOverloadOnConst1
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
-<<<<<<< HEAD
 completionsImportDefaultExportCrash2
 completionsImport_reExportDefault
 completionsImport_reexportTransient
-=======
 jsDocFunctionSignatures2
 jsDocFunctionSignatures12
 outliningHintSpansForFunction
 getOutliningSpans
 outliningForNonCompleteInterfaceDeclaration
 incrementalParsingWithJsDoc
->>>>>>> @{-1}
+autoImportPackageRootPathTypeModule

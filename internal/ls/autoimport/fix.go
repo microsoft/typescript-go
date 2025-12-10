@@ -832,6 +832,13 @@ func (v *View) compareModuleSpecifiers(a, b *Fix) int {
 	if comparison := tspath.CompareNumberOfDirectorySeparators(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
 		return comparison
 	}
+	// Sort ./foo before ../foo for equal-length specifiers
+	if strings.HasPrefix(a.ModuleSpecifier, "./") && !strings.HasPrefix(b.ModuleSpecifier, "./") {
+		return -1
+	}
+	if strings.HasPrefix(b.ModuleSpecifier, "./") && !strings.HasPrefix(a.ModuleSpecifier, "./") {
+		return 1
+	}
 	if comparison := strings.Compare(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
 		return comparison
 	}

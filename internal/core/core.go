@@ -686,6 +686,24 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	return dst
 }
 
+// UnorderedEqual returns true if s1 and s2 contain the same elements, regardless of order.
+func UnorderedEqual[T comparable](s1 []T, s2 []T) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	counts := make(map[T]int)
+	for _, v := range s1 {
+		counts[v]++
+	}
+	for _, v := range s2 {
+		counts[v]--
+		if counts[v] < 0 {
+			return false
+		}
+	}
+	return true
+}
+
 func Deduplicate[T comparable](slice []T) []T {
 	if len(slice) > 1 {
 		for i, value := range slice {

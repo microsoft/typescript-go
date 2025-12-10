@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -49,6 +50,9 @@ type BucketState struct {
 	dirtyFile           tspath.Path
 	multipleFilesDirty  bool
 	newProgramStructure bool
+	// fileExcludePatterns is the value of the corresponding user preference when
+	// the bucket was built. If changed, the bucket should be rebuilt.
+	fileExcludePatterns []string
 }
 
 func (b BucketState) Dirty() bool {
@@ -62,8 +66,8 @@ func (b BucketState) DirtyFile() tspath.Path {
 	return b.dirtyFile
 }
 
-func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path) bool {
-	return b.newProgramStructure || b.hasDirtyFileBesides(file)
+func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences *lsutil.UserPreferences) bool {
+	return b.newProgramStructure || b.hasDirtyFileBesides(file) || !core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns)
 }
 
 func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
@@ -152,7 +156,8 @@ func (d *directory) Clone() *directory {
 }
 
 type Registry struct {
-	toPath func(fileName string) tspath.Path
+	toPath          func(fileName string) tspath.Path
+	userPreferences *lsutil.UserPreferences
 
 	// exports      map[tspath.Path][]*RawExport
 	directories map[tspath.Path]*directory
@@ -171,20 +176,20 @@ func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
 	}
 }
 
-func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path) bool {
+func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences *lsutil.UserPreferences) bool {
 	projectBucket, ok := r.projects[projectPath]
 	if !ok {
 		panic("project bucket missing")
 	}
 	path := r.toPath(fileName)
-	if projectBucket.state.possiblyNeedsRebuildForFile(path) {
+	if projectBucket.state.possiblyNeedsRebuildForFile(path, preferences) {
 		return false
 	}
 
 	dirPath := path.GetDirectoryPath()
 	for {
 		if dirBucket, ok := r.nodeModules[dirPath]; ok {
-			if dirBucket.state.possiblyNeedsRebuildForFile(path) {
+			if dirBucket.state.possiblyNeedsRebuildForFile(path, preferences) {
 				return false
 			}
 		}
@@ -204,12 +209,17 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 		logger = logger.Fork("Building autoimport registry")
 	}
 	builder := newRegistryBuilder(r, host)
+	if change.UserPreferences != nil {
+		builder.userPreferences = change.UserPreferences
+		if !core.UnorderedEqual(builder.userPreferences.AutoImportSpecifierExcludeRegexes, r.userPreferences.AutoImportSpecifierExcludeRegexes) {
+			builder.specifierCache.Clear()
+		}
+	}
 	builder.updateBucketAndDirectoryExistence(change, logger)
 	builder.markBucketsDirty(change, logger)
 	if change.RequestedFile != "" {
 		builder.updateIndexes(ctx, change, logger)
 	}
-	// !!! deref removed source files
 	if logger != nil {
 		logger.Logf("Built autoimport registry in %v", time.Since(start))
 	}
@@ -274,12 +284,14 @@ func (r *Registry) GetCacheStats() *CacheStats {
 }
 
 type RegistryChange struct {
-	RequestedFile   tspath.Path
+	RequestedFile tspath.Path
+	// !!! sending opened/closed may be simpler
 	OpenFiles       map[tspath.Path]string
 	Changed         collections.Set[lsproto.DocumentUri]
 	Created         collections.Set[lsproto.DocumentUri]
 	Deleted         collections.Set[lsproto.DocumentUri]
 	RebuiltPrograms collections.Set[tspath.Path]
+	UserPreferences *lsutil.UserPreferences
 }
 
 type RegistryCloneHost interface {
@@ -292,15 +304,15 @@ type RegistryCloneHost interface {
 }
 
 type registryBuilder struct {
-	// exports     *dirty.MapBuilder[tspath.Path, []*RawExport, []*RawExport]
 	host     RegistryCloneHost
 	resolver *module.Resolver
 	base     *Registry
 
-	directories            *dirty.Map[tspath.Path, *directory]
-	nodeModules            *dirty.Map[tspath.Path, *RegistryBucket]
-	projects               *dirty.Map[tspath.Path, *RegistryBucket]
-	relativeSpecifierCache *dirty.MapBuilder[tspath.Path, map[tspath.Path]string, map[tspath.Path]string]
+	userPreferences *lsutil.UserPreferences
+	directories     *dirty.Map[tspath.Path, *directory]
+	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
+	projects        *dirty.Map[tspath.Path, *RegistryBucket]
+	specifierCache  *dirty.MapBuilder[tspath.Path, map[tspath.Path]string, map[tspath.Path]string]
 }
 
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
@@ -309,20 +321,21 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		resolver: module.NewResolver(host, core.EmptyCompilerOptions, "", ""),
 		base:     registry,
 
-		directories:            dirty.NewMap(registry.directories),
-		nodeModules:            dirty.NewMap(registry.nodeModules),
-		projects:               dirty.NewMap(registry.projects),
-		relativeSpecifierCache: dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		directories:    dirty.NewMap(registry.directories),
+		nodeModules:    dirty.NewMap(registry.nodeModules),
+		projects:       dirty.NewMap(registry.projects),
+		specifierCache: dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
 	}
 }
 
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
-		toPath:         b.base.toPath,
-		directories:    core.FirstResult(b.directories.Finalize()),
-		nodeModules:    core.FirstResult(b.nodeModules.Finalize()),
-		projects:       core.FirstResult(b.projects.Finalize()),
-		specifierCache: core.FirstResult(b.relativeSpecifierCache.Build()),
+		toPath:          b.base.toPath,
+		userPreferences: b.userPreferences.CopyOrDefault(),
+		directories:     core.FirstResult(b.directories.Finalize()),
+		nodeModules:     core.FirstResult(b.nodeModules.Finalize()),
+		projects:        core.FirstResult(b.projects.Finalize()),
+		specifierCache:  core.FirstResult(b.specifierCache.Build()),
 	}
 }
 
@@ -347,14 +360,14 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 			neededDirectories[dirPath] = dir
 		}
 
-		if _, ok := b.base.specifierCache[path]; !ok {
-			b.relativeSpecifierCache.Set(path, make(map[tspath.Path]string))
+		if !b.specifierCache.Has(path) {
+			b.specifierCache.Set(path, make(map[tspath.Path]string))
 		}
 	}
 
 	for path := range b.base.specifierCache {
 		if _, ok := change.OpenFiles[path]; !ok {
-			b.relativeSpecifierCache.Delete(path)
+			b.specifierCache.Delete(path)
 		}
 	}
 
@@ -713,6 +726,7 @@ func (b *registryBuilder) buildProjectBucket(
 
 	start := time.Now()
 	var mu sync.Mutex
+	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
 	getChecker, closePool := b.createCheckerPool(program)
@@ -722,9 +736,15 @@ func (b *registryBuilder) buildProjectBucket(
 	var ignoredPackageNames collections.Set[string]
 	var combinedStats extractorStats
 
+outer:
 	for _, file := range program.GetSourceFiles() {
 		if program.IsSourceFileDefaultLibrary(file.Path()) {
 			continue
+		}
+		for _, excludePattern := range fileExcludePatterns {
+			if matched, _ := excludePattern.MatchString(file.FileName()); matched {
+				continue outer
+			}
 		}
 		if packageName := modulespecifiers.GetPackageNameFromDirectory(file.FileName()); packageName != "" {
 			// Only process this file if it is not going to be processed as part of a node_modules bucket
@@ -774,6 +794,7 @@ func (b *registryBuilder) buildProjectBucket(
 
 	result.bucket.Index = idx
 	result.bucket.IgnoredPackageNames = &ignoredPackageNames
+	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
 
 	if logger != nil {
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker)
@@ -806,18 +827,23 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 	return dependencies
 }
 
-func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependencies *collections.Set[string], dirName string, dirPath tspath.Path, logger *logging.LogTree) (*bucketBuildResult, error) {
+func (b *registryBuilder) buildNodeModulesBucket(
+	ctx context.Context,
+	dependencies *collections.Set[string],
+	dirName string,
+	dirPath tspath.Path,
+	logger *logging.LogTree,
+) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
 	}
 
-	// !!! ensure a different set of open files properly invalidates
-	// buckets that are built but may be incomplete due to different package.json visibility
 	// !!! should we really be preparing buckets for all open files? Could dirty tracking
 	// be more granular? what are the actual inputs that determine whether a bucket is valid
 	// for a given importing file?
 	// For now, we'll always build for all open files.
 	start := time.Now()
+	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	directoryPackageNames, err := getPackageNamesInNodeModules(tspath.CombinePaths(dirName, "node_modules"), b.host.FS())
 	if err != nil {
 		return nil, err
@@ -875,9 +901,26 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 				packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
 			}
 			packageEntrypoints := b.resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
-			if packageEntrypoints == nil || len(packageEntrypoints.Entrypoints) == 0 {
+			if packageEntrypoints == nil {
 				return
 			}
+			if len(fileExcludePatterns) > 0 || len(b.userPreferences.AutoImportSpecifierExcludeRegexes) > 0 {
+				packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
+					for _, excludePattern := range fileExcludePatterns {
+						if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
+							return true
+						}
+					}
+					// if modulespecifiers.IsExcludedByRegex(entrypoint.ModuleSpecifier, b.userPreferences.AutoImportSpecifierExcludeRegexes) {
+					// 	return true
+					// }
+					return false
+				})
+			}
+			if len(packageEntrypoints.Entrypoints) == 0 {
+				return
+			}
+
 			entrypointsMu.Lock()
 			entrypoints = append(entrypoints, packageEntrypoints)
 			entrypointsMu.Unlock()
@@ -934,6 +977,9 @@ func (b *registryBuilder) buildNodeModulesBucket(ctx context.Context, dependenci
 			Paths:              make(map[tspath.Path]struct{}, len(exports)),
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
 			LookupLocations:    make(map[tspath.Path]struct{}),
+			state: BucketState{
+				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
+			},
 		},
 		possibleFailedAmbientModuleLookupSources: &possibleFailedAmbientModuleLookupSources,
 		possibleFailedAmbientModuleLookupTargets: &possibleFailedAmbientModuleLookupTargets,

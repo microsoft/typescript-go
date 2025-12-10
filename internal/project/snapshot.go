@@ -387,6 +387,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
+		UserPreferences: config.tsUserPreferences,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 
 	snapshotFS, _ := fs.Finalize()

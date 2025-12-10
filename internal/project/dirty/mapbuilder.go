@@ -37,6 +37,25 @@ func (mb *MapBuilder[K, VBase, VBuilder]) Delete(key K) {
 	delete(mb.dirty, key)
 }
 
+func (mb *MapBuilder[K, VBase, VBuilder]) Clear() {
+	mb.dirty = make(map[K]VBuilder)
+	mb.deleted = make(map[K]struct{}, len(mb.base))
+	for key := range mb.base {
+		mb.deleted[key] = struct{}{}
+	}
+}
+
+func (mb *MapBuilder[K, VBase, VBuilder]) Has(key K) bool {
+	if _, ok := mb.deleted[key]; ok {
+		return false
+	}
+	if _, ok := mb.dirty[key]; ok {
+		return true
+	}
+	_, ok := mb.base[key]
+	return ok
+}
+
 func (mb *MapBuilder[K, VBase, VBuilder]) Build() map[K]VBase {
 	if len(mb.dirty) == 0 && len(mb.deleted) == 0 {
 		return mb.base

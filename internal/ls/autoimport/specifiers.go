@@ -15,6 +15,10 @@ func (v *View) GetModuleSpecifier(
 
 	// Ambient module
 	if modulespecifiers.PathIsBareSpecifier(string(export.ModuleID)) {
+		specifier := string(export.ModuleID)
+		if modulespecifiers.IsExcludedByRegex(specifier, userPreferences.AutoImportSpecifierExcludeRegexes) {
+			return "", modulespecifiers.ResultKindNone
+		}
 		return string(export.ModuleID), modulespecifiers.ResultKindAmbient
 	}
 
@@ -24,18 +28,24 @@ func (v *View) GetModuleSpecifier(
 			for _, entrypoint := range entrypoints {
 				if entrypoint.IncludeConditions.IsSubsetOf(conditions) && !conditions.Intersects(entrypoint.ExcludeConditions) {
 					// !!! modulespecifiers.processEnding
+					var specifier string
 					switch entrypoint.Ending {
 					case module.EndingFixed:
-						return entrypoint.ModuleSpecifier, modulespecifiers.ResultKindNodeModules
+						specifier = entrypoint.ModuleSpecifier
 					case module.EndingExtensionChangeable:
 						dtsExtension := tspath.GetDeclarationFileExtension(entrypoint.ModuleSpecifier)
 						if dtsExtension != "" {
-							return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false), modulespecifiers.ResultKindNodeModules
+							specifier = tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, modulespecifiers.GetJSExtensionForDeclarationFileExtension(dtsExtension), []string{dtsExtension}, false)
+						} else {
+							specifier = entrypoint.ModuleSpecifier
 						}
-						return entrypoint.ModuleSpecifier, modulespecifiers.ResultKindNodeModules
 					default:
 						// !!! definitely wrong, lazy
-						return tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false), modulespecifiers.ResultKindNodeModules
+						specifier = tspath.ChangeAnyExtension(entrypoint.ModuleSpecifier, "", []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}, false)
+					}
+
+					if !modulespecifiers.IsExcludedByRegex(specifier, userPreferences.AutoImportSpecifierExcludeRegexes) {
+						return specifier, modulespecifiers.ResultKindNodeModules
 					}
 				}
 			}

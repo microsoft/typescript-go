@@ -39,7 +39,7 @@ func PathIsBareSpecifier(path string) bool {
 	return !tspath.PathIsAbsolute(path) && !tspath.PathIsRelative(path)
 }
 
-func isExcludedByRegex(moduleSpecifier string, excludes []string) bool {
+func IsExcludedByRegex(moduleSpecifier string, excludes []string) bool {
 	for _, pattern := range excludes {
 		re := stringToRegex(pattern)
 		if re == nil {

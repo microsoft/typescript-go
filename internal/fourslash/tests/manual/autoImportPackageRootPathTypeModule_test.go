@@ -31,5 +31,5 @@ export function foo() {};
 foo/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"pkg/lib"}, nil /*preferences*/)
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"pkg"}, nil /*preferences*/)
 }

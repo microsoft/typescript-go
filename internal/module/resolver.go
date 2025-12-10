@@ -2039,7 +2039,7 @@ type ResolvedEntrypoint struct {
 }
 
 func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) *ResolvedEntrypoints {
-	extensions := extensionsTypeScript | extensionsDeclaration
+	extensions := extensionsTypeScript | extensionsDeclaration | extensionsJavaScript
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
 	if packageJson.Exists() && packageJson.Contents.Exports.IsPresent() {
@@ -2062,7 +2062,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		r.host.FS(),
 		r.host.GetCurrentDirectory(),
 		packageJson.PackageDirectory,
-		extensions.Array(),
+		(extensions ^ extensionsJavaScript).Array(),
 		[]string{"node_modules"},
 		[]string{"**/*"},
 		nil,
