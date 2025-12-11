@@ -576,6 +576,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			}
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
+		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
 	})
 
 	return newSnapshot
@@ -956,5 +957,22 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 				}
 			})
 		}
+	}
+}
+
+func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange, oldSnapshot, newSnapshot *Snapshot) {
+	if change.fileChanges.Changed.Len() == 1 {
+		var changedFile lsproto.DocumentUri
+		for uri := range change.fileChanges.Changed.Keys() {
+			changedFile = uri
+		}
+		project := newSnapshot.GetDefaultProject(changedFile)
+		if project == nil {
+			return
+		}
+		if newSnapshot.AutoImports.IsPreparedForImportingFile(changedFile.FileName(), project.configFilePath, newSnapshot.config.tsUserPreferences) {
+			return
+		}
+		_, _ = s.GetLanguageServiceWithAutoImports(ctx, changedFile)
 	}
 }
