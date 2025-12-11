@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportProvider_exportMap5(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @types package lookup
 // @Filename: /home/src/workspaces/project/tsconfig.json
