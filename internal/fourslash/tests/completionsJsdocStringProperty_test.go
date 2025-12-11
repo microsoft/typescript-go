@@ -26,7 +26,7 @@ var someVariable;`
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &[]string{},
+			CommitCharacters: &[]string{".", ",", ";"},
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{},

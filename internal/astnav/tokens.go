@@ -190,7 +190,7 @@ func getTokenAtPosition(
 				flags := scanner.TokenFlags()
 				if tokenStart <= position && (position < tokenEnd) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
-						if ast.IsJSDocKind(current.Kind) {
+						if ast.IsJSDocKind(current.Kind) || ast.IsTypeElement(current) {
 							return current
 						}
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
