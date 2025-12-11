@@ -137,9 +137,9 @@ func NewSession(init *SessionInit) *Session {
 	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*Overlay), init.Options.PositionEncoding, toPath)
 	parseCache := init.ParseCache
 	if parseCache == nil {
-		parseCache = &ParseCache{}
+		parseCache = NewParseCache(RefCountCacheOptions{})
 	}
-	extendedConfigCache := &ExtendedConfigCache{}
+	extendedConfigCache := NewExtendedConfigCache()
 
 	session := &Session{
 		options:             init.Options,
@@ -464,7 +464,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return languageService, nil
 }
 
-func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
+func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []ls.Project, error) {
 	snapshot, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
 		return nil, nil, nil, err
@@ -474,7 +474,7 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 	return project, defaultLs, allProjects, nil
 }
 
-func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]*Project, error) {
+func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]ls.Project, error) {
 	snapshot := s.getSnapshot(
 		ctx,
 		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
@@ -505,7 +505,7 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 func (s *Session) GetSnapshotLoadingProjectTree(
 	ctx context.Context,
 	// If null, all project trees need to be loaded, otherwise only those that are referenced
-	requestedProjectTrees map[tspath.Path]struct{},
+	requestedProjectTrees *collections.Set[tspath.Path],
 ) *Snapshot {
 	snapshot := s.getSnapshot(
 		ctx,
@@ -766,7 +766,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var programCount int
 	var extendedConfigCount int
 	if s.logger.IsVerbose() {
-		s.parseCache.entries.Range(func(_ parseCacheKey, _ *parseCacheEntry) bool {
+		s.parseCache.entries.Range(func(_ ParseCacheKey, _ *refCountCacheEntry[*ast.SourceFile]) bool {
 			parseCacheSize++
 			return true
 		})
@@ -774,7 +774,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 			programCount++
 			return true
 		})
-		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *extendedConfigCacheEntry) bool {
+		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *refCountCacheEntry[*ExtendedConfigCacheEntry]) bool {
 			extendedConfigCount++
 			return true
 		})
