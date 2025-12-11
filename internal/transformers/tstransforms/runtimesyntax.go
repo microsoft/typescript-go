@@ -187,10 +187,10 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 		return tx.Visitor().VisitNode(n.Expression)
 	case ast.KindIdentifier:
 		return tx.Factory().NewStringLiteralFromNode(name)
-	case ast.KindStringLiteral:
-		return tx.Factory().NewStringLiteral(name.Text())
+	case ast.KindStringLiteral: // !!! propagate token flags (will produce new diffs)
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindNumericLiteral:
-		return tx.Factory().NewNumericLiteral(name.Text())
+		return tx.Factory().NewNumericLiteral(name.Text(), ast.TokenFlagsNone)
 	default:
 		return name
 	}
