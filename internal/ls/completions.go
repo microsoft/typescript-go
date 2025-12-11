@@ -726,38 +726,7 @@ func (l *LanguageService) getCompletionData(
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
 					symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMember, insertQuestionDot)}
 				} else {
-					// !!! andrewbranch/autoimport
-					// var fileName string
-					// if tspath.IsExternalModuleNameRelative(stringutil.StripQuotes(moduleSymbol.Name)) {
-					// 	fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
-					// }
-					// result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(
-					// 	typeChecker,
-					// 	[]*SymbolExportInfo{{
-					// 		exportKind:        ExportKindNamed,
-					// 		moduleFileName:    fileName,
-					// 		isFromPackageJson: false,
-					// 		moduleSymbol:      moduleSymbol,
-					// 		symbol:            firstAccessibleSymbol,
-					// 		targetFlags:       typeChecker.SkipAlias(firstAccessibleSymbol).Flags,
-					// 	}},
-					// 	position,
-					// 	ast.IsValidTypeOnlyAliasUseSite(location),
-					// )
-
-					// if result != nil {
-					// 	symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{
-					// 		kind:            getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberExport, insertQuestionDot),
-					// 		isDefaultExport: false,
-					// 		fileName:        fileName,
-					// 		data: &symbolOriginInfoExport{
-					// 			moduleSymbol:    moduleSymbol,
-					// 			symbolName:      firstAccessibleSymbol.Name,
-					// 			exportName:      firstAccessibleSymbol.Name,
-					// 			moduleSpecifier: result.moduleSpecifier,
-					// 		},
-					// 	}
-					// }
+					// !!! auto-import symbol
 				}
 			} else if firstAccessibleSymbolId == 0 || !seenPropertySymbols.Has(firstAccessibleSymbolId) {
 				symbols = append(symbols, symbol)
@@ -1116,7 +1085,6 @@ func (l *LanguageService) getCompletionData(
 		if !shouldOfferImportCompletions() {
 			return nil
 		}
-		// !!! CompletionInfoFlags
 
 		// import { type | -> token text should be blank
 		var lowerCaseTokenText string
@@ -1124,110 +1092,12 @@ func (l *LanguageService) getCompletionData(
 			lowerCaseTokenText = strings.ToLower(previousToken.Text())
 		}
 
-		// !!! timestamp
-		// isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
-
-		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
-		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
-		// addSymbolToList := func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportInfoMapKey) []*SymbolExportInfo {
-		// 	// Do a relatively cheap check to bail early if all re-exports are non-importable
-		// 	// due to file location or package.json dependency filtering. For non-node16+
-		// 	// module resolution modes, getting past this point guarantees that we'll be
-		// 	// able to generate a suitable module specifier, so we can safely show a completion,
-		// 	// even if we defer computing the module specifier.
-		// 	info = core.Filter(info, func(i *SymbolExportInfo) bool {
-		// 		var toFile *ast.SourceFile
-		// 		if ast.IsSourceFile(i.moduleSymbol.ValueDeclaration) {
-		// 			toFile = i.moduleSymbol.ValueDeclaration.AsSourceFile()
-		// 		}
-		// 		return l.isImportable(
-		// 			file,
-		// 			toFile,
-		// 			i.moduleSymbol,
-		// 			preferences,
-		// 			importSpecifierResolver.packageJsonImportFilter(),
-		// 		)
-		// 	})
-		// 	if len(info) == 0 {
-		// 		return nil
-		// 	}
-
-		// 	// In node16+, module specifier resolution can fail due to modules being blocked
-		// 	// by package.json `exports`. If that happens, don't show a completion item.
-		// 	// N.B. We always try to resolve module specifiers here, because we have to know
-		// 	// now if it's going to fail so we can omit the completion from the list.
-		// 	result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(typeChecker, info, position, isValidTypeOnlyUseSite)
-		// 	if result == nil {
-		// 		return nil
-		// 	}
-
-		// 	// If we skipped resolving module specifiers, our selection of which ExportInfo
-		// 	// to use here is arbitrary, since the info shown in the completion list derived from
-		// 	// it should be identical regardless of which one is used. During the subsequent
-		// 	// `CompletionEntryDetails` request, we'll get all the ExportInfos again and pick
-		// 	// the best one based on the module specifier it produces.
-		// 	moduleSpecifier := result.moduleSpecifier
-		// 	exportInfo := info[0]
-		// 	if result.exportInfo != nil {
-		// 		exportInfo = result.exportInfo
-		// 	}
-
-		// 	isDefaultExport := exportInfo.exportKind == ExportKindDefault
-		// 	if exportInfo.symbol == nil {
-		// 		panic("should have handled `futureExportSymbolInfo` earlier")
-		// 	}
-		// 	symbol := exportInfo.symbol
-		// 	if isDefaultExport {
-		// 		if defaultSymbol := binder.GetLocalSymbolForExportDefault(symbol); defaultSymbol != nil {
-		// 			symbol = defaultSymbol
-		// 		}
-		// 	}
-
-		// 	// pushAutoImportSymbol
-		// 	symbolId := ast.GetSymbolId(symbol)
-		// 	if symbolToSortTextMap[symbolId] == SortTextGlobalsOrKeywords {
-		// 		// If an auto-importable symbol is available as a global, don't push the auto import
-		// 		return nil
-		// 	}
-		// 	originInfo := &symbolOriginInfo{
-		// 		kind:              symbolOriginInfoKindExport,
-		// 		isDefaultExport:   isDefaultExport,
-		// 		isFromPackageJson: exportInfo.isFromPackageJson,
-		// 		fileName:          exportInfo.moduleFileName,
-		// 		data: &symbolOriginInfoExport{
-		// 			symbolName:      symbolName,
-		// 			moduleSymbol:    exportInfo.moduleSymbol,
-		// 			exportName:      core.IfElse(exportInfo.exportKind == ExportKindExportEquals, ast.InternalSymbolNameExportEquals, exportInfo.symbol.Name),
-		// 			exportMapKey:    exportMapKey,
-		// 			moduleSpecifier: moduleSpecifier,
-		// 		},
-		// 	}
-		// 	symbolToOriginInfoMap[symbolId] = originInfo
-		// 	symbolToSortTextMap[symbolId] = core.IfElse(importStatementCompletion != nil, SortTextLocationPriority, SortTextAutoImportSuggestions)
-		// 	symbols = append(symbols, symbol)
-		// 	return nil
-		// }
-
 		view, err := l.getPreparedAutoImportView(file)
 		if err != nil {
 			return err
 		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, isRightOfOpenTag, isTypeOnlyLocation)
-
-		// l.searchExportInfosForCompletions(ctx,
-		// 	typeChecker,
-		// 	file,
-		// 	preferences,
-		// 	importStatementCompletion != nil,
-		// 	isRightOfOpenTag,
-		// 	isTypeOnlyLocation,
-		// 	lowerCaseTokenText,
-		// 	addSymbolToList,
-		// )
-
-		// !!! completionInfoFlags
-		// !!! logging
 		return nil
 	}
 
@@ -1981,42 +1851,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		// !!! deprecation
 
 		if data.importStatementCompletion != nil {
-			/// !!! andrewbranch/autoimport
-			// resolvedOrigin := origin.asExport()
-			// labelDetails = &lsproto.CompletionItemLabelDetails{
-			// 	Description: &resolvedOrigin.moduleSpecifier, // !!! vscode @link support
-			// }
-			// quotedModuleSpecifier := escapeSnippetText(quote(file, preferences, resolvedOrigin.moduleSpecifier))
-			// exportKind := ExportKindNamed
-			// if origin.isDefaultExport {
-			// 	exportKind = ExportKindDefault
-			// } else if resolvedOrigin.exportName == ast.InternalSymbolNameExportEquals {
-			// 	exportKind = ExportKindExportEquals
-			// }
-
-			// insertText = "import "
-			// typeOnlyText := scanner.TokenToString(ast.KindTypeKeyword) + " "
-			// if data.importStatementCompletion.isTopLevelTypeOnly {
-			// 	insertText += typeOnlyText
-			// }
-			// tabStop := core.IfElse(ptrIsTrue(clientOptions.CompletionItem.SnippetSupport), "$1", "")
-			// importKind := getImportKind(file, exportKind, l.GetProgram(), true /*forceImportKeyword*/)
-			// escapedSnippet := escapeSnippetText(name)
-			// suffix := core.IfElse(useSemicolons, ";", "")
-			// switch importKind {
-			// case ImportKindCommonJS:
-			// 	insertText += fmt.Sprintf(`%s%s = require(%s)%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			// case ImportKindDefault:
-			// 	insertText += fmt.Sprintf(`%s%s from %s%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			// case ImportKindNamespace:
-			// 	insertText += fmt.Sprintf(`* as %s from %s%s`, escapedSnippet, quotedModuleSpecifier, suffix)
-			// case ImportKindNamed:
-			// 	importSpecifierTypeOnlyText := core.IfElse(data.importStatementCompletion.couldBeTypeOnlyImportSpecifier, typeOnlyText, "")
-			// 	insertText += fmt.Sprintf(`{ %s%s%s } from %s%s`, importSpecifierTypeOnlyText, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
-			// }
-
-			// replacementSpan = data.importStatementCompletion.replacementSpan
-			// isSnippet = ptrIsTrue(clientOptions.CompletionItem.SnippetSupport)
+			// !!!
 			continue
 		}
 
