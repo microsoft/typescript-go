@@ -734,6 +734,7 @@ func (b *registryBuilder) buildProjectBucket(
 	exports := make(map[tspath.Path][]*Export)
 	var wg sync.WaitGroup
 	var ignoredPackageNames collections.Set[string]
+	var skippedFileCount int
 	var combinedStats extractorStats
 
 outer:
@@ -743,6 +744,7 @@ outer:
 		}
 		for _, excludePattern := range fileExcludePatterns {
 			if matched, _ := excludePattern.MatchString(file.FileName()); matched {
+				skippedFileCount++
 				continue outer
 			}
 		}
@@ -798,6 +800,9 @@ outer:
 
 	if logger != nil {
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker)
+		if skippedFileCount > 0 {
+			logger.Logf("Skipped %d files due to exclude patterns", skippedFileCount)
+		}
 		logger.Logf("Built index: %v", time.Since(indexStart))
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
@@ -858,6 +863,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 
 	var entrypointsMu sync.Mutex
 	var entrypoints []*module.ResolvedEntrypoints
+	var skippedEntrypointsCount int32
 	var combinedStats extractorStats
 	var possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
 	var possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
@@ -904,18 +910,17 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			if packageEntrypoints == nil {
 				return
 			}
-			if len(fileExcludePatterns) > 0 || len(b.userPreferences.AutoImportSpecifierExcludeRegexes) > 0 {
+			if len(fileExcludePatterns) > 0 {
+				count := int32(len(packageEntrypoints.Entrypoints))
 				packageEntrypoints.Entrypoints = slices.DeleteFunc(packageEntrypoints.Entrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
 					for _, excludePattern := range fileExcludePatterns {
 						if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
 							return true
 						}
 					}
-					// if modulespecifiers.IsExcludedByRegex(entrypoint.ModuleSpecifier, b.userPreferences.AutoImportSpecifierExcludeRegexes) {
-					// 	return true
-					// }
 					return false
 				})
+				atomic.AddInt32(&skippedEntrypointsCount, count-int32(len(packageEntrypoints.Entrypoints)))
 			}
 			if len(packageEntrypoints.Entrypoints) == 0 {
 				return
@@ -1003,6 +1008,9 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	if logger != nil {
 		logger.Logf("Determined dependencies and package names: %v", extractorStart.Sub(start))
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(extractorStart), combinedStats.exports, combinedStats.usedChecker)
+		if skippedEntrypointsCount > 0 {
+			logger.Logf("Skipped %d entrypoints due to exclude patterns", skippedEntrypointsCount)
+		}
 		logger.Logf("Built index: %v", time.Since(indexStart))
 		logger.Logf("Bucket total: %v", time.Since(start))
 	}
