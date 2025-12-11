@@ -553,6 +553,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensRangeInfo, (*Server).handleSemanticTokensRange)
 
 	return handlers
 })
@@ -824,6 +826,17 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: ptrTo(true),
+			},
+			SemanticTokensProvider: &lsproto.SemanticTokensOptionsOrRegistrationOptions{
+				Options: &lsproto.SemanticTokensOptions{
+					Legend: ls.SemanticTokensLegend(s.clientCapabilities.TextDocument.SemanticTokens),
+					Full: &lsproto.BooleanOrSemanticTokensFullDelta{
+						Boolean: ptrTo(true),
+					},
+					Range: &lsproto.BooleanOrEmptyObject{
+						Boolean: ptrTo(true),
+					},
+				},
 			},
 		},
 	}
@@ -1152,6 +1165,14 @@ func (s *Server) handleCallHierarchyOutgoingCalls(
 		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
 	}
 	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
+}
+
+func (s *Server) handleSemanticTokensFull(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensParams) (lsproto.SemanticTokensResponse, error) {
+	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleSemanticTokensRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensRangeParams) (lsproto.SemanticTokensRangeResponse, error) {
+	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range)
 }
 
 // !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
