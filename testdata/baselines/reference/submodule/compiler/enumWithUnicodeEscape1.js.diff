@@ -1,0 +1,9 @@
+--- old.enumWithUnicodeEscape1.js
++++ new.enumWithUnicodeEscape1.js
+@@= skipped -8, +8 lines =@@
+ //// [enumWithUnicodeEscape1.js]
+ var E;
+ (function (E) {
+-    E[E["gold \u2730"] = 0] = "gold \u2730";
++    E[E['gold \u2730'] = 0] = 'gold \u2730';
+ })(E || (E = {}));
