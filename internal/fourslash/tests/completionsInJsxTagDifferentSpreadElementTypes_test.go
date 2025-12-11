@@ -31,7 +31,7 @@ export function ComponentNumberOrObjectX(props: number | { x: string }) {
 }
 
 // Very unexpected, but still structured (union) types.
-// `boolean` is `true | false` and an optional `null` is really `null | undefined`.
+// 'boolean' is 'true | false' and an optional 'null' is really 'null | undefined'.
 export function ComponentBoolean(props: boolean) {
     return <SomeComponent {...props} /*boolean*//>;
 }
