@@ -568,6 +568,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.DocumentSymbol == nil {
 		capabilitiesWithDefaults.TextDocument.DocumentSymbol = defaultDocumentSymbolCapabilities
 	}
+	if capabilitiesWithDefaults.TextDocument.FoldingRange == nil {
+		capabilitiesWithDefaults.TextDocument.FoldingRange = defaultFoldingRangeCapabilities
+	}
 	return &capabilitiesWithDefaults
 }
 
