@@ -866,20 +866,32 @@ func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences *lsutil.
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports.IsTrue()
 }
 
-// CompareFixes returns negative if `a` is better than `b`.
+// CompareFixesForSorting returns negative if `a` is better than `b`.
 // Sorting with this comparator will place the best fix first.
-func (v *View) CompareFixes(a, b *Fix) int {
+// After rank sorting, fixes will be sorted by arbitrary but stable criteria
+// to ensure a deterministic order.
+func (v *View) CompareFixesForSorting(a, b *Fix) int {
+	if res := v.CompareFixesForRanking(a, b); res != 0 {
+		return res
+	}
+	return v.compareModuleSpecifiersForSorting(a, b)
+}
+
+// CompareFixesForRanking returns negative if `a` is better than `b`.
+// Sorting with this comparator will place the best fix first.
+// Fixes of equal desirability will be considered equal.
+func (v *View) CompareFixesForRanking(a, b *Fix) int {
 	if res := compareFixKinds(a.Kind, b.Kind); res != 0 {
 		return res
 	}
-	return v.compareModuleSpecifiers(a, b)
+	return v.compareModuleSpecifiersForRanking(a, b)
 }
 
 func compareFixKinds(a, b lsproto.AutoImportFixKind) int {
 	return int(a) - int(b)
 }
 
-func (v *View) compareModuleSpecifiers(a, b *Fix) int {
+func (v *View) compareModuleSpecifiersForRanking(a, b *Fix) int {
 	if comparison := compareModuleSpecifierRelativity(a, b, v.preferences); comparison != 0 {
 		return comparison
 	}
@@ -895,6 +907,13 @@ func (v *View) compareModuleSpecifiers(a, b *Fix) int {
 	if comparison := tspath.CompareNumberOfDirectorySeparators(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
 		return comparison
 	}
+	return 0
+}
+
+func (v *View) compareModuleSpecifiersForSorting(a, b *Fix) int {
+	if res := v.compareModuleSpecifiersForRanking(a, b); res != 0 {
+		return res
+	}
 	// Sort ./foo before ../foo for equal-length specifiers
 	if strings.HasPrefix(a.ModuleSpecifier, "./") && !strings.HasPrefix(b.ModuleSpecifier, "./") {
 		return -1
@@ -908,6 +927,7 @@ func (v *View) compareModuleSpecifiers(a, b *Fix) int {
 	if comparison := cmp.Compare(a.ImportKind, b.ImportKind); comparison != 0 {
 		return comparison
 	}
+	// !!! further tie-breakers? In practice this is only called on fixes with the same name
 	return 0
 }
 

@@ -364,6 +364,13 @@ func (p *UserPreferences) CopyOrDefault() *UserPreferences {
 	return p.Copy()
 }
 
+func (p *UserPreferences) OrDefault() *UserPreferences {
+	if p == nil {
+		return NewDefaultUserPreferences()
+	}
+	return p
+}
+
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences{
 		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,

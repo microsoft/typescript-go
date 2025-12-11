@@ -177,6 +177,9 @@ func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
 }
 
 func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences *lsutil.UserPreferences) bool {
+	if r == nil {
+		return false
+	}
 	projectBucket, ok := r.projects[projectPath]
 	if !ok {
 		panic("project bucket missing")
@@ -334,7 +337,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		resolver: module.NewResolver(host, core.EmptyCompilerOptions, "", ""),
 		base:     registry,
 
-		userPreferences: registry.userPreferences.CopyOrDefault(),
+		userPreferences: registry.userPreferences.OrDefault(),
 		directories:     dirty.NewMap(registry.directories),
 		nodeModules:     dirty.NewMap(registry.nodeModules),
 		projects:        dirty.NewMap(registry.projects),
@@ -345,7 +348,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
 		toPath:          b.base.toPath,
-		userPreferences: b.userPreferences.CopyOrDefault(),
+		userPreferences: b.userPreferences,
 		directories:     core.FirstResult(b.directories.Finalize()),
 		nodeModules:     core.FirstResult(b.nodeModules.Finalize()),
 		projects:        core.FirstResult(b.projects.Finalize()),

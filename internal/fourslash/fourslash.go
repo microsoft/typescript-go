@@ -928,6 +928,7 @@ type MarkerInput = any
 // !!! user preferences param
 // !!! completion context param
 func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *CompletionsExpectedList) VerifyCompletionsResult {
+	t.Helper()
 	var list *lsproto.CompletionList
 	switch marker := markerInput.(type) {
 	case string:

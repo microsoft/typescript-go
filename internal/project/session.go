@@ -970,7 +970,11 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if project == nil {
 			return
 		}
-		if newSnapshot.AutoImports.IsPreparedForImportingFile(changedFile.FileName(), project.configFilePath, newSnapshot.config.tsUserPreferences) {
+		if newSnapshot.AutoImports.IsPreparedForImportingFile(
+			changedFile.FileName(),
+			project.configFilePath,
+			newSnapshot.config.tsUserPreferences.OrDefault(),
+		) {
 			return
 		}
 		_, _ = s.GetLanguageServiceWithAutoImports(ctx, changedFile)

@@ -158,7 +158,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 
 	fixes := make([]*FixAndExport, 0, len(results))
 	compareFixes := func(a, b *FixAndExport) int {
-		return v.CompareFixes(a.Fix, b.Fix)
+		return v.CompareFixesForRanking(a.Fix, b.Fix)
 	}
 
 	for _, exps := range grouped {
