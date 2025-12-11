@@ -110,9 +110,30 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
-// GetRedirectTargets implements checker.Program.
+// GetRedirectTargets returns the list of file paths that redirect to the given path.
+// These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
-	return nil // !!! TODO: project references support
+	return p.redirectTargetsMap[path]
+}
+
+// GetFileCanonicalPath returns the canonical path for a file that may be a duplicate package.
+// If the file is a redirect target (i.e., it redirects to a canonical file), returns the canonical path.
+// Otherwise, returns the path unchanged.
+func (p *Program) GetFileCanonicalPath(path tspath.Path) tspath.Path {
+	// If this path has redirect targets, it's already canonical
+	if _, ok := p.redirectTargetsMap[path]; ok {
+		return path
+	}
+	// Check if this path is a redirect target of some canonical path
+	for canonicalPath, targets := range p.redirectTargetsMap {
+		for _, t := range targets {
+			if tspath.Path(t) == path {
+				return canonicalPath
+			}
+		}
+	}
+	// Not part of any redirect group, return as-is
+	return path
 }
 
 // gets the original file that was included in program
@@ -241,6 +262,21 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
 	}
+	// TODO: CHECK THIS
+	// If this file is part of a package redirect group (same package installed in multiple
+	// node_modules locations), we need to rebuild the program because the redirect targets
+	// might need recalculation. A file is in a redirect group if it's either a canonical
+	// file that others redirect to, or if it redirects to another file.
+	// if _, isCanonical := p.redirectTargetsMap[changedFilePath]; isCanonical {
+	// 	return NewProgram(newOpts), false
+	// }
+	// for _, targets := range p.redirectTargetsMap {
+	// 	for _, target := range targets {
+	// 		if tspath.Path(target) == changedFilePath {
+	// 			return NewProgram(newOpts), false
+	// 		}
+	// 	}
+	// }
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
 		opts:                        newOpts,

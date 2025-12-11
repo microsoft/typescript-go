@@ -221,6 +221,11 @@ Ensure 'use strict' is always emitted.
 type: boolean
 default: `false`, unless `strict` is set
 
+[94m--disablePackageDeduplication[39m
+Disable deduplication of packages with the same name and version.
+type: boolean
+default: false
+
 [94m--exactOptionalPropertyTypes[39m
 Interpret optional property types as written, rather than adding 'undefined'.
 type: boolean

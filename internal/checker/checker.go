@@ -544,6 +544,10 @@ type Program interface {
 	GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
+	// GetFileCanonicalPath returns the canonical path for a file that may be from a duplicate package.
+	// Used to determine if two files from the same package (name@version) installed in different locations
+	// should be treated as the same for type compatibility purposes.
+	GetFileCanonicalPath(path tspath.Path) tspath.Path
 }
 
 type Host interface {
@@ -26975,8 +26979,14 @@ func (c *Checker) compareProperties(sourceProp *ast.Symbol, targetProp *ast.Symb
 		return TernaryFalse
 	}
 	if sourcePropAccessibility != ast.ModifierFlagsNone {
-		if c.getTargetSymbol(sourceProp) != c.getTargetSymbol(targetProp) {
-			return TernaryFalse
+		sourceTarget := c.getTargetSymbol(sourceProp)
+		targetTarget := c.getTargetSymbol(targetProp)
+		if sourceTarget != targetTarget {
+			// Check if these symbols are from duplicate package instances (same package installed
+			// in different locations). If they map to the same canonical file, treat them as identical.
+			if !c.areSymbolsFromSamePackageFile(sourceTarget, targetTarget) {
+				return TernaryFalse
+			}
 		}
 	} else {
 		if (sourceProp.Flags & ast.SymbolFlagsOptional) != (targetProp.Flags & ast.SymbolFlagsOptional) {
@@ -26987,6 +26997,34 @@ func (c *Checker) compareProperties(sourceProp *ast.Symbol, targetProp *ast.Symb
 		return TernaryFalse
 	}
 	return compareTypes(c.getTypeOfSymbol(sourceProp), c.getTypeOfSymbol(targetProp))
+}
+
+// areSymbolsFromSamePackageFile checks if two symbols come from files that are duplicates
+// of the same package file (same package name@version installed in different locations).
+func (c *Checker) areSymbolsFromSamePackageFile(source *ast.Symbol, target *ast.Symbol) bool {
+	// If package deduplication is disabled, don't treat any files as duplicates
+	if c.compilerOptions.DisablePackageDeduplication.IsTrue() {
+		return false
+	}
+	sourceDecl := source.ValueDeclaration
+	targetDecl := target.ValueDeclaration
+	if sourceDecl == nil || targetDecl == nil {
+		return false
+	}
+	sourceFile := ast.GetSourceFileOfNode(sourceDecl)
+	targetFile := ast.GetSourceFileOfNode(targetDecl)
+	if sourceFile == nil || targetFile == nil {
+		return false
+	}
+	// If they're from the same file, this is not a package deduplication scenario
+	if sourceFile.Path() == targetFile.Path() {
+		return false
+	}
+	// Get the canonical paths for both files
+	sourceCanonical := c.program.GetFileCanonicalPath(sourceFile.Path())
+	targetCanonical := c.program.GetFileCanonicalPath(targetFile.Path())
+	// If they map to the same canonical path, they're from the same package file
+	return sourceCanonical == targetCanonical
 }
 
 func compareTypesEqual(s *Type, t *Type) Ternary {

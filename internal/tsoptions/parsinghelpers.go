@@ -227,6 +227,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.DisableSolutionSearching = ParseTristate(value)
 	case "disableReferencedProjectLoad":
 		allOptions.DisableReferencedProjectLoad = ParseTristate(value)
+	case "disablePackageDeduplication":
+		allOptions.DisablePackageDeduplication = ParseTristate(value)
 	case "declarationMap":
 		allOptions.DeclarationMap = ParseTristate(value)
 	case "declaration":

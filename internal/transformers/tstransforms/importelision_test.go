@@ -86,6 +86,10 @@ func (p *fakeProgram) GetRedirectTargets(path tspath.Path) []string {
 	return nil
 }
 
+func (p *fakeProgram) GetFileCanonicalPath(path tspath.Path) tspath.Path {
+	return path
+}
+
 func (p *fakeProgram) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
 	return ""
 }
