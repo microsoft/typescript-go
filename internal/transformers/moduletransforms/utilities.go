@@ -57,7 +57,7 @@ func getExternalModuleNameLiteral(factory *printer.NodeFactory, importNode *ast.
 		if name == nil {
 			name = tryRenameExternalModule(factory, moduleName, sourceFile)
 		}
-		if name == nil {
+		if name == nil { // !!! propagate token flags (will produce new diffs)
 			name = factory.NewStringLiteral(moduleName.Text(), ast.TokenFlagsNone)
 		}
 		return name
