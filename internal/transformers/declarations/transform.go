@@ -1597,15 +1597,15 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
 				if value >= 0 {
-					newInitializer = tx.Factory().NewNumericLiteral(value.String())
+					newInitializer = tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 				} else {
 					newInitializer = tx.Factory().NewPrefixUnaryExpression(
 						ast.KindMinusToken,
-						tx.Factory().NewNumericLiteral((-value).String()),
+						tx.Factory().NewNumericLiteral((-value).String(), ast.TokenFlagsNone),
 					)
 				}
 			case string:
-				newInitializer = tx.Factory().NewStringLiteral(value)
+				newInitializer = tx.Factory().NewStringLiteral(value, ast.TokenFlagsNone)
 			default:
 				// nil
 				newInitializer = nil

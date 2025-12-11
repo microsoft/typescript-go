@@ -25,7 +25,7 @@ func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expressi
 	}
 	updatedText := tspath.ChangeExtension(node.Text(), outputpaths.GetOutputExtension(node.Text(), compilerOptions.Jsx))
 	if updatedText != node.Text() {
-		updated := emitContext.Factory.NewStringLiteral(updatedText)
+		updated := emitContext.Factory.NewStringLiteral(updatedText, node.AsStringLiteral().TokenFlags)
 		// !!! set quote style
 		emitContext.SetOriginal(updated, node)
 		emitContext.AssignCommentAndSourceMapRanges(updated, node)
@@ -59,7 +59,7 @@ func getExternalModuleNameLiteral(factory *printer.NodeFactory, importNode *ast.
 			name = tryRenameExternalModule(factory, moduleName, sourceFile)
 		}
 		if name == nil {
-			name = factory.NewStringLiteral(moduleName.Text())
+			name = factory.NewStringLiteral(moduleName.Text(), moduleName.AsStringLiteral().TokenFlags)
 		}
 		return name
 	}

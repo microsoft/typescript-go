@@ -191,9 +191,9 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 	case ast.KindIdentifier:
 		return tx.Factory().NewStringLiteralFromNode(name)
 	case ast.KindStringLiteral:
-		return tx.Factory().NewStringLiteral(name.Text())
+		return tx.Factory().NewStringLiteral(name.Text(), name.AsStringLiteral().TokenFlags)
 	case ast.KindNumericLiteral:
-		return tx.Factory().NewNumericLiteral(name.Text())
+		return tx.Factory().NewNumericLiteral(name.Text(), name.AsNumericLiteral().TokenFlags)
 	default:
 		return name
 	}
@@ -530,7 +530,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		ifStatement := tx.Factory().NewIfStatement(
 			tx.Factory().NewStrictInequalityExpression(
 				tx.Factory().NewTypeOfExpression(tx.getEnumQualifiedReference(enum, member)),
-				tx.Factory().NewStringLiteral("string"),
+				tx.Factory().NewStringLiteral("string", ast.TokenFlagsNone),
 			),
 			tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
