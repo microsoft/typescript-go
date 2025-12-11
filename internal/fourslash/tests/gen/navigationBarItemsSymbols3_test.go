@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarItemsSymbols3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum E {
     // No nav bar entry for this

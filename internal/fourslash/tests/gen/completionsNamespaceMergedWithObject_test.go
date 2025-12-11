@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsNamespaceMergedWithObject(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace N {
     export type T = number;

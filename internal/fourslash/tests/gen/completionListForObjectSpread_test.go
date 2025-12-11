@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListForObjectSpread(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let o = { a: 1, b: 'no' }
 let o2 = { b: 'yes', c: true }

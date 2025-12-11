@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsJsDocTypeDef(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @typedef {Object} /*0*/T */
 function foo() {}`

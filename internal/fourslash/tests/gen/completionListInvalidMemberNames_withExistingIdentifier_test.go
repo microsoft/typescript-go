@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListInvalidMemberNames_withExistingIdentifier(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const x: { "foo ": "space in the name", };
 x[|.fo/*0*/|];

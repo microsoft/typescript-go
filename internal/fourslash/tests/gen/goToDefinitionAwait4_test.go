@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionAwait4(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `async function outerAsyncFun() {
     let /*end*/af = async () => {

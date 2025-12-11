@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsWithDeprecatedTag2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @deprecated foo */
 declare function foo<T>();

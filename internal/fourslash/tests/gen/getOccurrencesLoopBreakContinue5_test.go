@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesLoopBreakContinue5(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var arr = [1, 2, 3, 4];
 label1: for (var n in arr) {

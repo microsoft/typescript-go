@@ -9,7 +9,7 @@ import (
 
 func TestDeclarationMapsOutOfDateMapping(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/a/dist/index.d.ts
 export declare class Foo {

@@ -9,7 +9,7 @@ import (
 
 func TestAutoImportNoPackageJson_nodenext(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /node_modules/lit/index.d.cts

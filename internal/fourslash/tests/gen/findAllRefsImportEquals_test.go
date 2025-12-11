@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsImportEquals(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import j = N./**/q;
 namespace N { export const q = 0; }`

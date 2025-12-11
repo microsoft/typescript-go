@@ -9,7 +9,7 @@ import (
 
 func TestParameterWithDestructuring(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const result = [{ a: 'hello' }]
     .map(({ /*1*/a }) => /*2*/a)

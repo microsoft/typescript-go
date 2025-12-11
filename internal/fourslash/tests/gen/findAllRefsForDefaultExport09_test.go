@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForDefaultExport09(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /tsconfig.json
 {

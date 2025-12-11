@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForClassParameter(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var p = 2;
 

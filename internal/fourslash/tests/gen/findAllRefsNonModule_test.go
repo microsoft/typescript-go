@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsNonModule(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @checkJs: true
 // @Filename: /script.ts

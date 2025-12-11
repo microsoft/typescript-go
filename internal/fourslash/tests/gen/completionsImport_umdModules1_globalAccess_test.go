@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_umdModules1_globalAccess(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /package.json
 { "dependencies": { "@types/classnames": "*" } }

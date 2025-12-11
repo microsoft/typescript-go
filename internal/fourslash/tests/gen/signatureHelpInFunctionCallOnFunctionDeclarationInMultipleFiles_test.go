@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpInFunctionCallOnFunctionDeclarationInMultipleFiles(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: signatureHelpInFunctionCallOnFunctionDeclarationInMultipleFiles_file0.ts
 declare function fn(x: string, y: number);

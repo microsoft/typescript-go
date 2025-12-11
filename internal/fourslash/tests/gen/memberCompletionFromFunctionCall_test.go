@@ -10,7 +10,7 @@ import (
 
 func TestMemberCompletionFromFunctionCall(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare interface ifoo {
     text: (value: any) => ifoo;

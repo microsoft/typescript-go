@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpCommentsFunctionExpression(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** lambdaFoo var comment*/
 var lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInTypeParameterOfTypeAlias2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Map1<K, /*0*/
 type Map1<K, /*1*/V> = [];

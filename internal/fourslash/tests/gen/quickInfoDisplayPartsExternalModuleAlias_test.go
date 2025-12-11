@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsExternalModuleAlias(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: quickInfoDisplayPartsExternalModuleAlias_file0.ts
 export namespace m1 {

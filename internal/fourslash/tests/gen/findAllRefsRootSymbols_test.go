@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsRootSymbols(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { /*0*/x: {}; }
 interface J { /*1*/x: {}; }

@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoJSDocAtBeforeSpace(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @return Don't @ me

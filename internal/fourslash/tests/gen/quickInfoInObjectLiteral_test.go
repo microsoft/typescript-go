@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoInObjectLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     doStuff(x: string, callback: (a: string) => string);

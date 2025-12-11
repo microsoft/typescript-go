@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListAfterInvalidCharacter(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Completion after invalid character
 module testModule {

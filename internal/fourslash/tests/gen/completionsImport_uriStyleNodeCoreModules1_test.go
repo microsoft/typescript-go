@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_uriStyleNodeCoreModules1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /node_modules/@types/node/index.d.ts

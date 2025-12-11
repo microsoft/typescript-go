@@ -9,7 +9,7 @@ import (
 
 func TestSmartSelection_objectTypes(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type X = {
   /*1*/foo?: string;

@@ -11,7 +11,7 @@ import (
 
 func TestCompletionForStringLiteral12(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(x: "bla"): void;
 function foo(x: "bla"): void;

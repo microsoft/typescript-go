@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsEnum1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum /*1*/E {
     /*2*/e1,

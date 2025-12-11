@@ -10,7 +10,7 @@ import (
 
 func TestCompletions01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x: string[] = [];
 x.forEach(function (y) { y/*1*/

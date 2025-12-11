@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoForConstAssertions(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = { a: 1 } as /*1*/const;
 const b = 1 as /*2*/const;

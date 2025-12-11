@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportPaths2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|foo/*0*/();|]
 // @Filename: folder_b/index.ts

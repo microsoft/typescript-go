@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsUnionStringLiteralProperty(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Foo = { a: 0, b: 'x' } | { a: 0, b: 'y' } | { a: 1, b: 'z' };
 const foo: Foo = { a: 0, b: '/*1*/' }

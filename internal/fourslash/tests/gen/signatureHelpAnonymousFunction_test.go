@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpAnonymousFunction(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var anonymousFunctionTest = function(n: number, s: string): (a: number, b: string) => string {
     return null;

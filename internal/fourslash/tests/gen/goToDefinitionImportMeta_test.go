@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionImportMeta(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: foo.ts

@@ -9,7 +9,7 @@ import (
 
 func TestJsdocTypedefTagGoToDefinition(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js

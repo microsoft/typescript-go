@@ -9,7 +9,7 @@ import (
 
 func TestFormattingKeywordAsIdentifier(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare var module/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

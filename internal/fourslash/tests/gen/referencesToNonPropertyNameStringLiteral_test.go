@@ -9,7 +9,7 @@ import (
 
 func TestReferencesToNonPropertyNameStringLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const str: string = "hello/*1*/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -10,7 +10,7 @@ import (
 
 func TestPathCompletionsPackageJsonImportsIgnoreMatchingNodeModule1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /src/node_modules/#internal/package.json

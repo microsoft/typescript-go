@@ -9,7 +9,7 @@ import (
 
 func TestSquiggleIllegalClassExtension(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo extends /*1*/Bar/*2*/ { }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

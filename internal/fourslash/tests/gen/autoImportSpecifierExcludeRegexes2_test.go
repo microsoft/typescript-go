@@ -10,7 +10,7 @@ import (
 
 func TestAutoImportSpecifierExcludeRegexes2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tsconfig.json
 {

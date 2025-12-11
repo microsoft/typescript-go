@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpForSignatureWithUnreachableType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/foo/node_modules/bar/index.d.ts
 export interface SomeType {

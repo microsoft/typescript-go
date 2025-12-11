@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForLabel4(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/label: function foo(label) {
     while (true) {

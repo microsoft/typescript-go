@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForStaticInstanceMethodInheritance(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class X{
 	/*0*/foo(): void{}

@@ -9,7 +9,7 @@ import (
 
 func TestAnnotateWithTypeFromJSDoc2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: test123.ts
 /** @type {number} */

@@ -9,7 +9,7 @@ import (
 
 func TestInvalidRestArgError(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function b(.../*1*/)/*2*/ {}  `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

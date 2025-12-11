@@ -9,7 +9,7 @@ import (
 
 func TestNavbar_contains_no_duplicates(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module Windows {
     export module Foundation {

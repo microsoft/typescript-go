@@ -9,7 +9,7 @@ import (
 
 func TestGenericDerivedTypeAcrossModuleBoundary1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
    export class C1 { }

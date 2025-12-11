@@ -9,7 +9,7 @@ import (
 
 func TestIncrementalUpdateToClassImplementingGenericClass(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function alert(message?: string): void;
 class Animal<T> {

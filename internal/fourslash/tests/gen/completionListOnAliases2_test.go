@@ -12,7 +12,7 @@ import (
 
 func TestCompletionListOnAliases2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     export interface I { }

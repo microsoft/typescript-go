@@ -9,7 +9,7 @@ import (
 
 func TestJsDocPropertyDescription9(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class LiteralClass {
     /** Something generic */

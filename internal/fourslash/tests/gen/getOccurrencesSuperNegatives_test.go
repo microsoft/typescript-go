@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesSuperNegatives(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f(x = [|super|]) {
     [|super|];

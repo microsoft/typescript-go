@@ -9,7 +9,7 @@ import (
 
 func TestIsDefinitionOverloads(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*1*/f(x: number): void;
 function /*2*/f(x: string): void;

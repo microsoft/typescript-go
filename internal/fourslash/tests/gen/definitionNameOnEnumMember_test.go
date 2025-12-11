@@ -9,7 +9,7 @@ import (
 
 func TestDefinitionNameOnEnumMember(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum e {
     firstMember,

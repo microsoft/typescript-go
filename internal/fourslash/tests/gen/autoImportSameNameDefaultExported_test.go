@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportSameNameDefaultExported(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /node_modules/antd/index.d.ts

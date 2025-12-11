@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsGenericIndexedAccess6(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: component.tsx
 interface CustomElements {

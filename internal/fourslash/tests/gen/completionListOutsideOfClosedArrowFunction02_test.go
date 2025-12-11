@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListOutsideOfClosedArrowFunction02(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// no a or b
 (a, b) => { }/*1*/`

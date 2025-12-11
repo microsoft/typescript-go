@@ -9,7 +9,7 @@ import (
 
 func TestPackageJsonImportsFailedLookups(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a/b/c/d/e/tsconfig.json
 { "compilerOptions": { "module": "nodenext" } }

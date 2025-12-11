@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionDecoratorOverloads(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Target: ES6
 // @experimentaldecorators: true

@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoCommentsClass(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is class c2 without constructor*/
 class c/*1*/2 {

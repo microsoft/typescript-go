@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImportTypings1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings,my_other_typings
 // @Filename: tests/test0.ts

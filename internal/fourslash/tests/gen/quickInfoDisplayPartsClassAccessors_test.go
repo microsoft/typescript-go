@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsClassAccessors(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class c {
     public get /*1*/publicProperty() { return ""; }

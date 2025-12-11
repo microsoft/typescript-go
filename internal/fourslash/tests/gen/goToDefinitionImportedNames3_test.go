@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionImportedNames3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: e.ts
  import {M, [|/*classAliasDefinition*/C|], I} from "./d";

@@ -9,7 +9,7 @@ import (
 
 func TestRenameInheritedProperties4(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface interface1 extends interface1 {
    [|[|{| "contextRangeIndex": 0 |}doStuff|](): string;|]

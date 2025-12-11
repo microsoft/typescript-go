@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInObjectLiteralAssignmentPattern1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let x = { a: 1, b: 2 };
 let y = ({ /**/ } = x, 1);`

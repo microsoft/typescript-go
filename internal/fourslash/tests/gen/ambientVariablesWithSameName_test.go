@@ -9,7 +9,7 @@ import (
 
 func TestAmbientVariablesWithSameName(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module M {
     export var x: string;

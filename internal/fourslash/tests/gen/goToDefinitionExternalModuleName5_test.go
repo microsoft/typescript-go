@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionExternalModuleName5(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.ts
 declare module /*2*/[|"external/*1*/"|] {

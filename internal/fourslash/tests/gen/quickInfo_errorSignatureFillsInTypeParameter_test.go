@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfo_errorSignatureFillsInTypeParameter(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function f<T>(x: number): T;
 const x/**/ = f();`

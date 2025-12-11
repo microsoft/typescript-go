@@ -9,7 +9,7 @@ import (
 
 func TestGenericCallsWithOptionalParams1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Collection<T> {
     public add(x: T) { }

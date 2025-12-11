@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportAmbient2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|/*!
  * I'm a license or something

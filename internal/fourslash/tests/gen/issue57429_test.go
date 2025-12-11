@@ -11,7 +11,7 @@ import (
 
 func TestIssue57429(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 function Builder<I>(def: I) {

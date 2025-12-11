@@ -10,7 +10,7 @@ import (
 
 func TestInlayHintsInteractiveVariableTypes2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const object = { foo: 1, bar: 2 }
 const array = [1, 2]

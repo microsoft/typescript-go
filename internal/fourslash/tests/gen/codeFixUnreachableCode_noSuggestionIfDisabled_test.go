@@ -9,7 +9,7 @@ import (
 
 func TestCodeFixUnreachableCode_noSuggestionIfDisabled(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowUnreachableCode: true
 if (false) 0;`

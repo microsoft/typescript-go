@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpInference(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function f<T extends string>(a: T, b: T, c: T): void;
 f("x", /**/);`

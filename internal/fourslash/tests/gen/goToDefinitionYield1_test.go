@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionYield1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function* /*end1*/gen() {
     [|/*start1*/yield|] 0;

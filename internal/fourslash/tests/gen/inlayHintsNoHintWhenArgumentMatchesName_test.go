@@ -10,7 +10,7 @@ import (
 
 func TestInlayHintsNoHintWhenArgumentMatchesName(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo (a: number, b: number) {}
 declare const a: 1;

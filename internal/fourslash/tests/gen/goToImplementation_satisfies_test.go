@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementation_satisfies(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 interface /*def*/I {

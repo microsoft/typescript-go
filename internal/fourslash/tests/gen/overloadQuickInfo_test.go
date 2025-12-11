@@ -9,7 +9,7 @@ import (
 
 func TestOverloadQuickInfo(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function Foo(a: string, b: number, c: boolean);
 function Foo(a: any, name: string, age: number);

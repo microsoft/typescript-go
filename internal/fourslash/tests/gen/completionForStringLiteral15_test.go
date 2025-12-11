@@ -11,7 +11,7 @@ import (
 
 func TestCompletionForStringLiteral15(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let x: { [_ in "foo"]: string } = {
     "[|/**/|]"

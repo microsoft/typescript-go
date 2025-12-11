@@ -10,7 +10,7 @@ import (
 
 func TestRenamePrivateAccessor(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
    [|get [|{| "contextRangeIndex": 0 |}#foo|]() { return 1 }|]

@@ -9,7 +9,7 @@ import (
 
 func TestUpdateToClassStatics(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module TypeScript {
     export class PullSymbol {}

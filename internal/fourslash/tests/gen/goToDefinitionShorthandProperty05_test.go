@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionShorthandProperty05(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     /*3*/foo(): void

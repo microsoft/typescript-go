@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportFileQuoteStyleMixed0(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|import { v2 } from "./module2";
 import { v3 } from './module3';

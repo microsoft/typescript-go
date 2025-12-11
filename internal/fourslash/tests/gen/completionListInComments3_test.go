@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInComments3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` /*{| "name": "1" |}
  /*  {| "name": "2" |}

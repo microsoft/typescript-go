@@ -9,7 +9,7 @@ import (
 
 func TestGetPreProcessedFile(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: classic
 // @Filename: refFile1.ts

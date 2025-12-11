@@ -9,7 +9,7 @@ import (
 
 func TestAutoImportNoPackageJson_commonjs(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /node_modules/lit/index.d.cts

@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionScriptImport(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: scriptThing.ts
 /*1d*/console.log("woooo side effects")

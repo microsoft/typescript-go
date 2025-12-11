@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_ofAlias_preferShortPath(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonJs
 // @noLib: true

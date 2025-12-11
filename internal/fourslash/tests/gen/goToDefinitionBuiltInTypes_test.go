@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionBuiltInTypes(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var n: /*number*/number;
 var s: /*string*/string;

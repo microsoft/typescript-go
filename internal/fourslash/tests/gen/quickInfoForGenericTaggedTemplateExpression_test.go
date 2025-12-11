@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoForGenericTaggedTemplateExpression(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface T1 {}
 class T2 {}

@@ -9,7 +9,7 @@ import (
 
 func TestChainedFatArrowFormatting(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var fn = () => () => null/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

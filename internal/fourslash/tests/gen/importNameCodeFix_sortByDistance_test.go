@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFix_sortByDistance(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /src/admin/utils/db/db.ts

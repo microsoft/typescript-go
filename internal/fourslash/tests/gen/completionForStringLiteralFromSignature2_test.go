@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteralFromSignature2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function f(a: "x"): void;
 declare function f(a: string, b: number): void;

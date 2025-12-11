@@ -9,7 +9,7 @@ import (
 
 func TestUpdateSourceFile_jsdocSignature(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @callback Cb

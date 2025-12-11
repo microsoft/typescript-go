@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForGlobals(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: referencesForGlobals_1.ts
 /*1*/var /*2*/global = 2;

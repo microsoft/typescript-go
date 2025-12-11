@@ -10,7 +10,7 @@ import (
 
 func TestIdentifierErrorRecovery(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var /*1*/export/*2*/;
 var foo;

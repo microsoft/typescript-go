@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListBuilderLocations_Modules(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module A/*moduleName1*/
 module A./*moduleName2*/`

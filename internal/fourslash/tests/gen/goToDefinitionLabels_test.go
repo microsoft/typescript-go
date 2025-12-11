@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionLabels(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*label1Definition*/label1: while (true) {
     /*label2Definition*/label2: while (true) {

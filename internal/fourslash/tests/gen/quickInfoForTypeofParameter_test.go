@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoForTypeofParameter(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo() {
     var y/*ref1*/1: string;

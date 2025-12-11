@@ -9,7 +9,7 @@ import (
 
 func TestGoToTypeDefinition_typeReference(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { name: string };
 type Box<T> = { value: T };

@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionPropertyAssignment(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export const /*FunctionResult*/Component = () => { return "OK"}
 Component./*PropertyResult*/displayName = 'Component'

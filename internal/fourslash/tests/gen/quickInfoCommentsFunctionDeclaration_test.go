@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoCommentsFunctionDeclaration(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This comment should appear for foo*/
 function f/*1*/oo() {

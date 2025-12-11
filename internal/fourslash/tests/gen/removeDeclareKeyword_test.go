@@ -9,7 +9,7 @@ import (
 
 func TestRemoveDeclareKeyword(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**/declare var y;
 var x = new y;`

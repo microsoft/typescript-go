@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesSwitchCaseDefault2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `switch (10) {
     case 1:

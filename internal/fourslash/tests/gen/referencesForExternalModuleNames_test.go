@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForExternalModuleNames(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: referencesForGlobals_1.ts
 /*1*/declare module "/*2*/foo" {

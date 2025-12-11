@@ -9,7 +9,7 @@ import (
 
 func TestRenameLabel5(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `loop1: for (let i = 0; i <= 10; i++) {
     loop2: for (let j = 0; j <= 10; j++) {

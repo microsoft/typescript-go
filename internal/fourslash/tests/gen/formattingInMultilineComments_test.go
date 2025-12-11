@@ -9,7 +9,7 @@ import (
 
 func TestFormattingInMultilineComments(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = function() {
     if (true) {

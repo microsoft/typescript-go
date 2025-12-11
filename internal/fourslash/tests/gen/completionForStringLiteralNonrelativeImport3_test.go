@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImport3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: tests/test0.ts

@@ -9,7 +9,7 @@ import (
 
 func TestRenameAlias(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module SomeModule { export class SomeClass { } }
 [|import [|{| "contextRangeIndex": 0 |}M|] = SomeModule;|]

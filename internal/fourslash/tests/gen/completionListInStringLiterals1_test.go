@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInStringLiterals1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `"/*1*/       /*2*/\/*3*/
  /*4*/   \\/*5*/`

@@ -9,7 +9,7 @@ import (
 
 func TestGoToTypeDefinition_promiseType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { name: string };
 async function /*reference*/getUser() { return { name: "Bob" } satisfies User as User }

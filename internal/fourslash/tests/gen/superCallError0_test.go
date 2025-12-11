@@ -9,7 +9,7 @@ import (
 
 func TestSuperCallError0(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class T5<T>{
     constructor(public bar: T) { }

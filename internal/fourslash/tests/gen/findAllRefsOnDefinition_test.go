@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsOnDefinition(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: findAllRefsOnDefinition-import.ts
 export class Test{

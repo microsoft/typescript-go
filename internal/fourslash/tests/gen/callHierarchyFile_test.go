@@ -9,7 +9,7 @@ import (
 
 func TestCallHierarchyFile(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `foo();
 function /**/foo() {

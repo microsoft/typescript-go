@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListBuilderLocations_properties(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var aa = 1;
 class A1 {

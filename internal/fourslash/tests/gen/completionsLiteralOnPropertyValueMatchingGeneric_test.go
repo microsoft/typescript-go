@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsLiteralOnPropertyValueMatchingGeneric(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.tsx
 declare function bar1<P extends "" | "bar" | "baz">(p: { type: P }): void;

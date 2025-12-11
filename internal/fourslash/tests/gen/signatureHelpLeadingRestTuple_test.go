@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpLeadingRestTuple(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export function leading(...args: [...names: string[], allCaps: boolean]): void {
 }

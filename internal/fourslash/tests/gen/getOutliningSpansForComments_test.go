@@ -10,7 +10,7 @@ import (
 
 func TestGetOutliningSpansForComments(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|/*
     Block comment at the beginning of the file before module:

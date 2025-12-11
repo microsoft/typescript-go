@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarJsDocCommentWithNoTags(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** Test */
 export const Test = {}`

@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarItemsSymbols1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     [Symbol.isRegExp] = 0;

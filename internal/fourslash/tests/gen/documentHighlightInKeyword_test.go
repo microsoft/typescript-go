@@ -10,7 +10,7 @@ import (
 
 func TestDocumentHighlightInKeyword(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export type Foo<T> = {
     [K [|in|] keyof T]: any;

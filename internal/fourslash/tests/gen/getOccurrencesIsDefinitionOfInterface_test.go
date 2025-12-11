@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfInterface(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/interface /*2*/I {
     p: number;

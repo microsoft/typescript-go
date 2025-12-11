@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionImport2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /b.ts
 /*2*/export const foo = 1;

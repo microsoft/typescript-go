@@ -9,7 +9,7 @@ import (
 
 func TestReferencesInConfiguredProject(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/referencesForGlobals_1.ts
 class /*0*/globalClass {

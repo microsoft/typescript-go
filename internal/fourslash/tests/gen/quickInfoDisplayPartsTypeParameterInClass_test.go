@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsTypeParameterInClass(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class /*1*/c</*2*/T> {
     /*3*/constructor(/*4*/a: /*5*/T) {

@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFix_withJson(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export const a = 'a';

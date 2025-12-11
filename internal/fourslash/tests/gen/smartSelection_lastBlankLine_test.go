@@ -9,7 +9,7 @@ import (
 
 func TestSmartSelection_lastBlankLine(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {}
 /**/`

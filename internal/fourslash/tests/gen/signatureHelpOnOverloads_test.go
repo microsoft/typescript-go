@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpOnOverloads(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function fn(x: string);
 declare function fn(x: string, y: number);

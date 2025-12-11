@@ -9,7 +9,7 @@ import (
 
 func TestDeleteClassWithEnumPresent(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum Foo { a, b, c }
 /**/class Bar { }`

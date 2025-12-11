@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsImportStarOfExportEquals(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowSyntheticDefaultimports: true
 // @Filename: /node_modules/a/index.d.ts

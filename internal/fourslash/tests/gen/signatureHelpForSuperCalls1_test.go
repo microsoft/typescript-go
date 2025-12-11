@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpForSuperCalls1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A { }
 class B extends A { }

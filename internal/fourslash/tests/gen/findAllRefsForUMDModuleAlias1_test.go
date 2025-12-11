@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForUMDModuleAlias1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: 0.d.ts
 export function doThing(): string;

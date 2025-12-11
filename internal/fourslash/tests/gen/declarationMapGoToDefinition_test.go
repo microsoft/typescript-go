@@ -9,7 +9,7 @@ import (
 
 func TestDeclarationMapGoToDefinition(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: index.ts
 export class Foo {

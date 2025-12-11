@@ -9,7 +9,7 @@ import (
 
 func TestConstructorFindAllReferences3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export class C {
     /**/constructor() { }

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListAfterSpreadOperator01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let v = [1,2,3,4];
 let x = [.../**/`

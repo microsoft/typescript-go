@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteralRelativeImport6(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @rootDirs: /repo/src1,/repo/src2/,/repo/generated1,/repo/generated2/
 // @Filename: /repo/src1/test1.ts

@@ -9,7 +9,7 @@ import (
 
 func TestCallHierarchyFunctionAmbiguity1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: a.d.ts
 declare function foo(x?: number): void;

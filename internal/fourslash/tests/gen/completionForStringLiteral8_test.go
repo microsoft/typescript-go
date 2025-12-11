@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteral8(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type As = 'arf' | 'abacus' | 'abaddon';
 let a: As;

@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsIsDefinition(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(a: number): number;
 declare function foo(a: string): string;

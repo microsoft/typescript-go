@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsClassDefaultAnonymous(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/export /*2*/default /*3*/class /*4*/ {
 }`

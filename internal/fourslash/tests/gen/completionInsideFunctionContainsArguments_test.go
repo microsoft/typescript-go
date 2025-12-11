@@ -10,7 +10,7 @@ import (
 
 func TestCompletionInsideFunctionContainsArguments(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function testArguments() {/*1*/}
 /*2*/

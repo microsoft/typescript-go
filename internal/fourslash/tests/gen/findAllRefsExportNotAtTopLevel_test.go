@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsExportNotAtTopLevel(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `{
     /*1*/export const /*2*/x = 0;

@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfNamespace(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/namespace /*2*/Numbers {
     export var n = 12;

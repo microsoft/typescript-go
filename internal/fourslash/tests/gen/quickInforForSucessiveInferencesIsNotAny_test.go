@@ -9,7 +9,7 @@ import (
 
 func TestQuickInforForSucessiveInferencesIsNotAny(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function schema<T> (value : T) : {field : T};
 

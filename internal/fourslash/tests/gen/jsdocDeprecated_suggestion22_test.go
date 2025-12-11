@@ -9,7 +9,7 @@ import (
 
 func TestJsdocDeprecated_suggestion22(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 const foo: {

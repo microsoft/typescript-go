@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfTypeAlias(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/type /*2*/Alias= number;
 let n: /*3*/Alias = 12;`

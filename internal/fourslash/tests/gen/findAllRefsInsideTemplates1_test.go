@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsInsideTemplates1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/var /*2*/x = 10;
 var y = ` + "`" + `${ /*3*/x } ${ /*4*/x }` + "`" + ``

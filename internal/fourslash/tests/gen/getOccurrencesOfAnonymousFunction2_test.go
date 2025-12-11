@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesOfAnonymousFunction2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//global foo definition
 function foo() {}

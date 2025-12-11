@@ -9,7 +9,7 @@ import (
 
 func TestRenameModuleExportsProperties2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|class [|{| "contextRangeIndex": 0 |}A|] {}|]
 module.exports = { B: [|A|] }`

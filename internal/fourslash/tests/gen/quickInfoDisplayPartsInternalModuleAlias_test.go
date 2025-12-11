@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsInternalModuleAlias(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module m.m1 {
     export class c {

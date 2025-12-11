@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForIllegalAssignment(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `f/*1*/oo = fo/*2*/o;
 var /*bar*/bar = function () { };

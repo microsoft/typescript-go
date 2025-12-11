@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpObjectLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var objectLiteral = { n: 5, s: "", f: (a: number, b: string) => "" };
 objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");`

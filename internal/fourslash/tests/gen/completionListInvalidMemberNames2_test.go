@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInvalidMemberNames2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare var Symbol: SymbolConstructor;
 interface SymbolConstructor {

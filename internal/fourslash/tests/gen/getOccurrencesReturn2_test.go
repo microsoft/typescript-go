@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesReturn2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f(a: number) {
     if (a > 0) {

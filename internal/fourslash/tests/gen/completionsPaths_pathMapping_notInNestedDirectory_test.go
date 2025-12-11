@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsPaths_pathMapping_notInNestedDirectory(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /user.ts
 import {} from "something//**/";

@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpWithInvalidArgumentList1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(a) { }
 foo(hello my name /**/is`

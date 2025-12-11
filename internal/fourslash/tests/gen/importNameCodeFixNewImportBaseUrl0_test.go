@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportBaseUrl0(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|f1/*0*/();|]
 // @Filename: tsconfig.json

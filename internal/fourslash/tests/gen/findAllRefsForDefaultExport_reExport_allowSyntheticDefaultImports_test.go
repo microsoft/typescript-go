@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForDefaultExport_reExport_allowSyntheticDefaultImports(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowSyntheticDefaultImports: true
 // @Filename: /export.ts

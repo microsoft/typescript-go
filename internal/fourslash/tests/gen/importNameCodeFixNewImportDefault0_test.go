@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportDefault0(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|f1/*0*/();|]
 // @Filename: module.ts

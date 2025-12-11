@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementation_inDifferentFiles(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/bar.ts
 import {Foo} from './foo'

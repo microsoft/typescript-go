@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsNonExistentImport(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import { NonExistentType } from "non-existent-module";
 let foo: /**/`

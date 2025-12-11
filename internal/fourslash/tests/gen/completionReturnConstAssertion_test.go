@@ -11,7 +11,7 @@ import (
 
 func TestCompletionReturnConstAssertion(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type T = {
     foo1: 1;

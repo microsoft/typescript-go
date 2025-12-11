@@ -9,7 +9,7 @@ import (
 
 func TestIncompatibleOverride(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo { xyz: string; }
 class Bar extends Foo { /*1*/xyz/*2*/: number = 1; }

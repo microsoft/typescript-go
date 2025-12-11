@@ -11,7 +11,7 @@ import (
 
 func TestCompletionForQuotedPropertyInPropertyAssignment4(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export interface ConfigFiles {
   jspm: string;

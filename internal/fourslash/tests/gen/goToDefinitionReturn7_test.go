@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionReturn7(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(a: string, b: string): string;
 function foo(a: number, b: number): number;

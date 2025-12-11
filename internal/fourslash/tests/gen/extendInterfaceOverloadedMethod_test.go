@@ -9,7 +9,7 @@ import (
 
 func TestExtendInterfaceOverloadedMethod(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A<T> {
     foo(a: T): B<T>;

@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsUniqueSymbol1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const Symbol: () => symbol;
 namespace M {

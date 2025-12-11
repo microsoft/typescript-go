@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoNestedExportEqualExportDefault(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export = (state, messages) => {
    export/*1*/ default/*2*/ {

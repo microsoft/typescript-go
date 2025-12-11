@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarItemsMultilineStringIdentifiers2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f(p1: () => any, p2: string) { }
 f(() => { }, ` + "`" + `line1\

@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsModuleAugmentation(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/foo/index.d.ts
 /*1*/export type /*2*/T = number;

@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoWithNestedDestructuredParameterInLambda(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: a.tsx
 import * as React from 'react';

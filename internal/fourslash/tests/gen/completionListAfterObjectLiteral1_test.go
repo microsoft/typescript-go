@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListAfterObjectLiteral1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var v = { x: 4, y: 3 }./**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

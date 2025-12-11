@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInUnclosedFunction03(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(x: string, y: number, z: boolean) {
     function bar(a: number, b: string, c: typeof /*1*/

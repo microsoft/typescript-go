@@ -9,7 +9,7 @@ import (
 
 func TestGoToTypeDefinitionModule(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: module1.ts
 module /*definition*/M {

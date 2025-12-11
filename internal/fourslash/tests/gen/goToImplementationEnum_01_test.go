@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementationEnum_01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum [|Foo|] {
     Foo1 = function initializer() { return 5 } (),

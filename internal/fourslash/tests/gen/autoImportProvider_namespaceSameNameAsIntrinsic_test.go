@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportProvider_namespaceSameNameAsIntrinsic(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/fp-ts/package.json
 { "name": "fp-ts", "version": "0.10.4" }

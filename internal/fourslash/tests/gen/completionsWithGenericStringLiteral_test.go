@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsWithGenericStringLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 declare function get<T, K extends keyof T>(obj: T, key: K): T[K];

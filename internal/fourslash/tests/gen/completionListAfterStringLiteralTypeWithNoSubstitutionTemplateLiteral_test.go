@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListAfterStringLiteralTypeWithNoSubstitutionTemplateLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let count: 'one' | 'two';
 count = ` + "`" + `[|/**/|]` + "`" + ``

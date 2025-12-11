@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForDefaultExport01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/export default class /*2*/DefaultExportedClass {
 }

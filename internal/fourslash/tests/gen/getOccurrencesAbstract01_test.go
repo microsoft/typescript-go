@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesAbstract01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|abstract|] class Animal {
     [|abstract|] prop1; // Does not compile

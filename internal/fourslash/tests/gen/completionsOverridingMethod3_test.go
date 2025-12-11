@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsOverridingMethod3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 // @Filename: boo.d.ts

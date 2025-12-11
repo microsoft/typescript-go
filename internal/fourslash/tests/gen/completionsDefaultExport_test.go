@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsDefaultExport(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export default function f() {}

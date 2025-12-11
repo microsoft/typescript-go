@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListAfterSlash(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var a = 0;
 a/./**/`

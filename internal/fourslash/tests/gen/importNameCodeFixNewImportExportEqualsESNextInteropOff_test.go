@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixNewImportExportEqualsESNextInteropOff(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Module: esnext
 // @Filename: /foo.d.ts

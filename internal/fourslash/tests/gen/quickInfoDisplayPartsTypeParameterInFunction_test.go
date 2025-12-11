@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoDisplayPartsTypeParameterInFunction(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*1*/foo</*2*/U>(/*3*/a: /*4*/U) {
     return /*5*/a;

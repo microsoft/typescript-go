@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_default_alreadyExistedWithRename(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export default function foo() {}

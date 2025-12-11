@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsImport_notFromUnrelatedNodeModules(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /unrelated/node_modules/@types/foo/index.d.ts

@@ -10,7 +10,7 @@ import (
 
 func TestDocumentHighlightAtInheritedProperties2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: file1.ts
 class class1 extends class1 {

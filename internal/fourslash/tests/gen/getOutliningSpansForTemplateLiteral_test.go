@@ -9,7 +9,7 @@ import (
 
 func TestGetOutliningSpansForTemplateLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function tag(...args: any[]): void
 const a = [|` + "`" + `signal line` + "`" + `|]

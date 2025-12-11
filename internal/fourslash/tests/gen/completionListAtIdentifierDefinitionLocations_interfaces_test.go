@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListAtIdentifierDefinitionLocations_interfaces(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var aa = 1;
 interface /*interfaceName1*/

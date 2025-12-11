@@ -9,7 +9,7 @@ import (
 
 func TestFormattingOnNestedDoWhileByEnter(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*2*/do{
 /*3*/do/*1*/{

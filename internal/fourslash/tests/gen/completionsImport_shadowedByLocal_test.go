@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsImport_shadowedByLocal(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /a.ts

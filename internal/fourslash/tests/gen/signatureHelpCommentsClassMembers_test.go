@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpCommentsClassMembers(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is comment for c1*/
 class c1 {

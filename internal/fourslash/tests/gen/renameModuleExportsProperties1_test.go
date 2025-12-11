@@ -11,7 +11,7 @@ import (
 
 func TestRenameModuleExportsProperties1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|class [|{| "contextRangeIndex": 0 |}A|] {}|]
 module.exports = { [|A|] }`

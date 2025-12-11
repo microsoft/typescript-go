@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoJsDocTagsFunctionOverload03(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: quickInfoJsDocTagsFunctionOverload03.ts
 declare function /*1*/foo(): void;

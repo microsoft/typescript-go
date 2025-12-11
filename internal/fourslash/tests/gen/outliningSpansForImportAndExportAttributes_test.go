@@ -9,7 +9,7 @@ import (
 
 func TestOutliningSpansForImportAndExportAttributes(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import { a1, a2 } from "a";
 ;

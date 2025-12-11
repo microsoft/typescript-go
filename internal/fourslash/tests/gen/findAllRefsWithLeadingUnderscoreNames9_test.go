@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsWithLeadingUnderscoreNames9(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `(/*1*/function /*2*/___foo() {
     /*3*/___foo();

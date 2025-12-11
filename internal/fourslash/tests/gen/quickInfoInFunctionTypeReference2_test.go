@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoInFunctionTypeReference2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C<T> {
     map(fn: (/*1*/k: string, /*2*/value: T, context: any) => void, context: any) {

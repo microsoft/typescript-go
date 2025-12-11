@@ -9,7 +9,7 @@ import (
 
 func TestDeclarationMapsGoToDefinitionSameNameDifferentDirectory(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: BaseClass/Source.d.ts
 declare class Control {

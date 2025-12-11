@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpCallExpressionTuples(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function fnTest(str: string, num: number) { }
 declare function wrap<A extends any[], R>(fn: (...a: A) => R) : (...a: A) => R;

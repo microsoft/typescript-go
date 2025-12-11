@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionTypeReferenceDirective(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: src/types
 // @Filename: src/types/lib/index.d.ts

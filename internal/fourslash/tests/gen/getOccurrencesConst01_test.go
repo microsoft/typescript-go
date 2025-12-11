@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesConst01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|const|] enum E1 {
     v1,

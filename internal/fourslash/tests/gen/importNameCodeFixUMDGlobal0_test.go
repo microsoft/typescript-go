@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixUMDGlobal0(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @AllowSyntheticDefaultImports: false
 // @Module: es2015

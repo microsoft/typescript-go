@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListOnSuper(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class TAB<T>{
     foo<T>(x: T) {

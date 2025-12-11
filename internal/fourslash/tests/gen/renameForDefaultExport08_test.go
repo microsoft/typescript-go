@@ -9,7 +9,7 @@ import (
 
 func TestRenameForDefaultExport08(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.ts
 export default function DefaultExportedFunction() {

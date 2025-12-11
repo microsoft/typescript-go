@@ -9,7 +9,7 @@ import (
 
 func TestErrorConsistency(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Int<T> {
 val<U>(f: (t: T) => U): Int<U>;

@@ -13,7 +13,7 @@ import (
 
 func TestAutoImportSpecifierExcludeRegexes1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: preserve
 // @Filename: /node_modules/lib/index.d.ts

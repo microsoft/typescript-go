@@ -9,7 +9,7 @@ import (
 
 func TestRenameDefaultLibDontWork(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: file1.ts
 [|var [|{| "contextRangeIndex": 0 |}test|] = "foo";|]

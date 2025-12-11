@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_preferUpdatingExistingImport(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /deep/module/why/you/want/this/path.ts

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListFunctionMembers(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function fnc1() {
     var bar = 1;

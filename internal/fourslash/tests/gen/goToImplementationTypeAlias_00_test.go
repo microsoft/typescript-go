@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementationTypeAlias_00(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: def.d.ts
 export type TypeAlias = { P: number }

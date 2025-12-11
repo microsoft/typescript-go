@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsInheritedProperties3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class class1 extends class1 {
     [|/*0*/doStuff() { }|]

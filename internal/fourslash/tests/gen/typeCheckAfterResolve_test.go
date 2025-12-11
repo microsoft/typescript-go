@@ -9,7 +9,7 @@ import (
 
 func TestTypeCheckAfterResolve(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*start*/class Point implements /*IPointRef*/IPoint {
     getDist() {

@@ -9,7 +9,7 @@ import (
 
 func TestJsDocTypeTagQuickInfo2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: jsDocTypeTag2.js

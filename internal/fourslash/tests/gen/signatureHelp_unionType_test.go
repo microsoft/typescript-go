@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelp_unionType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const a: (fn?: ((x: string) => string) | ((y: number) => number)) => void;
 declare const b: (x: string | number) => void;

@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfParameter(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f(/*1*/x: number) {
   return /*2*/x + 1

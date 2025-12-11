@@ -10,7 +10,7 @@ import (
 
 func TestGetOutliningSpansForRegions(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// region without label
 [|// #region

@@ -10,7 +10,7 @@ import (
 
 func TestInlayHintsFunctionParameterTypes3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IFoo {
     bar(x?: boolean): void;

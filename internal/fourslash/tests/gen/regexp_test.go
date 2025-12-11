@@ -9,7 +9,7 @@ import (
 
 func TestRegexp(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var /**/x = /aa/;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

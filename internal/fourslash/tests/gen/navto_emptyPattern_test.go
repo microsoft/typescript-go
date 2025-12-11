@@ -11,7 +11,7 @@ import (
 
 func TestNavto_emptyPattern(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: foo.ts
 const [|x: number = 1|];

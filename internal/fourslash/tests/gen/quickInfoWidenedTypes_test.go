@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoWidenedTypes(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var /*1*/a = null;                   // var a: any
 var /*2*/b = undefined;              // var b: any

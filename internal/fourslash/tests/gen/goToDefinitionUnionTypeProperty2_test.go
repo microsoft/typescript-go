@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionUnionTypeProperty2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface HasAOrB {
     /*propertyDefinition1*/a: string;

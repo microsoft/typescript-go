@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListStringParenthesizedType(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type T1 = "a" | "b" | "c";
 type T2<T extends T1> = {};

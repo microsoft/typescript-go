@@ -10,7 +10,7 @@ import (
 
 func TestNoCompletionsForCurrentOrLaterParametersInDefaults(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f1(a = /*1*/, b) { }
 function f2(a = a/*2*/, b) { }

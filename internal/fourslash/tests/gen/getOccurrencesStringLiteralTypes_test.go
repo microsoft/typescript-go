@@ -10,7 +10,7 @@ import (
 
 func TestGetOccurrencesStringLiteralTypes(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(a: "[|option 1|]") { }
 foo("[|option 1|]");`

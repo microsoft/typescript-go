@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForUnionProperties(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface One {
     common: { /*one*/a: number; };

@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForStringLiteralTypes(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Options = "/*1*/option 1" | "option 2";
 let myOption: Options = "/*2*/option 1";`

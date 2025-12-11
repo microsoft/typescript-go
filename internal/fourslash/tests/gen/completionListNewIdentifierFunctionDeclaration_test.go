@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListNewIdentifierFunctionDeclaration(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 function F(pref: (a/*1*/`

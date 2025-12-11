@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarAnonymousClassAndFunctionExpressions3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `describe('foo', () => {
     test(` + "`" + `a ${1} b ${2}` + "`" + `, () => {})

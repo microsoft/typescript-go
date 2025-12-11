@@ -9,7 +9,7 @@ import (
 
 func TestFindAllReferencesTripleSlash(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @checkJs: true
 // @Filename: /node_modules/@types/globals/index.d.ts

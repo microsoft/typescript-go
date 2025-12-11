@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionAmbiants(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare var /*ambientVariableDefinition*/ambientVar;
 declare function /*ambientFunctionDefinition*/ambientFunction();

@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoCommentsCommentParsing(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/// This is simple /// comments
 function simple() {

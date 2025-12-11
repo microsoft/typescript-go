@@ -9,7 +9,7 @@ import (
 
 func TestDuplicateTypeParameters(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A<B, /**/B>  { }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

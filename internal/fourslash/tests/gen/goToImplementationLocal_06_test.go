@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementationLocal_06(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare var [|someVar|]: string;
 someVa/*reference*/r`

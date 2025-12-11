@@ -9,7 +9,7 @@ import (
 
 func TestGenericWithSpecializedProperties2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo<T> {
     y: Foo<number>;

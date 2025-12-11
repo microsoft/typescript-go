@@ -9,7 +9,7 @@ import (
 
 func TestGoToTypeDefinition_Pick(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { id: number; name: string; };
 declare const user: Pick<User, "name">

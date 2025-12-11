@@ -9,7 +9,7 @@ import (
 
 func TestSymbolNameAtUnparseableFunctionOverload(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class TestClass {
     public function foo(x: string): void;

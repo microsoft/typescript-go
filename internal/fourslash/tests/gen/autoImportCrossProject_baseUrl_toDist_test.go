@@ -10,7 +10,7 @@ import (
 
 func TestAutoImportCrossProject_baseUrl_toDist(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/common/tsconfig.json
 {

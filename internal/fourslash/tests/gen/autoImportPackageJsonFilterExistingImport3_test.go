@@ -9,7 +9,7 @@ import (
 
 func TestAutoImportPackageJsonFilterExistingImport3(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: preserve
 // @Filename: /home/src/workspaces/project/node_modules/@types/node/index.d.ts

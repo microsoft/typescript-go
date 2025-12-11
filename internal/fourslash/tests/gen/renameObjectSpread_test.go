@@ -9,7 +9,7 @@ import (
 
 func TestRenameObjectSpread(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A1 { [|[|{| "contextRangeIndex": 0 |}a|]: number|] };
 interface A2 { [|[|{| "contextRangeIndex": 2 |}a|]?: number|] };

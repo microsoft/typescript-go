@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfVariable(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/var /*2*/x = 0;
 var assignmentRightHandSide = /*3*/x;

@@ -9,7 +9,7 @@ import (
 
 func TestFailureToImplementClass(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IExec {
     exec: (filename: string, cmdLine: string) => boolean;

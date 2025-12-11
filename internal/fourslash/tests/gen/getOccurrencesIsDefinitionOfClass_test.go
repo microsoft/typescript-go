@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfClass(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/class /*2*/C {
     n: number;

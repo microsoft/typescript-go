@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportSortCaseSensitivity2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export interface HasBar { bar: number }

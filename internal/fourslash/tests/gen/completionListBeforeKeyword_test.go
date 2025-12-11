@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListBeforeKeyword(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Completion after dot in named type, when the following line has a keyword
 module TypeModule1 {

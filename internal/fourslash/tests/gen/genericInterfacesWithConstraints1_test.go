@@ -9,7 +9,7 @@ import (
 
 func TestGenericInterfacesWithConstraints1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A { a: string; }
 interface B extends A { b: string; }

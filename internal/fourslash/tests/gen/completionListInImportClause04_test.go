@@ -12,7 +12,7 @@ import (
 
 func TestCompletionListInImportClause04(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.d.ts
  declare class Foo {

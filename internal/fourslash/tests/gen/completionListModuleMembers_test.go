@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListModuleMembers(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` module Module {
      var innerVariable = 1;

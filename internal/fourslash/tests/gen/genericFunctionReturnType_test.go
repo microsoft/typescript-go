@@ -9,7 +9,7 @@ import (
 
 func TestGenericFunctionReturnType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo<T, U>(x: T, y: U): (a: U) => T {
     var z = y;

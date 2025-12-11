@@ -9,7 +9,7 @@ import (
 
 func TestSignatureHelpInCompleteGenericsCall(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo<T>(x: number, callback: (x: T) => number) {
 }

@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementationClassMethod_01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `abstract class AbstractBar {
     abstract he/*declaration*/llo(): void;

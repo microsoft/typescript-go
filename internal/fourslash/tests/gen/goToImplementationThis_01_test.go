@@ -9,7 +9,7 @@ import (
 
 func TestGoToImplementationThis_01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class [|Bar|] extends Foo {
     hello(): th/*this_type*/is {

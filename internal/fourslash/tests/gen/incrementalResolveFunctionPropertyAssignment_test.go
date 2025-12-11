@@ -9,7 +9,7 @@ import (
 
 func TestIncrementalResolveFunctionPropertyAssignment(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function bar(indexer: { getLength(): number; getTypeAtIndex(index: number): string; }): string {
     return indexer.getTypeAtIndex(indexer.getLength() - 1);

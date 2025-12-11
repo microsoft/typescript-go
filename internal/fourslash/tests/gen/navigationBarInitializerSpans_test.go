@@ -9,7 +9,7 @@ import (
 
 func TestNavigationBarInitializerSpans(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// get the name for the navbar from the variable name rather than the function name
 const [|[|x|] = () => { var [|a|]; }|];

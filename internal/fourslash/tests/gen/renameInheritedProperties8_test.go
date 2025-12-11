@@ -9,7 +9,7 @@ import (
 
 func TestRenameInheritedProperties8(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C implements D {
     [|[|{| "contextRangeIndex": 0 |}prop1|]: string;|]

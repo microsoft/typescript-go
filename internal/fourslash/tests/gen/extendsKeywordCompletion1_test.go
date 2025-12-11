@@ -12,7 +12,7 @@ import (
 
 func TestExtendsKeywordCompletion1(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export interface B ex/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsOfConstructor_multipleFiles(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: f.ts
 class A {

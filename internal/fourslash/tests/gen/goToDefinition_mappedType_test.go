@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinition_mappedType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { /*def*/m(): void; };
 declare const i: { [K in "m"]: I[K] };

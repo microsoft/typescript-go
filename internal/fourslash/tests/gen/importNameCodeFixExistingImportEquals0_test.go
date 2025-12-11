@@ -9,7 +9,7 @@ import (
 
 func TestImportNameCodeFixExistingImportEquals0(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|import ns = require("ambient-module");
 var x = v1/*0*/ + 5;|]

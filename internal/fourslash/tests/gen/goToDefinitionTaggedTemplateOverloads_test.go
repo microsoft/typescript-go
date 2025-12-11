@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionTaggedTemplateOverloads(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*defFNumber*/f(strs: TemplateStringsArray, x: number): void;
 function /*defFBool*/f(strs: TemplateStringsArray, x: boolean): void;

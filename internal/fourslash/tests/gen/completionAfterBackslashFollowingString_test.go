@@ -10,7 +10,7 @@ import (
 
 func TestCompletionAfterBackslashFollowingString(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `Harness.newLine = ""\n/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

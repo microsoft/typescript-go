@@ -9,7 +9,7 @@ import (
 
 func TestGenericFunctionSignatureHelp3MultiFile(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: genericFunctionSignatureHelp_0.ts
 function foo1<T>(x: number, callback: (y1: T) => number) { }

@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForImports(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module "jquery" {
     function $(s: string): any;

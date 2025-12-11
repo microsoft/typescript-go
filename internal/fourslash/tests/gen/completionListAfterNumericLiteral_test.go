@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListAfterNumericLiteral(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: f1.ts
 0./*dotOnNumberExpressions1*/

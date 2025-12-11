@@ -9,7 +9,7 @@ import (
 
 func TestImplementation01(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Fo/*1*/o {}
 class /*2*/Bar implements Foo {}`

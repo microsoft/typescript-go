@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoForIn(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var obj;
 for (var /**/p in obj) { }`

@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForVariableInExtendsClause02(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/interface /*2*/Base { }
 namespace n {

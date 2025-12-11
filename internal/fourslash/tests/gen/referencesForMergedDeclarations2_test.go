@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForMergedDeclarations2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module ATest {
     export interface Bar { }

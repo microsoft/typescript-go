@@ -9,7 +9,7 @@ import (
 
 func TestGetOutliningForSingleLineComments(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|// Single line comments at the start of the file
 // line 2

@@ -11,7 +11,7 @@ import (
 
 func TestModuleMembersOfGenericType(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     export var x = <T>(x: T) => x;

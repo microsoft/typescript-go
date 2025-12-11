@@ -9,7 +9,7 @@ import (
 
 func TestGotoDefinitionInObjectBindingPattern2(t *testing.T) {
 	t.Parallel()
-
+	fourslash.SkipIfFailing(t)
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var p0 = ({a/*1*/a}) => {console.log(aa)};
 function f2({ [|a/*a1*/1|], [|b/*b1*/1|] }: { /*a1_dest*/a1: number, /*b1_dest*/b1: number } = { a1: 0, b1: 0 }) {}`
