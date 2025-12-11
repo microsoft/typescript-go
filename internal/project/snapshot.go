@@ -39,6 +39,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	AutoImports                        *autoimport.Registry
+	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	config                             Config
 
@@ -54,6 +55,8 @@ func NewSnapshot(
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	config Config,
+	autoImports *autoimport.Registry,
+	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -67,6 +70,8 @@ func NewSnapshot(
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		config:                             config,
+		AutoImports:                        autoImports,
+		autoImportsWatch:                   autoImportsWatch,
 	}
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
@@ -380,6 +385,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	if change.ResourceRequest.AutoImports != "" {
 		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
 	}
+	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
 		RequestedFile:   prepareAutoImports,
 		OpenFiles:       openFiles,
@@ -389,6 +395,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		RebuiltPrograms: projectsWithNewProgramStructure,
 		UserPreferences: config.tsUserPreferences,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
+	if err == nil {
+		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())
+	}
 
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
@@ -398,6 +407,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		nil,
 		compilerOptionsForInferredProjects,
 		config,
+		autoImports,
+		autoImportsWatch,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id
@@ -405,9 +416,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.ConfigFileRegistry = configFileRegistry
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
-	if err == nil {
-		newSnapshot.AutoImports = autoImports
-	}
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)

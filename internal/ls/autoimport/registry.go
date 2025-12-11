@@ -202,6 +202,16 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 	return true
 }
 
+func (r *Registry) NodeModulesDirectories() map[tspath.Path]string {
+	dirs := make(map[tspath.Path]string)
+	for dirPath, dir := range r.directories {
+		if dir.hasNodeModules {
+			dirs[tspath.Path(tspath.CombinePaths(string(dirPath), "node_modules"))] = tspath.CombinePaths(dir.name, "node_modules")
+		}
+	}
+	return dirs
+}
+
 func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost, logger *logging.LogTree) (*Registry, error) {
 	// !!! try to do less to discover that this call is a no-op
 	start := time.Now()
@@ -499,8 +509,6 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 }
 
 func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *logging.LogTree) {
-	start := time.Now()
-
 	// Mark new program structures
 	for projectPath := range change.RebuiltPrograms.Keys() {
 		if bucket, ok := b.projects.Get(projectPath); ok {
@@ -565,10 +573,6 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 	markFilesDirty(change.Created.Keys())
 	markFilesDirty(change.Deleted.Keys())
 	markFilesDirty(change.Changed.Keys())
-
-	if logger != nil {
-		logger.Logf("Marked buckets dirty in %v", time.Since(start))
-	}
 }
 
 func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChange, logger *logging.LogTree) {

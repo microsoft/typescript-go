@@ -163,6 +163,21 @@ func NewSession(init *SessionInit) *Session {
 			&ConfigFileRegistry{},
 			nil,
 			Config{},
+			nil,
+			NewWatchedFiles(
+				"auto-import",
+				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+				func(nodeModulesDirs map[tspath.Path]string) PatternsAndIgnored {
+					patterns := make([]string, 0, len(nodeModulesDirs))
+					for _, dir := range nodeModulesDirs {
+						patterns = append(patterns, getRecursiveGlobPattern(dir))
+					}
+					slices.Sort(patterns)
+					return PatternsAndIgnored{
+						patterns: patterns,
+					}
+				},
+			),
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
@@ -694,6 +709,10 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			}
 		},
 	)
+
+	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
+		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
+	}
 
 	if len(errors) > 0 {
 		return fmt.Errorf("errors updating watches: %v", errors)
