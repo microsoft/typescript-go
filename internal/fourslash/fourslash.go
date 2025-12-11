@@ -2548,6 +2548,17 @@ func (f *FourslashTest) Backspace(t *testing.T, count int) {
 	// f.checkPostEditInvariants() // !!! do we need this?
 }
 
+// DeleteAtCaret removes the text at the current caret position as if the user pressed delete `count` times.
+func (f *FourslashTest) DeleteAtCaret(t *testing.T, count int) {
+	script := f.getScriptInfo(f.activeFilename)
+	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+
+	for range count {
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, offset, offset+1, "")
+		// Position stays the same after delete (unlike backspace)
+	}
+}
+
 // Enters text as if the user had pasted it.
 func (f *FourslashTest) Paste(t *testing.T, text string) {
 	script := f.getScriptInfo(f.activeFilename)
@@ -3847,4 +3858,55 @@ func collectDocumentSymbolSpans(
 			collectDocumentSymbolSpans(uri, child, spansToSymbol)
 		}
 	}
+}
+
+// VerifyNumberOfErrorsInCurrentFile verifies that the current file has the expected number of errors.
+func (f *FourslashTest) VerifyNumberOfErrorsInCurrentFile(t *testing.T, expectedCount int) {
+	diagnostics := f.getDiagnostics(t, f.activeFilename)
+	// Filter to only include errors (not suggestions/hints)
+	errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
+		return d.Severity != nil && *d.Severity == lsproto.DiagnosticSeverityError
+	})
+	if len(errors) != expectedCount {
+		t.Fatalf("Expected %d errors in current file, but got %d", expectedCount, len(errors))
+	}
+}
+
+// VerifyNoErrors verifies that no errors exist in any open files.
+func (f *FourslashTest) VerifyNoErrors(t *testing.T) {
+	for fileName := range f.openFiles {
+		diagnostics := f.getDiagnostics(t, fileName)
+		// Filter to only include errors (not suggestions/hints)
+		errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
+			return d.Severity != nil && *d.Severity == lsproto.DiagnosticSeverityError
+		})
+		if len(errors) > 0 {
+			var messages []string
+			for _, err := range errors {
+				messages = append(messages, err.Message)
+			}
+			t.Fatalf("Expected no errors but found %d in %s: %v", len(errors), fileName, messages)
+		}
+	}
+}
+
+// VerifyErrorExistsAtRange verifies that an error with the given code exists at the given range.
+func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *RangeMarker, code int, message string) {
+	diagnostics := f.getDiagnostics(t, rangeMarker.FileName())
+	for _, diag := range diagnostics {
+		if diag.Code != nil && diag.Code.Integer != nil && int(*diag.Code.Integer) == code {
+			// Check if the range matches
+			if diag.Range.Start.Line == rangeMarker.LSRange.Start.Line &&
+				diag.Range.Start.Character == rangeMarker.LSRange.Start.Character &&
+				diag.Range.End.Line == rangeMarker.LSRange.End.Line &&
+				diag.Range.End.Character == rangeMarker.LSRange.End.Character {
+				// If message is provided, verify it matches
+				if message != "" && diag.Message != message {
+					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message)
+				}
+				return
+			}
+		}
+	}
+	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
 }
