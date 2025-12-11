@@ -567,7 +567,7 @@ func (f *NodeFactory) NewParamHelper(expression *ast.Node, parameterOffset int, 
 		f.NewUnscopedHelperName("__param"),
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
-		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(fmt.Sprint(parameterOffset)), expression}),
+		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(strconv.Itoa(parameterOffset)), expression}),
 		ast.NodeFlagsNone,
 	)
 	helper.Loc = location

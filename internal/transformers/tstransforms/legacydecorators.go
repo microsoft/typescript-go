@@ -770,7 +770,7 @@ func getDecoratorsOfParameters(node *ast.Node) [][]*ast.Node {
 			firstParameterOffset = 1
 			numParameters = numParameters - 1
 		}
-		for i := 0; i < numParameters; i++ {
+		for i := range numParameters {
 			p := parameters[i+firstParameterOffset]
 			if len(decorators) > 0 || ast.HasDecorators(p) {
 				if len(decorators) == 0 {
