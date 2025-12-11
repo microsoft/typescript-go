@@ -3865,7 +3865,7 @@ func (f *FourslashTest) VerifyNumberOfErrorsInCurrentFile(t *testing.T, expected
 	diagnostics := f.getDiagnostics(t, f.activeFilename)
 	// Filter to only include errors (not suggestions/hints)
 	errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
-		return d.Severity != nil && *d.Severity == lsproto.DiagnosticSeverityError
+		return !isSuggestionDiagnostic(d)
 	})
 	if len(errors) != expectedCount {
 		t.Fatalf("Expected %d errors in current file, but got %d", expectedCount, len(errors))
@@ -3878,7 +3878,7 @@ func (f *FourslashTest) VerifyNoErrors(t *testing.T) {
 		diagnostics := f.getDiagnostics(t, fileName)
 		// Filter to only include errors (not suggestions/hints)
 		errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
-			return d.Severity != nil && *d.Severity == lsproto.DiagnosticSeverityError
+			return !isSuggestionDiagnostic(d)
 		})
 		if len(errors) > 0 {
 			var messages []string
@@ -3954,7 +3954,7 @@ func (f *FourslashTest) VerifyErrorExistsBetweenMarkers(t *testing.T, startMarke
 	endPos := endMarker.Position
 
 	for _, diag := range diagnostics {
-		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+		if !isSuggestionDiagnostic(diag) {
 			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.Start))
 			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.End))
 			if diagStart >= startPos && diagEnd <= endPos {
@@ -3986,7 +3986,7 @@ func (f *FourslashTest) VerifyErrorExistsAfterMarker(t *testing.T, markerName st
 	diagnostics := f.getDiagnostics(t, fileName)
 
 	for _, diag := range diagnostics {
-		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+		if !isSuggestionDiagnostic(diag) {
 			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.Start))
 			if diagStart >= markerPos {
 				return // Found an error after the marker
@@ -4017,7 +4017,7 @@ func (f *FourslashTest) VerifyErrorExistsBeforeMarker(t *testing.T, markerName s
 	diagnostics := f.getDiagnostics(t, fileName)
 
 	for _, diag := range diagnostics {
-		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+		if !isSuggestionDiagnostic(diag) {
 			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.End))
 			if diagEnd <= markerPos {
 				return // Found an error before the marker
