@@ -27,6 +27,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+// isValidSliceRange checks if the given start and end indices are valid for slicing a string/slice of the given length.
+func isValidSliceRange(start, end, length int) bool {
+	return start >= 0 && end >= 0 && start <= end && end <= length
+}
+
 type SymbolExportInfo struct {
 	symbol            *ast.Symbol
 	moduleSymbol      *ast.Symbol
@@ -116,16 +121,27 @@ func (e *ExportInfoMap) add(
 			topLevelNodeModulesIndex := nodeModulesPathParts.TopLevelNodeModulesIndex
 			topLevelPackageNameIndex := nodeModulesPathParts.TopLevelPackageNameIndex
 			packageRootIndex := nodeModulesPathParts.PackageRootIndex
-			packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(moduleFile.FileName()[topLevelPackageNameIndex+1 : packageRootIndex]))
-			if strings.HasPrefix(string(importingFile), string(moduleFile.Path())[0:topLevelNodeModulesIndex]) {
-				nodeModulesPath := moduleFile.FileName()[0 : topLevelPackageNameIndex+1]
-				if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {
-					prevDeepestNodeModulesIndex := strings.Index(prevDeepestNodeModulesPath, "/node_modules/")
-					if topLevelNodeModulesIndex > prevDeepestNodeModulesIndex {
+
+			// Bounds check to prevent slice bounds out of range panic
+			fileName := moduleFile.FileName()
+			if isValidSliceRange(topLevelPackageNameIndex+1, packageRootIndex, len(fileName)) {
+				packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(fileName[topLevelPackageNameIndex+1 : packageRootIndex]))
+			}
+
+			// Bounds check for module path slice
+			modulePath := string(moduleFile.Path())
+			if topLevelNodeModulesIndex >= 0 && topLevelNodeModulesIndex <= len(modulePath) && strings.HasPrefix(string(importingFile), modulePath[0:topLevelNodeModulesIndex]) {
+				// Bounds check for node modules path slice
+				if topLevelPackageNameIndex >= 0 && topLevelPackageNameIndex+1 <= len(fileName) {
+					nodeModulesPath := fileName[0 : topLevelPackageNameIndex+1]
+					if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {
+						prevDeepestNodeModulesIndex := strings.Index(prevDeepestNodeModulesPath, "/node_modules/")
+						if topLevelNodeModulesIndex > prevDeepestNodeModulesIndex {
+							e.packages[packageName] = nodeModulesPath
+						}
+					} else {
 						e.packages[packageName] = nodeModulesPath
 					}
-				} else {
-					e.packages[packageName] = nodeModulesPath
 				}
 			}
 		}
@@ -152,6 +168,10 @@ func (e *ExportInfoMap) add(
 		names = getNamesForExportedSymbol(namedSymbol, ch, core.ScriptTargetNone)
 	}
 
+	// Bounds check to prevent slice bounds out of range panic
+	if len(names) == 0 {
+		return
+	}
 	symbolName := names[0]
 	if symbolNameMatch != nil && !symbolNameMatch(symbolName) {
 		return
@@ -714,12 +734,23 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	sourceFileCache := map[*ast.SourceFile]packageJsonFilterResult{}
 
 	getNodeModuleRootSpecifier := func(fullSpecifier string) string {
-		components := tspath.GetPathComponents(modulespecifiers.GetPackageNameFromTypesPackageName(fullSpecifier), "")[1:]
+		components := tspath.GetPathComponents(modulespecifiers.GetPackageNameFromTypesPackageName(fullSpecifier), "")
+		// Bounds check to prevent slice bounds out of range panic
+		if len(components) < 2 {
+			return ""
+		}
+		components = components[1:]
 		// Scoped packages
-		if strings.HasPrefix(components[0], "@") {
+		if len(components) > 0 && strings.HasPrefix(components[0], "@") {
+			if len(components) < 2 {
+				return components[0]
+			}
 			return fmt.Sprintf("%s/%s", components[0], components[1])
 		}
-		return components[0]
+		if len(components) > 0 {
+			return components[0]
+		}
+		return ""
 	}
 
 	moduleSpecifierIsCoveredByPackageJson := func(specifier string) bool {
