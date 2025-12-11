@@ -290,6 +290,10 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithoutClassDeco
 	initialMembers := tx.Visitor().VisitNodes(node.Members)
 	members, decorationStatements := tx.transformDecoratorsOfClassElements(node, initialMembers)
 
+	if name == nil && len(decorationStatements) > 0 {
+		name = tx.Factory().NewGeneratedNameForNode(node.AsNode())
+	}
+
 	updated := tx.Factory().UpdateClassDeclaration(
 		node,
 		modifiers,
