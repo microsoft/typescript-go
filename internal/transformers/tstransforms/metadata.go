@@ -129,7 +129,7 @@ func (tx *MetadataTransformer) visitPropertyDeclaration(node *ast.PropertyDeclar
 }
 
 func (tx *MetadataTransformer) visitMethodDeclaration(node *ast.MethodDeclaration) *ast.Node {
-	if !ast.HasDecorators(node.AsNode()) {
+	if !ast.HasDecorators(node.AsNode()) && len(getDecoratorsOfParameters(node.AsNode())) == 0 {
 		return tx.Visitor().VisitEachChild(node.AsNode())
 	}
 
@@ -149,7 +149,7 @@ func (tx *MetadataTransformer) visitMethodDeclaration(node *ast.MethodDeclaratio
 }
 
 func (tx *MetadataTransformer) visitSetAccessor(node *ast.SetAccessorDeclaration) *ast.Node {
-	if !ast.HasDecorators(node.AsNode()) {
+	if !ast.HasDecorators(node.AsNode()) && len(getDecoratorsOfParameters(node.AsNode())) == 0 {
 		return tx.Visitor().VisitEachChild(node.AsNode())
 	}
 
@@ -231,7 +231,9 @@ func (tx *MetadataTransformer) injectClassElementTypeMetadata(list *ast.Modifier
 		}
 		if len(originalNodes) == 0 {
 			res := tx.Factory().NewModifierList(metadata)
-			res.Loc = list.Loc
+			if list != nil {
+				res.Loc = list.Loc
+			}
 			return res
 		}
 		var modifiersArray []*ast.Node
