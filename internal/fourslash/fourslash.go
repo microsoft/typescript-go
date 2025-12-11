@@ -3910,3 +3910,119 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 	}
 	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
 }
+
+// VerifyCurrentLineContentIs verifies that the current line content matches the expected text.
+func (f *FourslashTest) VerifyCurrentLineContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	lines := strings.Split(script.content, "\n")
+	lineNum := int(f.currentCaretPosition.Line)
+	if lineNum >= len(lines) {
+		t.Fatalf("Current line %d is out of range (file has %d lines)", lineNum, len(lines))
+	}
+	actualLine := lines[lineNum]
+	// Handle \r if present
+	actualLine = strings.TrimSuffix(actualLine, "\r")
+	if actualLine != expectedText {
+		t.Fatalf("Current line content mismatch.\nExpected: %q\nActual: %q", expectedText, actualLine)
+	}
+}
+
+// VerifyCurrentFileContentIs verifies that the current file content matches the expected text.
+func (f *FourslashTest) VerifyCurrentFileContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	if script.content != expectedText {
+		t.Fatalf("Current file content mismatch.\nExpected: %q\nActual: %q", expectedText, script.content)
+	}
+}
+
+// VerifyErrorExistsBetweenMarkers verifies that an error exists between the two markers.
+func (f *FourslashTest) VerifyErrorExistsBetweenMarkers(t *testing.T, startMarkerName string, endMarkerName string) {
+	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
+	if !ok {
+		t.Fatalf("Start marker '%s' not found", startMarkerName)
+	}
+	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
+	if !ok {
+		t.Fatalf("End marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName() != endMarker.FileName() {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+
+	diagnostics := f.getDiagnostics(t, startMarker.FileName())
+	startPos := startMarker.Position
+	endPos := endMarker.Position
+
+	for _, diag := range diagnostics {
+		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.Start))
+			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.End))
+			if diagStart >= startPos && diagEnd <= endPos {
+				return // Found an error in the range
+			}
+		}
+	}
+	t.Fatalf("Expected error between markers '%s' and '%s' but none was found", startMarkerName, endMarkerName)
+}
+
+// VerifyErrorExistsAfterMarker verifies that an error exists after the given marker.
+func (f *FourslashTest) VerifyErrorExistsAfterMarker(t *testing.T, markerName string) {
+	var fileName string
+	var markerPos int
+
+	if markerName == "" {
+		// Use current position
+		fileName = f.activeFilename
+		markerPos = int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(f.activeFilename), f.currentCaretPosition))
+	} else {
+		marker, ok := f.testData.MarkerPositions[markerName]
+		if !ok {
+			t.Fatalf("Marker '%s' not found", markerName)
+		}
+		fileName = marker.FileName()
+		markerPos = marker.Position
+	}
+
+	diagnostics := f.getDiagnostics(t, fileName)
+
+	for _, diag := range diagnostics {
+		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.Start))
+			if diagStart >= markerPos {
+				return // Found an error after the marker
+			}
+		}
+	}
+	t.Fatalf("Expected error after marker '%s' but none was found", markerName)
+}
+
+// VerifyErrorExistsBeforeMarker verifies that an error exists before the given marker.
+func (f *FourslashTest) VerifyErrorExistsBeforeMarker(t *testing.T, markerName string) {
+	var fileName string
+	var markerPos int
+
+	if markerName == "" {
+		// Use current position
+		fileName = f.activeFilename
+		markerPos = int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(f.activeFilename), f.currentCaretPosition))
+	} else {
+		marker, ok := f.testData.MarkerPositions[markerName]
+		if !ok {
+			t.Fatalf("Marker '%s' not found", markerName)
+		}
+		fileName = marker.FileName()
+		markerPos = marker.Position
+	}
+
+	diagnostics := f.getDiagnostics(t, fileName)
+
+	for _, diag := range diagnostics {
+		if diag.Severity != nil && *diag.Severity == lsproto.DiagnosticSeverityError {
+			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.End))
+			if diagEnd <= markerPos {
+				return // Found an error before the marker
+			}
+		}
+	}
+	t.Fatalf("Expected error before marker '%s' but none was found", markerName)
+}

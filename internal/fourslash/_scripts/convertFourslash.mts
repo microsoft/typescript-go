@@ -255,6 +255,16 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [{ kind: "verifyNoErrors" }];
                 case "errorExistsAtRange":
                     return parseErrorExistsAtRange(callExpression.arguments);
+                case "currentLineContentIs":
+                    return parseCurrentLineContentIs(callExpression.arguments);
+                case "currentFileContentIs":
+                    return parseCurrentFileContentIs(callExpression.arguments);
+                case "errorExistsBetweenMarkers":
+                    return parseErrorExistsBetweenMarkers(callExpression.arguments);
+                case "errorExistsAfterMarker":
+                    return parseErrorExistsAfterMarker(callExpression.arguments);
+                case "errorExistsBeforeMarker":
+                    return parseErrorExistsBeforeMarker(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -1529,6 +1539,79 @@ function parseErrorExistsAtRange(args: readonly ts.Expression[]): [VerifyErrorEx
     }];
 }
 
+function parseCurrentLineContentIs(args: readonly ts.Expression[]): [VerifyCurrentLineContentIsCmd] | undefined {
+    let arg0;
+    if (args.length !== 1 || !(arg0 = getStringLiteralLike(args[0]))) {
+        console.error(`Expected a single string literal argument in verify.currentLineContentIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyCurrentLineContentIs",
+        text: arg0.text,
+    }];
+}
+
+function parseCurrentFileContentIs(args: readonly ts.Expression[]): [VerifyCurrentFileContentIsCmd] | undefined {
+    let arg0;
+    if (args.length !== 1 || !(arg0 = getStringLiteralLike(args[0]))) {
+        console.error(`Expected a single string literal argument in verify.currentFileContentIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyCurrentFileContentIs",
+        text: arg0.text,
+    }];
+}
+
+function parseErrorExistsBetweenMarkers(args: readonly ts.Expression[]): [VerifyErrorExistsBetweenMarkersCmd] | undefined {
+    if (args.length !== 2) {
+        console.error(`Expected 2 arguments in verify.errorExistsBetweenMarkers, got ${args.length}`);
+        return undefined;
+    }
+    let startMarker, endMarker;
+    if (!(startMarker = getStringLiteralLike(args[0])) || !(endMarker = getStringLiteralLike(args[1]))) {
+        console.error(`Expected string literal arguments in verify.errorExistsBetweenMarkers, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyErrorExistsBetweenMarkers",
+        startMarker: startMarker.text,
+        endMarker: endMarker.text,
+    }];
+}
+
+function parseErrorExistsAfterMarker(args: readonly ts.Expression[]): [VerifyErrorExistsAfterMarkerCmd] | undefined {
+    let markerName = "";
+    if (args.length > 0) {
+        const arg0 = getStringLiteralLike(args[0]);
+        if (!arg0) {
+            console.error(`Expected string literal argument in verify.errorExistsAfterMarker, got ${args[0].getText()}`);
+            return undefined;
+        }
+        markerName = arg0.text;
+    }
+    return [{
+        kind: "verifyErrorExistsAfterMarker",
+        markerName: markerName,
+    }];
+}
+
+function parseErrorExistsBeforeMarker(args: readonly ts.Expression[]): [VerifyErrorExistsBeforeMarkerCmd] | undefined {
+    let markerName = "";
+    if (args.length > 0) {
+        const arg0 = getStringLiteralLike(args[0]);
+        if (!arg0) {
+            console.error(`Expected string literal argument in verify.errorExistsBeforeMarker, got ${args[0].getText()}`);
+            return undefined;
+        }
+        markerName = arg0.text;
+    }
+    return [{
+        kind: "verifyErrorExistsBeforeMarker",
+        markerName: markerName,
+    }];
+}
+
 function stringToTristate(s: string): string {
     switch (s) {
         case "true":
@@ -2788,6 +2871,32 @@ interface VerifyErrorExistsAtRangeCmd {
     message: string;
 }
 
+interface VerifyCurrentLineContentIsCmd {
+    kind: "verifyCurrentLineContentIs";
+    text: string;
+}
+
+interface VerifyCurrentFileContentIsCmd {
+    kind: "verifyCurrentFileContentIs";
+    text: string;
+}
+
+interface VerifyErrorExistsBetweenMarkersCmd {
+    kind: "verifyErrorExistsBetweenMarkers";
+    startMarker: string;
+    endMarker: string;
+}
+
+interface VerifyErrorExistsAfterMarkerCmd {
+    kind: "verifyErrorExistsAfterMarker";
+    markerName: string;
+}
+
+interface VerifyErrorExistsBeforeMarkerCmd {
+    kind: "verifyErrorExistsBeforeMarker";
+    markerName: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -2817,7 +2926,12 @@ type Cmd =
     | VerifyOutliningSpansCmd
     | VerifyNumberOfErrorsInCurrentFileCmd
     | VerifyNoErrorsCmd
-    | VerifyErrorExistsAtRangeCmd;
+    | VerifyErrorExistsAtRangeCmd
+    | VerifyCurrentLineContentIsCmd
+    | VerifyCurrentFileContentIsCmd
+    | VerifyErrorExistsBetweenMarkersCmd
+    | VerifyErrorExistsAfterMarkerCmd
+    | VerifyErrorExistsBeforeMarkerCmd;
 
 function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
     if (foldingRangeKind) {
@@ -3137,6 +3251,16 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyNoErrors(t)`;
         case "verifyErrorExistsAtRange":
             return `f.VerifyErrorExistsAtRange(t, ${cmd.range}, ${cmd.code}, ${getGoStringLiteral(cmd.message)})`;
+        case "verifyCurrentLineContentIs":
+            return `f.VerifyCurrentLineContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+        case "verifyCurrentFileContentIs":
+            return `f.VerifyCurrentFileContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+        case "verifyErrorExistsBetweenMarkers":
+            return `f.VerifyErrorExistsBetweenMarkers(t, ${getGoStringLiteral(cmd.startMarker)}, ${getGoStringLiteral(cmd.endMarker)})`;
+        case "verifyErrorExistsAfterMarker":
+            return `f.VerifyErrorExistsAfterMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
+        case "verifyErrorExistsBeforeMarker":
+            return `f.VerifyErrorExistsBeforeMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
