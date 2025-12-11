@@ -113,7 +113,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 					if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
 						b.WriteString("\n")
 						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
-						if len(commentText) >= 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") {
+						if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
 							b.WriteString(commentText)
 							b.WriteString("\n")
 						} else {
