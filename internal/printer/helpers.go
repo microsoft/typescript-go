@@ -30,7 +30,7 @@ func compareEmitHelpers(x *EmitHelper, y *EmitHelper) int {
 	return x.Priority.Value - y.Priority.Value
 }
 
-// !!! TypeScript Helpers
+// TypeScript Helpers
 
 var decorateHelper = &EmitHelper{
 	Name:       "typescript:decorate",
@@ -42,6 +42,16 @@ var decorateHelper = &EmitHelper{
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};`,
+}
+
+var metadataHelper = &EmitHelper{
+	Name:       "typescript:metadata",
+	ImportName: "__metadata",
+	Scoped:     false,
+	Priority:   &Priority{3},
+	Text: `var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };`,
 }
 

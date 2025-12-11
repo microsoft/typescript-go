@@ -2,6 +2,7 @@ package tstransforms
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -10,26 +11,31 @@ import (
 
 type LegacyDecoratorsTransformer struct {
 	transformers.Transformer
-	languageVersion core.ScriptTarget
+	languageVersion   core.ScriptTarget
+	referenceResolver binder.ReferenceResolver
 
 	/**
 	 * A map that keeps track of aliases created for classes with decorators to avoid issues
 	 * with the double-binding behavior of classes.
 	 */
-	classAliases map[*ast.Node]*ast.Node
+	classAliases     map[*ast.Node]*ast.Node
+	enclosingClasses []*ast.ClassDeclaration
 }
 
 func NewLegacyDecoratorsTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
-	tx := &LegacyDecoratorsTransformer{languageVersion: opt.CompilerOptions.GetEmitScriptTarget()}
+	tx := &LegacyDecoratorsTransformer{languageVersion: opt.CompilerOptions.GetEmitScriptTarget(), referenceResolver: opt.Resolver}
 	return tx.NewTransformer(tx.visit, opt.Context)
 }
 
 func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
-	if (node.SubtreeFacts() & ast.SubtreeContainsDecorators) == 0 {
+	// we have to visit all identifiers in classes, just in case they require substitution
+	if (node.SubtreeFacts()&ast.SubtreeContainsDecorators) == 0 && len(tx.enclosingClasses) == 0 {
 		return node
 	}
 
 	switch node.Kind {
+	case ast.KindIdentifier:
+		return tx.visitIdentifier(node.AsIdentifier())
 	case ast.KindDecorator:
 		// Decorators are elided. They will be emitted as part of `visitClassDeclaration`.
 		return nil
@@ -51,12 +57,25 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitParamerDeclaration(node.AsParameterDeclaration())
 	case ast.KindSourceFile:
 		tx.classAliases = make(map[*ast.Node]*ast.Node)
+		tx.enclosingClasses = nil
 		result := tx.Visitor().VisitEachChild(node)
+		tx.EmitContext().AddEmitHelper(result, tx.EmitContext().ReadEmitHelpers()...)
 		tx.classAliases = nil
+		tx.enclosingClasses = nil
 		return result
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
+}
+
+func (tx *LegacyDecoratorsTransformer) visitIdentifier(node *ast.Identifier) *ast.Node {
+	// takes the place of `substituteIdentifier` in the strada transform
+	for _, d := range tx.enclosingClasses {
+		if _, ok := tx.classAliases[d.AsNode()]; ok && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(node.AsNode())) == d.AsNode() {
+			return tx.classAliases[d.AsNode()]
+		}
+	}
+	return node.AsNode()
 }
 
 func elideNodes(f *printer.NodeFactory, nodes *ast.NodeList) *ast.NodeList {
@@ -153,7 +172,7 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.Proper
 	if (node.Flags & ast.NodeFlagsAmbient) != 0 {
 		return nil
 	}
-	if ast.HasSyntacticModifier(node.AsNode(), ast.ModifierFlagsAmbient) {
+	if ast.HasSyntacticModifier(node.AsNode(), ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) {
 		return nil
 	}
 
@@ -286,6 +305,14 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithoutClassDeco
 	return tx.Factory().NewSyntaxList(append([]*ast.Node{updated}, decorationStatements...))
 }
 
+func (tx *LegacyDecoratorsTransformer) popEnclosingClass() {
+	tx.enclosingClasses = tx.enclosingClasses[:len(tx.enclosingClasses)-1]
+}
+
+func (tx *LegacyDecoratorsTransformer) pushEnclosingClass(cls *ast.ClassDeclaration) {
+	tx.enclosingClasses = append(tx.enclosingClasses, cls)
+}
+
 /**
 * Transforms a decorated class declaration and appends the resulting statements. If
 * the class requires an alias to avoid issues with double-binding, the alias is returned.
@@ -392,6 +419,10 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 
 	location := moveRangePastModifiers(node.AsNode())
 	classAlias := tx.getClassAliasIfNeeded(node)
+	if classAlias != nil {
+		tx.pushEnclosingClass(node)
+		defer tx.popEnclosingClass()
+	}
 
 	// When we used to transform to ES5/3 this would be moved inside an IIFE and should reference the name
 	// without any block-scoped variable collision handling - but we don't support that anymore, so we always
@@ -490,14 +521,41 @@ func (tx *LegacyDecoratorsTransformer) transformClassDeclarationWithClassDecorat
 	return tx.Factory().NewSyntaxList(statements)
 }
 
+func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.ClassDeclaration) bool {
+	var isOrContainsStaticSelfReference func(n *ast.Node) bool
+	isOrContainsStaticSelfReference = func(n *ast.Node) bool {
+		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == node.AsNode() {
+			return true
+		}
+		return n.ForEachChild(isOrContainsStaticSelfReference)
+	}
+	for _, node := range node.Members.Nodes {
+		if node.ForEachChild(isOrContainsStaticSelfReference) {
+			return true
+		}
+	}
+	return false
+}
+
 /**
 * Gets a local alias for a class declaration if it is a decorated class with an internal
 * reference to the static side of the class. This is necessary to avoid issues with
 * double-binding semantics for the class name.
  */
 func (tx *LegacyDecoratorsTransformer) getClassAliasIfNeeded(node *ast.ClassDeclaration) *ast.Node {
-	// !!! TODO: record & transform references to the static side of the class and create the required alias
-	return nil
+	if !tx.hasInternalStaticReference(node) {
+		return nil
+	}
+	nameText := "default"
+	if node.Name() != nil && !transformers.IsGeneratedIdentifier(tx.EmitContext(), node.Name()) {
+		nameText = node.Name().Text()
+	}
+
+	classAlias := tx.Factory().NewUniqueName(nameText)
+	tx.EmitContext().AddVariableDeclaration(classAlias)
+	tx.classAliases[node.AsNode()] = classAlias
+
+	return classAlias
 }
 
 /**
@@ -535,7 +593,7 @@ func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(n
 	// When we used to transform to ES5/3 this would be moved inside an IIFE and should reference the name
 	// without any block-scoped variable collision handling - but we don't support that anymore, so we always
 	// use the local name for the class
-	localName := tx.Factory().GetLocalNameEx(node.AsNode(), printer.AssignedNameOptions{AllowComments: false, AllowSourceMaps: true})
+	localName := tx.Factory().GetDeclarationNameEx(node.AsNode(), printer.NameOptions{AllowComments: false, AllowSourceMaps: true})
 	decorate := tx.Factory().NewDecorateHelper(decoratorExpressions, localName, nil, nil)
 	assignmentTarget := decorate
 	if classAlias != nil {
@@ -586,10 +644,8 @@ func hasClassElementWithDecoratorContainingPrivateIdentifierInExpression(node *a
 }
 
 type allDecorators struct {
-	decorators    []*ast.Node
-	parameters    [][]*ast.Node
-	getDecorators []*ast.Node
-	setDecorators []*ast.Node
+	decorators []*ast.Node
+	parameters [][]*ast.Node
 }
 
 /**
@@ -646,7 +702,32 @@ func getAllDecoratorsOfAccessors(accessor *ast.Node, parent *ast.ClassDeclaratio
 	if accessor.Body() == nil {
 		return nil
 	}
-	return nil // !!! TODO: use getAllAccessorDeclarations to form the decorator list for accessors
+	decls := ast.GetAllAccessorDeclarations(parent.Members.Nodes, accessor)
+	var firstAccessorWithDecorators *ast.Node
+	if ast.HasDecorators(decls.FirstAccessor) {
+		firstAccessorWithDecorators = decls.FirstAccessor
+	} else if ast.HasDecorators(decls.SecondAccessor) {
+		firstAccessorWithDecorators = decls.SecondAccessor
+	}
+
+	if firstAccessorWithDecorators == nil || accessor != firstAccessorWithDecorators {
+		return nil
+	}
+
+	decorators := firstAccessorWithDecorators.Decorators()
+	var parameters [][]*ast.Node
+	if useLegacyDecorators && decls.SetAccessor != nil {
+		parameters = getDecoratorsOfParameters(decls.SetAccessor.AsNode())
+	}
+
+	if len(decorators) == 0 && len(parameters) == 0 {
+		return nil
+	}
+
+	return &allDecorators{
+		decorators: decorators,
+		parameters: parameters,
+	}
 }
 
 func getAllDecoratorsOfProperty(property *ast.Node) *allDecorators {
@@ -784,7 +865,10 @@ func (tx *LegacyDecoratorsTransformer) generateClassElementDecorationExpressions
 	members := getDecoratedClassElements(node, isStatic)
 	var expressions []*ast.Node
 	for _, member := range members {
-		expressions = append(expressions, tx.generateClassElementDecorationExpression(node, member))
+		expr := tx.generateClassElementDecorationExpression(node, member)
+		if expr != nil {
+			expressions = append(expressions, expr)
+		}
 	}
 	return expressions
 }

@@ -3992,6 +3992,41 @@ func ClassOrConstructorParameterIsDecorated(useLegacyDecorators bool, node *Node
 	return constructor != nil && ChildIsDecorated(useLegacyDecorators, constructor, node)
 }
 
+func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
+	var parameters *NodeList
+	if IsAccessor(node) {
+		decls := GetAllAccessorDeclarations(parent.Members(), node)
+		var firstAccessorWithDecorators *Node
+		if HasDecorators(decls.FirstAccessor) {
+			firstAccessorWithDecorators = decls.FirstAccessor
+		} else if HasDecorators(decls.SecondAccessor) {
+			firstAccessorWithDecorators = decls.SecondAccessor
+		}
+		if firstAccessorWithDecorators == nil || node != firstAccessorWithDecorators {
+			return false
+		}
+		if decls.SetAccessor != nil {
+			parameters = decls.SetAccessor.Parameters
+		}
+	} else if IsMethodDeclaration(node) {
+		parameters = node.ParameterList()
+	}
+	if nodeIsDecorated(useLegacyDecorators, node, parent, nil) {
+		return true
+	}
+	if parameters != nil && len(parameters.Nodes) > 0 {
+		for _, parameter := range parameters.Nodes {
+			if IsThisParameter(parameter) {
+				continue
+			}
+			if nodeIsDecorated(useLegacyDecorators, parameter, node, parent) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func nodeIsDecorated(useLegacyDecorators bool, node *Node, parent *Node, grandparent *Node) bool {
 	return HasDecorators(node) && NodeCanBeDecorated(useLegacyDecorators, node, parent, grandparent)
 }
@@ -4015,4 +4050,112 @@ func ChildIsDecorated(useLegacyDecorators bool, node *Node, parent *Node) bool {
 	default:
 		return false
 	}
+}
+
+type AllAccessorDeclarations struct {
+	FirstAccessor  *AccessorDeclaration
+	SecondAccessor *AccessorDeclaration
+	SetAccessor    *SetAccessorDeclaration
+	GetAccessor    *GetAccessorDeclaration
+}
+
+func GetAllAccessorDeclarationsForDeclaration(accessor *AccessorDeclaration, declarationsOfSymbol []*Node) AllAccessorDeclarations {
+	var otherKind Kind
+	if accessor.Kind == KindSetAccessor {
+		otherKind = KindGetAccessor
+	} else if accessor.Kind == KindGetAccessor {
+		otherKind = KindSetAccessor
+	} else {
+		panic(fmt.Sprintf("Unexpected node kind %q", accessor.Kind))
+	}
+	// otherAccessor := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
+	var otherAccessor *AccessorDeclaration
+	for _, d := range declarationsOfSymbol {
+		if d.Kind == otherKind {
+			otherAccessor = d
+			break
+		}
+	}
+
+	var firstAccessor *AccessorDeclaration
+	var secondAccessor *AccessorDeclaration
+	if otherAccessor != nil && (otherAccessor.Pos() < accessor.Pos()) {
+		firstAccessor = otherAccessor
+		secondAccessor = accessor
+	} else {
+		firstAccessor = accessor
+		secondAccessor = otherAccessor
+	}
+
+	var setAccessor *SetAccessorDeclaration
+	var getAccessor *GetAccessorDeclaration
+	if accessor.Kind == KindSetAccessor {
+		setAccessor = accessor.AsSetAccessorDeclaration()
+		if otherAccessor != nil {
+			getAccessor = otherAccessor.AsGetAccessorDeclaration()
+		}
+	} else {
+		getAccessor = accessor.AsGetAccessorDeclaration()
+		if otherAccessor != nil {
+			setAccessor = otherAccessor.AsSetAccessorDeclaration()
+		}
+	}
+
+	return AllAccessorDeclarations{
+		FirstAccessor:  firstAccessor,
+		SecondAccessor: secondAccessor,
+		SetAccessor:    setAccessor,
+		GetAccessor:    getAccessor,
+	}
+}
+
+func GetAllAccessorDeclarations(parentDeclarations []*Node, accessor *AccessorDeclaration) AllAccessorDeclarations {
+	if HasDynamicName(accessor) {
+		// dynamic names can only be match up via checker symbol lookup, just return an object with just this accessor
+		return GetAllAccessorDeclarationsForDeclaration(accessor, []*Node{accessor})
+	}
+
+	accessorName := GetPropertyNameForPropertyNameNode(accessor.Name())
+	accessorStatic := IsStatic(accessor)
+	var matches []*Node
+	for _, member := range parentDeclarations {
+		if !IsAccessor(member) || IsStatic(member) != accessorStatic {
+			continue
+		}
+		memberName := GetPropertyNameForPropertyNameNode(member.Name())
+		if memberName == accessorName {
+			matches = append(matches, member)
+		}
+	}
+	return GetAllAccessorDeclarationsForDeclaration(accessor, matches)
+}
+
+func IsAsyncFunction(node *Node) bool {
+	switch node.Kind {
+	case KindFunctionDeclaration, KindFunctionExpression, KindArrowFunction, KindMethodDeclaration:
+		data := node.BodyData()
+		return data.Body != nil && data.AsteriskToken == nil && HasSyntacticModifier(node, ModifierFlagsAsync)
+	}
+	return false
+}
+
+/**
+ * Gets the most likely element type for a TypeNode. This is not an exhaustive test
+ * as it assumes a rest argument can only be an array type (either T[], or Array<T>).
+ *
+ * @param node The type node.
+ *
+ * @internal
+ */
+func GetRestParameterElementType(node *ParameterDeclarationNode) *Node {
+	if node == nil {
+		return node
+	}
+	if node.Kind == KindArrayType {
+		return node.AsArrayTypeNode().ElementType
+	}
+	if node.Kind == KindTypeReference && node.AsTypeReferenceNode().TypeArguments != nil {
+		return core.FirstOrNil(node.AsTypeReferenceNode().TypeArguments.Nodes)
+	}
+	return nil
 }

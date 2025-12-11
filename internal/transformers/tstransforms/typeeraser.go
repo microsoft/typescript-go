@@ -121,6 +121,11 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.Factory().UpdateExpressionWithTypeArguments(n, tx.Visitor().VisitNode(n.Expression), nil)
 
 	case ast.KindPropertyDeclaration:
+		if tx.compilerOptions.ExperimentalDecorators.IsTrue() && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) && ast.HasDecorators(node) {
+			// declare/abstract props with decorators must be preserved until the decorator transform can process them and remove them
+			n := node.AsPropertyDeclaration()
+			return tx.Factory().UpdatePropertyDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		}
 		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) {
 			// TypeScript `declare` fields are elided
 			return nil
