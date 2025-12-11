@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionPreferredSuggestions1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare let v1: string & {} | "a" | "b" | "c";
 v1 = "/*1*/";

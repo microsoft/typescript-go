@@ -8,8 +8,8 @@ import (
 )
 
 func TestRegexDetection(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` /*1*/15 / /*2*/Math.min(61 / /*3*/42, 32 / 15) / /*4*/15;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

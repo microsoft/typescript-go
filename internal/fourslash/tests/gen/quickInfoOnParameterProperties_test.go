@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnParameterProperties(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IFoo {
   /** this is the name of blabla 

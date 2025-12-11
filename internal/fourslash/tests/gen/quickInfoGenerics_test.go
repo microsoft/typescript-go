@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoGenerics(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Con/*1*/tainer<T> {
     x: T;

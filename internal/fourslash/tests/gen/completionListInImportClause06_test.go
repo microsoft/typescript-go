@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInImportClause06(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: T1,T2
 // @Filename: app.ts

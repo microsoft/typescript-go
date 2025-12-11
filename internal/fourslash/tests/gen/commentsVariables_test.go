@@ -10,8 +10,8 @@ import (
 )
 
 func TestCommentsVariables(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is my variable*/
 var myV/*1*/ariable = 10;

@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoInJsdocInTsFile1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @type {() => { /*1*/data: string[] }} */
 function test(): { data: string[] } {

@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxGoToDefinitionClassInDifferentFile(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: preserve
 // @Filename: C.tsx

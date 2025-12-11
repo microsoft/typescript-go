@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsWithDeprecatedTag3(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @deprecated foo */
 declare function foo<T>();

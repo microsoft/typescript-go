@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInTemplateLiteralParts1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*0*/` + "`" + `  $ { ${/*1*/ 10/*2*/ + 1.1/*3*/ /*4*/} 12312` + "`" + `/*5*/
 

@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription5(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Multiple1Example {
     /** Something generic */

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListOfSplitInterface(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A {
     a: number;

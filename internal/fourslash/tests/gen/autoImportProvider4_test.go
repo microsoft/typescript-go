@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportProvider4(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/a/package.json
 { "dependencies": { "b": "*" } }

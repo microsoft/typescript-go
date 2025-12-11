@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoContextuallyTypedSignatureOptionalParameterFromIntersection1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 const optionals: ((a?: number) => unknown) & ((b?: string) => unknown) = (

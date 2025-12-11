@@ -10,8 +10,8 @@ import (
 )
 
 func TestPathCompletionsPackageJsonExportsBundlerNoNodeCondition(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @Filename: /node_modules/foo/package.json

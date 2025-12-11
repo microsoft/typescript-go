@@ -10,8 +10,8 @@ import (
 )
 
 func TestImportTypeCompletions4(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: true
 // @Filename: /foo.ts

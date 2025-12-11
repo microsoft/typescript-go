@@ -10,8 +10,8 @@ import (
 )
 
 func TestProtoVarVisibleWithOuterScopeUnderscoreProto(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// outer
 var ___proto__ = 10;

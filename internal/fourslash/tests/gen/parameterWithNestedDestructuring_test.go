@@ -8,8 +8,8 @@ import (
 )
 
 func TestParameterWithNestedDestructuring(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[[{ a: 'hello', b: [1] }]]
   .map(([{ a, b: [c] }]) => /*1*/a + /*2*/c);

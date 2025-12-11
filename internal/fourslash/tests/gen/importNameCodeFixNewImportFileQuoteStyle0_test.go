@@ -8,8 +8,8 @@ import (
 )
 
 func TestImportNameCodeFixNewImportFileQuoteStyle0(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|import { v2 } from './module2';
 

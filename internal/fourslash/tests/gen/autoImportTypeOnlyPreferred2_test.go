@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportTypeOnlyPreferred2(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/react/index.d.ts
 export interface ComponentType {}

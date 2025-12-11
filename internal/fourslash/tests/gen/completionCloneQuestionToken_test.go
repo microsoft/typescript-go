@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionCloneQuestionToken(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /file2.ts
 type TCallback<T = any> = (options: T) => any;

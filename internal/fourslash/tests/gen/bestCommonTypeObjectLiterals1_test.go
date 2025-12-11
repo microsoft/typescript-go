@@ -8,8 +8,8 @@ import (
 )
 
 func TestBestCommonTypeObjectLiterals1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var a = { name: 'bob', age: 18 };
 var b = { name: 'jim', age: 20 };

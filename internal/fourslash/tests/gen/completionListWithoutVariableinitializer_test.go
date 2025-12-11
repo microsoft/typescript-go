@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListWithoutVariableinitializer(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = a/*1*/;
 const b = a && b/*2*/;

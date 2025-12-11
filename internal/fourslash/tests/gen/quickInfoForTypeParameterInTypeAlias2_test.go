@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForTypeParameterInTypeAlias2(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Call<AA> = { (): A/*1*/A };
 type Index<AA> = {[foo: string]: A/*2*/A};

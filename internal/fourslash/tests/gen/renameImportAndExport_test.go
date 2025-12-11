@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameImportAndExport(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|import [|{| "contextRangeIndex": 0 |}a|] from "module";|]
 [|export { [|{| "contextRangeIndex": 2 |}a|] };|]`

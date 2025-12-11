@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/Library/Caches/typescript/node_modules/@types/react-router-dom/package.json
  { "name": "@types/react-router-dom", "version": "16.8.4", "types": "index.d.ts" }

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsUnion(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { x: number; }
 interface Many<T> extends ReadonlyArray<T> { extra: number; }

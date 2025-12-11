@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsPathsJsonModule(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @resolveJsonModule: true

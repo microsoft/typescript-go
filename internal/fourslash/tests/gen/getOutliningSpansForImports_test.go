@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOutliningSpansForImports(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|import * as ns from "mod";
 

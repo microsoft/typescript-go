@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsJsdocParamTypeBeforeName(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @param /*name1*/ {/*type*/} /*name2*/ */
 function toString(obj) {}`

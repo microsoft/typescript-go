@@ -8,8 +8,8 @@ import (
 )
 
 func TestReturnTypeOfGenericFunction1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface WrappedArray<T> {
     map<U>(iterator: (value: T) => U, context?: any): U[];

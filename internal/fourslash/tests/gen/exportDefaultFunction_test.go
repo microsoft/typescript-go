@@ -10,8 +10,8 @@ import (
 )
 
 func TestExportDefaultFunction(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export default function func() {
     /*1*/

@@ -8,8 +8,8 @@ import (
 )
 
 func TestPaste(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `fn(/**/);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

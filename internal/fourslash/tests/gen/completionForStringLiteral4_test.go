@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionForStringLiteral4(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: in.js

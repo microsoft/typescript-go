@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsTuple(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const x: [number, number];
 x[|./**/|];`

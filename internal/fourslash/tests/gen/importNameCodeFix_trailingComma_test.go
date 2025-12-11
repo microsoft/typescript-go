@@ -8,8 +8,8 @@ import (
 )
 
 func TestImportNameCodeFix_trailingComma(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: index.ts
 import {

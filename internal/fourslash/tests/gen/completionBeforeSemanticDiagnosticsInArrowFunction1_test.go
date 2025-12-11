@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionBeforeSemanticDiagnosticsInArrowFunction1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var f4 = <T>(x: T/**/ ) => {
 }`

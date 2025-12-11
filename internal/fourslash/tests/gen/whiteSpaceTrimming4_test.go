@@ -8,8 +8,8 @@ import (
 )
 
 func TestWhiteSpaceTrimming4(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var re = /\w+   /*1*//;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

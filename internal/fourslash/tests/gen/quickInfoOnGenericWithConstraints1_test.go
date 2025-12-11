@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnGenericWithConstraints1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Fo/*1*/o<T/*2*/T extends Date> {}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

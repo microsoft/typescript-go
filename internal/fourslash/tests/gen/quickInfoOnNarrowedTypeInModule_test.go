@@ -10,8 +10,8 @@ import (
 )
 
 func TestQuickInfoOnNarrowedTypeInModule(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var strOrNum: string | number;
 module m {

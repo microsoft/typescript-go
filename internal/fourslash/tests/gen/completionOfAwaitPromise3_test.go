@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionOfAwaitPromise3(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo { ["foo-foo"]: string }
 async function foo(x: Promise<Foo>) {

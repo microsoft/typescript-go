@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListInvalidMemberNames(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = {
     "foo ": "space in the name",

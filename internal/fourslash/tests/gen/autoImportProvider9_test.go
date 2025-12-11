@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportProvider9(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: preserve
 // @Filename: /home/src/workspaces/project/index.ts

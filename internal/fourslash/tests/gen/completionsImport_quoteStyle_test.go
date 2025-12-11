@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsImport_quoteStyle(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts

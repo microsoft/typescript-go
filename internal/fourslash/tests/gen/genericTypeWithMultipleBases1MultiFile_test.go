@@ -10,8 +10,8 @@ import (
 )
 
 func TestGenericTypeWithMultipleBases1MultiFile(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: genericTypeWithMultipleBases_0.ts
 interface iBaseScope {

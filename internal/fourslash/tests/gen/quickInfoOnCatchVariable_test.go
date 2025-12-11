@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnCatchVariable(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f() {
    try { } catch (/**/e) { }

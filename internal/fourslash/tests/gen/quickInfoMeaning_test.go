@@ -10,8 +10,8 @@ import (
 )
 
 func TestQuickInfoMeaning(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.d.ts
 declare const [|/*foo_value_declaration*/foo: number|];

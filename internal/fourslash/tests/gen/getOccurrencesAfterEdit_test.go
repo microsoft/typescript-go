@@ -8,8 +8,8 @@ import (
 )
 
 func TestGetOccurrencesAfterEdit(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*0*/
 interface A {

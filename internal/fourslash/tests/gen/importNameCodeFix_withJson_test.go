@@ -8,8 +8,8 @@ import (
 )
 
 func TestImportNameCodeFix_withJson(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export const a = 'a';

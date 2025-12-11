@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsPropertiesPriorities(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 interface I {

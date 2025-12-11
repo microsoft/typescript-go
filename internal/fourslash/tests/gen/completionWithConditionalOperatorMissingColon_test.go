@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionWithConditionalOperatorMissingColon(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `1 ? fun/*1*/
 function func () {}`

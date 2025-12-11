@@ -8,8 +8,8 @@ import (
 )
 
 func TestImportFixWithMultipleModuleExportAssignment(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @allowJs: true

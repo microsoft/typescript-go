@@ -8,8 +8,8 @@ import (
 )
 
 func TestContextualTypingOfGenericCallSignatures2(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     <T>(x: T): void

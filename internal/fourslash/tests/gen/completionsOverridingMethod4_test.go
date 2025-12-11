@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsOverridingMethod4(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 // @Filename: secret.ts

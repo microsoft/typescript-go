@@ -10,8 +10,8 @@ import (
 )
 
 func TestSuggestionNoDuplicates(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: false
 // @Filename: foo.ts

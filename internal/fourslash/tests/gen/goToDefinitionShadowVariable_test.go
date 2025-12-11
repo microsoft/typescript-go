@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionShadowVariable(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var shadowVariable = "foo";
 function shadowVariableTestModule() {

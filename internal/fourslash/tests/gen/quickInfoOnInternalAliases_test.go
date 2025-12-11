@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnInternalAliases(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** Module comment*/
 export module m1 {

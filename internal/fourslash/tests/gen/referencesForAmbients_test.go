@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForAmbients(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/declare module "/*2*/foo" {
     /*3*/var /*4*/f: number;

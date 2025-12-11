@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsStringsWithTriggerCharacter(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type A = "a/b" | "b/a";
 const a: A = "[|a/*1*/|]";

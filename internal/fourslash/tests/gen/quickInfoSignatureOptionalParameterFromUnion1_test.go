@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoSignatureOptionalParameterFromUnion1(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const optionals:
   | ((a?: { a: true }) => unknown)

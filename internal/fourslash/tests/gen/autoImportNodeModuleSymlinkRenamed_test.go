@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportNodeModuleSymlinkRenamed(t *testing.T) {
-	t.Parallel()
 	fourslash.SkipIfFailing(t)
+	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/solution/package.json
 {
