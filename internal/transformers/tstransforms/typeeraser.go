@@ -217,10 +217,11 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		// preserve decorators for the decorator transforms
 		if ast.HasDecorators(node) {
 			decorators := node.Decorators()
+			visited, _ := tx.Visitor().VisitSlice(decorators)
 			if modifiers == nil {
-				modifiers = tx.Factory().NewModifierList(decorators)
+				modifiers = tx.Factory().NewModifierList(visited)
 			} else {
-				modifiers = tx.Factory().NewModifierList(slices.Concat(modifiers.Nodes, decorators))
+				modifiers = tx.Factory().NewModifierList(slices.Concat(modifiers.Nodes, visited))
 			}
 		}
 		return tx.Factory().UpdateParameterDeclaration(n, modifiers, n.DotDotDotToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
