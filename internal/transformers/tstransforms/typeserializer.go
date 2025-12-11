@@ -431,8 +431,8 @@ func (s *metadataSerializer) serializeEntityNameAsExpressionFallback(node *ast.E
 	s.ec.AddVariableDeclaration(temp)
 	return s.f.NewLogicalANDExpression(
 		s.f.NewLogicalANDExpression(
-			left.AsQualifiedName().Left,
-			s.f.NewStrictInequalityExpression(s.f.NewAssignmentExpression(temp, left.AsQualifiedName().Right), s.f.NewVoidZeroExpression()),
+			left.AsBinaryExpression().Left,
+			s.f.NewStrictInequalityExpression(s.f.NewAssignmentExpression(temp, left.AsBinaryExpression().Right), s.f.NewVoidZeroExpression()),
 		),
 		s.f.NewPropertyAccessExpression(temp, nil, node.AsQualifiedName().Right, ast.NodeFlagsNone),
 	)
