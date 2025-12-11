@@ -138,11 +138,10 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 
 const rootDir = "/"
 
-var parseCache = project.ParseCache{
-	Options: project.ParseCacheOptions{
-		DisableDeletion: true,
-	},
-}
+var parseCache = project.NewParseCache(project.RefCountCacheOptions{
+	DisableDeletion: true,
+},
+)
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
@@ -167,6 +166,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testfs[filePath] = vfstest.Symlink(tspath.GetNormalizedAbsolutePath(target, rootDir))
 	}
 
+	// !!! use default compiler options for inferred project as base
 	compilerOptions := &core.CompilerOptions{
 		SkipDefaultLibCheck: core.TSTrue,
 	}
@@ -216,7 +216,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 
-		ParseCache: &parseCache,
+		ParseCache: parseCache,
 	})
 
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
@@ -479,6 +479,19 @@ var (
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
 		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 	}
+	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+			ActiveParameterSupport: ptrTrue,
+		},
+		ContextSupport: ptrTrue,
+	}
+	defaultDocumentSymbolCapabilities = &lsproto.DocumentSymbolClientCapabilities{
+		HierarchicalDocumentSymbolSupport: ptrTrue,
+	}
 )
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -536,16 +549,10 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 		capabilitiesWithDefaults.TextDocument.Hover = defaultHoverCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
-		capabilitiesWithDefaults.TextDocument.SignatureHelp = &lsproto.SignatureHelpClientCapabilities{
-			SignatureInformation: &lsproto.ClientSignatureInformationOptions{
-				DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
-				ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
-					LabelOffsetSupport: ptrTrue,
-				},
-				ActiveParameterSupport: ptrTrue,
-			},
-			ContextSupport: ptrTrue,
-		}
+		capabilitiesWithDefaults.TextDocument.SignatureHelp = defaultSignatureHelpCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.DocumentSymbol == nil {
+		capabilitiesWithDefaults.TextDocument.DocumentSymbol = defaultDocumentSymbolCapabilities
 	}
 	return &capabilitiesWithDefaults
 }
@@ -608,8 +615,12 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	if resMsg == nil {
 		t.Fatalf(prefix+"Nil response received for %s request", info.Method)
 	}
+	resp := resMsg.AsResponse()
+	if resp.Error != nil {
+		t.Fatalf(prefix+"%s request returned error: %s", info.Method, resp.Error.String())
+	}
 	if !resultOk {
-		t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resMsg.AsResponse().Result)
+		t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resp.Result)
 	}
 	return result
 }
@@ -1426,6 +1437,114 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 			t.Fatalf("Import fix at index %d doesn't match.\nExpected:\n%s\n\nActual:\n%s", i, expected, actual)
 		}
 	}
+}
+
+func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
+	t *testing.T,
+	markerName string,
+	expectedModuleSpecifiers []string,
+	preferences *lsutil.UserPreferences,
+) {
+	f.GoToMarker(t, markerName)
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	// Get diagnostics at the current position to find errors that need import fixes
+	diagParams := &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	diagResult := sendRequest(t, f, lsproto.TextDocumentDiagnosticInfo, diagParams)
+
+	var diagnostics []*lsproto.Diagnostic
+	if diagResult.FullDocumentDiagnosticReport != nil && diagResult.FullDocumentDiagnosticReport.Items != nil {
+		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: diagnostics,
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	// Extract module specifiers from import fix code actions
+	var actualModuleSpecifiers []string
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
+				if item.CodeAction.Edit != nil && item.CodeAction.Edit.Changes != nil {
+					for _, changeEdits := range *item.CodeAction.Edit.Changes {
+						for _, edit := range changeEdits {
+							moduleSpec := extractModuleSpecifier(edit.NewText)
+							if moduleSpec != "" {
+								if !slices.Contains(actualModuleSpecifiers, moduleSpec) {
+									actualModuleSpecifiers = append(actualModuleSpecifiers, moduleSpec)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Compare results
+	if len(actualModuleSpecifiers) != len(expectedModuleSpecifiers) {
+		t.Fatalf("Expected %d module specifiers, got %d.\nExpected: %v\nActual: %v",
+			len(expectedModuleSpecifiers), len(actualModuleSpecifiers),
+			expectedModuleSpecifiers, actualModuleSpecifiers)
+	}
+
+	for i, expected := range expectedModuleSpecifiers {
+		if i >= len(actualModuleSpecifiers) || actualModuleSpecifiers[i] != expected {
+			t.Fatalf("Module specifier mismatch at index %d.\nExpected: %v\nActual: %v",
+				i, expectedModuleSpecifiers, actualModuleSpecifiers)
+		}
+	}
+}
+
+func extractModuleSpecifier(text string) string {
+	// Try to match: from "..." or from '...'
+	if idx := strings.Index(text, "from \""); idx != -1 {
+		start := idx + 6 // len("from \"")
+		if end := strings.Index(text[start:], "\""); end != -1 {
+			return text[start : start+end]
+		}
+	}
+	if idx := strings.Index(text, "from '"); idx != -1 {
+		start := idx + 6 // len("from '")
+		if end := strings.Index(text[start:], "'"); end != -1 {
+			return text[start : start+end]
+		}
+	}
+
+	// Try to match: require("...") or require('...')
+	if idx := strings.Index(text, "require(\""); idx != -1 {
+		start := idx + 9 // len("require(\"")
+		if end := strings.Index(text[start:], "\""); end != -1 {
+			return text[start : start+end]
+		}
+	}
+	if idx := strings.Index(text, "require('"); idx != -1 {
+		start := idx + 9 // len("require('")
+		if end := strings.Index(text[start:], "'"); end != -1 {
+			return text[start : start+end]
+		}
+	}
+
+	return ""
 }
 
 func (f *FourslashTest) VerifyBaselineFindAllReferences(
@@ -2429,6 +2548,17 @@ func (f *FourslashTest) Backspace(t *testing.T, count int) {
 	// f.checkPostEditInvariants() // !!! do we need this?
 }
 
+// DeleteAtCaret removes the text at the current caret position as if the user pressed delete `count` times.
+func (f *FourslashTest) DeleteAtCaret(t *testing.T, count int) {
+	script := f.getScriptInfo(f.activeFilename)
+	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+
+	for range count {
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, offset, offset+1, "")
+		// Position stays the same after delete (unlike backspace)
+	}
+}
+
 // Enters text as if the user had pasted it.
 func (f *FourslashTest) Paste(t *testing.T, text string) {
 	script := f.getScriptInfo(f.activeFilename)
@@ -2989,13 +3119,18 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 	if f.lastKnownMarkerName != nil {
 		return fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
 	}
-	return fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+	return fmt.Sprintf("At position %s(Ln %d, Col %d): ", f.activeFilename, f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
 	reset := f.ConfigureWithReset(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
+		ImportModuleSpecifierEnding:           f.userPreferences.ImportModuleSpecifierEnding,
+		ImportModuleSpecifierPreference:       f.userPreferences.ImportModuleSpecifierPreference,
+		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
+		AutoImportSpecifierExcludeRegexes:     f.userPreferences.AutoImportSpecifierExcludeRegexes,
+		PreferTypeOnlyAutoImports:             f.userPreferences.PreferTypeOnlyAutoImports,
 	})
 	defer reset()
 
@@ -3664,4 +3799,230 @@ func verifyIncludesSymbols(
 		}
 		assertDeepEqual(t, actualSym, sym, fmt.Sprintf("%s: Symbol '%s' at location '%v' mismatch", prefix, sym.Name, sym.Location))
 	}
+}
+
+func (f *FourslashTest) VerifyBaselineDocumentSymbol(t *testing.T) {
+	params := &lsproto.DocumentSymbolParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
+	uri := lsconv.FileNameToDocumentURI(f.activeFilename)
+	spansToSymbol := make(map[documentSpan]*lsproto.DocumentSymbol)
+	if result.DocumentSymbols != nil {
+		for _, symbol := range *result.DocumentSymbols {
+			collectDocumentSymbolSpans(uri, symbol, spansToSymbol)
+		}
+	}
+	f.addResultToBaseline(
+		t,
+		documentSymbolsCmd,
+		f.getBaselineForSpansWithFileContents(slices.Collect(maps.Keys(spansToSymbol)), baselineFourslashLocationsOptions{
+			getLocationData: func(span documentSpan) string {
+				symbol := spansToSymbol[span]
+				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbol.Kind.String())
+			},
+		}),
+	)
+
+	var detailsBuilder strings.Builder
+	if result.DocumentSymbols != nil {
+		writeDocumentSymbolDetails(*result.DocumentSymbols, 0, &detailsBuilder)
+	}
+	f.writeToBaseline(documentSymbolsCmd, "\n\n// === Details ===\n"+detailsBuilder.String())
+}
+
+func writeDocumentSymbolDetails(symbols []*lsproto.DocumentSymbol, indent int, builder *strings.Builder) {
+	for _, symbol := range symbols {
+		fmt.Fprintf(builder, "%s(%s) %s\n", strings.Repeat("  ", indent), symbol.Kind.String(), symbol.Name)
+		if symbol.Children != nil {
+			writeDocumentSymbolDetails(*symbol.Children, indent+1, builder)
+		}
+	}
+}
+
+func collectDocumentSymbolSpans(
+	uri lsproto.DocumentUri,
+	symbol *lsproto.DocumentSymbol,
+	spansToSymbol map[documentSpan]*lsproto.DocumentSymbol,
+) {
+	span := documentSpan{
+		uri:         uri,
+		textSpan:    symbol.SelectionRange,
+		contextSpan: &symbol.Range,
+	}
+	spansToSymbol[span] = symbol
+	if symbol.Children != nil {
+		for _, child := range *symbol.Children {
+			collectDocumentSymbolSpans(uri, child, spansToSymbol)
+		}
+	}
+}
+
+// VerifyNumberOfErrorsInCurrentFile verifies that the current file has the expected number of errors.
+func (f *FourslashTest) VerifyNumberOfErrorsInCurrentFile(t *testing.T, expectedCount int) {
+	diagnostics := f.getDiagnostics(t, f.activeFilename)
+	// Filter to only include errors (not suggestions/hints)
+	errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
+		return !isSuggestionDiagnostic(d)
+	})
+	if len(errors) != expectedCount {
+		t.Fatalf("Expected %d errors in current file, but got %d", expectedCount, len(errors))
+	}
+}
+
+// VerifyNoErrors verifies that no errors exist in any open files.
+func (f *FourslashTest) VerifyNoErrors(t *testing.T) {
+	for fileName := range f.openFiles {
+		diagnostics := f.getDiagnostics(t, fileName)
+		// Filter to only include errors (not suggestions/hints)
+		errors := core.Filter(diagnostics, func(d *lsproto.Diagnostic) bool {
+			return !isSuggestionDiagnostic(d)
+		})
+		if len(errors) > 0 {
+			var messages []string
+			for _, err := range errors {
+				messages = append(messages, err.Message)
+			}
+			t.Fatalf("Expected no errors but found %d in %s: %v", len(errors), fileName, messages)
+		}
+	}
+}
+
+// VerifyErrorExistsAtRange verifies that an error with the given code exists at the given range.
+func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *RangeMarker, code int, message string) {
+	diagnostics := f.getDiagnostics(t, rangeMarker.FileName())
+	for _, diag := range diagnostics {
+		if diag.Code != nil && diag.Code.Integer != nil && int(*diag.Code.Integer) == code {
+			// Check if the range matches
+			if diag.Range.Start.Line == rangeMarker.LSRange.Start.Line &&
+				diag.Range.Start.Character == rangeMarker.LSRange.Start.Character &&
+				diag.Range.End.Line == rangeMarker.LSRange.End.Line &&
+				diag.Range.End.Character == rangeMarker.LSRange.End.Character {
+				// If message is provided, verify it matches
+				if message != "" && diag.Message != message {
+					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message)
+				}
+				return
+			}
+		}
+	}
+	t.Fatalf("Expected error with code %d at range %v but it was not found", code, rangeMarker.LSRange)
+}
+
+// VerifyCurrentLineContentIs verifies that the current line content matches the expected text.
+func (f *FourslashTest) VerifyCurrentLineContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	lines := strings.Split(script.content, "\n")
+	lineNum := int(f.currentCaretPosition.Line)
+	if lineNum >= len(lines) {
+		t.Fatalf("Current line %d is out of range (file has %d lines)", lineNum, len(lines))
+	}
+	actualLine := lines[lineNum]
+	// Handle \r if present
+	actualLine = strings.TrimSuffix(actualLine, "\r")
+	if actualLine != expectedText {
+		t.Fatalf("Current line content mismatch.\nExpected: %q\nActual: %q", expectedText, actualLine)
+	}
+}
+
+// VerifyCurrentFileContentIs verifies that the current file content matches the expected text.
+func (f *FourslashTest) VerifyCurrentFileContentIs(t *testing.T, expectedText string) {
+	script := f.getScriptInfo(f.activeFilename)
+	if script.content != expectedText {
+		t.Fatalf("Current file content mismatch.\nExpected: %q\nActual: %q", expectedText, script.content)
+	}
+}
+
+// VerifyErrorExistsBetweenMarkers verifies that an error exists between the two markers.
+func (f *FourslashTest) VerifyErrorExistsBetweenMarkers(t *testing.T, startMarkerName string, endMarkerName string) {
+	startMarker, ok := f.testData.MarkerPositions[startMarkerName]
+	if !ok {
+		t.Fatalf("Start marker '%s' not found", startMarkerName)
+	}
+	endMarker, ok := f.testData.MarkerPositions[endMarkerName]
+	if !ok {
+		t.Fatalf("End marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName() != endMarker.FileName() {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+
+	diagnostics := f.getDiagnostics(t, startMarker.FileName())
+	startPos := startMarker.Position
+	endPos := endMarker.Position
+
+	for _, diag := range diagnostics {
+		if !isSuggestionDiagnostic(diag) {
+			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.Start))
+			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(startMarker.FileName()), diag.Range.End))
+			if diagStart >= startPos && diagEnd <= endPos {
+				return // Found an error in the range
+			}
+		}
+	}
+	t.Fatalf("Expected error between markers '%s' and '%s' but none was found", startMarkerName, endMarkerName)
+}
+
+// VerifyErrorExistsAfterMarker verifies that an error exists after the given marker.
+func (f *FourslashTest) VerifyErrorExistsAfterMarker(t *testing.T, markerName string) {
+	var fileName string
+	var markerPos int
+
+	if markerName == "" {
+		// Use current position
+		fileName = f.activeFilename
+		markerPos = int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(f.activeFilename), f.currentCaretPosition))
+	} else {
+		marker, ok := f.testData.MarkerPositions[markerName]
+		if !ok {
+			t.Fatalf("Marker '%s' not found", markerName)
+		}
+		fileName = marker.FileName()
+		markerPos = marker.Position
+	}
+
+	diagnostics := f.getDiagnostics(t, fileName)
+
+	for _, diag := range diagnostics {
+		if !isSuggestionDiagnostic(diag) {
+			diagStart := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.Start))
+			if diagStart >= markerPos {
+				return // Found an error after the marker
+			}
+		}
+	}
+	t.Fatalf("Expected error after marker '%s' but none was found", markerName)
+}
+
+// VerifyErrorExistsBeforeMarker verifies that an error exists before the given marker.
+func (f *FourslashTest) VerifyErrorExistsBeforeMarker(t *testing.T, markerName string) {
+	var fileName string
+	var markerPos int
+
+	if markerName == "" {
+		// Use current position
+		fileName = f.activeFilename
+		markerPos = int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(f.activeFilename), f.currentCaretPosition))
+	} else {
+		marker, ok := f.testData.MarkerPositions[markerName]
+		if !ok {
+			t.Fatalf("Marker '%s' not found", markerName)
+		}
+		fileName = marker.FileName()
+		markerPos = marker.Position
+	}
+
+	diagnostics := f.getDiagnostics(t, fileName)
+
+	for _, diag := range diagnostics {
+		if !isSuggestionDiagnostic(diag) {
+			diagEnd := int(f.converters.LineAndCharacterToPosition(f.getScriptInfo(fileName), diag.Range.End))
+			if diagEnd <= markerPos {
+				return // Found an error before the marker
+			}
+		}
+	}
+	t.Fatalf("Expected error before marker '%s' but none was found", markerName)
 }

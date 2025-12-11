@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 const (
@@ -150,14 +151,19 @@ func (l *LanguageService) getDocumentation(c *checker.Checker, jsdoc *ast.Node, 
 					}
 				}
 				comments := tag.Comments()
-				if len(comments) != 0 {
-					if commentHasPrefix(comments, "```") {
+				if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
+					tagsBuilder.WriteString("\n")
+					commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
+					if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
+						tagsBuilder.WriteString(commentText)
 						tagsBuilder.WriteString("\n")
 					} else {
-						tagsBuilder.WriteString(" ")
-						if !commentHasPrefix(comments, "-") {
-							tagsBuilder.WriteString("— ")
-						}
+						writeCode(&tagsBuilder, "tsx", commentText)
+					}
+				} else if len(comments) != 0 {
+					tagsBuilder.WriteString(" ")
+					if !commentHasPrefix(comments, "-") {
+						tagsBuilder.WriteString("— ")
 					}
 					l.writeComments(&tagsBuilder, c, comments, isMarkdown)
 				}
@@ -169,6 +175,19 @@ func (l *LanguageService) getDocumentation(c *checker.Checker, jsdoc *ast.Node, 
 
 func isInheritDocTag(tag *ast.JSDocTag) bool {
 	return tag.TagName().Text() == "inheritDoc" || tag.TagName().Text() == "inheritdoc"
+}
+
+func getCommentText(comments []*ast.Node) string {
+	var b strings.Builder
+	for _, comment := range comments {
+		switch comment.Kind {
+		case ast.KindJSDocText:
+			b.WriteString(comment.Text())
+		case ast.KindJSDocLink, ast.KindJSDocLinkCode, ast.KindJSDocLinkPlain:
+			b.WriteString(scanner.GetTextOfNode(comment))
+		}
+	}
+	return b.String()
 }
 
 func formatQuickInfo(quickInfo string) string {
