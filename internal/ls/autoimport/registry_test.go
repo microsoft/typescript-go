@@ -270,6 +270,9 @@ func TestRegistryLifecycle(t *testing.T) {
 
 		// Close monorepo file; no node_modules buckets should remain
 		session.DidCloseFile(ctx, monorepoHandle.URI())
+		session.DidOpenFile(ctx, "untitled:Untitled-1", 0, "", lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(ctx, "untitled:Untitled-1")
+		assert.NilError(t, err)
 		stats = autoImportStats(t, session)
 		assert.Equal(t, len(stats.NodeModulesBuckets), 0)
 	})

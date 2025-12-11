@@ -118,22 +118,26 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	if file, ok := s.overlays[path]; ok {
 		return file
 	}
-	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
-	if entry != nil {
-		entry.Locked(func(entry dirty.Value[*diskFile]) {
-			if entry.Value() != nil && !entry.Value().MatchesDiskText() {
-				if content, ok := s.fs.ReadFile(fileName); ok {
-					entry.Change(func(file *diskFile) {
-						file.content = content
-						file.hash = xxh3.Hash128([]byte(content))
-						file.needsReload = false
-					})
-				} else {
-					entry.Delete()
-				}
-			}
-		})
+	if entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true}); entry != nil {
+		return s.reloadEntryIfNeeded(entry)
 	}
+	return nil
+}
+
+func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
+	entry.Locked(func(entry dirty.Value[*diskFile]) {
+		if entry.Value() != nil && !entry.Value().MatchesDiskText() {
+			if content, ok := s.fs.ReadFile(entry.Value().fileName); ok {
+				entry.Change(func(file *diskFile) {
+					file.content = content
+					file.hash = xxh3.Hash128([]byte(content))
+					file.needsReload = false
+				})
+			} else {
+				entry.Delete()
+			}
+		}
+	})
 	if entry == nil || entry.Value() == nil {
 		return nil
 	}

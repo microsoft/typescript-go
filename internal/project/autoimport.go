@@ -2,6 +2,7 @@ package project
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -10,11 +11,55 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+type autoImportBuilderFS struct {
+	snapshotFSBuilder *snapshotFSBuilder
+	untrackedFiles    collections.SyncMap[tspath.Path, FileHandle]
+}
+
+var _ FileSource = (*autoImportBuilderFS)(nil)
+
+// FS implements FileSource.
+func (a *autoImportBuilderFS) FS() vfs.FS {
+	return a.snapshotFSBuilder.fs
+}
+
+// GetFile implements FileSource.
+func (a *autoImportBuilderFS) GetFile(fileName string) FileHandle {
+	path := a.snapshotFSBuilder.toPath(fileName)
+	return a.GetFileByPath(fileName, path)
+}
+
+// GetFileByPath implements FileSource.
+func (a *autoImportBuilderFS) GetFileByPath(fileName string, path tspath.Path) FileHandle {
+	// We want to avoid long-term caching of files referenced only by auto-imports, so we
+	// override GetFileByPath to avoid collecting more files into the snapshotFSBuilder's
+	// diskFiles. (Note the reason we can't just use the finalized SnapshotFS is that changed
+	// files not read during other parts of the snapshot clone will be marked as dirty, but
+	// not yet refreshed from disk.)
+	if overlay, ok := a.snapshotFSBuilder.overlays[path]; ok {
+		return overlay
+	}
+	if diskFile, ok := a.snapshotFSBuilder.diskFiles.Load(path); ok {
+		return a.snapshotFSBuilder.reloadEntryIfNeeded(diskFile)
+	}
+	if fh, ok := a.untrackedFiles.Load(path); ok {
+		return fh
+	}
+	var fh FileHandle
+	content, ok := a.snapshotFSBuilder.fs.ReadFile(fileName)
+	if ok {
+		fh = newDiskFile(fileName, content)
+	}
+	fh, _ = a.untrackedFiles.LoadOrStore(path, fh)
+	return fh
+}
+
 type autoImportRegistryCloneHost struct {
 	projectCollection *ProjectCollection
 	parseCache        *ParseCache
 	fs                *sourceFS
 	currentDirectory  string
+	files             []ParseCacheKey
 }
 
 var _ autoimport.RegistryCloneHost = (*autoImportRegistryCloneHost)(nil)
@@ -29,7 +74,7 @@ func newAutoImportRegistryCloneHost(
 	return &autoImportRegistryCloneHost{
 		projectCollection: projectCollection,
 		parseCache:        parseCache,
-		fs:                &sourceFS{toPath: toPath, source: snapshotFSBuilder},
+		fs:                &sourceFS{toPath: toPath, source: &autoImportBuilderFS{snapshotFSBuilder: snapshotFSBuilder}},
 	}
 }
 
@@ -98,13 +143,22 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 	if fh == nil {
 		return nil
 	}
-	// !!! andrewbranch/autoimport: this should usually/always be a peek instead of an acquire
-	return a.parseCache.Acquire(NewParseCacheKey(ast.SourceFileParseOptions{
+	opts := ast.SourceFileParseOptions{
 		FileName:         fileName,
 		Path:             path,
 		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 		// !!! wrong if we load non-.d.ts files here
 		ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{},
-	}, fh.Hash(), core.GetScriptKindFromFileName(fileName)), fh)
+	}
+	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
+	a.files = append(a.files, key)
+	return a.parseCache.Acquire(key, fh)
+}
+
+// Dispose implements autoimport.RegistryCloneHost.
+func (a *autoImportRegistryCloneHost) Dispose() {
+	for _, key := range a.files {
+		a.parseCache.Deref(key)
+	}
 }

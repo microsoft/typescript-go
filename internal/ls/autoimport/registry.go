@@ -223,7 +223,9 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 	if logger != nil {
 		logger.Logf("Built autoimport registry in %v", time.Since(start))
 	}
-	return builder.Build(), nil
+	registry := builder.Build()
+	builder.host.Dispose()
+	return registry, nil
 }
 
 type BucketStats struct {
@@ -301,6 +303,7 @@ type RegistryCloneHost interface {
 	GetProgramForProject(projectPath tspath.Path) *compiler.Program
 	GetPackageJson(fileName string) *packagejson.InfoCacheEntry
 	GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile
+	Dispose()
 }
 
 type registryBuilder struct {
@@ -321,10 +324,11 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		resolver: module.NewResolver(host, core.EmptyCompilerOptions, "", ""),
 		base:     registry,
 
-		directories:    dirty.NewMap(registry.directories),
-		nodeModules:    dirty.NewMap(registry.nodeModules),
-		projects:       dirty.NewMap(registry.projects),
-		specifierCache: dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		userPreferences: registry.userPreferences.CopyOrDefault(),
+		directories:     dirty.NewMap(registry.directories),
+		nodeModules:     dirty.NewMap(registry.nodeModules),
+		projects:        dirty.NewMap(registry.projects),
+		specifierCache:  dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
 	}
 }
 
@@ -345,6 +349,9 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 	neededDirectories := make(map[tspath.Path]string)
 	for path, fileName := range change.OpenFiles {
 		neededProjects[core.FirstResult(b.host.GetDefaultProject(path))] = struct{}{}
+		if strings.HasPrefix(fileName, "^/") {
+			continue
+		}
 		dir := fileName
 		dirPath := path
 		for {

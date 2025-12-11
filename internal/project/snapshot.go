@@ -368,7 +368,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.sessionOptions.CurrentDirectory,
 		s.toPath,
 	)
-	openFiles := make(map[tspath.Path]string)
+	openFiles := make(map[tspath.Path]string, len(overlays))
 	for path, overlay := range overlays {
 		openFiles[path] = overlay.FileName()
 	}
