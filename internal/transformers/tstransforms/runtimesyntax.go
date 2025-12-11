@@ -952,12 +952,12 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMemberDeclarationValue(member *
 	switch value := evaluatedValue.(type) {
 	case jsnum.Number:
 		if value >= 0 {
-			return tx.Factory().NewNumericLiteral(value.String())
+			return tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 		} else {
-			return tx.Factory().NewPrefixUnaryExpression(ast.KindMinusToken, tx.Factory().NewNumericLiteral((-value).String()))
+			return tx.Factory().NewPrefixUnaryExpression(ast.KindMinusToken, tx.Factory().NewNumericLiteral((-value).String(), ast.TokenFlagsNone))
 		}
 	case string:
-		return tx.Factory().NewStringLiteral(value)
+		return tx.Factory().NewStringLiteral(value, ast.TokenFlagsNone)
 	default:
 		if member.Initializer == nil {
 			return tx.Factory().NewVoidZeroExpression()
