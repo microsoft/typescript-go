@@ -483,7 +483,6 @@ func isObjectBindingElementWithoutPropertyName(bindingElement *ast.Node) bool {
 		bindingElement.PropertyName() == nil
 }
 
-
 func isRightSideOfPropertyAccess(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindPropertyAccessExpression && node.Parent.Name() == node
 }
