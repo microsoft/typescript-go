@@ -293,16 +293,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*project.Config, err
 	if err != nil {
 		return &project.Config{}, fmt.Errorf("configure request failed: %w", err)
 	}
-	s.Log(fmt.Sprintf("\n\nconfiguration received: %+v, %T\n\n", configs, configs))
 	return project.ParseConfiguration(configs), nil
-	s.logger.Infof("configuration: %+v, %T", configs, configs)
-	userPreferences := s.session.NewUserPreferences()
-	for _, item := range configs {
-		if parsed := userPreferences.Parse(item); parsed != nil {
-			return parsed, nil
-		}
-	}
-	return userPreferences, nil
 }
 
 func (s *Server) Run(ctx context.Context) error {

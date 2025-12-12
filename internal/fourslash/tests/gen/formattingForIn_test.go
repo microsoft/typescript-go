@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingForIn(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**/for (var i    in[]   )  {}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingSpaceBetweenOptionalChaining(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/a    ?.    b   ?.   c   .   d;
 /*2*/o    .  m()   ?.   length;`

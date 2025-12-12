@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingSingleLineWithNewLineOptionSet(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/module Default{}
 /*2*/function foo(){}

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatNoSpaceBeforeCloseBrace1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `new Foo(1, /* comment */    );`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

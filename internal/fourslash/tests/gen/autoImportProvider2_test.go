@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportProvider2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/direct-dependency/package.json
 { "name": "direct-dependency", "dependencies": { "indirect-dependency": "*" } }

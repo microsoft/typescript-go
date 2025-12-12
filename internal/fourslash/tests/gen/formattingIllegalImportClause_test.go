@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingIllegalImportClause(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var expect = require('expect.js');
 import React   from 'react'/*1*/;

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingMappedType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*generic*/type t  < T  > =   {
 /*map*/   [   P   in   keyof    T  ]   :   T  [  P  ]

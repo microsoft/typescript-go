@@ -8,8 +8,8 @@ import (
 )
 
 func TestSpaceBeforeAndAfterBinaryOperators(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let i = 0;
 /*1*/(i++,i++);

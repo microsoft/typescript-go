@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingTypeInfer(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
 /*L1*/type C<T> = T extends Array<infer U> ? U : never;

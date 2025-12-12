@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingChainingMethods(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` z$ = this.store.select(this.fake())
      .ofType(

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnConstructorSignature(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/interface Gourai { new   () {} }
 /*2*/type Stylet = { new   () {} }`

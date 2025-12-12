@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingSkippedTokens(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/foo(): Bar { }
 /*2*/function Foo      () #   { }

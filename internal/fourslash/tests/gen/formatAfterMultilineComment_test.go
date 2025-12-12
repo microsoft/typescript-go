@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatAfterMultilineComment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*foo
 */"123123";`

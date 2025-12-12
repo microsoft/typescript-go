@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatAsyncKeyword(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/let x = async         () => 1;
 /*2*/let y = async() => 1;

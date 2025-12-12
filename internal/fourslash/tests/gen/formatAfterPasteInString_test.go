@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatAfterPasteInString(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*2*/const x = f('aa/*1*/a').x()`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

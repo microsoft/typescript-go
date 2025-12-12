@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingNonNullAssertionOperator(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/ 'bar' ! ;
 /*2*/ ( 'bar' ) ! ;

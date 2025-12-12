@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingNestedScopes(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/        module      My.App      {
 /*2*/export      var appModule =      angular.module("app", [

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnObjectLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = /*1*/{foo:/*2*/ 1,
 bar: "tt",/*3*/

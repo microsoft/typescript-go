@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatComments(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `_.chain()
 // wow/*callChain1*/

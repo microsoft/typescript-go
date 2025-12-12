@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatDotAfterNumber(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `1+ 2 .toString() +3/*1*/
 1+ 2. .toString() +3/*2*/

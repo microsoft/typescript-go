@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingDecorators(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/        @    decorator1    
 /*2*/            @        decorator2

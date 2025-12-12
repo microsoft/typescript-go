@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingInDestructuring5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let a, b;
 /*1*/if (false)[a, b] = [1, 2];

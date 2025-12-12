@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatTsx(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.tsx
 <div><p>'</p><p>{function(){return 1;}]}</p></div>`

@@ -8,8 +8,8 @@ import (
 )
 
 func TestSpaceAfterReturn(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f( ) {
 return       1;/*1*/

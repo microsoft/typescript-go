@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnClasses(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/         class                    a                  {
 /*2*/                                                        constructor       (       n   :                 number    )             ;

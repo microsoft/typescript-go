@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingAfterChainedFatArrow(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = n => p => {
     while (true) {

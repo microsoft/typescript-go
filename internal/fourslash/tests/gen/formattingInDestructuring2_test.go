@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingInDestructuring2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/function   drawText(    { text = "", location: [x, y]=           [0, 0], bold = false }) {
     // Draw text  

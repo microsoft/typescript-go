@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnInvalidCodes(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/var a;var c          , b;var  $d
 /*2*/var $e

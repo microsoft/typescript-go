@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingHexLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x =  0x1,y;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

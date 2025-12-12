@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestImportNameCodeFix_externalNonRelateive2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/apps/app1/tsconfig.json
 {
@@ -40,17 +41,17 @@ shared/*external2external*/`
 		`import { shared } from "shared/constants";
 
 shared`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
 	f.GoToMarker(t, "internal2internal")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { utils } from "./utils";
 
 utils`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
 	f.GoToMarker(t, "external2external")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { shared } from "./constants";
 
 shared`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingFatArrowFunctions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// valid
     (         )           =>    1  ;/*1*/

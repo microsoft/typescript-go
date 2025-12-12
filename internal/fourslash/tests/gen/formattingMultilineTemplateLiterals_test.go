@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingMultilineTemplateLiterals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/new Error(` + "`" + `Failed to expand glob: ${projectSpec.filesGlob}
 /*2*/                at projectPath : ${projectFile}

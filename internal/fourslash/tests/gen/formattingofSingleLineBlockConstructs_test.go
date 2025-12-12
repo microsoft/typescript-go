@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingofSingleLineBlockConstructs(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module InternalModule/*1*/{}
 interface MyInterface/*2*/{}

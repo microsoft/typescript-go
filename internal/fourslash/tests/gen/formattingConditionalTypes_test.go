@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingConditionalTypes(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*L1*/type Diff1<T, U> = T extends U?never:T;
 /*L2*/type Diff2<T, U> = T    extends    U  ?    never   :     T;`

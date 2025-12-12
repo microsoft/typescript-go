@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportProvider1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/@angular/forms/package.json
 { "name": "@angular/forms", "typings": "./forms.d.ts" }

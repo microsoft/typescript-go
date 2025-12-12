@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingSpaceBeforeFunctionParen(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/function foo() { }
 /*2*/function boo  () { }

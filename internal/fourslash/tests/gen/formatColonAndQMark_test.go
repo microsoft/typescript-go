@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatColonAndQMark(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class foo {/*1*/
     constructor (n?: number, m = 5, o?: string) { }/*2*/

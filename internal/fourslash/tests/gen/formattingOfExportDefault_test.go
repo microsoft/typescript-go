@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOfExportDefault(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module Foo {
 /*1*/    export        default        class        Test { }

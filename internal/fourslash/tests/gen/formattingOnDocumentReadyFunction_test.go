@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnDocumentReadyFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/$    (   document   )   .  ready  (   function   (   )   {
 /*2*/    alert    (           'i am ready'  )   ;

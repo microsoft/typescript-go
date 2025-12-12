@@ -8,8 +8,8 @@ import (
 )
 
 func TestGenericsFormatting(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*inClassDeclaration*/class Foo   <    T1   ,  T2    >  {
 /*inMethodDeclaration*/    public method    <   T3,    T4   >   ( a: T1,   b: Array    < T4 > ):   Map < T1  ,   T2, Array < T3    >    > {

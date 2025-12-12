@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestImportNameCodeFix_externalNonRelative1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.base.json
 {
@@ -55,11 +56,11 @@ Pkg2/*internal*/
 		`import { Pkg2 } from "pkg-2/utils";
 
 Pkg2`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
 	f.GoToMarker(t, "internal")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { Pkg2 } from "../../utils";
 
 Pkg2`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
 }

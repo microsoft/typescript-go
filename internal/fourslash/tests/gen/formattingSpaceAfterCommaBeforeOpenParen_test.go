@@ -8,13 +8,8 @@ import (
 )
 
 func TestFormattingSpaceAfterCommaBeforeOpenParen(t *testing.T) {
-<<<<<<< HEAD
-	t.Parallel()
-	t.Skip()
-=======
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
->>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `foo(a,(b))/*1*/
 foo(a,(<b>c).d)/*2*/`
@@ -22,15 +17,8 @@ foo(a,(<b>c).d)/*2*/`
 	defer done()
 	f.GoToMarker(t, "1")
 	f.Insert(t, ";")
-<<<<<<< HEAD
 	f.VerifyCurrentLineContent(t, `foo(a, (b));`)
 	f.GoToMarker(t, "2")
 	f.Insert(t, ";")
 	f.VerifyCurrentLineContent(t, `foo(a, (<b>c).d);`)
-=======
-	f.VerifyCurrentLineContentIs(t, "foo(a, (b));")
-	f.GoToMarker(t, "2")
-	f.Insert(t, ";")
-	f.VerifyCurrentLineContentIs(t, "foo(a, (<b>c).d);")
->>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 }

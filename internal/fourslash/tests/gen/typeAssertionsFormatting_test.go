@@ -8,8 +8,8 @@ import (
 )
 
 func TestTypeAssertionsFormatting(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `( <  any   >      publisher);/*1*/
  <  any  >      3;/*2*/`

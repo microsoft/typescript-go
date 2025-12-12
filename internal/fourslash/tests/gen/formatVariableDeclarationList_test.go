@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatVariableDeclarationList(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/var   fun1   =   function   (     )     {
 /*2*/            var               x   =   'foo'             ,

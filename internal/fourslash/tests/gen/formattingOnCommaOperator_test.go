@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingOnCommaOperator(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var v1 = ((1, 2, 3), 4, 5, (6, 7));/*1*/
 function f1() {

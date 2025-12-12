@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingSpacesAfterConstructor(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/class test { constructor                   () { } }
 /*2*/class test { constructor                   () { } }`

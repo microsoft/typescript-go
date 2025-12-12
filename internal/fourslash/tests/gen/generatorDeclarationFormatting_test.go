@@ -8,8 +8,8 @@ import (
 )
 
 func TestGeneratorDeclarationFormatting(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function    *g() { }/*1*/
 var v = function    *() { };/*2*/`

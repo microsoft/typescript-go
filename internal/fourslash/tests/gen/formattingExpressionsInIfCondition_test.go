@@ -8,13 +8,8 @@ import (
 )
 
 func TestFormattingExpressionsInIfCondition(t *testing.T) {
-<<<<<<< HEAD
-	t.Parallel()
-
-=======
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
->>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `if (a === 1 ||
     /*0*/b === 2 ||/*1*/
@@ -25,9 +20,5 @@ func TestFormattingExpressionsInIfCondition(t *testing.T) {
 	f.GoToMarker(t, "1")
 	f.Insert(t, "\n")
 	f.GoToMarker(t, "0")
-<<<<<<< HEAD
 	f.VerifyCurrentLineContent(t, `    b === 2 ||`)
-=======
-	f.VerifyCurrentLineContentIs(t, "    b === 2 ||")
->>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormatDebuggerStatement(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `if(false){debugger;}
   if    (   false   )   {    debugger  ;   }`

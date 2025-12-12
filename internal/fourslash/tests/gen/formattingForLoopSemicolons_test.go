@@ -8,8 +8,8 @@ import (
 )
 
 func TestFormattingForLoopSemicolons(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/for (;;) { }
 /*2*/for (var x;x<0;x++) { }
