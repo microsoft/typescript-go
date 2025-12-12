@@ -277,6 +277,10 @@ func (s *Scanner) TokenText() string {
 	return s.text[s.tokenStart:s.pos]
 }
 
+func (s *Scanner) TextAtTokenIs(str string) bool {
+	return s.text[s.tokenStart:min(s.tokenStart+len(str), len(s.text))] == str
+}
+
 func (s *Scanner) TokenValue() string {
 	return s.tokenValue
 }
