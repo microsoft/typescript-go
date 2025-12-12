@@ -13,7 +13,7 @@
 
 // === findAllReferences ===
 // === /b.ts ===
-// import { /*FIND ALL REFS*/[|f|] } from "a";
+// import { /*FIND ALL REFS*/[|[|f|]|] } from "a";
 
 // === /c.ts ===
 // A.[|f|]();

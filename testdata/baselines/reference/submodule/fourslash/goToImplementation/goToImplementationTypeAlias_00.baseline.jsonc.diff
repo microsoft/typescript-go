@@ -3,6 +3,7 @@
 @@= skipped -0, +0 lines =@@
  // === goToImplementation ===
  // === /ref.ts ===
- // import { TypeAlias } from "./def";
+-// import { TypeAlias } from "./def";
 -// const c: T/*GOTO IMPL*/ypeAlias = [|{ P: 2 }|];
++// <|import { [|TypeAlias|] } from "./def";|>
 +// const c: T/*GOTO IMPL*/ypeAlias = { P: 2 };

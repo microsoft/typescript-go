@@ -7,7 +7,7 @@
 // --- (line: 5) skipped ---
 
 // === /player.js ===
-// import { [|Component|] } from './component.js';
+// import { [|[|Component|]|] } from './component.js';
 // 
 // /**
 //  * @extends [|Component|]/*FIND ALL REFS*/

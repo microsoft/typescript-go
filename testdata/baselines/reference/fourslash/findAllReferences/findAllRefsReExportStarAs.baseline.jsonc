@@ -33,7 +33,7 @@
 // export * as [|Leaf|] from './leafModule';
 
 // === /importing.ts ===
-//  import { /*FIND ALL REFS*/[|Leaf|] } from './exporting';
+//  import { /*FIND ALL REFS*/[|[|Leaf|]|] } from './exporting';
 //  [|Leaf|].hello()
 
 
@@ -43,5 +43,5 @@
 // export * as [|Leaf|] from './leafModule';
 
 // === /importing.ts ===
-//  import { [|Leaf|] } from './exporting';
+//  import { [|[|Leaf|]|] } from './exporting';
 //  /*FIND ALL REFS*/[|Leaf|].hello()

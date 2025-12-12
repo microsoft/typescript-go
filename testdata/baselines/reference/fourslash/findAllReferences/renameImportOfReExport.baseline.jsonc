@@ -37,6 +37,6 @@
 //     export { [|C|] } from "a";
 // }
 // declare module "c" {
-//     import { /*FIND ALL REFS*/[|C|] } from "b";
+//     import { /*FIND ALL REFS*/[|[|C|]|] } from "b";
 //     export function f(c: [|C|]): void;
 // }

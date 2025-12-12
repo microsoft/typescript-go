@@ -49,7 +49,7 @@
 //     export { [|N|] }; // Renaming N here would rename
 // }
 // declare module "b" {
-//     import { /*FIND ALL REFS*/[|N|] } from "a";
+//     import { /*FIND ALL REFS*/[|[|N|]|] } from "a";
 //     export const y: typeof [|N|].x;
 // }
 

@@ -1,0 +1,10 @@
+--- old.goToImplementation_inDifferentFiles.baseline.jsonc
++++ new.goToImplementation_inDifferentFiles.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === goToImplementation ===
+ // === /home/src/workspaces/project/bar.ts ===
+-// import {Foo} from './foo'
++// import {[|Foo|]} from './foo'
+ // 
+ // class [|A|] implements Foo {
+ //     func() {}

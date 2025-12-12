@@ -47,7 +47,7 @@
 
 // === /file2.ts ===
 // declare function log(s: string | number): void;
-// import { /*FIND ALL REFS*/[|q|] } from "./file1";
+// import { /*FIND ALL REFS*/[|[|q|]|] } from "./file1";
 // log([|q|] + 1);
 
 
@@ -65,7 +65,7 @@
 
 // === /file2.ts ===
 // declare function log(s: string | number): void;
-// import { [|q|] } from "./file1";
+// import { [|[|q|]|] } from "./file1";
 // log(/*FIND ALL REFS*/[|q|] + 1);
 
 

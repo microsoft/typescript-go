@@ -78,7 +78,7 @@ Config File Names::
 
 // === findAllReferences ===
 // === /myproject/a/index.ts ===
-// import { [|B|] } from "../b/lib";
+// import { [|[|B|]|] } from "../b/lib";
 // const b: /*FIND ALL REFS*/[|B|] = new [|B|]();
 
 // === /myproject/b/lib/index.d.ts ===

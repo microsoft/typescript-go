@@ -29,4 +29,4 @@
 // [|B|].x;
 
 // === /c.ts ===
-// import { /*FIND ALL REFS*/[|B|] } from "./b";
+// import { /*FIND ALL REFS*/[|[|B|]|] } from "./b";

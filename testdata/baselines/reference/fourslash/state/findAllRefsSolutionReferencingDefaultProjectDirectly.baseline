@@ -344,7 +344,7 @@ Config File Names::
 // export function [|foo|]() { return 1; }
 
 // === /myproject/src/main.ts ===
-// import { [|foo|] } from './helpers/functions';
+// import { [|[|foo|]|] } from './helpers/functions';
 // export { /*FIND ALL REFS*/[|foo|] };
 {
   "method": "textDocument/didClose",

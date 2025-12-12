@@ -6,4 +6,4 @@
 
 // === documentHighlights ===
 // === /b.ts ===
-// import { /*HIGHLIGHTS*/[|x|] } from "./a";
+// import { /*HIGHLIGHTS*/[|[|x|]|] } from "./a";

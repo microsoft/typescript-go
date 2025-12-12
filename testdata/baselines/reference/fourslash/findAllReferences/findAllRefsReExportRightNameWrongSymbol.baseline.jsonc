@@ -43,7 +43,7 @@
 
 // === /c.ts ===
 // export { x } from "./b";
-// import { /*FIND ALL REFS*/[|x|] } from "./a";
+// import { /*FIND ALL REFS*/[|[|x|]|] } from "./a";
 // [|x|];
 
 
@@ -54,7 +54,7 @@
 
 // === /c.ts ===
 // export { x } from "./b";
-// import { [|x|] } from "./a";
+// import { [|[|x|]|] } from "./a";
 // /*FIND ALL REFS*/[|x|];
 
 
@@ -69,4 +69,4 @@
 // x;
 
 // === /d.ts ===
-// import { /*FIND ALL REFS*/[|x|] } from "./c";
+// import { /*FIND ALL REFS*/[|[|x|]|] } from "./c";

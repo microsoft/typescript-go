@@ -503,7 +503,7 @@ Config File Names::
 // export function [|foo|]() { return 1; }
 
 // === /myproject/src/main.ts ===
-// import { [|foo|] } from './helpers/functions';
+// import { [|[|foo|]|] } from './helpers/functions';
 // export { /*FIND ALL REFS*/[|foo|] };
 {
   "method": "textDocument/didClose",
@@ -585,7 +585,7 @@ Config::
 
 // === findAllReferences ===
 // === /myproject/indirect3/main.ts ===
-// import { /*FIND ALL REFS*/[|foo|] } from '../target/src/main';
+// import { /*FIND ALL REFS*/[|[|foo|]|] } from '../target/src/main';
 // [|foo|]()
 // export function bar() {}
 
@@ -593,5 +593,5 @@ Config::
 // export function [|foo|]() { return 1; }
 
 // === /myproject/src/main.ts ===
-// import { [|foo|] } from './helpers/functions';
+// import { [|[|foo|]|] } from './helpers/functions';
 // export { [|foo|] };
