@@ -483,11 +483,6 @@ func isObjectBindingElementWithoutPropertyName(bindingElement *ast.Node) bool {
 		bindingElement.PropertyName() == nil
 }
 
-func isArgumentOfElementAccessExpression(node *ast.Node) bool {
-	return node != nil && node.Parent != nil &&
-		node.Parent.Kind == ast.KindElementAccessExpression &&
-		node.Parent.AsElementAccessExpression().ArgumentExpression == node
-}
 
 func isRightSideOfPropertyAccess(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindPropertyAccessExpression && node.Parent.Name() == node

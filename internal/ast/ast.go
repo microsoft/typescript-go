@@ -10952,27 +10952,6 @@ func (file *SourceFile) GetNameTable() map[string]int {
 	file.nameTableOnce.Do(func() {
 		nameTable := make(map[string]int, file.IdentifierCount)
 
-		isTagName := func(node *Node) bool {
-			return node.Parent != nil && IsJSDocTag(node.Parent) && node.Parent.TagName() == node
-		}
-
-		isArgumentOfElementAccessExpression := func(node *Node) bool {
-			return node != nil && node.Parent != nil &&
-				node.Parent.Kind == KindElementAccessExpression &&
-				node.Parent.AsElementAccessExpression().ArgumentExpression == node
-		}
-
-		// We want to store any numbers/strings if they were a name that could be
-		// related to a declaration.  So, if we have 'import x = require("something")'
-		// then we want 'something' to be in the name table.  Similarly, if we have
-		// "a['propname']" then we want to store "propname" in the name table.
-		literalIsName := func(node *Node) bool {
-			return IsDeclarationName(node) ||
-				node.Parent.Kind == KindExternalModuleReference ||
-				isArgumentOfElementAccessExpression(node) ||
-				IsLiteralComputedPropertyDeclarationName(node)
-		}
-
 		var walk func(node *Node) bool
 		walk = func(node *Node) bool {
 			if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
@@ -10993,8 +10972,7 @@ func (file *SourceFile) GetNameTable() map[string]int {
 			}
 			return false
 		}
-
-		file.AsNode().ForEachChild(walk)
+		file.ForEachChild(walk)
 
 		file.nameTable = nameTable
 	})
