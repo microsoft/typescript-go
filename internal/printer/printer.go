@@ -37,7 +37,7 @@ type PrinterOptions struct {
 	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
-	// Target                        core.ScriptTarget
+	Target                      core.ScriptTarget
 	SourceMap                   bool
 	InlineSourceMap             bool
 	InlineSources               bool
@@ -999,7 +999,11 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	state := p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
+	flags := getLiteralTextFlagsNone
+	if p.Options.Target >= core.ScriptTargetES2021 {
+		flags |= getLiteralTextFlagsAllowNumericSeparator
+	}
+	p.emitLiteral(node.AsNode(), flags)
 	p.exitNode(node.AsNode(), state)
 }
 
