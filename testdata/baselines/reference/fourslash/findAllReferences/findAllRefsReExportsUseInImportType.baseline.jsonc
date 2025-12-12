@@ -62,7 +62,7 @@
 
 // === findAllReferences ===
 // === /app.ts ===
-// import { /*FIND ALL REFS*/[|[|foo|]|] } from './foo/types';
+// import { /*FIND ALL REFS*/[|foo|] } from './foo/types';
 // export type fullType = [|foo|].Full;
 // type namespaceImport = typeof import('./foo/types');
 // type fullType2 = import('./foo/types').[|foo|].Full;
@@ -75,7 +75,7 @@
 
 // === findAllReferences ===
 // === /app.ts ===
-// import { [|[|foo|]|] } from './foo/types';
+// import { [|foo|] } from './foo/types';
 // export type fullType = /*FIND ALL REFS*/[|foo|].Full;
 // type namespaceImport = typeof import('./foo/types');
 // type fullType2 = import('./foo/types').[|foo|].Full;

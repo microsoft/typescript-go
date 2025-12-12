@@ -1910,12 +1910,6 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 		return
 	}
 
-	// For non-aliased imports like `import { foo }`, skip when coming from an export search,
-	// as these are already added in searchForImportsOfExport.
-	if parent.Kind == ast.KindImportSpecifier && parent.PropertyName() == nil && parent.Name() == referenceLocation && search.comingFrom == ImpExpKindExport {
-		return
-	}
-
 	if parent.Kind == ast.KindExportSpecifier {
 		state.getReferencesAtExportSpecifier(referenceLocation, referenceSymbol, parent.AsExportSpecifier(), search, addReferencesHere, false /*alwaysGetReferences*/)
 		return
@@ -2139,14 +2133,6 @@ func (state *refState) searchForImportsOfExport(exportLocation *ast.Node, export
 
 	// For each import, find all references to that import in its source file.
 	for _, i := range r.importSearches {
-		// For `import { abc }` (no alias), add the import as a reference to the export symbol.
-		// For `import { foo as bar }`, `foo` is already added via singleReferences above,
-		// and `bar` is just a local alias, not a reference to the export.
-		if ast.IsImportSpecifier(i.importLocation.Parent) && i.importLocation.Parent.PropertyName() == nil {
-			addRef := state.referenceAdder(exportSymbol)
-			addRef(i.importLocation, entryKindNode)
-		}
-		// Then search for uses of the imported symbol in the file
 		state.getReferencesInSourceFile(ast.GetSourceFileOfNode(i.importLocation), state.createSearch(i.importLocation, i.importSymbol, ImpExpKindExport, "", nil), true /*addReferencesHere*/)
 	}
 

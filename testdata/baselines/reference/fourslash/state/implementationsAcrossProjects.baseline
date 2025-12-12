@@ -213,7 +213,7 @@ Config::
 
 // === goToImplementation ===
 // === /projects/container/compositeExec/index.ts ===
-// <|import { [|Foo|] } from "../lib";|>
+// import { Foo } from "../lib";
 // <|class [|A2|] implements Foo {
 //     func() {}
 // }|>
@@ -222,7 +222,7 @@ Config::
 // }|>
 
 // === /projects/container/exec/index.ts ===
-// <|import { [|Foo|] } from "../lib";|>
+// import { Foo } from "../lib";
 // <|class [|A1|] implements Foo {
 //     func() {}
 // }|>
@@ -231,7 +231,7 @@ Config::
 // }|>
 
 // === /projects/container/lib/bar.ts ===
-// <|import {[|Foo|]} from './index'|>
+// import {Foo} from './index'
 // <|class [|A|] implements Foo {
 //     func() {}
 // }|>

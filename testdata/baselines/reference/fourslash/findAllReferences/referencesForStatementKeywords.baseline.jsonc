@@ -146,7 +146,7 @@
 // // import ... from ...
 // import type B from "./b";
 // import type * as C from "./c";
-// /*FIND ALL REFS*/import type { [|[|D|]|] } from "./d";
+// /*FIND ALL REFS*/import type { [|D|] } from "./d";
 // import type { e1, e2 as e3 } from "./e";
 // 
 // // import "module"
@@ -163,7 +163,7 @@
 // // import ... from ...
 // import type B from "./b";
 // import type * as C from "./c";
-// import /*FIND ALL REFS*/type { [|[|D|]|] } from "./d";
+// import /*FIND ALL REFS*/type { [|D|] } from "./d";
 // import type { e1, e2 as e3 } from "./e";
 // 
 // // import "module"

@@ -21,7 +21,7 @@
 // === /b.ts ===
 // export { f as [|g|] } from "./a";
 // import { f } from "./a";
-// import { /*FIND ALL REFS*/[|[|g|]|] } from "./b";
+// import { /*FIND ALL REFS*/[|g|] } from "./b";
 
 
 
@@ -31,5 +31,5 @@
 
 // === /b.ts ===
 // export { [|f|] as [|g|] } from "./a";
-// import { /*FIND ALL REFS*/[|[|f|]|] } from "./a";
+// import { /*FIND ALL REFS*/[|f|] } from "./a";
 // import { [|g|] } from "./b";

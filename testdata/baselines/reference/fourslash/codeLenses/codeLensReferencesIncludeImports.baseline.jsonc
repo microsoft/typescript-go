@@ -1,8 +1,4 @@
 // === Code Lenses ===
-// === /other.ts ===
-// import { [|abc|] } from "./abc";
-// 
-
 // === /abc.ts ===
-// export function /*CODELENS: 1 reference*/abc() { }
+// export function /*CODELENS: 0 references*/abc() { }
 // 

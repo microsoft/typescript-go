@@ -19,7 +19,7 @@
 // }
 
 // === /b.ts ===
-// import { /*FIND ALL REFS*/[|[|Class|]|] } from "./a";
+// import { /*FIND ALL REFS*/[|Class|] } from "./a";
 // 
 // var c = new [|Class|]();
 
@@ -34,7 +34,7 @@
 // }
 
 // === /b.ts ===
-// import { [|[|Class|]|] } from "./a";
+// import { [|Class|] } from "./a";
 // 
 // var c = new /*FIND ALL REFS*/[|Class|]();
 

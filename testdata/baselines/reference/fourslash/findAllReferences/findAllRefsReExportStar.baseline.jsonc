@@ -12,4 +12,4 @@
 // export function [|foo|](): void {}
 
 // === /c.ts ===
-// import { /*FIND ALL REFS*/[|[|foo|]|] } from "./b";
+// import { /*FIND ALL REFS*/[|foo|] } from "./b";

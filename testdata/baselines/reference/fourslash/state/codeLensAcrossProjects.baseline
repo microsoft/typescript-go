@@ -296,7 +296,7 @@ Config::
 
 // === Code Lenses ===
 // === /projects/container/compositeExec/index.ts ===
-// import { [|Pointable|] } from "../lib";
+// import { Pointable } from "../lib";
 // class Point2 implements [|Pointable|] {
 //   getX(): number {
 //     return 0;
@@ -304,7 +304,7 @@ Config::
 // --- (line: 6) skipped ---
 
 // === /projects/container/exec/index.ts ===
-// import { [|Pointable|] } from "../lib";
+// import { Pointable } from "../lib";
 // class Point1 implements [|Pointable|] {
 //   getX(): number {
 //     return 0;
@@ -312,7 +312,7 @@ Config::
 // --- (line: 6) skipped ---
 
 // === /projects/container/lib/bar.ts ===
-// import { [|Pointable|] } from "./index";
+// import { Pointable } from "./index";
 // class Point implements [|Pointable|] {
 //   getX(): number {
 //     return 0;
@@ -321,7 +321,7 @@ Config::
 
 // === /projects/container/lib/index.ts ===
 // 
-// export interface /*CODELENS: 6 references*/Pointable {
+// export interface /*CODELENS: 3 references*/Pointable {
 //   getX(): number;
 //   getY(): number;
 // }

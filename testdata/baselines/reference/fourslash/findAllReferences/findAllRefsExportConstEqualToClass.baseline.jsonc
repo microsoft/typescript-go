@@ -14,4 +14,4 @@
 // export const [|D|] = C;
 
 // === /b.ts ===
-// import { /*FIND ALL REFS*/[|[|D|]|] } from "./a";
+// import { /*FIND ALL REFS*/[|D|] } from "./a";

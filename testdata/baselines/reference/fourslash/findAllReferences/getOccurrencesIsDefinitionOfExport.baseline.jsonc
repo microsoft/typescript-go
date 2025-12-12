@@ -13,5 +13,5 @@
 // export var [|x|] = 12;
 
 // === /main.ts ===
-// import { /*FIND ALL REFS*/[|[|x|]|] } from "./m";
+// import { /*FIND ALL REFS*/[|x|] } from "./m";
 // const y = [|x|];

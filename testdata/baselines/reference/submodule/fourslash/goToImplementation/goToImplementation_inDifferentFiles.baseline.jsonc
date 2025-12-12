@@ -1,6 +1,6 @@
 // === goToImplementation ===
 // === /home/src/workspaces/project/bar.ts ===
-// import {[|Foo|]} from './foo'
+// import {Foo} from './foo'
 // 
 // class [|A|] implements Foo {
 //     func() {}

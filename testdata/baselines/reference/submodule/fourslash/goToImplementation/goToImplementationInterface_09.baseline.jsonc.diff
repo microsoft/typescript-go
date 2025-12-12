@@ -3,7 +3,6 @@
 @@= skipped -0, +0 lines =@@
  // === goToImplementation ===
  // === /ref.ts ===
--// import { Interface } from "./def";
+ // import { Interface } from "./def";
 -// const c: I/*GOTO IMPL*/nterface = [|{ P: 2 }|];
-+// <|import { [|Interface|] } from "./def";|>
 +// const c: I/*GOTO IMPL*/nterface = { P: 2 };
