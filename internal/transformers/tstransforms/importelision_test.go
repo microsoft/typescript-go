@@ -86,7 +86,7 @@ func (p *fakeProgram) GetRedirectTargets(path tspath.Path) []string {
 	return nil
 }
 
-func (p *fakeProgram) GetFileCanonicalPath(path tspath.Path) tspath.Path {
+func (p *fakeProgram) GetDeduplicatedPackagePath(path tspath.Path) tspath.Path {
 	return path
 }
 

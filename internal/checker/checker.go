@@ -544,10 +544,7 @@ type Program interface {
 	GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
-	// GetFileCanonicalPath returns the canonical path for a file that may be from a duplicate package.
-	// Used to determine if two files from the same package (name@version) installed in different locations
-	// should be treated as the same for type compatibility purposes.
-	GetFileCanonicalPath(path tspath.Path) tspath.Path
+	GetDeduplicatedPackagePath(path tspath.Path) tspath.Path
 }
 
 type Host interface {
@@ -27016,15 +27013,11 @@ func (c *Checker) areSymbolsFromSamePackageFile(source *ast.Symbol, target *ast.
 	if sourceFile == nil || targetFile == nil {
 		return false
 	}
-	// If they're from the same file, this is not a package deduplication scenario
+	// If they're from the same file, they can't have been deduplicated.
 	if sourceFile == targetFile {
 		return false
 	}
-	// Get the canonical paths for both files
-	sourceCanonical := c.program.GetFileCanonicalPath(sourceFile.Path())
-	targetCanonical := c.program.GetFileCanonicalPath(targetFile.Path())
-	// If they map to the same canonical path, they're from the same package file
-	return sourceCanonical == targetCanonical
+	return c.program.GetDeduplicatedPackagePath(sourceFile.Path()) == c.program.GetDeduplicatedPackagePath(targetFile.Path())
 }
 
 func compareTypesEqual(s *Type, t *Type) Ternary {
