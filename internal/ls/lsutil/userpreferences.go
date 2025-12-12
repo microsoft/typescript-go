@@ -16,7 +16,7 @@ func NewDefaultUserPreferences() *UserPreferences {
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 
-		AllowRenameOfImportPath:            true,
+		AllowRenameOfImportPath:            core.TSTrue,
 		ProvideRefactorNotApplicableReason: true,
 		IncludeCompletionsWithSnippetText:  core.TSTrue,
 		DisplayPartsForJSDoc:               true,
@@ -66,13 +66,13 @@ type UserPreferences struct {
 
 	// ------- AutoImports --------
 
-	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference // !!!
+	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference
 	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference // !!!
-	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               // !!!
-	AutoImportFileExcludePatterns     []string                                               // !!!
-	PreferTypeOnlyAutoImports         bool                                                   // !!!
+	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference
+	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports
+	AutoImportSpecifierExcludeRegexes []string
+	AutoImportFileExcludePatterns     []string
+	PreferTypeOnlyAutoImports         core.Tristate
 
 	// ------- OrganizeImports -------
 
@@ -132,7 +132,7 @@ type UserPreferences struct {
 
 	// renamed from `providePrefixAndSuffixTextForRename`
 	UseAliasesForRename     core.Tristate
-	AllowRenameOfImportPath bool // !!!
+	AllowRenameOfImportPath core.Tristate
 
 	// ------- CodeFixes/Refactors -------
 
@@ -655,7 +655,7 @@ func (p *UserPreferences) Set(name string, value any) bool {
 	case "autoimportfileexcludepatterns":
 		p.AutoImportFileExcludePatterns = tsoptions.ParseStringArray(value)
 	case "prefertypeonlyautoimports":
-		p.PreferTypeOnlyAutoImports = parseBoolWithDefault(value, false)
+		p.PreferTypeOnlyAutoImports = tsoptions.ParseTristate(value)
 	case "organizeimportsignorecase":
 		p.OrganizeImportsIgnoreCase = tsoptions.ParseTristate(value)
 	case "organizeimportscollation":
@@ -675,14 +675,14 @@ func (p *UserPreferences) Set(name string, value any) bool {
 	case "usealiasesforrename", "provideprefixandsuffixtextforrename":
 		p.UseAliasesForRename = tsoptions.ParseTristate(value)
 	case "allowrenameofimportpath":
-		p.AllowRenameOfImportPath = parseBoolWithDefault(value, true)
+		p.AllowRenameOfImportPath = tsoptions.ParseTristate(value)
 	case "providerefactornotapplicablereason":
 		p.ProvideRefactorNotApplicableReason = parseBoolWithDefault(value, true)
 	case "includeinlayparameternamehints":
 		p.InlayHints.IncludeInlayParameterNameHints = parseInlayParameterNameHints(value)
 	case "includeinlayparameternamehintswhenargumentmatchesname":
 		p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseBoolWithDefault(value, false)
-	case "includeinlayfunctionparametertypeHints":
+	case "includeinlayfunctionparametertypehints":
 		p.InlayHints.IncludeInlayFunctionParameterTypeHints = parseBoolWithDefault(value, false)
 	case "includeinlayvariabletypehints":
 		p.InlayHints.IncludeInlayVariableTypeHints = parseBoolWithDefault(value, false)

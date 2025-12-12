@@ -34,9 +34,8 @@ type fileLoader struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
 
-	filesParser      *filesParser
-	rootTasks        []*parseTask
-	includeProcessor *includeProcessor
+	filesParser *filesParser
+	rootTasks   []*parseTask
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
@@ -101,7 +100,6 @@ func processAllProgramFiles(
 		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
-		includeProcessor:    &includeProcessor{},
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
@@ -144,7 +142,7 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 
 func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
 	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
-	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
+	if p.opts.Config.CompilerOptions().AllowNonTsExtensions.IsTrue() || tspath.HasExtension(absPath) {
 		p.rootTasks = append(p.rootTasks, &parseTask{
 			normalizedFilePath: absPath,
 			libFile:            libFile,
@@ -278,14 +276,20 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaData {
-	packageJsonScope := p.resolver.GetPackageJsonScopeIfApplicable(fileName)
+	packageJsonScope := p.resolver.GetPackageScopeForPath(fileName)
+	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
+
 	var packageJsonType, packageJsonDirectory string
 	if packageJsonScope.Exists() {
 		packageJsonDirectory = packageJsonScope.PackageDirectory
 		if value, ok := packageJsonScope.Contents.Type.GetValue(); ok {
-			packageJsonType = value
+			if !tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) &&
+				core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(fileName, "/node_modules/") {
+				packageJsonType = value
+			}
 		}
 	}
+
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType)
 	return ast.SourceFileMetaData{
 		PackageJsonType:      packageJsonType,
@@ -357,7 +361,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 				includeReason: includeReason,
 			}, nil)
 		} else {
-			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
 				kind: processingDiagnosticKindUnknownReference,
 				data: includeReason,
 			})
@@ -473,7 +477,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.Node {
 	p.factoryMu.Lock()
 	defer p.factoryMu.Unlock()
-	externalHelpersModuleReference := p.factory.NewStringLiteral(text)
+	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
 	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
 	// !!! addInternalEmitFlags(importDecl, InternalEmitFlags.NeverApplyImportHelper);
 	externalHelpersModuleReference.Parent = importDecl

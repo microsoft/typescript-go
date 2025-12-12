@@ -8,8 +8,13 @@ import (
 )
 
 func TestFormattingOnNestedDoWhileByEnter(t *testing.T) {
+<<<<<<< HEAD
 	t.Parallel()
 	t.Skip()
+=======
+	fourslash.SkipIfFailing(t)
+	t.Parallel()
+>>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*2*/do{
 /*3*/do/*1*/{
@@ -21,6 +26,7 @@ func TestFormattingOnNestedDoWhileByEnter(t *testing.T) {
 	defer done()
 	f.GoToMarker(t, "1")
 	f.Insert(t, "\n")
+<<<<<<< HEAD
 	f.VerifyCurrentLineContent(t, `    {`)
 	f.GoToMarker(t, "2")
 	f.VerifyCurrentLineContent(t, `do{`)
@@ -34,4 +40,19 @@ func TestFormattingOnNestedDoWhileByEnter(t *testing.T) {
 	f.VerifyCurrentLineContent(t, `}while(a!==b)`)
 	f.GoToMarker(t, "7")
 	f.VerifyCurrentLineContent(t, `}while(a!==b)`)
+=======
+	f.VerifyCurrentLineContentIs(t, "    {")
+	f.GoToMarker(t, "2")
+	f.VerifyCurrentLineContentIs(t, "do{")
+	f.GoToMarker(t, "3")
+	f.VerifyCurrentLineContentIs(t, "    do")
+	f.GoToMarker(t, "4")
+	f.VerifyCurrentLineContentIs(t, "do{")
+	f.GoToMarker(t, "5")
+	f.VerifyCurrentLineContentIs(t, "}while(a!==b)")
+	f.GoToMarker(t, "6")
+	f.VerifyCurrentLineContentIs(t, "}while(a!==b)")
+	f.GoToMarker(t, "7")
+	f.VerifyCurrentLineContentIs(t, "}while(a!==b)")
+>>>>>>> 20bf4fc90d3d38016f07fda1fb972eedc715bb02
 }
