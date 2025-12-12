@@ -69,30 +69,26 @@ async function main() {
             // Process failed tests
             if (event.Action === "fail" && event.Test) {
                 const outputs = testOutputs.get(event.Test) || [];
-                const fullOutput = outputs.join("");
 
-                // Check if this is a baseline-only failure
-                // Baseline failures contain specific messages from baseline.go
-                const hasBaselineMessage = /new baseline created at/.test(fullOutput) ||
-                    /the baseline file .* has changed/.test(fullOutput);
+                // A test is only considered a baseline-only failure if ALL error messages
+                // are baseline-related. Any non-baseline error message means it's a real failure.
+                const baselineMessagePatterns = [
+                    /^\s*baseline\.go:\d+: the baseline file .* has changed\./,
+                    /^\s*baseline\.go:\d+: new baseline created at /,
+                    /^\s*baseline\.go:\d+: the baseline file .* does not exist in the TypeScript submodule/,
+                    /^\s*baseline\.go:\d+: the baseline file .* does not match the reference in the TypeScript submodule/,
+                ];
 
-                // Check for non-baseline errors
-                // Look for patterns that indicate real test failures
-                // We need to filter out baseline messages when checking for errors
-                const outputWithoutBaseline = fullOutput
-                    .replace(/the baseline file .* has changed\. \(Run `hereby baseline-accept` if the new baseline is correct\.\)/g, "")
-                    .replace(/new baseline created at .*\./g, "")
-                    .replace(/the baseline file .* does not exist in the TypeScript submodule/g, "")
-                    .replace(/the baseline file .* does not match the reference in the TypeScript submodule/g, "");
+                // Check each output line that looks like an error message
+                // Error messages from Go tests typically contain ".go:" with a line number
+                const errorLines = outputs.filter(line => /^\s*\w+\.go:\d+:/.test(line));
 
-                const hasNonBaselineError = /^panic/m.test(outputWithoutBaseline) ||
-                    /Error|error/i.test(outputWithoutBaseline) ||
-                    /fatal|Fatal/.test(outputWithoutBaseline) ||
-                    /Unexpected/.test(outputWithoutBaseline);
+                // If there are no error lines, it's a real failure.
+                // If all error lines match baseline patterns, it's a baseline-only failure
+                const isBaselineOnlyFailure = errorLines.length > 0 &&
+                    errorLines.every(line => baselineMessagePatterns.some(pattern => pattern.test(line)));
 
-                // Only mark as failing if it's not a baseline-only failure
-                // (i.e., if there's no baseline message, or if there are other errors besides baseline)
-                if (!hasBaselineMessage || hasNonBaselineError) {
+                if (!isBaselineOnlyFailure) {
                     failingTests.push(event.Test);
                 }
             }
