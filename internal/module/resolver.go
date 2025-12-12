@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -2108,6 +2109,9 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				if strings.IndexByte(exports.AsString(), '*') != strings.LastIndexByte(exports.AsString(), '*') {
 					return
 				}
+				patternPath := tspath.ResolvePath(packageJson.PackageDirectory, exports.AsString())
+				leadingSlice, trailingSlice, _ := strings.Cut(patternPath, "*")
+				caseSensitive := r.resolver.host.FS().UseCaseSensitiveFileNames()
 				files := vfs.ReadDirectory(
 					r.resolver.host.FS(),
 					r.resolver.host.GetCurrentDirectory(),
@@ -2120,9 +2124,14 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 					nil,
 				)
 				for _, file := range files {
+					matchedStar, ok := r.getMatchedStarForPatternEntrypoint(file, leadingSlice, trailingSlice, caseSensitive)
+					if !ok {
+						continue
+					}
+					moduleSpecifier := tspath.ResolvePath(packageName, strings.Replace(subpath, "*", matchedStar, 1))
 					entrypoints = append(entrypoints, &ResolvedEntrypoint{
 						ResolvedFileName:  file,
-						ModuleSpecifier:   "!!! TODO",
+						ModuleSpecifier:   moduleSpecifier,
 						IncludeConditions: includeConditions,
 						ExcludeConditions: excludeConditions,
 						Ending:            core.IfElse(strings.HasSuffix(exports.AsString(), "*"), EndingExtensionChangeable, EndingFixed),
@@ -2198,4 +2207,19 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 	}
 
 	return entrypoints
+}
+
+func (r *resolutionState) getMatchedStarForPatternEntrypoint(file string, leadingSlice string, trailingSlice string, caseSensitive bool) (string, bool) {
+	if stringutil.HasPrefixAndSuffixWithoutOverlap(file, leadingSlice, trailingSlice, caseSensitive) {
+		return file[len(leadingSlice) : len(file)-len(trailingSlice)], true
+	}
+
+	if jsExtension := TryGetJSExtensionForFile(file, r.compilerOptions); len(jsExtension) > 0 {
+		swapped := tspath.ChangeFullExtension(file, jsExtension)
+		if stringutil.HasPrefixAndSuffixWithoutOverlap(swapped, leadingSlice, trailingSlice, caseSensitive) {
+			return swapped[len(leadingSlice) : len(swapped)-len(trailingSlice)], true
+		}
+	}
+
+	return "", false
 }

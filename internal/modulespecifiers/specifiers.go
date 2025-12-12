@@ -1199,7 +1199,7 @@ func tryGetModuleNameFromExportsOrImports(
 		pathOrPattern := tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(packageDirectory, strValue), "")
 		var extensionSwappedTarget string
 		if tspath.HasTSFileExtension(targetFilePath) {
-			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + tryGetJSExtensionForFile(targetFilePath, options)
+			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + module.TryGetJSExtensionForFile(targetFilePath, options)
 		}
 		canTryTsExtension := preferTsExtension && tspath.HasImplementationTSFileExtension(targetFilePath)
 
@@ -1261,7 +1261,7 @@ func tryGetModuleNameFromExportsOrImports(
 			if len(declarationFile) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(declarationFile, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := declarationFile[len(leadingSlice) : len(declarationFile)-len(trailingSlice)]
 				substituted := replaceFirstStar(packageName, starReplacement)
-				jsExtension := tryGetJSExtensionForFile(declarationFile, options)
+				jsExtension := module.TryGetJSExtensionForFile(declarationFile, options)
 				if len(jsExtension) > 0 {
 					return tspath.ChangeFullExtension(substituted, jsExtension)
 				}

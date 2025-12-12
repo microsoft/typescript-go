@@ -172,3 +172,26 @@ func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *Reso
 		return needAllowArbitraryExtensions()
 	}
 }
+
+// TryGetJSExtensionForFile maps TS/JS/DTS extensions to the output JS-side extension.
+// Returns an empty string if the extension is unsupported.
+func TryGetJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
+	ext := tspath.TryGetExtensionFromPath(fileName)
+	switch ext {
+	case tspath.ExtensionTs, tspath.ExtensionDts:
+		return tspath.ExtensionJs
+	case tspath.ExtensionTsx:
+		if options.Jsx == core.JsxEmitPreserve {
+			return tspath.ExtensionJsx
+		}
+		return tspath.ExtensionJs
+	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionJson:
+		return ext
+	case tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs:
+		return tspath.ExtensionMjs
+	case tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs:
+		return tspath.ExtensionCjs
+	default:
+		return ""
+	}
+}

@@ -150,7 +150,7 @@ func GetJSExtensionForDeclarationFileExtension(ext string) string {
 }
 
 func getJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
-	result := tryGetJSExtensionForFile(fileName, options)
+	result := module.TryGetJSExtensionForFile(fileName, options)
 	if len(result) == 0 {
 		panic(fmt.Sprintf("Extension %s is unsupported:: FileName:: %s", extensionFromPath(fileName), fileName))
 	}
@@ -167,27 +167,6 @@ func extensionFromPath(path string) string {
 		panic(fmt.Sprintf("File %s has unknown extension.", path))
 	}
 	return ext
-}
-
-func tryGetJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
-	ext := tspath.TryGetExtensionFromPath(fileName)
-	switch ext {
-	case tspath.ExtensionTs, tspath.ExtensionDts:
-		return tspath.ExtensionJs
-	case tspath.ExtensionTsx:
-		if options.Jsx == core.JsxEmitPreserve {
-			return tspath.ExtensionJsx
-		}
-		return tspath.ExtensionJs
-	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionJson:
-		return ext
-	case tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs:
-		return tspath.ExtensionMjs
-	case tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs:
-		return tspath.ExtensionCjs
-	default:
-		return ""
-	}
 }
 
 func tryGetAnyFileFromPath(host ModuleSpecifierGenerationHost, path string) bool {
@@ -452,7 +431,7 @@ func ProcessEntrypointEnding(
 		case ModuleSpecifierEndingTsExtension:
 			return specifier
 		case ModuleSpecifierEndingJsExtension:
-			if jsExtension := tryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
 				return tspath.RemoveFileExtension(specifier) + jsExtension
 			}
 			return specifier
@@ -465,7 +444,7 @@ func ProcessEntrypointEnding(
 				return specifier
 			}
 			// EndingExtensionChangeable - can only change extension, not remove it
-			if jsExtension := tryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
 				return tspath.RemoveFileExtension(specifier) + jsExtension
 			}
 			return specifier
