@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
 // Visitor
@@ -6140,15 +6141,16 @@ type StringLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewStringLiteral(text string) *Node {
+func (f *NodeFactory) NewStringLiteral(text string, flags TokenFlags) *Node {
 	data := f.stringLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsStringLiteralFlags
 	f.textCount++
 	return f.newNode(KindStringLiteral, data)
 }
 
 func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -6162,15 +6164,16 @@ type NumericLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewNumericLiteral(text string) *Node {
+func (f *NodeFactory) NewNumericLiteral(text string, flags TokenFlags) *Node {
 	data := f.numericLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
 }
 
 func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -6184,15 +6187,16 @@ type BigIntLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
+func (f *NodeFactory) NewBigIntLiteral(text string, flags TokenFlags) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindBigIntLiteral, data)
 }
 
 func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
@@ -6210,15 +6214,16 @@ type RegularExpressionLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
+func (f *NodeFactory) NewRegularExpressionLiteral(text string, flags TokenFlags) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
 	f.textCount++
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
 func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsRegularExpressionLiteral(node *Node) bool {
@@ -6232,15 +6237,16 @@ type NoSubstitutionTemplateLiteral struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
+func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlags TokenFlags) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // BinaryExpression
@@ -8721,7 +8727,7 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data := &TemplateHead{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateHead, data)
 }
@@ -8745,7 +8751,7 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data := &TemplateMiddle{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateMiddle, data)
 }
@@ -8769,7 +8775,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data := &TemplateTail{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
 }
@@ -10779,8 +10785,10 @@ type SourceFile struct {
 
 	// Fields set by language service
 
+	Hash             xxh3.Uint128
 	tokenCacheMu     sync.Mutex
 	tokenCache       map[core.TextRange]*Node
+	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
 }
@@ -10937,11 +10945,14 @@ func (node *SourceFile) BindOnce(bind func()) {
 	})
 }
 
+// Gets a token from the file's token cache, or creates it if it does not already exist.
+// This function should NOT be used for creating synthetic tokens that are not in the file in the first place.
 func (node *SourceFile) GetOrCreateToken(
 	kind Kind,
 	pos int,
 	end int,
 	parent *Node,
+	flags TokenFlags,
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
@@ -10959,11 +10970,45 @@ func (node *SourceFile) GetOrCreateToken(
 		return token
 	}
 
-	token := newNode(kind, &Token{}, NodeFactoryHooks{})
+	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent
 	node.tokenCache[loc] = token
 	return token
+}
+
+// `kind` should be a token kind.
+func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *Node {
+	if file.tokenFactory == nil {
+		file.tokenFactory = NewNodeFactory(NodeFactoryHooks{})
+	}
+	text := file.text[pos:end]
+	switch kind {
+	case KindNumericLiteral:
+		return file.tokenFactory.NewNumericLiteral(text, flags)
+	case KindBigIntLiteral:
+		return file.tokenFactory.NewBigIntLiteral(text, flags)
+	case KindStringLiteral:
+		return file.tokenFactory.NewStringLiteral(text, flags)
+	case KindJsxText, KindJsxTextAllWhiteSpaces:
+		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
+	case KindRegularExpressionLiteral:
+		return file.tokenFactory.NewRegularExpressionLiteral(text, flags)
+	case KindNoSubstitutionTemplateLiteral:
+		return file.tokenFactory.NewNoSubstitutionTemplateLiteral(text, flags)
+	case KindTemplateHead:
+		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags)
+	case KindTemplateMiddle:
+		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags)
+	case KindTemplateTail:
+		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags)
+	case KindIdentifier:
+		return file.tokenFactory.NewIdentifier(text)
+	case KindPrivateIdentifier:
+		return file.tokenFactory.NewPrivateIdentifier(text)
+	default: // Punctuation and keywords
+		return file.tokenFactory.NewToken(kind)
+	}
 }
 
 func IsSourceFile(node *Node) bool {

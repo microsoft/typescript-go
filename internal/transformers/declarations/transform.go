@@ -1131,11 +1131,8 @@ func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *
 }
 
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
-	// !!! TODO: JSDoc comment support
-	// if (hasJSDocNodes(updated) && hasJSDocNodes(original)) {
-	// 	updated.jsDoc = original.jsDoc;
-	// }
-	// return setCommentRange(updated, getCommentRange(original));
+	// Copy comment range from original to updated node so JSDoc comments are preserved
+	tx.EmitContext().AssignCommentRange(updated, original)
 }
 
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
@@ -1597,15 +1594,15 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
 				if value >= 0 {
-					newInitializer = tx.Factory().NewNumericLiteral(value.String())
+					newInitializer = tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 				} else {
 					newInitializer = tx.Factory().NewPrefixUnaryExpression(
 						ast.KindMinusToken,
-						tx.Factory().NewNumericLiteral((-value).String()),
+						tx.Factory().NewNumericLiteral((-value).String(), ast.TokenFlagsNone),
 					)
 				}
 			case string:
-				newInitializer = tx.Factory().NewStringLiteral(value)
+				newInitializer = tx.Factory().NewStringLiteral(value, ast.TokenFlagsNone)
 			default:
 				// nil
 				newInitializer = nil
