@@ -787,7 +787,7 @@ func (p *Parser) parseTypeTag(previousTags []*ast.Node, start int, tagName *ast.
 }
 
 func (p *Parser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	hasNameReference := p.isIdentifier() && !p.scanner.TextAtTokenIs("http://") && !p.scanner.TextAtTokenIs("https://") ||
+	hasNameReference := p.isIdentifier() && !strings.HasPrefix(p.sourceText[p.scanner.TokenEnd():], "://") ||
 		p.token == ast.KindOpenBraceToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
 	var nameExpression *ast.Node
 	if hasNameReference {
