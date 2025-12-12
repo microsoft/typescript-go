@@ -17,7 +17,6 @@ interface TestEvent {
 }
 
 async function main() {
-    const oldFailingTests = fs.readFileSync(failingTestsPath, "utf-8");
     const go = which.sync("go");
 
     let testProcess: cp.ChildProcess;
@@ -29,7 +28,6 @@ async function main() {
         });
     }
     catch (error) {
-        fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
         throw new Error("Failed to spawn test process: " + error);
     }
 
@@ -118,7 +116,6 @@ async function main() {
     await new Promise<void>((resolve, reject) => {
         testProcess.on("close", code => {
             if (hadPanic) {
-                fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
                 reject(new Error("Unrecovered panic detected in tests\n" + allOutputs.join("")));
                 return;
             }
@@ -129,7 +126,6 @@ async function main() {
         });
 
         testProcess.on("error", error => {
-            fs.writeFileSync(failingTestsPath, oldFailingTests, "utf-8");
             reject(error);
         });
     });
