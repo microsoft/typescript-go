@@ -276,7 +276,7 @@ jobs:
           npx hereby test || true
 
       - run: git add .
-      
+
       - name: Check for changes
         id: check-changes
         run: |
@@ -285,7 +285,7 @@ jobs:
             git diff --staged > generate_changes.patch
             exit 1
           fi
-      
+
       - name: Upload generate diff artifact
         if: ${{ failure() && steps.check-changes.conclusion == 'failure' }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
