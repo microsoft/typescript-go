@@ -5,6 +5,7 @@ import * as readline from "readline";
 import which from "which";
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
+const crashingTestsPath = path.join(import.meta.dirname, "crashingTests.txt");
 
 interface TestEvent {
     Time?: string;
@@ -37,6 +38,7 @@ async function main() {
     }
 
     const failingTests: string[] = [];
+    const crashingTests: string[] = [];
     const testOutputs = new Map<string, string[]>();
     const allOutputs: string[] = [];
     let hadPanic = false;
@@ -69,6 +71,12 @@ async function main() {
             // Process failed tests
             if (event.Action === "fail" && event.Test) {
                 const outputs = testOutputs.get(event.Test) || [];
+
+                // Check if this is a crashing test (contains InternalError)
+                const hasCrash = outputs.some(line => /InternalError/.test(line));
+                if (hasCrash) {
+                    crashingTests.push(event.Test);
+                }
 
                 // A test is only considered a baseline-only failure if ALL error messages
                 // are baseline-related. Any non-baseline error message means it's a real failure.
@@ -116,6 +124,7 @@ async function main() {
             }
 
             fs.writeFileSync(failingTestsPath, failingTests.sort((a, b) => a.localeCompare(b, "en-US")).join("\n") + "\n", "utf-8");
+            fs.writeFileSync(crashingTestsPath, crashingTests.sort((a, b) => a.localeCompare(b, "en-US")).join("\n") + "\n", "utf-8");
             resolve();
         });
 
