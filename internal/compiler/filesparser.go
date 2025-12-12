@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"cmp"
+	"maps"
 	"math"
 	"slices"
 	"sync"
@@ -457,12 +459,7 @@ func computePackageRedirects(
 	}
 	packageIdToFiles := make(map[string][]fileInfo)
 
-	// Iterate through resolvedModules in sorted order for determinism
-	containingFilePaths := make([]tspath.Path, 0, len(resolvedModules))
-	for containingPath := range resolvedModules {
-		containingFilePaths = append(containingFilePaths, containingPath)
-	}
-	slices.Sort(containingFilePaths)
+	containingFilePaths := slices.AppendSeq(make([]tspath.Path, 0, len(resolvedModules)), maps.Keys(resolvedModules))
 
 	for _, containingPath := range containingFilePaths {
 		resolutions := resolvedModules[containingPath]
@@ -509,15 +506,7 @@ func computePackageRedirects(
 			continue
 		}
 
-		// Sort files by path for determinism - first one becomes canonical
-		slices.SortFunc(files, func(a, b fileInfo) int {
-			if a.path < b.path {
-				return -1
-			} else if a.path > b.path {
-				return 1
-			}
-			return 0
-		})
+		slices.SortFunc(files, func(a, b fileInfo) int { return cmp.Compare(a.path, b.path) })
 
 		canonicalPath := files[0].path
 		packageName := files[0].packageName
