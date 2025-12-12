@@ -457,40 +457,29 @@ func computePackageRedirects(
 		fileName    string
 		packageName string
 	}
-	packageIdToFiles := make(map[string][]fileInfo)
+	packageIdToFiles := make(map[module.PackageId][]fileInfo)
 
 	containingFilePaths := slices.AppendSeq(make([]tspath.Path, 0, len(resolvedModules)), maps.Keys(resolvedModules))
+	slices.Sort(containingFilePaths)
 
 	for _, containingPath := range containingFilePaths {
 		resolutions := resolvedModules[containingPath]
 		for _, resolution := range resolutions {
-			if resolution == nil || !resolution.IsResolved() {
+			if !resolution.IsResolved() {
 				continue
 			}
 			pkgId := resolution.PackageId
 			if pkgId.Name == "" {
 				continue
 			}
-			// packageIdKey is "name@version" (excluding peerDependencies for redirect grouping)
-			packageIdKey := pkgId.Name + "@" + pkgId.Version
-			if pkgId.SubModuleName != "" {
-				packageIdKey = pkgId.Name + "/" + pkgId.SubModuleName + "@" + pkgId.Version
-			}
 			resolvedFileName := resolution.ResolvedFileName
 			resolvedPath := toPath(resolvedFileName)
 			packageName := pkgId.PackageName()
 
 			// Check if we've already recorded this path for this package
-			files := packageIdToFiles[packageIdKey]
-			found := false
-			for _, f := range files {
-				if f.path == resolvedPath {
-					found = true
-					break
-				}
-			}
-			if !found {
-				packageIdToFiles[packageIdKey] = append(files, fileInfo{path: resolvedPath, fileName: resolvedFileName, packageName: packageName})
+			files := packageIdToFiles[pkgId]
+			if !slices.ContainsFunc(files, func(f fileInfo) bool { return f.path == resolvedPath }) {
+				packageIdToFiles[pkgId] = append(files, fileInfo{path: resolvedPath, fileName: resolvedFileName, packageName: packageName})
 			}
 		}
 	}
