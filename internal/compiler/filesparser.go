@@ -452,6 +452,7 @@ func computePackageRedirects(
 	// packageIdKey -> list of (resolvedPath, packageName)
 	type fileInfo struct {
 		path        tspath.Path
+		fileName    string
 		packageName string
 	}
 	packageIdToFiles := make(map[string][]fileInfo)
@@ -478,7 +479,8 @@ func computePackageRedirects(
 			if pkgId.SubModuleName != "" {
 				packageIdKey = pkgId.Name + "/" + pkgId.SubModuleName + "@" + pkgId.Version
 			}
-			resolvedPath := toPath(resolution.ResolvedFileName)
+			resolvedFileName := resolution.ResolvedFileName
+			resolvedPath := toPath(resolvedFileName)
 			packageName := pkgId.PackageName()
 
 			// Check if we've already recorded this path for this package
@@ -491,7 +493,7 @@ func computePackageRedirects(
 				}
 			}
 			if !found {
-				packageIdToFiles[packageIdKey] = append(files, fileInfo{path: resolvedPath, packageName: packageName})
+				packageIdToFiles[packageIdKey] = append(files, fileInfo{path: resolvedPath, fileName: resolvedFileName, packageName: packageName})
 			}
 		}
 	}
@@ -530,7 +532,7 @@ func computePackageRedirects(
 			// Canonical path maps to itself
 			deduplicatedPathMap[canonicalPath] = canonicalPath
 			for _, f := range files[1:] {
-				redirectTargetsMap[canonicalPath] = append(redirectTargetsMap[canonicalPath], string(f.path))
+				redirectTargetsMap[canonicalPath] = append(redirectTargetsMap[canonicalPath], f.fileName)
 				// Redirect target maps to canonical
 				deduplicatedPathMap[f.path] = canonicalPath
 			}
