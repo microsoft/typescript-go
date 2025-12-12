@@ -8,8 +8,8 @@ import (
 )
 
 func TestGotoDefinitionLinkTag4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: a.ts
 interface [|/*2*/Foo|] {
@@ -20,6 +20,7 @@ enum E {
     /** {@link /*1*/[|Foo|]} */
     Foo
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "1")
 }

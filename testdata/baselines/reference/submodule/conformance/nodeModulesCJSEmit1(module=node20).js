@@ -22,12 +22,9 @@ three.foo;
 
 //// [1.cjs]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-export = {};
 module.exports = {};
 //// [2.cjs]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 export var foo = 0;
 exports.foo = 0;
 //// [3.cjs]
@@ -42,8 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 ;
 //// [5.cjs]
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const _2_cjs_1 = require("./2.cjs"); // ok
-const _3_cjs_1 = require("./3.cjs"); // error
+const _2_cjs_1 = __importDefault(require("./2.cjs")); // ok
+const _3_cjs_1 = __importDefault(require("./3.cjs")); // error
 _2_cjs_1.default.foo;
 _3_cjs_1.default.foo;

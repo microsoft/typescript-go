@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnElementAccessInWriteLocation4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 interface Serializer {
@@ -18,6 +18,7 @@ interface Serializer {
 }
 declare let box: Serializer;
 box['value'/*1*/] = true;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) Serializer.value: string | number | boolean", "")
 }

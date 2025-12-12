@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocFunctionSignatures10(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: Foo.js
@@ -22,7 +22,8 @@ function foo(x) {
 }
 
 fo/**/o()`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyQuickInfoIs(t, "function foo<any>(x: any): void", "Do some foo things")
 }

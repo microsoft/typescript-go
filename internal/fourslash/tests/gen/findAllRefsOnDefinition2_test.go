@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsOnDefinition2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: findAllRefsOnDefinition2-import.ts
 export module Test{
@@ -23,6 +23,7 @@ import Second = require("./findAllRefsOnDefinition2-import");
 
 var start: Second.Test./*3*/start;
 var stop: Second.Test.stop;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

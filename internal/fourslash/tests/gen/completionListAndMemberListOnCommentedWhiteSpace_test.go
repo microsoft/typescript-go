@@ -8,8 +8,8 @@ import (
 )
 
 func TestCompletionListAndMemberListOnCommentedWhiteSpace(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
   export class C { public pub = 0; private priv = 1; }
@@ -23,6 +23,7 @@ c. // test on c.
 
 //Test for comment
 //c. /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", nil)
 }

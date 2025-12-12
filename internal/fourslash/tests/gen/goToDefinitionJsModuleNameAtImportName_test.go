@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionJsModuleNameAtImportName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /foo.js
@@ -24,6 +24,7 @@ new [|/*importUsage*/BlahModule|].Blah()
 // @Filename: /barTs.ts
 import [|/*importDefTs*/BlahModule|] = require("./foo.js");
 new [|/*importUsageTs*/BlahModule|].Blah()`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "importDef", "importUsage", "importDefTs", "importUsageTs")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "importDef", "importUsage", "importDefTs", "importUsageTs")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameFromNodeModulesDep4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /index.ts
 import hljs from "highlight.js/lib/core"
@@ -24,7 +24,8 @@ export default hljs;
 export const h: string;
 // @Filename: /tsconfig.json
 {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "ok")
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)

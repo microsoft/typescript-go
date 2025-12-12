@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelp_unionType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const a: (fn?: ((x: string) => string) | ((y: number) => number)) => void;
 declare const b: (x: string | number) => void;
@@ -27,6 +27,7 @@ a((/*1*/) => {
 b(/*2*/);
 
 c((/*3*/) => {});`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

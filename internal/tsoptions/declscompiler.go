@@ -211,6 +211,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		IsCommandLineOnly:       true,
 		Description:             diagnostics.Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit,
 		DefaultValueDescription: diagnostics.Platform_specific,
+		extraValidation:         extraValidationLocale,
 	},
 
 	{
@@ -232,6 +233,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		IsFilePath:  true,
 		Category:    diagnostics.Command_line_Options,
 		Description: diagnostics.Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory,
+	},
+	{
+		Name:                    "checkers",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Command_line_Options,
+		Description:             diagnostics.Set_the_number_of_checkers_per_project,
+		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
+		minValue:                1,
 	},
 }
 
@@ -289,6 +298,15 @@ var optionsForCompiler = []*CommandLineOption{
 		IsCommandLineOnly:       true,
 		Description:             diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing,
 		DefaultValueDescription: false,
+	},
+	{
+		Name:                     "ignoreConfig",
+		Kind:                     CommandLineOptionTypeBoolean,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		IsCommandLineOnly:        true,
+		Description:              diagnostics.Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files,
+		DefaultValueDescription:  false,
 	},
 
 	// Basic
@@ -498,7 +516,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsProgramStructure: true,
 		Category:                diagnostics.Language_and_Environment,
 		Description:             diagnostics.Enable_lib_replacement,
-		DefaultValueDescription: true,
+		DefaultValueDescription: false,
 	},
 
 	// Strict Type Checks
@@ -699,7 +717,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsModuleResolution: true,
 		Category:                diagnostics.Modules,
 		Description:             diagnostics.Specify_how_TypeScript_looks_up_a_file_from_a_given_module_specifier,
-		DefaultValueDescription: diagnostics.X_module_AMD_or_UMD_or_System_or_ES6_then_Classic_Otherwise_Node,
+		DefaultValueDescription: diagnostics.X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler,
 	},
 	{
 		Name:                    "baseUrl",

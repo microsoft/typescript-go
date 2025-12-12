@@ -8,8 +8,8 @@ import (
 )
 
 func TestSyntaxErrorAfterImport1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module "extmod" {
   module IntMod {
@@ -21,7 +21,8 @@ func TestSyntaxErrorAfterImport1(t *testing.T) {
 import ext = require('extmod');
 import int = ext.IntMod;
 var x = new int/*0*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "0")
 	f.Insert(t, ".")
 }

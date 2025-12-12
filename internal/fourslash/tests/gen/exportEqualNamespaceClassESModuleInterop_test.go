@@ -9,11 +9,11 @@ import (
 )
 
 func TestExportEqualNamespaceClassESModuleInterop(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: true
-// @moduleResolution: node
+// @moduleResolution: bundler
 // @target: es2015
 // @module: esnext
 // @Filename: /node_modules/@bar/foo/index.d.ts
@@ -26,7 +26,8 @@ export = Foo;
 // @Filename: /index.ts
 import Foo from "foo";
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/index.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesSuper(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class SuperType {
     superMethod() {
@@ -61,6 +61,7 @@ class SubType extends SuperType {
     super = 10;
     static super = 20;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

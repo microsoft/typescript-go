@@ -20,16 +20,19 @@ a;
 //// [checkJsdocTypeTagOnExportAssignment1.js]
 //// [a.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {Object} Foo
  * @property {boolean} a
  * @property {boolean} b
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /** @type {Foo} */
 exports.default = { c: false };
 //// [b.js]
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const a_1 = require("./a");
+const a_1 = __importDefault(require("./a"));
 a_1.default;

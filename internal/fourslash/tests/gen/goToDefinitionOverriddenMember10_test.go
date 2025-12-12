@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionOverriddenMember10(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -21,6 +21,7 @@ class Bar extends Foo {
     /** [|@override{|"name": "1"|} |]*/
     m() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

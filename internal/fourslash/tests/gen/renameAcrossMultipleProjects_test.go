@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameAcrossMultipleProjects(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: a.ts
 [|var [|{| "contextRangeIndex": 0 |}x|]: number;|]
@@ -19,6 +19,7 @@ func TestRenameAcrossMultipleProjects(t *testing.T) {
 //@Filename: c.ts
 /// <reference path="a.ts" />
 [|x|]++;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "x")
 }

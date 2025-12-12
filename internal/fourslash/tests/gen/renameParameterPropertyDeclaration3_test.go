@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameParameterPropertyDeclaration3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     constructor([|protected [|{| "contextRangeIndex": 0 |}protectedParam|]: number|]) {
@@ -17,6 +17,7 @@ func TestRenameParameterPropertyDeclaration3(t *testing.T) {
         this.[|protectedParam|] += 10;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "protectedParam")
 }

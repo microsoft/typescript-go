@@ -8,8 +8,8 @@ import (
 )
 
 func TestGetOccurrencesOfUndefinedSymbol(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var obj1: {
     (bar: any): any;
@@ -24,6 +24,7 @@ class cls3 {
     super.ceFun/**/c();
 }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "")
 }

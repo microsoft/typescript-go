@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoFromContextualUnionType1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // based on https://github.com/microsoft/TypeScript/issues/55495
@@ -24,6 +24,7 @@ type X =
     };
 
 const obj = { name: "john", /*1*/someProp: "foo" } satisfies X;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) someProp: string", "")
 }

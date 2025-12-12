@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportProvider_referencesCrash(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/a/package.json
 {}
@@ -38,7 +38,9 @@ new A/**/();
 // @Filename: /home/src/workspaces/project/c/index.ts
 export {};
 // @link: /home/src/workspaces/project/a -> /home/src/workspaces/project/c/node_modules/a`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToFile(t, "/home/src/workspaces/project/c/index.ts")
 	f.VerifyBaselineFindAllReferences(t, "")
 }

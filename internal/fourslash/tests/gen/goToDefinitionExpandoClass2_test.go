@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionExpandoClass2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @allowJs: true
@@ -24,6 +24,7 @@ Core.Test = class {
 Core.Test.prototype.foo = 10
 
 new Core.Tes/*1*/t()`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

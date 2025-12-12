@@ -85,6 +85,7 @@ declare namespace foo {
 
 
 //// [definiteAssignmentAssertions.js]
+"use strict";
 // Suppress strict property initialization check
 class C1 {
     a;
@@ -106,7 +107,6 @@ class C3 {
 }
 // Definite assignment assertion not permitted on abstract property
 class C5 {
-    a;
 }
 // Suppress definite assignment check for variable
 function f1() {

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsIsDefinition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(a: number): number;
 declare function foo(a: string): string;
@@ -36,6 +36,7 @@ class Foo implements IFoo {
     foo/*6*/(): void { }
     static init() { return new this() }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoCommentsFunctionExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** lambdaFoo var comment*/
 var lamb/*1*/daFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
@@ -37,6 +37,7 @@ var assi/*14*/gned = /**
   return s.length;
 }
 assig/*16*/ned("hey");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

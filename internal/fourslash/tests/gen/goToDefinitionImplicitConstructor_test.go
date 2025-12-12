@@ -8,12 +8,13 @@ import (
 )
 
 func TestGoToDefinitionImplicitConstructor(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class /*constructorDefinition*/ImplicitConstructor {
 }
 var implicitConstructor = new /*constructorReference*/ImplicitConstructor();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "constructorReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "constructorReference")
 }

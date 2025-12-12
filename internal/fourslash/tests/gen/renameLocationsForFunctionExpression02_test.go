@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameLocationsForFunctionExpression02(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f() {
 
@@ -20,6 +20,7 @@ var x = [|function [|{| "contextRangeIndex": 0 |}f|](g: any, h: any) {
 
     let foo = () => [|f|]([|f|], g);
 }|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "f")
 }

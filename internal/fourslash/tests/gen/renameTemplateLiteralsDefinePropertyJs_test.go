@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameTemplateLiteralsDefinePropertyJs(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.js
@@ -25,6 +25,7 @@ obj.[|prop|];
 obj['[|prop|]'];
 obj["[|prop|]"];
 obj[` + "`" + `[|prop|]` + "`" + `];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "prop")
 }

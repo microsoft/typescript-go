@@ -51,6 +51,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -1454,6 +1455,9 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
 	strLen := strings.IndexRune(s.text[s.pos:], quote)
@@ -1625,6 +1629,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -1819,7 +1830,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1827,7 +1838,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1852,7 +1863,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -2052,14 +2064,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2330,10 +2341,10 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
-	body := node.AsArrowFunction().Body
+	body := node.Body()
 	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := GetECMALineAndCharacterOfPosition(sourceFile, body.End())
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
@@ -2369,7 +2380,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindCaseClause, ast.KindDefaultClause:
 		start := SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
-		statements := node.AsCaseOrDefaultClause().Statements.Nodes
+		statements := node.Statements()
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
@@ -2429,9 +2440,15 @@ func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.ECMALineMap()
 }
 
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
+	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
 	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return line, character
 }
@@ -2447,7 +2464,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
+func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
 	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 

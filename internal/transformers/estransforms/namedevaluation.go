@@ -13,13 +13,13 @@ import (
  * @internal
  */
 func isClassNamedEvaluationHelperBlock(emitContext *printer.EmitContext, node *ast.Node) bool {
-	if !ast.IsClassStaticBlockDeclaration(node) || len(node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes) != 1 {
+	if !ast.IsClassStaticBlockDeclaration(node) || len(node.AsClassStaticBlockDeclaration().Body.Statements()) != 1 {
 		return false
 	}
 
-	statement := node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0]
+	statement := node.AsClassStaticBlockDeclaration().Body.Statements()[0]
 	if ast.IsExpressionStatement(statement) {
-		expression := statement.AsExpressionStatement().Expression
+		expression := statement.Expression()
 		if emitContext.IsCallToHelper(expression, "__setFunctionName") {
 			arguments := expression.AsCallExpression().Arguments
 			return len(arguments.Nodes) >= 2 &&
@@ -99,13 +99,13 @@ func isNamedEvaluationSource(node *ast.Node) bool {
 	case ast.KindShorthandPropertyAssignment:
 		return node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
 	case ast.KindVariableDeclaration:
-		return ast.IsIdentifier(node.AsVariableDeclaration().Name()) && node.AsVariableDeclaration().Initializer != nil
+		return ast.IsIdentifier(node.AsVariableDeclaration().Name()) && node.Initializer() != nil
 	case ast.KindParameter:
-		return ast.IsIdentifier(node.AsParameterDeclaration().Name()) && node.AsParameterDeclaration().Initializer != nil && node.AsParameterDeclaration().DotDotDotToken == nil
+		return ast.IsIdentifier(node.AsParameterDeclaration().Name()) && node.Initializer() != nil && node.AsParameterDeclaration().DotDotDotToken == nil
 	case ast.KindBindingElement:
-		return ast.IsIdentifier(node.AsBindingElement().Name()) && node.AsBindingElement().Initializer != nil && node.AsBindingElement().DotDotDotToken == nil
+		return ast.IsIdentifier(node.AsBindingElement().Name()) && node.Initializer() != nil && node.AsBindingElement().DotDotDotToken == nil
 	case ast.KindPropertyDeclaration:
-		return node.AsPropertyDeclaration().Initializer != nil
+		return node.Initializer() != nil
 	case ast.KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
 		case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
@@ -134,7 +134,7 @@ func isNamedEvaluationAnd(emitContext *printer.EmitContext, node *ast.Node, cb f
 	case ast.KindBinaryExpression:
 		return isAnonymousFunctionDefinition(emitContext, node.AsBinaryExpression().Right, cb)
 	case ast.KindExportAssignment:
-		return isAnonymousFunctionDefinition(emitContext, node.AsExportAssignment().Expression, cb)
+		return isAnonymousFunctionDefinition(emitContext, node.Expression(), cb)
 	default:
 		panic("Unhandled case in isNamedEvaluation")
 	}
@@ -145,7 +145,7 @@ func getAssignedNameOfIdentifier(emitContext *printer.EmitContext, name *ast.Ide
 	original := emitContext.MostOriginal(ast.SkipOuterExpressions(expression, ast.OEKAll))
 	if (ast.IsClassDeclaration(original) || ast.IsFunctionDeclaration(original)) &&
 		original.Name() == nil && ast.HasSyntacticModifier(original, ast.ModifierFlagsDefault) {
-		return emitContext.Factory.NewStringLiteral("default")
+		return emitContext.Factory.NewStringLiteral("default", ast.TokenFlagsNone)
 	}
 	return emitContext.Factory.NewStringLiteralFromNode(name)
 }
@@ -153,7 +153,7 @@ func getAssignedNameOfIdentifier(emitContext *printer.EmitContext, name *ast.Ide
 func getAssignedNameOfPropertyName(emitContext *printer.EmitContext, name *ast.PropertyName, assignedNameText string) (assignedName *ast.Expression, updatedName *ast.PropertyName) {
 	factory := emitContext.Factory
 	if len(assignedNameText) > 0 {
-		assignedName := factory.NewStringLiteral(assignedNameText)
+		assignedName := factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 		return assignedName, name
 	}
 
@@ -236,7 +236,7 @@ func injectClassNamedEvaluationHelperBlockIfMissing(
 	factory := emitContext.Factory
 	namedEvaluationBlock := createClassNamedEvaluationHelperBlock(emitContext, assignedName, thisExpression)
 	if node.Name() != nil {
-		emitContext.SetSourceMapRange(namedEvaluationBlock.Body().AsBlock().Statements.Nodes[0], node.Name().Loc)
+		emitContext.SetSourceMapRange(namedEvaluationBlock.Body().Statements()[0], node.Name().Loc)
 	}
 
 	insertionIndex := slices.IndexFunc(node.Members(), func(n *ast.Node) bool {
@@ -325,7 +325,7 @@ func transformNamedEvaluationOfShorthandAssignmentProperty(emitContext *printer.
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.ObjectAssignmentInitializer)
 	}
@@ -359,7 +359,7 @@ func transformNamedEvaluationOfVariableDeclaration(emitContext *printer.EmitCont
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -393,7 +393,7 @@ func transformNamedEvaluationOfParameterDeclaration(emitContext *printer.EmitCon
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -429,7 +429,7 @@ func transformNamedEvaluationOfBindingElement(emitContext *printer.EmitContext, 
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -494,7 +494,7 @@ func transformNamedEvaluationOfAssignmentExpression(emitContext *printer.EmitCon
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Left, node.Right)
 	}
@@ -522,9 +522,9 @@ func transformNamedEvaluationOfExportAssignment(emitContext *printer.EmitContext
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
-		assignedName = factory.NewStringLiteral("")
+		assignedName = factory.NewStringLiteral("", ast.TokenFlagsNone)
 	}
 	expression := finishTransformNamedEvaluation(emitContext, node.Expression, assignedName, ignoreEmptyStringLiteral)
 	return factory.UpdateExportAssignment(

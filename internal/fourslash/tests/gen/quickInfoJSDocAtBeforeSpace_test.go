@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoJSDocAtBeforeSpace(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @return Don't @ me
@@ -24,6 +24,7 @@ function /*g*/g() { }
  * But another line
  */
 function /*h*/h() { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

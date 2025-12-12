@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -14,11 +15,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/ls/change"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type SymbolExportInfo struct {
@@ -35,17 +41,10 @@ type symbolExportEntry struct {
 	moduleSymbol *ast.Symbol
 }
 
-type ExportInfoMapKey struct {
-	SymbolName        string
-	SymbolId          ast.SymbolId
-	AmbientModuleName string
-	ModuleFile        tspath.Path
-}
-
-func newExportInfoMapKey(importedName string, symbol *ast.Symbol, ambientModuleNameKey string, ch *checker.Checker) ExportInfoMapKey {
-	return ExportInfoMapKey{
+func newExportInfoMapKey(importedName string, symbol *ast.Symbol, ambientModuleNameKey string, ch *checker.Checker) lsproto.ExportInfoMapKey {
+	return lsproto.ExportInfoMapKey{
 		SymbolName:        importedName,
-		SymbolId:          ast.GetSymbolId(ch.SkipAlias(symbol)),
+		SymbolId:          uint64(ast.GetSymbolId(ch.SkipAlias(symbol))),
 		AmbientModuleName: ambientModuleNameKey,
 	}
 }
@@ -68,8 +67,8 @@ type CachedSymbolExportInfo struct {
 	isFromPackageJson bool
 }
 
-type exportInfoMap struct {
-	exportInfo       collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]
+type ExportInfoMap struct {
+	exportInfo       collections.OrderedMap[lsproto.ExportInfoMapKey, []*CachedSymbolExportInfo]
 	symbols          map[int]symbolExportEntry
 	exportInfoId     int
 	usableByFileName tspath.Path
@@ -81,20 +80,20 @@ type exportInfoMap struct {
 	// !!! onFileChanged func(oldSourceFile *ast.SourceFile, newSourceFile *ast.SourceFile, typeAcquisitionEnabled bool) bool
 }
 
-func (e *exportInfoMap) clear() {
+func (e *ExportInfoMap) clear() {
 	e.symbols = map[int]symbolExportEntry{}
-	e.exportInfo = collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{}
+	e.exportInfo = collections.OrderedMap[lsproto.ExportInfoMapKey, []*CachedSymbolExportInfo]{}
 	e.usableByFileName = ""
 }
 
-func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key ExportInfoMapKey) []*SymbolExportInfo {
+func (e *ExportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key lsproto.ExportInfoMapKey) []*SymbolExportInfo {
 	if e.usableByFileName != importingFile {
 		return nil
 	}
-	return core.Map(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
+	return core.Map(e.exportInfo.GetOrZero(key), func(info *CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
 }
 
-func (e *exportInfoMap) add(
+func (e *ExportInfoMap) add(
 	importingFile tspath.Path,
 	symbol *ast.Symbol,
 	symbolTableKey string,
@@ -164,7 +163,8 @@ func (e *exportInfoMap) add(
 	}
 
 	moduleName := stringutil.StripQuotes(moduleSymbol.Name)
-	id := e.exportInfoId + 1
+	e.exportInfoId++
+	id := e.exportInfoId
 	target := ch.SkipAlias(symbol)
 
 	if flagMatch != nil && !flagMatch(target.Flags) {
@@ -193,7 +193,9 @@ func (e *exportInfoMap) add(
 	if moduleFile != nil {
 		moduleFileName = moduleFile.FileName()
 	}
-	e.exportInfo.Add(newExportInfoMapKey(symbolName, symbol, moduleKey, ch), CachedSymbolExportInfo{
+	key := newExportInfoMapKey(symbolName, symbol, moduleKey, ch)
+	infos := e.exportInfo.GetOrZero(key)
+	infos = append(infos, &CachedSymbolExportInfo{
 		id:                    id,
 		symbolTableKey:        symbolTableKey,
 		symbolName:            symbolName,
@@ -209,25 +211,26 @@ func (e *exportInfoMap) add(
 		targetFlags:       target.Flags,
 		isFromPackageJson: isFromPackageJson,
 	})
+	e.exportInfo.Set(key, infos)
 }
 
-func (e *exportInfoMap) search(
+func (e *ExportInfoMap) search(
 	ch *checker.Checker,
 	importingFile tspath.Path,
 	preferCapitalized bool,
 	matches func(name string, targetFlags ast.SymbolFlags) bool,
-	action func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo,
+	action func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key lsproto.ExportInfoMapKey) []*SymbolExportInfo,
 ) []*SymbolExportInfo {
 	if importingFile != e.usableByFileName {
 		return nil
 	}
-	for key, info := range e.exportInfo.M {
+	for key, info := range e.exportInfo.Entries() {
 		symbolName, ambientModuleName := key.SymbolName, key.AmbientModuleName
 		if preferCapitalized && info[0].capitalizedSymbolName != "" {
 			symbolName = info[0].capitalizedSymbolName
 		}
 		if matches(symbolName, info[0].targetFlags) {
-			rehydrated := core.Map(info, func(info CachedSymbolExportInfo) *SymbolExportInfo {
+			rehydrated := core.Map(info, func(info *CachedSymbolExportInfo) *SymbolExportInfo {
 				return e.rehydrateCachedInfo(ch, info)
 			})
 			filtered := core.FilterIndex(rehydrated, func(r *SymbolExportInfo, i int, _ []*SymbolExportInfo) bool {
@@ -243,7 +246,7 @@ func (e *exportInfoMap) search(
 	return nil
 }
 
-func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExportInfo, packageName string) bool {
+func (e *ExportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExportInfo, packageName string) bool {
 	if packageName == "" || info.moduleFileName == "" {
 		return true
 	}
@@ -254,7 +257,7 @@ func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExpo
 	return !ok || strings.HasPrefix(info.moduleFileName, packageDeepestNodeModulesPath)
 }
 
-func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) *SymbolExportInfo {
+func (e *ExportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info *CachedSymbolExportInfo) *SymbolExportInfo {
 	if info.symbol != nil && info.moduleSymbol != nil {
 		return &SymbolExportInfo{
 			symbol:            info.symbol,
@@ -340,32 +343,6 @@ type packageJsonFilterResult struct {
 	importable  bool
 	packageName string
 }
-type projectPackageJsonInfo struct {
-	fileName             string
-	parseable            bool
-	dependencies         map[string]string
-	devDependencies      map[string]string
-	peerDependencies     map[string]string
-	optionalDependencies map[string]string
-}
-
-func (info *projectPackageJsonInfo) has(dependencyName string) bool {
-	if _, ok := info.dependencies[dependencyName]; ok {
-		return true
-	}
-	if _, ok := info.devDependencies[dependencyName]; ok {
-		return true
-	}
-
-	if _, ok := info.peerDependencies[dependencyName]; ok {
-		return true
-	}
-	if _, ok := info.optionalDependencies[dependencyName]; ok {
-		return true
-	}
-
-	return false
-}
 
 func (l *LanguageService) getImportCompletionAction(
 	ctx context.Context,
@@ -374,33 +351,32 @@ func (l *LanguageService) getImportCompletionAction(
 	moduleSymbol *ast.Symbol,
 	sourceFile *ast.SourceFile,
 	position int,
-	exportMapKey ExportInfoMapKey,
-	symbolName string, // !!! needs *string ?
+	exportMapKey lsproto.ExportInfoMapKey,
+	symbolName string,
 	isJsxTagName bool,
 	// formatContext *formattingContext,
-	preferences *UserPreferences,
 ) (string, codeAction) {
 	var exportInfos []*SymbolExportInfo
 	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
-	exportInfos = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
+	exportInfos = l.getExportInfoMap(ctx, ch, sourceFile, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
 
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position))
-	fix := l.getImportFixForSymbol(ch, sourceFile, exportInfos, position, ptrTo(isValidTypeOnlyUseSite), preferences)
+	fix := l.getImportFixForSymbol(ch, sourceFile, exportInfos, position, ptrTo(isValidTypeOnlyUseSite))
 	if fix == nil {
 		lineAndChar := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))
 		panic(fmt.Sprintf("expected importFix at %s: (%v,%v)", sourceFile.FileName(), lineAndChar.Line, lineAndChar.Character))
 	}
-	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false, preferences)
+	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false)
 }
 
-func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
-	return &exportInfoMap{
+func NewExportInfoMap(globalsTypingCacheLocation string) *ExportInfoMap {
+	return &ExportInfoMap{
 		packages:                   map[string]string{},
 		symbols:                    map[int]symbolExportEntry{},
-		exportInfo:                 collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{},
+		exportInfo:                 collections.OrderedMap[lsproto.ExportInfoMapKey, []*CachedSymbolExportInfo]{},
 		globalTypingsCacheLocation: globalsTypingCacheLocation,
 	}
 }
@@ -409,7 +385,6 @@ func (l *LanguageService) isImportable(
 	fromFile *ast.SourceFile,
 	toFile *ast.SourceFile,
 	toModule *ast.Symbol,
-	preferences *UserPreferences,
 	packageJsonFilter *packageJsonImportFilter,
 	// moduleSpecifierResolutionHost ModuleSpecifierResolutionHost,
 	// moduleSpecifierCache ModuleSpecifierCache,
@@ -421,7 +396,7 @@ func (l *LanguageService) isImportable(
 	if toFile == nil {
 		moduleName := stringutil.StripQuotes(toModule.Name)
 		if _, ok := core.NodeCoreModules()[moduleName]; ok {
-			if useNodePrefix := shouldUseUriStyleNodeCoreModules(fromFile, l.GetProgram()); useNodePrefix {
+			if useNodePrefix := lsutil.ShouldUseUriStyleNodeCoreModules(fromFile, l.GetProgram()); useNodePrefix {
 				return useNodePrefix == strings.HasPrefix(moduleName, "node:")
 			}
 		}
@@ -503,7 +478,7 @@ func fileContainsPackageImport(sourceFile *ast.SourceFile, packageName string) b
 }
 
 func isImportableSymbol(symbol *ast.Symbol, ch *checker.Checker) bool {
-	return !ch.IsUndefinedSymbol(symbol) && !ch.IsUnknownSymbol(symbol) && !checker.IsKnownSymbol(symbol) // !!! && !checker.IsPrivateIdentifierSymbol(symbol);
+	return !ch.IsUndefinedSymbol(symbol) && !ch.IsUnknownSymbol(symbol) && !checker.IsKnownSymbol(symbol) && !checker.IsPrivateIdentifierSymbol(symbol)
 }
 
 func getDefaultLikeExportInfo(moduleSymbol *ast.Symbol, ch *checker.Checker) *ExportInfo {
@@ -522,14 +497,14 @@ func getDefaultLikeExportInfo(moduleSymbol *ast.Symbol, ch *checker.Checker) *Ex
 
 type importSpecifierResolverForCompletions struct {
 	*ast.SourceFile // importingFile
-	*UserPreferences
+	*lsutil.UserPreferences
 	l      *LanguageService
 	filter *packageJsonImportFilter
 }
 
 func (r *importSpecifierResolverForCompletions) packageJsonImportFilter() *packageJsonImportFilter {
 	if r.filter == nil {
-		r.filter = r.l.createPackageJsonImportFilter(r.SourceFile, *r.UserPreferences)
+		r.filter = r.l.createPackageJsonImportFilter(r.SourceFile)
 	}
 	return r.filter
 }
@@ -542,15 +517,9 @@ func (i *importSpecifierResolverForCompletions) getModuleSpecifierForBestExportI
 ) *ImportFix {
 	// !!! caching
 	//  used in completions, usually calculated once per `getCompletionData` call
-	var userPreferences UserPreferences
-	if i.UserPreferences == nil {
-		userPreferences = UserPreferences{}
-	} else {
-		userPreferences = *i.UserPreferences
-	}
 	packageJsonImportFilter := i.packageJsonImportFilter()
-	_, fixes := i.l.getImportFixes(ch, exportInfo, ptrTo(i.l.converters.PositionToLineAndCharacter(i.SourceFile, core.TextPos(position))), ptrTo(isValidTypeOnlyUseSite), ptrTo(false), i.SourceFile, userPreferences, false /* fromCacheOnly */)
-	return i.l.getBestFix(fixes, i.SourceFile, packageJsonImportFilter.allowsImportingSpecifier, userPreferences)
+	_, fixes := i.l.getImportFixes(ch, exportInfo, ptrTo(i.l.converters.PositionToLineAndCharacter(i.SourceFile, core.TextPos(position))), ptrTo(isValidTypeOnlyUseSite), ptrTo(false), i.SourceFile, false /* fromCacheOnly */)
+	return i.l.getBestFix(fixes, i.SourceFile, packageJsonImportFilter.allowsImportingSpecifier)
 }
 
 func (l *LanguageService) getImportFixForSymbol(
@@ -559,23 +528,17 @@ func (l *LanguageService) getImportFixForSymbol(
 	exportInfos []*SymbolExportInfo,
 	position int,
 	isValidTypeOnlySite *bool,
-	preferences *UserPreferences,
 ) *ImportFix {
-	var userPreferences UserPreferences
-	if preferences != nil {
-		userPreferences = *preferences
-	}
-
 	if isValidTypeOnlySite == nil {
 		isValidTypeOnlySite = ptrTo(ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position)))
 	}
-	useRequire := getShouldUseRequire(sourceFile, l.GetProgram())
-	packageJsonImportFilter := l.createPackageJsonImportFilter(sourceFile, userPreferences)
-	_, fixes := l.getImportFixes(ch, exportInfos, ptrTo(l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))), isValidTypeOnlySite, &useRequire, sourceFile, userPreferences, false /* fromCacheOnly */)
-	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier, userPreferences)
+	useRequire := shouldUseRequire(sourceFile, l.GetProgram())
+	packageJsonImportFilter := l.createPackageJsonImportFilter(sourceFile)
+	_, fixes := l.getImportFixes(ch, exportInfos, ptrTo(l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))), isValidTypeOnlySite, &useRequire, sourceFile, false /* fromCacheOnly */)
+	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier)
 }
 
-func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool, preferences UserPreferences) *ImportFix {
+func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool) *ImportFix {
 	if len(fixes) == 0 {
 		return nil
 	}
@@ -588,12 +551,10 @@ func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceF
 	best := fixes[0]
 	for _, fix := range fixes {
 		// Takes true branch of conditional if `fix` is better than `best`
-		if compareModuleSpecifiers(
+		if l.compareModuleSpecifiers(
 			fix,
 			best,
 			sourceFile,
-			l.GetProgram(),
-			preferences,
 			allowsImportingSpecifier,
 			func(fileName string) tspath.Path {
 				return tspath.ToPath(fileName, l.GetProgram().GetCurrentDirectory(), l.GetProgram().UseCaseSensitiveFileNames())
@@ -606,6 +567,85 @@ func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceF
 	return best
 }
 
+// returns `-1` if `a` is better than `b`
+//
+//	note: this sorts in descending order of preference; different than convention in other cmp-like functions
+func (l *LanguageService) compareModuleSpecifiers(
+	a *ImportFix, // !!! ImportFixWithModuleSpecifier
+	b *ImportFix, // !!! ImportFixWithModuleSpecifier
+	importingFile *ast.SourceFile, // | FutureSourceFile,
+	allowsImportingSpecifier func(specifier string) bool,
+	toPath func(fileName string) tspath.Path,
+) int {
+	if a.kind != ImportFixKindUseNamespace && b.kind != ImportFixKindUseNamespace {
+		if comparison := core.CompareBooleans(
+			b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.moduleSpecifier),
+			a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.moduleSpecifier),
+		); comparison != 0 {
+			return comparison
+		}
+		if comparison := compareModuleSpecifierRelativity(a, b, l.UserPreferences()); comparison != 0 {
+			return comparison
+		}
+		if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, l.GetProgram()); comparison != 0 {
+			return comparison
+		}
+		if comparison := core.CompareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
+			return comparison
+		}
+		if comparison := tspath.CompareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); comparison != 0 {
+			return comparison
+		}
+	}
+	return 0
+}
+
+func compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile, program *compiler.Program) int {
+	if strings.HasPrefix(a, "node:") && !strings.HasPrefix(b, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return -1
+		}
+		return 1
+	}
+	if strings.HasPrefix(b, "node:") && !strings.HasPrefix(a, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return 1
+		}
+		return -1
+	}
+	return 0
+}
+
+// This is a simple heuristic to try to avoid creating an import cycle with a barrel re-export.
+// E.g., do not `import { Foo } from ".."` when you could `import { Foo } from "../Foo"`.
+// This can produce false positives or negatives if re-exports cross into sibling directories
+// (e.g. `export * from "../whatever"`) or are not named "index".
+func isFixPossiblyReExportingImportingFile(fix *ImportFix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
+	if fix.isReExport != nil && *(fix.isReExport) &&
+		fix.exportInfo != nil && fix.exportInfo.moduleFileName != "" && isIndexFileName(fix.exportInfo.moduleFileName) {
+		reExportDir := toPath(tspath.GetDirectoryPath(fix.exportInfo.moduleFileName))
+		return strings.HasPrefix(string(importingFilePath), string(reExportDir))
+	}
+	return false
+}
+
+func isIndexFileName(fileName string) bool {
+	fileName = tspath.GetBaseFileName(fileName)
+	if tspath.FileExtensionIsOneOf(fileName, []string{".js", ".jsx", ".d.ts", ".ts", ".tsx"}) {
+		fileName = tspath.RemoveFileExtension(fileName)
+	}
+	return fileName == "index"
+}
+
+// returns `-1` if `a` is better than `b`
+func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences *lsutil.UserPreferences) int {
+	switch preferences.ImportModuleSpecifierPreference {
+	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
+		return core.CompareBooleans(a.moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.moduleSpecifierKind == modulespecifiers.ResultKindRelative)
+	}
+	return 0
+}
+
 func (l *LanguageService) getImportFixes(
 	ch *checker.Checker,
 	exportInfos []*SymbolExportInfo, // | FutureSymbolExportInfo[],
@@ -613,7 +653,6 @@ func (l *LanguageService) getImportFixes(
 	isValidTypeOnlyUseSite *bool,
 	useRequire *bool,
 	sourceFile *ast.SourceFile, // | FutureSourceFile,
-	preferences UserPreferences,
 	// importMap *importMap,
 	fromCacheOnly bool,
 ) (int, []*ImportFix) {
@@ -642,7 +681,6 @@ func (l *LanguageService) getImportFixes(
 		usagePosition,
 		*isValidTypeOnlyUseSite,
 		*useRequire,
-		preferences,
 		fromCacheOnly,
 	)
 	computedWithoutCacheCount := 0
@@ -652,11 +690,24 @@ func (l *LanguageService) getImportFixes(
 	return computedWithoutCacheCount, append(useNamespace, result...)
 }
 
-func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile, preferences UserPreferences) *packageJsonImportFilter {
-	packageJsons := []*projectPackageJsonInfo{}
-	// packageJsons := (
-	//     (host.getPackageJsonsVisibleToFile && host.getPackageJsonsVisibleToFile(fromFile.fileName)) || getPackageJsonsVisibleToFile(fromFile.fileName, host)
-	// ).filter(p => p.parseable);
+func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile) *packageJsonImportFilter {
+	// !!! The program package.json cache may not have every relevant package.json.
+	//     This should eventually be integrated with the session.
+	var packageJsons []*packagejson.PackageJson
+	dir := tspath.GetDirectoryPath(fromFile.FileName())
+	for {
+		packageJsonDir := l.GetProgram().GetNearestAncestorDirectoryWithPackageJson(dir)
+		if packageJsonDir == "" {
+			break
+		}
+		if packageJson := l.GetProgram().GetPackageJsonInfo(tspath.CombinePaths(packageJsonDir, "package.json")).GetContents(); packageJson != nil && packageJson.Parseable {
+			packageJsons = append(packageJsons, packageJson)
+		}
+		dir = tspath.GetDirectoryPath(packageJsonDir)
+		if dir == packageJsonDir {
+			break
+		}
+	}
 
 	var usesNodeCoreModules *bool
 	ambientModuleCache := map[*ast.Symbol]bool{}
@@ -674,7 +725,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	moduleSpecifierIsCoveredByPackageJson := func(specifier string) bool {
 		packageName := getNodeModuleRootSpecifier(specifier)
 		for _, packageJson := range packageJsons {
-			if packageJson.has(packageName) || packageJson.has(module.GetTypesPackageName(packageName)) {
+			if packageJson.HasDependency(packageName) || packageJson.HasDependency(module.GetTypesPackageName(packageName)) {
 				return true
 			}
 		}
@@ -706,7 +757,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 			fromFile,
 			importedFileName,
 			moduleSpecifierResolutionHost,
-			preferences.ModuleSpecifierPreferences(),
+			l.UserPreferences().ModuleSpecifierPreferences(),
 			modulespecifiers.ModuleSpecifierOptions{},
 		)
 		if specifier == "" {
@@ -721,7 +772,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	}
 
 	allowsImportingAmbientModule := func(moduleSymbol *ast.Symbol, moduleSpecifierResolutionHost modulespecifiers.ModuleSpecifierGenerationHost) bool {
-		if len(packageJsons) > 0 || moduleSymbol.ValueDeclaration == nil {
+		if len(packageJsons) == 0 || moduleSymbol.ValueDeclaration == nil {
 			return true
 		}
 
@@ -855,29 +906,9 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 		if existingImport.importKind != ImportKindNamed {
 			continue
 		}
-		var namespacePrefix string
-		declaration := existingImport.declaration
-		switch declaration.Kind {
-		case ast.KindVariableDeclaration, ast.KindImportEqualsDeclaration:
-			name := declaration.Name()
-			if declaration.Kind == ast.KindVariableDeclaration && (name == nil || name.Kind != ast.KindIdentifier) {
-				continue
-			}
-			namespacePrefix = name.Text()
-		case ast.KindJSDocImportTag, ast.KindImportDeclaration:
-			importClause := ast.GetImportClauseOfDeclaration(declaration)
-			if importClause == nil || importClause.NamedBindings == nil || importClause.NamedBindings.Kind != ast.KindNamespaceImport {
-				continue
-			}
-			namespacePrefix = importClause.NamedBindings.Name().Text()
-		default:
-			debug.AssertNever(declaration)
-		}
-		if namespacePrefix == "" {
-			continue
-		}
-		moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(declaration)
-		if moduleSpecifier != nil && moduleSpecifier.Text() != "" {
+		namespacePrefix := getNamespaceLikeImportText(existingImport.declaration)
+		moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(existingImport.declaration)
+		if namespacePrefix != "" && moduleSpecifier != nil && moduleSpecifier.Text() != "" {
 			return getUseNamespaceImport(
 				moduleSpecifier.Text(),
 				modulespecifiers.ResultKindNone,
@@ -887,6 +918,28 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 		}
 	}
 	return nil
+}
+
+func getNamespaceLikeImportText(declaration *ast.Statement) string {
+	switch declaration.Kind {
+	case ast.KindVariableDeclaration:
+		name := declaration.Name()
+		if name != nil && name.Kind == ast.KindIdentifier {
+			return name.Text()
+		}
+		return ""
+	case ast.KindImportEqualsDeclaration:
+		return declaration.Name().Text()
+	case ast.KindJSDocImportTag, ast.KindImportDeclaration:
+		importClause := declaration.ImportClause()
+		if importClause != nil && importClause.AsImportClause().NamedBindings != nil && importClause.AsImportClause().NamedBindings.Kind == ast.KindNamespaceImport {
+			return importClause.AsImportClause().NamedBindings.Name().Text()
+		}
+		return ""
+	default:
+		debug.AssertNever(declaration)
+		return ""
+	}
 }
 
 func tryAddToExistingImport(existingImports []*FixAddToExistingImportInfo, isValidTypeOnlyUseSite *bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *ImportFix {
@@ -934,14 +987,14 @@ func (info *FixAddToExistingImportInfo) getAddToExistingImportFix(isValidTypeOnl
 		return nil
 	}
 
-	importClause := ast.GetImportClauseOfDeclaration(info.declaration)
+	importClause := info.declaration.ImportClause()
 	if importClause == nil || !ast.IsStringLiteralLike(info.declaration.ModuleSpecifier()) {
 		return nil
 	}
-	namedBindings := importClause.NamedBindings
+	namedBindings := importClause.AsImportClause().NamedBindings
 	// A type-only import may not have both a default and named imports, so the only way a name can
 	// be added to an existing type-only import is adding a named import to existing named bindings.
-	if importClause.IsTypeOnly && !(info.importKind == ImportKindNamed && namedBindings != nil) {
+	if importClause.IsTypeOnly() && !(info.importKind == ImportKindNamed && namedBindings != nil) {
 		return nil
 	}
 
@@ -978,7 +1031,6 @@ func (l *LanguageService) getFixesForAddImport(
 	usagePosition *lsproto.Position,
 	isValidTypeOnlyUseSite bool,
 	useRequire bool,
-	preferences UserPreferences,
 	fromCacheOnly bool,
 ) []*ImportFix {
 	// tries to create a new import statement using an existing import specifier
@@ -995,7 +1047,7 @@ func (l *LanguageService) getFixesForAddImport(
 		return []*ImportFix{importWithExistingSpecifier}
 	}
 
-	return l.getNewImportFixes(ch, sourceFile, usagePosition, isValidTypeOnlyUseSite, useRequire, exportInfos, preferences, fromCacheOnly)
+	return l.getNewImportFixes(ch, sourceFile, usagePosition, isValidTypeOnlyUseSite, useRequire, exportInfos, fromCacheOnly)
 }
 
 func (l *LanguageService) getNewImportFixes(
@@ -1005,7 +1057,6 @@ func (l *LanguageService) getNewImportFixes(
 	isValidTypeOnlyUseSite bool,
 	useRequire bool,
 	exportInfos []*SymbolExportInfo, // !!! (SymbolExportInfo | FutureSymbolExportInfo)[],
-	preferences UserPreferences,
 	fromCacheOnly bool,
 ) []*ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */ {
 	isJs := tspath.HasJSFileExtension(sourceFile.FileName())
@@ -1014,7 +1065,7 @@ func (l *LanguageService) getNewImportFixes(
 	// getChecker := createGetChecker(program, host)// memoized typechecker based on `isFromPackageJson` bool
 
 	getModuleSpecifiers := func(moduleSymbol *ast.Symbol, checker *checker.Checker) ([]string, modulespecifiers.ResultKind) {
-		return modulespecifiers.GetModuleSpecifiersWithInfo(moduleSymbol, checker, compilerOptions, sourceFile, l.GetProgram(), preferences.ModuleSpecifierPreferences(), modulespecifiers.ModuleSpecifierOptions{}, true /*forAutoImport*/)
+		return modulespecifiers.GetModuleSpecifiersWithInfo(moduleSymbol, checker, compilerOptions, sourceFile, l.GetProgram(), l.UserPreferences().ModuleSpecifierPreferences(), modulespecifiers.ModuleSpecifierOptions{}, true /*forAutoImport*/)
 	}
 	// fromCacheOnly
 	//     ? (exportInfo: SymbolExportInfo | FutureSymbolExportInfo) => moduleSpecifiers.tryGetModuleSpecifiersFromCache(exportInfo.moduleSymbol, sourceFile, moduleSpecifierResolutionHost, preferences)
@@ -1107,7 +1158,7 @@ func getAddAsTypeOnly(
 	return AddAsTypeOnlyAllowed
 }
 
-func getShouldUseRequire(
+func shouldUseRequire(
 	sourceFile *ast.SourceFile, // !!! | FutureSourceFile
 	program *compiler.Program,
 ) bool {
@@ -1237,7 +1288,7 @@ func getUmdImportKind(importingFile *ast.SourceFile /* | FutureSourceFile */, pr
 	case core.ModuleKindES2015, core.ModuleKindES2020, core.ModuleKindES2022, core.ModuleKindESNext, core.ModuleKindNone, core.ModuleKindPreserve:
 		// Fall back to the `import * as ns` style import.
 		return ImportKindNamespace
-	case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNodeNext:
+	case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNode20, core.ModuleKindNodeNext:
 		if program.GetImpliedNodeFormatForEmit(importingFile) == core.ModuleKindESNext {
 			return ImportKindNamespace
 		}
@@ -1329,17 +1380,19 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 func forEachExternalModuleToImportFrom(
 	ch *checker.Checker,
 	program *compiler.Program,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
 ) {
-	// !!! excludePatterns
-	// excludePatterns := preferences.autoImportFileExcludePatterns && getIsExcludedPatterns(preferences, useCaseSensitiveFileNames)
+	var excludePatterns []*regexp2.Regexp
+	if preferences.AutoImportFileExcludePatterns != nil {
+		excludePatterns = getIsExcludedPatterns(preferences, program.UseCaseSensitiveFileNames())
+	}
 
 	forEachExternalModule(
 		ch,
 		program.GetSourceFiles(),
-		// !!! excludePatterns,
+		excludePatterns,
 		func(module *ast.Symbol, file *ast.SourceFile) {
 			cb(module, file, ch, false)
 		},
@@ -1361,24 +1414,73 @@ func forEachExternalModuleToImportFrom(
 	// }
 }
 
+func getIsExcludedPatterns(preferences *lsutil.UserPreferences, useCaseSensitiveFileNames bool) []*regexp2.Regexp {
+	if preferences.AutoImportFileExcludePatterns == nil {
+		return nil
+	}
+	var patterns []*regexp2.Regexp
+	for _, spec := range preferences.AutoImportFileExcludePatterns {
+		pattern := vfs.GetSubPatternFromSpec(spec, "", vfs.UsageExclude, vfs.WildcardMatcher{})
+		if pattern != "" {
+			if re := vfs.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
+				patterns = append(patterns, re)
+			}
+		}
+	}
+	return patterns
+}
+
 func forEachExternalModule(
 	ch *checker.Checker,
 	allSourceFiles []*ast.SourceFile,
-	// excludePatterns []RegExp,
+	excludePatterns []*regexp2.Regexp,
 	cb func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile),
 ) {
-	// !!! excludePatterns
-	// isExcluded := excludePatterns && getIsExcluded(excludePatterns, host)
+	var isExcluded func(*ast.SourceFile) bool = func(_ *ast.SourceFile) bool { return false }
+	if excludePatterns != nil {
+		isExcluded = getIsExcluded(excludePatterns)
+	}
 
 	for _, ambient := range ch.GetAmbientModules() {
-		if !strings.Contains(ambient.Name, "*") /*  && !(excludePatterns && ambient.Declarations.every(func (d){ return isExcluded(d.getSourceFile())})) */ {
+		if !strings.Contains(ambient.Name, "*") && !(excludePatterns != nil && core.Every(ambient.Declarations, func(d *ast.Node) bool {
+			return isExcluded(ast.GetSourceFileOfNode(d))
+		})) {
 			cb(ambient, nil /*sourceFile*/)
 		}
 	}
 	for _, sourceFile := range allSourceFiles {
-		if ast.IsExternalOrCommonJSModule(sourceFile) /* && !isExcluded(sourceFile) */ {
+		if ast.IsExternalOrCommonJSModule(sourceFile) && !isExcluded(sourceFile) {
 			cb(ch.GetMergedSymbol(sourceFile.Symbol), sourceFile)
 		}
+	}
+}
+
+func getIsExcluded(excludePatterns []*regexp2.Regexp) func(sourceFile *ast.SourceFile) bool {
+	// !!! SymlinkCache
+	// const realpathsWithSymlinks = host.getSymlinkCache?.().getSymlinkedDirectoriesByRealpath();
+	return func(sourceFile *ast.SourceFile) bool {
+		fileName := sourceFile.FileName()
+		for _, p := range excludePatterns {
+			if matched, _ := p.MatchString(fileName); matched {
+				return true
+			}
+		}
+		// !! SymlinkCache
+		// if (realpathsWithSymlinks?.size && pathContainsNodeModules(fileName)) {
+		//     let dir = getDirectoryPath(fileName);
+		//     return forEachAncestorDirectoryStoppingAtGlobalCache(
+		//         host,
+		//         getDirectoryPath(path),
+		//         dirPath => {
+		//             const symlinks = realpathsWithSymlinks.get(ensureTrailingDirectorySeparator(dirPath));
+		//             if (symlinks) {
+		//                 return symlinks.some(s => excludePatterns.some(p => p.test(fileName.replace(dir, s))));
+		//             }
+		//             dir = getDirectoryPath(dir);
+		//         },
+		//     ) ?? false;
+		// }
+		return false
 	}
 }
 
@@ -1390,49 +1492,69 @@ func (l *LanguageService) codeActionForFix(
 	symbolName string,
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
-	preferences *UserPreferences,
 ) codeAction {
-	tracker := l.newChangeTracker(ctx) // !!! changetracker.with
-	diag := l.codeActionForFixWorker(tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription, preferences)
-	changes := tracker.getChanges()[sourceFile.FileName()]
-	return codeAction{description: diag.Message(), changes: changes}
+	tracker := change.NewTracker(ctx, l.GetProgram().Options(), l.FormatOptions(), l.converters) // !!! changetracker.with
+	diag := l.codeActionForFixWorker(ctx, tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription)
+	changes := tracker.GetChanges()[sourceFile.FileName()]
+	return codeAction{description: diag, changes: changes}
 }
 
 func (l *LanguageService) codeActionForFixWorker(
-	changeTracker *changeTracker,
+	ctx context.Context,
+	changeTracker *change.Tracker,
 	sourceFile *ast.SourceFile,
 	symbolName string,
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
-	preferences *UserPreferences,
-) *diagnostics.Message {
+) string {
+	locale := locale.FromContext(ctx)
+
 	switch fix.kind {
 	case ImportFixKindUseNamespace:
-		changeTracker.addNamespaceQualifier(sourceFile, fix.qualification())
-		return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, `${fix.namespacePrefix}.${symbolName}`)
+		addNamespaceQualifier(changeTracker, sourceFile, fix.qualification())
+		return diagnostics.Change_0_to_1.Localize(locale, symbolName, fmt.Sprintf("%s.%s", *fix.namespacePrefix, symbolName))
 	case ImportFixKindJsdocTypeImport:
-		// !!! not implemented
-		// changeTracker.addImportType(changeTracker, sourceFile, fix, quotePreference);
-		// return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, getImportTypePrefix(fix.moduleSpecifier, quotePreference) + symbolName);
+		if fix.usagePosition == nil {
+			return ""
+		}
+		quotePreference := getQuotePreference(sourceFile, l.UserPreferences())
+		quoteChar := "\""
+		if quotePreference == quotePreferenceSingle {
+			quoteChar = "'"
+		}
+		importTypePrefix := fmt.Sprintf("import(%s%s%s).", quoteChar, fix.moduleSpecifier, quoteChar)
+		changeTracker.InsertText(sourceFile, *fix.usagePosition, importTypePrefix)
+		return diagnostics.Change_0_to_1.Localize(locale, symbolName, importTypePrefix+symbolName)
 	case ImportFixKindAddToExisting:
-		changeTracker.doAddExistingFix(
+		var defaultImport *Import
+		var namedImports []*Import
+		if fix.importKind == ImportKindDefault {
+			defaultImport = &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}
+		} else if fix.importKind == ImportKindNamed {
+			namedImports = []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly, propertyName: fix.propertyName}}
+		}
+		l.doAddExistingFix(
+			changeTracker,
 			sourceFile,
 			fix.importClauseOrBindingPattern,
-			core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil),
-			core.IfElse(fix.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}}, nil),
-			// nil /*removeExistingImportSpecifiers*/,
-			preferences,
+			defaultImport,
+			namedImports,
 		)
 		moduleSpecifierWithoutQuotes := stringutil.StripQuotes(fix.moduleSpecifier)
 		if includeSymbolNameInDescription {
-			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, moduleSpecifierWithoutQuotes)
+			return diagnostics.Import_0_from_1.Localize(locale, symbolName, moduleSpecifierWithoutQuotes)
 		}
-		return diagnostics.FormatMessage(diagnostics.Update_import_from_0, moduleSpecifierWithoutQuotes)
+		return diagnostics.Update_import_from_0.Localize(locale, moduleSpecifierWithoutQuotes)
 	case ImportFixKindAddNew:
 		var declarations []*ast.Statement
-		defaultImport := core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil)
-		namedImports := core.IfElse(fix.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}}, nil)
+		var defaultImport *Import
+		var namedImports []*Import
 		var namespaceLikeImport *Import
+		if fix.importKind == ImportKindDefault {
+			defaultImport = &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}
+		} else if fix.importKind == ImportKindNamed {
+			namedImports = []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly, propertyName: fix.propertyName}}
+		}
 		qualification := fix.qualification()
 		if fix.importKind == ImportKindNamespace || fix.importKind == ImportKindCommonJS {
 			namespaceLikeImport = &Import{kind: fix.importKind, addAsTypeOnly: fix.addAsTypeOnly, name: symbolName}
@@ -1442,39 +1564,126 @@ func (l *LanguageService) codeActionForFixWorker(
 		}
 
 		if fix.useRequire {
-			// !!! require
-			// declarations = getNewRequires(fixAddNew.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			declarations = getNewRequires(changeTracker, fix.moduleSpecifier, getQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		} else {
-			declarations = changeTracker.getNewImports(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			declarations = l.getNewImports(changeTracker, fix.moduleSpecifier, getQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		}
 
-		changeTracker.insertImports(
+		l.insertImports(
+			changeTracker,
 			sourceFile,
 			declarations,
 			/*blankLineBetween*/ true,
-			preferences,
 		)
 		if qualification != nil {
-			changeTracker.addNamespaceQualifier(sourceFile, qualification)
+			addNamespaceQualifier(changeTracker, sourceFile, qualification)
 		}
 		if includeSymbolNameInDescription {
-			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, fix.moduleSpecifier)
+			return diagnostics.Import_0_from_1.Localize(locale, symbolName, fix.moduleSpecifier)
 		}
-		return diagnostics.FormatMessage(diagnostics.Add_import_from_0, fix.moduleSpecifier)
+		return diagnostics.Add_import_from_0.Localize(locale, fix.moduleSpecifier)
 	case ImportFixKindPromoteTypeOnly:
-		// !!! type only
-		// promotedDeclaration := promoteFromTypeOnly(changes, fix.typeOnlyAliasDeclaration, program, sourceFile, preferences);
-		// if promotedDeclaration.Kind == ast.KindImportSpecifier {
-		// return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_of_0_from_1, symbolName, getModuleSpecifierText(promotedDeclaration.parent.parent))
-		// }
-		// return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_declaration_from_0, getModuleSpecifierText(promotedDeclaration));
+		promotedDeclaration := promoteFromTypeOnly(changeTracker, fix.typeOnlyAliasDeclaration, l.GetProgram(), sourceFile, l)
+		if promotedDeclaration.Kind == ast.KindImportSpecifier {
+			moduleSpec := getModuleSpecifierText(promotedDeclaration.Parent.Parent)
+			return diagnostics.Remove_type_from_import_of_0_from_1.Localize(locale, symbolName, moduleSpec)
+		}
+		moduleSpec := getModuleSpecifierText(promotedDeclaration)
+		return diagnostics.Remove_type_from_import_declaration_from_0.Localize(locale, moduleSpec)
 	default:
 		panic(fmt.Sprintf(`Unexpected fix kind %v`, fix.kind))
 	}
-	return nil
 }
 
-func getModuleSpecifierText(promotedDeclaration *ast.ImportDeclaration) string {
+func getNewRequires(
+	changeTracker *change.Tracker,
+	moduleSpecifier string,
+	quotePreference quotePreference,
+	defaultImport *Import,
+	namedImports []*Import,
+	namespaceLikeImport *Import,
+	compilerOptions *core.CompilerOptions,
+) []*ast.Statement {
+	quotedModuleSpecifier := changeTracker.NodeFactory.NewStringLiteral(
+		moduleSpecifier,
+		core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone),
+	)
+	var statements []*ast.Statement
+
+	// const { default: foo, bar, etc } = require('./mod');
+	if defaultImport != nil || len(namedImports) > 0 {
+		bindingElements := []*ast.Node{}
+		for _, namedImport := range namedImports {
+			var propertyName *ast.Node
+			if namedImport.propertyName != "" {
+				propertyName = changeTracker.NodeFactory.NewIdentifier(namedImport.propertyName)
+			}
+			bindingElements = append(bindingElements, changeTracker.NodeFactory.NewBindingElement(
+				/*dotDotDotToken*/ nil,
+				propertyName,
+				changeTracker.NodeFactory.NewIdentifier(namedImport.name),
+				/*initializer*/ nil,
+			))
+		}
+		if defaultImport != nil {
+			bindingElements = append([]*ast.Node{
+				changeTracker.NodeFactory.NewBindingElement(
+					/*dotDotDotToken*/ nil,
+					changeTracker.NodeFactory.NewIdentifier("default"),
+					changeTracker.NodeFactory.NewIdentifier(defaultImport.name),
+					/*initializer*/ nil,
+				),
+			}, bindingElements...)
+		}
+		declaration := createConstEqualsRequireDeclaration(
+			changeTracker,
+			changeTracker.NodeFactory.NewBindingPattern(
+				ast.KindObjectBindingPattern,
+				changeTracker.NodeFactory.NewNodeList(bindingElements),
+			),
+			quotedModuleSpecifier,
+		)
+		statements = append(statements, declaration)
+	}
+
+	// const foo = require('./mod');
+	if namespaceLikeImport != nil {
+		declaration := createConstEqualsRequireDeclaration(
+			changeTracker,
+			changeTracker.NodeFactory.NewIdentifier(namespaceLikeImport.name),
+			quotedModuleSpecifier,
+		)
+		statements = append(statements, declaration)
+	}
+
+	debug.AssertIsDefined(statements)
+	return statements
+}
+
+func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *ast.Node, quotedModuleSpecifier *ast.Node) *ast.Statement {
+	return changeTracker.NodeFactory.NewVariableStatement(
+		/*modifiers*/ nil,
+		changeTracker.NodeFactory.NewVariableDeclarationList(
+			ast.NodeFlagsConst,
+			changeTracker.NodeFactory.NewNodeList([]*ast.Node{
+				changeTracker.NodeFactory.NewVariableDeclaration(
+					name,
+					/*exclamationToken*/ nil,
+					/*type*/ nil,
+					changeTracker.NodeFactory.NewCallExpression(
+						changeTracker.NodeFactory.NewIdentifier("require"),
+						/*questionDotToken*/ nil,
+						/*typeArguments*/ nil,
+						changeTracker.NodeFactory.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
+						ast.NodeFlagsNone,
+					),
+				),
+			}),
+		),
+	)
+}
+
+func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
 	if promotedDeclaration.Kind == ast.KindImportEqualsDeclaration {
 		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
 		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
@@ -1487,4 +1696,8 @@ func getModuleSpecifierText(promotedDeclaration *ast.ImportDeclaration) string {
 		return importEqualsDeclaration.ModuleReference.Text()
 	}
 	return promotedDeclaration.Parent.ModuleSpecifier().Text()
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

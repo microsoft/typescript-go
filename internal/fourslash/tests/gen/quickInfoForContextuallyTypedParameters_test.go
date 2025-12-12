@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForContextuallyTypedParameters(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo1<T>(obj: T, settings: (row: T) => { value: string, func?: Function }): void;
 
@@ -36,7 +36,8 @@ function q<T extends { name: string }>(x: T): T["name"] {
 }
 
 foof/*4*/(o => ({ value: o.name, func: x => 'foo' }), new Error(), "name");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(parameter) o: Error", "")
 	f.VerifyQuickInfoAt(t, "2", "(parameter) o: Error", "")
 	f.VerifyQuickInfoAt(t, "3", "function foof<T, \"name\">(settings: (row: T) => {\n    value: T[\"name\"];\n    func?: Function;\n}, obj: T, key: \"name\"): \"name\"", "")

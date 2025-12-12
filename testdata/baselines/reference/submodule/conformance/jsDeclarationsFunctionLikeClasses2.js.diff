@@ -1,15 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses2.js
 +++ new.jsDeclarationsFunctionLikeClasses2.js
-@@= skipped -148, +148 lines =@@
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.origin = void 0;
--var source_1 = require("./source");
-+const source_1 = require("./source");
- exports.origin = new source_1.Point2D(0, 0);
- // export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this
-
-@@= skipped -9, +9 lines =@@
+@@= skipped -157, +157 lines =@@
  /**
   * @param {number} len
   */
@@ -28,8 +19,16 @@
 -     */
 -    dot(other: Vec): number;
 -    magnitude(): number;
--}
 +export declare function Vec(len: number): void;
++export declare namespace Vec {
++    var prototype: {
++        /**
++         * @param {Vec} other
++         */
++        dot(other: Vec): number;
++        magnitude(): number;
++    };
+ }
  /**
   * @param {number} x
   * @param {number} y
@@ -52,8 +51,14 @@
 -    set y(y: number);
 -    get y(): number;
 -    __proto__: typeof Vec;
--}
 +export declare function Point2D(x: number, y: number): any;
++export declare namespace Point2D {
++    var prototype: {
++        __proto__: typeof Vec;
++        x: number;
++        y: number;
++    };
+ }
  //// [referencer.d.ts]
 -export const origin: Point2D;
 -import { Point2D } from "./source";

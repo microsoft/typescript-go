@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionImportedNames8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowjs: true
 // @Filename: b.js
@@ -19,6 +19,7 @@ class /*classDefinition*/Class {
     private f;
 }
  export { Class };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "classAliasDefinition")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "classAliasDefinition")
 }

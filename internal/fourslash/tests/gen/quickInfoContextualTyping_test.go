@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoContextualTyping(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// DEFAULT INTERFACES
 interface IFoo {
@@ -203,7 +203,8 @@ Point.prototype = {
         return new Point(this.x + dx, this.y + dy);
     }
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) C1T5.foo: (i: number, s: string) => number", "")
 	f.VerifyQuickInfoAt(t, "2", "(parameter) i: number", "")
 	f.VerifyQuickInfoAt(t, "3", "(parameter) i: number", "")

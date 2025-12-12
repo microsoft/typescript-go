@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionFunctionType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const /*constDefinition*/c: () => void;
 /*constReference*/c();
@@ -22,6 +22,7 @@ class C {
         this./*propReference*/prop();
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "constReference", "cbReference", "propReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "constReference", "cbReference", "propReference")
 }

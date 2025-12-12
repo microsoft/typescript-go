@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionSameFile(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var /*localVariableDefinition*/localVariable;
 function /*localFunctionDefinition*/localFunction() { }
@@ -23,6 +23,7 @@ module /*localModuleDefinition*/localModule{ export var foo = 1;}
 var foo = new /*localClassReference*/localClass();
 class fooCls implements /*localInterfaceReference*/localInterface { }
 var fooVar = /*localModuleReference*/localModule.foo;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "localVariableReference", "localFunctionReference", "localClassReference", "localInterfaceReference", "localModuleReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "localVariableReference", "localFunctionReference", "localClassReference", "localInterfaceReference", "localModuleReference")
 }

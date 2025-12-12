@@ -11,8 +11,8 @@ import (
 )
 
 func TestIndirectClassInstantiation(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: something.js
@@ -26,7 +26,8 @@ var class2 = function() { };
 class2.prototype.blah = function() { };
 var inst2 = new class2();
 inst2.blah/*b*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "a")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

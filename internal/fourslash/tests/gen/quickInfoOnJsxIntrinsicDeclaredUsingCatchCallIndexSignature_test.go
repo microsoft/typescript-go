@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnJsxIntrinsicDeclaredUsingCatchCallIndexSignature(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @jsx: react
 // @filename: /a.tsx
@@ -17,6 +17,7 @@ declare namespace JSX {
   interface IntrinsicElements { [elemName: string]: any; }
 }
 </**/div class="democlass" />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

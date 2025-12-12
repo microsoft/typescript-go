@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -38,14 +39,9 @@ type ModulePath struct {
 	IsRedirect      bool
 }
 
-type PackageJsonInfo interface {
-	GetDirectory() string
-	GetContents() *packagejson.PackageJson
-}
-
 type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
-	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
+	GetSymlinkCache() *symlinks.KnownSymlinks
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
 	CommonSourceDirectory() string
 	GetGlobalTypingsCacheLocation() string
@@ -59,7 +55,7 @@ type ModuleSpecifierGenerationHost interface {
 	FileExists(path string) bool
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
-	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
+	GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry
 	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
 	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
 	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode
@@ -68,7 +64,7 @@ type ModuleSpecifierGenerationHost interface {
 type ImportModuleSpecifierPreference string
 
 const (
-	ImportModuleSpecifierPreferenceNone            ImportModuleSpecifierPreference = ""
+	ImportModuleSpecifierPreferenceNone            ImportModuleSpecifierPreference = "" // !!!
 	ImportModuleSpecifierPreferenceShortest        ImportModuleSpecifierPreference = "shortest"
 	ImportModuleSpecifierPreferenceProjectRelative ImportModuleSpecifierPreference = "project-relative"
 	ImportModuleSpecifierPreferenceRelative        ImportModuleSpecifierPreference = "relative"
@@ -78,7 +74,7 @@ const (
 type ImportModuleSpecifierEndingPreference string
 
 const (
-	ImportModuleSpecifierEndingPreferenceNone    ImportModuleSpecifierEndingPreference = ""
+	ImportModuleSpecifierEndingPreferenceNone    ImportModuleSpecifierEndingPreference = "" // !!!
 	ImportModuleSpecifierEndingPreferenceAuto    ImportModuleSpecifierEndingPreference = "auto"
 	ImportModuleSpecifierEndingPreferenceMinimal ImportModuleSpecifierEndingPreference = "minimal"
 	ImportModuleSpecifierEndingPreferenceIndex   ImportModuleSpecifierEndingPreference = "index"

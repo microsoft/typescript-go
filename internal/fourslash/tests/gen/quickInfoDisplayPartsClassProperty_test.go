@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsClassProperty(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class c {
     public /*1*/publicProperty: string;
@@ -30,6 +30,7 @@ func TestQuickInfoDisplayPartsClassProperty(t *testing.T) {
 var cInstance = new c();
 /*9*/cInstance./*10*/publicProperty;
 /*11*/c./*12*/staticProperty;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

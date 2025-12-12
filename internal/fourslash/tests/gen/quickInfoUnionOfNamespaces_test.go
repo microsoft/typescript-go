@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoUnionOfNamespaces(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const x: typeof A | typeof B;
 x./**/f;
@@ -20,6 +20,7 @@ namespace A {
 namespace B {
     export function f() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(method) f(): void", "")
 }

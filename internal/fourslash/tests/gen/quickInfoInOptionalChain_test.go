@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoInOptionalChain(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 interface A {
@@ -29,7 +29,8 @@ interface Foo2 { bar?: { baz: { qwe: string } } };
 declare const foo2: Foo2;
 
 if (foo2.b/*4*/ar?.b/*5*/az.q/*6*/we) {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) A.arr: string[]", "")
 	f.VerifyQuickInfoAt(t, "2", "(property) Foo.bar: {\n    baz: string;\n}", "")
 	f.VerifyQuickInfoAt(t, "3", "(property) baz: string | undefined", "")

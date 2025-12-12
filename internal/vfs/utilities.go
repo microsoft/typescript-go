@@ -24,24 +24,24 @@ type FileMatcherPatterns struct {
 	basePaths               []string
 }
 
-type usage string
+type Usage string
 
 const (
-	usageFiles       usage = "files"
-	usageDirectories usage = "directories"
-	usageExclude     usage = "exclude"
+	UsageFiles       Usage = "files"
+	UsageDirectories Usage = "directories"
+	UsageExclude     Usage = "exclude"
 )
 
-func GetRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
+func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
 	if len(specs) == 0 {
 		return nil
 	}
 	return core.Map(specs, func(spec string) string {
-		return getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+		return GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	})
 }
 
-func GetRegularExpressionForWildcard(specs []string, basePath string, usage usage) string {
+func GetRegularExpressionForWildcard(specs []string, basePath string, usage Usage) string {
 	patterns := GetRegularExpressionsForWildcards(specs, basePath, usage)
 	if len(patterns) == 0 {
 		return ""
@@ -138,18 +138,18 @@ var excludeMatcher = WildcardMatcher{
 	},
 }
 
-var wildcardMatchers = map[usage]WildcardMatcher{
-	usageFiles:       filesMatcher,
-	usageDirectories: directoriesMatcher,
-	usageExclude:     excludeMatcher,
+var wildcardMatchers = map[Usage]WildcardMatcher{
+	UsageFiles:       filesMatcher,
+	UsageDirectories: directoriesMatcher,
+	UsageExclude:     excludeMatcher,
 }
 
 func GetPatternFromSpec(
 	spec string,
 	basePath string,
-	usage usage,
+	usage Usage,
 ) string {
-	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+	pattern := GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	if pattern == "" {
 		return ""
 	}
@@ -157,10 +157,10 @@ func GetPatternFromSpec(
 	return fmt.Sprintf("^(%s)%s", pattern, ending)
 }
 
-func getSubPatternFromSpec(
+func GetSubPatternFromSpec(
 	spec string,
 	basePath string,
-	usage usage,
+	usage Usage,
 	matcher WildcardMatcher,
 ) string {
 	matcher = wildcardMatchers[usage]
@@ -314,11 +314,10 @@ var (
 )
 
 func GetRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
-	flags := regexp2.ECMAScript
+	opts := regexp2.RegexOptions(regexp2.ECMAScript)
 	if !useCaseSensitiveFileNames {
-		flags |= regexp2.IgnoreCase
+		opts |= regexp2.IgnoreCase
 	}
-	opts := regexp2.RegexOptions(flags)
 
 	key := regexp2CacheKey{pattern, opts}
 

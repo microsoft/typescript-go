@@ -7,15 +7,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-func (l *LanguageService) getExportInfos(
+func (l *LanguageService) getExportInfoMap(
 	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
-	preferences *UserPreferences,
-	exportMapKey ExportInfoMapKey,
+	exportMapKey lsproto.ExportInfoMapKey,
 ) []*SymbolExportInfo {
 	expInfoMap := NewExportInfoMap(l.GetProgram().GetGlobalTypingsCacheLocation())
 	moduleCount := 0
@@ -25,13 +26,13 @@ func (l *LanguageService) getExportInfos(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
-		preferences,
+		l.UserPreferences(),
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {
 				return
 			}
-			if moduleFile == nil && moduleSymbol.Name != exportMapKey.AmbientModuleName {
+			if moduleFile == nil && stringutil.StripQuotes(moduleSymbol.Name) != exportMapKey.AmbientModuleName {
 				return
 			}
 			seenExports := collections.Set[string]{}
@@ -80,12 +81,11 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
-	preferences *UserPreferences,
 	isForImportStatementCompletion bool,
 	isRightOfOpenTag bool,
 	isTypeOnlyLocation bool,
 	lowerCaseTokenText string,
-	action func([]*SymbolExportInfo, string, bool, ExportInfoMapKey) []*SymbolExportInfo,
+	action func([]*SymbolExportInfo, string, bool, lsproto.ExportInfoMapKey) []*SymbolExportInfo,
 ) {
 	symbolNameMatches := map[string]bool{}
 	symbolNameMatch := func(symbolName string) bool {
@@ -124,7 +124,7 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
-		preferences,
+		l.UserPreferences(),
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {

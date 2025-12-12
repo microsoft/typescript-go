@@ -3,10 +3,15 @@ package project_test
 import (
 	"context"
 	"maps"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/glob"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -548,6 +553,67 @@ func TestSession(t *testing.T) {
 			assert.Check(t, lsAfter.GetProgram() != programBefore)
 		})
 
+		t.Run("change program file not in tsconfig root files", func(t *testing.T) {
+			t.Parallel()
+			for _, workspaceDir := range []string{"/", "/home/projects/TS/p1", "/somewhere/else/entirely"} {
+				t.Run("workspaceDir="+strings.ReplaceAll(workspaceDir, "/", "_"), func(t *testing.T) {
+					t.Parallel()
+					files := map[string]any{
+						"/home/projects/TS/p1/tsconfig.json": `{
+							"compilerOptions": {
+								"noLib": true,
+								"module": "nodenext",
+								"strict": true
+							},
+							"files": ["src/index.ts"]
+						}`,
+						"/home/projects/TS/p1/src/index.ts": `import { x } from "../../x";`,
+						"/home/projects/TS/x.ts":            `export const x = 1;`,
+					}
+
+					session, utils := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+						CurrentDirectory:   workspaceDir,
+						DefaultLibraryPath: bundled.LibPath(),
+						TypingsLocation:    projecttestutil.TestTypingsLocation,
+						PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+						WatchEnabled:       true,
+						LoggingEnabled:     true,
+					})
+					session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+					lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					assert.NilError(t, err)
+					programBefore := lsBefore.GetProgram()
+					session.WaitForBackgroundTasks()
+
+					var xWatched bool
+				outer:
+					for _, call := range utils.Client().WatchFilesCalls() {
+						for _, watcher := range call.Watchers {
+							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/TS/x.ts") {
+								xWatched = true
+								break outer
+							}
+						}
+					}
+					assert.Check(t, xWatched)
+
+					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`, false)
+					assert.NilError(t, err)
+
+					session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+						{
+							Type: lsproto.FileChangeTypeChanged,
+							Uri:  "file:///home/projects/TS/x.ts",
+						},
+					})
+
+					lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					assert.NilError(t, err)
+					assert.Check(t, lsAfter.GetProgram() != programBefore)
+				})
+			}
+		})
+
 		t.Run("change config file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
@@ -784,6 +850,31 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/a.ts") != nil)
 		})
+	})
+
+	t.Run("refreshes code lenses and inlay hints when relevant user preferences change", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": "{}",
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+
+		session.Configure(&lsutil.UserPreferences{})
+
+		// Change user preferences for code lens and inlay hints.
+		newPrefs := session.UserPreferences()
+		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
+		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
+		session.Configure(newPrefs)
+
+		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
+		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()
+		assert.Equal(t, len(codeLensRefreshCalls), 1, "expected one RefreshCodeLens call after code lens preference change")
+		assert.Equal(t, len(inlayHintsRefreshCalls), 1, "expected one RefreshInlayHints call after inlay hints preference change")
 	})
 }
 

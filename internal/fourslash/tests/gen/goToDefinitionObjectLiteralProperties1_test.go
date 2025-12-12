@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionObjectLiteralProperties1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface PropsBag {
    /*first*/propx: number
@@ -22,6 +22,7 @@ function bar(firstarg: boolean, secondarg: PropsBag) {}
 bar(true, {
    [|pr/*p2*/opx|]: 10
 })`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "p1", "p2")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "p1", "p2")
 }

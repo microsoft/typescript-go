@@ -126,6 +126,9 @@ Run in single threaded mode.
 [94m--pprofDir[39m
 Generate pprof CPU/memory profiles to the given directory.
 
+[94m--checkers[39m
+Set the number of checkers per project.
+
 [94m--verbose, -v[39m
 Enable verbose logging.
 
@@ -137,6 +140,9 @@ Build all projects, including those that appear to be up to date.
 
 [94m--clean[39m
 Delete the outputs of all projects.
+
+[94m--builders[39m
+Set the number of projects to build concurrently.
 
 [94m--stopBuildOnErrors[39m
 Skip building downstream projects on error in upstream project.

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListCladule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     doStuff(): number { return 0; }
@@ -25,7 +25,8 @@ Foo/*c1*/; // should get "x", "prototype"
 var s: Foo/*c2*/; // no types, in Foo, so shouldnt have anything
 var f = new Foo();
 f/*c3*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "c1")
 	f.Insert(t, ".")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{

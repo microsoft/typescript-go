@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsdocTypedefTagRename04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsDocTypedef_form2.js
@@ -26,7 +26,9 @@ function test2() {
    /** @type {NumberLike2} */
    var n/*2*/umberLike2;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "2")
 	f.VerifyQuickInfoExists(t)
 	f.GoToMarker(t, "1")

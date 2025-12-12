@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionMultipleDefinitions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.ts
 interface /*interfaceDefinition1*/IFoo {
@@ -35,6 +35,7 @@ module /*moduleDefinition2*/Module {
 }
 // @Filename: e.ts
 [|Modul/*moduleReference*/e|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "interfaceReference", "moduleReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "interfaceReference", "moduleReference")
 }

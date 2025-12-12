@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionApparentTypeProperties(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Number {
     /*definition*/myObjectMethod(): number;
@@ -18,6 +18,7 @@ func TestGoToDefinitionApparentTypeProperties(t *testing.T) {
 var o = 0;
 o.[|/*reference1*/myObjectMethod|]();
 o[[|"/*reference2*/myObjectMethod"|]]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "reference1", "reference2")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "reference1", "reference2")
 }

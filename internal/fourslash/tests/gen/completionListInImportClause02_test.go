@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListInImportClause02(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module "M1" {
     export var V;
@@ -21,7 +21,8 @@ func TestCompletionListInImportClause02(t *testing.T) {
 declare module "M2" {
     import { /**/ } from "M1"
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

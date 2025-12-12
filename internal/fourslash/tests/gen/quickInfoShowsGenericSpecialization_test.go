@@ -8,11 +8,12 @@ import (
 )
 
 func TestQuickInfoShowsGenericSpecialization(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A<T> { }
 var /**/foo = new A<number>();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "var foo: A<number>", "")
 }

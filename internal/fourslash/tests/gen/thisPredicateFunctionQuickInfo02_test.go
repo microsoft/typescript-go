@@ -8,8 +8,8 @@ import (
 )
 
 func TestThisPredicateFunctionQuickInfo02(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Sundries {
     broken: boolean;
@@ -41,7 +41,8 @@ if (crate.isSupplies/*7*/()) {
        crate.;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(method) Crate<T>.isSundries(): this is Crate<Sundries>", "")
 	f.VerifyQuickInfoAt(t, "2", "(method) Crate<T>.isSupplies(): this is Crate<Supplies>", "")
 	f.VerifyQuickInfoAt(t, "3", "(method) Crate<T>.isPackedTight(): this is (this & {\n    extraContents: T;\n})", "")

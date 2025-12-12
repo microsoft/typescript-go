@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOfStringPropertyNames1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface foo {
     "foo bar": string;
@@ -27,7 +27,8 @@ var b: bar;
 var /*2*/r2 = b["hello world"];
 var /*3*/r4 = b['1'];
 var /*4*/r5 = b[1];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var r: string", "")
 	f.VerifyQuickInfoAt(t, "2", "var r2: number", "")
 	f.VerifyQuickInfoAt(t, "3", "var r4: string", "")

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsOnImportAliases(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: a.ts
 export class /*0*/Class {
@@ -20,6 +20,7 @@ import { /*1*/Class } from "./a";
 var c = new /*2*/Class();
 //@Filename: c.ts
 export { /*3*/Class } from "./a";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2")
 }

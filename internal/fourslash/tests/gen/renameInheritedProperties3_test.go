@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameInheritedProperties3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface interface1 extends interface1 {
    [|[|{| "contextRangeIndex": 0 |}propName|]: string;|]
@@ -17,6 +17,7 @@ func TestRenameInheritedProperties3(t *testing.T) {
 
 var v: interface1;
 v.[|propName|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "propName")
 }

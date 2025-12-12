@@ -8,8 +8,8 @@ import (
 )
 
 func TestIsDefinitionAcrossGlobalProjects(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/a/index.ts
 namespace NS {
@@ -92,6 +92,8 @@ const ic: I = { FC() {} };
         "emitDeclarationOnly": true,
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6", "7", "8", "9")
 }

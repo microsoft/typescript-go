@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListBuilderLocations_VariableDeclarations(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = a/*var1*/
 var x = (b/*var2*/
@@ -26,7 +26,8 @@ var y = [0, /*var9*/
 var y = ` + "`" + `${/*var10*/
 var y = ` + "`" + `${10} dd ${ /*var11*/
 var y = 10; y=/*var12*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"var1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

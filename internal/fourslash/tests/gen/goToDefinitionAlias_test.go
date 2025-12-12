@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionAlias(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: b.ts
 import /*alias1Definition*/alias1 = require("fileb");
@@ -31,6 +31,7 @@ export class Foo {
 export interface IFoo {
     x;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "alias1Type", "alias1Value", "alias2Type", "alias2Value")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "alias1Type", "alias1Value", "alias2Type", "alias2Value")
 }

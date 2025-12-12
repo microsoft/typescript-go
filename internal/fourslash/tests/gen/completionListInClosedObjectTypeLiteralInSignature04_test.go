@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionListInClosedObjectTypeLiteralInSignature04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I<TString, TNumber> {
     [s: string]: TString;
@@ -20,7 +20,8 @@ func TestCompletionListInClosedObjectTypeLiteralInSignature04(t *testing.T) {
 }
 
 declare function foo<TString, TNumber>(obj: I<TString, TNumber>): { /*1*/ }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

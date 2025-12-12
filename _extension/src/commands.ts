@@ -34,6 +34,12 @@ export function registerLanguageCommands(context: vscode.ExtensionContext, clien
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
 
+    disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
+        vscode.commands.executeCommand("workbench.action.openIssueReporter", {
+            extensionId: "TypeScriptTeam.native-preview",
+        });
+    }));
+
     return disposables;
 }
 
@@ -50,7 +56,7 @@ async function updateUseTsgoSetting(enable: boolean): Promise<void> {
             useTsgo.globalValue !== undefined ? vscode.ConfigurationTarget.Global : undefined;
     }
     // Update the setting and restart the extension host (needed to change the state of the built-in TS extension)
-    await tsConfig.update("experimental.useTsgo", enable, target);
+    await tsConfig.update("experimental.useTsgo", enable, target ?? vscode.ConfigurationTarget.Global);
     await restartExtHostOnChangeIfNeeded();
 }
 
@@ -73,6 +79,11 @@ async function showCommands(): Promise<void> {
             label: "$(debug-console) Show LSP Messages",
             description: "Show the LSP communication trace",
             command: "typescript.native-preview.lsp-trace.focus",
+        },
+        {
+            label: "$(report) Report Issue",
+            description: "Report an issue with TypeScript Native Preview",
+            command: "typescript.native-preview.reportIssue",
         },
         {
             label: "$(stop-circle) Disable TypeScript Native Preview",

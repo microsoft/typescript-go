@@ -2,8 +2,10 @@ package tspath
 
 import (
 	"cmp"
+	"slices"
 	"strings"
 	"unicode"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -333,6 +335,12 @@ func GetNormalizedPathComponents(path string, currentDirectory string) []string 
 	return reducePathComponents(GetPathComponents(path, currentDirectory))
 }
 
+func GetNormalizedAbsolutePathWithoutRoot(fileName string, currentDirectory string) string {
+	absolutePath := GetNormalizedAbsolutePath(fileName, currentDirectory)
+	rootLength := GetRootLength(absolutePath)
+	return absolutePath[rootLength:]
+}
+
 func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
 	rootLength := GetRootLength(fileName)
 	if rootLength == 0 && currentDirectory != "" {
@@ -606,7 +614,17 @@ func ToFileNameLowerCase(fileName string) string {
 			}
 			b[i] = c
 		}
-		return string(b)
+		// SAFETY: We construct a string that aliases b’s backing array without copying.
+		// (1) Lifetime: The address of b’s elements escapes via the returned string,
+		//     so escape analysis allocates b’s backing array on the heap. The string
+		//     header points to that heap allocation, ensuring it remains live for the
+		//     string’s lifetime.
+		// (2) Initialization: We assign to every b[i] before creating the string.
+		//     (Note: Go zeroes all allocated memory, so “uninitialized” bytes cannot occur.)
+		// (3) Immutability: We do not modify b after this point, so the string view
+		//     observes immutable data.
+		// (4) Non-empty: On this path len(b) > 0, so &b[0] is a valid, non-nil pointer.
+		return unsafe.String(&b[0], len(b))
 	}
 
 	return strings.Map(func(r rune) rune {
@@ -1022,4 +1040,125 @@ func SplitVolumePath(path string) (volume string, rest string, ok bool) {
 		return strings.ToLower(path[0:2]), path[2:], true
 	}
 	return "", path, false
+}
+
+// GetCommonParents returns the smallest set of directories that are parents of all paths with
+// at least `minComponents` directory components. Any path that has fewer than `minComponents` directory components
+// will be returned in the second return value. Examples:
+//
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g  =>  /a/b
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  =>  /
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  (minComponents: 2)	=>  /a/b, /x/y
+//	c:/a/b/c/d, d:/a/b/c/d =>	c:/a/b/c/d, d:/a/b/c/d
+func GetCommonParents(
+	paths []string,
+	minComponents int,
+	getPathComponents func(path string, currentDirectory string) []string,
+	options ComparePathsOptions,
+) (parents []string, ignored map[string]struct{}) {
+	if minComponents < 1 {
+		panic("minComponents must be at least 1")
+	}
+	if len(paths) == 0 {
+		return nil, nil
+	}
+	if len(paths) == 1 {
+		if len(reducePathComponents(getPathComponents(paths[0], options.CurrentDirectory))) < minComponents {
+			return nil, map[string]struct{}{paths[0]: {}}
+		}
+		return paths, nil
+	}
+
+	ignored = make(map[string]struct{})
+	pathComponents := make([][]string, 0, len(paths))
+	for _, path := range paths {
+		components := reducePathComponents(getPathComponents(path, options.CurrentDirectory))
+		if len(components) < minComponents {
+			ignored[path] = struct{}{}
+		} else {
+			pathComponents = append(pathComponents, components)
+		}
+	}
+
+	results := getCommonParentsWorker(pathComponents, minComponents, options)
+	resultPaths := make([]string, len(results))
+	for i, comps := range results {
+		resultPaths[i] = GetPathFromPathComponents(comps)
+	}
+
+	return resultPaths, ignored
+}
+
+func getCommonParentsWorker(componentGroups [][]string, minComponents int, options ComparePathsOptions) [][]string {
+	if len(componentGroups) == 0 {
+		return nil
+	}
+	// Determine the maximum depth we can consider
+	maxDepth := len(componentGroups[0])
+	for _, comps := range componentGroups[1:] {
+		if l := len(comps); l < maxDepth {
+			maxDepth = l
+		}
+	}
+
+	equality := options.getEqualityComparer()
+	for lastCommonIndex := range maxDepth {
+		candidate := componentGroups[0][lastCommonIndex]
+		for j, comps := range componentGroups[1:] {
+			if !equality(candidate, comps[lastCommonIndex]) { // divergence
+				if lastCommonIndex < minComponents {
+					// Not enough components, we need to fan out
+					orderedGroups := make([]Path, 0, len(componentGroups)-j)
+					newGroups := make(map[Path]struct {
+						head  []string
+						tails [][]string
+					})
+					for _, g := range componentGroups {
+						key := ToPath(g[lastCommonIndex], options.CurrentDirectory, options.UseCaseSensitiveFileNames)
+						if _, ok := newGroups[key]; !ok {
+							orderedGroups = append(orderedGroups, key)
+						}
+						newGroups[key] = struct {
+							head  []string
+							tails [][]string
+						}{
+							head:  g[:lastCommonIndex+1],
+							tails: append(newGroups[key].tails, g[lastCommonIndex+1:]),
+						}
+					}
+					slices.Sort(orderedGroups)
+					result := make([][]string, 0, len(newGroups))
+					for _, key := range orderedGroups {
+						group := newGroups[key]
+						subResults := getCommonParentsWorker(group.tails, minComponents-(lastCommonIndex+1), options)
+						for _, sr := range subResults {
+							result = append(result, append(group.head, sr...))
+						}
+					}
+					return result
+				}
+				return [][]string{componentGroups[0][:lastCommonIndex]}
+			}
+		}
+	}
+
+	return [][]string{componentGroups[0][:maxDepth]}
+}
+
+func StartsWithDirectory(fileName string, directoryName string, useCaseSensitiveFileNames bool) bool {
+	if directoryName == "" {
+		return false
+	}
+
+	canonicalFileName := GetCanonicalFileName(fileName, useCaseSensitiveFileNames)
+	canonicalDirectoryName := GetCanonicalFileName(directoryName, useCaseSensitiveFileNames)
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "/")
+	canonicalDirectoryName = strings.TrimSuffix(canonicalDirectoryName, "\\")
+
+	return strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"/") ||
+		strings.HasPrefix(canonicalFileName, canonicalDirectoryName+"\\")
+}
+
+func CompareNumberOfDirectorySeparators(path1, path2 string) int {
+	return cmp.Compare(strings.Count(path1, "/"), strings.Count(path2, "/"))
 }

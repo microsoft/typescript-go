@@ -1,6 +1,7 @@
 package project
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -19,52 +20,56 @@ type FileSource interface {
 
 var (
 	_ FileSource = (*snapshotFSBuilder)(nil)
-	_ FileSource = (*snapshotFS)(nil)
+	_ FileSource = (*SnapshotFS)(nil)
 )
 
-type snapshotFS struct {
+type SnapshotFS struct {
 	toPath    func(fileName string) tspath.Path
 	fs        vfs.FS
-	overlays  map[tspath.Path]*overlay
+	overlays  map[tspath.Path]*Overlay
 	diskFiles map[tspath.Path]*diskFile
 	readFiles collections.SyncMap[tspath.Path, memoizedDiskFile]
 }
 
-type memoizedDiskFile func() *diskFile
+type memoizedDiskFile func() FileHandle
 
-func (s *snapshotFS) FS() vfs.FS {
+func (s *SnapshotFS) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *snapshotFS) GetFile(fileName string) FileHandle {
+func (s *SnapshotFS) GetFile(fileName string) FileHandle {
 	if file, ok := s.overlays[s.toPath(fileName)]; ok {
 		return file
 	}
 	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
 		return file
 	}
-	newEntry := memoizedDiskFile(sync.OnceValue(func() *diskFile {
+	newEntry := memoizedDiskFile(sync.OnceValue(func() FileHandle {
 		if contents, ok := s.fs.ReadFile(fileName); ok {
 			return newDiskFile(fileName, contents)
 		}
 		return nil
 	}))
-	if entry, ok := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry); ok {
-		return entry()
-	}
-	return nil
+	entry, _ := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry)
+	return entry()
+}
+
+func (s *SnapshotFS) isOpenFile(fileName string) bool {
+	path := s.toPath(fileName)
+	_, ok := s.overlays[path]
+	return ok
 }
 
 type snapshotFSBuilder struct {
 	fs        vfs.FS
-	overlays  map[tspath.Path]*overlay
+	overlays  map[tspath.Path]*Overlay
 	diskFiles *dirty.SyncMap[tspath.Path, *diskFile]
 	toPath    func(string) tspath.Path
 }
 
 func newSnapshotFSBuilder(
 	fs vfs.FS,
-	overlays map[tspath.Path]*overlay,
+	overlays map[tspath.Path]*Overlay,
 	diskFiles map[tspath.Path]*diskFile,
 	positionEncoding lsproto.PositionEncodingKind,
 	toPath func(fileName string) tspath.Path,
@@ -83,14 +88,19 @@ func (s *snapshotFSBuilder) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool) {
+func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 	diskFiles, changed := s.diskFiles.Finalize()
-	return &snapshotFS{
+	return &SnapshotFS{
 		fs:        s.fs,
 		overlays:  s.overlays,
 		diskFiles: diskFiles,
 		toPath:    s.toPath,
 	}, changed
+}
+
+func (s *snapshotFSBuilder) isOpenFile(path tspath.Path) bool {
+	_, ok := s.overlays[path]
+	return ok
 }
 
 func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
@@ -109,7 +119,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 				if content, ok := s.fs.ReadFile(fileName); ok {
 					entry.Change(func(file *diskFile) {
 						file.content = content
-						file.hash = xxh3.Hash128([]byte(content))
+						file.hash = xxh3.HashString128(content)
 						file.needsReload = false
 					})
 				} else {
@@ -122,6 +132,42 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 		return nil
 	}
 	return entry.Value()
+}
+
+func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary) bool {
+	for uri := range change.Changed.Keys() {
+		path := s.toPath(uri.FileName())
+		if _, ok := s.diskFiles.Load(path); ok {
+			return true
+		}
+	}
+	for uri := range change.Deleted.Keys() {
+		path := s.toPath(uri.FileName())
+		if _, ok := s.diskFiles.Load(path); ok {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *snapshotFSBuilder) invalidateCache() {
+	s.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+		entry.Change(func(file *diskFile) {
+			file.needsReload = true
+		})
+		return true
+	})
+}
+
+func (s *snapshotFSBuilder) invalidateNodeModulesCache() {
+	s.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+		if strings.Contains(string(entry.Key()), "/node_modules/") {
+			entry.Change(func(file *diskFile) {
+				file.needsReload = true
+			})
+		}
+		return true
+	})
 }
 
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {

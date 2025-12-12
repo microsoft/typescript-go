@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnUnResolvedBaseConstructorSignature(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class baseClassWithConstructorParameterSpecifyingType {
     constructor(loading?: boolean) {
@@ -20,7 +20,8 @@ class genericBaseClassInheritingConstructorFromBase<TValue> extends baseClassWit
 class classInheritingSpecializedClass extends genericBaseClassInheritingConstructorFromBase<string> {
 }
 new class/*1*/InheritingSpecializedClass();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "1")
 	f.VerifyQuickInfoExists(t)
 }

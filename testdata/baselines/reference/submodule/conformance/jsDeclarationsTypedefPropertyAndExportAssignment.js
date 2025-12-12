@@ -55,8 +55,6 @@ class MainThreadTasks {
 module.exports = MainThreadTasks;
 
 //// [module.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 /**
  * @typedef TaskGroup
@@ -84,8 +82,6 @@ module.exports = {
     taskNameToGroup,
 };
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const { taskGroups, taskNameToGroup } = require('./module.js');
 /** @typedef {import('./module.js').TaskGroup} TaskGroup */
 /**
@@ -102,11 +98,11 @@ class MainThreadTasks {
      */
     constructor(x, y) { }
 }
-export = MainThreadTasks;
 module.exports = MainThreadTasks;
 
 
 //// [module.d.ts]
+/** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 export type TaskGroupIds = 'parseHTML' | 'styleLayout';
 export type TaskGroup = {
     id: TaskGroupIds;

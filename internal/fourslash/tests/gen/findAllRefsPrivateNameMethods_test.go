@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsPrivateNameMethods(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     /*1*/#foo(){ }
@@ -29,6 +29,7 @@ class E {
         this./*4*/#foo();
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")
 }

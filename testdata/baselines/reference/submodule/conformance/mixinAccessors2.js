@@ -17,6 +17,7 @@ class MyClass extends mixin(BaseClass) {
 
 
 //// [mixinAccessors2.js]
+"use strict";
 function mixin(superclass) {
     return class extends superclass {
         accessor name = "";
@@ -35,7 +36,8 @@ declare function mixin<T extends {
     new (...args: any[]): {};
 }>(superclass: T): {
     new (...args: any[]): {
-        name: string;
+        get name(): string;
+        set name(arg: string);
     };
 } & T;
 declare class BaseClass {
@@ -43,7 +45,8 @@ declare class BaseClass {
 }
 declare const MyClass_base: {
     new (...args: any[]): {
-        name: string;
+        get name(): string;
+        set name(arg: string);
     };
 } & typeof BaseClass;
 declare class MyClass extends MyClass_base {

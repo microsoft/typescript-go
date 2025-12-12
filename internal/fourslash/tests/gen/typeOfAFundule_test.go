@@ -8,8 +8,8 @@ import (
 )
 
 func TestTypeOfAFundule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function m1() { return 1; }
 module m1 { export var y = 2; }
@@ -17,6 +17,7 @@ function foo13() {
     return m1;
 }
 var /**/r13 = foo13();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "var r13: typeof m1", "")
 }

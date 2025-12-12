@@ -446,6 +446,10 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 	c.SetOriginalEx(node, original, false)
 }
 
+func (c *EmitContext) UnsetOriginal(node *ast.Node) {
+	delete(c.original, node)
+}
+
 func (c *EmitContext) SetOriginalEx(node *ast.Node, original *ast.Node, allowOverwrite bool) {
 	if original == nil {
 		panic("Original cannot be nil.")
@@ -899,7 +903,7 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 
 	return c.Factory.UpdateBlock(
 		updated.AsBlock(),
-		c.MergeEnvironmentList(updated.AsBlock().Statements, declarations),
+		c.MergeEnvironmentList(updated.StatementList(), declarations),
 	)
 }
 
@@ -917,9 +921,9 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	statements := c.EndLexicalEnvironment()
 	if len(statements) > 0 {
 		if ast.IsBlock(updated) {
-			statements = append(statements, updated.AsBlock().Statements.Nodes...)
+			statements = append(statements, updated.Statements()...)
 			statementsList := c.Factory.NewNodeList(statements)
-			statementsList.Loc = updated.AsBlock().Statements.Loc
+			statementsList.Loc = updated.StatementList().Loc
 			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList)
 		}
 		statements = append(statements, updated)

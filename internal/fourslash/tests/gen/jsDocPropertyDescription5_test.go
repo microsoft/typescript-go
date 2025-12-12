@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Multiple1Example {
     /** Something generic */
@@ -18,6 +18,7 @@ func TestJsDocPropertyDescription5(t *testing.T) {
 function multiple1Example(e: Multiple1Example) {
     console.log(e./*multiple1*/anything);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "multiple1", "any", "")
 }

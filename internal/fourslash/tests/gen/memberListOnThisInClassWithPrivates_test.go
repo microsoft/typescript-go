@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOnThisInClassWithPrivates(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C1 {
    public pubMeth() {this./**/} // test on 'this.'
@@ -19,7 +19,8 @@ func TestMemberListOnThisInClassWithPrivates(t *testing.T) {
    public pubProp = 0;
    private privProp = 0;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

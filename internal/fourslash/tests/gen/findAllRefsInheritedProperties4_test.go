@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsInheritedProperties4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface C extends D {
     /*0*/prop0: string;
@@ -23,6 +23,7 @@ interface D extends C {
 var d: D;
 d./*3*/prop0;
 d./*4*/prop1;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "2", "3", "1", "4")
 }

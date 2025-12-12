@@ -8,8 +8,8 @@ import (
 )
 
 func TestGotoDefinitionConstructorFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -23,6 +23,7 @@ StringStreamm.prototype = {
 function runMode () {
 new [|/*start*/StringStreamm|]()
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "start")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "start")
 }

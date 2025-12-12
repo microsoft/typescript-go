@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionOverriddenMember18(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @target: esnext
@@ -23,6 +23,7 @@ abstract class MySqlColumn {
 export class MySqlVarBinary extends MySqlColumn {
   [|/*1*/override|] readonly [entityKind]: string = "MySqlVarBinary";
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

@@ -7,6 +7,7 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | foo(): void
+// | This comment should appear for foo
 // | ----------------------------------------------------------------------
 // /** This is comment for function signature*/
 // function fooWithParameters(/** this is comment about a*/a: string,
@@ -18,10 +19,12 @@
 //                   ^
 // | ----------------------------------------------------------------------
 // | fooWithParameters(**a: string**, b: number): void
+// | This is comment for function signature
 // | ----------------------------------------------------------------------
 //                       ^
 // | ----------------------------------------------------------------------
 // | fooWithParameters(a: string, **b: number**): void
+// | This is comment for function signature
 // | ----------------------------------------------------------------------
 // /**
 // * Does something
@@ -32,6 +35,10 @@
 //    ^
 // | ----------------------------------------------------------------------
 // | fn(**a: string**): any
+// | Does something
+// | 
+// | *@param* `a` — a string
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -48,11 +55,14 @@
       "signatures": [
         {
           "label": "foo(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This comment should appear for foo"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -69,6 +79,10 @@
       "signatures": [
         {
           "label": "fooWithParameters(a: string, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is comment for function signature"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -76,11 +90,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -97,6 +111,10 @@
       "signatures": [
         {
           "label": "fooWithParameters(a: string, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is comment for function signature"
+          },
           "parameters": [
             {
               "label": "a: string"
@@ -104,11 +122,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -125,15 +143,19 @@
       "signatures": [
         {
           "label": "fn(a: string): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Does something\n\n*@param* `a` — a string\n"
+          },
           "parameters": [
             {
               "label": "a: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]

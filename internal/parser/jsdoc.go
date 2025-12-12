@@ -89,17 +89,12 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 func (p *Parser) parseJSDocNameReference() *ast.Node {
 	pos := p.nodePos()
 	hasBrace := p.parseOptional(ast.KindOpenBraceToken)
-	p2 := p.nodePos()
-	entityName := p.parseEntityName(false, nil)
-	for p.token == ast.KindPrivateIdentifier {
-		p.scanner.ReScanHashToken() // rescan #id as # id
-		p.nextTokenJSDoc()          // then skip the #
-		entityName = p.finishNode(p.factory.NewQualifiedName(entityName, p.parseIdentifier()), p2)
-	}
+	entityName := p.parseJSDocLinkName()
 	if hasBrace {
 		p.parseExpectedJSDoc(ast.KindCloseBraceToken)
 	}
-
+	p.scanner.ResetPos(p.scanner.TokenFullStart())
+	p.nextTokenJSDoc()
 	return p.finishNode(p.factory.NewJSDocNameReference(entityName), pos)
 }
 
@@ -133,7 +128,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	// +3 for leading `/**`
 	p.scanner.ResetPos(start + 3)
 	p.setContextFlags(ast.NodeFlagsJSDoc, true)
-	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
+	p.parsingContexts |= 1 << PCJSDocComment
 
 	comment := p.parseJSDocCommentWorker(start, end, fullStart, initialIndent)
 	// move jsdoc diagnostics to jsdocDiagnostics -- for JS files only
@@ -627,7 +622,6 @@ func (p *Parser) parseJSDocLink(start int) *ast.Node {
 func (p *Parser) parseJSDocLinkName() *ast.Node {
 	if tokenIsIdentifierOrKeyword(p.token) {
 		pos := p.nodePos()
-
 		name := p.parseIdentifierName()
 		for p.parseOptional(ast.KindDotToken) {
 			var right *ast.IdentifierNode
@@ -638,7 +632,6 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 			}
 			name = p.finishNode(p.factory.NewQualifiedName(name, right), pos)
 		}
-
 		for p.token == ast.KindPrivateIdentifier {
 			p.scanner.ReScanHashToken()
 			p.nextTokenJSDoc()
@@ -711,7 +704,7 @@ func isObjectOrObjectArrayTypeReference(node *ast.TypeNode) bool {
 	default:
 		if ast.IsTypeReferenceNode(node) {
 			ref := node.AsTypeReferenceNode()
-			return ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "Object" && ref.TypeArguments == nil
+			return ast.IsIdentifier(ref.TypeName) && ref.TypeName.Text() == "Object" && ref.TypeArguments == nil
 		}
 		return false
 	}
@@ -759,7 +752,7 @@ func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.Enti
 			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
 				children = append(children, child)
 			} else if child.Kind == ast.KindJSDocTemplateTag {
-				p.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
 		if children != nil {
@@ -794,11 +787,10 @@ func (p *Parser) parseTypeTag(previousTags []*ast.Node, start int, tagName *ast.
 }
 
 func (p *Parser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	isMarkdownOrJSDocLink := p.token == ast.KindOpenBracketToken || p.lookAhead(func(p *Parser) bool {
-		return p.nextTokenJSDoc() == ast.KindAtToken && tokenIsIdentifierOrKeyword(p.nextTokenJSDoc()) && isJSDocLinkTag(p.scanner.TokenValue())
-	})
+	hasNameReference := p.isIdentifier() && !strings.HasPrefix(p.sourceText[p.scanner.TokenEnd():], "://") ||
+		p.token == ast.KindOpenBraceToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
 	var nameExpression *ast.Node
-	if !isMarkdownOrJSDocLink {
+	if hasNameReference {
 		nameExpression = p.parseJSDocNameReference()
 	}
 	comments := p.parseTrailingTagComments(start, p.nodePos(), indent, indentText)
@@ -829,7 +821,7 @@ func (p *Parser) parseImportTag(start int, tagName *ast.IdentifierNode, margin i
 		identifier = p.parseIdentifier()
 	}
 
-	importClause := p.tryParseImportClause(identifier, afterImportTagPos, true /*isTypeOnly*/, true /*skipJSDocLeadingAsterisks*/)
+	importClause := p.tryParseImportClause(identifier, afterImportTagPos, ast.KindTypeKeyword, true /*skipJSDocLeadingAsterisks*/)
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
 
@@ -918,8 +910,14 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 			if childTypeTag != nil && childTypeTag.TypeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.TypeExpression.Type()) {
 				typeExpression = childTypeTag.TypeExpression
 			} else {
-				typeExpression = p.finishNode(jsdocTypeLiteral, jsdocPropertyTags[0].Pos())
+				// !!! This differs from Strada but prevents a crash
+				pos := start
+				if len(jsdocPropertyTags) > 0 {
+					pos = jsdocPropertyTags[0].Pos()
+				}
+				typeExpression = p.finishNode(jsdocTypeLiteral, pos)
 			}
+			end = typeExpression.End()
 		}
 	}
 
@@ -961,7 +959,7 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 			break
 		}
 		if child.Kind == ast.KindJSDocTemplateTag {
-			p.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			break
 		}
 		parameters = append(parameters, child)
@@ -1027,7 +1025,7 @@ func textsEqual(a *ast.EntityName, b *ast.EntityName) bool {
 			return false
 		}
 	}
-	return a.AsIdentifier().Text == b.AsIdentifier().Text
+	return a.Text() == b.Text()
 }
 
 func (p *Parser) parseChildPropertyTag(indent int) *ast.Node {

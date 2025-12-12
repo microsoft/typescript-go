@@ -47,6 +47,7 @@ type CompilerOptions struct {
 	ForceConsistentCasingInFileNames          Tristate                                  `json:"forceConsistentCasingInFileNames,omitzero"`
 	IsolatedModules                           Tristate                                  `json:"isolatedModules,omitzero"`
 	IsolatedDeclarations                      Tristate                                  `json:"isolatedDeclarations,omitzero"`
+	IgnoreConfig                              Tristate                                  `json:"ignoreConfig,omitzero"`
 	IgnoreDeprecations                        string                                    `json:"ignoreDeprecations,omitzero"`
 	ImportHelpers                             Tristate                                  `json:"importHelpers,omitzero"`
 	InlineSourceMap                           Tristate                                  `json:"inlineSourceMap,omitzero"`
@@ -148,6 +149,7 @@ type CompilerOptions struct {
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
+	Checkers       *int     `json:"checkers,omitzero"`
 
 	sourceFileAffectingCompilerOptionsOnce sync.Once
 	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
@@ -190,6 +192,8 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	switch options.GetEmitModuleKind() {
 	case ModuleKindNode16, ModuleKindNode18:
 		return ScriptTargetES2022
+	case ModuleKindNode20:
+		return ScriptTargetES2023
 	case ModuleKindNodeNext:
 		return ScriptTargetESNext
 	default:
@@ -198,26 +202,30 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 }
 
 func (options *CompilerOptions) GetEmitModuleKind() ModuleKind {
-	if options.Module != ModuleKindNone {
+	switch options.Module {
+	case ModuleKindNone, ModuleKindAMD, ModuleKindUMD, ModuleKindSystem:
+		if options.Target >= ScriptTargetES2015 {
+			return ModuleKindES2015
+		}
+		return ModuleKindCommonJS
+	default:
 		return options.Module
 	}
-	if options.Target >= ScriptTargetES2015 {
-		return ModuleKindES2015
-	}
-	return ModuleKindCommonJS
 }
 
 func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
-	if options.ModuleResolution != ModuleResolutionKindUnknown {
-		return options.ModuleResolution
-	}
-	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNode18:
-		return ModuleResolutionKindNode16
-	case ModuleKindNodeNext:
-		return ModuleResolutionKindNodeNext
+	switch options.ModuleResolution {
+	case ModuleResolutionKindUnknown, ModuleResolutionKindClassic, ModuleResolutionKindNode10:
+		switch options.GetEmitModuleKind() {
+		case ModuleKindNode16, ModuleKindNode18, ModuleKindNode20:
+			return ModuleResolutionKindNode16
+		case ModuleKindNodeNext:
+			return ModuleResolutionKindNodeNext
+		default:
+			return ModuleResolutionKindBundler
+		}
 	default:
-		return ModuleResolutionKindBundler
+		return options.ModuleResolution
 	}
 }
 
@@ -225,12 +233,11 @@ func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind
 	if options.ModuleDetection != ModuleDetectionKindNone {
 		return options.ModuleDetection
 	}
-	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext:
+	moduleKind := options.GetEmitModuleKind()
+	if ModuleKindNode16 <= moduleKind && moduleKind <= ModuleKindNodeNext {
 		return ModuleDetectionKindForce
-	default:
-		return ModuleDetectionKindAuto
 	}
+	return ModuleDetectionKindAuto
 }
 
 func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
@@ -249,29 +256,24 @@ func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) 
 	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
+// Deprecated: always returns true
 func (options *CompilerOptions) GetESModuleInterop() bool {
-	if options.ESModuleInterop != TSUnknown {
-		return options.ESModuleInterop == TSTrue
-	}
-	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNode18, ModuleKindNodeNext, ModuleKindPreserve:
-		return true
-	}
-	return false
+	return true
 }
 
+// Deprecated: always returns true
 func (options *CompilerOptions) GetAllowSyntheticDefaultImports() bool {
-	if options.AllowSyntheticDefaultImports != TSUnknown {
-		return options.AllowSyntheticDefaultImports == TSTrue
-	}
-	return options.GetESModuleInterop() ||
-		options.GetEmitModuleKind() == ModuleKindSystem ||
-		options.GetModuleResolutionKind() == ModuleResolutionKindBundler
+	return true
 }
 
 func (options *CompilerOptions) GetResolveJsonModule() bool {
 	if options.ResolveJsonModule != TSUnknown {
 		return options.ResolveJsonModule == TSTrue
+	}
+	switch options.GetEmitModuleKind() {
+	// TODO in 6.0: add Node16/Node18
+	case ModuleKindNode20, ModuleKindESNext:
+		return true
 	}
 	return options.GetModuleResolutionKind() == ModuleResolutionKindBundler
 }
@@ -364,19 +366,13 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
-	AllowUnreachableCode     Tristate
-	AllowUnusedLabels        Tristate
-	BindInStrictMode         bool
-	ShouldPreserveConstEnums bool
+	BindInStrictMode bool
 }
 
 func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
 	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
 		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
-			AllowUnreachableCode:     options.AllowUnreachableCode,
-			AllowUnusedLabels:        options.AllowUnusedLabels,
-			BindInStrictMode:         options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-			ShouldPreserveConstEnums: options.ShouldPreserveConstEnums(),
+			BindInStrictMode: options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
 		}
 	})
 	return options.sourceFileAffectingCompilerOptions
@@ -394,6 +390,7 @@ const (
 type ModuleKind int32
 
 const (
+	// Deprecated: Do not use outside of options parsing and validation.
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -440,6 +437,10 @@ type ModuleResolutionKind int32
 
 const (
 	ModuleResolutionKindUnknown ModuleResolutionKind = 0
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleResolutionKindClassic ModuleResolutionKind = 1
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleResolutionKindNode10 ModuleResolutionKind = 2
 	// Starting with node16, node's module resolver has significant departures from traditional cjs resolution
 	// to better support ECMAScript modules and their use within node - however more features are still being added.
 	// TypeScript's Node ESM support was introduced after Node 12 went end-of-life, and Node 14 is the earliest stable

@@ -54,6 +54,9 @@ Compile the project given the path to its configuration file, or to a folder wit
 [94m--showConfig[39m
 Print the final configuration instead of building.
 
+[94m--ignoreConfig[39m
+Ignore the tsconfig found and build with commandline options and files.
+
 [94m--build, -b[39m
 Build one or more projects and their dependencies, if out of date
 
@@ -116,7 +119,7 @@ default: false
 
 [94m--jsx[39m
 Specify what JSX code is generated.
-one of: preserve, react-native, react, react-jsx, react-jsxdev
+one of: preserve, react-native, react-jsx, react-jsxdev, react
 default: undefined
 
 [94m--outFile[39m

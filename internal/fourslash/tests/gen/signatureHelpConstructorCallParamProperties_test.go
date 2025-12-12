@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpConstructorCallParamProperties(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Circle {
     /**
@@ -20,6 +20,7 @@ func TestSignatureHelpConstructorCallParamProperties(t *testing.T) {
     }
 }
 var a = new Circle(/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

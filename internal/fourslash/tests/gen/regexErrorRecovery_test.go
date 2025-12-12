@@ -8,8 +8,8 @@ import (
 )
 
 func TestRegexErrorRecovery(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` // test code
 //var x = //**/a/;/*1*/
@@ -17,6 +17,7 @@ func TestRegexErrorRecovery(t *testing.T) {
  Bug 579071: Parser no longer detects a Regex when an open bracket is inserted
 verify.quickInfoIs("RegExp");
 verify.not.errorExistsAfterMarker("1");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.Insert(t, "(")
 }

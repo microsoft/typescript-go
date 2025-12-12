@@ -20,6 +20,8 @@ if (example.err === undefined) {
 }
 
 //// [discriminatedUnionTypes3.js]
+"use strict";
+// Repro from #44435
 const example = {};
 if (example.err === undefined) {
     example.property; // true

@@ -1,6 +1,6 @@
 --- old.untypedModuleImport_allowJs.symbols
 +++ new.untypedModuleImport_allowJs.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -9, +9 lines =@@
  === /node_modules/foo/index.js ===
  exports.default = { bar() { return 0; } }
  >exports.default : Symbol(default, Decl(index.js, 0, 0))

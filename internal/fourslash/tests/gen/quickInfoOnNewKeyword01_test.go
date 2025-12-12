@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnNewKeyword01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Cat {
   /**
@@ -21,7 +21,8 @@ func TestQuickInfoOnNewKeyword01(t *testing.T) {
 }
 
 ne/*1*/w Ca/*2*/t();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "constructor Cat(): Cat", "NOTE: this constructor is private! Please use the factory function")
 	f.VerifyQuickInfoAt(t, "2", "constructor Cat(): Cat", "NOTE: this constructor is private! Please use the factory function")
 }

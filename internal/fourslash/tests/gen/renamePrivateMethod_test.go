@@ -9,8 +9,8 @@ import (
 )
 
 func TestRenamePrivateMethod(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
    [|[|{| "contextRangeIndex": 0 |}#foo|]() { }|]
@@ -18,6 +18,7 @@ func TestRenamePrivateMethod(t *testing.T) {
        return this.[|#foo|]();
    }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, ToAny(f.GetRangesByText().Get("#foo"))...)
 }

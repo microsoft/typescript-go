@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoTypeArgumentInferenceWithMethodWithoutBody(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface ProxyHandler<T extends object> {
     getPrototypeOf?(target: T): object | null;
@@ -22,7 +22,8 @@ let target = {}
 let proxy = new /**/Proxy(target, {
     getPrototypeOf()
 })`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyQuickInfoExists(t)
 }

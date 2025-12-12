@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoInJsdocInTsFile1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @type {() => { /*1*/data: string[] }} */
 function test(): { data: string[] } {
@@ -43,7 +43,8 @@ if (stuff.quantity) {}
 
 /** @type {(a/*8*/: string) => void} */
 function test2(a: string) {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "", "")
 	f.VerifyQuickInfoAt(t, "2", "", "")
 	f.VerifyQuickInfoAt(t, "3", "", "")

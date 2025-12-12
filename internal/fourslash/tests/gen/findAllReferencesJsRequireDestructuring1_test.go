@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllReferencesJsRequireDestructuring1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @noEmit: true
@@ -18,6 +18,7 @@ func TestFindAllReferencesJsRequireDestructuring1(t *testing.T) {
 module.exports = { x: 1 };
 // @Filename: /Y.js
 const { /*1*/x: { y } } = require("./X");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

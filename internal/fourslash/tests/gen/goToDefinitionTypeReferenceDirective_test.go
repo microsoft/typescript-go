@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionTypeReferenceDirective(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: src/types
 // @Filename: src/types/lib/index.d.ts
@@ -17,6 +17,7 @@ func TestGoToDefinitionTypeReferenceDirective(t *testing.T) {
 // @Filename: src/app.ts
  /// <reference types="[|lib/*1*/|]"/>
  $.x;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxGoToDefinitionIntrinsics(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 declare module JSX {
@@ -25,6 +25,7 @@ declare module JSX {
 var x = <[|di/*ds*/v|] />;
 var y = <[|s/*ss*/pan|] />;
 var z = <div [|na/*ps*/me|]='hello' />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "ds", "ss", "ps")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "ds", "ss", "ps")
 }

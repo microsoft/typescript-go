@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionObjectLiteralProperties(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var o = {
     /*valueDefinition*/value: 0,
@@ -24,6 +24,7 @@ o./*getterReference*/getter;
 o./*setterReference*/setter;
 o./*methodReference*/method;
 o./*es6StyleMethodReference*/es6StyleMethod;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "valueReference", "getterReference", "setterReference", "methodReference", "es6StyleMethodReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "valueReference", "getterReference", "setterReference", "methodReference", "es6StyleMethodReference")
 }

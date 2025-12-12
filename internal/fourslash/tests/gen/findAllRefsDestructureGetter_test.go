@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsDestructureGetter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Test {
     get /*x0*/x() { return 0; }
@@ -18,6 +18,7 @@ func TestFindAllRefsDestructureGetter(t *testing.T) {
 }
 const { /*x1*/x, /*y1*/y } = new Test();
 /*x2*/x; /*y2*/y;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "x0", "x1", "x2", "y0", "y1", "y2")
 }

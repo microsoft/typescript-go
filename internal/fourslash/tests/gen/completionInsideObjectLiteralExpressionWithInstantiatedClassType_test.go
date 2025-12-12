@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionInsideObjectLiteralExpressionWithInstantiatedClassType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C1 {
     public a: string;
@@ -36,7 +36,8 @@ f2({ /*2*/ });
 
 function f3(foo: C2) {}
 f3({ /*3*/ });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

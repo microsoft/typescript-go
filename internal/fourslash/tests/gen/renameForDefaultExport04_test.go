@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameForDefaultExport04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.ts
 export default class /**/[|DefaultExportedClass|] {
@@ -21,7 +21,8 @@ export default class /**/[|DefaultExportedClass|] {
 var x: DefaultExportedClass;
 
 var y = new DefaultExportedClass;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 }

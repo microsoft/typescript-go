@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForFunctionParameter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x;
 var n;
@@ -18,6 +18,7 @@ function n(x: number, /*1*/n: number) {
     /*2*/n = 32;
     x = /*3*/n;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

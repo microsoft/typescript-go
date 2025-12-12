@@ -8,14 +8,15 @@ import (
 )
 
 func TestGoToDefinitionShadowVariable(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var shadowVariable = "foo";
 function shadowVariableTestModule() {
     var /*shadowVariableDefinition*/shadowVariable;
     /*shadowVariableReference*/shadowVariable = 1;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "shadowVariableReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "shadowVariableReference")
 }

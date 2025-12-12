@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameCommentsAndStrings4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `///<reference path="./Bar.ts" />
 [|function [|{| "contextRangeIndex": 0 |}Bar|]() {
@@ -21,6 +21,7 @@ func TestRenameCommentsAndStrings4(t *testing.T) {
         ` + "`" + `[|Bar|] ba ${Bar} bara [|Bar|] berbobo ${Bar} araura [|Bar|] ara!` + "`" + `;
     }
 }|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1])
 }

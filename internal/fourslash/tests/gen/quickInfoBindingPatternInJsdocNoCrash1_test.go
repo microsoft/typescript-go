@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoBindingPatternInJsdocNoCrash1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @type {({ /*1*/data: any }?) => { data: string[] }} */
 function useQuery({ data }): { data: string[] } {
@@ -17,6 +17,7 @@ function useQuery({ data }): { data: string[] } {
     data,
   };
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "", "")
 }

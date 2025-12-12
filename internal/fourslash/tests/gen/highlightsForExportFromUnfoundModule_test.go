@@ -8,8 +8,8 @@ import (
 )
 
 func TestHighlightsForExportFromUnfoundModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.js
@@ -21,7 +21,8 @@ export {
 export {
    /**/foo
 } from './a';`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

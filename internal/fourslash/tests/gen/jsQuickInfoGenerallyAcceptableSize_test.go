@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsQuickInfoGenerallyAcceptableSize(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -218,7 +218,8 @@ var doSome/*1*/thing = function (dataTable) {
   * @type {SomeCallback}
   */
 var anotherThing/*2*/ = function(a, b) {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var doSomething: (dataTable: DataTableThing) => void", "Do something")
 	f.VerifyQuickInfoAt(t, "2", "var anotherThing: SomeCallback", "Another thing")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestOverloadQuickInfo(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function Foo(a: string, b: number, c: boolean);
 function Foo(a: any, name: string, age: number);
@@ -27,6 +27,7 @@ function Foo();
 function Foo(x?: any, y?: any, z?: any) {
 }
 Fo/**/o();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "function Foo(): any (+12 overloads)", "")
 }

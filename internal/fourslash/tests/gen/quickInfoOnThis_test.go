@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnThis(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Restricted {
     n: number;
@@ -33,7 +33,8 @@ class Foo {
         console.log(th/*6*/is);
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "0", "this", "")
 	f.VerifyQuickInfoAt(t, "1", "this: void", "")
 	f.VerifyQuickInfoAt(t, "2", "this: this", "")

@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForUnionProperties(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface One {
     common: { /*one*/a: number; };
@@ -32,6 +32,7 @@ interface Two {
 var x : One | Two;
 
 x.common./*x*/a;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "one", "base", "x")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionRest(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Gen {
     x: number;
@@ -19,6 +19,7 @@ func TestGoToDefinitionRest(t *testing.T) {
 let t: Gen;
 var { x, ...rest } = t;
 rest.[|/*2*/parent|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "2")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "2")
 }

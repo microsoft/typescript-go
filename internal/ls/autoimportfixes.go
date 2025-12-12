@@ -1,10 +1,16 @@
 package ls
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/change"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type Import struct {
@@ -14,17 +20,17 @@ type Import struct {
 	propertyName  string // Use when needing to generate an `ImportSpecifier with a `propertyName`; the name preceding "as" keyword (propertyName = "" when "as" is absent)
 }
 
-func (ct *changeTracker) addNamespaceQualifier(sourceFile *ast.SourceFile, qualification *Qualification) {
-	ct.insertText(sourceFile, qualification.usagePosition, qualification.namespacePrefix+".")
+func addNamespaceQualifier(ct *change.Tracker, sourceFile *ast.SourceFile, qualification *Qualification) {
+	ct.InsertText(sourceFile, qualification.usagePosition, qualification.namespacePrefix+".")
 }
 
-func (ct *changeTracker) doAddExistingFix(
+func (ls *LanguageService) doAddExistingFix(
+	ct *change.Tracker,
 	sourceFile *ast.SourceFile,
 	clause *ast.Node, // ImportClause | ObjectBindingPattern,
 	defaultImport *Import,
 	namedImports []*Import,
 	// removeExistingImportSpecifiers *core.Set[ImportSpecifier | BindingElement] // !!! remove imports not implemented
-	preferences *UserPreferences,
 ) {
 	switch clause.Kind {
 	case ast.KindObjectBindingPattern:
@@ -51,10 +57,10 @@ func (ct *changeTracker) doAddExistingFix(
 			//     return
 			// }
 			if defaultImport != nil {
-				ct.addElementToBindingPattern(sourceFile, clause, defaultImport.name, ptrTo("default"))
+				addElementToBindingPattern(ct, sourceFile, clause, defaultImport.name, ptrTo("default"))
 			}
 			for _, specifier := range namedImports {
-				ct.addElementToBindingPattern(sourceFile, clause, specifier.name, &specifier.propertyName)
+				addElementToBindingPattern(ct, sourceFile, clause, specifier.name, &specifier.propertyName)
 			}
 			return
 		}
@@ -63,7 +69,7 @@ func (ct *changeTracker) doAddExistingFix(
 		importClause := clause.AsImportClause()
 
 		// promoteFromTypeOnly = true if we need to promote the entire original clause from type only
-		promoteFromTypeOnly := importClause.IsTypeOnly && core.Some(append(namedImports, defaultImport), func(i *Import) bool {
+		promoteFromTypeOnly := importClause.IsTypeOnly() && core.Some(append(namedImports, defaultImport), func(i *Import) bool {
 			if i == nil {
 				return false
 			}
@@ -77,23 +83,23 @@ func (ct *changeTracker) doAddExistingFix(
 
 		if defaultImport != nil {
 			debug.Assert(clause.Name() == nil, "Cannot add a default import to an import clause that already has one")
-			ct.insertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), changeNodeOptions{suffix: ", "})
+			ct.InsertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), change.NodeOptions{Suffix: ", "})
 		}
 
 		if len(namedImports) > 0 {
-			// !!! OrganizeImports not yet implemented
-			// specifierComparer, isSorted := OrganizeImports.getNamedImportSpecifierComparerWithDetection(importClause.Parent, preferences, sourceFile);
+			specifierComparer, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(importClause.Parent, sourceFile, ls.UserPreferences())
 			newSpecifiers := core.Map(namedImports, func(namedImport *Import) *ast.Node {
 				var identifier *ast.Node
 				if namedImport.propertyName != "" {
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					(!importClause.IsTypeOnly || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+					(!importClause.IsTypeOnly() || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, ls.UserPreferences()),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
-			}) // !!! sort with specifierComparer
+			})
+			slices.SortFunc(newSpecifiers, specifierComparer)
 
 			// !!! remove imports not implemented
 			// if (removeExistingImportSpecifiers) {
@@ -108,80 +114,113 @@ func (ct *changeTracker) doAddExistingFix(
 			//             append(core.Filter(existingSpecifiers, func (s *ast.ImportSpecifier) bool {return !removeExistingImportSpecifiers.Has(s)}), newSpecifiers...), // !!! sort with specifierComparer
 			//         ),
 			//     );
-			// } else if (len(existingSpecifiers) > 0 && isSorted != false) {
-			// 	!!! OrganizeImports not implemented
-			// 	The sorting preference computed earlier may or may not have validated that these particular
-			// 	import specifiers are sorted. If they aren't, `getImportSpecifierInsertionIndex` will return
-			// 	nonsense. So if there are existing specifiers, even if we know the sorting preference, we
-			// 	need to ensure that the existing specifiers are sorted according to the preference in order
-			// 	to do a sorted insertion.
-			// 	changed to check if existing specifiers are sorted
-			//     if we're promoting the clause from type-only, we need to transform the existing imports before attempting to insert the new named imports
-			//     transformedExistingSpecifiers := existingSpecifiers
-			// 	if promoteFromTypeOnly && existingSpecifiers {
-			// 		transformedExistingSpecifiers = ct.NodeFactory.updateNamedImports(
-			// 			importClause.NamedBindings.AsNamedImports(),
-			// 			core.SameMap(existingSpecifiers, func(e *ast.ImportSpecifier) *ast.ImportSpecifier {
-			// 				return ct.NodeFactory.updateImportSpecifier(e, /*isTypeOnly*/ true, e.propertyName, e.name)
-			// 			}),
-			// 		).elements
-			// 	}
-			//     for _, spec := range newSpecifiers {
-			//         insertionIndex := OrganizeImports.getImportSpecifierInsertionIndex(transformedExistingSpecifiers, spec, specifierComparer);
-			//         ct.insertImportSpecifierAtIndex(sourceFile, spec, importClause.namedBindings as NamedImports, insertionIndex);
-			//     }
-			// } else
-			if len(existingSpecifiers) > 0 {
+			//
+			if len(existingSpecifiers) > 0 && isSorted != core.TSFalse {
+				// The sorting preference computed earlier may or may not have validated that these particular
+				// import specifiers are sorted. If they aren't, `getImportSpecifierInsertionIndex` will return
+				// nonsense. So if there are existing specifiers, even if we know the sorting preference, we
+				// need to ensure that the existing specifiers are sorted according to the preference in order
+				// to do a sorted insertion.
+
+				// If we're promoting the clause from type-only, we need to transform the existing imports
+				// before attempting to insert the new named imports (for comparison purposes only)
+				specsToCompareAgainst := existingSpecifiers
+				if promoteFromTypeOnly && len(existingSpecifiers) > 0 {
+					specsToCompareAgainst = core.Map(existingSpecifiers, func(e *ast.Node) *ast.Node {
+						spec := e.AsImportSpecifier()
+						var propertyName *ast.Node
+						if spec.PropertyName != nil {
+							propertyName = spec.PropertyName
+						}
+						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
+							true, // isTypeOnly
+							propertyName,
+							spec.Name(),
+						)
+						return syntheticSpec
+					})
+				}
+
 				for _, spec := range newSpecifiers {
-					ct.insertNodeInListAfter(sourceFile, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(specsToCompareAgainst, spec, specifierComparer)
+					ct.InsertImportSpecifierAtIndex(sourceFile, spec, importClause.NamedBindings, insertionIndex)
+				}
+			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
+				// Existing specifiers are sorted, so insert each new specifier at the correct position
+				for _, spec := range newSpecifiers {
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					if insertionIndex >= len(existingSpecifiers) {
+						// Insert at the end
+						ct.InsertNodeInListAfter(sourceFile, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
+					} else {
+						// Insert before the element at insertionIndex
+						ct.InsertNodeInListAfter(sourceFile, existingSpecifiers[insertionIndex], spec.AsNode(), existingSpecifiers)
+					}
+				}
+			} else if len(existingSpecifiers) > 0 {
+				// Existing specifiers may not be sorted, append to the end
+				for _, spec := range newSpecifiers {
+					ct.InsertNodeInListAfter(sourceFile, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
 				}
 			} else {
 				if len(newSpecifiers) > 0 {
 					namedImports := ct.NodeFactory.NewNamedImports(ct.NodeFactory.NewNodeList(newSpecifiers))
 					if importClause.NamedBindings != nil {
-						ct.replaceNode(sourceFile, importClause.NamedBindings, namedImports, nil)
+						ct.ReplaceNode(sourceFile, importClause.NamedBindings, namedImports, nil)
 					} else {
 						if clause.Name() == nil {
 							panic("Import clause must have either named imports or a default import")
 						}
-						ct.insertNodeAfter(sourceFile, clause.Name(), namedImports)
+						ct.InsertNodeAfter(sourceFile, clause.Name(), namedImports)
 					}
 				}
 			}
 		}
 
 		if promoteFromTypeOnly {
-			// !!! promote type-only imports not implemented
+			// Delete the 'type' keyword from the import clause
+			typeKeyword := getTypeKeywordOfTypeOnlyImport(importClause, sourceFile)
+			ct.Delete(sourceFile, typeKeyword)
 
-			// ct.delete(sourceFile, getTypeKeywordOfTypeOnlyImport(clause, sourceFile));
-			// if (existingSpecifiers) {
-			//     // We used to convert existing specifiers to type-only only if compiler options indicated that
-			//     // would be meaningful (see the `importNameElisionDisabled` utility function), but user
-			//     // feedback indicated a preference for preserving the type-onlyness of existing specifiers
-			//     // regardless of whether it would make a difference in emit.
-			//     for _, specifier := range existingSpecifiers {
-			//         ct.insertModifierBefore(sourceFile, SyntaxKind.TypeKeyword, specifier);
-			//     }
-			// }
+			// Add 'type' modifier to existing specifiers (not newly added ones)
+			// We preserve the type-onlyness of existing specifiers regardless of whether
+			// it would make a difference in emit (user preference).
+			if len(existingSpecifiers) > 0 {
+				for _, specifier := range existingSpecifiers {
+					if !specifier.AsImportSpecifier().IsTypeOnly {
+						ct.InsertModifierBefore(sourceFile, ast.KindTypeKeyword, specifier)
+					}
+				}
+			}
 		}
 	default:
 		panic("Unsupported clause kind: " + clause.Kind.String() + "for doAddExistingFix")
 	}
 }
 
-func (ct *changeTracker) addElementToBindingPattern(sourceFile *ast.SourceFile, bindingPattern *ast.Node, name string, propertyName *string) {
-	element := ct.newBindingElementFromNameAndPropertyName(name, propertyName)
+func getTypeKeywordOfTypeOnlyImport(importClause *ast.ImportClause, sourceFile *ast.SourceFile) *ast.Node {
+	debug.Assert(importClause.IsTypeOnly(), "import clause must be type-only")
+	// The first child of a type-only import clause is the 'type' keyword
+	// import type { foo } from './bar'
+	//        ^^^^
+	typeKeyword := astnav.FindChildOfKind(importClause.AsNode(), ast.KindTypeKeyword, sourceFile)
+	debug.Assert(typeKeyword != nil, "type-only import clause should have a type keyword")
+	return typeKeyword
+}
+
+func addElementToBindingPattern(ct *change.Tracker, sourceFile *ast.SourceFile, bindingPattern *ast.Node, name string, propertyName *string) {
+	element := newBindingElementFromNameAndPropertyName(ct, name, propertyName)
 	if len(bindingPattern.Elements()) > 0 {
-		ct.insertNodeInListAfter(sourceFile, bindingPattern.Elements()[len(bindingPattern.Elements())-1], element, nil)
+		ct.InsertNodeInListAfter(sourceFile, bindingPattern.Elements()[len(bindingPattern.Elements())-1], element, nil)
 	} else {
-		ct.replaceNode(sourceFile, bindingPattern, ct.NodeFactory.NewBindingPattern(
+		ct.ReplaceNode(sourceFile, bindingPattern, ct.NodeFactory.NewBindingPattern(
 			ast.KindObjectBindingPattern,
 			ct.NodeFactory.NewNodeList([]*ast.Node{element}),
 		), nil)
 	}
 }
 
-func (ct *changeTracker) newBindingElementFromNameAndPropertyName(name string, propertyName *string) *ast.Node {
+func newBindingElementFromNameAndPropertyName(ct *change.Tracker, name string, propertyName *string) *ast.Node {
 	var newPropertyNameIdentifier *ast.Node
 	if propertyName != nil {
 		newPropertyNameIdentifier = ct.NodeFactory.NewIdentifier(*propertyName)
@@ -194,7 +233,7 @@ func (ct *changeTracker) newBindingElementFromNameAndPropertyName(name string, p
 	)
 }
 
-func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*ast.Statement, blankLineBetween bool, preferences *UserPreferences) {
+func (ls *LanguageService) insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*ast.Statement, blankLineBetween bool) {
 	var existingImportStatements []*ast.Statement
 
 	if imports[0].Kind == ast.KindVariableStatement {
@@ -202,10 +241,11 @@ func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*as
 	} else {
 		existingImportStatements = core.Filter(sourceFile.Statements.Nodes, ast.IsAnyImportSyntax)
 	}
-	// !!! OrganizeImports
-	//  { comparer, isSorted } := OrganizeImports.getOrganizeImportsStringComparerWithDetection(existingImportStatements, preferences);
-	//  sortedNewImports := isArray(imports) ? toSorted(imports, (a, b) => OrganizeImports.compareImportsOrRequireStatements(a, b, comparer)) : [imports];
-	sortedNewImports := imports
+	comparer, isSorted := organizeimports.GetOrganizeImportsStringComparerWithDetection(existingImportStatements, ls.UserPreferences())
+	sortedNewImports := slices.Clone(imports)
+	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
+		return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+	})
 	// !!! FutureSourceFile
 	// if !isFullSourceFile(sourceFile) {
 	//     for _, newImport := range sortedNewImports {
@@ -216,71 +256,74 @@ func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*as
 	// return;
 	// }
 
-	// if len(existingImportStatements) > 0 && isSorted {
-	//     for _, newImport := range sortedNewImports {
-	//         insertionIndex := OrganizeImports.getImportDeclarationInsertionIndex(existingImportStatements, newImport, comparer)
-	//         if insertionIndex == 0 {
-	//             // If the first import is top-of-file, insert after the leading comment which is likely the header.
-	//             options := existingImportStatements[0] == sourceFile.statements[0] ? { leadingTriviaOption: textchanges.LeadingTriviaOption.Exclude } : {};
-	//             ct.insertNodeBefore(sourceFile, existingImportStatements[0], newImport, /*blankLineBetween*/ false, options);
-	//         } else {
-	//             prevImport := existingImportStatements[insertionIndex - 1]
-	//             ct.insertNodeAfter(sourceFile, prevImport, newImport);
-	//         }
-	//     }
-	// 	return
-	// }
-
-	if len(existingImportStatements) > 0 {
-		ct.insertNodesAfter(sourceFile, existingImportStatements[len(existingImportStatements)-1], sortedNewImports)
+	if len(existingImportStatements) > 0 && isSorted {
+		// Existing imports are sorted, insert each new import at the correct position
+		for _, newImport := range sortedNewImports {
+			insertionIndex := organizeimports.GetImportDeclarationInsertIndex(existingImportStatements, newImport, func(a, b *ast.Statement) stringutil.Comparison {
+				return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
+			})
+			if insertionIndex == 0 {
+				// If the first import is top-of-file, insert after the leading comment which is likely the header
+				ct.InsertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(existingImportStatements[0], sourceFile, false)), newImport.AsNode(), change.NodeOptions{})
+			} else {
+				prevImport := existingImportStatements[insertionIndex-1]
+				ct.InsertNodeAfter(sourceFile, prevImport.AsNode(), newImport.AsNode())
+			}
+		}
+	} else if len(existingImportStatements) > 0 {
+		ct.InsertNodesAfter(sourceFile, existingImportStatements[len(existingImportStatements)-1], sortedNewImports)
 	} else {
-		ct.insertAtTopOfFile(sourceFile, sortedNewImports, blankLineBetween)
+		ct.InsertAtTopOfFile(sourceFile, sortedNewImports, blankLineBetween)
 	}
 }
 
-func (ct *changeTracker) makeImport(defaultImport *ast.IdentifierNode, namedImports []*ast.Node, moduleSpecifier *ast.Expression, isTypeOnly bool) *ast.Statement {
+func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImports []*ast.Node, moduleSpecifier *ast.Expression, isTypeOnly bool) *ast.Statement {
 	var newNamedImports *ast.Node
 	if len(namedImports) > 0 {
 		newNamedImports = ct.NodeFactory.NewNamedImports(ct.NodeFactory.NewNodeList(namedImports))
 	}
 	var importClause *ast.Node
 	if defaultImport != nil || newNamedImports != nil {
-		importClause = ct.NodeFactory.NewImportClause(isTypeOnly, defaultImport, newNamedImports)
+		importClause = ct.NodeFactory.NewImportClause(core.IfElse(isTypeOnly, ast.KindTypeKeyword, ast.KindUnknown), defaultImport, newNamedImports)
 	}
 	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
 }
 
-func (ct *changeTracker) getNewImports(
+func (ls *LanguageService) getNewImports(
+	ct *change.Tracker,
 	moduleSpecifier string,
-	// quotePreference quotePreference, // !!! quotePreference
+	quotePreference quotePreference,
 	defaultImport *Import,
 	namedImports []*Import,
 	namespaceLikeImport *Import, // { importKind: ImportKind.CommonJS | ImportKind.Namespace; }
 	compilerOptions *core.CompilerOptions,
-	preferences *UserPreferences,
 ) []*ast.Statement {
-	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier)
+	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(
+		moduleSpecifier,
+		core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone),
+	)
 	var statements []*ast.Statement // []AnyImportSyntax
 	if defaultImport != nil || len(namedImports) > 0 {
 		// `verbatimModuleSyntax` should prefer top-level `import type` -
 		// even though it's not an error, it would add unnecessary runtime emit.
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *Import) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
-			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
-				defaultImport != nil && defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *Import) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
+			(compilerOptions.VerbatimModuleSyntax.IsTrue() || ls.UserPreferences().PreferTypeOnlyAutoImports == core.TSTrue) &&
+				(defaultImport == nil || defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed) &&
+				!core.Some(namedImports, func(i *Import) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
 			defaultImportNode = ct.NodeFactory.NewIdentifier(defaultImport.name)
 		}
 
-		statements = append(statements, ct.makeImport(defaultImportNode, core.Map(namedImports, func(namedImport *Import) *ast.Node {
+		statements = append(statements, makeImport(ct, defaultImportNode, core.Map(namedImports, func(namedImport *Import) *ast.Node {
 			var namedImportPropertyName *ast.Node
 			if namedImport.propertyName != "" {
 				namedImportPropertyName = ct.NodeFactory.NewIdentifier(namedImport.propertyName)
 			}
 			return ct.NodeFactory.NewImportSpecifier(
-				!topLevelTypeOnly && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+				!topLevelTypeOnly && shouldUseTypeOnly(namedImport.addAsTypeOnly, ls.UserPreferences()),
 				namedImportPropertyName,
 				ct.NodeFactory.NewIdentifier(namedImport.name),
 			)
@@ -292,7 +335,7 @@ func (ct *changeTracker) getNewImports(
 		if namespaceLikeImport.kind == ImportKindCommonJS {
 			declaration = ct.NodeFactory.NewImportEqualsDeclaration(
 				/*modifiers*/ nil,
-				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
+				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, ls.UserPreferences()),
 				ct.NodeFactory.NewIdentifier(namespaceLikeImport.name),
 				ct.NodeFactory.NewExternalModuleReference(moduleSpecifierStringLiteral),
 			)
@@ -300,7 +343,7 @@ func (ct *changeTracker) getNewImports(
 			declaration = ct.NodeFactory.NewImportDeclaration(
 				/*modifiers*/ nil,
 				ct.NodeFactory.NewImportClause(
-					shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
+					/*phaseModifier*/ core.IfElse(shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, ls.UserPreferences()), ast.KindTypeKeyword, ast.KindUnknown),
 					/*name*/ nil,
 					ct.NodeFactory.NewNamespaceImport(ct.NodeFactory.NewIdentifier(namespaceLikeImport.name)),
 				),
@@ -320,6 +363,6 @@ func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
 	return addAsTypeOnly == AddAsTypeOnlyRequired
 }
 
-func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *UserPreferences) bool {
-	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
+func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
+	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports == core.TSTrue
 }

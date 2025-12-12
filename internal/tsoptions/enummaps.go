@@ -136,9 +136,9 @@ var moduleResolutionOptionMap = collections.NewOrderedMapFromList([]collections.
 	{Key: "node16", Value: core.ModuleResolutionKindNode16},
 	{Key: "nodenext", Value: core.ModuleResolutionKindNodeNext},
 	{Key: "bundler", Value: core.ModuleResolutionKindBundler},
-	{Key: "node", Value: core.ModuleResolutionKindBundler},    // TODO: remove when node is fully deprecated -- this is helpful for testing porting
-	{Key: "classic", Value: core.ModuleResolutionKindBundler}, // TODO: remove when fully deprecated
-	{Key: "node10", Value: core.ModuleResolutionKindBundler},  // TODO: remove when fully deprecated
+	{Key: "classic", Value: core.ModuleResolutionKindClassic},
+	{Key: "node", Value: core.ModuleResolutionKindNode10},
+	{Key: "node10", Value: core.ModuleResolutionKindNode10},
 })
 
 var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
@@ -185,9 +185,9 @@ var moduleDetectionOptionMap = collections.NewOrderedMapFromList([]collections.M
 var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "preserve", Value: core.JsxEmitPreserve},
 	{Key: "react-native", Value: core.JsxEmitReactNative},
-	{Key: "react", Value: core.JsxEmitReact},
 	{Key: "react-jsx", Value: core.JsxEmitReactJSX},
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
+	{Key: "react", Value: core.JsxEmitReact},
 })
 
 var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {

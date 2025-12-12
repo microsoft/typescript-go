@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionJsxNotSet(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /foo.jsx
@@ -20,6 +20,7 @@ export default Foo;
 // @Filename: /bar.jsx
 import Foo from './foo';
 const a = <[|/*use*/Foo|] />`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "use")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "use")
 }

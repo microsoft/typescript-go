@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionDecoratorOverloads(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Target: ES6
 // @experimentaldecorators: true
@@ -24,6 +24,7 @@ class C {
     @[|/*useDecString*/dec|] f() {}
     @[|/*useDecSymbol*/dec|] [s]() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "useDecString", "useDecSymbol")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "useDecString", "useDecSymbol")
 }

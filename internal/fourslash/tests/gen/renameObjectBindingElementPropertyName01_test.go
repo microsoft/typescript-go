@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameObjectBindingElementPropertyName01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     [|[|{| "contextRangeIndex": 0 |}property1|]: number;|]
@@ -18,6 +18,7 @@ func TestRenameObjectBindingElementPropertyName01(t *testing.T) {
 
 var foo: I;
 [|var { [|{| "contextRangeIndex": 2 |}property1|]: prop1 } = foo;|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "property1")
 }

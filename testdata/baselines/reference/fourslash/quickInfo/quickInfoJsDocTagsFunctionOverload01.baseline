@@ -4,11 +4,10 @@
 //  * Doc foo
 //  */
 // declare function foo(): void;
-//                  ^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function foo(): void
-// | function foo(x: number): void
 // | ```
 // | Doc foo
 // | ----------------------------------------------------------------------
@@ -18,13 +17,15 @@
 //  * @tag Tag text
 //  */
 // declare function foo(x: number): void
-//                  ^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function foo(): void
 // | function foo(x: number): void
 // | ```
-// | Doc foo
+// | Doc foo overloaded
+// | 
+// | *@tag* — Tag text
+// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -40,7 +41,17 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\nDoc foo"
+        "value": "```tsx\nfunction foo(): void\n```\nDoc foo"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 17
+        },
+        "end": {
+          "line": 3,
+          "character": 20
+        }
       }
     }
   },
@@ -57,7 +68,17 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\nDoc foo"
+        "value": "```tsx\nfunction foo(x: number): void\n```\nDoc foo overloaded\n\n*@tag* — Tag text\n"
+      },
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 17
+        },
+        "end": {
+          "line": 9,
+          "character": 20
+        }
       }
     }
   }

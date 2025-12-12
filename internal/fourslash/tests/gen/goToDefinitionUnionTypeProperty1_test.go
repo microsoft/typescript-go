@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionUnionTypeProperty1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface One {
     /*propertyDefinition1*/commonProperty: number;
@@ -25,6 +25,7 @@ var x : One | Two;
 
 x.[|/*propertyReference*/commonProperty|];
 x./*3*/commonFunction;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "propertyReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "propertyReference")
 }

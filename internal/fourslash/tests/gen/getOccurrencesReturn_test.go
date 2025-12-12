@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesReturn(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f(a: number) {
     if (a > 0) {
@@ -30,6 +30,7 @@ func TestGetOccurrencesReturn(t *testing.T) {
     [|return|];
     [|return|] true;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

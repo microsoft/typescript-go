@@ -11,8 +11,6 @@ test('hi') // error, T=number
 
 
 //// [typeTagNoErasure.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @template T @typedef {<T1 extends T>(data: T1) => T1} Test */
 /** @type {Test<number>} */
 const test = dibbity => dibbity;
@@ -21,4 +19,7 @@ test('hi'); // error, T=number
 
 
 //// [typeTagNoErasure.d.ts]
-export type Test<T> = <T1 extends T>(data: T1) => T1;
+/** @template T @typedef {<T1 extends T>(data: T1) => T1} Test */
+type Test<T> = <T1 extends T>(data: T1) => T1;
+/** @type {Test<number>} */
+declare const test: Test<number>;

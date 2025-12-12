@@ -2,35 +2,39 @@
 // === /referencesForDeclarationKeywords.ts ===
 // class Base {}
 // interface Implemented1 {}
-// /*FIND ALL REFS*/class C1 extends Base implements Implemented1 {
+// /*FIND ALL REFS*/class [|C1|] extends Base implements Implemented1 {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
+
+
+
+// === findAllReferences ===
+// === /referencesForDeclarationKeywords.ts ===
+// class [|Base|] {}
+// interface Implemented1 {}
+// class C1 /*FIND ALL REFS*/extends [|Base|] implements Implemented1 {
+//     get e() { return 1; }
+//     set e(v) {}
+// }
+// interface I1 extends [|Base|] { }
+// type T = { }
+// enum E { }
+// namespace N { }
+// --- (line: 11) skipped ---
 
 
 
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
 // class Base {}
-// interface Implemented1 {}
-// class C1 /*FIND ALL REFS*/extends Base implements Implemented1 {
+// interface [|Implemented1|] {}
+// class C1 extends Base /*FIND ALL REFS*/implements [|Implemented1|] {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// // --- (line: 7) skipped ---
-
-
-
-// === findAllReferences ===
-// === /referencesForDeclarationKeywords.ts ===
-// class Base {}
-// interface Implemented1 {}
-// class C1 extends Base /*FIND ALL REFS*/implements Implemented1 {
-//     get e() { return 1; }
-//     set e(v) {}
-// }
-// // --- (line: 7) skipped ---
+// --- (line: 7) skipped ---
 
 
 
@@ -50,11 +54,12 @@
 // class Base {}
 // interface Implemented1 {}
 // class C1 extends Base implements Implemented1 {
-//     /*FIND ALL REFS*/get e() { return 1; }
-//     set e(v) {}
+//     /*FIND ALL REFS*/get [|e|]() { return 1; }
+//     set [|e|](v) {}
 // }
 // interface I1 extends Base { }
-// // --- (line: 8) skipped ---
+// type T = { }
+// --- (line: 9) skipped ---
 
 
 
@@ -63,12 +68,12 @@
 // class Base {}
 // interface Implemented1 {}
 // class C1 extends Base implements Implemented1 {
-//     get e() { return 1; }
-//     /*FIND ALL REFS*/set e(v) {}
+//     get [|e|]() { return 1; }
+//     /*FIND ALL REFS*/set [|e|](v) {}
 // }
 // interface I1 extends Base { }
 // type T = { }
-// // --- (line: 9) skipped ---
+// --- (line: 9) skipped ---
 
 
 
@@ -78,25 +83,27 @@
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// /*FIND ALL REFS*/interface I1 extends Base { }
+// /*FIND ALL REFS*/interface [|I1|] extends Base { }
 // type T = { }
 // enum E { }
 // namespace N { }
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-// --- (line: 3) skipped ---
+// class [|Base|] {}
+// interface Implemented1 {}
+// class C1 extends [|Base|] implements Implemented1 {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// interface I1 /*FIND ALL REFS*/extends Base { }
+// interface I1 /*FIND ALL REFS*/extends [|Base|] { }
 // type T = { }
 // enum E { }
 // namespace N { }
-// // --- (line: 11) skipped ---
+// --- (line: 11) skipped ---
 
 
 
@@ -116,11 +123,11 @@
 //     set e(v) {}
 // }
 // interface I1 extends Base { }
-// /*FIND ALL REFS*/type T = { }
+// /*FIND ALL REFS*/type [|T|] = { }
 // enum E { }
 // namespace N { }
 // module M { }
-// // --- (line: 12) skipped ---
+// --- (line: 12) skipped ---
 
 
 
@@ -130,11 +137,11 @@
 // }
 // interface I1 extends Base { }
 // type T = { }
-// /*FIND ALL REFS*/enum E { }
+// /*FIND ALL REFS*/enum [|E|] { }
 // namespace N { }
 // module M { }
 // function fn() {}
-// // --- (line: 13) skipped ---
+// --- (line: 13) skipped ---
 
 
 
@@ -144,11 +151,11 @@
 // interface I1 extends Base { }
 // type T = { }
 // enum E { }
-// /*FIND ALL REFS*/namespace N { }
+// /*FIND ALL REFS*/namespace [|N|] { }
 // module M { }
 // function fn() {}
 // var x;
-// // --- (line: 14) skipped ---
+// --- (line: 14) skipped ---
 
 
 
@@ -158,11 +165,11 @@
 // type T = { }
 // enum E { }
 // namespace N { }
-// /*FIND ALL REFS*/module M { }
+// /*FIND ALL REFS*/module [|M|] { }
 // function fn() {}
 // var x;
 // let y;
-// // --- (line: 15) skipped ---
+// --- (line: 15) skipped ---
 
 
 
@@ -172,11 +179,11 @@
 // enum E { }
 // namespace N { }
 // module M { }
-// /*FIND ALL REFS*/function fn() {}
+// /*FIND ALL REFS*/function [|fn|]() {}
 // var x;
 // let y;
 // const z = 1;
-// // --- (line: 16) skipped ---
+// --- (line: 16) skipped ---
 
 
 
@@ -186,11 +193,11 @@
 // namespace N { }
 // module M { }
 // function fn() {}
-// /*FIND ALL REFS*/var x;
+// /*FIND ALL REFS*/var [|x|];
 // let y;
 // const z = 1;
 // interface Implemented2 {}
-// // --- (line: 17) skipped ---
+// --- (line: 17) skipped ---
 
 
 
@@ -200,7 +207,7 @@
 // module M { }
 // function fn() {}
 // var x;
-// /*FIND ALL REFS*/let y;
+// /*FIND ALL REFS*/let [|y|];
 // const z = 1;
 // interface Implemented2 {}
 // interface Implemented3 {}
@@ -215,7 +222,7 @@
 // function fn() {}
 // var x;
 // let y;
-// /*FIND ALL REFS*/const z = 1;
+// /*FIND ALL REFS*/const [|z|] = 1;
 // interface Implemented2 {}
 // interface Implemented3 {}
 // class C2 implements Implemented2, Implemented3 {}

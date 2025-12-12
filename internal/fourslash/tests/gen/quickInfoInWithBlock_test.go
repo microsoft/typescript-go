@@ -8,14 +8,15 @@ import (
 )
 
 func TestQuickInfoInWithBlock(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `with (x) {
     function /*1*/f() { }
     var /*2*/b = /*3*/f;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "any", "")
 	f.VerifyQuickInfoAt(t, "2", "any", "")
 	f.VerifyQuickInfoAt(t, "3", "any", "")

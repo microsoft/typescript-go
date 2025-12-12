@@ -304,6 +304,8 @@ function getValueConcrete<K extends keyof Foo1>(
 
 
 //// [correlatedUnions.js]
+"use strict";
+// Various repros from #30581
 function processRecord(rec) {
     rec.f(rec.v);
 }

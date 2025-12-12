@@ -9,8 +9,8 @@ import (
 )
 
 func TestStringLiteralCompletionsInArgUsingInferenceResultFromPreviousArg(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // https://github.com/microsoft/TypeScript/issues/55545
@@ -39,7 +39,8 @@ function myFunction2<K extends keyof typeof myEnum>(
 
 myFunction2("valA", { b: "/*ts3*/" });
 myFunction2("valA", { b: ` + "`" + `/*ts4*/` + "`" + ` });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"ts1", "ts2", "ts3", "ts4"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

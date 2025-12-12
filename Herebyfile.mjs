@@ -57,6 +57,7 @@ const { values: rawOptions } = parseArgs({
         tests: { type: "string", short: "t" },
         fix: { type: "boolean" },
         debug: { type: "boolean" },
+        dirty: { type: "boolean" },
 
         insiders: { type: "boolean" },
 
@@ -269,7 +270,7 @@ export const generate = task({
     description: "Runs go generate on the project.",
     run: async () => {
         assertTypeScriptCloned();
-        await $`go generate ./...`;
+        await $`go generate -v ./...`;
     },
 });
 
@@ -325,6 +326,12 @@ function goTest(taskName) {
 
 async function runTests() {
     warnIfTypeScriptSubmoduleNotCloned();
+
+    if (!options.dirty) {
+        await rimraf(localBaseline);
+        await fs.promises.mkdir(localBaseline, { recursive: true });
+    }
+
     await $test`${gotestsum("tests")} ./... ${isCI ? ["--timeout=45m"] : []}`;
 }
 
@@ -520,10 +527,13 @@ function baselineAcceptTask(localBaseline, refBaseline) {
     };
 }
 
+const localBaseline = "testdata/baselines/local/";
+const refBaseline = "testdata/baselines/reference/";
+
 export const baselineAccept = task({
     name: "baseline-accept",
     description: "Makes the most recent test results the new baseline, overwriting the old baseline.",
-    run: baselineAcceptTask("testdata/baselines/local/", "testdata/baselines/reference/"),
+    run: baselineAcceptTask(localBaseline, refBaseline),
 });
 
 /**
@@ -1127,7 +1137,7 @@ export const buildNativePreviewPackages = task({
             const readme = [
                 `# \`${npmPackageName}\``,
                 "",
-                `This package provides ${nodeOs}-${nodeArch} support for [${packageJson.name}](https://www.npmjs.com/package/${packageJson.name}).`,
+                `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
             ];
 
             fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");

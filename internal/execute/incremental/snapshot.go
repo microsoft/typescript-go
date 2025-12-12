@@ -16,20 +16,20 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
-type fileInfo struct {
+type FileInfo struct {
 	version            string
 	signature          string
 	affectsGlobalScope bool
 	impliedNodeFormat  core.ResolutionMode
 }
 
-func (f *fileInfo) Version() string                        { return f.version }
-func (f *fileInfo) Signature() string                      { return f.signature }
-func (f *fileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
-func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
+func (f *FileInfo) Version() string                        { return f.version }
+func (f *FileInfo) Signature() string                      { return f.signature }
+func (f *FileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
+func (f *FileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
 
 func ComputeHash(text string, hashWithText bool) string {
-	hashBytes := xxh3.Hash128([]byte(text)).Bytes()
+	hashBytes := xxh3.HashString128(text).Bytes()
 	hash := hex.EncodeToString(hashBytes[:])
 	if hashWithText {
 		hash += "-" + text
@@ -137,7 +137,8 @@ type buildInfoDiagnosticWithFileName struct {
 	end                int
 	code               int32
 	category           diagnostics.Category
-	message            string
+	messageKey         diagnostics.Key
+	messageArgs        []string
 	messageChain       []*buildInfoDiagnosticWithFileName
 	relatedInformation []*buildInfoDiagnosticWithFileName
 	reportsUnnecessary bool
@@ -145,7 +146,7 @@ type buildInfoDiagnosticWithFileName struct {
 	skippedOnNoEmit    bool
 }
 
-type diagnosticsOrBuildInfoDiagnosticsWithFileName struct {
+type DiagnosticsOrBuildInfoDiagnosticsWithFileName struct {
 	diagnostics          []*ast.Diagnostic
 	buildInfoDiagnostics []*buildInfoDiagnosticWithFileName
 }
@@ -165,12 +166,13 @@ func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file
 	for _, info := range b.relatedInformation {
 		relatedInformation = append(relatedInformation, info.toDiagnostic(p, fileForDiagnostic))
 	}
-	return ast.NewDiagnosticWith(
+	return ast.NewDiagnosticFromSerialized(
 		fileForDiagnostic,
 		core.NewTextRange(b.pos, b.end),
 		b.code,
 		b.category,
-		b.message,
+		b.messageKey,
+		b.messageArgs,
 		messageChain,
 		relatedInformation,
 		b.reportsUnnecessary,
@@ -179,7 +181,7 @@ func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file
 	)
 }
 
-func (d *diagnosticsOrBuildInfoDiagnosticsWithFileName) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+func (d *DiagnosticsOrBuildInfoDiagnosticsWithFileName) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
 	if d.diagnostics != nil {
 		return d.diagnostics
 	}
@@ -194,14 +196,14 @@ type snapshot struct {
 	// These are the fields that get serialized
 
 	// Information of the file eg. its version, signature etc
-	fileInfos collections.SyncMap[tspath.Path, *fileInfo]
+	fileInfos collections.SyncMap[tspath.Path, *FileInfo]
 	options   *core.CompilerOptions
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
 	referencedMap referenceMap
 	// Cache of semantic diagnostics for files with their Path being the key
-	semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
+	semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// Cache of dts emit diagnostics for files with their Path being the key
-	emitDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
+	emitDiagnosticsPerFile collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// The map has key by source file's path that has been changed
 	changedFilesSet collections.SyncSet[tspath.Path]
 	// Files pending to be emitted
@@ -301,7 +303,12 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 	}
 	builder.WriteString(diagnostic.Category().Name())
 	builder.WriteString(fmt.Sprintf("%d: ", diagnostic.Code()))
-	builder.WriteString(diagnostic.Message())
+	builder.WriteString(string(diagnostic.MessageKey()))
+	builder.WriteString("\n")
+	for _, arg := range diagnostic.MessageArgs() {
+		builder.WriteString(arg)
+		builder.WriteString("\n")
+	}
 	for _, chain := range diagnostic.MessageChain() {
 		diagnosticToStringBuilder(chain, file, builder)
 	}

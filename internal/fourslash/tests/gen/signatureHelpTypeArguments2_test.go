@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpTypeArguments2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** some documentation
  * @template T some documentation 2
@@ -23,6 +23,7 @@ f</*f0*/;
 f<number, /*f1*/;
 f<number, string, /*f2*/;
 f<number, string, boolean, /*f3*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnMethodOfImportEquals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.d.ts
 declare class C<T> {
@@ -20,6 +20,7 @@ export = C;
 import C = require("./a");
 declare var x: C<number>;
 x./**/m;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(method) C<number>.m(): void", "")
 }
