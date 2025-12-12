@@ -27017,7 +27017,7 @@ func (c *Checker) areSymbolsFromSamePackageFile(source *ast.Symbol, target *ast.
 		return false
 	}
 	// If they're from the same file, this is not a package deduplication scenario
-	if sourceFile.Path() == targetFile.Path() {
+	if sourceFile == targetFile {
 		return false
 	}
 	// Get the canonical paths for both files
