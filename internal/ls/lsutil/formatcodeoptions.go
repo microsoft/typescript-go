@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
@@ -84,6 +85,25 @@ type FormatCodeSettings struct {
 	IndentMultiLineObjectLiteralBeginningOnBlankLine            core.Tristate
 	Semicolons                                                  SemicolonPreference
 	IndentSwitchCase                                            core.Tristate
+}
+
+func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) *FormatCodeSettings {
+	updatedSettings := f.Copy()
+	updatedSettings.TabSize = int(opt.TabSize)
+	updatedSettings.IndentSize = int(opt.TabSize)
+	updatedSettings.ConvertTabsToSpaces = opt.InsertSpaces
+	if opt.TrimTrailingWhitespace != nil {
+		updatedSettings.TrimTrailingWhitespace = *opt.TrimTrailingWhitespace
+	}
+	return updatedSettings
+}
+
+func (settings *FormatCodeSettings) ToLSFormatOptions() *lsproto.FormattingOptions {
+	return &lsproto.FormattingOptions{
+		TabSize:                uint32(settings.TabSize),
+		InsertSpaces:           settings.ConvertTabsToSpaces,
+		TrimTrailingWhitespace: &settings.TrimTrailingWhitespace,
+	}
 }
 
 func (settings *FormatCodeSettings) Parse(prefs any) bool {

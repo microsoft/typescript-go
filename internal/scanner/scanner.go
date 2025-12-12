@@ -2459,7 +2459,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
-			return pos
+			return pos - 1
 		}
 		pos += size
 	}

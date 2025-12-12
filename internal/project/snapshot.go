@@ -106,11 +106,11 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	return s.config.ts
+	return s.config.Ts
 }
 
 func (s *Snapshot) FormatOptions() *lsutil.FormatCodeSettings {
-	return s.config.ts.FormatCodeSettings
+	return s.config.Ts.FormatCodeSettings
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {

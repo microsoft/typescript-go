@@ -58,11 +58,13 @@ type FourslashTest struct {
 	scriptInfos map[string]*scriptInfo
 	converters  *lsconv.Converters
 
-	userPreferences      *lsutil.UserPreferences
-	currentCaretPosition lsproto.Position
-	lastKnownMarkerName  *string
-	activeFilename       string
-	selectionEnd         *lsproto.Position
+	stateEnableFormatting   bool
+	reportFormatOnTypeCrash bool
+	userPreferences         *lsutil.UserPreferences
+	currentCaretPosition    lsproto.Position
+	lastKnownMarkerName     *string
+	activeFilename          string
+	selectionEnd            *lsproto.Position
 
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
 
@@ -99,6 +101,27 @@ func (s *scriptInfo) Text() string {
 
 func (s *scriptInfo) FileName() string {
 	return s.fileName
+}
+
+func (s *scriptInfo) GetLineContent(line int) string {
+	numLines := len(s.lineMap.LineStarts)
+	if line < 0 || line >= numLines {
+		return ""
+	}
+	start := s.lineMap.LineStarts[line]
+	var end core.TextPos
+	if line+1 < numLines {
+		end = s.lineMap.LineStarts[line+1]
+	} else {
+		end = core.TextPos(len(s.content))
+	}
+
+	// delete trailing newline
+	content := s.content[start:end]
+	if len(content) > 0 && content[len(content)-1] == '\n' {
+		content = content[:len(content)-1]
+	}
+	return content
 }
 
 type lspReader struct {
@@ -228,17 +251,19 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:          server,
-		in:              inputWriter,
-		out:             outputReader,
-		testData:        &testData,
-		userPreferences: lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
-		vfs:             fs,
-		scriptInfos:     scriptInfos,
-		converters:      converters,
-		baselines:       make(map[baselineCommand]*strings.Builder),
-		openFiles:       make(map[string]struct{}),
-		pendingRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		server:                  server,
+		in:                      inputWriter,
+		out:                     outputReader,
+		testData:                &testData,
+		stateEnableFormatting:   true,
+		reportFormatOnTypeCrash: true,
+		userPreferences:         lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		vfs:                     fs,
+		scriptInfos:             scriptInfos,
+		converters:              converters,
+		baselines:               make(map[baselineCommand]*strings.Builder),
+		openFiles:               make(map[string]struct{}),
+		pendingRequests:         make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 	}
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -599,17 +624,25 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
-	t.Helper()
+	// t.Helper()
 	prefix := f.getCurrentPositionPrefix()
 	f.baselineState(t)
 	f.baselineRequestOrNotification(t, info.Method, params)
 	resMsg, result, resultOk := sendRequestWorker(t, f, info, params)
 	f.baselineState(t)
-	if resMsg == nil {
-		t.Fatalf(prefix+"Nil response received for %s request", info.Method)
-	}
-	if !resultOk {
-		t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resMsg.AsResponse().Result)
+	switch info.Method {
+	case lsproto.MethodTextDocumentOnTypeFormatting:
+		if !f.reportFormatOnTypeCrash {
+			break
+		}
+		fallthrough
+	default:
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for %s request", info.Method)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resMsg.AsResponse().Result)
+		}
 	}
 	return result
 }
@@ -629,6 +662,13 @@ func (f *FourslashTest) updateState(method lsproto.Method, params any) {
 	case lsproto.MethodTextDocumentDidClose:
 		delete(f.openFiles, params.(*lsproto.DidCloseTextDocumentParams).TextDocument.Uri.FileName())
 	}
+}
+
+func (f *FourslashTest) SetFormatOption(t *testing.T, optionName string, value any) {
+	t.Helper()
+	newPreferences := f.userPreferences.Copy()
+	newPreferences.Set(optionName, value)
+	f.Configure(t, newPreferences)
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
@@ -842,6 +882,47 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		},
 	})
 	f.baselineProjectsAfterNotification(t, filename)
+}
+
+func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
+	if filename == "" {
+		filename = f.activeFilename
+	}
+	result := sendRequest(t, f, lsproto.TextDocumentFormattingInfo, &lsproto.DocumentFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(filename),
+		},
+		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+	})
+	if result.TextEdits == nil {
+		return
+	}
+	f.applyTextEdits(t, *result.TextEdits)
+}
+
+func (f *FourslashTest) VerifyCurrentFileContent(t *testing.T, expectedContent string) {
+	t.Helper()
+	actualContent := f.getScriptInfo(f.activeFilename).content
+	assert.Equal(t, actualContent, expectedContent)
+}
+
+func (f *FourslashTest) VerifyCurrentLineContent(t *testing.T, expectedContent string) {
+	t.Helper()
+	actualContent := f.getScriptInfo(f.activeFilename).GetLineContent(int(f.currentCaretPosition.Line))
+	assert.Equal(t, actualContent, expectedContent, fmt.Sprintf(`
+  actual line: "%s"
+expected line: "%s"
+`,
+		actualContent,
+		expectedContent,
+	))
+}
+
+func (f *FourslashTest) VerifyIndentation(t *testing.T, numSpaces int) {
+	t.Helper()
+	// not implemented
+	// actualContent := f.getScriptInfo(f.activeFilename).GetLineContent(int(f.currentCaretPosition.Line))
+	// assert.Equal(t, actualContent, expectedContent, fmt.Sprintf("Actual line content %s does not match expected content.", actualContent))
 }
 
 func getLanguageKind(filename string) lsproto.LanguageKind {
@@ -1337,13 +1418,14 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 		diagnostics = diagResult.FullDocumentDiagnosticReport.Items
 	}
 
+	currentCaretPosition := f.currentCaretPosition
 	params := &lsproto.CodeActionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Range: lsproto.Range{
-			Start: f.currentCaretPosition,
-			End:   f.currentCaretPosition,
+			End:   currentCaretPosition,
+			Start: currentCaretPosition,
 		},
 		Context: &lsproto.CodeActionContext{
 			Diagnostics: diagnostics,
@@ -1407,6 +1489,7 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 			insertedText := textChange.NewText
 			f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+len(insertedText), deletedText)
 		}
+		f.currentCaretPosition = currentCaretPosition
 	}
 
 	// Compare results
@@ -1422,9 +1505,7 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	}
 	for i, expected := range expectedTexts {
 		actual := actualTextArray[i]
-		if expected != actual {
-			t.Fatalf("Import fix at index %d doesn't match.\nExpected:\n%s\n\nActual:\n%s", i, expected, actual)
-		}
+		assert.Equal(t, expected, actual, fmt.Sprintf("Import fix at index %d doesn't match.\n", i))
 	}
 }
 
@@ -2406,11 +2487,13 @@ func roundtripThroughJson[T any](value any) (T, error) {
 
 // Insert text at the current caret position.
 func (f *FourslashTest) Insert(t *testing.T, text string) {
+	t.Helper()
 	f.typeText(t, text)
 }
 
 // Insert text and a new line at the current caret position.
 func (f *FourslashTest) InsertLine(t *testing.T, text string) {
+	t.Helper()
 	f.typeText(t, text+"\n")
 }
 
@@ -2434,6 +2517,23 @@ func (f *FourslashTest) Paste(t *testing.T, text string) {
 	script := f.getScriptInfo(f.activeFilename)
 	start := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
 	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start, text)
+
+	// post-paste fomatting
+	if f.stateEnableFormatting {
+		result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Range: lsproto.Range{
+				Start: f.currentCaretPosition,
+				End:   f.converters.PositionToLineAndCharacter(script, core.TextPos(start+len(text))),
+			},
+			Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+		})
+		if result.TextEdits != nil {
+			f.applyTextEdits(t, *result.TextEdits)
+		}
+	}
 	// this.checkPostEditInvariants(); // !!! do we need this?
 }
 
@@ -2477,20 +2577,38 @@ func (f *FourslashTest) getSelection() core.TextRange {
 	)
 }
 
-func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) {
+// Updates f.currentCaretPosition
+func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) int {
 	script := f.getScriptInfo(f.activeFilename)
 	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
 		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
 		return int(aStart) - int(bStart)
 	})
+
+	totalOffset := 0
+	currentCaretPosition := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
 	// Apply edits in reverse order to avoid affecting the positions of earlier edits.
 	for i := len(edits) - 1; i >= 0; i-- {
 		edit := edits[i]
 		start := int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start))
 		end := int(f.converters.LineAndCharacterToPosition(script, edit.Range.End))
 		f.editScriptAndUpdateMarkers(t, f.activeFilename, start, end, edit.NewText)
+
+		delta := len(edit.NewText) - (end - start)
+		if start <= currentCaretPosition {
+			if end <= currentCaretPosition {
+				// The entirety of the edit span falls before the caret position, shift the caret accordingly
+				currentCaretPosition += delta
+			} else {
+				// The span being replaced includes the caret position, place the caret at the beginning of the span
+				currentCaretPosition = start
+			}
+		}
+		totalOffset += delta
 	}
+	f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(currentCaretPosition))
+	return totalOffset
 }
 
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
@@ -2500,29 +2618,41 @@ func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string
 
 // Inserts the text currently at the caret position character by character, as if the user typed it.
 func (f *FourslashTest) typeText(t *testing.T, text string) {
+	// temprorary -- this disables tests failing if format crashes; this unblocks unrelated tests such as codefixes
+	f.reportFormatOnTypeCrash = false
+	defer func() {
+		f.reportFormatOnTypeCrash = true
+	}()
+
 	script := f.getScriptInfo(f.activeFilename)
-	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
 	selection := f.getSelection()
 	f.Replace(t, selection.Pos(), selection.End()-selection.Pos(), "")
 
 	totalSize := 0
 
+	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
 	for totalSize < len(text) {
 		r, size := utf8.DecodeRuneInString(text[totalSize:])
-		f.editScriptAndUpdateMarkers(t, f.activeFilename, totalSize+offset, totalSize+offset, string(r))
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, offset, offset, string(r))
 
 		totalSize += size
-		f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(totalSize+offset))
+		offset += size
+		f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(offset))
 
-		// !!! formatting
 		// Handle post-keystroke formatting
-		// if this.enableFormatting {
-		// 	const edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeSettings)
-		// 	if edits.length {
-		// 		offset += this.applyEdits(this.activeFile.fileName, edits)
-		// 	}
-		// }
-
+		if f.stateEnableFormatting {
+			result := sendRequest(t, f, lsproto.TextDocumentOnTypeFormattingInfo, &lsproto.DocumentOnTypeFormattingParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+				Ch:       string(r),
+				Options:  f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+			})
+			if result.TextEdits != nil {
+				offset += f.applyTextEdits(t, *result.TextEdits)
+			}
+		}
 	}
 
 	// f.checkPostEditInvariants() // !!! do we need this?

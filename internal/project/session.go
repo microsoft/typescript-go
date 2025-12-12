@@ -167,8 +167,8 @@ func NewSession(init *SessionInit) *Session {
 			nil,
 			toPath,
 		),
-		initialConfig:     &Config{},
-		workspaceConfig:   &Config{},
+		initialConfig:     NewConfig(nil),
+		workspaceConfig:   NewConfig(nil), // initialize so all `config`s are non-nil
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 		watches:           make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}
@@ -193,25 +193,25 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-// Gets current configuration, always a copy
-func (s *Session) Config() Config {
+// Gets copy of current configuration
+func (s *Session) Config() *Config {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
-	return *s.workspaceConfig.Copy()
+	return s.workspaceConfig.Copy()
 }
 
 // !!! ts/js preferences
-// Gets current configuration, always a copy
+// Gets copy of current UserPreferences
 func (s *Session) UserPreferences() *lsutil.UserPreferences {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
-	return s.workspaceConfig.ts.Copy()
+	return s.workspaceConfig.Ts.Copy()
 }
 
 // !!! ts/js preferences
 // Gets original UserPreferences of the session
 func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
-	return s.initialConfig.ts.CopyOrDefault()
+	return s.initialConfig.Ts.CopyOrDefault()
 }
 
 // Trace implements module.ResolutionHost
@@ -220,21 +220,23 @@ func (s *Session) Trace(msg string) {
 }
 
 func (s *Session) Configure(config *Config) {
+	// `config` should never be nil
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
-	oldConfig := s.workspaceConfig
+	oldConfig := s.workspaceConfig.Copy()
 	s.workspaceConfig = s.workspaceConfig.CopyInto(config)
 
 	// Tell the client to re-request certain commands depending on user preference changes.
-	if oldUserPreferences != config && oldUserPreferences != nil && config != nil {
-		s.refreshInlayHintsIfNeeded(oldUserPreferences, config)
-		s.refreshCodeLensIfNeeded(oldUserPreferences, config)
+	if oldConfig != config {
+
+		s.refreshInlayHintsIfNeeded(oldConfig, config)
+		s.refreshCodeLensIfNeeded(oldConfig, config)
 	}
 }
 
 func (s *Session) InitializeWithConfig(config *Config) {
-	config.ts = config.ts.CopyOrDefault()
+	config.Ts = config.Ts.CopyOrDefault()
 	s.initialConfig = config
 	s.Configure(s.initialConfig)
 }
@@ -806,16 +808,16 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
 }
 
-func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
-	if oldPrefs.InlayHints != newPrefs.InlayHints {
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *Config, newPrefs *Config) {
+	if oldPrefs.js.InlayHints != newPrefs.js.InlayHints || oldPrefs.Ts.InlayHints != newPrefs.Ts.InlayHints {
 		if err := s.client.RefreshInlayHints(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
 	}
 }
 
-func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
-	if oldPrefs.CodeLens != newPrefs.CodeLens {
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs *Config, newPrefs *Config) {
+	if oldPrefs.js.CodeLens != newPrefs.js.CodeLens || oldPrefs.Ts.CodeLens != newPrefs.Ts.CodeLens {
 		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}

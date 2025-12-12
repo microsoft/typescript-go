@@ -59,7 +59,7 @@ overloadresolutionWithConstraintCheckingDeferred.ts(19,14): error TS2741: Proper
 !!! related TS2728 overloadresolutionWithConstraintCheckingDeferred.ts:1:15: 'x' is declared here.
     
     var result3: string = foo(x => { // x has type D
-                              ~~~~~~~~~~~~~~~~~~~~~~
+                              ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Argument of type '(x: D) => G<D>' is not assignable to parameter of type '(x: B) => any'.

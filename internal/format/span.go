@@ -268,7 +268,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			w.insertIndentation(item.Loc.Pos(), indentation, false)
 		})
 
-		if opt.TrimTrailingWhitespace != false {
+		if opt.TrimTrailingWhitespace {
 			w.trimTrailingWhitespacesForRemainingRange(remainingTrivia)
 		}
 	}
@@ -303,6 +303,9 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			// edit in the middle of a token where the range ended, so if we have a non-contiguous
 			// pair here, we're already done and we can ignore it.
 			parent := astnav.FindPrecedingToken(w.sourceFile, tokenInfo.Loc.End())
+			if parent != nil {
+				parent = parent.Parent
+			}
 			if parent == nil {
 				parent = w.previousParent
 			}

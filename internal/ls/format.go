@@ -13,20 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func toFormatCodeSettings(opt *lsproto.FormattingOptions) *lsutil.FormatCodeSettings {
-	initial := lsutil.GetDefaultFormatCodeSettings()
-	initial.TabSize = int(opt.TabSize)
-	initial.IndentSize = int(opt.TabSize)
-	initial.ConvertTabsToSpaces = opt.InsertSpaces
-	if opt.TrimTrailingWhitespace != nil {
-		initial.TrimTrailingWhitespace = *opt.TrimTrailingWhitespace
-	}
-
-	// !!! get format settings
-	// TODO: We support a _lot_ more options than this
-	return initial
-}
-
 func (l *LanguageService) toLSProtoTextEdits(file *ast.SourceFile, changes []core.TextChange) []*lsproto.TextEdit {
 	result := make([]*lsproto.TextEdit, 0, len(changes))
 	for _, c := range changes {
@@ -47,7 +33,7 @@ func (l *LanguageService) ProvideFormatDocument(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForDocument(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
+		lsutil.FromLSFormatOptions(l.UserPreferences().FormatCodeSettings, options),
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
@@ -62,7 +48,7 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
+		lsutil.FromLSFormatOptions(l.UserPreferences().FormatCodeSettings, options),
 		l.converters.FromLSPRange(file, r),
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
@@ -79,7 +65,7 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,
-		toFormatCodeSettings(options),
+		lsutil.FromLSFormatOptions(l.UserPreferences().FormatCodeSettings, options),
 		int(l.converters.LineAndCharacterToPosition(file, position)),
 		character,
 	))

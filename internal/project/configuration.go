@@ -6,7 +6,7 @@ import (
 
 type Config struct {
 	js *lsutil.UserPreferences
-	ts *lsutil.UserPreferences
+	Ts *lsutil.UserPreferences
 	// tsserverOptions
 }
 
@@ -14,21 +14,21 @@ func NewConfig(userPreferences *lsutil.UserPreferences) *Config {
 	// use default userPreferences if nil
 	return &Config{
 		js: userPreferences.CopyOrDefault(),
-		ts: userPreferences.CopyOrDefault(),
+		Ts: userPreferences.CopyOrDefault(),
 	}
 }
 
 func (c *Config) Copy() *Config {
 	return &Config{
-		ts: c.ts.CopyOrDefault(),
+		Ts: c.Ts.CopyOrDefault(),
 		js: c.js.CopyOrDefault(),
 	}
 }
 
 // any non-nil field in b is copied into a
 func (a *Config) CopyInto(b *Config) *Config {
-	if b.ts != nil {
-		a.ts = b.ts.Copy()
+	if b.Ts != nil {
+		a.Ts = b.Ts.Copy()
 	}
 	if b.js != nil {
 		a.js = b.js.Copy()
@@ -45,7 +45,7 @@ func ParseConfiguration(items []any) *Config {
 		} else if config, ok := item.(map[string]any); ok {
 			newConfig := &Config{}
 			if i < 2 {
-				newConfig.ts = defaultConfig.ts.Copy().ParseWorker(config)
+				newConfig.Ts = defaultConfig.Ts.Copy().ParseWorker(config)
 			} else {
 				newConfig.js = defaultConfig.js.Copy().ParseWorker(config)
 			}

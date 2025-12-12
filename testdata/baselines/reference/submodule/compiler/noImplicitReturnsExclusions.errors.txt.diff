@@ -1,0 +1,11 @@
+--- old.noImplicitReturnsExclusions.errors.txt
++++ new.noImplicitReturnsExclusions.errors.txt
+@@= skipped -107, +107 lines =@@
+     ): void;
+     
+     registerCommand("_references-view.showHistoryItem", async (item) => { // Error, contextual return type of Promise<unknown>
+-                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS7030: Not all code paths return a value.
+       if (item instanceof HistoryItem) {
+         return executeCommand("vscode.open", item.input.location.uri);
