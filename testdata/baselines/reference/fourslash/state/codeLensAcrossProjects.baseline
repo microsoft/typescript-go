@@ -202,7 +202,6 @@ Config File Names::
             "typeOrder": "auto",
             "unicodeCollation": "ordinal"
           },
-          "preferTypeOnlyAutoImports": false,
           "quoteStyle": ""
         },
         "referencesCodeLens": {
@@ -210,7 +209,6 @@ Config File Names::
           "showOnAllFunctions": true
         },
         "unstable": {
-          "allowRenameOfImportPath": false,
           "allowTextChangesInNewFiles": false,
           "disableLineTextInReferences": false,
           "disableSuggestions": false,
@@ -662,7 +660,6 @@ Config::
             "typeOrder": "auto",
             "unicodeCollation": "ordinal"
           },
-          "preferTypeOnlyAutoImports": false,
           "quoteStyle": ""
         },
         "referencesCodeLens": {

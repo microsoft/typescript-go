@@ -16,7 +16,7 @@ var DefaultUserPreferences = &UserPreferences{
 	IncludeCompletionsForModuleExports:    core.TSTrue,
 	IncludeCompletionsForImportStatements: core.TSTrue,
 
-	AllowRenameOfImportPath:            true,
+	AllowRenameOfImportPath:            core.TSTrue,
 	ProvideRefactorNotApplicableReason: true,
 	IncludeCompletionsWithSnippetText:  core.TSTrue,
 	DisplayPartsForJSDoc:               true,
@@ -73,9 +73,9 @@ type UserPreferences struct {
 
 	ModuleSpecifier ModuleSpecifierUserPreferences
 
-	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"` // !!!
-	AutoImportFileExcludePatterns []string                      `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"` // !!!
-	PreferTypeOnlyAutoImports     bool                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`         // !!!
+	IncludePackageJsonAutoImports IncludePackageJsonAutoImports `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"`
+	AutoImportFileExcludePatterns []string                      `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
+	PreferTypeOnlyAutoImports     core.Tristate                 `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
 
 	// ------- OrganizeImports -------
 
@@ -134,7 +134,7 @@ type UserPreferences struct {
 	// ------- Rename -------
 
 	UseAliasesForRename     core.Tristate `raw:"providePrefixAndSuffixTextForRename" config:"preferences.useAliasesForRenames"`
-	AllowRenameOfImportPath bool          `raw:"allowRenameOfImportPath"` // !!!
+	AllowRenameOfImportPath core.Tristate `raw:"allowRenameOfImportPath"`
 
 	// ------- CodeFixes/Refactors -------
 

@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestImportNameCodeFixNewImportBaseUrl1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tsconfig.json
 {
@@ -33,5 +34,5 @@ f1();`,
 		`import { f1 } from "b/x";
 
 f1();`,
-	}, nil /*preferences*/)
+	}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
 }
