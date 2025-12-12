@@ -451,7 +451,7 @@ func (s *metadataSerializer) serializeEntityNameAsExpressionFallback(node *ast.E
  */
 func (s *metadataSerializer) createCheckedValue(left *ast.Node, right *ast.Node) *ast.Node {
 	return s.f.NewLogicalANDExpression(
-		s.f.NewStrictInequalityExpression(s.f.NewTypeOfExpression(left), s.f.NewStringLiteral("undefined")),
+		s.f.NewStrictInequalityExpression(s.f.NewTypeOfExpression(left), s.f.NewStringLiteral("undefined", ast.TokenFlagsNone)),
 		right,
 	)
 }

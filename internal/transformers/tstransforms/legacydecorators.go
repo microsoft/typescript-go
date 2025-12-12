@@ -1029,7 +1029,7 @@ func (tx *LegacyDecoratorsTransformer) getExpressionForPropertyName(member *ast.
 		}
 		return name.AsComputedPropertyName().Expression
 	} else if ast.IsIdentifier(name) {
-		return tx.Factory().NewStringLiteral(name.Text())
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	} else {
 		return tx.Factory().DeepCloneNode(name)
 	}

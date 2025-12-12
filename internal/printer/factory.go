@@ -554,7 +554,7 @@ func (f *NodeFactory) NewMetadataHelper(metadataKey string, metadataValue *ast.N
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
 		f.NewNodeList([]*ast.Node{
-			f.NewStringLiteral(metadataKey),
+			f.NewStringLiteral(metadataKey, ast.TokenFlagsNone),
 			metadataValue,
 		}),
 		ast.NodeFlagsNone,
@@ -567,7 +567,7 @@ func (f *NodeFactory) NewParamHelper(expression *ast.Node, parameterOffset int, 
 		f.NewUnscopedHelperName("__param"),
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
-		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(strconv.Itoa(parameterOffset)), expression}),
+		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(strconv.Itoa(parameterOffset), ast.TokenFlagsNone), expression}),
 		ast.NodeFlagsNone,
 	)
 	helper.Loc = location
