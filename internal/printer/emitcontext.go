@@ -447,11 +447,7 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 }
 
 func (c *EmitContext) UnsetOriginal(node *ast.Node) {
-	if c.original == nil {
-		c.original = make(map[*ast.Node]*ast.Node)
-	}
-
-	c.original[node] = nil
+	delete(c.original, node)
 }
 
 func (c *EmitContext) SetOriginalEx(node *ast.Node, original *ast.Node, allowOverwrite bool) {
