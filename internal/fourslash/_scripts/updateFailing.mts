@@ -73,7 +73,7 @@ async function main() {
                 const outputs = testOutputs.get(event.Test) || [];
 
                 // Check if this is a crashing test (contains InternalError)
-                const hasCrash = outputs.some(line => /InternalError/.test(line));
+                const hasCrash = outputs.some(line => line.includes("InternalError"));
                 if (hasCrash) {
                     crashingTests.push(event.Test);
                 }
