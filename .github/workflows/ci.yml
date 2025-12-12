@@ -280,7 +280,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          if ! git diff --staged --exit-code --quiet; then
+          if git diff --staged --exit-code --quiet; then
             git diff --staged --exit-code --stat
             git diff --staged > generate_changes.patch
             exit 1
