@@ -1,8 +1,6 @@
 package autoimport
 
 import (
-	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
 
@@ -23,9 +21,8 @@ func (v *View) GetModuleSpecifier(
 
 	if export.NodeModulesDirectory != "" {
 		if entrypoints, ok := v.registry.nodeModules[export.NodeModulesDirectory].Entrypoints[export.Path]; ok {
-			conditions := collections.NewSetFromItems(module.GetConditions(v.program.Options(), v.program.GetDefaultResolutionModeForFile(v.importingFile))...)
 			for _, entrypoint := range entrypoints {
-				if entrypoint.IncludeConditions.IsSubsetOf(conditions) && !conditions.Intersects(entrypoint.ExcludeConditions) {
+				if entrypoint.IncludeConditions.IsSubsetOf(v.conditions) && !v.conditions.Intersects(entrypoint.ExcludeConditions) {
 					specifier := modulespecifiers.ProcessEntrypointEnding(
 						entrypoint,
 						userPreferences,

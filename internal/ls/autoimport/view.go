@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -20,6 +21,7 @@ type View struct {
 	preferences    modulespecifiers.UserPreferences
 	projectKey     tspath.Path
 	allowedEndings []modulespecifiers.ModuleSpecifierEnding
+	conditions     *collections.Set[string]
 
 	existingImports          *collections.MultiMap[ModuleID, existingImport]
 	shouldUseRequireForFixes *bool
@@ -32,6 +34,10 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 		program:       program,
 		projectKey:    projectKey,
 		preferences:   preferences,
+		conditions: collections.NewSetFromItems(
+			module.GetConditions(program.Options(),
+				program.GetDefaultResolutionModeForFile(importingFile))...,
+		),
 	}
 }
 
@@ -173,6 +179,14 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 		}
 		fixes = append(fixes, core.MinAllFunc(fixesForGroup, compareFixes)...)
 	}
+
+	// The client will do additional sorting by SortText and Label, so we don't
+	// need to consider the name in our sorting here; we only need to produce a
+	// stable relative ordering between completions that the client will consider
+	// equivalent.
+	slices.SortFunc(fixes, func(a, b *FixAndExport) int {
+		return v.CompareFixesForSorting(a.Fix, b.Fix)
+	})
 
 	return fixes
 }

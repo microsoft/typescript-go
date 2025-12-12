@@ -551,7 +551,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 				},
 				ModuleSpecifierKind: moduleSpecifierKind,
 				IsReExport:          export.Target.ModuleID != export.ModuleID,
-				ModuleFileName:      export.ModuleFileName(),
+				ModuleFileName:      export.ModuleFileName,
 			},
 		}
 	}
@@ -580,7 +580,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 		},
 		ModuleSpecifierKind: moduleSpecifierKind,
 		IsReExport:          export.Target.ModuleID != export.ModuleID,
-		ModuleFileName:      export.ModuleFileName(),
+		ModuleFileName:      export.ModuleFileName,
 	})
 }
 
@@ -792,11 +792,11 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
 		} else if ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
 			if moduleSymbol := ch.ResolveExternalModuleName(moduleSpecifier); moduleSymbol != nil {
-				result.Add(getModuleIDOfModuleSymbol(moduleSymbol), existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
 			}
 		} else if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindJSDocImportTag {
 			if moduleSymbol := ch.GetSymbolAtLocation(moduleSpecifier); moduleSymbol != nil {
-				result.Add(getModuleIDOfModuleSymbol(moduleSymbol), existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
 			}
 		}
 	}
@@ -895,14 +895,18 @@ func (v *View) compareModuleSpecifiersForRanking(a, b *Fix) int {
 	if comparison := compareModuleSpecifierRelativity(a, b, v.preferences); comparison != 0 {
 		return comparison
 	}
-	if comparison := compareNodeCoreModuleSpecifiers(a.ModuleSpecifier, b.ModuleSpecifier, v.importingFile, v.program); comparison != 0 {
-		return comparison
+	if a.ModuleSpecifierKind == modulespecifiers.ResultKindAmbient && b.ModuleSpecifierKind == modulespecifiers.ResultKindAmbient {
+		if comparison := compareNodeCoreModuleSpecifiers(a.ModuleSpecifier, b.ModuleSpecifier, v.importingFile, v.program); comparison != 0 {
+			return comparison
+		}
 	}
-	if comparison := core.CompareBooleans(
-		isFixPossiblyReExportingImportingFile(a, v.importingFile.Path(), v.registry.toPath),
-		isFixPossiblyReExportingImportingFile(b, v.importingFile.Path(), v.registry.toPath),
-	); comparison != 0 {
-		return comparison
+	if a.ModuleSpecifierKind == modulespecifiers.ResultKindRelative && b.ModuleSpecifierKind == modulespecifiers.ResultKindRelative {
+		if comparison := core.CompareBooleans(
+			isFixPossiblyReExportingImportingFile(a, v.importingFile.Path(), v.registry.toPath),
+			isFixPossiblyReExportingImportingFile(b, v.importingFile.Path(), v.registry.toPath),
+		); comparison != 0 {
+			return comparison
+		}
 	}
 	if comparison := tspath.CompareNumberOfDirectorySeparators(a.ModuleSpecifier, b.ModuleSpecifier); comparison != 0 {
 		return comparison

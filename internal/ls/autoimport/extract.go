@@ -87,7 +87,7 @@ func (e *exportExtractor) extractFromFile(file *ast.SourceFile) []*Export {
 		}
 		exports := make([]*Export, 0, exportCount)
 		for _, decl := range moduleDeclarations {
-			e.extractFromModuleDeclaration(decl.AsModuleDeclaration(), file, ModuleID(decl.Name().Text()), &exports)
+			e.extractFromModuleDeclaration(decl.AsModuleDeclaration(), file, ModuleID(decl.Name().Text()), "", &exports)
 		}
 		return exports
 	}
@@ -108,32 +108,34 @@ func (e *exportExtractor) extractFromModule(file *ast.SourceFile) []*Export {
 	}
 	exports := make([]*Export, 0, len(file.Symbol.Exports)+augmentationExportCount)
 	for name, symbol := range file.Symbol.Exports {
-		e.extractFromSymbol(name, symbol, ModuleID(file.Path()), file, &exports)
+		e.extractFromSymbol(name, symbol, ModuleID(file.Path()), file.FileName(), file, &exports)
 	}
 	for _, decl := range moduleAugmentations {
 		name := decl.Name().AsStringLiteral().Text
 		moduleID := ModuleID(name)
+		var moduleFileName string
 		if tspath.IsExternalModuleNameRelative(name) {
-			// !!! need to resolve non-relative names in separate pass
 			if resolved, _ := e.moduleResolver.ResolveModuleName(name, file.FileName(), core.ModuleKindCommonJS, nil); resolved.IsResolved() {
-				moduleID = ModuleID(e.toPath(resolved.ResolvedFileName))
+				moduleFileName = resolved.ResolvedFileName
+				moduleID = ModuleID(e.toPath(moduleFileName))
 			} else {
 				// :shrug:
-				moduleID = ModuleID(e.toPath(tspath.ResolvePath(tspath.GetDirectoryPath(file.FileName()), name)))
+				moduleFileName = tspath.ResolvePath(tspath.GetDirectoryPath(file.FileName()), name)
+				moduleID = ModuleID(e.toPath(moduleFileName))
 			}
 		}
-		e.extractFromModuleDeclaration(decl, file, moduleID, &exports)
+		e.extractFromModuleDeclaration(decl, file, moduleID, moduleFileName, &exports)
 	}
 	return exports
 }
 
-func (e *exportExtractor) extractFromModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, moduleID ModuleID, exports *[]*Export) {
+func (e *exportExtractor) extractFromModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, moduleID ModuleID, moduleFileName string, exports *[]*Export) {
 	for name, symbol := range decl.Symbol.Exports {
-		e.extractFromSymbol(name, symbol, moduleID, file, exports)
+		e.extractFromSymbol(name, symbol, moduleID, moduleFileName, file, exports)
 	}
 }
 
-func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, moduleID ModuleID, file *ast.SourceFile, exports *[]*Export) {
+func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, moduleID ModuleID, moduleFileName string, file *ast.SourceFile, exports *[]*Export) {
 	if shouldIgnoreSymbol(symbol) {
 		return
 	}
@@ -154,7 +156,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 
 		*exports = slices.Grow(*exports, len(allExports))
 		for _, reexportedSymbol := range allExports {
-			export, _ := e.createExport(reexportedSymbol, moduleID, ExportSyntaxStar, file, checkerLease)
+			export, _ := e.createExport(reexportedSymbol, moduleID, moduleFileName, ExportSyntaxStar, file, checkerLease)
 			if export != nil {
 				export.through = ast.InternalSymbolNameExportStar
 				*exports = append(*exports, export)
@@ -165,7 +167,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 
 	syntax := getSyntax(symbol)
 	checkerLease := &checkerLease{checker: e.checker}
-	export, target := e.createExport(symbol, moduleID, syntax, file, checkerLease)
+	export, target := e.createExport(symbol, moduleID, moduleFileName, syntax, file, checkerLease)
 	if export == nil {
 		return
 	}
@@ -201,7 +203,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		if syntax == ExportSyntaxEquals && target.Flags&ast.SymbolFlagsNamespace != 0 {
 			*exports = slices.Grow(*exports, len(target.Exports))
 			for _, namedExport := range target.Exports {
-				export, _ := e.createExport(namedExport, moduleID, syntax, file, checkerLease)
+				export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
 				if export != nil {
 					export.through = name
 					*exports = append(*exports, export)
@@ -217,7 +219,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			*exports = slices.Grow(*exports, len(expression.AsObjectLiteralExpression().Properties.Nodes))
 			for _, prop := range expression.AsObjectLiteralExpression().Properties.Nodes {
 				if ast.IsShorthandPropertyAssignment(prop) || ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
-					export, _ := e.createExport(expression.Symbol().Members[prop.Name().Text()], moduleID, syntax, file, checkerLease)
+					export, _ := e.createExport(expression.Symbol().Members[prop.Name().Text()], moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
 						export.through = name
 						*exports = append(*exports, export)
@@ -229,7 +231,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 }
 
 // createExport creates an Export for the given symbol, returning the Export and the target symbol if the export is an alias.
-func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, syntax ExportSyntax, file *ast.SourceFile, checkerLease *checkerLease) (*Export, *ast.Symbol) {
+func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, moduleFileName string, syntax ExportSyntax, file *ast.SourceFile, checkerLease *checkerLease) (*Export, *ast.Symbol) {
 	if shouldIgnoreSymbol(symbol) {
 		return nil, nil
 	}
@@ -239,6 +241,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, sy
 			ExportName: symbol.Name,
 			ModuleID:   moduleID,
 		},
+		ModuleFileName:       moduleFileName,
 		Syntax:               syntax,
 		Flags:                symbol.CombinedLocalAndExportSymbolFlags(),
 		Path:                 file.Path(),

@@ -50,9 +50,10 @@ const (
 
 type Export struct {
 	ExportID
-	Syntax    ExportSyntax
-	Flags     ast.SymbolFlags
-	localName string
+	ModuleFileName string
+	Syntax         ExportSyntax
+	Flags          ast.SymbolFlags
+	localName      string
 	// through is the name of the module symbol's export that this export was found on,
 	// either 'export=', InternalSymbolNameExportStar, or empty string.
 	through string
@@ -95,13 +96,6 @@ func (e *Export) AmbientModuleName() string {
 	return ""
 }
 
-func (e *Export) ModuleFileName() string {
-	if e.AmbientModuleName() == "" {
-		return string(e.ModuleID)
-	}
-	return ""
-}
-
 func (e *Export) IsUnresolvedAlias() bool {
 	return e.Flags == ast.SymbolFlagsAlias
 }
@@ -110,11 +104,11 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 	if symbol.Parent == nil || !checker.IsExternalModuleSymbol(symbol.Parent) {
 		return nil
 	}
-	moduleID := getModuleIDOfModuleSymbol(symbol.Parent)
+	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
 	extractor := newSymbolExtractor("", "", ch)
 
 	var exports []*Export
-	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, ast.GetSourceFileOfModule(symbol.Parent), &exports)
+	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)
 	if len(exports) > 0 {
 		return exports[0]
 	}

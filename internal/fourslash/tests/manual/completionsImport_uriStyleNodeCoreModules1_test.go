@@ -10,16 +10,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionsImport_defaultAndNamedConflict(t *testing.T) {
+func TestCompletionsImport_uriStyleNodeCoreModules1(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @noLib: true
-// @Filename: /someModule.ts
-export const someModule = 0;
-export default 1;
+	const content = `// @module: commonjs
+// @Filename: /node_modules/@types/node/index.d.ts
+declare module "fs" { function writeFile(): void }
+declare module "fs/promises" { function writeFile(): Promise<void> }
+declare module "node:fs" { export * from "fs"; }
+declare module "node:fs/promises" { export * from "fs/promises"; }
 // @Filename: /index.ts
-someMo/**/`
+write/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
@@ -32,39 +34,46 @@ someMo/**/`
 			Exact: CompletionGlobalsPlus(
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
-						Label: "someModule",
+						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
 							AutoImport: &lsproto.AutoImportFix{
-								ModuleSpecifier: "./someModule",
+								ModuleSpecifier: "fs",
 							},
 						},
-						Detail:              PtrTo("(property) default: 1"),
-						Kind:                PtrTo(lsproto.CompletionItemKindField),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
-						Label: "someModule",
+						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
 							AutoImport: &lsproto.AutoImportFix{
-								ModuleSpecifier: "./someModule",
+								ModuleSpecifier: "fs/promises",
 							},
 						},
-						Detail:              PtrTo("const someModule: 0"),
-						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
-				}, true),
+					&lsproto.CompletionItem{
+						Label: "writeFile",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
+								ModuleSpecifier: "node:fs",
+							},
+						},
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					},
+					&lsproto.CompletionItem{
+						Label: "writeFile",
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportFix{
+								ModuleSpecifier: "node:fs/promises",
+							},
+						},
+						AdditionalTextEdits: fourslash.AnyTextEdits,
+						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
+					},
+				}, false),
 		},
-	})
-	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:          "someModule",
-		Source:        "./someModule",
-		AutoImportFix: &lsproto.AutoImportFix{},
-		Description:   "Add import from \"./someModule\"",
-		NewFileContent: PtrTo(`import someModule from "./someModule";
-
-someMo`),
 	})
 }

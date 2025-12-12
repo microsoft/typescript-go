@@ -999,6 +999,12 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
+	// For performance, the server may return unsorted completion lists.
+	// The client is expected to sort them by SortText and then by Label.
+	// We are the client here.
+	if result.List != nil {
+		slices.SortStableFunc(result.List.Items, ls.CompareCompletionEntries)
+	}
 	return result.List
 }
 

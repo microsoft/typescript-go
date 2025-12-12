@@ -333,15 +333,16 @@ func MinAllFunc[T any](xs []T, cmp func(a, b T) int) []T {
 		return nil
 	}
 
-	min := xs[0]
-	mins := []T{min}
+	m := xs[0]
+	mins := []T{m}
 
 	for _, x := range xs[1:] {
-		c := cmp(x, min)
+		c := cmp(x, m)
 		switch {
 		case c < 0:
-			min = x
-			mins = []T{x}
+			m = x
+			mins = mins[:0]
+			mins = append(mins, x)
 		case c == 0:
 			mins = append(mins, x)
 		}

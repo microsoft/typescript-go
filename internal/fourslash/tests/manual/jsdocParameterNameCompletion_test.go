@@ -40,8 +40,8 @@ function i(foo, bar) {}`
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
-				"foo",
 				"bar",
+				"foo",
 			},
 		},
 	})

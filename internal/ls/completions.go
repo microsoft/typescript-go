@@ -1,7 +1,6 @@
 package ls
 
 import (
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -27,7 +26,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var ErrNeedsAutoImports = errors.New("completion list needs auto imports")
@@ -1724,7 +1722,7 @@ func (l *LanguageService) completionInfoFromData(
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
 				!uniqueNames.Has(keywordEntry.Label) {
 				uniqueNames.Add(keywordEntry.Label)
-				sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
+				sortedEntries = append(sortedEntries, keywordEntry)
 			}
 		}
 	}
@@ -1732,14 +1730,14 @@ func (l *LanguageService) completionInfoFromData(
 	for _, keywordEntry := range getContextualKeywords(file, contextToken, position) {
 		if !uniqueNames.Has(keywordEntry.Label) {
 			uniqueNames.Add(keywordEntry.Label)
-			sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
+			sortedEntries = append(sortedEntries, keywordEntry)
 		}
 	}
 
 	for _, literal := range literals {
 		literalEntry := createCompletionItemForLiteral(file, preferences, literal)
 		uniqueNames.Add(literalEntry.Label)
-		sortedEntries = core.InsertSorted(sortedEntries, literalEntry, compareCompletionEntries)
+		sortedEntries = append(sortedEntries, literalEntry)
 	}
 
 	if !isChecked {
@@ -1782,6 +1780,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
+	sortedEntries = slices.Grow(sortedEntries, len(data.symbols)+len(data.autoImports))
 	// Tracks unique names.
 	// Value is set to false for global variables or completions from external module exports, because we can have multiple of those;
 	// true otherwise. Based on the order we add things we will always see locals first, then globals, then module exports.
@@ -1843,8 +1842,9 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			!(symbol.Parent == nil &&
 				!core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.GetSourceFileOfNode(d) == file }))
 		uniques[name] = shouldShadowLaterSymbols
-		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+		sortedEntries = append(sortedEntries, entry)
 	}
+
 	for _, autoImport := range data.autoImports {
 		// !!! flags filtering similar to shouldIncludeSymbol
 		// !!! check for type-only in JS
@@ -1880,7 +1880,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 
 		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
 			uniques[autoImport.Fix.Name] = false
-			sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+			sortedEntries = append(sortedEntries, entry)
 		}
 	}
 
@@ -3154,85 +3154,13 @@ func getCompletionsSymbolKind(kind lsutil.ScriptElementKind) lsproto.CompletionI
 // So, it's important that we sort those ties in the order we want them displayed if it matters. We don't
 // strictly need to sort by name or SortText here since clients are going to do it anyway, but we have to
 // do the work of comparing them so we can sort those ties appropriately.
-func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+func CompareCompletionEntries(a, b *lsproto.CompletionItem) int {
 	compareStrings := stringutil.CompareStringsCaseInsensitiveThenSensitive
-	result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
+	result := compareStrings(*a.SortText, *b.SortText)
 	if result == stringutil.ComparisonEqual {
-		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
-	}
-	// !!! duplicated with autoimport.CompareFixes, can we remove?
-	if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
-		sliceEntryData := entryInSlice.Data
-		insertEntryData := entryToInsert.Data
-		if sliceEntryData.AutoImport != nil && sliceEntryData.AutoImport.ModuleSpecifier != "" &&
-			insertEntryData.AutoImport != nil && insertEntryData.AutoImport.ModuleSpecifier != "" {
-			// Sort same-named auto-imports by module specifier
-			result = tspath.CompareNumberOfDirectorySeparators(
-				sliceEntryData.AutoImport.ModuleSpecifier,
-				insertEntryData.AutoImport.ModuleSpecifier,
-			)
-			if result == stringutil.ComparisonEqual {
-				result = compareStrings(
-					sliceEntryData.AutoImport.ModuleSpecifier,
-					insertEntryData.AutoImport.ModuleSpecifier,
-				)
-			}
-			if result == stringutil.ComparisonEqual {
-				result = -cmp.Compare(sliceEntryData.AutoImport.ImportKind, insertEntryData.AutoImport.ImportKind)
-			}
-		}
-	}
-	if result == stringutil.ComparisonEqual {
-		// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
-		return stringutil.ComparisonLessThan
+		result = compareStrings(a.Label, b.Label)
 	}
 	return result
-}
-
-// True if the first character of `lowercaseCharacters` is the first character
-// of some "word" in `identiferString` (where the string is split into "words"
-// by camelCase and snake_case segments), then if the remaining characters of
-// `lowercaseCharacters` appear, in order, in the rest of `identifierString`.//
-// True:
-// 'state' in 'useState'
-// 'sae' in 'useState'
-// 'viable' in 'ENVIRONMENT_VARIABLE'//
-// False:
-// 'staet' in 'useState'
-// 'tate' in 'useState'
-// 'ment' in 'ENVIRONMENT_VARIABLE'
-func charactersFuzzyMatchInString(identifierString string, lowercaseCharacters string) bool {
-	if lowercaseCharacters == "" {
-		return true
-	}
-
-	var prevChar rune
-	matchedFirstCharacter := false
-	characterIndex := 0
-	lowerCaseRunes := []rune(lowercaseCharacters)
-	testChar := lowerCaseRunes[characterIndex]
-
-	for _, strChar := range []rune(identifierString) {
-		if strChar == testChar || strChar == unicode.ToUpper(testChar) {
-			willMatchFirstChar := prevChar == 0 || // Beginning of word
-				'a' <= prevChar && prevChar <= 'z' && 'A' <= strChar && strChar <= 'Z' || // camelCase transition
-				prevChar == '_' && strChar != '_' // snake_case transition
-			matchedFirstCharacter = matchedFirstCharacter || willMatchFirstChar
-			if !matchedFirstCharacter {
-				continue
-			}
-			characterIndex++
-			if characterIndex == len(lowerCaseRunes) {
-				return true
-			} else {
-				testChar = lowerCaseRunes[characterIndex]
-			}
-		}
-		prevChar = strChar
-	}
-
-	// Did not find all characters
-	return false
 }
 
 var (
@@ -3429,16 +3357,12 @@ func (l *LanguageService) getJSCompletionEntries(
 		}
 		if !uniqueNames.Has(name) && scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 			uniqueNames.Add(name)
-			sortedEntries = core.InsertSorted(
-				sortedEntries,
-				&lsproto.CompletionItem{
-					Label:            name,
-					Kind:             ptrTo(lsproto.CompletionItemKindText),
-					SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
-					CommitCharacters: ptrTo([]string{}),
-				},
-				compareCompletionEntries,
-			)
+			sortedEntries = append(sortedEntries, &lsproto.CompletionItem{
+				Label:            name,
+				Kind:             ptrTo(lsproto.CompletionItemKindText),
+				SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
+				CommitCharacters: ptrTo([]string{}),
+			})
 		}
 	}
 	return sortedEntries

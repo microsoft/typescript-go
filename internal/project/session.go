@@ -966,6 +966,9 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		for uri := range change.fileChanges.Changed.Keys() {
 			changedFile = uri
 		}
+		if !newSnapshot.fs.isOpenFile(changedFile.FileName()) {
+			return
+		}
 		project := newSnapshot.GetDefaultProject(changedFile)
 		if project == nil {
 			return
