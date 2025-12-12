@@ -27010,9 +27010,6 @@ func (c *Checker) areSymbolsFromSamePackageFile(source *ast.Symbol, target *ast.
 	}
 	sourceFile := ast.GetSourceFileOfNode(sourceDecl)
 	targetFile := ast.GetSourceFileOfNode(targetDecl)
-	if sourceFile == nil || targetFile == nil {
-		return false
-	}
 	// If they're from the same file, they can't have been deduplicated.
 	if sourceFile == targetFile {
 		return false
