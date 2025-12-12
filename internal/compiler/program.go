@@ -120,17 +120,8 @@ func (p *Program) GetRedirectTargets(path tspath.Path) []string {
 // If the file is a redirect target (i.e., it redirects to a canonical file), returns the canonical path.
 // Otherwise, returns the path unchanged.
 func (p *Program) GetDeduplicatedPackagePath(path tspath.Path) tspath.Path {
-	// If this path has redirect targets, it's already canonical
-	if _, ok := p.redirectTargetsMap[path]; ok {
-		return path
-	}
-	// Check if this path is a redirect target of some canonical path
-	for canonicalPath, targets := range p.redirectTargetsMap {
-		for _, t := range targets {
-			if tspath.Path(t) == path {
-				return canonicalPath
-			}
-		}
+	if canonicalPath, ok := p.deduplicatedPathMap[path]; ok {
+		return canonicalPath
 	}
 	// Not part of any redirect group, return as-is
 	return path

@@ -72,7 +72,10 @@ type processedFiles struct {
 	sourceFileToPackageName map[tspath.Path]string
 	// Key is a file path. Value is the list of files that redirect to it (same package, different install location)
 	redirectTargetsMap map[tspath.Path][]string
-	finishedProcessing bool
+	// Maps any path (canonical or redirect target) to its canonical path.
+	// Canonical paths map to themselves; redirect targets map to their canonical path.
+	deduplicatedPathMap map[tspath.Path]tspath.Path
+	finishedProcessing  bool
 }
 
 type jsxRuntimeImportSpecifier struct {
