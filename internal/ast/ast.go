@@ -10950,7 +10950,7 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 // If the name appears more than once, the value is -1.
 func (file *SourceFile) GetNameTable() map[string]int {
 	file.nameTableOnce.Do(func() {
-		nameTable := make(map[string]int)
+		nameTable := make(map[string]int, file.IdentifierCount)
 
 		isTagName := func(node *Node) bool {
 			return node.Parent != nil && IsJSDocTag(node.Parent) && node.Parent.TagName() == node
