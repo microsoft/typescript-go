@@ -10801,6 +10801,8 @@ type SourceFile struct {
 	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
+	nameTableOnce    sync.Once
+	nameTable        map[string]int
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10942,6 +10944,64 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 		}
 	}
 	return lineMap
+}
+
+// GetNameTable returns a map of all names in the file to their positions.
+// If the name appears more than once, the value is -1.
+func (file *SourceFile) GetNameTable() map[string]int {
+	file.nameTableOnce.Do(func() {
+		file.nameTable = file.initializeNameTable()
+	})
+	return file.nameTable
+}
+
+func (file *SourceFile) initializeNameTable() map[string]int {
+	nameTable := make(map[string]int)
+
+	isTagName := func(node *Node) bool {
+		return node.Parent != nil && IsJSDocTag(node.Parent) && node.Parent.TagName() == node
+	}
+
+	isArgumentOfElementAccessExpression := func(node *Node) bool {
+		return node != nil && node.Parent != nil &&
+			node.Parent.Kind == KindElementAccessExpression &&
+			node.Parent.AsElementAccessExpression().ArgumentExpression == node
+	}
+
+	// We want to store any numbers/strings if they were a name that could be
+	// related to a declaration.  So, if we have 'import x = require("something")'
+	// then we want 'something' to be in the name table.  Similarly, if we have
+	// "a['propname']" then we want to store "propname" in the name table.
+	literalIsName := func(node *Node) bool {
+		return IsDeclarationName(node) ||
+			node.Parent.Kind == KindExternalModuleReference ||
+			isArgumentOfElementAccessExpression(node) ||
+			IsLiteralComputedPropertyDeclarationName(node)
+	}
+
+	var walk func(node *Node) bool
+	walk = func(node *Node) bool {
+		if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+			IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+			IsPrivateIdentifier(node) {
+			text := node.Text()
+			if _, ok := nameTable[text]; ok {
+				nameTable[text] = -1
+			} else {
+				nameTable[text] = node.Pos()
+			}
+		}
+
+		node.ForEachChild(walk)
+		jsdocNodes := node.JSDoc(file)
+		for _, jsdoc := range jsdocNodes {
+			jsdoc.ForEachChild(walk)
+		}
+		return false
+	}
+
+	file.AsNode().ForEachChild(walk)
+	return nameTable
 }
 
 func (node *SourceFile) IsBound() bool {
