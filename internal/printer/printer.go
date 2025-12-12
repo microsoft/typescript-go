@@ -206,9 +206,7 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 			}
 		}
 	}
-
 	// !!! Printer option to control whether to terminate unterminated literals
-	// !!! If necessary, printer option to control whether to preserve numeric separators
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
 	}
