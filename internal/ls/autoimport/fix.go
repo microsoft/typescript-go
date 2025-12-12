@@ -902,8 +902,8 @@ func (v *View) compareModuleSpecifiersForRanking(a, b *Fix) int {
 	}
 	if a.ModuleSpecifierKind == modulespecifiers.ResultKindRelative && b.ModuleSpecifierKind == modulespecifiers.ResultKindRelative {
 		if comparison := core.CompareBooleans(
-			isFixPossiblyReExportingImportingFile(a, v.importingFile.Path(), v.registry.toPath),
-			isFixPossiblyReExportingImportingFile(b, v.importingFile.Path(), v.registry.toPath),
+			isFixPossiblyReExportingImportingFile(a, v.importingFile.FileName()),
+			isFixPossiblyReExportingImportingFile(b, v.importingFile.FileName()),
 		); comparison != 0 {
 			return comparison
 		}
@@ -954,21 +954,27 @@ func compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile,
 // This is a simple heuristic to try to avoid creating an import cycle with a barrel re-export.
 // E.g., do not `import { Foo } from ".."` when you could `import { Foo } from "../Foo"`.
 // This can produce false positives or negatives if re-exports cross into sibling directories
-// (e.g. `export * from "../whatever"`) or are not named "index".
-func isFixPossiblyReExportingImportingFile(fix *Fix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
+// (e.g. `export * from "../whatever"`) or are not named "index". Technically this should do
+// a tspath.Path comparison, but it's not worth it to run a heuristic in such a hot path.
+func isFixPossiblyReExportingImportingFile(fix *Fix, importingFileName string) bool {
 	if fix.IsReExport && isIndexFileName(fix.ModuleFileName) {
-		reExportDir := toPath(tspath.GetDirectoryPath(fix.ModuleFileName))
-		return strings.HasPrefix(string(importingFilePath), string(reExportDir))
+		reExportDir := tspath.GetDirectoryPath(fix.ModuleFileName)
+		return strings.HasPrefix(importingFileName, reExportDir)
 	}
 	return false
 }
 
 func isIndexFileName(fileName string) bool {
-	fileName = tspath.GetBaseFileName(fileName)
-	if tspath.FileExtensionIsOneOf(fileName, []string{".js", ".jsx", ".d.ts", ".ts", ".tsx"}) {
-		fileName = tspath.RemoveFileExtension(fileName)
+	lastSlash := strings.LastIndexByte(fileName, '/')
+	if lastSlash < 0 || len(fileName) <= lastSlash+1 {
+		return false
 	}
-	return fileName == "index"
+	fileName = fileName[lastSlash+1:]
+	switch fileName {
+	case "index.js", "index.jsx", "index.d.ts", "index.ts", "index.tsx":
+		return true
+	}
+	return false
 }
 
 func promoteFromTypeOnly(
