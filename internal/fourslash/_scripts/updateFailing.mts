@@ -25,7 +25,7 @@ function main() {
     }
     const failRegex = /--- FAIL: ([\S]+)/gm;
     const failingTests: string[] = [];
-    const crashingRegex = /^=== NAME  ([\S]+)\n.*InternalError.*$/gm;
+    const crashingRegex = /^=== (?:NAME|CONT)  ([\S]+)\n.*InternalError.*$/gm;
     const crashingTests: string[] = [];
     let match;
 
