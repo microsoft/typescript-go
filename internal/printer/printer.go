@@ -212,6 +212,9 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
 	}
+	if p.Options.Target >= core.ScriptTargetES2021 {
+		flags |= getLiteralTextFlagsAllowNumericSeparator
+	}
 	return getLiteralText(node, core.Coalesce(sourceFile, p.currentSourceFile), flags)
 }
 
@@ -999,11 +1002,7 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	state := p.enterNode(node.AsNode())
-	flags := getLiteralTextFlagsNone
-	if p.Options.Target >= core.ScriptTargetES2021 {
-		flags |= getLiteralTextFlagsAllowNumericSeparator
-	}
-	p.emitLiteral(node.AsNode(), flags)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode(), state)
 }
 
