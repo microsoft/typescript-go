@@ -1,0 +1,11 @@
+--- old.duplicatePackageServices.baseline.jsonc
++++ new.duplicatePackageServices.baseline.jsonc
+@@= skipped -10, +10 lines =@@
+
+
+ // === goToDefinition ===
+-// === /node_modules/a/node_modules/x/index.d.ts ===
++// === /node_modules/b/node_modules/x/index.d.ts ===
+ // <|export default class [|X|] {
+ //     private x: number;
+ // }|>
