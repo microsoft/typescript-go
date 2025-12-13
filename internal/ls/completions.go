@@ -2753,7 +2753,7 @@ func getSourceFromOrigin(origin *symbolOriginInfo) string {
 func getRelevantTokens(position int, file *ast.SourceFile) (contextToken *ast.Node, previousToken *ast.Node) {
 	previousToken = astnav.FindPrecedingToken(file, position)
 	if previousToken != nil && position <= previousToken.End() && (ast.IsMemberName(previousToken) || ast.IsKeywordKind(previousToken.Kind)) {
-		contextToken := astnav.FindPrecedingToken(file, previousToken.Pos())
+		contextToken = astnav.FindPrecedingToken(file, previousToken.Pos())
 		return contextToken, previousToken
 	}
 	return previousToken, previousToken
@@ -4151,7 +4151,7 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 			return nil
 		}
 		// class c extends React.Component { a: () => 1\n compon| }
-		if isFromObjectTypeDeclaration(location) {
+		if contextToken != nil && isFromObjectTypeDeclaration(location) {
 			return ast.FindAncestor(location, ast.IsObjectTypeDeclaration)
 		}
 	}
