@@ -108,7 +108,7 @@ noImplicitReturnsExclusions.ts(88,53): error TS7030: Not all code paths return a
     ): void;
     
     registerCommand("_references-view.showHistoryItem", async (item) => { // Error, contextual return type of Promise<unknown>
-                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS7030: Not all code paths return a value.
       if (item instanceof HistoryItem) {
         return executeCommand("vscode.open", item.input.location.uri);

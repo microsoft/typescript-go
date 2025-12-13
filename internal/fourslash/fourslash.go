@@ -631,7 +631,7 @@ func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
 }
 
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) Resp {
-	// t.Helper()
+	t.Helper()
 	prefix := f.getCurrentPositionPrefix()
 	f.baselineState(t)
 	f.baselineRequestOrNotification(t, info.Method, params)

@@ -382,7 +382,6 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 		// unstable properties must be named the same as userPreferences
 		p.parseAll(unstable)
 	}
-	formatSettingsParsed := false
 	for name, values := range config {
 		switch name {
 		case "unstable":
@@ -400,7 +399,7 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 		case "workspaceSymbols":
 			p.parseWorkspaceSymbols(values)
 		case "format":
-			formatSettingsParsed = p.FormatCodeSettings.Parse(values) || formatSettingsParsed
+			p.FormatCodeSettings.Parse(values)
 		case "tsserver":
 			// !!!
 		case "tsc":
@@ -409,11 +408,8 @@ func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 			// !!!
 		default:
 			p.Set(name, values)
-			formatSettingsParsed = p.FormatCodeSettings.Set(name, values) || formatSettingsParsed
+			p.FormatCodeSettings.Set(name, values)
 		}
-	}
-	if !formatSettingsParsed {
-		p.FormatCodeSettings = nil
 	}
 	return p
 }
