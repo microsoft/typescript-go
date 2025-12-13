@@ -428,7 +428,7 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 	// Generate documentation from the signature's declaration
 	var documentation *string
 	if declaration := candidate.Declaration(); declaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, declaration, docFormat)
+		doc := l.getDocumentationFromDeclaration(c, nil, declaration, nil, docFormat)
 		if doc != "" {
 			documentation = &doc
 		}
