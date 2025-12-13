@@ -94,19 +94,6 @@ export class Client {
         return this.start(context, exe);
     }
 
-    generateGoMemLimitEnv(goMemLimit: string | undefined): Record<string, string> {
-        if (!goMemLimit) {
-            return {};
-        }
-        // Keep this regex aligned with the pattern in package.json.
-        if (!/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
-            this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
-            return {};
-        }
-        this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
-        return { GOMEMLIMIT: goMemLimit };
-    }
-
     async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
@@ -117,7 +104,17 @@ export class Client {
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
         const goMemLimit = config.get<string>("goMemLimit");
-        const env = { ...process.env, ...this.generateGoMemLimitEnv(goMemLimit) };
+        const env = { ...process.env };
+        if (goMemLimit) {
+            // Keep this regex aligned with the pattern in package.json.
+            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+                env.GOMEMLIMIT = goMemLimit;
+            }
+            else {
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            }
+        }
 
         const serverOptions: ServerOptions = {
             run: {
