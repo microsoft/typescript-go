@@ -128,6 +128,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 		ambientModuleOrPackageName string
 	}
 	grouped := make(map[exportGroupKey][]*Export, len(results))
+outer:
 	for _, e := range results {
 		name := e.Name()
 		if forJSX && !(unicode.IsUpper(rune(name[0])) || e.IsRenameable()) {
@@ -157,6 +158,7 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 						Path:                       e.Path,
 						NodeModulesDirectory:       e.NodeModulesDirectory,
 					})
+					continue outer
 				}
 			}
 		}

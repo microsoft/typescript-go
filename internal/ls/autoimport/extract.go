@@ -283,11 +283,14 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 			}
 			export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), targetSymbol, decl)
 			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), targetSymbol)
-			// !!! completely wrong, write a test for this
-			// do we need this for anything other than grouping reexports?
+			moduleID := ModuleID(ast.GetSourceFileOfNode(decl).Path())
+			parent := targetSymbol.Parent
+			if parent != nil && parent.IsExternalModule() {
+				moduleID, _ = getModuleIDAndFileNameOfModuleSymbol(parent)
+			}
 			export.Target = ExportID{
 				ExportName: targetSymbol.Name,
-				ModuleID:   ModuleID(ast.GetSourceFileOfNode(decl).Path()),
+				ModuleID:   moduleID,
 			}
 		}
 	} else {
