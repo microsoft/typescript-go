@@ -19,7 +19,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
@@ -269,30 +268,32 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferences, error) {
+func (s *Server) RequestConfiguration(ctx context.Context) (*project.Config, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
 		// if no configuration request capapbility, return default preferences
-		return s.session.NewUserPreferences(), nil
+		return project.NewConfig(s.session.NewUserPreferences()), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
 				Section: ptrTo("typescript"),
 			},
+			{
+				Section: ptrTo("ts"),
+			},
+			{
+				Section: ptrTo("javascript"),
+			},
+			{
+				Section: ptrTo("js"),
+			},
 		},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("configure request failed: %w", err)
+		return &project.Config{}, fmt.Errorf("configure request failed: %w", err)
 	}
-	s.logger.Infof("configuration: %+v, %T", configs, configs)
-	userPreferences := s.session.NewUserPreferences()
-	for _, item := range configs {
-		if parsed := userPreferences.Parse(item); parsed != nil {
-			return parsed, nil
-		}
-	}
-	return userPreferences, nil
+	return project.ParseConfiguration(configs), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -924,17 +925,14 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	settings, ok := params.Settings.(map[string]any)
-	if !ok {
+	// !!! only implemented because needed for fourslash
+	if params.Settings == nil {
 		return nil
+	} else if settings, ok := params.Settings.([]any); ok {
+		s.session.Configure(project.ParseConfiguration(settings))
+	} else if settings, ok := params.Settings.(map[string]any); ok {
+		s.session.Configure(project.ParseConfiguration([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
 	}
-	// !!! Both the 'javascript' and 'js/ts' scopes need to be checked for settings as well.
-	tsSettings := settings["typescript"]
-	userPreferences := s.session.UserPreferences()
-	if parsed := userPreferences.Parse(tsSettings); parsed != nil {
-		userPreferences = parsed
-	}
-	s.session.Configure(userPreferences)
 	return nil
 }
 

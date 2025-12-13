@@ -10,7 +10,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -38,7 +37,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	config                             Config
+	config                             *Config
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -53,9 +52,12 @@ func NewSnapshot(
 	extendedConfigCache *ExtendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	config Config,
+	config *Config,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
+	if config == nil {
+		config = NewConfig(nil) // disallow nil config
+	}
 	s := &Snapshot{
 		id: id,
 
@@ -105,11 +107,11 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	return s.config.tsUserPreferences
+	return s.config.Ts
 }
 
-func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
-	return s.config.formatOptions
+func (s *Snapshot) FormatOptions() *lsutil.FormatCodeSettings {
+	return s.config.Ts.FormatCodeSettings
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {
@@ -185,13 +187,6 @@ type SnapshotChange struct {
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
-}
-
-type Config struct {
-	tsUserPreferences *lsutil.UserPreferences
-	// jsUserPreferences *lsutil.UserPreferences
-	formatOptions *format.FormatCodeSettings
-	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -349,12 +344,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	config := s.config
 	if change.newConfig != nil {
-		if change.newConfig.tsUserPreferences != nil {
-			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
-		}
-		if change.newConfig.formatOptions != nil {
-			config.formatOptions = change.newConfig.formatOptions
-		}
+		config.CopyInto(change.newConfig)
 	}
 
 	snapshotFS, _ := fs.Finalize()

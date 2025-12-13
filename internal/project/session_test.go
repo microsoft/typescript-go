@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/glob"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
@@ -863,13 +862,13 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(&lsutil.UserPreferences{})
-
+		session.Configure(project.NewConfig(nil))
 		// Change user preferences for code lens and inlay hints.
 		newPrefs := session.UserPreferences()
 		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
 		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
-		session.Configure(newPrefs)
+
+		session.Configure(project.NewConfig(newPrefs))
 
 		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
 		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()

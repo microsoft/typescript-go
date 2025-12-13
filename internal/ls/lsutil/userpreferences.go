@@ -11,6 +11,8 @@ import (
 
 func NewDefaultUserPreferences() *UserPreferences {
 	return &UserPreferences{
+		FormatCodeSettings: GetDefaultFormatCodeSettings(),
+
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 
@@ -26,6 +28,8 @@ func NewDefaultUserPreferences() *UserPreferences {
 }
 
 type UserPreferences struct {
+	FormatCodeSettings *FormatCodeSettings
+
 	QuotePreference                           QuotePreference
 	LazyConfiguredProjectsFromExternalProject bool // !!!
 
@@ -372,20 +376,7 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 
 // ------ Parsing Config Response -------
 
-// returns non-nil if should break loop
-func (p *UserPreferences) Parse(item any) *UserPreferences {
-	if item == nil {
-		// continue
-	} else if config, ok := item.(map[string]any); ok {
-		p.parseWorker(config)
-	} else if item, ok := item.(*UserPreferences); ok {
-		// case for fourslash
-		return item.CopyOrDefault()
-	}
-	return nil
-}
-
-func (p *UserPreferences) parseWorker(config map[string]any) {
+func (p *UserPreferences) ParseWorker(config map[string]any) *UserPreferences {
 	// Process unstable preferences first so that they do not overwrite stable properties
 	if unstable, ok := config["unstable"]; ok {
 		// unstable properties must be named the same as userPreferences
@@ -408,7 +399,7 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		case "workspaceSymbols":
 			p.parseWorkspaceSymbols(values)
 		case "format":
-			// !!!
+			p.FormatCodeSettings.Parse(values)
 		case "tsserver":
 			// !!!
 		case "tsc":
@@ -416,9 +407,11 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 		case "experimental":
 			// !!!
 		default:
-			p.set(name, values)
+			p.Set(name, values)
+			p.FormatCodeSettings.Set(name, values)
 		}
 	}
+	return p
 }
 
 func (p *UserPreferences) parseAll(prefs any) {
@@ -427,7 +420,7 @@ func (p *UserPreferences) parseAll(prefs any) {
 		return
 	}
 	for name, value := range prefsMap {
-		p.set(name, value)
+		p.Set(name, value)
 	}
 }
 
@@ -442,7 +435,7 @@ func (p *UserPreferences) parseInlayHints(prefs any) {
 			switch name {
 			case "parameterNames":
 				if enabled, ok := v["enabled"]; ok {
-					p.set("includeInlayParameterNameHints", enabled)
+					p.Set("includeInlayParameterNameHints", enabled)
 				}
 				p.InlayHints.IncludeInlayParameterNameHintsWhenArgumentMatchesName = parseSuppress(v, "suppressWhenArgumentMatchesName")
 			case "parameterTypes":
@@ -459,7 +452,7 @@ func (p *UserPreferences) parseInlayHints(prefs any) {
 			}
 		} else {
 			// non-vscode case
-			p.set(name, v)
+			p.Set(name, v)
 		}
 	}
 }
@@ -472,9 +465,9 @@ func (p *UserPreferences) parseReferencesCodeLens(prefs any) {
 	for name, value := range referencesCodeLens {
 		switch name {
 		case "enabled":
-			p.set("referencesCodeLensEnabled", value)
+			p.Set("referencesCodeLensEnabled", value)
 		case "showOnAllFunctions":
-			p.set("referencesCodeLensShowOnAllFunctions", value)
+			p.Set("referencesCodeLensShowOnAllFunctions", value)
 		}
 	}
 }
@@ -487,11 +480,11 @@ func (p *UserPreferences) parseImplementationsCodeLens(prefs any) {
 	for name, value := range implementationsCodeLens {
 		switch name {
 		case "enabled":
-			p.set("implementationsCodeLensEnabled", value)
+			p.Set("implementationsCodeLensEnabled", value)
 		case "showOnInterfaceMethods":
-			p.set("implementationsCodeLensShowOnInterfaceMethods", value)
+			p.Set("implementationsCodeLensShowOnInterfaceMethods", value)
 		case "showOnAllClassMethods":
-			p.set("implementationsCodeLensShowOnAllClassMethods", value)
+			p.Set("implementationsCodeLensShowOnAllClassMethods", value)
 		}
 	}
 }
@@ -504,19 +497,19 @@ func (p *UserPreferences) parseSuggest(prefs any) {
 	for name, value := range completionsPreferences {
 		switch name {
 		case "autoImports":
-			p.set("includeCompletionsForModuleExports", value)
+			p.Set("includeCompletionsForModuleExports", value)
 		case "objectLiteralMethodSnippets":
 			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithObjectLiteralMethodSnippets", parseEnabledBool(v))
+				p.Set("includeCompletionsWithObjectLiteralMethodSnippets", parseEnabledBool(v))
 			}
 		case "classMemberSnippets":
 			if v, ok := value.(map[string]any); ok {
-				p.set("includeCompletionsWithClassMemberSnippets", parseEnabledBool(v))
+				p.Set("includeCompletionsWithClassMemberSnippets", parseEnabledBool(v))
 			}
 		case "includeAutomaticOptionalChainCompletions":
-			p.set("includeAutomaticOptionalChainCompletions", value)
+			p.Set("includeAutomaticOptionalChainCompletions", value)
 		case "includeCompletionsForImportStatements":
-			p.set("includeCompletionsForImportStatements", value)
+			p.Set("includeCompletionsForImportStatements", value)
 		}
 	}
 }
@@ -530,7 +523,7 @@ func (p *UserPreferences) parsePreferences(prefs any) {
 		if name == "organizeImports" {
 			p.parseOrganizeImportsPreferences(value)
 		} else {
-			p.set(name, value)
+			p.Set(name, value)
 		}
 	}
 }
@@ -542,7 +535,7 @@ func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
 		return
 	}
 	if typeOrder, ok := prefsMap["typeOrder"]; ok {
-		p.set("organizeimportstypeorder", parseOrganizeImportsTypeOrder(typeOrder))
+		p.Set("organizeimportstypeorder", parseOrganizeImportsTypeOrder(typeOrder))
 	}
 	if caseSensitivity, ok := prefsMap["caseSensitivity"]; ok {
 		if caseSensitivityStr, ok := caseSensitivity.(string); ok {
@@ -558,18 +551,18 @@ func (p *UserPreferences) parseOrganizeImportsPreferences(prefs any) {
 	if collation, ok := prefsMap["unicodeCollation"]; ok {
 		// The rest of the settings are only applicable when using unicode collation
 		if collationStr, ok := collation.(string); ok && collationStr == "unicode" {
-			p.set("organizeimportscollation", OrganizeImportsCollationUnicode)
+			p.Set("organizeimportscollation", OrganizeImportsCollationUnicode)
 			if locale, ok := prefsMap["locale"]; ok {
-				p.set("organizeimportslocale", locale)
+				p.Set("organizeimportslocale", locale)
 			}
 			if numeric, ok := prefsMap["numericCollation"]; ok {
-				p.set("organizeimportsnumericcollation", numeric)
+				p.Set("organizeimportsnumericcollation", numeric)
 			}
 			if accent, ok := prefsMap["accentCollation"]; ok {
-				p.set("organizeimportsaccentcollation", accent)
+				p.Set("organizeimportsaccentcollation", accent)
 			}
 			if caseFirst, ok := prefsMap["caseFirst"]; ok && !p.OrganizeImportsIgnoreCase.IsTrue() {
-				p.set("organizeimportscasefirst", caseFirst)
+				p.Set("organizeimportscasefirst", caseFirst)
 			}
 		}
 	}
@@ -586,7 +579,7 @@ func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
 		case "excludeLibrarySymbols":
 			p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
 		default:
-			p.set(name, value)
+			p.Set(name, value)
 		}
 	}
 }
@@ -625,7 +618,7 @@ func parseIntWithDefault(val any, defaultV int) int {
 	return defaultV
 }
 
-func (p *UserPreferences) set(name string, value any) {
+func (p *UserPreferences) Set(name string, value any) bool {
 	switch strings.ToLower(name) {
 	case "quotePreference":
 		p.QuotePreference = parseQuotePreference(value)
@@ -698,7 +691,7 @@ func (p *UserPreferences) set(name string, value any) {
 	case "includeinlayenummembervaluehints":
 		p.InlayHints.IncludeInlayEnumMemberValueHints = parseBoolWithDefault(value, false)
 	case "excludelibrarysymbolsinnavto":
-		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, true)
+		p.ExcludeLibrarySymbolsInNavTo = parseBoolWithDefault(value, false)
 	case "disablesuggestions":
 		p.DisableSuggestions = parseBoolWithDefault(value, false)
 	case "disablelinetextinreferences":
@@ -717,5 +710,11 @@ func (p *UserPreferences) set(name string, value any) {
 		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
 		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+	default:
+		if p.FormatCodeSettings == nil {
+			p.FormatCodeSettings = GetDefaultFormatCodeSettings()
+		}
+		return p.FormatCodeSettings.Set(name, value)
 	}
+	return true
 }
