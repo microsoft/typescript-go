@@ -25,14 +25,14 @@ function foo1() {
     return E.A;
     let E;
     (function (E) {
-        E[E["A"] = 0] = "A";
+        E[E["A"] = void 0] = "A";
     })(E || (E = {}));
 }
 function foo2() {
     return E.A;
     let E;
     (function (E) {
-        E[E["A"] = 0] = "A";
+        E[E["A"] = void 0] = "A";
     })(E || (E = {}));
 }
 const config = {
