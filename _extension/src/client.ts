@@ -107,12 +107,12 @@ export class Client {
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.
             if (!/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
-                throw new Error("Invalid goMemLimit. Must be a valid memory limit (e.g., '2048MiB', '4GiB').");
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            } else {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
             }
-            this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
         }
         const env = goMemLimit ? { ...process.env, GOMEMLIMIT: goMemLimit } : process.env;
-
 
         const serverOptions: ServerOptions = {
             run: {
