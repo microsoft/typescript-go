@@ -40,6 +40,7 @@ type CompilerOptions struct {
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
+	DisablePackageDeduplication               Tristate                                  `json:"disablePackageDeduplication,omitzero"`
 	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
 	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
