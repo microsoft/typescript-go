@@ -472,15 +472,6 @@ func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*as
 	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
 		return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
 	})
-	// !!! FutureSourceFile
-	// if !isFullSourceFile(sourceFile) {
-	//     for _, newImport := range sortedNewImports {
-	//         // Insert one at a time to send correct original source file for accurate text reuse
-	//         // when some imports are cloned from existing ones in other files.
-	//         ct.insertStatementsInNewFile(sourceFile.fileName, []*ast.Node{newImport}, ast.GetSourceFileOfNode(getOriginalNode(newImport)))
-	//     }
-	// return;
-	// }
 
 	if len(existingImportStatements) > 0 && isSorted {
 		// Existing imports are sorted, insert each new import at the correct position
@@ -515,7 +506,6 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
 }
 
-// !!! when/why could this return multiple?
 func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
 	var fixes []*Fix
 	if namespaceFix := v.tryUseExistingNamespaceImport(ctx, export, usagePosition); namespaceFix != nil {

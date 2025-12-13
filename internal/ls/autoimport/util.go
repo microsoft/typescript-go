@@ -2,6 +2,8 @@ package autoimport
 
 import (
 	"context"
+	"runtime"
+	"sync/atomic"
 	"unicode"
 	"unicode/utf8"
 
@@ -136,4 +138,37 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 		done()
 	}
 	return resolvedPackageNames
+}
+
+func createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func(), getCreatedCount func() int32) {
+	maxSize := int32(runtime.GOMAXPROCS(0))
+	pool := make(chan *checker.Checker, maxSize)
+	var created atomic.Int32
+
+	return func() (*checker.Checker, func()) {
+			// Try to get an existing checker
+			select {
+			case ch := <-pool:
+				return ch, func() { pool <- ch }
+			default:
+				break
+			}
+			// Try to create a new one if under limit
+			for {
+				current := created.Load()
+				if current >= maxSize {
+					// At limit, wait for one to become available
+					ch := <-pool
+					return ch, func() { pool <- ch }
+				}
+				if created.CompareAndSwap(current, current+1) {
+					ch := core.FirstResult(checker.NewChecker(program))
+					return ch, func() { pool <- ch }
+				}
+			}
+		}, func() {
+			close(pool)
+		}, func() int32 {
+			return created.Load()
+		}
 }

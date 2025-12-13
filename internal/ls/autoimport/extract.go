@@ -256,7 +256,6 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 
 	var targetSymbol *ast.Symbol
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-		// !!! try localNameResolver first?
 		targetSymbol = e.tryResolveSymbol(symbol, syntax, checkerLease)
 		if targetSymbol != nil {
 			var decl *ast.Node

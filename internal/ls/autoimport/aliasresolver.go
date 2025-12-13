@@ -69,7 +69,6 @@ func (r *aliasResolver) UseCaseSensitiveFileNames() bool {
 
 // GetSourceFile implements checker.Program.
 func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
-	// !!! local cache
 	file := r.host.GetSourceFile(fileName, r.toPath(fileName))
 	binder.BindSourceFile(file)
 	return file
@@ -77,7 +76,6 @@ func (r *aliasResolver) GetSourceFile(fileName string) *ast.SourceFile {
 
 // GetDefaultResolutionModeForFile implements checker.Program.
 func (r *aliasResolver) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
-	// !!!
 	return core.ModuleKindESNext
 }
 
@@ -109,8 +107,6 @@ func (r *aliasResolver) GetResolvedModule(currentSourceFile ast.HasFileName, mod
 	}
 	resolved, _ := r.moduleResolver.ResolveModuleName(moduleReference, currentSourceFile.FileName(), mode, nil)
 	resolved, _ = cache.LoadOrStore(module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}, resolved)
-	// !!! failed lookup locations
-	// !!! also successful lookup locations, for that matter, need to cause invalidation
 	if !resolved.IsResolved() && !tspath.PathIsRelative(moduleReference) {
 		r.onFailedAmbientModuleLookup(currentSourceFile, moduleReference)
 	}

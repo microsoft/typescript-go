@@ -78,9 +78,6 @@ type RegistryBucket struct {
 	state BucketState
 
 	Paths map[tspath.Path]struct{}
-	// !!! only need to store locations outside the current node_modules directory
-	//     if we always rebuild whole directory on any change inside
-	LookupLocations map[tspath.Path]struct{}
 	// IgnoredPackageNames is only defined for project buckets. It is the set of
 	// package names that were present in the project's program, and not included
 	// in a node_modules bucket, and ultimately not included in the project bucket
@@ -121,7 +118,6 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
 		state:               b.state,
 		Paths:               b.Paths,
-		LookupLocations:     b.LookupLocations,
 		IgnoredPackageNames: b.IgnoredPackageNames,
 		PackageNames:        b.PackageNames,
 		DependencyNames:     b.DependencyNames,
@@ -165,8 +161,8 @@ type Registry struct {
 	nodeModules map[tspath.Path]*RegistryBucket
 	projects    map[tspath.Path]*RegistryBucket
 
-	// specifierCache maps from importing file to target file to specifier
-	specifierCache map[tspath.Path]map[tspath.Path]string
+	// specifierCache maps from importing file to target file to specifier.
+	specifierCache map[tspath.Path]*collections.SyncMap[tspath.Path, string]
 }
 
 func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
@@ -216,7 +212,6 @@ func (r *Registry) NodeModulesDirectories() map[tspath.Path]string {
 }
 
 func (r *Registry) Clone(ctx context.Context, change RegistryChange, host RegistryCloneHost, logger *logging.LogTree) (*Registry, error) {
-	// !!! try to do less to discover that this call is a no-op
 	start := time.Now()
 	if logger != nil {
 		logger = logger.Fork("Building autoimport registry")
@@ -299,8 +294,7 @@ func (r *Registry) GetCacheStats() *CacheStats {
 }
 
 type RegistryChange struct {
-	RequestedFile tspath.Path
-	// !!! sending opened/closed may be simpler
+	RequestedFile   tspath.Path
 	OpenFiles       map[tspath.Path]string
 	Changed         collections.Set[lsproto.DocumentUri]
 	Created         collections.Set[lsproto.DocumentUri]
@@ -328,7 +322,7 @@ type registryBuilder struct {
 	directories     *dirty.Map[tspath.Path, *directory]
 	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
 	projects        *dirty.Map[tspath.Path, *RegistryBucket]
-	specifierCache  *dirty.MapBuilder[tspath.Path, map[tspath.Path]string, map[tspath.Path]string]
+	specifierCache  *dirty.MapBuilder[tspath.Path, *collections.SyncMap[tspath.Path, string], *collections.SyncMap[tspath.Path, string]]
 }
 
 func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBuilder {
@@ -381,7 +375,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 
 		if !b.specifierCache.Has(path) {
-			b.specifierCache.Set(path, make(map[tspath.Path]string))
+			b.specifierCache.Set(path, &collections.SyncMap[tspath.Path, string]{})
 		}
 	}
 
@@ -443,17 +437,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		}
 
 		if hasNodeModules {
-			if nodeModulesEntry, ok := b.nodeModules.Get(dirPath); ok {
-				// !!! this function is called updateBucketAndDirectoryExistence but it's marking buckets dirty too...
-				//     I'm not sure how this code path happens - after moving the package.json change handling out,
-				//     it looks like this only happens if we added a directory but already had a node_modules bucket,
-				//     which I think is impossible. We can probably delete this code path.
-				nodeModulesEntry.ChangeIf(func(bucket *RegistryBucket) bool {
-					return !bucket.state.multipleFilesDirty
-				}, func(bucket *RegistryBucket) {
-					bucket.state.multipleFilesDirty = true
-				})
-			} else {
+			if _, ok := b.nodeModules.Get(dirPath); !ok {
 				b.nodeModules.Add(dirPath, newRegistryBucket())
 			}
 		} else {
@@ -540,7 +524,6 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 			return
 		}
 		for uri := range uris {
-			// !!! handle package.json effect on node_modules (updateBucketAndDirectoryExistence already detected package.json change)
 			path := b.base.toPath(uri.FileName())
 			if len(cleanNodeModulesBuckets) > 0 {
 				// For node_modules, mark the bucket dirty if anything changes in the directory
@@ -555,14 +538,13 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 					}
 				}
 			}
-			// For projects, mark the bucket dirty if the bucket contains the file directly or as a lookup location
+			// For projects, mark the bucket dirty if the bucket contains the file directly.
+			// Any other significant change, like a created failed lookup location, is
+			// handled by newProgramStructure.
 			for projectDirPath := range cleanProjectBuckets {
 				entry, _ := b.projects.Get(projectDirPath)
 				var update bool
 				_, update = entry.Value().Paths[path]
-				if !update {
-					_, update = entry.Value().LookupLocations[path]
-				}
 				if update {
 					entry.Change(func(bucket *RegistryBucket) { bucket.markFileDirty(path) })
 					if !entry.Value().state.multipleFilesDirty {
@@ -596,8 +578,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 
 	tspath.ForEachAncestorDirectoryPath(change.RequestedFile, func(dirPath tspath.Path) (any, bool) {
 		if nodeModulesBucket, ok := b.nodeModules.Get(dirPath); ok {
-			// !!! don't do this unless dependencies could have possibly changed?
-			//     I don't know, it's probably pretty cheap, but easier to do now that we have BucketState
 			dirName := core.FirstResult(b.directories.Get(dirPath)).Value().name
 			dependencies := b.computeDependenciesForNodeModulesDirectory(change, dirName, dirPath)
 			if nodeModulesBucket.Value().state.hasDirtyFileBesides(change.RequestedFile) || !nodeModulesBucket.Value().DependencyNames.Equals(dependencies) {
@@ -659,7 +639,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	start := time.Now()
 	wg.Wait()
 
-	// !!! clean up this hot mess
 	for _, t := range tasks {
 		if t.err != nil {
 			continue
@@ -667,6 +646,16 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		t.entry.Replace(t.result.bucket)
 	}
 
+	// If we failed to resolve any alias exports by ending up at a non-relative module specifier
+	// that didn't resolve to another package, it's probably an ambient module declared in another package.
+	// We recorded these failures, along with the name of every ambient module declared elsewhere, so we
+	// can do a second pass on the failed files, this time including the ambient modules declarations that
+	// were missing the first time. Example: node_modules/fs-extra/index.d.ts is simply `export * from "fs"`,
+	// but when trying to resolve the `export *`, we don't know where "fs" is declared. The aliasResolver
+	// tries to find packages named "fs" on the file system, but after failing, records "fs" as a failure
+	// for fs-extra/index.d.ts. Meanwhile, if we also processed node_modules/@types/node/fs.d.ts, we
+	// recorded that file as declaring the ambient module "fs". In the second pass, we combine those two
+	// files and reprocess fs-extra/index.d.ts, this time finding "fs" declared in @types/node.
 	secondPassStart := time.Now()
 	var secondPassFileCount int
 	for _, t := range tasks {
@@ -682,7 +671,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				if _, exists := rootFiles[fileName]; exists {
 					continue
 				}
-				// !!! parallelize?
 				rootFiles[fileName] = b.host.GetSourceFile(fileName, b.base.toPath(fileName))
 				secondPassFileCount++
 			}
@@ -743,7 +731,7 @@ func (b *registryBuilder) buildProjectBucket(
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
-	getChecker, closePool := b.createCheckerPool(program)
+	getChecker, closePool, checkerCount := createCheckerPool(program)
 	defer closePool()
 	exports := make(map[tspath.Path][]*Export)
 	var wg sync.WaitGroup
@@ -778,8 +766,6 @@ outer:
 		}
 		wg.Go(func() {
 			if ctx.Err() == nil {
-				// !!! we could consider doing ambient modules / augmentations more directly
-				// from the program checker, instead of doing the syntax-based collection
 				checker, done := getChecker()
 				defer done()
 				extractor := b.newExportExtractor("", "", checker)
@@ -813,7 +799,7 @@ outer:
 	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
 
 	if logger != nil {
-		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker)
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker, %d created checkers)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker, checkerCount())
 		if skippedFileCount > 0 {
 			logger.Logf("Skipped %d files due to exclude patterns", skippedFileCount)
 		}
@@ -857,10 +843,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		return nil, ctx.Err()
 	}
 
-	// !!! should we really be preparing buckets for all open files? Could dirty tracking
-	// be more granular? what are the actual inputs that determine whether a bucket is valid
-	// for a given importing file?
-	// For now, we'll always build for all open files.
 	start := time.Now()
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	directoryPackageNames, err := getPackageNamesInNodeModules(tspath.CombinePaths(dirName, "node_modules"), b.host.FS())
@@ -887,7 +869,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		var wg sync.WaitGroup
 		for i, entrypoint := range entrypoints {
 			wg.Go(func() {
-				// !!! if we don't end up storing files in the ParseCache, this would be repeated during second-pass extraction
 				file := b.host.GetSourceFile(entrypoint.ResolvedFileName, b.base.toPath(entrypoint.ResolvedFileName))
 				binder.BindSourceFile(file)
 				rootFiles[i] = file
@@ -968,8 +949,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 					exports[entrypoint.Path()] = fileExports
 				} else {
 					// Record the package name so we can use it later during the second pass
-					// !!! perhaps we could store the whole set of partial exports and avoid
-					//     repeating some work
 					source.mu.Lock()
 					source.packageName = packageName
 					source.mu.Unlock()
@@ -995,7 +974,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			AmbientModuleNames: ambientModuleNames,
 			Paths:              make(map[tspath.Path]struct{}, len(exports)),
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
-			LookupLocations:    make(map[tspath.Path]struct{}),
 			state: BucketState{
 				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
 			},
@@ -1014,9 +992,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			path := b.base.toPath(entrypoint.ResolvedFileName)
 			result.bucket.Entrypoints[path] = append(result.bucket.Entrypoints[path], entrypoint)
 		}
-		for _, failedLocation := range entrypointSet.FailedLookupLocations {
-			result.bucket.LookupLocations[b.base.toPath(failedLocation)] = struct{}{}
-		}
 	}
 
 	if logger != nil {
@@ -1030,24 +1005,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	}
 
 	return result, ctx.Err()
-}
-
-// !!! tune default size, create on demand
-const checkerPoolSize = 16
-
-func (b *registryBuilder) createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func()) {
-	pool := make(chan *checker.Checker, checkerPoolSize)
-	for range checkerPoolSize {
-		pool <- core.FirstResult(checker.NewChecker(program))
-	}
-	return func() (*checker.Checker, func()) {
-			checker := <-pool
-			return checker, func() {
-				pool <- checker
-			}
-		}, func() {
-			close(pool)
-		}
 }
 
 func (b *registryBuilder) getNearestAncestorDirectoryWithValidPackageJson(filePath tspath.Path) *directory {

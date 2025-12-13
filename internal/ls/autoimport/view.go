@@ -147,7 +147,8 @@ func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, i
 				if e.ExportID == ex.ExportID {
 					grouped[key] = slices.Replace(existing, i, i+1, &Export{
 						ExportID:                   e.ExportID,
-						Syntax:                     e.Syntax,
+						ModuleFileName:             e.ModuleFileName,
+						Syntax:                     min(e.Syntax, ex.Syntax),
 						Flags:                      e.Flags | ex.Flags,
 						ScriptElementKind:          min(e.ScriptElementKind, ex.ScriptElementKind),
 						ScriptElementKindModifiers: *e.ScriptElementKindModifiers.UnionedWith(&ex.ScriptElementKindModifiers),

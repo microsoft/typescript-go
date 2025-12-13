@@ -8,8 +8,6 @@ func (v *View) GetModuleSpecifier(
 	export *Export,
 	userPreferences modulespecifiers.UserPreferences,
 ) (string, modulespecifiers.ResultKind) {
-	// !!! try using existing import
-
 	// Ambient module
 	if modulespecifiers.PathIsBareSpecifier(string(export.ModuleID)) {
 		specifier := string(export.ModuleID)
@@ -43,14 +41,14 @@ func (v *View) GetModuleSpecifier(
 
 	cache := v.registry.specifierCache[v.importingFile.Path()]
 	if export.NodeModulesDirectory == "" {
-		if specifier, ok := cache[export.Path]; ok {
+		if specifier, ok := cache.Load(export.Path); ok {
 			return specifier, modulespecifiers.ResultKindRelative
 		}
 	}
 
 	specifiers, kind := modulespecifiers.GetModuleSpecifiersForFileWithInfo(
 		v.importingFile,
-		string(export.ExportID.ModuleID),
+		export.ModuleFileName,
 		v.program.Options(),
 		v.program,
 		userPreferences,
@@ -58,9 +56,11 @@ func (v *View) GetModuleSpecifier(
 		true,
 	)
 	if len(specifiers) > 0 {
-		// !!! sort/filter specifiers?
+		// !!! unsure when this could return multiple specifiers combined with the
+		//     new node_modules code. Possibly with local symlinks, which should be
+		//     very rare.
 		specifier := specifiers[0]
-		cache[export.Path] = specifier
+		cache.Store(export.Path, specifier)
 		return specifier, kind
 	}
 	return "", modulespecifiers.ResultKindNone
