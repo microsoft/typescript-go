@@ -31,5 +31,5 @@ add/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyImportFixModuleSpecifiers(t, "", []string{"pkg", "pkg/utils"}, nil /*preferences*/)
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"pkg/utils"}, &lsutil.UserPreferences{AutoImportSpecifierExcludeRegexes: []string{"^pkg$"}})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"pkg/utils"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{AutoImportSpecifierExcludeRegexes: []string{"^pkg$"}}})
 }

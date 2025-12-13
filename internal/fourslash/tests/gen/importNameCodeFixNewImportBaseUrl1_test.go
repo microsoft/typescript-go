@@ -34,5 +34,5 @@ f1();`,
 		`import { f1 } from "b/x";
 
 f1();`,
-	}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
+	}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
 }
