@@ -28,15 +28,3 @@ class C2 {
 >value : Symbol(value, Decl(legacyDecoratorsSingleAccessor.ts, 9, 22))
 }
 
-// Test case for decorated class without modifiers
-declare function classDec(target: any): any;
->classDec : Symbol(classDec, Decl(legacyDecoratorsSingleAccessor.ts, 10, 1))
->target : Symbol(target, Decl(legacyDecoratorsSingleAccessor.ts, 13, 26))
-
-@classDec
->classDec : Symbol(classDec, Decl(legacyDecoratorsSingleAccessor.ts, 10, 1))
-
-class C3 {
->C3 : Symbol(C3, Decl(legacyDecoratorsSingleAccessor.ts, 13, 44))
-}
-

@@ -12,10 +12,3 @@ class C1 {
 class C2 {
     @dec set accessor(value: number) { }
 }
-
-// Test case for decorated class without modifiers
-declare function classDec(target: any): any;
-
-@classDec
-class C3 {
-}

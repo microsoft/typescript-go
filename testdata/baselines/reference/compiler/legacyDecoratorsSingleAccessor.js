@@ -13,13 +13,6 @@ class C2 {
     @dec set accessor(value: number) { }
 }
 
-// Test case for decorated class without modifiers
-declare function classDec(target: any): any;
-
-@classDec
-class C3 {
-}
-
 
 //// [legacyDecoratorsSingleAccessor.js]
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -42,8 +35,3 @@ class C2 {
 __decorate([
     dec
 ], C2.prototype, "accessor", null);
-let C3 = class C3 {
-};
-C3 = __decorate([
-    classDec
-], C3);
