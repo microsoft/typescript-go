@@ -1,5 +1,5 @@
 // @target: esnext
-// @experimentaldecorators: true
+// @experimentalDecorators: true
 
 declare function dec(target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor;
 
