@@ -109,10 +109,7 @@ func moveRangePastModifiers(node *ast.Node) core.TextRange {
 
 	var lastModifier *ast.Node
 	if ast.CanHaveModifiers(node) {
-		nodes := node.ModifierNodes()
-		if len(nodes) > 0 {
-			lastModifier = core.LastOrNil(nodes)
-		}
+		lastModifier = core.LastOrNil(node.ModifierNodes())
 	}
 
 	if lastModifier != nil && !ast.PositionIsSynthesized(lastModifier.End()) {
