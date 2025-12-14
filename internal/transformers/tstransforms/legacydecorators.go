@@ -110,8 +110,8 @@ func moveRangePastModifiers(node *ast.Node) core.TextRange {
 	var lastModifier *ast.Node
 	if ast.CanHaveModifiers(node) {
 		nodes := node.ModifierNodes()
-		if nodes != nil {
-			lastModifier = nodes[0]
+		if len(nodes) > 0 {
+			lastModifier = core.LastOrNil(nodes)
 		}
 	}
 
@@ -710,7 +710,7 @@ func getAllDecoratorsOfAccessors(accessor *ast.Node, parent *ast.ClassDeclaratio
 	var firstAccessorWithDecorators *ast.Node
 	if ast.HasDecorators(decls.FirstAccessor) {
 		firstAccessorWithDecorators = decls.FirstAccessor
-	} else if ast.HasDecorators(decls.SecondAccessor) {
+	} else if decls.SecondAccessor != nil && ast.HasDecorators(decls.SecondAccessor) {
 		firstAccessorWithDecorators = decls.SecondAccessor
 	}
 
