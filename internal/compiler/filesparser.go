@@ -413,10 +413,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	// Build sourceFileToPackageName and redirectTargetsMap by scanning all resolved modules.
 	// This is done after loading is complete to ensure determinism regardless of load order.
 	// Skip this if package deduplication is disabled.
+	var sourceFileToPackageName map[tspath.Path]string
 	var redirectTargetsMap map[tspath.Path][]string
 	var deduplicatedPathMap map[tspath.Path]tspath.Path
 	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
-		redirectTargetsMap, deduplicatedPathMap = computePackageRedirects(resolvedModules, loader.toPath)
+		sourceFileToPackageName, redirectTargetsMap, deduplicatedPathMap = computePackageRedirects(resolvedModules, loader.toPath)
 		// Physically replace duplicate source files with canonical ones.
 		// This ensures that when the checker encounters files from the same package
 		// installed in different locations, they're literally the same AST pointer,
@@ -446,6 +447,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		missingFiles:                         missingFiles,
 		includeProcessor:                     includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
+		sourceFileToPackageName:              sourceFileToPackageName,
 		redirectTargetsMap:                   redirectTargetsMap,
 		deduplicatedPathMap:                  deduplicatedPathMap,
 	}
@@ -458,7 +460,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 func computePackageRedirects(
 	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule],
 	toPath func(string) tspath.Path,
-) (redirectTargetsMap map[tspath.Path][]string, deduplicatedPathMap map[tspath.Path]tspath.Path) {
+) (sourceFileToPackageName map[tspath.Path]string, redirectTargetsMap map[tspath.Path][]string, deduplicatedPathMap map[tspath.Path]tspath.Path) {
 	// Collect all resolved files with package IDs
 	// packageIdKey -> list of (resolvedPath, packageName)
 	type fileInfo struct {
@@ -495,6 +497,7 @@ func computePackageRedirects(
 
 	// Now for each packageIdKey with multiple files, pick the canonical one (lexicographically first)
 	// and build the redirect map
+	sourceFileToPackageName = make(map[tspath.Path]string)
 	redirectTargetsMap = make(map[tspath.Path][]string)
 	deduplicatedPathMap = make(map[tspath.Path]tspath.Path)
 
@@ -506,6 +509,12 @@ func computePackageRedirects(
 		slices.SortFunc(files, func(a, b fileInfo) int { return cmp.Compare(a.path, b.path) })
 
 		canonicalPath := files[0].path
+		packageName := files[0].packageName
+
+		// Record package name for all files from this package
+		for _, f := range files {
+			sourceFileToPackageName[f.path] = packageName
+		}
 
 		// If there are multiple files, the others redirect to the canonical one
 		if len(files) > 1 {
@@ -519,7 +528,7 @@ func computePackageRedirects(
 		}
 	}
 
-	return redirectTargetsMap, deduplicatedPathMap
+	return sourceFileToPackageName, redirectTargetsMap, deduplicatedPathMap
 }
 
 func (w *filesParser) addIncludeReason(includeProcessor *includeProcessor, task *parseTask, reason *FileIncludeReason) {
