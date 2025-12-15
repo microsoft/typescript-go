@@ -51,6 +51,7 @@ type fileLoader struct {
 }
 
 type processedFiles struct {
+	finishedProcessing            bool
 	resolver                      *module.Resolver
 	files                         []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
@@ -68,14 +69,11 @@ type processedFiles struct {
 	// if file was included using source file and its output is actually part of program
 	// this contains mapping from output to source file
 	outputFileToProjectReferenceSource map[tspath.Path]string
-	// Maps a source file path to the name of the package it was imported with
-	sourceFileToPackageName map[tspath.Path]string
 	// Key is a file path. Value is the list of files that redirect to it (same package, different install location)
 	redirectTargetsMap map[tspath.Path][]string
 	// Maps any path (canonical or redirect target) to its canonical path.
 	// Canonical paths map to themselves; redirect targets map to their canonical path.
 	deduplicatedPathMap map[tspath.Path]tspath.Path
-	finishedProcessing  bool
 }
 
 type jsxRuntimeImportSpecifier struct {
