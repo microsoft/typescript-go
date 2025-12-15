@@ -101,10 +101,11 @@ func (f *Fix) Edits(
 			// }
 		}
 
+		quotePreference := lsutil.GetQuotePreference(file, preferences)
 		if f.UseRequire {
-			declarations = getNewRequires(tracker, f.ModuleSpecifier, defaultImport, namedImports, namespaceLikeImport, compilerOptions)
+			declarations = getNewRequires(tracker, f.ModuleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, compilerOptions)
 		} else {
-			declarations = getNewImports(tracker, f.ModuleSpecifier, lsutil.GetQuotePreference(file, preferences), defaultImport, namedImports, namespaceLikeImport, compilerOptions, preferences)
+			declarations = getNewImports(tracker, f.ModuleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, compilerOptions, preferences)
 		}
 
 		insertImports(
@@ -314,10 +315,8 @@ func getNewImports(
 	compilerOptions *core.CompilerOptions,
 	preferences *lsutil.UserPreferences,
 ) []*ast.Statement {
-	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier)
-	if quotePreference == lsutil.QuotePreferenceSingle {
-		moduleSpecifierStringLiteral.AsStringLiteral().TokenFlags |= ast.TokenFlagsSingleQuote
-	}
+	tokenFlags := core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier, tokenFlags)
 	var statements []*ast.Statement // []AnyImportSyntax
 	if defaultImport != nil || len(namedImports) > 0 {
 		// `verbatimModuleSyntax` should prefer top-level `import type` -
@@ -378,12 +377,16 @@ func getNewImports(
 func getNewRequires(
 	changeTracker *change.Tracker,
 	moduleSpecifier string,
+	quotePreference lsutil.QuotePreference,
 	defaultImport *newImportBinding,
 	namedImports []*newImportBinding,
 	namespaceLikeImport *newImportBinding,
 	compilerOptions *core.CompilerOptions,
 ) []*ast.Statement {
-	quotedModuleSpecifier := changeTracker.NodeFactory.NewStringLiteral(moduleSpecifier)
+	quotedModuleSpecifier := changeTracker.NodeFactory.NewStringLiteral(
+		moduleSpecifier,
+		core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone),
+	)
 	var statements []*ast.Statement
 
 	// const { default: foo, bar, etc } = require('./mod');

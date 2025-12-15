@@ -3349,7 +3349,7 @@ func (l *LanguageService) getJSCompletionEntries(
 	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
-	nameTable := getNameTable(file)
+	nameTable := file.GetNameTable()
 	for name, pos := range nameTable {
 		// Skip identifiers produced only from the current location
 		if pos == position {
@@ -3842,7 +3842,7 @@ func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collect
 		t = typeChecker.GetTypeOfSymbolAtLocation(symbol, expression)
 	}
 	var properties []*ast.Symbol
-	if t != nil {
+	if t != nil && t.Flags()&checker.TypeFlagsStructuredType != 0 {
 		properties = t.AsStructuredType().Properties()
 	}
 	for _, property := range properties {

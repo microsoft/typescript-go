@@ -130,7 +130,7 @@ func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath
 			if content, ok := s.fs.ReadFile(entry.Value().fileName); ok {
 				entry.Change(func(file *diskFile) {
 					file.content = content
-					file.hash = xxh3.Hash128([]byte(content))
+					file.hash = xxh3.HashString128(content)
 					file.needsReload = false
 				})
 			} else {
