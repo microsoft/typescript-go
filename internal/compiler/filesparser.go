@@ -429,6 +429,14 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 			}
 		}
+		// Also filter allFiles to remove duplicates - we only want to check canonical files.
+		// This prevents duplicate checking and avoids processing dependencies of duplicate files.
+		allFiles = slices.DeleteFunc(allFiles, func(f *ast.SourceFile) bool {
+			if canonicalPath, ok := deduplicatedPathMap[f.Path()]; ok {
+				return f.Path() != canonicalPath
+			}
+			return false
+		})
 	}
 
 	return processedFiles{
