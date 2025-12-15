@@ -148,8 +148,6 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		Path:             path,
 		CompilerOptions:  core.EmptyCompilerOptions.SourceFileAffecting(),
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-		// !!! wrong if we load non-.d.ts files here
-		ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{},
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
 	a.files = append(a.files, key)
