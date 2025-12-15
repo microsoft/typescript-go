@@ -263,6 +263,12 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
+func (n *Node) Decorators() []*Node {
+	if n.Modifiers() == nil {
+		return nil
+	}
+	return core.Filter(n.Modifiers().Nodes, IsDecorator)
+}
 
 type MutableNode Node
 
@@ -6300,7 +6306,7 @@ func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
-		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
+		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
@@ -6753,9 +6759,13 @@ func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
 
 func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
+	privateName := SubtreeFactsNone
+	if !IsIdentifier(node.name) {
+		privateName = SubtreeContainsPrivateIdentifierInExpression
+	}
 	return propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.name)
+		propagateSubtreeFacts(node.name) | privateName
 }
 
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -10791,6 +10801,8 @@ type SourceFile struct {
 	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
+	nameTableOnce    sync.Once
+	nameTable        map[string]int
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10934,6 +10946,39 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 	return lineMap
 }
 
+// GetNameTable returns a map of all names in the file to their positions.
+// If the name appears more than once, the value is -1.
+func (file *SourceFile) GetNameTable() map[string]int {
+	file.nameTableOnce.Do(func() {
+		nameTable := make(map[string]int, file.IdentifierCount)
+
+		var walk func(node *Node) bool
+		walk = func(node *Node) bool {
+			if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+				IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+				IsPrivateIdentifier(node) {
+				text := node.Text()
+				if _, ok := nameTable[text]; ok {
+					nameTable[text] = -1
+				} else {
+					nameTable[text] = node.Pos()
+				}
+			}
+
+			node.ForEachChild(walk)
+			jsdocNodes := node.JSDoc(file)
+			for _, jsdoc := range jsdocNodes {
+				jsdoc.ForEachChild(walk)
+			}
+			return false
+		}
+		file.ForEachChild(walk)
+
+		file.nameTable = nameTable
+	})
+	return file.nameTable
+}
+
 func (node *SourceFile) IsBound() bool {
 	return node.isBound.Load()
 }
@@ -10956,7 +11001,6 @@ func (node *SourceFile) GetOrCreateToken(
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
-
 	loc := core.NewTextRange(pos, end)
 	if node.tokenCache == nil {
 		node.tokenCache = make(map[core.TextRange]*Node)
@@ -10969,7 +11013,9 @@ func (node *SourceFile) GetOrCreateToken(
 		}
 		return token
 	}
-
+	if parent.Flags&NodeFlagsReparsed != 0 {
+		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
+	}
 	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent

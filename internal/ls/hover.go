@@ -99,8 +99,6 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 						writeOptionalEntityName(&b, tag.Name())
 					case ast.KindJSDocAugmentsTag:
 						writeOptionalEntityName(&b, tag.ClassName())
-					case ast.KindJSDocSeeTag:
-						writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
 					case ast.KindJSDocTemplateTag:
 						for i, tp := range tag.TypeParameters() {
 							if i != 0 {
@@ -111,13 +109,36 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 					}
 					comments := tag.Comments()
 					if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
-						b.WriteString("\n")
 						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
+						if strings.HasPrefix(commentText, "<caption>") {
+							if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
+								b.WriteString(" — ")
+								b.WriteString(commentText[len("<caption>"):captionEnd])
+								commentText = commentText[captionEnd+len("</caption>"):]
+								// Trim leading blank lines from commentText
+								for {
+									s1 := strings.TrimLeft(commentText, " \t")
+									s2 := strings.TrimLeft(s1, "\r\n")
+									if len(s1) == len(s2) {
+										break
+									}
+									commentText = s2
+								}
+							}
+						}
+						b.WriteString("\n")
 						if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
 							b.WriteString(commentText)
 							b.WriteString("\n")
 						} else {
 							writeCode(&b, "tsx", commentText)
+						}
+					} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
+						b.WriteString(" — ")
+						l.writeNameLink(&b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
+						if len(comments) != 0 {
+							b.WriteString(" ")
+							l.writeComments(&b, c, comments, isMarkdown)
 						}
 					} else if len(comments) != 0 {
 						b.WriteString(" ")
@@ -550,6 +571,10 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		}
 		return
 	}
+	l.writeNameLink(b, c, name, text, quote, isMarkdown)
+}
+
+func (l *LanguageService) writeNameLink(b *strings.Builder, c *checker.Checker, name *ast.Node, text string, quote bool, isMarkdown bool) {
 	declarations := getDeclarationsFromLocation(c, name)
 	if len(declarations) != 0 {
 		declaration := declarations[0]
@@ -569,7 +594,7 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		}
 		return
 	}
-	writeQuotedString(b, getEntityNameString(name)+" "+text, quote && isMarkdown)
+	writeQuotedString(b, getEntityNameString(name)+core.IfElse(len(text) != 0, " ", "")+text, quote && isMarkdown)
 }
 
 func trimCommentPrefix(text string) string {
