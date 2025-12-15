@@ -4203,7 +4203,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 	targetPropFlags := getDeclarationModifierFlagsFromSymbol(targetProp)
 	switch {
 	case sourcePropFlags&ast.ModifierFlagsPrivate != 0 || targetPropFlags&ast.ModifierFlagsPrivate != 0:
-		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration && !r.c.areSymbolsFromSamePackageFile(sourceProp, targetProp) {
+		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration {
 			if reportErrors {
 				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
 					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))

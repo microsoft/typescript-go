@@ -8,6 +8,10 @@
 //     private x: number;
 // }
 
+// === /node_modules/b/index.d.ts ===
+// import [|X|] from "x";
+// export const b: [|X|];
+
 
 
 // === findAllReferences ===
@@ -20,14 +24,22 @@
 //     private x: number;
 // }
 
+// === /node_modules/b/index.d.ts ===
+// import [|X|] from "x";
+// export const b: [|X|];
+
 
 
 // === findAllReferences ===
-// === /node_modules/b/index.d.ts ===
-// import [|X|]/*FIND ALL REFS*/ from "x";
-// export const b: [|X|];
+// === /node_modules/a/index.d.ts ===
+// import [|X|] from "x";
+// export function a(x: [|X|]): void;
 
-// === /node_modules/b/node_modules/x/index.d.ts ===
+// === /node_modules/a/node_modules/x/index.d.ts ===
 // export default class [|X|] {
 //     private x: number;
 // }
+
+// === /node_modules/b/index.d.ts ===
+// import [|X|]/*FIND ALL REFS*/ from "x";
+// export const b: [|X|];

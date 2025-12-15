@@ -11,7 +11,7 @@
 
 
 // === goToDefinition ===
-// === /node_modules/b/node_modules/x/index.d.ts ===
+// === /node_modules/a/node_modules/x/index.d.ts ===
 // <|export default class [|X|] {
 //     private x: number;
 // }|>

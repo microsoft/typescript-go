@@ -418,6 +418,17 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var deduplicatedPathMap map[tspath.Path]tspath.Path
 	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
 		sourceFileToPackageName, redirectTargetsMap, deduplicatedPathMap = computePackageRedirects(resolvedModules, loader.toPath)
+		// Physically replace duplicate source files with canonical ones.
+		// This ensures that when the checker encounters files from the same package
+		// installed in different locations, they're literally the same AST pointer,
+		// so symbol identity comparisons work correctly.
+		for duplicatePath, canonicalPath := range deduplicatedPathMap {
+			if duplicatePath != canonicalPath {
+				if canonicalFile, ok := filesByPath[canonicalPath]; ok {
+					filesByPath[duplicatePath] = canonicalFile
+				}
+			}
+		}
 	}
 
 	return processedFiles{

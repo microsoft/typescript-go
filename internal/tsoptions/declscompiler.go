@@ -191,8 +191,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Category:                   diagnostics.Type_Checking,
 		Description:                diagnostics.Disable_deduplication_of_packages_with_the_same_name_and_version,
 		DefaultValueDescription:    false,
-		AffectsSemanticDiagnostics: true,
-		AffectsBuildInfo:           true,
+		AffectsProgramStructure:           true,
 	},
 	{
 		Name:                     "noEmit",

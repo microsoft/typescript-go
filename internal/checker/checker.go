@@ -544,7 +544,6 @@ type Program interface {
 	GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
-	GetDeduplicatedPackagePath(path tspath.Path) tspath.Path
 }
 
 type Host interface {
@@ -26976,14 +26975,8 @@ func (c *Checker) compareProperties(sourceProp *ast.Symbol, targetProp *ast.Symb
 		return TernaryFalse
 	}
 	if sourcePropAccessibility != ast.ModifierFlagsNone {
-		sourceTarget := c.getTargetSymbol(sourceProp)
-		targetTarget := c.getTargetSymbol(targetProp)
-		if sourceTarget != targetTarget {
-			// Check if these symbols are from duplicate package instances (same package installed
-			// in different locations). If they map to the same canonical file, treat them as identical.
-			if !c.areSymbolsFromSamePackageFile(sourceTarget, targetTarget) {
-				return TernaryFalse
-			}
+		if c.getTargetSymbol(sourceProp) != c.getTargetSymbol(targetProp) {
+			return TernaryFalse
 		}
 	} else {
 		if (sourceProp.Flags & ast.SymbolFlagsOptional) != (targetProp.Flags & ast.SymbolFlagsOptional) {
@@ -26994,27 +26987,6 @@ func (c *Checker) compareProperties(sourceProp *ast.Symbol, targetProp *ast.Symb
 		return TernaryFalse
 	}
 	return compareTypes(c.getTypeOfSymbol(sourceProp), c.getTypeOfSymbol(targetProp))
-}
-
-// areSymbolsFromSamePackageFile checks if two symbols come from files that are duplicates
-// of the same package file (same package name@version installed in different locations).
-func (c *Checker) areSymbolsFromSamePackageFile(source *ast.Symbol, target *ast.Symbol) bool {
-	// If package deduplication is disabled, don't treat any files as duplicates
-	if c.compilerOptions.DisablePackageDeduplication.IsTrue() {
-		return false
-	}
-	sourceDecl := source.ValueDeclaration
-	targetDecl := target.ValueDeclaration
-	if sourceDecl == nil || targetDecl == nil {
-		return false
-	}
-	sourceFile := ast.GetSourceFileOfNode(sourceDecl)
-	targetFile := ast.GetSourceFileOfNode(targetDecl)
-	// If they're from the same file, they can't have been deduplicated.
-	if sourceFile == targetFile {
-		return false
-	}
-	return c.program.GetDeduplicatedPackagePath(sourceFile.Path()) == c.program.GetDeduplicatedPackagePath(targetFile.Path())
 }
 
 func compareTypesEqual(s *Type, t *Type) Ternary {
