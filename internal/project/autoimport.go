@@ -1,6 +1,8 @@
 package project
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -59,7 +61,9 @@ type autoImportRegistryCloneHost struct {
 	parseCache        *ParseCache
 	fs                *sourceFS
 	currentDirectory  string
-	files             []ParseCacheKey
+
+	filesMu sync.Mutex
+	files   []ParseCacheKey
 }
 
 var _ autoimport.RegistryCloneHost = (*autoImportRegistryCloneHost)(nil)
@@ -150,12 +154,17 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
+
+	a.filesMu.Lock()
 	a.files = append(a.files, key)
+	a.filesMu.Unlock()
 	return a.parseCache.Acquire(key, fh)
 }
 
 // Dispose implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) Dispose() {
+	a.filesMu.Lock()
+	defer a.filesMu.Unlock()
 	for _, key := range a.files {
 		a.parseCache.Deref(key)
 	}
