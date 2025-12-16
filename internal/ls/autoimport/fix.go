@@ -889,7 +889,7 @@ func (v *View) compareModuleSpecifiersForRanking(a, b *Fix) int {
 		return comparison
 	}
 	if a.ModuleSpecifierKind == modulespecifiers.ResultKindAmbient && b.ModuleSpecifierKind == modulespecifiers.ResultKindAmbient {
-		if comparison := compareNodeCoreModuleSpecifiers(a.ModuleSpecifier, b.ModuleSpecifier, v.importingFile, v.program); comparison != 0 {
+		if comparison := v.compareNodeCoreModuleSpecifiers(a.ModuleSpecifier, b.ModuleSpecifier, v.importingFile, v.program); comparison != 0 {
 			return comparison
 		}
 	}
@@ -928,18 +928,21 @@ func (v *View) compareModuleSpecifiersForSorting(a, b *Fix) int {
 	return 0
 }
 
-func compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile, program *compiler.Program) int {
+func (v *View) compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile, program *compiler.Program) int {
 	if strings.HasPrefix(a, "node:") && !strings.HasPrefix(b, "node:") {
-		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+		if v.shouldUseUriStyleNodeCoreModules.IsTrue() {
 			return -1
-		}
-		return 1
-	}
-	if strings.HasPrefix(b, "node:") && !strings.HasPrefix(a, "node:") {
-		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+		} else if v.shouldUseUriStyleNodeCoreModules.IsFalse() {
 			return 1
 		}
-		return -1
+		return 0
+	}
+	if strings.HasPrefix(b, "node:") && !strings.HasPrefix(a, "node:") {
+		if v.shouldUseUriStyleNodeCoreModules.IsTrue() {
+			return 1
+		} else if v.shouldUseUriStyleNodeCoreModules.IsFalse() {
+			return -1
+		}
 	}
 	return 0
 }

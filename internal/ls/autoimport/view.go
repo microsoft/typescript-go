@@ -3,28 +3,31 @@ package autoimport
 import (
 	"context"
 	"slices"
+	"strings"
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type View struct {
-	registry       *Registry
-	importingFile  *ast.SourceFile
-	program        *compiler.Program
-	preferences    modulespecifiers.UserPreferences
-	projectKey     tspath.Path
-	allowedEndings []modulespecifiers.ModuleSpecifierEnding
-	conditions     *collections.Set[string]
+	registry      *Registry
+	importingFile *ast.SourceFile
+	program       *compiler.Program
+	preferences   modulespecifiers.UserPreferences
+	projectKey    tspath.Path
 
-	existingImports          *collections.MultiMap[ModuleID, existingImport]
-	shouldUseRequireForFixes *bool
+	allowedEndings                   []modulespecifiers.ModuleSpecifierEnding
+	conditions                       *collections.Set[string]
+	shouldUseUriStyleNodeCoreModules core.Tristate
+	existingImports                  *collections.MultiMap[ModuleID, existingImport]
+	shouldUseRequireForFixes         *bool
 }
 
 func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspath.Path, program *compiler.Program, preferences modulespecifiers.UserPreferences) *View {
@@ -38,6 +41,7 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 			module.GetConditions(program.Options(),
 				program.GetDefaultResolutionModeForFile(importingFile))...,
 		),
+		shouldUseUriStyleNodeCoreModules: lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program),
 	}
 }
 
@@ -142,6 +146,13 @@ outer:
 			target:                     target,
 			name:                       name,
 			ambientModuleOrPackageName: core.FirstNonZero(e.AmbientModuleName(), e.PackageName),
+		}
+		if e.PackageName == "@types/node" || strings.Contains(string(e.Path), "/node_modules/@types/node/") {
+			if _, ok := core.UnprefixedNodeCoreModules[key.ambientModuleOrPackageName]; ok {
+				// Group URI-style and non-URI style node core modules together so the ranking logic
+				// is allowed to drop one if an explicit preference is detected.
+				key.ambientModuleOrPackageName = "node:" + key.ambientModuleOrPackageName
+			}
 		}
 		if existing, ok := grouped[key]; ok {
 			for i, ex := range existing {

@@ -1,6 +1,8 @@
 package autoimport
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
 
@@ -42,6 +44,9 @@ func (v *View) GetModuleSpecifier(
 	cache := v.registry.specifierCache[v.importingFile.Path()]
 	if export.NodeModulesDirectory == "" {
 		if specifier, ok := cache.Load(export.Path); ok {
+			if specifier == "" {
+				return "", modulespecifiers.ResultKindNone
+			}
 			return specifier, modulespecifiers.ResultKindRelative
 		}
 	}
@@ -55,13 +60,16 @@ func (v *View) GetModuleSpecifier(
 		modulespecifiers.ModuleSpecifierOptions{},
 		true,
 	)
-	if len(specifiers) > 0 {
-		// !!! unsure when this could return multiple specifiers combined with the
-		//     new node_modules code. Possibly with local symlinks, which should be
-		//     very rare.
-		specifier := specifiers[0]
+	// !!! unsure when this could return multiple specifiers combined with the
+	//     new node_modules code. Possibly with local symlinks, which should be
+	//     very rare.
+	for _, specifier := range specifiers {
+		if strings.Contains(specifier, "/node_modules/") {
+			continue
+		}
 		cache.Store(export.Path, specifier)
 		return specifier, kind
 	}
+	cache.Store(export.Path, "")
 	return "", modulespecifiers.ResultKindNone
 }

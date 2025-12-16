@@ -71,13 +71,13 @@ func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
 
-func ShouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Program) bool {
+func ShouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Program) core.Tristate {
 	for _, node := range file.Imports() {
 		if core.NodeCoreModules()[node.Text()] && !core.ExclusivelyPrefixedNodeCoreModules[node.Text()] {
 			if strings.HasPrefix(node.Text(), "node:") {
-				return true
+				return core.TSTrue
 			} else {
-				return false
+				return core.TSFalse
 			}
 		}
 	}

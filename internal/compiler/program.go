@@ -95,7 +95,7 @@ func (p *Program) GetCurrentDirectory() string {
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
 func (p *Program) GetGlobalTypingsCacheLocation() string {
-	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+	return p.opts.TypingsLocation
 }
 
 // GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
@@ -179,8 +179,8 @@ func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()
 }
 
-func (p *Program) UsesUriStyleNodeCoreModules() bool {
-	return p.usesUriStyleNodeCoreModules.IsTrue()
+func (p *Program) UsesUriStyleNodeCoreModules() core.Tristate {
+	return p.usesUriStyleNodeCoreModules
 }
 
 var _ checker.Program = (*Program)(nil)
@@ -1317,6 +1317,13 @@ func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	return ok
 }
 
+func (p *Program) IsGlobalTypingsFile(fileName string) bool {
+	if !tspath.IsDeclarationFileName(fileName) {
+		return false
+	}
+	return tspath.ContainsPath(p.GetGlobalTypingsCacheLocation(), fileName, p.comparePathsOptions)
+}
+
 func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
 	if libFile, ok := p.libFiles[path]; ok {
 		return libFile
@@ -1654,7 +1661,9 @@ func (p *Program) collectPackageNames() {
 			p.resolvedPackageNames = &collections.Set[string]{}
 			p.unresolvedPackageNames = &collections.Set[string]{}
 			for _, file := range p.files {
-				if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) {
+				if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
+					// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
+					// as root files, which would not pass IsSourceFileFromExternalLibrary.
 					continue
 				}
 				for _, imp := range file.Imports() {

@@ -158,6 +158,14 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		for _, reexportedSymbol := range allExports {
 			export, _ := e.createExport(reexportedSymbol, moduleID, moduleFileName, ExportSyntaxStar, file, checkerLease)
 			if export != nil {
+				parent := reexportedSymbol.Parent
+				if parent != nil && parent.IsExternalModule() {
+					targetModuleID, _ := getModuleIDAndFileNameOfModuleSymbol(parent)
+					export.Target = ExportID{
+						ExportName: reexportedSymbol.Name,
+						ModuleID:   targetModuleID,
+					}
+				}
 				export.through = ast.InternalSymbolNameExportStar
 				*exports = append(*exports, export)
 			}

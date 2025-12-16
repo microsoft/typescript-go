@@ -741,7 +741,7 @@ func (b *registryBuilder) buildProjectBucket(
 
 outer:
 	for _, file := range program.GetSourceFiles() {
-		if program.IsSourceFileDefaultLibrary(file.Path()) {
+		if program.IsSourceFileDefaultLibrary(file.Path()) || program.IsGlobalTypingsFile(file.FileName()) {
 			continue
 		}
 		for _, excludePattern := range fileExcludePatterns {

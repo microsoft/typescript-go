@@ -47,7 +47,7 @@ write/**/`
 						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
 							AutoImport: &lsproto.AutoImportFix{
-								ModuleSpecifier: "fs/promises",
+								ModuleSpecifier: "node:fs",
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -57,7 +57,7 @@ write/**/`
 						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
 							AutoImport: &lsproto.AutoImportFix{
-								ModuleSpecifier: "node:fs",
+								ModuleSpecifier: "fs/promises",
 							},
 						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
