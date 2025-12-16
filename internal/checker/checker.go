@@ -17080,9 +17080,7 @@ func getTypeInstantiationKey(typeArguments []*Type, alias *TypeAlias, singleSign
 func getIndexedAccessKey(objectType *Type, indexType *Type, accessFlags AccessFlags, alias *TypeAlias) CacheHashKey {
 	var b keyBuilder
 	b.writeType(objectType)
-	b.writeByte(',')
 	b.writeType(indexType)
-	b.writeByte(',')
 	hashWrite32(&b.h, accessFlags)
 	b.writeAlias(alias)
 	return b.hash()
@@ -17092,10 +17090,7 @@ func getTemplateTypeKey(texts []string, types []*Type) CacheHashKey {
 	var b keyBuilder
 	b.writeTypes(types)
 	b.writeByte('|')
-	for i, s := range texts {
-		if i != 0 {
-			b.writeByte(',')
-		}
+	for _, s := range texts {
 		b.writeInt(len(s))
 	}
 	b.writeByte('|')
@@ -17122,16 +17117,14 @@ func getRelationKey(source *Type, target *Type, intersectionState IntersectionSt
 	var b keyBuilder
 	var constrained bool
 	if isTypeReferenceWithGenericArguments(source) && isTypeReferenceWithGenericArguments(target) {
+		b.writeByte('g')
 		constrained = b.writeGenericTypeReferences(source, target, ignoreConstraints)
 	} else {
+		b.writeByte('s')
 		b.writeType(source)
-		b.writeByte(',')
 		b.writeType(target)
 	}
-	if intersectionState != IntersectionStateNone {
-		b.writeByte(':')
-		hashWrite32(&b.h, intersectionState)
-	}
+	hashWrite32(&b.h, intersectionState)
 	return b.hash(), constrained
 }
 
