@@ -111,8 +111,9 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.fs.fs)
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
+		oldCommandLine := entry.commandLine
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, nil /*optionsRaw*/, c, c)
-		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
+		c.updateExtendingConfigs(path, entry.commandLine, oldCommandLine)
 		c.updateRootFilesWatch(fileName, entry)
 		logger.Log("Finished loading config file")
 	default:
@@ -601,9 +602,21 @@ func (c *configFileRegistryBuilder) PnpApi() *pnp.PnpApi {
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
-func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+	var content string
 	fh := c.fs.GetFileByPath(fileName, path)
-	return c.extendedConfigCache.Acquire(fh, path, parse)
+	if fh != nil {
+		content = fh.Content()
+	}
+
+	return c.extendedConfigCache.Acquire(path, ExtendedConfigParseArgs{
+		FileName:        fileName,
+		Content:         content,
+		FS:              c.fs,
+		ResolutionStack: resolutionStack,
+		Host:            host,
+		Cache:           c,
+	}).ExtendedConfigCacheEntry
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {
