@@ -16915,20 +16915,12 @@ func (b *keyBuilder) writeInt(value int) {
 	hashWrite64(&b.h, value)
 }
 
-func (b *keyBuilder) writeSymbolId(id ast.SymbolId) {
-	hashWrite64(&b.h, id)
-}
-
 func (b *keyBuilder) writeSymbol(s *ast.Symbol) {
-	b.writeSymbolId(ast.GetSymbolId(s))
-}
-
-func (b *keyBuilder) writeTypeId(id TypeId) {
-	hashWrite32(&b.h, id)
+	hashWrite64(&b.h, ast.GetSymbolId(s))
 }
 
 func (b *keyBuilder) writeType(t *Type) {
-	b.writeTypeId(t.id)
+	hashWrite32(&b.h, t.id)
 }
 
 func (b *keyBuilder) writeTypes(types []*Type) {
