@@ -21,7 +21,6 @@ quickInfoForOverloadOnConst1
 renameDefaultKeyword
 renameForDefaultExport01
 tsxCompletion12
-completionsImportDefaultExportCrash2
 completionsImport_reExportDefault
 completionsImport_reexportTransient
 jsDocFunctionSignatures2

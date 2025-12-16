@@ -890,6 +890,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		})
 	}
 
+	indexStart := time.Now()
 	var wg sync.WaitGroup
 	for packageName := range packageNames.Keys() {
 		wg.Go(func() {
@@ -967,7 +968,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 
 	wg.Wait()
 
-	indexStart := time.Now()
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
 			Index:              &Index[*Export]{},

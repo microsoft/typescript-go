@@ -1846,13 +1846,22 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	}
 
 	for _, autoImport := range data.autoImports {
-		// !!! flags filtering similar to shouldIncludeSymbol
 		// !!! check for type-only in JS
 		// !!! deprecation
 
 		if data.importStatementCompletion != nil {
 			// !!!
 			continue
+		}
+
+		if !autoImport.Export.IsUnresolvedAlias() {
+			if data.isTypeOnlyLocation {
+				if autoImport.Export.Flags&ast.SymbolFlagsType == 0 && autoImport.Export.Flags&ast.SymbolFlagsModule == 0 {
+					continue
+				}
+			} else if autoImport.Export.Flags&ast.SymbolFlagsValue == 0 {
+				continue
+			}
 		}
 
 		entry := l.createLSPCompletionItem(

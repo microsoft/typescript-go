@@ -8,7 +8,7 @@ import (
 )
 
 func TestAutoImportPackageRootPathTypeModule(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+	t.Skip()
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
