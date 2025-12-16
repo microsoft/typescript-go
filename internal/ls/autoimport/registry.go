@@ -822,8 +822,10 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 	dependencies := &collections.Set[string]{}
 	b.directories.Range(func(entry *dirty.MapEntry[tspath.Path, *directory]) bool {
 		if entry.Value().packageJson.Exists() && dirPath.ContainsPath(entry.Key()) {
-			entry.Value().packageJson.Contents.RangeDependencies(func(name, _, _ string) bool {
-				dependencies.Add(module.GetPackageNameFromTypesPackageName(name))
+			entry.Value().packageJson.Contents.RangeDependencies(func(name, _, field string) bool {
+				if field == "dependencies" || field == "peerDendencies" {
+					dependencies.Add(module.GetPackageNameFromTypesPackageName(name))
+				}
 				return true
 			})
 		}
