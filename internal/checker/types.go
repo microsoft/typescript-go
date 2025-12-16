@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/evaluator"
-	"github.com/zeebo/xxh3"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
@@ -185,7 +184,7 @@ type ExportTypeLinks struct {
 type TypeAliasLinks struct {
 	declaredType                  *Type
 	typeParameters                []*Type                // Type parameters of type alias (undefined if non-generic)
-	instantiations                map[xxh3.Uint128]*Type // Instantiations of generic type alias (undefined if non-generic)
+	instantiations                map[CacheHashKey]*Type // Instantiations of generic type alias (undefined if non-generic)
 	isConstructorDeclaredProperty bool
 }
 
@@ -262,7 +261,7 @@ const (
 )
 
 type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[xxh3.Uint128]*ast.Symbol // Symbol with applicable declarations
+	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
 }
 
 type MarkedAssignmentSymbolLinks struct {
@@ -852,7 +851,7 @@ type ObjectType struct {
 	StructuredType
 	target         *Type                  // Target of instantiated type
 	mapper         *TypeMapper            // Type mapper for instantiated type
-	instantiations map[xxh3.Uint128]*Type // Map of type instantiations
+	instantiations map[CacheHashKey]*Type // Map of type instantiations
 }
 
 func (t *ObjectType) AsObjectType() *ObjectType { return t }
@@ -1082,7 +1081,7 @@ type ConditionalRoot struct {
 	isDistributive      bool
 	inferTypeParameters []*Type
 	outerTypeParameters []*Type
-	instantiations      map[xxh3.Uint128]*Type
+	instantiations      map[CacheHashKey]*Type
 	alias               *TypeAlias
 }
 

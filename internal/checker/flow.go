@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/zeebo/xxh3"
 )
 
 type FlowType struct {
@@ -41,8 +40,7 @@ type FlowState struct {
 	declaredType    *Type
 	initialType     *Type
 	flowContainer   *ast.Node
-	refKey          xxh3.Uint128
-	refKeyValid     bool
+	refKey          CacheHashKey
 	depth           int
 	sharedFlowStart int
 	reduceLabels    []*ast.FlowReduceLabelData
@@ -1290,10 +1288,10 @@ func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subty
 }
 
 func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowType {
-	if !f.refKeyValid {
-		f.refKey, f.refKeyValid = c.getFlowReferenceKey(f)
+	if f.refKey.IsZero() {
+		f.refKey = c.getFlowReferenceKey(f)
 	}
-	if !f.refKeyValid {
+	if f.refKey.IsZero() {
 		// No cache key is generated when binding patterns are in unnarrowable situations
 		return FlowType{t: f.declaredType}
 	}
@@ -1613,12 +1611,12 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
 // The second return value indicates whether the reference is a valid dotted name.
-func (c *Checker) getFlowReferenceKey(f *FlowState) (xxh3.Uint128, bool) {
+func (c *Checker) getFlowReferenceKey(f *FlowState) CacheHashKey {
 	var b keyBuilder
 	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
-		return b.hash(), true
+		return b.hash()
 	}
-	return xxh3.Uint128{}, false // Reference isn't a dotted name
+	return CacheHashKey{} // Reference isn't a dotted name
 }
 
 func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
