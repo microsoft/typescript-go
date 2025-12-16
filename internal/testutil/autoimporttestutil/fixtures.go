@@ -14,8 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// !!! delete unused parts of API
-
 // FileHandle represents a file created for an autoimport lifecycle test.
 type FileHandle struct {
 	fileName string
@@ -32,15 +30,12 @@ type ProjectFileHandle struct {
 	exportIdentifier string
 }
 
-func (f ProjectFileHandle) ExportIdentifier() string { return f.exportIdentifier }
-
 // NodeModulesPackageHandle describes a generated package under node_modules.
 type NodeModulesPackageHandle struct {
-	Name             string
-	Directory        string
-	ExportIdentifier string
-	packageJSON      FileHandle
-	declaration      FileHandle
+	Name        string
+	Directory   string
+	packageJSON FileHandle
+	declaration FileHandle
 }
 
 func (p NodeModulesPackageHandle) PackageJSONFile() FileHandle { return p.packageJSON }
@@ -387,7 +382,7 @@ func (b *fileMapBuilder) AddTextFile(path string, contents string) {
 
 func (b *fileMapBuilder) AddNodeModulesPackages(nodeModulesDir string, count int) []NodeModulesPackageHandle {
 	packages := make([]NodeModulesPackageHandle, 0, count)
-	for i := 0; i < count; i++ {
+	for range count {
 		packages = append(packages, b.AddNodeModulesPackage(nodeModulesDir))
 	}
 	return packages
@@ -419,7 +414,7 @@ func (b *fileMapBuilder) AddNamedNodeModulesPackage(nodeModulesDir string, name 
 	if resolvedName == "" {
 		resolvedName = fmt.Sprintf("pkg%d", b.nextPackageID)
 	}
-	exportName := fmt.Sprintf("%s_value", sanitizeIdentifier(resolvedName))
+	exportName := sanitizeIdentifier(resolvedName) + "_value"
 	pkgDir := tspath.CombinePaths(normalizedDir, resolvedName)
 	packageJSONPath := tspath.CombinePaths(pkgDir, "package.json")
 	packageJSONContent := fmt.Sprintf(`{"name":"%s","types":"index.d.ts"}`, resolvedName)
@@ -428,11 +423,10 @@ func (b *fileMapBuilder) AddNamedNodeModulesPackage(nodeModulesDir string, name 
 	declarationContent := fmt.Sprintf("export declare const %s: number;\n", exportName)
 	b.files[declarationPath] = declarationContent
 	packageHandle := NodeModulesPackageHandle{
-		Name:             resolvedName,
-		Directory:        pkgDir,
-		ExportIdentifier: exportName,
-		packageJSON:      FileHandle{fileName: packageJSONPath, content: packageJSONContent},
-		declaration:      FileHandle{fileName: declarationPath, content: declarationContent},
+		Name:        resolvedName,
+		Directory:   pkgDir,
+		packageJSON: FileHandle{fileName: packageJSONPath, content: packageJSONContent},
+		declaration: FileHandle{fileName: declarationPath, content: declarationContent},
 	}
 	projectRoot := tspath.GetDirectoryPath(normalizedDir)
 	record := b.ensureProjectRecord(projectRoot)
