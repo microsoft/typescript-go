@@ -36,11 +36,7 @@ func newCompilerHost(
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		sourceFS: &sourceFS{
-			tracking: true,
-			toPath:   builder.toPath,
-			source:   builder.fs,
-		},
+		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
 
 		project: project,
 		builder: builder,

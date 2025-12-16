@@ -207,11 +207,19 @@ type sourceFS struct {
 	source    FileSource
 }
 
-var _ vfs.FS = (*sourceFS)(nil)
-
-func (fs *sourceFS) EnableTracking() {
-	fs.tracking = true
+func newSourceFS(tracking bool, source FileSource, toPath func(fileName string) tspath.Path) *sourceFS {
+	fs := &sourceFS{
+		tracking: tracking,
+		toPath:   toPath,
+		source:   source,
+	}
+	if tracking {
+		fs.seenFiles = &collections.SyncSet[tspath.Path]{}
+	}
+	return fs
 }
+
+var _ vfs.FS = (*sourceFS)(nil)
 
 func (fs *sourceFS) DisableTracking() {
 	fs.tracking = false
@@ -220,9 +228,6 @@ func (fs *sourceFS) DisableTracking() {
 func (fs *sourceFS) Track(fileName string) {
 	if !fs.tracking {
 		return
-	}
-	if fs.seenFiles == nil {
-		fs.seenFiles = &collections.SyncSet[tspath.Path]{}
 	}
 	fs.seenFiles.Add(fs.toPath(fileName))
 }
