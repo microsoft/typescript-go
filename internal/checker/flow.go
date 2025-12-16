@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/zeebo/xxh3"
 )
 
 type FlowType struct {
@@ -1291,7 +1292,7 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 	if f.refKey.IsZero() {
 		f.refKey = c.getFlowReferenceKey(f)
 	}
-	if f.refKey.IsZero() {
+	if f.refKey == nonDottedNameCacheKey {
 		// No cache key is generated when binding patterns are in unnarrowable situations
 		return FlowType{t: f.declaredType}
 	}
@@ -1607,16 +1608,18 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	return false
 }
 
+var nonDottedNameCacheKey = CacheHashKey(xxh3.HashString128("?"))
+
 // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
-// The result is a zero hash if the reference isn't a dotted name.
+// The result is nonDottedNameCacheKey if the reference isn't a dotted name.
 func (c *Checker) getFlowReferenceKey(f *FlowState) CacheHashKey {
 	var b keyBuilder
 	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
 		return b.hash()
 	}
-	return CacheHashKey{} // Reference isn't a dotted name
+	return nonDottedNameCacheKey // Reference isn't a dotted name
 }
 
 func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
