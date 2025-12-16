@@ -68,20 +68,27 @@ func (f *Fix) Edits(
 			panic("import index out of range")
 		}
 		moduleSpecifier := file.Imports()[f.ImportIndex]
-		importDecl := ast.TryGetImportFromModuleSpecifier(moduleSpecifier)
-		if importDecl == nil {
+		importNode := ast.TryGetImportFromModuleSpecifier(moduleSpecifier)
+		if importNode == nil {
 			panic("expected import declaration")
 		}
 		var importClauseOrBindingPattern *ast.Node
-		if importDecl.Kind == ast.KindImportDeclaration {
-			importClauseOrBindingPattern = importDecl.ImportClause()
+		switch importNode.Kind {
+		case ast.KindImportDeclaration:
+			importClauseOrBindingPattern = importNode.ImportClause()
 			if importClauseOrBindingPattern == nil {
 				panic("expected import clause")
 			}
-		} else if importDecl.Kind == ast.KindVariableDeclaration {
-			importClauseOrBindingPattern = importDecl.Name().AsBindingPattern().AsNode()
-		} else {
-			panic("expected import declaration or variable declaration")
+		case ast.KindCallExpression:
+			if !ast.IsVariableDeclarationInitializedToRequire(importNode.Parent) {
+				panic("expected require call expression to be in variable declaration")
+			}
+			importClauseOrBindingPattern = importNode.Parent.Name()
+			if importClauseOrBindingPattern == nil || !ast.IsObjectBindingPattern(importClauseOrBindingPattern) {
+				panic("expected object binding pattern in variable declaration")
+			}
+		default:
+			panic("expected import declaration or require call expression")
 		}
 
 		defaultImport := core.IfElse(f.ImportKind == lsproto.ImportKindDefault, &newImportBinding{kind: lsproto.ImportKindDefault, name: f.Name, addAsTypeOnly: f.AddAsTypeOnly}, nil)
@@ -702,6 +709,11 @@ func (v *View) tryAddToExistingImport(
 		// A type-only import may not have both a default and named imports, so the only way a name can
 		// be added to an existing type-only import is adding a named import to existing named bindings.
 		if importClause.IsTypeOnly() && !(importKind == lsproto.ImportKindNamed && namedBindings != nil) {
+			continue
+		}
+
+		if importKind == lsproto.ImportKindDefault && importClause.Name() != nil {
+			// Cannot add a default import to a declaration that already has one
 			continue
 		}
 
