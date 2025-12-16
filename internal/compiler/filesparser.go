@@ -32,8 +32,6 @@ type parseTask struct {
 	typeResolutionsInFile        module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	typeResolutionsTrace         []module.DiagAndArgs
 	resolutionDiagnostics        []*ast.Diagnostic
-	resolvedPackageNames         collections.Set[string]
-	unresolvedPackageNames       collections.Set[string]
 	processingDiagnostics        []*processingDiagnostic
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
