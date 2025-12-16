@@ -1610,7 +1610,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
-// The second return value indicates whether the reference is a valid dotted name.
+// The result is a zero hash if the reference isn't a dotted name.
 func (c *Checker) getFlowReferenceKey(f *FlowState) CacheHashKey {
 	var b keyBuilder
 	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
