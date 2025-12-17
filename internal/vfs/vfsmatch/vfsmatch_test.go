@@ -17,6 +17,18 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
+// readDirectoryFunc is a function type for ReadDirectory implementations
+type readDirectoryFunc func(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string
+
+// readDirectoryImplementations contains all implementations to test
+var readDirectoryImplementations = []struct {
+	name string
+	fn   readDirectoryFunc
+}{
+	{"Regex", vfsmatch.ReadDirectory},
+	{"NoRegex", vfsmatch.ReadDirectoryNoRegex},
+}
+
 // caseInsensitiveHost simulates a Windows-like file system
 func caseInsensitiveHost() vfs.FS {
 	return vfstest.FromMap(map[string]string{
@@ -148,7 +160,7 @@ type readDirTestCase struct {
 	expect     func(t *testing.T, got []string)
 }
 
-func runReadDirectoryCase(t *testing.T, tc readDirTestCase) {
+func runReadDirectoryCase(t *testing.T, tc readDirTestCase, readDir readDirectoryFunc) {
 	currentDir := tc.currentDir
 	if currentDir == "" {
 		currentDir = "/"
@@ -663,10 +675,12 @@ func TestReadDirectory(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			runReadDirectoryCase(t, tc)
-		})
+		for _, impl := range readDirectoryImplementations {
+			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
+				t.Parallel()
+				runReadDirectoryCase(t, tc, impl.fn)
+			})
+		}
 	}
 }
 
@@ -886,10 +900,12 @@ func TestReadDirectoryEdgeCases(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			runReadDirectoryCase(t, tc)
-		})
+		for _, impl := range readDirectoryImplementations {
+			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
+				t.Parallel()
+				runReadDirectoryCase(t, tc, impl.fn)
+			})
+		}
 	}
 }
 
@@ -917,10 +933,12 @@ func TestReadDirectoryEmptyIncludes(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			runReadDirectoryCase(t, tc)
-		})
+		for _, impl := range readDirectoryImplementations {
+			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
+				t.Parallel()
+				runReadDirectoryCase(t, tc, impl.fn)
+			})
+		}
 	}
 }
 
@@ -951,10 +969,12 @@ func TestReadDirectorySymlinkCycle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			runReadDirectoryCase(t, tc)
-		})
+		for _, impl := range readDirectoryImplementations {
+			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
+				t.Parallel()
+				runReadDirectoryCase(t, tc, impl.fn)
+			})
+		}
 	}
 }
 
@@ -1221,9 +1241,11 @@ func TestReadDirectoryMatchesTypeScriptBaselines(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			runReadDirectoryCase(t, tc)
-		})
+		for _, impl := range readDirectoryImplementations {
+			t.Run(impl.name+"/"+tc.name, func(t *testing.T) {
+				t.Parallel()
+				runReadDirectoryCase(t, tc, impl.fn)
+			})
+		}
 	}
 }

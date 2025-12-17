@@ -462,6 +462,17 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	return core.Flatten(results)
 }
 
+// useGlobMatch controls whether to use the regex-free glob matching implementation.
+const useGlobMatch = true
+
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	if useGlobMatch {
+		return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+	}
+	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+}
+
+// ReadDirectoryRegex is the regex-based implementation, exported for benchmarking.
+func ReadDirectoryRegex(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
