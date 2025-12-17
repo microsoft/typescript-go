@@ -96,16 +96,14 @@ func BenchmarkReadDirectory(b *testing.B) {
 	for _, bc := range benchCases {
 		b.Run("Old/"+bc.name, func(b *testing.B) {
 			host := bc.host()
-			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				vfsmatch.ReadDirectoryOld(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
 			}
 		})
 
 		b.Run("New/"+bc.name, func(b *testing.B) {
 			host := bc.host()
-			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				vfsmatch.ReadDirectoryNew(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
 			}
 		})
@@ -161,7 +159,7 @@ func BenchmarkPatternCompilation(b *testing.B) {
 
 	for _, p := range patterns {
 		b.Run(p.name, func(b *testing.B) {
-			for range b.N {
+			for b.Loop() {
 				vfsmatch.CompileGlobPattern(p.spec, "/project", vfsmatch.UsageFiles, true)
 			}
 		})
@@ -223,7 +221,7 @@ func BenchmarkPatternMatching(b *testing.B) {
 		}
 
 		b.Run(tc.name, func(b *testing.B) {
-			for range b.N {
+			for b.Loop() {
 				for _, path := range tc.paths {
 					pattern.Matches(path)
 				}
