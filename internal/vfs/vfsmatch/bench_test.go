@@ -94,19 +94,19 @@ func BenchmarkReadDirectory(b *testing.B) {
 	}
 
 	for _, bc := range benchCases {
-		b.Run("Regex/"+bc.name, func(b *testing.B) {
+		b.Run("Old/"+bc.name, func(b *testing.B) {
 			host := bc.host()
 			b.ResetTimer()
 			for range b.N {
-				vfsmatch.ReadDirectoryRegex(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
+				vfsmatch.ReadDirectoryOld(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
 			}
 		})
 
-		b.Run("NoRegex/"+bc.name, func(b *testing.B) {
+		b.Run("New/"+bc.name, func(b *testing.B) {
 			host := bc.host()
 			b.ResetTimer()
 			for range b.N {
-				vfsmatch.ReadDirectoryNoRegex(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
+				vfsmatch.ReadDirectoryNew(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
 			}
 		})
 	}

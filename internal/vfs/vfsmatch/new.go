@@ -623,8 +623,3 @@ func matchFilesNoRegex(path string, extensions []string, excludes []string, incl
 
 	return core.Flatten(results)
 }
-
-// ReadDirectoryNoRegex is the regex-free version of ReadDirectory
-func ReadDirectoryNoRegex(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
-	return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
-}

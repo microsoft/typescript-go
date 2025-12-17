@@ -25,8 +25,8 @@ var readDirectoryImplementations = []struct {
 	name string
 	fn   readDirectoryFunc
 }{
-	{"Regex", vfsmatch.ReadDirectory},
-	{"NoRegex", vfsmatch.ReadDirectoryNoRegex},
+	{"Old", vfsmatch.ReadDirectoryOld},
+	{"New", vfsmatch.ReadDirectoryNew},
 }
 
 // caseInsensitiveHost simulates a Windows-like file system
