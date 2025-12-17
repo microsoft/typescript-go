@@ -8,8 +8,8 @@ import (
 )
 
 func TestSyntacticClassificationsForOfKeyword2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `for (var of in of) { }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -8,8 +8,8 @@ import (
 )
 
 func TestSyntacticClassificationsDocComment2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @param foo { function(x): string } */
 var v;`

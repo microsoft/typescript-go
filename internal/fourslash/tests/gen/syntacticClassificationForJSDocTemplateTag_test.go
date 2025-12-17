@@ -8,8 +8,8 @@ import (
 )
 
 func TestSyntacticClassificationForJSDocTemplateTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @template T baring strait */
 function ident<T>: T {

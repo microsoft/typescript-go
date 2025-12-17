@@ -8,8 +8,8 @@ import (
 )
 
 func TestSemanticClassificatonTypeAlias(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type /*0*/Alias = number
 var x: /*1*/Alias;

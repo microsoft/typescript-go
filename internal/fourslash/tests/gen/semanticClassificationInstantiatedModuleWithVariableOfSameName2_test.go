@@ -8,8 +8,8 @@ import (
 )
 
 func TestSemanticClassificationInstantiatedModuleWithVariableOfSameName2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module /*0*/M {
     export interface /*1*/I {

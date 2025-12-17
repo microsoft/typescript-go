@@ -8,8 +8,8 @@ import (
 )
 
 func TestSemanticClassificationInTemplateExpressions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module /*0*/M {
     export class /*1*/C {

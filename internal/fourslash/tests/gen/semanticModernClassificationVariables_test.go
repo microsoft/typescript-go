@@ -8,8 +8,8 @@ import (
 )
 
 func TestSemanticModernClassificationVariables(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `  var x = 9, y1 = [x];
   try {

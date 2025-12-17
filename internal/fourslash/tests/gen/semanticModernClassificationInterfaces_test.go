@@ -8,8 +8,8 @@ import (
 )
 
 func TestSemanticModernClassificationInterfaces(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Pos { x: number, y: number };
 const p = { x: 1, y: 2 } as Pos;

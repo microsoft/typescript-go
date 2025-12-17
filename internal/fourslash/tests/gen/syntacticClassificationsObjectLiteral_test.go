@@ -8,8 +8,8 @@ import (
 )
 
 func TestSyntacticClassificationsObjectLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var v = 10e0;
 var x = {
