@@ -3,7 +3,6 @@ package tsoptions
 import (
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
@@ -90,9 +89,6 @@ func toCanonicalKey(path string, useCaseSensitiveFileNames bool) string {
 	return strings.ToLower(path)
 }
 
-// wildcardDirectoryPattern matches paths with wildcard characters
-var wildcardDirectoryPattern = regexp2.MustCompile(`^[^*?]*(?=\/[^/]*[*?])`, 0)
-
 // wildcardDirectoryMatch represents the result of a wildcard directory match
 type wildcardDirectoryMatch struct {
 	Key       string
@@ -101,21 +97,24 @@ type wildcardDirectoryMatch struct {
 }
 
 func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *wildcardDirectoryMatch {
-	match, _ := wildcardDirectoryPattern.FindStringMatch(spec)
-	if match != nil {
-		// We check this with a few `Index` calls because it's more efficient than complex regex
-		questionWildcardIndex := strings.Index(spec, "?")
-		starWildcardIndex := strings.Index(spec, "*")
-		lastDirectorySeparatorIndex := strings.LastIndexByte(spec, tspath.DirectorySeparator)
+	// Find the first occurrence of a wildcard character
+	firstWildcard := strings.IndexAny(spec, "*?")
+	if firstWildcard != -1 {
+		// Find the last directory separator before the wildcard
+		lastSepBeforeWildcard := strings.LastIndexByte(spec[:firstWildcard], tspath.DirectorySeparator)
+		if lastSepBeforeWildcard != -1 {
+			path := spec[:lastSepBeforeWildcard]
+			lastDirectorySeparatorIndex := strings.LastIndexByte(spec, tspath.DirectorySeparator)
 
-		// Determine if this should be watched recursively
-		recursive := (questionWildcardIndex != -1 && questionWildcardIndex < lastDirectorySeparatorIndex) ||
-			(starWildcardIndex != -1 && starWildcardIndex < lastDirectorySeparatorIndex)
+			// Determine if this should be watched recursively:
+			// recursive if the wildcard appears in a directory segment (not just the final file segment)
+			recursive := firstWildcard < lastDirectorySeparatorIndex
 
-		return &wildcardDirectoryMatch{
-			Key:       toCanonicalKey(match.String(), useCaseSensitiveFileNames),
-			Path:      match.String(),
-			Recursive: recursive,
+			return &wildcardDirectoryMatch{
+				Key:       toCanonicalKey(path, useCaseSensitiveFileNames),
+				Path:      path,
+				Recursive: recursive,
+			}
 		}
 	}
 
