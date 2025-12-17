@@ -15,7 +15,7 @@ const newNewMatch = true
 
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	if newNewMatch {
-	return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+		return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 	}
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
@@ -55,10 +55,10 @@ type SpecMatchers interface {
 // It returns a matcher that can test if paths match any of the patterns.
 func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
 	if newNewMatch {
-	if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+		if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
+			return m
+		}
+		return nil
 	}
 	if m := newRegexSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
@@ -70,10 +70,10 @@ func NewSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensiti
 // Returns nil if the spec compiles to an empty pattern (e.g., trailing ** for non-exclude).
 func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
 	if newNewMatch {
-	if m := newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+		if m := newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
+			return m
+		}
+		return nil
 	}
 	if m := newRegexSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
@@ -85,10 +85,10 @@ func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSens
 // Returns nil if no valid patterns could be compiled from the specs.
 func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
 	if newNewMatch {
-	if m := newGlobSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
-		return m
-	}
-	return nil
+		if m := newGlobSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
+			return m
+		}
+		return nil
 	}
 	if m := newRegexSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
 		return m
