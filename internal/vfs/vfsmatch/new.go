@@ -143,12 +143,8 @@ func (p *GlobPattern) Matches(path string) bool {
 		return false
 	}
 
-	// Split the path into components
-	pathComponents := splitPath(path)
-
-	matched := p.matchComponents(pathComponents, 0, 0, false)
-
-	return matched
+	// Use iterator-based matching to avoid slice allocation
+	return p.matchPath(path, 0, false)
 }
 
 // MatchesPrefix checks if the given directory path could potentially match files under it.
@@ -158,50 +154,63 @@ func (p *GlobPattern) MatchesPrefix(path string) bool {
 		return false
 	}
 
-	pathComponents := splitPath(path)
-
-	return p.matchComponentsPrefix(pathComponents, 0, 0)
+	return p.matchPathPrefix(path, 0)
 }
 
-// splitPath splits a path into its components
-func splitPath(path string) []string {
-	// Handle the case of an absolute path
-	if len(path) > 0 && path[0] == '/' {
-		rest := strings.Split(strings.TrimPrefix(path, "/"), "/")
-		// Prepend empty string to represent root
-		result := make([]string, 0, len(rest)+1)
-		result = append(result, "")
-		for _, s := range rest {
-			if s != "" {
-				result = append(result, s)
-			}
-		}
-		return result
+// nextPathComponent extracts the next path component from path starting at offset.
+// Returns the component, the offset after this component (pointing to char after '/' or len(path)), and whether a component was found.
+func nextPathComponent(path string, offset int) (component string, nextOffset int, found bool) {
+	if offset >= len(path) {
+		return "", offset, false
 	}
 
-	parts := strings.Split(path, "/")
-	result := make([]string, 0, len(parts))
-	for _, s := range parts {
-		if s != "" {
-			result = append(result, s)
-		}
+	// Handle leading slash for absolute paths - return empty string for root
+	if offset == 0 && path[0] == '/' {
+		return "", 1, true
 	}
-	return result
+
+	// Skip any leading slashes (for cases like after root)
+	for offset < len(path) && path[offset] == '/' {
+		offset++
+	}
+
+	if offset >= len(path) {
+		return "", offset, false
+	}
+
+	// Find the end of this component
+	start := offset
+	for offset < len(path) && path[offset] != '/' {
+		offset++
+	}
+
+	return path[start:offset], offset, true
 }
 
-// matchComponents recursively matches path components against pattern components
-func (p *GlobPattern) matchComponents(pathComps []string, pathIdx int, patternIdx int, inDoubleAsterisk bool) bool {
-	// If we've consumed all pattern components, check if path is also fully consumed
+// matchPath matches the path against pattern components starting at patternIdx.
+// pathOffset is the current position in the path string.
+func (p *GlobPattern) matchPath(path string, patternIdx int, inDoubleAsterisk bool) bool {
+	// Bootstrap: handle the path from the beginning
+	return p.matchPathAt(path, 0, patternIdx, inDoubleAsterisk)
+}
+
+// matchPathAt matches path[pathOffset:] against pattern components starting at patternIdx.
+func (p *GlobPattern) matchPathAt(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool) bool {
+	// Get the next path component
+	pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
+
+	// If we've consumed all pattern components
 	if patternIdx >= len(p.components) {
 		if p.isExclude {
 			// For exclude patterns, we can match a prefix
 			return true
 		}
-		return pathIdx >= len(pathComps)
+		// Path must also be fully consumed
+		return !hasMore
 	}
 
 	// If we've consumed all path components but still have pattern components
-	if pathIdx >= len(pathComps) {
+	if !hasMore {
 		// Check if remaining pattern components are all optional (** only)
 		for i := patternIdx; i < len(p.components); i++ {
 			if !p.components[i].isDoubleAsterisk {
@@ -212,31 +221,26 @@ func (p *GlobPattern) matchComponents(pathComps []string, pathIdx int, patternId
 	}
 
 	pc := p.components[patternIdx]
-	pathComp := pathComps[pathIdx]
 
 	if pc.isDoubleAsterisk {
 		// ** can match zero or more directory levels
 		// First, try matching zero directories (skip the **)
-		if p.matchComponents(pathComps, pathIdx, patternIdx+1, true) {
+		if p.matchPathAt(path, pathOffset, patternIdx+1, true) {
 			return true
 		}
 
 		// For include patterns, ** should not match directories starting with . or common package folders
-		// But we still try to skip those directories and continue matching
 		if !p.isExclude {
 			if len(pathComp) > 0 && pathComp[0] == '.' {
-				// Don't match hidden directories in ** for includes - return false
-				// The next pattern component (if any) might explicitly match it
 				return false
 			}
 			if isCommonPackageFolder(pathComp) {
-				// Don't match common package folders in ** for includes
 				return false
 			}
 		}
 
 		// Match current component with ** and continue
-		return p.matchComponents(pathComps, pathIdx+1, patternIdx, true)
+		return p.matchPathAt(path, nextPathOffset, patternIdx, true)
 	}
 
 	// Check implicit package folder exclusion
@@ -250,13 +254,21 @@ func (p *GlobPattern) matchComponents(pathComps []string, pathIdx int, patternId
 	}
 
 	// Continue to next components
-	return p.matchComponents(pathComps, pathIdx+1, patternIdx+1, false)
+	return p.matchPathAt(path, nextPathOffset, patternIdx+1, false)
 }
 
-// matchComponentsPrefix checks if the path could be a prefix of a matching path
-func (p *GlobPattern) matchComponentsPrefix(pathComps []string, pathIdx int, patternIdx int) bool {
+// matchPathPrefix checks if the path could be a prefix of a matching path.
+func (p *GlobPattern) matchPathPrefix(path string, patternIdx int) bool {
+	return p.matchPathPrefixAt(path, 0, patternIdx)
+}
+
+// matchPathPrefixAt checks if path[pathOffset:] could be a prefix of a matching path.
+func (p *GlobPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx int) bool {
+	// Get the next path component
+	pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
+
 	// If we've consumed all path components, this prefix could match
-	if pathIdx >= len(pathComps) {
+	if !hasMore {
 		return true
 	}
 
@@ -266,12 +278,11 @@ func (p *GlobPattern) matchComponentsPrefix(pathComps []string, pathIdx int, pat
 	}
 
 	pc := p.components[patternIdx]
-	pathComp := pathComps[pathIdx]
 
 	if pc.isDoubleAsterisk {
 		// ** can match any directory level
 		// Try matching zero (skip **) or more directories
-		if p.matchComponentsPrefix(pathComps, pathIdx, patternIdx+1) {
+		if p.matchPathPrefixAt(path, pathOffset, patternIdx+1) {
 			return true
 		}
 
@@ -285,7 +296,7 @@ func (p *GlobPattern) matchComponentsPrefix(pathComps []string, pathIdx int, pat
 			}
 		}
 
-		return p.matchComponentsPrefix(pathComps, pathIdx+1, patternIdx)
+		return p.matchPathPrefixAt(path, nextPathOffset, patternIdx)
 	}
 
 	// Check implicit package folder exclusion
@@ -298,7 +309,7 @@ func (p *GlobPattern) matchComponentsPrefix(pathComps []string, pathIdx int, pat
 		return false
 	}
 
-	return p.matchComponentsPrefix(pathComps, pathIdx+1, patternIdx+1)
+	return p.matchPathPrefixAt(path, nextPathOffset, patternIdx+1)
 }
 
 // matchComponent matches a single path component against a pattern component
@@ -428,8 +439,9 @@ func (p *GlobPattern) stringsEqual(a, b string) bool {
 
 // isCommonPackageFolder checks if a directory name is a common package folder
 func isCommonPackageFolder(name string) bool {
-	lower := strings.ToLower(name)
-	return lower == "node_modules" || lower == "bower_components" || lower == "jspm_packages"
+	return strings.EqualFold(name, "node_modules") ||
+		strings.EqualFold(name, "bower_components") ||
+		strings.EqualFold(name, "jspm_packages")
 }
 
 // GlobMatcher holds compiled glob patterns for matching files.
