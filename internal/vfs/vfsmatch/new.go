@@ -178,13 +178,14 @@ func nextPathComponent(path string, offset int) (component string, nextOffset in
 		return "", offset, false
 	}
 
-	// Find the end of this component
-	start := offset
-	for offset < len(path) && path[offset] != '/' {
-		offset++
+	// Find the end of this component using optimized byte search
+	remaining := path[offset:]
+	idx := strings.IndexByte(remaining, '/')
+	if idx < 0 {
+		// No more slashes, rest of path is the component
+		return remaining, len(path), true
 	}
-
-	return path[start:offset], offset, true
+	return remaining[:idx], offset + idx, true
 }
 
 // matchPath matches the path against pattern components starting at patternIdx.
@@ -455,9 +456,16 @@ func (p *globPattern) matchSegments(segments []patternSegment, segIdx int, s str
 	return false
 }
 
-// wouldMatchMinJs checks if the filename ends with .min.js
+// wouldMatchMinJs checks if the filename ends with .min.js (case-insensitive)
 func (p *globPattern) wouldMatchMinJs(filename string) bool {
-	return strings.HasSuffix(strings.ToLower(filename), ".min.js")
+	// Check length first to avoid string operations
+	const suffix = ".min.js"
+	if len(filename) < len(suffix) {
+		return false
+	}
+	// Get the last 7 characters and compare case-insensitively
+	end := filename[len(filename)-len(suffix):]
+	return strings.EqualFold(end, suffix)
 }
 
 // patternExplicitlyIncludesMinJs checks if the pattern explicitly includes .min.js
@@ -651,15 +659,18 @@ func (v *visitorNoRegex) visitDirectory(
 	}
 
 	for _, current := range systemEntries.Files {
-		name := pathPrefix + current
-		absoluteName := absPathPrefix + current
-
-		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
+		// Check extension first using just the filename (avoids path concatenation)
+		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(current, v.extensions) {
 			continue
 		}
 
+		// Build absolute name for pattern matching
+		absoluteName := absPathPrefix + current
+
 		matchIdx := v.fileMatcher.MatchesFile(absoluteName)
 		if matchIdx >= 0 {
+			// Only build the relative name if we have a match
+			name := pathPrefix + current
 			if v.numIncludePatterns == 0 {
 				v.results[0] = append(v.results[0], name)
 			} else {
