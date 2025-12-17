@@ -46,7 +46,7 @@ func getRegularExpressionForWildcard(specs []string, basePath string, usage Usag
 
 	// If excluding, match "foo/bar/baz...", but if including, only allow "foo".
 	var terminator string
-	if usage == "exclude" {
+	if usage == UsageExclude {
 		terminator = "($|/)"
 	} else {
 		terminator = "$"
@@ -137,7 +137,7 @@ func getPatternFromSpec(
 	if pattern == "" {
 		return ""
 	}
-	ending := core.IfElse(usage == "exclude", "($|/)", "$")
+	ending := core.IfElse(usage == UsageExclude, "($|/)", "$")
 	return fmt.Sprintf("^(%s)%s", pattern, ending)
 }
 
@@ -155,7 +155,7 @@ func getSubPatternFromSpec(
 	hasWrittenComponent := false
 	components := tspath.GetNormalizedPathComponents(spec, basePath)
 	lastComponent := core.LastOrNil(components)
-	if usage != "exclude" && lastComponent == "**" {
+	if usage != UsageExclude && lastComponent == "**" {
 		return ""
 	}
 
@@ -172,7 +172,7 @@ func getSubPatternFromSpec(
 		if component == "**" {
 			subpattern.WriteString(matcher.doubleAsteriskRegexFragment)
 		} else {
-			if usage == "directories" {
+			if usage == UsageDirectories {
 				subpattern.WriteString("(")
 				optionalCount++
 			}
@@ -181,7 +181,7 @@ func getSubPatternFromSpec(
 				subpattern.WriteRune(tspath.DirectorySeparator)
 			}
 
-			if usage != "exclude" {
+			if usage != UsageExclude {
 				var componentPattern strings.Builder
 				if strings.HasPrefix(component, "*") {
 					componentPattern.WriteString("([^./]" + matcher.singleAsteriskRegexFragment + ")?")
@@ -225,10 +225,10 @@ func getFileMatcherPatterns(path string, excludes []string, includes []string, u
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
 
 	return fileMatcherPatterns{
-		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
-		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, "files"),
-		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, "directories"),
-		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
+		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, UsageFiles), func(pattern string) string { return "^" + pattern + "$" }),
+		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, UsageFiles),
+		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, UsageDirectories),
+		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, UsageExclude),
 		basePaths:               getBasePaths(path, includes, useCaseSensitiveFileNames),
 	}
 }

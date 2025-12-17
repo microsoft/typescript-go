@@ -104,7 +104,7 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 	if len(c.validatedExcludeSpecs) == 0 {
 		return false
 	}
-	excludeMatcher := vfsmatch.NewSpecMatcher(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude", comparePathsOptions.UseCaseSensitiveFileNames)
+	excludeMatcher := vfsmatch.NewSpecMatcher(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, vfsmatch.UsageExclude, comparePathsOptions.UseCaseSensitiveFileNames)
 	if excludeMatcher == nil {
 		return false
 	}
@@ -124,7 +124,7 @@ func (c *configFileSpecs) getMatchedIncludeSpec(fileName string, comparePathsOpt
 		return ""
 	}
 	for index, spec := range c.validatedIncludeSpecs {
-		includeMatcher := vfsmatch.NewSingleSpecMatcher(spec, comparePathsOptions.CurrentDirectory, "files", comparePathsOptions.UseCaseSensitiveFileNames)
+		includeMatcher := vfsmatch.NewSingleSpecMatcher(spec, comparePathsOptions.CurrentDirectory, vfsmatch.UsageFiles, comparePathsOptions.UseCaseSensitiveFileNames)
 		if includeMatcher != nil && includeMatcher.MatchString(fileName) {
 			return c.validatedIncludeSpecsBeforeSubstitution[index]
 		}
@@ -1660,7 +1660,7 @@ func getFileNamesFromConfigSpecs(
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeMatchers == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatchers(includes, basePath, "files", host.UseCaseSensitiveFileNames())
+					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatchers(includes, basePath, vfsmatch.UsageFiles, host.UseCaseSensitiveFileNames())
 				}
 				var includeIndex int = -1
 				if jsonOnlyIncludeMatchers != nil {

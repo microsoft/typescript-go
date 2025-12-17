@@ -10,6 +10,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=Usage -trimprefix=Usage -output=stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+
+type Usage int8
+
+const (
+	UsageFiles Usage = iota
+	UsageDirectories
+	UsageExclude
+)
+
 const newNewMatch = true
 
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
@@ -25,14 +36,6 @@ func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []str
 func IsImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
-
-type Usage string
-
-const (
-	UsageFiles       Usage = "files"
-	UsageDirectories Usage = "directories"
-	UsageExclude     Usage = "exclude"
-)
 
 // SpecMatcher is an interface for matching file paths against compiled glob patterns.
 type SpecMatcher interface {

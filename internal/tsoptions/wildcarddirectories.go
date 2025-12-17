@@ -25,7 +25,7 @@ func getWildcardDirectories(include []string, exclude []string, comparePathsOpti
 		return nil
 	}
 
-	excludeMatcher := vfsmatch.NewSpecMatcher(exclude, comparePathsOptions.CurrentDirectory, "exclude", comparePathsOptions.UseCaseSensitiveFileNames)
+	excludeMatcher := vfsmatch.NewSpecMatcher(exclude, comparePathsOptions.CurrentDirectory, vfsmatch.UsageExclude, comparePathsOptions.UseCaseSensitiveFileNames)
 
 	wildcardDirectories := make(map[string]bool)
 	wildCardKeyToPath := make(map[string]string)
