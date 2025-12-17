@@ -1,10 +1,9 @@
-package vfsmatch_test
+package vfsmatch
 
 import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -97,14 +96,14 @@ func BenchmarkReadDirectory(b *testing.B) {
 		b.Run("Old/"+bc.name, func(b *testing.B) {
 			host := bc.host()
 			for b.Loop() {
-				vfsmatch.ReadDirectoryOld(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
+				matchFiles(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
 			}
 		})
 
 		b.Run("New/"+bc.name, func(b *testing.B) {
 			host := bc.host()
 			for b.Loop() {
-				vfsmatch.ReadDirectoryNew(host, "/", bc.path, bc.extensions, bc.excludes, bc.includes, nil)
+				matchFilesNoRegex(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
 			}
 		})
 	}
@@ -160,7 +159,7 @@ func BenchmarkPatternCompilation(b *testing.B) {
 	for _, p := range patterns {
 		b.Run(p.name, func(b *testing.B) {
 			for b.Loop() {
-				vfsmatch.CompileGlobPattern(p.spec, "/project", vfsmatch.UsageFiles, true)
+				compileGlobPattern(p.spec, "/project", UsageFiles, true)
 			}
 		})
 	}
@@ -215,7 +214,7 @@ func BenchmarkPatternMatching(b *testing.B) {
 	}
 
 	for _, tc := range testCases {
-		pattern := vfsmatch.CompileGlobPattern(tc.spec, "/project", vfsmatch.UsageFiles, true)
+		pattern := compileGlobPattern(tc.spec, "/project", UsageFiles, true)
 		if pattern == nil {
 			continue
 		}
@@ -223,7 +222,7 @@ func BenchmarkPatternMatching(b *testing.B) {
 		b.Run(tc.name, func(b *testing.B) {
 			for b.Loop() {
 				for _, path := range tc.paths {
-					pattern.Matches(path)
+					pattern.matches(path)
 				}
 			}
 		})
