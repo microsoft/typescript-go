@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-// newNewMatch controls whether to use the regex-free glob matching implementation.
 const newNewMatch = true
 
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
@@ -36,7 +35,6 @@ const (
 )
 
 // SpecMatcher is an interface for matching file paths against compiled glob patterns.
-// It abstracts over both regex-based and regex-free implementations.
 type SpecMatcher interface {
 	// MatchString returns true if the given path matches the pattern.
 	MatchString(path string) bool
