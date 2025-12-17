@@ -10,13 +10,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/autoimporttestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
 func TestRegistryLifecycle(t *testing.T) {
 	t.Parallel()
-	t.Run("preparesProjectAndNodeModulesBuckets", func(t *testing.T) {
+	t.Run("builds project and node_modules buckets", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
 		session := fixture.Session()
@@ -44,7 +45,7 @@ func TestRegistryLifecycle(t *testing.T) {
 		assert.Assert(t, nodeModulesBucket.ExportCount > 0)
 	})
 
-	t.Run("marksProjectBucketDirtyAfterEdit", func(t *testing.T) {
+	t.Run("bucket does not rebuild on same-file change", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 2)
 		session := fixture.Session()
@@ -92,7 +93,51 @@ func TestRegistryLifecycle(t *testing.T) {
 		assert.Equal(t, projectBucket.State.Dirty(), false)
 	})
 
-	t.Run("packageJsonDependencyChangesInvalidateNodeModulesBuckets", func(t *testing.T) {
+	t.Run("bucket updates on same-file change when new files added to the program", func(t *testing.T) {
+		t.Parallel()
+		projectRoot := "/home/src/explicit-files-project"
+		files := map[string]any{
+			projectRoot + "/tsconfig.json": `{
+				"compilerOptions": {
+					"module": "esnext",
+					"target": "esnext",
+					"strict": true
+				},
+				"files": ["index.ts"]
+			}`,
+			projectRoot + "/index.ts": "",
+			projectRoot + "/utils.ts": `export const foo = 1;
+export const bar = 2;`,
+		}
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+
+		// Open the index.ts file
+		session.DidOpenFile(ctx, indexURI, 1, "", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+		stats := autoImportStats(t, session)
+		projectBucket := singleBucket(t, stats.ProjectBuckets)
+		assert.Equal(t, 1, projectBucket.FileCount)
+
+		// Edit index.ts to import foo from utils.ts
+		newContent := `import { foo } from "./utils";`
+		session.DidChangeFile(ctx, indexURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: newContent}},
+		})
+
+		// Bucket should be rebuilt because new files were added
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		projectBucket = singleBucket(t, stats.ProjectBuckets)
+		assert.Equal(t, 2, projectBucket.FileCount)
+	})
+
+	t.Run("package.json dependency changes invalidate node_modules buckets", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
 		session := fixture.Session()
@@ -134,7 +179,7 @@ func TestRegistryLifecycle(t *testing.T) {
 		assert.Check(t, singleBucket(t, stats.NodeModulesBuckets).DependencyNames.Has("newpkg"))
 	})
 
-	t.Run("nodeModulesBucketsDeletedWhenNoOpenFilesReferThem", func(t *testing.T) {
+	t.Run("node_modules buckets get deleted when no open files can reference them", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, autoimporttestutil.MonorepoSetupConfig{
 			Root: monorepoProjectRoot,
@@ -177,7 +222,7 @@ func TestRegistryLifecycle(t *testing.T) {
 		assert.Equal(t, len(stats.ProjectBuckets), 1)
 	})
 
-	t.Run("dependencyAggregationChangesAsFilesOpenAndClose", func(t *testing.T) {
+	t.Run("node_modules bucket dependency selection changes with open files", func(t *testing.T) {
 		t.Parallel()
 		monorepoRoot := "/home/src/monorepo"
 		packageADir := tspath.CombinePaths(monorepoRoot, "packages", "a")

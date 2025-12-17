@@ -326,10 +326,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
-	var projectsWithNewProgramStructure collections.Set[tspath.Path]
+	projectsWithNewProgramStructure := make(map[tspath.Path]bool)
 	for _, project := range projectCollection.Projects() {
 		if project.ProgramLastUpdate == newSnapshotID && project.ProgramUpdateKind != ProgramUpdateKindCloned {
-			projectsWithNewProgramStructure.Add(project.configFilePath)
+			projectsWithNewProgramStructure[project.configFilePath] = project.ProgramUpdateKind == ProgramUpdateKindNewFiles
 		}
 	}
 
@@ -337,7 +337,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	// file open specifically, but we don't need to do it on every snapshot clone.
 	if len(change.fileChanges.Opened) != 0 {
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
-		if projectsWithNewProgramStructure.Len() > 0 {
+		if len(projectsWithNewProgramStructure) > 0 {
 			cleanFilesStart := time.Now()
 			removedFiles := 0
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {

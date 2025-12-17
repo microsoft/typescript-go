@@ -536,6 +536,7 @@ func (s *Session) GetSnapshotLoadingProjectTree(
 // !!! take snapshot that GetLanguageService initially returned
 func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	snapshot := s.getSnapshot(ctx, ResourceRequest{
+		Documents:   []lsproto.DocumentUri{uri},
 		AutoImports: uri,
 	})
 	project := snapshot.GetDefaultProject(uri)

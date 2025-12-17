@@ -28,6 +28,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+type newProgramStructure int
+
+const (
+	newProgramStructureFalse newProgramStructure = iota
+	newProgramStructureSameFileNames
+	newProgramStructureDifferentFileNames
+)
+
 // BucketState represents the dirty state of a bucket.
 // In general, a bucket can be used for an auto-imports request if it is clean
 // or if the only edited file is the one that was requested for auto-imports.
@@ -35,7 +43,7 @@ import (
 // However, two exceptions cause the bucket to be rebuilt after a change to a
 // single file:
 //
-//  1. Local files are newly added to the project by a manual import (!!! not implemented yet)
+//  1. Local files are newly added to the project by a manual import
 //  2. A node_modules dependency normally filtered out by package.json dependencies
 //     is added to the project by a manual import
 //
@@ -49,14 +57,14 @@ type BucketState struct {
 	// `multipleFilesDirty` is set.
 	dirtyFile           tspath.Path
 	multipleFilesDirty  bool
-	newProgramStructure bool
+	newProgramStructure newProgramStructure
 	// fileExcludePatterns is the value of the corresponding user preference when
 	// the bucket was built. If changed, the bucket should be rebuilt.
 	fileExcludePatterns []string
 }
 
 func (b BucketState) Dirty() bool {
-	return b.multipleFilesDirty || b.dirtyFile != "" || b.newProgramStructure
+	return b.multipleFilesDirty || b.dirtyFile != "" || b.newProgramStructure > 0
 }
 
 func (b BucketState) DirtyFile() tspath.Path {
@@ -67,7 +75,7 @@ func (b BucketState) DirtyFile() tspath.Path {
 }
 
 func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences *lsutil.UserPreferences) bool {
-	return b.newProgramStructure || b.hasDirtyFileBesides(file) || !core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns)
+	return b.newProgramStructure > 0 || b.hasDirtyFileBesides(file) || !core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns)
 }
 
 func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
@@ -77,7 +85,7 @@ func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
 type RegistryBucket struct {
 	state BucketState
 
-	Paths map[tspath.Path]struct{}
+	Paths collections.Set[tspath.Path]
 	// IgnoredPackageNames is only defined for project buckets. It is the set of
 	// package names that were present in the project's program, and not included
 	// in a node_modules bucket, and ultimately not included in the project bucket
@@ -109,7 +117,7 @@ func newRegistryBucket() *RegistryBucket {
 	return &RegistryBucket{
 		state: BucketState{
 			multipleFilesDirty:  true,
-			newProgramStructure: true,
+			newProgramStructure: newProgramStructureDifferentFileNames,
 		},
 	}
 }
@@ -261,7 +269,7 @@ func (r *Registry) GetCacheStats() *CacheStats {
 		stats.ProjectBuckets = append(stats.ProjectBuckets, BucketStats{
 			Path:            path,
 			ExportCount:     exportCount,
-			FileCount:       len(bucket.Paths),
+			FileCount:       bucket.Paths.Len(),
 			State:           bucket.state,
 			DependencyNames: bucket.DependencyNames,
 			PackageNames:    bucket.PackageNames,
@@ -276,7 +284,7 @@ func (r *Registry) GetCacheStats() *CacheStats {
 		stats.NodeModulesBuckets = append(stats.NodeModulesBuckets, BucketStats{
 			Path:            path,
 			ExportCount:     exportCount,
-			FileCount:       len(bucket.Paths),
+			FileCount:       bucket.Paths.Len(),
 			State:           bucket.state,
 			DependencyNames: bucket.DependencyNames,
 			PackageNames:    bucket.PackageNames,
@@ -294,12 +302,15 @@ func (r *Registry) GetCacheStats() *CacheStats {
 }
 
 type RegistryChange struct {
-	RequestedFile   tspath.Path
-	OpenFiles       map[tspath.Path]string
-	Changed         collections.Set[lsproto.DocumentUri]
-	Created         collections.Set[lsproto.DocumentUri]
-	Deleted         collections.Set[lsproto.DocumentUri]
-	RebuiltPrograms collections.Set[tspath.Path]
+	RequestedFile tspath.Path
+	OpenFiles     map[tspath.Path]string
+	Changed       collections.Set[lsproto.DocumentUri]
+	Created       collections.Set[lsproto.DocumentUri]
+	Deleted       collections.Set[lsproto.DocumentUri]
+	// RebuiltPrograms maps from project path to:
+	//   - true: the program was rebuilt with a different set of file names
+	//   - false: the program was rebuilt but the set of file names is unchanged
+	RebuiltPrograms map[tspath.Path]bool
 	UserPreferences *lsutil.UserPreferences
 }
 
@@ -497,9 +508,11 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 
 func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *logging.LogTree) {
 	// Mark new program structures
-	for projectPath := range change.RebuiltPrograms.Keys() {
+	for projectPath, newFileNames := range change.RebuiltPrograms {
 		if bucket, ok := b.projects.Get(projectPath); ok {
-			bucket.Change(func(bucket *RegistryBucket) { bucket.state.newProgramStructure = true })
+			bucket.Change(func(bucket *RegistryBucket) {
+				bucket.state.newProgramStructure = core.IfElse(newFileNames, newProgramStructureDifferentFileNames, newProgramStructureSameFileNames)
+			})
 		}
 	}
 
@@ -543,9 +556,7 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 			// handled by newProgramStructure.
 			for projectDirPath := range cleanProjectBuckets {
 				entry, _ := b.projects.Get(projectDirPath)
-				var update bool
-				_, update = entry.Value().Paths[path]
-				if update {
+				if entry.Value().Paths.Has(path) {
 					entry.Change(func(bucket *RegistryBucket) { bucket.markFileDirty(path) })
 					if !entry.Value().state.multipleFilesDirty {
 						delete(cleanProjectBuckets, projectDirPath)
@@ -606,17 +617,19 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	}
 
 	if project, ok := b.projects.Get(projectPath); ok {
+		program := b.host.GetProgramForProject(projectPath)
 		resolvedPackageNames := core.Memoize(func() *collections.Set[string] {
-			return getResolvedPackageNames(ctx, b.host.GetProgramForProject(projectPath))
+			return getResolvedPackageNames(ctx, program)
 		})
 		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile)
-		if !shouldRebuild && project.Value().state.newProgramStructure {
-			// Exception (2) from BucketState comment - check if new program's resolved package names include any
-			// previously ignored. If not, we can skip rebuilding the project bucket.
-			if project.Value().IgnoredPackageNames.Intersects(resolvedPackageNames()) {
+		if !shouldRebuild && project.Value().state.newProgramStructure > 0 {
+			// Exceptions from BucketState comment - check if new program's resolved package names include any
+			// previously ignored, or if there are new non-node_modules files.
+			// If not, we can skip rebuilding the project bucket.
+			if project.Value().IgnoredPackageNames.Intersects(resolvedPackageNames()) || hasNewNonNodeModulesFiles(program, project.Value()) {
 				shouldRebuild = true
 			} else {
-				project.Change(func(b *RegistryBucket) { b.state.newProgramStructure = false })
+				project.Change(func(b *RegistryBucket) { b.state.newProgramStructure = newProgramStructureFalse })
 			}
 		}
 		if shouldRebuild {
@@ -684,7 +697,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
 				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, ch)
 				fileExports := extractor.extractFromFile(sourceFile)
-				t.result.bucket.Paths[path] = struct{}{}
+				t.result.bucket.Paths.Add(path)
 				for _, exp := range fileExports {
 					t.result.bucket.Index.insertAsWords(exp)
 				}
@@ -699,6 +712,25 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 		logger.Logf("Built %d indexes in %v", len(tasks), time.Since(start))
 	}
+}
+
+func hasNewNonNodeModulesFiles(program *compiler.Program, bucket *RegistryBucket) bool {
+	if bucket.state.newProgramStructure != newProgramStructureDifferentFileNames {
+		return false
+	}
+	for _, file := range program.GetSourceFiles() {
+		if strings.Contains(file.FileName(), "/node_modules/") || isIgnoredFile(program, file) {
+			continue
+		}
+		if !bucket.Paths.Has(file.Path()) {
+			return true
+		}
+	}
+	return false
+}
+
+func isIgnoredFile(program *compiler.Program, file *ast.SourceFile) bool {
+	return program.IsSourceFileDefaultLibrary(file.Path()) || program.IsGlobalTypingsFile(file.FileName())
 }
 
 type failedAmbientModuleLookupSource struct {
@@ -741,7 +773,7 @@ func (b *registryBuilder) buildProjectBucket(
 
 outer:
 	for _, file := range program.GetSourceFiles() {
-		if program.IsSourceFileDefaultLibrary(file.Path()) || program.IsGlobalTypingsFile(file.FileName()) {
+		if isIgnoredFile(program, file) {
 			continue
 		}
 		for _, excludePattern := range fileExcludePatterns {
@@ -785,10 +817,7 @@ outer:
 	indexStart := time.Now()
 	idx := &Index[*Export]{}
 	for path, fileExports := range exports {
-		if result.bucket.Paths == nil {
-			result.bucket.Paths = make(map[tspath.Path]struct{}, len(exports))
-		}
-		result.bucket.Paths[path] = struct{}{}
+		result.bucket.Paths.Add(path)
 		for _, exp := range fileExports {
 			idx.insertAsWords(exp)
 		}
@@ -974,7 +1003,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			DependencyNames:    dependencies,
 			PackageNames:       directoryPackageNames,
 			AmbientModuleNames: ambientModuleNames,
-			Paths:              make(map[tspath.Path]struct{}, len(exports)),
+			Paths:              *collections.NewSetWithSizeHint[tspath.Path](len(exports)),
 			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(exports)),
 			state: BucketState{
 				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
@@ -984,7 +1013,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		possibleFailedAmbientModuleLookupTargets: &possibleFailedAmbientModuleLookupTargets,
 	}
 	for path, fileExports := range exports {
-		result.bucket.Paths[path] = struct{}{}
+		result.bucket.Paths.Add(path)
 		for _, exp := range fileExports {
 			result.bucket.Index.insertAsWords(exp)
 		}
