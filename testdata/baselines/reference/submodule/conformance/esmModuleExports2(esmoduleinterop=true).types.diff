@@ -5,6 +5,6 @@
  const Foo = require("./exporter.mjs");
  >Foo : "oops"
 ->require("./exporter.mjs") : typeof import("/exporter", { with: { "resolution-mode": "import" } })
-+>require("./exporter.mjs") : typeof import("./exporter.mts", { with: { "resolution-mode": "import" } })
++>require("./exporter.mjs") : typeof import("./exporter.mjs", { with: { "resolution-mode": "import" } })
  >require : any
  >"./exporter.mjs" : "./exporter.mjs"

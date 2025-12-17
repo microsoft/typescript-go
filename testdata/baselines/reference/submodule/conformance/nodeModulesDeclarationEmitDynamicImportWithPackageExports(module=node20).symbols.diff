@@ -73,12 +73,12 @@
  export const a = import("package/cjs");
  >a : Symbol(a, Decl(other.cts, 1, 12))
 ->"package/cjs" : Symbol("index", Decl(index.cts, 0, 0))
-+>"package/cjs" : Symbol("./index.cts", Decl(index.cts, 0, 0))
++>"package/cjs" : Symbol("./index.cjs", Decl(index.cts, 0, 0))
 
  export const b = import("package/mjs");
  >b : Symbol(b, Decl(other.cts, 2, 12))
 ->"package/mjs" : Symbol("index", Decl(index.mts, 0, 0))
-+>"package/mjs" : Symbol("./index.mts", Decl(index.mts, 0, 0))
++>"package/mjs" : Symbol("./index.mjs", Decl(index.mts, 0, 0))
 
  export const c = import("package");
  >c : Symbol(c, Decl(other.cts, 3, 12))

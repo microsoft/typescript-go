@@ -122,8 +122,8 @@
  export const a = import("package/cjs");
 ->a : Promise<{ default: typeof import("index"); }>
 ->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : Promise<{ default: typeof import("./index.cts"); }>
-+>import("package/cjs") : Promise<{ default: typeof import("./index.cts"); }>
++>a : Promise<{ default: typeof import("./index.cjs"); }>
++>import("package/cjs") : Promise<{ default: typeof import("./index.cjs"); }>
  >"package/cjs" : "package/cjs"
 
  export const b = import("package/mjs");
