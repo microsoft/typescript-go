@@ -3,7 +3,6 @@ package tsoptions
 import (
 	"cmp"
 	"reflect"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -1384,13 +1383,20 @@ func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *as
 
 func specToDiagnostic(spec string, disallowTrailingRecursion bool) *diagnostics.Message {
 	if disallowTrailingRecursion {
-		if ok, _ := regexp.MatchString(invalidTrailingRecursionPattern, spec); ok {
+		if invalidTrailingRecursion(spec) {
 			return diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 		}
 	} else if invalidDotDotAfterRecursiveWildcard(spec) {
 		return diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 	}
 	return nil
+}
+
+func invalidTrailingRecursion(spec string) bool {
+	// Matches **, /**, **/, and /**/, but not a**b.
+	// Strip optional trailing slash, then check if it ends with /** or is just **
+	s := strings.TrimSuffix(spec, "/")
+	return s == "**" || strings.HasSuffix(s, "/**")
 }
 
 func invalidDotDotAfterRecursiveWildcard(s string) bool {
@@ -1416,18 +1422,6 @@ func invalidDotDotAfterRecursiveWildcard(s string) bool {
 	}
 	return lastDotIndex > wildcardIndex
 }
-
-// Tests for a path that ends in a recursive directory wildcard.
-//
-//	Matches **, \**, **\, and \**\, but not a**b.
-//	NOTE: used \ in place of / above to avoid issues with multiline comments.
-//
-// Breakdown:
-//
-//	(^|\/)      # matches either the beginning of the string or a directory separator.
-//	\*\*        # matches the recursive directory wildcard "**".
-//	\/?$        # matches an optional trailing directory separator at the end of the string.
-const invalidTrailingRecursionPattern = `(?:^|\/)\*\*\/?$`
 
 func GetTsConfigPropArrayElementValue(tsConfigSourceFile *ast.SourceFile, propKey string, elementValue string) *ast.StringLiteral {
 	callback := GetCallbackForFindingPropertyAssignmentByValue(elementValue)
