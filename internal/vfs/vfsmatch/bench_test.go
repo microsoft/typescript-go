@@ -101,7 +101,23 @@ func BenchmarkReadDirectory(b *testing.B) {
 		},
 	}
 
+	var benchOnly func(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string
+	// For benchmark comparison
+	// benchOnly = matchFiles
+	// benchOnly = matchFilesNoRegex
+
 	for _, bc := range benchCases {
+		if benchOnly != nil {
+			b.Run(bc.name, func(b *testing.B) {
+				host := cachedvfs.From(bc.host())
+				b.ReportAllocs()
+				for b.Loop() {
+					benchOnly(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
+				}
+			})
+			continue
+		}
+
 		b.Run("Old/"+bc.name, func(b *testing.B) {
 			host := cachedvfs.From(bc.host())
 			b.ReportAllocs()
