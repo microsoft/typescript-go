@@ -57,6 +57,15 @@
                         "tags": [
                             "experimental"
                         ]
+                    },
+                    "typescript.native-preview.goMemLimit": {
+                        "type": "string",
+                        "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
+                        "pattern": "^[0-9]+(([KMGT]i)?B)?$",
+                        "patternErrorMessage": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",
+                        "tags": [
+                            "experimental"
+                        ]
                     }
                 }
             }
@@ -122,8 +131,8 @@
         "vscode-languageclient": "^10.0.0-next.18"
     },
     "devDependencies": {
-        "@types/vscode": "^1.106.0",
-        "@vscode/vsce": "^3.7.0",
-        "esbuild": "^0.27.0"
+        "@types/vscode": "^1.106.1",
+        "@vscode/vsce": "^3.7.1",
+        "esbuild": "^0.27.1"
     }
 }

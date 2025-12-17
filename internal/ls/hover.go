@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 const (
@@ -67,21 +68,21 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat)
+	return quickInfo, l.getDocumentationFromDeclaration(c, declaration, contentFormat, false /*commentOnly*/)
 }
 
-func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind) string {
+func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if declaration == nil {
 		return ""
 	}
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
+	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
 		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
-		if jsdoc.Kind == ast.KindJSDoc {
+		if jsdoc.Kind == ast.KindJSDoc && !commentOnly {
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 				for _, tag := range tags.Nodes {
-					if tag.Kind == ast.KindJSDocTypeTag {
+					if tag.Kind == ast.KindJSDocTypeTag || tag.Kind == ast.KindJSDocTypedefTag || tag.Kind == ast.KindJSDocCallbackTag {
 						continue
 					}
 					b.WriteString("\n\n")
@@ -98,8 +99,6 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 						writeOptionalEntityName(&b, tag.Name())
 					case ast.KindJSDocAugmentsTag:
 						writeOptionalEntityName(&b, tag.ClassName())
-					case ast.KindJSDocSeeTag:
-						writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
 					case ast.KindJSDocTemplateTag:
 						for i, tp := range tag.TypeParameters() {
 							if i != 0 {
@@ -109,19 +108,60 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, de
 						}
 					}
 					comments := tag.Comments()
-					if len(comments) != 0 {
-						if commentHasPrefix(comments, "```") {
+					if tag.Kind == ast.KindJSDocTag && tag.TagName().Text() == "example" {
+						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
+						if strings.HasPrefix(commentText, "<caption>") {
+							if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
+								b.WriteString(" — ")
+								b.WriteString(commentText[len("<caption>"):captionEnd])
+								commentText = commentText[captionEnd+len("</caption>"):]
+								// Trim leading blank lines from commentText
+								for {
+									s1 := strings.TrimLeft(commentText, " \t")
+									s2 := strings.TrimLeft(s1, "\r\n")
+									if len(s1) == len(s2) {
+										break
+									}
+									commentText = s2
+								}
+							}
+						}
+						b.WriteString("\n")
+						if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
+							b.WriteString(commentText)
 							b.WriteString("\n")
 						} else {
+							writeCode(&b, "tsx", commentText)
+						}
+					} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
+						b.WriteString(" — ")
+						l.writeNameLink(&b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
+						if len(comments) != 0 {
 							b.WriteString(" ")
-							if !commentHasPrefix(comments, "-") {
-								b.WriteString("— ")
-							}
+							l.writeComments(&b, c, comments, isMarkdown)
+						}
+					} else if len(comments) != 0 {
+						b.WriteString(" ")
+						if comments[0].Kind != ast.KindJSDocText || !strings.HasPrefix(comments[0].Text(), "-") {
+							b.WriteString("— ")
 						}
 						l.writeComments(&b, c, comments, isMarkdown)
 					}
 				}
 			}
+		}
+	}
+	return b.String()
+}
+
+func getCommentText(comments []*ast.Node) string {
+	var b strings.Builder
+	for _, comment := range comments {
+		switch comment.Kind {
+		case ast.KindJSDocText:
+			b.WriteString(comment.Text())
+		case ast.KindJSDocLink, ast.KindJSDocLinkCode, ast.KindJSDocLinkPlain:
+			b.WriteString(scanner.GetTextOfNode(comment))
 		}
 	}
 	return b.String()
@@ -267,7 +307,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				b.WriteString(" = ")
 				b.WriteString(c.TypeToStringEx(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
 			}
-			declaration = core.Find(symbol.Declarations, ast.IsTypeAliasDeclaration)
+			declaration = core.Find(symbol.Declarations, ast.IsTypeOrJSTypeAliasDeclaration)
 		default:
 			b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbol(symbol), container, typeFormatFlags))
 		}
@@ -402,10 +442,6 @@ func containsTypedefTag(jsdoc *ast.Node) bool {
 	return false
 }
 
-func commentHasPrefix(comments []*ast.Node, prefix string) bool {
-	return comments[0].Kind == ast.KindJSDocText && strings.HasPrefix(comments[0].Text(), prefix)
-}
-
 func getJSDoc(node *ast.Node) *ast.Node {
 	return core.LastOrNil(node.JSDoc(nil))
 }
@@ -531,6 +567,10 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		}
 		return
 	}
+	l.writeNameLink(b, c, name, text, quote, isMarkdown)
+}
+
+func (l *LanguageService) writeNameLink(b *strings.Builder, c *checker.Checker, name *ast.Node, text string, quote bool, isMarkdown bool) {
 	declarations := getDeclarationsFromLocation(c, name)
 	if len(declarations) != 0 {
 		declaration := declarations[0]
@@ -550,7 +590,7 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		}
 		return
 	}
-	writeQuotedString(b, getEntityNameString(name)+" "+text, quote && isMarkdown)
+	writeQuotedString(b, getEntityNameString(name)+core.IfElse(len(text) != 0, " ", "")+text, quote && isMarkdown)
 }
 
 func trimCommentPrefix(text string) string {

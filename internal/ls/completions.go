@@ -1370,7 +1370,10 @@ func (l *LanguageService) getCompletionData(
 		if importAttributes.AsImportAttributes().Attributes != nil {
 			elements = importAttributes.AsImportAttributes().Attributes.Nodes
 		}
-		existing := collections.NewSetFromItems(core.Map(elements, (*ast.Node).Text)...)
+		attributeNames := core.Map(elements, func(el *ast.Node) string {
+			return el.AsImportAttribute().Name().Text()
+		})
+		existing := collections.NewSetFromItems(attributeNames...)
 		uniques := core.Filter(
 			typeChecker.GetApparentProperties(typeChecker.GetTypeAtLocation(importAttributes)),
 			func(symbol *ast.Symbol) bool {
@@ -2975,29 +2978,16 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 			contextualArrayType := typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
 			if contextualArrayType != nil {
 				// Get the type for the first element (index 0)
-				return typeChecker.GetContextualTypeForArrayElement(contextualArrayType, 0)
+				return typeChecker.GetContextualTypeForArrayLiteralAtPosition(contextualArrayType, parent, position)
 			}
 		}
 		return nil
-	case ast.KindCommaToken:
-		// When completing after `,` in an array literal (e.g., `[x, /*here*/]`),
-		// we should provide contextual type for the element after the comma
-		if ast.IsArrayLiteralExpression(parent) {
-			contextualArrayType := typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
-			if contextualArrayType != nil {
-				// Count how many elements come before the cursor position
-				arrayLiteral := parent.AsArrayLiteralExpression()
-				elementIndex := 0
-				for _, elem := range arrayLiteral.Elements.Nodes {
-					if elem.Pos() < position {
-						elementIndex++
-					} else {
-						break
-					}
-				}
-				return typeChecker.GetContextualTypeForArrayElement(contextualArrayType, elementIndex)
-			}
-		}
+	case ast.KindCloseBracketToken:
+		// When completing after `]` (e.g., `[x]/*here*/`), we should not provide a contextual type
+		// for the closing bracket token itself. Without this case, CloseBracketToken would fall through
+		// to the default case, and if the parent is an array literal, GetContextualType would try to
+		// find the token's index in the array elements (returning -1), leading to an out-of-bounds panic
+		// in getContextualTypeForElementExpression.
 		return nil
 	case ast.KindQuestionToken:
 		// When completing after `?` in a ternary conditional (e.g., `foo(a ? /*here*/)`),
@@ -3014,22 +3004,30 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		if ast.IsConditionalExpression(parent) {
 			return getContextualTypeForConditionalExpression(parent, position, file, typeChecker)
 		}
-		// Fall through to default for other colon contexts (object literals, etc.)
-		fallthrough
-	default:
-		argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
-		if argInfo != nil {
-			return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
-		} else if isEqualityOperatorKind(previousToken.Kind) && ast.IsBinaryExpression(parent) && isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
-			// completion at `x ===/**/`
-			return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
-		} else {
-			contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsCompletions)
-			if contextualType != nil {
-				return contextualType
+	case ast.KindCommaToken:
+		// When completing after `,` in an array literal (e.g., `[x, /*here*/]`),
+		// we should provide contextual type for the element after the comma.
+		if ast.IsArrayLiteralExpression(parent) {
+			contextualArrayType := typeChecker.GetContextualType(parent, checker.ContextFlagsNone)
+			if contextualArrayType != nil {
+				return typeChecker.GetContextualTypeForArrayLiteralAtPosition(contextualArrayType, parent, position)
 			}
-			return typeChecker.GetContextualType(previousToken, checker.ContextFlagsNone)
+			return nil
 		}
+	}
+	// Default case: see if we're in an argument position.
+	argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
+	if argInfo != nil {
+		return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
+	} else if isEqualityOperatorKind(previousToken.Kind) && ast.IsBinaryExpression(parent) && isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
+		// completion at `x ===/**/`
+		return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
+	} else {
+		contextualType := typeChecker.GetContextualType(previousToken, checker.ContextFlagsCompletions)
+		if contextualType != nil {
+			return contextualType
+		}
+		return typeChecker.GetContextualType(previousToken, checker.ContextFlagsNone)
 	}
 }
 
@@ -3585,7 +3583,7 @@ func (l *LanguageService) getJSCompletionEntries(
 	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
-	nameTable := getNameTable(file)
+	nameTable := file.GetNameTable()
 	for name, pos := range nameTable {
 		// Skip identifiers produced only from the current location
 		if pos == position {
@@ -4082,7 +4080,7 @@ func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collect
 		t = typeChecker.GetTypeOfSymbolAtLocation(symbol, expression)
 	}
 	var properties []*ast.Symbol
-	if t != nil {
+	if t != nil && t.Flags()&checker.TypeFlagsStructuredType != 0 {
 		properties = t.AsStructuredType().Properties()
 	}
 	for _, property := range properties {

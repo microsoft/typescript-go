@@ -60,14 +60,6 @@ func hasOverrideModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsOverride)
 }
 
-func hasAbstractModifier(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract)
-}
-
-func hasAmbientModifier(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient)
-}
-
 func hasAsyncModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
@@ -167,40 +159,6 @@ func IsInTypeQuery(node *ast.Node) bool {
 		}
 		return ast.FindAncestorQuit
 	}) != nil
-}
-
-func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	// private names cannot be used with decorators yet
-	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
-		return false
-	}
-	switch node.Kind {
-	case ast.KindClassDeclaration:
-		// class declarations are valid targets
-		return true
-	case ast.KindClassExpression:
-		// class expressions are valid targets for native decorators
-		return !useLegacyDecorators
-	case ast.KindPropertyDeclaration:
-		// property declarations are valid if their parent is a class declaration.
-		return parent != nil && (useLegacyDecorators && ast.IsClassDeclaration(parent) ||
-			!useLegacyDecorators && ast.IsClassLike(parent) && !hasAbstractModifier(node) && !hasAmbientModifier(node))
-	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
-		// if this method has a body and its parent is a class declaration, this is a valid target.
-		return parent != nil && node.Body() != nil && (useLegacyDecorators && ast.IsClassDeclaration(parent) ||
-			!useLegacyDecorators && ast.IsClassLike(parent))
-	case ast.KindParameter:
-		// TODO(rbuckton): Parameter decorator support for ES decorators must wait until it is standardized
-		if !useLegacyDecorators {
-			return false
-		}
-		// if the parameter's parent has a body and its grandparent is a class declaration, this is a valid target.
-		return parent != nil && parent.Body() != nil &&
-			(parent.Kind == ast.KindConstructor || parent.Kind == ast.KindMethodDeclaration || parent.Kind == ast.KindSetAccessor) &&
-			ast.GetThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
-	}
-
-	return false
 }
 
 func canHaveLocals(node *ast.Node) bool {
@@ -1283,34 +1241,6 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program, ignoreNoCheck bool) bool {
-	return (!ignoreNoCheck && options.NoCheck.IsTrue()) ||
-		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
-		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
-		host.IsSourceFromProjectReference(sourceFile.Path()) ||
-		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
-}
-
-func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
-		return false
-	}
-
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
-		return true
-	}
-
-	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
-	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
-
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
-	// - plain JS: .js files with no // ts-check and checkJs: undefined
-	// - check JS: .js files with either // ts-check or checkJs: true
-	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
-}
-
 func getEnclosingContainer(node *ast.Node) *ast.Node {
 	return ast.FindAncestor(node.Parent, func(n *ast.Node) bool {
 		return binder.GetContainerFlags(n)&binder.ContainerFlagsIsContainer != 0
@@ -1792,46 +1722,13 @@ func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol
 				suggestion.ValueDeclaration == nil ||
 				!ast.IsClassLike(suggestion.ValueDeclaration) ||
 				len(ast.GetExtendsHeritageClauseElements(suggestion.ValueDeclaration)) != 0 ||
-				classOrConstructorParameterIsDecorated(suggestion.ValueDeclaration)
+				ast.ClassOrConstructorParameterIsDecorated(false, suggestion.ValueDeclaration)
 			return !(file != declarationFile && declarationFile != nil && ast.IsGlobalSourceFile(declarationFile.AsNode())) &&
 				!(excludeClasses && suggestion != nil && suggestion.Flags&ast.SymbolFlagsClass != 0 && suggestionHasNoExtendsOrDecorators) &&
 				!(node != nil && excludeClasses && ast.IsPropertyAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && suggestionHasNoExtendsOrDecorators)
 		}
 	}
 	return false
-}
-
-func classOrConstructorParameterIsDecorated(node *ast.Node) bool {
-	if nodeIsDecorated(node, nil, nil) {
-		return true
-	}
-	constructor := ast.GetFirstConstructorWithBody(node)
-	return constructor != nil && childIsDecorated(constructor, node)
-}
-
-func nodeIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	return ast.HasDecorators(node) && nodeCanBeDecorated(false, node, parent, grandparent)
-}
-
-func nodeOrChildIsDecorated(node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
-	return nodeIsDecorated(node, parent, grandparent) || childIsDecorated(node, parent)
-}
-
-func childIsDecorated(node *ast.Node, parent *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return core.Some(node.Members(), func(m *ast.Node) bool {
-			return nodeOrChildIsDecorated(m, node, parent)
-		})
-	case ast.KindMethodDeclaration,
-		ast.KindSetAccessor,
-		ast.KindConstructor:
-		return core.Some(node.Parameters(), func(p *ast.Node) bool {
-			return nodeIsDecorated(p, node, parent)
-		})
-	default:
-		return false
-	}
 }
 
 // Returns if a type is or consists of a JSLiteral object type

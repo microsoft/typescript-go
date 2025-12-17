@@ -142,7 +142,7 @@ func getAssignedNameOfIdentifier(emitContext *printer.EmitContext, name *ast.Ide
 	original := emitContext.MostOriginal(ast.SkipOuterExpressions(expression, ast.OEKAll))
 	if (ast.IsClassDeclaration(original) || ast.IsFunctionDeclaration(original)) &&
 		original.Name() == nil && ast.HasSyntacticModifier(original, ast.ModifierFlagsDefault) {
-		return emitContext.Factory.NewStringLiteral("default")
+		return emitContext.Factory.NewStringLiteral("default", ast.TokenFlagsNone)
 	}
 	return emitContext.Factory.NewStringLiteralFromNode(name)
 }
@@ -150,7 +150,7 @@ func getAssignedNameOfIdentifier(emitContext *printer.EmitContext, name *ast.Ide
 func getAssignedNameOfPropertyName(emitContext *printer.EmitContext, name *ast.PropertyName, assignedNameText string) (assignedName *ast.Expression, updatedName *ast.PropertyName) {
 	factory := emitContext.Factory
 	if len(assignedNameText) > 0 {
-		assignedName := factory.NewStringLiteral(assignedNameText)
+		assignedName := factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 		return assignedName, name
 	}
 
@@ -322,7 +322,7 @@ func transformNamedEvaluationOfShorthandAssignmentProperty(emitContext *printer.
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.ObjectAssignmentInitializer)
 	}
@@ -356,7 +356,7 @@ func transformNamedEvaluationOfVariableDeclaration(emitContext *printer.EmitCont
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -390,7 +390,7 @@ func transformNamedEvaluationOfParameterDeclaration(emitContext *printer.EmitCon
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -426,7 +426,7 @@ func transformNamedEvaluationOfBindingElement(emitContext *printer.EmitContext, 
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Name(), node.Initializer)
 	}
@@ -491,7 +491,7 @@ func transformNamedEvaluationOfAssignmentExpression(emitContext *printer.EmitCon
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
 		assignedName = getAssignedNameOfIdentifier(emitContext, node.Left, node.Right)
 	}
@@ -519,9 +519,9 @@ func transformNamedEvaluationOfExportAssignment(emitContext *printer.EmitContext
 	factory := emitContext.Factory
 	var assignedName *ast.Expression
 	if len(assignedNameText) > 0 {
-		assignedName = factory.NewStringLiteral(assignedNameText)
+		assignedName = factory.NewStringLiteral(assignedNameText, ast.TokenFlagsNone)
 	} else {
-		assignedName = factory.NewStringLiteral("")
+		assignedName = factory.NewStringLiteral("", ast.TokenFlagsNone)
 	}
 	expression := finishTransformNamedEvaluation(emitContext, node.Expression, assignedName, ignoreEmptyStringLiteral)
 	return factory.UpdateExportAssignment(
