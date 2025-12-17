@@ -1,7 +1,6 @@
 package autoimport
 
 import (
-	"fmt"
 	"slices"
 	"sync/atomic"
 
@@ -366,44 +365,31 @@ func shouldIgnoreSymbol(symbol *ast.Symbol) bool {
 }
 
 func getSyntax(symbol *ast.Symbol) ExportSyntax {
-	var syntax ExportSyntax
 	for _, decl := range symbol.Declarations {
-		var declSyntax ExportSyntax
 		switch decl.Kind {
 		case ast.KindExportSpecifier:
-			declSyntax = ExportSyntaxNamed
+			return ExportSyntaxNamed
 		case ast.KindExportAssignment:
-			declSyntax = core.IfElse(
+			return core.IfElse(
 				decl.AsExportAssignment().IsExportEquals,
 				ExportSyntaxEquals,
 				ExportSyntaxDefaultDeclaration,
 			)
 		case ast.KindNamespaceExportDeclaration:
-			declSyntax = ExportSyntaxUMD
+			return ExportSyntaxUMD
 		case ast.KindJSExportAssignment:
-			declSyntax = ExportSyntaxCommonJSModuleExports
+			return ExportSyntaxCommonJSModuleExports
 		case ast.KindCommonJSExport:
-			declSyntax = ExportSyntaxCommonJSExportsProperty
+			return ExportSyntaxCommonJSExportsProperty
 		default:
 			if ast.GetCombinedModifierFlags(decl)&ast.ModifierFlagsDefault != 0 {
-				declSyntax = ExportSyntaxDefaultModifier
+				return ExportSyntaxDefaultModifier
 			} else {
-				declSyntax = ExportSyntaxModifier
+				return ExportSyntaxModifier
 			}
 		}
-		if syntax != ExportSyntaxNone && syntax != declSyntax {
-			// !!! this can probably happen in erroring code
-			//     actually, it can probably happen in valid alias/local merges!
-			//     or no wait, maybe only for imports?
-			var fileName string
-			if len(symbol.Declarations) > 0 {
-				fileName = ast.GetSourceFileOfNode(symbol.Declarations[0]).FileName()
-			}
-			panic(fmt.Sprintf("mixed export syntaxes for symbol %s in %s", symbol.Name, fileName))
-		}
-		syntax = declSyntax
 	}
-	return syntax
+	return ExportSyntaxNone
 }
 
 func isUnusableName(name string) bool {
