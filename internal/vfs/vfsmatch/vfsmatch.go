@@ -83,7 +83,7 @@ func NewSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSens
 // Returns nil if no valid patterns could be compiled from the specs.
 func NewSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
 	if newNewMatch {
-		if m := newGlobSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
+		if m := newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames); m != nil {
 			return m
 		}
 		return nil

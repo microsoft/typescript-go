@@ -142,9 +142,7 @@ func (p *globPattern) matches(path string) bool {
 	if p == nil {
 		return false
 	}
-
-	// Use iterator-based matching to avoid slice allocation
-	return p.matchPath(path, 0, false)
+	return p.matchPathWorker(path, 0, 0, false, false)
 }
 
 // matchesPrefix checks if the given directory path could potentially match files under it.
@@ -153,8 +151,7 @@ func (p *globPattern) matchesPrefix(path string) bool {
 	if p == nil {
 		return false
 	}
-
-	return p.matchPathPrefix(path, 0)
+	return p.matchPathWorker(path, 0, 0, false, true)
 }
 
 // nextPathComponent extracts the next path component from path starting at offset.
@@ -188,32 +185,21 @@ func nextPathComponent(path string, offset int) (component string, nextOffset in
 	return remaining[:idx], offset + idx, true
 }
 
-// matchPath matches the path against pattern components starting at patternIdx.
-// pathOffset is the current position in the path string.
-func (p *globPattern) matchPath(path string, patternIdx int, inDoubleAsterisk bool) bool {
-	// Bootstrap: handle the path from the beginning
-	return p.matchPathAt(path, 0, patternIdx, inDoubleAsterisk)
-}
-
-// matchPathAt matches path[pathOffset:] against pattern components starting at patternIdx.
-func (p *globPattern) matchPathAt(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool) bool {
+// matchPathWorker is the unified path matching function.
+// When prefixMatch is true, it checks if the path could be a prefix of a matching path.
+// When prefixMatch is false, it checks if the path fully matches the pattern.
+func (p *globPattern) matchPathWorker(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool, prefixMatch bool) bool {
 	for {
 		// Get the next path component
 		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
 
-		// If we've consumed all pattern components
-		if patternIdx >= len(p.components) {
-			if p.isExclude {
-				// For exclude patterns, we can match a prefix
+		// If we've consumed all path components
+		if !hasMore {
+			if prefixMatch {
+				// For prefix matching, any prefix could match
 				return true
 			}
-			// Path must also be fully consumed
-			return !hasMore
-		}
-
-		// If we've consumed all path components but still have pattern components
-		if !hasMore {
-			// For exclude patterns, if remaining is just the implicit glob suffix (** and *), match
+			// For full matching, check remaining pattern components
 			if p.isExclude {
 				return p.isImplicitGlobSuffix(patternIdx)
 			}
@@ -226,12 +212,22 @@ func (p *globPattern) matchPathAt(path string, pathOffset int, patternIdx int, i
 			return true
 		}
 
+		// If we've consumed all pattern components
+		if patternIdx >= len(p.components) {
+			if prefixMatch {
+				// For prefix matching, no more matches possible
+				return false
+			}
+			// For full matching with exclude patterns, we can match a prefix
+			return p.isExclude
+		}
+
 		pc := p.components[patternIdx]
 
 		if pc.isDoubleAsterisk {
 			// ** can match zero or more directory levels
 			// First, try matching zero directories (skip the **) - this requires recursion
-			if p.matchPathAt(path, pathOffset, patternIdx+1, true) {
+			if p.matchPathWorker(path, pathOffset, patternIdx+1, true, prefixMatch) {
 				return true
 			}
 
@@ -247,7 +243,6 @@ func (p *globPattern) matchPathAt(path string, pathOffset int, patternIdx int, i
 
 			// Match current component with ** and continue (iterate instead of recurse)
 			pathOffset = nextPathOffset
-			// patternIdx stays the same, inDoubleAsterisk stays true
 			inDoubleAsterisk = true
 			continue
 		}
@@ -266,67 +261,6 @@ func (p *globPattern) matchPathAt(path string, pathOffset int, patternIdx int, i
 		pathOffset = nextPathOffset
 		patternIdx++
 		inDoubleAsterisk = false
-	}
-}
-
-// matchPathPrefix checks if the path could be a prefix of a matching path.
-func (p *globPattern) matchPathPrefix(path string, patternIdx int) bool {
-	return p.matchPathPrefixAt(path, 0, patternIdx)
-}
-
-// matchPathPrefixAt checks if path[pathOffset:] could be a prefix of a matching path.
-func (p *globPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx int) bool {
-	for {
-		// Get the next path component
-		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
-
-		// If we've consumed all path components, this prefix could match
-		if !hasMore {
-			return true
-		}
-
-		// If we've consumed all pattern components, no more matches possible
-		if patternIdx >= len(p.components) {
-			return false
-		}
-
-		pc := p.components[patternIdx]
-
-		if pc.isDoubleAsterisk {
-			// ** can match any directory level
-			// Try matching zero (skip **) or more directories - needs recursion for branching
-			if p.matchPathPrefixAt(path, pathOffset, patternIdx+1) {
-				return true
-			}
-
-			// For include patterns, ** should not match hidden or package directories
-			if !p.isExclude {
-				if len(pathComp) > 0 && pathComp[0] == '.' {
-					return false
-				}
-				if isCommonPackageFolder(pathComp) {
-					return false
-				}
-			}
-
-			// Iterate: consume path component, keep same pattern index
-			pathOffset = nextPathOffset
-			continue
-		}
-
-		// Check implicit package folder exclusion
-		if pc.implicitlyExcludePackages && !p.isExclude && isCommonPackageFolder(pathComp) {
-			return false
-		}
-
-		// Match current component
-		if !p.matchComponent(pc, pathComp, false) {
-			return false
-		}
-
-		// Iterate: advance both path and pattern
-		pathOffset = nextPathOffset
-		patternIdx++
 	}
 }
 
@@ -378,14 +312,26 @@ func (p *globPattern) matchWildcardComponent(segments []patternSegment, s string
 		if !p.stringsEqual(suffix, sSuffix) {
 			return false
 		}
-		// Check min.js exclusion
-		if p.excludeMinJs && p.wouldMatchMinJs(s) && !p.patternExplicitlyIncludesMinJs(segments) {
-			return false
-		}
-		return true
+		return p.checkMinJsExclusion(s, segments)
 	}
 
-	return p.matchSegments(segments, 0, s, 0)
+	if !p.matchSegments(segments, 0, s, 0) {
+		return false
+	}
+	return p.checkMinJsExclusion(s, segments)
+}
+
+// checkMinJsExclusion returns true if the match should be allowed (not excluded).
+// Returns false if this is a .min.js file that should be excluded.
+func (p *globPattern) checkMinJsExclusion(filename string, segments []patternSegment) bool {
+	if !p.excludeMinJs {
+		return true
+	}
+	if !p.wouldMatchMinJs(filename) {
+		return true
+	}
+	// Exclude .min.js unless pattern explicitly includes it
+	return p.patternExplicitlyIncludesMinJs(segments)
 }
 
 func (p *globPattern) matchSegments(segments []patternSegment, segIdx int, s string, sIdx int) bool {
@@ -420,33 +366,16 @@ func (p *globPattern) matchSegments(segments []patternSegment, segIdx int, s str
 
 	case segmentStar:
 		// Match zero or more characters (not /)
-		// For files usage, also need to handle .min.js exclusion
-
 		// Try matching zero characters first
 		if p.matchSegments(segments, segIdx+1, s, sIdx) {
-			// Before returning true, check min.js exclusion
-			if p.excludeMinJs && segIdx == 0 && segIdx+1 < len(segments) {
-				// Check if this could result in matching a .min.js file
-				if p.wouldMatchMinJs(s) {
-					return false
-				}
-			}
 			return true
 		}
-
 		// Try matching more characters
 		for i := sIdx; i < len(s); i++ {
 			if s[i] == '/' {
 				break
 			}
 			if p.matchSegments(segments, segIdx+1, s, i+1) {
-				// Check min.js exclusion
-				if p.excludeMinJs && strings.HasSuffix(s, ".min.js") {
-					// Only exclude if pattern doesn't explicitly include .min.js
-					if !p.patternExplicitlyIncludesMinJs(segments) {
-						return false
-					}
-				}
 				return true
 			}
 		}
@@ -740,7 +669,7 @@ func matchFilesNoRegex(path string, extensions []string, excludes []string, incl
 	return core.Flatten(results)
 }
 
-// globSpecMatcher wraps a globMatcher for SpecMatcher interface.
+// globSpecMatcher wraps glob patterns for matching paths.
 type globSpecMatcher struct {
 	patterns []*globPattern
 }
@@ -755,6 +684,25 @@ func (m *globSpecMatcher) MatchString(path string) bool {
 		}
 	}
 	return false
+}
+
+func (m *globSpecMatcher) MatchIndex(path string) int {
+	if m == nil {
+		return -1
+	}
+	for i, p := range m.patterns {
+		if p.matches(path) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (m *globSpecMatcher) Len() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.patterns)
 }
 
 // newGlobSpecMatcher creates a glob-based matcher for multiple specs.
@@ -781,39 +729,4 @@ func newGlobSingleSpecMatcher(spec string, basePath string, usage Usage, useCase
 		return nil
 	}
 	return &globSpecMatcher{patterns: []*globPattern{pattern}}
-}
-
-// globSpecMatchers holds a list of individual glob matchers for index lookup.
-type globSpecMatchers struct {
-	patterns []*globPattern
-}
-
-func (m *globSpecMatchers) MatchIndex(path string) int {
-	for i, p := range m.patterns {
-		if p.matches(path) {
-			return i
-		}
-	}
-	return -1
-}
-
-func (m *globSpecMatchers) Len() int {
-	return len(m.patterns)
-}
-
-// newGlobSpecMatchers creates individual glob matchers for each spec.
-func newGlobSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatchers {
-	if len(specs) == 0 {
-		return nil
-	}
-	var patterns []*globPattern
-	for _, spec := range specs {
-		if pattern := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames); pattern != nil {
-			patterns = append(patterns, pattern)
-		}
-	}
-	if len(patterns) == 0 {
-		return nil
-	}
-	return &globSpecMatchers{patterns: patterns}
 }
