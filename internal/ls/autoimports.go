@@ -24,7 +24,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type SymbolExportInfo struct {
@@ -1420,9 +1420,9 @@ func getIsExcludedPatterns(preferences *lsutil.UserPreferences, useCaseSensitive
 	}
 	var patterns []*regexp2.Regexp
 	for _, spec := range preferences.AutoImportFileExcludePatterns {
-		pattern := vfs.GetSubPatternFromSpec(spec, "", vfs.UsageExclude, vfs.WildcardMatcher{})
+		pattern := vfsmatch.GetSubPatternFromSpec(spec, "", vfsmatch.UsageExclude, vfsmatch.WildcardMatcher{})
 		if pattern != "" {
-			if re := vfs.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
+			if re := vfsmatch.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
 				patterns = append(patterns, re)
 			}
 		}

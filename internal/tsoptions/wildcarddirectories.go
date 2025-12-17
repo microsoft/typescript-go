@@ -5,7 +5,7 @@ import (
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 func getWildcardDirectories(include []string, exclude []string, comparePathsOptions tspath.ComparePathsOptions) map[string]bool {
@@ -26,7 +26,7 @@ func getWildcardDirectories(include []string, exclude []string, comparePathsOpti
 		return nil
 	}
 
-	rawExcludeRegex := vfs.GetRegularExpressionForWildcard(exclude, comparePathsOptions.CurrentDirectory, "exclude")
+	rawExcludeRegex := vfsmatch.GetRegularExpressionForWildcard(exclude, comparePathsOptions.CurrentDirectory, "exclude")
 	var excludeRegex *regexp2.Regexp
 	if rawExcludeRegex != "" {
 		flags := regexp2.ECMAScript
@@ -131,7 +131,7 @@ func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *
 
 	if lastSepIndex := strings.LastIndexByte(spec, tspath.DirectorySeparator); lastSepIndex != -1 {
 		lastSegment := spec[lastSepIndex+1:]
-		if vfs.IsImplicitGlob(lastSegment) {
+		if vfsmatch.IsImplicitGlob(lastSegment) {
 			path := tspath.RemoveTrailingDirectorySeparator(spec)
 			return &wildcardDirectoryMatch{
 				Key:       toCanonicalKey(path, useCaseSensitiveFileNames),
