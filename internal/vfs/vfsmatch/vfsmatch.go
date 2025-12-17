@@ -367,7 +367,10 @@ func (v *visitor) visitDirectory(
 	absolutePath string,
 	depth *int,
 ) {
-	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
+	// Use the real path (with symlinks resolved) for cycle detection.
+	// This prevents infinite loops when symlinks create cycles.
+	realPath := v.host.Realpath(absolutePath)
+	canonicalPath := tspath.GetCanonicalFileName(realPath, v.useCaseSensitiveFileNames)
 	if v.visited.Has(canonicalPath) {
 		return
 	}
