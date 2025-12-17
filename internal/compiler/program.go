@@ -246,9 +246,8 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	// node_modules locations), we need to rebuild the program because the redirect targets
 	// might need recalculation. A file is in a redirect group if it's either a canonical
 	// file that others redirect to, or if it redirects to another file.
-	if canonicalPath, ok := p.deduplicatedPathMap[changedFilePath]; ok {
+	if _, ok := p.deduplicatedPathMap[changedFilePath]; ok {
 		// File is either a canonical file or a redirect target; either way, need full rebuild
-		_ = canonicalPath
 		return NewProgram(newOpts), false
 	}
 	// TODO: reverify compiler options when config has changed?
