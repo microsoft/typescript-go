@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -90,18 +91,28 @@ func BenchmarkReadDirectory(b *testing.B) {
 			includes:   []string{"src/**/*.ts"},
 			excludes:   []string{"**/node_modules/**", "**/*.test.ts"},
 		},
+		{
+			name:       "LargeAllFiles",
+			host:       largeFileSystemHost,
+			path:       "/project",
+			extensions: []string{".ts", ".tsx", ".js"},
+			excludes:   []string{"**/node_modules/**"},
+			includes:   []string{"**/*"},
+		},
 	}
 
 	for _, bc := range benchCases {
 		b.Run("Old/"+bc.name, func(b *testing.B) {
-			host := bc.host()
+			host := cachedvfs.From(bc.host())
+			b.ReportAllocs()
 			for b.Loop() {
 				matchFiles(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
 			}
 		})
 
 		b.Run("New/"+bc.name, func(b *testing.B) {
-			host := bc.host()
+			host := cachedvfs.From(bc.host())
+			b.ReportAllocs()
 			for b.Loop() {
 				matchFilesNoRegex(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
 			}
