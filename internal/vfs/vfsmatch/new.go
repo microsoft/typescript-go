@@ -196,65 +196,72 @@ func (p *GlobPattern) matchPath(path string, patternIdx int, inDoubleAsterisk bo
 
 // matchPathAt matches path[pathOffset:] against pattern components starting at patternIdx.
 func (p *GlobPattern) matchPathAt(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool) bool {
-	// Get the next path component
-	pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
+	for {
+		// Get the next path component
+		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
 
-	// If we've consumed all pattern components
-	if patternIdx >= len(p.components) {
-		if p.isExclude {
-			// For exclude patterns, we can match a prefix
-			return true
-		}
-		// Path must also be fully consumed
-		return !hasMore
-	}
-
-	// If we've consumed all path components but still have pattern components
-	if !hasMore {
-		// Check if remaining pattern components are all optional (** only)
-		for i := patternIdx; i < len(p.components); i++ {
-			if !p.components[i].isDoubleAsterisk {
-				return false
+		// If we've consumed all pattern components
+		if patternIdx >= len(p.components) {
+			if p.isExclude {
+				// For exclude patterns, we can match a prefix
+				return true
 			}
+			// Path must also be fully consumed
+			return !hasMore
 		}
-		return true
-	}
 
-	pc := p.components[patternIdx]
-
-	if pc.isDoubleAsterisk {
-		// ** can match zero or more directory levels
-		// First, try matching zero directories (skip the **)
-		if p.matchPathAt(path, pathOffset, patternIdx+1, true) {
+		// If we've consumed all path components but still have pattern components
+		if !hasMore {
+			// Check if remaining pattern components are all optional (** only)
+			for i := patternIdx; i < len(p.components); i++ {
+				if !p.components[i].isDoubleAsterisk {
+					return false
+				}
+			}
 			return true
 		}
 
-		// For include patterns, ** should not match directories starting with . or common package folders
-		if !p.isExclude {
-			if len(pathComp) > 0 && pathComp[0] == '.' {
-				return false
+		pc := p.components[patternIdx]
+
+		if pc.isDoubleAsterisk {
+			// ** can match zero or more directory levels
+			// First, try matching zero directories (skip the **) - this requires recursion
+			if p.matchPathAt(path, pathOffset, patternIdx+1, true) {
+				return true
 			}
-			if isCommonPackageFolder(pathComp) {
-				return false
+
+			// For include patterns, ** should not match directories starting with . or common package folders
+			if !p.isExclude {
+				if len(pathComp) > 0 && pathComp[0] == '.' {
+					return false
+				}
+				if isCommonPackageFolder(pathComp) {
+					return false
+				}
 			}
+
+			// Match current component with ** and continue (iterate instead of recurse)
+			pathOffset = nextPathOffset
+			// patternIdx stays the same, inDoubleAsterisk stays true
+			inDoubleAsterisk = true
+			continue
 		}
 
-		// Match current component with ** and continue
-		return p.matchPathAt(path, nextPathOffset, patternIdx, true)
-	}
+		// Check implicit package folder exclusion
+		if pc.implicitlyExcludePackages && !p.isExclude && isCommonPackageFolder(pathComp) {
+			return false
+		}
 
-	// Check implicit package folder exclusion
-	if pc.implicitlyExcludePackages && !p.isExclude && isCommonPackageFolder(pathComp) {
-		return false
-	}
+		// Match current component
+		if !p.matchComponent(pc, pathComp, inDoubleAsterisk) {
+			return false
+		}
 
-	// Match current component
-	if !p.matchComponent(pc, pathComp, inDoubleAsterisk) {
-		return false
+		// Continue to next components (iterate instead of recurse)
+		pathOffset = nextPathOffset
+		patternIdx++
+		inDoubleAsterisk = false
 	}
-
-	// Continue to next components
-	return p.matchPathAt(path, nextPathOffset, patternIdx+1, false)
 }
 
 // matchPathPrefix checks if the path could be a prefix of a matching path.
@@ -264,52 +271,58 @@ func (p *GlobPattern) matchPathPrefix(path string, patternIdx int) bool {
 
 // matchPathPrefixAt checks if path[pathOffset:] could be a prefix of a matching path.
 func (p *GlobPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx int) bool {
-	// Get the next path component
-	pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
+	for {
+		// Get the next path component
+		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
 
-	// If we've consumed all path components, this prefix could match
-	if !hasMore {
-		return true
-	}
-
-	// If we've consumed all pattern components, no more matches possible
-	if patternIdx >= len(p.components) {
-		return false
-	}
-
-	pc := p.components[patternIdx]
-
-	if pc.isDoubleAsterisk {
-		// ** can match any directory level
-		// Try matching zero (skip **) or more directories
-		if p.matchPathPrefixAt(path, pathOffset, patternIdx+1) {
+		// If we've consumed all path components, this prefix could match
+		if !hasMore {
 			return true
 		}
 
-		// For include patterns, ** should not match hidden or package directories
-		if !p.isExclude {
-			if len(pathComp) > 0 && pathComp[0] == '.' {
-				return false
-			}
-			if isCommonPackageFolder(pathComp) {
-				return false
-			}
+		// If we've consumed all pattern components, no more matches possible
+		if patternIdx >= len(p.components) {
+			return false
 		}
 
-		return p.matchPathPrefixAt(path, nextPathOffset, patternIdx)
-	}
+		pc := p.components[patternIdx]
 
-	// Check implicit package folder exclusion
-	if pc.implicitlyExcludePackages && !p.isExclude && isCommonPackageFolder(pathComp) {
-		return false
-	}
+		if pc.isDoubleAsterisk {
+			// ** can match any directory level
+			// Try matching zero (skip **) or more directories - needs recursion for branching
+			if p.matchPathPrefixAt(path, pathOffset, patternIdx+1) {
+				return true
+			}
 
-	// Match current component
-	if !p.matchComponent(pc, pathComp, false) {
-		return false
-	}
+			// For include patterns, ** should not match hidden or package directories
+			if !p.isExclude {
+				if len(pathComp) > 0 && pathComp[0] == '.' {
+					return false
+				}
+				if isCommonPackageFolder(pathComp) {
+					return false
+				}
+			}
 
-	return p.matchPathPrefixAt(path, nextPathOffset, patternIdx+1)
+			// Iterate: consume path component, keep same pattern index
+			pathOffset = nextPathOffset
+			continue
+		}
+
+		// Check implicit package folder exclusion
+		if pc.implicitlyExcludePackages && !p.isExclude && isCommonPackageFolder(pathComp) {
+			return false
+		}
+
+		// Match current component
+		if !p.matchComponent(pc, pathComp, false) {
+			return false
+		}
+
+		// Iterate: advance both path and pattern
+		pathOffset = nextPathOffset
+		patternIdx++
+	}
 }
 
 // matchComponent matches a single path component against a pattern component
@@ -340,6 +353,31 @@ func (p *GlobPattern) matchWildcardComponent(segments []patternSegment, s string
 			// Pattern starts with wildcard, so it cannot match a string starting with '.'
 			return false
 		}
+	}
+
+	// Fast path for common pattern: * followed by literal suffix (e.g., "*.ts")
+	if len(segments) == 2 && segments[0].kind == segmentStar && segments[1].kind == segmentLiteral {
+		suffix := segments[1].literal
+		if len(s) < len(suffix) {
+			return false
+		}
+		// Check that there are no slashes in what * would match
+		prefixLen := len(s) - len(suffix)
+		for i := range prefixLen {
+			if s[i] == '/' {
+				return false
+			}
+		}
+		// Check suffix match
+		sSuffix := s[prefixLen:]
+		if !p.stringsEqual(suffix, sSuffix) {
+			return false
+		}
+		// Check min.js exclusion
+		if p.excludeMinJs && p.wouldMatchMinJs(s) && !p.patternExplicitlyIncludesMinJs(segments) {
+			return false
+		}
+		return true
 	}
 
 	return p.matchSegments(segments, 0, s, 0)
@@ -439,9 +477,17 @@ func (p *GlobPattern) stringsEqual(a, b string) bool {
 
 // isCommonPackageFolder checks if a directory name is a common package folder
 func isCommonPackageFolder(name string) bool {
-	return strings.EqualFold(name, "node_modules") ||
-		strings.EqualFold(name, "bower_components") ||
-		strings.EqualFold(name, "jspm_packages")
+	// Quick length check to avoid EqualFold for most cases
+	switch len(name) {
+	case 12: // node_modules
+		return strings.EqualFold(name, "node_modules")
+	case 16: // bower_components
+		return strings.EqualFold(name, "bower_components")
+	case 13: // jspm_packages
+		return strings.EqualFold(name, "jspm_packages")
+	default:
+		return false
+	}
 }
 
 // GlobMatcher holds compiled glob patterns for matching files.
@@ -557,9 +603,20 @@ func (v *visitorNoRegex) visitDirectory(
 
 	systemEntries := v.host.GetAccessibleEntries(absolutePath)
 
+	// Pre-compute path suffixes to reduce allocations
+	// We'll build paths by appending "/" + entry name
+	pathPrefix := path
+	absPathPrefix := absolutePath
+	if len(path) > 0 && path[len(path)-1] != '/' {
+		pathPrefix = path + "/"
+	}
+	if len(absolutePath) > 0 && absolutePath[len(absolutePath)-1] != '/' {
+		absPathPrefix = absolutePath + "/"
+	}
+
 	for _, current := range systemEntries.Files {
-		name := tspath.CombinePaths(path, current)
-		absoluteName := tspath.CombinePaths(absolutePath, current)
+		name := pathPrefix + current
+		absoluteName := absPathPrefix + current
 
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
 			continue
@@ -584,8 +641,8 @@ func (v *visitorNoRegex) visitDirectory(
 	}
 
 	for _, current := range systemEntries.Directories {
-		name := tspath.CombinePaths(path, current)
-		absoluteName := tspath.CombinePaths(absolutePath, current)
+		name := pathPrefix + current
+		absoluteName := absPathPrefix + current
 
 		if v.directoryMatcher.MatchesDirectory(absoluteName) {
 			v.visitDirectory(name, absoluteName, depth)
