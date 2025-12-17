@@ -127,6 +127,7 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 	unresolvedPackageNames := program.UnresolvedPackageNames()
 	if unresolvedPackageNames.Len() > 0 {
 		checker, done := program.GetTypeChecker(ctx)
+		defer done()
 		for name := range unresolvedPackageNames.Keys() {
 			if symbol := checker.TryFindAmbientModule(name); symbol != nil {
 				declaringFile := ast.GetSourceFileOfModule(symbol)
@@ -135,7 +136,6 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 				}
 			}
 		}
-		done()
 	}
 	return resolvedPackageNames
 }

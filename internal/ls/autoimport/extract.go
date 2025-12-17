@@ -29,12 +29,12 @@ type exportExtractor struct {
 }
 
 type extractorStats struct {
-	exports     int32
-	usedChecker int32
+	exports     atomic.Int32
+	usedChecker atomic.Int32
 }
 
-func (e *exportExtractor) Stats() extractorStats {
-	return *e.stats
+func (e *exportExtractor) Stats() *extractorStats {
+	return e.stats
 }
 
 type checkerLease struct {
@@ -305,9 +305,9 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 		export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), symbol)
 	}
 
-	atomic.AddInt32(&e.stats.exports, 1)
+	e.stats.exports.Add(1)
 	if checkerLease.TryChecker() != nil {
-		atomic.AddInt32(&e.stats.usedChecker, 1)
+		e.stats.usedChecker.Add(1)
 	}
 
 	return export, targetSymbol

@@ -806,8 +806,8 @@ outer:
 				exports[file.Path()] = fileExports
 				mu.Unlock()
 				stats := extractor.Stats()
-				atomic.AddInt32(&combinedStats.exports, stats.exports)
-				atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
+				combinedStats.exports.Add(stats.exports.Load())
+				combinedStats.usedChecker.Add(stats.usedChecker.Load())
 			}
 		})
 	}
@@ -828,7 +828,7 @@ outer:
 	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
 
 	if logger != nil {
-		logger.Logf("Extracted exports: %v (%d exports, %d used checker, %d created checkers)", indexStart.Sub(start), combinedStats.exports, combinedStats.usedChecker, checkerCount())
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker, %d created checkers)", indexStart.Sub(start), combinedStats.exports.Load(), combinedStats.usedChecker.Load(), checkerCount())
 		if skippedFileCount > 0 {
 			logger.Logf("Skipped %d files due to exclude patterns", skippedFileCount)
 		}
@@ -989,8 +989,8 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			}
 			if logger != nil {
 				stats := extractor.Stats()
-				atomic.AddInt32(&combinedStats.exports, stats.exports)
-				atomic.AddInt32(&combinedStats.usedChecker, stats.usedChecker)
+				combinedStats.exports.Add(stats.exports.Load())
+				combinedStats.usedChecker.Add(stats.usedChecker.Load())
 			}
 		})
 	}
@@ -1027,7 +1027,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 
 	if logger != nil {
 		logger.Logf("Determined dependencies and package names: %v", extractorStart.Sub(start))
-		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(extractorStart), combinedStats.exports, combinedStats.usedChecker)
+		logger.Logf("Extracted exports: %v (%d exports, %d used checker)", indexStart.Sub(extractorStart), combinedStats.exports.Load(), combinedStats.usedChecker.Load())
 		if skippedEntrypointsCount > 0 {
 			logger.Logf("Skipped %d entrypoints due to exclude patterns", skippedEntrypointsCount)
 		}
