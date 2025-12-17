@@ -452,11 +452,11 @@ func (p *globPattern) stringsEqual(a, b string) bool {
 func isCommonPackageFolder(name string) bool {
 	// Quick length check to avoid EqualFold for most cases
 	switch len(name) {
-	case 12: // node_modules
+	case len("node_modules"):
 		return strings.EqualFold(name, "node_modules")
-	case 16: // bower_components
+	case len("bower_components"):
 		return strings.EqualFold(name, "bower_components")
-	case 13: // jspm_packages
+	case len("jspm_packages"):
 		return strings.EqualFold(name, "jspm_packages")
 	default:
 		return false
