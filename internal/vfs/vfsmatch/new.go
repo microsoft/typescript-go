@@ -69,7 +69,7 @@ func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive
 	components[0] = tspath.RemoveTrailingDirectorySeparator(components[0])
 
 	// Handle implicit glob (directories become dir/**/*)
-	if isImplicitGlob(lastComponent) {
+	if IsImplicitGlob(lastComponent) {
 		components = append(components, "**", "*")
 	}
 
