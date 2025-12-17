@@ -15,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type FileMatcherPatterns struct {
+type fileMatcherPatterns struct {
 	// One pattern for each "include" spec.
 	includeFilePatterns []string
 	// One pattern matching one of any of the "include" specs.
@@ -25,25 +25,17 @@ type FileMatcherPatterns struct {
 	basePaths               []string
 }
 
-type Usage string
-
-const (
-	UsageFiles       Usage = "files"
-	UsageDirectories Usage = "directories"
-	UsageExclude     Usage = "exclude"
-)
-
-func GetRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
+func getRegularExpressionsForWildcards(specs []string, basePath string, usage Usage) []string {
 	if len(specs) == 0 {
 		return nil
 	}
 	return core.Map(specs, func(spec string) string {
-		return GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+		return getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	})
 }
 
-func GetRegularExpressionForWildcard(specs []string, basePath string, usage Usage) string {
-	patterns := GetRegularExpressionsForWildcards(specs, basePath, usage)
+func getRegularExpressionForWildcard(specs []string, basePath string, usage Usage) string {
+	patterns := getRegularExpressionsForWildcards(specs, basePath, usage)
 	if len(patterns) == 0 {
 		return ""
 	}
@@ -76,9 +68,10 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 	}
 }
 
+// isImplicitGlob checks if a path is implicitly a glob.
 // An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
 // and does not contain any glob characters itself.
-func IsImplicitGlob(lastPathComponent string) bool {
+func isImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
@@ -95,7 +88,7 @@ var (
 	implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
 )
 
-type WildcardMatcher struct {
+type wildcardMatcher struct {
 	singleAsteriskRegexFragment string
 	doubleAsteriskRegexFragment string
 	replaceWildcardCharacter    func(match string) string
@@ -111,7 +104,7 @@ const (
 	singleAsteriskRegexFragment             = "[^/]*"
 )
 
-var filesMatcher = WildcardMatcher{
+var filesMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragmentFilesMatcher,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
@@ -121,7 +114,7 @@ var filesMatcher = WildcardMatcher{
 	},
 }
 
-var directoriesMatcher = WildcardMatcher{
+var directoriesMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
@@ -131,7 +124,7 @@ var directoriesMatcher = WildcardMatcher{
 	},
 }
 
-var excludeMatcher = WildcardMatcher{
+var excludeMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	doubleAsteriskRegexFragment: "(/.+?)?",
 	replaceWildcardCharacter: func(match string) string {
@@ -139,18 +132,18 @@ var excludeMatcher = WildcardMatcher{
 	},
 }
 
-var wildcardMatchers = map[Usage]WildcardMatcher{
+var wildcardMatchers = map[Usage]wildcardMatcher{
 	UsageFiles:       filesMatcher,
 	UsageDirectories: directoriesMatcher,
 	UsageExclude:     excludeMatcher,
 }
 
-func GetPatternFromSpec(
+func getPatternFromSpec(
 	spec string,
 	basePath string,
 	usage Usage,
 ) string {
-	pattern := GetSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
+	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
 	if pattern == "" {
 		return ""
 	}
@@ -158,11 +151,11 @@ func GetPatternFromSpec(
 	return fmt.Sprintf("^(%s)%s", pattern, ending)
 }
 
-func GetSubPatternFromSpec(
+func getSubPatternFromSpec(
 	spec string,
 	basePath string,
 	usage Usage,
-	matcher WildcardMatcher,
+	matcher wildcardMatcher,
 ) string {
 	matcher = wildcardMatchers[usage]
 
@@ -180,7 +173,7 @@ func GetSubPatternFromSpec(
 	// We need to remove to create our regex correctly.
 	components[0] = tspath.RemoveTrailingDirectorySeparator(components[0])
 
-	if IsImplicitGlob(lastComponent) {
+	if isImplicitGlob(lastComponent) {
 		components = append(components, "**", "*")
 	}
 
@@ -290,16 +283,16 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 
 // getFileMatcherPatterns generates file matching patterns based on the provided path,
 // includes, excludes, and other parameters. path is the directory of the tsconfig.json file.
-func getFileMatcherPatterns(path string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string) FileMatcherPatterns {
+func getFileMatcherPatterns(path string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string) fileMatcherPatterns {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
 
-	return FileMatcherPatterns{
-		includeFilePatterns:     core.Map(GetRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
-		includeFilePattern:      GetRegularExpressionForWildcard(includes, absolutePath, "files"),
-		includeDirectoryPattern: GetRegularExpressionForWildcard(includes, absolutePath, "directories"),
-		excludePattern:          GetRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
+	return fileMatcherPatterns{
+		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
+		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, "files"),
+		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, "directories"),
+		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
 		basePaths:               getBasePaths(path, includes, useCaseSensitiveFileNames),
 	}
 }
@@ -314,7 +307,7 @@ var (
 	regexp2Cache   = make(map[regexp2CacheKey]*regexp2.Regexp)
 )
 
-func GetRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
+func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
 	opts := regexp2.RegexOptions(regexp2.ECMAScript)
 	if !useCaseSensitiveFileNames {
 		opts |= regexp2.IgnoreCase
@@ -423,15 +416,15 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	patterns := getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory)
 	var includeFileRegexes []*regexp2.Regexp
 	if patterns.includeFilePatterns != nil {
-		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return GetRegexFromPattern(pattern, useCaseSensitiveFileNames) })
+		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return getRegexFromPattern(pattern, useCaseSensitiveFileNames) })
 	}
 	var includeDirectoryRegex *regexp2.Regexp
 	if patterns.includeDirectoryPattern != "" {
-		includeDirectoryRegex = GetRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
+		includeDirectoryRegex = getRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
 	}
 	var excludeRegex *regexp2.Regexp
 	if patterns.excludePattern != "" {
-		excludeRegex = GetRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
+		excludeRegex = getRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
 	}
 
 	// Associate an array of results with each include regex. This keeps results in order of the "include" order.
@@ -460,4 +453,68 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	}
 
 	return core.Flatten(results)
+}
+
+// regexSpecMatcher wraps a regexp2.Regexp for SpecMatcher interface.
+type regexSpecMatcher struct {
+	re *regexp2.Regexp
+}
+
+func (m *regexSpecMatcher) MatchString(path string) bool {
+	if m == nil || m.re == nil {
+		return false
+	}
+	matched, err := m.re.MatchString(path)
+	return err == nil && matched
+}
+
+// newRegexSpecMatcher creates a regex-based matcher for multiple specs.
+func newRegexSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *regexSpecMatcher {
+	pattern := getRegularExpressionForWildcard(specs, basePath, usage)
+	if pattern == "" {
+		return nil
+	}
+	return &regexSpecMatcher{re: getRegexFromPattern(pattern, useCaseSensitiveFileNames)}
+}
+
+// newRegexSingleSpecMatcher creates a regex-based matcher for a single spec.
+func newRegexSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *regexSpecMatcher {
+	pattern := getPatternFromSpec(spec, basePath, usage)
+	if pattern == "" {
+		return nil
+	}
+	return &regexSpecMatcher{re: getRegexFromPattern(pattern, useCaseSensitiveFileNames)}
+}
+
+// regexSpecMatchers holds a list of individual regex matchers for index lookup.
+type regexSpecMatchers struct {
+	matchers []*regexp2.Regexp
+}
+
+func (m *regexSpecMatchers) MatchIndex(path string) int {
+	for i, re := range m.matchers {
+		if matched, err := re.MatchString(path); err == nil && matched {
+			return i
+		}
+	}
+	return -1
+}
+
+func (m *regexSpecMatchers) Len() int {
+	return len(m.matchers)
+}
+
+// newRegexSpecMatchers creates individual regex matchers for each spec.
+func newRegexSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *regexSpecMatchers {
+	patterns := getRegularExpressionsForWildcards(specs, basePath, usage)
+	if len(patterns) == 0 {
+		return nil
+	}
+	matchers := make([]*regexp2.Regexp, len(patterns))
+	for i, pattern := range patterns {
+		// Wrap pattern with ^ and $ for full match
+		fullPattern := "^" + pattern + "$"
+		matchers[i] = getRegexFromPattern(fullPattern, useCaseSensitiveFileNames)
+	}
+	return &regexSpecMatchers{matchers: matchers}
 }

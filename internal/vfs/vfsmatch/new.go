@@ -9,9 +9,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-// GlobPattern represents a compiled glob pattern for matching file paths.
+// globPattern represents a compiled glob pattern for matching file paths.
 // It stores the pattern components for efficient matching without using regex.
-type GlobPattern struct {
+type globPattern struct {
 	// The original pattern specification
 	spec string
 	// The base path from which the pattern was derived
@@ -54,8 +54,8 @@ const (
 	segmentQuestion             // ? - matches single char except /
 )
 
-// CompileGlobPattern compiles a glob spec into a GlobPattern for matching.
-func CompileGlobPattern(spec string, basePath string, usage Usage, caseSensitive bool) *GlobPattern {
+// compileGlobPattern compiles a glob spec into a globPattern for matching.
+func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive bool) *globPattern {
 	components := tspath.GetNormalizedPathComponents(spec, basePath)
 	lastComponent := core.LastOrNil(components)
 
@@ -69,11 +69,11 @@ func CompileGlobPattern(spec string, basePath string, usage Usage, caseSensitive
 	components[0] = tspath.RemoveTrailingDirectorySeparator(components[0])
 
 	// Handle implicit glob (directories become dir/**/*)
-	if IsImplicitGlob(lastComponent) {
+	if isImplicitGlob(lastComponent) {
 		components = append(components, "**", "*")
 	}
 
-	pattern := &GlobPattern{
+	pattern := &globPattern{
 		spec:          spec,
 		basePath:      basePath,
 		isExclude:     usage == UsageExclude,
@@ -137,8 +137,8 @@ func parsePatternSegments(comp string) []patternSegment {
 	return segments
 }
 
-// Matches checks if the given path matches this glob pattern.
-func (p *GlobPattern) Matches(path string) bool {
+// matches checks if the given path matches this glob pattern.
+func (p *globPattern) matches(path string) bool {
 	if p == nil {
 		return false
 	}
@@ -147,9 +147,9 @@ func (p *GlobPattern) Matches(path string) bool {
 	return p.matchPath(path, 0, false)
 }
 
-// MatchesPrefix checks if the given directory path could potentially match files under it.
+// matchesPrefix checks if the given directory path could potentially match files under it.
 // This is used for directory filtering during traversal.
-func (p *GlobPattern) MatchesPrefix(path string) bool {
+func (p *globPattern) matchesPrefix(path string) bool {
 	if p == nil {
 		return false
 	}
@@ -189,13 +189,13 @@ func nextPathComponent(path string, offset int) (component string, nextOffset in
 
 // matchPath matches the path against pattern components starting at patternIdx.
 // pathOffset is the current position in the path string.
-func (p *GlobPattern) matchPath(path string, patternIdx int, inDoubleAsterisk bool) bool {
+func (p *globPattern) matchPath(path string, patternIdx int, inDoubleAsterisk bool) bool {
 	// Bootstrap: handle the path from the beginning
 	return p.matchPathAt(path, 0, patternIdx, inDoubleAsterisk)
 }
 
 // matchPathAt matches path[pathOffset:] against pattern components starting at patternIdx.
-func (p *GlobPattern) matchPathAt(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool) bool {
+func (p *globPattern) matchPathAt(path string, pathOffset int, patternIdx int, inDoubleAsterisk bool) bool {
 	for {
 		// Get the next path component
 		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
@@ -212,6 +212,10 @@ func (p *GlobPattern) matchPathAt(path string, pathOffset int, patternIdx int, i
 
 		// If we've consumed all path components but still have pattern components
 		if !hasMore {
+			// For exclude patterns, if remaining is just the implicit glob suffix (** and *), match
+			if p.isExclude {
+				return p.isImplicitGlobSuffix(patternIdx)
+			}
 			// Check if remaining pattern components are all optional (** only)
 			for i := patternIdx; i < len(p.components); i++ {
 				if !p.components[i].isDoubleAsterisk {
@@ -265,12 +269,12 @@ func (p *GlobPattern) matchPathAt(path string, pathOffset int, patternIdx int, i
 }
 
 // matchPathPrefix checks if the path could be a prefix of a matching path.
-func (p *GlobPattern) matchPathPrefix(path string, patternIdx int) bool {
+func (p *globPattern) matchPathPrefix(path string, patternIdx int) bool {
 	return p.matchPathPrefixAt(path, 0, patternIdx)
 }
 
 // matchPathPrefixAt checks if path[pathOffset:] could be a prefix of a matching path.
-func (p *GlobPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx int) bool {
+func (p *globPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx int) bool {
 	for {
 		// Get the next path component
 		pathComp, nextPathOffset, hasMore := nextPathComponent(path, pathOffset)
@@ -326,7 +330,7 @@ func (p *GlobPattern) matchPathPrefixAt(path string, pathOffset int, patternIdx 
 }
 
 // matchComponent matches a single path component against a pattern component
-func (p *GlobPattern) matchComponent(pc patternComponent, pathComp string, afterDoubleAsterisk bool) bool {
+func (p *globPattern) matchComponent(pc patternComponent, pathComp string, afterDoubleAsterisk bool) bool {
 	if pc.isDoubleAsterisk {
 		// Should not happen here, handled separately
 		return true
@@ -344,7 +348,7 @@ func (p *GlobPattern) matchComponent(pc patternComponent, pathComp string, after
 }
 
 // matchWildcardComponent matches a path component against wildcard segments
-func (p *GlobPattern) matchWildcardComponent(segments []patternSegment, s string) bool {
+func (p *globPattern) matchWildcardComponent(segments []patternSegment, s string) bool {
 	// For non-exclude patterns, if the segments start with * or ?,
 	// the matched string cannot start with '.'
 	if !p.isExclude && len(segments) > 0 && len(s) > 0 && s[0] == '.' {
@@ -383,7 +387,7 @@ func (p *GlobPattern) matchWildcardComponent(segments []patternSegment, s string
 	return p.matchSegments(segments, 0, s, 0)
 }
 
-func (p *GlobPattern) matchSegments(segments []patternSegment, segIdx int, s string, sIdx int) bool {
+func (p *globPattern) matchSegments(segments []patternSegment, segIdx int, s string, sIdx int) bool {
 	// If we've processed all segments
 	if segIdx >= len(segments) {
 		return sIdx >= len(s)
@@ -452,12 +456,12 @@ func (p *GlobPattern) matchSegments(segments []patternSegment, segIdx int, s str
 }
 
 // wouldMatchMinJs checks if the filename ends with .min.js
-func (p *GlobPattern) wouldMatchMinJs(filename string) bool {
+func (p *globPattern) wouldMatchMinJs(filename string) bool {
 	return strings.HasSuffix(strings.ToLower(filename), ".min.js")
 }
 
 // patternExplicitlyIncludesMinJs checks if the pattern explicitly includes .min.js
-func (p *GlobPattern) patternExplicitlyIncludesMinJs(segments []patternSegment) bool {
+func (p *globPattern) patternExplicitlyIncludesMinJs(segments []patternSegment) bool {
 	// Look for .min.js in the literal segments
 	for _, seg := range segments {
 		if seg.kind == segmentLiteral && strings.Contains(strings.ToLower(seg.literal), ".min.js") {
@@ -467,8 +471,40 @@ func (p *GlobPattern) patternExplicitlyIncludesMinJs(segments []patternSegment) 
 	return false
 }
 
+// isImplicitGlobSuffix checks if the remaining pattern components from patternIdx
+// are the implicit glob suffix (** followed by *) or all **
+func (p *globPattern) isImplicitGlobSuffix(patternIdx int) bool {
+	remaining := len(p.components) - patternIdx
+	if remaining == 0 {
+		return true
+	}
+	// All remaining must be ** (can match zero components)
+	// OR it's exactly **/* (the implicit glob pattern added for directories)
+	allDoubleAsterisk := true
+	for i := patternIdx; i < len(p.components); i++ {
+		if !p.components[i].isDoubleAsterisk {
+			allDoubleAsterisk = false
+			break
+		}
+	}
+	if allDoubleAsterisk {
+		return true
+	}
+	// Check for exactly **/* pattern (implicit glob suffix)
+	if remaining == 2 {
+		if p.components[patternIdx].isDoubleAsterisk {
+			last := p.components[patternIdx+1]
+			// The last component must be a pure * wildcard (matching any filename)
+			if last.hasWildcards && len(last.segments) == 1 && last.segments[0].kind == segmentStar {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // stringsEqual compares two strings with case sensitivity based on pattern settings
-func (p *GlobPattern) stringsEqual(a, b string) bool {
+func (p *globPattern) stringsEqual(a, b string) bool {
 	if p.caseSensitive {
 		return a == b
 	}
@@ -490,30 +526,30 @@ func isCommonPackageFolder(name string) bool {
 	}
 }
 
-// GlobMatcher holds compiled glob patterns for matching files.
-type GlobMatcher struct {
-	includePatterns []*GlobPattern
-	excludePatterns []*GlobPattern
+// globMatcher holds compiled glob patterns for matching files.
+type globMatcher struct {
+	includePatterns []*globPattern
+	excludePatterns []*globPattern
 	caseSensitive   bool
 	// hadIncludes tracks whether any include specs were provided (even if they compiled to nothing)
 	hadIncludes bool
 }
 
-// NewGlobMatcher creates a new GlobMatcher from include and exclude specs.
-func NewGlobMatcher(includes []string, excludes []string, basePath string, caseSensitive bool, usage Usage) *GlobMatcher {
-	m := &GlobMatcher{
+// newGlobMatcher creates a new globMatcher from include and exclude specs.
+func newGlobMatcher(includes []string, excludes []string, basePath string, caseSensitive bool, usage Usage) *globMatcher {
+	m := &globMatcher{
 		caseSensitive: caseSensitive,
 		hadIncludes:   len(includes) > 0,
 	}
 
 	for _, spec := range includes {
-		if pattern := CompileGlobPattern(spec, basePath, usage, caseSensitive); pattern != nil {
+		if pattern := compileGlobPattern(spec, basePath, usage, caseSensitive); pattern != nil {
 			m.includePatterns = append(m.includePatterns, pattern)
 		}
 	}
 
 	for _, spec := range excludes {
-		if pattern := CompileGlobPattern(spec, basePath, UsageExclude, caseSensitive); pattern != nil {
+		if pattern := compileGlobPattern(spec, basePath, UsageExclude, caseSensitive); pattern != nil {
 			m.excludePatterns = append(m.excludePatterns, pattern)
 		}
 	}
@@ -523,10 +559,10 @@ func NewGlobMatcher(includes []string, excludes []string, basePath string, caseS
 
 // MatchesFile checks if a file path matches the include patterns and doesn't match exclude patterns.
 // Returns the index of the matching include pattern, or -1 if no match.
-func (m *GlobMatcher) MatchesFile(path string) int {
+func (m *globMatcher) MatchesFile(path string) int {
 	// First check excludes
 	for _, exc := range m.excludePatterns {
-		if exc.Matches(path) {
+		if exc.matches(path) {
 			return -1
 		}
 	}
@@ -541,7 +577,7 @@ func (m *GlobMatcher) MatchesFile(path string) int {
 
 	// Check includes
 	for i, inc := range m.includePatterns {
-		if inc.Matches(path) {
+		if inc.matches(path) {
 			return i
 		}
 	}
@@ -550,10 +586,10 @@ func (m *GlobMatcher) MatchesFile(path string) int {
 }
 
 // MatchesDirectory checks if a directory could contain matching files.
-func (m *GlobMatcher) MatchesDirectory(path string) bool {
+func (m *globMatcher) MatchesDirectory(path string) bool {
 	// First check if excluded
 	for _, exc := range m.excludePatterns {
-		if exc.Matches(path) {
+		if exc.matches(path) {
 			return false
 		}
 	}
@@ -568,7 +604,7 @@ func (m *GlobMatcher) MatchesDirectory(path string) bool {
 
 	// Check if any include pattern could match files in this directory
 	for _, inc := range m.includePatterns {
-		if inc.MatchesPrefix(path) {
+		if inc.matchesPrefix(path) {
 			return true
 		}
 	}
@@ -576,10 +612,10 @@ func (m *GlobMatcher) MatchesDirectory(path string) bool {
 	return false
 }
 
-// visitorNoRegex is similar to visitor but uses GlobMatcher instead of regex
+// visitorNoRegex is similar to visitor but uses globMatcher instead of regex
 type visitorNoRegex struct {
-	fileMatcher               *GlobMatcher
-	directoryMatcher          *GlobMatcher
+	fileMatcher               *globMatcher
+	directoryMatcher          *globMatcher
 	extensions                []string
 	useCaseSensitiveFileNames bool
 	host                      vfs.FS
@@ -657,10 +693,10 @@ func matchFilesNoRegex(path string, extensions []string, excludes []string, incl
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
 
 	// Build file matcher
-	fileMatcher := NewGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageFiles)
+	fileMatcher := newGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageFiles)
 
 	// Build directory matcher
-	directoryMatcher := NewGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageDirectories)
+	directoryMatcher := newGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageDirectories)
 
 	basePaths := getBasePaths(path, includes, useCaseSensitiveFileNames)
 
@@ -691,4 +727,82 @@ func matchFilesNoRegex(path string, extensions []string, excludes []string, incl
 	}
 
 	return core.Flatten(results)
+}
+
+// globSpecMatcher wraps a globMatcher for SpecMatcher interface.
+type globSpecMatcher struct {
+	patterns []*globPattern
+}
+
+func (m *globSpecMatcher) MatchString(path string) bool {
+	if m == nil {
+		return false
+	}
+	for _, p := range m.patterns {
+		if p.matches(path) {
+			return true
+		}
+	}
+	return false
+}
+
+// newGlobSpecMatcher creates a glob-based matcher for multiple specs.
+func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
+	if len(specs) == 0 {
+		return nil
+	}
+	m := &globSpecMatcher{}
+	for _, spec := range specs {
+		if pattern := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames); pattern != nil {
+			m.patterns = append(m.patterns, pattern)
+		}
+	}
+	if len(m.patterns) == 0 {
+		return nil
+	}
+	return m
+}
+
+// newGlobSingleSpecMatcher creates a glob-based matcher for a single spec.
+func newGlobSingleSpecMatcher(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
+	pattern := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames)
+	if pattern == nil {
+		return nil
+	}
+	return &globSpecMatcher{patterns: []*globPattern{pattern}}
+}
+
+// globSpecMatchers holds a list of individual glob matchers for index lookup.
+type globSpecMatchers struct {
+	patterns []*globPattern
+}
+
+func (m *globSpecMatchers) MatchIndex(path string) int {
+	for i, p := range m.patterns {
+		if p.matches(path) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (m *globSpecMatchers) Len() int {
+	return len(m.patterns)
+}
+
+// newGlobSpecMatchers creates individual glob matchers for each spec.
+func newGlobSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatchers {
+	if len(specs) == 0 {
+		return nil
+	}
+	var patterns []*globPattern
+	for _, spec := range specs {
+		if pattern := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames); pattern != nil {
+			patterns = append(patterns, pattern)
+		}
+	}
+	if len(patterns) == 0 {
+		return nil
+	}
+	return &globSpecMatchers{patterns: patterns}
 }

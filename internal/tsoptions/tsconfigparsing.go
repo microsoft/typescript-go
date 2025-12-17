@@ -2,13 +2,11 @@ package tsoptions
 
 import (
 	"cmp"
-	"fmt"
 	"reflect"
 	"regexp"
 	"slices"
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -107,13 +105,15 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 	if len(c.validatedExcludeSpecs) == 0 {
 		return false
 	}
-	excludePattern := vfsmatch.GetRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
-	excludeRegex := vfsmatch.GetRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
+	excludeMatcher := vfsmatch.NewSpecMatcher(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude", comparePathsOptions.UseCaseSensitiveFileNames)
+	if excludeMatcher == nil {
+		return false
+	}
+	if excludeMatcher.MatchString(fileName) {
 		return true
 	}
 	if !tspath.HasExtension(fileName) {
-		if match, err := excludeRegex.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)); err == nil && match {
+		if excludeMatcher.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)) {
 			return true
 		}
 	}
@@ -125,12 +125,9 @@ func (c *configFileSpecs) getMatchedIncludeSpec(fileName string, comparePathsOpt
 		return ""
 	}
 	for index, spec := range c.validatedIncludeSpecs {
-		includePattern := vfsmatch.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
-		if includePattern != "" {
-			includeRegex := vfsmatch.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return c.validatedIncludeSpecsBeforeSubstitution[index]
-			}
+		includeMatcher := vfsmatch.NewSingleSpecMatcher(spec, comparePathsOptions.CurrentDirectory, "files", comparePathsOptions.UseCaseSensitiveFileNames)
+		if includeMatcher != nil && includeMatcher.MatchString(fileName) {
+			return c.validatedIncludeSpecsBeforeSubstitution[index]
 		}
 	}
 	return ""
@@ -1662,23 +1659,19 @@ func getFileNamesFromConfigSpecs(
 		literalFileMap.Set(keyMappper(fileName), file)
 	}
 
-	var jsonOnlyIncludeRegexes []*regexp2.Regexp
+	var jsonOnlyIncludeMatchers vfsmatch.SpecMatchers
 	if len(validatedIncludeSpecs) > 0 {
 		files := vfsmatch.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
-				if jsonOnlyIncludeRegexes == nil {
+				if jsonOnlyIncludeMatchers == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(vfsmatch.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
-					if includeFilePatterns != nil {
-						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return vfsmatch.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
-						})
-					} else {
-						jsonOnlyIncludeRegexes = nil
-					}
+					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatchers(includes, basePath, "files", host.UseCaseSensitiveFileNames())
 				}
-				includeIndex := core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(file)) })
+				var includeIndex int = -1
+				if jsonOnlyIncludeMatchers != nil {
+					includeIndex = jsonOnlyIncludeMatchers.MatchIndex(file)
+				}
 				if includeIndex != -1 {
 					key := keyMappper(file)
 					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {

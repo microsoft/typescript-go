@@ -1249,3 +1249,195 @@ func TestReadDirectoryMatchesTypeScriptBaselines(t *testing.T) {
 		}
 	}
 }
+
+// TestSpecMatcher tests the SpecMatcher API
+func TestSpecMatcher(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name                      string
+		specs                     []string
+		basePath                  string
+		usage                     vfsmatch.Usage
+		useCaseSensitiveFileNames bool
+		matchingPaths             []string
+		nonMatchingPaths          []string
+	}{
+		{
+			name:                      "simple wildcard",
+			specs:                     []string{"*.ts"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/a.ts", "/project/b.ts", "/project/foo.ts"},
+			nonMatchingPaths:          []string{"/project/a.js", "/project/sub/a.ts"},
+		},
+		{
+			name:                      "recursive wildcard",
+			specs:                     []string{"**/*.ts"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/a.ts", "/project/sub/a.ts", "/project/sub/deep/a.ts"},
+			nonMatchingPaths:          []string{"/project/a.js"},
+		},
+		{
+			name:                      "exclude pattern",
+			specs:                     []string{"node_modules"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageExclude,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/node_modules", "/project/node_modules/foo"},
+			nonMatchingPaths:          []string{"/project/src"},
+		},
+		{
+			name:                      "case insensitive",
+			specs:                     []string{"*.ts"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: false,
+			matchingPaths:             []string{"/project/A.TS", "/project/B.Ts"},
+			nonMatchingPaths:          []string{"/project/a.js"},
+		},
+		{
+			name:                      "multiple specs",
+			specs:                     []string{"*.ts", "*.tsx"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/a.ts", "/project/b.tsx"},
+			nonMatchingPaths:          []string{"/project/a.js"},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			matcher := vfsmatch.NewSpecMatcher(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			if matcher == nil {
+				t.Fatal("matcher should not be nil")
+			}
+			for _, path := range tc.matchingPaths {
+				assert.Assert(t, matcher.MatchString(path), "should match: %s", path)
+			}
+			for _, path := range tc.nonMatchingPaths {
+				assert.Assert(t, !matcher.MatchString(path), "should not match: %s", path)
+			}
+		})
+	}
+}
+
+func TestSingleSpecMatcher(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name                      string
+		spec                      string
+		basePath                  string
+		usage                     vfsmatch.Usage
+		useCaseSensitiveFileNames bool
+		expectNil                 bool
+		matchingPaths             []string
+		nonMatchingPaths          []string
+	}{
+		{
+			name:                      "simple spec",
+			spec:                      "*.ts",
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/a.ts"},
+			nonMatchingPaths:          []string{"/project/a.js"},
+		},
+		{
+			name:                      "trailing ** non-exclude returns nil",
+			spec:                      "**",
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			expectNil:                 true,
+		},
+		{
+			name:                      "trailing ** exclude works",
+			spec:                      "**",
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageExclude,
+			useCaseSensitiveFileNames: true,
+			matchingPaths:             []string{"/project/anything", "/project/deep/path"},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			matcher := vfsmatch.NewSingleSpecMatcher(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			if tc.expectNil {
+				assert.Assert(t, matcher == nil, "should be nil")
+				return
+			}
+			if matcher == nil {
+				t.Fatal("matcher should not be nil")
+			}
+			for _, path := range tc.matchingPaths {
+				assert.Assert(t, matcher.MatchString(path), "should match: %s", path)
+			}
+			for _, path := range tc.nonMatchingPaths {
+				assert.Assert(t, !matcher.MatchString(path), "should not match: %s", path)
+			}
+		})
+	}
+}
+
+func TestSpecMatchers(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name                      string
+		specs                     []string
+		basePath                  string
+		usage                     vfsmatch.Usage
+		useCaseSensitiveFileNames bool
+		expectNil                 bool
+		pathToIndex               map[string]int
+	}{
+		{
+			name:                      "multiple specs return correct index",
+			specs:                     []string{"*.ts", "*.tsx", "*.js"},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			pathToIndex: map[string]int{
+				"/project/a.ts":  0,
+				"/project/b.tsx": 1,
+				"/project/c.js":  2,
+				"/project/d.css": -1, // no match
+			},
+		},
+		{
+			name:                      "empty specs returns nil",
+			specs:                     []string{},
+			basePath:                  "/project",
+			usage:                     vfsmatch.UsageFiles,
+			useCaseSensitiveFileNames: true,
+			expectNil:                 true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			matchers := vfsmatch.NewSpecMatchers(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+			if tc.expectNil {
+				assert.Assert(t, matchers == nil, "should be nil")
+				return
+			}
+			if matchers == nil {
+				t.Fatal("matchers should not be nil")
+			}
+			for path, expectedIndex := range tc.pathToIndex {
+				gotIndex := matchers.MatchIndex(path)
+				assert.Equal(t, gotIndex, expectedIndex, "path: %s", path)
+			}
+		})
+	}
+}

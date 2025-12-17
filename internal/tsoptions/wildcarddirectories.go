@@ -26,15 +26,7 @@ func getWildcardDirectories(include []string, exclude []string, comparePathsOpti
 		return nil
 	}
 
-	rawExcludeRegex := vfsmatch.GetRegularExpressionForWildcard(exclude, comparePathsOptions.CurrentDirectory, "exclude")
-	var excludeRegex *regexp2.Regexp
-	if rawExcludeRegex != "" {
-		flags := regexp2.ECMAScript
-		if !comparePathsOptions.UseCaseSensitiveFileNames {
-			flags |= regexp2.IgnoreCase
-		}
-		excludeRegex = regexp2.MustCompile(rawExcludeRegex, regexp2.RegexOptions(flags))
-	}
+	excludeMatcher := vfsmatch.NewSpecMatcher(exclude, comparePathsOptions.CurrentDirectory, "exclude", comparePathsOptions.UseCaseSensitiveFileNames)
 
 	wildcardDirectories := make(map[string]bool)
 	wildCardKeyToPath := make(map[string]string)
@@ -43,10 +35,8 @@ func getWildcardDirectories(include []string, exclude []string, comparePathsOpti
 
 	for _, file := range include {
 		spec := tspath.NormalizeSlashes(tspath.CombinePaths(comparePathsOptions.CurrentDirectory, file))
-		if excludeRegex != nil {
-			if matched, _ := excludeRegex.MatchString(spec); matched {
-				continue
-			}
+		if excludeMatcher != nil && excludeMatcher.MatchString(spec) {
+			continue
 		}
 
 		match := getWildcardDirectoryFromSpec(spec, comparePathsOptions.UseCaseSensitiveFileNames)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -1384,15 +1383,15 @@ func forEachExternalModuleToImportFrom(
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
 ) {
-	var excludePatterns []*regexp2.Regexp
+	var excludeMatcher vfsmatch.SpecMatcher
 	if preferences.AutoImportFileExcludePatterns != nil {
-		excludePatterns = getIsExcludedPatterns(preferences, program.UseCaseSensitiveFileNames())
+		excludeMatcher = getIsExcludedMatcher(preferences, program.UseCaseSensitiveFileNames())
 	}
 
 	forEachExternalModule(
 		ch,
 		program.GetSourceFiles(),
-		excludePatterns,
+		excludeMatcher,
 		func(module *ast.Symbol, file *ast.SourceFile) {
 			cb(module, file, ch, false)
 		},
@@ -1414,35 +1413,26 @@ func forEachExternalModuleToImportFrom(
 	// }
 }
 
-func getIsExcludedPatterns(preferences *lsutil.UserPreferences, useCaseSensitiveFileNames bool) []*regexp2.Regexp {
+func getIsExcludedMatcher(preferences *lsutil.UserPreferences, useCaseSensitiveFileNames bool) vfsmatch.SpecMatcher {
 	if preferences.AutoImportFileExcludePatterns == nil {
 		return nil
 	}
-	var patterns []*regexp2.Regexp
-	for _, spec := range preferences.AutoImportFileExcludePatterns {
-		pattern := vfsmatch.GetSubPatternFromSpec(spec, "", vfsmatch.UsageExclude, vfsmatch.WildcardMatcher{})
-		if pattern != "" {
-			if re := vfsmatch.GetRegexFromPattern(pattern, useCaseSensitiveFileNames); re != nil {
-				patterns = append(patterns, re)
-			}
-		}
-	}
-	return patterns
+	return vfsmatch.NewSpecMatcher(preferences.AutoImportFileExcludePatterns, "", vfsmatch.UsageExclude, useCaseSensitiveFileNames)
 }
 
 func forEachExternalModule(
 	ch *checker.Checker,
 	allSourceFiles []*ast.SourceFile,
-	excludePatterns []*regexp2.Regexp,
+	excludeMatcher vfsmatch.SpecMatcher,
 	cb func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile),
 ) {
 	var isExcluded func(*ast.SourceFile) bool = func(_ *ast.SourceFile) bool { return false }
-	if excludePatterns != nil {
-		isExcluded = getIsExcluded(excludePatterns)
+	if excludeMatcher != nil {
+		isExcluded = getIsExcluded(excludeMatcher)
 	}
 
 	for _, ambient := range ch.GetAmbientModules() {
-		if !strings.Contains(ambient.Name, "*") && !(excludePatterns != nil && core.Every(ambient.Declarations, func(d *ast.Node) bool {
+		if !strings.Contains(ambient.Name, "*") && !(excludeMatcher != nil && core.Every(ambient.Declarations, func(d *ast.Node) bool {
 			return isExcluded(ast.GetSourceFileOfNode(d))
 		})) {
 			cb(ambient, nil /*sourceFile*/)
@@ -1455,15 +1445,13 @@ func forEachExternalModule(
 	}
 }
 
-func getIsExcluded(excludePatterns []*regexp2.Regexp) func(sourceFile *ast.SourceFile) bool {
+func getIsExcluded(excludeMatcher vfsmatch.SpecMatcher) func(sourceFile *ast.SourceFile) bool {
 	// !!! SymlinkCache
 	// const realpathsWithSymlinks = host.getSymlinkCache?.().getSymlinkedDirectoriesByRealpath();
 	return func(sourceFile *ast.SourceFile) bool {
 		fileName := sourceFile.FileName()
-		for _, p := range excludePatterns {
-			if matched, _ := p.MatchString(fileName); matched {
-				return true
-			}
+		if excludeMatcher.MatchString(fileName) {
+			return true
 		}
 		// !! SymlinkCache
 		// if (realpathsWithSymlinks?.size && pathContainsNodeModules(fileName)) {
