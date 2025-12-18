@@ -26,9 +26,12 @@ var rootPath = sync.OnceValue(func() string {
 	root := filepath.VolumeName(filename) + string(filepath.Separator)
 
 	dir := filepath.Dir(filename)
-	for dir != root {
+	for {
 		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
 			return dir
+		}
+		if dir == root {
+			break
 		}
 		dir = filepath.Dir(dir)
 	}
