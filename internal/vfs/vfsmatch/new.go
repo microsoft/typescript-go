@@ -98,28 +98,24 @@ func parseComponent(s string, isInclude bool) component {
 // parseSegments breaks "*.ts" into [segStar, segLiteral(".ts")]
 func parseSegments(s string) []segment {
 	var result []segment
-	var buf strings.Builder
-
-	flushLiteral := func() {
-		if buf.Len() > 0 {
-			result = append(result, segment{kind: segLiteral, literal: buf.String()})
-			buf.Reset()
-		}
-	}
-
-	for i := range len(s) {
+	start := 0
+	for i := 0; i < len(s); i++ {
 		switch s[i] {
-		case '*':
-			flushLiteral()
-			result = append(result, segment{kind: segStar})
-		case '?':
-			flushLiteral()
-			result = append(result, segment{kind: segQuestion})
-		default:
-			buf.WriteByte(s[i])
+		case '*', '?':
+			if i > start {
+				result = append(result, segment{kind: segLiteral, literal: s[start:i]})
+			}
+			if s[i] == '*' {
+				result = append(result, segment{kind: segStar})
+			} else {
+				result = append(result, segment{kind: segQuestion})
+			}
+			start = i + 1
 		}
 	}
-	flushLiteral()
+	if start < len(s) {
+		result = append(result, segment{kind: segLiteral, literal: s[start:]})
+	}
 	return result
 }
 
@@ -128,7 +124,7 @@ func (p *globPattern) matches(path string) bool {
 	if p == nil {
 		return false
 	}
-	return p.matchPath(path, 0, 0)
+	return p.matchPath(path, 0, 0, false)
 }
 
 // matchesPrefix returns true if files under this directory path could match.
@@ -137,20 +133,24 @@ func (p *globPattern) matchesPrefix(path string) bool {
 	if p == nil {
 		return false
 	}
-	return p.matchPathPrefix(path, 0, 0)
+	return p.matchPath(path, 0, 0, true)
 }
 
 // matchPath checks if path matches the pattern starting from the given offsets.
-func (p *globPattern) matchPath(path string, pathOffset, compIdx int) bool {
+// If prefixOnly is true, returns true when path is exhausted (prefix matching for directories).
+func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly bool) bool {
 	for {
 		pathPart, nextOffset, ok := nextPathPart(path, pathOffset)
 		if !ok {
+			if prefixOnly {
+				return true // Path exhausted - could potentially match
+			}
 			return p.patternSatisfied(compIdx)
 		}
 
 		if compIdx >= len(p.components) {
 			// Exclude patterns match prefixes (e.g., "node_modules" excludes "node_modules/foo")
-			return p.isExclude
+			return p.isExclude && !prefixOnly
 		}
 
 		comp := p.components[compIdx]
@@ -158,7 +158,7 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int) bool {
 		switch comp.kind {
 		case kindDoubleAsterisk:
 			// ** can match zero directories: try skipping it
-			if p.matchPath(path, pathOffset, compIdx+1) {
+			if p.matchPath(path, pathOffset, compIdx+1, prefixOnly) {
 				return true
 			}
 			// ** should not match hidden dirs or package folders (for includes)
@@ -166,54 +166,6 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int) bool {
 				return false
 			}
 			// ** matches this directory, try next path part with same **
-			pathOffset = nextOffset
-			continue
-
-		case kindLiteral:
-			if comp.skipPackageFolders && isPackageFolder(pathPart) {
-				return false
-			}
-			if !p.stringsEqual(comp.literal, pathPart) {
-				return false
-			}
-
-		case kindWildcard:
-			if comp.skipPackageFolders && isPackageFolder(pathPart) {
-				return false
-			}
-			if !p.matchWildcard(comp.segments, pathPart) {
-				return false
-			}
-		}
-
-		pathOffset = nextOffset
-		compIdx++
-	}
-}
-
-// matchPathPrefix checks if path could be a prefix of a matching path.
-// Similar to matchPath but returns true when path is exhausted.
-func (p *globPattern) matchPathPrefix(path string, pathOffset, compIdx int) bool {
-	for {
-		pathPart, nextOffset, ok := nextPathPart(path, pathOffset)
-		if !ok {
-			return true // Path exhausted - could potentially match
-		}
-
-		if compIdx >= len(p.components) {
-			return false
-		}
-
-		comp := p.components[compIdx]
-
-		switch comp.kind {
-		case kindDoubleAsterisk:
-			if p.matchPathPrefix(path, pathOffset, compIdx+1) {
-				return true
-			}
-			if !p.isExclude && (isHiddenPath(pathPart) || isPackageFolder(pathPart)) {
-				return false
-			}
 			pathOffset = nextOffset
 			continue
 
@@ -616,9 +568,5 @@ func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSen
 
 // newGlobSingleSpecMatcher creates a matcher for a single glob spec.
 func newGlobSingleSpecMatcher(spec, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
-	p := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames)
-	if p == nil {
-		return nil
-	}
-	return &globSpecMatcher{patterns: []*globPattern{p}}
+	return newGlobSpecMatcher([]string{spec}, basePath, usage, useCaseSensitiveFileNames)
 }
