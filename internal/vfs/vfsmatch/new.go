@@ -436,8 +436,8 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 	return m
 }
 
-// MatchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
-func (m *globMatcher) MatchesFileParts(prefix, suffix string) int {
+// matchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
+func (m *globMatcher) matchesFileParts(prefix, suffix string) int {
 	for _, exc := range m.excludes {
 		if exc.matchesParts(prefix, suffix) {
 			return -1
@@ -457,8 +457,8 @@ func (m *globMatcher) MatchesFileParts(prefix, suffix string) int {
 	return -1
 }
 
-// MatchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
-func (m *globMatcher) MatchesDirectoryParts(prefix, suffix string) bool {
+// matchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
+func (m *globMatcher) matchesDirectoryParts(prefix, suffix string) bool {
 	for _, exc := range m.excludes {
 		if exc.matchesParts(prefix, suffix) {
 			return false
@@ -504,7 +504,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(file, v.extensions) {
 			continue
 		}
-		if idx := v.fileMatcher.MatchesFileParts(absPrefix, file); idx >= 0 {
+		if idx := v.fileMatcher.matchesFileParts(absPrefix, file); idx >= 0 {
 			v.results[idx] = append(v.results[idx], pathPrefix+file)
 		}
 	}
@@ -518,7 +518,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 	}
 
 	for _, dir := range entries.Directories {
-		if !v.directoryMatcher.MatchesDirectoryParts(absPrefix, dir) {
+		if !v.directoryMatcher.matchesDirectoryParts(absPrefix, dir) {
 			continue
 		}
 		absDir := absPrefix + dir
