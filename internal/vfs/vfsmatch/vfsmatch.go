@@ -48,8 +48,6 @@ type SpecMatcher interface {
 type SpecMatchers interface {
 	// MatchIndex returns the index of the first matching pattern, or -1 if none match.
 	MatchIndex(path string) int
-	// Len returns the number of patterns.
-	Len() int
 }
 
 // NewSpecMatcher creates a matcher for one or more glob specs.

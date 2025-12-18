@@ -436,10 +436,6 @@ func (m *regexSpecMatchers) MatchIndex(path string) int {
 	return -1
 }
 
-func (m *regexSpecMatchers) Len() int {
-	return len(m.matchers)
-}
-
 // newRegexSpecMatchers creates individual regex matchers for each spec.
 func newRegexSpecMatchers(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *regexSpecMatchers {
 	patterns := getRegularExpressionsForWildcards(specs, basePath, usage)

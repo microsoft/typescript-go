@@ -529,14 +529,6 @@ func (m *globSpecMatcher) MatchIndex(path string) int {
 	return -1
 }
 
-// Len returns the number of patterns.
-func (m *globSpecMatcher) Len() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.patterns)
-}
-
 // newGlobSpecMatcher creates a matcher for multiple glob specs.
 func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) *globSpecMatcher {
 	if len(specs) == 0 {
