@@ -310,7 +310,16 @@ func (s *Server) Run(ctx context.Context) error {
 			return err
 		}
 	})
-	go func() { readLoopErr <- s.readLoop(ctx) }()
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				stack := debug.Stack()
+				s.logger.Errorf("panic in readLoop: %v\n%s", r, string(stack))
+				readLoopErr <- fmt.Errorf("panic in readLoop: %v", r)
+			}
+		}()
+		readLoopErr <- s.readLoop(ctx)
+	}()
 
 	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) && ctx.Err() != nil {
 		return err
@@ -358,7 +367,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 		} else {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodCancelRequest {
-				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
+				if v, ok := req.Params.(*lsproto.CancelParams); ok {
+					s.cancelRequest(v.Id)
+				}
 			} else {
 				s.requestQueue <- req
 			}
