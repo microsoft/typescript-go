@@ -178,7 +178,7 @@ func runReadDirectoryCase(t *testing.T, tc readDirTestCase, readDir readDirector
 	if path == "" {
 		path = "/dev"
 	}
-	got := ReadDirectory(tc.host(), currentDir, path, tc.extensions, tc.excludes, tc.includes, tc.depth)
+	got := readDir(tc.host(), currentDir, path, tc.extensions, tc.excludes, tc.includes, tc.depth)
 	tc.expect(t, got)
 }
 
