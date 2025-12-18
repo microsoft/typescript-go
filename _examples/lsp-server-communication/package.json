@@ -18,6 +18,10 @@
             {
                 "command": "lsp-example.printAST",
                 "title": "Print AST of Current File"
+            },
+            {
+                "command": "lsp-example.printSymbolInfo",
+                "title": "Print Symbol Info at Cursor"
             }
         ]
     },

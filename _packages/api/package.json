@@ -49,6 +49,7 @@
     },
     "scripts": {
         "build": "tsc -b",
+        "watch": "tsc -b --watch",
         "build:test": "tsc -b test",
         "bench": "node --experimental-strip-types --no-warnings --conditions @typescript/source test/api.bench.ts",
         "test": "node --test --experimental-strip-types --no-warnings --conditions @typescript/source ./test/**/*.test.ts"

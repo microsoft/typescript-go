@@ -21747,7 +21747,10 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 }
 
 // Parameters for the initializeAPISession request.
-type InitializeAPISessionParams struct{}
+type InitializeAPISessionParams struct {
+	// Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.
+	PipePath *string `json:"pipePath,omitzero"`
+}
 
 // Result for the initializeAPISession request.
 type InitializeAPISessionResult struct {

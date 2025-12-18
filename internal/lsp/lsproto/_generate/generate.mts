@@ -175,7 +175,14 @@ const customStructures: Structure[] = [
     },
     {
         name: "InitializeAPISessionParams",
-        properties: [],
+        properties: [
+            {
+                name: "pipePath",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.",
+            },
+        ],
         documentation: "Parameters for the initializeAPISession request.",
     },
     {

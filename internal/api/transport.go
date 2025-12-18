@@ -3,7 +3,6 @@ package api
 import (
 	"io"
 	"net"
-	"os"
 )
 
 // Transport is an interface for accepting connections from API clients.
@@ -22,10 +21,7 @@ type PipeTransport struct {
 // NewPipeTransport creates a new transport listening on the given path.
 // On Unix, this creates a Unix domain socket. On Windows, this creates a named pipe.
 func NewPipeTransport(path string) (*PipeTransport, error) {
-	// Remove any existing socket file
-	_ = os.Remove(path)
-
-	listener, err := net.Listen("unix", path)
+	listener, err := newPipeListener(path)
 	if err != nil {
 		return nil, err
 	}

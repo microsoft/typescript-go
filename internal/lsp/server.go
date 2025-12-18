@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"math/rand/v2"
 	"runtime/debug"
 	"slices"
 	"sync"
@@ -1175,15 +1176,25 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 		s.removeAPISession(apiSession.ID())
 	})
 
-	// Create a pipe transport for this session
-	pipePath := s.getAPIPipePath(apiSession.ID())
+	// Use provided pipe path or generate a unique one
+	var pipePath string
+	if params.PipePath != nil && *params.PipePath != "" {
+		pipePath = *params.PipePath
+	} else {
+		pipePath = s.generateAPIPipePath()
+	}
+
 	transport, err := api.NewPipeTransport(pipePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create API transport: %w", err)
 	}
 
 	// Start accepting connections in the background
-	go s.runAPISession(ctx, apiSession, transport)
+	go func() {
+		if err := apiSession.Run(ctx, transport); err != nil {
+			s.logger.Errorf("API session %s: %v", apiSession.ID(), err)
+		}
+	}()
 
 	s.apiSessions[apiSession.ID()] = apiSession
 
@@ -1193,28 +1204,11 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 	}, nil
 }
 
-func (s *Server) getAPIPipePath(sessionID string) string {
-	// Use a path in the temp directory based on session ID
-	return fmt.Sprintf("/tmp/tsgo-api-%s.sock", sessionID)
-}
-
-func (s *Server) runAPISession(ctx context.Context, session *api.Session, transport api.Transport) {
-	defer transport.Close()
-	defer session.Close()
-
-	// Accept a single connection for this session
-	rwc, err := transport.Accept()
-	if err != nil {
-		s.logger.Errorf("API session %s: failed to accept connection: %v", session.ID(), err)
-		return
-	}
-
-	conn := api.NewConn(rwc, session)
-	session.SetConn(conn)
-
-	if err := conn.Run(ctx); err != nil {
-		s.logger.Errorf("API session %s: connection error: %v", session.ID(), err)
-	}
+func (s *Server) generateAPIPipePath() string {
+	// Generate a high-entropy path using time and random source
+	now := time.Now().UnixNano()
+	rnd := rand.Uint64()
+	return api.GeneratePipePath(fmt.Sprintf("tsgo-api-%x-%x", now, rnd))
 }
 
 func (s *Server) removeAPISession(id string) {
