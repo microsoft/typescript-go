@@ -1296,8 +1296,8 @@ func TestSpecMatcher(t *testing.T) {
 			basePath:                  "/project",
 			usage:                     UsageExclude,
 			useCaseSensitiveFileNames: true,
-			matchingPaths:             []string{"/project/node_modules", "/project/node_modules/foo"},
-			nonMatchingPaths:          []string{"/project/src"},
+			matchingPaths:             []string{"/project/node_modules/foo"},
+			nonMatchingPaths:          []string{"/project/node_modules", "/project/src"},
 		},
 		{
 			name:                      "case insensitive",
@@ -1331,6 +1331,220 @@ func TestSpecMatcher(t *testing.T) {
 			}
 			for _, path := range tc.nonMatchingPaths {
 				assert.Assert(t, !matcher.MatchString(path), "should not match: %s", path)
+			}
+		})
+	}
+}
+
+func TestSpecMatcher_MatchString(t *testing.T) {
+	t.Parallel()
+
+	implementations := []struct {
+		name string
+		new  func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher
+	}{
+		{
+			name: "Old",
+			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
+				return newRegexSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+		{
+			name: "New",
+			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
+				return newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+	}
+
+	cases := []struct {
+		name                      string
+		specs                     []string
+		basePath                  string
+		usage                     Usage
+		useCaseSensitiveFileNames bool
+		paths                     []string
+		expected                  []bool
+	}{
+		{
+			name:                      "simple wildcard files",
+			specs:                     []string{"*.ts"},
+			basePath:                  "/project",
+			usage:                     UsageFiles,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/a.ts", "/project/sub/a.ts", "/project/a.js"},
+			expected:                  []bool{true, false, false},
+		},
+		{
+			name:                      "recursive wildcard files",
+			specs:                     []string{"**/*.ts"},
+			basePath:                  "/project",
+			usage:                     UsageFiles,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/a.ts", "/project/sub/a.ts", "/project/a.js"},
+			expected:                  []bool{true, true, false},
+		},
+		{
+			name:                      "exclude pattern matches prefix",
+			specs:                     []string{"node_modules"},
+			basePath:                  "/project",
+			usage:                     UsageExclude,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/node_modules", "/project/node_modules/foo", "/project/src"},
+			expected:                  []bool{false, true, false},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, len(tc.paths), len(tc.expected))
+
+			for _, impl := range implementations {
+				t.Run(impl.name, func(t *testing.T) {
+					t.Parallel()
+					m := impl.new(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+					assert.Assert(t, m != nil)
+					for i, path := range tc.paths {
+						assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestSingleSpecMatcher_MatchString(t *testing.T) {
+	t.Parallel()
+
+	implementations := []struct {
+		name string
+		new  func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher
+	}{
+		{
+			name: "Old",
+			new: func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
+				return newRegexSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+		{
+			name: "New",
+			new: func(spec string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatcher {
+				return newGlobSingleSpecMatcher(spec, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+	}
+
+	cases := []struct {
+		name                      string
+		spec                      string
+		basePath                  string
+		usage                     Usage
+		useCaseSensitiveFileNames bool
+		paths                     []string
+		expected                  []bool
+	}{
+		{
+			name:                      "single spec wildcard",
+			spec:                      "*.ts",
+			basePath:                  "/project",
+			usage:                     UsageFiles,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/a.ts", "/project/sub/a.ts", "/project/a.js"},
+			expected:                  []bool{true, false, false},
+		},
+		{
+			name:                      "single spec trailing starstar exclude allowed",
+			spec:                      "**",
+			basePath:                  "/project",
+			usage:                     UsageExclude,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/a.ts", "/project/sub/a.ts"},
+			expected:                  []bool{true, true},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, len(tc.paths), len(tc.expected))
+			for _, impl := range implementations {
+				t.Run(impl.name, func(t *testing.T) {
+					t.Parallel()
+					m := impl.new(tc.spec, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+					assert.Assert(t, m != nil)
+					for i, path := range tc.paths {
+						assert.Equal(t, m.MatchString(path), tc.expected[i], "path: %s", path)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestSpecMatchers_MatchIndex(t *testing.T) {
+	t.Parallel()
+
+	implementations := []struct {
+		name string
+		new  func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers
+	}{
+		{
+			name: "Old",
+			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
+				return newRegexSpecMatchers(specs, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+		{
+			name: "New",
+			new: func(specs []string, basePath string, usage Usage, useCaseSensitiveFileNames bool) SpecMatchers {
+				return newGlobSpecMatcher(specs, basePath, usage, useCaseSensitiveFileNames)
+			},
+		},
+	}
+
+	cases := []struct {
+		name                      string
+		specs                     []string
+		basePath                  string
+		usage                     Usage
+		useCaseSensitiveFileNames bool
+		paths                     []string
+		expected                  []int
+	}{
+		{
+			name:                      "index lookup prefers first match",
+			specs:                     []string{"*.ts", "*.tsx"},
+			basePath:                  "/project",
+			usage:                     UsageFiles,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/a.ts", "/project/a.tsx", "/project/a.js"},
+			expected:                  []int{0, 1, -1},
+		},
+		{
+			name:                      "exclude index lookup",
+			specs:                     []string{"node_modules", "bower_components"},
+			basePath:                  "/project",
+			usage:                     UsageExclude,
+			useCaseSensitiveFileNames: true,
+			paths:                     []string{"/project/node_modules", "/project/node_modules/foo", "/project/bower_components", "/project/bower_components/bar", "/project/src"},
+			expected:                  []int{-1, 0, -1, 1, -1},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, len(tc.paths), len(tc.expected))
+			for _, impl := range implementations {
+				t.Run(impl.name, func(t *testing.T) {
+					t.Parallel()
+					m := impl.new(tc.specs, tc.basePath, tc.usage, tc.useCaseSensitiveFileNames)
+					assert.Assert(t, m != nil)
+					for i, path := range tc.paths {
+						assert.Equal(t, m.MatchIndex(path), tc.expected[i], "path: %s", path)
+					}
+				})
 			}
 		})
 	}

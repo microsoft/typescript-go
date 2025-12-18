@@ -187,10 +187,8 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly
 
 // patternSatisfied checks if remaining pattern components can match empty input.
 func (p *globPattern) patternSatisfied(compIdx int) bool {
-	if p.isExclude {
-		return p.isImplicitGlobSuffix(compIdx)
-	}
-	// Include patterns: all remaining components must be ** (matches zero dirs)
+	// A pattern is satisfied when remaining components can match empty input.
+	// For both include and exclude patterns, only trailing "**" components may match nothing.
 	for _, c := range p.components[compIdx:] {
 		if c.kind != kindDoubleAsterisk {
 			return false
@@ -298,26 +296,6 @@ func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool 
 		}
 	}
 	return false
-}
-
-// isImplicitGlobSuffix checks if remaining components are the implicit "**/*" suffix.
-func (p *globPattern) isImplicitGlobSuffix(compIdx int) bool {
-	remaining := p.components[compIdx:]
-	for i, c := range remaining {
-		switch c.kind {
-		case kindDoubleAsterisk:
-			continue
-		case kindWildcard:
-			// Allow single * as last component (the implicit glob suffix)
-			if i == len(remaining)-1 && len(c.segments) == 1 && c.segments[0].kind == segStar {
-				return true
-			}
-			return false
-		default:
-			return false
-		}
-	}
-	return true
 }
 
 // stringsEqual compares strings with appropriate case sensitivity.
