@@ -131,48 +131,49 @@ func parseSegments(s string) []segment {
 
 // matches returns true if path matches this pattern.
 func (p *globPattern) matches(path string) bool {
-	return p.matchPath(path, 0, 0, false)
+	return p.matchPathParts(path, "", 0, 0, false)
+}
+
+// matchesParts returns true if prefix+suffix matches this pattern.
+// This avoids allocating a combined string for common call sites where prefix ends with '/'.
+func (p *globPattern) matchesParts(prefix, suffix string) bool {
+	return p.matchPathParts(prefix, suffix, 0, 0, false)
 }
 
 // matchesPrefix returns true if files under this directory path could match.
 // Used to skip directories during traversal.
-func (p *globPattern) matchesPrefix(path string) bool {
-	return p.matchPath(path, 0, 0, true)
+// matchesPrefixParts returns true if files under prefix+suffix could match.
+func (p *globPattern) matchesPrefixParts(prefix, suffix string) bool {
+	return p.matchPathParts(prefix, suffix, 0, 0, true)
 }
 
-// matchPath checks if path matches the pattern starting from the given offsets.
-// If prefixOnly is true, returns true when path is exhausted (prefix matching for directories).
-func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly bool) bool {
+// matchPathParts is like matchPath, but operates on a virtual path formed by prefix+suffix.
+// Offsets are in the combined string.
+func (p *globPattern) matchPathParts(prefix, suffix string, pathOffset, compIdx int, prefixOnly bool) bool {
 	for {
-		pathPart, nextOffset, ok := nextPathPart(path, pathOffset)
+		pathPart, nextOffset, ok := nextPathPartParts(prefix, suffix, pathOffset)
 		if !ok {
 			if prefixOnly {
-				return true // Path exhausted - could potentially match
+				return true
 			}
 			return p.patternSatisfied(compIdx)
 		}
 
 		if compIdx >= len(p.components) {
-			// Exclude patterns match prefixes (e.g., "node_modules" excludes "node_modules/foo")
 			return p.isExclude && !prefixOnly
 		}
 
 		comp := p.components[compIdx]
-
 		switch comp.kind {
 		case kindDoubleAsterisk:
-			// ** can match zero directories: try skipping it
-			if p.matchPath(path, pathOffset, compIdx+1, prefixOnly) {
+			if p.matchPathParts(prefix, suffix, pathOffset, compIdx+1, prefixOnly) {
 				return true
 			}
-			// ** should not match hidden dirs or package folders (for includes)
 			if !p.isExclude && (isHiddenPath(pathPart) || isPackageFolder(pathPart)) {
 				return false
 			}
-			// ** matches this directory, try next path part with same **
 			pathOffset = nextOffset
 			continue
-
 		case kindLiteral:
 			if comp.skipPackageFolders && isPackageFolder(pathPart) {
 				panic("unreachable: literal components never have skipPackageFolders")
@@ -180,7 +181,6 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly
 			if !p.stringsEqual(comp.literal, pathPart) {
 				return false
 			}
-
 		case kindWildcard:
 			if comp.skipPackageFolders && isPackageFolder(pathPart) {
 				return false
@@ -208,30 +208,69 @@ func (p *globPattern) patternSatisfied(compIdx int) bool {
 }
 
 // nextPathPart extracts the next path component from path starting at offset.
-func nextPathPart(path string, offset int) (part string, nextOffset int, ok bool) {
-	if offset >= len(path) {
+func nextPathPartSingle(s string, offset int) (part string, nextOffset int, ok bool) {
+	if offset >= len(s) {
+		return "", offset, false
+	}
+	if offset == 0 && len(s) > 0 && s[0] == '/' {
+		return "", 1, true
+	}
+	for offset < len(s) && s[offset] == '/' {
+		offset++
+	}
+	if offset >= len(s) {
+		return "", offset, false
+	}
+	rest := s[offset:]
+	if idx := strings.IndexByte(rest, '/'); idx >= 0 {
+		return rest[:idx], offset + idx, true
+	}
+	return rest, len(s), true
+}
+
+func nextPathPartParts(prefix, suffix string, offset int) (part string, nextOffset int, ok bool) {
+	// Fast paths: keep the hot single-string scan tight.
+	if len(suffix) == 0 {
+		return nextPathPartSingle(prefix, offset)
+	}
+	if len(prefix) == 0 {
+		return nextPathPartSingle(suffix, offset)
+	}
+
+	// For matchFilesNoRegex call sites, prefix is a directory path ending in '/',
+	// and suffix is a single entry name (no '/'). That makes this significantly
+	// simpler than a general-purpose "virtual concatenation" scanner.
+
+	totalLen := len(prefix) + len(suffix)
+	if offset >= totalLen {
 		return "", offset, false
 	}
 
 	// Handle leading slash (root of absolute path)
-	if offset == 0 && path[0] == '/' {
+	if offset == 0 && prefix[0] == '/' {
 		return "", 1, true
 	}
 
-	// Skip consecutive slashes
-	for offset < len(path) && path[offset] == '/' {
-		offset++
-	}
-	if offset >= len(path) {
-		return "", offset, false
+	// Scan within prefix.
+	if offset < len(prefix) {
+		for offset < len(prefix) && prefix[offset] == '/' {
+			offset++
+		}
+		if offset < len(prefix) {
+			rest := prefix[offset:]
+			idx := strings.IndexByte(rest, '/')
+			// idx is guaranteed >= 0 for the call sites we care about because prefix ends in '/'.
+			return rest[:idx], offset + idx, true
+		}
+		// Fall through into suffix region.
 	}
 
-	// Find end of this component
-	rest := path[offset:]
-	if idx := strings.IndexByte(rest, '/'); idx >= 0 {
-		return rest[:idx], offset + idx, true
+	// Scan suffix: it's a single component.
+	sOff := offset - len(prefix)
+	if sOff >= len(suffix) {
+		return "", offset, false
 	}
-	return rest, len(path), true
+	return suffix[sOff:], totalLen, true
 }
 
 // matchWildcard matches a path component against wildcard segments.
@@ -317,7 +356,12 @@ func (p *globPattern) hasMinJsSuffix(filename string) bool {
 	if p.caseSensitive {
 		return strings.HasSuffix(filename, ".min.js")
 	}
-	return strings.HasSuffix(strings.ToLower(filename), ".min.js")
+	const minJs = ".min.js"
+	if len(filename) < len(minJs) {
+		return false
+	}
+	// Avoid allocating via strings.ToLower; compare suffix case-insensitively.
+	return strings.EqualFold(filename[len(filename)-len(minJs):], minJs)
 }
 
 func (p *globPattern) patternMentionsMinSuffix(segs []segment) bool {
@@ -392,10 +436,10 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 	return m
 }
 
-// MatchesFile returns the index of the matching include pattern, or -1 if excluded/no match.
-func (m *globMatcher) MatchesFile(path string) int {
+// MatchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
+func (m *globMatcher) MatchesFileParts(prefix, suffix string) int {
 	for _, exc := range m.excludes {
-		if exc.matches(path) {
+		if exc.matchesParts(prefix, suffix) {
 			return -1
 		}
 	}
@@ -406,27 +450,25 @@ func (m *globMatcher) MatchesFile(path string) int {
 		return 0
 	}
 	for i, inc := range m.includes {
-		if inc.matches(path) {
+		if inc.matchesParts(prefix, suffix) {
 			return i
 		}
 	}
 	return -1
 }
 
-// MatchesDirectory returns true if this directory could contain matching files.
-func (m *globMatcher) MatchesDirectory(path string) bool {
+// MatchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
+func (m *globMatcher) MatchesDirectoryParts(prefix, suffix string) bool {
 	for _, exc := range m.excludes {
-		if exc.matches(path) {
+		if exc.matchesParts(prefix, suffix) {
 			return false
 		}
 	}
-
 	if len(m.includes) == 0 {
 		return !m.hadIncludes
 	}
-
 	for _, inc := range m.includes {
-		if inc.matchesPrefix(path) {
+		if inc.matchesPrefixParts(prefix, suffix) {
 			return true
 		}
 	}
@@ -462,7 +504,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(file, v.extensions) {
 			continue
 		}
-		if idx := v.fileMatcher.MatchesFile(absPrefix + file); idx >= 0 {
+		if idx := v.fileMatcher.MatchesFileParts(absPrefix, file); idx >= 0 {
 			v.results[idx] = append(v.results[idx], pathPrefix+file)
 		}
 	}
@@ -476,10 +518,11 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 	}
 
 	for _, dir := range entries.Directories {
-		absDir := absPrefix + dir
-		if v.directoryMatcher.MatchesDirectory(absDir) {
-			v.visit(pathPrefix+dir, absDir, depth)
+		if !v.directoryMatcher.MatchesDirectoryParts(absPrefix, dir) {
+			continue
 		}
+		absDir := absPrefix + dir
+		v.visit(pathPrefix+dir, absDir, depth)
 	}
 }
 
@@ -505,6 +548,10 @@ func matchFilesNoRegex(path string, extensions, excludes, includes []string, use
 		v.visit(basePath, tspath.CombinePaths(currentDirectory, basePath), depth)
 	}
 
+	// Fast path: a single include bucket (or no includes) doesn't need flattening.
+	if len(v.results) == 1 {
+		return v.results[0]
+	}
 	return core.Flatten(v.results)
 }
 

@@ -1722,23 +1722,23 @@ func TestGlobPatternInternals(t *testing.T) {
 		path := "/dev//foo///bar"
 
 		// First call - returns empty for root
-		part, offset, ok := nextPathPart(path, 0)
+		part, offset, ok := nextPathPartParts(path, "", 0)
 		assert.Assert(t, ok)
 		assert.Equal(t, part, "")
 		assert.Equal(t, offset, 1)
 
 		// Second call - should skip consecutive slashes after /dev
-		part, offset, ok = nextPathPart(path, 1)
+		part, offset, ok = nextPathPartParts(path, "", 1)
 		assert.Assert(t, ok)
 		assert.Equal(t, part, "dev")
 
 		// Third call - should skip the double slashes before foo
-		part, offset, ok = nextPathPart(path, offset)
+		part, offset, ok = nextPathPartParts(path, "", offset)
 		assert.Assert(t, ok)
 		assert.Equal(t, part, "foo")
 
 		// Fourth call - should skip the triple slashes before bar
-		part, _, ok = nextPathPart(path, offset)
+		part, _, ok = nextPathPartParts(path, "", offset)
 		assert.Assert(t, ok)
 		assert.Equal(t, part, "bar")
 	})
@@ -1748,13 +1748,67 @@ func TestGlobPatternInternals(t *testing.T) {
 		path := "/dev/"
 
 		// Skip to after "dev"
-		_, offset, ok := nextPathPart(path, 0) // root
+		_, offset, ok := nextPathPartParts(path, "", 0) // root
 		assert.Assert(t, ok)
-		_, offset, ok = nextPathPart(path, offset) // dev
+		_, offset, ok = nextPathPartParts(path, "", offset) // dev
 		assert.Assert(t, ok)
 		// Now at trailing slash, should return not ok
-		_, _, ok = nextPathPart(path, offset)
+		_, _, ok = nextPathPartParts(path, "", offset)
 		assert.Assert(t, !ok)
+	})
+
+	t.Run("nextPathPartParts handles empty prefix", func(t *testing.T) {
+		t.Parallel()
+		path := "/dev//foo"
+
+		part, offset, ok := nextPathPartParts("", path, 0)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "")
+		assert.Equal(t, offset, 1)
+
+		part, offset, ok = nextPathPartParts("", path, offset)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "dev")
+
+		part, _, ok = nextPathPartParts("", path, offset)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "foo")
+	})
+
+	t.Run("nextPathPartParts returns not ok when only slashes remain", func(t *testing.T) {
+		t.Parallel()
+		prefix := "/dev/"
+		suffix := "foo"
+
+		_, offset, ok := nextPathPartParts(prefix, suffix, 0) // root
+		assert.Assert(t, ok)
+
+		part, offset, ok := nextPathPartParts(prefix, suffix, offset) // dev
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "dev")
+
+		part, offset, ok = nextPathPartParts(prefix, suffix, offset) // foo
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "foo")
+		assert.Equal(t, offset, len(prefix)+len(suffix))
+
+		_, _, ok = nextPathPartParts(prefix, suffix, offset)
+		assert.Assert(t, !ok)
+	})
+
+	t.Run("nextPathPartParts parses from suffix region", func(t *testing.T) {
+		t.Parallel()
+		prefix := "/"
+		suffix := "a"
+
+		part, offset, ok := nextPathPartParts(prefix, suffix, 0) // root
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "")
+		assert.Equal(t, offset, 1)
+
+		part, _, ok = nextPathPartParts(prefix, suffix, offset)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "a")
 	})
 
 	t.Run("question mark segment at end of string", func(t *testing.T) {
