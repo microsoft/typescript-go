@@ -944,11 +944,7 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 
 // TODO: move `lookupSymbolChain` and co to `symbolaccessibility.go` (but getSpecifierForModuleSymbol uses much context which makes that hard?)
 func (b *NodeBuilderImpl) lookupSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, yieldModuleSymbol bool) []*ast.Symbol {
-	// Skip tracking for unresolved symbols - they have no declarations and cause false accessibility errors.
-	// The local import binding (if any) should be tracked separately.
-	if symbol.CheckFlags&ast.CheckFlagsUnresolved == 0 {
-		b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, meaning)
-	}
+	b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, meaning)
 	return b.lookupSymbolChainWorker(symbol, meaning, yieldModuleSymbol)
 }
 
@@ -3124,6 +3120,9 @@ func (t *TypeAlias) ToTypeReferenceNode(b *NodeBuilderImpl) *ast.Node {
 			// Track the local alias symbol (the import specifier) to mark it visible
 			b.ctx.tracker.TrackSymbol(localSym, b.ctx.enclosingDeclaration, ast.SymbolFlagsType)
 		}
+		// For unresolved symbols, use symbolToEntityNameNode to avoid false accessibility errors
+		// since we've already tracked the local import binding above
+		return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(sym), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
 	}
 	return b.f.NewTypeReferenceNode(b.symbolToName(sym, ast.SymbolFlagsType, false), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
 }
