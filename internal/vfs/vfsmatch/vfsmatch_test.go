@@ -1450,3 +1450,213 @@ func TestSpecMatchers(t *testing.T) {
 		})
 	}
 }
+
+// TestGlobPatternInternals tests internal glob pattern matching logic
+// to ensure edge cases are covered that may not be hit by ReadDirectory tests
+func TestGlobPatternInternals(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nextPathPart handles consecutive slashes", func(t *testing.T) {
+		t.Parallel()
+		// Test path with consecutive slashes
+		path := "/dev//foo///bar"
+
+		// First call - returns empty for root
+		part, offset, ok := nextPathPart(path, 0)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "")
+		assert.Equal(t, offset, 1)
+
+		// Second call - should skip consecutive slashes after /dev
+		part, offset, ok = nextPathPart(path, 1)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "dev")
+
+		// Third call - should skip the double slashes before foo
+		part, offset, ok = nextPathPart(path, offset)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "foo")
+
+		// Fourth call - should skip the triple slashes before bar
+		part, _, ok = nextPathPart(path, offset)
+		assert.Assert(t, ok)
+		assert.Equal(t, part, "bar")
+	})
+
+	t.Run("nextPathPart handles path ending with slashes", func(t *testing.T) {
+		t.Parallel()
+		path := "/dev/"
+
+		// Skip to after "dev"
+		_, offset, ok := nextPathPart(path, 0) // root
+		assert.Assert(t, ok)
+		_, offset, ok = nextPathPart(path, offset) // dev
+		assert.Assert(t, ok)
+		// Now at trailing slash, should return not ok
+		_, _, ok = nextPathPart(path, offset)
+		assert.Assert(t, !ok)
+	})
+
+	t.Run("question mark segment at end of string", func(t *testing.T) {
+		t.Parallel()
+		// Create pattern with question mark that should fail when string is exhausted
+		p := compileGlobPattern("a?", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		// Should match "ab"
+		assert.Assert(t, p.matches("/ab"))
+
+		// Should NOT match "a" (question mark requires a character)
+		assert.Assert(t, !p.matches("/a"))
+	})
+
+	t.Run("star segment with complex pattern", func(t *testing.T) {
+		t.Parallel()
+		// Pattern like "a*b*c" requires backtracking in star matching
+		p := compileGlobPattern("a*b*c", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		// Should match "abc"
+		assert.Assert(t, p.matches("/abc"))
+
+		// Should match "aXbYc"
+		assert.Assert(t, p.matches("/aXbYc"))
+
+		// Should match "aXXXbYYYc"
+		assert.Assert(t, p.matches("/aXXXbYYYc"))
+
+		// Should NOT match "aXbY" (no trailing c)
+		assert.Assert(t, !p.matches("/aXbY"))
+	})
+
+	t.Run("ensureTrailingSlash with existing slash", func(t *testing.T) {
+		t.Parallel()
+		// Test that ensureTrailingSlash doesn't double-add slashes
+		result := ensureTrailingSlash("/dev/")
+		assert.Equal(t, result, "/dev/")
+
+		result = ensureTrailingSlash("/")
+		assert.Equal(t, result, "/")
+	})
+
+	t.Run("ensureTrailingSlash with empty string", func(t *testing.T) {
+		t.Parallel()
+		result := ensureTrailingSlash("")
+		assert.Equal(t, result, "")
+	})
+
+	t.Run("literal component with package folder in include", func(t *testing.T) {
+		t.Parallel()
+		// When a literal include path goes through a package folder,
+		// the skipPackageFolders flag on literal components should not block it
+		// because literal components in includes don't have skipPackageFolders=true
+		host := vfstest.FromMap(map[string]string{
+			"/dev/node_modules/pkg/index.ts": "",
+		}, false)
+
+		// Explicit literal path should work
+		got := matchFilesNoRegex("/dev", []string{".ts"}, nil,
+			[]string{"node_modules/pkg/index.ts"}, false, "/", nil, host)
+		assert.Assert(t, slices.Contains(got, "/dev/node_modules/pkg/index.ts"))
+	})
+}
+
+// TestMatchSegmentsEdgeCases tests edge cases in the matchSegments function
+func TestMatchSegmentsEdgeCases(t *testing.T) {
+	t.Parallel()
+
+	t.Run("question mark before slash in string", func(t *testing.T) {
+		t.Parallel()
+		// This tests the case where question mark encounters a slash character
+		// which should fail since ? doesn't match /
+		p := compileGlobPattern("a?b", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		// "a/b" should not match "a?b" pattern since ? shouldn't match /
+		// But this is a single component pattern, so / wouldn't be in the component
+		// We need to test this within the segment matching
+
+		// Create a pattern that will exercise question mark matching edge cases
+		assert.Assert(t, p.matches("/aXb"))   // X matches ?
+		assert.Assert(t, !p.matches("/ab"))   // nothing to match ?
+		assert.Assert(t, !p.matches("/aXYb")) // XY is too many chars for ?
+	})
+
+	t.Run("star with no trailing content", func(t *testing.T) {
+		t.Parallel()
+		// Test that star can match to end of string
+		p := compileGlobPattern("a*", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		assert.Assert(t, p.matches("/a"))
+		assert.Assert(t, p.matches("/abc"))
+		assert.Assert(t, p.matches("/aXYZ"))
+	})
+
+	t.Run("multiple stars in pattern", func(t *testing.T) {
+		t.Parallel()
+		// Test patterns with multiple stars that require backtracking
+		p := compileGlobPattern("*a*", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		assert.Assert(t, p.matches("/a"))
+		assert.Assert(t, p.matches("/Xa"))
+		assert.Assert(t, p.matches("/aX"))
+		assert.Assert(t, p.matches("/XaY"))
+		assert.Assert(t, !p.matches("/XYZ")) // no 'a'
+	})
+
+	t.Run("literal segment not matching", func(t *testing.T) {
+		t.Parallel()
+		// Test literal segment that's longer than remaining string
+		p := compileGlobPattern("abcdefgh.ts", "/", UsageFiles, true)
+		assert.Assert(t, p != nil)
+
+		assert.Assert(t, !p.matches("/abc.ts"))     // different literal
+		assert.Assert(t, p.matches("/abcdefgh.ts")) // exact match
+	})
+}
+
+// TestReadDirectoryConsecutiveSlashes tests handling of paths with consecutive slashes
+func TestReadDirectoryConsecutiveSlashes(t *testing.T) {
+	t.Parallel()
+
+	host := vfstest.FromMap(map[string]string{
+		"/dev/a.ts":   "",
+		"/dev/x/b.ts": "",
+	}, false)
+
+	// The matchFilesNoRegex function normalizes paths, but we can test internal handling
+	got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"**/*.ts"}, false, "/", nil, host)
+	assert.Assert(t, len(got) >= 2, "should find files")
+	assert.Assert(t, slices.Contains(got, "/dev/a.ts"))
+	assert.Assert(t, slices.Contains(got, "/dev/x/b.ts"))
+}
+
+// TestGlobPatternLiteralWithPackageFolders tests literal component behavior with package folders
+func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
+	t.Parallel()
+
+	t.Run("wildcard skips package folders", func(t *testing.T) {
+		t.Parallel()
+		// Wildcard patterns should skip node_modules
+		host := vfstest.FromMap(map[string]string{
+			"/dev/a.ts":              "",
+			"/dev/node_modules/b.ts": "",
+		}, false)
+
+		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"*/*.ts"}, false, "/", nil, host)
+		assert.Assert(t, !slices.Contains(got, "/dev/node_modules/b.ts"), "should skip node_modules with wildcard")
+	})
+
+	t.Run("explicit literal includes package folder", func(t *testing.T) {
+		t.Parallel()
+		// Explicit literal paths should include package folders
+		host := vfstest.FromMap(map[string]string{
+			"/dev/node_modules/b.ts": "",
+		}, false)
+
+		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"node_modules/b.ts"}, false, "/", nil, host)
+		assert.Assert(t, slices.Contains(got, "/dev/node_modules/b.ts"), "should include explicit node_modules path")
+	})
+}

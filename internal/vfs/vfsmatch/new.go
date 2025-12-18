@@ -165,7 +165,7 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly
 
 		case kindLiteral:
 			if comp.skipPackageFolders && isPackageFolder(pathPart) {
-				return false
+				panic("unreachable: literal components never have skipPackageFolders")
 			}
 			if !p.stringsEqual(comp.literal, pathPart) {
 				return false
@@ -281,9 +281,9 @@ func (p *globPattern) matchSegments(segs []segment, segIdx int, s string, sIdx i
 			}
 		}
 		return false
+	default:
+		panic("unreachable: unknown segment kind")
 	}
-
-	return false
 }
 
 // checkMinJsExclusion returns false if this is a .min.js file that should be excluded.
