@@ -10,7 +10,7 @@ type Host interface {
 	UseCaseSensitiveFileNames() bool
 	ReadFile(path string) (contents string, ok bool)
 	Converters() *lsconv.Converters
-	UserPreferences() *lsutil.UserPreferences
+	GetPreference(activeFile string) *lsutil.UserPreferences
 	FormatOptions() *lsutil.FormatCodeSettings
 	GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo
 }

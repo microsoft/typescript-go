@@ -229,7 +229,6 @@ func (s *Session) Configure(config *Config) {
 
 	// Tell the client to re-request certain commands depending on user preference changes.
 	if oldConfig != config {
-
 		s.refreshInlayHintsIfNeeded(oldConfig, config)
 		s.refreshCodeLensIfNeeded(oldConfig, config)
 	}
@@ -468,7 +467,7 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	if project == nil {
 		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return snapshot, project, ls.NewLanguageService(project.GetProgram(), snapshot), nil
+	return snapshot, project, ls.NewLanguageService(project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
@@ -514,7 +513,7 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 	if !project.HasFile(uri.FileName()) {
 		return nil
 	}
-	return ls.NewLanguageService(project.GetProgram(), snapshot)
+	return ls.NewLanguageService(project.GetProgram(), snapshot, uri.FileName())
 }
 
 func (s *Session) GetSnapshotLoadingProjectTree(

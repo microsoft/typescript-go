@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -106,9 +107,27 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
+func (s *Snapshot) GetPreference(activeFile string) *lsutil.UserPreferences {
+	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
+	if tspath.ExtensionIsTs(fileEnding) {
+		if s.config.Ts != nil {
+			return s.config.Ts
+		} else if s.config.js != nil {
+			return s.config.js
+		}
+	} else {
+		if s.config.js != nil {
+			return s.config.js
+		} else if s.config.Ts != nil {
+			return s.config.Ts
+		}
+	}
+	return lsutil.NewDefaultUserPreferences()
+}
+
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	if s.config.tsUserPreferences != nil {
-		return s.config.tsUserPreferences
+	if s.config.Ts != nil {
+		return s.config.Ts
 	}
 	return lsutil.NewDefaultUserPreferences()
 }

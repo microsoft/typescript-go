@@ -12,6 +12,7 @@ import (
 
 type LanguageService struct {
 	host                    Host
+	activeConfig            *lsutil.UserPreferences
 	program                 *compiler.Program
 	converters              *lsconv.Converters
 	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
@@ -20,11 +21,13 @@ type LanguageService struct {
 func NewLanguageService(
 	program *compiler.Program,
 	host Host,
+	activeFile string,
 ) *LanguageService {
 	return &LanguageService{
 		host:                    host,
 		program:                 program,
 		converters:              host.Converters(),
+		activeConfig:            host.GetPreference(activeFile),
 		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
 	}
 }
@@ -38,14 +41,14 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 }
 
 func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
-	return l.host.UserPreferences()
+	return l.activeConfig
 }
 
 func (l *LanguageService) FormatOptions() *lsutil.FormatCodeSettings {
-	if formatOptions := l.host.FormatOptions(); formatOptions != nil {
-		return formatOptions
+	if l.activeConfig.FormatCodeSettings == nil {
+		return lsutil.GetDefaultFormatCodeSettings()
 	}
-	return lsutil.GetDefaultFormatCodeSettings()
+	return l.activeConfig.FormatCodeSettings
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
