@@ -121,18 +121,12 @@ func parseSegments(s string) []segment {
 
 // matches returns true if path matches this pattern.
 func (p *globPattern) matches(path string) bool {
-	if p == nil {
-		return false
-	}
 	return p.matchPath(path, 0, 0, false)
 }
 
 // matchesPrefix returns true if files under this directory path could match.
 // Used to skip directories during traversal.
 func (p *globPattern) matchesPrefix(path string) bool {
-	if p == nil {
-		return false
-	}
 	return p.matchPath(path, 0, 0, true)
 }
 
@@ -505,9 +499,6 @@ type globSpecMatcher struct {
 
 // MatchString returns true if any pattern matches the path.
 func (m *globSpecMatcher) MatchString(path string) bool {
-	if m == nil {
-		return false
-	}
 	for _, p := range m.patterns {
 		if p.matches(path) {
 			return true
@@ -518,9 +509,6 @@ func (m *globSpecMatcher) MatchString(path string) bool {
 
 // MatchIndex returns the index of the first matching pattern, or -1.
 func (m *globSpecMatcher) MatchIndex(path string) int {
-	if m == nil {
-		return -1
-	}
 	for i, p := range m.patterns {
 		if p.matches(path) {
 			return i
