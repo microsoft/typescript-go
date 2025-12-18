@@ -99,7 +99,7 @@ func parseComponent(s string, isInclude bool) component {
 func parseSegments(s string) []segment {
 	var result []segment
 	start := 0
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		switch s[i] {
 		case '*', '?':
 			if i > start {
