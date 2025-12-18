@@ -194,12 +194,11 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, prefixOnly
 // patternSatisfied checks if remaining pattern components can match empty input.
 func (p *globPattern) patternSatisfied(compIdx int) bool {
 	if p.isExclude {
-		// Exclude patterns: check for implicit glob suffix (added for directories)
 		return p.isImplicitGlobSuffix(compIdx)
 	}
 	// Include patterns: all remaining components must be ** (matches zero dirs)
-	for i := compIdx; i < len(p.components); i++ {
-		if p.components[i].kind != kindDoubleAsterisk {
+	for _, c := range p.components[compIdx:] {
+		if c.kind != kindDoubleAsterisk {
 			return false
 		}
 	}
@@ -295,10 +294,7 @@ func (p *globPattern) matchSegments(segs []segment, segIdx int, s string, sIdx i
 
 // checkMinJsExclusion returns false if this is a .min.js file that should be excluded.
 func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool {
-	if !p.excludeMinJs {
-		return true
-	}
-	if !strings.HasSuffix(strings.ToLower(filename), ".min.js") {
+	if !p.excludeMinJs || !strings.HasSuffix(strings.ToLower(filename), ".min.js") {
 		return true
 	}
 	// Allow if pattern explicitly includes .min.js
@@ -313,7 +309,6 @@ func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool 
 // isImplicitGlobSuffix checks if remaining components are the implicit "**/*" suffix.
 func (p *globPattern) isImplicitGlobSuffix(compIdx int) bool {
 	remaining := p.components[compIdx:]
-
 	for i, c := range remaining {
 		switch c.kind {
 		case kindDoubleAsterisk:
@@ -347,11 +342,11 @@ func isHiddenPath(name string) bool {
 // isPackageFolder checks if name is a common package folder (node_modules, etc.)
 func isPackageFolder(name string) bool {
 	switch len(name) {
-	case 12: // node_modules
+	case len("node_modules"):
 		return strings.EqualFold(name, "node_modules")
-	case 13: // jspm_packages
+	case len("jspm_packages"):
 		return strings.EqualFold(name, "jspm_packages")
-	case 16: // bower_components
+	case len("bower_components"):
 		return strings.EqualFold(name, "bower_components")
 	}
 	return false
@@ -389,21 +384,17 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 
 // MatchesFile returns the index of the matching include pattern, or -1 if excluded/no match.
 func (m *globMatcher) MatchesFile(path string) int {
-	// Check excludes first
 	for _, exc := range m.excludes {
 		if exc.matches(path) {
 			return -1
 		}
 	}
-
-	// No includes compiled but specs were provided -> nothing matches
 	if len(m.includes) == 0 {
 		if m.hadIncludes {
 			return -1
 		}
 		return 0
 	}
-
 	for i, inc := range m.includes {
 		if inc.matches(path) {
 			return i
@@ -454,11 +445,9 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 
 	entries := v.host.GetAccessibleEntries(absolutePath)
 
-	// Prepare path prefixes for building child paths
 	pathPrefix := ensureTrailingSlash(path)
 	absPrefix := ensureTrailingSlash(absolutePath)
 
-	// Match files
 	for _, file := range entries.Files {
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(file, v.extensions) {
 			continue
@@ -468,7 +457,6 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 		}
 	}
 
-	// Recurse into directories
 	if depth != nil {
 		newDepth := *depth - 1
 		if newDepth == 0 {
