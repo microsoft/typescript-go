@@ -24,6 +24,7 @@ exports.foo3 = foo3;
 
 
 //// [isolatedDeclarationErrorTypes1.d.ts]
+import { Unresolved } from "foo";
 export declare const foo1: (type?: any) => void;
 export declare const foo2: (type?: any) => void;
 export declare const foo3: (type: Unresolved) => void;
