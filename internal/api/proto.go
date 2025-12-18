@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var (
@@ -32,7 +33,7 @@ const (
 )
 
 func ProjectHandle(p *project.Project) Handle[project.Project] {
-	return createHandle[project.Project](handlePrefixProject, p.Name())
+	return Handle[project.Project](fmt.Sprintf("%c.%s", handlePrefixProject, p.ID()))
 }
 
 func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
@@ -70,6 +71,10 @@ func parseNodeHandle(handle Handle[ast.Node]) (Handle[ast.SourceFile], int, ast.
 	return fileHandle, int(pos), ast.Kind(kind), nil
 }
 
+func parseProjectHandle(handle Handle[project.Project]) tspath.Path {
+	return tspath.Path(handle[2:])
+}
+
 func createHandle[T any](prefix rune, id any) Handle[T] {
 	return Handle[T](fmt.Sprintf("%c%016x", prefix, id))
 }
@@ -78,28 +83,30 @@ const (
 	MethodConfigure Method = "configure"
 	MethodRelease   Method = "release"
 
-	MethodParseConfigFile       Method = "parseConfigFile"
-	MethodLoadProject           Method = "loadProject"
-	MethodGetSymbolAtPosition   Method = "getSymbolAtPosition"
-	MethodGetSymbolsAtPositions Method = "getSymbolsAtPositions"
-	MethodGetSymbolAtLocation   Method = "getSymbolAtLocation"
-	MethodGetSymbolsAtLocations Method = "getSymbolsAtLocations"
-	MethodGetTypeOfSymbol       Method = "getTypeOfSymbol"
-	MethodGetTypesOfSymbols     Method = "getTypesOfSymbols"
-	MethodGetSourceFile         Method = "getSourceFile"
+	MethodParseConfigFile          Method = "parseConfigFile"
+	MethodLoadProject              Method = "loadProject"
+	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
+	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
+	MethodGetSymbolsAtPositions    Method = "getSymbolsAtPositions"
+	MethodGetSymbolAtLocation      Method = "getSymbolAtLocation"
+	MethodGetSymbolsAtLocations    Method = "getSymbolsAtLocations"
+	MethodGetTypeOfSymbol          Method = "getTypeOfSymbol"
+	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
+	MethodGetSourceFile            Method = "getSourceFile"
 )
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodRelease:               unmarshallerFor[string],
-	MethodParseConfigFile:       unmarshallerFor[ParseConfigFileParams],
-	MethodLoadProject:           unmarshallerFor[LoadProjectParams],
-	MethodGetSourceFile:         unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition:   unmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetSymbolsAtPositions: unmarshallerFor[GetSymbolsAtPositionsParams],
-	MethodGetSymbolAtLocation:   unmarshallerFor[GetSymbolAtLocationParams],
-	MethodGetSymbolsAtLocations: unmarshallerFor[GetSymbolsAtLocationsParams],
-	MethodGetTypeOfSymbol:       unmarshallerFor[GetTypeOfSymbolParams],
-	MethodGetTypesOfSymbols:     unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodRelease:                  unmarshallerFor[string],
+	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
+	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
+	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
+	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
+	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetSymbolsAtPositions:    unmarshallerFor[GetSymbolsAtPositionsParams],
+	MethodGetSymbolAtLocation:      unmarshallerFor[GetSymbolAtLocationParams],
+	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
+	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
 }
 
 type ConfigureParams struct {
@@ -118,6 +125,10 @@ type ConfigFileResponse struct {
 
 type LoadProjectParams struct {
 	ConfigFileName string `json:"configFileName"`
+}
+
+type GetDefaultProjectForFileParams struct {
+	FileName string `json:"fileName"`
 }
 
 type ProjectResponse struct {
@@ -199,6 +210,12 @@ func NewTypeData(t *checker.Type) *TypeResponse {
 type GetSourceFileParams struct {
 	Project  Handle[project.Project] `json:"project"`
 	FileName string                  `json:"fileName"`
+}
+
+// SourceFileResponse contains the binary-encoded AST data for a source file.
+// The Data field is base64-encoded binary data in the encoder's format.
+type SourceFileResponse struct {
+	Data string `json:"data"`
 }
 
 func unmarshalPayload(method string, payload jsontext.Value) (any, error) {

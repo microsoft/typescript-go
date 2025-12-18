@@ -40,6 +40,18 @@ export function registerLanguageCommands(context: vscode.ExtensionContext, clien
         });
     }));
 
+    disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection", async () => {
+        try {
+            const result = await client.initializeAPISession();
+            return result.pipePath;
+        }
+        catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to initialize API session: ${message}`);
+            throw error;
+        }
+    }));
+
     return disposables;
 }
 

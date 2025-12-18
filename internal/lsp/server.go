@@ -13,8 +13,10 @@ import (
 	"time"
 
 	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -52,8 +54,8 @@ func NewServer(opts *ServerOptions) *Server {
 		stderr:                opts.Err,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
-		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
-		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		pendingClientRequests: make(map[jsonrpc.ID]pendingClientRequest),
+		pendingServerRequests: make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
@@ -139,9 +141,9 @@ type Server struct {
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
-	pendingClientRequests   map[lsproto.ID]pendingClientRequest
+	pendingClientRequests   map[jsonrpc.ID]pendingClientRequest
 	pendingClientRequestsMu sync.Mutex
-	pendingServerRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingServerRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
 	pendingServerRequestsMu sync.Mutex
 
 	cwd                string
@@ -159,6 +161,10 @@ type Server struct {
 	watchers     collections.SyncSet[project.WatcherID]
 
 	session *project.Session
+
+	// apiSessions holds active API sessions keyed by their ID
+	apiSessions   map[string]*api.Session
+	apiSessionsMu sync.Mutex
 
 	// Test options for initializing session
 	client project.Client
@@ -332,7 +338,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 			return err
 		}
 
-		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
+		if s.initializeParams == nil && msg.Kind == jsonrpc.MessageKindRequest {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodInitialize {
 				resp, err := s.handleInitialize(ctx, req.Params.(*lsproto.InitializeParams), req)
@@ -346,7 +352,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 			continue
 		}
 
-		if msg.Kind == lsproto.MessageKindResponse {
+		if msg.Kind == jsonrpc.MessageKindResponse {
 			resp := msg.AsResponse()
 			s.pendingServerRequestsMu.Lock()
 			if respChan, ok := s.pendingServerRequests[*resp.ID]; ok {
@@ -441,7 +447,7 @@ func (s *Server) writeLoop(ctx context.Context) error {
 }
 
 func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
-	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
+	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
 	req := info.NewRequestMessage(id, params)
 
 	responseChan := make(chan *lsproto.ResponseMessage, 1)
@@ -468,14 +474,14 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
-func (s *Server) sendResult(id *lsproto.ID, result any) {
+func (s *Server) sendResult(id *jsonrpc.ID, result any) {
 	s.sendResponse(&lsproto.ResponseMessage{
 		ID:     id,
 		Result: result,
 	})
 }
 
-func (s *Server) sendError(id *lsproto.ID, err error) {
+func (s *Server) sendError(id *jsonrpc.ID, err error) {
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
@@ -483,7 +489,7 @@ func (s *Server) sendError(id *lsproto.ID, err error) {
 	// TODO(jakebailey): error data
 	s.sendResponse(&lsproto.ResponseMessage{
 		ID: id,
-		Error: &lsproto.ResponseError{
+		Error: &jsonrpc.ResponseError{
 			Code:    int32(code),
 			Message: err.Error(),
 		},
@@ -553,6 +559,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
+
+	registerRequestHandler(handlers, lsproto.InitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 
 	return handlers
 })
@@ -1152,6 +1160,67 @@ func (s *Server) handleCallHierarchyOutgoingCalls(
 		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
 	}
 	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
+}
+
+func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto.InitializeAPISessionParams, _ *lsproto.RequestMessage) (lsproto.InitializeAPISessionResponse, error) {
+	s.apiSessionsMu.Lock()
+	defer s.apiSessionsMu.Unlock()
+
+	if s.apiSessions == nil {
+		s.apiSessions = make(map[string]*api.Session)
+	}
+
+	var apiSession *api.Session
+	apiSession = api.NewSession(s.session, func() {
+		s.removeAPISession(apiSession.ID())
+	})
+
+	// Create a pipe transport for this session
+	pipePath := s.getAPIPipePath(apiSession.ID())
+	transport, err := api.NewPipeTransport(pipePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create API transport: %w", err)
+	}
+
+	// Start accepting connections in the background
+	go s.runAPISession(ctx, apiSession, transport)
+
+	s.apiSessions[apiSession.ID()] = apiSession
+
+	return &lsproto.InitializeAPISessionResult{
+		SessionId: apiSession.ID(),
+		PipePath:  pipePath,
+	}, nil
+}
+
+func (s *Server) getAPIPipePath(sessionID string) string {
+	// Use a path in the temp directory based on session ID
+	return fmt.Sprintf("/tmp/tsgo-api-%s.sock", sessionID)
+}
+
+func (s *Server) runAPISession(ctx context.Context, session *api.Session, transport api.Transport) {
+	defer transport.Close()
+	defer session.Close()
+
+	// Accept a single connection for this session
+	rwc, err := transport.Accept()
+	if err != nil {
+		s.logger.Errorf("API session %s: failed to accept connection: %v", session.ID(), err)
+		return
+	}
+
+	conn := api.NewConn(rwc, session)
+	session.SetConn(conn)
+
+	if err := conn.Run(ctx); err != nil {
+		s.logger.Errorf("API session %s: connection error: %v", session.ID(), err)
+	}
+}
+
+func (s *Server) removeAPISession(id string) {
+	s.apiSessionsMu.Lock()
+	defer s.apiSessionsMu.Unlock()
+	delete(s.apiSessions, id)
 }
 
 // !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support

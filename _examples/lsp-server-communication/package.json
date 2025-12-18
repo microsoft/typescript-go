@@ -1,0 +1,39 @@
+{
+    "name": "lsp-server-communication-example",
+    "displayName": "LSP Server Communication Example",
+    "description": "Example extension demonstrating communication with the TypeScript Go API",
+    "version": "0.0.1",
+    "publisher": "example",
+    "type": "commonjs",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "lsp-example.printAST",
+                "title": "Print AST of Current File"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=out/extension.js",
+        "watch": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=out/extension.js --watch"
+    },
+    "dependencies": {
+        "@typescript/api": "file:../../_packages/api",
+        "@typescript/ast": "file:../../_packages/ast"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.85.0",
+        "esbuild": "^0.27.1",
+        "typescript": "^5.3.0"
+    }
+}

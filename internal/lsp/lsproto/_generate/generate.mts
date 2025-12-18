@@ -173,6 +173,27 @@ const customStructures: Structure[] = [
             },
         ],
     },
+    {
+        name: "InitializeAPISessionParams",
+        properties: [],
+        documentation: "Parameters for the initializeAPISession request.",
+    },
+    {
+        name: "InitializeAPISessionResult",
+        properties: [
+            {
+                name: "sessionId",
+                type: { kind: "base", name: "string" },
+                documentation: "The unique identifier for this API session.",
+            },
+            {
+                name: "pipePath",
+                type: { kind: "base", name: "string" },
+                documentation: "The path to the named pipe or Unix domain socket for API communication.",
+            },
+        ],
+        documentation: "Result for the initializeAPISession request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -192,6 +213,18 @@ const customEnumerations: Enumeration[] = [
                 value: "implementations",
             },
         ],
+    },
+];
+
+// Custom requests to add to the model
+const customRequests: Request[] = [
+    {
+        method: "$/initializeAPISession",
+        typeName: "InitializeAPISessionRequest",
+        params: { kind: "reference", name: "InitializeAPISessionParams" },
+        result: { kind: "reference", name: "InitializeAPISessionResult" },
+        messageDirection: "clientToServer",
+        documentation: "Custom request to initialize an API session.",
     },
 ];
 
@@ -296,6 +329,7 @@ function patchAndPreprocessModel() {
     // Add custom enumerations, custom structures, and synthetic structures to the model
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
+    model.requests.push(...customRequests);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();

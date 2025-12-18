@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -169,7 +170,7 @@ func (info RequestInfo[Params, Resp]) UnmarshalResult(result any) (Resp, error) 
 	return r.(Resp), nil
 }
 
-func (info RequestInfo[Params, Resp]) NewRequestMessage(id *ID, params Params) *RequestMessage {
+func (info RequestInfo[Params, Resp]) NewRequestMessage(id *jsonrpc.ID, params Params) *RequestMessage {
 	return &RequestMessage{
 		ID:     id,
 		Method: info.Method,

@@ -26,6 +26,8 @@
         "api:build": "npm run -w @typescript/api build",
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
+        "example:build": "npm run -w lsp-server-communication-example compile",
+        "example:watch": "npm run -w lsp-server-communication-example watch",
         "node": "node --no-warnings --conditions @typescript/source",
         "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts",
         "updatefailing": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/updateFailing.mts",
@@ -33,7 +35,8 @@
     },
     "workspaces": [
         "./_extension",
-        "./_packages/*"
+        "./_packages/*",
+        "./_examples/*"
     ],
     "packageManager": "npm@8.19.4",
     "volta": {

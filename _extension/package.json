@@ -111,6 +111,12 @@
                 "title": "Show References of CodeLens",
                 "command": "typescript.native-preview.codeLens.showLocations",
                 "enablement": "false"
+            },
+            {
+                "command": "typescript.native-preview.initializeAPIConnection",
+                "title": "Initialize API Connection",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "Developer: TypeScript Native Preview"
             }
         ]
     },

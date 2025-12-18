@@ -21746,6 +21746,74 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
+// Parameters for the initializeAPISession request.
+type InitializeAPISessionParams struct{}
+
+// Result for the initializeAPISession request.
+type InitializeAPISessionResult struct {
+	// The unique identifier for this API session.
+	SessionId string `json:"sessionId"`
+
+	// The path to the named pipe or Unix domain socket for API communication.
+	PipePath string `json:"pipePath"`
+}
+
+var _ json.UnmarshalerFrom = (*InitializeAPISessionResult)(nil)
+
+func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingSessionId uint = 1 << iota
+		missingPipePath
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"sessionId"`:
+			missing &^= missingSessionId
+			if err := json.UnmarshalDecode(dec, &s.SessionId); err != nil {
+				return err
+			}
+		case `"pipePath"`:
+			missing &^= missingPipePath
+			if err := json.UnmarshalDecode(dec, &s.PipePath); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingSessionId != 0 {
+			missingProps = append(missingProps, "sessionId")
+		}
+		if missing&missingPipePath != 0 {
+			missingProps = append(missingProps, "pipePath")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
 type CallHierarchyItemData struct{}
 
@@ -23056,6 +23124,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
+	case MethodInitializeAPISession:
+		return unmarshalPtrTo[InitializeAPISessionParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -23253,6 +23323,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
+	case MethodInitializeAPISession:
+		return unmarshalValue[InitializeAPISessionResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -23557,6 +23629,8 @@ const (
 	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
+	// Custom request to initialize an API session.
+	MethodInitializeAPISession Method = "$/initializeAPISession"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24064,6 +24138,12 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
+
+// Response type for `$/initializeAPISession`
+type InitializeAPISessionResponse = *InitializeAPISessionResult
+
+// Type mapping info for `$/initializeAPISession`
+var InitializeAPISessionInfo = RequestInfo[*InitializeAPISessionParams, InitializeAPISessionResponse]{Method: MethodInitializeAPISession}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}

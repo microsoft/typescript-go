@@ -1,14 +1,21 @@
 /// <reference path="./node.ts" preserve="true" />
-import { SymbolFlags } from "#symbolFlags";
-import { TypeFlags } from "#typeFlags";
 import type {
     Node,
     SourceFile,
 } from "@typescript/ast";
+import {
+    type API as BaseAPI,
+    type APIOptions as BaseAPIOptions,
+    ObjectRegistry,
+    type Project as BaseProject,
+    type Symbol as BaseSymbol,
+    SymbolFlags,
+    type Type as BaseType,
+    TypeFlags,
+} from "./base/index.ts";
 import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
 import { RemoteSourceFile } from "./node.ts";
-import { ObjectRegistry } from "./objectRegistry.ts";
 import type {
     ConfigResponse,
     ProjectResponse,
@@ -18,19 +25,54 @@ import type {
 
 export { SymbolFlags, TypeFlags };
 
-export interface APIOptions {
-    tsserverPath: string;
-    cwd?: string;
-    logFile?: string;
+export interface APIOptions extends BaseAPIOptions {
     fs?: FileSystem;
 }
 
-export class API {
+/** Type alias for the sync object registry */
+export type SyncObjectRegistry = ObjectRegistry<Project, Symbol, Type>;
+
+export abstract class DisposableObject {
+    private disposed: boolean = false;
+    protected objectRegistry: SyncObjectRegistry;
+    abstract readonly id: string;
+
+    constructor(objectRegistry: SyncObjectRegistry) {
+        this.objectRegistry = objectRegistry;
+    }
+    [globalThis.Symbol.dispose](): void {
+        this.objectRegistry.release(this);
+        this.disposed = true;
+    }
+    dispose(): void {
+        this[globalThis.Symbol.dispose]();
+    }
+    isDisposed(): boolean {
+        return this.disposed;
+    }
+    ensureNotDisposed(): this {
+        if (this.disposed) {
+            throw new Error(`${this.constructor.name} is disposed`);
+        }
+        return this;
+    }
+}
+
+export class API implements BaseAPI<false> {
     private client: Client;
-    private objectRegistry: ObjectRegistry;
+    private objectRegistry: SyncObjectRegistry;
+
     constructor(options: APIOptions) {
         this.client = new Client(options);
-        this.objectRegistry = new ObjectRegistry(this.client);
+        // Create registry with factories - we use arrow functions to capture `this.client` and `this.objectRegistry`
+        this.objectRegistry = new ObjectRegistry<Project, Symbol, Type>(
+            {
+                createProject: data => new Project(this.client, this.objectRegistry, data),
+                createSymbol: data => new Symbol(this.objectRegistry, data),
+                createType: data => new Type(this.objectRegistry, data),
+            },
+            id => this.client.request("release", id),
+        );
     }
 
     parseConfigFile(fileName: string): ConfigResponse {
@@ -55,40 +97,16 @@ export class API {
     }
 }
 
-export class DisposableObject {
-    private disposed: boolean = false;
-    protected objectRegistry: ObjectRegistry;
-    constructor(objectRegistry: ObjectRegistry) {
-        this.objectRegistry = objectRegistry;
-    }
-    [globalThis.Symbol.dispose](): void {
-        this.objectRegistry.release(this);
-        this.disposed = true;
-    }
-    dispose(): void {
-        this[globalThis.Symbol.dispose]();
-    }
-    isDisposed(): boolean {
-        return this.disposed;
-    }
-    ensureNotDisposed(): this {
-        if (this.disposed) {
-            throw new Error(`${this.constructor.name} is disposed`);
-        }
-        return this;
-    }
-}
-
-export class Project extends DisposableObject {
+export class Project extends DisposableObject implements BaseProject<false> {
     private decoder = new TextDecoder();
     private client: Client;
 
-    id: string;
+    readonly id: string;
     configFileName!: string;
     compilerOptions!: Record<string, unknown>;
     rootFiles!: readonly string[];
 
-    constructor(client: Client, objectRegistry: ObjectRegistry, data: ProjectResponse) {
+    constructor(client: Client, objectRegistry: SyncObjectRegistry, data: ProjectResponse) {
         super(objectRegistry);
         this.id = data.id;
         this.client = client;
@@ -112,53 +130,51 @@ export class Project extends DisposableObject {
         return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
 
-    getSymbolAtLocation(node: Node): Symbol | undefined;
-    getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
-    getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | (Symbol | undefined)[] | undefined {
+    getSymbolAtLocation(node: Node): Symbol | undefined {
         this.ensureNotDisposed();
-        if (Array.isArray(nodeOrNodes)) {
-            const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodeOrNodes.map(node => node.id) });
-            return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
-        }
-        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: (nodeOrNodes as Node).id });
+        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: node.id });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
-    getSymbolAtPosition(fileName: string, positions: readonly number[]): (Symbol | undefined)[];
-    getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
+    getSymbolsAtLocations(nodes: readonly Node[]): (Symbol | undefined)[] {
         this.ensureNotDisposed();
-        if (typeof positionOrPositions === "number") {
-            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position: positionOrPositions });
-            return data ? this.objectRegistry.getSymbol(data) : undefined;
-        }
-        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions: positionOrPositions });
+        const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodes.map(node => node.id) });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
-    getTypeOfSymbol(symbol: Symbol): Type | undefined;
-    getTypeOfSymbol(symbols: readonly Symbol[]): (Type | undefined)[];
-    getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Type | (Type | undefined)[] | undefined {
+    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined {
         this.ensureNotDisposed();
-        if (Array.isArray(symbolOrSymbols)) {
-            const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
-            return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
-        }
-        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
+        const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position });
+        return data ? this.objectRegistry.getSymbol(data) : undefined;
+    }
+
+    getSymbolsAtPositions(fileName: string, positions: readonly number[]): (Symbol | undefined)[] {
+        this.ensureNotDisposed();
+        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions });
+        return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
+    }
+
+    getTypeOfSymbol(symbol: Symbol): Type | undefined {
+        this.ensureNotDisposed();
+        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: symbol.ensureNotDisposed().id });
         return data ? this.objectRegistry.getType(data) : undefined;
+    }
+
+    getTypesOfSymbols(symbols: readonly Symbol[]): (Type | undefined)[] {
+        this.ensureNotDisposed();
+        const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbols.map(s => s.ensureNotDisposed().id) });
+        return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
     }
 }
 
-export class Symbol extends DisposableObject {
-    private client: Client;
-    id: string;
-    name: string;
-    flags: SymbolFlags;
-    checkFlags: number;
+export class Symbol extends DisposableObject implements BaseSymbol<false> {
+    readonly id: string;
+    readonly name: string;
+    readonly flags: SymbolFlags;
+    readonly checkFlags: number;
 
-    constructor(client: Client, objectRegistry: ObjectRegistry, data: SymbolResponse) {
+    constructor(objectRegistry: SyncObjectRegistry, data: SymbolResponse) {
         super(objectRegistry);
-        this.client = client;
         this.id = data.id;
         this.name = data.name;
         this.flags = data.flags;
@@ -166,13 +182,12 @@ export class Symbol extends DisposableObject {
     }
 }
 
-export class Type extends DisposableObject {
-    private client: Client;
-    id: string;
-    flags: TypeFlags;
-    constructor(client: Client, objectRegistry: ObjectRegistry, data: TypeResponse) {
+export class Type extends DisposableObject implements BaseType<false> {
+    readonly id: string;
+    readonly flags: TypeFlags;
+
+    constructor(objectRegistry: SyncObjectRegistry, data: TypeResponse) {
         super(objectRegistry);
-        this.client = client;
         this.id = data.id;
         this.flags = data.flags;
     }

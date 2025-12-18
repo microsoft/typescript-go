@@ -194,6 +194,17 @@ export class Client {
         });
     }
 
+    /**
+     * Initialize an API session and return the pipe path for connecting.
+     * This allows other extensions to get a direct connection to the API server.
+     */
+    async initializeAPISession(): Promise<{ sessionId: string; pipePath: string; }> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        return this.client.sendRequest<{ sessionId: string; pipePath: string; }>("$/initializeAPISession", {});
+    }
+
     async restart(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
         if (!this.client) {
             return Promise.reject(new Error("Language client is not initialized"));
