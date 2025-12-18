@@ -290,23 +290,39 @@ func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool 
 		return true
 	}
 
-	lowerName := strings.ToLower(filename)
-	if !strings.HasSuffix(lowerName, ".min.js") {
+	// Preserve legacy behavior:
+	// - When matching is case-sensitive, only the exact ".min.js" suffix is excluded by default.
+	// - When matching is case-insensitive, any casing variant is excluded by default.
+	if !p.hasMinJsSuffix(filename) {
 		return true
 	}
+	// Allow when the user's pattern explicitly references the .min. suffix.
+	if p.patternMentionsMinSuffix(segs) {
+		return true
+	}
+	return false
+}
 
-	// Match legacy behavior: exclude .min.js by default for "files" patterns, but allow it
-	// when the user's pattern explicitly references the .min. suffix (e.g. "*.min.*" or "*.min.js").
+func (p *globPattern) hasMinJsSuffix(filename string) bool {
+	if p.caseSensitive {
+		return strings.HasSuffix(filename, ".min.js")
+	}
+	return strings.HasSuffix(strings.ToLower(filename), ".min.js")
+}
+
+func (p *globPattern) patternMentionsMinSuffix(segs []segment) bool {
 	for _, seg := range segs {
 		if seg.kind != segLiteral {
 			continue
 		}
-		lowerLit := strings.ToLower(seg.literal)
-		if strings.Contains(lowerLit, ".min.js") || strings.Contains(lowerLit, ".min.") {
+		lit := seg.literal
+		if !p.caseSensitive {
+			lit = strings.ToLower(lit)
+		}
+		if strings.Contains(lit, ".min.js") || strings.Contains(lit, ".min.") {
 			return true
 		}
 	}
-
 	return false
 }
 

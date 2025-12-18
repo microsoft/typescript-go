@@ -91,6 +91,7 @@ func caseSensitiveHost() vfs.FS {
 		"/dev/q/a/c/b/d.ts": "",
 		"/dev/js/a.js":      "",
 		"/dev/js/b.js":      "",
+		"/dev/js/d.MIN.js":  "",
 	}, true)
 }
 
@@ -639,6 +640,18 @@ func TestReadDirectory(t *testing.T) {
 				assert.Assert(t, slices.Contains(got, "/dev/js/b.js"))
 				assert.Assert(t, !slices.Contains(got, "/dev/js/d.min.js"))
 				assert.Assert(t, !slices.Contains(got, "/dev/js/ab.min.js"))
+			},
+		},
+		{
+			name:       "min js exclusion is case-sensitive on case-sensitive FS",
+			host:       caseSensitiveHost,
+			extensions: []string{".js"},
+			includes:   []string{"js/*"},
+			expect: func(t *testing.T, got []string) {
+				assert.Assert(t, slices.Contains(got, "/dev/js/a.js"))
+				assert.Assert(t, slices.Contains(got, "/dev/js/b.js"))
+				// Legacy behavior: only lowercase ".min.js" is excluded by default when matching is case-sensitive.
+				assert.Assert(t, slices.Contains(got, "/dev/js/d.MIN.js"))
 			},
 		},
 		{
