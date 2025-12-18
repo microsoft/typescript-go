@@ -284,10 +284,8 @@ func nextPathPart(path string, offset int) (part string, nextOffset int, ok bool
 // matchWildcard matches a path component against wildcard segments.
 func (p *globPattern) matchWildcard(segs []segment, s string) bool {
 	// Include patterns: wildcards at start cannot match hidden files
-	if !p.isExclude && len(segs) > 0 && isHiddenPath(s) {
-		if segs[0].kind == segStar || segs[0].kind == segQuestion {
-			return false
-		}
+	if !p.isExclude && len(segs) > 0 && isHiddenPath(s) && (segs[0].kind == segStar || segs[0].kind == segQuestion) {
+		return false
 	}
 
 	// Fast path: single * followed by literal suffix (e.g., "*.ts")
@@ -364,18 +362,17 @@ func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool 
 func (p *globPattern) isImplicitGlobSuffix(compIdx int) bool {
 	remaining := p.components[compIdx:]
 
-	// Check for exactly **/* (the implicit glob added for directories)
-	if len(remaining) == 2 &&
-		remaining[0].kind == kindDoubleAsterisk &&
-		remaining[1].kind == kindWildcard &&
-		len(remaining[1].segments) == 1 &&
-		remaining[1].segments[0].kind == segStar {
-		return true
-	}
-
-	// All ** is fine (matches zero directories)
-	for _, c := range remaining {
-		if c.kind != kindDoubleAsterisk {
+	for i, c := range remaining {
+		switch c.kind {
+		case kindDoubleAsterisk:
+			continue
+		case kindWildcard:
+			// Allow single * as last component (the implicit glob suffix)
+			if i == len(remaining)-1 && len(c.segments) == 1 && c.segments[0].kind == segStar {
+				return true
+			}
+			return false
+		default:
 			return false
 		}
 	}
@@ -406,6 +403,13 @@ func isPackageFolder(name string) bool {
 		return strings.EqualFold(name, "bower_components")
 	}
 	return false
+}
+
+func ensureTrailingSlash(s string) string {
+	if len(s) > 0 && s[len(s)-1] != '/' {
+		return s + "/"
+	}
+	return s
 }
 
 // globMatcher combines include and exclude patterns for file matching.
@@ -485,7 +489,6 @@ type globVisitor struct {
 	useCaseSensitiveFileNames bool
 	visited                   collections.Set[string]
 	results                   [][]string
-	numIncludes               int
 }
 
 func (v *globVisitor) visit(path, absolutePath string, depth *int) {
@@ -500,28 +503,16 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 	entries := v.host.GetAccessibleEntries(absolutePath)
 
 	// Prepare path prefixes for building child paths
-	pathPrefix := path
-	absPrefix := absolutePath
-	if len(path) > 0 && path[len(path)-1] != '/' {
-		pathPrefix = path + "/"
-	}
-	if len(absolutePath) > 0 && absolutePath[len(absolutePath)-1] != '/' {
-		absPrefix = absolutePath + "/"
-	}
+	pathPrefix := ensureTrailingSlash(path)
+	absPrefix := ensureTrailingSlash(absolutePath)
 
 	// Match files
 	for _, file := range entries.Files {
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(file, v.extensions) {
 			continue
 		}
-		absFile := absPrefix + file
-		if idx := v.fileMatcher.MatchesFile(absFile); idx >= 0 {
-			relFile := pathPrefix + file
-			if v.numIncludes == 0 {
-				v.results[0] = append(v.results[0], relFile)
-			} else {
-				v.results[idx] = append(v.results[idx], relFile)
-			}
+		if idx := v.fileMatcher.MatchesFile(absPrefix + file); idx >= 0 {
+			v.results[idx] = append(v.results[idx], pathPrefix+file)
 		}
 	}
 
@@ -551,29 +542,20 @@ func matchFilesNoRegex(path string, extensions, excludes, includes []string, use
 	fileMatcher := newGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageFiles)
 	directoryMatcher := newGlobMatcher(includes, excludes, absolutePath, useCaseSensitiveFileNames, UsageDirectories)
 
-	basePaths := getBasePaths(path, includes, useCaseSensitiveFileNames)
-	numIncludes := len(fileMatcher.includes)
-
-	results := make([][]string, max(numIncludes, 1))
-	for i := range results {
-		results[i] = []string{}
-	}
-
 	v := globVisitor{
 		host:                      host,
 		fileMatcher:               fileMatcher,
 		directoryMatcher:          directoryMatcher,
 		extensions:                extensions,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		results:                   results,
-		numIncludes:               numIncludes,
+		results:                   make([][]string, max(len(fileMatcher.includes), 1)),
 	}
 
-	for _, basePath := range basePaths {
+	for _, basePath := range getBasePaths(path, includes, useCaseSensitiveFileNames) {
 		v.visit(basePath, tspath.CombinePaths(currentDirectory, basePath), depth)
 	}
 
-	return core.Flatten(results)
+	return core.Flatten(v.results)
 }
 
 // globSpecMatcher wraps multiple glob patterns for matching paths.
