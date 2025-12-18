@@ -286,15 +286,27 @@ func (p *globPattern) matchSegments(segs []segment, segIdx int, s string, sIdx i
 
 // checkMinJsExclusion returns false if this is a .min.js file that should be excluded.
 func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool {
-	if !p.excludeMinJs || !strings.HasSuffix(strings.ToLower(filename), ".min.js") {
+	if !p.excludeMinJs {
 		return true
 	}
-	// Allow if pattern explicitly includes .min.js
+
+	lowerName := strings.ToLower(filename)
+	if !strings.HasSuffix(lowerName, ".min.js") {
+		return true
+	}
+
+	// Match legacy behavior: exclude .min.js by default for "files" patterns, but allow it
+	// when the user's pattern explicitly references the .min. suffix (e.g. "*.min.*" or "*.min.js").
 	for _, seg := range segs {
-		if seg.kind == segLiteral && strings.Contains(strings.ToLower(seg.literal), ".min.js") {
+		if seg.kind != segLiteral {
+			continue
+		}
+		lowerLit := strings.ToLower(seg.literal)
+		if strings.Contains(lowerLit, ".min.js") || strings.Contains(lowerLit, ".min.") {
 			return true
 		}
 	}
+
 	return false
 }
 

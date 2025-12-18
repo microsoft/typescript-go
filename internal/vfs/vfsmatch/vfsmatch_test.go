@@ -339,6 +339,17 @@ func TestReadDirectory(t *testing.T) {
 			},
 		},
 		{
+			name:       "double asterisk matches zero-or-more directories",
+			host:       caseInsensitiveHost,
+			extensions: []string{".ts", ".tsx", ".d.ts"},
+			includes:   []string{"x/**/a.ts"},
+			expect: func(t *testing.T, got []string) {
+				assert.Equal(t, len(got), 2)
+				assert.Assert(t, slices.Contains(got, "/dev/x/a.ts"))
+				assert.Assert(t, slices.Contains(got, "/dev/x/y/a.ts"))
+			},
+		},
+		{
 			name:       "wildcard multiple recursive directories",
 			host:       caseInsensitiveHost,
 			extensions: []string{".ts", ".tsx", ".d.ts"},
@@ -638,6 +649,28 @@ func TestReadDirectory(t *testing.T) {
 			expect: func(t *testing.T, got []string) {
 				assert.Assert(t, slices.Contains(got, "/dev/js/d.min.js"))
 				assert.Assert(t, slices.Contains(got, "/dev/js/ab.min.js"))
+			},
+		},
+		{
+			name:       "min js files included when pattern mentions .min.",
+			host:       caseInsensitiveHost,
+			extensions: []string{".js"},
+			includes:   []string{"js/*.min.*"},
+			expect: func(t *testing.T, got []string) {
+				assert.Equal(t, len(got), 2)
+				assert.Assert(t, slices.Contains(got, "/dev/js/d.min.js"))
+				assert.Assert(t, slices.Contains(got, "/dev/js/ab.min.js"))
+			},
+		},
+		{
+			name:       "exclude literal node_modules folder",
+			host:       commonFoldersHost,
+			extensions: []string{".ts", ".tsx", ".d.ts"},
+			excludes:   []string{"node_modules"},
+			includes:   []string{"**/*"},
+			expect: func(t *testing.T, got []string) {
+				assert.Assert(t, slices.Contains(got, "/dev/a.ts"))
+				assert.Assert(t, !slices.Contains(got, "/dev/node_modules/a.ts"))
 			},
 		},
 		{
