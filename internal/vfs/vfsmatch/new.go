@@ -73,6 +73,8 @@ func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive
 		caseSensitive: caseSensitive,
 		excludeMinJs:  usage == UsageFiles,
 	}
+	// Avoid slice growth during compilation.
+	p.components = make([]component, 0, len(parts))
 
 	for _, part := range parts {
 		p.components = append(p.components, parseComponent(part, usage != UsageExclude))
@@ -97,7 +99,15 @@ func parseComponent(s string, isInclude bool) component {
 
 // parseSegments breaks "*.ts" into [segStar, segLiteral(".ts")]
 func parseSegments(s string) []segment {
-	var result []segment
+	// Preallocate based on wildcard count: each wildcard contributes 1 segment,
+	// and each wildcard can split literals into at most one extra literal segment.
+	wildcards := 0
+	for i := range len(s) {
+		if s[i] == '*' || s[i] == '?' {
+			wildcards++
+		}
+	}
+	result := make([]segment, 0, 2*wildcards+1)
 	start := 0
 	for i := range len(s) {
 		switch s[i] {
