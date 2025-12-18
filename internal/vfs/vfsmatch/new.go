@@ -128,7 +128,7 @@ func (p *globPattern) matches(path string) bool {
 	if p == nil {
 		return false
 	}
-	return p.matchPath(path, 0, 0, false)
+	return p.matchPath(path, 0, 0)
 }
 
 // matchesPrefix returns true if files under this directory path could match.
@@ -141,17 +141,14 @@ func (p *globPattern) matchesPrefix(path string) bool {
 }
 
 // matchPath checks if path matches the pattern starting from the given offsets.
-// afterRecursive is true if we just matched a ** (affects dot-file handling).
-func (p *globPattern) matchPath(path string, pathOffset, compIdx int, afterRecursive bool) bool {
+func (p *globPattern) matchPath(path string, pathOffset, compIdx int) bool {
 	for {
 		pathPart, nextOffset, ok := nextPathPart(path, pathOffset)
 		if !ok {
-			// No more path parts - check if pattern is satisfied
 			return p.patternSatisfied(compIdx)
 		}
 
 		if compIdx >= len(p.components) {
-			// Path has more parts but pattern is done
 			// Exclude patterns match prefixes (e.g., "node_modules" excludes "node_modules/foo")
 			return p.isExclude
 		}
@@ -161,21 +158,15 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, afterRecur
 		switch comp.kind {
 		case kindDoubleAsterisk:
 			// ** can match zero directories: try skipping it
-			if p.matchPath(path, pathOffset, compIdx+1, true) {
+			if p.matchPath(path, pathOffset, compIdx+1) {
 				return true
 			}
 			// ** should not match hidden dirs or package folders (for includes)
-			if !p.isExclude {
-				if len(pathPart) > 0 && pathPart[0] == '.' {
-					return false
-				}
-				if isPackageFolder(pathPart) {
-					return false
-				}
+			if !p.isExclude && (isHiddenPath(pathPart) || isPackageFolder(pathPart)) {
+				return false
 			}
 			// ** matches this directory, try next path part with same **
 			pathOffset = nextOffset
-			afterRecursive = true
 			continue
 
 		case kindLiteral:
@@ -197,7 +188,6 @@ func (p *globPattern) matchPath(path string, pathOffset, compIdx int, afterRecur
 
 		pathOffset = nextOffset
 		compIdx++
-		afterRecursive = false
 	}
 }
 
@@ -207,8 +197,7 @@ func (p *globPattern) matchPathPrefix(path string, pathOffset, compIdx int) bool
 	for {
 		pathPart, nextOffset, ok := nextPathPart(path, pathOffset)
 		if !ok {
-			// Path exhausted - any prefix could potentially match
-			return true
+			return true // Path exhausted - could potentially match
 		}
 
 		if compIdx >= len(p.components) {
@@ -222,13 +211,8 @@ func (p *globPattern) matchPathPrefix(path string, pathOffset, compIdx int) bool
 			if p.matchPathPrefix(path, pathOffset, compIdx+1) {
 				return true
 			}
-			if !p.isExclude {
-				if len(pathPart) > 0 && pathPart[0] == '.' {
-					return false
-				}
-				if isPackageFolder(pathPart) {
-					return false
-				}
+			if !p.isExclude && (isHiddenPath(pathPart) || isPackageFolder(pathPart)) {
+				return false
 			}
 			pathOffset = nextOffset
 			continue
@@ -300,7 +284,7 @@ func nextPathPart(path string, offset int) (part string, nextOffset int, ok bool
 // matchWildcard matches a path component against wildcard segments.
 func (p *globPattern) matchWildcard(segs []segment, s string) bool {
 	// Include patterns: wildcards at start cannot match hidden files
-	if !p.isExclude && len(segs) > 0 && len(s) > 0 && s[0] == '.' {
+	if !p.isExclude && len(segs) > 0 && isHiddenPath(s) {
 		if segs[0].kind == segStar || segs[0].kind == segQuestion {
 			return false
 		}
@@ -309,20 +293,13 @@ func (p *globPattern) matchWildcard(segs []segment, s string) bool {
 	// Fast path: single * followed by literal suffix (e.g., "*.ts")
 	if len(segs) == 2 && segs[0].kind == segStar && segs[1].kind == segLiteral {
 		suffix := segs[1].literal
-		if len(s) < len(suffix) {
-			return false
-		}
-		matched := s[len(s)-len(suffix):]
-		if !p.stringsEqual(suffix, matched) {
+		if len(s) < len(suffix) || !p.stringsEqual(suffix, s[len(s)-len(suffix):]) {
 			return false
 		}
 		return p.checkMinJsExclusion(s, segs)
 	}
 
-	if !p.matchSegments(segs, 0, s, 0) {
-		return false
-	}
-	return p.checkMinJsExclusion(s, segs)
+	return p.matchSegments(segs, 0, s, 0) && p.checkMinJsExclusion(s, segs)
 }
 
 // matchSegments recursively matches segments against string s.
@@ -387,28 +364,22 @@ func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool 
 func (p *globPattern) isImplicitGlobSuffix(compIdx int) bool {
 	remaining := p.components[compIdx:]
 
-	// All ** is fine (matches zero)
-	allRecursive := true
-	for _, c := range remaining {
-		if c.kind != kindDoubleAsterisk {
-			allRecursive = false
-			break
-		}
-	}
-	if allRecursive {
+	// Check for exactly **/* (the implicit glob added for directories)
+	if len(remaining) == 2 &&
+		remaining[0].kind == kindDoubleAsterisk &&
+		remaining[1].kind == kindWildcard &&
+		len(remaining[1].segments) == 1 &&
+		remaining[1].segments[0].kind == segStar {
 		return true
 	}
 
-	// Check for exactly **/* (the implicit glob added for directories)
-	if len(remaining) == 2 {
-		if remaining[0].kind == kindDoubleAsterisk && remaining[1].kind == kindWildcard {
-			segs := remaining[1].segments
-			if len(segs) == 1 && segs[0].kind == segStar {
-				return true
-			}
+	// All ** is fine (matches zero directories)
+	for _, c := range remaining {
+		if c.kind != kindDoubleAsterisk {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 // stringsEqual compares strings with appropriate case sensitivity.
@@ -419,15 +390,20 @@ func (p *globPattern) stringsEqual(a, b string) bool {
 	return strings.EqualFold(a, b)
 }
 
+// isHiddenPath checks if a path component is hidden (starts with dot).
+func isHiddenPath(name string) bool {
+	return len(name) > 0 && name[0] == '.'
+}
+
 // isPackageFolder checks if name is a common package folder (node_modules, etc.)
 func isPackageFolder(name string) bool {
 	switch len(name) {
 	case 12: // node_modules
 		return strings.EqualFold(name, "node_modules")
-	case 16: // bower_components
-		return strings.EqualFold(name, "bower_components")
 	case 13: // jspm_packages
 		return strings.EqualFold(name, "jspm_packages")
+	case 16: // bower_components
+		return strings.EqualFold(name, "bower_components")
 	}
 	return false
 }
