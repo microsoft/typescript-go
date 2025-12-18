@@ -944,7 +944,11 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 
 // TODO: move `lookupSymbolChain` and co to `symbolaccessibility.go` (but getSpecifierForModuleSymbol uses much context which makes that hard?)
 func (b *NodeBuilderImpl) lookupSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, yieldModuleSymbol bool) []*ast.Symbol {
-	b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, meaning)
+	// Skip tracking for unresolved symbols - they have no declarations and cause false accessibility errors.
+	// The local import binding (if any) should be tracked separately.
+	if symbol.CheckFlags&ast.CheckFlagsUnresolved == 0 {
+		b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, meaning)
+	}
 	return b.lookupSymbolChainWorker(symbol, meaning, yieldModuleSymbol)
 }
 
@@ -3111,5 +3115,15 @@ func (b *NodeBuilderImpl) newStringLiteralEx(text string, isSingleQuote bool) *a
 // Direct serialization core functions for types, type aliases, and symbols
 
 func (t *TypeAlias) ToTypeReferenceNode(b *NodeBuilderImpl) *ast.Node {
-	return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(t.Symbol()), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
+	sym := t.Symbol()
+	// For unresolved symbols (e.g., from unresolved imports), try to find and track
+	// the local import binding by resolving the name without following the alias
+	if sym.CheckFlags&ast.CheckFlagsUnresolved != 0 && b.ctx.enclosingDeclaration != nil {
+		localSym := b.ch.resolveName(b.ctx.enclosingDeclaration, sym.Name, ast.SymbolFlagsType|ast.SymbolFlagsAlias, nil, false, false)
+		if localSym != nil && localSym.Flags&ast.SymbolFlagsAlias != 0 {
+			// Track the local alias symbol (the import specifier) to mark it visible
+			b.ctx.tracker.TrackSymbol(localSym, b.ctx.enclosingDeclaration, ast.SymbolFlagsType)
+		}
+	}
+	return b.f.NewTypeReferenceNode(b.symbolToName(sym, ast.SymbolFlagsType, false), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
 }
