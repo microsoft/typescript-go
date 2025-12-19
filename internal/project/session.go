@@ -16,7 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
@@ -198,20 +197,6 @@ func (s *Session) Config() *Config {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	return s.workspaceConfig.Copy()
-}
-
-// !!! ts/js preferences
-// Gets copy of current UserPreferences
-func (s *Session) UserPreferences() *lsutil.UserPreferences {
-	s.configRWMu.Lock()
-	defer s.configRWMu.Unlock()
-	return s.workspaceConfig.Ts.Copy()
-}
-
-// !!! ts/js preferences
-// Gets original UserPreferences of the session
-func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
-	return s.initialConfig.Ts.CopyOrDefault()
 }
 
 // Trace implements module.ResolutionHost

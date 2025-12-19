@@ -271,8 +271,8 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 func (s *Server) RequestConfiguration(ctx context.Context) (*project.Config, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		// if no configuration request capapbility, return default preferences
-		return project.NewConfig(s.session.NewUserPreferences()), nil
+		// if no configuration request capapbility, return default config
+		return project.NewConfig(nil), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
@@ -931,6 +931,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	} else if settings, ok := params.Settings.([]any); ok {
 		s.session.Configure(project.ParseConfiguration(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
+		// fourslash case
 		s.session.Configure(project.ParseConfiguration([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
 	}
 	return nil

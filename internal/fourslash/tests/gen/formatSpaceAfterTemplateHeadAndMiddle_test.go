@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -33,7 +34,9 @@ const a6 = ` + "`" + `
 ` + "`" + `;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces", true)
+	opts405 := f.GetOptions()
+	opts405.FormatCodeSettings.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = core.TSTrue
+	f.Configure(t, opts405)
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, "const a1 = `${ 1 }${ 1 }`;\n"+"const a2 = `\n"+`    ${ 1 }${ 1 }
 `+"`;\n"+"const a3 = `\n"+`

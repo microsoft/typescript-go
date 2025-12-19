@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -18,7 +19,9 @@ func TestFormattingSpaceBeforeCloseParen(t *testing.T) {
 /*5*/var bar = (function (a) { });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", true)
+	opts235 := f.GetOptions()
+	opts235.FormatCodeSettings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = core.TSTrue
+	f.Configure(t, opts235)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `( {} );`)
@@ -30,7 +33,9 @@ func TestFormattingSpaceBeforeCloseParen(t *testing.T) {
 	f.VerifyCurrentLineContent(t, `( { foo: 42 } );`)
 	f.GoToMarker(t, "5")
 	f.VerifyCurrentLineContent(t, `var bar = ( function( a ) { } );`)
-	f.SetFormatOption(t, "InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", false)
+	opts674 := f.GetOptions()
+	opts674.FormatCodeSettings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = core.TSFalse
+	f.Configure(t, opts674)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `({});`)

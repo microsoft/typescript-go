@@ -25,7 +25,9 @@ PatternValidator/**/`
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
-	f.SetFormatOption(t, "newLineCharacter", "\n")
+	opts615 := f.GetOptions()
+	opts615.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts615)
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { PatternValidator } from "@angular/forms";
 

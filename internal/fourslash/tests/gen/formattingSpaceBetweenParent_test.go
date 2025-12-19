@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -16,7 +17,9 @@ func TestFormattingSpaceBetweenParent(t *testing.T) {
 /*3*/if((true)){}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", true)
+	opts180 := f.GetOptions()
+	opts180.FormatCodeSettings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = core.TSTrue
+	f.Configure(t, opts180)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `foo( () => 1 );`)

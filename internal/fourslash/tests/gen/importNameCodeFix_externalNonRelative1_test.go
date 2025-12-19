@@ -50,7 +50,9 @@ Pkg2/*internal*/
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()
-	f.SetFormatOption(t, "newline", "\n")
+	opts1493 := f.GetOptions()
+	opts1493.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts1493)
 	f.GoToMarker(t, "external")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { Pkg2 } from "pkg-2/utils";

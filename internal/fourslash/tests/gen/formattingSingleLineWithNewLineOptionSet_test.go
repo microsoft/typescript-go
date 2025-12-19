@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -18,8 +19,12 @@ func TestFormattingSingleLineWithNewLineOptionSet(t *testing.T) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "PlaceOpenBraceOnNewLineForFunctions", true)
-	f.SetFormatOption(t, "PlaceOpenBraceOnNewLineForControlBlocks", true)
+	opts208 := f.GetOptions()
+	opts208.FormatCodeSettings.PlaceOpenBraceOnNewLineForFunctions = core.TSTrue
+	f.Configure(t, opts208)
+	opts276 := f.GetOptions()
+	opts276.FormatCodeSettings.PlaceOpenBraceOnNewLineForControlBlocks = core.TSTrue
+	f.Configure(t, opts276)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `module Default { }`)

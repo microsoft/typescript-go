@@ -23,7 +23,9 @@ function b(){
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "trimTrailingWhitespace", false)
+	opts233 := f.GetOptions()
+	opts233.FormatCodeSettings.TrimTrailingWhitespace = false
+	f.Configure(t, opts233)
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, `
 var a;     

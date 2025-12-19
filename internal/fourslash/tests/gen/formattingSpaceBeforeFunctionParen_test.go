@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -20,8 +21,12 @@ func TestFormattingSpaceBeforeFunctionParen(t *testing.T) {
 /*7*/function* g () { }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "insertSpaceBeforeFunctionParenthesis", true)
-	f.SetFormatOption(t, "insertSpaceAfterFunctionKeywordForAnonymousFunctions", false)
+	opts333 := f.GetOptions()
+	opts333.FormatCodeSettings.InsertSpaceBeforeFunctionParenthesis = core.TSTrue
+	f.Configure(t, opts333)
+	opts414 := f.GetOptions()
+	opts414.FormatCodeSettings.InsertSpaceAfterFunctionKeywordForAnonymousFunctions = core.TSFalse
+	f.Configure(t, opts414)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `function foo () { }`)

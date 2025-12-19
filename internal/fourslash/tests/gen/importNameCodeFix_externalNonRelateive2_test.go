@@ -35,7 +35,9 @@ shared/*external2external*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()
-	f.SetFormatOption(t, "newline", "\n")
+	opts814 := f.GetOptions()
+	opts814.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts814)
 	f.GoToMarker(t, "internal2external")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import { shared } from "shared/constants";

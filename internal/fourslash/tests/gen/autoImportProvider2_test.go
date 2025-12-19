@@ -30,6 +30,8 @@ IndirectDependency/**/`
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
-	f.SetFormatOption(t, "newLineCharacter", "\n")
+	opts1116 := f.GetOptions()
+	opts1116.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts1116)
 	f.VerifyImportFixAtPosition(t, []string{}, nil /*preferences*/)
 }

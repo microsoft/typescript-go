@@ -38,7 +38,9 @@ const b = new MyClass2/*2*/();`
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "1")
-	f.SetFormatOption(t, "newLineCharacter", "\n")
+	opts1180 := f.GetOptions()
+	opts1180.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts1180)
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

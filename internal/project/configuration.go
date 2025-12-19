@@ -10,8 +10,8 @@ type Config struct {
 	// tsserverOptions
 }
 
+// if `userPreferences` is nil, this function will return a config with default userPreferences
 func NewConfig(userPreferences *lsutil.UserPreferences) *Config {
-	// use default userPreferences if nil
 	return &Config{
 		js: userPreferences.CopyOrDefault(),
 		Ts: userPreferences.CopyOrDefault(),
@@ -38,16 +38,16 @@ func (a *Config) CopyInto(b *Config) *Config {
 
 func ParseConfiguration(items []any) *Config {
 	defaultConfig := NewConfig(nil)
-	c := &Config{}
+	c := NewConfig(nil)
 	for i, item := range items {
 		if item == nil {
 			// continue
 		} else if config, ok := item.(map[string]any); ok {
 			newConfig := &Config{}
 			if i < 2 {
-				newConfig.Ts = defaultConfig.Ts.Copy().ParseWorker(config)
+				newConfig.Ts = defaultConfig.Ts.ParseWorker(config)
 			} else {
-				newConfig.js = defaultConfig.js.Copy().ParseWorker(config)
+				newConfig.js = defaultConfig.js.ParseWorker(config)
 			}
 			c = c.CopyInto(newConfig)
 		} else if item, ok := item.(*lsutil.UserPreferences); ok {

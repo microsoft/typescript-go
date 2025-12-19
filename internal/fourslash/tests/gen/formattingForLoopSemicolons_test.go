@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -23,7 +24,9 @@ func TestFormattingForLoopSemicolons(t *testing.T) {
 	f.VerifyCurrentLineContent(t, `for (var x; x < 0; x++) { }`)
 	f.GoToMarker(t, "3")
 	f.VerifyCurrentLineContent(t, `for (var x; x < 0; x++) { }`)
-	f.SetFormatOption(t, "InsertSpaceAfterSemicolonInForStatements", false)
+	opts444 := f.GetOptions()
+	opts444.FormatCodeSettings.InsertSpaceAfterSemicolonInForStatements = core.TSFalse
+	f.Configure(t, opts444)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `for (;;) { }`)

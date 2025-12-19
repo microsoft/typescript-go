@@ -373,10 +373,27 @@ function parseFormatStatement(funcName: string, args: readonly ts.Expression[]):
             }];
         }
         case "setOption":
-            const optName = getGoStringLiteral(getStringLiteralLike(args[0])!.text);
+            var optName = getStringLiteralLike(args[0])!.text;
+            if (optName == "newline") {
+                optName = "NewLineCharacter";
+            }
+            var optValue = args[1].getText();
+            if (
+                (args[1].kind == ts.SyntaxKind.TrueKeyword || args[1].kind == ts.SyntaxKind.FalseKeyword) &&
+                !(optName == "trimTrailingWhitespace" || optName == "convertTabsToSpaces")
+            ) {
+                optValue = stringToTristate(args[1].getText());
+            }
+            const varName = "opts" + args[1].pos;
             return [{
                 kind: "format",
-                goStatement: `f.SetFormatOption(t, ${optName}, ${args[1].getText()})`,
+                goStatement: `${varName} := f.GetOptions()`,
+            }, {
+                kind: "format",
+                goStatement: `${varName}.FormatCodeSettings.${optName.charAt(0).toUpperCase() + optName.slice(1)} = ${optValue}`,
+            }, {
+                kind: "format",
+                goStatement: `f.Configure(t, ${varName})`,
             }];
         case "selection":
         case "onType":

@@ -37,7 +37,9 @@ module.exports = {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.MarkTestAsStradaServer()
-	f.SetFormatOption(t, "newLineCharacter", "\n")
+	opts650 := f.GetOptions()
+	opts650.FormatCodeSettings.NewLineCharacter = "\n"
+	f.Configure(t, opts650)
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

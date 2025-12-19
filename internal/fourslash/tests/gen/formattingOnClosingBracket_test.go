@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -45,7 +46,9 @@ a++;/*19*/
 }/*27*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "InsertSpaceAfterSemicolonInForStatements", true)
+	opts874 := f.GetOptions()
+	opts874.FormatCodeSettings.InsertSpaceAfterSemicolonInForStatements = core.TSTrue
+	f.Configure(t, opts874)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `function f() {`)

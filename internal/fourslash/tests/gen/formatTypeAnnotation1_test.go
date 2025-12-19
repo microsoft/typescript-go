@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -18,7 +19,9 @@ interface Foo {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "insertSpaceBeforeTypeAnnotation", true)
+	opts207 := f.GetOptions()
+	opts207.FormatCodeSettings.InsertSpaceBeforeTypeAnnotation = core.TSTrue
+	f.Configure(t, opts207)
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, `function foo(x : number, y ?: string) : number { }
 interface Foo {

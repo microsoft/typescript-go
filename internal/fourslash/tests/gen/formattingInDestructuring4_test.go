@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -17,7 +18,9 @@ func TestFormattingInDestructuring4(t *testing.T) {
 /*4*/} = { a: 1, b: 2 };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces", false)
+	opts198 := f.GetOptions()
+	opts198.FormatCodeSettings.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = core.TSFalse
+	f.Configure(t, opts198)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `const {`)

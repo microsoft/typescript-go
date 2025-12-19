@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -36,7 +37,9 @@ var clear =
     }
 };
 `)
-	f.SetFormatOption(t, "indentMultiLineObjectLiteralBeginningOnBlankLine", true)
+	opts444 := f.GetOptions()
+	opts444.FormatCodeSettings.IndentMultiLineObjectLiteralBeginningOnBlankLine = core.TSTrue
+	f.Configure(t, opts444)
 	f.FormatDocument(t, "")
 	f.VerifyCurrentFileContent(t, `
 var clear =

@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -18,7 +19,9 @@ func TestFormattingSpacesAfterConstructor(t *testing.T) {
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `class test { constructor() { } }`)
-	f.SetFormatOption(t, "InsertSpaceAfterConstructor", true)
+	opts319 := f.GetOptions()
+	opts319.FormatCodeSettings.InsertSpaceAfterConstructor = core.TSTrue
+	f.Configure(t, opts319)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "2")
 	f.VerifyCurrentLineContent(t, `class test { constructor () { } }`)

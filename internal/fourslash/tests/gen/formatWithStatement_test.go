@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -22,7 +23,9 @@ with (bar.blah)/*4*/
 }/*6*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.SetFormatOption(t, "PlaceOpenBraceOnNewLineForControlBlocks", false)
+	opts227 := f.GetOptions()
+	opts227.FormatCodeSettings.PlaceOpenBraceOnNewLineForControlBlocks = core.TSFalse
+	f.Configure(t, opts227)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `with (foo.bar) {`)
@@ -32,7 +35,9 @@ with (bar.blah)/*4*/
 	f.VerifyCurrentLineContent(t, `with (bar.blah) {`)
 	f.GoToMarker(t, "6")
 	f.VerifyCurrentLineContent(t, `}`)
-	f.SetFormatOption(t, "PlaceOpenBraceOnNewLineForControlBlocks", true)
+	opts565 := f.GetOptions()
+	opts565.FormatCodeSettings.PlaceOpenBraceOnNewLineForControlBlocks = core.TSTrue
+	f.Configure(t, opts565)
 	f.FormatDocument(t, "")
 	f.GoToMarker(t, "1")
 	f.VerifyCurrentLineContent(t, `with (foo.bar)`)

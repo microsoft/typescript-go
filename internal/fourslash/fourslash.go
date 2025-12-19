@@ -692,11 +692,8 @@ func (f *FourslashTest) updateState(method lsproto.Method, params any) {
 	}
 }
 
-func (f *FourslashTest) SetFormatOption(t *testing.T, optionName string, value any) {
-	t.Helper()
-	newPreferences := f.userPreferences.Copy()
-	newPreferences.Set(optionName, value)
-	f.Configure(t, newPreferences)
+func (f *FourslashTest) GetOptions() *lsutil.UserPreferences {
+	return f.userPreferences
 }
 
 func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
