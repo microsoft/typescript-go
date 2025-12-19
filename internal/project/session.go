@@ -86,8 +86,6 @@ type Session struct {
 	// released from the parseCache.
 	programCounter *programCounter
 
-	// read-only after initialization
-	initialPreferences                 *lsutil.UserPreferences
 	userPreferences                    *lsutil.UserPreferences // !!! update to Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
@@ -190,16 +188,11 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-// Gets current UserPreferences, always a copy
+// Gets current UserPreferences
 func (s *Session) UserPreferences() *lsutil.UserPreferences {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
-	return s.userPreferences.Copy()
-}
-
-// Gets original UserPreferences of the session
-func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
-	return s.initialPreferences.CopyOrDefault()
+	return s.userPreferences
 }
 
 // Trace implements module.ResolutionHost
@@ -222,8 +215,7 @@ func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
 }
 
 func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
-	s.initialPreferences = userPreferences.CopyOrDefault()
-	s.Configure(s.initialPreferences)
+	s.Configure(userPreferences)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -706,7 +698,7 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	var newConfig *Config
 	if s.pendingConfigChanges {
 		newConfig = &Config{
-			tsUserPreferences: s.userPreferences.Copy(),
+			tsUserPreferences: s.userPreferences,
 		}
 	}
 	s.pendingConfigChanges = false

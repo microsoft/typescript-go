@@ -1619,6 +1619,7 @@ function stringToTristate(s: string): string {
 
 function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefined {
     const inlayHintPreferences: string[] = [];
+    const moduleSpecifierPreferences: string[] = [];
     const preferences: string[] = [];
     for (const prop of arg.properties) {
         if (ts.isPropertyAssignment(prop)) {
@@ -1643,19 +1644,19 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                         }
                         regexes.push(getGoStringLiteral(strElem.text));
                     }
-                    preferences.push(`AutoImportSpecifierExcludeRegexes: []string{${regexes.join(", ")}}`);
+                    moduleSpecifierPreferences.push(`AutoImportSpecifierExcludeRegexes: []string{${regexes.join(", ")}}`);
                     break;
                 case "importModuleSpecifierPreference":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
                         return undefined;
                     }
-                    preferences.push(`ImportModuleSpecifierPreference: ${prop.initializer.getText()}`);
+                    moduleSpecifierPreferences.push(`ImportModuleSpecifierPreference: ${prop.initializer.getText()}`);
                     break;
                 case "importModuleSpecifierEnding":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
                         return undefined;
                     }
-                    preferences.push(`ImportModuleSpecifierEnding: ${prop.initializer.getText()}`);
+                    moduleSpecifierPreferences.push(`ImportModuleSpecifierEnding: ${prop.initializer.getText()}`);
                     break;
                 case "includePackageJsonAutoImports":
                     if (!ts.isStringLiteralLike(prop.initializer)) {
@@ -1735,6 +1736,9 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
 
     if (inlayHintPreferences.length > 0) {
         preferences.push(`InlayHints: lsutil.InlayHintsPreferences{${inlayHintPreferences.join(",")}}`);
+    }
+    if (moduleSpecifierPreferences.length > 0) {
+        preferences.push(`ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{${moduleSpecifierPreferences.join(",")}}`);
     }
     if (preferences.length === 0) {
         return "nil /*preferences*/";

@@ -23,5 +23,5 @@ export declare function customElement(name: string): any;
 customElement/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"lit/decorators.js"}, &lsutil.UserPreferences{ImportModuleSpecifierEnding: "js"})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"lit/decorators.js"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierEnding: "js"}})
 }

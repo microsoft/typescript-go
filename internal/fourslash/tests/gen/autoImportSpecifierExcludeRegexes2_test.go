@@ -28,8 +28,8 @@ add/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./utils"}, nil /*preferences*/)
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@app/utils"}, &lsutil.UserPreferences{AutoImportSpecifierExcludeRegexes: []string{"^\\./"}})
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@app/utils"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./utils"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative", AutoImportSpecifierExcludeRegexes: []string{"^@app/"}})
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{}, &lsutil.UserPreferences{AutoImportSpecifierExcludeRegexes: []string{"utils"}})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@app/utils"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{AutoImportSpecifierExcludeRegexes: []string{"^\\./"}}})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"@app/utils"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./utils"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative", AutoImportSpecifierExcludeRegexes: []string{"^@app/"}}})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{AutoImportSpecifierExcludeRegexes: []string{"utils"}}})
 }

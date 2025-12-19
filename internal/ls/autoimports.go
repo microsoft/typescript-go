@@ -639,7 +639,7 @@ func isIndexFileName(fileName string) bool {
 
 // returns `-1` if `a` is better than `b`
 func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences *lsutil.UserPreferences) int {
-	switch preferences.ImportModuleSpecifierPreference {
+	switch preferences.ModuleSpecifier.ImportModuleSpecifierPreference {
 	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
 		return core.CompareBooleans(a.moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.moduleSpecifierKind == modulespecifiers.ResultKindRelative)
 	}
