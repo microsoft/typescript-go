@@ -51,13 +51,13 @@ const (
 )
 
 // compileGlobPattern compiles a glob spec (e.g., "src/**/*.ts") into a pattern.
-// Returns nil if the pattern would match nothing.
-func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive bool) *globPattern {
+// Returns (pattern, false) if the pattern would match nothing.
+func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive bool) (globPattern, bool) {
 	parts := tspath.GetNormalizedPathComponents(spec, basePath)
 
 	// "src/**" without a filename matches nothing (for include patterns)
 	if usage != UsageExclude && core.LastOrNil(parts) == "**" {
-		return nil
+		return globPattern{}, false
 	}
 
 	// Normalize root: "/home/" -> "/home"
@@ -68,18 +68,18 @@ func compileGlobPattern(spec string, basePath string, usage Usage, caseSensitive
 		parts = append(parts, "**", "*")
 	}
 
-	p := &globPattern{
+	p := globPattern{
 		isExclude:     usage == UsageExclude,
 		caseSensitive: caseSensitive,
 		excludeMinJs:  usage == UsageFiles,
+		// Avoid slice growth during compilation.
+		components: make([]component, 0, len(parts)),
 	}
-	// Avoid slice growth during compilation.
-	p.components = make([]component, 0, len(parts))
 
 	for _, part := range parts {
 		p.components = append(p.components, parseComponent(part, usage != UsageExclude))
 	}
-	return p
+	return p, true
 }
 
 // parseComponent converts a path segment string into a component.
@@ -415,21 +415,25 @@ func ensureTrailingSlash(s string) string {
 
 // globMatcher combines include and exclude patterns for file matching.
 type globMatcher struct {
-	includes    []*globPattern
-	excludes    []*globPattern
+	includes    []globPattern
+	excludes    []globPattern
 	hadIncludes bool // true if include specs were provided (even if none compiled)
 }
 
 func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSensitive bool, usage Usage) *globMatcher {
-	m := &globMatcher{hadIncludes: len(includeSpecs) > 0}
+	m := &globMatcher{
+		hadIncludes: len(includeSpecs) > 0,
+		includes:    make([]globPattern, 0, len(includeSpecs)),
+		excludes:    make([]globPattern, 0, len(excludeSpecs)),
+	}
 
 	for _, spec := range includeSpecs {
-		if p := compileGlobPattern(spec, basePath, usage, caseSensitive); p != nil {
+		if p, ok := compileGlobPattern(spec, basePath, usage, caseSensitive); ok {
 			m.includes = append(m.includes, p)
 		}
 	}
 	for _, spec := range excludeSpecs {
-		if p := compileGlobPattern(spec, basePath, UsageExclude, caseSensitive); p != nil {
+		if p, ok := compileGlobPattern(spec, basePath, UsageExclude, caseSensitive); ok {
 			m.excludes = append(m.excludes, p)
 		}
 	}
@@ -438,8 +442,8 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 
 // matchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
 func (m *globMatcher) matchesFileParts(prefix, suffix string) int {
-	for _, exc := range m.excludes {
-		if exc.matchesParts(prefix, suffix) {
+	for i := range m.excludes {
+		if m.excludes[i].matchesParts(prefix, suffix) {
 			return -1
 		}
 	}
@@ -449,8 +453,8 @@ func (m *globMatcher) matchesFileParts(prefix, suffix string) int {
 		}
 		return 0
 	}
-	for i, inc := range m.includes {
-		if inc.matchesParts(prefix, suffix) {
+	for i := range m.includes {
+		if m.includes[i].matchesParts(prefix, suffix) {
 			return i
 		}
 	}
@@ -459,16 +463,16 @@ func (m *globMatcher) matchesFileParts(prefix, suffix string) int {
 
 // matchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
 func (m *globMatcher) matchesDirectoryParts(prefix, suffix string) bool {
-	for _, exc := range m.excludes {
-		if exc.matchesParts(prefix, suffix) {
+	for i := range m.excludes {
+		if m.excludes[i].matchesParts(prefix, suffix) {
 			return false
 		}
 	}
 	if len(m.includes) == 0 {
 		return !m.hadIncludes
 	}
-	for _, inc := range m.includes {
-		if inc.matchesPrefixParts(prefix, suffix) {
+	for i := range m.includes {
+		if m.includes[i].matchesPrefixParts(prefix, suffix) {
 			return true
 		}
 	}
@@ -556,13 +560,13 @@ func matchFilesNoRegex(path string, extensions, excludes, includes []string, use
 
 // globSpecMatcher wraps multiple glob patterns for matching paths.
 type globSpecMatcher struct {
-	patterns []*globPattern
+	patterns []globPattern
 }
 
 // MatchString returns true if any pattern matches the path.
 func (m *globSpecMatcher) MatchString(path string) bool {
-	for _, p := range m.patterns {
-		if p.matches(path) {
+	for i := range m.patterns {
+		if m.patterns[i].matches(path) {
 			return true
 		}
 	}
@@ -571,8 +575,8 @@ func (m *globSpecMatcher) MatchString(path string) bool {
 
 // MatchIndex returns the index of the first matching pattern, or -1.
 func (m *globSpecMatcher) MatchIndex(path string) int {
-	for i, p := range m.patterns {
-		if p.matches(path) {
+	for i := range m.patterns {
+		if m.patterns[i].matches(path) {
 			return i
 		}
 	}
@@ -584,9 +588,9 @@ func newGlobSpecMatcher(specs []string, basePath string, usage Usage, useCaseSen
 	if len(specs) == 0 {
 		return nil
 	}
-	var patterns []*globPattern
+	patterns := make([]globPattern, 0, len(specs))
 	for _, spec := range specs {
-		if p := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames); p != nil {
+		if p, ok := compileGlobPattern(spec, basePath, usage, useCaseSensitiveFileNames); ok {
 			patterns = append(patterns, p)
 		}
 	}

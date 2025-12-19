@@ -186,7 +186,7 @@ func BenchmarkPatternCompilation(b *testing.B) {
 	for _, p := range patterns {
 		b.Run(p.name, func(b *testing.B) {
 			for b.Loop() {
-				compileGlobPattern(p.spec, "/project", UsageFiles, true)
+				_, _ = compileGlobPattern(p.spec, "/project", UsageFiles, true)
 			}
 		})
 	}
@@ -241,8 +241,8 @@ func BenchmarkPatternMatching(b *testing.B) {
 	}
 
 	for _, tc := range testCases {
-		pattern := compileGlobPattern(tc.spec, "/project", UsageFiles, true)
-		if pattern == nil {
+		pattern, ok := compileGlobPattern(tc.spec, "/project", UsageFiles, true)
+		if !ok {
 			continue
 		}
 

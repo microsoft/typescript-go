@@ -1818,8 +1818,8 @@ func TestGlobPatternInternals(t *testing.T) {
 	t.Run("question mark segment at end of string", func(t *testing.T) {
 		t.Parallel()
 		// Create pattern with question mark that should fail when string is exhausted
-		p := compileGlobPattern("a?", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("a?", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		// Should match "ab"
 		assert.Assert(t, p.matches("/ab"))
@@ -1831,8 +1831,8 @@ func TestGlobPatternInternals(t *testing.T) {
 	t.Run("star segment with complex pattern", func(t *testing.T) {
 		t.Parallel()
 		// Pattern like "a*b*c" requires backtracking in star matching
-		p := compileGlobPattern("a*b*c", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("a*b*c", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		// Should match "abc"
 		assert.Assert(t, p.matches("/abc"))
@@ -1887,8 +1887,8 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 		t.Parallel()
 		// This tests the case where question mark encounters a slash character
 		// which should fail since ? doesn't match /
-		p := compileGlobPattern("a?b", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("a?b", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		// "a/b" should not match "a?b" pattern since ? shouldn't match /
 		// But this is a single component pattern, so / wouldn't be in the component
@@ -1903,8 +1903,8 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 	t.Run("star with no trailing content", func(t *testing.T) {
 		t.Parallel()
 		// Test that star can match to end of string
-		p := compileGlobPattern("a*", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("a*", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		assert.Assert(t, p.matches("/a"))
 		assert.Assert(t, p.matches("/abc"))
@@ -1914,8 +1914,8 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 	t.Run("multiple stars in pattern", func(t *testing.T) {
 		t.Parallel()
 		// Test patterns with multiple stars that require backtracking
-		p := compileGlobPattern("*a*", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("*a*", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		assert.Assert(t, p.matches("/a"))
 		assert.Assert(t, p.matches("/Xa"))
@@ -1927,8 +1927,8 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 	t.Run("literal segment not matching", func(t *testing.T) {
 		t.Parallel()
 		// Test literal segment that's longer than remaining string
-		p := compileGlobPattern("abcdefgh.ts", "/", UsageFiles, true)
-		assert.Assert(t, p != nil)
+		p, ok := compileGlobPattern("abcdefgh.ts", "/", UsageFiles, true)
+		assert.Assert(t, ok)
 
 		assert.Assert(t, !p.matches("/abc.ts"))     // different literal
 		assert.Assert(t, p.matches("/abcdefgh.ts")) // exact match
