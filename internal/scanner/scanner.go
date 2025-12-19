@@ -2346,9 +2346,8 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
 		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
-			// The arrow function spans multiple lines,
-			// make the error span be the first line, inclusive.
-			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine))
+			// The arrow function spans multiple lines, make the error span be the first line, inclusive.
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine)+1)
 		}
 	}
 	return core.NewTextRange(pos, node.End())
@@ -2458,7 +2457,7 @@ func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
-			return pos
+			return pos - 1
 		}
 		pos += size
 	}
