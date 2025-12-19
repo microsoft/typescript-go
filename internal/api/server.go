@@ -15,10 +15,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=MessageType -output=stringer_generated.go
@@ -93,12 +95,19 @@ func NewServer(options *ServerOptions) *Server {
 		panic("Cwd is required")
 	}
 
+	var fs vfs.FS = osvfs.FS()
+
+	pnpApi := pnp.InitPnpApi(fs, options.Cwd)
+	if pnpApi != nil {
+		fs = pnpvfs.From(fs)
+	}
+
 	server := &Server{
 		r:                  bufio.NewReader(options.In),
 		w:                  bufio.NewWriter(options.Out),
 		stderr:             options.Err,
 		cwd:                options.Cwd,
-		fs:                 bundled.WrapFS(osvfs.FS()),
+		fs:                 bundled.WrapFS(fs),
 		defaultLibraryPath: options.DefaultLibraryPath,
 	}
 	logger := logging.NewLogger(options.Err)
