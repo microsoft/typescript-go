@@ -8,31 +8,25 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestJsdocParameterNameCompletion(t *testing.T) {
+func TestCompletionListWithLabel(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/**
- * @param /*0*/
- */
-function f(foo, bar) {}
-/**
- * @param foo
- * @param /*1*/
- */
-function g(foo, bar) {}
-/**
- * @param can/*2*/
- * @param cantaloupe
- */
-function h(cat, canary, canoodle, cantaloupe, zebra) {}
-/**
- * @param /*3*/ {string} /*4*/
- */
-function i(foo, bar) {}`
+	const content = ` label: while (true) {
+    break /*1*/
+    continue /*2*/
+    testlabel: while (true) {
+        break /*3*/
+        continue /*4*/
+        break tes/*5*/
+        continue tes/*6*/
+    }
+    break /*7*/
+    break; /*8*/
+}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCompletions(t, []string{"0", "3", "4"}, &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2", "7"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
@@ -40,12 +34,11 @@ function i(foo, bar) {}`
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
-				"foo",
-				"bar",
+				"label",
 			},
 		},
 	})
-	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"3", "4", "5", "6"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
@@ -53,20 +46,20 @@ function i(foo, bar) {}`
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
-				"bar",
+				"label",
+				"testlabel",
 			},
 		},
 	})
-	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "8", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
-				"canary",
-				"canoodle",
+			Excludes: []string{
+				"label",
 			},
 		},
 	})

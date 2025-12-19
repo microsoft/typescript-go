@@ -47,8 +47,8 @@ new Q<{ id: string; name: string }>().select("name", "/*ts3*/");`
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
-				"name",
 				"id",
+				"name",
 			},
 		},
 	})
