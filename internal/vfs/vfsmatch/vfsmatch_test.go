@@ -17,15 +17,15 @@ func ptrTo[T any](v T) *T {
 }
 
 // readDirectoryFunc is a function type for ReadDirectory implementations
-type readDirectoryFunc func(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string
+type readDirectoryFunc func(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string
 
 // readDirectoryOld wraps matchFiles with the expected test signature
-func readDirectoryOld(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+func readDirectoryOld(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
 // readDirectoryNew wraps matchFilesNoRegex with the expected test signature
-func readDirectoryNew(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+func readDirectoryNew(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
 	return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
@@ -166,7 +166,7 @@ type readDirTestCase struct {
 	extensions []string
 	excludes   []string
 	includes   []string
-	depth      *int
+	depth      int
 	expect     func(t *testing.T, got []string)
 }
 
@@ -179,7 +179,11 @@ func runReadDirectoryCase(t *testing.T, tc readDirTestCase, readDir readDirector
 	if path == "" {
 		path = "/dev"
 	}
-	got := readDir(tc.host(), currentDir, path, tc.extensions, tc.excludes, tc.includes, tc.depth)
+	depth := tc.depth
+	if depth == 0 {
+		depth = UnlimitedDepth
+	}
+	got := readDir(tc.host(), currentDir, path, tc.extensions, tc.excludes, tc.includes, depth)
 	tc.expect(t, got)
 }
 
@@ -581,7 +585,7 @@ func TestReadDirectory(t *testing.T) {
 			name:       "depth limit one",
 			host:       caseInsensitiveHost,
 			extensions: []string{".ts", ".tsx", ".d.ts"},
-			depth:      ptrTo(1),
+			depth:      1,
 			expect: func(t *testing.T, got []string) {
 				for _, f := range got {
 					suffix := f[len("/dev/"):]
@@ -593,7 +597,7 @@ func TestReadDirectory(t *testing.T) {
 			name:       "depth limit two",
 			host:       caseInsensitiveHost,
 			extensions: []string{".ts", ".tsx", ".d.ts"},
-			depth:      ptrTo(2),
+			depth:      2,
 			expect: func(t *testing.T, got []string) {
 				assert.Assert(t, slices.Contains(got, "/dev/a.ts"))
 				assert.Assert(t, slices.Contains(got, "/dev/z/a.ts"))
@@ -1870,7 +1874,7 @@ func TestGlobPatternInternals(t *testing.T) {
 
 		// Explicit literal path should work
 		got := matchFilesNoRegex("/dev", []string{".ts"}, nil,
-			[]string{"node_modules/pkg/index.ts"}, false, "/", nil, host)
+			[]string{"node_modules/pkg/index.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, slices.Contains(got, "/dev/node_modules/pkg/index.ts"))
 	})
 }
@@ -1941,7 +1945,7 @@ func TestReadDirectoryConsecutiveSlashes(t *testing.T) {
 	}, false)
 
 	// The matchFilesNoRegex function normalizes paths, but we can test internal handling
-	got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"**/*.ts"}, false, "/", nil, host)
+	got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"**/*.ts"}, false, "/", UnlimitedDepth, host)
 	assert.Assert(t, len(got) >= 2, "should find files")
 	assert.Assert(t, slices.Contains(got, "/dev/a.ts"))
 	assert.Assert(t, slices.Contains(got, "/dev/x/b.ts"))
@@ -1959,7 +1963,7 @@ func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
 			"/dev/node_modules/b.ts": "",
 		}, false)
 
-		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"*/*.ts"}, false, "/", nil, host)
+		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"*/*.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, !slices.Contains(got, "/dev/node_modules/b.ts"), "should skip node_modules with wildcard")
 	})
 
@@ -1970,7 +1974,7 @@ func TestGlobPatternLiteralWithPackageFolders(t *testing.T) {
 			"/dev/node_modules/b.ts": "",
 		}, false)
 
-		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"node_modules/b.ts"}, false, "/", nil, host)
+		got := matchFilesNoRegex("/dev", []string{".ts"}, nil, []string{"node_modules/b.ts"}, false, "/", UnlimitedDepth, host)
 		assert.Assert(t, slices.Contains(got, "/dev/node_modules/b.ts"), "should include explicit node_modules path")
 	})
 }

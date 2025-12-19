@@ -1,6 +1,7 @@
 package vfsmatch
 
 import (
+	"math"
 	"sort"
 	"strings"
 
@@ -21,9 +22,12 @@ const (
 	UsageExclude
 )
 
+// UnlimitedDepth can be passed as the depth argument to indicate there is no depth limit.
+const UnlimitedDepth = math.MaxInt
+
 const newMatch = true
 
-func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
 	if newMatch {
 		return matchFilesNoRegex(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 	}

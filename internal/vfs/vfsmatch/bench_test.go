@@ -101,7 +101,7 @@ func BenchmarkReadDirectory(b *testing.B) {
 		},
 	}
 
-	var benchOnly func(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string
+	var benchOnly func(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS) []string
 	// For benchmark comparison
 	// benchOnly = matchFiles
 	// benchOnly = matchFilesNoRegex
@@ -112,7 +112,7 @@ func BenchmarkReadDirectory(b *testing.B) {
 				host := cachedvfs.From(bc.host())
 				b.ReportAllocs()
 				for b.Loop() {
-					benchOnly(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
+					benchOnly(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", UnlimitedDepth, host)
 				}
 			})
 			continue
@@ -122,7 +122,7 @@ func BenchmarkReadDirectory(b *testing.B) {
 			host := cachedvfs.From(bc.host())
 			b.ReportAllocs()
 			for b.Loop() {
-				matchFiles(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
+				matchFiles(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", UnlimitedDepth, host)
 			}
 		})
 
@@ -130,7 +130,7 @@ func BenchmarkReadDirectory(b *testing.B) {
 			host := cachedvfs.From(bc.host())
 			b.ReportAllocs()
 			for b.Loop() {
-				matchFilesNoRegex(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", nil, host)
+				matchFilesNoRegex(bc.path, bc.extensions, bc.excludes, bc.includes, host.UseCaseSensitiveFileNames(), "/", UnlimitedDepth, host)
 			}
 		})
 	}

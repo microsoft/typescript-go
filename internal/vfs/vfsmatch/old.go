@@ -294,7 +294,7 @@ type visitor struct {
 func (v *visitor) visitDirectory(
 	path string,
 	absolutePath string,
-	depth *int,
+	depth int,
 ) {
 	// Use the real path (with symlinks resolved) for cycle detection.
 	// This prevents infinite loops when symlinks create cycles.
@@ -327,12 +327,11 @@ func (v *visitor) visitDirectory(
 		}
 	}
 
-	if depth != nil {
-		newDepth := *depth - 1
-		if newDepth == 0 {
+	if depth != UnlimitedDepth {
+		depth--
+		if depth == 0 {
 			return
 		}
-		depth = &newDepth
 	}
 
 	for _, current := range directories {
@@ -345,7 +344,7 @@ func (v *visitor) visitDirectory(
 }
 
 // path is the directory of the tsconfig.json
-func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
+func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 

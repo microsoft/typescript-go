@@ -486,7 +486,7 @@ type globVisitor struct {
 	results                   [][]string
 }
 
-func (v *globVisitor) visit(path, absolutePath string, depth *int) {
+func (v *globVisitor) visit(path, absolutePath string, depth int) {
 	// Detect symlink cycles
 	realPath := v.host.Realpath(absolutePath)
 	canonicalPath := tspath.GetCanonicalFileName(realPath, v.useCaseSensitiveFileNames)
@@ -509,12 +509,11 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 		}
 	}
 
-	if depth != nil {
-		newDepth := *depth - 1
-		if newDepth == 0 {
+	if depth != UnlimitedDepth {
+		depth--
+		if depth == 0 {
 			return
 		}
-		depth = &newDepth
 	}
 
 	for _, dir := range entries.Directories {
@@ -527,7 +526,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth *int) {
 }
 
 // matchFilesNoRegex matches files using compiled glob patterns (no regex).
-func matchFilesNoRegex(path string, extensions, excludes, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
+func matchFilesNoRegex(path string, extensions, excludes, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
