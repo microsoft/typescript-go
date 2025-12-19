@@ -95,19 +95,46 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 		}
 	}
 
+	// Compute the set of packages accessible to the importing file.
+	// This includes packages from package.json dependencies (aggregated from ancestor directories)
+	// plus packages that are directly imported by the project's program files.
+	// If no package.json is found, allowedPackages remains nil and all packages are allowed.
+	var allowedPackages *collections.Set[string]
+	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
+		if dir, ok := v.registry.directories[dirPath]; ok {
+			if pj := dir.packageJson; pj.Exists() && pj.Contents.Parseable {
+				// Initialize to empty set if this is the first package.json we've seen
+				if allowedPackages == nil {
+					allowedPackages = &collections.Set[string]{}
+				}
+				addPackageJsonDependencies(pj.Contents, allowedPackages)
+			}
+		}
+		return nil, false
+	})
+	// If we found at least one package.json, also include packages directly imported by the project
+	if allowedPackages != nil {
+		if bucket, ok := v.registry.projects[v.projectKey]; ok {
+			allowedPackages = allowedPackages.UnionedWith(bucket.ResolvedPackageNames)
+		}
+	}
+
 	var excludePackages *collections.Set[string]
 	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
 		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
 			exports := search(nodeModulesBucket)
-			if excludePackages.Len() > 0 {
-				results = slices.Grow(results, len(exports))
-				for _, e := range exports {
-					if !excludePackages.Has(e.PackageName) {
-						results = append(results, e)
-					}
+			results = slices.Grow(results, len(exports))
+			for _, e := range exports {
+				// Exclude packages found in lower node_modules (shadowing)
+				if excludePackages.Has(e.PackageName) {
+					continue
 				}
-			} else {
-				results = append(results, exports...)
+				// If allowedPackages is nil, no package.json was found, so include all packages.
+				// Otherwise, only include packages that are dependencies or directly imported.
+				if allowedPackages != nil && !allowedPackages.Has(e.PackageName) {
+					continue
+				}
+				results = append(results, e)
 			}
 
 			// As we go up the directory tree, exclude packages found in lower node_modules

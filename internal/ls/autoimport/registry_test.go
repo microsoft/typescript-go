@@ -285,6 +285,85 @@ export const bar = 2;`,
 		stats = autoImportStats(t, session)
 		assert.Equal(t, len(stats.NodeModulesBuckets), 0)
 	})
+
+	t.Run("node_modules bucket includes resolved packages from all projects", func(t *testing.T) {
+		// This test verifies that when multiple projects share a node_modules directory,
+		// the node_modules bucket includes resolved package names from ALL projects,
+		// not just the currently requested file's project.
+		//
+		// Scenario:
+		// - Two separate projects (project-a and project-b) share a root node_modules
+		// - pkg-listed is in both package.json dependencies
+		// - pkg-unlisted is NOT in any package.json, but project-a imports it directly
+		// - When requesting completions for project-b, pkg-unlisted should still be in
+		//   the node_modules bucket because project-a's resolved packages are included.
+		t.Parallel()
+		monorepoRoot := "/home/src/cross-project-deps"
+		packageADir := tspath.CombinePaths(monorepoRoot, "packages", "a")
+		packageBDir := tspath.CombinePaths(monorepoRoot, "packages", "b")
+		packageAIndex := tspath.CombinePaths(packageADir, "index.ts")
+		packageBIndex := tspath.CombinePaths(packageBDir, "index.ts")
+
+		fixture := autoimporttestutil.SetupMonorepoLifecycleSession(t, autoimporttestutil.MonorepoSetupConfig{
+			Root: monorepoRoot,
+			MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+				Name: "monorepo",
+				// Both pkg-listed and pkg-unlisted exist in node_modules
+				NodeModuleNames: []string{"pkg-listed", "pkg-unlisted"},
+				// But only pkg-listed is in the root package.json dependencies
+				DependencyNames: []string{"pkg-listed"},
+			},
+			Packages: []autoimporttestutil.MonorepoPackageConfig{
+				{
+					FileCount: 0,
+					MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+						Name: "a",
+						// package-a only lists pkg-listed in its package.json
+						DependencyNames: []string{"pkg-listed"},
+					},
+				},
+				{
+					FileCount: 0,
+					MonorepoPackageTemplate: autoimporttestutil.MonorepoPackageTemplate{
+						Name: "b",
+						// package-b also only lists pkg-listed in its package.json
+						DependencyNames: []string{"pkg-listed"},
+					},
+				},
+			},
+			ExtraFiles: []autoimporttestutil.TextFileSpec{
+				// project-a directly imports pkg-unlisted (not in package.json)
+				{Path: packageAIndex, Content: "import { pkg_unlisted_value } from \"pkg-unlisted\";\nexport const a = pkg_unlisted_value;\n"},
+				// project-b does not import pkg-unlisted
+				{Path: packageBIndex, Content: "export const b = 1;\n"},
+			},
+		})
+		session := fixture.Session()
+		packageAHandle := fixture.ExtraFile(packageAIndex)
+		packageBHandle := fixture.ExtraFile(packageBIndex)
+
+		ctx := context.Background()
+
+		// Open file in project-a (which imports pkg-unlisted)
+		session.DidOpenFile(ctx, packageAHandle.URI(), 1, packageAHandle.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, packageAHandle.URI())
+		assert.NilError(t, err)
+
+		// Open file in project-b (which does not import pkg-unlisted)
+		session.DidOpenFile(ctx, packageBHandle.URI(), 1, packageBHandle.Content(), lsproto.LanguageKindTypeScript)
+		// Request auto-imports for project-b
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, packageBHandle.URI())
+		assert.NilError(t, err)
+
+		// Verify that the node_modules bucket includes pkg-unlisted
+		// even though we requested auto-imports for project-b which doesn't list it.
+		// This is because project-a imports it directly, and the bucket should include
+		// resolved packages from all projects that share the node_modules directory.
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Assert(t, nodeModulesBucket.DependencyNames.Has("pkg-listed"), "pkg-listed should be in dependencies")
+		assert.Assert(t, nodeModulesBucket.DependencyNames.Has("pkg-unlisted"), "pkg-unlisted should be in dependencies because project-a imports it")
+	})
 }
 
 const (

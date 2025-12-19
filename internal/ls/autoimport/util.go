@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -171,4 +172,15 @@ func createCheckerPool(program checker.Program) (getChecker func() (*checker.Che
 		}, func() int32 {
 			return created.Load()
 		}
+}
+
+// addPackageJsonDependencies adds all dependencies and peerDependencies from a package.json
+// to the given set, canonicalizing @types package names to their base names.
+func addPackageJsonDependencies(contents *packagejson.PackageJson, deps *collections.Set[string]) {
+	contents.RangeDependencies(func(name, _, field string) bool {
+		if field == "dependencies" || field == "peerDependencies" {
+			deps.Add(module.GetPackageNameFromTypesPackageName(name))
+		}
+		return true
+	})
 }

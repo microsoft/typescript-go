@@ -20,7 +20,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -40,17 +39,11 @@ const (
 // In general, a bucket can be used for an auto-imports request if it is clean
 // or if the only edited file is the one that was requested for auto-imports.
 // Most edits within a file will not change the imports available to that file.
-// However, two exceptions cause the bucket to be rebuilt after a change to a
-// single file:
-//
-//  1. Local files are newly added to the project by a manual import
-//  2. A node_modules dependency normally filtered out by package.json dependencies
-//     is added to the project by a manual import
-//
-// Both of these cases take a bit of work to determine, but can only happen after
-// a full (non-clone) program update. When this happens, the `newProgramStructure`
-// flag is set until the next time the bucket is rebuilt, when those conditions
-// will be checked.
+// However, one exception causes the bucket to be rebuilt after a change to a
+// single file: local files are newly added to the project by a manual import.
+// This can only happen after a full (non-clone) program update. When this
+// happens, the `newProgramStructure` flag is set until the next time the bucket
+// is rebuilt, when this condition will be checked.
 type BucketState struct {
 	// dirtyFile is the file that was edited last, if any. It does not necessarily
 	// indicate that no other files have been edited, so it should be ignored if
@@ -86,22 +79,21 @@ type RegistryBucket struct {
 	state BucketState
 
 	Paths collections.Set[tspath.Path]
-	// IgnoredPackageNames is only defined for project buckets. It is the set of
-	// package names that were present in the project's program, and not included
-	// in a node_modules bucket, and ultimately not included in the project bucket
-	// because they were only imported transitively. If an updated program's
-	// ResolvedPackageNames contains one of these, the bucket should be rebuilt
-	// because that package will be included.
-	IgnoredPackageNames *collections.Set[string]
+	// ResolvedPackageNames is only defined for project buckets. It is the set of
+	// package names that were resolved from imports in the project's program files.
+	// This is passed to node_modules buckets so they include packages that are
+	// directly imported even if not listed in package.json dependencies.
+	ResolvedPackageNames *collections.Set[string]
 	// PackageNames is only defined for node_modules buckets. It is the full set of
 	// package directory names in the node_modules directory (but not necessarily
-	// inclued in the bucket).
+	// included in the bucket).
 	PackageNames *collections.Set[string]
 	// DependencyNames is only defined for node_modules buckets. It is the set of
 	// package names that will be included in the bucket if present in the directory,
-	// computed from package.json dependencies. If nil, all packages are included
-	// because at least one open file has access to this node_modules directory without
-	// being filtered by a package.json.
+	// computed from package.json dependencies plus resolved package names from
+	// active programs. If nil, all packages are included because at least one open
+	// file has access to this node_modules directory without being filtered by a
+	// package.json.
 	DependencyNames *collections.Set[string]
 	// AmbientModuleNames is only defined for node_modules buckets. It is the set of
 	// ambient module names found while extracting exports in the bucket.
@@ -124,14 +116,14 @@ func newRegistryBucket() *RegistryBucket {
 
 func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
-		state:               b.state,
-		Paths:               b.Paths,
-		IgnoredPackageNames: b.IgnoredPackageNames,
-		PackageNames:        b.PackageNames,
-		DependencyNames:     b.DependencyNames,
-		AmbientModuleNames:  b.AmbientModuleNames,
-		Entrypoints:         b.Entrypoints,
-		Index:               b.Index,
+		state:                b.state,
+		Paths:                b.Paths,
+		ResolvedPackageNames: b.ResolvedPackageNames,
+		PackageNames:         b.PackageNames,
+		DependencyNames:      b.DependencyNames,
+		AmbientModuleNames:   b.AmbientModuleNames,
+		Entrypoints:          b.Entrypoints,
+		Index:                b.Index,
 	}
 }
 
@@ -587,10 +579,23 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	var tasks []*task
 	var wg sync.WaitGroup
 
+	// Compute resolved package names for all projects upfront.
+	// These are needed to compute node_modules dependencies so packages that are
+	// directly imported by programs are included even if not listed in package.json.
+	// We need all projects because a node_modules directory can be used by multiple projects.
+	allResolvedPackageNames := make(map[tspath.Path]*collections.Set[string])
+	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
+		program := b.host.GetProgramForProject(entry.Key())
+		if program != nil {
+			allResolvedPackageNames[entry.Key()] = getResolvedPackageNames(ctx, program)
+		}
+		return true
+	})
+
 	tspath.ForEachAncestorDirectoryPath(change.RequestedFile, func(dirPath tspath.Path) (any, bool) {
 		if nodeModulesBucket, ok := b.nodeModules.Get(dirPath); ok {
 			dirName := core.FirstResult(b.directories.Get(dirPath)).Value().name
-			dependencies := b.computeDependenciesForNodeModulesDirectory(change, dirName, dirPath)
+			dependencies := b.computeDependenciesForNodeModulesDirectory(change, allResolvedPackageNames, dirName, dirPath)
 			if nodeModulesBucket.Value().state.hasDirtyFileBesides(change.RequestedFile) || !nodeModulesBucket.Value().DependencyNames.Equals(dependencies) {
 				task := &task{entry: nodeModulesBucket, dependencyNames: dependencies}
 				tasks = append(tasks, task)
@@ -604,29 +609,14 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		return nil, false
 	})
 
-	nodeModulesContainsDependency := func(nodeModulesDir tspath.Path, packageName string) bool {
-		for _, task := range tasks {
-			if task.entry.Key() == nodeModulesDir {
-				return task.dependencyNames == nil || task.dependencyNames.Has(packageName)
-			}
-		}
-		if bucket, ok := b.base.nodeModules[nodeModulesDir]; ok {
-			return bucket.DependencyNames == nil || bucket.DependencyNames.Has(packageName)
-		}
-		return false
-	}
-
-	if project, ok := b.projects.Get(projectPath); ok {
+	if project, hasProject := b.projects.Get(projectPath); hasProject {
 		program := b.host.GetProgramForProject(projectPath)
-		resolvedPackageNames := core.Memoize(func() *collections.Set[string] {
-			return getResolvedPackageNames(ctx, program)
-		})
+		resolvedPackageNames := allResolvedPackageNames[projectPath]
 		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile)
 		if !shouldRebuild && project.Value().state.newProgramStructure > 0 {
-			// Exceptions from BucketState comment - check if new program's resolved package names include any
-			// previously ignored, or if there are new non-node_modules files.
-			// If not, we can skip rebuilding the project bucket.
-			if project.Value().IgnoredPackageNames.Intersects(resolvedPackageNames()) || hasNewNonNodeModulesFiles(program, project.Value()) {
+			// Check if resolved package names changed, or if there are new non-node_modules files.
+			// If so, we need to rebuild both the project bucket and potentially node_modules buckets.
+			if !project.Value().ResolvedPackageNames.Equals(resolvedPackageNames) || hasNewNonNodeModulesFiles(program, project.Value()) {
 				shouldRebuild = true
 			} else {
 				project.Change(func(b *RegistryBucket) { b.state.newProgramStructure = newProgramStructureFalse })
@@ -639,8 +629,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				index, err := b.buildProjectBucket(
 					ctx,
 					projectPath,
-					resolvedPackageNames(),
-					nodeModulesContainsDependency,
+					resolvedPackageNames,
 					logger.Fork("Building project bucket "+string(projectPath)),
 				)
 				task.result = index
@@ -751,7 +740,6 @@ func (b *registryBuilder) buildProjectBucket(
 	ctx context.Context,
 	projectPath tspath.Path,
 	resolvedPackageNames *collections.Set[string],
-	nodeModulesContainsDependency func(nodeModulesDir tspath.Path, packageName string) bool,
 	logger *logging.LogTree,
 ) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
@@ -767,7 +755,6 @@ func (b *registryBuilder) buildProjectBucket(
 	defer closePool()
 	exports := make(map[tspath.Path][]*Export)
 	var wg sync.WaitGroup
-	var ignoredPackageNames collections.Set[string]
 	var skippedFileCount int
 	var combinedStats extractorStats
 
@@ -782,19 +769,10 @@ outer:
 				continue outer
 			}
 		}
-		if packageName := modulespecifiers.GetPackageNameFromDirectory(file.FileName()); packageName != "" {
-			// Only process this file if it is not going to be processed as part of a node_modules bucket
-			// *and* if it was imported directly (not transitively) by a project file (i.e., this is part
-			// of a package not listed in package.json, but imported anyway).
-			pathComponents := tspath.GetPathComponents(string(file.Path()), "")
-			nodeModulesDir := tspath.GetPathFromPathComponents(pathComponents[:slices.Index(pathComponents, "node_modules")])
-			if nodeModulesContainsDependency(tspath.Path(nodeModulesDir), packageName) {
-				continue
-			}
-			if !resolvedPackageNames.Has(packageName) {
-				ignoredPackageNames.Add(packageName)
-				continue
-			}
+		// Skip all node_modules files - they are always handled by node_modules buckets.
+		// This simplifies the logic and ensures exports are indexed consistently.
+		if strings.Contains(file.FileName(), "/node_modules/") {
+			continue
 		}
 		wg.Go(func() {
 			if ctx.Err() == nil {
@@ -824,7 +802,7 @@ outer:
 	}
 
 	result.bucket.Index = idx
-	result.bucket.IgnoredPackageNames = &ignoredPackageNames
+	result.bucket.ResolvedPackageNames = resolvedPackageNames
 	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
 
 	if logger != nil {
@@ -838,7 +816,7 @@ outer:
 	return result, nil
 }
 
-func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change RegistryChange, dirName string, dirPath tspath.Path) *collections.Set[string] {
+func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change RegistryChange, allResolvedPackageNames map[tspath.Path]*collections.Set[string], dirName string, dirPath tspath.Path) *collections.Set[string] {
 	// If any open files are in scope of this directory but not in scope of any package.json,
 	// we need to add all packages in this node_modules directory.
 	for path := range change.OpenFiles {
@@ -851,15 +829,20 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 	dependencies := &collections.Set[string]{}
 	b.directories.Range(func(entry *dirty.MapEntry[tspath.Path, *directory]) bool {
 		if entry.Value().packageJson.Exists() && dirPath.ContainsPath(entry.Key()) {
-			entry.Value().packageJson.Contents.RangeDependencies(func(name, _, field string) bool {
-				if field == "dependencies" || field == "peerDendencies" {
-					dependencies.Add(module.GetPackageNameFromTypesPackageName(name))
-				}
-				return true
-			})
+			addPackageJsonDependencies(entry.Value().packageJson.Contents, dependencies)
 		}
 		return true
 	})
+
+	// Add packages that are directly imported by programs but not listed in package.json.
+	// This ensures node_modules files are always in node_modules buckets.
+	// Include packages from all projects that have this node_modules directory in their spine.
+	for _, resolvedPackageNames := range allResolvedPackageNames {
+		for name := range resolvedPackageNames.Keys() {
+			dependencies.Add(name)
+		}
+	}
+
 	return dependencies
 }
 
