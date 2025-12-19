@@ -1,0 +1,12 @@
+declarationEmitRetainsImportOfCastType.ts(1,30): error TS2307: Cannot find module 'jotai' or its corresponding type declarations.
+
+
+==== declarationEmitRetainsImportOfCastType.ts (1 errors) ====
+    import { WritableAtom } from 'jotai'
+                                 ~~~~~~~
+!!! error TS2307: Cannot find module 'jotai' or its corresponding type declarations.
+    
+    export function focusAtom() {
+      return null as unknown as WritableAtom<any, any, any>
+    }
+    
