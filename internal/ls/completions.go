@@ -4807,9 +4807,10 @@ func isSolelyIdentifierDefinitionLocation(
 		return ast.IsFunctionLike(parent) && !ast.IsMethodDeclaration(parent)
 	}
 
+	tokenKind := keywordForNode(contextToken)
 	// If the previous token is keyword corresponding to class member completion keyword
 	// there will be completion available here
-	if isClassMemberCompletionKeyword(keywordForNode(contextToken)) && isFromObjectTypeDeclaration(contextToken) {
+	if isClassMemberCompletionKeyword(tokenKind) && isFromObjectTypeDeclaration(contextToken) {
 		return false
 	}
 
@@ -4819,7 +4820,7 @@ func isSolelyIdentifierDefinitionLocation(
 		// - its name of the parameter and not being edited
 		// eg. constructor(a |<- this shouldnt show completion
 		if !ast.IsIdentifier(contextToken) ||
-			ast.IsParameterPropertyModifier(keywordForNode(contextToken)) ||
+			ast.IsParameterPropertyModifier(tokenKind) ||
 			isCurrentlyEditingNode(contextToken, file, position) {
 			return false
 		}
@@ -4827,7 +4828,7 @@ func isSolelyIdentifierDefinitionLocation(
 
 	// Previous token may have been a keyword that was converted to an identifier.
 	switch keywordForNode(contextToken) {
-	case ast.KindAbstractKeyword, ast.KindClassKeyword, ast.KindConstKeyword, ast.KindDeclareKeyword,
+	case ast.KindAbstractKeyword, ast.KindClassKeyword, ast.KindDeclareKeyword,
 		ast.KindEnumKeyword, ast.KindFunctionKeyword, ast.KindInterfaceKeyword, ast.KindLetKeyword,
 		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword,
 		ast.KindStaticKeyword, ast.KindVarKeyword:
@@ -4862,7 +4863,9 @@ func isSolelyIdentifierDefinitionLocation(
 			return true
 		}
 	}
-
+	if tokenKind == ast.KindConstKeyword {
+		return true
+	}
 	return ast.IsDeclarationName(contextToken) &&
 		!ast.IsShorthandPropertyAssignment(parent) &&
 		!ast.IsJsxAttribute(parent) &&
