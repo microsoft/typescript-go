@@ -147,6 +147,10 @@ func (c *Checker) compareTypesSubtypeOf(source *Type, target *Type) Ternary {
 	return TernaryFalse
 }
 
+func (c *Checker) IsTypeAssignableTo(source *Type, target *Type) bool {
+	return c.isTypeAssignableTo(source, target)
+}
+
 func (c *Checker) isTypeAssignableTo(source *Type, target *Type) bool {
 	return c.isTypeRelatedTo(source, target, c.assignableRelation)
 }
