@@ -283,6 +283,17 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
+	var sourceFileToPackageName map[tspath.Path]string
+	var redirectTargetsMap map[tspath.Path][]string
+	var deduplicatedPathMap map[tspath.Path]tspath.Path
+	var packageIdToCanonicalPath map[module.PackageId]tspath.Path
+	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
+		sourceFileToPackageName = make(map[tspath.Path]string, totalFileCount)
+		redirectTargetsMap = make(map[tspath.Path][]string)
+		deduplicatedPathMap = make(map[tspath.Path]tspath.Path)
+		packageIdToCanonicalPath = make(map[module.PackageId]tspath.Path)
+	}
+
 	var collectFiles func(tasks []*parseTask, seen map[*parseTaskData]string)
 	collectFiles = func(tasks []*parseTask, seen map[*parseTaskData]string) {
 		for _, task := range tasks {
@@ -331,6 +342,36 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			for _, trace := range task.resolutionsTrace {
 				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
+
+			if packageIdToCanonicalPath != nil {
+				for _, resolution := range task.resolutionsInFile {
+					if !resolution.IsResolved() {
+						continue
+					}
+					pkgId := resolution.PackageId
+					if pkgId.Name == "" {
+						continue
+					}
+					resolvedPath := loader.toPath(resolution.ResolvedFileName)
+					packageName := pkgId.PackageName()
+
+					if canonical, exists := packageIdToCanonicalPath[pkgId]; exists {
+						if _, alreadyRecorded := sourceFileToPackageName[resolvedPath]; !alreadyRecorded {
+							sourceFileToPackageName[resolvedPath] = packageName
+							if resolvedPath != canonical {
+
+								deduplicatedPathMap[resolvedPath] = canonical
+								redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], resolution.ResolvedFileName)
+							}
+						}
+					} else {
+						packageIdToCanonicalPath[pkgId] = resolvedPath
+						sourceFileToPackageName[resolvedPath] = packageName
+						deduplicatedPathMap[resolvedPath] = resolvedPath
+					}
+				}
+			}
+
 			if subTasks := task.subTasks; len(subTasks) > 0 {
 				collectFiles(subTasks, seen)
 			}
@@ -408,6 +449,22 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		}
 	}
 
+	if deduplicatedPathMap != nil {
+		for duplicatePath, canonicalPath := range deduplicatedPathMap {
+			if duplicatePath != canonicalPath {
+				if canonicalFile, ok := filesByPath[canonicalPath]; ok {
+					filesByPath[duplicatePath] = canonicalFile
+				}
+			}
+		}
+		allFiles = slices.DeleteFunc(allFiles, func(f *ast.SourceFile) bool {
+			if canonicalPath, ok := deduplicatedPathMap[f.Path()]; ok {
+				return f.Path() != canonicalPath
+			}
+			return false
+		})
+	}
+
 	return processedFiles{
 		finishedProcessing:                   true,
 		resolver:                             loader.resolver,
@@ -424,6 +481,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		missingFiles:                         missingFiles,
 		includeProcessor:                     includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
+		sourceFileToPackageName:              sourceFileToPackageName,
+		redirectTargetsMap:                   redirectTargetsMap,
+		deduplicatedPathMap:                  deduplicatedPathMap,
 	}
 }
 

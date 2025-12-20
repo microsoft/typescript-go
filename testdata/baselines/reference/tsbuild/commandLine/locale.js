@@ -104,6 +104,11 @@ Disable full type checking (only critical parse and emit errors will be reported
 type: boolean
 default: false
 
+[94m--disablePackageDeduplication[39m
+Disable deduplication of packages with the same name and version.
+type: boolean
+default: false
+
 [94m--noEmit[39m
 Disable emitting files from a compilation.
 type: boolean
