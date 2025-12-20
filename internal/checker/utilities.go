@@ -1676,7 +1676,7 @@ func (c *Checker) typesPackageExists(packageName string) bool {
 
 func (c *Checker) packageBundlesTypes(packageName string) bool {
 	packagesMap := c.getPackagesMap()
-	hasTypes, _ := packagesMap[packageName]
+	hasTypes := packagesMap[packageName]
 	return hasTypes
 }
 

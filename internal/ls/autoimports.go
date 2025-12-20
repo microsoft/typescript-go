@@ -356,9 +356,7 @@ func (l *LanguageService) getImportCompletionAction(
 	isJsxTagName bool,
 	// formatContext *formattingContext,
 ) (string, codeAction) {
-	var exportInfos []*SymbolExportInfo
-	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
-	exportInfos = l.getExportInfoMap(ctx, ch, sourceFile, exportMapKey)
+	exportInfos := l.getExportInfoMap(ctx, ch, sourceFile, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
@@ -1436,7 +1434,7 @@ func forEachExternalModule(
 	excludePatterns []*regexp2.Regexp,
 	cb func(moduleSymbol *ast.Symbol, sourceFile *ast.SourceFile),
 ) {
-	var isExcluded func(*ast.SourceFile) bool = func(_ *ast.SourceFile) bool { return false }
+	isExcluded := func(_ *ast.SourceFile) bool { return false }
 	if excludePatterns != nil {
 		isExcluded = getIsExcluded(excludePatterns)
 	}
@@ -1604,7 +1602,7 @@ func getNewRequires(
 	namespaceLikeImport *Import,
 	compilerOptions *core.CompilerOptions,
 ) []*ast.Statement {
-	quotedModuleSpecifier := changeTracker.NodeFactory.NewStringLiteral(
+	quotedModuleSpecifier := changeTracker.NewStringLiteral(
 		moduleSpecifier,
 		core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone),
 	)
@@ -1616,30 +1614,30 @@ func getNewRequires(
 		for _, namedImport := range namedImports {
 			var propertyName *ast.Node
 			if namedImport.propertyName != "" {
-				propertyName = changeTracker.NodeFactory.NewIdentifier(namedImport.propertyName)
+				propertyName = changeTracker.NewIdentifier(namedImport.propertyName)
 			}
-			bindingElements = append(bindingElements, changeTracker.NodeFactory.NewBindingElement(
+			bindingElements = append(bindingElements, changeTracker.NewBindingElement(
 				/*dotDotDotToken*/ nil,
 				propertyName,
-				changeTracker.NodeFactory.NewIdentifier(namedImport.name),
+				changeTracker.NewIdentifier(namedImport.name),
 				/*initializer*/ nil,
 			))
 		}
 		if defaultImport != nil {
 			bindingElements = append([]*ast.Node{
-				changeTracker.NodeFactory.NewBindingElement(
+				changeTracker.NewBindingElement(
 					/*dotDotDotToken*/ nil,
-					changeTracker.NodeFactory.NewIdentifier("default"),
-					changeTracker.NodeFactory.NewIdentifier(defaultImport.name),
+					changeTracker.NewIdentifier("default"),
+					changeTracker.NewIdentifier(defaultImport.name),
 					/*initializer*/ nil,
 				),
 			}, bindingElements...)
 		}
 		declaration := createConstEqualsRequireDeclaration(
 			changeTracker,
-			changeTracker.NodeFactory.NewBindingPattern(
+			changeTracker.NewBindingPattern(
 				ast.KindObjectBindingPattern,
-				changeTracker.NodeFactory.NewNodeList(bindingElements),
+				changeTracker.NewNodeList(bindingElements),
 			),
 			quotedModuleSpecifier,
 		)
@@ -1650,7 +1648,7 @@ func getNewRequires(
 	if namespaceLikeImport != nil {
 		declaration := createConstEqualsRequireDeclaration(
 			changeTracker,
-			changeTracker.NodeFactory.NewIdentifier(namespaceLikeImport.name),
+			changeTracker.NewIdentifier(namespaceLikeImport.name),
 			quotedModuleSpecifier,
 		)
 		statements = append(statements, declaration)
@@ -1661,20 +1659,20 @@ func getNewRequires(
 }
 
 func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *ast.Node, quotedModuleSpecifier *ast.Node) *ast.Statement {
-	return changeTracker.NodeFactory.NewVariableStatement(
+	return changeTracker.NewVariableStatement(
 		/*modifiers*/ nil,
-		changeTracker.NodeFactory.NewVariableDeclarationList(
+		changeTracker.NewVariableDeclarationList(
 			ast.NodeFlagsConst,
-			changeTracker.NodeFactory.NewNodeList([]*ast.Node{
-				changeTracker.NodeFactory.NewVariableDeclaration(
+			changeTracker.NewNodeList([]*ast.Node{
+				changeTracker.NewVariableDeclaration(
 					name,
 					/*exclamationToken*/ nil,
 					/*type*/ nil,
-					changeTracker.NodeFactory.NewCallExpression(
-						changeTracker.NodeFactory.NewIdentifier("require"),
+					changeTracker.NewCallExpression(
+						changeTracker.NewIdentifier("require"),
 						/*questionDotToken*/ nil,
 						/*typeArguments*/ nil,
-						changeTracker.NodeFactory.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
+						changeTracker.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
 						ast.NodeFlagsNone,
 					),
 				),
