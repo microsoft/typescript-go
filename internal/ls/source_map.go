@@ -27,7 +27,17 @@ func (l *LanguageService) getMappedLocation(fileName string, fileRange core.Text
 		}
 	}
 	debug.Assert(endPos.FileName == startPos.FileName, "start and end should be in same file")
-	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
+	
+	// Validate that the end position is valid (same file and after start position).
+	// This handles non-monotonic source map mappings where the next mapping entry
+	// might have an original position that's earlier in the source file.
+	// If end is before start, clamp to start position to avoid inverted ranges.
+	endPosValue := endPos.Pos
+	if endPos.FileName != startPos.FileName || endPos.Pos < startPos.Pos {
+		endPosValue = startPos.Pos
+	}
+	
+	newRange := core.NewTextRange(startPos.Pos, endPosValue)
 	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
 	return lsproto.Location{
 		Uri:   lsconv.FileNameToDocumentURI(startPos.FileName),
