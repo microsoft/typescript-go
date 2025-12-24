@@ -12,6 +12,12 @@ import {
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
+    isFunctionDeclaration,
+    isExpressionStatement,
+    isCallExpression,
+    isPropertyAccessExpression,
+    isIdentifier,
+    isStringLiteral,
 } from "@typescript/ast";
 import assert from "node:assert";
 import {
@@ -175,6 +181,45 @@ test("Dispose", () => {
         name: "Error",
         message: `symbol "${symbol.id}" not found`,
     });
+});
+
+test("Function", () => {
+    const currentFiles = {
+        "/tsconfig.json": "{}",
+        "/src/index.ts": `function foo() {
+            console.log("hello", "world")
+        }`,
+    };
+    
+    let api = spawnAPI(currentFiles);
+    const project = api.loadProject("/tsconfig.json");
+    const sourceFile = project.getSourceFile("/src/index.ts");
+
+    let func = sourceFile?.statements[0]!;
+    assert.ok(isFunctionDeclaration(func));
+
+    let body = func.body!;
+    let expr = body.statements[0]!;
+    assert.ok(isExpressionStatement(expr));
+    let call_expr = expr.expression;
+    assert.ok(isCallExpression(call_expr));
+
+    let callee = call_expr.expression;
+    assert.ok(isPropertyAccessExpression(callee));
+    let left = callee.expression;
+    let right = callee.name;
+    assert.ok(isIdentifier(left));
+    assert.ok(isIdentifier(right));
+    assert.equal(left.text, "console");
+    assert.equal(right.text, "log");
+
+    let args = call_expr.arguments;
+    let arg0 = args[0];
+    let arg1 = args[1];
+    assert.ok(isStringLiteral(arg0));
+    assert.ok(isStringLiteral(arg1));
+    assert.equal(arg0.text, "hello");
+    assert.equal(arg1.text, "world");
 });
 
 test("Benchmarks", async () => {
