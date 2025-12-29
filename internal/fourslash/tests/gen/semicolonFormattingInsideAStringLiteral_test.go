@@ -16,5 +16,5 @@ func TestSemicolonFormattingInsideAStringLiteral(t *testing.T) {
 	defer done()
 	f.GoToMarker(t, "")
 	f.Insert(t, ";")
-	f.VerifyCurrentLineContentIs(t, "  var x = \"string;")
+	f.VerifyCurrentLineContentIs(t, "   var x = \"string;")
 }
