@@ -40,18 +40,6 @@ func GetTokenAtPosition(sourceFile *ast.SourceFile, position int) *ast.Node {
 	return getTokenAtPosition(sourceFile, position, true /*allowPositionInLeadingTrivia*/, nil)
 }
 
-func shouldVisitNode(node *ast.Node, allowReparsed bool) bool {
-	// Skip reparsed nodes unless:
-	// 1. The node itself is AsExpression or SatisfiesExpression, OR
-	// 2. We're already inside an AsExpression or SatisfiesExpression (allowReparsed=true)
-	// These are special cases where reparsed nodes from JSDoc type assertions
-	// should still be navigable to reach identifiers.
-	isSpecialReparsed := node.Flags&ast.NodeFlagsReparsed != 0 &&
-		(node.Kind == ast.KindAsExpression || node.Kind == ast.KindSatisfiesExpression)
-
-	return node.Flags&ast.NodeFlagsReparsed == 0 || isSpecialReparsed || allowReparsed
-}
-
 func getTokenAtPosition(
 	sourceFile *ast.SourceFile,
 	position int,
@@ -80,10 +68,6 @@ func getTokenAtPosition(
 	// `nodeAfterLeft` tracks the first node we visit after visiting the node that advances `left`.
 	// When scanning in between nodes for token, we should only scan up to the start of `nodeAfterLeft`.
 	var nodeAfterLeft *ast.Node
-	// `allowReparsed` is set when we're navigating inside an AsExpression or
-	// SatisfiesExpression, which allows visiting their reparsed children to reach
-	// the actual identifier from JSDoc type assertions.
-	allowReparsed := false
 
 	testNode := func(node *ast.Node) int {
 		if node.Kind != ast.KindEndOfFile && node.End() == position && includePrecedingTokenAtEndPosition != nil {
@@ -113,7 +97,7 @@ func getTokenAtPosition(
 			nodeAfterLeft = node
 		}
 		if next == nil {
-			if shouldVisitNode(node, allowReparsed) {
+			if node.Flags&ast.NodeFlagsReparsed == 0 {
 				result := testNode(node)
 				switch result {
 				case -1:
@@ -139,7 +123,7 @@ func getTokenAtPosition(
 		}
 		if nodeAfterLeft == nil {
 			for _, node := range nodeList.Nodes {
-				if shouldVisitNode(node, allowReparsed) {
+				if node.Flags&ast.NodeFlagsReparsed == 0 {
 					nodeAfterLeft = node
 					break
 				}
@@ -164,7 +148,7 @@ func getTokenAtPosition(
 						left = node.End()
 						nodeAfterLeft = nil
 						for i := middle + 1; i < len(nodes); i++ {
-							if shouldVisitNode(nodes[i], allowReparsed) {
+							if nodes[i].Flags&ast.NodeFlagsReparsed == 0 {
 								nodeAfterLeft = nodes[i]
 								break
 							}
@@ -272,11 +256,6 @@ func getTokenAtPosition(
 		left = current.Pos()
 		nodeAfterLeft = nil
 		next = nil
-		// When navigating into AsExpression or SatisfiesExpression, allow visiting
-		// their reparsed children to reach identifiers from JSDoc type assertions.
-		if current.Kind == ast.KindAsExpression || current.Kind == ast.KindSatisfiesExpression {
-			allowReparsed = true
-		}
 	}
 }
 
