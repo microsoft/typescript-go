@@ -11452,10 +11452,10 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 	if flags&ast.ModifierFlagsAbstract != 0 && c.symbolHasNonMethodDeclaration(prop) && (isThisProperty(location) ||
 		isThisInitializedObjectBindingExpression(location) ||
 		ast.IsObjectBindingPattern(location.Parent) && isThisInitializedDeclaration(location.Parent.Parent)) {
-		declaringClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
-		if declaringClassDeclaration != nil && c.isNodeUsedDuringClassInitialization(location) {
+		parentSymbol := c.getParentOfSymbol(prop)
+		if parentSymbol != nil && parentSymbol.Flags&ast.SymbolFlagsClass != 0 && c.isNodeUsedDuringClassInitialization(location) {
 			if errorNode != nil {
-				c.error(errorNode, diagnostics.Abstract_property_0_in_class_1_cannot_be_accessed_in_the_constructor, c.symbolToString(prop), declaringClassDeclaration.Name().Text())
+				c.error(errorNode, diagnostics.Abstract_property_0_in_class_1_cannot_be_accessed_in_the_constructor, c.symbolToString(prop), c.symbolToString(parentSymbol))
 			}
 			return false
 		}
@@ -18556,6 +18556,9 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) == 0 {
+		return nil
+	}
 	data := t.AsInterfaceType()
 	if !data.baseTypesResolved {
 		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseTypes) {
