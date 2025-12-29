@@ -88,18 +88,18 @@ linters:
     staticcheck:
       checks:
         - all
-        - -QF1001
-        - -QF1003
-        - -SA1019
-        - -SA6005
-        - -SA9003
-        - -ST1000
-        - -ST1003
-        - -ST1006 # TODO: enable
-        - -ST1016
-        - -ST1020
-        - -ST1021
-        - -ST1022
+        - -QF1001 # Apply De Morgan’s law
+        - -QF1003 # Convert if/else-if chain to tagged switch
+        - -SA1019 # Using a deprecated function, variable, constant or field
+        - -SA6005 # Inefficient string comparison with strings.ToLower or strings.ToUpper
+        - -SA9003 # Empty body in an if or else branch
+        - -ST1000 # Incorrect or missing package comment
+        - -ST1003 # Poorly chosen identifier
+        - -ST1006 # Poorly chosen receiver name
+        - -ST1016 # Use consistent method receiver names
+        - -ST1020 # The documentation of an exported function should start with the function’s name
+        - -ST1021 # The documentation of an exported type should start with type’s name
+        - -ST1022 # The documentation of an exported variable or constant should start with variable’s name
 
   exclusions:
     rules:
