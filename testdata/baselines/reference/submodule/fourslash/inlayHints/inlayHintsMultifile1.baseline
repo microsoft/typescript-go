@@ -16,12 +16,12 @@ async function foo () {
         "uri": "bundled:///libs/lib.es5.d.ts",
         "range": {
           "start": {
-            "line": 1549,
-            "character": 10
+            "line": 0,
+            "character": 0
           },
           "end": {
-            "line": 1549,
-            "character": 17
+            "line": 0,
+            "character": 0
           }
         }
       }
@@ -70,12 +70,12 @@ function bar () { return import('./a') }
         "uri": "bundled:///libs/lib.es5.d.ts",
         "range": {
           "start": {
-            "line": 1549,
-            "character": 10
+            "line": 0,
+            "character": 0
           },
           "end": {
-            "line": 1549,
-            "character": 17
+            "line": 0,
+            "character": 0
           }
         }
       }
@@ -120,12 +120,12 @@ async function main () {
         "uri": "bundled:///libs/lib.es5.d.ts",
         "range": {
           "start": {
-            "line": 1549,
-            "character": 10
+            "line": 0,
+            "character": 0
           },
           "end": {
-            "line": 1549,
-            "character": 17
+            "line": 0,
+            "character": 0
           }
         }
       }

@@ -25,12 +25,12 @@ using _defer = {
         "uri": "bundled:///libs/lib.es5.d.ts",
         "range": {
           "start": {
-            "line": 99,
-            "character": 10
+            "line": 0,
+            "character": 0
           },
           "end": {
-            "line": 99,
-            "character": 16
+            "line": 0,
+            "character": 0
           }
         }
       }
@@ -44,12 +44,12 @@ using _defer = {
         "uri": "bundled:///libs/lib.esnext.disposable.d.ts",
         "range": {
           "start": {
-            "line": 26,
-            "character": 13
+            "line": 0,
+            "character": 0
           },
           "end": {
-            "line": 26,
-            "character": 20
+            "line": 0,
+            "character": 0
           }
         }
       }

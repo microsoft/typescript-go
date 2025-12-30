@@ -3448,6 +3448,15 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 			return lsproto.ComparePositions(a.Position, b.Position)
 		})
 		annotations = core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
+			if hint.Label.InlayHintLabelParts != nil {
+				for _, part := range *hint.Label.InlayHintLabelParts {
+					// Avoid diffs caused by lib file updates.
+					if part.Location != nil && isLibFile(part.Location.Uri.FileName()) {
+						part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0}
+						part.Location.Range.End = lsproto.Position{Line: 0, Character: 0}
+					}
+				}
+			}
 			underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
 			hintJson, err := core.StringifyJson(hint, "", "  ")
 			if err != nil {

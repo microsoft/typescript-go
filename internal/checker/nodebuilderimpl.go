@@ -1258,7 +1258,11 @@ func (b *NodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 		return range_
 	}
 	if !ast.NodeIsSynthesized(range_) || (range_.Flags&ast.NodeFlagsSynthesized == 0) || b.ctx.enclosingFile == nil || b.ctx.enclosingFile != ast.GetSourceFileOfNode(b.e.MostOriginal(range_)) {
+		original := range_
 		range_ = range_.Clone(b.f) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions
+		if symbol, ok := b.idToSymbol[original]; ok {
+			b.idToSymbol[range_] = symbol
+		}
 	}
 	if range_ == location || location == nil {
 		return range_

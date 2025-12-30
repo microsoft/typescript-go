@@ -252,13 +252,39 @@
       "value": "<"
     },
     {
-      "value": "X"
+      "value": "X",
+      "location": {
+        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
+        "range": {
+          "start": {
+            "line": 22,
+            "character": 6
+          },
+          "end": {
+            "line": 22,
+            "character": 7
+          }
+        }
+      }
     },
     {
       "value": ", "
     },
     {
-      "value": "Y"
+      "value": "Y",
+      "location": {
+        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
+        "range": {
+          "start": {
+            "line": 22,
+            "character": 9
+          },
+          "end": {
+            "line": 22,
+            "character": 10
+          }
+        }
+      }
     },
     {
       "value": ">"
@@ -544,7 +570,20 @@
       "value": "<"
     },
     {
-      "value": "T"
+      "value": "T",
+      "location": {
+        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
+        "range": {
+          "start": {
+            "line": 20,
+            "character": 7
+          },
+          "end": {
+            "line": 20,
+            "character": 8
+          }
+        }
+      }
     },
     {
       "value": ">"
@@ -600,13 +639,39 @@
       "value": "<"
     },
     {
-      "value": "X"
+      "value": "X",
+      "location": {
+        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
+        "range": {
+          "start": {
+            "line": 21,
+            "character": 8
+          },
+          "end": {
+            "line": 21,
+            "character": 9
+          }
+        }
+      }
     },
     {
       "value": ", "
     },
     {
-      "value": "Y"
+      "value": "Y",
+      "location": {
+        "uri": "file:///inlayHintsInteractiveFunctionParameterTypes1.ts",
+        "range": {
+          "start": {
+            "line": 21,
+            "character": 11
+          },
+          "end": {
+            "line": 21,
+            "character": 12
+          }
+        }
+      }
     },
     {
       "value": ">"
