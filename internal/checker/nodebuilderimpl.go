@@ -99,8 +99,7 @@ type NodeBuilderImpl struct {
 	// reusable visitor
 	cloneBindingNameVisitor *ast.NodeVisitor
 
-	// symbols for synthesized identifiers, needed for e.g. inlay hints,
-	// since identifier nodes no longer have a symbol property
+	// symbols for synthesized identifiers, needed for e.g. inlay hints
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol
 }
 

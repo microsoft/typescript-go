@@ -39,7 +39,7 @@ const p = (a: Foo[]) => a;
         "range": {
           "start": {
             "line": 0,
-            "character": 9
+            "character": 10
           },
           "end": {
             "line": 0,
@@ -64,7 +64,7 @@ const p = (a: Foo[]) => a;
         "range": {
           "start": {
             "line": 0,
-            "character": 9
+            "character": 10
           },
           "end": {
             "line": 0,

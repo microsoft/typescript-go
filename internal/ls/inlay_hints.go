@@ -311,6 +311,7 @@ func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrI
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+	// !!! Avoid type node reuse so we collect identifier symbols.
 	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags, idToSymbol)
 	debug.AssertIsDefined(typeNode, "should always get typenode")
 	return lsproto.StringOrInlayHintLabelParts{
@@ -322,6 +323,7 @@ func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.Ty
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+	// !!! Avoid type node reuse so we collect identifier symbols.
 	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags, idToSymbol)
 	debug.AssertIsDefined(typeNode, "should always get typePredicateNode")
 	return lsproto.StringOrInlayHintLabelParts{
@@ -443,7 +445,6 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 		case ast.KindIdentifier:
 			identifierText := node.Text()
 			var name *ast.Node
-			// !!! This will only work for synthetic identifiers.
 			if symbol := idToSymbol[node]; symbol != nil && len(symbol.Declarations) != 0 {
 				name = ast.GetNameOfDeclaration(symbol.Declarations[0])
 			}
@@ -762,11 +763,13 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 
 func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsproto.InlayHintLabelPart {
 	file := ast.GetSourceFileOfNode(node)
+	pos := astnav.GetStartOfNode(node, file, false /*includeJSDoc*/)
+	end := node.End()
 	return &lsproto.InlayHintLabelPart{
 		Value: text,
 		Location: &lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
-			Range: s.converters.ToLSPRange(file, node.Loc),
+			Range: s.converters.ToLSPRange(file, core.NewTextRange(pos, end)),
 		},
 	}
 }

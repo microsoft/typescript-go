@@ -20,13 +20,39 @@ using _defer = {
       "value": "["
     },
     {
-      "value": "Symbol"
+      "value": "Symbol",
+      "location": {
+        "uri": "bundled:///libs/lib.es5.d.ts",
+        "range": {
+          "start": {
+            "line": 99,
+            "character": 10
+          },
+          "end": {
+            "line": 99,
+            "character": 16
+          }
+        }
+      }
     },
     {
       "value": "."
     },
     {
-      "value": "dispose"
+      "value": "dispose",
+      "location": {
+        "uri": "bundled:///libs/lib.esnext.disposable.d.ts",
+        "range": {
+          "start": {
+            "line": 26,
+            "character": 13
+          },
+          "end": {
+            "line": 26,
+            "character": 20
+          }
+        }
+      }
     },
     {
       "value": "]"
