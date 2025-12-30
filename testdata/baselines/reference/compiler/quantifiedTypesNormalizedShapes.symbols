@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/quantifiedTypesNormalizedShapes.ts] ////
+
+=== quantifiedTypesNormalizedShapes.ts ===
+type NormalizedRecord<T extends { id: string }> =
+>NormalizedRecord : Symbol(NormalizedRecord, Decl(quantifiedTypesNormalizedShapes.ts, 0, 0))
+>T : Symbol(T, Decl(quantifiedTypesNormalizedShapes.ts, 0, 22))
+>id : Symbol(id, Decl(quantifiedTypesNormalizedShapes.ts, 0, 33))
+
+  <Id extends string> { [K in Id]: Omit<T, "id"> & { id: K } }
+>Id : Symbol(Id, Decl(quantifiedTypesNormalizedShapes.ts, 1, 3))
+>K : Symbol(K, Decl(quantifiedTypesNormalizedShapes.ts, 1, 25))
+>Id : Symbol(Id, Decl(quantifiedTypesNormalizedShapes.ts, 1, 3))
+>Omit : Symbol(Omit, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(quantifiedTypesNormalizedShapes.ts, 0, 22))
+>id : Symbol(id, Decl(quantifiedTypesNormalizedShapes.ts, 1, 52))
+>K : Symbol(K, Decl(quantifiedTypesNormalizedShapes.ts, 1, 25))
+
+interface Layer {
+>Layer : Symbol(Layer, Decl(quantifiedTypesNormalizedShapes.ts, 1, 62))
+
+  id: string
+>id : Symbol(Layer.id, Decl(quantifiedTypesNormalizedShapes.ts, 3, 17))
+
+  color: string
+>color : Symbol(Layer.color, Decl(quantifiedTypesNormalizedShapes.ts, 4, 12))
+}
+
+let layers: NormalizedRecord<Layer> = {
+>layers : Symbol(layers, Decl(quantifiedTypesNormalizedShapes.ts, 8, 3))
+>NormalizedRecord : Symbol(NormalizedRecord, Decl(quantifiedTypesNormalizedShapes.ts, 0, 0))
+>Layer : Symbol(Layer, Decl(quantifiedTypesNormalizedShapes.ts, 1, 62))
+
+  a: {
+>a : Symbol(a, Decl(quantifiedTypesNormalizedShapes.ts, 8, 39))
+
+    id: "a",
+>id : Symbol(id, Decl(quantifiedTypesNormalizedShapes.ts, 9, 6))
+
+    color: "green"
+>color : Symbol(color, Decl(quantifiedTypesNormalizedShapes.ts, 10, 12))
+
+  },
+  b: {
+>b : Symbol(b, Decl(quantifiedTypesNormalizedShapes.ts, 12, 4))
+
+    id: "a", // should have been "b"
+>id : Symbol(id, Decl(quantifiedTypesNormalizedShapes.ts, 13, 6))
+
+    color: "blue"
+>color : Symbol(color, Decl(quantifiedTypesNormalizedShapes.ts, 14, 12))
+  }
+}
+

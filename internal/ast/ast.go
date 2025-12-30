@@ -573,6 +573,8 @@ func (n *Node) TypeParameterList() *NodeList {
 		return n.AsTypeAliasDeclaration().TypeParameters
 	case KindJSDocTemplateTag:
 		return n.AsJSDocTemplateTag().TypeParameters
+	case KindQuantifiedType:
+		return n.AsQuantifiedTypeNode().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
 		if funcLike != nil {
@@ -1748,6 +1750,10 @@ func (n *Node) AsFunctionTypeNode() *FunctionTypeNode {
 
 func (n *Node) AsConstructorTypeNode() *ConstructorTypeNode {
 	return n.data.(*ConstructorTypeNode)
+}
+
+func (n *Node) AsQuantifiedTypeNode() *QuantifiedTypeNode {
+	return n.data.(*QuantifiedTypeNode)
 }
 
 func (n *Node) AsTypeQueryNode() *TypeQueryNode {
@@ -8869,6 +8875,41 @@ func (node *TemplateLiteralTypeSpan) Clone(f NodeFactoryCoercible) *Node {
 
 func IsTemplateLiteralTypeSpan(node *Node) bool {
 	return node.Kind == KindTemplateLiteralTypeSpan
+}
+
+// QuantifiedTypeNode
+
+type QuantifiedTypeNode struct {
+	TypeNodeBase
+	LocalsContainerBase
+	TypeParameters *NodeList // NodeList[*TypeParameterDeclarationNode]
+	BaseType       *TypeNode
+}
+
+func (f *NodeFactory) NewQuantifiedTypeNode(typeParameters *NodeList, baseTypeNode *TypeNode) *Node {
+	data := &QuantifiedTypeNode{}
+	data.TypeParameters = typeParameters
+	data.BaseType = baseTypeNode
+	return f.newNode(KindQuantifiedType, data)
+}
+
+func (f *NodeFactory) UpdateQuantifiedTypeNode(node *QuantifiedTypeNode, typeParameters *NodeList, baseTypeNode *TypeNode) *Node {
+	if typeParameters != node.TypeParameters || baseTypeNode != node.BaseType {
+		return updateNode(f.NewQuantifiedTypeNode(typeParameters, baseTypeNode), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *QuantifiedTypeNode) ForEachChild(v Visitor) bool {
+	return visitNodeList(v, node.TypeParameters) || visit(v, node.BaseType)
+}
+
+func (node *QuantifiedTypeNode) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateQuantifiedTypeNode(node, v.visitNodes(node.TypeParameters), v.visitNode(node.BaseType))
+}
+
+func (node *QuantifiedTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewQuantifiedTypeNode(node.TypeParameters, node.BaseType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // SyntheticExpression

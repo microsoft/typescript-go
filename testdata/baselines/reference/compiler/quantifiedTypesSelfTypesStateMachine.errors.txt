@@ -1,0 +1,48 @@
+quantifiedTypesSelfTypesStateMachine.ts(22,5): error TS2322: Type '{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }' is not assignable to type 'ParseStateMachine<{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }>'.
+  The types of 'green.TICK' are incompatible between these types.
+    Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
+
+
+==== quantifiedTypesSelfTypesStateMachine.ts (1 errors) ====
+    type ParseStateMachine<Self> = { [S in keyof Self]: { [E in keyof Self[S]]: keyof Self } }
+    type StateMachine = <Self extends ParseStateMachine<Self>> Self
+    
+    let trafficLights: StateMachine = {
+      off: {
+        ON: "red"
+      },
+      red: {
+        TICK: "yellow",
+        OFF: "off"
+      },
+      yellow: {
+        TICK: "green",
+        OFF: "off"
+      },
+      green: {
+        TICK: "red",
+        OFF: "off"
+      }
+    }
+    
+    let trafficLightsInvalid: StateMachine = {
+        ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }' is not assignable to type 'ParseStateMachine<{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }>'.
+!!! error TS2322:   The types of 'green.TICK' are incompatible between these types.
+!!! error TS2322:     Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
+      off: {
+        ON: "red"
+      },
+      red: {
+        TICK: "yellow",
+        OFF: "off"
+      },
+      yellow: {
+        TICK: "green",
+        OFF: "off"
+      },
+      green: {
+        TICK: "reddd",
+        OFF: "off"
+      }
+    }

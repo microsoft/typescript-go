@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/quantifiedTypesSelfTypesCaseInsensitve.ts] ////
+
+=== quantifiedTypesSelfTypesCaseInsensitve.ts ===
+type PasreCaseInsensitive<Self, T extends string> =
+>PasreCaseInsensitive : PasreCaseInsensitive<Self, T>
+
+  Self extends string
+    ? Lowercase<Self> extends Lowercase<T>
+        ? Self
+        : `Error: Type '${Self}' is not assignable to type 'CaseInsensitive<${T}>'`
+    : T
+
+type CaseInsensitive<T extends string> = <Self> PasreCaseInsensitive<Self, T>
+>CaseInsensitive : <Self> PasreCaseInsensitive<Self, T>
+
+declare const setHeader: 
+>setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
+
+  (key: CaseInsensitive<"Set-Cookie" | "Accept">, value: string) => void
+>key : <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">
+>value : string
+
+setHeader("Set-Cookie", "test")
+>setHeader("Set-Cookie", "test") : void
+>setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
+>"Set-Cookie" : "Set-Cookie"
+>"test" : "test"
+
+setHeader("Accept", "test2")
+>setHeader("Accept", "test2") : void
+>setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
+>"Accept" : "Accept"
+>"test2" : "test2"
+
+setHeader("sEt-cOoKiE", "stop writing headers like this but ok")
+>setHeader("sEt-cOoKiE", "stop writing headers like this but ok") : void
+>setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
+>"sEt-cOoKiE" : "sEt-cOoKiE"
+>"stop writing headers like this but ok" : "stop writing headers like this but ok"
+
+setHeader("Acept", "nah this has a typo")
+>setHeader("Acept", "nah this has a typo") : void
+>setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
+>"Acept" : "Acept"
+>"nah this has a typo" : "nah this has a typo"
+
