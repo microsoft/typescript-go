@@ -1115,7 +1115,6 @@ func (l *LanguageService) getNewImportFixes(
 				if namespacePrefix == nil {
 					namespacePrefix = ptrTo(moduleSymbolToValidIdentifier(
 						exportInfo.moduleSymbol,
-						compilerOptions.GetEmitScriptTarget(),
 						/*forceCapitalize*/ false,
 					))
 				}
@@ -1339,8 +1338,8 @@ func forEachNameOfDefaultExport(defaultExport *ast.Symbol, ch *checker.Checker, 
 	for _, symbol := range chain {
 		if symbol.Parent != nil && checker.IsExternalModuleSymbol(symbol.Parent) {
 			final := cb(
-				moduleSymbolToValidIdentifier(symbol.Parent, scriptTarget /*forceCapitalize*/, false),
-				moduleSymbolToValidIdentifier(symbol.Parent, scriptTarget /*forceCapitalize*/, true),
+				moduleSymbolToValidIdentifier(symbol.Parent, false /*forceCapitalize*/),
+				moduleSymbolToValidIdentifier(symbol.Parent, true /*forceCapitalize*/),
 			)
 			if final != "" {
 				return final
