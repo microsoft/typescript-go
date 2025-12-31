@@ -20,14 +20,14 @@ import { getLanguageForUri } from "./util";
 const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
 
 export class Client {
-    private outputChannel: vscode.OutputChannel;
-    private traceOutputChannel: vscode.OutputChannel;
+    private outputChannel: vscode.LogOutputChannel;
+    private traceOutputChannel: vscode.LogOutputChannel;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.clientOptions = {
@@ -103,16 +103,31 @@ export class Client {
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        const goMemLimit = config.get<string>("goMemLimit");
+        const env = { ...process.env };
+        if (goMemLimit) {
+            // Keep this regex aligned with the pattern in package.json.
+            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+                env.GOMEMLIMIT = goMemLimit;
+            }
+            else {
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            }
+        }
+
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
             debug: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
         };
 
@@ -127,6 +142,10 @@ export class Client {
         await this.client.start();
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
+
+        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
+            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
+        }
 
         const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
             if (args.length !== 3) {

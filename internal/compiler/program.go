@@ -378,7 +378,7 @@ func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func())
 
 func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
 	if pool, ok := p.checkerPool.(*checkerPool); ok {
-		pool.ForEachCheckerParallel(cb)
+		pool.forEachCheckerParallel(cb)
 	}
 }
 
@@ -420,20 +420,26 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 // collectDiagnostics collects diagnostics from a single file or all files.
 // If sourceFile is non-nil, returns diagnostics for just that file.
 // If sourceFile is nil, returns diagnostics for all files in the program.
-func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	var result []*ast.Diagnostic
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		for _, file := range p.files {
-			result = append(result, collect(ctx, file)...)
+		diagnostics := make([][]*ast.Diagnostic, len(p.files))
+		wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
+		for i, file := range p.files {
+			wg.Queue(func() {
+				diagnostics[i] = collect(ctx, file)
+			})
 		}
+		wg.RunAndWait()
+		result = slices.Concat(diagnostics...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
 	})
 }
@@ -444,13 +450,13 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 	} else {
 		p.BindSourceFiles()
 	}
-	return p.collectDiagnostics(ctx, sourceFile, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return file.BindDiagnostics()
 	})
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSemanticDiagnosticsForFile)
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
@@ -462,7 +468,7 @@ func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Conte
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getSuggestionDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getSuggestionDiagnosticsForFile)
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
@@ -473,11 +479,39 @@ func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 }
 
 func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
+	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 	filtered, _ := p.getDiagnosticsWithPrecedingDirectives(sourceFile, p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
 	return filtered
+}
+
+func (p *Program) SkipTypeChecking(sourceFile *ast.SourceFile, ignoreNoCheck bool) bool {
+	return (!ignoreNoCheck && p.Options().NoCheck.IsTrue()) ||
+		p.Options().SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
+		p.Options().SkipDefaultLibCheck.IsTrue() && p.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
+		p.IsSourceFromProjectReference(sourceFile.Path()) ||
+		!p.canIncludeBindAndCheckDiagnostics(sourceFile)
+}
+
+func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) bool {
+	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
+		return false
+	}
+
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+		return true
+	}
+
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, p.Options())
+	isPlainJS := ast.IsPlainJSFile(sourceFile, p.Options().CheckJs)
+
+	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// - plain JS: .js files with no // ts-check and checkJs: undefined
+	// - check JS: .js files with either // ts-check or checkJs: true
+	// - external: files that are added by plugins
+	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -796,7 +830,9 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	// !!! emitDecoratorMetadata
+	if options.EmitDecoratorMetadata.IsTrue() && options.ExperimentalDecorators.IsFalseOrUnknown() {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "emitDecoratorMetadata", "experimentalDecorators")
+	}
 
 	if options.JsxFactory != "" {
 		if options.ReactNamespace != "" {
@@ -997,8 +1033,10 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 		return nil
 	}
 
-	globalDiagnostics := make([][]*ast.Diagnostic, p.checkerPool.Count())
-	p.ForEachCheckerParallel(func(idx int, checker *checker.Checker) {
+	pool := p.checkerPool.(*checkerPool)
+
+	globalDiagnostics := make([][]*ast.Diagnostic, len(pool.checkers))
+	pool.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
 		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
 	})
 
@@ -1006,7 +1044,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.collectDiagnostics(ctx, sourceFile, p.getDeclarationDiagnosticsForFile)
+	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getDeclarationDiagnosticsForFile)
 }
 
 func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
@@ -1040,16 +1078,20 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 // including bind diagnostics, checker diagnostics, and handling of @ts-ignore/@ts-expect-error directives.
 func (p *Program) getBindAndCheckDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
-	if checker.SkipTypeChecking(sourceFile, compilerOptions, p, false) {
+	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
-	defer done()
+	// IIFE to release checker as soon as possible.
+	diags := func() []*ast.Diagnostic {
+		fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
+		defer done()
 
-	// Getting a checker will force a bind, so this will be populated.
-	diags := slices.Clip(sourceFile.BindDiagnostics())
-	diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
+		// Getting a checker will force a bind, so this will be populated.
+		diags := slices.Clip(sourceFile.BindDiagnostics())
+		diags = append(diags, fileChecker.GetDiagnostics(ctx, sourceFile)...)
+		return diags
+	}()
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
@@ -1127,11 +1169,11 @@ func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFi
 }
 
 func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
+	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
 
-	fileChecker, done := p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+	fileChecker, done := p.checkerPool.GetCheckerForFileExclusive(ctx, sourceFile)
 	defer done()
 
 	// Getting a checker will force a bind, so this will be populated.
