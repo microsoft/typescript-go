@@ -141,6 +141,26 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 	return resolvedPackageNames
 }
 
+// addProjectReferenceOutputMappings adds output .d.ts to source file mappings
+// from a program's project references to the provided map.
+// This is used during node_modules bucket building to redirect extraction
+// from output files to source files when the output is from a project reference.
+func addProjectReferenceOutputMappings(program *compiler.Program, result map[tspath.Path]string) {
+	refs := program.GetResolvedProjectReferences()
+	for _, ref := range refs {
+		if ref == nil {
+			continue
+		}
+		ref.ParseInputOutputNames()
+		for outputDtsPath, mapping := range ref.OutputDtsToProjectReference() {
+			// Only add if not already present (first program wins)
+			if _, exists := result[outputDtsPath]; !exists {
+				result[outputDtsPath] = mapping.Source
+			}
+		}
+	}
+}
+
 func createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func(), getCreatedCount func() int32) {
 	maxSize := int32(runtime.GOMAXPROCS(0))
 	pool := make(chan *checker.Checker, maxSize)

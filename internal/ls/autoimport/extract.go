@@ -20,12 +20,16 @@ type symbolExtractor struct {
 
 	localNameResolver *binder.NameResolver
 	checker           *checker.Checker
+	toPath            func(fileName string) tspath.Path
+	// realpath, if set, is used to resolve symlinks for ModuleID generation.
+	// This ensures that symlinked packages use their realpath as ModuleID,
+	// deduplicating exports from files that appear via multiple symlink paths.
+	realpath func(fileName string) string
 }
 
 type exportExtractor struct {
 	*symbolExtractor
 	moduleResolver *module.Resolver
-	toPath         func(fileName string) tspath.Path
 }
 
 type extractorStats struct {
@@ -54,7 +58,7 @@ func (l *checkerLease) TryChecker() *checker.Checker {
 	return nil
 }
 
-func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker) *symbolExtractor {
+func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker, toPath func(string) tspath.Path, realpath func(string) string) *symbolExtractor {
 	return &symbolExtractor{
 		nodeModulesDirectory: nodeModulesDirectory,
 		packageName:          packageName,
@@ -62,16 +66,40 @@ func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, ch
 		localNameResolver: &binder.NameResolver{
 			CompilerOptions: core.EmptyCompilerOptions,
 		},
-		stats: &extractorStats{},
+		stats:    &extractorStats{},
+		toPath:   toPath,
+		realpath: realpath,
 	}
 }
 
-func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker) *exportExtractor {
+func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker, realpath func(string) string) *exportExtractor {
 	return &exportExtractor{
-		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, checker),
+		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, checker, b.base.toPath, realpath),
 		moduleResolver:  b.resolver,
-		toPath:          b.base.toPath,
 	}
+}
+
+// getModuleID returns the ModuleID for a file, using realpath if available.
+func (e *symbolExtractor) getModuleID(file *ast.SourceFile) ModuleID {
+	if e.realpath != nil && e.toPath != nil {
+		realpath := e.realpath(file.FileName())
+		return ModuleID(e.toPath(realpath))
+	}
+	return ModuleID(file.Path())
+}
+
+// getModuleIDForSymbol returns the ModuleID for a module symbol, using realpath
+// normalization when available for source files.
+func (e *symbolExtractor) getModuleIDForSymbol(symbol *ast.Symbol) ModuleID {
+	moduleID, fileName := getModuleIDAndFileNameOfModuleSymbol(symbol)
+	// If fileName is set, this is a source file that may need realpath normalization
+	if fileName != "" && e.realpath != nil {
+		decl := ast.GetNonAugmentationDeclaration(symbol)
+		if decl != nil && decl.Kind == ast.KindSourceFile {
+			return e.getModuleID(decl.AsSourceFile())
+		}
+	}
+	return moduleID
 }
 
 func (e *exportExtractor) extractFromFile(file *ast.SourceFile) []*Export {
@@ -105,9 +133,10 @@ func (e *exportExtractor) extractFromModule(file *ast.SourceFile) []*Export {
 	for _, decl := range moduleAugmentations {
 		augmentationExportCount += len(decl.Symbol.Exports)
 	}
+	moduleID := e.getModuleID(file)
 	exports := make([]*Export, 0, len(file.Symbol.Exports)+augmentationExportCount)
 	for name, symbol := range file.Symbol.Exports {
-		e.extractFromSymbol(name, symbol, ModuleID(file.Path()), file.FileName(), file, &exports)
+		e.extractFromSymbol(name, symbol, moduleID, file.FileName(), file, &exports)
 	}
 	for _, decl := range moduleAugmentations {
 		name := decl.Name().AsStringLiteral().Text
@@ -159,7 +188,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			if export != nil {
 				parent := reexportedSymbol.Parent
 				if parent != nil && parent.IsExternalModule() {
-					targetModuleID, _ := getModuleIDAndFileNameOfModuleSymbol(parent)
+					targetModuleID := e.getModuleIDForSymbol(parent)
 					export.Target = ExportID{
 						ExportName: reexportedSymbol.Name,
 						ModuleID:   targetModuleID,
@@ -293,7 +322,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 			moduleID := ModuleID(ast.GetSourceFileOfNode(decl).Path())
 			parent := targetSymbol.Parent
 			if parent != nil && parent.IsExternalModule() {
-				moduleID, _ = getModuleIDAndFileNameOfModuleSymbol(parent)
+				moduleID = e.getModuleIDForSymbol(parent)
 			}
 			export.Target = ExportID{
 				ExportName: targetSymbol.Name,

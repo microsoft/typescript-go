@@ -13,11 +13,11 @@ import (
 // by that project's files.
 //
 // Scenario:
-// - Two separate projects (project-a and project-b) share a root node_modules
-// - pkg-listed is in both package.json dependencies
-// - pkg-unlisted is NOT in any package.json, but project-a imports it directly
-// - When requesting completions in project-b, pkg-unlisted should NOT appear
-//   because project-b doesn't list it and doesn't import it directly.
+//   - Two separate projects (project-a and project-b) share a root node_modules
+//   - pkg-listed is in both package.json dependencies
+//   - pkg-unlisted is NOT in any package.json, but project-a imports it directly
+//   - When requesting completions in project-b, pkg-unlisted should NOT appear
+//     because project-b doesn't list it and doesn't import it directly.
 func TestAutoImportCrossProjectNodeModules(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

@@ -791,6 +791,7 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 	result := collections.NewMultiMapWithSizeHint[ModuleID, existingImport](len(v.importingFile.Imports()))
 	ch, done := v.program.GetTypeChecker(ctx)
 	defer done()
+
 	for i, moduleSpecifier := range v.importingFile.Imports() {
 		node := ast.TryGetImportFromModuleSpecifier(moduleSpecifier)
 		if node == nil {

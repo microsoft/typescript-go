@@ -105,7 +105,7 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 		return nil
 	}
 	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
-	extractor := newSymbolExtractor("", "", ch)
+	extractor := newSymbolExtractor("", "", ch, nil, nil)
 
 	var exports []*Export
 	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)

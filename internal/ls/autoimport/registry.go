@@ -23,6 +23,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -579,15 +580,19 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	var tasks []*task
 	var wg sync.WaitGroup
 
-	// Compute resolved package names for all projects upfront.
-	// These are needed to compute node_modules dependencies so packages that are
+	// Compute resolved package names and project reference output mappings for all projects upfront.
+	// Resolved package names are needed to compute node_modules dependencies so packages that are
 	// directly imported by programs are included even if not listed in package.json.
+	// Project reference output mappings are needed to redirect extraction from output .d.ts files
+	// to source files for packages that are project references.
 	// We need all projects because a node_modules directory can be used by multiple projects.
 	allResolvedPackageNames := make(map[tspath.Path]*collections.Set[string])
+	projectReferenceOutputs := make(map[tspath.Path]string)
 	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
 		program := b.host.GetProgramForProject(entry.Key())
 		if program != nil {
 			allResolvedPackageNames[entry.Key()] = getResolvedPackageNames(ctx, program)
+			addProjectReferenceOutputMappings(program, projectReferenceOutputs)
 		}
 		return true
 	})
@@ -600,7 +605,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				task := &task{entry: nodeModulesBucket, dependencyNames: dependencies}
 				tasks = append(tasks, task)
 				wg.Go(func() {
-					result, err := b.buildNodeModulesBucket(ctx, dependencies, dirName, dirPath, logger.Fork("Building node_modules bucket "+dirName))
+					result, err := b.buildNodeModulesBucket(ctx, dependencies, dirName, dirPath, projectReferenceOutputs, logger.Fork("Building node_modules bucket "+dirName))
 					task.result = result
 					task.err = err
 				})
@@ -684,7 +689,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			ch, _ := checker.NewChecker(aliasResolver)
 			t.result.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
-				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, ch)
+				extractor := b.newExportExtractor(t.entry.Key(), source.packageName, ch, b.host.FS().Realpath)
 				fileExports := extractor.extractFromFile(sourceFile)
 				t.result.bucket.Paths.Add(path)
 				for _, exp := range fileExports {
@@ -722,6 +727,55 @@ func isIgnoredFile(program *compiler.Program, file *ast.SourceFile) bool {
 	return program.IsSourceFileDefaultLibrary(file.Path()) || program.IsGlobalTypingsFile(file.FileName())
 }
 
+// hasSymlinkToNodeModules checks if a file's realpath has a symlink that points
+// to a node_modules directory. This is used to skip files in the project bucket
+// that would be duplicated by the node_modules bucket via their symlink.
+func hasSymlinkToNodeModules(filePath tspath.Path, symlinkCache *symlinks.KnownSymlinks) bool {
+	if symlinkCache == nil {
+		return false
+	}
+
+	// First check if the file itself has a symlink to node_modules
+	if filesByRealpath := symlinkCache.FilesByRealpath(); filesByRealpath != nil {
+		if symlinkPaths, ok := filesByRealpath.Load(filePath); ok {
+			found := false
+			symlinkPaths.Range(func(symlinkPath string) bool {
+				if strings.Contains(symlinkPath, "/node_modules/") {
+					found = true
+					return false // stop ranging
+				}
+				return true
+			})
+			if found {
+				return true
+			}
+		}
+	}
+
+	// Fall back to checking ancestor directories
+	directoriesByRealpath := symlinkCache.DirectoriesByRealpath()
+	if directoriesByRealpath == nil {
+		return false
+	}
+	found := false
+	tspath.ForEachAncestorDirectoryPath(filePath, func(dirPath tspath.Path) (any, bool) {
+		symlinkPaths, ok := directoriesByRealpath.Load(dirPath.EnsureTrailingDirectorySeparator())
+		if !ok {
+			return nil, false
+		}
+		// Check if any of the symlinks point to a node_modules directory
+		symlinkPaths.Range(func(symlinkPath string) bool {
+			if strings.Contains(symlinkPath, "/node_modules/") {
+				found = true
+				return false // stop ranging
+			}
+			return true
+		})
+		return nil, found // stop if we found a match
+	})
+	return found
+}
+
 type failedAmbientModuleLookupSource struct {
 	mu          sync.Mutex
 	fileName    string
@@ -751,6 +805,7 @@ func (b *registryBuilder) buildProjectBucket(
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
 	result := &bucketBuildResult{bucket: &RegistryBucket{}}
 	program := b.host.GetProgramForProject(projectPath)
+	symlinkCache := program.GetSymlinkCache()
 	getChecker, closePool, checkerCount := createCheckerPool(program)
 	defer closePool()
 	exports := make(map[tspath.Path][]*Export)
@@ -774,11 +829,16 @@ outer:
 		if strings.Contains(file.FileName(), "/node_modules/") {
 			continue
 		}
+		// Skip files that are realpaths of symlinks in node_modules.
+		// These files will be indexed via their symlinked path in node_modules buckets.
+		if hasSymlinkToNodeModules(file.Path(), symlinkCache) {
+			continue
+		}
 		wg.Go(func() {
 			if ctx.Err() == nil {
 				checker, done := getChecker()
 				defer done()
-				extractor := b.newExportExtractor("", "", checker)
+				extractor := b.newExportExtractor("", "", checker, nil)
 				fileExports := extractor.extractFromFile(file)
 				mu.Lock()
 				exports[file.Path()] = fileExports
@@ -851,6 +911,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	dependencies *collections.Set[string],
 	dirName string,
 	dirPath tspath.Path,
+	projectReferenceOutputs map[tspath.Path]string,
 	logger *logging.LogTree,
 ) (*bucketBuildResult, error) {
 	if ctx.Err() != nil {
@@ -878,12 +939,34 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	var possibleFailedAmbientModuleLookupTargets collections.SyncSet[string]
 	var possibleFailedAmbientModuleLookupSources collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 
-	createAliasResolver := func(packageName string, entrypoints []*module.ResolvedEntrypoint) *aliasResolver {
+	createAliasResolver := func(packageName string, entrypoints []*module.ResolvedEntrypoint, toRealpath, toSymlink func(string) string) *aliasResolver {
+		seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(entrypoints))
 		rootFiles := make([]*ast.SourceFile, len(entrypoints))
 		var wg sync.WaitGroup
 		for i, entrypoint := range entrypoints {
+			fileName := entrypoint.ResolvedFileName
+
+			// Compute realpath for deduplication and project reference output lookup.
+			// We always use realpath for deduplication to avoid getting the same file twice
+			// (e.g., once via symlink path and once via realpath from project reference redirect).
+			realpathFileName := toRealpath(fileName)
+			realpathPath := b.base.toPath(realpathFileName)
+
+			// Check if this is a project reference output file that should be redirected to source.
+			if inputFileName, ok := projectReferenceOutputs[realpathPath]; ok {
+				// inputFileName is a realpath to the source file.
+				// Transform back to symlink path so rootFiles uses consistent symlink paths.
+				fileName = toSymlink(inputFileName)
+				// Update realpathPath to deduplicate on the input file's realpath
+				realpathPath = b.base.toPath(inputFileName)
+			}
+
+			// Use realpath for deduplication
+			if !seenFiles.AddIfAbsent(realpathPath) {
+				continue
+			}
 			wg.Go(func() {
-				file := b.host.GetSourceFile(entrypoint.ResolvedFileName, b.base.toPath(entrypoint.ResolvedFileName))
+				file := b.host.GetSourceFile(fileName, b.base.toPath(fileName))
 				binder.BindSourceFile(file)
 				rootFiles[i] = file
 			})
@@ -900,6 +983,31 @@ func (b *registryBuilder) buildNodeModulesBucket(
 				fileName: source.FileName(),
 			})
 		})
+	}
+
+	// getPackageRealpathFuncs returns functions to transform between symlink and realpath for files within a package.
+	// It calls FS.Realpath once per package directory and uses string replacement for files,
+	// avoiding expensive realpath syscalls for each file.
+	getPackageRealpathFuncs := func(packageDir string) (toRealpath, toSymlink func(string) string) {
+		realPackageDir := b.host.FS().Realpath(packageDir)
+		if realPackageDir == packageDir {
+			// Not a symlink, both directions are identity
+			return core.Identity, core.Identity
+		}
+		// Package is symlinked; derive paths by replacing the prefix
+		toRealpath = func(fileName string) string {
+			if after, ok := strings.CutPrefix(fileName, packageDir); ok {
+				return realPackageDir + after
+			}
+			return fileName
+		}
+		toSymlink = func(fileName string) string {
+			if after, ok := strings.CutPrefix(fileName, realPackageDir); ok {
+				return packageDir + after
+			}
+			return fileName
+		}
+		return toRealpath, toSymlink
 	}
 
 	indexStart := time.Now()
@@ -940,15 +1048,12 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			entrypoints = append(entrypoints, packageEntrypoints)
 			entrypointsMu.Unlock()
 
-			aliasResolver := createAliasResolver(packageName, packageEntrypoints.Entrypoints)
+			// Compute realpath functions once per package to avoid per-file syscalls
+			toRealpath, toSymlink := getPackageRealpathFuncs(packageJson.PackageDirectory)
+			aliasResolver := createAliasResolver(packageName, packageEntrypoints.Entrypoints, toRealpath, toSymlink)
 			checker, _ := checker.NewChecker(aliasResolver)
-			extractor := b.newExportExtractor(dirPath, packageName, checker)
-			seenFiles := collections.NewSetWithSizeHint[tspath.Path](len(packageEntrypoints.Entrypoints))
+			extractor := b.newExportExtractor(dirPath, packageName, checker, toRealpath)
 			for _, entrypoint := range aliasResolver.rootFiles {
-				if !seenFiles.AddIfAbsent(entrypoint.Path()) {
-					continue
-				}
-
 				if ctx.Err() != nil {
 					return
 				}
