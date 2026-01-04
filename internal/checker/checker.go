@@ -614,7 +614,6 @@ type Checker struct {
 	reverseMappedCache                          map[ReverseMappedTypeKey]*Type
 	reverseHomomorphicMappedCache               map[ReverseMappedTypeKey]*Type
 	iterationTypesCache                         map[IterationTypesKey]IterationTypes
-	contextualTypeStack                         map[*ast.Node]bool
 	markerTypes                                 collections.Set[*Type]
 	undefinedSymbol                             *ast.Symbol
 	argumentsSymbol                             *ast.Symbol
@@ -916,7 +915,6 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.iterationTypesCache = make(map[IterationTypesKey]IterationTypes)
-	c.contextualTypeStack = make(map[*ast.Node]bool)
 	c.undefinedSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
 	c.requireSymbol = c.newSymbol(ast.SymbolFlagsProperty, "require")
@@ -7248,22 +7246,6 @@ func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts
 }
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
-	if contextualType.flags&TypeFlagsQuantified == 0 {
-		return c.checkExpressionWithContextualTypeWorker(node, contextualType, inferenceContext, checkMode)
-	}
-	t0 := c.checkExpressionWithContextualTypeWorker(node, contextualType.AsQuantifiedType().baseType, nil, checkMode|CheckModeSkipContextSensitive|CheckModeSkipGenericFunctions)
-	ctx := c.newInferenceContext(
-		core.Map(contextualType.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() }),
-		nil,
-		InferenceFlagsNone,
-		nil,
-	)
-	c.inferTypes(ctx.inferences, t0, contextualType.AsQuantifiedType().baseType, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
-	newContextualType := c.instantiateType(contextualType.AsQuantifiedType().baseType, ctx.mapper)
-	return c.checkExpressionWithContextualTypeWorker(node, newContextualType, inferenceContext, checkMode)
-}
-
-func (c *Checker) checkExpressionWithContextualTypeWorker(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
 	contextNode := c.getContextNode(node)
 	c.pushContextualType(contextNode, contextualType, false /*isCache*/)
 	c.pushInferenceContext(contextNode, inferenceContext)
@@ -7340,30 +7322,8 @@ func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
-	var t *Type
-	var contextualType *Type
-	if !c.contextualTypeStack[node] {
-		// quickfix to avoid recursion TODO: come up with something better
-		c.contextualTypeStack[node] = true
-		contextualType = c.getContextualType(node, ContextFlagsNone)
-		delete(c.contextualTypeStack, node)
-	}
-	isAlreadyContextuallyChecking := core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
-	if contextualType != nil && contextualType.flags&TypeFlagsQuantified != 0 && !isAlreadyContextuallyChecking {
-		t0 := c.checkExpressionWithContextualType(node, contextualType.AsQuantifiedType().baseType, nil, checkMode|CheckModeSkipContextSensitive|CheckModeSkipGenericFunctions)
-		ctx := c.newInferenceContext(
-			core.Map(contextualType.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() }),
-			nil,
-			InferenceFlagsNone,
-			nil,
-		)
-		c.inferTypes(ctx.inferences, t0, contextualType.AsQuantifiedType().baseType, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
-		newContextualType := c.instantiateType(contextualType.AsQuantifiedType().baseType, ctx.mapper)
-		t = c.checkExpressionWithContextualType(node, newContextualType, nil, checkMode)
-	} else {
-		uninstantiatedType := c.checkExpressionWorker(node, checkMode)
-		t = c.instantiateTypeWithSingleGenericCallSignature(node, uninstantiatedType, checkMode)
-	}
+	uninstantiatedType := c.checkExpressionWorker(node, checkMode)
+	t := c.instantiateTypeWithSingleGenericCallSignature(node, uninstantiatedType, checkMode)
 	if isConstEnumObjectType(t) {
 		c.checkConstEnumAccess(node, t)
 	}
@@ -12780,6 +12740,31 @@ func (c *Checker) checkReferenceExpression(expr *ast.Node, invalidReferenceMessa
 }
 
 func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type {
+	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
+	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
+		return c.checkObjectLiteralWorker(node, checkMode)
+	}
+	baseType := contextualType.AsQuantifiedType().baseType
+	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
+
+	// context sensitive
+	inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode)
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
+
+	// normal
+	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal)
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
+
+	// final
+	t = c.checkExpressionWithContextualType(node, c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments)), nil, CheckModeNormal)
+	return t
+}
+
+func (c *Checker) checkObjectLiteralWorker(node *ast.Node, checkMode CheckMode) *Type {
 	inDestructuringPattern := ast.IsAssignmentTarget(node)
 	// Grammar checking
 	c.checkGrammarObjectLiteralExpression(node.AsObjectLiteralExpression(), inDestructuringPattern)
@@ -29752,6 +29737,9 @@ func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags C
 	instantiatedType := c.instantiateContextualType(contextualType, node, contextFlags)
 	if instantiatedType != nil && !(contextFlags&ContextFlagsNoConstraints != 0 && instantiatedType.flags&TypeFlagsTypeVariable != 0) {
 		apparentType := c.mapTypeEx(instantiatedType, func(t *Type) *Type {
+			if t.flags&TypeFlagsQuantified != 0 {
+				return t
+			}
 			if t.objectFlags&ObjectFlagsMapped != 0 {
 				return t
 			}
