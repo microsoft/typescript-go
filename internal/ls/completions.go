@@ -5853,7 +5853,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		// Collect constant values in existing clauses.
 		tracker := newCaseClauseTracker(c, clauses)
 		target := options.GetEmitScriptTarget()
-		quotePreference := getQuotePreference(file, l.UserPreferences())
+		quotePreference := lsutil.GetQuotePreference(file, l.UserPreferences())
 		// !!! importAdder
 		var elements []*ast.Expression
 		factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
@@ -5904,7 +5904,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 					elements = append(elements, number)
 				case string:
 					literal := factory.NewStringLiteral(v)
-					literal.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+					literal.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
 					elements = append(elements, literal)
 				}
 			}
@@ -5945,7 +5945,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 func typeNodeToExpression(
 	typeNode *ast.TypeNode,
 	target core.ScriptTarget,
-	quotePreference quotePreference,
+	quotePreference lsutil.QuotePreference,
 	factory *ast.NodeFactory,
 ) *ast.Expression {
 	switch typeNode.Kind {
@@ -5974,7 +5974,7 @@ func typeNodeToExpression(
 		switch literal.Kind {
 		case ast.KindStringLiteral:
 			expr := factory.NewStringLiteral(literal.Text())
-			expr.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == quotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+			expr.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
 			return expr
 		case ast.KindNumericLiteral:
 			expr := factory.NewNumericLiteral(literal.Text())
@@ -6010,7 +6010,7 @@ func typeNodeToExpression(
 func entityNameToExpression(
 	entityName *ast.EntityName,
 	target core.ScriptTarget,
-	quotePreference quotePreference,
+	quotePreference lsutil.QuotePreference,
 	factory *ast.NodeFactory,
 ) *ast.Expression {
 	if ast.IsIdentifier(entityName) {
