@@ -84,7 +84,10 @@ func (b BucketState) DirtyPackages() *collections.Set[string] {
 }
 
 func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences *lsutil.UserPreferences) bool {
-	return b.newProgramStructure > 0 || b.hasDirtyFileBesides(file) || !core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns)
+	return b.newProgramStructure > 0 ||
+		b.hasDirtyFileBesides(file) ||
+		!core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns) ||
+		b.dirtyPackages.Len() > 0
 }
 
 func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
