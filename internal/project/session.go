@@ -840,6 +840,9 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 			s.logger.Log("\tnode_modules buckets:")
 			for _, bucket := range autoImportStats.NodeModulesBuckets {
 				s.logger.Logf("\t\t%s%s:", bucket.Path, core.IfElse(bucket.State.Dirty(), " (dirty)", ""))
+				for packageName := range bucket.State.DirtyPackages().Keys() {
+					s.logger.Logf("\t\t\tNeeds granular update: %s", packageName)
+				}
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
 			}

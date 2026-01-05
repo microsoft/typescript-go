@@ -7,11 +7,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/autoimporttestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -363,6 +365,137 @@ export const bar = 2;`,
 		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
 		assert.Assert(t, nodeModulesBucket.DependencyNames.Has("pkg-listed"), "pkg-listed should be in dependencies")
 		assert.Assert(t, nodeModulesBucket.DependencyNames.Has("pkg-unlisted"), "pkg-unlisted should be in dependencies because project-a imports it")
+	})
+
+	t.Run("symlinked monorepo invalidates on source file change", func(t *testing.T) {
+		// This test verifies that when a source file in a symlinked project reference
+		// is modified, the node_modules bucket is properly invalidated.
+		//
+		// Scenario:
+		// 1. project-a imports from project-b (symlinked into node_modules)
+		// 2. project-b has projectBFunction export
+		// 3. Open project-b's source file and delete the export
+		// 4. Verify the node_modules bucket is invalidated and rebuilt
+		//
+		// We also include a regular (non-symlinked) package "other-pkg" to observe
+		// whether a change to project-b triggers a full rebuild of the entire bucket
+		// or a more granular update.
+		t.Parallel()
+		monorepoRoot := "/home/src/symlinked-monorepo-invalidation"
+		projectADir := tspath.CombinePaths(monorepoRoot, "packages", "project-a")
+		projectBDir := tspath.CombinePaths(monorepoRoot, "packages", "project-b")
+		projectAIndex := tspath.CombinePaths(projectADir, "src", "index.ts")
+		projectBSrcIndex := tspath.CombinePaths(projectBDir, "src", "index.ts")
+		projectBDistIndex := tspath.CombinePaths(projectBDir, "dist", "index.d.ts")
+		otherPkgDir := tspath.CombinePaths(projectADir, "node_modules", "other-pkg")
+
+		files := map[string]any{
+			// project-b: the library package
+			tspath.CombinePaths(projectBDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"composite": true,
+					"outDir": "./dist",
+					"rootDir": "./src",
+					"declaration": true,
+					"module": "esnext",
+					"strict": true
+				},
+				"include": ["src"]
+			}`,
+			tspath.CombinePaths(projectBDir, "package.json"): `{
+				"name": "project-b",
+				"version": "1.0.0",
+				"main": "dist/index.js",
+				"types": "dist/index.d.ts"
+			}`,
+			projectBSrcIndex: `export function projectBFunction(): string { return "hello"; }
+export const projectBValue: number = 42;`,
+			projectBDistIndex: `export declare function projectBFunction(): string;
+export declare const projectBValue: number;`,
+			// other-pkg: a regular (non-symlinked) package
+			tspath.CombinePaths(otherPkgDir, "package.json"): `{
+				"name": "other-pkg",
+				"version": "1.0.0",
+				"main": "index.js",
+				"types": "index.d.ts"
+			}`,
+			tspath.CombinePaths(otherPkgDir, "index.d.ts"): `export declare function otherFunction(): void;
+export declare const otherValue: string;`,
+			// project-a: the consumer package
+			tspath.CombinePaths(projectADir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true,
+					"outDir": "./dist",
+					"rootDir": "./src"
+				},
+				"include": ["src"],
+				"references": [{ "path": "../project-b" }]
+			}`,
+			tspath.CombinePaths(projectADir, "package.json"): `{
+				"name": "project-a",
+				"dependencies": { "project-b": "*", "other-pkg": "*" }
+			}`,
+			projectAIndex: `console.log("hello");
+`,
+			// Symlink: project-b is accessible via node_modules
+			tspath.CombinePaths(projectADir, "node_modules", "project-b"): vfstest.Symlink(projectBDir),
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+
+		// Open project-a's index file and get initial auto-imports
+		projectAURI := lsconv.FileNameToDocumentURI(projectAIndex)
+		projectAContent := files[projectAIndex].(string)
+		session.DidOpenFile(ctx, projectAURI, 1, projectAContent, lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageServiceWithAutoImports(ctx, projectAURI)
+		assert.NilError(t, err)
+
+		// Verify initial state: bucket is clean with files
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		initialFileCount := nodeModulesBucket.FileCount
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean initially")
+		assert.Assert(t, initialFileCount > 0, "bucket should have files initially")
+
+		// Open project-b's source file
+		projectBURI := lsconv.FileNameToDocumentURI(projectBSrcIndex)
+		projectBContent := files[projectBSrcIndex].(string)
+		session.DidOpenFile(ctx, projectBURI, 1, projectBContent, lsproto.LanguageKindTypeScript)
+
+		// Modify the file (delete one export)
+		newProjectBContent := `export const projectBValue: number = 42;`
+		session.DidChangeFile(ctx, projectBURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: newProjectBContent}},
+		})
+
+		// Check that the node_modules bucket is now dirty
+		_, err = session.GetLanguageService(ctx, projectAURI)
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), true, "bucket should be dirty after source file change")
+
+		// Verify that only project-b is marked for update, not other-pkg.
+		// This tests that we correctly track which packages need granular updates.
+		dirtyPackages := nodeModulesBucket.State.DirtyPackages()
+		assert.Assert(t, dirtyPackages != nil, "dirty packages should be tracked")
+		assert.Assert(t, dirtyPackages.Has("project-b"), "project-b should be in dirty packages")
+		assert.Assert(t, !dirtyPackages.Has("other-pkg"), "other-pkg should NOT be in dirty packages")
+		assert.Equal(t, dirtyPackages.Len(), 1, "only one package should be dirty")
+
+		// Rebuild by requesting auto-imports again.
+		// NOTE: Currently the entire bucket is rebuilt, not just the dirty packages.
+		// The dirtyPackages tracking is in place for future granular update implementation.
+		_, err = session.GetLanguageServiceWithAutoImports(ctx, projectAURI)
+		assert.NilError(t, err)
+
+		// Verify bucket is clean again after rebuild
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean after rebuild")
 	})
 }
 

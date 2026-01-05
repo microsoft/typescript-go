@@ -119,7 +119,7 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 		}
 	}
 
-	var excludePackages *collections.Set[string]
+	excludePackages := &collections.Set[string]{}
 	tspath.ForEachAncestorDirectoryPath(v.importingFile.Path().GetDirectoryPath(), func(dirPath tspath.Path) (result any, stop bool) {
 		if nodeModulesBucket, ok := v.registry.nodeModules[dirPath]; ok {
 			exports := search(nodeModulesBucket)
@@ -138,7 +138,9 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 			}
 
 			// As we go up the directory tree, exclude packages found in lower node_modules
-			excludePackages = excludePackages.UnionedWith(nodeModulesBucket.PackageNames)
+			for pkgName := range nodeModulesBucket.PackageFiles {
+				excludePackages.Add(pkgName)
+			}
 		}
 		return nil, false
 	})

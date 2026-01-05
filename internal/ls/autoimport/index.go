@@ -147,3 +147,40 @@ func (idx *Index[T]) insertAsWords(value T) {
 		}
 	}
 }
+
+// Clone creates a new Index containing only entries for which filter returns true.
+func (idx *Index[T]) Clone(filter func(T) bool) *Index[T] {
+	if idx == nil {
+		return nil
+	}
+
+	newIdx := &Index[T]{
+		entries: make([]T, 0, len(idx.entries)),
+		index:   make(map[rune][]int, len(idx.index)),
+	}
+
+	// Build mapping from old index to new index for filtered entries
+	oldToNew := make(map[int]int, len(idx.entries))
+	for oldIndex, entry := range idx.entries {
+		if filter(entry) {
+			newIndex := len(newIdx.entries)
+			newIdx.entries = append(newIdx.entries, entry)
+			oldToNew[oldIndex] = newIndex
+		}
+	}
+
+	// Rebuild the index with remapped indices
+	for r, oldIndices := range idx.index {
+		newIndices := make([]int, 0, len(oldIndices))
+		for _, oldIndex := range oldIndices {
+			if newIndex, ok := oldToNew[oldIndex]; ok {
+				newIndices = append(newIndices, newIndex)
+			}
+		}
+		if len(newIndices) > 0 {
+			newIdx.index[r] = newIndices
+		}
+	}
+
+	return newIdx
+}

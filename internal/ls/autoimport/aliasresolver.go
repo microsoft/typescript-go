@@ -13,18 +13,26 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+type pathAndFileName struct {
+	path     tspath.Path
+	fileName string
+}
+
 type aliasResolver struct {
 	toPath         func(fileName string) tspath.Path
 	host           RegistryCloneHost
 	moduleResolver *module.Resolver
 
-	rootFiles                   []*ast.SourceFile
+	rootFiles []*ast.SourceFile
+	// symlinks maps from realpath to symlinked path and file name
+	symlinks                    map[tspath.Path]pathAndFileName
 	onFailedAmbientModuleLookup func(source ast.HasFileName, moduleName string)
 	resolvedModules             collections.SyncMap[tspath.Path, *collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]]
 }
 
 func newAliasResolver(
 	rootFiles []*ast.SourceFile,
+	symlinks map[tspath.Path]pathAndFileName,
 	host RegistryCloneHost,
 	moduleResolver *module.Resolver,
 	toPath func(fileName string) tspath.Path,

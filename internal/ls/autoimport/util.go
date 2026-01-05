@@ -3,6 +3,7 @@ package autoimport
 import (
 	"context"
 	"runtime"
+	"strings"
 	"sync/atomic"
 	"unicode"
 	"unicode/utf8"
@@ -203,4 +204,29 @@ func addPackageJsonDependencies(contents *packagejson.PackageJson, deps *collect
 		}
 		return true
 	})
+}
+
+// getPackageRealpathFuncs returns functions to transform between symlink and realpath for files within a package.
+// It calls FS.Realpath once per package directory and uses string replacement for files,
+// avoiding expensive realpath syscalls for each file.
+func getPackageRealpathFuncs(fs vfs.FS, packageDir string) (toRealpath, toSymlink func(string) string) {
+	realPackageDir := fs.Realpath(packageDir)
+	if realPackageDir == packageDir {
+		// Not a symlink, both directions are identity
+		return core.Identity, core.Identity
+	}
+	// Package is symlinked; derive paths by replacing the prefix
+	toRealpath = func(fileName string) string {
+		if after, ok := strings.CutPrefix(fileName, packageDir); ok {
+			return realPackageDir + after
+		}
+		return fileName
+	}
+	toSymlink = func(fileName string) string {
+		if after, ok := strings.CutPrefix(fileName, realPackageDir); ok {
+			return packageDir + after
+		}
+		return fileName
+	}
+	return toRealpath, toSymlink
 }

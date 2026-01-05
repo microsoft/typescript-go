@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 // FileHandle represents a file created for an autoimport lifecycle test.
@@ -160,6 +161,7 @@ type MonorepoSetupConfig struct {
 	MonorepoPackageTemplate
 	Packages   []MonorepoPackageConfig
 	ExtraFiles []TextFileSpec
+	Symlinks   []SymlinkSpec
 }
 
 type MonorepoPackageConfig struct {
@@ -171,6 +173,12 @@ type MonorepoPackageConfig struct {
 type TextFileSpec struct {
 	Path    string
 	Content string
+}
+
+// SymlinkSpec describes a symlink to create in the fixture.
+type SymlinkSpec struct {
+	Link   string // The symlink path
+	Target string // The target path the symlink points to
 }
 
 // SetupMonorepoLifecycleSession builds a monorepo workspace with root-level node_modules
@@ -241,6 +249,11 @@ func SetupMonorepoLifecycleSession(t *testing.T, config MonorepoSetupConfig) *Mo
 	for _, extra := range config.ExtraFiles {
 		builder.AddTextFile(extra.Path, extra.Content)
 		extraHandles = append(extraHandles, FileHandle{fileName: normalizeAbsolutePath(extra.Path), content: extra.Content})
+	}
+
+	// Add symlinks
+	for _, symlink := range config.Symlinks {
+		builder.AddSymlink(symlink.Link, symlink.Target)
 	}
 
 	// Build project handles after all packages are created
@@ -378,6 +391,13 @@ func (b *fileMapBuilder) Files() map[string]any {
 func (b *fileMapBuilder) AddTextFile(path string, contents string) {
 	b.ensureFiles()
 	b.files[normalizeAbsolutePath(path)] = contents
+}
+
+// AddSymlink creates a symlink from linkPath to targetPath.
+// The targetPath should be an absolute path.
+func (b *fileMapBuilder) AddSymlink(linkPath string, targetPath string) {
+	b.ensureFiles()
+	b.files[normalizeAbsolutePath(linkPath)] = vfstest.Symlink(normalizeAbsolutePath(targetPath))
 }
 
 func (b *fileMapBuilder) AddNodeModulesPackages(nodeModulesDir string, count int) []NodeModulesPackageHandle {
