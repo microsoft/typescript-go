@@ -7246,6 +7246,9 @@ func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts
 }
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
+	if contextualType.flags&TypeFlagsQuantified != 0 {
+		return c.checkExpressionExWithContextualType(node, checkMode, contextualType)
+	}
 	contextNode := c.getContextNode(node)
 	c.pushContextualType(contextNode, contextualType, false /*isCache*/)
 	c.pushInferenceContext(contextNode, inferenceContext)
@@ -7319,6 +7322,46 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
+	return c.checkExpressionExWithContextualType(node, checkMode, nil)
+}
+
+func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode CheckMode, contextualType *Type) *Type {
+	if node.Kind == ast.KindIdentifier { // to avoid recursion in some jsx test cases TODO: come up with a better fix
+		return c.checkExpressionExWorker(node, checkMode)
+	}
+	if contextualType == nil {
+		contextualType = c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	}
+	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
+	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
+		return c.checkExpressionExWorker(node, checkMode)
+	}
+	baseType := contextualType.AsQuantifiedType().baseType
+	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
+
+	// context sensitive
+	// TODO: this is not needed if the node is not context sensitive
+	inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode|CheckModeSkipContextSensitive)
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
+
+	// normal
+	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal)
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
+
+	// final
+	baseTypeInferred := c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
+	t = c.checkExpressionWithContextualType(node, baseTypeInferred, nil, CheckModeNormal)
+
+	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseTypeInferred, c.assignableRelation, node, node, nil, nil) {
+		return c.errorType // to avoid showing errors in parent TODO: maybe there is a better way to do this
+	}
+	return t
+}
+
+func (c *Checker) checkExpressionExWorker(node *ast.Node, checkMode CheckMode) *Type {
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -12740,31 +12783,6 @@ func (c *Checker) checkReferenceExpression(expr *ast.Node, invalidReferenceMessa
 }
 
 func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type {
-	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
-	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
-	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
-		return c.checkObjectLiteralWorker(node, checkMode)
-	}
-	baseType := contextualType.AsQuantifiedType().baseType
-	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
-
-	// context sensitive
-	inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
-	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode)
-	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
-	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
-
-	// normal
-	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal)
-	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
-	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
-
-	// final
-	t = c.checkExpressionWithContextualType(node, c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments)), nil, CheckModeNormal)
-	return t
-}
-
-func (c *Checker) checkObjectLiteralWorker(node *ast.Node, checkMode CheckMode) *Type {
 	inDestructuringPattern := ast.IsAssignmentTarget(node)
 	// Grammar checking
 	c.checkGrammarObjectLiteralExpression(node.AsObjectLiteralExpression(), inDestructuringPattern)

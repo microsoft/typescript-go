@@ -14,7 +14,7 @@ declare const f: (t: <T extends object> Input<T>) => void
 f({
 >f({  values: ["a", "b", "c"],  identifier: v => v}) : void
 >f : (t: <T extends object> Input<T>) => void
->{  values: ["a", "b", "c"],  identifier: v => v} : { values: string[]; identifier: (v: object) => object; }
+>{  values: ["a", "b", "c"],  identifier: v => v} : any
 
   values: ["a", "b", "c"],
 >values : string[]

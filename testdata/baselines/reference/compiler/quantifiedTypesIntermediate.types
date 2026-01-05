@@ -44,9 +44,9 @@ f([
 f([
 >f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }]) : void
 >f : (t: (<T> Input<T>)[]) => void
->[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : { values: { key: string; }[]; identifier: (v: { key: string; }) => number; }[]
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : any[]
   {
->{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => number; }
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : any
 
     values: [{ key: "a" }, { key: "b" }, { key: "c" }],
 >values : { key: string; }[]
@@ -77,7 +77,7 @@ f([
 f([
 >f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }]) : void
 >f : (t: (<T> Input<T>)[]) => void
->[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : ({ values: { key: string; }[]; identifier: (v: { key: string; }) => string; } | { values: { key: string; }[]; identifier: (v: { key: string; }) => number; })[]
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : any[]
   {
 >{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }
 
@@ -104,7 +104,7 @@ f([
 
   },
   {
->{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => number; }
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : any
 
     values: [{ key: "a" }, { key: "b" }, { key: "c" }],
 >values : { key: string; }[]

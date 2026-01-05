@@ -18,7 +18,7 @@ interface Layer {
 
 let layers: NormalizedRecord<Layer> = {
 >layers : <Id extends string> { [K in Id]: Omit<Layer, "id"> & { id: K; }; }
->{  a: {    id: "a",    color: "green"  },  b: {    id: "a", // should have been "b"    color: "blue"  }} : { a: { id: "a"; color: string; }; b: { id: "a"; color: string; }; }
+>{  a: {    id: "a",    color: "green"  },  b: {    id: "a", // should have been "b"    color: "blue"  }} : any
 
   a: {
 >a : { id: string; color: string; }

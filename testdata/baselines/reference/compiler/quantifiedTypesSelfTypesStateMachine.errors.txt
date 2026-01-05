@@ -1,6 +1,4 @@
-quantifiedTypesSelfTypesStateMachine.ts(22,5): error TS2322: Type '{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }' is not assignable to type 'ParseStateMachine<{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }>'.
-  The types of 'green.TICK' are incompatible between these types.
-    Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
+quantifiedTypesSelfTypesStateMachine.ts(35,5): error TS2820: Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
 
 
 ==== quantifiedTypesSelfTypesStateMachine.ts (1 errors) ====
@@ -26,10 +24,6 @@ quantifiedTypesSelfTypesStateMachine.ts(22,5): error TS2322: Type '{ off: { ON: 
     }
     
     let trafficLightsInvalid: StateMachine = {
-        ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type '{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }' is not assignable to type 'ParseStateMachine<{ off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }>'.
-!!! error TS2322:   The types of 'green.TICK' are incompatible between these types.
-!!! error TS2322:     Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
       off: {
         ON: "red"
       },
@@ -43,6 +37,9 @@ quantifiedTypesSelfTypesStateMachine.ts(22,5): error TS2322: Type '{ off: { ON: 
       },
       green: {
         TICK: "reddd",
+        ~~~~
+!!! error TS2820: Type '"reddd"' is not assignable to type '"green" | "off" | "red" | "yellow"'. Did you mean '"red"'?
+!!! related TS6500 quantifiedTypesSelfTypesStateMachine.ts:35:5: The expected type comes from property 'TICK' which is declared here on type '{ TICK: "green" | "off" | "red" | "yellow"; OFF: "green" | "off" | "red" | "yellow"; }'
         OFF: "off"
       }
     }

@@ -47,7 +47,7 @@ f2({
 f2({
 >f2({  values: [{ key: "a" }, { key: "b" }, { key: 0 }],  identifier: v => v.key}) : void
 >f2 : (t: <T> { values: T[]; identifier: (value: T) => string; }) => void
->{  values: [{ key: "a" }, { key: "b" }, { key: 0 }],  identifier: v => v.key} : { values: ({ key: string; } | { key: number; })[]; identifier: (v: { key: string; } | { key: number; }) => string | number; }
+>{  values: [{ key: "a" }, { key: "b" }, { key: 0 }],  identifier: v => v.key} : any
 
   values: [{ key: "a" }, { key: "b" }, { key: 0 }],
 >values : ({ key: string; } | { key: number; })[]

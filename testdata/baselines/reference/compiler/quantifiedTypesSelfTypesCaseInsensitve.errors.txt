@@ -1,4 +1,4 @@
-quantifiedTypesSelfTypesCaseInsensitve.ts(16,11): error TS2345: Argument of type '"Acept"' is not assignable to parameter of type '"Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Accept>'" | "Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Set-Cookie>'"'.
+quantifiedTypesSelfTypesCaseInsensitve.ts(16,11): error TS2322: Type '"Acept"' is not assignable to type '"Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Accept>'" | "Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Set-Cookie>'"'.
 
 
 ==== quantifiedTypesSelfTypesCaseInsensitve.ts (1 errors) ====
@@ -19,4 +19,4 @@ quantifiedTypesSelfTypesCaseInsensitve.ts(16,11): error TS2345: Argument of type
     setHeader("sEt-cOoKiE", "stop writing headers like this but ok")
     setHeader("Acept", "nah this has a typo")
               ~~~~~~~
-!!! error TS2345: Argument of type '"Acept"' is not assignable to parameter of type '"Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Accept>'" | "Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Set-Cookie>'"'.
+!!! error TS2322: Type '"Acept"' is not assignable to type '"Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Accept>'" | "Error: Type 'Acept' is not assignable to type 'CaseInsensitive<Set-Cookie>'"'.

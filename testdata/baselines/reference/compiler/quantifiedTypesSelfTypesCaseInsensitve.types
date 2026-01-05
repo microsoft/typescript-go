@@ -41,6 +41,6 @@ setHeader("sEt-cOoKiE", "stop writing headers like this but ok")
 setHeader("Acept", "nah this has a typo")
 >setHeader("Acept", "nah this has a typo") : void
 >setHeader : (key: <Self> PasreCaseInsensitive<Self, "Accept" | "Set-Cookie">, value: string) => void
->"Acept" : "Acept"
+>"Acept" : any
 >"nah this has a typo" : "nah this has a typo"
 

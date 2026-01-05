@@ -12,103 +12,103 @@ let trafficLights: StateMachine = {
 >{  off: {    ON: "red"  },  red: {    TICK: "yellow",    OFF: "off"  },  yellow: {    TICK: "green",    OFF: "off"  },  green: {    TICK: "red",    OFF: "off"  }} : { off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "red"; OFF: "off"; }; }
 
   off: {
->off : { ON: "red"; }
->{    ON: "red"  } : { ON: "red"; }
+>off : { ON: string; }
+>{    ON: "red"  } : { ON: string; }
 
     ON: "red"
->ON : "red"
+>ON : string
 >"red" : "red"
 
   },
   red: {
->red : { TICK: "yellow"; OFF: "off"; }
->{    TICK: "yellow",    OFF: "off"  } : { TICK: "yellow"; OFF: "off"; }
+>red : { TICK: string; OFF: string; }
+>{    TICK: "yellow",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "yellow",
->TICK : "yellow"
+>TICK : string
 >"yellow" : "yellow"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
 
   },
   yellow: {
->yellow : { TICK: "green"; OFF: "off"; }
->{    TICK: "green",    OFF: "off"  } : { TICK: "green"; OFF: "off"; }
+>yellow : { TICK: string; OFF: string; }
+>{    TICK: "green",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "green",
->TICK : "green"
+>TICK : string
 >"green" : "green"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
 
   },
   green: {
->green : { TICK: "red"; OFF: "off"; }
->{    TICK: "red",    OFF: "off"  } : { TICK: "red"; OFF: "off"; }
+>green : { TICK: string; OFF: string; }
+>{    TICK: "red",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "red",
->TICK : "red"
+>TICK : string
 >"red" : "red"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
   }
 }
 
 let trafficLightsInvalid: StateMachine = {
 >trafficLightsInvalid : <Self extends ParseStateMachine<Self>> Self
->{  off: {    ON: "red"  },  red: {    TICK: "yellow",    OFF: "off"  },  yellow: {    TICK: "green",    OFF: "off"  },  green: {    TICK: "reddd",    OFF: "off"  }} : { off: { ON: "red"; }; red: { TICK: "yellow"; OFF: "off"; }; yellow: { TICK: "green"; OFF: "off"; }; green: { TICK: "reddd"; OFF: "off"; }; }
+>{  off: {    ON: "red"  },  red: {    TICK: "yellow",    OFF: "off"  },  yellow: {    TICK: "green",    OFF: "off"  },  green: {    TICK: "reddd",    OFF: "off"  }} : any
 
   off: {
->off : { ON: "red"; }
->{    ON: "red"  } : { ON: "red"; }
+>off : { ON: string; }
+>{    ON: "red"  } : { ON: string; }
 
     ON: "red"
->ON : "red"
+>ON : string
 >"red" : "red"
 
   },
   red: {
->red : { TICK: "yellow"; OFF: "off"; }
->{    TICK: "yellow",    OFF: "off"  } : { TICK: "yellow"; OFF: "off"; }
+>red : { TICK: string; OFF: string; }
+>{    TICK: "yellow",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "yellow",
->TICK : "yellow"
+>TICK : string
 >"yellow" : "yellow"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
 
   },
   yellow: {
->yellow : { TICK: "green"; OFF: "off"; }
->{    TICK: "green",    OFF: "off"  } : { TICK: "green"; OFF: "off"; }
+>yellow : { TICK: string; OFF: string; }
+>{    TICK: "green",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "green",
->TICK : "green"
+>TICK : string
 >"green" : "green"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
 
   },
   green: {
->green : { TICK: "reddd"; OFF: "off"; }
->{    TICK: "reddd",    OFF: "off"  } : { TICK: "reddd"; OFF: "off"; }
+>green : { TICK: string; OFF: string; }
+>{    TICK: "reddd",    OFF: "off"  } : { TICK: string; OFF: string; }
 
     TICK: "reddd",
->TICK : "reddd"
+>TICK : string
 >"reddd" : "reddd"
 
     OFF: "off"
->OFF : "off"
+>OFF : string
 >"off" : "off"
   }
 }

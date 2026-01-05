@@ -1,22 +1,23 @@
-quantifiedTypesConstraints.ts(4,3): error TS2345: Argument of type '{ values: string[]; identifier: (v: object) => object; }' is not assignable to parameter of type 'Input<object>'.
-  Types of property 'values' are incompatible.
-    Type 'string[]' is not assignable to type 'object[]'.
-      Type 'string' is not assignable to type 'object'.
+quantifiedTypesConstraints.ts(5,12): error TS2322: Type 'string' is not assignable to type 'object'.
+quantifiedTypesConstraints.ts(5,17): error TS2322: Type 'string' is not assignable to type 'object'.
+quantifiedTypesConstraints.ts(5,22): error TS2322: Type 'string' is not assignable to type 'object'.
+quantifiedTypesConstraints.ts(6,20): error TS2322: Type 'object' is not assignable to type 'string'.
 
 
-==== quantifiedTypesConstraints.ts (1 errors) ====
+==== quantifiedTypesConstraints.ts (4 errors) ====
     type Input<T> = { values: T[], identifier: (value: T) => string }
     declare const f: (t: <T extends object> Input<T>) => void
     
     f({
-      ~
       values: ["a", "b", "c"],
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+               ~~~
+!!! error TS2322: Type 'string' is not assignable to type 'object'.
+                    ~~~
+!!! error TS2322: Type 'string' is not assignable to type 'object'.
+                         ~~~
+!!! error TS2322: Type 'string' is not assignable to type 'object'.
       identifier: v => v
-    ~~~~~~~~~~~~~~~~~~~~
+                       ~
+!!! error TS2322: Type 'object' is not assignable to type 'string'.
+!!! related TS6502 quantifiedTypesConstraints.ts:1:44: The expected type comes from the return type of this signature.
     })
-    ~
-!!! error TS2345: Argument of type '{ values: string[]; identifier: (v: object) => object; }' is not assignable to parameter of type 'Input<object>'.
-!!! error TS2345:   Types of property 'values' are incompatible.
-!!! error TS2345:     Type 'string[]' is not assignable to type 'object[]'.
-!!! error TS2345:       Type 'string' is not assignable to type 'object'.

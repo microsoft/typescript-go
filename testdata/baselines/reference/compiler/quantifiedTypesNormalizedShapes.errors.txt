@@ -1,9 +1,4 @@
-quantifiedTypesNormalizedShapes.ts(9,5): error TS2322: Type '{ a: { id: "a"; color: string; }; b: { id: "a"; color: string; }; }' is not assignable to type '{ a: Omit<Layer, "id"> & { id: "a"; }; b: Omit<Layer, "id"> & { id: "b"; }; }'.
-  Types of property 'b' are incompatible.
-    Type '{ id: "a"; color: string; }' is not assignable to type 'Omit<Layer, "id"> & { id: "b"; }'.
-      Type '{ id: "a"; color: string; }' is not assignable to type '{ id: "b"; }'.
-        Types of property 'id' are incompatible.
-          Type '"a"' is not assignable to type '"b"'.
+quantifiedTypesNormalizedShapes.ts(15,5): error TS2322: Type '"a"' is not assignable to type '"b"'.
 
 
 ==== quantifiedTypesNormalizedShapes.ts (1 errors) ====
@@ -16,19 +11,15 @@ quantifiedTypesNormalizedShapes.ts(9,5): error TS2322: Type '{ a: { id: "a"; col
     }
     
     let layers: NormalizedRecord<Layer> = {
-        ~~~~~~
-!!! error TS2322: Type '{ a: { id: "a"; color: string; }; b: { id: "a"; color: string; }; }' is not assignable to type '{ a: Omit<Layer, "id"> & { id: "a"; }; b: Omit<Layer, "id"> & { id: "b"; }; }'.
-!!! error TS2322:   Types of property 'b' are incompatible.
-!!! error TS2322:     Type '{ id: "a"; color: string; }' is not assignable to type 'Omit<Layer, "id"> & { id: "b"; }'.
-!!! error TS2322:       Type '{ id: "a"; color: string; }' is not assignable to type '{ id: "b"; }'.
-!!! error TS2322:         Types of property 'id' are incompatible.
-!!! error TS2322:           Type '"a"' is not assignable to type '"b"'.
       a: {
         id: "a",
         color: "green"
       },
       b: {
         id: "a", // should have been "b"
+        ~~
+!!! error TS2322: Type '"a"' is not assignable to type '"b"'.
+!!! related TS6500 quantifiedTypesNormalizedShapes.ts:2:54: The expected type comes from property 'id' which is declared here on type 'Omit<Layer, "id"> & { id: "b"; }'
         color: "blue"
       }
     }
