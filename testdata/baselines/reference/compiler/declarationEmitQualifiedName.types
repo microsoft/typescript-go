@@ -37,11 +37,11 @@ export const A = {
 
 === b.ts ===
 import { A } from './a.js'
->A : { readonly item: { readonly a: import("e").E.A; }; }
+>A : { readonly item: { readonly a: import("./e.js").E.A; }; }
 
 export const B = { ...A } as const
->B : { readonly item: { readonly a: import("e").E.A; }; }
->{ ...A } as const : { readonly item: { readonly a: import("e").E.A; }; }
->{ ...A } : { readonly item: { readonly a: import("e").E.A; }; }
->A : { readonly item: { readonly a: import("e").E.A; }; }
+>B : { readonly item: { readonly a: import("./e.js").E.A; }; }
+>{ ...A } as const : { readonly item: { readonly a: import("./e.js").E.A; }; }
+>{ ...A } : { readonly item: { readonly a: import("./e.js").E.A; }; }
+>A : { readonly item: { readonly a: import("./e.js").E.A; }; }
 

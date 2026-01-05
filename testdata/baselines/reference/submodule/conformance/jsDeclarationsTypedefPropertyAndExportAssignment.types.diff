@@ -11,7 +11,15 @@
  >require : any
  >'./module.js' : "./module.js"
 
-@@= skipped -30, +30 lines =@@
+@@= skipped -23, +23 lines =@@
+      * @param {TaskNode} y
+      */
+     constructor(x, y){}
+->x : import("module").TaskGroup
++>x : import("./module.js").TaskGroup
+ >y : TaskNode
+ }
+
  module.exports = MainThreadTasks;
  >module.exports = MainThreadTasks : typeof MainThreadTasks
  >module.exports : typeof MainThreadTasks
@@ -20,7 +28,7 @@
  >exports : typeof MainThreadTasks
  >MainThreadTasks : typeof MainThreadTasks
 
-@@= skipped -51, +51 lines =@@
+@@= skipped -58, +58 lines =@@
 
  /** @type {Object<string, TaskGroup>} */
  const taskNameToGroup = {};
