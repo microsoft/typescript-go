@@ -22,3 +22,17 @@ let t0 = f([
   }
 ])
 
+
+let t1 = f([
+  {
+    a: true,
+    ab: a => +a,
+    bc: b => typeof b === "number"
+  },
+  {
+    a: "hello",
+    ab: a => a + " world",
+    bc: b => +b,
+    extra: "foo" // TODO: an extra property should be allowed
+  }
+])
