@@ -102,7 +102,6 @@ export class Client {
         const config = vscode.workspace.getConfiguration("typescript.native-preview");
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
-
         const goMemLimit = config.get<string>("goMemLimit");
         const env = { ...process.env };
         if (goMemLimit) {

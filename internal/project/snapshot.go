@@ -279,6 +279,14 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
+	// Compute effective customConfigFileName from user preferences
+	customConfigFileName := ""
+	if change.newConfig != nil && change.newConfig.tsUserPreferences != nil {
+		customConfigFileName = change.newConfig.tsUserPreferences.CustomConfigFileName
+	} else if s.config.tsUserPreferences != nil {
+		customConfigFileName = s.config.tsUserPreferences.CustomConfigFileName
+	}
+
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
@@ -289,6 +297,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
+		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
 	)
