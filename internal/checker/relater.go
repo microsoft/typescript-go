@@ -172,14 +172,26 @@ func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation
 		if source.flags&TypeFlagsQuantified != 0 {
 			return source == target
 		}
-		ctx := c.newInferenceContext(
-			core.Map(target.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() }),
-			nil,
-			InferenceFlagsNone,
-			nil,
-		)
-		c.inferTypes(ctx.inferences, source, target.AsQuantifiedType().baseType, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
-		return c.isTypeRelatedTo(source, c.instantiateType(target.AsQuantifiedType().baseType, ctx.mapper), relation)
+		baseType := target.AsQuantifiedType().baseType
+		typeParameters := core.Map(target.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() })
+
+		if source.flags&TypeFlagsUnion == 0 {
+			inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			c.inferTypes(inferenceContext.inferences, source, baseType, InferencePriorityNone, false)
+			return c.isTypeRelatedTo(source, c.instantiateType(baseType, inferenceContext.mapper), relation)
+		}
+
+		for _, sourceMember := range source.AsUnionType().types {
+			inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			c.inferTypes(inferenceContext.inferences, sourceMember, baseType, InferencePriorityNone, false)
+			result := c.isTypeRelatedTo(sourceMember, c.instantiateType(baseType, inferenceContext.mapper), relation)
+			if result {
+				continue
+			}
+			return result
+		}
+
+		return true
 	}
 	if isFreshLiteralType(source) {
 		source = source.AsLiteralType().regularType
@@ -2570,14 +2582,26 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		if originalSource.flags&TypeFlagsQuantified != 0 && originalSource == originalTarget {
 			return TernaryTrue
 		}
-		ctx := r.c.newInferenceContext(
-			core.Map(originalTarget.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() }),
-			nil,
-			InferenceFlagsNone,
-			nil,
-		)
-		r.c.inferTypes(ctx.inferences, originalSource, originalTarget.AsQuantifiedType().baseType, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
-		return r.isRelatedToEx(originalSource, r.c.instantiateType(originalTarget.AsQuantifiedType().baseType, ctx.mapper), recursionFlags, reportErrors, headMessage, intersectionState)
+		baseType := originalTarget.AsQuantifiedType().baseType
+		typeParameters := core.Map(originalTarget.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() })
+
+		if originalSource.flags&TypeFlagsUnion == 0 {
+			inferenceContext := r.c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			r.c.inferTypes(inferenceContext.inferences, originalSource, baseType, InferencePriorityNone, false)
+			return r.isRelatedToEx(originalSource, r.c.instantiateType(baseType, inferenceContext.mapper), recursionFlags, reportErrors, headMessage, intersectionState)
+		}
+
+		for _, originalSourceMember := range originalSource.AsUnionType().types {
+			inferenceContext := r.c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			r.c.inferTypes(inferenceContext.inferences, originalSourceMember, baseType, InferencePriorityNone, false)
+			result := r.isRelatedToEx(originalSourceMember, r.c.instantiateType(baseType, inferenceContext.mapper), recursionFlags, reportErrors, headMessage, intersectionState)
+			if result == TernaryTrue {
+				continue
+			}
+			return result
+		}
+
+		return TernaryTrue
 	}
 
 	if originalSource == originalTarget {
