@@ -1924,6 +1924,71 @@ func TestMatchSegmentsEdgeCases(t *testing.T) {
 		assert.Assert(t, !p.matches("/XYZ")) // no 'a'
 	})
 
+	t.Run("multiple stars requiring backtracking", func(t *testing.T) {
+		t.Parallel()
+		// These patterns require proper backtracking to match correctly.
+		// A naive greedy algorithm would fail on these.
+
+		// Pattern: *a*a - must find two 'a' characters
+		p1, ok := compileGlobPattern("*a*a", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+		assert.Assert(t, p1.matches("/aa"))     // minimal: first * matches "", second * matches ""
+		assert.Assert(t, p1.matches("/Xaa"))    // first * matches "X"
+		assert.Assert(t, p1.matches("/aXa"))    // second * matches "X"
+		assert.Assert(t, p1.matches("/XaYa"))   // both * match chars
+		assert.Assert(t, p1.matches("/aaaa"))   // multiple a's
+		assert.Assert(t, !p1.matches("/a"))     // only one 'a'
+		assert.Assert(t, !p1.matches("/Xa"))    // only one 'a'
+		assert.Assert(t, !p1.matches("/aX"))    // only one 'a', doesn't end with 'a'
+		assert.Assert(t, !p1.matches("/XaYaZ")) // doesn't end with 'a'
+
+		// Pattern: *a*b*c - must find a, then b, then c in order
+		p2, ok := compileGlobPattern("*a*b*c", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+		assert.Assert(t, p2.matches("/abc"))       // minimal
+		assert.Assert(t, p2.matches("/XaYbZc"))    // chars between
+		assert.Assert(t, p2.matches("/aXbYc"))     // chars between
+		assert.Assert(t, p2.matches("/aaabbbccc")) // repeated chars
+		assert.Assert(t, !p2.matches("/ab"))       // missing c
+		assert.Assert(t, !p2.matches("/ac"))       // missing b
+		assert.Assert(t, !p2.matches("/cba"))      // wrong order
+		assert.Assert(t, !p2.matches("/abcX"))     // doesn't end with c
+
+		// Pattern: *a*a*a - must find three 'a' characters
+		p3, ok := compileGlobPattern("*a*a*a", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+		assert.Assert(t, p3.matches("/aaa"))
+		assert.Assert(t, p3.matches("/aXaYa"))
+		assert.Assert(t, p3.matches("/XaYaZa"))
+		assert.Assert(t, !p3.matches("/aa"))  // only two 'a's
+		assert.Assert(t, !p3.matches("/aaX")) // doesn't end with 'a'
+
+		// Pattern: a*b*a - starts with a, ends with a, has b in middle
+		p4, ok := compileGlobPattern("a*b*a", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+		assert.Assert(t, p4.matches("/aba"))
+		assert.Assert(t, p4.matches("/aXbYa"))
+		assert.Assert(t, p4.matches("/abba"))  // b appears, ends with a
+		assert.Assert(t, !p4.matches("/ab"))   // doesn't end with a
+		assert.Assert(t, !p4.matches("/aba ")) // trailing space
+		assert.Assert(t, !p4.matches("/Xaba")) // doesn't start with a (hidden file rule may affect)
+	})
+
+	t.Run("pathological pattern performance", func(t *testing.T) {
+		t.Parallel()
+		// This pattern could cause exponential backtracking in naive implementations.
+		// Pattern: *a*a*a*a*b against "aaaaaaaaaaaaaaaa" (no b)
+		// Should return false quickly, not hang.
+		p, ok := compileGlobPattern("*a*a*a*a*b", "/", UsageFiles, true)
+		assert.Assert(t, ok)
+
+		// These should complete quickly (not hang)
+		assert.Assert(t, !p.matches("/aaaaaaaaaaaaaaaa"))  // no 'b' at end
+		assert.Assert(t, !p.matches("/aaaaaaaaaaaaaaaaX")) // ends with X not b
+		assert.Assert(t, p.matches("/aaaab"))              // minimal match
+		assert.Assert(t, p.matches("/XaYaZaWab"))          // complex match
+	})
+
 	t.Run("literal segment not matching", func(t *testing.T) {
 		t.Parallel()
 		// Test literal segment that's longer than remaining string
