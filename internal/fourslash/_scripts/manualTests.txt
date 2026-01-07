@@ -27,3 +27,5 @@ outliningHintSpansForFunction
 getOutliningSpans
 outliningForNonCompleteInterfaceDeclaration
 incrementalParsingWithJsDoc
+autoCloseFragment
+autoCloseTag

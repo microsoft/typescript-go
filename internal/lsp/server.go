@@ -542,6 +542,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentJSXClosingTagInfo, (*Server).handleJSXClosingTag)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
@@ -997,6 +998,10 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 
 func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.FoldingRangeParams) (lsproto.FoldingRangeResponse, error) {
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleJSXClosingTag(ctx context.Context, ls *ls.LanguageService, params *lsproto.JSXClosingTagParams) (lsproto.JSXClosingTagResponse, error) {
+	return ls.ProvideJsxClosingTag(ctx, params)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {

@@ -2809,6 +2809,21 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
+func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
+	for marker, expectedText := range markersToNewText {
+		f.GoToMarker(t, marker)
+		params := &lsproto.JSXClosingTagParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		result := sendRequest(t, f, lsproto.TextDocumentJSXClosingTagInfo, params)
+
+		assertDeepEqual(t, result.NewText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
+	}
+}
+
 // VerifySignatureHelpOptions contains options for verifying signature help.
 // All fields are optional - only specified fields will be verified.
 type VerifySignatureHelpOptions struct {

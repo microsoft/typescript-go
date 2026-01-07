@@ -4160,6 +4160,25 @@ func GetRestParameterElementType(node *ParameterDeclarationNode) *Node {
 	return nil
 }
 
+func TagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
+	if lhs.Kind != rhs.Kind {
+		return false
+	}
+	switch lhs.Kind {
+	case KindIdentifier:
+		return lhs.Text() == rhs.Text()
+	case KindThisKeyword:
+		return true
+	case KindJsxNamespacedName:
+		return lhs.AsJsxNamespacedName().Namespace.Text() == rhs.AsJsxNamespacedName().Namespace.Text() &&
+			lhs.AsJsxNamespacedName().Name().Text() == rhs.AsJsxNamespacedName().Name().Text()
+	case KindPropertyAccessExpression:
+		return lhs.AsPropertyAccessExpression().Name().Text() == rhs.AsPropertyAccessExpression().Name().Text() &&
+			TagNamesAreEquivalent(lhs.Expression(), rhs.Expression())
+	}
+	panic("Unhandled case in TagNamesAreEquivalent")
+}
+
 func isTagName(node *Node) bool {
 	return node.Parent != nil && IsJSDocTag(node.Parent) && node.Parent.TagName() == node
 }
