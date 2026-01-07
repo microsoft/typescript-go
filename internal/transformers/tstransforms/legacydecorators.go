@@ -165,15 +165,12 @@ func (tx *LegacyDecoratorsTransformer) visitParamerDeclaration(node *ast.Paramet
 	return updated
 }
 
-/**
- * Visits the property name of a class element, for use when emitting property
- * initializers. For a computed property on a node with decorators, a temporary
- * value is stored for later use.
- */
+// visitPropertyNameOfClassElement visits the property name of a class element.
+// Computed property names with decorators need hoisting because the name expression
+// must be evaluated once and referenced in both the property definition and the
+// decorator call.
 func (tx *LegacyDecoratorsTransformer) visitPropertyNameOfClassElement(member *ast.Node) *ast.Node {
 	name := member.Name()
-	// Computed property names need to be transformed into a hoisted variable when they are used more than once.
-	// The names are used more than once when the property has a decorator.
 	if ast.IsComputedPropertyName(name) && ast.HasDecorators(member) {
 		expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
 		if expression != nil && !transformers.IsSimpleInlineableExpression(expression) {
