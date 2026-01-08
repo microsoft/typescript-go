@@ -5,53 +5,53 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/psuedochecker"
+	"github.com/microsoft/typescript-go/internal/pseudochecker"
 )
 
-// Maps a psuedochecker's psuedotypes into ast nodes and reports any inference fallback errors the psuedotype structure implies
-func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Node {
-	debug.Assert(t != nil, "Attempted to serialize nil psuedotype")
+// Maps a pseudochecker's pseudotypes into ast nodes and reports any inference fallback errors the pseudotype structure implies
+func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Node {
+	debug.Assert(t != nil, "Attempted to serialize nil pseudotype")
 	switch t.Kind {
-	case psuedochecker.PsuedoTypeKindDirect:
-		return b.reuseTypeNode(t.Data.(*psuedochecker.PsuedoTypeDirect).TypeNode)
-	case psuedochecker.PsuedoTypeKindInferred:
-		node := t.Data.(*psuedochecker.PsuedoTypeInferred).Expression
+	case pseudochecker.PseudoTypeKindDirect:
+		return b.reuseTypeNode(t.Data.(*pseudochecker.PseudoTypeDirect).TypeNode)
+	case pseudochecker.PseudoTypeKindInferred:
+		node := t.Data.(*pseudochecker.PseudoTypeInferred).Expression
 		b.ctx.tracker.ReportInferenceFallback(node)
 		ty := b.ch.getTypeOfExpression(node)
 		return b.typeToTypeNode(ty)
-	case psuedochecker.PsuedoTypeKindNoResult:
-		node := t.Data.(*psuedochecker.PsuedoTypeNoResult).Declaration
+	case pseudochecker.PseudoTypeKindNoResult:
+		node := t.Data.(*pseudochecker.PseudoTypeNoResult).Declaration
 		b.ctx.tracker.ReportInferenceFallback(node)
 		return b.serializeTypeForDeclaration(node, nil, nil, false)
-	case psuedochecker.PsuedoTypeKindMaybeConstLocation:
-		d := t.Data.(*psuedochecker.PsuedoTypeMaybeConstLocation)
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		d := t.Data.(*pseudochecker.PseudoTypeMaybeConstLocation)
 		// see checkExpressionWithContextualType for general literal widening rules which need to be emulated here, plus
-		// checkTemplateLiteralExpression for template literal widening rules if the psuedochecker ever supports literalized templates
+		// checkTemplateLiteralExpression for template literal widening rules if the pseudochecker ever supports literalized templates
 		isInConstContext := b.ch.isConstContext(d.Node)
 		if !isInConstContext {
 			contextualType := b.ch.getContextualType(d.Node, ContextFlagsNone)
-			t := b.psuedoTypeToType(d.ConstType)
+			t := b.pseudoTypeToType(d.ConstType)
 			if t != nil && b.ch.isLiteralOfContextualType(t, b.ch.instantiateContextualType(contextualType, d.Node, ContextFlagsNone)) {
 				isInConstContext = true
 			}
 		}
 		if isInConstContext {
-			return b.psuedoTypeToNode(d.ConstType)
+			return b.pseudoTypeToNode(d.ConstType)
 		} else {
-			return b.psuedoTypeToNode(d.RegularType)
+			return b.pseudoTypeToNode(d.RegularType)
 		}
-	case psuedochecker.PsuedoTypeKindUnion:
+	case pseudochecker.PseudoTypeKindUnion:
 		var res []*ast.Node
 		var hasElidedType bool
-		members := t.Data.(*psuedochecker.PsuedoTypeUnion).Types
+		members := t.Data.(*pseudochecker.PseudoTypeUnion).Types
 		for _, m := range members {
 			if !b.ch.strictNullChecks {
-				if m.Kind == psuedochecker.PsuedoTypeKindUndefined || m.Kind == psuedochecker.PsuedoTypeKindNull {
+				if m.Kind == pseudochecker.PseudoTypeKindUndefined || m.Kind == pseudochecker.PseudoTypeKindNull {
 					hasElidedType = true
 					continue
 				}
 			}
-			res = append(res, b.psuedoTypeToNode(m))
+			res = append(res, b.pseudoTypeToNode(m))
 		}
 		if len(res) == 1 {
 			return res[0]
@@ -63,32 +63,32 @@ func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 			return b.f.NewKeywordTypeNode(ast.KindNeverKeyword)
 		}
 		return b.f.NewUnionTypeNode(b.f.NewNodeList(res))
-	case psuedochecker.PsuedoTypeKindUndefined:
+	case pseudochecker.PseudoTypeKindUndefined:
 		if !b.ch.strictNullChecks {
 			return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
 		return b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword)
-	case psuedochecker.PsuedoTypeKindNull:
+	case pseudochecker.PseudoTypeKindNull:
 		if !b.ch.strictNullChecks {
 			return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindNullKeyword))
-	case psuedochecker.PsuedoTypeKindAny:
+	case pseudochecker.PseudoTypeKindAny:
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
-	case psuedochecker.PsuedoTypeKindString:
+	case pseudochecker.PseudoTypeKindString:
 		return b.f.NewKeywordTypeNode(ast.KindStringKeyword)
-	case psuedochecker.PsuedoTypeKindNumber:
+	case pseudochecker.PseudoTypeKindNumber:
 		return b.f.NewKeywordTypeNode(ast.KindNumberKeyword)
-	case psuedochecker.PsuedoTypeKindBigInt:
+	case pseudochecker.PseudoTypeKindBigInt:
 		return b.f.NewKeywordTypeNode(ast.KindBigIntKeyword)
-	case psuedochecker.PsuedoTypeKindBoolean:
+	case pseudochecker.PseudoTypeKindBoolean:
 		return b.f.NewKeywordTypeNode(ast.KindBooleanKeyword)
-	case psuedochecker.PsuedoTypeKindFalse:
+	case pseudochecker.PseudoTypeKindFalse:
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindFalseKeyword))
-	case psuedochecker.PsuedoTypeKindTrue:
+	case pseudochecker.PseudoTypeKindTrue:
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
-	case psuedochecker.PsuedoTypeKindSingleCallSignature:
-		d := t.Data.(*psuedochecker.PsuedoTypeSingleCallSignature)
+	case pseudochecker.PseudoTypeKindSingleCallSignature:
+		d := t.Data.(*pseudochecker.PseudoTypeSingleCallSignature)
 		var typeParams *ast.NodeList
 		if len(d.TypeParameters) > 0 {
 			res := make([]*ast.Node, 0, len(d.TypeParameters))
@@ -97,29 +97,29 @@ func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 			}
 			typeParams = b.f.NewNodeList(res)
 		}
-		params := b.psuedoParametersToNodeList(d.Parameters)
-		returnType := b.psuedoTypeToNode(d.ReturnType)
+		params := b.pseudoParametersToNodeList(d.Parameters)
+		returnType := b.pseudoTypeToNode(d.ReturnType)
 		return b.f.NewFunctionTypeNode(typeParams, params, returnType)
-	case psuedochecker.PsuedoTypeKindTuple:
+	case pseudochecker.PseudoTypeKindTuple:
 		var res []*ast.Node
-		elements := t.Data.(*psuedochecker.PsuedoTypeTuple).Elements
+		elements := t.Data.(*pseudochecker.PseudoTypeTuple).Elements
 		for _, e := range elements {
-			res = append(res, b.psuedoTypeToNode(e))
+			res = append(res, b.pseudoTypeToNode(e))
 		}
-		// !!! TODO: psuedo-tuples are implicitly `readonly` since they originate from `as const` contexts
+		// !!! TODO: pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
 		// but strada fails to add the `readonly` modifier to the generated node. We replicate that bug here.
 		// return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, b.f.NewTupleTypeNode(b.f.NewNodeList(res)))
 		result := b.f.NewTupleTypeNode(b.f.NewNodeList(res))
 		b.e.AddEmitFlags(result, printer.EFSingleLine)
 		return result
-	case psuedochecker.PsuedoTypeKindObjectLiteral:
-		elements := t.Data.(*psuedochecker.PsuedoTypeObjectLiteral).Elements
+	case pseudochecker.PseudoTypeKindObjectLiteral:
+		elements := t.Data.(*pseudochecker.PseudoTypeObjectLiteral).Elements
 		if len(elements) == 0 {
 			result := b.f.NewTypeLiteralNode(b.f.NewNodeList(nil))
 			b.e.AddEmitFlags(result, printer.EFSingleLine)
 			return result
 		}
-		// NOTE: using the checker's `isConstContext` instead of the psuedochecker's `isInConstContext`
+		// NOTE: using the checker's `isConstContext` instead of the pseudochecker's `isInConstContext`
 		// results in different results here. The checker one is more "correct" but means we'll mark
 		// objects in parameter positions contextually typed by const type parameters as readonly -
 		// something a true syntactic ID emitter couldn't possibly know (since the signature could
@@ -131,49 +131,49 @@ func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 		// we should have a unified `reuseName` codepath that remaps keyword ID names to string literal names
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
-			if isConst || (e.Kind == psuedochecker.PsuedoObjectElementKindPropertyAssignment && e.Data.(*psuedochecker.PsuedoPropertyAssignment).Readonly) {
+			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.Data.(*pseudochecker.PseudoPropertyAssignment).Readonly) {
 				modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
 			}
 			var newProp *ast.Node
 			switch e.Kind {
-			case psuedochecker.PsuedoObjectElementKindMethod:
-				d := e.Data.(*psuedochecker.PsuedoObjectMethod)
+			case pseudochecker.PseudoObjectElementKindMethod:
+				d := e.Data.(*pseudochecker.PseudoObjectMethod)
 				newProp = b.f.NewMethodSignatureDeclaration(
 					modifiers,
 					b.reuseNode(e.Name),
 					nil,
 					nil,
-					b.psuedoParametersToNodeList(d.Parameters),
-					b.psuedoTypeToNode(d.ReturnType),
+					b.pseudoParametersToNodeList(d.Parameters),
+					b.pseudoTypeToNode(d.ReturnType),
 				)
-			case psuedochecker.PsuedoObjectElementKindPropertyAssignment:
-				d := e.Data.(*psuedochecker.PsuedoPropertyAssignment)
+			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
+				d := e.Data.(*pseudochecker.PseudoPropertyAssignment)
 				newProp = b.f.NewPropertySignatureDeclaration(
 					modifiers,
 					b.reuseNode(e.Name),
 					nil,
-					b.psuedoTypeToNode(d.Type),
+					b.pseudoTypeToNode(d.Type),
 					nil,
 				)
-			case psuedochecker.PsuedoObjectElementKindSetAccessor:
-				d := e.Data.(*psuedochecker.PsuedoSetAccessor)
+			case pseudochecker.PseudoObjectElementKindSetAccessor:
+				d := e.Data.(*pseudochecker.PseudoSetAccessor)
 				newProp = b.f.NewSetAccessorDeclaration(
 					nil,
 					b.reuseNode(e.Name),
 					nil,
-					b.f.NewNodeList([]*ast.Node{b.psuedoParameterToNode(d.Parameter)}),
+					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter)}),
 					nil,
 					nil,
 					nil,
 				)
-			case psuedochecker.PsuedoObjectElementKindGetAccessor:
-				d := e.Data.(*psuedochecker.PsuedoGetAccessor)
+			case pseudochecker.PseudoObjectElementKindGetAccessor:
+				d := e.Data.(*pseudochecker.PseudoGetAccessor)
 				newProp = b.f.NewSetAccessorDeclaration(
 					nil,
 					b.reuseNode(e.Name),
 					nil,
 					nil,
-					b.psuedoTypeToNode(d.Type),
+					b.pseudoTypeToNode(d.Type),
 					nil,
 					nil,
 				)
@@ -188,24 +188,24 @@ func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 			b.e.AddEmitFlags(result, printer.EFSingleLine)
 		}
 		return result
-	case psuedochecker.PsuedoTypeKindStringLiteral, psuedochecker.PsuedoTypeKindNumericLiteral, psuedochecker.PsuedoTypeKindBigIntLiteral:
-		source := t.Data.(*psuedochecker.PsuedoTypeLiteral).Node
+	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
+		source := t.Data.(*pseudochecker.PseudoTypeLiteral).Node
 		return b.f.NewLiteralTypeNode(b.reuseNode(source))
 	default:
-		debug.AssertNever(t.Kind, "Unhandled psuedotype kind in psuedotype node construction")
+		debug.AssertNever(t.Kind, "Unhandled pseudotype kind in pseudotype node construction")
 		return nil
 	}
 }
 
-func (b *NodeBuilderImpl) psuedoParametersToNodeList(params []*psuedochecker.PsuedoParameter) *ast.NodeList {
+func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.PseudoParameter) *ast.NodeList {
 	res := make([]*ast.Node, 0, len(params))
 	for _, p := range params {
-		res = append(res, b.psuedoParameterToNode(p))
+		res = append(res, b.pseudoParameterToNode(p))
 	}
 	return b.f.NewNodeList(res)
 }
 
-func (b *NodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter) *ast.Node {
+func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter) *ast.Node {
 	var dotDotDot *ast.Node
 	var questionMark *ast.Node
 	if p.Rest {
@@ -219,39 +219,39 @@ func (b *NodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter
 		dotDotDot,
 		b.reuseNode(p.Name),
 		questionMark,
-		b.psuedoTypeToNode(p.Type),
+		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
 }
 
-func (b *NodeBuilderImpl) psuedoTypeToType(t *psuedochecker.PsuedoType) *Type {
-	// !!! TODO: only literal types currently mapped because this is only used to determine if literal contextual typing need apply to the psuedotype
-	// If this is used more broadly, the implementation needs to be filled out more to handle the structural psuedotypes - signatures, objects, tuples, etc
-	debug.Assert(t != nil, "Attempted to realize nil psuedotype")
+func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
+	// !!! TODO: only literal types currently mapped because this is only used to determine if literal contextual typing need apply to the pseudotype
+	// If this is used more broadly, the implementation needs to be filled out more to handle the structural pseudotypes - signatures, objects, tuples, etc
+	debug.Assert(t != nil, "Attempted to realize nil pseudotype")
 	switch t.Kind {
-	case psuedochecker.PsuedoTypeKindDirect:
-		return b.ch.getTypeFromTypeNode(t.Data.(*psuedochecker.PsuedoTypeDirect).TypeNode)
-	case psuedochecker.PsuedoTypeKindInferred:
-		node := t.Data.(*psuedochecker.PsuedoTypeInferred).Expression
+	case pseudochecker.PseudoTypeKindDirect:
+		return b.ch.getTypeFromTypeNode(t.Data.(*pseudochecker.PseudoTypeDirect).TypeNode)
+	case pseudochecker.PseudoTypeKindInferred:
+		node := t.Data.(*pseudochecker.PseudoTypeInferred).Expression
 		ty := b.ch.getTypeOfExpression(node)
 		return ty
-	case psuedochecker.PsuedoTypeKindNoResult:
+	case pseudochecker.PseudoTypeKindNoResult:
 		return nil // TODO: extract type selection logic from `serializeTypeForDeclaration`, not needed for current usecases but needed if completeness becomes required
-	case psuedochecker.PsuedoTypeKindMaybeConstLocation:
-		d := t.Data.(*psuedochecker.PsuedoTypeMaybeConstLocation)
-		return b.psuedoTypeToType(d.ConstType) // !!! TODO: not needed for const-checking usecases, but proper context switching behavior required if completeness is required
-	case psuedochecker.PsuedoTypeKindUnion:
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		d := t.Data.(*pseudochecker.PseudoTypeMaybeConstLocation)
+		return b.pseudoTypeToType(d.ConstType) // !!! TODO: not needed for const-checking usecases, but proper context switching behavior required if completeness is required
+	case pseudochecker.PseudoTypeKindUnion:
 		var res []*Type
 		var hasElidedType bool
-		members := t.Data.(*psuedochecker.PsuedoTypeUnion).Types
+		members := t.Data.(*pseudochecker.PseudoTypeUnion).Types
 		for _, m := range members {
 			if !b.ch.strictNullChecks {
-				if m.Kind == psuedochecker.PsuedoTypeKindUndefined || m.Kind == psuedochecker.PsuedoTypeKindNull {
+				if m.Kind == pseudochecker.PseudoTypeKindUndefined || m.Kind == pseudochecker.PseudoTypeKindNull {
 					hasElidedType = true
 					continue
 				}
 			}
-			t := b.psuedoTypeToType(m)
+			t := b.pseudoTypeToType(m)
 			if t == nil {
 				return nil // propagate failure
 			}
@@ -267,26 +267,26 @@ func (b *NodeBuilderImpl) psuedoTypeToType(t *psuedochecker.PsuedoType) *Type {
 			return b.ch.neverType
 		}
 		return b.ch.newUnionType(ObjectFlagsNone, res)
-	case psuedochecker.PsuedoTypeKindUndefined:
+	case pseudochecker.PseudoTypeKindUndefined:
 		return b.ch.undefinedWideningType
-	case psuedochecker.PsuedoTypeKindNull:
+	case pseudochecker.PseudoTypeKindNull:
 		return b.ch.nullWideningType
-	case psuedochecker.PsuedoTypeKindAny:
+	case pseudochecker.PseudoTypeKindAny:
 		return b.ch.anyType
-	case psuedochecker.PsuedoTypeKindString:
+	case pseudochecker.PseudoTypeKindString:
 		return b.ch.stringType
-	case psuedochecker.PsuedoTypeKindNumber:
+	case pseudochecker.PseudoTypeKindNumber:
 		return b.ch.numberType
-	case psuedochecker.PsuedoTypeKindBigInt:
+	case pseudochecker.PseudoTypeKindBigInt:
 		return b.ch.bigintType
-	case psuedochecker.PsuedoTypeKindBoolean:
+	case pseudochecker.PseudoTypeKindBoolean:
 		return b.ch.booleanType
-	case psuedochecker.PsuedoTypeKindFalse:
+	case pseudochecker.PseudoTypeKindFalse:
 		return b.ch.falseType
-	case psuedochecker.PsuedoTypeKindTrue:
+	case pseudochecker.PseudoTypeKindTrue:
 		return b.ch.trueType
-	case psuedochecker.PsuedoTypeKindStringLiteral, psuedochecker.PsuedoTypeKindNumericLiteral, psuedochecker.PsuedoTypeKindBigIntLiteral:
-		source := t.Data.(*psuedochecker.PsuedoTypeLiteral).Node
+	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
+		source := t.Data.(*pseudochecker.PseudoTypeLiteral).Node
 		return b.ch.getTypeOfExpression(source) // big shortcut, uses cached expression types where possible
 	default:
 		return nil

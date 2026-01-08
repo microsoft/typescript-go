@@ -1,5 +1,5 @@
-// psuedochecker is a limited "checker" that returns psuedo-"types" of expressions - mostly those which trivially have type nodes
-package psuedochecker
+// pseudochecker is a limited "checker" that returns pseudo-"types" of expressions - mostly those which trivially have type nodes
+package pseudochecker
 
 // TODO: Late binding/symbol merging?
 // In strada, `expressionToTypeNode` used many `resolver` methods whose net effect was just
@@ -11,8 +11,8 @@ package psuedochecker
 // This is an area of active ~~feature-creep~~ development in ID output, prerequisite refactoring would include
 // extracting the `mergeSymbol` core checker logic into a reusable component.
 
-type PsuedoChecker struct{}
+type PseudoChecker struct{}
 
-func NewPsuedoChecker() *PsuedoChecker {
-	return &PsuedoChecker{}
+func NewPseudoChecker() *PseudoChecker {
+	return &PseudoChecker{}
 }

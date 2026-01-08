@@ -559,6 +559,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			if visited == node {
 				visited = b.setTextRange(node.Clone(factory), node)
 			}
+			node = visited
 			newType := factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 			switch node.Kind {
 			case ast.KindPropertyDeclaration:
@@ -718,7 +719,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if bound.hadError {
 			return node
 		}
-		recover := bound.startRecoveryScope()
+		recover_ := bound.startRecoveryScope()
 		introducesNewScope := ast.IsFunctionLike(node) || ast.IsMappedTypeNode(node)
 		var exit func()
 		if introducesNewScope {
@@ -742,7 +743,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 
 		if bound.hadError {
 			if ast.IsTypeNode(node) && !ast.IsTypePredicateNode(node) {
-				bound.endRecoveryScope(recover)
+				bound.endRecoveryScope(recover_)
 				// TODO: this fallback matches strada behavior, but it lacks any verification that the type from `node` actually matches
 				// the type we'd expect at this traversal position within the parent type.
 				t := b.getTypeFromTypeNode(node, false)
