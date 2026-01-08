@@ -280,6 +280,7 @@ func TestProjectLifetime(t *testing.T) {
 
 		// Should now have one configured project only (file is now under src/)
 		_, err = session.GetLanguageService(context.Background(), srcIndexUri)
+		assert.NilError(t, err)
 		snapshot, release = session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
