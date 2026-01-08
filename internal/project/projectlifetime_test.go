@@ -286,4 +286,61 @@ func TestProjectLifetime(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 	})
+
+	t.Run("tsconfig move from subdirectory to parent via didChangeWatchedFiles", func(t *testing.T) {
+		t.Parallel()
+		// Start with tsconfig.json in src/ that includes "src" - file won't be included initially
+		files := map[string]any{
+			"/home/projects/TS/p1/src/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true
+				},
+				"include": ["src"]
+			}`,
+			"/home/projects/TS/p1/src/index.ts": `export const x = 1;`,
+		}
+		session, utils := projecttestutil.Setup(files)
+
+		// Open src/index.ts - should create inferred project since tsconfig.json includes "src"
+		// relative to its location (src/src/ which doesn't exist)
+		indexUri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
+		session.DidOpenFile(context.Background(), indexUri, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Should have one inferred project only (file is not included by tsconfig at src/tsconfig.json)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/src/tsconfig.json")) == nil)
+
+		// Simulate tsconfig.json move: create tsconfig.json at parent level, delete from src/
+		tsconfigContent := files["/home/projects/TS/p1/src/tsconfig.json"].(string)
+		err := utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", tsconfigContent, false)
+		assert.NilError(t, err)
+		err = utils.FS().Remove("/home/projects/TS/p1/src/tsconfig.json")
+		assert.NilError(t, err)
+
+		// Simulate file move via didChangeWatchedFiles
+		newTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/tsconfig.json")
+		oldTsconfigUri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/tsconfig.json")
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{
+				Uri:  newTsconfigUri,
+				Type: lsproto.FileChangeTypeCreated,
+			},
+			{
+				Uri:  oldTsconfigUri,
+				Type: lsproto.FileChangeTypeDeleted,
+			},
+		})
+
+		// Should now have one configured project only (tsconfig.json now includes src/index.ts)
+		_, err = session.GetLanguageService(context.Background(), indexUri)
+		assert.NilError(t, err)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+	})
 }

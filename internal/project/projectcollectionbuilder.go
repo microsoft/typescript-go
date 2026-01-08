@@ -89,7 +89,7 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 		newProjectCollection.configuredProjects = configuredProjects
 	}
 
-	if !changed && !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
+	if !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
 		ensureCloned()
 		newProjectCollection.fileDefaultProjects = b.fileDefaultProjects
 	}
