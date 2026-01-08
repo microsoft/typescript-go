@@ -115,9 +115,6 @@ func (s *Set[T]) IsSubsetOf(other *Set[T]) bool {
 	if s == nil {
 		return true
 	}
-	if other == nil {
-		return false
-	}
 	for key := range s.M {
 		if !other.Has(key) {
 			return false
