@@ -17,27 +17,23 @@ const bazResult = useBaz();
 
 const x: string = myGlobal;
 >x : Symbol(x, Decl(index.ts, 6, 5))
->myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 11))
+>myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11))
 
 === /node_modules/.pnpm/foo@1.0.0+globals@1.0.0/node_modules/foo/index.d.ts ===
 import "globals";
 export declare function useFoo(): typeof myGlobal;
 >useFoo : Symbol(useFoo, Decl(index.d.ts, 0, 17))
->myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 11))
+>myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11))
 
 === /node_modules/.pnpm/foo@1.0.0+globals@1.0.0/node_modules/globals/index.d.ts ===
 declare var myGlobal: string;
->myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 11))
+>myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11))
 
 === /node_modules/.pnpm/foo@1.0.0+globals@2.0.0/node_modules/foo/index.d.ts ===
 import "globals";
 export declare function useFoo(): typeof myGlobal;
 >useFoo : Symbol(useFoo, Decl(index.d.ts, 0, 17))
->myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 11))
-
-=== /node_modules/.pnpm/foo@1.0.0+globals@2.0.0/node_modules/globals/index.d.ts ===
-declare var myGlobal: number;
->myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 11))
+>myGlobal : Symbol(myGlobal, Decl(index.d.ts, 0, 11))
 
 === /node_modules/.pnpm/bar@1.0.0/node_modules/bar/index.d.ts ===
 import { useFoo } from "foo";

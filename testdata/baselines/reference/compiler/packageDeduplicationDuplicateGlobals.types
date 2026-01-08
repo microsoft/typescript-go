@@ -37,10 +37,6 @@ export declare function useFoo(): typeof myGlobal;
 >useFoo : () => string
 >myGlobal : string
 
-=== /node_modules/.pnpm/foo@1.0.0+globals@2.0.0/node_modules/globals/index.d.ts ===
-declare var myGlobal: number;
->myGlobal : string
-
 === /node_modules/.pnpm/bar@1.0.0/node_modules/bar/index.d.ts ===
 import { useFoo } from "foo";
 >useFoo : () => string

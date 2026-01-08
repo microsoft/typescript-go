@@ -372,8 +372,20 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				}
 			}
 
-			if subTasks := task.subTasks; len(subTasks) > 0 {
-				collectFiles(subTasks, seen)
+			// Check if this file is from a deduplicated package.
+			// If so, skip walking its subtasks - the canonical package's
+			// dependencies will be used instead.
+			skipSubtasks := false
+			if deduplicatedPathMap != nil {
+				if canonical, ok := deduplicatedPathMap[task.path]; ok && task.path != canonical {
+					skipSubtasks = true
+				}
+			}
+
+			if !skipSubtasks {
+				if subTasks := task.subTasks; len(subTasks) > 0 {
+					collectFiles(subTasks, seen)
+				}
 			}
 
 			// Exclude automatic type directive tasks from include reason processing,
