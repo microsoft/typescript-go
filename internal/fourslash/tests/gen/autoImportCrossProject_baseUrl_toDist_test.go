@@ -46,5 +46,5 @@ export function saveMe() {
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToFile(t, "/home/src/workspaces/project/web/src/Helper.ts")
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"../../common/src/MyModule"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"../../common/src/MyModule"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
 }

@@ -24,7 +24,9 @@ ignoredSym/*2*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.Configure(t, &lsutil.UserPreferences{
-		AutoImportSpecifierExcludeRegexes:     []string{".*ignoreme.*"},
+		ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{
+			AutoImportSpecifierExcludeRegexes: []string{".*ignoreme.*"},
+		},
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	})

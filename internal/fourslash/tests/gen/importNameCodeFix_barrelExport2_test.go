@@ -35,6 +35,6 @@ export { A } from "../foo/a";
 export * from "./a";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "sibling", []string{"proj/foo/a", "proj/src/utils", "proj", "proj/foo"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
-	f.VerifyImportFixModuleSpecifiers(t, "parent", []string{"proj/foo", "proj/foo/a", "proj/src/utils", "proj"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"})
+	f.VerifyImportFixModuleSpecifiers(t, "sibling", []string{"proj/foo/a", "proj/src/utils", "proj", "proj/foo"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
+	f.VerifyImportFixModuleSpecifiers(t, "parent", []string{"proj/foo", "proj/foo/a", "proj/src/utils", "proj"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "non-relative"}})
 }

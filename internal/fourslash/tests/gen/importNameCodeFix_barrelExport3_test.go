@@ -31,6 +31,6 @@ A/*parent*/
 export * from "./a";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "sibling", []string{"./a", "./index", "../index"}, &lsutil.UserPreferences{ImportModuleSpecifierEnding: "index"})
-	f.VerifyImportFixModuleSpecifiers(t, "parent", []string{"../foo/a", "../foo/index", "../index"}, &lsutil.UserPreferences{ImportModuleSpecifierEnding: "index"})
+	f.VerifyImportFixModuleSpecifiers(t, "sibling", []string{"./a", "./index", "../index"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierEnding: "index"}})
+	f.VerifyImportFixModuleSpecifiers(t, "parent", []string{"../foo/a", "../foo/index", "../index"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierEnding: "index"}})
 }

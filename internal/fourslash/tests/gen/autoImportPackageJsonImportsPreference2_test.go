@@ -25,5 +25,5 @@ export function something(name: string): any;
 something/**/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./src/a/b/c/something"}, &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"})
+	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./src/a/b/c/something"}, &lsutil.UserPreferences{ModuleSpecifier: lsutil.ModuleSpecifierUserPreferences{ImportModuleSpecifierPreference: "project-relative"}})
 }

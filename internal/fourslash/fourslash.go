@@ -232,7 +232,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		in:              inputWriter,
 		out:             outputReader,
 		testData:        &testData,
-		userPreferences: lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		userPreferences: lsutil.DefaultUserPreferences,
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
@@ -674,7 +674,7 @@ func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) 
 }
 
 func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *lsutil.UserPreferences) (reset func()) {
-	originalConfig := f.userPreferences.Copy()
+	originalConfig := f.userPreferences
 	f.Configure(t, config)
 	return func() {
 		f.Configure(t, originalConfig)
@@ -1288,7 +1288,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		userPreferences = options.UserPreferences
 	} else {
 		// Default preferences: enables auto-imports
-		userPreferences = lsutil.NewDefaultUserPreferences()
+		userPreferences = lsutil.DefaultUserPreferences
 	}
 
 	reset := f.ConfigureWithReset(t, userPreferences)
@@ -3143,10 +3143,8 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 	reset := f.ConfigureWithReset(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		ImportModuleSpecifierEnding:           f.userPreferences.ImportModuleSpecifierEnding,
-		ImportModuleSpecifierPreference:       f.userPreferences.ImportModuleSpecifierPreference,
+		ModuleSpecifier:                       f.userPreferences.ModuleSpecifier,
 		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
-		AutoImportSpecifierExcludeRegexes:     f.userPreferences.AutoImportSpecifierExcludeRegexes,
 		PreferTypeOnlyAutoImports:             f.userPreferences.PreferTypeOnlyAutoImports,
 	})
 	defer reset()
@@ -3434,7 +3432,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 
 	preferences := testPreferences
 	if preferences == nil {
-		preferences = lsutil.NewDefaultUserPreferences()
+		preferences = lsutil.DefaultUserPreferences
 	}
 	reset := f.ConfigureWithReset(t, preferences)
 	defer reset()
@@ -3755,11 +3753,11 @@ type VerifyWorkspaceSymbolCase struct {
 
 // `verify.navigateTo` in Strada.
 func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorkspaceSymbolCase) {
-	originalPreferences := f.userPreferences.Copy()
+	originalPreferences := f.userPreferences
 	for _, testCase := range cases {
 		preferences := testCase.Preferences
 		if preferences == nil {
-			preferences = lsutil.NewDefaultUserPreferences()
+			preferences = lsutil.DefaultUserPreferences
 		}
 		f.Configure(t, preferences)
 		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
