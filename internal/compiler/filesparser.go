@@ -292,12 +292,10 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
-	var sourceFileToPackageName map[tspath.Path]string
 	var redirectTargetsMap map[tspath.Path][]string
 	var deduplicatedPathMap map[tspath.Path]tspath.Path
 	var packageIdToCanonicalPath map[module.PackageId]tspath.Path
 	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
-		sourceFileToPackageName = make(map[tspath.Path]string, totalFileCount)
 		redirectTargetsMap = make(map[tspath.Path][]string)
 		deduplicatedPathMap = make(map[tspath.Path]tspath.Path)
 		packageIdToCanonicalPath = make(map[module.PackageId]tspath.Path)
@@ -355,13 +353,12 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			var existingCanonicalPath tspath.Path
 			if packageIdToCanonicalPath != nil && data.packageId.Name != "" {
 				if canonical, exists := packageIdToCanonicalPath[data.packageId]; exists {
-					packageIdToCanonicalPath[data.packageId] = task.path
-					sourceFileToPackageName[task.path] = data.packageId.PackageName()
-					deduplicatedPathMap[task.path] = canonical
 					redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], task.normalizedFilePath)
+					deduplicatedPathMap[task.path] = canonical
 					existingCanonicalPath = canonical
 				} else {
 					packageIdToCanonicalPath[data.packageId] = task.path
+					deduplicatedPathMap[task.path] = task.path
 				}
 			}
 
@@ -464,7 +461,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		missingFiles:                         missingFiles,
 		includeProcessor:                     includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
-		sourceFileToPackageName:              sourceFileToPackageName,
 		redirectTargetsMap:                   redirectTargetsMap,
 		deduplicatedPathMap:                  deduplicatedPathMap,
 	}
