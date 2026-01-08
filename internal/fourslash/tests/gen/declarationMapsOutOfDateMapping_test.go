@@ -8,8 +8,8 @@ import (
 )
 
 func TestDeclarationMapsOutOfDateMapping(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/a/dist/index.d.ts
 export declare class Foo {
@@ -32,7 +32,9 @@ export class /*2*/Foo {
 }
 // @Filename: /home/src/workspaces/project/index.ts
 import { Foo/*1*/ } from "a";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToFile(t, "/home/src/workspaces/project/index.ts")
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f.VerifyBaselineGoToDefinition(t, false, "1")
 }

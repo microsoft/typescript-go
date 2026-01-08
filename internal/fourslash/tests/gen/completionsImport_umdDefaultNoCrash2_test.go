@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsImport_umdDefaultNoCrash2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @allowJs: true
@@ -45,7 +45,8 @@ func TestCompletionsImport_umdDefaultNoCrash2(t *testing.T) {
 // @Filename: /src/index.js
 import Dottie from 'dottie';
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

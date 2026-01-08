@@ -9,8 +9,8 @@ import (
 )
 
 func TestStringCompletionsImportOrExportSpecifier(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: exports.ts
 export let foo = 1;
@@ -40,7 +40,8 @@ export { type "/*typeExport0*/" } from "./exports";
 export { type "/*typeExport1*/" as typeExport1 } from "./exports";
 export { type foo as "/*typeExport2*/" } from "./exports";
 export { type foo, type "/*typeExport3*/" } from "./exports";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "valueImport0", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -85,6 +85,7 @@ class M extends L {
 
 
 //// [derivedUninitializedPropertyDeclaration.js]
+"use strict";
 class A {
     property = 'x';
     m() { return 1; }
@@ -120,7 +121,6 @@ class G extends E {
     }
 }
 class H extends E {
-    p1;
 }
 class J {
     r = 5;

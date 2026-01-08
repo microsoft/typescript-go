@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_duplicatePackages_scoped(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @esModuleInterop: true
@@ -37,7 +37,8 @@ import "@scope/react-dom";
 import "@scope/react";
 // @Filename: /packages/a/foo.ts
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -50,21 +51,21 @@ import "@scope/react";
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "render",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "@scope/react-dom",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "useState",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "@scope/react",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

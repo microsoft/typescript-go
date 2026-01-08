@@ -173,7 +173,7 @@ func (c *externalModuleInfoCollector) addExportedName(name *ast.ModuleExportName
 }
 
 func (c *externalModuleInfoCollector) addExportedNamesForExportDeclaration(node *ast.ExportDeclaration) {
-	for _, specifier := range node.ExportClause.AsNamedExports().Elements.Nodes {
+	for _, specifier := range node.ExportClause.Elements() {
 		specifierNameText := specifier.Name().Text()
 		if c.addUniqueExport(specifierNameText) {
 			name := specifier.PropertyNameOrName()
@@ -228,7 +228,7 @@ func (c *externalModuleInfoCollector) addExportedFunctionDeclaration(node *ast.F
 
 func (c *externalModuleInfoCollector) collectExportedVariableInfo(decl *ast.Node /*VariableDeclaration | BindingElement*/) {
 	if ast.IsBindingPattern(decl.Name()) {
-		for _, element := range decl.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range decl.Name().Elements() {
 			e := element.AsBindingElement()
 			if e.Name() != nil {
 				c.collectExportedVariableInfo(element)
@@ -259,7 +259,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 					nil,   /*modifiers*/
 					false, /*isTypeOnly*/
 					externalHelpersModuleName,
-					emitContext.Factory.NewExternalModuleReference(emitContext.Factory.NewStringLiteral(externalHelpersModuleNameText)),
+					emitContext.Factory.NewExternalModuleReference(emitContext.Factory.NewStringLiteral(externalHelpersModuleNameText, ast.TokenFlagsNone)),
 				)
 				emitContext.AddEmitFlags(externalHelpersImportDeclaration, printer.EFNeverApplyImportHelper|printer.EFCustomPrologue)
 				return externalHelpersImportDeclaration
@@ -293,7 +293,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 				externalHelpersImportDeclaration := emitContext.Factory.NewImportDeclaration(
 					nil, /*modifiers*/
 					emitContext.Factory.NewImportClause(ast.KindUnknown /*phaseModifier*/, nil /*name*/, namedBindings),
-					emitContext.Factory.NewStringLiteral(externalHelpersModuleNameText),
+					emitContext.Factory.NewStringLiteral(externalHelpersModuleNameText, ast.TokenFlagsNone),
 					nil, /*attributes*/
 				)
 
@@ -338,19 +338,7 @@ func isNamedDefaultReference(e *ast.Node /*ImportSpecifier | ExportSpecifier*/) 
 }
 
 func containsDefaultReference(node *ast.Node /*NamedImportBindings | NamedExportBindings*/) bool {
-	if node == nil {
-		return false
-	}
-	var elements *ast.NodeList
-	switch {
-	case ast.IsNamedImports(node):
-		elements = node.AsNamedImports().Elements
-	case ast.IsNamedExports(node):
-		elements = node.AsNamedExports().Elements
-	default:
-		return false
-	}
-	return core.Some(elements.Nodes, isNamedDefaultReference)
+	return node != nil && (ast.IsNamedImports(node) || ast.IsNamedExports(node)) && core.Some(node.Elements(), isNamedDefaultReference)
 }
 
 func getExportNeedsImportStarHelper(node *ast.ExportDeclaration) bool {

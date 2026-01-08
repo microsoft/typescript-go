@@ -21,6 +21,7 @@ type Options struct {
 	IsSubmodule         bool
 	IsSubmoduleAccepted bool
 	DiffFixupOld        func(string) string
+	DiffFixupNew        func(string) string
 	SkipDiffWithOld     bool
 }
 
@@ -64,7 +65,7 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 		localPath := filepath.Join(localRoot, outRoot, origSubfolder, diffFileName)
 		referencePath := filepath.Join(referenceRoot, outRoot, origSubfolder, diffFileName)
 
-		diff := getBaselineDiff(t, actual, submoduleExpected, fileName, opts.DiffFixupOld)
+		diff := getBaselineDiff(t, actual, submoduleExpected, fileName, opts.DiffFixupOld, opts.DiffFixupNew)
 		writeComparison(t, diff, localPath, referencePath, false)
 	}
 
@@ -79,7 +80,7 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 var submoduleAcceptedFileNames = sync.OnceValue(func() *collections.Set[string] {
 	var set collections.Set[string]
 
-	submoduleAccepted := filepath.Join(repo.TestDataPath, "submoduleAccepted.txt")
+	submoduleAccepted := filepath.Join(repo.TestDataPath(), "submoduleAccepted.txt")
 	if content, err := os.ReadFile(submoduleAccepted); err == nil {
 		for line := range strings.SplitSeq(string(content), "\n") {
 			line = strings.TrimSpace(line)
@@ -113,14 +114,22 @@ func DiffText(oldName string, newName string, expected string, actual string) st
 	})
 }
 
-func getBaselineDiff(t *testing.T, actual string, expected string, fileName string, fixupOld func(string) string) string {
+func getBaselineDiff(t *testing.T, actual string, expected string, fileName string, fixupOld func(string) string, fixupNew func(string) string) string {
 	if fixupOld != nil {
 		expected = fixupOld(expected)
+	}
+	if fixupNew != nil {
+		actual = fixupNew(actual)
 	}
 	if actual == expected {
 		return NoContent
 	}
 	s := DiffText("old."+fileName, "new."+fileName, expected, actual)
+
+	// If the diff is empty (just headers, no hunks), return NoContent
+	if !strings.Contains(s, "@@") {
+		return NoContent
+	}
 
 	// Remove line numbers from unified diff headers; this avoids adding/deleting
 	// lines in our baselines from causing knock-on header changes later in the diff.
@@ -205,7 +214,7 @@ func writeComparison(t *testing.T, actualContent string, local, reference string
 }
 
 var (
-	localRoot              = filepath.Join(repo.TestDataPath, "baselines", "local")
-	referenceRoot          = filepath.Join(repo.TestDataPath, "baselines", "reference")
-	submoduleReferenceRoot = filepath.Join(repo.TypeScriptSubmodulePath, "tests", "baselines", "reference")
+	localRoot              = filepath.Join(repo.TestDataPath(), "baselines", "local")
+	referenceRoot          = filepath.Join(repo.TestDataPath(), "baselines", "reference")
+	submoduleReferenceRoot = filepath.Join(repo.TypeScriptSubmodulePath(), "tests", "baselines", "reference")
 )

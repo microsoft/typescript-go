@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameFunctionParameter2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @param {number} p
@@ -17,6 +17,7 @@ func TestRenameFunctionParameter2(t *testing.T) {
 const foo = function foo(p/**/) {
     return p;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionOverloadsInMultiplePropertyAccesses(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace A {
     export namespace B {
@@ -19,6 +19,7 @@ func TestGoToDefinitionOverloadsInMultiplePropertyAccesses(t *testing.T) {
     }
 }
 A.B.[|/*2*/f|]("");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "2")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "2")
 }

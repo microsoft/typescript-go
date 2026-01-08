@@ -18,6 +18,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | c3(): c3
+// | Constructor comment
 // | ----------------------------------------------------------------------
 // var i3_c = c3;
 // /** Class comment*/
@@ -30,6 +31,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | c4(): c4
+// | Constructor comment
 // | ----------------------------------------------------------------------
 // var i4_c = c4;
 // /** Class with statics*/
@@ -54,6 +56,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | c6(): c6
+// | constructor comment
 // | ----------------------------------------------------------------------
 // var i6_c = c6;
 // 
@@ -69,6 +72,9 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | a(**a: string**): a
+// | - `a: string`: this is my a
+
+// | constructor for a
 // | ----------------------------------------------------------------------
 // module m {
 //     export module m2 {
@@ -99,8 +105,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -117,11 +122,14 @@
       "signatures": [
         {
           "label": "c3(): c3",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Constructor comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -138,11 +146,14 @@
       "signatures": [
         {
           "label": "c4(): c4",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Constructor comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -162,8 +173,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -180,11 +190,14 @@
       "signatures": [
         {
           "label": "c6(): c6",
+          "documentation": {
+            "kind": "markdown",
+            "value": "constructor comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -201,15 +214,23 @@
       "signatures": [
         {
           "label": "a(a: string): a",
+          "documentation": {
+            "kind": "markdown",
+            "value": "constructor for a"
+          },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is my a\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]

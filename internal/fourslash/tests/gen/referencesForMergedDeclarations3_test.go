@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForMergedDeclarations3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|class /*class*/[|testClass|] {
     static staticMethod() { }
@@ -28,6 +28,7 @@ var c2: [|testClass|].Bar;
 [|testClass|].prototype.method();
 [|testClass|].bind(this);
 new [|testClass|]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "module", "class")
 }

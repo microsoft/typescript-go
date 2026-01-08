@@ -8,8 +8,8 @@ import (
 )
 
 func TestJavaScriptClass3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
@@ -23,6 +23,7 @@ class Foo {
 var x = new Foo();
 x.[|alpha/*src1*/|];
 x.[|beta/*src2*/|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "src1", "src2")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "src1", "src2")
 }

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionForStringLiteralRelativeImport5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @rootDirs: /repo/src1,/repo/src2/,/repo/generated1,/repo/generated2/
 // @Filename: /dir/secret_file.ts
@@ -31,7 +31,8 @@ var foo3 = require(".//*require3*/
 /*f1*/
 // @Filename: /repo/generated2/dir/f2.ts
 /*f2*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"import_as1", "import_equals1", "require1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

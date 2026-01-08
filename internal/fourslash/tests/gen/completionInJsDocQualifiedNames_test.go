@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionInJsDocQualifiedNames(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /node_modules/foo/index.d.ts
@@ -21,7 +21,8 @@ export type T = number;
 import * as Foo from "foo";
 /** @type {Foo./**/} */
 const x = 0;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

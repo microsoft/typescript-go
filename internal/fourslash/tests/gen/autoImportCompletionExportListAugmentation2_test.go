@@ -5,14 +5,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestAutoImportCompletionExportListAugmentation2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /node_modules/@sapphire/pieces/index.d.ts
@@ -45,7 +44,8 @@ import { Command } from "@sapphire/framework";
 class PingCommand extends Command {
   /*1*/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -59,9 +59,9 @@ class PingCommand extends Command {
 					InsertText:          PtrTo("get container(): Container {\n}"),
 					FilterText:          PtrTo("container"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
+					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					})),
+					},
 				},
 			},
 		},

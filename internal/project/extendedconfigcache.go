@@ -1,75 +1,52 @@
 package project
 
 import (
-	"sync"
-
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
 
-type extendedConfigCache struct {
-	entries collections.SyncMap[tspath.Path, *extendedConfigCacheEntry]
+type ExtendedConfigParseArgs struct {
+	FileName        string
+	Content         string
+	FS              FileSource
+	ResolutionStack []string
+	Host            tsoptions.ParseConfigHost
+	Cache           tsoptions.ExtendedConfigCache
 }
 
-type extendedConfigCacheEntry struct {
-	mu       sync.Mutex
-	entry    *tsoptions.ExtendedConfigCacheEntry
-	hash     xxh3.Uint128
-	refCount int
+type ExtendedConfigCacheEntry struct {
+	*tsoptions.ExtendedConfigCacheEntry
+	Hash xxh3.Uint128
 }
 
-func (c *extendedConfigCache) Acquire(fh FileHandle, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
-	entry, loaded := c.loadOrStoreNewLockedEntry(path)
-	defer entry.mu.Unlock()
-	var hash xxh3.Uint128
-	if fh != nil {
-		hash = fh.Hash()
-	}
-	if !loaded || entry.hash != hash {
-		// Reparse the config if the hash has changed, or parse for the first time.
-		entry.entry = parse()
-		entry.hash = hash
-	}
-	return entry.entry
+type ExtendedConfigCache = RefCountCache[tspath.Path, *ExtendedConfigCacheEntry, ExtendedConfigParseArgs]
+
+func NewExtendedConfigCache() *ExtendedConfigCache {
+	return NewRefCountCache(
+		RefCountCacheOptions{},
+		func(path tspath.Path, args ExtendedConfigParseArgs) *ExtendedConfigCacheEntry {
+			result := &ExtendedConfigCacheEntry{
+				ExtendedConfigCacheEntry: tsoptions.ParseExtendedConfig(args.FileName, path, args.ResolutionStack, args.Host, args.Cache),
+			}
+			result.Hash = hash(result.ExtendedConfigCacheEntry, args)
+			return result
+		},
+		func(path tspath.Path, entry *ExtendedConfigCacheEntry, args ExtendedConfigParseArgs) bool {
+			return entry.Hash == xxh3.Uint128{} || entry.Hash != hash(entry.ExtendedConfigCacheEntry, args)
+		},
+	)
 }
 
-func (c *extendedConfigCache) Ref(path tspath.Path) {
-	if entry, ok := c.entries.Load(path); ok {
-		entry.mu.Lock()
-		entry.refCount++
-		entry.mu.Unlock()
-	}
-}
-
-func (c *extendedConfigCache) Deref(path tspath.Path) {
-	if entry, ok := c.entries.Load(path); ok {
-		entry.mu.Lock()
-		entry.refCount--
-		remove := entry.refCount <= 0
-		entry.mu.Unlock()
-		if remove {
-			c.entries.Delete(path)
+func hash(entry *tsoptions.ExtendedConfigCacheEntry, args ExtendedConfigParseArgs) xxh3.Uint128 {
+	hasher := xxh3.New()
+	_, _ = hasher.WriteString(args.Content)
+	for _, fileName := range entry.ExtendedFileNames() {
+		fh := args.FS.GetFile(fileName)
+		if fh == nil {
+			return xxh3.Uint128{}
 		}
+		_, _ = hasher.WriteString(fh.Content())
 	}
-}
-
-func (c *extendedConfigCache) Has(path tspath.Path) bool {
-	_, ok := c.entries.Load(path)
-	return ok
-}
-
-// loadOrStoreNewLockedEntry loads an existing entry or creates a new one. The returned
-// entry's mutex is locked and its refCount is incremented (or initialized to 1
-// in the case of a new entry).
-func (c *extendedConfigCache) loadOrStoreNewLockedEntry(path tspath.Path) (*extendedConfigCacheEntry, bool) {
-	entry := &extendedConfigCacheEntry{refCount: 1}
-	entry.mu.Lock()
-	if existing, loaded := c.entries.LoadOrStore(path, entry); loaded {
-		existing.mu.Lock()
-		existing.refCount++
-		return existing, true
-	}
-	return entry, false
+	return hasher.Sum128()
 }

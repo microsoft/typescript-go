@@ -8,8 +8,8 @@ import (
 )
 
 func TestGetOccurrencesAfterEdit(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*0*/
 interface A {
@@ -18,7 +18,8 @@ interface A {
 function foo(x: A) {
     x.f/*1*/oo
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "1")
 	f.GoToMarker(t, "0")
 	f.Insert(t, "\n")

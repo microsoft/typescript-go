@@ -10,8 +10,8 @@ import (
 )
 
 func TestJsDocFunctionSignatures3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
@@ -32,7 +32,8 @@ var someObject = {
     }
 
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "1")
 	f.Insert(t, ".")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{

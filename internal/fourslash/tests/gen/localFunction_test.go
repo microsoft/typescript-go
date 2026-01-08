@@ -8,8 +8,8 @@ import (
 )
 
 func TestLocalFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*1*/foo() {
     function /*2*/bar2() {
@@ -19,7 +19,8 @@ func TestLocalFunction(t *testing.T) {
 }
 var x = function /*4*/bar4() {
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "function foo(): void", "")
 	f.VerifyQuickInfoAt(t, "2", "(local function) bar2(): void", "")
 	f.VerifyQuickInfoAt(t, "3", "(local function) bar3(): void", "")

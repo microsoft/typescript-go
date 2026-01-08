@@ -8,12 +8,13 @@ import (
 )
 
 func TestQuickInfoDisplayPartsVarWithStringTypes01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let /*1*/hello: "hello" | 'hello' = "hello";
 let /*2*/world: 'world' = "world";
 let /*3*/helloOrWorld: "hello" | 'world';`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

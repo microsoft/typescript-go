@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinitionModifiers(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 /*export*/export class A/*A*/ {
@@ -28,6 +28,7 @@ func TestGoToTypeDefinitionModifiers(t *testing.T) {
 }
 
 exp/*exportFunction*/ort function foo/*foo*/() { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "export", "A", "private", "z", "private2", "y", "readonly", "x", "async", "a", "override", "b", "public1", "public2", "multipleModifiers", "c", "exportFunction", "foo")
 }

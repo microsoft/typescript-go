@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxGoToDefinitionUnionElementType2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 // @jsx: preserve
@@ -27,6 +27,7 @@ class RC2 extends React.Component<{}, {}> {
 }
 var /*pt1*/RCComp = RC1 || RC2;
 <[|RC/*one*/Comp|] />`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "one")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "one")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription11(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type AliasExample = {
     /** Something generic */
@@ -20,6 +20,7 @@ func TestJsDocPropertyDescription11(t *testing.T) {
 function aliasExample(e: AliasExample) {
     console.log(e./*alias*/anything);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "alias", "(index) AliasExample[string | `any${string}`]: string", "Something generic\nSomething else")
 }

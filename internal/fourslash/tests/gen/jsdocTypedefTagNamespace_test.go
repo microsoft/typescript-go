@@ -11,8 +11,8 @@ import (
 )
 
 func TestJsdocTypedefTagNamespace(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js
@@ -27,7 +27,9 @@ var x; x./*1*/;
 var x1; x1./*2*/;
 /** @type {T.People} */
 var x1; x1./*3*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, []string{"1", "3"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

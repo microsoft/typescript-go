@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionImportModuleSpecifierEndingJsx(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@allowJs: true
 //@jsx:preserve
@@ -19,7 +19,8 @@ func TestCompletionImportModuleSpecifierEndingJsx(t *testing.T) {
  export class Test { }
 //@Filename:module.jsx
 import { Test } from ".//**/"`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

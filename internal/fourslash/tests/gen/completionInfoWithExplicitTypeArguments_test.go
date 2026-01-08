@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionInfoWithExplicitTypeArguments(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { x: number; y: number; }
 
@@ -20,7 +20,8 @@ f<I>({ /*f*/ });
 
 declare function g<T>(x: keyof T, y: number): void;
 g<I>("[|/*g*/|]");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "f", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

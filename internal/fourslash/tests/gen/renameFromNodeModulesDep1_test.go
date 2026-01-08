@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameFromNodeModulesDep1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /index.ts
 import { /*okWithAlias*/[|Foo|] } from "foo";
@@ -23,7 +23,8 @@ f./*notOk*/bar;
 export interface Foo {
     bar: string;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "okWithAlias")
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 	f.VerifyRenameFailed(t, nil /*preferences*/)

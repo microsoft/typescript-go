@@ -8,13 +8,14 @@ import (
 )
 
 func TestSmartSelection_imports(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import { /**/x as y, z } from './z';
 import { b } from './';
 
 console.log(1);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSelectionRanges(t)
 }

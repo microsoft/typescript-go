@@ -9,8 +9,8 @@ import (
 )
 
 func TestJsDocTagsWithHyphen(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: dummy.js
@@ -26,7 +26,8 @@ func TestJsDocTagsWithHyphen(t *testing.T) {
 const product = {
     /*3*/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) high-top: boolean", "some-comments")
 	f.VerifyQuickInfoAt(t, "2", "type Product = {\n    title: string;\n    \"high-top\": boolean;\n}", "")
 	f.VerifyCompletions(t, []string{"3"}, &fourslash.CompletionsExpectedList{

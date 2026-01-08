@@ -9,8 +9,8 @@ import (
 )
 
 func TestAugmentedTypesModule1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module m1c {
     export interface I { foo(): void; }
@@ -18,7 +18,8 @@ func TestAugmentedTypesModule1(t *testing.T) {
 var m1c = 1; // Should be allowed
 var x: m1c./*1*/;
 var /*2*/r = m1c;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxRename7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 // @jsx: preserve
@@ -30,6 +30,7 @@ let opt = <Opt />;
 let opt1 = <Opt [|[|{| "contextRangeIndex": 2 |}propx|]={100}|] propString />;
 let opt2 = <Opt [|[|{| "contextRangeIndex": 4 |}propx|]={100}|] optional/>;
 let opt3 = <Opt wrong />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "propx")
 }

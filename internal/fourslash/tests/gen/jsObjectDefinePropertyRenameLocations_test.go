@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsObjectDefinePropertyRenameLocations(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -24,6 +24,7 @@ var CircularList = (function () {
     }
     return CircularList;
 })()`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/)
 }

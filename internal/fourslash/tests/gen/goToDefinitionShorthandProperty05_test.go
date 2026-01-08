@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionShorthandProperty05(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     /*3*/foo(): void
@@ -18,6 +18,7 @@ const /*2*/foo = 1;
 let x: Foo = {
     [|f/*1*/oo|]
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

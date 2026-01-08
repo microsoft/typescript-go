@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinitionAliases(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: goToTypeDefinitioAliases_module1.ts
 interface /*definition*/I {
@@ -23,6 +23,7 @@ export {v1 as v2};
 // @Filename: goToTypeDefinitioAliases_module3.ts
 import {/*reference1*/v2 as v3} from "./goToTypeDefinitioAliases_module2";
 /*reference2*/v3;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference1", "reference2")
 }

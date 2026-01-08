@@ -9,8 +9,8 @@ import (
 )
 
 func TestDocumentHighlightAtInheritedProperties3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: file1.ts
 interface interface1 extends interface1 {
@@ -21,6 +21,7 @@ interface interface1 extends interface1 {
 var v: interface1;
 v.[|propName|];
 v.[|doStuff|]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

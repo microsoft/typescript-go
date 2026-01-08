@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsGeneratorFunctions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*a*/ ;
 function* /*b*/ ;
@@ -27,7 +27,8 @@ const o: I = {
     */*e*/
 };
 1 * /*f*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"a", "b"}, nil)
 	f.VerifyCompletions(t, []string{"c", "d"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

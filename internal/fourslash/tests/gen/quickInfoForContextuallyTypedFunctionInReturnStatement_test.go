@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForContextuallyTypedFunctionInReturnStatement(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Accumulator {
     clear(): void;
@@ -25,6 +25,7 @@ function makeAccumulator(): Accumulator {
         result: function () { return sum; }
     };
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(parameter) value: number", "")
 }

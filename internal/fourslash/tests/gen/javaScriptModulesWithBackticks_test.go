@@ -9,8 +9,8 @@ import (
 )
 
 func TestJavaScriptModulesWithBackticks(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.js
@@ -18,7 +18,8 @@ exports.x = 0;
 // @Filename: consumer.js
 var a = require(` + "`" + `./a` + "`" + `);
 a./**/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

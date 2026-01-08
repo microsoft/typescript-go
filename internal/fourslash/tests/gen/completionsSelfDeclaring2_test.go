@@ -9,14 +9,15 @@ import (
 )
 
 func TestCompletionsSelfDeclaring2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f1<T>(x: T) {}
 f1({ abc/*1*/ });
 function f2<T extends { xyz: number }>(x: T) {}
 f2({ x/*2*/ });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

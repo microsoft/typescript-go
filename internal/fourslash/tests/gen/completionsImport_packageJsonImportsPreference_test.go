@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_packageJsonImportsPreference(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: preserve
 // @allowImportingTsExtensions: true
@@ -30,7 +30,8 @@ export const internalFoo = 0;
 export * from "./internal/foo.ts";
 // @Filename: /project/src/main.ts
 internalFoo/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -42,11 +43,11 @@ internalFoo/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "internalFoo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "#internal/foo",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
@@ -63,11 +64,11 @@ internalFoo/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "internalFoo",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./other",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},

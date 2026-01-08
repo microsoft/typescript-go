@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsdocTypedefTagGoToDefinition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js
@@ -28,6 +28,8 @@ var person; person.[|personName/*3*/|]
 
 /** @type {Animal} */
 var animal; animal.[|animalName/*4*/|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "3", "4")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
+	f.VerifyBaselineGoToDefinition(t, true, "3", "4")
 }

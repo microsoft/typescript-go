@@ -8,8 +8,8 @@ import (
 )
 
 func TestThisBindingInLambda(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Greeter {
     constructor() { 
@@ -18,6 +18,7 @@ func TestThisBindingInLambda(t *testing.T) {
 		});
 	}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "this: this", "")
 }

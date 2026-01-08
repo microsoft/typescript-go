@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportTypeCompletions7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: es2020
 // @module: esnext
@@ -21,7 +21,8 @@ declare namespace Foo {}
 export = Foo;
 // @Filename: /test.ts
 [|import F/**/|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/test.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -34,11 +35,11 @@ export = Foo;
 				&lsproto.CompletionItem{
 					Label:      "Foo",
 					InsertText: PtrTo("import Foo from \"./foo\";"),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./foo",
 						},
-					})),
+					},
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							NewText: "Foo",

@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpCommentsCommentParsing(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/// This is simple /// comments
 function simple() {
@@ -212,6 +212,7 @@ jsDocCommentAlignmentTest3(/*47*/"hello",/*48*/1, /*49*/2);
 /**/
 class NoQuickInfoClass {
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

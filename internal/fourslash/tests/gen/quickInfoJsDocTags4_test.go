@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoJsDocTags4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: quickInfoJsDocTags4.ts
 class Foo {
@@ -32,6 +32,7 @@ class Bar extends Foo {
         return res;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

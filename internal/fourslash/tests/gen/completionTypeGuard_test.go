@@ -9,15 +9,16 @@ import (
 )
 
 func TestCompletionTypeGuard(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const x = "str";
 function assert1(condition: any, msg?: string): /*1*/ ;
 function assert2(condition: any, msg?: string): /*2*/ { }
 function assert3(condition: any, msg?: string): /*3*/
 hi`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

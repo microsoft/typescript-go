@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameLabel4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `loop:
 for (let i = 0; i <= 10; i++) {
@@ -17,6 +17,7 @@ for (let i = 0; i <= 10; i++) {
    if (i === 1) continue /**/loop;
    if (i === 10) break loop;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

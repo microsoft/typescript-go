@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_reexportTransient(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: true
 // @Filename: /transient.d.ts
@@ -24,7 +24,8 @@ export { one } from "./transient";
 export { one } from "./r1";
 // @Filename: /index.ts
 one/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -37,11 +38,11 @@ one/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "one",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "./transient",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

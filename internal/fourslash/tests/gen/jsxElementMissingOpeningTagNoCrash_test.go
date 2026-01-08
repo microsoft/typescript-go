@@ -8,12 +8,13 @@ import (
 )
 
 func TestJsxElementMissingOpeningTagNoCrash(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 declare function Foo(): any;
 let x = <></Fo/*$*/o>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "$", "let Foo: any", "")
 }

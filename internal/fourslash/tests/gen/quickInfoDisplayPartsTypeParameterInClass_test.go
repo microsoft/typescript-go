@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsTypeParameterInClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class /*1*/c</*2*/T> {
     /*3*/constructor(/*4*/a: /*5*/T) {
@@ -31,6 +31,7 @@ class /*19*/c2</*20*/T extends /*21*/c<string>> {
 var /*33*/cInstance1 = new /*34*/c2(/*35*/cInstance);
 var /*36*/cVal2 = /*37*/c2;
 /*38*/cInstance1./*39*/method(/*40*/cInstance, /*41*/cInstance);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

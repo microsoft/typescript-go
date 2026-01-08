@@ -8,10 +8,12 @@ import (
 )
 
 func TestReferencesToNonPropertyNameStringLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const str: string = "hello/*1*/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

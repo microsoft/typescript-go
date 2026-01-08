@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsTypeAssertionKeywords(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = {
   b: 42 as /*0*/
@@ -21,7 +21,8 @@ func TestCompletionsTypeAssertionKeywords(t *testing.T) {
 const b = 42 as /*2*/
 
 var c = </*3*/>42`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

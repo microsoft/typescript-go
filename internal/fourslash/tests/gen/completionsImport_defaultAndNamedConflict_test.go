@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_defaultAndNamedConflict(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /someModule.ts
@@ -20,7 +20,8 @@ export const someModule = 0;
 export default 1;
 // @Filename: /index.ts
 someMo/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -32,11 +33,11 @@ someMo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "someModule",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "./someModule",
 							},
-						})),
+						},
 						Detail:              PtrTo("(property) default: 1"),
 						Kind:                PtrTo(lsproto.CompletionItemKindField),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -44,11 +45,11 @@ someMo/**/`
 					},
 					&lsproto.CompletionItem{
 						Label: "someModule",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "./someModule",
 							},
-						})),
+						},
 						Detail:              PtrTo("const someModule: 0"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -60,7 +61,7 @@ someMo/**/`
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "someModule",
 		Source: "./someModule",
-		AutoImportData: &ls.AutoImportData{
+		AutoImportData: &lsproto.AutoImportData{
 			ExportName: "default",
 			FileName:   "/someModule.ts",
 		},

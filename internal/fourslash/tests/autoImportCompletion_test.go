@@ -6,7 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -24,9 +24,10 @@ import {someVar} from "./a.ts";
 someVar;
 a/**/
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &ls.UserPreferences{
+		UserPreferences: &lsutil.UserPreferences{
 			IncludeCompletionsForModuleExports:    core.TSTrue,
 			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
@@ -41,7 +42,7 @@ a/**/
 	})
 	f.BaselineAutoImportsCompletions(t, []string{""})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &ls.UserPreferences{
+		UserPreferences: &lsutil.UserPreferences{
 			// completion autoimport preferences off; this tests if fourslash server communication correctly registers changes in user preferences
 			IncludeCompletionsForModuleExports:    core.TSUnknown,
 			IncludeCompletionsForImportStatements: core.TSUnknown,
@@ -69,9 +70,10 @@ import {someVar} from "./a.ts";
 someVar;
 a/**/
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &ls.UserPreferences{
+		UserPreferences: &lsutil.UserPreferences{
 			IncludeCompletionsForModuleExports:    core.TSTrue,
 			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
@@ -100,9 +102,10 @@ import { aa, someVar } from "./a.ts";
 someVar;
 b/**/
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &ls.UserPreferences{
+		UserPreferences: &lsutil.UserPreferences{
 			IncludeCompletionsForModuleExports:    core.TSTrue,
 			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
@@ -153,6 +156,7 @@ const m = import("./src//*6*/");
 import {} from "./src//*7*/";
 import mod = require("./src//*8*/");
 const m = import("./src//*9*/");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.BaselineAutoImportsCompletions(t, []string{"1", "3", "6", "9", "2", "4", "5", "7", "8"})
 }

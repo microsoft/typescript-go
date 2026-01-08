@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_augmentation(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export const foo = 0;
@@ -23,7 +23,8 @@ declare module "./a" {
 }
 // @Filename: /user.ts
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -35,22 +36,22 @@ declare module "./a" {
 				&lsproto.CompletionItem{
 					Label:  "foo",
 					Detail: PtrTo("const foo: 0"),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label:  "bar",
 					Detail: PtrTo("const bar: 0"),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./a",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},

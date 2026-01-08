@@ -47,6 +47,7 @@ type CompilerOptions struct {
 	ForceConsistentCasingInFileNames          Tristate                                  `json:"forceConsistentCasingInFileNames,omitzero"`
 	IsolatedModules                           Tristate                                  `json:"isolatedModules,omitzero"`
 	IsolatedDeclarations                      Tristate                                  `json:"isolatedDeclarations,omitzero"`
+	IgnoreConfig                              Tristate                                  `json:"ignoreConfig,omitzero"`
 	IgnoreDeprecations                        string                                    `json:"ignoreDeprecations,omitzero"`
 	ImportHelpers                             Tristate                                  `json:"importHelpers,omitzero"`
 	InlineSourceMap                           Tristate                                  `json:"inlineSourceMap,omitzero"`
@@ -148,6 +149,7 @@ type CompilerOptions struct {
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
+	Checkers       *int     `json:"checkers,omitzero"`
 
 	sourceFileAffectingCompilerOptionsOnce sync.Once
 	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
@@ -231,12 +233,11 @@ func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind
 	if options.ModuleDetection != ModuleDetectionKindNone {
 		return options.ModuleDetection
 	}
-	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNode20, ModuleKindNodeNext:
+	moduleKind := options.GetEmitModuleKind()
+	if ModuleKindNode16 <= moduleKind && moduleKind <= ModuleKindNodeNext {
 		return ModuleDetectionKindForce
-	default:
-		return ModuleDetectionKindAuto
 	}
+	return ModuleDetectionKindAuto
 }
 
 func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
@@ -365,19 +366,13 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
-	AllowUnreachableCode     Tristate
-	AllowUnusedLabels        Tristate
-	BindInStrictMode         bool
-	ShouldPreserveConstEnums bool
+	BindInStrictMode bool
 }
 
 func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
 	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
 		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
-			AllowUnreachableCode:     options.AllowUnreachableCode,
-			AllowUnusedLabels:        options.AllowUnusedLabels,
-			BindInStrictMode:         options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-			ShouldPreserveConstEnums: options.ShouldPreserveConstEnums(),
+			BindInStrictMode: options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
 		}
 	})
 	return options.sourceFileAffectingCompilerOptions

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_defaultFalsePositive(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/foo/index.ts
 export default function f(): void;
@@ -21,7 +21,8 @@ export const concat = 0;
 // @Filename: /a.ts
 export {};
 conca/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/a.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -33,11 +34,11 @@ conca/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "concat",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "bar/concat",
 						},
-					})),
+					},
 					Detail:              PtrTo("const concat: 0"),
 					Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

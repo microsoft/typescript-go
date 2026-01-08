@@ -8,13 +8,14 @@ import (
 )
 
 func TestSignatureHelpJSMissingPropertyAccess(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
 // @Filename: test.js
 foo.filter(/**/)`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

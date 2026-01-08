@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoTypeOfThisInStatics(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     static foo() {
@@ -20,7 +20,8 @@ func TestQuickInfoTypeOfThisInStatics(t *testing.T) {
         return 1;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(local var) r: typeof C", "")
 	f.VerifyQuickInfoAt(t, "2", "(local var) r: typeof C", "")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxFindAllReferences9(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 // @jsx: preserve
@@ -40,6 +40,7 @@ let opt = <MainButton onClick={()=>{}} ignore-prop />;
 let opt = <MainButton goTo="goTo" />;
 let opt = <MainButton goTo />;
 let opt = <MainButton wrong />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

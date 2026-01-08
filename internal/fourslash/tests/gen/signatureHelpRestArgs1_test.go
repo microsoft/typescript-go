@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpRestArgs1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function fn(a: number, b: number, c: number) {}
 const a = [1, 2] as const;
@@ -20,6 +20,7 @@ fn(/*2*/, ...a);
 
 fn(...b, /*3*/);
 fn(/*4*/, ...b, /*5*/);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

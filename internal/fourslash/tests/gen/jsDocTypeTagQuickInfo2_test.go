@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocTypeTagQuickInfo2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: jsDocTypeTag2.js
@@ -37,6 +37,7 @@ var /*10*/func;
 var /*11*/func1;
 /** @type {string | number} */
 var /*12*/sOrn;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

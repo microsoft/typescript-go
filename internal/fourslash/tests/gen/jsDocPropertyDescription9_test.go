@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription9(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class LiteralClass {
     /** Something generic */
@@ -22,7 +22,8 @@ function literalClass(e: typeof LiteralClass) {
     console.log(e./*literal2Class*/anything);
     console.log(e./*literal3Class*/prefix0);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "literal1Class", "(index) LiteralClass[`prefix${string}`]: any", "Something generic")
 	f.VerifyQuickInfoAt(t, "literal2Class", "any", "")
 	f.VerifyQuickInfoAt(t, "literal3Class", "(index) LiteralClass[`prefix${string}` | `prefix${number}`]: any", "Something generic\nSomething else")

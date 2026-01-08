@@ -17,11 +17,17 @@ Show all compiler options.
 [94m--build, -b[39m
 Build one or more projects and their dependencies, if out of date
 
+[94m--checkers[39m
+Set the number of checkers per project.
+
 [94m--help, -h[39m
 Print this message.
 
 [94m--help, -?[39m
 
+
+[94m--ignoreConfig[39m
+Ignore the tsconfig found and build with commandline options and files.
 
 [94m--init[39m
 Initializes a TypeScript project and creates a tsconfig.json file.
@@ -647,6 +653,9 @@ Build all projects, including those that appear to be up to date.
 
 [94m--clean[39m
 Delete the outputs of all projects.
+
+[94m--builders[39m
+Set the number of projects to build concurrently.
 
 [94m--stopBuildOnErrors[39m
 Skip building downstream projects on error in upstream project.

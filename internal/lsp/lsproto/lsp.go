@@ -1,21 +1,28 @@
 package lsproto
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
-	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type DocumentUri string // !!!
 
 func (uri DocumentUri) FileName() string {
+	if bundled.IsBundled(string(uri)) {
+		return string(uri)
+	}
 	if strings.HasPrefix(string(uri), "file://") {
-		parsed := core.Must(url.Parse(string(uri)))
+		parsed, err := url.Parse(string(uri))
+		if err != nil {
+			panic(fmt.Sprintf("invalid file URI: %s", uri))
+		}
 		if parsed.Host != "" {
 			return "//" + parsed.Host + parsed.Path
 		}
@@ -58,6 +65,19 @@ type HasTextDocumentURI interface {
 	TextDocumentURI() DocumentUri
 }
 
+type HasTextDocumentPosition interface {
+	HasTextDocumentURI
+	TextDocumentPosition() Position
+}
+
+type HasLocations interface {
+	GetLocations() *[]Location
+}
+
+type HasLocation interface {
+	GetLocation() Location
+}
+
 type URI string // !!!
 
 type Method string
@@ -68,6 +88,14 @@ func unmarshalPtrTo[T any](data []byte) (*T, error) {
 		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
 	}
 	return &v, nil
+}
+
+func unmarshalValue[T any](data []byte) (T, error) {
+	var v T
+	if err := json.Unmarshal(data, &v); err != nil {
+		return *new(T), fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
+	}
+	return v, nil
 }
 
 func unmarshalAny(data []byte) (any, error) {
@@ -128,9 +156,41 @@ type RequestInfo[Params, Resp any] struct {
 	Method Method
 }
 
+func (info RequestInfo[Params, Resp]) UnmarshalResult(result any) (Resp, error) {
+	if r, ok := result.(Resp); ok {
+		return r, nil
+	}
+
+	raw, ok := result.(jsontext.Value)
+	if !ok {
+		return *new(Resp), fmt.Errorf("expected jsontext.Value, got %T", result)
+	}
+
+	r, err := unmarshalResult(info.Method, raw)
+	if err != nil {
+		return *new(Resp), err
+	}
+	return r.(Resp), nil
+}
+
+func (info RequestInfo[Params, Resp]) NewRequestMessage(id *ID, params Params) *RequestMessage {
+	return &RequestMessage{
+		ID:     id,
+		Method: info.Method,
+		Params: params,
+	}
+}
+
 type NotificationInfo[Params any] struct {
 	_      [0]Params
 	Method Method
+}
+
+func (info NotificationInfo[Params]) NewNotificationMessage(params Params) *RequestMessage {
+	return &RequestMessage{
+		Method: info.Method,
+		Params: params,
+	}
 }
 
 type Null struct{}
@@ -148,4 +208,26 @@ func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
+}
+
+type clientCapabilitiesKey struct{}
+
+func WithClientCapabilities(ctx context.Context, caps *ResolvedClientCapabilities) context.Context {
+	return context.WithValue(ctx, clientCapabilitiesKey{}, caps)
+}
+
+func GetClientCapabilities(ctx context.Context) *ResolvedClientCapabilities {
+	if caps, _ := ctx.Value(clientCapabilitiesKey{}).(*ResolvedClientCapabilities); caps != nil {
+		return caps
+	}
+	return &ResolvedClientCapabilities{}
+}
+
+// PreferredMarkupKind returns the first (most preferred) markup kind from the given formats,
+// or MarkupKindPlainText if the slice is empty.
+func PreferredMarkupKind(formats []MarkupKind) MarkupKind {
+	if len(formats) > 0 {
+		return formats[0]
+	}
+	return MarkupKindPlainText
 }

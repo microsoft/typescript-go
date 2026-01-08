@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinition_arrayType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { name: string };
 declare const users: User[]
@@ -22,6 +22,7 @@ declare const users2: UsersArr
 class CustomArray<T> extends Array<T> { immutableReverse() { return [...this].reverse() } }
 declare const users3: CustomArray<User>
 /*reference3*/users3`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference", "reference2", "reference3")
 }

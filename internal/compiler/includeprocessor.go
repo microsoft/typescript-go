@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -12,11 +13,11 @@ import (
 )
 
 type includeProcessor struct {
-	fileIncludeReasons    map[tspath.Path][]*fileIncludeReason
+	fileIncludeReasons    map[tspath.Path][]*FileIncludeReason
 	processingDiagnostics []*processingDiagnostic
 
-	reasonToReferenceLocation  collections.SyncMap[*fileIncludeReason, *referenceFileLocation]
-	includeReasonToRelatedInfo collections.SyncMap[*fileIncludeReason, *ast.Diagnostic]
+	reasonToReferenceLocation  collections.SyncMap[*FileIncludeReason, *referenceFileLocation]
+	includeReasonToRelatedInfo collections.SyncMap[*FileIncludeReason, *ast.Diagnostic]
 	redirectAndFileFormat      collections.SyncMap[tspath.Path, []*ast.Diagnostic]
 	computedDiagnostics        *ast.DiagnosticsCollection
 	computedDiagnosticsOnce    sync.Once
@@ -59,7 +60,33 @@ func (i *includeProcessor) addProcessingDiagnostic(d ...*processingDiagnostic) {
 	i.processingDiagnostics = append(i.processingDiagnostics, d...)
 }
 
-func (i *includeProcessor) getReferenceLocation(r *fileIncludeReason, program *Program) *referenceFileLocation {
+func (i *includeProcessor) addProcessingDiagnosticsForFileCasing(file tspath.Path, existingCasing string, currentCasing string, reason *FileIncludeReason) {
+	if !reason.isReferencedFile() && slices.ContainsFunc(i.fileIncludeReasons[file], func(r *FileIncludeReason) bool {
+		return r.isReferencedFile()
+	}) {
+		i.addProcessingDiagnostic(&processingDiagnostic{
+			kind: processingDiagnosticKindExplainingFileInclude,
+			data: &includeExplainingDiagnostic{
+				file:             file,
+				diagnosticReason: reason,
+				message:          diagnostics.Already_included_file_name_0_differs_from_file_name_1_only_in_casing,
+				args:             []any{existingCasing, currentCasing},
+			},
+		})
+	} else {
+		i.addProcessingDiagnostic(&processingDiagnostic{
+			kind: processingDiagnosticKindExplainingFileInclude,
+			data: &includeExplainingDiagnostic{
+				file:             file,
+				diagnosticReason: reason,
+				message:          diagnostics.File_name_0_differs_from_already_included_file_name_1_only_in_casing,
+				args:             []any{currentCasing, existingCasing},
+			},
+		})
+	}
+}
+
+func (i *includeProcessor) getReferenceLocation(r *FileIncludeReason, program *Program) *referenceFileLocation {
 	if existing, ok := i.reasonToReferenceLocation.Load(r); ok {
 		return existing
 	}
@@ -84,7 +111,7 @@ func (i *includeProcessor) getCompilerOptionsObjectLiteralSyntax(program *Progra
 	return i.compilerOptionsSyntax
 }
 
-func (i *includeProcessor) getRelatedInfo(r *fileIncludeReason, program *Program) *ast.Diagnostic {
+func (i *includeProcessor) getRelatedInfo(r *FileIncludeReason, program *Program) *ast.Diagnostic {
 	if existing, ok := i.includeReasonToRelatedInfo.Load(r); ok {
 		return existing
 	}

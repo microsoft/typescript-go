@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsImport_typeOnly(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: esnext
 // @moduleResolution: bundler
@@ -20,7 +20,8 @@ export class B {}
 // @Filename: /b.ts
 import type { A } from './a';
 const b: B/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/b.ts")
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "B",

@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForGlobalsInExternalModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/var /*2*/topLevelVar = 2;
 var topLevelVar2 = /*3*/topLevelVar;
@@ -26,6 +26,7 @@ var i: /*9*/topLevelInterface;
 var x = /*12*/topLevelModule.x;
 
 export = x;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
 }

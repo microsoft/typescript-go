@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportReExportFromAmbientModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
@@ -28,7 +28,9 @@ declare module "fs" {
 export * from "fs";
 // @Filename: /home/src/workspaces/project/index.ts
 access/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -39,21 +41,21 @@ access/**/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "accessSync",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "fs",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label: "accessSync",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "fs-extra",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
@@ -67,7 +69,7 @@ access/**/`
 		NewFileContent: PtrTo(`import { accessSync } from "fs-extra";
 
 access`),
-		AutoImportData: &ls.AutoImportData{
+		AutoImportData: &lsproto.AutoImportData{
 			ExportName:      "accessSync",
 			FileName:        "/home/src/workspaces/project/node_modules/@types/fs-extra/index.d.ts",
 			ModuleSpecifier: "fs-extra",

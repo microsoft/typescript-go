@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForIndexProperty3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Object {
     /*1*/toMyString();
@@ -20,6 +20,7 @@ y./*2*/toMyString();
 
 var x = {};
 x["/*3*/toMyString"]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

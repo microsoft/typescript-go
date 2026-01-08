@@ -8,8 +8,8 @@ import (
 )
 
 func TestTrailingCommaSignatureHelp(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function str(n: number): string;
 /**
@@ -23,6 +23,7 @@ str(1, /*a*/)
 
 declare function f<T>(a: T): T;
 f(2, /*b*/);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }

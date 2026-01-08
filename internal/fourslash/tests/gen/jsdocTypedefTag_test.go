@@ -9,8 +9,8 @@ import (
 )
 
 func TestJsdocTypedefTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js
@@ -61,7 +61,9 @@ c.catAge./*catAge*/;
 var d;d./*dog*/;
 d.dogName./*dogName*/;
 d.dogAge./*dogAge*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "numberLike", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

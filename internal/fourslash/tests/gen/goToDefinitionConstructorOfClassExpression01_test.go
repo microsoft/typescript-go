@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionConstructorOfClassExpression01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = class C {
     /*definition*/constructor() {
@@ -33,6 +33,7 @@ var x1 = new [|/*cref*/C|]();
 var x2 = new [|/*xref*/x|]();
 var y1 = new [|/*yref*/y|]();
 var z1 = new [|/*zref*/z|]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "xusage", "yusage", "zusage", "cref", "xref", "yref", "zref")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "xusage", "yusage", "zusage", "cref", "xref", "yref", "zref")
 }

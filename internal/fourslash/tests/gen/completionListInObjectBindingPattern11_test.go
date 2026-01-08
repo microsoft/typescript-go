@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInObjectBindingPattern11(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     property1: number;
@@ -18,7 +18,8 @@ func TestCompletionListInObjectBindingPattern11(t *testing.T) {
 }
 
 var { property1: prop1, /**/ }: I;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

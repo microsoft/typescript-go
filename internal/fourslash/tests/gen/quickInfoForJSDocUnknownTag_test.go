@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForJSDocUnknownTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/**
  * @example
@@ -57,6 +57,7 @@ function b/*4*/oo() {
 function go/*5*/o() {
     return '2';
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

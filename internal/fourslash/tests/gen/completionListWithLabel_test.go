@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListWithLabel(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` label: while (true) {
     break /*1*/
@@ -24,7 +24,8 @@ func TestCompletionListWithLabel(t *testing.T) {
     break /*7*/
     break; /*8*/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "2", "7"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

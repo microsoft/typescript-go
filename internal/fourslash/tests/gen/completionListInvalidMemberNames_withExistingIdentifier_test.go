@@ -10,14 +10,15 @@ import (
 )
 
 func TestCompletionListInvalidMemberNames_withExistingIdentifier(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare const x: { "foo ": "space in the name", };
 x[|.fo/*0*/|];
 x[|./*1*/|]
 unrelatedIdentifier;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

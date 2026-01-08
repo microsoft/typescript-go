@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionJsDocImportTag5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJS: true
 // @checkJs: true
@@ -24,6 +24,7 @@ export interface /*2*/A { }
  * @param { [|A/*1*/|] } a
  */
 function f(a) {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

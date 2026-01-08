@@ -9,8 +9,8 @@ import (
 )
 
 func TestMemberListOfModuleBeforeKeyword(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module TypeModule1 {
     export class C1 { }
@@ -25,7 +25,8 @@ TypeModule1./*dottedExpression*/
 module TypeModule3 {
     export class Test3 {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

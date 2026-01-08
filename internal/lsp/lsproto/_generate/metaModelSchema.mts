@@ -202,6 +202,16 @@ export type Request = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * The client capability property path if any.
+	 */
+	clientCapability?: string;
+
+	/**
+	 * The server capability property path if any.
+	 */
+	serverCapability?: string;
 };
 
 /**
@@ -269,6 +279,16 @@ export type Notification = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * The client capability property path if any.
+	 */
+	clientCapability?: string;
+
+	/**
+	 * The server capability property path if any.
+	 */
+	serverCapability?: string;
 };
 
 /**
@@ -319,6 +339,12 @@ export type Property = {
 	 * the property contains the deprecation message.
 	 */
 	deprecated?: string;
+
+	/**
+	 * Whether this property uses omitzero without being a pointer.
+	 * Custom extension for special value types.
+	 */
+	omitzeroValue?: boolean;
 };
 
 /**

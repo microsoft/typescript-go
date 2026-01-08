@@ -14,6 +14,8 @@
 //                        ^
 // | ----------------------------------------------------------------------
 // | p2(**b: number**): number
+// | - `b: number`: number to add
+// | sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     /** setter property 1*/
@@ -22,6 +24,8 @@
 //                           ^
 // | ----------------------------------------------------------------------
 // | p2(**b: number**): number
+// | - `b: number`: number to add
+// | sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     /** pp1 is property of c1*/
@@ -36,6 +40,8 @@
 //                         ^
 // | ----------------------------------------------------------------------
 // | pp2(**b: number**): number
+// | - `b: number`: number to add
+// | sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     /** setter property 2*/
@@ -44,6 +50,8 @@
 //                             ^
 // | ----------------------------------------------------------------------
 // | pp2(**b: number**): number
+// | - `b: number`: number to add
+// | sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     /** Constructor method*/
@@ -61,6 +69,8 @@
 //                      ^
 // | ----------------------------------------------------------------------
 // | s2(**b: number**): number
+// | - `b: number`: number to add
+// | static sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     /** setter property 3*/
@@ -69,6 +79,8 @@
 //                       ^
 // | ----------------------------------------------------------------------
 // | s2(**b: number**): number
+// | - `b: number`: number to add
+// | static sum with property
 // | ----------------------------------------------------------------------
 //     }
 //     public nc_p1: number;
@@ -130,6 +142,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | c1(): c1
+// | Constructor method
 // | ----------------------------------------------------------------------
 // var i1_p = i1.p1;
 // var i1_f = i1.p2;
@@ -137,6 +150,8 @@
 //                  ^
 // | ----------------------------------------------------------------------
 // | p2(**b: number**): number
+// | - `b: number`: number to add
+// | sum with property
 // | ----------------------------------------------------------------------
 // var i1_prop = i1.p3;
 // i1.p3 = i1_prop;
@@ -155,6 +170,8 @@
 //                    ^
 // | ----------------------------------------------------------------------
 // | s2(**b: number**): number
+// | - `b: number`: number to add
+// | static sum with property
 // | ----------------------------------------------------------------------
 // var i1_s_prop = c1.s3;
 // c1.s3 = i1_s_prop;
@@ -214,15 +231,23 @@
       "signatures": [
         {
           "label": "p2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -239,15 +264,23 @@
       "signatures": [
         {
           "label": "p2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -264,15 +297,23 @@
       "signatures": [
         {
           "label": "pp2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -289,15 +330,23 @@
       "signatures": [
         {
           "label": "pp2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -314,15 +363,23 @@
       "signatures": [
         {
           "label": "s2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "static sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -339,15 +396,23 @@
       "signatures": [
         {
           "label": "s2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "static sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -368,11 +433,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -393,11 +458,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -418,11 +483,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -443,11 +508,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -468,11 +533,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -493,11 +558,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -514,11 +579,14 @@
       "signatures": [
         {
           "label": "c1(): c1",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Constructor method"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -535,15 +603,23 @@
       "signatures": [
         {
           "label": "p2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -564,11 +640,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -585,15 +661,23 @@
       "signatures": [
         {
           "label": "s2(b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "static sum with property"
+          },
           "parameters": [
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "number to add"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -614,11 +698,11 @@
             {
               "label": "b: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]

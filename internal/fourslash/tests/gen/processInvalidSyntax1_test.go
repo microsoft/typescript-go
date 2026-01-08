@@ -8,8 +8,8 @@ import (
 )
 
 func TestProcessInvalidSyntax1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: decl.js
@@ -24,6 +24,7 @@ obj¬
 for (obj/**/.prop of arr) {
 
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

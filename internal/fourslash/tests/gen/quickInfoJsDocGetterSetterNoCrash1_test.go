@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoJsDocGetterSetterNoCrash1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A implements A {
   get x(): string { return "" }
@@ -22,7 +22,8 @@ class B implements B {
 }
 const f = new B()
 f.x/*2*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) A.x: string", "")
 	f.VerifyQuickInfoAt(t, "2", "(property) B.x: string", "")
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -84,6 +85,51 @@ func TestCommandLineParseResult(t *testing.T) {
 	for _, testCase := range parseCommandLineSubScenarios {
 		testCase.createSubScenario("parseCommandLine").assertParseResult(t)
 	}
+}
+
+func TestCustomConditionsNullOverride(t *testing.T) {
+	t.Parallel()
+
+	files := map[string]string{
+		"/project/tsconfig.json": `{
+  "compilerOptions": {
+    "customConditions": ["condition1", "condition2"]
+  }
+}`,
+		"/project/index.ts": `console.log("Hello, World!");`,
+	}
+
+	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true)
+
+	// Parse command line with --customConditions null
+	cmdLine := tsoptions.ParseCommandLine([]string{"--project", "/project", "--customConditions", "null"}, host)
+
+	// Check that the raw options contain null for customConditions
+	if rawMap, ok := cmdLine.Raw.(*collections.OrderedMap[string, any]); ok {
+		customConditionsRaw, exists := rawMap.Get("customConditions")
+		assert.Assert(t, exists, "customConditions should exist in raw options")
+		assert.Assert(t, customConditionsRaw == nil, "customConditions should be nil in raw options, got: %v", customConditionsRaw)
+	} else {
+		t.Fatal("Raw options should be an OrderedMap")
+	}
+
+	// Now parse the config file with the command line options
+	// Wrap command line options in "compilerOptions" key to match tsconfig.json structure
+	wrappedRaw := &collections.OrderedMap[string, any]{}
+	wrappedRaw.Set("compilerOptions", cmdLine.Raw.(*collections.OrderedMap[string, any]))
+	parsedConfig, errors := tsoptions.GetParsedCommandLineOfConfigFile(
+		"/project/tsconfig.json",
+		cmdLine.CompilerOptions(),
+		wrappedRaw,
+		host,
+		nil,
+	)
+
+	assert.Assert(t, len(errors) == 0, "Should not have errors: %v", errors)
+
+	// Check that customConditions is nil (overridden by command line)
+	customConditions := parsedConfig.CompilerOptions().CustomConditions
+	assert.Assert(t, customConditions == nil, "customConditions should be nil after override, got: %v", customConditions)
 }
 
 func TestParseCommandLineVerifyNull(t *testing.T) {
@@ -190,7 +236,7 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 		// assert.DeepEqual(t, tsBaseline.watchoptions, newParsedWatchOptions)
 
 		var formattedErrors strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, parsed.Errors, &diagnosticwriter.FormattingOptions{NewLine: "\n"})
+		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, diagnosticwriter.FromASTDiagnostics(parsed.Errors), &diagnosticwriter.FormattingOptions{NewLine: "\n"})
 		newBaselineErrors := formattedErrors.String()
 
 		// !!!
@@ -247,31 +293,48 @@ func formatNewBaseline(
 
 func (f commandLineSubScenario) assertBuildParseResult(t *testing.T) {
 	t.Helper()
+	f.assertBuildParseResultWithTsBaseline(t, func() *TestCommandLineParserBuild {
+		originalBaseline := f.baseline.ReadFile(t)
+		return parseExistingCompilerBaselineBuild(t, originalBaseline)
+	})
+}
+
+func (f commandLineSubScenario) assertBuildParseResultWithTsBaseline(t *testing.T, getTsBaseline func() *TestCommandLineParserBuild) {
+	t.Helper()
 	t.Run(f.testName, func(t *testing.T) {
 		t.Parallel()
-		originalBaseline := f.baseline.ReadFile(t)
-		tsBaseline := parseExistingCompilerBaselineBuild(t, originalBaseline)
+
+		var tsBaseline *TestCommandLineParserBuild
+		if getTsBaseline != nil {
+			tsBaseline = getTsBaseline()
+		}
 
 		// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
 		parsed := tsoptions.ParseBuildCommandLine(f.commandLine, &tsoptionstest.VfsParseConfigHost{
 			Vfs:              osvfs.FS(),
-			CurrentDirectory: tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath),
+			CurrentDirectory: tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath()),
 		})
 
 		newBaselineProjects := strings.Join(parsed.Projects, ",")
-		assert.Equal(t, tsBaseline.projects, newBaselineProjects)
+		if getTsBaseline != nil {
+			assert.Equal(t, tsBaseline.projects, newBaselineProjects)
+		}
 
 		o, _ := json.Marshal(parsed.BuildOptions)
 		newParsedBuildOptions := &core.BuildOptions{}
 		e := json.Unmarshal(o, newParsedBuildOptions)
 		assert.NilError(t, e)
-		assert.DeepEqual(t, tsBaseline.options, newParsedBuildOptions, cmpopts.IgnoreUnexported(core.BuildOptions{}))
+		if getTsBaseline != nil {
+			assert.DeepEqual(t, tsBaseline.options, newParsedBuildOptions, cmpopts.IgnoreUnexported(core.BuildOptions{}))
+		}
 
 		compilerOpts, _ := json.Marshal(parsed.CompilerOptions)
 		newParsedCompilerOptions := &core.CompilerOptions{}
 		e = json.Unmarshal(compilerOpts, newParsedCompilerOptions)
 		assert.NilError(t, e)
-		assert.DeepEqual(t, tsBaseline.compilerOptions, newParsedCompilerOptions, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
+		if getTsBaseline != nil {
+			assert.DeepEqual(t, tsBaseline.compilerOptions, newParsedCompilerOptions, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
+		}
 
 		newParsedWatchOptions := core.WatchOptions{}
 		e = json.Unmarshal(o, &newParsedWatchOptions)
@@ -281,7 +344,7 @@ func (f commandLineSubScenario) assertBuildParseResult(t *testing.T) {
 		// assert.DeepEqual(t, tsBaseline.watchoptions, newParsedWatchOptions)
 
 		var formattedErrors strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, parsed.Errors, &diagnosticwriter.FormattingOptions{NewLine: "\n"})
+		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, diagnosticwriter.FromASTDiagnostics(parsed.Errors), &diagnosticwriter.FormattingOptions{NewLine: "\n"})
 		newBaselineErrors := formattedErrors.String()
 
 		// !!!
@@ -353,7 +416,7 @@ func createSubScenario(scenarioKind string, subScenarioName string, commandline 
 	baselineFileName := "tests/baselines/reference/config/commandLineParsing/" + subScenarioName + ".js"
 
 	result := &commandLineSubScenario{
-		filefixture.FromFile(subScenarioName, filepath.Join(repo.TypeScriptSubmodulePath, baselineFileName)),
+		filefixture.FromFile(subScenarioName, filepath.Join(repo.TypeScriptSubmodulePath(), baselineFileName)),
 		subScenarioName,
 		commandline,
 		nil,
@@ -431,6 +494,18 @@ func TestParseBuildCommandLine(t *testing.T) {
 
 	for _, testCase := range parseCommandLineSubScenarios {
 		testCase.createSubScenario("parseBuildOptions").assertBuildParseResult(t)
+	}
+
+	extraScenarios := []*subScenarioInput{
+		{`parse --builders`, []string{"--builders", "2"}},
+		{`--singleThreaded and --builders together`, []string{"--singleThreaded", "--builders", "2"}},
+		{`reports error when --builders is 0`, []string{"--builders", "0"}},
+		{`reports error when --builders is negative`, []string{"--builders", "-1"}},
+		{`reports error when --builders is invalid type`, []string{"--builders", "invalid"}},
+	}
+
+	for _, testCase := range extraScenarios {
+		testCase.createSubScenario("parseBuildOptions").assertBuildParseResultWithTsBaseline(t, nil)
 	}
 }
 

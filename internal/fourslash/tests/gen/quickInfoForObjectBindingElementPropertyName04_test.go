@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForObjectBindingElementPropertyName04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Recursive {
     next?: Recursive;
@@ -18,7 +18,8 @@ func TestQuickInfoForObjectBindingElementPropertyName04(t *testing.T) {
 
 function f ({ /*1*/next: { /*2*/next: x} }) {
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) next: {\n    next: any;\n}", "")
 	f.VerifyQuickInfoAt(t, "2", "(property) next: any", "")
 }

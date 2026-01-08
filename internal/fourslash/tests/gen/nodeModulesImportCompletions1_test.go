@@ -9,8 +9,8 @@ import (
 )
 
 func TestNodeModulesImportCompletions1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @module: node18
@@ -44,7 +44,8 @@ const m = import("./src//*6*/");
 import {} from "./src//*7*/";
 import mod = require("./src//*8*/");
 const m = import("./src//*9*/");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "3", "6", "9"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

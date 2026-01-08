@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesClassExpressionStatic(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let A = class Foo {
     public [|static|] foo;
@@ -30,6 +30,7 @@ let B = class D {
     private static test() {}
     public static test2() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

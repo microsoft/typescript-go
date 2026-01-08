@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnUndefined(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(a: string) {
 }
@@ -18,7 +18,8 @@ var x = {
     undefined: 10
 };
 x./*2*/undefined = 30;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var undefined", "")
 	f.VerifyQuickInfoAt(t, "2", "(property) undefined: number", "")
 }

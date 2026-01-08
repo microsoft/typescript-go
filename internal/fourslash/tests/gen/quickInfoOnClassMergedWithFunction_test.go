@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnClassMergedWithFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module Test {
     class Mocked {
@@ -23,6 +23,7 @@ func TestQuickInfoOnClassMergedWithFunction(t *testing.T) {
         }
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(property) myProp: string", "")
 }

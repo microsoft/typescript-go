@@ -8,8 +8,8 @@ import (
 )
 
 func TestExplainFilesNodeNextWithTypesReference(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/react-hook-form/package.json
 {
@@ -47,6 +47,7 @@ declare namespace React { export interface Whatever {} }
 }
 // @Filename: /index.ts
 import { useForm } from "react-hook-form";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestJavaScriptClass2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
@@ -22,6 +22,7 @@ class Foo {
 }
 var x = new Foo();
 x.[|union|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "union")
 }

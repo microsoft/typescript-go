@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImportDefaultExportCrash2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @allowJs: true
@@ -42,7 +42,8 @@ Object.keys(methods).forEach((methodName) => {
 export default methods.$;
 // @Filename: /swipe-back.js
 /*1*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -54,21 +55,21 @@ export default methods.$;
 				&lsproto.CompletionItem{
 					Label:               "$",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dom7",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 				&lsproto.CompletionItem{
 					Label:               "Dom7",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "./dom7",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},

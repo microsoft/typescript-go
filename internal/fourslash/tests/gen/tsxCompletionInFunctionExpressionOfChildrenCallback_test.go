@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxCompletionInFunctionExpressionOfChildrenCallback(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@module: commonjs
 //@jsx: preserve
@@ -36,6 +36,7 @@ function UserName() {
         </FetchUser>
     );
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", nil)
 }

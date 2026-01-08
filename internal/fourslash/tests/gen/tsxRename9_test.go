@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxRename9(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 // @jsx: preserve
@@ -39,6 +39,7 @@ let opt = [|<[|{| "contextRangeIndex": 14 |}MainButton|] [|[|{| "contextRangeInd
 let opt = [|<[|{| "contextRangeIndex": 18 |}MainButton|] [|[|{| "contextRangeIndex": 20 |}onClick|]={()=>{}}|] [|ignore-prop|] />|];
 let opt = [|<[|{| "contextRangeIndex": 23 |}MainButton|] [|[|{| "contextRangeIndex": 25 |}goTo|]="goTo"|] />|];
 let opt = [|<[|{| "contextRangeIndex": 27 |}MainButton|] [|wrong|] />|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "onClick", "goTo", "MainButton", "ignore-prop", "wrong")
 }

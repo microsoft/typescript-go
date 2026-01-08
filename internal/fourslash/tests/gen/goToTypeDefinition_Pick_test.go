@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinition_Pick(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { id: number; name: string; };
 declare const user: Pick<User, "name">
@@ -18,6 +18,7 @@ declare const user: Pick<User, "name">
 type PickedUser = Pick<User, "name">
 declare const user2: PickedUser
 /*reference2*/user2`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference", "reference2")
 }

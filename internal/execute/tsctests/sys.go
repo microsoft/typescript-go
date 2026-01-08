@@ -3,9 +3,7 @@ package tsctests
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"maps"
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,8 +12,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -23,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"golang.org/x/text/language"
 )
 
 type FileMap map[string]any
@@ -84,9 +87,9 @@ func (t *TestClock) SinceStart() time.Duration {
 	return t.Now().Sub(t.start)
 }
 
-func NewTscSystem(files FileMap, useCaseSensitiveFileNames bool, cwd string) *testSys {
+func NewTscSystem(files FileMap, useCaseSensitiveFileNames bool, cwd string) *TestSys {
 	clock := &TestClock{start: time.Now()}
-	return &testSys{
+	return &TestSys{
 		fs: &testFs{
 			FS: vfstest.FromMapWithClock(files, useCaseSensitiveFileNames, clock),
 		},
@@ -95,7 +98,21 @@ func NewTscSystem(files FileMap, useCaseSensitiveFileNames bool, cwd string) *te
 	}
 }
 
-func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
+func GetFileMapWithBuild(files FileMap, commandLineArgs []string) FileMap {
+	sys := newTestSys(&tscInput{
+		files: maps.Clone(files),
+	}, false)
+	execute.CommandLine(sys, commandLineArgs, sys)
+	sys.fs.writtenFiles.Range(func(key string) bool {
+		if text, ok := sys.fsFromFileMap().ReadFile(key); ok {
+			files[key] = text
+		}
+		return true
+	})
+	return files
+}
+
+func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *TestSys {
 	cwd := tscInput.cwd
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
@@ -114,6 +131,11 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
 	}, currentWrite)
 	sys.env = tscInput.env
 	sys.forIncrementalCorrectness = forIncrementalCorrectness
+	sys.fsDiffer = &fsbaselineutil.FSDiffer{
+		FS:           sys.fs.FS.(iovfs.FsWithSys),
+		DefaultLibs:  func() *collections.SyncSet[string] { return sys.fs.defaultLibs },
+		WrittenFiles: &sys.fs.writtenFiles,
+	}
 
 	// Ensure the default library file is present
 	sys.ensureLibPathExists("lib.d.ts")
@@ -126,24 +148,12 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
 	return sys
 }
 
-type diffEntry struct {
-	content       string
-	mTime         time.Time
-	isWritten     bool
-	symlinkTarget string
-}
-
-type snapshot struct {
-	snap        map[string]*diffEntry
-	defaultLibs *collections.SyncSet[string]
-}
-
-type testSys struct {
+type TestSys struct {
 	currentWrite              *strings.Builder
 	programBaselines          strings.Builder
 	programIncludeBaselines   strings.Builder
 	tracer                    *harnessutil.TracerForBaselining
-	serializedDiff            *snapshot
+	fsDiffer                  *fsbaselineutil.FSDiffer
 	forIncrementalCorrectness bool
 
 	fs                 *testFs
@@ -154,31 +164,31 @@ type testSys struct {
 }
 
 var (
-	_ tsc.System             = (*testSys)(nil)
-	_ tsc.CommandLineTesting = (*testSys)(nil)
+	_ tsc.System             = (*TestSys)(nil)
+	_ tsc.CommandLineTesting = (*TestSys)(nil)
 )
 
-func (s *testSys) Now() time.Time {
+func (s *TestSys) Now() time.Time {
 	return s.clock.Now()
 }
 
-func (s *testSys) SinceStart() time.Duration {
+func (s *TestSys) SinceStart() time.Duration {
 	return s.clock.SinceStart()
 }
 
-func (s *testSys) FS() vfs.FS {
+func (s *TestSys) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *testSys) fsFromFileMap() iovfs.FsWithSys {
-	return s.fs.FS.(iovfs.FsWithSys)
+func (s *TestSys) fsFromFileMap() iovfs.FsWithSys {
+	return s.fsDiffer.FS
 }
 
-func (s *testSys) mapFs() *vfstest.MapFS {
-	return s.fsFromFileMap().FSys().(*vfstest.MapFS)
+func (s *TestSys) mapFs() *vfstest.MapFS {
+	return s.fsDiffer.MapFs()
 }
 
-func (s *testSys) ensureLibPathExists(path string) {
+func (s *TestSys) ensureLibPathExists(path string) {
 	path = s.defaultLibraryPath + "/" + path
 	if _, ok := s.fsFromFileMap().ReadFile(path); !ok {
 		if s.fs.defaultLibs == nil {
@@ -192,39 +202,39 @@ func (s *testSys) ensureLibPathExists(path string) {
 	}
 }
 
-func (s *testSys) DefaultLibraryPath() string {
+func (s *TestSys) DefaultLibraryPath() string {
 	return s.defaultLibraryPath
 }
 
-func (s *testSys) GetCurrentDirectory() string {
+func (s *TestSys) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-func (s *testSys) Writer() io.Writer {
+func (s *TestSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
-func (s *testSys) WriteOutputIsTTY() bool {
+func (s *TestSys) WriteOutputIsTTY() bool {
 	return true
 }
 
-func (s *testSys) GetWidthOfTerminal() int {
+func (s *TestSys) GetWidthOfTerminal() int {
 	if widthStr := s.GetEnvironmentVariable("TS_TEST_TERMINAL_WIDTH"); widthStr != "" {
 		return core.Must(strconv.Atoi(widthStr))
 	}
 	return 0
 }
 
-func (s *testSys) GetEnvironmentVariable(name string) string {
+func (s *TestSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func (s *testSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
+func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {
 			modTime := s.mapFs().GetModTime(file)
-			if s.serializedDiff != nil {
-				if diff, ok := s.serializedDiff.snap[file]; ok && diff.mTime.Equal(modTime) {
+			if serializedDiff := s.fsDiffer.SerializedDiff(); serializedDiff != nil {
+				if diff, ok := serializedDiff.Snap[file]; ok && diff.MTime.Equal(modTime) {
 					// Even though written, timestamp was reverted
 					continue
 				}
@@ -246,49 +256,50 @@ func (s *testSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *colle
 	}
 }
 
-func (s *testSys) OnListFilesStart(w io.Writer) {
+func (s *TestSys) OnListFilesStart(w io.Writer) {
 	fmt.Fprintln(w, listFileStart)
 }
 
-func (s *testSys) OnListFilesEnd(w io.Writer) {
+func (s *TestSys) OnListFilesEnd(w io.Writer) {
 	fmt.Fprintln(w, listFileEnd)
 }
 
-func (s *testSys) OnStatisticsStart(w io.Writer) {
+func (s *TestSys) OnStatisticsStart(w io.Writer) {
 	fmt.Fprintln(w, statisticsStart)
 }
 
-func (s *testSys) OnStatisticsEnd(w io.Writer) {
+func (s *TestSys) OnStatisticsEnd(w io.Writer) {
 	fmt.Fprintln(w, statisticsEnd)
 }
 
-func (s *testSys) OnBuildStatusReportStart(w io.Writer) {
+func (s *TestSys) OnBuildStatusReportStart(w io.Writer) {
 	fmt.Fprintln(w, buildStatusReportStart)
 }
 
-func (s *testSys) OnBuildStatusReportEnd(w io.Writer) {
+func (s *TestSys) OnBuildStatusReportEnd(w io.Writer) {
 	fmt.Fprintln(w, buildStatusReportEnd)
 }
 
-func (s *testSys) OnWatchStatusReportStart() {
+func (s *TestSys) OnWatchStatusReportStart() {
 	fmt.Fprintln(s.Writer(), watchStatusReportStart)
 }
 
-func (s *testSys) OnWatchStatusReportEnd() {
+func (s *TestSys) OnWatchStatusReportEnd() {
 	fmt.Fprintln(s.Writer(), watchStatusReportEnd)
 }
 
-func (s *testSys) GetTrace(w io.Writer) func(str string) {
-	return func(str string) {
+func (s *TestSys) GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any) {
+	return func(msg *diagnostics.Message, args ...any) {
 		fmt.Fprintln(w, traceStart)
 		defer fmt.Fprintln(w, traceEnd)
 		// With tsc -b building projects in parallel we cannot serialize the package.json lookup trace
 		// so trace as if it wasnt cached
+		str := msg.Localize(locale, args...)
 		s.tracer.TraceWithWriter(w, str, w == s.Writer())
 	}
 }
 
-func (s *testSys) writeHeaderToBaseline(builder *strings.Builder, program *incremental.Program) {
+func (s *TestSys) writeHeaderToBaseline(builder *strings.Builder, program *incremental.Program) {
 	if builder.Len() != 0 {
 		builder.WriteString("\n")
 	}
@@ -301,7 +312,7 @@ func (s *testSys) writeHeaderToBaseline(builder *strings.Builder, program *incre
 	}
 }
 
-func (s *testSys) OnProgram(program *incremental.Program) {
+func (s *TestSys) OnProgram(program *incremental.Program) {
 	s.writeHeaderToBaseline(&s.programBaselines, program)
 
 	testingData := program.GetTestingData()
@@ -357,7 +368,7 @@ func (s *testSys) OnProgram(program *incremental.Program) {
 	}
 }
 
-func (s *testSys) baselinePrograms(baseline *strings.Builder, header string) string {
+func (s *TestSys) baselinePrograms(baseline *strings.Builder, header string) string {
 	baseline.WriteString(s.programBaselines.String())
 	s.programBaselines.Reset()
 	var result string
@@ -370,7 +381,7 @@ func (s *testSys) baselinePrograms(baseline *strings.Builder, header string) str
 	return result
 }
 
-func (s *testSys) serializeState(baseline *strings.Builder) {
+func (s *TestSys) serializeState(baseline *strings.Builder) {
 	s.baselineOutput(baseline)
 	s.baselineFSwithDiff(baseline)
 	// todo watch
@@ -399,7 +410,7 @@ var (
 	traceEnd               = "!!! Trace end"
 )
 
-func (s *testSys) baselineOutput(baseline io.Writer) {
+func (s *TestSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
 	output := s.getOutput(false)
 	fmt.Fprint(baseline, output)
@@ -412,13 +423,18 @@ type outputSanitizer struct {
 	outputLines  []string
 }
 
+var (
+	englishVersion     = diagnostics.Version_0.Localize(locale.Default, core.Version())
+	fakeEnglishVersion = diagnostics.Version_0.Localize(locale.Default, harnessutil.FakeTSVersion)
+	czech              = locale.Locale(language.MustParse("cs"))
+	czechVersion       = diagnostics.Version_0.Localize(czech, core.Version())
+	fakeCzechVersion   = diagnostics.Version_0.Localize(czech, harnessutil.FakeTSVersion)
+)
+
 func (o *outputSanitizer) addOutputLine(s string) {
-	if change := strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion)); change != s {
-		s = change
-	}
-	if change := strings.ReplaceAll(s, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion); change != s {
-		s = change
-	}
+	s = strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion))
+	s = strings.ReplaceAll(s, englishVersion, fakeEnglishVersion)
+	s = strings.ReplaceAll(s, czechVersion, fakeCzechVersion)
 	o.outputLines = append(o.outputLines, s)
 }
 
@@ -484,7 +500,7 @@ func (o *outputSanitizer) addOrSkipLinesForComparing(
 	panic("Expected lineEnd" + lineEnd + " not found after " + lineStart)
 }
 
-func (s *testSys) getOutput(forComparing bool) string {
+func (s *TestSys) getOutput(forComparing bool) string {
 	lines := strings.Split(s.currentWrite.String(), "\n")
 	transformer := &outputSanitizer{
 		forComparing: forComparing,
@@ -494,104 +510,28 @@ func (s *testSys) getOutput(forComparing bool) string {
 	return transformer.transformLines()
 }
 
-func (s *testSys) clearOutput() {
+func (s *TestSys) clearOutput() {
 	s.currentWrite.Reset()
 	s.tracer.Reset()
 }
 
-func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
-	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
-	snap := map[string]*diffEntry{}
-
-	diffs := map[string]string{}
-
-	for path, file := range s.mapFs().Entries() {
-		if file.Mode&fs.ModeSymlink != 0 {
-			target, ok := s.mapFs().GetTargetOfSymlink(path)
-			if !ok {
-				panic("Failed to resolve symlink target: " + path)
-			}
-			newEntry := &diffEntry{symlinkTarget: target}
-			snap[path] = newEntry
-			s.addFsEntryDiff(diffs, newEntry, path)
-			continue
-		} else if file.Mode.IsRegular() {
-			newEntry := &diffEntry{content: string(file.Data), mTime: file.ModTime, isWritten: s.fs.writtenFiles.Has(path)}
-			snap[path] = newEntry
-			s.addFsEntryDiff(diffs, newEntry, path)
-		}
-	}
-	if s.serializedDiff != nil {
-		for path := range s.serializedDiff.snap {
-			if fileInfo := s.mapFs().GetFileInfo(path); fileInfo == nil {
-				// report deleted
-				s.addFsEntryDiff(diffs, nil, path)
-			}
-		}
-	}
-	var defaultLibs collections.SyncSet[string]
-	if s.fs.defaultLibs != nil {
-		s.fs.defaultLibs.Range(func(libPath string) bool {
-			defaultLibs.Add(libPath)
-			return true
-		})
-	}
-	s.serializedDiff = &snapshot{
-		snap:        snap,
-		defaultLibs: &defaultLibs,
-	}
-	diffKeys := slices.Collect(maps.Keys(diffs))
-	slices.Sort(diffKeys)
-	for _, path := range diffKeys {
-		fmt.Fprint(baseline, "//// ["+path+"] ", diffs[path], "\n")
-	}
-	fmt.Fprintln(baseline)
-	s.fs.writtenFiles = collections.SyncSet[string]{} // Reset written files after baseline
+func (s *TestSys) baselineFSwithDiff(baseline io.Writer) {
+	s.fsDiffer.BaselineFSwithDiff(baseline)
 }
 
-func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEntry, path string) {
-	var oldDirContent *diffEntry
-	var defaultLibs *collections.SyncSet[string]
-	if s.serializedDiff != nil {
-		oldDirContent = s.serializedDiff.snap[path]
-		defaultLibs = s.serializedDiff.defaultLibs
-	}
-	// todo handle more cases of fs changes
-	if oldDirContent == nil {
-		if s.fs.defaultLibs == nil || !s.fs.defaultLibs.Has(path) {
-			if newDirContent.symlinkTarget != "" {
-				diffs[path] = "-> " + newDirContent.symlinkTarget + " *new*"
-			} else {
-				diffs[path] = "*new* \n" + newDirContent.content
-			}
-		}
-	} else if newDirContent == nil {
-		diffs[path] = "*deleted*"
-	} else if newDirContent.content != oldDirContent.content {
-		diffs[path] = "*modified* \n" + newDirContent.content
-	} else if newDirContent.isWritten {
-		diffs[path] = "*rewrite with same content*"
-	} else if newDirContent.mTime != oldDirContent.mTime {
-		diffs[path] = "*mTime changed*"
-	} else if defaultLibs != nil && defaultLibs.Has(path) && s.fs.defaultLibs != nil && !s.fs.defaultLibs.Has(path) {
-		// Lib file that was read
-		diffs[path] = "*Lib*\n" + newDirContent.content
-	}
-}
-
-func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {
+func (s *TestSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {
 	if err := s.fsFromFileMap().WriteFile(path, content, writeByteOrderMark); err != nil {
 		panic(err)
 	}
 }
 
-func (s *testSys) removeNoError(path string) {
+func (s *TestSys) removeNoError(path string) {
 	if err := s.fsFromFileMap().Remove(path); err != nil {
 		panic(err)
 	}
 }
 
-func (s *testSys) readFileNoError(path string) string {
+func (s *TestSys) readFileNoError(path string) string {
 	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
@@ -599,29 +539,29 @@ func (s *testSys) readFileNoError(path string) string {
 	return content
 }
 
-func (s *testSys) renameFileNoError(oldPath string, newPath string) {
+func (s *TestSys) renameFileNoError(oldPath string, newPath string) {
 	s.writeFileNoError(newPath, s.readFileNoError(oldPath), false)
 	s.removeNoError(oldPath)
 }
 
-func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+func (s *TestSys) replaceFileText(path string, oldText string, newText string) {
 	content := s.readFileNoError(path)
 	content = strings.Replace(content, oldText, newText, 1)
 	s.writeFileNoError(path, content, false)
 }
 
-func (s *testSys) replaceFileTextAll(path string, oldText string, newText string) {
+func (s *TestSys) replaceFileTextAll(path string, oldText string, newText string) {
 	content := s.readFileNoError(path)
 	content = strings.ReplaceAll(content, oldText, newText)
 	s.writeFileNoError(path, content, false)
 }
 
-func (s *testSys) appendFile(path string, text string) {
+func (s *TestSys) appendFile(path string, text string) {
 	content := s.readFileNoError(path)
 	s.writeFileNoError(path, content+text, false)
 }
 
-func (s *testSys) prependFile(path string, text string) {
+func (s *TestSys) prependFile(path string, text string) {
 	content := s.readFileNoError(path)
 	s.writeFileNoError(path, text+content, false)
 }

@@ -10,8 +10,8 @@ import (
 )
 
 func TestPathCompletionsPackageJsonExportsBundlerNoNodeCondition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @Filename: /node_modules/foo/package.json
@@ -30,7 +30,8 @@ export const index = 0;
 export const index = 0;
 // @Filename: /index.ts
 import { } from "foo//**/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

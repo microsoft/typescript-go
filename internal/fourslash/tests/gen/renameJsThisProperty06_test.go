@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameJsThisProperty06(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.js
@@ -21,6 +21,7 @@ var C = class {
 [|C.prototype.[|{| "contextRangeIndex": 0 |}z|] = 1;|]
 var t = new C(12);
 [|t.[|{| "contextRangeIndex": 2 |}z|] = 11;|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "z")
 }

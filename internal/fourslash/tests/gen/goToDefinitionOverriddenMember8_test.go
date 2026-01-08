@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionOverriddenMember8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitOverride: true
 // @Filename: ./a.ts
@@ -21,6 +21,7 @@ import { A } from "./a";
 class B extends A {
     [|/*1*/override|] m() {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

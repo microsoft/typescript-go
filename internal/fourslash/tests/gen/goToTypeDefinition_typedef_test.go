@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinition_typedef(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -20,6 +20,7 @@ func TestGoToTypeDefinition_typedef(t *testing.T) {
 
 /** @type {I} */
 const /*ref*/i = { x: 0 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "ref")
 }

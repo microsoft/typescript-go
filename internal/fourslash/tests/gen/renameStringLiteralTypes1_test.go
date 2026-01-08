@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameStringLiteralTypes1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface AnimationOptions {
     deltaX: number;
@@ -20,6 +20,7 @@ func TestRenameStringLiteralTypes1(t *testing.T) {
 function animate(o: AnimationOptions) { }
 
 animate({ deltaX: 100, deltaY: 100, easing: "[|ease-in-out|]" });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "ease-in-out")
 }

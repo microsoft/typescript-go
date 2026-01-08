@@ -211,6 +211,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		IsCommandLineOnly:       true,
 		Description:             diagnostics.Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit,
 		DefaultValueDescription: diagnostics.Platform_specific,
+		extraValidation:         extraValidationLocale,
 	},
 
 	{
@@ -232,6 +233,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		IsFilePath:  true,
 		Category:    diagnostics.Command_line_Options,
 		Description: diagnostics.Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory,
+	},
+	{
+		Name:                    "checkers",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Command_line_Options,
+		Description:             diagnostics.Set_the_number_of_checkers_per_project,
+		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
+		minValue:                1,
 	},
 }
 
@@ -289,6 +298,15 @@ var optionsForCompiler = []*CommandLineOption{
 		IsCommandLineOnly:       true,
 		Description:             diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing,
 		DefaultValueDescription: false,
+	},
+	{
+		Name:                     "ignoreConfig",
+		Kind:                     CommandLineOptionTypeBoolean,
+		ShowInSimplifiedHelpView: true,
+		Category:                 diagnostics.Command_line_Options,
+		IsCommandLineOnly:        true,
+		Description:              diagnostics.Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files,
+		DefaultValueDescription:  false,
 	},
 
 	// Basic

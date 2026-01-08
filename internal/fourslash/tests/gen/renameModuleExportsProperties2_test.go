@@ -8,11 +8,12 @@ import (
 )
 
 func TestRenameModuleExportsProperties2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|class [|{| "contextRangeIndex": 0 |}A|] {}|]
 module.exports = { B: [|A|] }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[2])
 }

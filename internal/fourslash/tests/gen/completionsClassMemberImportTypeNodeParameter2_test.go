@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsClassMemberImportTypeNodeParameter2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @FileName: /index.d.ts
@@ -24,7 +24,8 @@ export declare class Cls {
 export declare class Derived extends Cls {
   /*1*/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

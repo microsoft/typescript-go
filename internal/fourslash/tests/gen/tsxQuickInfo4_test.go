@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxQuickInfo4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 // @jsx: preserve
@@ -48,7 +48,8 @@ function buildSomeElement2(): JSX.Element {
     );
 }
 let componenet = <MainButton onClick={()=>{}} ext/*5*/ra-prop>GO</MainButton>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "function MainButton(linkProps: LinkProps): JSX.Element (+1 overload)", "")
 	f.VerifyQuickInfoAt(t, "2", "(property) LinkProps.to: string", "")
 	f.VerifyQuickInfoAt(t, "3", "function MainButton(buttonProps: ButtonProps): JSX.Element (+1 overload)", "")

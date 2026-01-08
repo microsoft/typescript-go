@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoJsDoc(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: esnext
 /**
@@ -69,6 +69,7 @@ class C {
         fn/*11*/();
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

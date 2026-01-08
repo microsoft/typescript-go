@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesBloomFilters2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: declaration.ts
 var container = { /*1*/42: 1 };
@@ -19,6 +19,7 @@ function blah() { return (container[42]) === 2;  };
 function blah2() { container["42"] };
 // @Filename: redeclaration.ts
 container = { "42" : 18 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

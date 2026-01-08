@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsExternalModuleReferenceResolutionOrderInImportDeclaration(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: externalModuleRefernceResolutionOrderInImportDeclaration_file1.ts
 export function foo() { };
@@ -22,7 +22,8 @@ declare module "externalModuleRefernceResolutionOrderInImportDeclaration_file1" 
 ///<reference path='externalModuleRefernceResolutionOrderInImportDeclaration_file2.ts'/>
 import file1 = require('externalModuleRefernceResolutionOrderInImportDeclaration_file1');
 /*1*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "1")
 	f.Insert(t, "file1.")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{

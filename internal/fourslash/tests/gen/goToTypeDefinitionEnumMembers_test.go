@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinitionEnumMembers(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum E {
     value1,
@@ -18,6 +18,7 @@ func TestGoToTypeDefinitionEnumMembers(t *testing.T) {
 var x = E.value2;
 
 /*reference*/x;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference")
 }

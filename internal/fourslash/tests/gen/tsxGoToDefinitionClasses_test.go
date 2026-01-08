@@ -8,8 +8,8 @@ import (
 )
 
 func TestTsxGoToDefinitionClasses(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 declare module JSX {
@@ -25,6 +25,7 @@ class /*ct*/MyClass {
 var x = <[|My/*c*/Class|] />;
 var y = <MyClass [|f/*p*/oo|]= 'hello' />;
 var z = <[|MyCl/*w*/ass|] wrong= 'hello' />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "c", "p", "w")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "c", "p", "w")
 }

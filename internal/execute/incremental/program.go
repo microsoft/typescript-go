@@ -47,7 +47,7 @@ func NewProgram(program *compiler.Program, oldProgram *Program, host Host, testi
 		if oldProgram != nil {
 			incrementalProgram.testingData.OldProgramSemanticDiagnosticsPerFile = &oldProgram.snapshot.semanticDiagnosticsPerFile
 		} else {
-			incrementalProgram.testingData.OldProgramSemanticDiagnosticsPerFile = &collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]{}
+			incrementalProgram.testingData.OldProgramSemanticDiagnosticsPerFile = &collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]{}
 		}
 		incrementalProgram.testingData.UpdatedSignatureKinds = make(map[tspath.Path]SignatureUpdateKind)
 	}
@@ -55,8 +55,8 @@ func NewProgram(program *compiler.Program, oldProgram *Program, host Host, testi
 }
 
 type TestingData struct {
-	SemanticDiagnosticsPerFile           *collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
-	OldProgramSemanticDiagnosticsPerFile *collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
+	SemanticDiagnosticsPerFile           *collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]
+	OldProgramSemanticDiagnosticsPerFile *collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]
 	UpdatedSignatureKinds                map[tspath.Path]SignatureUpdateKind
 }
 
@@ -84,10 +84,34 @@ func (p *Program) Options() *core.CompilerOptions {
 	return p.snapshot.options
 }
 
+// CommonSourceDirectory implements compiler.AnyProgram interface.
+func (p *Program) CommonSourceDirectory() string {
+	p.panicIfNoProgram("CommonSourceDirectory")
+	return p.program.CommonSourceDirectory()
+}
+
+// Program implements compiler.AnyProgram interface.
+func (p *Program) Program() *compiler.Program {
+	p.panicIfNoProgram("Program")
+	return p.program
+}
+
+// IsSourceFileDefaultLibrary implements compiler.AnyProgram interface.
+func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
+	p.panicIfNoProgram("IsSourceFileDefaultLibrary")
+	return p.program.IsSourceFileDefaultLibrary(path)
+}
+
 // GetSourceFiles implements compiler.AnyProgram interface.
 func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	p.panicIfNoProgram("GetSourceFiles")
 	return p.program.GetSourceFiles()
+}
+
+// GetSourceFile implements compiler.AnyProgram interface.
+func (p *Program) GetSourceFile(path string) *ast.SourceFile {
+	p.panicIfNoProgram("GetSourceFile")
+	return p.program.GetSourceFile(path)
 }
 
 // GetConfigFileParsingDiagnostics implements compiler.AnyProgram interface.
@@ -172,6 +196,12 @@ func (p *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.Sourc
 	return nil
 }
 
+// GetSuggestionDiagnostics implements compiler.AnyProgram interface.
+func (p *Program) GetSuggestionDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetSuggestionDiagnostics")
+	return p.program.GetSuggestionDiagnostics(ctx, file) // TODO: incremental suggestion diagnostics (only relevant in editor incremental builder?)
+}
+
 // GetModeForUsageLocation implements compiler.AnyProgram interface.
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	p.panicIfNoProgram("Emit")
@@ -232,7 +262,7 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 	}
 
 	// Get their diagnostics and cache them
-	diagnosticsPerFile := p.program.GetSemanticDiagnosticsNoFilter(ctx, affectedFiles)
+	diagnosticsPerFile := p.program.GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx, affectedFiles)
 	// commit changes if no err
 	if ctx.Err() != nil {
 		return
@@ -240,7 +270,7 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 
 	// Commit changes to snapshot
 	for file, diagnostics := range diagnosticsPerFile {
-		p.snapshot.semanticDiagnosticsPerFile.Store(file.Path(), &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics})
+		p.snapshot.semanticDiagnosticsPerFile.Store(file.Path(), &DiagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics})
 	}
 	if p.snapshot.semanticDiagnosticsPerFile.Size() == len(p.program.GetSourceFiles()) && p.snapshot.checkPending && !p.snapshot.options.NoCheck.IsTrue() {
 		p.snapshot.checkPending = false

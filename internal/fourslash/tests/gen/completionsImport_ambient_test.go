@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_ambient(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: a.d.ts
@@ -28,7 +28,8 @@ declare module 'path2longer' {
 
 // @Filename: b.ts
 Ba/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -44,21 +45,21 @@ Ba/**/`
 					},
 					&lsproto.CompletionItem{
 						Label: "Bar",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "path1",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},
 					&lsproto.CompletionItem{
 						Label: "Bar",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "path2longer",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

@@ -8,8 +8,8 @@ import (
 )
 
 func TestImportTypeNodeGoToDefinition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /ns.ts
 /*refFile*/export namespace /*refFoo*/Foo {
@@ -20,6 +20,7 @@ func TestImportTypeNodeGoToDefinition(t *testing.T) {
 // @Filename: /usage.ts
 type A = typeof import([|/*1*/"./ns"|]).[|/*2*/Foo|].[|/*3*/Bar|];
 type B = import([|/*4*/"./ns"|]).[|/*5*/Foo|].[|/*6*/Bar|].[|/*7*/Baz|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1", "2", "3", "4", "5", "6", "7")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1", "2", "3", "4", "5", "6", "7")
 }

@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_exportMap8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
@@ -49,7 +49,9 @@ import { fooFromIndex } from "dependency";
 fooFrom/*cts*/
 // @Filename: /home/src/workspaces/project/src/foo.mts
 fooFrom/*mts*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "cts")
 	f.VerifyCompletions(t, "cts", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -61,11 +63,11 @@ fooFrom/*mts*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "fooFromLol",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dependency/lol",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
@@ -86,11 +88,11 @@ fooFrom/*mts*/`
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "fooFromIndex",
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "dependency/lol",
 						},
-					})),
+					},
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},

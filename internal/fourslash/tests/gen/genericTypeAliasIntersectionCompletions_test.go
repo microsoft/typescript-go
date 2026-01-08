@@ -9,8 +9,8 @@ import (
 )
 
 func TestGenericTypeAliasIntersectionCompletions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type MixinCtor<A, B> = new () => A & B & { constructor: MixinCtor<A, B> };
 function merge<A, B>(a: { prototype: A }, b: { prototype: B }): MixinCtor<A, B> {
@@ -39,7 +39,8 @@ abstract class RightSideNode extends TreeNode {
 
 var obj = new (merge(LeftSideNode, RightSideNode))();
 obj./**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

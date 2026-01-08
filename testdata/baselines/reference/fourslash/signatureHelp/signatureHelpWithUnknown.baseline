@@ -4,6 +4,9 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | eval(**x: string**): any
+// | - `x: string`: A String value that contains valid JavaScript code.
+
+// | Evaluates JavaScript code and executes it.
 // | ----------------------------------------------------------------------
 [
   {
@@ -20,15 +23,23 @@
       "signatures": [
         {
           "label": "eval(x: string): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Evaluates JavaScript code and executes it."
+          },
           "parameters": [
             {
-              "label": "x: string"
+              "label": "x: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "A String value that contains valid JavaScript code.\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_reExportDefault(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a/b/impl.ts
@@ -21,7 +21,8 @@ export default function foo() {}
 export { default as foo } from "./b/impl";
 // @Filename: /use.ts
 fo/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -33,11 +34,11 @@ fo/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "foo",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "./a",
 							},
-						})),
+						},
 						Detail:              PtrTo("(alias) function foo(): void\nexport foo"),
 						Kind:                PtrTo(lsproto.CompletionItemKindVariable),
 						AdditionalTextEdits: fourslash.AnyTextEdits,

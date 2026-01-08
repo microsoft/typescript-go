@@ -9,8 +9,8 @@ import (
 )
 
 func TestImportCompletionsPackageJsonImportsPattern2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @allowImportingTsExtensions: true
@@ -24,7 +24,8 @@ func TestImportCompletionsPackageJsonImportsPattern2(t *testing.T) {
 export function something(name: string): any;
 // @Filename: /a.ts
 import {} from "/*1*/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -8,8 +8,8 @@ import (
 )
 
 func TestGetJavaScriptSyntacticDiagnostics24(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: a.js
@@ -22,6 +22,7 @@ function Person(age) {
 }
 let x = new Person(100);
 x.canVote/**/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(property) Person.canVote: number | boolean", "")
 }

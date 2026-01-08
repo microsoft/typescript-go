@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_filteredByPackageJson_peerDependencies(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@noEmit: true
 //@Filename: /package.json
@@ -37,7 +37,8 @@ export declare var ReactFake: any;
 }
 //@Filename: /src/index.ts
 const x = Re/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -49,11 +50,11 @@ const x = Re/**/`
 				&lsproto.CompletionItem{
 					Label:               "React",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "react",
 						},
-					})),
+					},
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
 				},
 			},

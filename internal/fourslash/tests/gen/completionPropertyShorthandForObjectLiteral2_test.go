@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionPropertyShorthandForObjectLiteral2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const foo = 1;
 const bar = 2;
@@ -20,7 +20,8 @@ const obj1 = {
 const obj2: any = {
   foo b/*2*/
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

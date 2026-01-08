@@ -16,11 +16,8 @@ module.exports.Strings = Strings;
 //// [bar.js]
 class Bar {
 }
-export = Bar;
 module.exports = Bar;
 //// [cls.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const Bar = require("./bar");
 const Strings = {
     a: "A",
@@ -28,7 +25,6 @@ const Strings = {
 };
 class Foo extends Bar {
 }
-export = Foo;
 module.exports = Foo;
 export var Strings = Strings;
 module.exports.Strings = Strings;

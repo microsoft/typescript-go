@@ -8,8 +8,8 @@ import (
 )
 
 func TestDocumentHighlights_33722(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /y.ts
 class Foo {
@@ -22,6 +22,7 @@ export default f;
 import y from "./y";
 
 y().[|foo|]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, f.Ranges()[0])
 }

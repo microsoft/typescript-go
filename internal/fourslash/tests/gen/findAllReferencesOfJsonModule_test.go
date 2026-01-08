@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllReferencesOfJsonModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @resolveJsonModule: true
 // @module: commonjs
@@ -19,6 +19,7 @@ func TestFindAllReferencesOfJsonModule(t *testing.T) {
 /*3*/settings;
 // @Filename: /settings.json
  {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

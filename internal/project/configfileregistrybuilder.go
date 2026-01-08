@@ -25,7 +25,7 @@ var (
 // all changes have been made.
 type configFileRegistryBuilder struct {
 	fs                  *snapshotFSBuilder
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	sessionOptions      *SessionOptions
 
 	base            *ConfigFileRegistry
@@ -36,7 +36,7 @@ type configFileRegistryBuilder struct {
 func newConfigFileRegistryBuilder(
 	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
-	extendedConfigCache *extendedConfigCache,
+	extendedConfigCache *ExtendedConfigCache,
 	sessionOptions *SessionOptions,
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
@@ -76,10 +76,10 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	return newRegistry
 }
 
-func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
+func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
 	configFileName string,
 	configFilePath tspath.Path,
-	openFilePath tspath.Path,
+	filePath tspath.Path,
 	loadKind projectLoadKind,
 	logger *logging.LogTree,
 ) *tsoptions.ParsedCommandLine {
@@ -90,7 +90,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 		}
 		return nil
 	case projectLoadKindCreate:
-		return c.acquireConfigForOpenFile(configFileName, configFilePath, openFilePath, logger)
+		return c.acquireConfigForFile(configFileName, configFilePath, filePath, logger)
 	default:
 		panic(fmt.Sprintf("unknown project load kind: %d", loadKind))
 	}
@@ -106,8 +106,9 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.fs.fs)
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
-		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
-		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
+		oldCommandLine := entry.commandLine
+		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, nil /*optionsRaw*/, c, c)
+		c.updateExtendingConfigs(path, entry.commandLine, oldCommandLine)
 		c.updateRootFilesWatch(fileName, entry)
 		logger.Log("Finished loading config file")
 	default:
@@ -216,7 +217,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	slices.Sort(globs)
-	entry.rootFilesWatch = entry.rootFilesWatch.Clone(patternsAndIgnored{
+	entry.rootFilesWatch = entry.rootFilesWatch.Clone(PatternsAndIgnored{
 		patterns: globs,
 		ignored:  ignored,
 	})
@@ -248,17 +249,19 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 	return entry.Value().commandLine
 }
 
-// acquireConfigForOpenFile loads a config file entry from the cache, or parses it if not already
+// acquireConfigForFile loads a config file entry from the cache, or parses it if not already
 // cached, then adds the open file to `retainingOpenFiles` to keep it alive in the cache.
-// Each `acquireConfigForOpenFile` call that passes an `openFilePath`
+// Each `acquireConfigForFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
-func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
+func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, configFilePath tspath.Path, filePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
-			_, alreadyRetaining := config.retainingOpenFiles[openFilePath]
-			needsRetainOpenFile = !alreadyRetaining
+			if c.fs.isOpenFile(filePath) {
+				_, alreadyRetaining := config.retainingOpenFiles[filePath]
+				needsRetainOpenFile = !alreadyRetaining
+			}
 			return needsRetainOpenFile || config.pendingReload != PendingReloadNone
 		},
 		func(config *configFileEntry) {
@@ -266,7 +269,7 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 				if config.retainingOpenFiles == nil {
 					config.retainingOpenFiles = make(map[tspath.Path]struct{})
 				}
-				config.retainingOpenFiles[openFilePath] = struct{}{}
+				config.retainingOpenFiles[filePath] = struct{}{}
 			}
 			c.reloadIfNeeded(config, configFileName, configFilePath, logger)
 		},
@@ -524,13 +527,30 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	}
 
 	configName := c.computeConfigFileName(fileName, false, logger)
-
-	if _, ok := c.fs.overlays[path]; ok {
+	if c.fs.isOpenFile(path) {
 		c.configFileNames.Add(path, &configFileNames{
 			nearestConfigFileName: configName,
 		})
 	}
 	return configName
+}
+
+func (c *configFileRegistryBuilder) forEachConfigFileNameFor(fileName string, path tspath.Path, cb func(configFileName string)) {
+	if isDynamicFileName(fileName) {
+		return
+	}
+
+	if entry, ok := c.configFileNames.Get(path); ok {
+		configFileName := entry.Value().nearestConfigFileName
+		for configFileName != "" {
+			cb(configFileName)
+			if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
+				configFileName = ancestorConfigName
+			} else {
+				return
+			}
+		}
+	}
 }
 
 func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, logger *logging.LogTree) string {
@@ -542,6 +562,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	if !ok {
 		return ""
 	}
+
 	if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
 		return ancestorConfigName
 	}
@@ -549,7 +570,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	// Look for config in parent folders of config file
 	result := c.computeConfigFileName(configFileName, true, logger)
 
-	if _, ok := c.fs.overlays[path]; ok {
+	if c.fs.isOpenFile(path) {
 		entry.Change(func(value *configFileNames) {
 			if value.ancestors == nil {
 				value.ancestors = make(map[string]string)
@@ -571,9 +592,21 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
-func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+	var content string
 	fh := c.fs.GetFileByPath(fileName, path)
-	return c.extendedConfigCache.Acquire(fh, path, parse)
+	if fh != nil {
+		content = fh.Content()
+	}
+
+	return c.extendedConfigCache.Acquire(path, ExtendedConfigParseArgs{
+		FileName:        fileName,
+		Content:         content,
+		FS:              c.fs,
+		ResolutionStack: resolutionStack,
+		Host:            host,
+		Cache:           c,
+	}).ExtendedConfigCacheEntry
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {

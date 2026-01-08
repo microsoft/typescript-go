@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickinfoForNamespaceMergeWithClassConstrainedToSelf(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare namespace AMap {
     namespace MassMarks {
@@ -27,6 +27,7 @@ interface MassMarksCustomData extends AMap.MassMarks./*1*/Data {
     name: string;
     id: string;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "interface AMap.MassMarks<D extends AMap.MassMarks.Data = AMap.MassMarks.Data>.Data", "")
 }

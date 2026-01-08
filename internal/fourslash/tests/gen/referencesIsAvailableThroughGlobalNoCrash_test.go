@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesIsAvailableThroughGlobalNoCrash(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /packages/playwright-core/bundles/utils/node_modules/@types/debug/index.d.ts
 declare var debug: debug.Debug & { debug: debug.Debug; default: debug.Debug };
@@ -24,6 +24,7 @@ declare namespace debug {
 { "types": "index.d.ts" }
 // @Filename: /packages/playwright-core/src/index.ts
 export const debug: typeof import('../bundles/utils/node_modules//*1*/@types/debug') = require('./utilsBundleImpl').debug;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

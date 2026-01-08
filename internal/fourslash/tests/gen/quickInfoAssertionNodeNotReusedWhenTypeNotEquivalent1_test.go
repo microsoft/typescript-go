@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoAssertionNodeNotReusedWhenTypeNotEquivalent1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 type Wrapper<T> = {
@@ -38,6 +38,7 @@ type Unwrap<T extends Wrapper<any>> = T["_type"] extends Record<
   : T["_type"];
 
 type Test/*1*/ = Unwrap<typeof value>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "type Test = {\n    prop1: \"hello\";\n}", "")
 }

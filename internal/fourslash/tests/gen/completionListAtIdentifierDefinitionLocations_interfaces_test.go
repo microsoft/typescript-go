@@ -8,12 +8,13 @@ import (
 )
 
 func TestCompletionListAtIdentifierDefinitionLocations_interfaces(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var aa = 1;
 interface /*interfaceName1*/
 interface a/*interfaceName2*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, f.Markers(), nil)
 }

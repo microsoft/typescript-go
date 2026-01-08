@@ -25,11 +25,11 @@
 //         super.method();
 //     }
 //     method() { super(); }
-// // --- (line: 8) skipped ---
+// --- (line: 8) skipped ---
 
 // === /d.ts ===
 // import * as a from "./a";
-// new a.C();
+// new a.[|C|]();
 // class d extends a.C { constructor() { [|super|](); }
 
 
@@ -61,11 +61,11 @@
 //         super.method();
 //     }
 //     method() { super(); }
-// // --- (line: 8) skipped ---
+// --- (line: 8) skipped ---
 
 // === /d.ts ===
 // import * as a from "./a";
-// new a.C();
+// new a.[|C|]();
 // class d extends a.C { constructor() { [|super|](); }
 
 
@@ -97,9 +97,9 @@
 //         super.method();
 //     }
 //     method() { super(); }
-// // --- (line: 8) skipped ---
+// --- (line: 8) skipped ---
 
 // === /d.ts ===
 // import * as a from "./a";
-// new a.C();
+// new a.[|C|]();
 // class d extends a.C { constructor() { [|super|](); }

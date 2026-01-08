@@ -9,7 +9,7 @@ import (
 )
 
 // Maps a psuedochecker's psuedotypes into ast nodes and reports any inference fallback errors the psuedotype structure implies
-func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Node {
+func (b *NodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Node {
 	debug.Assert(t != nil, "Attempted to serialize nil psuedotype")
 	switch t.Kind {
 	case psuedochecker.PsuedoTypeKindDirect:
@@ -197,7 +197,7 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 	}
 }
 
-func (b *nodeBuilderImpl) psuedoParametersToNodeList(params []*psuedochecker.PsuedoParameter) *ast.NodeList {
+func (b *NodeBuilderImpl) psuedoParametersToNodeList(params []*psuedochecker.PsuedoParameter) *ast.NodeList {
 	res := make([]*ast.Node, 0, len(params))
 	for _, p := range params {
 		res = append(res, b.psuedoParameterToNode(p))
@@ -205,7 +205,7 @@ func (b *nodeBuilderImpl) psuedoParametersToNodeList(params []*psuedochecker.Psu
 	return b.f.NewNodeList(res)
 }
 
-func (b *nodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter) *ast.Node {
+func (b *NodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter) *ast.Node {
 	var dotDotDot *ast.Node
 	var questionMark *ast.Node
 	if p.Rest {
@@ -224,7 +224,7 @@ func (b *nodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter
 	)
 }
 
-func (b *nodeBuilderImpl) psuedoTypeToType(t *psuedochecker.PsuedoType) *Type {
+func (b *NodeBuilderImpl) psuedoTypeToType(t *psuedochecker.PsuedoType) *Type {
 	// !!! TODO: only literal types currently mapped because this is only used to determine if literal contextual typing need apply to the psuedotype
 	// If this is used more broadly, the implementation needs to be filled out more to handle the structural psuedotypes - signatures, objects, tuples, etc
 	debug.Assert(t != nil, "Attempted to realize nil psuedotype")

@@ -2,6 +2,9 @@ package declarations
 
 import (
 	"fmt"
+	"iter"
+	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -50,7 +53,6 @@ type DeclarationTransformer struct {
 	declarationFilePath string
 	declarationMapPath  string
 
-	isBundledEmit                    bool
 	needsDeclare                     bool
 	needsScopeFixMarker              bool
 	resultHasScopeMarker             bool
@@ -67,7 +69,7 @@ type DeclarationTransformer struct {
 // TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
 func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
 	resolver := host.GetEmitResolver()
-	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
+	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), stripInternal: compilerOptions.StripInternal.IsTrue(), resolver: resolver}
 	tracker := NewSymbolTracker(host, resolver, state)
 	// TODO: Use new host GetOutputPathsFor method instead of passing in entrypoint paths (which will also better support bundled emit)
 	tx := &DeclarationTransformer{
@@ -87,6 +89,75 @@ func (tx *DeclarationTransformer) GetDiagnostics() []*ast.Diagnostic {
 	return tx.state.diagnostics
 }
 
+func (tx *DeclarationTransformer) shouldStripInternal(node *ast.Node) bool {
+	return tx.state.stripInternal && node != nil && tx.isInternalDeclaration(node, tx.state.currentSourceFile)
+}
+
+func (tx *DeclarationTransformer) isInternalDeclaration(node *ast.Node, sourceFile *ast.SourceFile) bool {
+	if node == nil {
+		return false
+	}
+	parseTreeNode := tx.EmitContext().MostOriginal(node)
+	if !ast.IsParseTreeNode(parseTreeNode) {
+		return false
+	}
+	if parseTreeNode.Kind == ast.KindParameter {
+		params := parseTreeNode.Parent.Parameters()
+		paramIdx := slices.IndexFunc(params, func(p *ast.ParameterDeclarationNode) bool {
+			return p.AsNode() == parseTreeNode
+		})
+		var previousSibling *ast.Node
+		if paramIdx > 0 {
+			previousSibling = params[paramIdx-1].AsNode()
+		}
+
+		text := sourceFile.Text()
+		var commentRanges []ast.CommentRange
+
+		if previousSibling != nil {
+			// to handle
+			// ... parameters, /** @internal */
+			// public param: string
+			trailingPos := scanner.SkipTriviaEx(text, previousSibling.End()+1, &scanner.SkipTriviaOptions{StopAtComments: true})
+			for comment := range scanner.GetTrailingCommentRanges(tx.Factory().AsNodeFactory(), text, trailingPos) {
+				commentRanges = append(commentRanges, comment)
+			}
+			for comment := range scanner.GetLeadingCommentRanges(tx.Factory().AsNodeFactory(), text, node.Pos()) {
+				commentRanges = append(commentRanges, comment)
+			}
+		} else {
+			trailingPos := scanner.SkipTriviaEx(text, node.Pos(), &scanner.SkipTriviaOptions{StopAtComments: true})
+			for comment := range scanner.GetTrailingCommentRanges(tx.Factory().AsNodeFactory(), text, trailingPos) {
+				commentRanges = append(commentRanges, comment)
+			}
+		}
+
+		if len(commentRanges) > 0 {
+			return hasInternalAnnotation(commentRanges[len(commentRanges)-1], sourceFile)
+		}
+		return false
+	}
+
+	for commentRange := range tx.getLeadingCommentRangesOfNode(parseTreeNode, sourceFile) {
+		if hasInternalAnnotation(commentRange, sourceFile) {
+			return true
+		}
+	}
+	return false
+}
+
+func (tx *DeclarationTransformer) getLeadingCommentRangesOfNode(node *ast.Node, sourceFile *ast.SourceFile) iter.Seq[ast.CommentRange] {
+	if node == nil || node.Kind == ast.KindJsxText {
+		return nil
+	}
+	return scanner.GetLeadingCommentRanges(tx.Factory().AsNodeFactory(), sourceFile.Text(), node.Pos())
+}
+
+func hasInternalAnnotation(commentRange ast.CommentRange, sourceFile *ast.SourceFile) bool {
+	comment := sourceFile.Text()[commentRange.Pos():commentRange.End()]
+	return strings.Contains(comment, "@internal")
+}
+
 const declarationEmitNodeBuilderFlags = nodebuilder.FlagsMultilineObjectLiterals |
 	nodebuilder.FlagsWriteClassExpressionAsTypeLiteral |
 	nodebuilder.FlagsUseTypeOfFunction |
@@ -102,7 +173,6 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 	if node == nil {
 		return nil
 	}
-	// !!! TODO: Bundle support?
 	switch node.Kind {
 	case ast.KindSourceFile:
 		return tx.visitSourceFile(node.AsSourceFile())
@@ -161,7 +231,6 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 		return node.AsNode()
 	}
 
-	tx.isBundledEmit = false
 	tx.needsDeclare = true
 	tx.needsScopeFixMarker = false
 	tx.resultHasScopeMarker = false
@@ -238,7 +307,7 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 		tx.state.lateMarkedStatements = tx.state.lateMarkedStatements[1:]
 
 		saveNeedsDeclare := tx.needsDeclare
-		tx.needsDeclare = next.Parent != nil && ast.IsSourceFile(next.Parent) && !(ast.IsExternalModule(next.Parent.AsSourceFile()) && tx.isBundledEmit)
+		tx.needsDeclare = next.Parent != nil && ast.IsSourceFile(next.Parent)
 
 		result := tx.transformTopLevelDeclaration(next)
 
@@ -311,8 +380,6 @@ func (tx *DeclarationTransformer) getReferencedFiles(outputFilePath string) (res
 		if file.IsDeclarationFile {
 			declFileName = file.FileName()
 		} else {
-			// !!! bundled emit support, omit bundled refs
-			// if (tx.isBundledEmit && contains((node as Bundle).sourceFiles, file)) continue
 			paths := tx.host.GetOutputPathsFor(file, true)
 			// Try to use output path for referenced file, or output js path if that doesn't exist, or the input path if all else fails
 			declFileName = paths.DeclarationFilePath()
@@ -382,8 +449,9 @@ func (tx *DeclarationTransformer) getTypeReferences() (result []*ast.FileReferen
 }
 
 func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.Node {
-	// !!! TODO: stripInternal support?
-	// if (shouldStripInternal(input)) return nil
+	if tx.shouldStripInternal(input) {
+		return nil
+	}
 	if ast.IsDeclaration(input) {
 		if isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, input) {
 			return nil
@@ -404,7 +472,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 						return nil
 					}
 				}
-			} else if !tx.resolver.IsLateBound(tx.EmitContext().ParseNode(input)) || !ast.IsEntityNameExpression(input.Name().AsComputedPropertyName().Expression) {
+			} else if !tx.resolver.IsLateBound(tx.EmitContext().ParseNode(input)) || !ast.IsEntityNameExpression(input.Name().Expression()) {
 				return nil
 			}
 		}
@@ -529,7 +597,7 @@ func (tx *DeclarationTransformer) checkName(node *ast.Node) {
 	}
 	tx.state.errorNameNode = node.Name()
 	debug.Assert(ast.HasDynamicName(node)) // Should only be called with dynamic names
-	entityName := node.Name().AsComputedPropertyName().Expression
+	entityName := node.Name().Expression()
 	tx.checkEntityNameVisibility(entityName, tx.enclosingDeclaration)
 	if !tx.suppressNewDiagnosticContexts {
 		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
@@ -908,8 +976,9 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 }
 
 func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *ast.Node {
-	// !!! TODO: stripInternal support?
-	// if (shouldStripInternal(input)) return nil
+	if tx.shouldStripInternal(input) {
+		return nil
+	}
 	switch input.Kind {
 	case ast.KindExportDeclaration:
 		if ast.IsSourceFile(input.Parent) {
@@ -922,7 +991,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			input.Modifiers(),
 			input.IsTypeOnly(),
 			input.AsExportDeclaration().ExportClause,
-			tx.rewriteModuleSpecifier(input, input.AsExportDeclaration().ModuleSpecifier),
+			tx.rewriteModuleSpecifier(input, input.ModuleSpecifier()),
 			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
 		)
 	case ast.KindCommonJSExport:
@@ -932,7 +1001,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		tx.resultHasScopeMarker = true
 		name := input.AsCommonJSExport().Name()
 		if ast.IsIdentifier(name) {
-			if name.AsIdentifier().Text == "default" {
+			if name.Text() == "default" {
 				// const _default: Type; export default _default;
 				newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 				tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
@@ -1004,7 +1073,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			tx.resultHasExternalModuleIndicator = true
 		}
 		tx.resultHasScopeMarker = true
-		if input.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+		if input.Expression().Kind == ast.KindIdentifier {
 			return input
 		}
 		// expression is non-identifier, create _default typed variable to reference
@@ -1047,11 +1116,6 @@ func (tx *DeclarationTransformer) rewriteModuleSpecifier(parent *ast.Node, input
 		return nil
 	}
 	tx.resultHasExternalModuleIndicator = tx.resultHasExternalModuleIndicator || (parent.Kind != ast.KindModuleDeclaration && parent.Kind != ast.KindImportType)
-	if ast.IsStringLiteralLike(input) {
-		if tx.isBundledEmit {
-			// !!! TODO: support bundled emit specifier rewriting
-		}
-	}
 	return input
 }
 
@@ -1067,11 +1131,8 @@ func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *
 }
 
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
-	// !!! TODO: JSDoc comment support
-	// if (hasJSDocNodes(updated) && hasJSDocNodes(original)) {
-	// 	updated.jsDoc = original.jsDoc;
-	// }
-	// return setCommentRange(updated, getCommentRange(original));
+	// Copy comment range from original to updated node so JSDoc comments are preserved
+	tx.EmitContext().AssignCommentRange(updated, original)
 }
 
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
@@ -1142,8 +1203,9 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 		// Remove duplicates of the current statement from the deferred work queue (this was done via orderedRemoveItem in strada - why? to ensure the same backing array? microop?)
 		tx.state.lateMarkedStatements = core.Filter(tx.state.lateMarkedStatements, func(node *ast.Node) bool { return node != input })
 	}
-	// !!! TODO: stripInternal support?
-	// if (shouldStripInternal(input)) return;
+	if tx.shouldStripInternal(input) {
+		return nil
+	}
 	if input.Kind == ast.KindImportEqualsDeclaration {
 		return tx.transformImportEqualsDeclaration(input.AsImportEqualsDeclaration())
 	}
@@ -1262,7 +1324,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		oldHasScopeFix := tx.resultHasScopeMarker
 		tx.resultHasScopeMarker = false
 		tx.needsScopeFixMarker = false
-		statements := tx.Visitor().VisitNodes(inner.AsModuleBlock().Statements)
+		statements := tx.Visitor().VisitNodes(inner.StatementList())
 		lateStatements := tx.transformAndReplaceLatePaintedStatements(statements)
 		if input.Flags&ast.NodeFlagsAmbient != 0 {
 			tx.needsScopeFixMarker = false // If it was `declare`'d everything is implicitly exported already, ignore late printed "privates"
@@ -1343,22 +1405,20 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 
 	modifiers := tx.ensureModifiers(input.AsNode())
 	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
-	ctor := getFirstConstructorWithBody(input.AsNode())
+	ctor := ast.GetFirstConstructorWithBody(input.AsNode())
 	var parameterProperties []*ast.Node
 	if ctor != nil {
 		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
 		for _, param := range ctor.AsConstructorDeclaration().Parameters.Nodes {
-			if !ast.HasSyntacticModifier(param, ast.ModifierFlagsParameterPropertyModifier) {
+			if !ast.HasSyntacticModifier(param, ast.ModifierFlagsParameterPropertyModifier) || tx.shouldStripInternal(param) {
 				continue
 			}
-			// !!! TODO: stripInternal support?
-			// if (shouldStripInternal(param)) { continue }
 			tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(param)
 			if param.Name().Kind == ast.KindIdentifier {
 				updated := tx.Factory().NewPropertyDeclaration(
 					tx.ensureModifiers(param),
 					param.Name(),
-					param.AsParameterDeclaration().QuestionToken,
+					param.QuestionToken(),
 					tx.ensureType(param, false),
 					tx.ensureNoInitializer(param),
 				)
@@ -1410,8 +1470,8 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
 		oldId := "default"
-		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().AsIdentifier().Text) > 0 {
-			oldId = input.Name().AsIdentifier().Text
+		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().Text()) > 0 {
+			oldId = input.Name().Text()
 		}
 		newId := tx.Factory().NewUniqueNameEx(oldId+"_base", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
@@ -1515,8 +1575,9 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
 		tx.Factory().NewNodeList(core.MapNonNil(input.Members.Nodes, func(m *ast.Node) *ast.Node {
-			// !!! TODO: stripInternal support?
-			// if (shouldStripInternal(m)) return;
+			if tx.shouldStripInternal(m) {
+				return nil
+			}
 
 			// !!! TODO: isolatedDeclarations support
 			// if (
@@ -1533,15 +1594,15 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
 				if value >= 0 {
-					newInitializer = tx.Factory().NewNumericLiteral(value.String())
+					newInitializer = tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 				} else {
 					newInitializer = tx.Factory().NewPrefixUnaryExpression(
 						ast.KindMinusToken,
-						tx.Factory().NewNumericLiteral((-value).String()),
+						tx.Factory().NewNumericLiteral((-value).String(), ast.TokenFlagsNone),
 					)
 				}
 			case string:
-				newInitializer = tx.Factory().NewStringLiteral(value)
+				newInitializer = tx.Factory().NewStringLiteral(value, ast.TokenFlagsNone)
 			default:
 				// nil
 				newInitializer = nil
@@ -1578,9 +1639,12 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		additions = ast.ModifierFlagsAmbient
 	}
 	parentIsFile := node.Parent.Kind == ast.KindSourceFile
-	if !parentIsFile || (tx.isBundledEmit && parentIsFile && ast.IsExternalModule(node.Parent.AsSourceFile())) {
+	if !parentIsFile {
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
+	}
+	if ast.IsImplicitlyExportedJSTypeAlias(node) {
+		additions |= ast.ModifierFlagsExport
 	}
 	return maskModifierFlags(tx.host, node, mask, additions)
 }
@@ -1672,8 +1736,8 @@ func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Nod
 		return node
 	} else {
 		// TODO: visitor to avoid always making new nodes?
-		elements := make([]*ast.Node, 0, len(node.AsBindingPattern().Elements.Nodes))
-		for _, elem := range node.AsBindingPattern().Elements.Nodes {
+		elements := make([]*ast.Node, 0, len(node.Elements()))
+		for _, elem := range node.Elements() {
 			if elem.Kind == ast.KindOmittedExpression {
 				elements = append(elements, elem)
 				continue
@@ -1784,7 +1848,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 	}
 	// Named imports (optionally with visible default)
 	bindingList := core.Filter(
-		decl.ImportClause.AsImportClause().NamedBindings.AsNamedImports().Elements.Nodes,
+		decl.ImportClause.AsImportClause().NamedBindings.Elements(),
 		func(b *ast.Node) bool {
 			return tx.resolver.IsDeclarationVisible(b)
 		},

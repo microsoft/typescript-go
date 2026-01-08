@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesBloomFilters(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: declaration.ts
 var container = { /*1*/searchProp : 1 };
@@ -19,6 +19,7 @@ function blah() { return (1 + 2 + container.searchProp()) === 2;  };
 function blah2() { container["searchProp"] };
 // @Filename: redeclaration.ts
 container = { "searchProp" : 18 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

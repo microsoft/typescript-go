@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToTypeDefinition(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: goToTypeDefinition_Definition.ts
 class /*definition*/C {
@@ -18,6 +18,7 @@ class /*definition*/C {
 var c: C;
 // @Filename: goToTypeDefinition_Consumption.ts
 /*reference*/c = undefined;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference")
 }

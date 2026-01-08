@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/Library/Caches/typescript/node_modules/@types/react-router-dom/package.json
  { "name": "@types/react-router-dom", "version": "16.8.4", "types": "index.d.ts" }
@@ -31,7 +31,9 @@ func TestAutoImportProvider_globalTypingsCache(t *testing.T) {
  export const BrowserRouterFromJs = () => null;
 // @Filename: /home/src/workspaces/project/index.js
 BrowserRouter/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -43,11 +45,11 @@ BrowserRouter/**/`
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label: "BrowserRouterFromDts",
-						Data: PtrTo(any(&ls.CompletionItemData{
-							AutoImport: &ls.AutoImportData{
+						Data: &lsproto.CompletionItemData{
+							AutoImport: &lsproto.AutoImportData{
 								ModuleSpecifier: "react-router-dom",
 							},
-						})),
+						},
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					},

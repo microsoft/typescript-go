@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForInheritedProperties3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface interface1 extends interface1 {
    /*1*/doStuff(): void;
@@ -19,6 +19,7 @@ func TestReferencesForInheritedProperties3(t *testing.T) {
 var v: interface1;
 v./*3*/propName;
 v./*4*/doStuff();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")
 }

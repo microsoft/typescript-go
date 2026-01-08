@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionForStringLiteralNonrelativeImport12(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: tests/test0.ts
 import * as foo1 from "m/*import_as0*/
@@ -23,7 +23,8 @@ var foo3 = require("m/*require0*/
     "optionalDependencies": { "optional-module": "latest" },
     "peerDependencies": { "peer-module": "latest" }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

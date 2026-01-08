@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoInObjectLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     doStuff(x: string, callback: (a: string) => string);
@@ -28,7 +28,8 @@ class Foo {
         }
   }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) y1: () => string", "")
 	f.VerifyQuickInfoAt(t, "2", "var value: number", "")
 }

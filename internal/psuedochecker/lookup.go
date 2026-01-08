@@ -121,7 +121,7 @@ func (ch *PsuedoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 }
 
 func (ch *PsuedoChecker) typeFromAccessor(accessor *ast.Node) *PsuedoType {
-	accessorDeclarations := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.DeclarationData().Symbol)
+	accessorDeclarations := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.DeclarationData().Symbol.Declarations)
 	accessorType := ch.getTypeAnnotationFromAllAccessorDeclarations(accessor, accessorDeclarations)
 	if accessorType != nil && !ast.IsTypePredicateNode(accessorType) {
 		return NewPsuedoTypeDirect(accessorType)
@@ -332,7 +332,7 @@ func (ch *PsuedoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 
 // rougly analogous to typeFromObjectLiteralAccessor in strada
 func (ch *PsuedoChecker) getAccessorMember(accessor *ast.Node, name *ast.Node) *PsuedoObjectElement {
-	allAccessors := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.Symbol()) // TODO: node preservation for late-bound accessor pairs?
+	allAccessors := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.Symbol().Declarations) // TODO: node preservation for late-bound accessor pairs?
 
 	// TODO: handle psuedo-annotations from get accessor return positions?
 	if allAccessors.GetAccessor != nil && allAccessors.GetAccessor.Type != nil &&

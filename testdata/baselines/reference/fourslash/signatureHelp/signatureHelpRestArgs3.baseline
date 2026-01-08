@@ -4,6 +4,10 @@
 //                                  ^
 // | ----------------------------------------------------------------------
 // | assign(target: object, **...sources: any[]**): any
+// | - `...sources: any[]`: One or more source objects from which to copy properties
+
+// | Copy the values of all of the enumerable own properties from one or more source objects to a
+// | target object. Returns the target object.
 // | ----------------------------------------------------------------------
 [
   {
@@ -20,60 +24,123 @@
       "signatures": [
         {
           "label": "assign<T extends {}U>(target: T, source: U): T & U",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Copy the values of all of the enumerable own properties from one or more source objects to a\ntarget object. Returns the target object."
+          },
           "parameters": [
             {
-              "label": "target: T"
+              "label": "target: T",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The target object to copy to.\n"
+              }
             },
             {
-              "label": "source: U"
+              "label": "source: U",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The source object from which to copy properties.\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         },
         {
           "label": "assign<T extends {}UV>(target: T, source1: U, source2: V): T & U & V",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Copy the values of all of the enumerable own properties from one or more source objects to a\ntarget object. Returns the target object."
+          },
           "parameters": [
             {
-              "label": "target: T"
+              "label": "target: T",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The target object to copy to.\n"
+              }
             },
             {
-              "label": "source1: U"
+              "label": "source1: U",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first source object from which to copy properties.\n"
+              }
             },
             {
-              "label": "source2: V"
+              "label": "source2: V",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The second source object from which to copy properties.\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         },
         {
           "label": "assign<T extends {}UVW>(target: T, source1: U, source2: V, source3: W): T & U & V & W",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Copy the values of all of the enumerable own properties from one or more source objects to a\ntarget object. Returns the target object."
+          },
           "parameters": [
             {
-              "label": "target: T"
+              "label": "target: T",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The target object to copy to.\n"
+              }
             },
             {
-              "label": "source1: U"
+              "label": "source1: U",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first source object from which to copy properties.\n"
+              }
             },
             {
-              "label": "source2: V"
+              "label": "source2: V",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The second source object from which to copy properties.\n"
+              }
             },
             {
-              "label": "source3: W"
+              "label": "source3: W",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The third source object from which to copy properties.\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         },
         {
           "label": "assign(target: object, ...sources: any[]): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Copy the values of all of the enumerable own properties from one or more source objects to a\ntarget object. Returns the target object."
+          },
           "parameters": [
             {
-              "label": "target: object"
+              "label": "target: object",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The target object to copy to.\n"
+              }
             },
             {
-              "label": "...sources: any[]"
+              "label": "...sources: any[]",
+              "documentation": {
+                "kind": "markdown",
+                "value": "One or more source objects from which to copy properties\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 3,
-      "activeParameter": 1
+      "activeSignature": 3
     }
   }
 ]

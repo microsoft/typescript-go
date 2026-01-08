@@ -5,14 +5,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestAutoImportCompletionExportEqualsWithDefault1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @module: commonjs
@@ -61,7 +60,8 @@ declare abstract class Container_ extends Node {
 declare class Container extends Container_ {}
 
 export = Container;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -75,9 +75,9 @@ export = Container;`
 					InsertText:          PtrTo("parent: Container_ | Document_ | undefined;"),
 					FilterText:          PtrTo("parent"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
+					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					})),
+					},
 				},
 			},
 		},

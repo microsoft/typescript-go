@@ -8,12 +8,13 @@ import (
 )
 
 func TestGoToDefinitionSwitchCase6(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export default { [|/*a*/case|] };
 [|/*b*/default|];
 [|/*c*/case|] 42;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "a", "b", "c")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "a", "b", "c")
 }

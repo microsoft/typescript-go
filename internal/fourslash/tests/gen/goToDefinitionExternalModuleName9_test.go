@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionExternalModuleName9(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: b.ts
 export * from [|'e/*1*/'|];
@@ -17,6 +17,7 @@ export * from [|'e/*1*/'|];
 declare module /*2*/"e" {
     class Foo { }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsForDefaultExport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.ts
 export default function /*def*/f() {}
@@ -18,7 +18,8 @@ import /*deg*/g from "./a";
 [|/*ref*/g|]();
 // @Filename: c.ts
 import { f } from "./a";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "def", "deg")
-	f.VerifyBaselineGoToDefinition(t, "ref")
+	f.VerifyBaselineGoToDefinition(t, true, "ref")
 }

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListAtThisType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Test {
     foo() {}
@@ -24,7 +24,8 @@ func TestCompletionListAtThisType(t *testing.T) {
 
     baz<T>(a: T, k: keyof T) {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

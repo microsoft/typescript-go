@@ -5,14 +5,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestAutoImportCompletionAmbientMergedModule1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @module: commonjs
@@ -43,7 +42,8 @@ import { MoveQuoteMatch } from "./motion";
 export class MoveInsideNextQuote extends MoveQuoteMatch {/*1*/
   keys = ["i", "n", "q"];
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -57,9 +57,9 @@ export class MoveInsideNextQuote extends MoveQuoteMatch {/*1*/
 					InsertText:          PtrTo("public execActionWithCount(position: Position): Promise<void> {\n}"),
 					FilterText:          PtrTo("execActionWithCount"),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
-					Data: PtrTo(any(&ls.CompletionItemData{
+					Data: &lsproto.CompletionItemData{
 						Source: "ClassMemberSnippet/",
-					})),
+					},
 				},
 			},
 		},

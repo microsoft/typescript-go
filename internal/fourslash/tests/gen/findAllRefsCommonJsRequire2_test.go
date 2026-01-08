@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsCommonJsRequire2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -18,6 +18,7 @@ module.exports.f = f
 // @Filename: /b.js
 const { f } = require('./a')
 /**/f`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")
 }

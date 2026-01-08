@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsObjectBindingElementPropertyName04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     /*0*/property1: number;
@@ -22,6 +22,7 @@ function f({ /*1*/property1: p1 }: I,
 
     return /*3*/property1 + 1;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2", "3")
 }

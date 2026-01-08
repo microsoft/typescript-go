@@ -40,26 +40,36 @@
 //    ^
 // | ----------------------------------------------------------------------
 // | f1(**var1: any**, var2: any): void
+// | - `var1: any`: **Highlighted text**
+
 // | ----------------------------------------------------------------------
 // f2();
 //    ^
 // | ----------------------------------------------------------------------
 // | f2(**var1: any**, var2: any): void
+// | - `var1: any`: *Regular text with an asterisk
+
 // | ----------------------------------------------------------------------
 // f3();
 //    ^
 // | ----------------------------------------------------------------------
 // | f3(**var1: any**, var2: any): void
+// | - `var1: any`: *Regular text with an asterisk
+
 // | ----------------------------------------------------------------------
 // f4();
 //    ^
 // | ----------------------------------------------------------------------
 // | f4(**var1: any**, var2: any): void
+// | - `var1: any`: **Highlighted text**
+
 // | ----------------------------------------------------------------------
 // f5();
 //    ^
 // | ----------------------------------------------------------------------
 // | f5(**var1: any**, var2: any): void
+// | - `var1: any`: **Highlighted text**
+
 // | ----------------------------------------------------------------------
 [
   {
@@ -78,16 +88,24 @@
           "label": "f1(var1: any, var2: any): void",
           "parameters": [
             {
-              "label": "var1: any"
+              "label": "var1: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "**Highlighted text**\n"
+              }
             },
             {
-              "label": "var2: any"
+              "label": "var2: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "Another **Highlighted text**\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -106,16 +124,24 @@
           "label": "f2(var1: any, var2: any): void",
           "parameters": [
             {
-              "label": "var1: any"
+              "label": "var1: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "*Regular text with an asterisk\n"
+              }
             },
             {
-              "label": "var2: any"
+              "label": "var2: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "Another *Regular text with an asterisk\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -134,16 +160,24 @@
           "label": "f3(var1: any, var2: any): void",
           "parameters": [
             {
-              "label": "var1: any"
+              "label": "var1: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "*Regular text with an asterisk\n"
+              }
             },
             {
-              "label": "var2: any"
+              "label": "var2: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "Another *Regular text with an asterisk\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -162,16 +196,24 @@
           "label": "f4(var1: any, var2: any): void",
           "parameters": [
             {
-              "label": "var1: any"
+              "label": "var1: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "**Highlighted text**\n"
+              }
             },
             {
-              "label": "var2: any"
+              "label": "var2: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "Another **Highlighted text**\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -190,16 +232,24 @@
           "label": "f5(var1: any, var2: any): void",
           "parameters": [
             {
-              "label": "var1: any"
+              "label": "var1: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "**Highlighted text**\n"
+              }
             },
             {
-              "label": "var2: any"
+              "label": "var2: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "Another **Highlighted text**\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   }
 ]

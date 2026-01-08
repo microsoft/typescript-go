@@ -12,6 +12,9 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | str(n: number, **radix: number**): string
+// | - `radix: number`: The radix
+
+// | Stringifies a number with radix
 // | ----------------------------------------------------------------------
 // 
 // declare function f<T>(a: T): T;
@@ -39,22 +42,31 @@
             {
               "label": "n: number"
             }
-          ]
+          ],
+          "activeParameter": 1
         },
         {
           "label": "str(n: number, radix: number): string",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Stringifies a number with radix"
+          },
           "parameters": [
             {
               "label": "n: number"
             },
             {
-              "label": "radix: number"
+              "label": "radix: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The radix\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 1,
-      "activeParameter": 1
+      "activeSignature": 1
     }
   },
   {
@@ -75,11 +87,11 @@
             {
               "label": "a: 2"
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   }
 ]

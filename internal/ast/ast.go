@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
 // Visitor
@@ -24,7 +25,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
+	for _, node := range nodes { //nolint:modernize
 		if v(node) {
 			return true
 		}
@@ -262,11 +263,17 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
+func (n *Node) Decorators() []*Node {
+	if n.Modifiers() == nil {
+		return nil
+	}
+	return core.Filter(n.Modifiers().Nodes, IsDecorator)
+}
 
-type mutableNode Node
+type MutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
-func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+func (n *Node) AsMutable() *MutableNode                     { return (*MutableNode)(n) }
+func (n *MutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
@@ -414,7 +421,19 @@ func (n *Node) Expression() *Node {
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
-func (m *mutableNode) SetExpression(expr *Node) {
+func (n *Node) RawText() string {
+	switch n.Kind {
+	case KindTemplateHead:
+		return n.AsTemplateHead().RawText
+	case KindTemplateMiddle:
+		return n.AsTemplateMiddle().RawText
+	case KindTemplateTail:
+		return n.AsTemplateTail().RawText
+	}
+	panic("Unhandled case in Node.RawText: " + n.Kind.String())
+}
+
+func (m *MutableNode) SetExpression(expr *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindPropertyAccessExpression:
@@ -605,6 +624,8 @@ func (n *Node) StatementList() *NodeList {
 		return n.AsBlock().Statements
 	case KindModuleBlock:
 		return n.AsModuleBlock().Statements
+	case KindCaseClause, KindDefaultClause:
+		return n.AsCaseOrDefaultClause().Statements
 	}
 	panic("Unhandled case in Node.StatementList: " + n.Kind.String())
 }
@@ -615,6 +636,15 @@ func (n *Node) Statements() []*Node {
 		return list.Nodes
 	}
 	return nil
+}
+
+func (n *Node) CanHaveStatements() bool {
+	switch n.Kind {
+	case KindSourceFile, KindBlock, KindModuleBlock, KindCaseClause, KindDefaultClause:
+		return true
+	default:
+		return false
+	}
 }
 
 func (n *Node) ModifierFlags() ModifierFlags {
@@ -695,7 +725,7 @@ func (n *Node) Type() *Node {
 	return nil
 }
 
-func (m *mutableNode) SetType(t *Node) {
+func (m *MutableNode) SetType(t *Node) {
 	n := (*Node)(m)
 	switch m.Kind {
 	case KindVariableDeclaration:
@@ -787,7 +817,7 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
-func (m *mutableNode) SetInitializer(initializer *Node) {
+func (m *MutableNode) SetInitializer(initializer *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindVariableDeclaration:
@@ -1026,6 +1056,10 @@ func (n *Node) Statement() *Statement {
 		return n.AsForStatement().Statement
 	case KindForInStatement, KindForOfStatement:
 		return n.AsForInOrOfStatement().Statement
+	case KindWithStatement:
+		return n.AsWithStatement().Statement
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Statement
 	}
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
@@ -1056,8 +1090,11 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedExports().Elements
 	case KindObjectBindingPattern, KindArrayBindingPattern:
 		return n.AsBindingPattern().Elements
+	case KindArrayLiteralExpression:
+		return n.AsArrayLiteralExpression().Elements
+	case KindTupleType:
+		return n.AsTupleTypeNode().Elements
 	}
-
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
 
@@ -1069,22 +1106,22 @@ func (n *Node) Elements() []*Node {
 	return nil
 }
 
-func (n *Node) postfixToken() *Node {
+func (n *Node) PostfixToken() *Node {
 	switch n.Kind {
-	case KindEnumMember:
-		return n.AsEnumMember().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
 	case KindMethodDeclaration:
 		return n.AsMethodDeclaration().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	case KindEnumMember:
+		return n.AsEnumMember().PostfixToken
 	case KindGetAccessor:
 		return n.AsGetAccessorDeclaration().PostfixToken
 	case KindSetAccessor:
@@ -1104,7 +1141,7 @@ func (n *Node) QuestionToken() *TokenNode {
 	case KindNamedTupleMember:
 		return n.AsNamedTupleMember().QuestionToken
 	}
-	postfix := n.postfixToken()
+	postfix := n.PostfixToken()
 	if postfix != nil && postfix.Kind == KindQuestionToken {
 		return postfix
 	}
@@ -1149,26 +1186,6 @@ func (n *Node) ClassName() *Node {
 		return n.AsJSDocImplementsTag().ClassName
 	}
 	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
-}
-
-func (n *Node) PostfixToken() *Node {
-	switch n.Kind {
-	case KindParameter:
-		return n.AsParameterDeclaration().QuestionToken
-	case KindMethodDeclaration:
-		return n.AsMethodDeclaration().PostfixToken
-	case KindShorthandPropertyAssignment:
-		return n.AsShorthandPropertyAssignment().PostfixToken
-	case KindMethodSignature:
-		return n.AsMethodSignatureDeclaration().PostfixToken
-	case KindPropertySignature:
-		return n.AsPropertySignatureDeclaration().PostfixToken
-	case KindPropertyAssignment:
-		return n.AsPropertyAssignment().PostfixToken
-	case KindPropertyDeclaration:
-		return n.AsPropertyDeclaration().PostfixToken
-	}
-	return nil
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -2059,59 +2076,63 @@ type NodeBase struct {
 // Aliases for Node unions
 
 type (
-	Statement                   = Node // Node with StatementBase
-	Declaration                 = Node // Node with DeclarationBase
-	Expression                  = Node // Node with ExpressionBase
-	TypeNode                    = Node // Node with TypeNodeBase
-	TypeElement                 = Node // Node with TypeElementBase
-	ClassElement                = Node // Node with ClassElementBase
-	NamedMember                 = Node // Node with NamedMemberBase
-	ObjectLiteralElement        = Node // Node with ObjectLiteralElementBase
-	BlockOrExpression           = Node // Block | Expression
-	AccessExpression            = Node // PropertyAccessExpression | ElementAccessExpression
-	DeclarationName             = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
-	ModuleName                  = Node // Identifier | StringLiteral
-	ModuleExportName            = Node // Identifier | StringLiteral
-	PropertyName                = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
-	ModuleBody                  = Node // ModuleBlock | ModuleDeclaration
-	ForInitializer              = Node // Expression | MissingDeclaration | VariableDeclarationList
-	ModuleReference             = Node // Identifier | QualifiedName | ExternalModuleReference
-	NamedImportBindings         = Node // NamespaceImport | NamedImports
-	NamedExportBindings         = Node // NamespaceExport | NamedExports
-	MemberName                  = Node // Identifier | PrivateIdentifier
-	EntityName                  = Node // Identifier | QualifiedName
-	BindingName                 = Node // Identifier | BindingPattern
-	ModifierLike                = Node // Modifier | Decorator
-	JsxChild                    = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxAttributeLike            = Node // JsxAttribute | JsxSpreadAttribute
-	JsxAttributeName            = Node // Identifier | JsxNamespacedName
-	JsxAttributeValue           = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression        = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
-	ClassLikeDeclaration        = Node // ClassDeclaration | ClassExpression
-	AccessorDeclaration         = Node // GetAccessorDeclaration | SetAccessorDeclaration
-	LiteralLikeNode             = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
-	LiteralExpression           = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
-	UnionOrIntersectionTypeNode = Node // UnionTypeNode | IntersectionTypeNode
-	TemplateLiteralLikeNode     = Node // TemplateHead | TemplateMiddle | TemplateTail
-	TemplateMiddleOrTail        = Node // TemplateMiddle | TemplateTail
-	TemplateLiteral             = Node // TemplateExpression | NoSubstitutionTemplateLiteral
-	TypePredicateParameterName  = Node // Identifier | ThisTypeNode
-	ImportAttributeName         = Node // Identifier | StringLiteral
-	LeftHandSideExpression      = Node // subset of Expression
-	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
-	JSDocTag                    = Node // Node with JSDocTagBase
-	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
-	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
-	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
-	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
-	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
-	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
-	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
-	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
-	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
-	NamedImportsOrExports       = Node // NamedImports | NamedExports
-	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
-	CallLikeExpression          = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	Statement                      = Node // Node with StatementBase
+	Declaration                    = Node // Node with DeclarationBase
+	Expression                     = Node // Node with ExpressionBase
+	TypeNode                       = Node // Node with TypeNodeBase
+	TypeElement                    = Node // Node with TypeElementBase
+	ClassElement                   = Node // Node with ClassElementBase
+	NamedMember                    = Node // Node with NamedMemberBase
+	ObjectLiteralElement           = Node // Node with ObjectLiteralElementBase
+	BlockOrExpression              = Node // Block | Expression
+	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
+	DeclarationName                = Node // Identifier | PrivateIdentifier | StringLiteral | NumericLiteral | BigIntLiteral | NoSubstitutionTemplateLiteral | ComputedPropertyName | BindingPattern | ElementAccessExpression
+	ModuleName                     = Node // Identifier | StringLiteral
+	ModuleExportName               = Node // Identifier | StringLiteral
+	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
+	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
+	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
+	NamedImportBindings            = Node // NamespaceImport | NamedImports
+	NamedExportBindings            = Node // NamespaceExport | NamedExports
+	MemberName                     = Node // Identifier | PrivateIdentifier
+	EntityName                     = Node // Identifier | QualifiedName
+	BindingName                    = Node // Identifier | BindingPattern
+	ModifierLike                   = Node // Modifier | Decorator
+	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
+	JsxAttributeName               = Node // Identifier | JsxNamespacedName
+	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
+	JsxTagNameExpression           = Node // IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName
+	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
+	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralExpression              = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
+	TemplateLiteralLikeNode        = Node // TemplateHead | TemplateMiddle | TemplateTail
+	TemplateMiddleOrTail           = Node // TemplateMiddle | TemplateTail
+	TemplateLiteral                = Node // TemplateExpression | NoSubstitutionTemplateLiteral
+	TypePredicateParameterName     = Node // Identifier | ThisTypeNode
+	ImportAttributeName            = Node // Identifier | StringLiteral
+	LeftHandSideExpression         = Node // subset of Expression
+	JSDocComment                   = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
+	JSDocTag                       = Node // Node with JSDocTagBase
+	SignatureDeclaration           = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike              = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport       = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode            = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral     = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration      = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike              = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration          = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports          = Node // NamedImports | NamedExports
+	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
+	CallLikeExpression             = Node // CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxCallLike | InstanceofExpression
+	FunctionLikeDeclaration        = Node // FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | FunctionExpression | ArrowFunction
+	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
+	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
+	CallOrNewExpression            = Node // CallExpression | NewExpression
 )
 
 // Aliases for node singletons
@@ -2162,6 +2183,7 @@ type (
 	LiteralType                     = Node
 	JSDocNode                       = Node
 	BindingPatternNode              = Node
+	TypePredicateNodeNode           = Node
 )
 
 type (
@@ -2199,11 +2221,11 @@ func IsWriteAccess(node *Node) bool {
 }
 
 func IsWriteAccessForReference(node *Node) bool {
-	decl := getDeclarationFromName(node)
+	decl := GetDeclarationFromName(node)
 	return (decl != nil && declarationIsWriteAccess(decl)) || node.Kind == KindDefaultKeyword || IsWriteAccess(node)
 }
 
-func getDeclarationFromName(name *Node) *Declaration {
+func GetDeclarationFromName(name *Node) *Declaration {
 	if name == nil || name.Parent == nil {
 		return nil
 	}
@@ -2281,6 +2303,7 @@ func declarationIsWriteAccess(decl *Node) bool {
 		KindParameter,
 		KindShorthandPropertyAssignment,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeParameter:
 		return true
 
@@ -4844,6 +4867,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportDeclaration
+}
+
 func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
 }
@@ -5139,7 +5166,7 @@ func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression)
+	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Type) | propagateSubtreeFacts(node.Expression) | core.IfElse(node.IsExportEquals, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
 func IsExportAssignment(node *Node) bool {
@@ -6120,15 +6147,16 @@ type StringLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewStringLiteral(text string) *Node {
+func (f *NodeFactory) NewStringLiteral(text string, flags TokenFlags) *Node {
 	data := f.stringLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsStringLiteralFlags
 	f.textCount++
 	return f.newNode(KindStringLiteral, data)
 }
 
 func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -6142,15 +6170,16 @@ type NumericLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewNumericLiteral(text string) *Node {
+func (f *NodeFactory) NewNumericLiteral(text string, flags TokenFlags) *Node {
 	data := f.numericLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
 }
 
 func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -6164,15 +6193,16 @@ type BigIntLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
+func (f *NodeFactory) NewBigIntLiteral(text string, flags TokenFlags) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindBigIntLiteral, data)
 }
 
 func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
@@ -6190,15 +6220,16 @@ type RegularExpressionLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
+func (f *NodeFactory) NewRegularExpressionLiteral(text string, flags TokenFlags) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
 	f.textCount++
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
 func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsRegularExpressionLiteral(node *Node) bool {
@@ -6212,15 +6243,16 @@ type NoSubstitutionTemplateLiteral struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
+func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlags TokenFlags) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // BinaryExpression
@@ -6274,7 +6306,7 @@ func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
-		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
+		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
@@ -6727,9 +6759,13 @@ func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
 
 func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
+	privateName := SubtreeFactsNone
+	if !IsIdentifier(node.name) {
+		privateName = SubtreeContainsPrivateIdentifierInExpression
+	}
 	return propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.name)
+		propagateSubtreeFacts(node.name) | privateName
 }
 
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -8701,7 +8737,7 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data := &TemplateHead{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateHead, data)
 }
@@ -8725,7 +8761,7 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data := &TemplateMiddle{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateMiddle, data)
 }
@@ -8749,7 +8785,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data := &TemplateTail{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
 }
@@ -10737,7 +10773,9 @@ type SourceFile struct {
 	NodeCount                   int
 	TextCount                   int
 	CommonJSModuleIndicator     *Node
-	ExternalModuleIndicator     *Node
+	// If this is the SourceFile itself, then this module was "forced"
+	// to be an external module (previously "true").
+	ExternalModuleIndicator *Node
 
 	// Fields set by binder
 
@@ -10757,10 +10795,14 @@ type SourceFile struct {
 
 	// Fields set by language service
 
+	Hash             xxh3.Uint128
 	tokenCacheMu     sync.Mutex
 	tokenCache       map[core.TextRange]*Node
+	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
+	nameTableOnce    sync.Once
+	nameTable        map[string]int
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10904,6 +10946,39 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 	return lineMap
 }
 
+// GetNameTable returns a map of all names in the file to their positions.
+// If the name appears more than once, the value is -1.
+func (file *SourceFile) GetNameTable() map[string]int {
+	file.nameTableOnce.Do(func() {
+		nameTable := make(map[string]int, file.IdentifierCount)
+
+		var walk func(node *Node) bool
+		walk = func(node *Node) bool {
+			if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+				IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+				IsPrivateIdentifier(node) {
+				text := node.Text()
+				if _, ok := nameTable[text]; ok {
+					nameTable[text] = -1
+				} else {
+					nameTable[text] = node.Pos()
+				}
+			}
+
+			node.ForEachChild(walk)
+			jsdocNodes := node.JSDoc(file)
+			for _, jsdoc := range jsdocNodes {
+				jsdoc.ForEachChild(walk)
+			}
+			return false
+		}
+		file.ForEachChild(walk)
+
+		file.nameTable = nameTable
+	})
+	return file.nameTable
+}
+
 func (node *SourceFile) IsBound() bool {
 	return node.isBound.Load()
 }
@@ -10915,15 +10990,17 @@ func (node *SourceFile) BindOnce(bind func()) {
 	})
 }
 
+// Gets a token from the file's token cache, or creates it if it does not already exist.
+// This function should NOT be used for creating synthetic tokens that are not in the file in the first place.
 func (node *SourceFile) GetOrCreateToken(
 	kind Kind,
 	pos int,
 	end int,
 	parent *Node,
+	flags TokenFlags,
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
-
 	loc := core.NewTextRange(pos, end)
 	if node.tokenCache == nil {
 		node.tokenCache = make(map[core.TextRange]*Node)
@@ -10936,12 +11013,48 @@ func (node *SourceFile) GetOrCreateToken(
 		}
 		return token
 	}
-
-	token := newNode(kind, &Token{}, NodeFactoryHooks{})
+	if parent.Flags&NodeFlagsReparsed != 0 {
+		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
+	}
+	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent
 	node.tokenCache[loc] = token
 	return token
+}
+
+// `kind` should be a token kind.
+func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *Node {
+	if file.tokenFactory == nil {
+		file.tokenFactory = NewNodeFactory(NodeFactoryHooks{})
+	}
+	text := file.text[pos:end]
+	switch kind {
+	case KindNumericLiteral:
+		return file.tokenFactory.NewNumericLiteral(text, flags)
+	case KindBigIntLiteral:
+		return file.tokenFactory.NewBigIntLiteral(text, flags)
+	case KindStringLiteral:
+		return file.tokenFactory.NewStringLiteral(text, flags)
+	case KindJsxText, KindJsxTextAllWhiteSpaces:
+		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
+	case KindRegularExpressionLiteral:
+		return file.tokenFactory.NewRegularExpressionLiteral(text, flags)
+	case KindNoSubstitutionTemplateLiteral:
+		return file.tokenFactory.NewNoSubstitutionTemplateLiteral(text, flags)
+	case KindTemplateHead:
+		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags)
+	case KindTemplateMiddle:
+		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags)
+	case KindTemplateTail:
+		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags)
+	case KindIdentifier:
+		return file.tokenFactory.NewIdentifier(text)
+	case KindPrivateIdentifier:
+		return file.tokenFactory.NewPrivateIdentifier(text)
+	default: // Punctuation and keywords
+		return file.tokenFactory.NewToken(kind)
+	}
 }
 
 func IsSourceFile(node *Node) bool {
@@ -10961,7 +11074,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	result := make(map[string][]*Node)
 
 	addDeclaration := func(declaration *Node) {
-		name := getDeclarationName(declaration)
+		name := GetDeclarationName(declaration)
 		if name != "" {
 			result[name] = append(result[name], declaration)
 		}
@@ -10971,7 +11084,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	visit = func(node *Node) bool {
 		switch node.Kind {
 		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
-			declarationName := getDeclarationName(node)
+			declarationName := GetDeclarationName(node)
 			if declarationName != "" {
 				declarations := result[declarationName]
 				var lastDeclaration *Node
@@ -11003,7 +11116,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				break
 			}
 			fallthrough
-		case KindVariableDeclaration, KindBindingElement:
+		case KindVariableDeclaration, KindBindingElement, KindCommonJSExport:
 			name := node.Name()
 			if name != nil {
 				if IsBindingPattern(name) {
@@ -11023,7 +11136,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 			exportClause := node.AsExportDeclaration().ExportClause
 			if exportClause != nil {
 				if IsNamedExports(exportClause) {
-					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+					for _, element := range exportClause.Elements() {
 						visit(element)
 					}
 				} else {
@@ -11046,12 +11159,18 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 					if namedBindings.Kind == KindNamespaceImport {
 						addDeclaration(namedBindings)
 					} else {
-						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+						for _, element := range namedBindings.Elements() {
 							visit(element)
 						}
 					}
 				}
 			}
+		case KindBinaryExpression:
+			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
+				addDeclaration(node)
+			}
+			node.ForEachChild(visit)
 		default:
 			node.ForEachChild(visit)
 		}
@@ -11061,7 +11180,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 	return result
 }
 
-func getDeclarationName(declaration *Node) string {
+func GetDeclarationName(declaration *Node) string {
 	name := GetNonAssignedNameOfDeclaration(declaration)
 	if name != nil {
 		if IsComputedPropertyName(name) {

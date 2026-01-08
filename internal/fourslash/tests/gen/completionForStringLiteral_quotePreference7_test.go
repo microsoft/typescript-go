@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionForStringLiteral_quotePreference7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 export const a = null;
@@ -20,7 +20,8 @@ import { a } from './a';
 
 const foo = { '#': null };
 foo[|./**/|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "/b.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

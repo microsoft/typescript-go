@@ -12,21 +12,25 @@
 //   ^
 // | ----------------------------------------------------------------------
 // | f<**T**, U, V, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, ;
 //           ^
 // | ----------------------------------------------------------------------
 // | f<T, **U**, V, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, string, ;
 //                   ^
 // | ----------------------------------------------------------------------
 // | f<T, U, **V**, W>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 // f<number, string, boolean, ;
 //                            ^
 // | ----------------------------------------------------------------------
 // | f<T, U, V, **W**>(a: number, b: string, c: boolean): void
+// | some documentation
 // | ----------------------------------------------------------------------
 [
   {
@@ -43,6 +47,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -56,11 +64,11 @@
             {
               "label": "W"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -77,6 +85,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -90,11 +102,11 @@
             {
               "label": "W"
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -111,6 +123,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -124,11 +140,11 @@
             {
               "label": "W"
             }
-          ]
+          ],
+          "activeParameter": 2
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 2
+      "activeSignature": 0
     }
   },
   {
@@ -145,6 +161,10 @@
       "signatures": [
         {
           "label": "f<T, U, V, W>(a: number, b: string, c: boolean): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "some documentation"
+          },
           "parameters": [
             {
               "label": "T"
@@ -158,11 +178,11 @@
             {
               "label": "W"
             }
-          ]
+          ],
+          "activeParameter": 3
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 3
+      "activeSignature": 0
     }
   }
 ]

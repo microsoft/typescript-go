@@ -9,8 +9,8 @@ import (
 )
 
 func TestJsdocTypedefTagRename03(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsDocTypedef_form3.js
@@ -24,7 +24,9 @@ func TestJsdocTypedefTagRename03(t *testing.T) {
 
 /** @type {/*2*/[|Person|]} */
 var person;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.GoToFile(t, "jsDocTypedef_form3.js")
 	f.VerifyBaselineRename(t, nil /*preferences*/, ToAny(f.GetRangesByText().Get("Person"))...)
 }

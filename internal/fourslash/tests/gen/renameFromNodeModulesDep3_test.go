@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameFromNodeModulesDep3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /packages/first/index.d.ts
 import { /*ok*/[|Foo|] } from "foo";
@@ -21,7 +21,8 @@ export interface Foo {
     /*ok3*/[|bar|]: string;
 }
 // @link: /packages/foo -> /packages/first/node_modules/foo`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "ok")
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 	f.VerifyRenameSucceeded(t, nil /*preferences*/)

@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameContextuallyTypedProperties2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     prop1: () => void;
@@ -65,6 +65,7 @@ var o10: I = {
     set ["prop1"](v) { },
     [|set ["[|{| "contextRangeIndex": 20 |}prop2|]"](v) { }|]
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "prop2")
 }

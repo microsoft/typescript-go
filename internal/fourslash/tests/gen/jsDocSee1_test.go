@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocSee1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface [|/*def1*/Foo|] {
     foo: string
@@ -29,6 +29,7 @@ const c = ""
 const [|/*def3*/d|] = ""
 /** @see /*use5*/[|d|] dd*/
 const e = ""`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "use1", "use2", "use3", "use4", "use5")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "use1", "use2", "use3", "use4", "use5")
 }

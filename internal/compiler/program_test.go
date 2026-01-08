@@ -292,14 +292,14 @@ func BenchmarkNewProgram(b *testing.B) {
 	b.Run("compiler", func(b *testing.B) {
 		repo.SkipIfNoTypeScriptSubmodule(b)
 
-		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+		rootPath := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)
 
 		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 
-		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, host, nil)
+		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, nil, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 
 		opts := compiler.ProgramOptions{

@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocFunctionSignatures8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: Foo.js
@@ -25,7 +25,8 @@ function Person(name, age) {
     this.age = age;
 }
 var p = new Pers/**/on();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyQuickInfoIs(t, "constructor Person(name: string, age: number): Person", "Represents a person\na b multiline test")
 }

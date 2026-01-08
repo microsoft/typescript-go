@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameReferenceFromLinkTag3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: a.ts
 interface Foo {
@@ -20,6 +20,7 @@ enum E {
     /** {@link /**/Foo} */
     Foo
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

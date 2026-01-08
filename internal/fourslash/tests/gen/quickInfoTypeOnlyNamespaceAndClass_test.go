@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoTypeOnlyNamespaceAndClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export namespace ns {
@@ -18,7 +18,8 @@ export namespace ns {
 // @Filename: /b.ts
 import type { ns } from './a';
 let x: /*1*/ns./*2*/Box<string>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(alias) namespace ns\nimport ns", "")
 	f.VerifyQuickInfoAt(t, "2", "class ns.Box<T>", "")
 }

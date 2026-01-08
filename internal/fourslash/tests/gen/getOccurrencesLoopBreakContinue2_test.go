@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesLoopBreakContinue2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var arr = [1, 2, 3, 4];
 label1: for (var n in arr) {
@@ -74,6 +74,7 @@ label1: for (var n in arr) {
 label5: while (true) break label5;
 
 label7: while (true) continue label5;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsImport_fromAmbientModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts
@@ -19,7 +19,8 @@ declare module "m" {
 }
 // @Filename: /b.ts
 /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "x",
 		Source:      "m",

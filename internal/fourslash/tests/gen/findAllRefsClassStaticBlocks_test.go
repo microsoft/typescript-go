@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsClassStaticBlocks(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class ClassStaticBocks {
     static x;
@@ -19,6 +19,7 @@ func TestFindAllRefsClassStaticBlocks(t *testing.T) {
     static y;
     [|[|/*classStaticBocks3*/static|] {}|]
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "classStaticBocks1", "classStaticBocks2", "classStaticBocks3")
 }

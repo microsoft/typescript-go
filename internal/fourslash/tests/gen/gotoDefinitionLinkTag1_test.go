@@ -8,8 +8,8 @@ import (
 )
 
 func TestGotoDefinitionLinkTag1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: foo.ts
 interface [|/*def1*/Foo|] {
@@ -35,6 +35,7 @@ function foo(x) { }
 // @Filename: bar.ts
 /** {@link /*use7*/[|Foo|] }dd*/
 const f = ""`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "use1", "use2", "use3", "use4", "use5", "use6", "use7")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "use1", "use2", "use3", "use4", "use5", "use6", "use7")
 }

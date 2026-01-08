@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsForImportCallType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /app.ts
 export function he/**/llo() {};
@@ -19,6 +19,7 @@ export type app = typeof import("./app")
 import type { app } from "./re-export";
 declare const app: app
 app.hello();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")
 }

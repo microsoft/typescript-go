@@ -1,10 +1,8 @@
 --- old.initializerWithThisPropertyAccess.js
 +++ new.initializerWithThisPropertyAccess.js
-@@= skipped -35, +35 lines =@@
-
-
+@@= skipped -37, +37 lines =@@
  //// [initializerWithThisPropertyAccess.js]
--"use strict";
+ "use strict";
  class A {
 +    a;
 +    b = this.a; // Error
@@ -47,16 +45,3 @@
 +    prop = false;
  }
 
-
-@@= skipped -51, +46 lines =@@
- }
- declare class Foo {
-     private bar;
--    readonly barProp = false;
-+    readonly barProp: boolean;
-     constructor();
- }
- declare class Bar {
--    readonly prop = false;
-+    readonly prop: boolean;
- }

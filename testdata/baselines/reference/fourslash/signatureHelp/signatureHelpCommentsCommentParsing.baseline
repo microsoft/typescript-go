@@ -28,6 +28,7 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | jsDocSingleLine(): void
+// | this is eg of single line jsdoc style comment
 // | ----------------------------------------------------------------------
 // 
 // 
@@ -40,6 +41,9 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | jsDocMultiLine(): void
+// | this is multiple line jsdoc stule comment
+// | New line1
+// | New Line2
 // | ----------------------------------------------------------------------
 // 
 // /** multiple line jsdoc comments no longer merge
@@ -53,6 +57,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMultiLineMerge(): void
+// | Another this one too
 // | ----------------------------------------------------------------------
 // 
 // 
@@ -64,6 +69,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments1(): void
+// | jsdoc comment
 // | ----------------------------------------------------------------------
 // 
 // /// Triple slash comment
@@ -74,6 +80,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments2(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** jsdoc comment */ /*** triplestar jsDocComment*/
@@ -84,6 +91,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments3(): void
+// | * triplestar jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** jsdoc comment */ /** another jsDocComment*/
@@ -95,6 +103,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments4(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /// Triple slash comment 1
@@ -107,6 +116,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments5(): void
+// | another jsDocComment
 // | ----------------------------------------------------------------------
 // 
 // /** another jsDocComment*/
@@ -120,6 +130,7 @@
 //                     ^
 // | ----------------------------------------------------------------------
 // | jsDocMixedComments6(): void
+// | jsdoc comment
 // | ----------------------------------------------------------------------
 // 
 // // This shoulnot be help comment
@@ -158,10 +169,16 @@
 //     ^
 // | ----------------------------------------------------------------------
 // | sum(**a: number**, b: number): number
+// | - `a: number`: first number
+
+// | Adds two integers and returns the result
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
 // | sum(a: number, **b: number**): number
+// | - `b: number`: second number
+
+// | Adds two integers and returns the result
 // | ----------------------------------------------------------------------
 // /** This is multiplication function
 //  * @param 
@@ -176,22 +193,30 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | multiply(**a: number**, b: number, c?: number, d?: any, e?: any): void
+// | - `a: number`: first number
+
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //             ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, **b: number**, c?: number, d?: any, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                 ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, **c?: number**, d?: any, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                      ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, c?: number, **d?: any**, e?: any): void
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
 // | multiply(a: number, b: number, c?: number, d?: any, **e?: any**): void
+// | - `e?: any`: LastParam 
+// | This is multiplication function
 // | ----------------------------------------------------------------------
 // /** fn f1 with number
 // * @param { string} b about b
@@ -206,6 +231,7 @@
 //    ^
 // | ----------------------------------------------------------------------
 // | f1(**a: number**): any
+// | fn f1 with number
 // | ----------------------------------------------------------------------
 // f1("hello");
 //    ^
@@ -227,26 +253,40 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | subtract(**a: number**, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, **b: number**, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
+// | - `b: number`: this is about b
+
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                   ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, **c?: () => string**, d?: () => string, e?: () => string, f?: () => string): void
+// | - `c?: () => string`: this is optional param c
+
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                          ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, **d?: () => string**, e?: () => string, f?: () => string): void
+// | - `d?: () => string`: this is optional param d
+
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                                 ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, **e?: () => string**, f?: () => string): void
+// | - `e?: () => string`: this is optional param e
+
+// | This is subtract function
 // | ----------------------------------------------------------------------
 //                                        ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, **f?: () => string**): void
+// | This is subtract function
 // | ----------------------------------------------------------------------
 // /** this is square function
 // @paramTag { number } a this is input number of paramTag
@@ -260,6 +300,9 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | square(**a: number**): number
+// | - `a: number`: this is input number
+
+// | this is square function
 // | ----------------------------------------------------------------------
 // /** this is divide function
 // @param { number} a this is a
@@ -272,10 +315,16 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | divide(**a: number**, b: number): void
+// | - `a: number`: this is a
+
+// | this is divide function
 // | ----------------------------------------------------------------------
 //            ^
 // | ----------------------------------------------------------------------
 // | divide(a: number, **b: number**): void
+// | - `b: number`: this is b
+
+// | this is divide function
 // | ----------------------------------------------------------------------
 // /**
 // Function returns string concat of foo and bar
@@ -289,10 +338,16 @@
 //        ^
 // | ----------------------------------------------------------------------
 // | fooBar(**foo: string**, bar: string): string
+// | - `foo: string`: is string
+
+// | Function returns string concat of foo and bar
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
 // | fooBar(foo: string, **bar: string**): string
+// | - `bar: string`: is second string
+
+// | Function returns string concat of foo and bar
 // | ----------------------------------------------------------------------
 // /** This is a comment */
 // var x;
@@ -315,18 +370,26 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(**a: number**, b: number, c: number, d: number): number
+// | - `a: number`: this is inline comment for a
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                    ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, **b: number**, c: number, d: number): number
+// | - `b: number`: this is inline comment for b
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                        ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, **c: number**, d: number): number
+// | - `c: number`: it is third parameter
+
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocParamTest(a: number, b: number, c: number, **d: number**): number
+// | this is jsdoc style function with param tag as well as inline parameter help
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   * And properly aligned comment
@@ -337,6 +400,8 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest1(): void
+// | This is function comment
+// | And properly aligned comment
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   *     And aligned with 4 space char margin
@@ -347,6 +412,8 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest2(): void
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 // /** This is function comment
 //   *     And aligned with 4 space char margin
@@ -365,14 +432,31 @@
 //                            ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(**a: string**, b: any, c: any): void
+// | - `a: string`: this is info about a
+spanning on two lines and aligned perfectly
+
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, **b: any**, c: any): void
+// | - `b: any`: this is info about b
+spanning on two lines and aligned perfectly
+spanning one more line alined perfectly
+    spanning another line with more margin
+
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 //                                       ^
 // | ----------------------------------------------------------------------
 // | jsDocCommentAlignmentTest3(a: string, b: any, **c: any**): void
+// | - `c: any`: this is info about b
+not aligned text about parameter will eat only one space
+
+// | This is function comment
+// |     And aligned with 4 space char margin
 // | ----------------------------------------------------------------------
 // 
 // ^
@@ -399,8 +483,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -420,8 +503,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -438,11 +520,14 @@
       "signatures": [
         {
           "label": "jsDocSingleLine(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is eg of single line jsdoc style comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -459,11 +544,14 @@
       "signatures": [
         {
           "label": "jsDocMultiLine(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is multiple line jsdoc stule comment\nNew line1\nNew Line2"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -480,11 +568,14 @@
       "signatures": [
         {
           "label": "jsDocMultiLineMerge(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Another this one too"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -501,11 +592,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments1(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "jsdoc comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -522,11 +616,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments2(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -543,11 +640,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments3(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "* triplestar jsDocComment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -564,11 +664,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments4(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -585,11 +688,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments5(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "another jsDocComment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -606,11 +712,14 @@
       "signatures": [
         {
           "label": "jsDocMixedComments6(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "jsdoc comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -630,8 +739,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -651,8 +759,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -672,8 +779,7 @@
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -690,18 +796,30 @@
       "signatures": [
         {
           "label": "sum(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Adds two integers and returns the result"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "second number\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -718,18 +836,30 @@
       "signatures": [
         {
           "label": "sum(a: number, b: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Adds two integers and returns the result"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "second number\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -746,9 +876,17 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
@@ -760,13 +898,17 @@
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -783,9 +925,17 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
@@ -797,13 +947,17 @@
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -820,9 +974,17 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
@@ -834,13 +996,17 @@
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
-          ]
+          ],
+          "activeParameter": 2
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 2
+      "activeSignature": 0
     }
   },
   {
@@ -857,9 +1023,17 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
@@ -871,13 +1045,17 @@
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
-          ]
+          ],
+          "activeParameter": 3
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 3
+      "activeSignature": 0
     }
   },
   {
@@ -894,9 +1072,17 @@
       "signatures": [
         {
           "label": "multiply(a: number, b: number, c?: number, d?: any, e?: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is multiplication function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "first number\n"
+              }
             },
             {
               "label": "b: number"
@@ -908,13 +1094,17 @@
               "label": "d?: any"
             },
             {
-              "label": "e?: any"
+              "label": "e?: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "LastParam "
+              }
             }
-          ]
+          ],
+          "activeParameter": 4
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 4
+      "activeSignature": 0
     }
   },
   {
@@ -931,11 +1121,16 @@
       "signatures": [
         {
           "label": "f1(a: number): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
               "label": "a: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         },
         {
           "label": "f1(b: string): any",
@@ -943,11 +1138,11 @@
             {
               "label": "b: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -964,11 +1159,16 @@
       "signatures": [
         {
           "label": "f1(a: number): any",
+          "documentation": {
+            "kind": "markdown",
+            "value": "fn f1 with number"
+          },
           "parameters": [
             {
               "label": "a: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         },
         {
           "label": "f1(b: string): any",
@@ -976,11 +1176,11 @@
             {
               "label": "b: string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 1,
-      "activeParameter": 0
+      "activeSignature": 1
     }
   },
   {
@@ -997,30 +1197,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1037,30 +1257,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -1077,30 +1317,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 2
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 2
+      "activeSignature": 0
     }
   },
   {
@@ -1117,30 +1377,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 3
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 3
+      "activeSignature": 0
     }
   },
   {
@@ -1157,30 +1437,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 4
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 4
+      "activeSignature": 0
     }
   },
   {
@@ -1197,30 +1497,50 @@
       "signatures": [
         {
           "label": "subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is subtract function"
+          },
           "parameters": [
             {
               "label": "a: number"
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is about b\n"
+              }
             },
             {
-              "label": "c?: () => string"
+              "label": "c?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param c\n"
+              }
             },
             {
-              "label": "d?: () => string"
+              "label": "d?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param d\n"
+              }
             },
             {
-              "label": "e?: () => string"
+              "label": "e?: () => string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is optional param e\n"
+              }
             },
             {
               "label": "f?: () => string"
             }
-          ]
+          ],
+          "activeParameter": 5
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 5
+      "activeSignature": 0
     }
   },
   {
@@ -1237,15 +1557,23 @@
       "signatures": [
         {
           "label": "square(a: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is square function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is input number\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1262,18 +1590,30 @@
       "signatures": [
         {
           "label": "divide(a: number, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is divide function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is a\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is b\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1290,18 +1630,30 @@
       "signatures": [
         {
           "label": "divide(a: number, b: number): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is divide function"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is a\n"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is b\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -1318,18 +1670,30 @@
       "signatures": [
         {
           "label": "fooBar(foo: string, bar: string): string",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Function returns string concat of foo and bar"
+          },
           "parameters": [
             {
-              "label": "foo: string"
+              "label": "foo: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is string\n"
+              }
             },
             {
-              "label": "bar: string"
+              "label": "bar: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is second string\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1346,18 +1710,30 @@
       "signatures": [
         {
           "label": "fooBar(foo: string, bar: string): string",
+          "documentation": {
+            "kind": "markdown",
+            "value": "Function returns string concat of foo and bar"
+          },
           "parameters": [
             {
-              "label": "foo: string"
+              "label": "foo: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is string\n"
+              }
             },
             {
-              "label": "bar: string"
+              "label": "bar: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "is second string\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -1386,24 +1762,40 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1420,24 +1812,40 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -1454,24 +1862,40 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
             }
-          ]
+          ],
+          "activeParameter": 2
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 2
+      "activeSignature": 0
     }
   },
   {
@@ -1488,24 +1912,40 @@
       "signatures": [
         {
           "label": "jsDocParamTest(a: number, b: number, c: number, d: number): number",
+          "documentation": {
+            "kind": "markdown",
+            "value": "this is jsdoc style function with param tag as well as inline parameter help"
+          },
           "parameters": [
             {
-              "label": "a: number"
+              "label": "a: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for a"
+              }
             },
             {
-              "label": "b: number"
+              "label": "b: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is inline comment for b"
+              }
             },
             {
-              "label": "c: number"
+              "label": "c: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "it is third parameter\n"
+              }
             },
             {
               "label": "d: number"
             }
-          ]
+          ],
+          "activeParameter": 3
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 3
+      "activeSignature": 0
     }
   },
   {
@@ -1522,11 +1962,14 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest1(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\nAnd properly aligned comment"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1543,11 +1986,14 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest2(): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": []
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1564,21 +2010,37 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 0
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 0
+      "activeSignature": 0
     }
   },
   {
@@ -1595,21 +2057,37 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 1
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 1
+      "activeSignature": 0
     }
   },
   {
@@ -1626,21 +2104,37 @@
       "signatures": [
         {
           "label": "jsDocCommentAlignmentTest3(a: string, b: any, c: any): void",
+          "documentation": {
+            "kind": "markdown",
+            "value": "This is function comment\n    And aligned with 4 space char margin"
+          },
           "parameters": [
             {
-              "label": "a: string"
+              "label": "a: string",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about a\nspanning on two lines and aligned perfectly\n"
+              }
             },
             {
-              "label": "b: any"
+              "label": "b: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+              }
             },
             {
-              "label": "c: any"
+              "label": "c: any",
+              "documentation": {
+                "kind": "markdown",
+                "value": "this is info about b\nnot aligned text about parameter will eat only one space\n"
+              }
             }
-          ]
+          ],
+          "activeParameter": 2
         }
       ],
-      "activeSignature": 0,
-      "activeParameter": 2
+      "activeSignature": 0
     }
   },
   {

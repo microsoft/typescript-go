@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -136,7 +138,7 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
 				baselineContent.WriteString("\n")
 				baselineContent.WriteString("Errors::\n")
-				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, errors, &diagnosticwriter.FormattingOptions{
+				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(errors), &diagnosticwriter.FormattingOptions{
 					NewLine: "\n",
 					ComparePathsOptions: tspath.ComparePathsOptions{
 						CurrentDirectory:          "/",
@@ -818,6 +820,7 @@ func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfi
 		host,
 		host.GetCurrentDirectory(),
 		nil,
+		nil,
 		configFileName,
 		/*resolutionStack*/ nil,
 		/*extraFileExtensions*/ nil,
@@ -835,9 +838,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		configFileName := tspath.CombinePaths(basePath, config.configFileName)
 		allFileLists := make(map[string]string, len(config.allFileList)+1)
-		for file, content := range config.allFileList {
-			allFileLists[file] = content
-		}
+		maps.Copy(allFileLists, config.allFileList)
 		allFileLists[configFileName] = config.jsonText
 		host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 		parsedConfigFileContent := getParsed(config, host, basePath)
@@ -864,7 +865,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("FileNames::\n")
 		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(parsedConfigFileContent.Errors), &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
 			ComparePathsOptions: tspath.ComparePathsOptions{
 				CurrentDirectory:          basePath,
@@ -1007,7 +1008,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
 	fs := osvfs.FS()
@@ -1026,7 +1027,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}
@@ -1040,6 +1041,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		host,
 		host.GetCurrentDirectory(),
 		nil,
+		nil,
 		tsconfigFileName,
 		/*resolutionStack*/ nil,
 		/*extraFileExtensions*/ nil,
@@ -1048,7 +1050,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	if len(parseConfigFileContent.Errors) > 0 {
 		for _, error := range parseConfigFileContent.Errors {
-			t.Log(error.Message())
+			t.Log(error.Localize(locale.Default))
 		}
 		t.FailNow()
 	}
@@ -1059,7 +1061,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		Module:                     core.ModuleKindNodeNext,
 		ModuleResolution:           core.ModuleResolutionKindNodeNext,
 		NewLine:                    core.NewLineKindLF,
-		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
+		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "built", "local")),
 		Target:                     core.ScriptTargetES2020,
 		Types:                      []string{"node"},
 		ConfigFilePath:             tsconfigFileName,
@@ -1071,7 +1073,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		IsolatedDeclarations:       core.TSTrue,
 		NoImplicitOverride:         core.TSTrue,
 		PreserveConstEnums:         core.TSTrue,
-		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src")),
+		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src")),
 		SkipLibCheck:               core.TSTrue,
 		Strict:                     core.TSTrue,
 		StrictBindCallApply:        core.TSFalse,
@@ -1175,7 +1177,7 @@ func TestParseSrcCompiler(t *testing.T) {
 func BenchmarkParseSrcCompiler(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 
-	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath(), "src", "compiler"))
 	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
 	fs := osvfs.FS()
@@ -1202,6 +1204,7 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 			host,
 			host.GetCurrentDirectory(),
 			nil,
+			nil,
 			tsconfigFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
@@ -1216,14 +1219,14 @@ type memoCache struct {
 	m map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
 }
 
-func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
 	if mc.m == nil {
 		mc.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
 	}
 	if e, ok := mc.m[path]; ok {
 		return e
 	}
-	e := parse()
+	e := tsoptions.ParseExtendedConfig(fileName, path, resolutionStack, host, mc)
 	mc.m[path] = e
 	return e
 }
@@ -1261,6 +1264,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 				tsConfigSourceFile,
 				host,
 				host.GetCurrentDirectory(),
+				nil,
 				nil,
 				configFileName,
 				nil,
@@ -1305,6 +1309,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 				tsConfigSourceFile,
 				host,
 				host.GetCurrentDirectory(),
+				nil,
 				nil,
 				configFileName,
 				nil,

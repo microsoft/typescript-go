@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInObjectLiteral(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface point {
     x: number;
@@ -22,7 +22,8 @@ interface thing {
 }
 var t: thing;
 t.pos = { x: 4, y: 3 + t./**/ };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

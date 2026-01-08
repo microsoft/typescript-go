@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnThis2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Bar<T> {
     public explicitThis(this: this) {
@@ -19,7 +19,8 @@ func TestQuickInfoOnThis2(t *testing.T) {
         console.log(thi/*2*/s);
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "this: this", "")
 	f.VerifyQuickInfoAt(t, "2", "this: Bar<T>", "")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestRenameStringLiteralTypes4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     "Prop 1": string;
@@ -18,6 +18,7 @@ func TestRenameStringLiteralTypes4(t *testing.T) {
 declare const fn: <K extends keyof I>(p: K) => void
 
 fn("Prop 1"/**/)`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

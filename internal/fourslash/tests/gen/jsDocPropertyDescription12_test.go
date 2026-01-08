@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription12(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type SymbolAlias = {
     /** Something generic */
@@ -18,6 +18,7 @@ func TestJsDocPropertyDescription12(t *testing.T) {
 function symbolAlias(e: SymbolAlias) {
     console.log(e./*symbolAlias*/anything);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "symbolAlias", "any", "")
 }

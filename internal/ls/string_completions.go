@@ -46,7 +46,6 @@ func (l *LanguageService) getStringLiteralCompletions(
 	position int,
 	contextToken *ast.Node,
 	compilerOptions *core.CompilerOptions,
-	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	// !!! reference comment
 	if IsInString(file, position, contextToken) {
@@ -65,7 +64,6 @@ func (l *LanguageService) getStringLiteralCompletions(
 			file,
 			position,
 			compilerOptions,
-			clientOptions,
 		)
 	}
 	return nil
@@ -78,7 +76,6 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	file *ast.SourceFile,
 	position int,
 	options *core.CompilerOptions,
-	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	if completion == nil {
 		return nil
@@ -88,7 +85,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	switch {
 	case completion.fromPaths != nil:
 		completion := completion.fromPaths
-		return l.convertPathCompletions(completion, file, position, clientOptions)
+		return l.convertPathCompletions(ctx, completion, file, position)
 	case completion.fromProperties != nil:
 		completion := completion.fromProperties
 		data := &completionDataData{
@@ -105,11 +102,10 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			position,
 			file,
 			options,
-			clientOptions,
 		)
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
 		itemDefaults := l.setItemDefaults(
-			clientOptions,
+			ctx,
 			position,
 			file,
 			items,
@@ -134,6 +130,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		items := core.Map(completion.types, func(t *checker.StringLiteralType) *lsproto.CompletionItem {
 			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
 			return l.createLSPCompletionItem(
+				ctx,
 				name,
 				"", /*insertText*/
 				"", /*filterText*/
@@ -145,7 +142,6 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				nil, /*labelDetails*/
 				file,
 				position,
-				clientOptions,
 				false, /*isMemberCompletion*/
 				false, /*isSnippet*/
 				false, /*hasAction*/
@@ -156,7 +152,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
 		itemDefaults := l.setItemDefaults(
-			clientOptions,
+			ctx,
 			position,
 			file,
 			items,
@@ -174,16 +170,17 @@ func (l *LanguageService) convertStringLiteralCompletions(
 }
 
 func (l *LanguageService) convertPathCompletions(
+	ctx context.Context,
 	pathCompletions []*pathCompletion,
 	file *ast.SourceFile,
 	position int,
-	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	isNewIdentifierLocation := true // The user may type in a path that doesn't yet exist, creating a "new identifier" with respect to the collection of identifiers the server is aware of.
 	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
 	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
 		replacementSpan := l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
 		return l.createLSPCompletionItem(
+			ctx,
 			pathCompletion.name,
 			"", /*insertText*/
 			"", /*filterText*/
@@ -195,7 +192,6 @@ func (l *LanguageService) convertPathCompletions(
 			nil, /*labelDetails*/
 			file,
 			position,
-			clientOptions,
 			false, /*isMemberCompletion*/
 			false, /*isSnippet*/
 			false, /*hasAction*/
@@ -205,7 +201,7 @@ func (l *LanguageService) convertPathCompletions(
 		)
 	})
 	itemDefaults := l.setItemDefaults(
-		clientOptions,
+		ctx,
 		position,
 		file,
 		items,
@@ -354,10 +350,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		}
 		exports := typeChecker.GetExportsAndPropertiesOfModule(moduleSpecifierSymbol)
 		existing := collections.NewSetFromItems(core.Map(namedImportsOrExports.Elements(), func(n *ast.Node) string {
-			if n.PropertyName() != nil {
-				return n.PropertyName().Text()
-			}
-			return n.Name().Text()
+			return n.PropertyNameOrName().Text()
 		})...)
 		uniques := core.Filter(exports, func(e *ast.Symbol) bool {
 			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(e.Name)
@@ -670,6 +663,7 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 	file *ast.SourceFile,
 	position int,
 	contextToken *ast.Node,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
 		return item
@@ -683,7 +677,7 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 	if completions == nil {
 		return item
 	}
-	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker)
+	return l.stringLiteralCompletionDetails(item, name, contextToken, completions, file, checker, docFormat)
 }
 
 func (l *LanguageService) stringLiteralCompletionDetails(
@@ -693,27 +687,28 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 	completion *stringLiteralCompletions,
 	file *ast.SourceFile,
 	checker *checker.Checker,
+	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
 	switch {
 	case completion.fromPaths != nil:
 		pathCompletions := completion.fromPaths
 		for _, pathCompletion := range pathCompletions {
 			if pathCompletion.name == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:
 		types := completion.fromTypes
 		for _, t := range types.types {
 			if t.AsLiteralType().Value().(string) == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}
 	}

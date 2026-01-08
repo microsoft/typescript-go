@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
-func (b *nodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
 	if node == nil {
 		return node
 	}
@@ -18,7 +18,7 @@ func (b *nodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
 	return b.tryReuseExistingNodeHelper(node)
 }
 
-func (b *nodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	if node == nil {
 		return node
 	}
@@ -131,7 +131,7 @@ func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary
 	}
 }
 
-func (b *nodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
+func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	b.ch.checkNotCanceled()
 	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError}
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound), b.ctx.tracker.GetModuleSpecifierGenerationHost())
@@ -140,7 +140,7 @@ func (b *nodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	return bound
 }
 
-func (b *nodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
+func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError
@@ -157,7 +157,7 @@ func (b *nodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 	return true
 }
 
-func (b *nodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
+func (b *NodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
 	bound := b.createRecoveryBoundary()
 	var transformed *ast.Node
 	v := getExistingNodeTreeVisitor(b, bound) // !!! TODO: Cache visitor and just reset bound+host builder? We try this for a *lot* of nodes.
@@ -169,7 +169,7 @@ func (b *nodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *as
 	return transformed
 }
 
-func (b *nodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.Node) string {
+func (b *NodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.Node) string {
 	if b.ctx.enclosingFile != ast.GetSourceFileOfNode(lit) {
 		mode := core.ResolutionModeNone
 		if parent.AsImportTypeNode().Attributes != nil {
@@ -205,17 +205,17 @@ func (b *nodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.
 	return ""
 }
 
-func (b *nodeBuilderImpl) rewriteModuleSpecifier(parent *ast.Node, lit *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) rewriteModuleSpecifier(parent *ast.Node, lit *ast.Node) *ast.Node {
 	newName := b.getModuleSpecifierOverride(parent, lit)
 	if len(newName) == 0 {
 		return lit
 	}
-	res := b.f.NewStringLiteral(newName)
+	res := b.f.NewStringLiteral(newName, ast.TokenFlagsNone)
 	b.e.SetOriginal(res, lit)
 	return res
 }
 
-func (b *nodeBuilderImpl) getEnclosingDeclarationIgnoringFakeScope() *ast.Node {
+func (b *NodeBuilderImpl) getEnclosingDeclarationIgnoringFakeScope() *ast.Node {
 	enc := b.ctx.enclosingDeclaration
 	for enc != nil && b.links.Get(enc).fakeScopeForSignatureDeclaration != nil {
 		enc = enc.Parent
@@ -223,7 +223,7 @@ func (b *nodeBuilderImpl) getEnclosingDeclarationIgnoringFakeScope() *ast.Node {
 	return enc
 }
 
-func getExistingNodeTreeVisitor(b *nodeBuilderImpl, bound *recoveryBoundary) *ast.NodeVisitor {
+func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *ast.NodeVisitor {
 	// TODO: wrap all these closures into methods on an object so we can guarantee we reuse the same memory on each invocation by reusing/resetting the object
 	// instead of re-closing-over all of these each time we need a visitor. In theory the compiler could handle this, but in practice closure inlining hasn't been reliable
 	var visitor *ast.NodeVisitor

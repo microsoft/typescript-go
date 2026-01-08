@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForLabel(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/*1*/label: while (true) {
     if (false) /*2*/break /*3*/label;
@@ -18,6 +18,7 @@ func TestReferencesForLabel(t *testing.T) {
 
 /*6*/label: while (false) { }
 var label = "label";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6")
 }

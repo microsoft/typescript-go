@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnVarInArrowExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IMap<T> {
     [key: string]: T;
@@ -22,6 +22,7 @@ each(categories, category => {
     });
 });
 function each<T>(items: T[], handler: (item: T) => void) { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(local var) changes: string[]", "")
 }

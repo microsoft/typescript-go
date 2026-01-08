@@ -17,7 +17,7 @@ import (
 type tscEdit struct {
 	caption         string
 	commandLineArgs []string
-	edit            func(*testSys)
+	edit            func(*TestSys)
 	expectedDiff    string
 }
 
@@ -40,7 +40,7 @@ type tscInput struct {
 	windowsStyleRoot string
 }
 
-func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) tsc.CommandLineResult {
+func (test *tscInput) executeCommand(sys *TestSys, baselineBuilder *strings.Builder, commandLineArgs []string) tsc.CommandLineResult {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
 	result := execute.CommandLine(sys, commandLineArgs, sys)
 	switch result.Status {
@@ -85,7 +85,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		for index, do := range test.edits {
 			sys.clearOutput()
 			wg := core.NewWorkGroup(false)
-			var nonIncrementalSys *testSys
+			var nonIncrementalSys *TestSys
 			commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
 			wg.Queue(func() {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
@@ -119,7 +119,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
 				baselineBuilder.WriteString(diff)
 				if do.expectedDiff == "" {
-					unexpectedDiff += fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff)
+					unexpectedDiff += fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff) //nolint:perfsprint
 				}
 			} else if do.expectedDiff != "" {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
@@ -133,7 +133,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 	})
 }
 
-func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) string {
+func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) string {
 	var diffBuilder strings.Builder
 
 	nonIncrementalOutputs := nonIncrementalSys.fs.writtenFiles.ToSlice()

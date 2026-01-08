@@ -177,7 +177,7 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 		ast.KindRegularExpressionLiteral:
 		text = textSourceNode.Text()
 	}
-	node := f.NewStringLiteral(text)
+	node := f.NewStringLiteral(text, ast.TokenFlagsNone)
 	if f.emitContext.textSource == nil {
 		f.emitContext.textSource = make(map[*ast.StringLiteralNode]*ast.Node)
 	}
@@ -217,6 +217,10 @@ func (f *NodeFactory) NewLogicalORExpression(left *ast.Expression, right *ast.Ex
 	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindBarBarToken), right)
 }
 
+func (f *NodeFactory) NewLogicalANDExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindAmpersandAmpersandToken), right)
+}
+
 // func (f *NodeFactory) NewLogicalANDExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
 // func (f *NodeFactory) NewBitwiseORExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
 // func (f *NodeFactory) NewBitwiseXORExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
@@ -234,7 +238,7 @@ func (f *NodeFactory) NewStrictInequalityExpression(left *ast.Expression, right 
 //
 
 func (f *NodeFactory) NewVoidZeroExpression() *ast.Expression {
-	return f.NewVoidExpression(f.NewNumericLiteral("0"))
+	return f.NewVoidExpression(f.NewNumericLiteral("0", ast.TokenFlagsNone))
 }
 
 func flattenCommaElement(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
@@ -282,7 +286,7 @@ func (f *NodeFactory) NewTypeCheck(value *ast.Node, tag string) *ast.Node {
 	} else if tag == "undefined" {
 		return f.NewStrictEqualityExpression(value, f.NewVoidZeroExpression())
 	} else {
-		return f.NewStrictEqualityExpression(f.NewTypeOfExpression(value), f.NewStringLiteral(tag))
+		return f.NewStrictEqualityExpression(f.NewTypeOfExpression(value), f.NewStringLiteral(tag, ast.TokenFlagsNone))
 	}
 }
 
@@ -321,7 +325,7 @@ func (f *NodeFactory) NewFunctionCallCall(target *ast.Expression, thisArg *ast.E
 func (f *NodeFactory) NewArraySliceCall(array *ast.Expression, start int) *ast.Node {
 	var args []*ast.Node
 	if start != 0 {
-		args = append(args, f.NewNumericLiteral(strconv.Itoa(start)))
+		args = append(args, f.NewNumericLiteral(strconv.Itoa(start), ast.TokenFlagsNone))
 	}
 	return f.NewMethodCall(array, f.NewIdentifier("slice"), args)
 }
@@ -381,13 +385,13 @@ func (f *NodeFactory) RestoreOuterExpressions(outerExpression *ast.Expression, i
 // Ensures `"use strict"` is the first statement of a slice of statements.
 func (f *NodeFactory) EnsureUseStrict(statements []*ast.Statement) []*ast.Statement {
 	for _, statement := range statements {
-		if ast.IsPrologueDirective(statement) && statement.AsExpressionStatement().Expression.Text() == "use strict" {
+		if ast.IsPrologueDirective(statement) && statement.Expression().Text() == "use strict" {
 			return statements
 		} else {
 			break
 		}
 	}
-	useStrictPrologue := f.NewExpressionStatement(f.NewStringLiteral("use strict"))
+	useStrictPrologue := f.NewExpressionStatement(f.NewStringLiteral("use strict", ast.TokenFlagsNone))
 	statements = append([]*ast.Statement{useStrictPrologue}, statements...)
 	return statements
 }
@@ -399,7 +403,7 @@ func (f *NodeFactory) SplitStandardPrologue(source []*ast.Statement) (prologue [
 			return source[:i], source[i:]
 		}
 	}
-	return nil, source
+	return source, nil
 }
 
 // Splits a slice of statements into two parts: custom prologue statements (e.g., with `EFCustomPrologue` set) and the rest of the statements
@@ -518,7 +522,57 @@ func (f *NodeFactory) NewUnscopedHelperName(name string) *ast.IdentifierNode {
 	return node
 }
 
-// !!! TypeScript Helpers
+// TypeScript Helpers
+
+func (f *NodeFactory) NewDecorateHelper(decoratorExpressions []*ast.Node, target *ast.Node, memberName *ast.Node, descriptor *ast.Node) *ast.Expression {
+	f.emitContext.RequestEmitHelper(decorateHelper)
+
+	var argumentsArray []*ast.Node
+	argumentsArray = append(argumentsArray, f.NewArrayLiteralExpression(f.NewNodeList(decoratorExpressions), true))
+	argumentsArray = append(argumentsArray, target)
+	if memberName != nil {
+		argumentsArray = append(argumentsArray, memberName)
+		if descriptor != nil {
+			argumentsArray = append(argumentsArray, descriptor)
+		}
+	}
+
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__decorate"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(argumentsArray),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewMetadataHelper(metadataKey string, metadataValue *ast.Node) *ast.Node {
+	f.emitContext.RequestEmitHelper(metadataHelper)
+
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__metadata"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Node{
+			f.NewStringLiteral(metadataKey, ast.TokenFlagsNone),
+			metadataValue,
+		}),
+		ast.NodeFlagsNone,
+	)
+}
+
+func (f *NodeFactory) NewParamHelper(expression *ast.Node, parameterOffset int, location core.TextRange) *ast.Expression {
+	f.emitContext.RequestEmitHelper(paramHelper)
+	helper := f.NewCallExpression(
+		f.NewUnscopedHelperName("__param"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList([]*ast.Expression{f.NewNumericLiteral(strconv.Itoa(parameterOffset), ast.TokenFlagsNone), expression}),
+		ast.NodeFlagsNone,
+	)
+	helper.Loc = location
+	return helper
+}
 
 // ESNext Helpers
 
@@ -573,7 +627,7 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 					f.NewToken(ast.KindQuestionToken),
 					temp,
 					f.NewToken(ast.KindColonToken),
-					f.NewBinaryExpression(nil, temp, nil, f.NewToken(ast.KindPlusToken), f.NewStringLiteral("")),
+					f.NewBinaryExpression(nil, temp, nil, f.NewToken(ast.KindPlusToken), f.NewStringLiteral("", ast.TokenFlagsNone)),
 				))
 			} else {
 				propertyNames = append(propertyNames, f.NewStringLiteralFromNode(propertyName))
@@ -613,7 +667,7 @@ func (f *NodeFactory) NewSetFunctionNameHelper(fn *ast.Expression, name *ast.Exp
 	f.emitContext.RequestEmitHelper(setFunctionNameHelper)
 	var arguments []*ast.Expression
 	if len(prefix) > 0 {
-		arguments = []*ast.Expression{fn, name, f.NewStringLiteral(prefix)}
+		arguments = []*ast.Expression{fn, name, f.NewStringLiteral(prefix, ast.TokenFlagsNone)}
 	} else {
 		arguments = []*ast.Expression{fn, name}
 	}

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsClassWithStaticThisAccess(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `[|class /*0*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 0 |}C|] {
     static s() {
@@ -22,7 +22,8 @@ func TestFindAllRefsClassWithStaticThisAccess(t *testing.T) {
         class Inner { x = this; }
     }
 }|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2")
 	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1])
 }

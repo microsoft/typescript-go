@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesAbstract02(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Not valid TS (abstract methods can only appear in abstract classes)
 class Animal {
@@ -22,7 +22,8 @@ let c = /*1*/abstract class Foo {
     /*2*/abstract foo(): void;
     abstract bar(): void;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, "1", "2")
 	f.VerifyBaselineDocumentHighlights(t, nil /*preferences*/, ToAny(f.Ranges())...)
 }

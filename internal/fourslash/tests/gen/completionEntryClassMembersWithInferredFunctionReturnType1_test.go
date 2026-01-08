@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionEntryClassMembersWithInferredFunctionReturnType1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /tokenizer.ts
 export default abstract class Tokenizer {
@@ -25,7 +25,8 @@ import Tokenizer from "./tokenizer.js";
 export default abstract class ExpressionParser extends Tokenizer {
   /**/
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

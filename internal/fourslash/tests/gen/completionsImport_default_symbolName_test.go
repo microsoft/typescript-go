@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_default_symbolName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @esModuleInterop: false
@@ -27,7 +27,8 @@ declare namespace RangeParser {
 export = RangeParser;
 // @Filename: /b.ts
 R/*0*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -39,11 +40,11 @@ R/*0*/`
 				&lsproto.CompletionItem{
 					Label: "RangeParser",
 					Kind:  PtrTo(lsproto.CompletionItemKindFunction),
-					Data: PtrTo(any(&ls.CompletionItemData{
-						AutoImport: &ls.AutoImportData{
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportData{
 							ModuleSpecifier: "range-parser",
 						},
-					})),
+					},
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					Detail:              PtrTo("namespace RangeParser\nfunction RangeParser(): string"),

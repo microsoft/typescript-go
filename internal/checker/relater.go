@@ -97,16 +97,16 @@ func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
 }
 
 type Relation struct {
-	results map[string]RelationComparisonResult
+	results map[CacheHashKey]RelationComparisonResult
 }
 
-func (r *Relation) get(key string) RelationComparisonResult {
+func (r *Relation) get(key CacheHashKey) RelationComparisonResult {
 	return r.results[key]
 }
 
-func (r *Relation) set(key string, result RelationComparisonResult) {
+func (r *Relation) set(key CacheHashKey, result RelationComparisonResult) {
 	if r.results == nil {
-		r.results = make(map[string]RelationComparisonResult)
+		r.results = make(map[CacheHashKey]RelationComparisonResult)
 	}
 	r.results[key] = result
 }
@@ -191,7 +191,8 @@ func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation
 		}
 	}
 	if source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsObject != 0 {
-		related := relation.get(getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false))
+		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false)
+		related := relation.get(id)
 		if related != RelationComparisonResultNone {
 			return related&RelationComparisonResultSucceeded != 0
 		}
@@ -370,7 +371,7 @@ func (c *Checker) checkTypeRelatedToEx(
 	result := r.isRelatedToEx(source, target, RecursionFlagsBoth, errorNode != nil /*reportErrors*/, headMessage, IntersectionStateNone)
 	if r.overflow {
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
-		id := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
+		id, _ := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
 		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
 		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
@@ -443,7 +444,7 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 	}
 	switch node.Kind {
 	case ast.KindAsExpression:
-		if !isConstAssertion(node) {
+		if !ast.IsConstAssertion(node) {
 			break
 		}
 		fallthrough
@@ -493,7 +494,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		return false
 	}
 	reportedError := false
-	for _, prop := range node.AsObjectLiteralExpression().Properties.Nodes {
+	for _, prop := range node.Properties() {
 		if ast.IsSpreadAssignment(prop) {
 			continue
 		}
@@ -503,10 +504,10 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		}
 		switch prop.Kind {
 		case ast.KindSetAccessor, ast.KindGetAccessor, ast.KindMethodDeclaration, ast.KindShorthandPropertyAssignment:
-			reportedError = c.elaborateElement(source, target, relation, prop.Name(), nil, nameType, nil, diagnosticOutput) || reportedError
+			reportedError = c.elaborateElement(source, target, relation, prop.Name(), nil, nameType, nil, nil, diagnosticOutput) || reportedError
 		case ast.KindPropertyAssignment:
 			message := core.IfElse(ast.IsComputedNonLiteralName(prop.Name()), diagnostics.Type_of_computed_property_s_value_is_0_which_is_not_assignable_to_type_1, nil)
-			reportedError = c.elaborateElement(source, target, relation, prop.Name(), prop.Initializer(), nameType, message, diagnosticOutput) || reportedError
+			reportedError = c.elaborateElement(source, target, relation, prop.Name(), prop.Initializer(), nameType, message, nil, diagnosticOutput) || reportedError
 		}
 	}
 	return reportedError
@@ -525,18 +526,18 @@ func (c *Checker) elaborateArrayLiteral(node *ast.Node, source *Type, target *Ty
 		}
 	}
 	reportedError := false
-	for i, element := range node.AsArrayLiteralExpression().Elements.Nodes {
+	for i, element := range node.Elements() {
 		if ast.IsOmittedExpression(element) || c.isTupleLikeType(target) && c.getPropertyOfType(target, jsnum.Number(i).String()) == nil {
 			continue
 		}
 		nameType := c.getNumberLiteralType(jsnum.Number(i))
 		checkNode := c.getEffectiveCheckNode(element)
-		reportedError = c.elaborateElement(source, target, relation, checkNode, checkNode, nameType, nil, diagnosticOutput) || reportedError
+		reportedError = c.elaborateElement(source, target, relation, checkNode, checkNode, nameType, nil, nil, diagnosticOutput) || reportedError
 	}
 	return reportedError
 }
 
-func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relation, prop *ast.Node, next *ast.Node, nameType *Type, errorMessage *diagnostics.Message, diagnosticOutput *[]*ast.Diagnostic) bool {
+func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relation, prop *ast.Node, next *ast.Node, nameType *Type, errorMessage *diagnostics.Message, diagnosticFactory func(prop *ast.Node) *ast.Diagnostic, diagnosticOutput *[]*ast.Diagnostic) bool {
 	targetPropType := c.getBestMatchIndexedAccessTypeOrUndefined(source, target, nameType)
 	if targetPropType == nil || targetPropType.flags&TypeFlagsIndexedAccess != 0 {
 		// Don't elaborate on indexes on generic variables
@@ -557,7 +558,10 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 	if next != nil {
 		specificSource = c.checkExpressionForMutableLocationWithContextualType(next, sourcePropType)
 	}
-	if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
+	if diagnosticFactory != nil {
+		// Use the custom diagnostic factory if provided (e.g., for JSX text children with dynamic error messages)
+		diags = append(diags, diagnosticFactory(prop))
+	} else if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
 		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, c.TypeToString(specificSource), c.TypeToString(targetPropType)))
 	} else {
 		propName := c.getPropertyNameFromIndex(nameType, nil /*accessNode*/)
@@ -1963,7 +1967,7 @@ func (c *Checker) getTupleElementLabelFromBindingElement(node *ast.Node, index i
 			return name + "_n"
 		case ast.KindArrayBindingPattern:
 			if hasDotDotDotToken(node) {
-				elements := node.Name().AsBindingPattern().Elements.Nodes
+				elements := node.Name().Elements()
 				lastElement := core.LastOrNil(elements)
 				lastElementIsBindingElementRest := lastElement != nil && ast.IsBindingElement(lastElement) && hasDotDotDotToken(lastElement)
 				elementCount := len(elements) - core.IfElse(lastElementIsBindingElementRest, 1, 0)
@@ -1994,19 +1998,11 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			if sig.declaration != nil {
 				typeNode := sig.declaration.Type()
-				var jsdocTypePredicate *TypePredicate
-				if typeNode == nil {
-					if jsdocSignature := c.getSignatureOfFullSignatureType(sig.declaration); jsdocSignature != nil {
-						jsdocTypePredicate = c.getTypePredicateOfSignature(jsdocSignature)
-					}
-				}
 				switch {
 				case typeNode != nil:
 					if ast.IsTypePredicateNode(typeNode) {
 						sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
 					}
-				case jsdocTypePredicate != nil:
-					sig.resolvedTypePredicate = jsdocTypePredicate
 				case ast.IsFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
 					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
 					sig.resolvedTypePredicate = c.getTypePredicateFromBody(sig.declaration)
@@ -2509,8 +2505,8 @@ type Relater struct {
 	errorNode      *ast.Node
 	errorChain     *ErrorChain
 	relatedInfo    []*ast.Diagnostic
-	maybeKeys      []string
-	maybeKeysSet   collections.Set[string]
+	maybeKeys      []CacheHashKey
+	maybeKeysSet   collections.Set[CacheHashKey]
 	sourceStack    []*Type
 	targetStack    []*Type
 	maybeCount     int
@@ -3019,7 +3015,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	if r.overflow {
 		return TernaryFalse
 	}
-	id := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
+	id, constrained := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
 	if entry := r.relation.get(id); entry != RelationComparisonResultNone {
 		if reportErrors && entry&RelationComparisonResultFailed != 0 && entry&RelationComparisonResultOverflow == 0 {
 			// We are elaborating errors and the cached result is a failure not due to a comparison overflow,
@@ -3046,11 +3042,11 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	if r.maybeKeysSet.Has(id) {
 		return TernaryMaybe
 	}
-	// A key that ends with "*" is an indication that we have type references that reference constrained
+	// A constrained key indicates that we have type references that reference constrained
 	// type parameters. For such keys we also check against the key we would have gotten if all type parameters
 	// were unconstrained.
-	if strings.HasSuffix(id, "*") {
-		broadestEquivalentId := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, true /*ignoreConstraints*/)
+	if constrained {
+		broadestEquivalentId, _ := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, true /*ignoreConstraints*/)
 		if r.maybeKeysSet.Has(broadestEquivalentId) {
 			return TernaryMaybe
 		}
@@ -3878,26 +3874,32 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 				} else {
 					related = r.c.compareTypesIdentical(s, t)
 				}
-			} else if variance == VarianceFlagsCovariant {
-				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-			} else if variance == VarianceFlagsContravariant {
-				related = r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-			} else if variance == VarianceFlagsBivariant {
-				// In the bivariant case we first compare contravariantly without reporting
-				// errors. Then, if that doesn't succeed, we compare covariantly with error
-				// reporting. Thus, error elaboration will be based on the covariant check,
-				// which is generally easier to reason about.
-				related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
-				if related == TernaryFalse {
-					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-				}
 			} else {
-				// In the invariant case we first compare covariantly, and only when that
-				// succeeds do we proceed to compare contravariantly. Thus, error elaboration
-				// will typically be based on the covariant check.
-				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
-				if related != TernaryFalse {
-					related &= r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				// Propagate unreliable variance flag
+				if r.c.inVarianceComputation && varianceFlags&VarianceFlagsUnreliable != 0 {
+					r.c.instantiateType(s, r.c.reportUnreliableMapper)
+				}
+				if variance == VarianceFlagsCovariant {
+					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				} else if variance == VarianceFlagsContravariant {
+					related = r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				} else if variance == VarianceFlagsBivariant {
+					// In the bivariant case we first compare contravariantly without reporting
+					// errors. Then, if that doesn't succeed, we compare covariantly with error
+					// reporting. Thus, error elaboration will be based on the covariant check,
+					// which is generally easier to reason about.
+					related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
+					if related == TernaryFalse {
+						related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					}
+				} else {
+					// In the invariant case we first compare covariantly, and only when that
+					// succeeds do we proceed to compare contravariantly. Thus, error elaboration
+					// will typically be based on the covariant check.
+					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					if related != TernaryFalse {
+						related &= r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+					}
 				}
 			}
 			if related == TernaryFalse {

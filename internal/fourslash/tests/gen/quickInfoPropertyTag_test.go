@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoPropertyTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -21,6 +21,7 @@ func TestQuickInfoPropertyTag(t *testing.T) {
 
 /** @type {I} */
 const obj = { /**/x: 10 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "", "(property) x: number", "Doc\nMore doc")
 }

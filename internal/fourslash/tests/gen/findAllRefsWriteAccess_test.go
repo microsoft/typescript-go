@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsWriteAccess(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Obj {
     [` + "`" + `/*1*/num` + "`" + `]: number;
@@ -28,6 +28,7 @@ o[` + "`" + `num` + "`" + `] = 3;
 
 o['num'];
 o[` + "`" + `num` + "`" + `];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

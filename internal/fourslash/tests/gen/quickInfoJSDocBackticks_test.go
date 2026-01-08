@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoJSDocBackticks(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noEmit: true
 // @allowJs: true
@@ -26,7 +26,8 @@ export function f(x, y) {
     return x/*x*/ + y/*y*/
 }
 f/*f*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "f")
 	f.VerifyQuickInfoIs(t, "function f(x: string, y: string): string", "`@param` initial at-param is OK in title comment")
 	f.GoToMarker(t, "x")

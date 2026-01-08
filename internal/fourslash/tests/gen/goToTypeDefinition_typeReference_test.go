@@ -8,13 +8,14 @@ import (
 )
 
 func TestGoToTypeDefinition_typeReference(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type User = { name: string };
 type Box<T> = { value: T };
 declare const boxedUser: Box<User>
 /*reference*/boxedUser`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineGoToTypeDefinition(t, "reference")
 }

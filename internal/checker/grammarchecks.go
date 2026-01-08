@@ -214,7 +214,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousDecoratorErrors(node) || c.reportObviousModifierErrors(node) {
 		return true
 	}
-	if ast.IsParameter(node) && ast.IsThisParameter(node) {
+	if ast.IsThisParameter(node) {
 		return c.grammarErrorOnFirstToken(node, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 	}
 	blockScopeKind := ast.NodeFlagsNone
@@ -232,20 +232,17 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	// [...leadingDecorators, ...leadingModifiers, ...trailingDecorators, ...trailingModifiers]. It is an error to
 	// have both leading and trailing decorators.
 	hasLeadingDecorators := false
-	var modifiers []*ast.Node
-	if node.Modifiers() != nil {
-		modifiers = node.Modifiers().Nodes
-	}
+	modifiers := node.ModifierNodes()
 	for _, modifier := range modifiers {
 		if ast.IsDecorator(modifier) {
-			if !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
+			if !ast.NodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
 				if node.Kind == ast.KindMethodDeclaration && !ast.NodeIsPresent(node.Body()) {
 					return c.grammarErrorOnFirstToken(node, diagnostics.A_decorator_can_only_decorate_a_method_implementation_not_an_overload)
 				} else {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_are_not_valid_here)
 				}
 			} else if c.legacyDecorators && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
-				accessors := c.getAllAccessorDeclarationsForDeclaration(node)
+				accessors := ast.GetAllAccessorDeclarationsForDeclaration(node, c.getSymbolOfDeclaration(node).Declarations)
 				if ast.HasDecorators(accessors.FirstAccessor) && node == accessors.SecondAccessor {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name)
 				}
@@ -587,16 +584,11 @@ func (c *Checker) reportObviousModifierErrors(node *ast.Node) bool {
 }
 
 func (c *Checker) findFirstModifierExcept(node *ast.Node, allowedModifier ast.Kind) *ast.Node {
-	modifiers := node.Modifiers()
-	if modifiers == nil {
-		return nil
-	}
-	modifier := core.Find(modifiers.Nodes, ast.IsModifier)
+	modifier := core.Find(node.ModifierNodes(), ast.IsModifier)
 	if modifier != nil && modifier.Kind != allowedModifier {
 		return modifier
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
@@ -627,10 +619,7 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindShorthandPropertyAssignment,
 		ast.KindNamespaceExportDeclaration,
 		ast.KindMissingDeclaration:
-		if modifiers := node.Modifiers(); modifiers != nil {
-			return core.Find(modifiers.Nodes, ast.IsModifier)
-		}
-		return nil
+		return core.Find(node.ModifierNodes(), ast.IsModifier)
 	default:
 		if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 			return nil
@@ -644,17 +633,12 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		case ast.KindClassExpression,
 			ast.KindInterfaceDeclaration,
 			ast.KindTypeAliasDeclaration:
-			if modifiers := node.Modifiers(); modifiers != nil {
-				return core.Find(modifiers.Nodes, ast.IsModifier)
-			}
-			return nil
+			return core.Find(node.ModifierNodes(), ast.IsModifier)
 		case ast.KindVariableStatement:
 			if node.AsVariableStatement().DeclarationList.Flags&ast.NodeFlagsUsing != 0 {
 				return c.findFirstModifierExcept(node, ast.KindAwaitKeyword)
-			} else if modifiers := node.Modifiers(); modifiers != nil {
-				return core.Find(modifiers.Nodes, ast.IsModifier)
 			}
-			return nil
+			return core.Find(node.ModifierNodes(), ast.IsModifier)
 		case ast.KindEnumDeclaration:
 			return c.findFirstModifierExcept(node, ast.KindConstKeyword)
 		default:
@@ -673,7 +657,7 @@ func (c *Checker) reportObviousDecoratorErrors(node *ast.Node) bool {
 
 func (c *Checker) findFirstIllegalDecorator(node *ast.Node) *ast.Node {
 	if ast.CanHaveIllegalDecorators(node) {
-		decorator := core.Find(node.Modifiers().Nodes, ast.IsDecorator)
+		decorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
 		return decorator
 	} else {
 		return nil
@@ -749,7 +733,7 @@ func (c *Checker) checkGrammarForUseStrictSimpleParameterList(node *ast.Node) bo
 		body := node.Body()
 		var useStrictDirective *ast.Node
 		if body != nil && ast.IsBlock(body) {
-			useStrictDirective = binder.FindUseStrictPrologue(ast.GetSourceFileOfNode(node), body.AsBlock().Statements.Nodes)
+			useStrictDirective = binder.FindUseStrictPrologue(ast.GetSourceFileOfNode(node), body.Statements())
 		}
 		if useStrictDirective != nil {
 			nonSimpleParameters := core.Filter(node.Parameters(), func(n *ast.Node) bool {
@@ -791,7 +775,7 @@ func (c *Checker) checkGrammarFunctionLikeDeclaration(node *ast.Node) bool {
 
 func (c *Checker) checkGrammarClassLikeDeclaration(node *ast.Node) bool {
 	file := ast.GetSourceFileOfNode(node)
-	return c.checkGrammarClassDeclarationHeritageClauses(node, file) || c.checkGrammarTypeParameterList(node.ClassLikeData().TypeParameters, file)
+	return c.checkGrammarClassDeclarationHeritageClauses(node, file) || c.checkGrammarTypeParameterList(node.TypeParameterList(), file)
 }
 
 func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile) bool {
@@ -814,8 +798,8 @@ func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile
 	}
 
 	equalsGreaterThanToken := arrowFunc.EqualsGreaterThanToken
-	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, equalsGreaterThanToken.Pos())
-	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, equalsGreaterThanToken.End())
+	startLine := scanner.GetECMALineOfPosition(file, equalsGreaterThanToken.Pos())
+	endLine := scanner.GetECMALineOfPosition(file, equalsGreaterThanToken.End())
 	return startLine != endLine && c.grammarErrorOnNode(equalsGreaterThanToken, diagnostics.Line_terminator_not_permitted_before_arrow)
 }
 
@@ -900,7 +884,7 @@ func (c *Checker) checkGrammarHeritageClause(node *ast.HeritageClause) bool {
 		return c.grammarErrorAtPos(node.AsNode(), types.Pos(), 0, diagnostics.X_0_list_cannot_be_empty, listType)
 	}
 
-	for _, node := range types.Nodes {
+	for _, node := range types.Nodes { //nolint:modernize
 		if c.checkGrammarExpressionWithTypeArguments(node) {
 			return true
 		}
@@ -949,11 +933,11 @@ func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLik
 					for _, tag := range j.AsJSDoc().Tags.Nodes {
 						if tag.Kind == ast.KindJSDocAugmentsTag {
 							target := typeNodes[0].AsExpressionWithTypeArguments()
-							source := tag.AsJSDocAugmentsTag().ClassName.AsExpressionWithTypeArguments()
+							source := tag.ClassName().AsExpressionWithTypeArguments()
 							if !ast.HasSamePropertyAccessName(target.Expression, source.Expression) &&
 								target.Expression.Kind == ast.KindIdentifier &&
 								source.Expression.Kind == ast.KindIdentifier {
-								return c.grammarErrorOnNode(tag.AsJSDocAugmentsTag().ClassName, diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.AsJSDocAugmentsTag().TagName.Text(), source.Expression.Text(), target.Expression.Text())
+								return c.grammarErrorOnNode(tag.ClassName(), diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.TagName().Text(), source.Expression.Text(), target.Expression.Text())
 							}
 						}
 					}
@@ -1092,15 +1076,15 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 		}
 
 		// Modifiers are never allowed on properties except for 'async' on a method declaration
-		if modifiers := prop.Modifiers(); modifiers != nil {
+		if modifiers := prop.ModifierNodes(); len(modifiers) != 0 {
 			if ast.CanHaveModifiers(prop) {
-				for _, mod := range modifiers.Nodes {
+				for _, mod := range modifiers {
 					if ast.IsModifier(mod) && (mod.Kind != ast.KindAsyncKeyword || prop.Kind != ast.KindMethodDeclaration) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, scanner.GetTextOfNode(mod))
 					}
 				}
 			} else if ast.CanHaveIllegalModifiers(prop) {
-				for _, mod := range modifiers.Nodes {
+				for _, mod := range modifiers {
 					if ast.IsModifier(mod) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, scanner.GetTextOfNode(mod))
 					}
@@ -1185,7 +1169,7 @@ func (c *Checker) checkGrammarJsxElement(node *ast.Node) bool {
 	c.checkGrammarJsxName(node.TagName())
 	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 	var seen collections.Set[string]
-	for _, attrNode := range node.Attributes().AsJsxAttributes().Properties.Nodes {
+	for _, attrNode := range node.Attributes().Properties() {
 		if attrNode.Kind == ast.KindJsxSpreadAttribute {
 			continue
 		}
@@ -1399,7 +1383,7 @@ func (c *Checker) doesAccessorHaveCorrectParameterCount(accessor *ast.AccessorDe
 
 func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool {
 	if node.Operator == ast.KindUniqueKeyword {
-		innerType := node.AsTypeOperatorNode().Type
+		innerType := node.Type
 		if innerType.Kind != ast.KindSymbolKeyword {
 			return c.grammarErrorOnNode(innerType, diagnostics.X_0_expected, scanner.TokenToString(ast.KindSymbolKeyword))
 		}
@@ -1428,7 +1412,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 			return c.grammarErrorOnNode(node.AsNode(), diagnostics.X_unique_symbol_types_are_not_allowed_here)
 		}
 	} else if node.Operator == ast.KindReadonlyKeyword {
-		innerType := node.AsTypeOperatorNode().Type
+		innerType := node.Type
 		if innerType.Kind != ast.KindArrayType && innerType.Kind != ast.KindTupleType {
 			return c.grammarErrorOnFirstToken(node.AsNode(), diagnostics.X_readonly_type_modifier_is_only_permitted_on_array_and_tuple_literal_types, scanner.TokenToString(ast.KindSymbolKeyword))
 		}
@@ -1509,16 +1493,7 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 }
 
 func (c *Checker) checkGrammarBreakOrContinueStatement(node *ast.Node) bool {
-	var targetLabel *ast.IdentifierNode
-	switch node.Kind {
-	case ast.KindBreakStatement:
-		targetLabel = node.AsBreakStatement().Label
-	case ast.KindContinueStatement:
-		targetLabel = node.AsContinueStatement().Label
-	default:
-		panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
-	}
-
+	targetLabel := node.Label()
 	var current *ast.Node = node
 	for current != nil {
 		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(current) {
@@ -1527,10 +1502,10 @@ func (c *Checker) checkGrammarBreakOrContinueStatement(node *ast.Node) bool {
 
 		switch current.Kind {
 		case ast.KindLabeledStatement:
-			if targetLabel != nil && (current.AsLabeledStatement()).Label.Text() == targetLabel.Text() {
+			if targetLabel != nil && current.Label().Text() == targetLabel.Text() {
 				// found matching label - verify that label usage is correct
 				// continue can only target labels that are on iteration statements
-				isMisplacedContinueLabel := node.Kind == ast.KindContinueStatement && !ast.IsIterationStatement((current.AsLabeledStatement()).Statement, true /*lookInLabeledStatements*/)
+				isMisplacedContinueLabel := node.Kind == ast.KindContinueStatement && !ast.IsIterationStatement(current.Statement(), true /*lookInLabeledStatements*/)
 
 				if isMisplacedContinueLabel {
 					return c.grammarErrorOnNode(node, diagnostics.A_continue_statement_can_only_jump_to_a_label_of_an_enclosing_iteration_statement)
@@ -1575,7 +1550,7 @@ func (c *Checker) checkGrammarBreakOrContinueStatement(node *ast.Node) bool {
 
 func (c *Checker) checkGrammarBindingElement(node *ast.BindingElement) bool {
 	if node.DotDotDotToken != nil {
-		elements := node.Parent.AsBindingPattern().Elements
+		elements := node.Parent.ElementList()
 		if node.AsNode() != core.LastOrNil(elements.Nodes) {
 			return c.grammarErrorOnNode(&node.Node, diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern)
 		}
@@ -1657,7 +1632,7 @@ func (c *Checker) checkGrammarForEsModuleMarkerInBindingName(name *ast.Node) boo
 			return c.grammarErrorOnNodeSkippedOnNoEmit(name, diagnostics.Identifier_expected_esModule_is_reserved_as_an_exported_marker_when_transforming_ECMAScript_modules)
 		}
 	} else {
-		for _, element := range name.AsBindingPattern().Elements.Nodes {
+		for _, element := range name.Elements() {
 			if element.Name() != nil {
 				return c.checkGrammarForEsModuleMarkerInBindingName(element.Name())
 			}
@@ -1668,11 +1643,11 @@ func (c *Checker) checkGrammarForEsModuleMarkerInBindingName(name *ast.Node) boo
 
 func (c *Checker) checkGrammarNameInLetOrConstDeclarations(name *ast.Node /*Union[Identifier, BindingPattern]*/) bool {
 	if name.Kind == ast.KindIdentifier {
-		if name.AsIdentifier().Text == "let" {
+		if name.Text() == "let" {
 			return c.grammarErrorOnNode(name, diagnostics.X_let_is_not_allowed_to_be_used_as_a_name_in_let_or_const_declarations)
 		}
 	} else {
-		elements := name.AsBindingPattern().Elements.Nodes
+		elements := name.Elements()
 		for _, element := range elements {
 			bindingElement := element.AsBindingElement()
 			if bindingElement.Name() != nil {
@@ -1876,7 +1851,7 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 		}
 	case ast.KindImportKeyword:
 		if nameText != "meta" {
-			isCallee := ast.IsCallExpression(node.Parent) && node.Parent.AsCallExpression().Expression == node.AsNode()
+			isCallee := ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node.AsNode()
 			if nameText == "defer" {
 				if !isCallee {
 					return c.grammarErrorAtPos(node.AsNode(), node.AsNode().End(), 0, diagnostics.X_0_expected, "(")
@@ -1928,7 +1903,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		if c.checkGrammarForInvalidDynamicName(propertyName, diagnostics.A_computed_property_name_in_a_class_property_declaration_must_have_a_simple_literal_type_or_a_unique_symbol_type) {
 			return true
 		}
-		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
+		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.PostfixToken(), diagnostics.An_accessor_property_cannot_be_declared_optional) {
 			return true
 		}
 	} else if ast.IsInterfaceDeclaration(node.Parent) {
@@ -1939,7 +1914,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 			// Interfaces cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}
-		if initializer := node.AsPropertySignatureDeclaration().Initializer; initializer != nil {
+		if initializer := node.Initializer(); initializer != nil {
 			return c.grammarErrorOnNode(initializer, diagnostics.An_interface_property_cannot_have_an_initializer)
 		}
 	} else if ast.IsTypeLiteralNode(node.Parent) {
@@ -1950,7 +1925,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 			// Type literals cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}
-		if initializer := node.AsPropertySignatureDeclaration().Initializer; initializer != nil {
+		if initializer := node.Initializer(); initializer != nil {
 			return c.grammarErrorOnNode(initializer, diagnostics.A_type_literal_property_cannot_have_an_initializer)
 		}
 	}
@@ -1968,7 +1943,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 				return c.grammarErrorOnNode(postfixToken, diagnostics.Declarations_with_initializers_cannot_also_have_definite_assignment_assertions)
 			case propDecl.Type == nil:
 				return c.grammarErrorOnNode(postfixToken, diagnostics.Declarations_with_definite_assignment_assertions_must_also_have_type_annotations)
-			case !ast.IsClassLike(node.Parent) || node.Flags&ast.NodeFlagsAmbient != 0 || ast.IsStatic(node) || hasAbstractModifier(node):
+			case !ast.IsClassLike(node.Parent) || node.Flags&ast.NodeFlagsAmbient != 0 || ast.IsStatic(node) || ast.HasAbstractModifier(node):
 				return c.grammarErrorOnNode(postfixToken, diagnostics.A_definite_assignment_assertion_is_not_permitted_in_this_context)
 			}
 		}
@@ -2118,9 +2093,7 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 	// We should test against `getTextOfNode(node)` rather than `node.text`, because `node.text` for large numeric literals can contain "."
 	// e.g. `node.text` for numeric literal `1100000000000000000000` is `1.1e21`.
 	isFractional := strings.ContainsRune(nodeText, '.')
-	// !!!
-	// isScientific := node.NumericLiteralFlags & ast.TokenFlagsScientific
-	isScientific := strings.ContainsRune(nodeText, 'e')
+	isScientific := node.TokenFlags&ast.TokenFlagsScientific != 0
 
 	// Scientific notation (e.g. 2e54 and 1e00000000010) can't be converted to bigint
 	// Fractional numbers (e.g. 9000000000000000.001) are inherently imprecise anyway
@@ -2178,21 +2151,15 @@ func (c *Checker) checkGrammarImportClause(node *ast.ImportClause) bool {
 }
 
 func (c *Checker) checkGrammarTypeOnlyNamedImportsOrExports(namedBindings *ast.Node) bool {
-	var nodeList *ast.NodeList
-	if namedBindings.Kind == ast.KindNamedImports {
-		nodeList = namedBindings.AsNamedImports().Elements
-	} else {
-		nodeList = namedBindings.AsNamedExports().Elements
-	}
-
+	nodeList := namedBindings.ElementList()
 	for _, specifier := range nodeList.Nodes {
 		var specifierIsTypeOnly bool
 		var message *diagnostics.Message
 		if specifier.Kind == ast.KindImportSpecifier {
-			specifierIsTypeOnly = specifier.AsImportSpecifier().IsTypeOnly
+			specifierIsTypeOnly = specifier.IsTypeOnly()
 			message = diagnostics.The_type_modifier_cannot_be_used_on_a_named_import_when_import_type_is_used_on_its_import_statement
 		} else {
-			specifierIsTypeOnly = specifier.AsExportSpecifier().IsTypeOnly
+			specifierIsTypeOnly = specifier.IsTypeOnly()
 			message = diagnostics.The_type_modifier_cannot_be_used_on_a_named_export_when_export_type_is_used_on_its_export_statement
 		}
 
@@ -2224,7 +2191,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 
 	nodeArguments := nodeAsCall.Arguments
 	argumentNodes := nodeArguments.Nodes
-	if c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindNodeNext && c.moduleKind != core.ModuleKindNode16 && c.moduleKind != core.ModuleKindPreserve {
+	if !(core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext) && c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindPreserve {
 		// We are allowed trailing comma after proposal-import-assertions.
 		c.checkGrammarForDisallowedTrailingComma(nodeArguments, diagnostics.Trailing_comma_not_allowed)
 

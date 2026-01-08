@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllReferPropertyAccessExpressionHeritageClause(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class B {}
 function foo() {
@@ -17,6 +17,7 @@ function foo() {
 }
 class C extends (foo())./*2*/B {}
 class C1 extends foo()./*3*/B {}`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

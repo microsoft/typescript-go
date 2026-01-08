@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionPropertyAssignment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export const /*FunctionResult*/Component = () => { return "OK"}
 Component./*PropertyResult*/displayName = 'Component'
@@ -17,6 +17,7 @@ Component./*PropertyResult*/displayName = 'Component'
 [|/*FunctionClick*/Component|]
 
 Component.[|/*PropertyClick*/displayName|]`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "FunctionClick", "PropertyClick")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "FunctionClick", "PropertyClick")
 }

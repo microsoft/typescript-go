@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferences01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/referencesForGlobals_1.ts
 class /*0*/globalClass {
@@ -18,6 +18,8 @@ class /*0*/globalClass {
 // @Filename: /home/src/workspaces/project/referencesForGlobals_2.ts
 ///<reference path="referencesForGlobals_1.ts" />
 var c = /*1*/globalClass();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

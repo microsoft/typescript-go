@@ -38,7 +38,7 @@ type PrinterOptions struct {
 	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
-	// Target                        core.ScriptTarget
+	Target                      core.ScriptTarget
 	SourceMap                   bool
 	InlineSourceMap             bool
 	InlineSources               bool
@@ -207,11 +207,12 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 			}
 		}
 	}
-
 	// !!! Printer option to control whether to terminate unterminated literals
-	// !!! If necessary, printer option to control whether to preserve numeric separators
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+	if p.Options.Target >= core.ScriptTargetES2021 {
+		flags |= getLiteralTextFlagsAllowNumericSeparator
 	}
 	return getLiteralText(node, core.Coalesce(sourceFile, p.currentSourceFile), flags)
 }
@@ -869,10 +870,9 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindImportAttributes:
 		return true
 	case ast.KindClassExpression,
-		ast.KindClassDeclaration:
-		return list == node.ClassLikeData().TypeParameters
-	case ast.KindInterfaceDeclaration:
-		return list == node.AsInterfaceDeclaration().TypeParameters
+		ast.KindClassDeclaration,
+		ast.KindInterfaceDeclaration:
+		return list == node.TypeParameterList()
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodDeclaration:
@@ -1001,7 +1001,7 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	state := p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -1561,10 +1561,10 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 
 	if p.shouldEmitBlockFunctionBodyOnSingleLine(body) && statementOffset == 0 && pos == p.writer.GetTextPos() {
 		p.decreaseIndent()
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFSingleLineFunctionBodyStatements, statementOffset, -1)
 		p.increaseIndent()
 	} else {
-		p.emitList((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements)
+		p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements, statementOffset, -1)
 	}
 
 	p.emitDetachedCommentsAfterStatementList(body.AsNode(), body.Statements.Loc, detachedState)
@@ -2925,7 +2925,7 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, precedence ast.OperatorPrecedence) {
+func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression) {
 	// avoid reprinting parens for nested partially emitted expressions
 	type entry struct {
 		node  *ast.PartiallyEmittedExpression
@@ -2941,7 +2941,7 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 		node = node.Expression.AsPartiallyEmittedExpression()
 	}
 
-	p.emitExpression(node.Expression, precedence)
+	p.emitExpression(node.Expression, ast.OperatorPrecedenceLowest)
 
 	// unwind stack
 	for stack.Len() > 0 {
@@ -3087,7 +3087,7 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindNotEmittedStatement:
 		return
 	case ast.KindPartiallyEmittedExpression:
-		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
 	case ast.KindSyntheticReferenceExpression:
 		panic("SyntheticReferenceExpression should not be printed")
 
@@ -3758,7 +3758,7 @@ func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
 	p.writeSpace()
 	if node.Name().Kind == ast.KindStringLiteral {
 		// TODO: This doesn't work for illegal names.
-		p.write(node.Name().AsStringLiteral().Text)
+		p.write(node.Name().Text())
 	} else {
 		p.emitBindingName(node.Name())
 	}
@@ -3808,8 +3808,12 @@ func (p *Printer) emitImportAttribute(node *ast.ImportAttribute) {
 	p.emitImportAttributeName(node.Name())
 	p.writePunctuation(":")
 	p.writeSpace()
-	/// !!! emit trailing comments of value
-	p.emitExpression(node.Value, ast.OperatorPrecedenceDisallowComma)
+	value := node.Value
+	if p.emitContext.EmitFlags(node.Value)&EFNoLeadingComments == 0 {
+		commentRange := getCommentRange(value)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
+	p.emitExpression(value, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -4026,7 +4030,7 @@ func (p *Printer) emitJsxOpeningElement(node *ast.JsxOpeningElement) {
 	indented := p.writeLineSeparatorsAndIndentBefore(node.TagName, node.AsNode())
 	p.emitJsxTagName(node.TagName)
 	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	if attributes := node.Attributes.AsJsxAttributes(); len(attributes.Properties.Nodes) > 0 {
+	if len(node.Attributes.Properties()) > 0 {
 		p.writeSpace()
 	}
 	p.emitJsxAttributes(node.Attributes.AsJsxAttributes())
@@ -4278,9 +4282,10 @@ func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	// "comment1" is not considered to be leading comment for node.initializer
 	// but rather a trailing comment on the previous node.
 	initializer := node.Initializer
-
-	// !!! emit trailing comments of initializer
-
+	if p.emitContext.EmitFlags(initializer)&EFNoLeadingComments == 0 {
+		commentRange := getCommentRange(initializer)
+		p.emitTrailingComments(commentRange.Pos(), commentSeparatorAfter)
+	}
 	p.emitExpression(initializer, ast.OperatorPrecedenceDisallowComma)
 	p.exitNode(node.AsNode(), state)
 }
@@ -4543,9 +4548,9 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 	originalList := children
 	switch originalParent.Kind {
 	case ast.KindObjectLiteralExpression:
-		originalList = originalParent.AsObjectLiteralExpression().Properties
+		originalList = originalParent.PropertyList()
 	case ast.KindArrayLiteralExpression:
-		originalList = originalParent.AsArrayLiteralExpression().Elements
+		originalList = originalParent.ElementList()
 	case ast.KindCallExpression, ast.KindNewExpression:
 		switch children {
 		case parentNode.TypeArgumentList():
@@ -4577,13 +4582,11 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		switch children {
-		case parentNode.AsBindingPattern().Elements:
-			originalList = originalParent.AsBindingPattern().Elements
+		case parentNode.ElementList():
+			originalList = originalParent.ElementList()
 		}
-	case ast.KindNamedImports:
-		originalList = originalParent.AsNamedImports().Elements
-	case ast.KindNamedExports:
-		originalList = originalParent.AsNamedExports().Elements
+	case ast.KindNamedImports, ast.KindNamedExports:
+		originalList = originalParent.ElementList()
 	case ast.KindImportAttributes:
 		originalList = originalParent.AsImportAttributes().Attributes
 	}
@@ -4959,9 +4962,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	case ast.KindSourceFile:
 		p.emitSourceFile(node.AsSourceFile())
 
-	case ast.KindBundle:
-		panic("not implemented")
-
 	// Transformation nodes
 	case ast.KindNotEmittedTypeElement:
 		p.emitNotEmittedTypeElement(node.AsNotEmittedTypeElement())
@@ -5065,7 +5065,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 
 	if contextNode.Pos() != startPos {
 		indentLeading := flags&tefIndentLeadingComments != 0
-		needsIndent := indentLeading && p.currentSourceFile != nil && !positionsAreOnSameLine(startPos, pos, p.currentSourceFile)
+		needsIndent := indentLeading && p.currentSourceFile != nil && !PositionsAreOnSameLine(startPos, pos, p.currentSourceFile)
 		p.increaseIndentIf(needsIndent)
 		p.emitLeadingComments(startPos, false /*elided*/)
 		p.decreaseIndentIf(needsIndent)
@@ -5655,31 +5655,20 @@ func (p *Printer) generateNames(node *ast.Node) {
 	}
 
 	switch node.Kind {
-	case ast.KindBlock:
-		p.generateAllNames(node.AsBlock().Statements)
-	case ast.KindLabeledStatement:
-		p.generateNames(node.AsLabeledStatement().Statement)
-	case ast.KindWithStatement:
-		p.generateNames(node.AsWithStatement().Statement)
-	case ast.KindDoStatement:
-		p.generateNames(node.AsDoStatement().Statement)
-	case ast.KindWhileStatement:
-		p.generateNames(node.AsWhileStatement().Statement)
+	case ast.KindBlock, ast.KindCaseClause, ast.KindDefaultClause:
+		p.generateAllNames(node.StatementList())
+	case ast.KindLabeledStatement, ast.KindWithStatement, ast.KindDoStatement, ast.KindWhileStatement:
+		p.generateNames(node.Statement())
 	case ast.KindIfStatement:
 		p.generateNames(node.AsIfStatement().ThenStatement)
 		p.generateNames(node.AsIfStatement().ElseStatement)
-	case ast.KindForStatement:
-		p.generateNames(node.AsForStatement().Initializer)
-		p.generateNames(node.AsForStatement().Statement)
-	case ast.KindForOfStatement, ast.KindForInStatement:
-		p.generateNames(node.AsForInOrOfStatement().Initializer)
-		p.generateNames(node.AsForInOrOfStatement().Statement)
+	case ast.KindForStatement, ast.KindForOfStatement, ast.KindForInStatement:
+		p.generateNames(node.Initializer())
+		p.generateNames(node.Statement())
 	case ast.KindSwitchStatement:
 		p.generateNames(node.AsSwitchStatement().CaseBlock)
 	case ast.KindCaseBlock:
 		p.generateAllNames(node.AsCaseBlock().Clauses)
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		p.generateAllNames(node.AsCaseOrDefaultClause().Statements)
 	case ast.KindTryStatement:
 		p.generateNames(node.AsTryStatement().TryBlock)
 		p.generateNames(node.AsTryStatement().CatchClause)
@@ -5700,7 +5689,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 			p.generateNames(node.AsFunctionDeclaration().Body)
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		p.generateAllNames(node.AsBindingPattern().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
@@ -5709,7 +5698,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 	case ast.KindNamespaceImport, ast.KindNamespaceExport:
 		p.generateNameIfNeeded(node.Name())
 	case ast.KindNamedImports:
-		p.generateAllNames(node.AsNamedImports().Elements)
+		p.generateAllNames(node.ElementList())
 	case ast.KindImportSpecifier:
 		n := node.AsImportSpecifier()
 		if n.PropertyName != nil {

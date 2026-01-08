@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsDotDotDotInObjectLiteral1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// https://github.com/microsoft/TypeScript/issues/57540
 
@@ -23,7 +23,8 @@ const bar: {
   a: 42,
   .../*1*/
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

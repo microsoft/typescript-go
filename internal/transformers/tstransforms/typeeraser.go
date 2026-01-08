@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -109,7 +111,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindModuleDeclaration:
 		if !ast.IsIdentifier(node.Name()) ||
-			!isInstantiatedModule(node, tx.compilerOptions.ShouldPreserveConstEnums()) ||
+			!ast.IsInstantiatedModule(node, tx.compilerOptions.ShouldPreserveConstEnums()) ||
 			getInnermostModuleDeclarationFromDottedModule(node.AsModuleDeclaration()).Body == nil {
 			// TypeScript module declarations are elided if they are not instantiated or have no body
 			return tx.elide(node)
@@ -121,7 +123,12 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.Factory().UpdateExpressionWithTypeArguments(n, tx.Visitor().VisitNode(n.Expression), nil)
 
 	case ast.KindPropertyDeclaration:
-		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) {
+		if tx.compilerOptions.ExperimentalDecorators.IsTrue() && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) && ast.HasDecorators(node) {
+			// declare/abstract props with decorators must be preserved until the decorator transform can process them and remove them
+			n := node.AsPropertyDeclaration()
+			return tx.Factory().UpdatePropertyDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		}
+		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsAbstract) {
 			// TypeScript `declare` fields are elided
 			return nil
 		}
@@ -206,6 +213,16 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		var modifiers *ast.ModifierList
 		if ast.IsParameterPropertyDeclaration(node, tx.parentNode) {
 			modifiers = transformers.ExtractModifiers(tx.EmitContext(), n.Modifiers(), ast.ModifierFlagsParameterPropertyModifier)
+		}
+		// preserve decorators for the decorator transforms
+		if ast.HasDecorators(node) {
+			decorators := node.Decorators()
+			visited, _ := tx.Visitor().VisitSlice(decorators)
+			if modifiers == nil {
+				modifiers = tx.Factory().NewModifierList(visited)
+			} else {
+				modifiers = tx.Factory().NewModifierList(slices.Concat(modifiers.Nodes, visited))
+			}
 		}
 		return tx.Factory().UpdateParameterDeclaration(n, modifiers, n.DotDotDotToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
 

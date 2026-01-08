@@ -10,8 +10,8 @@ import (
 )
 
 func TestPathCompletionsPackageJsonImportsSrcNoDistWildcard5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
@@ -59,7 +59,9 @@ export const blah = 0;
 export const onlyInCjs = 0;
 // @Filename: /home/src/workspaces/project/src/index.mts
 import { } from "/**/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

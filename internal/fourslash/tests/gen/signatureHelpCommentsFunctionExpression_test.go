@@ -8,8 +8,8 @@ import (
 )
 
 func TestSignatureHelpCommentsFunctionExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** lambdaFoo var comment*/
 var lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
@@ -37,6 +37,7 @@ var assigned = /**
   return s.length;
 }
 assigned(/*18*/"hey");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }
