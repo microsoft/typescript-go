@@ -49,6 +49,12 @@ func (ch *PseudoChecker) GetTypeOfDeclaration(node *ast.Node) *PseudoType {
 		return ch.typeFromExpandoProperty(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 		return ch.typeFromPropertyAssignment(node)
+	case ast.KindCommonJSExport:
+		t := node.AsCommonJSExport().Type
+		if t != nil {
+			return NewPseudoTypeDirect(t)
+		}
+		return ch.typeFromExpression(node.AsCommonJSExport().Initializer)
 	default:
 		debug.FailBadSyntaxKind(node, "node needs to be an inferrable node")
 		return nil
