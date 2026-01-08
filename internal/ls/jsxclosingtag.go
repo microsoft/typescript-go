@@ -8,13 +8,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) ProvideJsxClosingTag(ctx context.Context, params *lsproto.JSXClosingTagParams) (lsproto.JSXClosingTagResponse, error) {
+func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, params *lsproto.TextDocumentPositionParams) (*lsproto.ClosingTagCompletionResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := l.converters.LineAndCharacterToPosition(sourceFile, params.Position)
 
 	token := astnav.FindPrecedingToken(sourceFile, int(position))
 	if token == nil {
-		return lsproto.JSXClosingTagResponse{}, nil
+		return nil, nil
 	}
 
 	var element *ast.Node
@@ -25,7 +25,7 @@ func (l *LanguageService) ProvideJsxClosingTag(ctx context.Context, params *lspr
 	}
 
 	if element != nil && isUnclosedTag(element.AsJsxElement()) {
-		result := lsproto.JSXClosingTagResponse{
+		result := &lsproto.ClosingTagCompletionResponse{
 			// TODO: Slight divergence from Strada - we don't use the verbatim text from the opening tag.
 			NewText: strPtrTo("</" + element.AsJsxElement().OpeningElement.TagName().Text() + ">"),
 		}
@@ -40,13 +40,13 @@ func (l *LanguageService) ProvideJsxClosingTag(ctx context.Context, params *lspr
 	}
 
 	if fragment != nil && isUnclosedFragment(fragment.AsJsxFragment()) {
-		result := lsproto.JSXClosingTagResponse{
+		result := &lsproto.ClosingTagCompletionResponse{
 			NewText: strPtrTo("</>"),
 		}
 		return result, nil
 	}
 
-	return lsproto.JSXClosingTagResponse{}, nil
+	return nil, nil
 }
 
 func isUnclosedTag(node *ast.JsxElement) bool {

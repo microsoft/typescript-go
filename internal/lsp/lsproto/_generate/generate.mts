@@ -173,6 +173,19 @@ const customStructures: Structure[] = [
             },
         ],
     },
+    {
+        name: "ClosingTagCompletionResponse",
+        properties: [
+            // TODO: TextEdit?
+            {
+                name: "newText",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The text to insert at the closing tag position.",
+            },
+        ],
+        documentation: "ClosingTagCompletionResponse is the response for the textDocument/closingTagCompletion request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -192,6 +205,18 @@ const customEnumerations: Enumeration[] = [
                 value: "implementations",
             },
         ],
+    },
+];
+
+// Custom requests to add to the model (TypeScript-specific LSP extensions)
+const customRequests: Request[] = [
+    {
+        method: "textDocument/closingTagCompletion",
+        typeName: "TextDocumentClosingTagCompletionRequest",
+        params: { kind: "reference", name: "TextDocumentPositionParams" },
+        result: { kind: "reference", name: "ClosingTagCompletionResponse" },
+        messageDirection: "clientToServer",
+        documentation: "Request to get the closing tag completion at a given position.",
     },
 ];
 
@@ -293,9 +318,10 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom enumerations, custom structures, and synthetic structures to the model
+    // Add custom enumerations, custom structures, custom requests, and synthetic structures to the model
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
+    model.requests.push(...customRequests);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();

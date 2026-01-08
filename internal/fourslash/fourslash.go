@@ -2812,15 +2812,19 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
 	for marker, expectedText := range markersToNewText {
 		f.GoToMarker(t, marker)
-		params := &lsproto.JSXClosingTagParams{
+		params := &lsproto.TextDocumentPositionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 		}
-		result := sendRequest(t, f, lsproto.TextDocumentJSXClosingTagInfo, params)
+		result := sendRequest(t, f, lsproto.TextDocumentClosingTagCompletionInfo, params)
 
-		assertDeepEqual(t, result.NewText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
+		var actualText *string
+		if result != nil {
+			actualText = result.NewText
+		}
+		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
 	}
 }
 
