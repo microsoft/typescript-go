@@ -289,48 +289,59 @@ func (p *globPattern) matchWildcard(segs []segment, s string) bool {
 		return p.checkMinJsExclusion(s, segs)
 	}
 
-	return p.matchSegments(segs, 0, s, 0) && p.checkMinJsExclusion(s, segs)
+	return p.matchSegments(segs, s) && p.checkMinJsExclusion(s, segs)
 }
 
-// matchSegments recursively matches segments against string s.
-func (p *globPattern) matchSegments(segs []segment, segIdx int, s string, sIdx int) bool {
-	if segIdx >= len(segs) {
-		return sIdx >= len(s)
-	}
+// matchSegments matches segments against string s using an iterative algorithm.
+// This avoids exponential backtracking by tracking only the last star position.
+// The algorithm is O(n*m) where n is the string length and m is pattern length.
+func (p *globPattern) matchSegments(segs []segment, s string) bool {
+	segIdx, sIdx := 0, 0
+	starSegIdx, starSIdx := -1, 0
 
-	seg := segs[segIdx]
-
-	switch seg.kind {
-	case segLiteral:
-		end := sIdx + len(seg.literal)
-		if end > len(s) {
-			return false
-		}
-		if !p.stringsEqual(seg.literal, s[sIdx:end]) {
-			return false
-		}
-		return p.matchSegments(segs, segIdx+1, s, end)
-
-	case segQuestion:
-		if sIdx >= len(s) || s[sIdx] == '/' {
-			return false
-		}
-		return p.matchSegments(segs, segIdx+1, s, sIdx+1)
-
-	case segStar:
-		// Try matching 0, 1, 2, ... characters (but not /)
-		if p.matchSegments(segs, segIdx+1, s, sIdx) {
-			return true
-		}
-		for i := sIdx; i < len(s) && s[i] != '/'; i++ {
-			if p.matchSegments(segs, segIdx+1, s, i+1) {
-				return true
+	for sIdx < len(s) {
+		if segIdx < len(segs) {
+			seg := segs[segIdx]
+			switch seg.kind {
+			case segLiteral:
+				end := sIdx + len(seg.literal)
+				if end <= len(s) && p.stringsEqual(seg.literal, s[sIdx:end]) {
+					sIdx = end
+					segIdx++
+					continue
+				}
+			case segQuestion:
+				if s[sIdx] != '/' {
+					sIdx++
+					segIdx++
+					continue
+				}
+			case segStar:
+				// Record star position for backtracking, then try matching zero chars.
+				starSegIdx = segIdx
+				starSIdx = sIdx
+				segIdx++
+				continue
 			}
 		}
+
+		// Current segment didn't match. Backtrack to last star if possible.
+		if starSegIdx >= 0 && starSIdx < len(s) && s[starSIdx] != '/' {
+			// Star consumes one more character, retry from segment after star.
+			starSIdx++
+			sIdx = starSIdx
+			segIdx = starSegIdx + 1
+			continue
+		}
+
 		return false
-	default:
-		panic("unreachable: unknown segment kind")
 	}
+
+	// Consume any trailing stars.
+	for segIdx < len(segs) && segs[segIdx].kind == segStar {
+		segIdx++
+	}
+	return segIdx >= len(segs)
 }
 
 // checkMinJsExclusion returns false if this is a .min.js file that should be excluded.
