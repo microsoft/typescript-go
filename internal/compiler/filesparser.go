@@ -25,6 +25,7 @@ type parseTask struct {
 	startedSubTasks             bool
 	isForAutomaticTypeDirective bool
 	includeReason               *FileIncludeReason
+	packageId                   module.PackageId
 
 	metadata                     ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
@@ -164,6 +165,7 @@ type resolvedRef struct {
 	increaseDepth bool
 	elideOnDepth  bool
 	includeReason *FileIncludeReason
+	packageId     module.PackageId
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
@@ -174,6 +176,7 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 		increaseDepth:      ref.increaseDepth,
 		elideOnDepth:       ref.elideOnDepth,
 		includeReason:      ref.includeReason,
+		packageId:          ref.packageId,
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
@@ -190,6 +193,7 @@ type parseTaskData struct {
 	mu              sync.Mutex
 	lowestDepth     int
 	startedSubTasks bool
+	packageId       module.PackageId
 }
 
 func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
@@ -218,6 +222,11 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
 					// This is new task for file name - so load subtasks if there was loading for any other casing
 					startSubtasks = data.startedSubTasks
 				}
+			}
+
+			// Propagate packageId to data if we have one and data doesn't yet
+			if data.packageId.Name == "" && task.packageId.Name != "" {
+				data.packageId = task.packageId
 			}
 
 			currentDepth := core.IfElse(task.increaseDepth, depth+1, depth)
@@ -343,45 +352,20 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
 
-			if packageIdToCanonicalPath != nil {
-				for _, resolution := range task.resolutionsInFile {
-					if !resolution.IsResolved() {
-						continue
-					}
-					pkgId := resolution.PackageId
-					if pkgId.Name == "" {
-						continue
-					}
-					resolvedPath := loader.toPath(resolution.ResolvedFileName)
-					packageName := pkgId.PackageName()
-
-					if canonical, exists := packageIdToCanonicalPath[pkgId]; exists {
-						if _, alreadyRecorded := sourceFileToPackageName[resolvedPath]; !alreadyRecorded {
-							sourceFileToPackageName[resolvedPath] = packageName
-							if resolvedPath != canonical {
-								deduplicatedPathMap[resolvedPath] = canonical
-								redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], resolution.ResolvedFileName)
-							}
-						}
-					} else {
-						packageIdToCanonicalPath[pkgId] = resolvedPath
-						sourceFileToPackageName[resolvedPath] = packageName
-						deduplicatedPathMap[resolvedPath] = resolvedPath
-					}
+			var existingCanonicalPath tspath.Path
+			if packageIdToCanonicalPath != nil && data.packageId.Name != "" {
+				if canonical, exists := packageIdToCanonicalPath[data.packageId]; exists {
+					packageIdToCanonicalPath[data.packageId] = task.path
+					sourceFileToPackageName[task.path] = data.packageId.PackageName()
+					deduplicatedPathMap[task.path] = canonical
+					redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], task.normalizedFilePath)
+					existingCanonicalPath = canonical
+				} else {
+					packageIdToCanonicalPath[data.packageId] = task.path
 				}
 			}
 
-			// Check if this file is from a deduplicated package.
-			// If so, skip walking its subtasks - the canonical package's
-			// dependencies will be used instead.
-			skipSubtasks := false
-			if deduplicatedPathMap != nil {
-				if canonical, ok := deduplicatedPathMap[task.path]; ok && task.path != canonical {
-					skipSubtasks = true
-				}
-			}
-
-			if !skipSubtasks {
+			if existingCanonicalPath == "" {
 				if subTasks := task.subTasks; len(subTasks) > 0 {
 					collectFiles(subTasks, seen)
 				}
@@ -402,6 +386,10 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				continue
 			}
 			file := task.file
+			if existingCanonicalPath != "" {
+				file = filesByPath[existingCanonicalPath]
+			}
+
 			path := task.path
 
 			if len(task.processingDiagnostics) > 0 {
@@ -417,7 +405,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			if task.libFile != nil {
 				libFiles = append(libFiles, file)
 				libFilesMap[path] = task.libFile
-			} else {
+			} else if existingCanonicalPath == "" {
 				files = append(files, file)
 			}
 			filesByPath[path] = file
@@ -458,22 +446,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		for _, trace := range value.trace {
 			loader.opts.Host.Trace(trace.Message, trace.Args...)
 		}
-	}
-
-	if deduplicatedPathMap != nil {
-		for duplicatePath, canonicalPath := range deduplicatedPathMap {
-			if duplicatePath != canonicalPath {
-				if canonicalFile, ok := filesByPath[canonicalPath]; ok {
-					filesByPath[duplicatePath] = canonicalFile
-				}
-			}
-		}
-		allFiles = slices.DeleteFunc(allFiles, func(f *ast.SourceFile) bool {
-			if canonicalPath, ok := deduplicatedPathMap[f.Path()]; ok {
-				return f.Path() != canonicalPath
-			}
-			return false
-		})
 	}
 
 	return processedFiles{

@@ -196,6 +196,7 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 						kind: fileIncludeKindAutomaticTypeDirectiveFile,
 						data: &automaticTypeDirectiveFileData{name, resolved.PackageId},
 					},
+					packageId: resolved.PackageId,
 				})
 			}
 		}
@@ -366,6 +367,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 				increaseDepth: resolved.IsExternalLibraryImport,
 				elideOnDepth:  false,
 				includeReason: includeReason,
+				packageId:     resolved.PackageId,
 			}, nil)
 		} else {
 			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
@@ -472,6 +474,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 							synthetic: core.IfElse(importIndex < 0, entry, nil),
 						},
 					},
+					packageId: resolvedModule.PackageId,
 				}, nil)
 			}
 		}
