@@ -359,7 +359,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 						if _, alreadyRecorded := sourceFileToPackageName[resolvedPath]; !alreadyRecorded {
 							sourceFileToPackageName[resolvedPath] = packageName
 							if resolvedPath != canonical {
-
 								deduplicatedPathMap[resolvedPath] = canonical
 								redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], resolution.ResolvedFileName)
 							}
