@@ -25,7 +25,7 @@ x1('bye'/*3*/);`
 	f.GoToMarker(t, "1")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{ParameterName: "z", ParameterSpan: "z: string", OverloadsCount: 3})
 	f.GoToMarker(t, "2")
-	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{ParameterName: "x", ParameterSpan: "x: 'hi'", OverloadsCount: 3})
+	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{ParameterName: "x", ParameterSpan: "x: \"hi\"", OverloadsCount: 3})
 	f.GoToMarker(t, "3")
-	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{ParameterName: "y", ParameterSpan: "y: 'bye'", OverloadsCount: 3})
+	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{ParameterName: "y", ParameterSpan: "y: \"bye\"", OverloadsCount: 3})
 }

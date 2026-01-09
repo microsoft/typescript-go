@@ -21,7 +21,7 @@ var /*2*/x = foo(/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")
-	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(name: 'order'): string", OverloadsCount: 4})
+	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{Text: "foo(name: \"order\"): string", OverloadsCount: 4})
 	f.Insert(t, "\"hi\"")
 	f.VerifyQuickInfoAt(t, "2", "var x: string", "")
 }
