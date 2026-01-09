@@ -71,8 +71,8 @@ type processedFiles struct {
 	// Key is a file path. Value is the list of files that redirect to it (same package, different install location)
 	redirectTargetsMap map[tspath.Path][]string
 	// Any paths involved in deduplication, including canonical paths and redirected paths
-	deduplicatedPaths collections.Set[tspath.Path]
-	finishedProcessing  bool
+	deduplicatedPaths  collections.Set[tspath.Path]
+	finishedProcessing bool
 }
 
 type jsxRuntimeImportSpecifier struct {
