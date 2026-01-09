@@ -293,11 +293,10 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 
 	var redirectTargetsMap map[tspath.Path][]string
-	var deduplicatedPathMap map[tspath.Path]tspath.Path
+	var deduplicatedPaths collections.Set[tspath.Path]
 	var packageIdToCanonicalPath map[module.PackageId]tspath.Path
 	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
 		redirectTargetsMap = make(map[tspath.Path][]string)
-		deduplicatedPathMap = make(map[tspath.Path]tspath.Path)
 		packageIdToCanonicalPath = make(map[module.PackageId]tspath.Path)
 	}
 
@@ -354,11 +353,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			if packageIdToCanonicalPath != nil && data.packageId.Name != "" {
 				if canonical, exists := packageIdToCanonicalPath[data.packageId]; exists {
 					redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], task.normalizedFilePath)
-					deduplicatedPathMap[task.path] = canonical
 					existingCanonicalPath = canonical
+					deduplicatedPaths.Add(task.path)
+					deduplicatedPaths.Add(canonical)
 				} else {
 					packageIdToCanonicalPath[data.packageId] = task.path
-					deduplicatedPathMap[task.path] = task.path
 				}
 			}
 
@@ -462,7 +461,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		includeProcessor:                     includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
 		redirectTargetsMap:                   redirectTargetsMap,
-		deduplicatedPathMap:                  deduplicatedPathMap,
+		deduplicatedPaths:                    deduplicatedPaths,
 	}
 }
 
