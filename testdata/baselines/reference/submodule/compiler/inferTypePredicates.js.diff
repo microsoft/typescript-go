@@ -44,18 +44,3 @@
  declare function inferWithRest(x: string | null, ...f: ["a", "b"]): x is string;
  declare const foobar: {
      type: "foo";
-@@= skipped -10, +10 lines =@@
-     type: "bar";
-     bar: string;
- };
--declare const foobarPred: (fb: typeof foobar) => fb is {
-+declare const foobarPred: (fb: {
-+    type: "foo";
-+    foo: number;
-+} | {
-+    type: "bar";
-+    bar: string;
-+}) => fb is {
-     type: "foo";
-     foo: number;
- };

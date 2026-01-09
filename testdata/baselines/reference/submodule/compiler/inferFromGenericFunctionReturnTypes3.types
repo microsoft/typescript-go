@@ -39,7 +39,7 @@ function wrappedFoo(): Wrap<'foo'> {
 }
 
 function wrapBar(value: 'bar'): Wrap<'bar'> {
->wrapBar : (value: "bar") => Wrap<"bar">
+>wrapBar : (value: 'bar') => Wrap<"bar">
 >value : "bar"
 
     return { value };
@@ -57,13 +57,13 @@ function wrappedBar(): Wrap<'bar'> {
     const inferred = wrapBar(value);
 >inferred : Wrap<"bar">
 >wrapBar(value) : Wrap<"bar">
->wrapBar : (value: "bar") => Wrap<"bar">
+>wrapBar : (value: 'bar') => Wrap<"bar">
 >value : "bar"
 
     const literal = wrapBar('bar');
 >literal : Wrap<"bar">
 >wrapBar('bar') : Wrap<"bar">
->wrapBar : (value: "bar") => Wrap<"bar">
+>wrapBar : (value: 'bar') => Wrap<"bar">
 >'bar' : "bar"
 
     const value2: string = 'bar';
@@ -73,7 +73,7 @@ function wrappedBar(): Wrap<'bar'> {
     const literal2 = wrapBar(value2);  // Error
 >literal2 : Wrap<"bar">
 >wrapBar(value2) : Wrap<"bar">
->wrapBar : (value: "bar") => Wrap<"bar">
+>wrapBar : (value: 'bar') => Wrap<"bar">
 >value2 : string
 
     return wrap(value);
@@ -252,7 +252,7 @@ function objectToMap(obj: any) {
 
 interface Person {
   phoneNumbers: {
->phoneNumbers : { __typename: "PhoneNumber"; }[]
+>phoneNumbers : { __typename: 'PhoneNumber'; }[]
 
     __typename: 'PhoneNumber';
 >__typename : "PhoneNumber"

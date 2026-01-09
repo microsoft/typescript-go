@@ -5,7 +5,7 @@
 
  export function makeNewChannel<T extends ChannelType>(type: T): NewChannel<ChannelOfType<T>> {
 ->makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T>>
-+>makeNewChannel : <T extends "email" | "text">(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
++>makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
  >type : T
 
      const localChannelId = `blahblahblah`;
@@ -14,7 +14,7 @@
  >newTextChannel : NewChannel<TextChannel>
  >makeNewChannel('text') : NewChannel<TextChannel>
 ->makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T>>
-+>makeNewChannel : <T extends "email" | "text">(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
++>makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
  >'text' : "text"
 
  // This should work
@@ -23,7 +23,7 @@
  >newTextChannel2 : NewChannel<TextChannel>
  >makeNewChannel('text') : NewChannel<TextChannel>
 ->makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T>>
-+>makeNewChannel : <T extends "email" | "text">(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
++>makeNewChannel : <T extends ChannelType>(type: T) => NewChannel<ChannelOfType<T, EmailChannel> | ChannelOfType<T, TextChannel>>
  >'text' : "text"
 
  // Compare with this, which ofc works.

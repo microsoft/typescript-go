@@ -1,29 +1,70 @@
 --- old.controlFlowGenericTypes.types
 +++ new.controlFlowGenericTypes.types
-@@= skipped -331, +331 lines =@@
- };
+@@= skipped -109, +109 lines =@@
 
- function get<K extends keyof A>(key: K, obj: A): number {
-->get : <K extends keyof A>(key: K, obj: A) => number
-+>get : <K extends "a">(key: K, obj: A) => number
- >key : K
- >obj : A
-
-@@= skipped -28, +28 lines =@@
- >EventEmitter : EventEmitter<ET>
-
-     off<K extends keyof ET>(...args: [K, number] | [unknown, string]):void {}
-->off : <K extends keyof ET>(...args: [K, number] | [unknown, string]) => void
-+>off : <K extends keyof ET>(...args: [unknown, string] | [K, number]) => void
- >args : [unknown, string] | [K, number]
+         unbox(x);
+ >unbox(x) : T
+->unbox : <T_1>(x: Box<T_1>) => T_1
++>unbox : <T_1>(x: Box<T>) => T_1
+ >x : Box<T>
+     }
  }
- function once<ET, T extends EventEmitter<ET>>(emittingObject: T, eventName: keyof ET): void {
-@@= skipped -226, +226 lines =@@
+@@= skipped -17, +17 lines =@@
+
+         unbox(x);
+ >unbox(x) : T
+->unbox : <T_1>(x: Box<T_1>) => T_1
++>unbox : <T_1>(x: Box<T>) => T_1
+ >x : Box<T>
+     }
+ }
+@@= skipped -17, +17 lines =@@
+
+         unbox(x);  // Error
+ >unbox(x) : T
+->unbox : <T_1>(x: Box<T_1>) => T_1
++>unbox : <T_1>(x: Box<T>) => T_1
+ >x : undefined
+     }
+ }
+@@= skipped -16, +16 lines =@@
+
+         unbox(x);  // Error
+ >unbox(x) : unknown
+->unbox : <T_1>(x: Box<T_1>) => T_1
++>unbox : <T_1>(x: Box<T>) => T_1
+ >x : undefined
+     }
+ }
+@@= skipped -8, +8 lines =@@
+ // Repro from #13995
+
+ declare function takeA(val: 'A'): void;
+->takeA : (val: "A") => void
++>takeA : (val: 'A') => void
+ >val : "A"
+
+ export function bounceAndTakeIfA<AB extends 'A' | 'B'>(value: AB): AB {
+->bounceAndTakeIfA : <AB extends "A" | "B">(value: AB) => AB
++>bounceAndTakeIfA : <AB extends 'A' | 'B'>(value: AB) => AB
+ >value : AB
+
+     if (value === 'A') {
+@@= skipped -14, +14 lines =@@
+
+         takeA(value);
+ >takeA(value) : void
+->takeA : (val: "A") => void
++>takeA : (val: 'A') => void
+ >value : "A"
+
+         return value;
+@@= skipped -404, +404 lines =@@
  >title : string | undefined
 
  function getColumnProperty<T>(column: Column<T>, key: keyof Column<T>) {
 ->getColumnProperty : <T>(column: Column<T>, key: keyof Column<T>) => Column<T>["title" | keyof (keyof T extends never ? { id?: number | string; } : { id: T; })]
-+>getColumnProperty : <T>(column: Column<T>, key: "title" | keyof (keyof T extends never ? { id?: string | number | undefined; } : { id: T; })) => Column<T>["title" | keyof (keyof T extends never ? { id?: string | number | undefined; } : { id: T; })]
++>getColumnProperty : <T>(column: Column<T>, key: keyof Column<T>) => Column<T>["title" | keyof (keyof T extends never ? { id?: string | number | undefined; } : { id: T; })]
  >column : Column<T>
 ->key : "title" | keyof (keyof T extends never ? { id?: number | string; } : { id: T; })
 +>key : "title" | keyof (keyof T extends never ? { id?: string | number | undefined; } : { id: T; })

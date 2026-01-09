@@ -10,12 +10,12 @@
 
  declare function flat1<T>(a: Array<T | Array<T>>): Array<T>
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >a : (T | T[])[]
 
  declare function flat2<T>(a: Array<T | Array<T | Array<T>>>): Array<T>;
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >a : (T | (T | T[])[])[]
 
  flat([1, [2, [3]]]);  // number[]
@@ -75,7 +75,7 @@
  flat1([1, [2, [3]]]);  // (number | number[])[]
  >flat1([1, [2, [3]]]) : (number | number[])[]
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >[1, [2, [3]]] : (number | (number | number[])[])[]
  >1 : 1
  >[2, [3]] : (number | number[])[]
@@ -84,7 +84,7 @@
  flat1([[[0]]]);  // number[][]
  >flat1([[[0]]]) : number[][]
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >[[[0]]] : number[][][]
  >[[0]] : number[][]
  >[0] : number[]
@@ -93,7 +93,7 @@
  flat1([1, 'a', [2]]);  // (string | number)[]
  >flat1([1, 'a', [2]]) : (string | number)[]
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >[1, 'a', [2]] : (string | number | number[])[]
  >1 : 1
  >'a' : "a"
@@ -102,7 +102,7 @@
  flat1([1, [2, 'a']]);  // (string | number)[]
  >flat1([1, [2, 'a']]) : (string | number)[]
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >[1, [2, 'a']] : (number | (string | number)[])[]
  >1 : 1
  >[2, 'a'] : (string | number)[]
@@ -111,7 +111,7 @@
  flat1([1, ['a']]);  // Error
  >flat1([1, ['a']]) : string[]
 ->flat1 : <T>(a: Array<T | Array<T>>) => Array<T>
-+>flat1 : <T>(a: (T | T[])[]) => T[]
++>flat1 : <T>(a: Array<T | Array<T>>) => T[]
  >[1, ['a']] : (number | string[])[]
  >1 : 1
  >['a'] : string[]
@@ -120,7 +120,7 @@
  flat2([1, [2, [3]]]);  // number[]
  >flat2([1, [2, [3]]]) : number[]
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >[1, [2, [3]]] : (number | (number | number[])[])[]
  >1 : 1
  >[2, [3]] : (number | number[])[]
@@ -129,7 +129,7 @@
  flat2([[[0]]]);  // number[]
  >flat2([[[0]]]) : number[]
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >[[[0]]] : number[][][]
  >[[0]] : number[][]
  >[0] : number[]
@@ -138,7 +138,7 @@
  flat2([1, 'a', [2]]);  // (string | number)[]
  >flat2([1, 'a', [2]]) : (string | number)[]
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >[1, 'a', [2]] : (string | number | number[])[]
  >1 : 1
  >'a' : "a"
@@ -147,7 +147,7 @@
  flat2([1, [2, 'a']]);  // (string | number)[]
  >flat2([1, [2, 'a']]) : (string | number)[]
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >[1, [2, 'a']] : (number | (string | number)[])[]
  >1 : 1
  >[2, 'a'] : (string | number)[]
@@ -156,7 +156,7 @@
  flat2([1, ['a']]);  // Error
  >flat2([1, ['a']]) : string[]
 ->flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => Array<T>
-+>flat2 : <T>(a: (T | (T | T[])[])[]) => T[]
++>flat2 : <T>(a: Array<T | Array<T | Array<T>>>) => T[]
  >[1, ['a']] : (number | string[])[]
  >1 : 1
  >['a'] : string[]

@@ -1,27 +1,15 @@
 --- old.declarationEmitTopLevelNodeFromCrossFile.types
 +++ new.declarationEmitTopLevelNodeFromCrossFile.types
-@@= skipped -4, +4 lines =@@
- >X : string
-
- export const fn = { o: (a?: (X | undefined)[]) => {} };
-->fn : { o: (a?: (X | undefined)[]) => void; }
-->{ o: (a?: (X | undefined)[]) => {} } : { o: (a?: (X | undefined)[]) => void; }
-->o : (a?: (X | undefined)[]) => void
-->(a?: (X | undefined)[]) => {} : (a?: (X | undefined)[]) => void
-+>fn : { o: (a?: string[]) => void; }
-+>{ o: (a?: (X | undefined)[]) => {} } : { o: (a?: string[]) => void; }
-+>o : (a?: string[]) => void
-+>(a?: (X | undefined)[]) => {} : (a?: string[]) => void
- >a : string[]
+@@= skipped -12, +12 lines =@@
 
  === b.ts ===
  import {fn} from "./a";
 ->fn : { o: (a?: (import("a").X | undefined)[]) => void; }
-+>fn : { o: (a?: string[]) => void; }
++>fn : { o: (a?: (string | undefined)[]) => void; }
 
  export const m = {                        
  >m : { prop: number; }
-@@= skipped -24, +24 lines =@@
+@@= skipped -16, +16 lines =@@
 
 
  export const x = { p: fn }; 
@@ -29,7 +17,7 @@
 ->{ p: fn } : { p: { o: (a?: (import("a").X | undefined)[]) => void; }; }
 ->p : { o: (a?: (import("a").X | undefined)[]) => void; }
 ->fn : { o: (a?: (import("a").X | undefined)[]) => void; }
-+>x : { p: { o: (a?: string[]) => void; }; }
-+>{ p: fn } : { p: { o: (a?: string[]) => void; }; }
-+>p : { o: (a?: string[]) => void; }
-+>fn : { o: (a?: string[]) => void; }
++>x : { p: { o: (a?: (string | undefined)[]) => void; }; }
++>{ p: fn } : { p: { o: (a?: (string | undefined)[]) => void; }; }
++>p : { o: (a?: (string | undefined)[]) => void; }
++>fn : { o: (a?: (string | undefined)[]) => void; }

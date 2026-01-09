@@ -1,13 +1,11 @@
 --- old.unionReductionMutualSubtypes.types
 +++ new.unionReductionMutualSubtypes.types
-@@= skipped -16, +16 lines =@@
- >val : ReturnVal
+@@= skipped -17, +17 lines =@@
 
  function run(options: { something?(b?: string): void }) {
-->run : (options: { something?(b?: string): void; }) => void
+ >run : (options: { something?(b?: string): void; }) => void
 ->options : { something?(b?: string): void; }
 ->something : ((b?: string) => void) | undefined
-+>run : (options: { something?(b?: string | undefined): void; }) => void
 +>options : { something?(b?: string | undefined): void; }
 +>something : ((b?: string | undefined) => void) | undefined
  >b : string | undefined

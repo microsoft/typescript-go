@@ -427,12 +427,12 @@ declare function f<T>(x: T): T;
 >x : T
 
 declare function g(x: typeof s): void;
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >x : unique symbol
 >s : unique symbol
 
 declare function g(x: typeof N.s): void;
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >x : unique symbol
 >N.s : unique symbol
 >N : typeof N
@@ -668,19 +668,19 @@ f<typeof N.s>(N["s"]);
 
 g(s);
 >g(s) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >s : unique symbol
 
 g(N.s);
 >g(N.s) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >N.s : unique symbol
 >N : typeof N
 >s : unique symbol
 
 g(N["s"]);
 >g(N["s"]) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >N["s"] : unique symbol
 >N : typeof N
 >"s" : "s"
@@ -806,7 +806,7 @@ interface Context {
 >s : unique symbol
 
     method5(p?: typeof s): typeof s;
->method5 : (p?: unique symbol) => unique symbol
+>method5 : (p?: typeof s) => unique symbol
 >p : unique symbol
 >s : unique symbol
 >s : unique symbol

@@ -10,27 +10,29 @@
      },
      {
        "value": ": "
-@@= skipped -9, +10 lines =@@
-       "value": "("
-     },
-     {
--      "value": "d"
-+      "value": "d",
-+      "location": {},
-     },
-     {
-       "value": ": "
-@@= skipped -107, +108 lines =@@
+@@= skipped -116, +117 lines =@@
        "value": "("
      },
      {
 -      "value": "x"
+-    },
+-    {
+-      "value": ": "
+-    },
+-    {
+-      "value": "X",
 +      "value": "x",
-+      "location": {},
+       "location": {},
++    },
++    {
++      "value": ": "
++    },
++    {
++      "value": "X"
      },
      {
-       "value": ": "
-@@= skipped -47, +48 lines =@@
+       "value": ")"
+@@= skipped -47, +47 lines =@@
        "value": "; "
      },
      {
@@ -115,8 +117,20 @@
      },
      {
 -      "value": "x"
+-    },
+-    {
+-      "value": ": "
+-    },
+-    {
+-      "value": "X",
 +      "value": "x",
-+      "location": {},
+       "location": {},
++    },
++    {
++      "value": ": "
++    },
++    {
++      "value": "X"
      },
      {
-       "value": ": "
+       "value": ")"

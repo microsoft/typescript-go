@@ -14,3 +14,21 @@
 
                  break;
              }
+@@= skipped -115, +115 lines =@@
+
+             onlyPlus(obj.key);
+ >onlyPlus(obj.key) : "+"
+->onlyPlus : (arg: "+") => "+"
++>onlyPlus : (arg: '+') => "+"
+ >obj.key : "+"
+ >obj : AdditiveObj
+ >key : "+"
+@@= skipped -11, +11 lines =@@
+ }
+
+ function onlyPlus(arg: '+') {
+->onlyPlus : (arg: "+") => "+"
++>onlyPlus : (arg: '+') => "+"
+ >arg : "+"
+
+   return arg;

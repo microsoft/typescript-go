@@ -5,11 +5,11 @@
 
  export declare const value2: {
 ->value2 : { sliceSelectors: <FuncMap extends import("./types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }; }
-+>value2 : { sliceSelectors: <FuncMap extends import("types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }; }
++>value2 : { sliceSelectors: <FuncMap extends import('./types').SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }; }
 
      sliceSelectors: <FuncMap extends import('./types').SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> };
 ->sliceSelectors : <FuncMap extends import("./types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }
-+>sliceSelectors : <FuncMap extends import("types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }
++>sliceSelectors : <FuncMap extends import('./types').SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }
  >selectorsBySlice : FuncMap
 
  };

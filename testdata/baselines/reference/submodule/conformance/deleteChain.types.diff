@@ -1,55 +1,28 @@
 --- old.deleteChain.types
 +++ new.deleteChain.types
-@@= skipped -40, +40 lines =@@
- >c : string | undefined
-
- declare const o3: { b: undefined | { c: string } };
-->o3 : { b: undefined | { c: string; }; }
-+>o3 : { b: { c: string; } | undefined; }
- >b : { c: string; } | undefined
- >c : string
-
-@@= skipped -8, +8 lines =@@
- >delete o3.b?.c : boolean
- >o3.b?.c : string | undefined
- >o3.b : { c: string; } | undefined
-->o3 : { b: undefined | { c: string; }; }
-+>o3 : { b: { c: string; } | undefined; }
- >b : { c: string; } | undefined
- >c : string | undefined
-
-@@= skipped -9, +9 lines =@@
- >(o3.b?.c) : string | undefined
- >o3.b?.c : string | undefined
- >o3.b : { c: string; } | undefined
-->o3 : { b: undefined | { c: string; }; }
-+>o3 : { b: { c: string; } | undefined; }
- >b : { c: string; } | undefined
+@@= skipped -62, +62 lines =@@
  >c : string | undefined
 
  declare const o4: { b?: { c: { d?: { e: string } } } };
 ->o4 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
++>o4 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
 ->c : { d?: { e: string; }; }
-+>o4 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
 +>c : { d?: { e: string; } | undefined; }
  >d : { e: string; } | undefined
  >e : string
 
-@@= skipped -15, +15 lines =@@
+@@= skipped -10, +10 lines =@@
  >delete o4.b?.c.d?.e : boolean
  >o4.b?.c.d?.e : string | undefined
  >o4.b?.c.d : { e: string; } | undefined
 ->o4.b?.c : { d?: { e: string; }; } | undefined
-->o4.b : { c: { d?: { e: string; }; }; } | undefined
-->o4 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
-->c : { d?: { e: string; }; } | undefined
 +>o4.b?.c : { d?: { e: string; } | undefined; } | undefined
-+>o4.b : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o4 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
+ >o4.b : { c: { d?: { e: string; }; }; } | undefined
+->o4 : { b?: { c: { d?: { e: string; }; }; }; }
++>o4 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
+->c : { d?: { e: string; }; } | undefined
 +>c : { d?: { e: string; } | undefined; } | undefined
  >d : { e: string; } | undefined
  >e : string | undefined
@@ -59,14 +32,12 @@
  >(o4.b?.c.d) : { e: string; } | undefined
  >o4.b?.c.d : { e: string; } | undefined
 ->o4.b?.c : { d?: { e: string; }; } | undefined
-->o4.b : { c: { d?: { e: string; }; }; } | undefined
-->o4 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
-->c : { d?: { e: string; }; } | undefined
 +>o4.b?.c : { d?: { e: string; } | undefined; } | undefined
-+>o4.b : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o4 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
+ >o4.b : { c: { d?: { e: string; }; }; } | undefined
+->o4 : { b?: { c: { d?: { e: string; }; }; }; }
++>o4 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
+->c : { d?: { e: string; }; } | undefined
 +>c : { d?: { e: string; } | undefined; } | undefined
  >d : { e: string; } | undefined
  >e : string | undefined
@@ -76,24 +47,20 @@
  >o4.b?.c.d?.e : string | undefined
  >o4.b?.c.d : { e: string; } | undefined
 ->o4.b?.c : { d?: { e: string; }; } | undefined
-->o4.b : { c: { d?: { e: string; }; }; } | undefined
-->o4 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
-->c : { d?: { e: string; }; } | undefined
 +>o4.b?.c : { d?: { e: string; } | undefined; } | undefined
-+>o4.b : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o4 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
+ >o4.b : { c: { d?: { e: string; }; }; } | undefined
+->o4 : { b?: { c: { d?: { e: string; }; }; }; }
++>o4 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
+->c : { d?: { e: string; }; } | undefined
 +>c : { d?: { e: string; } | undefined; } | undefined
  >d : { e: string; } | undefined
  >e : string | undefined
 
  declare const o5: { b?(): { c: { d?: { e: string } } } };
-->o5 : { b?(): { c: { d?: { e: string; }; }; }; }
-->b : (() => { c: { d?: { e: string; }; }; }) | undefined
+ >o5 : { b?(): { c: { d?: { e: string; }; }; }; }
+ >b : (() => { c: { d?: { e: string; }; }; }) | undefined
 ->c : { d?: { e: string; }; }
-+>o5 : { b?(): { c: { d?: { e: string; } | undefined; }; }; }
-+>b : (() => { c: { d?: { e: string; } | undefined; }; }) | undefined
 +>c : { d?: { e: string; } | undefined; }
  >d : { e: string; } | undefined
  >e : string
@@ -103,16 +70,12 @@
  >o5.b?.().c.d?.e : string | undefined
  >o5.b?.().c.d : { e: string; } | undefined
 ->o5.b?.().c : { d?: { e: string; }; } | undefined
-->o5.b?.() : { c: { d?: { e: string; }; }; } | undefined
-->o5.b : (() => { c: { d?: { e: string; }; }; }) | undefined
-->o5 : { b?(): { c: { d?: { e: string; }; }; }; }
-->b : (() => { c: { d?: { e: string; }; }; }) | undefined
-->c : { d?: { e: string; }; } | undefined
 +>o5.b?.().c : { d?: { e: string; } | undefined; } | undefined
-+>o5.b?.() : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o5.b : (() => { c: { d?: { e: string; } | undefined; }; }) | undefined
-+>o5 : { b?(): { c: { d?: { e: string; } | undefined; }; }; }
-+>b : (() => { c: { d?: { e: string; } | undefined; }; }) | undefined
+ >o5.b?.() : { c: { d?: { e: string; }; }; } | undefined
+ >o5.b : (() => { c: { d?: { e: string; }; }; }) | undefined
+ >o5 : { b?(): { c: { d?: { e: string; }; }; }; }
+ >b : (() => { c: { d?: { e: string; }; }; }) | undefined
+->c : { d?: { e: string; }; } | undefined
 +>c : { d?: { e: string; } | undefined; } | undefined
  >d : { e: string; } | undefined
  >e : string | undefined
@@ -122,26 +85,21 @@
  >o5.b?.().c.d?.e : string | undefined
  >o5.b?.().c.d : { e: string; } | undefined
 ->o5.b?.().c : { d?: { e: string; }; } | undefined
-->o5.b?.() : { c: { d?: { e: string; }; }; } | undefined
-->o5.b : (() => { c: { d?: { e: string; }; }; }) | undefined
-->o5 : { b?(): { c: { d?: { e: string; }; }; }; }
-->b : (() => { c: { d?: { e: string; }; }; }) | undefined
-->c : { d?: { e: string; }; } | undefined
 +>o5.b?.().c : { d?: { e: string; } | undefined; } | undefined
-+>o5.b?.() : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o5.b : (() => { c: { d?: { e: string; } | undefined; }; }) | undefined
-+>o5 : { b?(): { c: { d?: { e: string; } | undefined; }; }; }
-+>b : (() => { c: { d?: { e: string; } | undefined; }; }) | undefined
+ >o5.b?.() : { c: { d?: { e: string; }; }; } | undefined
+ >o5.b : (() => { c: { d?: { e: string; }; }; }) | undefined
+ >o5 : { b?(): { c: { d?: { e: string; }; }; }; }
+ >b : (() => { c: { d?: { e: string; }; }; }) | undefined
+->c : { d?: { e: string; }; } | undefined
 +>c : { d?: { e: string; } | undefined; } | undefined
  >d : { e: string; } | undefined
  >e : string | undefined
 
  declare const o6: { b?: { c: { d?: { e: string } } } };
 ->o6 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
++>o6 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
 ->c : { d?: { e: string; }; }
-+>o6 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
 +>c : { d?: { e: string; } | undefined; }
  >d : { e: string; } | undefined
  >e : string
@@ -151,28 +109,22 @@
  >o6.b?.['c'].d?.['e'] : string | undefined
  >o6.b?.['c'].d : { e: string; } | undefined
 ->o6.b?.['c'] : { d?: { e: string; }; } | undefined
-->o6.b : { c: { d?: { e: string; }; }; } | undefined
-->o6 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
 +>o6.b?.['c'] : { d?: { e: string; } | undefined; } | undefined
-+>o6.b : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o6 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
+ >o6.b : { c: { d?: { e: string; }; }; } | undefined
+->o6 : { b?: { c: { d?: { e: string; }; }; }; }
++>o6 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
  >'c' : "c"
  >d : { e: string; } | undefined
- >'e' : "e"
 @@= skipped -13, +13 lines =@@
  >(o6.b?.['c'].d?.['e']) : string | undefined
  >o6.b?.['c'].d?.['e'] : string | undefined
  >o6.b?.['c'].d : { e: string; } | undefined
 ->o6.b?.['c'] : { d?: { e: string; }; } | undefined
-->o6.b : { c: { d?: { e: string; }; }; } | undefined
-->o6 : { b?: { c: { d?: { e: string; }; }; }; }
-->b : { c: { d?: { e: string; }; }; } | undefined
 +>o6.b?.['c'] : { d?: { e: string; } | undefined; } | undefined
-+>o6.b : { c: { d?: { e: string; } | undefined; }; } | undefined
-+>o6 : { b?: { c: { d?: { e: string; } | undefined; }; } | undefined; }
-+>b : { c: { d?: { e: string; } | undefined; }; } | undefined
+ >o6.b : { c: { d?: { e: string; }; }; } | undefined
+->o6 : { b?: { c: { d?: { e: string; }; }; }; }
++>o6 : { b?: { c: { d?: { e: string; }; }; } | undefined; }
+ >b : { c: { d?: { e: string; }; }; } | undefined
  >'c' : "c"
  >d : { e: string; } | undefined
- >'e' : "e"

@@ -254,7 +254,7 @@ console.log((cond || undefined) && 1 / cond);
 >cond : any
 
 function foo(this: Object | undefined) {
->foo : (this: Object) => 0 | Object
+>foo : (this: Object | undefined) => 0 | Object
 >this : Object
 
     // Should be OK

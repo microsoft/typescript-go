@@ -20,3 +20,12 @@
  !!! related TS2728 destructuringParameterDeclaration2.ts:27:21: 'z' is declared here.
      c1({ z: true });   // Error, implied type is {z:number}?
           ~
+@@= skipped -13, +12 lines =@@
+     c3({ b: true });   // Error, implied type is { b: number|string }. 
+          ~
+ !!! error TS2322: Type 'boolean' is not assignable to type 'string | number'.
+-!!! related TS6500 destructuringParameterDeclaration2.ts:29:20: The expected type comes from property 'b' which is declared here on type '{ b: string | number; }'
++!!! related TS6500 destructuringParameterDeclaration2.ts:29:20: The expected type comes from property 'b' which is declared here on type '{ b: number | string; }'
+     c5([1, 2, false, true]);   // Error, implied type is [any, any, [[any]]]
+               ~~~~~
+ !!! error TS2322: Type 'boolean' is not assignable to type '[[any]]'.

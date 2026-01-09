@@ -1,15 +1,6 @@
 --- old.predicateSemantics.types
 +++ new.predicateSemantics.types
-@@= skipped -253, +253 lines =@@
- >cond : any
-
- function foo(this: Object | undefined) {
-->foo : (this: Object | undefined) => 0 | Object
-+>foo : (this: Object) => 0 | Object
- >this : Object
-
-     // Should be OK
-@@= skipped -69, +69 lines =@@
+@@= skipped -322, +322 lines =@@
 
  // https://github.com/microsoft/TypeScript/issues/60614
  declare function tag<T>(

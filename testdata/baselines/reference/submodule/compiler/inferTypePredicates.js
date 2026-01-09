@@ -627,13 +627,7 @@ declare const foobar: {
     type: "bar";
     bar: string;
 };
-declare const foobarPred: (fb: {
-    type: "foo";
-    foo: number;
-} | {
-    type: "bar";
-    bar: string;
-}) => fb is {
+declare const foobarPred: (fb: typeof foobar) => fb is {
     type: "foo";
     foo: number;
 };
