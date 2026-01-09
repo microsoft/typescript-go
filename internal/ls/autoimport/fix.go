@@ -71,7 +71,7 @@ func (f *Fix) Edits(
 			panic("import index out of range")
 		}
 		existingFix := getAddToExistingImportFix(file, f)
-		addToExistingImport(tracker, file, existingFix.importClauseOrBindingPattern, existingFix.defaultImport, []*newImportBinding{existingFix.namedImport}, preferences)
+		addToExistingImport(tracker, file, existingFix.importClauseOrBindingPattern, existingFix.defaultImport, core.SingleElementSlice(existingFix.namedImport), preferences)
 		return tracker.GetChanges()[file.FileName()], diagnostics.Update_import_from_0.Localize(locale, f.ModuleSpecifier)
 	case lsproto.AutoImportFixKindAddNew:
 		var declarations []*ast.Statement
