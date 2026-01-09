@@ -1086,8 +1086,12 @@ func (l *LanguageService) getCompletionData(
 
 		// import { type | -> token text should be blank
 		var lowerCaseTokenText string
-		if previousToken != nil && ast.IsIdentifier(previousToken) && !(previousToken == contextToken && importStatementCompletion != nil) {
-			lowerCaseTokenText = strings.ToLower(previousToken.Text())
+		usagePosition := l.createLspPosition(position, file)
+		if previousToken != nil && ast.IsIdentifier(previousToken) {
+			usagePosition = l.createLspPosition(scanner.GetTokenPosOfNode(previousToken, file, false /*includeJSDoc*/), file)
+			if !(previousToken == contextToken && importStatementCompletion != nil) {
+				lowerCaseTokenText = strings.ToLower(previousToken.Text())
+			}
 		}
 
 		view, err := l.getPreparedAutoImportView(file)
@@ -1095,7 +1099,7 @@ func (l *LanguageService) getCompletionData(
 			return err
 		}
 
-		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, isRightOfOpenTag, isTypeOnlyLocation)
+		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
 		return nil
 	}
 

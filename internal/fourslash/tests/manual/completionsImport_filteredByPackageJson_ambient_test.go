@@ -11,7 +11,6 @@ import (
 )
 
 func TestCompletionsImport_filteredByPackageJson_ambient(t *testing.T) {
-	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@noEmit: true
@@ -116,18 +115,7 @@ loca/*5*/`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label: "declaredBySomethingNotInPackageJson",
-					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportFix{
-							ModuleSpecifier: "declared-by-foo",
-						},
-					},
-					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
-				},
-			},
+			Excludes: []string{"declaredBySomethingNotInPackageJson"},
 		},
 	})
 	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{

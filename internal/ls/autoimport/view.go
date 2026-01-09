@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -152,7 +153,7 @@ type FixAndExport struct {
 	Export *Export
 }
 
-func (v *View) GetCompletions(ctx context.Context, prefix string, forJSX bool, isTypeOnlyLocation bool) []*FixAndExport {
+func (v *View) GetCompletions(ctx context.Context, prefix string, position lsproto.Position, forJSX bool, isTypeOnlyLocation bool) []*FixAndExport {
 	results := v.Search(prefix, QueryKindWordPrefix)
 
 	type exportGroupKey struct {
@@ -213,7 +214,7 @@ outer:
 	for _, exps := range grouped {
 		fixesForGroup := make([]*FixAndExport, 0, len(exps))
 		for _, e := range exps {
-			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation, nil) {
+			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation, &position) {
 				fixesForGroup = append(fixesForGroup, &FixAndExport{
 					Fix:    fix,
 					Export: e,
