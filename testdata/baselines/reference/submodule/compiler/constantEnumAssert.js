@@ -69,11 +69,6 @@ var E3;
     E3[E3["b"] = 2] = "b";
     E3[E3["c"] = 4] = "c";
 })(E3 || (E3 = {}));
-var E4;
-(function (E4) {
-    E4[E4["a"] = 0] = "a";
-    E4[E4["b"] = 1] = "b";
-})(E4 || (E4 = {}));
 const E5 = {
     a: 'a',
     b: 'b'
@@ -83,10 +78,10 @@ const foo2 = { a: E2.a };
 const foo3 = { a: E1.a };
 const foo4 = { a: E2.a };
 const foo5 = { a: E3.a };
-const foo6 = { a: E4.a };
+const foo6 = { a: 0 /* E4.a */ };
 const foo7 = { a: E5.a };
 const foo8 = { a: E1.a };
 const foo9 = { a: E2.a };
 const foo10 = { a: E3.a };
-const foo11 = { a: E4.a };
+const foo11 = { a: 0 /* E4.a */ };
 const foo12 = { a: E5.a };

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsJSDocImportTagEmptyModuleSpecifier1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @checkJs: true
@@ -20,7 +20,8 @@ func TestCompletionsJSDocImportTagEmptyModuleSpecifier1(t *testing.T) {
 export type MyUnion = string | number;
 // @filename: index.js
 /** @import { MyUnion } from "/**/" */`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

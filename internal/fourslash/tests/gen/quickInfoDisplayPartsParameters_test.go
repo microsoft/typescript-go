@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsParameters(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @return *crunch* */
 function /*1*/foo(/*2*/param: string, /*3*/optionalParam?: string, /*4*/paramWithInitializer = "hello", .../*5*/restParam: string[]) {
@@ -18,6 +18,7 @@ function /*1*/foo(/*2*/param: string, /*3*/optionalParam?: string, /*4*/paramWit
     /*8*/paramWithInitializer = "Hello";
     /*9*/restParam[0] = "World";
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

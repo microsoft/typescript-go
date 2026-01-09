@@ -1,10 +1,12 @@
 package estransforms
 
 import (
+	"slices"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -302,14 +304,14 @@ func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *as
 	var suffix []*ast.Node
 	if ast.IsBlock(body) {
 		custom := false
-		for i, statement := range body.AsBlock().Statements.Nodes {
+		for i, statement := range body.Statements() {
 			if !custom && ast.IsPrologueDirective(statement) {
 				prefix = append(prefix, statement)
 			} else if ch.EmitContext().EmitFlags(statement)&printer.EFCustomPrologue != 0 {
 				custom = true
 				prefix = append(prefix, statement)
 			} else {
-				suffix = body.AsBlock().Statements.Nodes[i:]
+				suffix = body.Statements()[i:]
 				break
 			}
 		}
@@ -323,7 +325,7 @@ func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *as
 	}
 
 	newStatementList := ch.Factory().NewNodeList(append(append(append(prefix, extras...), newStatements...), suffix...))
-	newStatementList.Loc = body.AsBlock().Statements.Loc
+	newStatementList.Loc = body.StatementList().Loc
 	return ch.Factory().UpdateBlock(body.AsBlock(), newStatementList)
 }
 
@@ -336,7 +338,7 @@ func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.No
 				// In cases where a binding pattern is simply '[]' or '{}',
 				// we usually don't want to emit a var declaration; however, in the presence
 				// of an initializer, we must emit that expression to preserve side effects.
-				if len(parameter.Name().AsBindingPattern().Elements.Nodes) > 0 {
+				if len(parameter.Name().Elements()) > 0 {
 					declarations := ch.flattenDestructuringBinding(flattenLevelAll, parameter, ch.Factory().NewGeneratedNameForNode(parameter), false, false)
 					if declarations != nil {
 						declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
@@ -424,11 +426,9 @@ func (ch *objectRestSpreadTransformer) visitCatchClause(node *ast.CatchClause) *
 			}
 			newStatement := ch.Factory().NewVariableStatement(nil, ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList(decls)))
 			statements := []*ast.Node{newStatement}
-			if block.AsBlock().Statements != nil && len(block.AsBlock().Statements.Nodes) > 0 {
-				statements = append(statements, block.AsBlock().Statements.Nodes...)
-			}
+			statements = append(statements, block.Statements()...)
 			statementList := ch.Factory().NewNodeList(statements)
-			statementList.Loc = block.AsBlock().Statements.Loc
+			statementList.Loc = block.StatementList().Loc
 
 			block = ch.Factory().UpdateBlock(block.AsBlock(), statementList)
 		}
@@ -482,7 +482,7 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flatten
 
 	if ast.IsVariableDeclaration(node) {
 		initializer := getInitializerOfBindingOrAssignmentElement(node)
-		if initializer != nil && (ast.IsIdentifier(initializer) && bindingOrAssignmentElementAssignsToName(node, initializer.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node)) {
+		if initializer != nil && (ast.IsIdentifier(initializer) && bindingOrAssignmentElementAssignsToName(node, initializer.Text()) || bindingOrAssignmentElementContainsNonLiteralComputedName(node)) {
 			// If the right-hand value of the assignment is also an assignment target then
 			// we need to cache the right-hand value.
 			initializer = ch.ensureIdentifier(ch.Visitor().VisitNode(initializer), false, initializer.Loc)
@@ -540,14 +540,14 @@ func (ch *objectRestSpreadTransformer) visitForOftatement(node *ast.ForInOrOfSta
 				statements = append(statements, res)
 			}
 			if ast.IsBlock(node.Statement) {
-				for _, statement := range node.Statement.AsBlock().Statements.Nodes {
+				for _, statement := range node.Statement.Statements() {
 					visited := ch.Visitor().VisitEachChild(statement)
 					if visited != nil {
 						statements = append(statements, visited)
 					}
 				}
 				bodyLocation = node.Statement.Loc
-				statementsLocation = node.Statement.AsBlock().Statements.Loc
+				statementsLocation = node.Statement.StatementList().Loc
 			} else if node.Statement != nil {
 				statements = append(statements, ch.Visitor().VisitEachChild(node.Statement))
 				bodyLocation = node.Statement.Loc
@@ -638,7 +638,7 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 	if value != nil {
 		value = ch.Visitor().VisitNode(value)
 
-		if ast.IsIdentifier(value) && bindingOrAssignmentElementAssignsToName(node.AsNode(), value.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node.AsNode()) {
+		if ast.IsIdentifier(value) && bindingOrAssignmentElementAssignsToName(node.AsNode(), value.Text()) || bindingOrAssignmentElementContainsNonLiteralComputedName(node.AsNode()) {
 			// If the right-hand value of the assignment is also an assignment target then
 			// we need to cache the right-hand value.
 			value = ch.ensureIdentifier(value, false, location)
@@ -778,7 +778,7 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
 		} else if ast.IsOmittedExpression(element) {
 			continue
 		} else if ast.GetRestIndicatorOfBindingOrAssignmentElement(element) == nil {
-			rhsValue := ch.Factory().NewElementAccessExpression(value, nil, ch.Factory().NewNumericLiteral(strconv.Itoa(i)), ast.NodeFlagsNone)
+			rhsValue := ch.Factory().NewElementAccessExpression(value, nil, ch.Factory().NewNumericLiteral(strconv.Itoa(i), ast.TokenFlagsNone), ast.NodeFlagsNone)
 			ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false)
 		} else if i == numElements-1 {
 			rhsValue := ch.Factory().NewArraySliceCall(value, i)
@@ -807,7 +807,7 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
  */
 func (ch *objectRestSpreadTransformer) createDestructuringPropertyAccess(value *ast.Node, propertyName *ast.Node) *ast.Node {
 	if ast.IsComputedPropertyName(propertyName) {
-		argumentExpression := ch.ensureIdentifier(ch.Visitor().VisitNode(propertyName.AsComputedPropertyName().Expression), false, propertyName.Loc)
+		argumentExpression := ch.ensureIdentifier(ch.Visitor().VisitNode(propertyName.Expression()), false, propertyName.Loc)
 		return ch.Factory().NewElementAccessExpression(
 			value,
 			nil,
@@ -823,7 +823,7 @@ func (ch *objectRestSpreadTransformer) createDestructuringPropertyAccess(value *
 			ast.NodeFlagsNone,
 		)
 	} else {
-		name := ch.Factory().NewIdentifier(propertyName.AsIdentifier().Text)
+		name := ch.Factory().NewIdentifier(propertyName.Text())
 		return ch.Factory().NewPropertyAccessExpression(
 			value,
 			nil,
@@ -862,15 +862,19 @@ func (ch *objectRestSpreadTransformer) emitExpression(node *ast.Node) {
 }
 
 func (ch *objectRestSpreadTransformer) emitAssignment(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
-	// Debug.assertNode(target, createAssignmentCallback ? isIdentifier : isExpression); // !!!
+	debug.AssertNode(target, ast.IsExpression)
 	expr := ch.Factory().NewAssignmentExpression(ch.Visitor().VisitNode(target), value)
 	expr.Loc = location
 	ch.EmitContext().SetOriginal(expr, original)
 	ch.emitExpression(expr)
 }
 
+func isBindingName(node *ast.Node) bool {
+	return node.Kind == ast.KindIdentifier || node.Kind == ast.KindArrayBindingPattern || node.Kind == ast.KindObjectBindingPattern
+}
+
 func (ch *objectRestSpreadTransformer) emitBinding(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
-	// Debug.assertNode(target, isBindingName); // !!!
+	debug.AssertNode(target, isBindingName)
 	if len(ch.ctx.currentExpressions) > 0 {
 		value = ch.Factory().InlineExpressions(append(ch.ctx.currentExpressions, value))
 		ch.ctx.currentExpressions = nil
@@ -999,7 +1003,7 @@ func bindingOrAssignmentElementAssignsToName(element *ast.Node, name string) boo
 	if ast.IsBindingPattern(target) || ast.IsAssignmentPattern(target) {
 		return bindingOrAssignmentPatternAssignsToName(target, name)
 	} else if ast.IsIdentifier(target) {
-		return target.AsIdentifier().Text == name
+		return target.Text() == name
 	}
 	return false
 }
@@ -1016,7 +1020,7 @@ func bindingOrAssignmentPatternAssignsToName(pattern *ast.Node, name string) boo
 
 func bindingOrAssignmentElementContainsNonLiteralComputedName(element *ast.Node) bool {
 	propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
-	if propertyName != nil && ast.IsComputedPropertyName(propertyName) && !ast.IsLiteralExpression(propertyName.AsComputedPropertyName().Expression) {
+	if propertyName != nil && ast.IsComputedPropertyName(propertyName) && !ast.IsLiteralExpression(propertyName.Expression()) {
 		return true
 	}
 	target := ast.GetTargetOfBindingOrAssignmentElement(element)
@@ -1025,12 +1029,7 @@ func bindingOrAssignmentElementContainsNonLiteralComputedName(element *ast.Node)
 
 func bindingOrAssignmentPatternContainsNonLiteralComputedName(pattern *ast.Node) bool {
 	elements := ast.GetElementsOfBindingOrAssignmentPattern(pattern)
-	for _, element := range elements {
-		if bindingOrAssignmentElementContainsNonLiteralComputedName(element) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(elements, bindingOrAssignmentElementContainsNonLiteralComputedName)
 }
 
 func getInitializerOfBindingOrAssignmentElement(bindingElement *ast.Node) *ast.Node {

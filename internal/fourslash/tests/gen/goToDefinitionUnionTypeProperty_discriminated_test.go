@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionUnionTypeProperty_discriminated(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type U = A | B;
 
@@ -31,6 +31,7 @@ const u2: U = {
   [|/*kindBogus*/kind|]: "bogus",
   [|/*propBogus*/prop|]: 0,
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "kind", "prop", "kindBogus", "propBogus")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "kind", "prop", "kindBogus", "propBogus")
 }

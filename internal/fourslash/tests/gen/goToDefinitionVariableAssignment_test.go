@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionVariableAssignment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -18,7 +18,8 @@ const Bar;
 const Foo = /*def*/Bar = function () {}
 Foo.prototype.bar = function() {}
 new [|Foo/*ref*/|]();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToFile(t, "foo.js")
-	f.VerifyBaselineGoToDefinition(t, "ref")
+	f.VerifyBaselineGoToDefinition(t, true, "ref")
 }

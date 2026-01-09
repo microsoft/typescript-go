@@ -8,25 +8,26 @@ import (
 )
 
 func TestQuickInfoForGetterAndSetter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = ` class Test {
-     constructor() {
-         this.value;
-     }
+	const content = `class Test {
+    constructor() {
+        this.value;
+    }
 
-     /** Getter text */
-     get val/*1*/ue() {
-         return this.value;
-     }
+    /** Getter text */
+    get val/*1*/ue() {
+        return this.value;
+    }
 
-     /** Setter text */
-     set val/*2*/ue(value) {
-         this.value = value;
-     }
- }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+    /** Setter text */
+    set val/*2*/ue(value) {
+        this.value = value;
+    }
+}`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "1")
 	f.VerifyQuickInfoIs(t, "(getter) Test.value: any", "Getter text")
 	f.GoToMarker(t, "2")

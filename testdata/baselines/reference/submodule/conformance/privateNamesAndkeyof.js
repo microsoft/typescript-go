@@ -24,6 +24,7 @@ k = "fooProp"; // Error
 
 
 //// [privateNamesAndkeyof.js]
+"use strict";
 var _A_fooField;
 class A {
     constructor() {

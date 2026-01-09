@@ -1,10 +1,8 @@
 --- old.initializerWithThisPropertyAccess.js
 +++ new.initializerWithThisPropertyAccess.js
-@@= skipped -35, +35 lines =@@
-
-
+@@= skipped -37, +37 lines =@@
  //// [initializerWithThisPropertyAccess.js]
--"use strict";
+ "use strict";
  class A {
 +    a;
 +    b = this.a; // Error
@@ -47,31 +45,3 @@
 +    prop = false;
  }
 
-
- //// [initializerWithThisPropertyAccess.d.ts]
- declare class A {
-     a: number;
--    b: number;
-+    b: number; // Error
-     c: () => number;
-     d: number;
-     constructor();
-@@= skipped -46, +41 lines =@@
-     x: number;
- }
- declare class C {
--    a: number;
-+    a!: number;
-     b: number;
- }
-+// Repro from #37979
- declare class Foo {
-     private bar;
--    readonly barProp = false;
-+    readonly barProp: boolean;
-     constructor();
- }
- declare class Bar {
--    readonly prop = false;
-+    readonly prop: boolean;
- }

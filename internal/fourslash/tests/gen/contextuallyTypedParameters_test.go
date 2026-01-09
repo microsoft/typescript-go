@@ -8,8 +8,8 @@ import (
 )
 
 func TestContextuallyTypedParameters(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(cb: (this: any, x: number, y: string, z: boolean) => void): void;
 
@@ -48,7 +48,8 @@ foo(function(a, b, c, ...args) {
     c/*62*/;
     args/*63*/;
 });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "10", "(parameter) a: number", "")
 	f.VerifyQuickInfoAt(t, "11", "(parameter) args: [y: string, z: boolean]", "")
 	f.VerifyQuickInfoAt(t, "20", "(parameter) a: number", "")

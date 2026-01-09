@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForStringLiteralPropertyNames(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     public "/*1*/ss": any;
@@ -20,6 +20,7 @@ x.ss;
 x["ss"];
 x = { "ss": 0 };
 x = { ss: 0 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1")
 }

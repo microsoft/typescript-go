@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForStatic(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: referencesOnStatic_1.ts
 var n = 43;
@@ -37,6 +37,7 @@ class foo2 {
 }
 // @Filename: referencesOnStatic_2.ts
 var q = foo./*9*/n;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5", "6", "7", "8", "9")
 }

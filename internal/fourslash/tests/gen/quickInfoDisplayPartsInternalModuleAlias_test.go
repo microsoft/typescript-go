@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsInternalModuleAlias(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module m.m1 {
     export class c {
@@ -25,6 +25,7 @@ module m2 {
     export import /*7*/a4 = m.m1;
     new /*8*/a4.c();
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

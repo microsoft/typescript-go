@@ -6,8 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
-var BuildOpts = slices.Concat(commonOptionsWithBuild, optionsForBuild)
-
 var TscBuildOption = CommandLineOption{
 	Name:                     "build",
 	Kind:                     "boolean",
@@ -18,7 +16,7 @@ var TscBuildOption = CommandLineOption{
 	DefaultValueDescription:  false,
 }
 
-var optionsForBuild = []*CommandLineOption{
+var OptionsForBuild = []*CommandLineOption{
 	&TscBuildOption,
 	{
 		Name:                    "verbose",
@@ -52,6 +50,14 @@ var optionsForBuild = []*CommandLineOption{
 		DefaultValueDescription: false,
 	},
 	{
+		Name:                    "builders",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Command_line_Options,
+		Description:             diagnostics.Set_the_number_of_projects_to_build_concurrently,
+		DefaultValueDescription: diagnostics.X_all_unless_singleThreaded_is_passed,
+		minValue:                1,
+	},
+	{
 		Name:                    "stopBuildOnErrors",
 		Category:                diagnostics.Command_line_Options,
 		Description:             diagnostics.Skip_building_downstream_projects_on_error_in_upstream_project,
@@ -59,3 +65,5 @@ var optionsForBuild = []*CommandLineOption{
 		DefaultValueDescription: false,
 	},
 }
+
+var BuildOpts = slices.Concat(commonOptionsWithBuild, OptionsForBuild)

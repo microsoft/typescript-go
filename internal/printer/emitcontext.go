@@ -94,6 +94,7 @@ func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.
 		VisitFunctionBody:       c.VisitFunctionBody,
 		VisitIterationBody:      c.VisitIterationBody,
 		VisitTopLevelStatements: c.VisitVariableEnvironment,
+		VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
 	})
 }
 
@@ -518,6 +519,10 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 	c.SetOriginalEx(node, original, false)
 }
 
+func (c *EmitContext) UnsetOriginal(node *ast.Node) {
+	delete(c.original, node)
+}
+
 func (c *EmitContext) SetOriginalEx(node *ast.Node, original *ast.Node, allowOverwrite bool) {
 	if original == nil {
 		panic("Original cannot be nil.")
@@ -584,6 +589,14 @@ const (
 	hasSourceMapRange
 )
 
+type SynthesizedComment struct {
+	Kind               ast.Kind
+	Loc                core.TextRange
+	HasLeadingNewLine  bool
+	HasTrailingNewLine bool
+	Text               string
+}
+
 type emitNode struct {
 	flags                     emitNodeFlags
 	emitFlags                 EmitFlags
@@ -592,6 +605,8 @@ type emitNode struct {
 	tokenSourceMapRanges      map[ast.Kind]core.TextRange
 	helpers                   []*EmitHelper
 	externalHelpersModuleName *ast.IdentifierNode
+	leadingComments           []SynthesizedComment
+	trailingComments          []SynthesizedComment
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
@@ -1054,7 +1069,7 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 
 	return c.Factory.UpdateBlock(
 		updated.AsBlock(),
-		c.MergeEnvironmentList(updated.AsBlock().Statements, declarations),
+		c.MergeEnvironmentList(updated.StatementList(), declarations),
 	)
 }
 
@@ -1064,7 +1079,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	}
 
 	c.StartLexicalEnvironment()
-	updated := visitor.VisitEmbeddedStatement(body)
+	updated := c.VisitEmbeddedStatement(body, visitor)
 	if updated == nil {
 		panic("Expected visitor to return a statement.")
 	}
@@ -1072,9 +1087,9 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	statements := c.EndLexicalEnvironment()
 	if len(statements) > 0 {
 		if ast.IsBlock(updated) {
-			statements = append(statements, updated.AsBlock().Statements.Nodes...)
+			statements = append(statements, updated.Statements()...)
 			statementsList := c.Factory.NewNodeList(statements)
-			statementsList.Loc = updated.AsBlock().Statements.Loc
+			statementsList.Loc = updated.StatementList().Loc
 			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList)
 		}
 		statements = append(statements, updated)
@@ -1082,4 +1097,61 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	}
 
 	return updated
+}
+
+func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.NodeVisitor) *ast.Statement {
+	embeddedStatement := visitor.VisitEmbeddedStatement(node)
+	if embeddedStatement == nil {
+		return nil
+	}
+	if ast.IsNotEmittedStatement(embeddedStatement) {
+		emptyStatement := visitor.Factory.NewEmptyStatement()
+		emptyStatement.Loc = node.Loc
+		c.SetOriginal(emptyStatement, node)
+		c.AssignCommentRange(emptyStatement, node)
+		return emptyStatement
+	}
+	return embeddedStatement
+}
+
+func (c *EmitContext) SetSyntheticLeadingComments(node *ast.Node, comments []SynthesizedComment) *ast.Node {
+	c.emitNodes.Get(node).leadingComments = comments
+	return node
+}
+
+func (c *EmitContext) AddSyntheticLeadingComment(node *ast.Node, kind ast.Kind, text string, hasTrailingNewLine bool) *ast.Node {
+	c.emitNodes.Get(node).leadingComments = append(c.emitNodes.Get(node).leadingComments, SynthesizedComment{Kind: kind, Loc: core.NewTextRange(-1, -1), HasTrailingNewLine: hasTrailingNewLine, Text: text})
+	return node
+}
+
+func (c *EmitContext) GetSyntheticLeadingComments(node *ast.Node) []SynthesizedComment {
+	if c.emitNodes.Has(node) {
+		return c.emitNodes.Get(node).leadingComments
+	}
+	return nil
+}
+
+func (c *EmitContext) SetSyntheticTrailingComments(node *ast.Node, comments []SynthesizedComment) *ast.Node {
+	c.emitNodes.Get(node).trailingComments = comments
+	return node
+}
+
+func (c *EmitContext) AddSyntheticTrailingComment(node *ast.Node, kind ast.Kind, text string, hasTrailingNewLine bool) *ast.Node {
+	c.emitNodes.Get(node).trailingComments = append(c.emitNodes.Get(node).trailingComments, SynthesizedComment{Kind: kind, Loc: core.NewTextRange(-1, -1), HasTrailingNewLine: hasTrailingNewLine, Text: text})
+	return node
+}
+
+func (c *EmitContext) GetSyntheticTrailingComments(node *ast.Node) []SynthesizedComment {
+	if c.emitNodes.Has(node) {
+		return c.emitNodes.Get(node).trailingComments
+	}
+	return nil
+}
+
+func (c *EmitContext) NewNotEmittedStatement(node *ast.Node) *ast.Statement {
+	statement := c.Factory.NewNotEmittedStatement()
+	statement.Loc = node.Loc
+	c.SetOriginal(statement, node)
+	c.AssignCommentRange(statement, node)
+	return statement
 }

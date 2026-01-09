@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsxFindAllReferencesOnRuntimeImportWithPaths1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: project/src/foo.ts
 import * as x from /**/"@foo/dir/jsx-runtime";
@@ -38,6 +38,7 @@ export {}
         }
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")
 }

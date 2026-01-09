@@ -54,39 +54,29 @@ class Foo<T extends string> {
 
 
 //// [spreadObjectOrFalsy.js]
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+"use strict";
 function f1(a) {
-    return __assign({}, a); // Error
+    return Object.assign({}, a); // Error
 }
 function f2(a) {
-    return __assign({}, a);
+    return Object.assign({}, a);
 }
 function f3(a) {
-    return __assign({}, a); // Error
+    return Object.assign({}, a); // Error
 }
 function f4(a) {
-    return __assign({}, a);
+    return Object.assign({}, a);
 }
 function f5(a) {
-    return __assign({}, a);
+    return Object.assign({}, a);
 }
 function f6(a) {
-    return __assign({}, a);
+    return Object.assign({}, a);
 }
 // Repro from #46976
 function g1(a) {
     const { z } = a;
-    return __assign({}, z);
+    return Object.assign({}, z);
 }
 class Foo {
     data;
@@ -108,11 +98,9 @@ declare function f3<T extends undefined>(a: T): any;
 declare function f4<T extends undefined>(a: object | T): {};
 declare function f5<S, T extends undefined>(a: S | T): S | T;
 declare function f6<T extends object | undefined>(a: T): T;
-// Repro from #46976
 declare function g1<T extends {}, A extends {
     z: (T | undefined) & T;
 }>(a: A): T;
-// Repro from #47028
 interface DatafulFoo<T> {
     data: T;
 }

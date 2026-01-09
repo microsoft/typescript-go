@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnParameterProperties(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IFoo {
   /** this is the name of blabla 
@@ -36,6 +36,7 @@ class Foo2 implements IFoo {
   ) {
   }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

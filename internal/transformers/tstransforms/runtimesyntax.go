@@ -44,7 +44,7 @@ func (tx *RuntimeSyntaxTransformer) pushNode(node *ast.Node) (grandparentNode *a
 	grandparentNode = tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
-	return
+	return grandparentNode
 }
 
 // Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
@@ -64,7 +64,7 @@ func (tx *RuntimeSyntaxTransformer) pushScope(node *ast.Node) (savedCurrentScope
 	case ast.KindCaseBlock, ast.KindModuleBlock, ast.KindBlock:
 		tx.currentScope = node
 		tx.currentScopeFirstDeclarationsOfName = nil
-	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindModuleDeclaration, ast.KindVariableStatement:
+	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindVariableStatement:
 		tx.recordDeclarationInScope(node)
 	}
 	return savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName
@@ -137,7 +137,7 @@ func (tx *RuntimeSyntaxTransformer) recordDeclarationInScope(node *ast.Node) {
 		}
 		return
 	case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
-		for _, element := range node.AsBindingPattern().Elements.Nodes {
+		for _, element := range node.Elements() {
 			tx.recordDeclarationInScope(element)
 		}
 		return
@@ -190,10 +190,10 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 		return tx.Visitor().VisitNode(n.Expression)
 	case ast.KindIdentifier:
 		return tx.Factory().NewStringLiteralFromNode(name)
-	case ast.KindStringLiteral:
-		return tx.Factory().NewStringLiteral(name.AsStringLiteral().Text)
+	case ast.KindStringLiteral: // !!! propagate token flags (will produce new diffs)
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindNumericLiteral:
-		return tx.Factory().NewNumericLiteral(name.AsNumericLiteral().Text)
+		return tx.Factory().NewNumericLiteral(name.Text(), ast.TokenFlagsNone)
 	default:
 		return name
 	}
@@ -309,6 +309,10 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 }
 
 func (tx *RuntimeSyntaxTransformer) visitEnumDeclaration(node *ast.EnumDeclaration) *ast.Node {
+	if !tx.shouldEmitEnumDeclaration(node) {
+		return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
+	}
+
 	statements := []*ast.Statement{}
 
 	// If needed, we should emit a variable declaration for the enum:
@@ -526,7 +530,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		ifStatement := tx.Factory().NewIfStatement(
 			tx.Factory().NewStrictInequalityExpression(
 				tx.Factory().NewTypeOfExpression(tx.getEnumQualifiedReference(enum, member)),
-				tx.Factory().NewStringLiteral("string"),
+				tx.Factory().NewStringLiteral("string", ast.TokenFlagsNone),
 			),
 			tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
@@ -553,6 +557,10 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 }
 
 func (tx *RuntimeSyntaxTransformer) visitModuleDeclaration(node *ast.ModuleDeclaration) *ast.Node {
+	if !tx.shouldEmitModuleDeclaration(node) {
+		return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
+	}
+
 	statements := []*ast.Statement{}
 
 	// If needed, we should emit a variable declaration for the module:
@@ -920,7 +928,7 @@ func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
 			indices[0] = i
 			return indices
 		} else if ast.IsTryStatement(statement) {
-			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.AsBlock().Statements.Nodes, 0), 0, i)
+			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.Statements(), 0), 0, i)
 		}
 	}
 	return nil
@@ -1128,6 +1136,19 @@ func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast
 		}
 	}
 	return result
+}
+
+func (tx *RuntimeSyntaxTransformer) shouldEmitEnumDeclaration(node *ast.EnumDeclaration) bool {
+	return !ast.IsEnumConst(node.AsNode()) || tx.compilerOptions.ShouldPreserveConstEnums()
+}
+
+func (tx *RuntimeSyntaxTransformer) shouldEmitModuleDeclaration(node *ast.ModuleDeclaration) bool {
+	pn := tx.EmitContext().ParseNode(node.AsNode())
+	if pn == nil {
+		// If we can't find a parse tree node, assume the node is instantiated.
+		return true
+	}
+	return ast.IsInstantiatedModule(node.AsNode(), tx.compilerOptions.ShouldPreserveConstEnums())
 }
 
 func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.ModuleDeclaration) *ast.ModuleDeclaration {

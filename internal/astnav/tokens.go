@@ -9,9 +9,27 @@ import (
 )
 
 func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
-	return getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
+	return getReparsedNodeForNode(getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
 		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
-	})
+	}))
+}
+
+// If the given node is a declaration name node in a JSDoc comment that is subject to reparsing, return the declaration name node
+// for the corresponding reparsed construct. Otherwise, just return the node.
+func getReparsedNodeForNode(node *ast.Node) *ast.Node {
+	if node.Flags&ast.NodeFlagsJSDoc != 0 && (ast.IsIdentifier(node) || ast.IsPrivateIdentifier(node)) {
+		parent := node.Parent
+		if (ast.IsJSDocTypedefTag(parent) || ast.IsJSDocCallbackTag(parent) || ast.IsJSDocPropertyTag(parent) || ast.IsJSDocParameterTag(parent) || ast.IsImportClause(parent) || ast.IsImportSpecifier(parent)) && parent.Name() == node {
+			// Reparsing preserves the location of the name. Thus, a search at the position of the name with JSDoc excluded
+			// finds the containing reparsed declaration node.
+			if reparsed := ast.GetNodeAtPosition(ast.GetSourceFileOfNode(node), node.Pos(), false); reparsed != nil {
+				if name := reparsed.Name(); name != nil && name.Pos() == node.Pos() {
+					return name
+				}
+			}
+		}
+	}
+	return node
 }
 
 func GetTouchingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
@@ -47,6 +65,9 @@ func getTokenAtPosition(
 	// `left` tracks the lower boundary of the node/token that could be returned,
 	// and is eventually the scanner's start position, if the scanner is used.
 	left := 0
+	// `nodeAfterLeft` tracks the first node we visit after visiting the node that advances `left`.
+	// When scanning in between nodes for token, we should only scan up to the start of `nodeAfterLeft`.
+	var nodeAfterLeft *ast.Node
 
 	testNode := func(node *ast.Node) int {
 		if node.Kind != ast.KindEndOfFile && node.End() == position && includePrecedingTokenAtEndPosition != nil {
@@ -56,7 +77,8 @@ func getTokenAtPosition(
 		if node.End() < position || node.Kind != ast.KindEndOfFile && node.End() == position {
 			return -1
 		}
-		if getPosition(node, sourceFile, allowPositionInLeadingTrivia) > position {
+		nodePos := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
+		if nodePos > position {
 			return 1
 		}
 		return 0
@@ -68,30 +90,53 @@ func getTokenAtPosition(
 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
-		if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 && next == nil {
-			switch testNode(node) {
-			case -1:
-				if !ast.IsJSDocKind(node.Kind) {
-					// We can't move the left boundary into or beyond JSDoc,
-					// because we may end up returning the token after this JSDoc,
-					// constructing it with the scanner, and we need to include
-					// all its leading trivia in its position.
-					left = node.End()
+		if node == nil {
+			return nil
+		}
+		if nodeAfterLeft == nil {
+			nodeAfterLeft = node
+		}
+		if next == nil {
+			if node.Flags&ast.NodeFlagsReparsed == 0 {
+				result := testNode(node)
+				switch result {
+				case -1:
+					if !ast.IsJSDocKind(node.Kind) {
+						// We can't move the left boundary into or beyond JSDoc,
+						// because we may end up returning the token after this JSDoc,
+						// constructing it with the scanner, and we need to include
+						// all its leading trivia in its position.
+						left = node.End()
+					}
+					nodeAfterLeft = nil
+				case 0:
+					next = node
 				}
-			case 0:
-				next = node
 			}
 		}
 		return node
 	}
 
 	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
-		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
+		if nodeList == nil || len(nodeList.Nodes) == 0 {
+			return nodeList
+		}
+		if nodeAfterLeft == nil {
+			for _, node := range nodeList.Nodes {
+				if node.Flags&ast.NodeFlagsReparsed == 0 {
+					nodeAfterLeft = node
+					break
+				}
+			}
+		}
+		if next == nil {
 			if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil {
 				left = nodeList.End()
+				nodeAfterLeft = nil
 				prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
 			} else if nodeList.End() <= position {
 				left = nodeList.End()
+				nodeAfterLeft = nil
 			} else if nodeList.Pos() <= position {
 				nodes := nodeList.Nodes
 				index, match := core.BinarySearchUniqueFunc(nodes, func(middle int, node *ast.Node) int {
@@ -101,6 +146,13 @@ func getTokenAtPosition(
 					cmp := testNode(node)
 					if cmp < 0 {
 						left = node.End()
+						nodeAfterLeft = nil
+						for i := middle + 1; i < len(nodes); i++ {
+							if nodes[i].Flags&ast.NodeFlagsReparsed == 0 {
+								nodeAfterLeft = nodes[i]
+								break
+							}
+						}
 					}
 					return cmp
 				})
@@ -113,6 +165,11 @@ func getTokenAtPosition(
 						cmp := testNode(node)
 						if cmp < 0 {
 							left = node.End()
+							if middle+1 < len(nodes) {
+								nodeAfterLeft = nodes[middle+1]
+							} else {
+								nodeAfterLeft = nil
+							}
 						}
 						return cmp
 					})
@@ -148,11 +205,33 @@ func getTokenAtPosition(
 				return current
 			}
 			scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-			for left < current.End() {
+			end := current.End()
+			// We should only scan up to the start of the next node in the AST after the node ending at position `left`.
+			// It is necessary to enforce this invariant in cases where `position` occurs in between two node/tokens,
+			// such that we would not find a token in the loop below before we reach the next node.
+			// We can fall into this case when `allowPositionInLeadingTrivia` is false and `position` is in a leading trivia,
+			// or when `position` would be in the leading trivia of a node but this node is inside JSDoc:
+			// ```
+			// /**
+			//  * @type {{
+			//  */*$*/ identifier: boolean;
+			//  * }}
+			//  */
+			// ```
+			// The position of marker '$' falls in between the asterisk token and the identifier token, but is not
+			// part of the leading trivia for `identifier`.
+			if nodeAfterLeft != nil {
+				end = nodeAfterLeft.Pos()
+			}
+			for left < end {
 				token := scanner.Token()
 				tokenFullStart := scanner.TokenFullStart()
 				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
 				tokenEnd := scanner.TokenEnd()
+				flags := scanner.TokenFlags()
+				if tokenEnd > end {
+					break
+				}
 				if tokenStart <= position && (position < tokenEnd) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
 						if ast.IsJSDocKind(current.Kind) {
@@ -160,10 +239,10 @@ func getTokenAtPosition(
 						}
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
-					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, flags)
 				}
 				if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
-					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, flags)
 					if includePrecedingTokenAtEndPosition(prevToken) {
 						return prevToken
 					}
@@ -175,6 +254,7 @@ func getTokenAtPosition(
 		}
 		current = next
 		left = current.Pos()
+		nodeAfterLeft = nil
 		next = nil
 	}
 }
@@ -475,7 +555,8 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 					tokenFullStart := scanner.TokenFullStart()
 					tokenEnd := scanner.TokenEnd()
 					startPos = tokenEnd
-					tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n))
+					flags := scanner.TokenFlags()
+					tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags))
 					scanner.Scan()
 				}
 				startPos = visitedNode.End()
@@ -492,7 +573,8 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				tokenFullStart := scanner.TokenFullStart()
 				tokenEnd := scanner.TokenEnd()
 				startPos = tokenEnd
-				tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n))
+				flags := scanner.TokenFlags()
+				tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags))
 				scanner.Scan()
 			}
 
@@ -577,8 +659,9 @@ func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFi
 			tokenFullStart := scanner.TokenFullStart()
 			tokenStart := scanner.TokenStart()
 			tokenEnd := scanner.TokenEnd()
+			flags := scanner.TokenFlags()
 			if tokenStart == previousToken.End() {
-				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n)
+				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags)
 			}
 			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
 		}
@@ -632,4 +715,63 @@ func shouldSkipChild(node *ast.Node) bool {
 		node.Kind == ast.KindJSDocSignature ||
 		ast.IsJSDocLinkLike(node) ||
 		ast.IsJSDocTag(node)
+}
+
+// FindChildOfKind searches for a child node or token of the specified kind within a containing node.
+// This function scans through both AST nodes and intervening tokens to find the first match.
+func FindChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
+	lastNodePos := containingNode.Pos()
+	scan := scanner.GetScannerForSourceFile(sourceFile, lastNodePos)
+
+	var foundChild *ast.Node
+	visitNode := func(node *ast.Node) bool {
+		if node == nil || node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
+		// Look for child in preceding tokens.
+		startPos := lastNodePos
+		for startPos < node.Pos() {
+			tokenKind := scan.Token()
+			tokenFullStart := scan.TokenFullStart()
+			tokenEnd := scan.TokenEnd()
+			flags := scan.TokenFlags()
+			token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
+			if tokenKind == kind {
+				foundChild = token
+				return true
+			}
+			startPos = tokenEnd
+			scan.Scan()
+		}
+		if node.Kind == kind {
+			foundChild = node
+			return true
+		}
+
+		lastNodePos = node.End()
+		scan.ResetPos(lastNodePos)
+		return false
+	}
+
+	ast.ForEachChildAndJSDoc(containingNode, sourceFile, visitNode)
+
+	if foundChild != nil {
+		return foundChild
+	}
+
+	// Look for child in trailing tokens.
+	startPos := lastNodePos
+	for startPos < containingNode.End() {
+		tokenKind := scan.Token()
+		tokenFullStart := scan.TokenFullStart()
+		tokenEnd := scan.TokenEnd()
+		flags := scan.TokenFlags()
+		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode, flags)
+		if tokenKind == kind {
+			return token
+		}
+		startPos = tokenEnd
+		scan.Scan()
+	}
+	return nil
 }

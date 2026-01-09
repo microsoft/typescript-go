@@ -23,6 +23,7 @@ const x: { [sym: symbol]: (p: string) => void } = { [A]: s => s.length };
 
 
 //// [contextuallyTypedSymbolNamedProperties.js]
+"use strict";
 // Repros from #43628
 const A = Symbol("A");
 const B = Symbol("B");
@@ -34,7 +35,6 @@ const x = { [A]: s => s.length };
 
 
 //// [contextuallyTypedSymbolNamedProperties.d.ts]
-// Repros from #43628
 declare const A: unique symbol;
 declare const B: unique symbol;
 type Action = {

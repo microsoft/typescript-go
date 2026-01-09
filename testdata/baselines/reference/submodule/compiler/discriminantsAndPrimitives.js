@@ -83,6 +83,7 @@ else {
 
 
 //// [discriminantsAndPrimitives.js]
+// Repro from #10257 plus other tests
 function f1(x) {
     if (typeof x !== 'string') {
         switch (x.kind) {
@@ -115,12 +116,6 @@ function f4(x) {
         }
     }
 }
-// Repro from #31319
-var EnumTypeNode;
-(function (EnumTypeNode) {
-    EnumTypeNode["Pattern"] = "Pattern";
-    EnumTypeNode["Disjunction"] = "Disjunction";
-})(EnumTypeNode || (EnumTypeNode = {}));
 let n;
 if (n.type === "Disjunction") {
     n.alternatives.slice();

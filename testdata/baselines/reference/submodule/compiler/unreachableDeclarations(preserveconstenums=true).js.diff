@@ -1,53 +1,16 @@
 --- old.unreachableDeclarations(preserveconstenums=true).js
 +++ new.unreachableDeclarations(preserveconstenums=true).js
-@@= skipped -88, +88 lines =@@
-
-
- //// [unreachableDeclarations.js]
--"use strict";
- function func1() {
-     aFunc();
-     console.log(EnumA.Value);
--    console.log(0 /* EnumB.Value */);
-+    console.log(EnumB.Value);
-     return;
-     function aFunc() {
-         console.log(EnumA.Value);
--        console.log(0 /* EnumB.Value */);
-+        console.log(EnumB.Value);
-     }
-     let EnumA;
-     (function (EnumA) {
-@@= skipped -33, +32 lines =@@
- }
- function func3() {
-     aFunc();
--    console.log(0 /* EnumB.Value */);
-+    console.log(EnumB.Value);
-     return;
-     function aFunc() {
--        console.log(0 /* EnumB.Value */);
-+        console.log(EnumB.Value);
-     }
-     let EnumB;
-     (function (EnumB) {
-@@= skipped -17, +17 lines =@@
-     function aFunc() {
+@@= skipped -139, +139 lines =@@
          console.log(ClassA.Value);
      }
--    let ClassA = (() => {
--        class ClassA {
--        }
--        ClassA.Value = 1234;
--        return ClassA;
--    })();
-+    class ClassA {
+     class ClassA {
 +        static Value = 1234;
-+    }
+     }
+-    ClassA.Value = 1234;
  }
  function func5() {
      aFunc();
-@@= skipped -26, +23 lines =@@
+@@= skipped -22, +22 lines =@@
          Bar[Bar["A"] = 0] = "A";
      })(Bar || (Bar = {}));
      class Foo {

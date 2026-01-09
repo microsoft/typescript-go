@@ -8,8 +8,8 @@ import (
 )
 
 func TestIndexerReturnTypes1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Numeric {
     [x: number]: Date;
@@ -71,7 +71,8 @@ var /*13*/r13 = ty[1];
 var /*14*/r14 = ty['1'];
 var /*15*/r15 = ty2[1];
 var /*16*/r16 = ty2['1'];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var r1: Date", "")
 	f.VerifyQuickInfoAt(t, "2", "var r2: Date", "")
 	f.VerifyQuickInfoAt(t, "3", "var r3: RegExp", "")

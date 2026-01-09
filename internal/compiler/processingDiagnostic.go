@@ -23,13 +23,13 @@ type processingDiagnostic struct {
 	data any
 }
 
-func (d *processingDiagnostic) asFileIncludeReason() *fileIncludeReason {
-	return d.data.(*fileIncludeReason)
+func (d *processingDiagnostic) asFileIncludeReason() *FileIncludeReason {
+	return d.data.(*FileIncludeReason)
 }
 
 type includeExplainingDiagnostic struct {
 	file             tspath.Path
-	diagnosticReason *fileIncludeReason
+	diagnosticReason *FileIncludeReason
 	message          *diagnostics.Message
 	args             []any
 }
@@ -67,30 +67,30 @@ func (d *processingDiagnostic) toDiagnostic(program *Program) *ast.Diagnostic {
 
 func (d *processingDiagnostic) createDiagnosticExplainingFile(program *Program) *ast.Diagnostic {
 	diag := d.asIncludeExplainingDiagnostic()
-	var chain []*ast.Diagnostic
+	var includeDetails []*ast.Diagnostic
 	var relatedInfo []*ast.Diagnostic
 	var redirectInfo []*ast.Diagnostic
-	var preferredLocation *fileIncludeReason
-	var seenReasons collections.Set[*fileIncludeReason]
+	var preferredLocation *FileIncludeReason
+	var seenReasons collections.Set[*FileIncludeReason]
 	if diag.diagnosticReason.isReferencedFile() && !program.includeProcessor.getReferenceLocation(diag.diagnosticReason, program).isSynthetic {
 		preferredLocation = diag.diagnosticReason
 	}
 
-	processRelatedInfo := func(includeReason *fileIncludeReason) {
+	processRelatedInfo := func(includeReason *FileIncludeReason) {
 		if preferredLocation == nil && includeReason.isReferencedFile() && !program.includeProcessor.getReferenceLocation(includeReason, program).isSynthetic {
 			preferredLocation = includeReason
-		} else {
+		} else if preferredLocation != includeReason {
 			info := program.includeProcessor.getRelatedInfo(includeReason, program)
 			if info != nil {
 				relatedInfo = append(relatedInfo, info)
 			}
 		}
 	}
-	processInclude := func(includeReason *fileIncludeReason) {
+	processInclude := func(includeReason *FileIncludeReason) {
 		if !seenReasons.AddIfAbsent(includeReason) {
 			return
 		}
-		chain = append(chain, includeReason.toDiagnostic(program, false))
+		includeDetails = append(includeDetails, includeReason.toDiagnostic(program, false))
 		processRelatedInfo(includeReason)
 	}
 
@@ -98,7 +98,7 @@ func (d *processingDiagnostic) createDiagnosticExplainingFile(program *Program) 
 
 	if diag.file != "" {
 		reasons := program.includeProcessor.fileIncludeReasons[diag.file]
-		chain = make([]*ast.Diagnostic, 0, len(reasons))
+		includeDetails = make([]*ast.Diagnostic, 0, len(reasons))
 		for _, reason := range reasons {
 			processInclude(reason)
 		}
@@ -107,9 +107,10 @@ func (d *processingDiagnostic) createDiagnosticExplainingFile(program *Program) 
 	if diag.diagnosticReason != nil {
 		processInclude(diag.diagnosticReason)
 	}
-	if chain != nil && (preferredLocation == nil || seenReasons.Len() != 1) {
+	var chain []*ast.Diagnostic
+	if includeDetails != nil && (preferredLocation == nil || seenReasons.Len() != 1) {
 		fileReason := ast.NewCompilerDiagnostic(diagnostics.The_file_is_in_the_program_because_Colon)
-		fileReason.SetMessageChain(chain)
+		fileReason.SetMessageChain(includeDetails)
 		chain = []*ast.Diagnostic{fileReason}
 	}
 	if redirectInfo != nil {

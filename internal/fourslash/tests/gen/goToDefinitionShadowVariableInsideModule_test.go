@@ -8,13 +8,14 @@ import (
 )
 
 func TestGoToDefinitionShadowVariableInsideModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module shdModule {
     var /*shadowVariableDefinition*/shdVar;
     /*shadowVariableReference*/shdVar = 1;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "shadowVariableReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "shadowVariableReference")
 }

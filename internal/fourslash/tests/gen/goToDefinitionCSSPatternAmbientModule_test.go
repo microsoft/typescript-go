@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionCSSPatternAmbientModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: true
 // @Filename: index.css
@@ -21,6 +21,7 @@ declare module /*2b*/"*.css" {
 }
 // @Filename: index.ts
 import styles from [|/*1*/"./index.css"|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

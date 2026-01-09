@@ -8,17 +8,18 @@ import (
 )
 
 func TestFindAllRefsWithShorthandPropertyAssignment2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = ` var /*0*/dx = "Foo";
+	const content = `var /*0*/dx = "Foo";
 
- module M { export var /*1*/dx; }
- module M {
-    var z = 100;
-    export var y = { /*2*/dx, z };
- }
- M.y./*3*/dx;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+module M { export var /*1*/dx; }
+module M {
+   var z = 100;
+   export var y = { /*2*/dx, z };
+}
+M.y./*3*/dx;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2", "3")
 }

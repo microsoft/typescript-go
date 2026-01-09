@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOfVarInArrowExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IMap<T> {
     [key: string]: T;
@@ -25,7 +25,8 @@ each(categories, category => {
     });
 });
 function each<T>(items: T[], handler: (item: T) => void) { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "(property) a1: string", "")
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

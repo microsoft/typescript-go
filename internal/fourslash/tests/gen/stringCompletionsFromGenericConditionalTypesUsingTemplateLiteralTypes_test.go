@@ -9,8 +9,8 @@ import (
 )
 
 func TestStringCompletionsFromGenericConditionalTypesUsingTemplateLiteralTypes(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 type keyword = "foo" | "bar" | "baz"
@@ -39,7 +39,8 @@ type validate<def> = def extends string
 const parse = <def>(def: validate<def>) => def
 const shallowExpression = parse("foo|/*ts*/")
 const nestedExpression = parse({ prop: "foo|/*ts2*/" })`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"ts"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

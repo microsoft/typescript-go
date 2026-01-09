@@ -334,17 +334,8 @@ const distantRes = distant({
 
 
 //// [intraExpressionInferences.js]
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+"use strict";
+// Repros from #47599
 callIt({
     produce: () => 0,
     consume: n => n.toFixed()
@@ -457,7 +448,7 @@ branch({
         let test1 = u;
     }
 });
-Foo(__assign({
+Foo(Object.assign({
     a: (x) => 10,
     b: (arg) => {
         arg.toString();
@@ -517,37 +508,31 @@ const distantRes = distant({
 
 
 //// [intraExpressionInferences.d.ts]
-// Repros from #47599
 declare function callIt<T>(obj: {
     produce: (n: number) => T;
     consume: (x: T) => void;
 }): void;
 declare function callItT<T>(obj: [(n: number) => T, (x: T) => void]): void;
-// Repro from #25092
 interface MyInterface<T> {
     retrieveGeneric: (parameter: string) => T;
     operateWithGeneric: (generic: T) => string;
 }
 declare const inferTypeFn: <T>(generic: MyInterface<T>) => MyInterface<T>;
 declare const myGeneric: MyInterface<number>;
-// Repro #38623
 declare function make<M>(o: {
     mutations: M;
     action: (m: M) => void;
 }): void;
-// Repro from #38845
 declare function foo<A>(options: {
     a: A;
     b: (a: A) => void;
 }): void;
-// Repro from #38872
 type Chain<R1, R2> = {
     a(): R1;
     b(a: R1): R2;
     c(b: R2): void;
 };
 declare function test<R1, R2>(foo: Chain<R1, R2>): void;
-// Repro from #41712
 declare class Wrapper<T = any> {
     value?: T;
 }
@@ -563,7 +548,6 @@ type MappingComponent<I extends WrappedMap, O extends WrappedMap> = {
     map?: (inputs: Unwrap<I>) => Unwrap<O>;
 };
 declare function createMappingComponent<I extends WrappedMap, O extends WrappedMap>(def: MappingComponent<I, O>): void;
-// Repro from #48279
 declare function simplified<T>(props: {
     generator: () => T;
     receiver: (t: T) => any;
@@ -573,7 +557,6 @@ declare function whatIWant<T>(props: {
     receiver: (t: T) => any;
 }): void;
 declare function nonObject<T>(generator: (bob: any) => T, receiver: (t: T) => any): void;
-// Repro from #48466
 interface Opts<TParams, TDone, TMapped> {
     fetch: (params: TParams, foo: number) => TDone;
     map: (data: TDone) => TMapped;
@@ -583,7 +566,6 @@ interface Params {
     one: number;
     two: string;
 }
-// Repro from #45255
 declare const branch: <T, U extends T>(_: {
     test: T;
     if: (t: T) => t is U;

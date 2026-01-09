@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionAmbiants(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare var /*ambientVariableDefinition*/ambientVar;
 declare function /*ambientFunctionDefinition*/ambientFunction();
@@ -24,6 +24,7 @@ declare class ambientClass {
 var ambientClassVariable = new /*constructorReference*/ambientClass();
 ambientClass./*staticMethodReference*/method();
 ambientClassVariable./*instanceMethodReference*/method();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "ambientVariableReference", "ambientFunctionReference", "constructorReference", "staticMethodReference", "instanceMethodReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "ambientVariableReference", "ambientFunctionReference", "constructorReference", "staticMethodReference", "instanceMethodReference")
 }

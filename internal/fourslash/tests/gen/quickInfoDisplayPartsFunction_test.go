@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*1*/foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[]) {
 }
@@ -30,6 +30,7 @@ function /*8*/foowith3overload(a: any): any {
 /*12*/foowith3overload("hello");
 /*13*/foowith3overload(10);
 /*14*/foowith3overload(true);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

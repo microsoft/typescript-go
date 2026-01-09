@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnThis5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noImplicitThis: true
 const foo = {
@@ -32,6 +32,7 @@ class Foo {
         type X = typeof th/*6*/is;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

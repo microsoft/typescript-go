@@ -10,8 +10,8 @@ import (
 )
 
 func TestPathCompletionsPackageJsonImportsWildcard7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /package.json
@@ -25,7 +25,8 @@ func TestPathCompletionsPackageJsonImportsWildcard7(t *testing.T) {
 export const blah = 0;
 // @Filename: /index.mts
 import { } from "/**/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

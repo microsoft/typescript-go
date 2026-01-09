@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInTypedObjectLiteralsWithPartialPropertyNames2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface MyPoint {
     x1: number;
@@ -19,7 +19,8 @@ func TestCompletionListInTypedObjectLiteralsWithPartialPropertyNames2(t *testing
 var p15: MyPoint = {
     /**/x1: 0,
 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

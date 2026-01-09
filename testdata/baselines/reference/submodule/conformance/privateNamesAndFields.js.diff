@@ -1,14 +1,6 @@
 --- old.privateNamesAndFields.js
 +++ new.privateNamesAndFields.js
-@@= skipped -17, +17 lines =@@
-
-
- //// [privateNamesAndFields.js]
--"use strict";
- var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-     if (kind === "m") throw new TypeError("Private method is not writable");
-     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-@@= skipped -17, +16 lines =@@
+@@= skipped -34, +34 lines =@@
  _A_foo = new WeakMap();
  class B extends A {
      constructor() {

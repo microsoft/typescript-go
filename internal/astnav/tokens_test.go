@@ -20,7 +20,7 @@ import (
 )
 
 var testFiles = []string{
-	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
+	filepath.Join(repo.TypeScriptSubmodulePath(), "src/services/mapCode.ts"),
 }
 
 func TestGetTokenAtPosition(t *testing.T) {
@@ -41,6 +41,52 @@ func TestGetTokenAtPosition(t *testing.T) {
 				return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
 			},
 		)
+	})
+
+	t.Run("JSDoc type assertion", func(t *testing.T) {
+		t.Parallel()
+		fileText := `function foo(x) {
+    const s = /**@type {string}*/(x)
+}`
+		file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.js",
+			Path:     "/test.js",
+		}, fileText, core.ScriptKindJS)
+
+		// Position of 'x' inside the parenthesized expression (position 52)
+		position := 52
+
+		// This should not panic - it previously panicked with:
+		// "did not expect KindParenthesizedExpression to have KindIdentifier in its trivia"
+		token := astnav.GetTouchingPropertyName(file, position)
+		if token == nil {
+			t.Fatal("Expected to get a token, got nil")
+		}
+
+		// The function may return either the identifier itself or the containing
+		// parenthesized expression, depending on how the AST is structured
+		if token.Kind != ast.KindIdentifier && token.Kind != ast.KindParenthesizedExpression {
+			t.Errorf("Expected identifier or parenthesized expression, got %s", token.Kind)
+		}
+	})
+
+	t.Run("JSDoc type assertion with comment", func(t *testing.T) {
+		t.Parallel()
+		// Exact code from the issue report
+		fileText := `function foo(x) {
+    const s = /**@type {string}*/(x)  // Go-to-definition on x causes panic
+}`
+		file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.js",
+			Path:     "/test.js",
+		}, fileText, core.ScriptKindJS)
+
+		// Find position of 'x' in the type assertion
+		xPos := 52 // Position of 'x' in (x)
+
+		// This should not panic
+		token := astnav.GetTouchingPropertyName(file, xPos)
+		assert.Assert(t, token != nil, "Expected to get a token")
 	})
 
 	t.Run("pointer equality", func(t *testing.T) {
@@ -240,7 +286,7 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 }
 
 func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDiff, rng core.TextRange, position int) {
-	lines := file.LineMap()
+	lines := file.ECMALineMap()
 
 	tsTokenPos := position
 	goTokenPos := position

@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionsLiteralDirectlyInRestConstrainedToArrayType(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 
@@ -18,7 +18,8 @@ function fn<T extends ('value1' | 'value2' | 'value3')[]>(...values: T): T { ret
 
 const value1 = fn('/*1*/');
 const value2 = fn('value1', '/*2*/');`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

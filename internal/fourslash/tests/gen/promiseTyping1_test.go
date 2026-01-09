@@ -8,8 +8,8 @@ import (
 )
 
 func TestPromiseTyping1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IPromise<T> {
     then<U>(success: (value: T) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void ): IPromise<U>;
@@ -24,7 +24,8 @@ var p/*1*/2 = p1.then(function (x/*2*/x) {
 });
 p2.then(function (x/*3*/x) {
 } );`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var p2: IPromise<string>", "")
 	f.VerifyQuickInfoAt(t, "2", "(parameter) xx: string", "")
 	f.VerifyQuickInfoAt(t, "3", "(parameter) xx: string", "")

@@ -1,54 +1,18 @@
 --- old.jsDeclarationsExportForms.js
 +++ new.jsDeclarationsExportForms.js
-@@= skipped -110, +110 lines =@@
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.Foo = void 0;
--var cls_1 = require("./cls");
-+const cls_1 = require("./cls");
- Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return cls_1.Foo; } });
- //// [bat.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--var ns = require("./cls");
-+const ns = require("./cls");
- exports.default = ns;
- //// [ban.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.ns = void 0;
--var ns = require("./cls");
-+const ns = require("./cls");
- exports.ns = ns;
- //// [bol.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.classContainer = void 0;
--var ns = require("./cls");
-+const ns = require("./cls");
- exports.classContainer = ns;
- //// [cjs.js]
- const ns = require("./cls");
- module.exports = { ns };
- //// [cjs2.js]
- const ns = require("./cls");
-+export = ns;
+@@= skipped -236, +236 lines =@@
  module.exports = ns;
  //// [cjs3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  const ns = require("./cls");
 +export var ns = ns;
  module.exports.ns = ns;
  //// [cjs4.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  const ns = require("./cls");
 +export var names = ns;
  module.exports.names = ns;
  //// [includeAll.js]
  "use strict";
-@@= skipped -47, +54 lines =@@
+@@= skipped -20, +22 lines =@@
 
 
  //// [cls.d.ts]
@@ -93,13 +57,13 @@
  //// [cjs3.d.ts]
 -export { ns };
 -import ns = require("./cls");
-+export var ns = ns;
-+export {};
++declare const ns: typeof ns;
++export declare var ns: typeof ns;
  //// [cjs4.d.ts]
 -export { ns as names };
 -import ns = require("./cls");
-+export var names = ns;
-+export {};
++declare const ns: typeof ns;
++export declare var names: typeof ns;
  //// [includeAll.d.ts]
 -export {};
 +import "./cjs4";
@@ -119,9 +83,12 @@
 +
 +out/cjs.d.ts(1,15): error TS2502: 'ns' is referenced directly or indirectly in its own type annotation.
 +out/cjs2.d.ts(1,10): error TS2304: Cannot find name 'ns'.
-+out/cjs3.d.ts(1,17): error TS1039: Initializers are not allowed in ambient contexts.
-+out/cjs4.d.ts(1,20): error TS1039: Initializers are not allowed in ambient contexts.
-+out/cjs4.d.ts(1,20): error TS2304: Cannot find name 'ns'.
++out/cjs3.d.ts(1,15): error TS2395: Individual declarations in merged declaration 'ns' must be all exported or all local.
++out/cjs3.d.ts(1,15): error TS2451: Cannot redeclare block-scoped variable 'ns'.
++out/cjs3.d.ts(2,20): error TS2395: Individual declarations in merged declaration 'ns' must be all exported or all local.
++out/cjs3.d.ts(2,20): error TS2451: Cannot redeclare block-scoped variable 'ns'.
++out/cjs3.d.ts(2,20): error TS2502: 'ns' is referenced directly or indirectly in its own type annotation.
++out/cjs4.d.ts(1,15): error TS2502: 'ns' is referenced directly or indirectly in its own type annotation.
 +
 +
 +==== out/cls.d.ts (0 errors) ====
@@ -168,19 +135,25 @@
 +             ~~
 +!!! error TS2304: Cannot find name 'ns'.
 +    
-+==== out/cjs3.d.ts (1 errors) ====
-+    export var ns = ns;
-+                    ~~
-+!!! error TS1039: Initializers are not allowed in ambient contexts.
-+    export {};
++==== out/cjs3.d.ts (5 errors) ====
++    declare const ns: typeof ns;
++                  ~~
++!!! error TS2395: Individual declarations in merged declaration 'ns' must be all exported or all local.
++                  ~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'ns'.
++    export declare var ns: typeof ns;
++                       ~~
++!!! error TS2395: Individual declarations in merged declaration 'ns' must be all exported or all local.
++                       ~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'ns'.
++                       ~~
++!!! error TS2502: 'ns' is referenced directly or indirectly in its own type annotation.
 +    
-+==== out/cjs4.d.ts (2 errors) ====
-+    export var names = ns;
-+                       ~~
-+!!! error TS1039: Initializers are not allowed in ambient contexts.
-+                       ~~
-+!!! error TS2304: Cannot find name 'ns'.
-+    export {};
++==== out/cjs4.d.ts (1 errors) ====
++    declare const ns: typeof ns;
++                  ~~
++!!! error TS2502: 'ns' is referenced directly or indirectly in its own type annotation.
++    export declare var names: typeof ns;
 +    
 +==== out/includeAll.d.ts (0 errors) ====
 +    import "./cjs4";

@@ -17,7 +17,6 @@ class A {
     constructor() {
         _A_foo.set(this, 1);
     }
-    @dec // Error
     #bar() { }
 }
 _A_foo = new WeakMap();

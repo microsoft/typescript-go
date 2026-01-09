@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsWithStringReplacementMode1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface TFunction {
     (_: 'login.title', __?: {}): string;
@@ -33,7 +33,8 @@ func TestCompletionsWithStringReplacementMode1(t *testing.T) {
 }
 const f: TFunction = (() => {}) as any;
 f('[|login./**/|]')`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

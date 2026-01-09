@@ -2,13 +2,16 @@ package core
 
 import (
 	"iter"
+	"maps"
 	"math"
 	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -157,7 +160,7 @@ func Same[T any](s1 []T, s2 []T) bool {
 }
 
 func Some[T any](slice []T, f func(T) bool) bool {
-	for _, value := range slice {
+	for _, value := range slice { //nolint:modernize
 		if f(value) {
 			return true
 		}
@@ -172,6 +175,17 @@ func Every[T any](slice []T, f func(T) bool) bool {
 		}
 	}
 	return true
+}
+
+func Or[T any](funcs ...func(T) bool) func(T) bool {
+	return func(input T) bool {
+		for _, f := range funcs {
+			if f(input) {
+				return true
+			}
+		}
+		return false
+	}
 }
 
 func Find[T any](slice []T, f func(T) bool) T {
@@ -349,18 +363,14 @@ func Coalesce[T *U, U any](a T, b T) T {
 	}
 }
 
-// Returns the first element that is not `nil`; CoalesceList(a, b, c) is roughly analogous to `a ?? b ?? c` in JS, except that it
-// non-shortcutting, so it is advised to only use a constant or precomputed value for non-first values in the list
-func CoalesceList[T *U, U any](a ...T) T {
-	return FirstNonNil(a, func(t T) T { return t })
-}
+type ECMALineStarts []TextPos
 
-func ComputeLineStarts(text string) []TextPos {
+func ComputeECMALineStarts(text string) ECMALineStarts {
 	result := make([]TextPos, 0, strings.Count(text, "\n")+1)
-	return slices.AppendSeq(result, ComputeLineStartsSeq(text))
+	return slices.AppendSeq(result, ComputeECMALineStartsSeq(text))
 }
 
-func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
+func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 	return func(yield func(TextPos) bool) {
 		textLen := TextPos(len(text))
 		var pos TextPos
@@ -397,12 +407,9 @@ func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
 }
 
 func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
-	line = sort.Search(len(lineStarts), func(i int) bool {
+	line = max(sort.Search(len(lineStarts), func(i int) bool {
 		return int(lineStarts[i]) > position
-	}) - 1
-	if line < 0 {
-		line = 0
-	}
+	})-1, 0)
 	return line, position - int(lineStarts[line])
 }
 
@@ -467,6 +474,8 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
 	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
+	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
+	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
 	for _, candidate := range candidates {
 		candidateName := getName(candidate)
@@ -481,11 +490,11 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
 			}
-			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1)
+			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance-0.1)
 			if distance < 0 {
 				continue
 			}
-			// Debug.assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
+			debug.Assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
 			bestDistance = distance
 			bestCandidate = candidate
 		}
@@ -493,9 +502,25 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	return bestCandidate
 }
 
-func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
-	previous := make([]float64, len(s2)+1)
-	current := make([]float64, len(s2)+1)
+type levenshteinBuffers struct {
+	previous []float64
+	current  []float64
+}
+
+var levenshteinBuffersPool = sync.Pool{
+	New: func() any {
+		return &levenshteinBuffers{}
+	},
+}
+
+func levenshteinWithMax(buffers *levenshteinBuffers, s1 []rune, s2 []rune, maxValue float64) float64 {
+	bufferSize := len(s2) + 1
+	buffers.previous = slices.Grow(buffers.previous[:0], bufferSize)[:bufferSize]
+	buffers.current = slices.Grow(buffers.current[:0], bufferSize)[:bufferSize]
+
+	previous := buffers.previous
+	current := buffers.current
+
 	big := maxValue + 0.01
 	for i := range previous {
 		previous[i] = float64(i)
@@ -586,4 +611,86 @@ func ConcatenateSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 			}
 		}
 	}
+}
+
+func comparableValuesEqual[T comparable](a, b T) bool {
+	return a == b
+}
+
+func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
+}
+
+func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	for k, v2 := range m2 {
+		if _, ok := m1[k]; !ok {
+			onAdded(k, v2)
+		}
+	}
+	for k, v1 := range m1 {
+		if v2, ok := m2[k]; ok {
+			if !equalValues(v1, v2) {
+				onChanged(k, v1, v2)
+			}
+		} else {
+			onRemoved(k, v1)
+		}
+	}
+}
+
+// CopyMapInto is maps.Copy, unless dst is nil, in which case it clones and returns src.
+// Use CopyMapInto anywhere you would use maps.Copy preceded by a nil check and map initialization.
+func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) map[K]V {
+	if dst == nil {
+		return maps.Clone(src)
+	}
+	maps.Copy(dst, src)
+	return dst
+}
+
+func Deduplicate[T comparable](slice []T) []T {
+	if len(slice) > 1 {
+		for i, value := range slice {
+			if slices.Contains(slice[:i], value) {
+				result := slices.Clone(slice[:i])
+				for i++; i < len(slice); i++ {
+					value = slice[i]
+					if !slices.Contains(result, value) {
+						result = append(result, value)
+					}
+				}
+				return result
+			}
+		}
+	}
+	return slice
+}
+
+func DeduplicateSorted[T any](slice []T, isEqual func(a, b T) bool) []T {
+	if len(slice) == 0 {
+		return slice
+	}
+	last := slice[0]
+	deduplicated := slice[:1]
+	for i := 1; i < len(slice); i++ {
+		next := slice[i]
+		if isEqual(last, next) {
+			continue
+		}
+
+		deduplicated = append(deduplicated, next)
+		last = next
+	}
+
+	return deduplicated
+}
+
+// CompareBooleans treats true as greater than false.
+func CompareBooleans(a, b bool) int {
+	if a && !b {
+		return 1
+	} else if !a && b {
+		return -1
+	}
+	return 0
 }

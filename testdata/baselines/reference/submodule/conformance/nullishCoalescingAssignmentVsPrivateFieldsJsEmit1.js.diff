@@ -1,0 +1,13 @@
+--- old.nullishCoalescingAssignmentVsPrivateFieldsJsEmit1.js
++++ new.nullishCoalescingAssignmentVsPrivateFieldsJsEmit1.js
+@@= skipped -38, +38 lines =@@
+         __classPrivateFieldSet(this, _Cls_privateProp, __classPrivateFieldGet(this, _Cls_privateProp, "f") ?? (false ? neverThis() : 20), "f");
+     }
+ }
+-_Cls_privateProp = new WeakMap();
++_Cls_privateProp = new WeakMap( // https://github.com/microsoft/TypeScript/issues/61109
++// https://github.com/microsoft/TypeScript/issues/61109
++);
+ function neverThis() {
+     throw new Error("This should really really never happen!");
+ }

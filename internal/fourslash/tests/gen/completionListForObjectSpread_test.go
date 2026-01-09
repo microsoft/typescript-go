@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionListForObjectSpread(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let o = { a: 1, b: 'no' }
 let o2 = { b: 'yes', c: true }
@@ -32,7 +32,8 @@ let spreadUndefined: { a: number } =
     { a: 7, ...undefined }
 spreadNull./*3*/a;
 spreadUndefined./*4*/a;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -11,8 +11,8 @@ import (
 )
 
 func TestJsdocTypedefTagTypeExpressionCompletion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     age: number;
@@ -43,7 +43,8 @@ Foo./*valueMemberOfFoo*/;
   * @type { {/*propertyName*/ageX: number} }
   */
 var y;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "type1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

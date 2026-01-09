@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionScriptImportServer(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/scriptThing.ts
 /*1d*/console.log("woooo side effects")
@@ -21,6 +21,8 @@ func TestGoToDefinitionScriptImportServer(t *testing.T) {
 import [|/*1*/"./scriptThing"|];
 import [|/*2*/"./stylez.css"|];
 import [|/*3*/"./foo.txt"|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1", "2", "3")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
+	f.VerifyBaselineGoToDefinition(t, true, "1", "2", "3")
 }

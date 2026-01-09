@@ -11,21 +11,22 @@ import (
 )
 
 func TestGetJavaScriptGlobalCompletions1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
- function f() {
-     // helloWorld leaks from here into the global space?
-     if (helloWorld) {
-         return 3;
-     }
-     return 5;
- }
+function f() {
+    // helloWorld leaks from here into the global space?
+    if (helloWorld) {
+        return 3;
+    }
+    return 5;
+}
 
- hello/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+hello/**/`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

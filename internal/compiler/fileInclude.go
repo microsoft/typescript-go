@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -28,7 +29,7 @@ const (
 	fileIncludeKindAutomaticTypeDirectiveFile
 )
 
-type fileIncludeReason struct {
+type FileIncludeReason struct {
 	kind fileIncludeKind
 	data any
 
@@ -57,7 +58,11 @@ type referenceFileLocation struct {
 
 func (r *referenceFileLocation) text() string {
 	if r.node != nil {
-		return r.node.Text()
+		if !ast.NodeIsSynthesized(r.node) {
+			return r.file.Text()[scanner.SkipTrivia(r.file.Text(), r.node.Loc.Pos()):r.node.End()]
+		} else {
+			return fmt.Sprintf(`"%s"`, r.node.Text())
+		}
 	} else {
 		return r.file.Text()[r.ref.Pos():r.ref.End()]
 	}
@@ -76,28 +81,28 @@ type automaticTypeDirectiveFileData struct {
 	packageId     module.PackageId
 }
 
-func (r *fileIncludeReason) asIndex() int {
+func (r *FileIncludeReason) asIndex() int {
 	return r.data.(int)
 }
 
-func (r *fileIncludeReason) asLibFileIndex() (int, bool) {
+func (r *FileIncludeReason) asLibFileIndex() (int, bool) {
 	index, ok := r.data.(int)
 	return index, ok
 }
 
-func (r *fileIncludeReason) isReferencedFile() bool {
+func (r *FileIncludeReason) isReferencedFile() bool {
 	return r != nil && r.kind <= fileIncludeKindLibReferenceDirective
 }
 
-func (r *fileIncludeReason) asReferencedFileData() *referencedFileData {
+func (r *FileIncludeReason) asReferencedFileData() *referencedFileData {
 	return r.data.(*referencedFileData)
 }
 
-func (r *fileIncludeReason) asAutomaticTypeDirectiveFileData() *automaticTypeDirectiveFileData {
+func (r *FileIncludeReason) asAutomaticTypeDirectiveFileData() *automaticTypeDirectiveFileData {
 	return r.data.(*automaticTypeDirectiveFileData)
 }
 
-func (r *fileIncludeReason) getReferencedLocation(program *Program) *referenceFileLocation {
+func (r *FileIncludeReason) getReferencedLocation(program *Program) *referenceFileLocation {
 	ref := r.asReferencedFileData()
 	file := program.GetSourceFileByPath(ref.file)
 	switch r.kind {
@@ -148,7 +153,7 @@ func (r *fileIncludeReason) getReferencedLocation(program *Program) *referenceFi
 	}
 }
 
-func (r *fileIncludeReason) toDiagnostic(program *Program, relativeFileName bool) *ast.Diagnostic {
+func (r *FileIncludeReason) toDiagnostic(program *Program, relativeFileName bool) *ast.Diagnostic {
 	if relativeFileName {
 		r.relativeFileNameDiagOnce.Do(func() {
 			r.relativeFileNameDiag = r.computeDiagnostic(program, func(fileName string) string {
@@ -164,7 +169,7 @@ func (r *fileIncludeReason) toDiagnostic(program *Program, relativeFileName bool
 	}
 }
 
-func (r *fileIncludeReason) computeDiagnostic(program *Program, toFileName func(string) string) *ast.Diagnostic {
+func (r *FileIncludeReason) computeDiagnostic(program *Program, toFileName func(string) string) *ast.Diagnostic {
 	if r.isReferencedFile() {
 		return r.computeReferenceFileDiagnostic(program, toFileName)
 	}
@@ -224,7 +229,7 @@ func (r *fileIncludeReason) computeDiagnostic(program *Program, toFileName func(
 	}
 }
 
-func (r *fileIncludeReason) computeReferenceFileDiagnostic(program *Program, toFileName func(string) string) *ast.Diagnostic {
+func (r *FileIncludeReason) computeReferenceFileDiagnostic(program *Program, toFileName func(string) string) *ast.Diagnostic {
 	referenceLocation := program.includeProcessor.getReferenceLocation(r, program)
 	referenceText := referenceLocation.text()
 	switch r.kind {
@@ -263,7 +268,7 @@ func (r *fileIncludeReason) computeReferenceFileDiagnostic(program *Program, toF
 	}
 }
 
-func (r *fileIncludeReason) toRelatedInfo(program *Program) *ast.Diagnostic {
+func (r *FileIncludeReason) toRelatedInfo(program *Program) *ast.Diagnostic {
 	if r.isReferencedFile() {
 		return r.computeReferenceFileRelatedInfo(program)
 	}
@@ -316,7 +321,7 @@ func (r *fileIncludeReason) toRelatedInfo(program *Program) *ast.Diagnostic {
 	return nil
 }
 
-func (r *fileIncludeReason) computeReferenceFileRelatedInfo(program *Program) *ast.Diagnostic {
+func (r *FileIncludeReason) computeReferenceFileRelatedInfo(program *Program) *ast.Diagnostic {
 	referenceLocation := program.includeProcessor.getReferenceLocation(r, program)
 	if referenceLocation.isSynthetic {
 		return nil

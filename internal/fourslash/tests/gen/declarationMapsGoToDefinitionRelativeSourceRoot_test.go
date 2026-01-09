@@ -8,8 +8,8 @@ import (
 )
 
 func TestDeclarationMapsGoToDefinitionRelativeSourceRoot(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: index.ts
 export class Foo {
@@ -48,6 +48,8 @@ export interface SomeType {
 import * as mod from "./out/indexdef";
 const instance = new mod.Foo();
 instance.[|/*1*/methodName|]({member: 12});`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.MarkTestAsStradaServer()
+	f.VerifyBaselineGoToDefinition(t, true, "1")
 }

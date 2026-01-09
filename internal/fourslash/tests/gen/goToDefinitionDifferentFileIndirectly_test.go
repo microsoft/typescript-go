@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionDifferentFileIndirectly(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: Remote2.ts
 var /*remoteVariableDefinition*/rem2Var;
@@ -29,6 +29,7 @@ module remMod { export var foo; }
 var rem2foo = new /*remoteClassReference*/rem2Cls();
 class rem2fooCls implements /*remoteInterfaceReference*/rem2Int { }
 var rem2fooVar = /*remoteModuleReference*/rem2Mod.foo;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "remoteVariableReference", "remoteFunctionReference", "remoteClassReference", "remoteInterfaceReference", "remoteModuleReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "remoteVariableReference", "remoteFunctionReference", "remoteClassReference", "remoteInterfaceReference", "remoteModuleReference")
 }

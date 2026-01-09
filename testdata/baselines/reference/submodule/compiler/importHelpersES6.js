@@ -23,16 +23,15 @@ export declare function __classPrivateFieldIn(a: any, b: any): boolean;
 
 
 //// [a.js]
-import { __classPrivateFieldGet, __classPrivateFieldSet } from "tslib";
-var _A_x;
-@dec
-export class A {
-    constructor() {
-        _A_x.set(this, 1);
-    }
-    async f() { __classPrivateFieldSet(this, _A_x, await __classPrivateFieldGet(this, _A_x, "f"), "f"); }
+import { __decorate } from "tslib";
+let A = class A {
+    #x = 1;
+    async f() { this.#x = await this.#x; }
     g(u) { return #x in u; }
-}
-_A_x = new WeakMap();
+};
+A = __decorate([
+    dec
+], A);
+export { A };
 const o = { a: 1 };
 const y = Object.assign({}, o);

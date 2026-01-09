@@ -10,10 +10,10 @@ interface JSONSchema4 {
 
 
 //// [conditionalTypesASI.js]
+// Repro from #21637
 
 
 //// [conditionalTypesASI.d.ts]
-// Repro from #21637
 interface JSONSchema4 {
     a?: number;
     extends?: string | string[];

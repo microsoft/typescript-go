@@ -8,8 +8,8 @@ import (
 )
 
 func TestDeprecatedInheritedJSDocOverload(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface PartialObserver<T> {}
 interface Subscription {}
@@ -36,6 +36,7 @@ declare const a: ThingWithDeprecations<void>
 a.subscribe/**/(() => {
   console.log('something happened');
 });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

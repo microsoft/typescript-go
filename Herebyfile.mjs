@@ -57,6 +57,7 @@ const { values: rawOptions } = parseArgs({
         tests: { type: "string", short: "t" },
         fix: { type: "boolean" },
         debug: { type: "boolean" },
+        dirty: { type: "boolean" },
 
         insiders: { type: "boolean" },
 
@@ -176,6 +177,7 @@ async function generateLibs(out) {
 
 export const lib = task({
     name: "lib",
+    description: "Copies the libs to built/local.",
     run: () => generateLibs(builtLocal),
 });
 
@@ -189,11 +191,12 @@ export const lib = task({
 function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
-    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${goBuildTags("noembed")} -o ${out} ./cmd/tsgo`;
+    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "release")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
     name: "tsgo:build",
+    description: "Builds the tsgo binary.",
     run: async () => {
         await buildTsgo();
     },
@@ -216,6 +219,7 @@ export const build = task({
 
 export const buildWatch = task({
     name: "build:watch",
+    description: "Builds the tsgo binary and watches for changes.",
     run: async () => {
         await watchDebounced("build:watch", async (paths, abortSignal) => {
             let libsChanged = false;
@@ -263,9 +267,10 @@ export const cleanBuilt = task({
 
 export const generate = task({
     name: "generate",
+    description: "Runs go generate on the project.",
     run: async () => {
         assertTypeScriptCloned();
-        await $`go generate ./...`;
+        await $`go generate -v ./...`;
     },
 });
 
@@ -321,11 +326,18 @@ function goTest(taskName) {
 
 async function runTests() {
     warnIfTypeScriptSubmoduleNotCloned();
+
+    if (!options.dirty) {
+        await rimraf(localBaseline);
+        await fs.promises.mkdir(localBaseline, { recursive: true });
+    }
+
     await $test`${gotestsum("tests")} ./... ${isCI ? ["--timeout=45m"] : []}`;
 }
 
 export const test = task({
     name: "test",
+    description: "Runs all tests. This is the most typical test task to need.",
     run: runTests,
 });
 
@@ -337,6 +349,7 @@ async function runTestBenchmarks() {
 
 export const testBenchmarks = task({
     name: "test:benchmarks",
+    description: "Runs all benchmarks.",
     run: runTestBenchmarks,
 });
 
@@ -350,11 +363,13 @@ async function runTestAPI() {
 
 export const testTools = task({
     name: "test:tools",
+    description: "Runs all tests in the _tools module.",
     run: runTestTools,
 });
 
 export const buildAPITests = task({
     name: "build:api:test",
+    description: "Builds the @typescript/api tests.",
     run: async () => {
         await $`npm run -w @typescript/api build:test`;
     },
@@ -362,12 +377,14 @@ export const buildAPITests = task({
 
 export const testAPI = task({
     name: "test:api",
+    description: "Runs the @typescript/api tests.",
     dependencies: [tsgo, buildAPITests],
     run: runTestAPI,
 });
 
 export const testAll = task({
     name: "test:all",
+    description: "Runs ALL tests in the repo, including benchmarks, _tools, and the API tests.",
     dependencies: [tsgo, buildAPITests],
     run: async () => {
         // Prevent interleaving by running these directly instead of in parallel.
@@ -435,6 +452,7 @@ const buildCustomLinter = memoize(async () => {
 
 export const lint = task({
     name: "lint",
+    description: "Runs golangci-lint.",
     run: async () => {
         await buildCustomLinter();
 
@@ -455,6 +473,7 @@ export const lint = task({
 
 export const installTools = task({
     name: "install-tools",
+    description: "Installs optional tools for developing within the repo.",
     run: async () => {
         await Promise.all([
             ...[...tools].map(([tool, version]) => $`go install ${tool}${version ? `@${version}` : ""}`),
@@ -465,6 +484,7 @@ export const installTools = task({
 
 export const format = task({
     name: "format",
+    description: "Formats the repo.",
     run: async () => {
         await $`dprint fmt`;
     },
@@ -472,6 +492,7 @@ export const format = task({
 
 export const checkFormat = task({
     name: "check:format",
+    description: "Checks that the repo is formatted.",
     run: async () => {
         await $`dprint check`;
     },
@@ -506,10 +527,13 @@ function baselineAcceptTask(localBaseline, refBaseline) {
     };
 }
 
+const localBaseline = "testdata/baselines/local/";
+const refBaseline = "testdata/baselines/reference/";
+
 export const baselineAccept = task({
     name: "baseline-accept",
-    description: "Makes the most recent test results the new baseline, overwriting the old baseline",
-    run: baselineAcceptTask("testdata/baselines/local/", "testdata/baselines/reference/"),
+    description: "Makes the most recent test results the new baseline, overwriting the old baseline.",
+    run: baselineAcceptTask(localBaseline, refBaseline),
 });
 
 /**
@@ -728,6 +752,7 @@ const getSignTempDir = memoize(async () => {
 
 const cleanSignTempDirectory = task({
     name: "clean:sign-tmp",
+    hiddenFromTaskList: true,
     run: () => rimraf(builtSignTmp),
 });
 
@@ -736,15 +761,16 @@ let signCount = 0;
 /**
  * @typedef {{
  *   SignFileRecordList: {
- *     SignFileList: { SrcPath: string; DstPath: string | null; }[];
+ *     SignFileList: { SrcPath: string; DstPath: string | null }[];
  *     Certs: Cert;
+ *     MacAppName: string | undefined
  *   }[]
  * }} DDSignFileList
  *
  * @param {DDSignFileList} filelist
  */
-async function sign(filelist) {
-    const data = JSON.stringify(filelist, undefined, 4);
+async function sign(filelist, unchangedOutputOkay = false) {
+    let data = JSON.stringify(filelist, undefined, 4);
     console.log("filelist:", data);
 
     if (!process.env.MBSIGN_APPFOLDER) {
@@ -787,6 +813,71 @@ async function sign(filelist) {
         return;
     }
 
+    const signingWorkaround = true;
+
+    /** @type {{ source: string; target: string }[]} */
+    const signingWorkaroundFiles = [];
+
+    if (signingWorkaround) {
+        // DstPath is currently broken in the signing tool.
+        // Copy all of the files to a new tempdir and then leave DstPath unset
+        // so that it's overwritten, then move the file to the destination.
+        console.log("Working around DstPath bug");
+
+        /** @type {DDSignFileList} */
+        const newFileList = {
+            SignFileRecordList: filelist.SignFileRecordList.map(list => {
+                return {
+                    Certs: list.Certs,
+                    SignFileList: list.SignFileList.map(file => {
+                        const dstPath = file.DstPath;
+                        if (dstPath === null) {
+                            return file;
+                        }
+
+                        const src = file.SrcPath;
+                        // File extensions must be preserved; use a prefix.
+                        const dstPathTemp = `${path.dirname(src)}/signing-temp-${path.basename(src)}`;
+
+                        console.log(`Copying: ${src} -> ${dstPathTemp}`);
+                        fs.cpSync(src, dstPathTemp);
+
+                        signingWorkaroundFiles.push({ source: dstPathTemp, target: dstPath });
+
+                        return {
+                            SrcPath: dstPathTemp,
+                            DstPath: null,
+                        };
+                    }),
+                    MacAppName: list.MacAppName,
+                };
+            }),
+        };
+
+        data = JSON.stringify(newFileList, undefined, 4);
+        console.log("new filelist:", data);
+    }
+
+    /** @type {Map<string, string>} */
+    const srcHashes = new Map();
+
+    for (const record of filelist.SignFileRecordList) {
+        for (const file of record.SignFileList) {
+            const src = file.SrcPath;
+            const dst = file.DstPath ?? src;
+
+            if (!fs.existsSync(src)) {
+                throw new Error(`Source file does not exist: ${src}`);
+            }
+
+            const hash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex");
+            srcHashes.set(src, hash);
+
+            console.log(`Will sign ${src} -> ${dst}`);
+            console.log(`  sha256: ${hash}`);
+        }
+    }
+
     const tmp = await getSignTempDir();
     const filelistPath = path.resolve(tmp, `signing-filelist-${signCount++}.json`);
     await fs.promises.writeFile(filelistPath, data);
@@ -798,6 +889,61 @@ async function sign(filelist) {
     }
     finally {
         await fs.promises.unlink(filelistPath);
+    }
+
+    if (signingWorkaround) {
+        // Now, copy the files back.
+        for (const { source, target } of signingWorkaroundFiles) {
+            console.log(`Moving signed file: ${source} -> ${target}`);
+            await fs.promises.rename(source, target);
+        }
+    }
+
+    /** @type {string[]} */
+    let failures = [];
+
+    for (const record of filelist.SignFileRecordList) {
+        for (const file of record.SignFileList) {
+            const src = file.SrcPath;
+            const dst = file.DstPath ?? src;
+
+            if (!fs.existsSync(dst)) {
+                failures.push(`Signed file does not exist: ${dst}`);
+                const newSrcHash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex");
+                const oldSrcHash = srcHashes.get(src);
+                assert(oldSrcHash);
+                if (oldSrcHash !== newSrcHash) {
+                    failures.push(`  Source file changed during signing: ${src}\n    before: ${oldSrcHash}\n    after:  ${newSrcHash}`);
+                }
+                continue;
+            }
+
+            const srcHash = srcHashes.get(src);
+            assert(srcHash);
+            const dstHash = crypto.createHash("sha256").update(fs.readFileSync(dst)).digest("hex");
+            if (srcHash === dstHash) {
+                const message = `Signed file is identical to source file (not signed?): ${src} -> ${dst}\n  sha256: ${dstHash}`;
+                if (unchangedOutputOkay) {
+                    console.log(message);
+                }
+                else {
+                    failures.push(message);
+                    continue;
+                }
+            }
+
+            if (src === dst) {
+                console.log(`Signed ${src}`);
+            }
+            else {
+                console.log(`Signed ${src} -> ${dst}`);
+            }
+            console.log(`  sha256: ${dstHash}`);
+        }
+    }
+
+    if (failures.length) {
+        throw new Error("Some files failed to sign:\n" + failures.map(f => " - " + f).join("\n"));
     }
 }
 
@@ -941,6 +1087,7 @@ export const buildNativePreviewPackages = task({
         const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
         inputPackageJson.version = getVersion();
         delete inputPackageJson.private;
+        delete inputPackageJson.engines;
 
         const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
         inputPackageJson.gitHead = gitHead;
@@ -990,7 +1137,7 @@ export const buildNativePreviewPackages = task({
             const readme = [
                 `# \`${npmPackageName}\``,
                 "",
-                `This package provides ${nodeOs}-${nodeArch} support for [${packageJson.name}](https://www.npmjs.com/package/${packageJson.name}).`,
+                `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
             ];
 
             fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
@@ -1050,12 +1197,14 @@ export const signNativePreviewPackages = task({
                     filelist.SignFileRecordList.push({
                         SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
                         Certs: cert,
+                        MacAppName: undefined,
                     });
                     break;
                 case "LinuxSign":
                     filelist.SignFileRecordList.push({
                         SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig" })),
                         Certs: cert,
+                        MacAppName: undefined,
                     });
                     break;
                 case "MacDeveloperHarden":
@@ -1080,6 +1229,7 @@ export const signNativePreviewPackages = task({
                     filelist.SignFileRecordList.push({
                         SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath })),
                         Certs: cert,
+                        MacAppName: undefined, // MacAppName is only for notarization
                     });
                     break;
                 default:
@@ -1100,11 +1250,14 @@ export const signNativePreviewPackages = task({
                     {
                         SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
                         Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
+                        MacAppName: "MicrosoftTypeScript",
                     },
                 ],
             };
 
-            await sign(notarizeFilelist);
+            // Notarizing does not change the file, it just sends it to Apple, so ignore the case
+            // where the input files are the same as the output files.
+            await sign(notarizeFilelist, /*unchangedOutputOkay*/ true);
 
             // Finally, unzip the notarized files and move them back to their original locations.
 
@@ -1219,6 +1372,7 @@ export const signNativePreviewExtensions = task({
                 {
                     SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
                     Certs: "VSCodePublisher",
+                    MacAppName: undefined,
                 },
             ],
         });
@@ -1227,6 +1381,7 @@ export const signNativePreviewExtensions = task({
 
 export const nativePreview = task({
     name: "native-preview",
+    hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [packNativePreviewPackages, packNativePreviewExtensions],
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
@@ -1235,6 +1390,7 @@ export const nativePreview = task({
 
 export const installExtension = task({
     name: "install-extension",
+    hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [packNativePreviewExtensions],
     run: async () => {
         if (options.forRelease) {

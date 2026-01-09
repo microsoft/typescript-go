@@ -406,6 +406,7 @@ function StaticSetter() {
 
 
 //// [privateNameDuplicateField.js]
+"use strict";
 function Field() {
     var _A_Field_Field_foo, _A_Field_Field_foo_1, _A_Field_Method_foo, _A_Field_Getter_foo, _A_Field_Setter_foo, _A_Field_StaticField_foo, _A_Field_StaticMethod_foo, _A_Field_StaticGetter_foo, _A_Field_StaticSetter_foo;
     // Error

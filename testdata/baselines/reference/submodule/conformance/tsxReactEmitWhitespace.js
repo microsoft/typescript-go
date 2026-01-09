@@ -73,22 +73,25 @@ var p = 0;
 // Emit "   "
 React.createElement("div", null, "   ");
 // Emit "  ", p, "   "
-React.createElement("div", null, "  ", p, "    ");
+React.createElement("div", null,
+    "  ",
+    p,
+    "    ");
 // Emit only p
 React.createElement("div", null, p);
 // Emit only p
 React.createElement("div", null, p);
 // Emit "  3"
-React.createElement("div", null, "  ");
+React.createElement("div", null, "  3");
 // Emit "  3  "
 React.createElement("div", null, "  3  ");
 // Emit "3"
-React.createElement("div", null);
+React.createElement("div", null, "3");
 // Emit no args
 React.createElement("div", null);
 // Emit "foo bar"
-React.createElement("div", null, "fo ba");
+React.createElement("div", null, "foo bar");
 // Emit "hello\\ world"
-React.createElement("div", null, "hello worl");
+React.createElement("div", null, "hello\\ world");
 // Emit "  a b  c d  "
-React.createElement("div", null, "   b   d  ");
+React.createElement("div", null, "  a b  c d  ");

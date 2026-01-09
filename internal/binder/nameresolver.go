@@ -174,7 +174,7 @@ loop:
 				}
 			}
 		case ast.KindExpressionWithTypeArguments:
-			if lastLocation == location.AsExpressionWithTypeArguments().Expression && ast.IsHeritageClause(location.Parent) && location.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword {
+			if lastLocation == location.Expression() && ast.IsHeritageClause(location.Parent) && location.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword {
 				container := location.Parent.Parent
 				if ast.IsClassLike(container) {
 					result = r.lookup(r.getSymbolOfDeclaration(container).Members, name, meaning&ast.SymbolFlagsType)
@@ -205,13 +205,6 @@ loop:
 					return nil
 				}
 			}
-		case ast.KindArrowFunction:
-			// when targeting ES6 or higher there is no 'arguments' in an arrow function
-			// for lower compile targets the resolved symbol is used to emit an error
-			if r.CompilerOptions.GetEmitScriptTarget() >= core.ScriptTargetES2015 {
-				break
-			}
-			fallthrough
 		case ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionDeclaration:
 			if meaning&ast.SymbolFlagsVariable != 0 && name == "arguments" {
 				result = r.argumentsSymbol()
@@ -224,8 +217,8 @@ loop:
 			}
 			if meaning&ast.SymbolFlagsFunction != 0 {
 				functionName := location.AsFunctionExpression().Name()
-				if functionName != nil && name == functionName.AsIdentifier().Text {
-					result = location.AsFunctionExpression().Symbol
+				if functionName != nil && name == functionName.Text() {
+					result = location.Symbol()
 					break loop
 				}
 			}
@@ -274,14 +267,14 @@ loop:
 		case ast.KindInferType:
 			if meaning&ast.SymbolFlagsTypeParameter != 0 {
 				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameter().Name()
-				if parameterName != nil && name == parameterName.AsIdentifier().Text {
-					result = location.AsInferTypeNode().TypeParameter.AsTypeParameter().Symbol
+				if parameterName != nil && name == parameterName.Text() {
+					result = location.AsInferTypeNode().TypeParameter.Symbol()
 					break loop
 				}
 			}
 		case ast.KindExportSpecifier:
 			exportSpecifier := location.AsExportSpecifier()
-			if lastLocation != nil && lastLocation == exportSpecifier.PropertyName && location.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
+			if lastLocation != nil && lastLocation == exportSpecifier.PropertyName && location.Parent.Parent.ModuleSpecifier() != nil {
 				location = location.Parent.Parent.Parent
 			}
 		}
@@ -354,21 +347,18 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *ast.Symbol, loca
 			// - optional chaining pre-es2020
 			// - nullish coalesce pre-es2020
 			// - spread assignment in binding pattern pre-es2017
-			target := r.CompilerOptions.GetEmitScriptTarget()
-			if target >= core.ScriptTargetES2015 {
-				functionLocation := location
-				declarationRequiresScopeChange := core.TSUnknown
-				if r.GetRequiresScopeChangeCache != nil {
-					declarationRequiresScopeChange = r.GetRequiresScopeChangeCache(functionLocation)
-				}
-				if declarationRequiresScopeChange == core.TSUnknown {
-					declarationRequiresScopeChange = core.IfElse(core.Some(functionLocation.Parameters(), r.requiresScopeChange), core.TSTrue, core.TSFalse)
-					if r.SetRequiresScopeChangeCache != nil {
-						r.SetRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
-					}
-				}
-				return declarationRequiresScopeChange != core.TSTrue
+			functionLocation := location
+			declarationRequiresScopeChange := core.TSUnknown
+			if r.GetRequiresScopeChangeCache != nil {
+				declarationRequiresScopeChange = r.GetRequiresScopeChangeCache(functionLocation)
 			}
+			if declarationRequiresScopeChange == core.TSUnknown {
+				declarationRequiresScopeChange = core.IfElse(core.Some(functionLocation.Parameters(), r.requiresScopeChange), core.TSTrue, core.TSFalse)
+				if r.SetRequiresScopeChangeCache != nil {
+					r.SetRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
+				}
+			}
+			return declarationRequiresScopeChange != core.TSTrue
 		}
 	}
 	return false

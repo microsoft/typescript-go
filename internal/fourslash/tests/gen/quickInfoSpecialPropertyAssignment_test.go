@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoSpecialPropertyAssignment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -20,7 +20,8 @@ class C {
       this./*read*/x;
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "write", "(property) C.x: any", "Doc")
 	f.VerifyQuickInfoAt(t, "read", "(property) C.x: number", "Doc")
 }

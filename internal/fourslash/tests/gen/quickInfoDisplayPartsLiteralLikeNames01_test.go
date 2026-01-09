@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsLiteralLikeNames01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     public /*1*/1() { }
@@ -24,6 +24,7 @@ func TestQuickInfoDisplayPartsLiteralLikeNames01(t *testing.T) {
         this./*9*/NaN();
         C./*10*/stringLiteralName();
     }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

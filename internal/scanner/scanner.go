@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -50,6 +51,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -1453,6 +1455,9 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
 	strLen := strings.IndexRune(s.text[s.pos:], quote)
@@ -1624,6 +1629,13 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) && s.char() == '\\' && s.charAt(1) == 'u' {
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos // restore position because we do not consume nextCodePoint
 		}
 		return string(codePoint)
 	case 'x':
@@ -1818,7 +1830,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1826,7 +1838,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1851,7 +1863,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -2051,14 +2064,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2329,14 +2341,14 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	pos := SkipTrivia(sourceFile.Text(), node.Pos())
-	body := node.AsArrowFunction().Body
+	body := node.Body()
 	if body != nil && body.Kind == ast.KindBlock {
-		startLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.Pos())
-		endLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.End())
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
-			return core.NewTextRange(pos, GetEndLinePosition(sourceFile, startLine))
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine))
 		}
 	}
 	return core.NewTextRange(pos, node.End())
@@ -2368,7 +2380,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindCaseClause, ast.KindDefaultClause:
 		start := SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
-		statements := node.AsCaseOrDefaultClause().Statements.Nodes
+		statements := node.Statements()
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
@@ -2424,19 +2436,25 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
-	return sourceFile.LineMap()
+func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
+	return sourceFile.ECMALineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
-	lineMap := GetLineStarts(sourceFile)
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
+func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
+	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
+	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
 	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
-	return
+	return line, character
 }
 
-func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	pos := int(GetLineStarts(sourceFile)[line])
+func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
+	pos := int(GetECMALineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
@@ -2446,36 +2464,47 @@ func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	}
 }
 
-func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(GetLineStarts(sourceFile), line, character)
+func GetECMAPositionOfLineAndCharacter(sourceFile ast.SourceFileLike, line int, character int) int {
+	return ComputePositionOfLineAndCharacter(GetECMALineStarts(sourceFile), line, character)
 }
 
 func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
-	/// !!! debugText, allowEdits
+	return ComputePositionOfLineAndCharacterEx(lineStarts, line, character, nil, false)
+}
+
+func ComputePositionOfLineAndCharacterEx(lineStarts []core.TextPos, line int, character int, text *string, allowEdits bool) int {
 	if line < 0 || line >= len(lineStarts) {
-		// if (allowEdits) {
-		//     // Clamp line to nearest allowable value
-		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
-		// }
-		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		if allowEdits {
+			// Clamp line to nearest allowable value
+			if line < 0 {
+				line = 0
+			} else if line >= len(lineStarts) {
+				line = len(lineStarts) - 1
+			}
+		} else {
+			panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		}
 	}
 
 	res := int(lineStarts[line]) + character
 
-	// !!!
-	// if (allowEdits) {
-	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
-	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
-	//     // apply them to the computed position to improve accuracy
-	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
-	// }
+	if allowEdits {
+		// Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
+		// TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
+		// apply them to the computed position to improve accuracy
+		if line+1 < len(lineStarts) && res > int(lineStarts[line+1]) {
+			return int(lineStarts[line+1])
+		}
+		if text != nil && res > len(*text) {
+			return len(*text)
+		}
+		return res
+	}
 	if line < len(lineStarts)-1 && res >= int(lineStarts[line+1]) {
 		panic("Computed position is beyond that of the following line.")
+	} else if text != nil {
+		debug.Assert(res <= len(*text)) // Allow single character overflow for trailing newline
 	}
-	// !!!
-	// else if (debugText !== undefined) {
-	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
-	// }
 	return res
 }
 

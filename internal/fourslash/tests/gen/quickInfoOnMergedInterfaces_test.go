@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnMergedInterfaces(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     interface A<T> {
@@ -26,6 +26,7 @@ func TestQuickInfoOnMergedInterfaces(t *testing.T) {
     var r3 = a(true, 2);
     var /*1*/r4 = a(1, true);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var r4: number", "")
 }

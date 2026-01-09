@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoCommentsClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is class c2 without constructor*/
 class c/*1*/2 {
@@ -68,6 +68,7 @@ module m {
     }
 }
 var myVar = new m.m2.c/*33*/1();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

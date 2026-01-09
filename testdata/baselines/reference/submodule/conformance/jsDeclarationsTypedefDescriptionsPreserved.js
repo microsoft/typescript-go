@@ -19,8 +19,6 @@
 
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Options for Foo <------------
  * @typedef {Object} FooOptions
@@ -38,20 +36,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 //// [index.d.ts]
-export type FooOptions = {
-    bar: boolean;
-    baz: string;
-};
-export type BarOptions = {
-    bar: boolean;
-    baz: string;
-};
 /**
  * Options for Foo <------------
  * @typedef {Object} FooOptions
  * @property {boolean} bar - Marvin K Mooney
  * @property {string} baz - Sylvester McMonkey McBean
  */
+type FooOptions = {
+    bar: boolean;
+    baz: string;
+};
+type BarOptions = {
+    bar: boolean;
+    baz: string;
+};
 /**
  * Multiline
  * Options

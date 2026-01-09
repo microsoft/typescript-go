@@ -93,6 +93,8 @@ function f6<T extends string | (new () => {})>(a: T) {
 
 
 //// [typeVariableTypeGuards.js]
+"use strict";
+// Repro from #14091
 class A {
     props;
     constructor(props) {

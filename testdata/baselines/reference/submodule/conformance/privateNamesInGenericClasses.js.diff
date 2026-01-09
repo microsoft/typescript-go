@@ -1,14 +1,6 @@
 --- old.privateNamesInGenericClasses.js
 +++ new.privateNamesInGenericClasses.js
-@@= skipped -29, +29 lines =@@
-
-
- //// [privateNamesInGenericClasses.js]
--"use strict";
- var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-@@= skipped -12, +11 lines =@@
+@@= skipped -41, +41 lines =@@
      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
      return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
  };

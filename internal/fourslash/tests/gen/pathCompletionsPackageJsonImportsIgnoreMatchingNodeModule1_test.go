@@ -9,8 +9,8 @@ import (
 )
 
 func TestPathCompletionsPackageJsonImportsIgnoreMatchingNodeModule1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /src/node_modules/#internal/package.json
@@ -23,7 +23,8 @@ func TestPathCompletionsPackageJsonImportsIgnoreMatchingNodeModule1(t *testing.T
 export function something(name: string): any;
 // @Filename: /src/a.ts
 import {} from "#internal//*1*/";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

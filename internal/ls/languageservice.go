@@ -3,24 +3,50 @@ package ls
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type LanguageService struct {
-	host       Host
-	converters *Converters
+	host                    Host
+	program                 *compiler.Program
+	converters              *lsconv.Converters
+	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
 }
 
-func NewLanguageService(host Host) *LanguageService {
+func NewLanguageService(
+	program *compiler.Program,
+	host Host,
+) *LanguageService {
 	return &LanguageService{
-		host:       host,
-		converters: NewConverters(host.GetPositionEncoding(), host.GetLineMap),
+		host:                    host,
+		program:                 program,
+		converters:              host.Converters(),
+		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
 	}
 }
 
-// GetProgram updates the program if the project version has changed.
+func (l *LanguageService) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, l.program.GetCurrentDirectory(), l.UseCaseSensitiveFileNames())
+}
+
 func (l *LanguageService) GetProgram() *compiler.Program {
-	return l.host.GetProgram()
+	return l.program
+}
+
+func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
+	return l.host.UserPreferences()
+}
+
+func (l *LanguageService) FormatOptions() *format.FormatCodeSettings {
+	if formatOptions := l.host.FormatOptions(); formatOptions != nil {
+		return formatOptions
+	}
+	return format.GetDefaultFormatCodeSettings(l.GetProgram().Options().NewLine.GetNewLineCharacter())
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
@@ -30,10 +56,31 @@ func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Progr
 }
 
 func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*compiler.Program, *ast.SourceFile) {
-	fileName := DocumentURIToFileName(documentURI)
+	fileName := documentURI.FileName()
 	program, file := l.tryGetProgramAndFile(fileName)
 	if file == nil {
 		panic("file not found: " + fileName)
 	}
 	return program, file
+}
+
+func (l *LanguageService) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
+	d, ok := l.documentPositionMappers[fileName]
+	if !ok {
+		d = sourcemap.GetDocumentPositionMapper(l, fileName)
+		l.documentPositionMappers[fileName] = d
+	}
+	return d
+}
+
+func (l *LanguageService) ReadFile(fileName string) (string, bool) {
+	return l.host.ReadFile(fileName)
+}
+
+func (l *LanguageService) UseCaseSensitiveFileNames() bool {
+	return l.host.UseCaseSensitiveFileNames()
+}
+
+func (l *LanguageService) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	return l.host.GetECMALineInfo(fileName)
 }

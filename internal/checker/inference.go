@@ -1035,7 +1035,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 	optionalMask := core.IfElse(modifiers&MappedTypeModifiersIncludeOptional != 0, 0, ast.SymbolFlagsOptional)
 	var indexInfos []*IndexInfo
 	if indexInfo != nil {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, core.OrElse(c.inferReverseMappedType(indexInfo.valueType, r.mappedType, r.constraintType), c.unknownType), readonlyMask && indexInfo.isReadonly, nil, nil)}
 	}
 	members := make(ast.SymbolTable)
 	limitedConstraint := c.getLimitedConstraint(t)
@@ -1174,7 +1174,7 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 	}
 	var indexInfos []*IndexInfo
 	if t.flags&TypeFlagsString != 0 {
-		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil)}
+		indexInfos = []*IndexInfo{c.newIndexInfo(c.stringType, c.emptyObjectType, false /*isReadonly*/, nil, nil)}
 	}
 	return c.newAnonymousType(nil, members, nil, nil, indexInfos)
 }
@@ -1347,6 +1347,19 @@ func (c *Checker) getMapperFromContext(n *InferenceContext) *TypeMapper {
 		return nil
 	}
 	return n.mapper
+}
+
+// Return a type mapper that combines the context's return mapper with a mapper that erases any additional type parameters
+// to their inferences at the time of creation.
+func (c *Checker) createOuterReturnMapper(context *InferenceContext) *TypeMapper {
+	if context.outerReturnMapper == nil {
+		mapper := c.cloneInferenceContext(context, InferenceFlagsNone).mapper
+		if context.returnMapper != nil {
+			mapper = newMergedTypeMapper(context.returnMapper, mapper)
+		}
+		context.outerReturnMapper = mapper
+	}
+	return context.outerReturnMapper
 }
 
 func (c *Checker) getCovariantInference(inference *InferenceInfo, signature *Signature) *Type {

@@ -60,6 +60,8 @@ test(
 
 
 //// [contextSensitiveReturnTypeInference.js]
+"use strict";
+// Repro from #34849
 const DEPS = {
     foo: 1
 };

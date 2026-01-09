@@ -8,8 +8,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -69,7 +70,15 @@ func (p *fakeProgram) GetNearestAncestorDirectoryWithPackageJson(dirname string)
 	return ""
 }
 
-func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+func (p *fakeProgram) GetSymlinkCache() *symlinks.KnownSymlinks {
+	return nil
+}
+
+func (p *fakeProgram) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+	return nil
+}
+
+func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
 	return nil
 }
 
@@ -81,7 +90,7 @@ func (p *fakeProgram) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFi
 	return ""
 }
 
-func (p *fakeProgram) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
+func (p *fakeProgram) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
 	return nil
 }
 
@@ -89,7 +98,7 @@ func (p *fakeProgram) IsSourceFromProjectReference(path tspath.Path) bool {
 	return false
 }
 
-func (p *fakeProgram) GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
+func (p *fakeProgram) GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
 	return nil
 }
 
@@ -213,7 +222,7 @@ func TestImportElision(t *testing.T) {
 
 			compilerOptions := &core.CompilerOptions{}
 
-			c := checker.NewChecker(&fakeProgram{
+			c, _ := checker.NewChecker(&fakeProgram{
 				singleThreaded:  true,
 				compilerOptions: compilerOptions,
 				files:           files,

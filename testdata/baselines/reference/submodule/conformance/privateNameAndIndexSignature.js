@@ -14,6 +14,7 @@ class A {
 
 
 //// [privateNameAndIndexSignature.js]
+"use strict";
 var _A_foo;
 class A {
     ["#bar"] = this["#bar"]; // Error (private identifiers should not prevent circularity checking for computeds)

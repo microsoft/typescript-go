@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionClassStaticBlocks(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class ClassStaticBocks {
     static x;
@@ -19,6 +19,7 @@ func TestGoToDefinitionClassStaticBlocks(t *testing.T) {
     static y;
     [|/*classStaticBocks3*/static|] {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "classStaticBocks1", "classStaticBocks2", "classStaticBocks3")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "classStaticBocks1", "classStaticBocks2", "classStaticBocks3")
 }

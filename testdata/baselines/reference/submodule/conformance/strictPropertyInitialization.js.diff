@@ -1,23 +1,6 @@
 --- old.strictPropertyInitialization.js
 +++ new.strictPropertyInitialization.js
-@@= skipped -162, +162 lines =@@
-
-
- //// [strictPropertyInitialization.js]
--"use strict";
--// Properties with non-undefined types require initialization
- var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-     if (kind === "m") throw new TypeError("Private method is not writable");
-     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-@@= skipped -14, +12 lines =@@
-     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
- };
- var _C1_f, _C1_g, _C1_h, _C1_i, _C4_d, _C4_e, _C4_f, _C5_b, _C6_b, _C7_b, _C10_d, _C11_b;
-+// Properties with non-undefined types require initialization
- class C1 {
-     constructor() {
-         _C1_f.set(this, void 0); //Error
-@@= skipped -7, +8 lines =@@
+@@= skipped -183, +183 lines =@@
          _C1_h.set(this, void 0); //Error
          _C1_i.set(this, void 0);
      }
@@ -113,11 +96,7 @@
  }
  // No strict initialization checks for abstract members
  class C9 {
-+    a;
-+    b;
-+    c;
-+    d;
- }
+@@= skipped -10, +15 lines =@@
  // Properties with non-undefined types must be assigned before they can be accessed
  // within their constructor
  class C10 {
@@ -127,7 +106,7 @@
      constructor() {
          _C10_d.set(this, void 0);
          let x = this.a; // Error
-@@= skipped -20, +32 lines =@@
+@@= skipped -10, +13 lines =@@
          let y = this.c;
      }
  }
@@ -169,80 +148,3 @@
 
 
  //// [strictPropertyInitialization.d.ts]
-+// Properties with non-undefined types require initialization
- declare class C1 {
-     #private;
--    a: number;
-+    a: number; // Error
-     b: number | undefined;
--    c: number | null;
-+    c: number | null; // Error
-     d?: number;
- }
-+// No strict initialization checks in ambient contexts
- declare class C2 {
-     #private;
-     a: number;
-@@= skipped -22, +24 lines =@@
-     c: number | null;
-     d?: number;
- }
-+// No strict initialization checks for static members
- declare class C3 {
-     static a: number;
-     static b: number | undefined;
-     static c: number | null;
-     static d?: number;
- }
-+// Initializer satisfies strict initialization check
- declare class C4 {
-     #private;
-     a: number;
-     b: number;
-     c: string;
- }
-+// Assignment in constructor satisfies strict initialization check
- declare class C5 {
-     #private;
-     a: number;
-     constructor();
- }
-+// All code paths must contain assignment
- declare class C6 {
-     #private;
--    a: number;
-+    a: number; // Error
-     constructor(cond: boolean);
- }
- declare class C7 {
-@@= skipped -27, +31 lines =@@
-     a: number;
-     constructor(cond: boolean);
- }
-+// Properties with string literal names aren't checked
- declare class C8 {
--    a: number;
-+    a: number; // Error
-     "b": number;
-     0: number;
- }
-+// No strict initialization checks for abstract members
- declare abstract class C9 {
-     abstract a: number;
-     abstract b: number | undefined;
-     abstract c: number | null;
-     abstract d?: number;
- }
-+// Properties with non-undefined types must be assigned before they can be accessed
-+// within their constructor
- declare class C10 {
-     #private;
-     a: number;
-@@= skipped -18, +22 lines =@@
-     c?: number;
-     constructor();
- }
-+// Property is considered initialized by type any even though value could be undefined
- declare function someValue(): any;
- declare class C11 {
-     #private;

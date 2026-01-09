@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsWithOptionalPropertiesGenericDeep(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 interface DeepOptions {
@@ -25,7 +25,8 @@ interface MyOptions {
 }
 declare function bar<T extends MyOptions>(options?: Partial<T>): void;
 bar({ deep: {/*1*/} });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

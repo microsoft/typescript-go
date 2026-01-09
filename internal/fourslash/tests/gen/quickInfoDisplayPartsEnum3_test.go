@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoDisplayPartsEnum3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum /*1*/E {
     /*2*/"e1",
@@ -29,6 +29,7 @@ var /*20*/eInstance1: /*21*/constE;
 /*22*/eInstance1 = /*23*/constE[/*24*/"e1"];
 /*25*/eInstance1 = /*26*/constE[/*27*/"e2"];
 /*28*/eInstance1 = /*29*/constE[/*30*/'e3'];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

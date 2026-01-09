@@ -8,13 +8,14 @@ import (
 )
 
 func TestFindAllRefsRootSymbols(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { /*0*/x: {}; }
 interface J { /*1*/x: {}; }
 declare const o: (I | J) & { /*2*/x: string };
 o./*3*/x;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2", "3")
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoModuleVariables(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = 1;
 module M {
@@ -23,7 +23,8 @@ module M {
     var x = 3;
     console.log(/*3*/x); // 3
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var M.x: number", "")
 	f.VerifyQuickInfoAt(t, "2", "var M.x: number", "")
 	f.VerifyQuickInfoAt(t, "3", "var x: number", "")

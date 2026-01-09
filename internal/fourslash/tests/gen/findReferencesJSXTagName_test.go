@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindReferencesJSXTagName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: index.tsx
 import { /*1*/SubmissionComp } from "./RedditSubmission"
@@ -20,6 +20,7 @@ function displaySubreddit(subreddit: string) {
 // @Filename: RedditSubmission.ts
 export const /*2*/SubmissionComp = (submission: SubmissionProps) =>
     <div style={{ fontFamily: "sans-serif" }}></div>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")
 }

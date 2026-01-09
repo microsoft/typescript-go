@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionForStringLiteralExport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings
 // @Filename: test.ts
@@ -26,7 +26,8 @@ export {} from ".//*4*/";
 /*someFile2*/
 // @Filename: my_typings/some-module/index.d.ts
 export var x = 9;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"0", "4"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

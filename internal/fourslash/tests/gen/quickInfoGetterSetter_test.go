@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoGetterSetter(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: es2015
 class C {
@@ -23,7 +23,8 @@ class C {
 }
 let instance = new C();
 instance./*setterUse*/myValue = instance./*getterUse*/myValue;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "getterUse", "(property) C.myValue: Promise<string>", "")
 	f.VerifyQuickInfoAt(t, "getterDef", "(getter) C.myValue: Promise<string>", "")
 	f.VerifyQuickInfoAt(t, "setterUse", "(property) C.myValue: string | Promise<string>", "")

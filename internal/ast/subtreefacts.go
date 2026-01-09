@@ -4,7 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type SubtreeFacts int32
+type SubtreeFacts uint32
 
 const (
 	// Facts
@@ -37,6 +37,7 @@ const (
 	SubtreeContainsClassFields
 	SubtreeContainsDecorators
 	SubtreeContainsIdentifier
+	SubtreeContainsPrivateIdentifierInExpression
 
 	SubtreeFactsComputed              // NOTE: This should always be last
 	SubtreeFactsNone     SubtreeFacts = 0

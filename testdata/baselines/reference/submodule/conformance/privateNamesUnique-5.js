@@ -16,8 +16,9 @@ const b: A2 = new B();
 
 
 //// [privateNamesUnique-5.js]
-var _A_foo, _B_foo;
+"use strict";
 // same as privateNamesUnique-1, but with an interface
+var _A_foo, _B_foo;
 class A {
     constructor() {
         _A_foo.set(this, void 0);

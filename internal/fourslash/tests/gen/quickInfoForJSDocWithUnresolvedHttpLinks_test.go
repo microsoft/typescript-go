@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForJSDocWithUnresolvedHttpLinks(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @checkJs: true
 // @filename: quickInfoForJSDocWithHttpLinks.js
@@ -18,6 +18,7 @@ var /*5*/see2 = true
 
 /** {@link https://hvaD} */
 var /*6*/see3 = true`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

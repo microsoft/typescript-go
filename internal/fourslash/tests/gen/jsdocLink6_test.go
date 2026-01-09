@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsdocLink6(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 export default function A() { }
@@ -21,6 +21,7 @@ import A, { B } from "./a";
  * {@link B}
  */
 export default function /**/f() { }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

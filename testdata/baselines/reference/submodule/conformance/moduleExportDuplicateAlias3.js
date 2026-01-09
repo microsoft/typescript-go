@@ -17,7 +17,6 @@ const result = apply.toFixed()
 
 //// [moduleExportAliasDuplicateAlias.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 export var apply = undefined;
 exports.apply = undefined;
 export var apply = undefined;
@@ -38,11 +37,10 @@ const result = apply.toFixed();
 
 
 //// [moduleExportAliasDuplicateAlias.d.ts]
-export var apply = undefined;
-export var apply = undefined;
-export var apply = a;
-export var apply = 'ok';
-export var apply = 1;
-export {};
+export declare var apply: undefined;
+export declare var apply: undefined;
+export declare var apply: undefined;
+export declare var apply: undefined;
+export declare var apply: undefined;
 //// [test.d.ts]
 export {};

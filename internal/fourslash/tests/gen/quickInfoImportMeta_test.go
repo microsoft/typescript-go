@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoImportMeta(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: foo.ts
@@ -25,6 +25,7 @@ im/*1*/port.me/*2*/ta;
  */
  interface ImportMeta {
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

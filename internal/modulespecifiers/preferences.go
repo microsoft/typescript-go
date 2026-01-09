@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -130,7 +131,7 @@ func getPreferredEnding(
 		resolutionMode = host.GetDefaultResolutionModeForFile(importingSourceFile)
 	}
 	return getModuleSpecifierEndingPreference(
-		prefs.ImportModuleSpecifierEndingPreference,
+		prefs.ImportModuleSpecifierEnding,
 		resolutionMode,
 		compilerOptions,
 		importingSourceFile,
@@ -219,7 +220,7 @@ func getModuleSpecifierPreferences(
 			}
 			return []ModuleSpecifierEnding{ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex, ModuleSpecifierEndingJsExtension}
 		default:
-			// Debug.assertNever(preferredEnding); // !!!
+			debug.AssertNever(preferredEnding)
 		}
 		return []ModuleSpecifierEnding{ModuleSpecifierEndingMinimal}
 	}

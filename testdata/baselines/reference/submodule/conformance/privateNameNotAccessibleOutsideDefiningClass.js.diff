@@ -1,14 +1,6 @@
 --- old.privateNameNotAccessibleOutsideDefiningClass.js
 +++ new.privateNameNotAccessibleOutsideDefiningClass.js
-@@= skipped -8, +8 lines =@@
-
-
- //// [privateNameNotAccessibleOutsideDefiningClass.js]
--"use strict";
- var _A_foo;
- class A {
-     constructor() {
-@@= skipped -8, +7 lines =@@
+@@= skipped -16, +16 lines =@@
      }
  }
  _A_foo = new WeakMap();

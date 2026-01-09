@@ -186,17 +186,8 @@ function oops<T extends unknown>(arg: T): {} {
 
 
 //// [unknownType1.js]
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+"use strict";
+// In an intersection everything absorbs unknown
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -279,10 +270,10 @@ function f25() {
 }
 // Spread of unknown causes result to be unknown
 function f26(x, y, z) {
-    let o1 = __assign({ a: 42 }, x); // { a: number }
-    let o2 = __assign(__assign({ a: 42 }, x), y); // unknown
-    let o3 = __assign(__assign(__assign({ a: 42 }, x), y), z); // any
-    let o4 = __assign({ a: 42 }, z); // any
+    let o1 = Object.assign({ a: 42 }, x); // { a: number }
+    let o2 = Object.assign(Object.assign({ a: 42 }, x), y); // unknown
+    let o3 = Object.assign(Object.assign(Object.assign({ a: 42 }, x), y), z); // any
+    let o4 = Object.assign({ a: 42 }, z); // any
 }
 // Functions with unknown return type don't need return expressions
 function f27() {

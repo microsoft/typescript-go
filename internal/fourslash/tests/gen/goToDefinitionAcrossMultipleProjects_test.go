@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionAcrossMultipleProjects(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: a.ts
 var /*def1*/x: number;
@@ -25,6 +25,7 @@ var /*def4*/x: number;
 /// <reference path="c.ts" />
 /// <reference path="d.ts" />
 [|/*use*/x|]++;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "use")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, true, "use")
 }

@@ -16,18 +16,3 @@
  }
  exports.A = A;
  //// [exportStarFromEmptyModule_module4.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--var X = require("./exportStarFromEmptyModule_module3");
-+const X = require("./exportStarFromEmptyModule_module3");
- var s;
- X.A.q;
- X.A.r; // Error
-@@= skipped -16, +17 lines =@@
-     static r: any;
- }
- //// [exportStarFromEmptyModule_module2.d.ts]
-+// empty
- //// [exportStarFromEmptyModule_module3.d.ts]
- export * from "./exportStarFromEmptyModule_module2";
- export * from "./exportStarFromEmptyModule_module1";

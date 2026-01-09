@@ -9,18 +9,19 @@ import (
 )
 
 func TestTsxCompletion8(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
- declare module JSX {
-     interface Element { }
-     interface IntrinsicElements {
-         div: { ONE: string; TWO: number; }
-     }
- }
- var x = <div /*1*/ autoComplete /*2*/ />;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+declare module JSX {
+    interface Element { }
+    interface IntrinsicElements {
+        div: { ONE: string; TWO: number; }
+    }
+}
+var x = <div /*1*/ autoComplete /*2*/ />;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

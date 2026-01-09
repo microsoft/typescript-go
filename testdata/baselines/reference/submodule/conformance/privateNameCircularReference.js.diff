@@ -1,14 +1,6 @@
 --- old.privateNameCircularReference.js
 +++ new.privateNameCircularReference.js
-@@= skipped -8, +8 lines =@@
-
-
- //// [privateNameCircularReference.js]
--"use strict";
- var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-@@= skipped -11, +10 lines =@@
+@@= skipped -19, +19 lines =@@
      constructor() {
          _A_foo.set(this, __classPrivateFieldGet(this, _A_bar, "f"));
          _A_bar.set(this, __classPrivateFieldGet(this, _A_foo, "f"));

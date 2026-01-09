@@ -8,8 +8,6 @@ exports["Does not work yet"] = D;
 
 
 //// [moduleExportAliasElementAccessExpression.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 function D() { }
 export var D = D;
 exports["D"] = D;
@@ -20,29 +18,8 @@ exports["Does not work yet"] = D;
 
 
 //// [moduleExportAliasElementAccessExpression.d.ts]
-export var D = D;
-// (the only package I could find that uses spaces in identifiers is webidl-conversions)
-export var Does not work yet = D;
-export {};
-
-
-//// [DtsFileErrors]
-
-
-out/moduleExportAliasElementAccessExpression.d.ts(3,17): error TS1005: ',' expected.
-out/moduleExportAliasElementAccessExpression.d.ts(3,21): error TS1005: ',' expected.
-out/moduleExportAliasElementAccessExpression.d.ts(3,26): error TS1005: ',' expected.
-
-
-==== out/moduleExportAliasElementAccessExpression.d.ts (3 errors) ====
-    export var D = D;
-    // (the only package I could find that uses spaces in identifiers is webidl-conversions)
-    export var Does not work yet = D;
-                    ~~~
-!!! error TS1005: ',' expected.
-                        ~~~~
-!!! error TS1005: ',' expected.
-                             ~~~
-!!! error TS1005: ',' expected.
-    export {};
-    
+declare function D(): void;
+declare const _exported: typeof D;
+export { _exported as "D" };
+declare const _exported_1: typeof D;
+export { _exported_1 as "Does not work yet" };

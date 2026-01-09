@@ -8,8 +8,8 @@ import (
 )
 
 func TestConstructorFindAllReferences4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export class C {
     /**/protected constructor() { }
@@ -17,6 +17,7 @@ func TestConstructorFindAllReferences4(t *testing.T) {
 }
 
 new C().foo();`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "")
 }

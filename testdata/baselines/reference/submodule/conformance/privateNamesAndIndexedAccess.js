@@ -15,6 +15,7 @@ class C {
 
 
 //// [privateNamesAndIndexedAccess.js]
+"use strict";
 var _C_bar;
 class C {
     foo = 3;

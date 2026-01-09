@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
 
 // ParseFlags
 
@@ -82,7 +82,7 @@ const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFo
 	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
 
-type SymbolFormatFlags int32
+type SymbolFormatFlags uint32
 
 const (
 	SymbolFormatFlagsNone SymbolFormatFlags = 0
@@ -146,12 +146,10 @@ type DeferredSymbolLinks struct {
 // Links for alias symbols
 
 type AliasSymbolLinks struct {
-	immediateTarget             *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
-	aliasTarget                 *ast.Symbol // Resolved (non-alias) target of an alias
-	referenced                  bool        // True if alias symbol has been referenced as a value that can be emitted
-	typeOnlyDeclarationResolved bool        // True when typeOnlyDeclaration resolution in process
-	typeOnlyDeclaration         *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
-	typeOnlyExportStarName      string      // Set to the name of the symbol re-exported by an 'export type *' declaration, when different from the symbol name
+	immediateTarget     *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
+	aliasTarget         *ast.Symbol // Resolved (non-alias) target of an alias
+	referenced          bool        // True if alias symbol has been referenced as a value that can be emitted
+	typeOnlyDeclaration *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
 }
 
 // Links for module symbols
@@ -185,16 +183,18 @@ type ExportTypeLinks struct {
 
 type TypeAliasLinks struct {
 	declaredType                  *Type
-	typeParameters                []*Type          // Type parameters of type alias (undefined if non-generic)
-	instantiations                map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
+	typeParameters                []*Type                // Type parameters of type alias (undefined if non-generic)
+	instantiations                map[CacheHashKey]*Type // Instantiations of generic type alias (undefined if non-generic)
 	isConstructorDeclaredProperty bool
 }
 
 // Links for declared types (type parameters, class types, interface types, enums)
 
 type DeclaredTypeLinks struct {
-	declaredType          *Type
-	typeParametersChecked bool
+	declaredType           *Type
+	interfaceChecked       bool
+	indexSignaturesChecked bool
+	typeParametersChecked  bool
 }
 
 // Links for switch clauses
@@ -261,7 +261,7 @@ const (
 )
 
 type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[string]*ast.Symbol // Symbol with applicable declarations
+	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
 }
 
 type MarkedAssignmentSymbolLinks struct {
@@ -337,7 +337,8 @@ type NodeLinks struct {
 }
 
 type SymbolNodeLinks struct {
-	resolvedSymbol *ast.Symbol // Resolved symbol associated with node
+	resolvedSymbol              *ast.Symbol // Resolved symbol associated with node
+	resolvedSymbolNoDiagnostics *ast.Symbol // Resolved symbol associated with node, generated without producing diagnostics for an API call
 }
 
 type TypeNodeLinks struct {
@@ -574,11 +575,10 @@ func (t *Type) ObjectFlags() ObjectFlags {
 
 // Casts for concrete struct types
 
-func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
-func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
-func (t *Type) AsSingleSignatureType() *SingleSignatureType { return t.data.(*SingleSignatureType) }
+func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
+func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
+func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
@@ -716,6 +716,10 @@ func (t *Type) IsIndex() bool {
 	return t.flags&TypeFlagsIndex != 0
 }
 
+func (t *Type) IsTupleType() bool {
+	return isTupleType(t)
+}
+
 // TypeData
 
 type TypeData interface {
@@ -838,10 +842,6 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 // ObjectFlagsAnonymous|ObjectFlagsInstantiationExpression: Originating instantiation expression type
 // ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsInstantiationExpression: Instantiated instantiation expression type
 
-// SingleSignatureType:
-// ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType: Originating single signature type
-// ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsSingleSignatureType: Instantiated single signature type
-
 // ReverseMappedType:
 // ObjectFlagsAnonymous|ObjectFlagsReverseMapped: Reverse mapped type
 
@@ -850,9 +850,9 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 
 type ObjectType struct {
 	StructuredType
-	target         *Type            // Target of instantiated type
-	mapper         *TypeMapper      // Type mapper for instantiated type
-	instantiations map[string]*Type // Map of type instantiations
+	target         *Type                  // Target of instantiated type
+	mapper         *TypeMapper            // Type mapper for instantiated type
+	instantiations map[CacheHashKey]*Type // Map of type instantiations
 }
 
 func (t *ObjectType) AsObjectType() *ObjectType { return t }
@@ -929,6 +929,7 @@ type TupleElementInfo struct {
 }
 
 func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
+func (t *TupleElementInfo) LabeledDeclaration() *ast.Node   { return t.labeledDeclaration }
 
 type TupleType struct {
 	InterfaceType
@@ -947,13 +948,7 @@ func (t *TupleType) ElementFlags() []ElementFlags {
 	}
 	return elementFlags
 }
-
-// SingleSignatureType
-
-type SingleSignatureType struct {
-	ObjectType
-	outerTypeParameters []*Type
-}
+func (t *TupleType) ElementInfos() []TupleElementInfo { return t.elementInfos }
 
 // InstantiationExpressionType
 
@@ -1087,7 +1082,7 @@ type ConditionalRoot struct {
 	isDistributive      bool
 	inferTypeParameters []*Type
 	outerTypeParameters []*Type
-	instantiations      map[string]*Type
+	instantiations      map[CacheHashKey]*Type
 	alias               *TypeAlias
 }
 
@@ -1192,13 +1187,18 @@ type TypePredicate struct {
 	t              *Type
 }
 
+func (typePredicate *TypePredicate) Type() *Type {
+	return typePredicate.t
+}
+
 // IndexInfo
 
 type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node // IndexSignatureDeclaration
+	declaration *ast.Node   // IndexSignatureDeclaration
+	components  []*ast.Node // ElementWithComputedPropertyName
 }
 
 /**
@@ -1221,20 +1221,6 @@ const (
 type TypeComparer func(s *Type, t *Type, reportErrors bool) Ternary
 
 type LanguageFeatureMinimumTargetMap struct {
-	Classes                           core.ScriptTarget
-	ForOf                             core.ScriptTarget
-	Generators                        core.ScriptTarget
-	Iteration                         core.ScriptTarget
-	SpreadElements                    core.ScriptTarget
-	RestElements                      core.ScriptTarget
-	TaggedTemplates                   core.ScriptTarget
-	DestructuringAssignment           core.ScriptTarget
-	BindingPatterns                   core.ScriptTarget
-	ArrowFunctions                    core.ScriptTarget
-	BlockScopedVariables              core.ScriptTarget
-	ObjectAssign                      core.ScriptTarget
-	RegularExpressionFlagsUnicode     core.ScriptTarget
-	RegularExpressionFlagsSticky      core.ScriptTarget
 	Exponentiation                    core.ScriptTarget
 	AsyncFunctions                    core.ScriptTarget
 	ForAwaitOf                        core.ScriptTarget
@@ -1258,20 +1244,6 @@ type LanguageFeatureMinimumTargetMap struct {
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
-	Classes:                           core.ScriptTargetES2015,
-	ForOf:                             core.ScriptTargetES2015,
-	Generators:                        core.ScriptTargetES2015,
-	Iteration:                         core.ScriptTargetES2015,
-	SpreadElements:                    core.ScriptTargetES2015,
-	RestElements:                      core.ScriptTargetES2015,
-	TaggedTemplates:                   core.ScriptTargetES2015,
-	DestructuringAssignment:           core.ScriptTargetES2015,
-	BindingPatterns:                   core.ScriptTargetES2015,
-	ArrowFunctions:                    core.ScriptTargetES2015,
-	BlockScopedVariables:              core.ScriptTargetES2015,
-	ObjectAssign:                      core.ScriptTargetES2015,
-	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
-	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 	Exponentiation:                    core.ScriptTargetES2016,
 	AsyncFunctions:                    core.ScriptTargetES2017,
 	ForAwaitOf:                        core.ScriptTargetES2018,

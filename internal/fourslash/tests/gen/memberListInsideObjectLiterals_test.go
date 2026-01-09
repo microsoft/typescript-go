@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListInsideObjectLiterals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module ObjectLiterals {
     interface MyPoint {
@@ -36,7 +36,8 @@ func TestMemberListInsideObjectLiterals(t *testing.T) {
         /*4*/y1
     };
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "3", "4"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

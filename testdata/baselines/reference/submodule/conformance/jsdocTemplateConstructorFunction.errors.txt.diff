@@ -1,0 +1,34 @@
+--- old.jsdocTemplateConstructorFunction.errors.txt
++++ new.jsdocTemplateConstructorFunction.errors.txt
+@@= skipped -0, +0 lines =@@
+-templateTagOnConstructorFunctions.js(24,1): error TS2322: Type 'boolean' is not assignable to type 'number'.
+-
+-
+-==== templateTagOnConstructorFunctions.js (1 errors) ====
++templateTagOnConstructorFunctions.js(15,12): error TS2304: Cannot find name 'T'.
++templateTagOnConstructorFunctions.js(16,15): error TS2304: Cannot find name 'T'.
++
++
++==== templateTagOnConstructorFunctions.js (2 errors) ====
+     /**
+      * @template U
+      * @typedef {(u: U) => U} Id
+@@= skipped -16, +17 lines =@@
+     }
+     /**
+      * @param {T} v
++               ~
++!!! error TS2304: Cannot find name 'T'.
+      * @param {Id<T>} id
++                  ~
++!!! error TS2304: Cannot find name 'T'.
+      */
+     Zet.prototype.add = function(v, id) {
+         this.u = v || this.t
+@@= skipped -9, +13 lines =@@
+     var z = new Zet(1)
+     z.t = 2
+     z.u = false
+-    ~~~
+-!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
+     

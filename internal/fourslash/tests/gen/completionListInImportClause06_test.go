@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListInImportClause06(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: T1,T2
 // @Filename: app.ts
@@ -19,7 +19,8 @@ import * as A from "/*1*/";
 export declare let x: number;
 // @Filename: T2/a__b/index.d.ts
 export declare let x: number;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

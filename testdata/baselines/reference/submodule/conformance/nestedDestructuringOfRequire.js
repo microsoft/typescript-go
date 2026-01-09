@@ -15,8 +15,6 @@ chalk
 
 
 //// [mod1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = {
     grey: {}
 };
@@ -29,7 +27,8 @@ chalk;
 
 
 //// [mod1.d.ts]
-export var chalk = chalk;
-export {};
+export declare var chalk: {
+    grey: {};
+};
 //// [main.d.ts]
 export {};

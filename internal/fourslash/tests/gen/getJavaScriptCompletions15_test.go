@@ -11,8 +11,8 @@ import (
 )
 
 func TestGetJavaScriptCompletions15(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: refFile1.ts
@@ -29,7 +29,8 @@ ref2.V./*2*/;
 var v = { x: require("./refFile3") };
 v.x./*3*/;
 v.x.V./*4*/;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

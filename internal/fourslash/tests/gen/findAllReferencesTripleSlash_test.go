@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllReferencesTripleSlash(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @checkJs: true
 // @Filename: /node_modules/@types/globals/index.d.ts
@@ -22,6 +22,7 @@ console.log("b.ts");
 // @Filename: /c.js
 require("./b");
 require("globals");`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")
 }

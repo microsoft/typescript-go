@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionForStringLiteral3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function f(a: "A", b: number): void;
 declare function f(a: "B", b: number): void;
@@ -21,7 +21,8 @@ declare function f(a: string, b: number): void;
 f("[|/*1*/C|]", 2);
 
 f("/*2*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -8,8 +8,8 @@ import (
 )
 
 func TestGoToDefinitionInterfaceAfterImplement(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface /*interfaceDefinition*/sInt {
     sVar: number;
@@ -21,6 +21,7 @@ class iClass implements /*interfaceReference*/sInt {
     public sFn() {
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "interfaceReference")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "interfaceReference")
 }

@@ -9,11 +9,10 @@ import (
 )
 
 func TestCompletionListForTransitivelyExportedMembers04(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @ModuleResolution: classic
-// @Filename: A.ts
+	const content = `// @Filename: A.ts
 export interface I1 { one: number }
 export interface I2 { two: string }
 export type I1_OR_I2 = I1 | I2;
@@ -35,12 +34,13 @@ export module Inner {
 export var bVar = "bee!";
 // @Filename: C.ts
 export var cVar = "see!";
-export * from "A";
-export * from "B"
+export * from "./A";
+export * from "./B"
 // @Filename: D.ts
-import * as c from "C";
+import * as c from "./C";
 var x: c.Inner./**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
 import {
+    DocumentUri,
     LanguageClient,
     LanguageClientOptions,
+    Location,
     NotebookDocumentFilter,
+    Position,
     ServerOptions,
     TextDocumentFilter,
     TransportKind,
@@ -14,15 +17,17 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
+const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
+
 export class Client {
-    private outputChannel: vscode.OutputChannel;
-    private traceOutputChannel: vscode.OutputChannel;
+    private outputChannel: vscode.LogOutputChannel;
+    private traceOutputChannel: vscode.LogOutputChannel;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.clientOptions = {
@@ -32,6 +37,9 @@ export class Client {
             ],
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
+            initializationOptions: {
+                codeLensShowLocationsCommandName,
+            },
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -81,12 +89,12 @@ export class Client {
         };
     }
 
-    async initialize(context: vscode.ExtensionContext): Promise<void> {
+    async initialize(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
         const exe = await getExe(context);
-        this.start(context, exe);
+        return this.start(context, exe);
     }
 
-    async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<void> {
+    async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
 
@@ -95,16 +103,31 @@ export class Client {
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        const goMemLimit = config.get<string>("goMemLimit");
+        const env = { ...process.env };
+        if (goMemLimit) {
+            // Keep this regex aligned with the pattern in package.json.
+            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+                env.GOMEMLIMIT = goMemLimit;
+            }
+            else {
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            }
+        }
+
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
             debug: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
         };
 
@@ -119,14 +142,40 @@ export class Client {
         await this.client.start();
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
-        context.subscriptions.push(
-            new vscode.Disposable(() => {
-                if (this.client) {
-                    this.client.stop();
-                }
-                vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-            }),
-        );
+
+        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
+            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
+        }
+
+        const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
+            if (args.length !== 3) {
+                throw new Error("Unexpected number of arguments.");
+            }
+
+            const lspUri = args[0] as DocumentUri;
+            const lspPosition = args[1] as Position;
+            const lspLocations = args[2] as Location[];
+
+            const editorUri = vscode.Uri.parse(lspUri);
+            const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
+            const editorLocations = lspLocations.map(loc =>
+                new vscode.Location(
+                    vscode.Uri.parse(loc.uri),
+                    new vscode.Range(
+                        new vscode.Position(loc.range.start.line, loc.range.start.character),
+                        new vscode.Position(loc.range.end.line, loc.range.end.character),
+                    ),
+                )
+            );
+
+            vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
+        });
+
+        return new vscode.Disposable(() => {
+            this.client?.stop();
+            codeLensLocationsCommand.dispose();
+            vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
+        });
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {
@@ -145,7 +194,7 @@ export class Client {
         });
     }
 
-    async restart(context: vscode.ExtensionContext): Promise<void> {
+    async restart(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
         if (!this.client) {
             return Promise.reject(new Error("Language client is not initialized"));
         }
@@ -157,6 +206,7 @@ export class Client {
         }
 
         this.outputChannel.appendLine(`Restarting language server...`);
-        return this.client.restart();
+        this.client.restart();
+        return new vscode.Disposable(() => {});
     }
 }

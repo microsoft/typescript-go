@@ -8,8 +8,8 @@ import (
 )
 
 func TestDefinitionNameOnEnumMember(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum e {
     firstMember,
@@ -17,6 +17,7 @@ func TestDefinitionNameOnEnumMember(t *testing.T) {
     thirdMember
 }
 var enumMember = e.[|/*1*/thirdMember|];`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineGoToDefinition(t, "1")
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false, "1")
 }

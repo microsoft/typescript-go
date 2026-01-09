@@ -8,8 +8,8 @@ import (
 )
 
 func TestClassInterfaceInsert(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Intersection {
     dist: number;
@@ -19,7 +19,8 @@ class /*className*/Sphere {
     constructor(private center) {
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "className", "class Sphere", "")
 	f.GoToMarker(t, "interfaceGoesHere")
 	f.Insert(t, "\ninterface Surface {\n    reflect: () => number;\n}\n")

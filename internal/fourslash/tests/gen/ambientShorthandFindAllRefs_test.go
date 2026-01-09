@@ -8,8 +8,8 @@ import (
 )
 
 func TestAmbientShorthandFindAllRefs(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: declarations.d.ts
 declare module "jquery";
@@ -17,6 +17,7 @@ declare module "jquery";
 import {/*1*/x} from "jquery";
 // @Filename: user2.ts
 import {/*2*/x} from "jquery";`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2")
 }

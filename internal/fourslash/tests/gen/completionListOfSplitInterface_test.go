@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListOfSplitInterface(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A {
     a: number;
@@ -43,7 +43,8 @@ var ci: I;
 ci./*1*/b;
 var ci1: I1;
 ci1./*2*/b;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

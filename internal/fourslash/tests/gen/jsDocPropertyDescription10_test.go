@@ -8,8 +8,8 @@ import (
 )
 
 func TestJsDocPropertyDescription10(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class MultipleClass {
     /** Something generic */
@@ -18,6 +18,7 @@ func TestJsDocPropertyDescription10(t *testing.T) {
 function multipleClass(e: typeof MultipleClass) {
     console.log(e./*multipleClass*/anything);
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "multipleClass", "any", "")
 }

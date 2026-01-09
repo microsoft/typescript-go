@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForNoContext(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module modTest {
     //Declare
@@ -31,6 +31,7 @@ func TestReferencesForNoContext(t *testing.T) {
     module testMod {
     }
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")
 }

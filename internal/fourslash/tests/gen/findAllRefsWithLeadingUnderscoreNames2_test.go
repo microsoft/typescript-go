@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsWithLeadingUnderscoreNames2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     /*1*/public /*2*/__bar() { return 0; }
@@ -17,6 +17,7 @@ func TestFindAllRefsWithLeadingUnderscoreNames2(t *testing.T) {
 
 var x: Foo;
 x./*3*/__bar;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3")
 }

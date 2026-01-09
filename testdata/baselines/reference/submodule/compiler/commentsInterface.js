@@ -91,7 +91,7 @@ var i2_i_nc_fnfoo = i2_i.nc_fnfoo;
 var i2_i_nc_fnfoo_r = i2_i.nc_fnfoo(10);
 var i3_i;
 i3_i = {
-    f: (/**i3_i a*/ a) => "Hello" + a,
+    f: /**own f*/ (/**i3_i a*/ a) => "Hello" + a,
     l: this.f,
     /** own x*/
     x: this.f(10),
@@ -131,7 +131,6 @@ interface i2 {
     /** this is fnfoo*/
     fnfoo(/**param help*/ b: number): string;
     nc_fnfoo(b: number): string;
-    // nc_y
     nc_y: number;
 }
 declare var i2_i: i2;

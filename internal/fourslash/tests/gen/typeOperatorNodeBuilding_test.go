@@ -8,23 +8,24 @@ import (
 )
 
 func TestTypeOperatorNodeBuilding(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: keyof.ts
- function doSomethingWithKeys<T>(...keys: (keyof T)[]) { }
+function doSomethingWithKeys<T>(...keys: (keyof T)[]) { }
 
- const /*1*/utilityFunctions = {
-   doSomethingWithKeys
- };
+const /*1*/utilityFunctions = {
+  doSomethingWithKeys
+};
 // @Filename: typeof.ts
- class Foo { static a: number; }
- function doSomethingWithTypes(...statics: (typeof Foo)[]) {}
+class Foo { static a: number; }
+function doSomethingWithTypes(...statics: (typeof Foo)[]) {}
 
- const /*2*/utilityFunctions = {
-   doSomethingWithTypes
- };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+const /*2*/utilityFunctions = {
+  doSomethingWithTypes
+};`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "const utilityFunctions: {\n    doSomethingWithKeys: <T>(...keys: (keyof T)[]) => void;\n}", "")
 	f.VerifyQuickInfoAt(t, "2", "const utilityFunctions: {\n    doSomethingWithTypes: (...statics: (typeof Foo)[]) => void;\n}", "")
 }

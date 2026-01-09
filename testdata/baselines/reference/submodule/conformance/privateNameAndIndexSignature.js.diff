@@ -1,10 +1,7 @@
 --- old.privateNameAndIndexSignature.js
 +++ new.privateNameAndIndexSignature.js
-@@= skipped -13, +13 lines =@@
-
-
- //// [privateNameAndIndexSignature.js]
--"use strict";
+@@= skipped -16, +16 lines =@@
+ "use strict";
  var _A_foo;
  class A {
 +    ["#bar"] = this["#bar"]; // Error (private identifiers should not prevent circularity checking for computeds)

@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefs_jsEnum(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -18,6 +18,7 @@ func TestFindAllRefs_jsEnum(t *testing.T) {
 /*3*/E["A"];
 /** @type {/*4*/E} */
 const e = /*5*/E.A;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4", "5")
 }

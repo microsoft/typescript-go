@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsImport_promoteTypeOnly2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: es2015
 // @Filename: /exports.ts
@@ -20,7 +20,8 @@ export interface SomeInterface {}
 import type { SomeInterface } from "./exports.js";
 const SomeInterface = {};
 SomeI/**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

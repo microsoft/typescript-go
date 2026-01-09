@@ -9,29 +9,30 @@ import (
 )
 
 func TestTsxCompletion14(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@module: commonjs
 //@jsx: preserve
- declare module JSX {
-     interface Element { }
-     interface IntrinsicElements {
-     }
-     interface ElementAttributesProperty { props; }
- }
+declare module JSX {
+    interface Element { }
+    interface IntrinsicElements {
+    }
+    interface ElementAttributesProperty { props; }
+}
 //@Filename: exporter.tsx
- export class Thing { props: { ONE: string; TWO: number } }
- export module M {
-    export declare function SFCComp(props: { Three: number; Four: string }): JSX.Element;
- }
+export class Thing { props: { ONE: string; TWO: number } }
+export module M {
+   export declare function SFCComp(props: { Three: number; Four: string }): JSX.Element;
+}
 //@Filename: file.tsx
- import * as Exp from './exporter';
- var x1 = <Exp.Thing /*1*/ />;
- var x2 = <Exp.M.SFCComp /*2*/ />;
- var x3 = <Exp.Thing /*3*/ ></Exp.Thing>;
- var x4 = <Exp.M.SFCComp /*4*/ ></Exp.M.SFCComp>;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+import * as Exp from './exporter';
+var x1 = <Exp.Thing /*1*/ />;
+var x2 = <Exp.M.SFCComp /*2*/ />;
+var x3 = <Exp.Thing /*3*/ ></Exp.Thing>;
+var x4 = <Exp.M.SFCComp /*4*/ ></Exp.M.SFCComp>;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "3"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

@@ -13,17 +13,8 @@ let o2: { b: string, x: number } = test(o1);
 
 
 //// [genericIsNeverEmptyObject.js]
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+"use strict";
+// Repro from #29067
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -35,10 +26,9 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-// Repro from #29067
 function test(obj) {
     let { a } = obj, rest = __rest(obj, ["a"]);
-    return __assign(__assign({}, rest), { b: a });
+    return Object.assign(Object.assign({}, rest), { b: a });
 }
 let o1 = { a: 'hello', x: 42 };
 let o2 = test(o1);

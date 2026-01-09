@@ -9,13 +9,14 @@ import (
 )
 
 func TestCompletionsWritingSpreadArgument(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
- const [] = [Math.min(./*marker*/)]
+const [] = [Math.min(./*marker*/)]
 `
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "marker")
 	f.VerifyCompletions(t, nil, nil)
 	f.Insert(t, ".")

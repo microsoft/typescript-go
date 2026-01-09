@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForAliasedGeneric(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     export module N {
@@ -20,7 +20,8 @@ func TestQuickInfoForAliasedGeneric(t *testing.T) {
 import d = M.N;
 var /*1*/aa: d.C<number>;
 var /*2*/bb: d.D;`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "1", "var aa: d.C<number>", "")
 	f.VerifyQuickInfoAt(t, "2", "var bb: d.D", "")
 }

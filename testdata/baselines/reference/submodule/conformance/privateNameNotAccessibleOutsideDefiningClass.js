@@ -9,6 +9,7 @@ new A().#foo = 4;               // Error
 
 
 //// [privateNameNotAccessibleOutsideDefiningClass.js]
+"use strict";
 var _A_foo;
 class A {
     constructor() {

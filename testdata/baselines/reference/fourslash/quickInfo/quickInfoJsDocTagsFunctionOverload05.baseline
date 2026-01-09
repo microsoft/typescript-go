@@ -1,0 +1,81 @@
+// === QuickInfo ===
+=== /quickInfoJsDocTagsFunctionOverload05.ts ===
+// declare function foo(): void;
+//                  ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// 
+// /**
+//  * @tag Tag text
+//  */
+// declare function foo(x: number): void
+//                  ^^^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(x: number): void
+// | ```
+// | 
+// | 
+// | *@tag* — Tag text
+// | 
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 17,
+      "LSPosition": {
+        "line": 0,
+        "character": 17
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(): void\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 17
+        },
+        "end": {
+          "line": 0,
+          "character": 20
+        }
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 73,
+      "LSPosition": {
+        "line": 5,
+        "character": 17
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(x: number): void\n```\n\n\n*@tag* — Tag text\n"
+      },
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 17
+        },
+        "end": {
+          "line": 5,
+          "character": 20
+        }
+      }
+    }
+  }
+]

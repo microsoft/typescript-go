@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
 	"github.com/microsoft/typescript-go/internal/transformers/estransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/inliners"
 	"github.com/microsoft/typescript-go/internal/transformers/jsxtransforms"
 	"github.com/microsoft/typescript-go/internal/transformers/moduletransforms"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
@@ -42,9 +43,6 @@ type emitter struct {
 }
 
 func (e *emitter) emit() {
-	if e.host.Options().ListEmittedFiles.IsTrue() {
-		e.emitResult.EmittedFiles = []string{}
-	}
 	// !!! tracing
 	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
 	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
@@ -66,6 +64,7 @@ func getModuleTransformer(opts *transformers.TransformOptions) *transformers.Tra
 		core.ModuleKindES2022,
 		core.ModuleKindES2020,
 		core.ModuleKindES2015,
+		core.ModuleKindNode20,
 		core.ModuleKindNode18,
 		core.ModuleKindNode16,
 		core.ModuleKindNodeNext,
@@ -86,7 +85,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	var emitResolver printer.EmitResolver
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled || options.GetJSXTransformEnabled() {
+	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() { // full emit resolver is needed for import ellision and const enum inlining
 		emitResolver = host.GetEmitResolver()
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
@@ -104,6 +103,11 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	// transform TypeScript syntax
 	{
+		// use type nodes to add metadata decorators
+		if options.EmitDecoratorMetadata.IsTrue() {
+			tx = append(tx, tstransforms.NewMetadataTransformer(&opts))
+		}
+
 		// erase types
 		tx = append(tx, tstransforms.NewTypeEraserTransformer(&opts))
 
@@ -114,6 +118,10 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 		// transform `enum`, `namespace`, and parameter properties
 		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(&opts))
+
+		if options.ExperimentalDecorators.IsTrue() {
+			tx = append(tx, tstransforms.NewLegacyDecoratorsTransformer(&opts))
+		}
 	}
 
 	// !!! transform legacy decorator syntax
@@ -126,8 +134,15 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 		tx = append(tx, downleveler)
 	}
 
+	tx = append(tx, estransforms.NewUseStrictTransformer(&opts))
+
 	// transform module syntax
 	tx = append(tx, getModuleTransformer(&opts))
+
+	// inlining (formerly done via substitutions)
+	if !options.GetIsolatedModules() {
+		tx = append(tx, inliners.NewConstEnumInliningTransformer(&opts))
+	}
 	return tx
 }
 
@@ -157,6 +172,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		SourceMap:       options.SourceMap.IsTrue(),
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		InlineSources:   options.InlineSources.IsTrue(),
+		Target:          options.Target,
 		// !!!
 	}
 
@@ -191,12 +207,13 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	// !!! strada skipped emit if there were diagnostics
 
 	printerOptions := printer.PrinterOptions{
-		RemoveComments:  options.RemoveComments.IsTrue(),
-		NewLine:         options.NewLine,
-		NoEmitHelpers:   options.NoEmitHelpers.IsTrue(),
-		SourceMap:       options.DeclarationMap.IsTrue(),
-		InlineSourceMap: options.InlineSourceMap.IsTrue(),
-		InlineSources:   options.InlineSources.IsTrue(),
+		RemoveComments:      options.RemoveComments.IsTrue(),
+		OnlyPrintJSDocStyle: true,
+		NewLine:             options.NewLine,
+		NoEmitHelpers:       options.NoEmitHelpers.IsTrue(),
+		SourceMap:           options.DeclarationMap.IsTrue(),
+		InlineSourceMap:     options.InlineSourceMap.IsTrue(),
+		InlineSources:       options.InlineSources.IsTrue(),
 		// !!!
 	}
 
@@ -259,10 +276,10 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 		// Write the source map
 		if len(sourceMapFilePath) > 0 {
 			sourceMap := sourceMapGenerator.String()
-			err := e.host.WriteFile(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/)
+			err := e.writeText(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, nil)
 			if err != nil {
 				e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
-			} else if e.emitResult.EmittedFiles != nil {
+			} else {
 				e.emitResult.EmittedFiles = append(e.emitResult.EmittedFiles, sourceMapFilePath)
 			}
 		}
@@ -272,26 +289,27 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	// Write the output file
 	text := e.writer.String()
-	var err error
-	var skippedDtsWrite bool
-	if e.writeFile == nil {
-		err = e.host.WriteFile(jsFilePath, text, e.host.Options().EmitBOM.IsTrue())
-	} else {
-		data := &WriteFileData{
-			SourceMapUrlPos: sourceMapUrlPos,
-			Diagnostics:     e.emitterDiagnostics.GetDiagnostics(),
-		}
-		err = e.writeFile(jsFilePath, text, e.host.Options().EmitBOM.IsTrue(), data)
-		skippedDtsWrite = data.SkippedDtsWrite
+	data := &WriteFileData{
+		SourceMapUrlPos: sourceMapUrlPos,
+		Diagnostics:     e.emitterDiagnostics.GetDiagnostics(),
 	}
+	err := e.writeText(jsFilePath, text, options.EmitBOM.IsTrue(), data)
+	skippedDtsWrite := data.SkippedDtsWrite
 	if err != nil {
 		e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
-	} else if e.emitResult.EmittedFiles != nil && !skippedDtsWrite {
+	} else if !skippedDtsWrite {
 		e.emitResult.EmittedFiles = append(e.emitResult.EmittedFiles, jsFilePath)
 	}
 
 	// Reset state
 	e.writer.Clear()
+}
+
+func (e *emitter) writeText(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error {
+	if e.writeFile != nil {
+		return e.writeFile(fileName, text, writeByteOrderMark, data)
+	}
+	return e.host.WriteFile(fileName, text, writeByteOrderMark)
 }
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
@@ -385,7 +403,7 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 
 type SourceFileMayBeEmittedHost interface {
 	Options() *core.CompilerOptions
-	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 	GetCurrentDirectory() string
 	UseCaseSensitiveFileNames() bool
@@ -418,7 +436,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 
 	// Check other conditions for file emit
 	// Source files from referenced projects are not emitted
-	if host.GetOutputAndProjectReference(sourceFile.Path()) != nil {
+	if host.GetProjectReferenceFromSource(sourceFile.Path()) != nil {
 		return false
 	}
 

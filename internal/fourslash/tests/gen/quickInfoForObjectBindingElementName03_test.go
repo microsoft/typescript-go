@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForObjectBindingElementName03(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Options {
     /**
@@ -21,6 +21,7 @@ func TestQuickInfoForObjectBindingElementName03(t *testing.T) {
 function f({ foo }: Options) {
     foo/*1*/;
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

@@ -8,8 +8,8 @@ import (
 )
 
 func TestReferencesForExportedValues(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     /*1*/export var /*2*/variable = 0;
@@ -20,6 +20,7 @@ func TestReferencesForExportedValues(t *testing.T) {
 
 // external use
 M./*4*/variable`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "1", "2", "3", "4")
 }

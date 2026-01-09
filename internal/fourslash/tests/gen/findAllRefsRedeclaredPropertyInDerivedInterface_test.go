@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllRefsRedeclaredPropertyInDerivedInterface(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 interface A {
@@ -20,6 +20,7 @@ interface B extends A {
 }
 const a: A = { /*2*/x: 0 };
 const b: B = { /*3*/x: 0 };`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2", "3")
 }

@@ -10,8 +10,8 @@ import (
 )
 
 func TestMemberListOfExportedClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
   export class C { public pub = 0; private priv = 1; }
@@ -22,7 +22,8 @@ func TestMemberListOfExportedClass(t *testing.T) {
 var c = new M.C();
 
 c./**/ // test on c.`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

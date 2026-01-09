@@ -62,6 +62,7 @@ class A {
 
 
 //// [privateNamesIncompatibleModifiersJs.js]
+"use strict";
 var _A_a, _A_b, _A_c;
 class A {
     constructor() {

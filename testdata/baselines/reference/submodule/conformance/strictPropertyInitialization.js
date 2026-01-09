@@ -163,6 +163,8 @@ class C13 {
 
 
 //// [strictPropertyInitialization.js]
+"use strict";
+// Properties with non-undefined types require initialization
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -175,7 +177,6 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _C1_f, _C1_g, _C1_h, _C1_i, _C4_d, _C4_e, _C4_f, _C5_b, _C6_b, _C7_b, _C10_d, _C11_b;
-// Properties with non-undefined types require initialization
 class C1 {
     constructor() {
         _C1_f.set(this, void 0); //Error
@@ -273,10 +274,6 @@ class C8 {
 }
 // No strict initialization checks for abstract members
 class C9 {
-    a;
-    b;
-    c;
-    d;
 }
 // Properties with non-undefined types must be assigned before they can be accessed
 // within their constructor
@@ -334,15 +331,13 @@ class C13 {
 
 
 //// [strictPropertyInitialization.d.ts]
-// Properties with non-undefined types require initialization
 declare class C1 {
     #private;
-    a: number; // Error
+    a: number;
     b: number | undefined;
-    c: number | null; // Error
+    c: number | null;
     d?: number;
 }
-// No strict initialization checks in ambient contexts
 declare class C2 {
     #private;
     a: number;
@@ -350,30 +345,26 @@ declare class C2 {
     c: number | null;
     d?: number;
 }
-// No strict initialization checks for static members
 declare class C3 {
     static a: number;
     static b: number | undefined;
     static c: number | null;
     static d?: number;
 }
-// Initializer satisfies strict initialization check
 declare class C4 {
     #private;
     a: number;
     b: number;
     c: string;
 }
-// Assignment in constructor satisfies strict initialization check
 declare class C5 {
     #private;
     a: number;
     constructor();
 }
-// All code paths must contain assignment
 declare class C6 {
     #private;
-    a: number; // Error
+    a: number;
     constructor(cond: boolean);
 }
 declare class C7 {
@@ -381,21 +372,17 @@ declare class C7 {
     a: number;
     constructor(cond: boolean);
 }
-// Properties with string literal names aren't checked
 declare class C8 {
-    a: number; // Error
+    a: number;
     "b": number;
     0: number;
 }
-// No strict initialization checks for abstract members
 declare abstract class C9 {
     abstract a: number;
     abstract b: number | undefined;
     abstract c: number | null;
     abstract d?: number;
 }
-// Properties with non-undefined types must be assigned before they can be accessed
-// within their constructor
 declare class C10 {
     #private;
     a: number;
@@ -403,7 +390,6 @@ declare class C10 {
     c?: number;
     constructor();
 }
-// Property is considered initialized by type any even though value could be undefined
 declare function someValue(): any;
 declare class C11 {
     #private;

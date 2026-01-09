@@ -3,6 +3,7 @@ package packagejson
 import (
 	json "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/collections"
 )
 
 type HeaderFields struct {
@@ -26,6 +27,54 @@ type DependencyFields struct {
 	DevDependencies      Expected[map[string]string] `json:"devDependencies"`
 	PeerDependencies     Expected[map[string]string] `json:"peerDependencies"`
 	OptionalDependencies Expected[map[string]string] `json:"optionalDependencies"`
+}
+
+// HasDependency returns true if the package.json has a dependency with the given name
+// under any of the dependency fields (dependencies, devDependencies, peerDependencies,
+// optionalDependencies).
+func (df *DependencyFields) HasDependency(name string) bool {
+	if deps, ok := df.Dependencies.GetValue(); ok {
+		if _, ok := deps[name]; ok {
+			return true
+		}
+	}
+	if devDeps, ok := df.DevDependencies.GetValue(); ok {
+		if _, ok := devDeps[name]; ok {
+			return true
+		}
+	}
+	if peerDeps, ok := df.PeerDependencies.GetValue(); ok {
+		if _, ok := peerDeps[name]; ok {
+			return true
+		}
+	}
+	if optDeps, ok := df.OptionalDependencies.GetValue(); ok {
+		if _, ok := optDeps[name]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+func (df *DependencyFields) GetRuntimeDependencyNames() *collections.Set[string] {
+	var count int
+	deps, _ := df.Dependencies.GetValue()
+	count += len(deps)
+	peerDeps, _ := df.PeerDependencies.GetValue()
+	count += len(peerDeps)
+	optDeps, _ := df.OptionalDependencies.GetValue()
+	count += len(optDeps)
+	names := collections.NewSetWithSizeHint[string](count)
+	for name := range deps {
+		names.Add(name)
+	}
+	for name := range peerDeps {
+		names.Add(name)
+	}
+	for name := range optDeps {
+		names.Add(name)
+	}
+	return names
 }
 
 type Fields struct {

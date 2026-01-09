@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoForFunctionDeclaration(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A<T> { }
 
@@ -21,7 +21,8 @@ function /*f*/f<T>(t: T) {
 
 var x = f(0);
 var y = makeA(0);`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyQuickInfoAt(t, "makeA", "function makeA<T>(t: T): A<T>", "")
 	f.VerifyQuickInfoAt(t, "f", "function f<T>(t: T): A<T>", "")
 }

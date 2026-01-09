@@ -11,67 +11,68 @@ import (
 )
 
 func TestCompletionInJsDoc(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: Foo.js
- /** @/*1*/ */
- var v1;
+/** @/*1*/ */
+var v1;
 
- /** @p/*2*/ */
- var v2;
+/** @p/*2*/ */
+var v2;
 
- /** @param /*3*/ */
- var v3;
+/** @param /*3*/ */
+var v3;
 
- /** @param { n/*4*/ } bar */
- var v4;
+/** @param { n/*4*/ } bar */
+var v4;
 
- /** @type { n/*5*/ } */
- var v5;
+/** @type { n/*5*/ } */
+var v5;
 
- // @/*6*/
- var v6;
+// @/*6*/
+var v6;
 
- // @pa/*7*/
- var v7;
+// @pa/*7*/
+var v7;
 
- /** @return { n/*8*/ } */
- var v8;
+/** @return { n/*8*/ } */
+var v8;
 
- /** /*9*/ */
+/** /*9*/ */
 
- /**
-  /*10*/
+/**
+ /*10*/
+*/
+
+/**
+ * /*11*/
  */
 
- /**
-  * /*11*/
+/**
+          /*12*/
+ */
+
+/**
+  *       /*13*/
   */
 
- /**
-           /*12*/
+/**
+  * some comment /*14*/
   */
 
- /**
-   *       /*13*/
-   */
+/**
+  * @param /*15*/
+  */
 
- /**
-   * some comment /*14*/
-   */
+/** @param /*16*/ */
 
- /**
-   * @param /*15*/
-   */
-
- /** @param /*16*/ */
-
- /**
-   * jsdoc inline tag {@/*17*/}
-   */`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+/**
+  * jsdoc inline tag {@/*17*/}
+  */`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

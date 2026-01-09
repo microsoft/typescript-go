@@ -1,6 +1,6 @@
 --- old.blockScopedVariablesUseBeforeDef.js
 +++ new.blockScopedVariablesUseBeforeDef.js
-@@= skipped -153, +153 lines =@@
+@@= skipped -161, +161 lines =@@
 
 
  //// [blockScopedVariablesUseBeforeDef.js]
@@ -66,15 +66,10 @@
      let x;
  }
  function foo10() {
--    let A = (() => {
--        class A {
--        }
--        A.a = x;
--        return A;
--    })();
-+    class A {
+     class A {
 +        static a = x;
-+    }
+     }
+-    A.a = x;
      let x;
  }
  function foo11() {
@@ -98,7 +93,7 @@
              constructor() {
                  this.a = x;
              }
-@@= skipped -81, +69 lines =@@
+@@= skipped -78, +69 lines =@@
      let [a] = (() => a)();
  }
  function foo17() {
@@ -133,3 +128,4 @@
 +        yield 1;
      })();
  }
+ function foo18() {

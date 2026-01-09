@@ -38,6 +38,7 @@ export function testUndefined(): TestUndefined {
 
 
 //// [expandoFunctionNullishProperty.js]
+// mentioned in https://github.com/microsoft/TypeScript/issues/54220
 export function testNull() {
     function inner() { }
     inner.prop = null;
@@ -56,7 +57,6 @@ export function testUndefined() {
 
 
 //// [expandoFunctionNullishProperty.d.ts]
-// mentioned in https://github.com/microsoft/TypeScript/issues/54220
 interface TestNull {
     (): void;
     readonly prop: null;

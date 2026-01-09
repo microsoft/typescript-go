@@ -11,6 +11,38 @@
         "category": "Message",
         "code": 100002
     },
+    "Set the number of checkers per project.": {
+        "category": "Message",
+        "code": 100003
+    },
+    "4, unless --singleThreaded is passed.": {
+        "category": "Message",
+        "code": 100004
+    },
+    "{0} references": {
+        "category": "Message",
+        "code": 100005
+    },
+    "1 reference": {
+        "category": "Message",
+        "code": 100006
+    },
+    "{0} implementations": {
+        "category": "Message",
+        "code": 100007
+    },
+    "1 implementation": {
+        "category": "Message",
+        "code": 100008
+    },
+    "Set the number of projects to build concurrently.": {
+        "category": "Message",
+        "code": 100009
+    },
+    "all, unless --singleThreaded is passed.": {
+        "category": "Message",
+        "code": 100010
+    },
     "Non-relative paths are not allowed. Did you forget a leading './'?": {
         "category": "Error",
         "code": 5090
@@ -19,8 +51,40 @@
         "category": "Error",
         "code": 8030
     },
-    "A JSDoc '@type' tag may not occur with a '@param' or '@returns' tag.": {
+    "Failed to delete file '{0}'.": {
+        "category": "Message",
+        "code": 6353
+    },
+    "Project '{0}' is out of date because config file does not exist.": {
+        "category": "Message",
+        "code": 6401
+    },
+    "Project '{0}' is out of date because input '{1}' does not exist.": {
+        "category": "Message",
+        "code": 6420
+    },
+    "Project '{0}' is out of date because it has errors.": {
+        "category": "Message",
+        "code": 6423
+    },
+    "Locale must be an IETF BCP 47 language tag. Examples: '{0}', '{1}'.": {
         "category": "Error",
-        "code": 8040
+        "code": 6048
+    },
+    "Ignore the tsconfig found and build with commandline options and files.": {
+        "category": "Message",
+        "code": 1549
+    },
+    "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
+        "category": "Error",
+        "code": 5112
+    },
+    "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided.": {
+        "category": "Error",
+        "code": 5074
+    },
+    "Option '{0}' requires value to be greater than '{1}'.": {
+        "category": "Error",
+        "code": 5002
     }
 }

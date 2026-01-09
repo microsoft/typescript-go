@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/zeebo/xxh3"
 )
 
 type FlowType struct {
@@ -40,7 +41,7 @@ type FlowState struct {
 	declaredType    *Type
 	initialType     *Type
 	flowContainer   *ast.Node
-	refKey          string
+	refKey          CacheHashKey
 	depth           int
 	sharedFlowStart int
 	reduceLabels    []*ast.FlowReduceLabelData
@@ -1288,10 +1289,10 @@ func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subty
 }
 
 func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowType {
-	if f.refKey == "" {
+	if f.refKey.IsZero() {
 		f.refKey = c.getFlowReferenceKey(f)
 	}
-	if f.refKey == "?" {
+	if f.refKey == nonDottedNameCacheKey {
 		// No cache key is generated when binding patterns are in unnarrowable situations
 		return FlowType{t: f.declaredType}
 	}
@@ -1427,7 +1428,7 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		// parameter declared in the same parameter list is a candidate.
 		if ast.IsIdentifier(expr) {
 			symbol := c.getResolvedSymbol(expr)
-			declaration := symbol.ValueDeclaration
+			declaration := c.getExportSymbolOfValueSymbolIfExported(symbol).ValueDeclaration
 			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
 				return declaration
 			}
@@ -1549,7 +1550,7 @@ func (c *Checker) createFinalArrayType(elementType *Type) *Type {
 func (c *Checker) reportFlowControlError(node *ast.Node) {
 	block := ast.FindAncestor(node, ast.IsFunctionOrModuleBlock)
 	sourceFile := ast.GetSourceFileOfNode(node)
-	span := scanner.GetRangeOfTokenAtPosition(sourceFile, ast.GetStatementsOfBlock(block).Pos())
+	span := scanner.GetRangeOfTokenAtPosition(sourceFile, block.StatementList().Pos())
 	c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
 }
 
@@ -1607,19 +1608,21 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	return false
 }
 
+var nonDottedNameCacheKey = CacheHashKey(xxh3.HashString128("?"))
+
 // Return the flow cache key for a "dotted name" (i.e. a sequence of identifiers
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
-// The result is an empty string if the reference isn't a dotted name.
-func (c *Checker) getFlowReferenceKey(f *FlowState) string {
-	var b KeyBuilder
+// The result is nonDottedNameCacheKey if the reference isn't a dotted name.
+func (c *Checker) getFlowReferenceKey(f *FlowState) CacheHashKey {
+	var b keyBuilder
 	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
-		return b.String()
+		return b.hash()
 	}
-	return "?" // Reference isn't a dotted name
+	return nonDottedNameCacheKey // Reference isn't a dotted name
 }
 
-func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
+func (c *Checker) writeFlowCacheKey(b *keyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier:
 		if !ast.IsThisInTypeQuery(node) {
@@ -1627,19 +1630,19 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 			if symbol == c.unknownSymbol {
 				return false
 			}
-			b.WriteSymbol(symbol)
+			b.writeSymbol(symbol)
 		}
 		fallthrough
 	case ast.KindThisKeyword:
-		b.WriteByte(':')
-		b.WriteType(declaredType)
+		b.writeByte(':')
+		b.writeType(declaredType)
 		if initialType != declaredType {
-			b.WriteByte('=')
-			b.WriteType(initialType)
+			b.writeByte('=')
+			b.writeType(initialType)
 		}
 		if flowContainer != nil {
-			b.WriteByte('@')
-			b.WriteNode(flowContainer)
+			b.writeByte('@')
+			b.writeNode(flowContainer)
 		}
 		return true
 	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
@@ -1648,16 +1651,16 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		if !c.writeFlowCacheKey(b, node.AsQualifiedName().Left, declaredType, initialType, flowContainer) {
 			return false
 		}
-		b.WriteByte('.')
-		b.WriteString(node.AsQualifiedName().Right.Text())
+		b.writeByte('.')
+		b.writeString(node.AsQualifiedName().Right.Text())
 		return true
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		if propName, ok := c.getAccessedPropertyName(node); ok {
 			if !c.writeFlowCacheKey(b, node.Expression(), declaredType, initialType, flowContainer) {
 				return false
 			}
-			b.WriteByte('.')
-			b.WriteString(propName)
+			b.writeByte('.')
+			b.writeString(propName)
 			return true
 		}
 		if ast.IsElementAccessExpression(node) && ast.IsIdentifier(node.AsElementAccessExpression().ArgumentExpression) {
@@ -1666,16 +1669,16 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 				if !c.writeFlowCacheKey(b, node.Expression(), declaredType, initialType, flowContainer) {
 					return false
 				}
-				b.WriteString(".@")
-				b.WriteSymbol(symbol)
+				b.writeString(".@")
+				b.writeSymbol(symbol)
 				return true
 			}
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
-		b.WriteNode(node)
-		b.WriteByte('#')
-		b.WriteType(declaredType)
+		b.writeNode(node)
+		b.writeByte('#')
+		b.writeType(declaredType)
 		return true
 	}
 	return false
@@ -1759,11 +1762,8 @@ func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 	if ast.IsPropertyAssignment(node) || ast.IsShorthandPropertyAssignment(node) {
 		return c.getLiteralPropertyNameText(node.Name())
 	}
-	if ast.IsArrayBindingPattern(parent) {
-		return strconv.Itoa(slices.Index(parent.AsBindingPattern().Elements.Nodes, node)), true
-	}
-	if ast.IsArrayLiteralExpression(parent) {
-		return strconv.Itoa(slices.Index(parent.AsArrayLiteralExpression().Elements.Nodes, node)), true
+	if ast.IsArrayLiteralExpression(parent) || ast.IsArrayBindingPattern(parent) {
+		return strconv.Itoa(slices.Index(parent.Elements(), node)), true
 	}
 	return "", false
 }
@@ -2099,7 +2099,7 @@ func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic
 		case ast.KindSuperKeyword:
 			return c.checkSuperExpression(node)
 		case ast.KindPropertyAccessExpression:
-			t := c.getTypeOfDottedName(node.AsPropertyAccessExpression().Expression, diagnostic)
+			t := c.getTypeOfDottedName(node.Expression(), diagnostic)
 			if t != nil {
 				name := node.Name()
 				var prop *ast.Symbol
@@ -2115,7 +2115,7 @@ func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic
 				}
 			}
 		case ast.KindParenthesizedExpression:
-			return c.getTypeOfDottedName(node.AsParenthesizedExpression().Expression, diagnostic)
+			return c.getTypeOfDottedName(node.Expression(), diagnostic)
 		}
 	}
 	return nil
@@ -2160,7 +2160,17 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
-	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil
+	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil ||
+		c.isExpandoPropertyFunctionWithReturnTypeAnnotation(node)
+}
+
+func (c *Checker) isExpandoPropertyFunctionWithReturnTypeAnnotation(node *ast.Node) bool {
+	if ast.IsBinaryExpression(node) {
+		if expr := node.AsBinaryExpression().Right; ast.IsFunctionLike(expr) && expr.Type() != nil {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Checker) hasTypePredicateOrNeverReturnType(sig *Signature) bool {
@@ -2233,7 +2243,7 @@ func (c *Checker) getInitialTypeOfBindingElement(node *ast.Node) *Type {
 	case ast.IsObjectBindingPattern(pattern):
 		t = c.getTypeOfDestructuredProperty(parentType, getBindingElementPropertyName(node))
 	case !hasDotDotDotToken(node):
-		t = c.getTypeOfDestructuredArrayElement(parentType, slices.Index(pattern.AsBindingPattern().Elements.Nodes, node))
+		t = c.getTypeOfDestructuredArrayElement(parentType, slices.Index(pattern.Elements(), node))
 	default:
 		t = c.getTypeOfDestructuredSpreadExpression(parentType)
 	}
@@ -2276,7 +2286,7 @@ func (c *Checker) getAssignedTypeOfBinaryExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) getAssignedTypeOfArrayLiteralElement(node *ast.Node, element *ast.Node) *Type {
-	return c.getTypeOfDestructuredArrayElement(c.getAssignedType(node), slices.Index(node.AsArrayLiteralExpression().Elements.Nodes, element))
+	return c.getTypeOfDestructuredArrayElement(c.getAssignedType(node), slices.Index(node.Elements(), element))
 }
 
 func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
@@ -2398,7 +2408,7 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpression *ast.Node) *ast.Node {
 	if predicate.kind == TypePredicateKindIdentifier || predicate.kind == TypePredicateKindAssertsIdentifier {
 		arguments := callExpression.Arguments()
-		if int(predicate.parameterIndex) < len(arguments) {
+		if predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) {
 			return arguments[predicate.parameterIndex]
 		}
 	} else {
@@ -2489,7 +2499,7 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&ast.FlowFlagsCall != 0:
 			if signature := c.getEffectsSignature(flow.Node); signature != nil {
 				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					if arguments := flow.Node.Arguments(); int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
+					if arguments := flow.Node.Arguments(); predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
 						return false
 					}
 				}
@@ -2672,11 +2682,8 @@ func (c *Checker) markNodeAssignmentsWorker(node *ast.Node) bool {
 		return false
 	case ast.KindExportSpecifier:
 		exportDeclaration := node.AsExportSpecifier().Parent.Parent.AsExportDeclaration()
-		name := node.AsExportSpecifier().PropertyName
-		if name == nil {
-			name = node.Name()
-		}
-		if !node.AsExportSpecifier().IsTypeOnly && !exportDeclaration.IsTypeOnly && exportDeclaration.ModuleSpecifier == nil && !ast.IsStringLiteral(name) {
+		name := node.PropertyNameOrName()
+		if !node.IsTypeOnly() && !exportDeclaration.IsTypeOnly && exportDeclaration.ModuleSpecifier == nil && !ast.IsStringLiteral(name) {
 			symbol := c.resolveEntityName(name, ast.SymbolFlagsValue, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil)
 			if symbol != nil && c.isParameterOrMutableLocalVariable(symbol) {
 				links := c.markedAssignmentSymbolLinks.Get(symbol)

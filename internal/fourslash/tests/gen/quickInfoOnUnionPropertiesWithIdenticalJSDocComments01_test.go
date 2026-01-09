@@ -8,8 +8,8 @@ import (
 )
 
 func TestQuickInfoOnUnionPropertiesWithIdenticalJSDocComments01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export type DocumentFilter = {
     /** A language id, like ` + "`" + `typescript` + "`" + `. */
@@ -36,6 +36,7 @@ func TestQuickInfoOnUnionPropertiesWithIdenticalJSDocComments01(t *testing.T) {
 
 declare let x: DocumentFilter;
 x./**/language`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineHover(t)
 }

@@ -42,6 +42,9 @@ export function fnWithPartialAnnotationOnDefaultparam(x = /** @type {P} */(somet
 
 
 //// [input.d.ts]
+/**
+ * @typedef {{ } & { name?: string }} P
+ */
 export type P = {} & {
     name?: string;
 };
@@ -57,14 +60,14 @@ export declare function fn(p?: {
 /** @param {number} req */
 export declare function fnWithRequiredDefaultParam(p: {
     name?: string | undefined;
-}, req: number): void;
+} | undefined, req: number): void;
 export declare class C {
     field: {
         name?: string | undefined;
     };
     /** @optional */ optField: {
         name?: string | undefined;
-    }; // not a thing
+    };
     /** @readonly */ readonly roFiled: {
         name?: string | undefined;
     };
@@ -74,7 +77,7 @@ export declare class C {
     /** @param {number} req */
     methodWithRequiredDefault(p: {
         name?: string | undefined;
-    }, req: number): void;
+    } | undefined, req: number): void;
     constructor(ctorField?: {
         name?: string | undefined;
     });
@@ -89,10 +92,11 @@ declare const _default: {
     name?: string | undefined;
 };
 export default /** @type {P} */ _default;
-// allows `undefined` on the input side, thanks to the initializer
 /**
  *
  * @param {P} x
  * @param {number} b
  */
-export declare function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
+export declare function fnWithPartialAnnotationOnDefaultparam(x: {
+    name?: string | undefined;
+} | undefined, b: number): void;

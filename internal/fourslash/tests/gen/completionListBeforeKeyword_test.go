@@ -9,8 +9,8 @@ import (
 )
 
 func TestCompletionListBeforeKeyword(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// Completion after dot in named type, when the following line has a keyword
 module TypeModule1 {
@@ -27,7 +27,8 @@ TypeModule1./*ValueReference*/
 module TypeModule3 {
     export class Test3 {}
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

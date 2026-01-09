@@ -9,15 +9,16 @@ import (
 )
 
 func TestCompletionListInFatArrow(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var items = [0, 1, 2];
 items.forEach((n) => {
     /**/
     var q = n;
 });`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.GoToMarker(t, "")
 	f.Insert(t, "it")
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{

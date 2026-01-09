@@ -8,8 +8,8 @@ import (
 )
 
 func TestFindAllReferencesUmdModuleAsGlobalConst(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /node_modules/@types/three/three-core.d.ts
 export class Vector3 {
@@ -44,6 +44,7 @@ let v = new /*3*/THREE.Vector2();
  	},
     "files": ["/src/index.ts", "typings/global.d.ts"]
 }`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2", "3")
 }
