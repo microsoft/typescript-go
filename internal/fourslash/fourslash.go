@@ -1289,6 +1289,7 @@ type ApplyCodeActionFromCompletionOptions struct {
 }
 
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
+	t.Helper()
 	f.GoToMarker(t, *markerName)
 	var userPreferences *lsutil.UserPreferences
 	if options != nil && options.UserPreferences != nil {
