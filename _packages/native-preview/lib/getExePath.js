@@ -45,7 +45,7 @@ export default function getExePath() {
     if (process.platform === "win32") {
         exe += ".exe";
         if (exe.length >= 248) {
-            exe = "\\\\?\\" + exe;
+            exe = `\\?\` + exe;
         }
     }
 
