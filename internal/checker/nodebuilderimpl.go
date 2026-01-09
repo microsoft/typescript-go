@@ -2035,7 +2035,12 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		} else {
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
-		result = b.pseudoTypeToNode(pt)
+		annotated := b.pseudoTypeToType(pt)
+		if annotated == t || annotated != nil && b.ch.isErrorType(annotated) {
+			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
+			// see: canReuseTypeNodeAnnotation in strada for context
+			result = b.pseudoTypeToNode(pt)
+		}
 		remove()
 	}
 	if result == nil {
