@@ -816,7 +816,36 @@ func (s *orderedSet[T]) add(value T) {
 }
 
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
-	return ast.FindAncestor(node.Parent, ast.IsFunctionLikeOrClassStaticBlockDeclaration)
+	node = node.Parent
+	for node != nil {
+		if node.Kind == ast.KindComputedPropertyName {
+			node = node.Parent.Parent
+			continue
+		}
+		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(node) {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
+}
+
+func getContainingClassStaticBlock(node *ast.Node) *ast.Node {
+	node = node.Parent
+	for node != nil {
+		if node.Kind == ast.KindComputedPropertyName {
+			node = node.Parent.Parent
+			continue
+		}
+		if ast.IsClassLike(node) || ast.IsFunctionLike(node) {
+			return nil
+		}
+		if ast.IsClassStaticBlockDeclaration(node) {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
 }
 
 func isNodeDescendantOf(node *ast.Node, ancestor *ast.Node) bool {
