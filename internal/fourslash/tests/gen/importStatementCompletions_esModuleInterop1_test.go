@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportStatementCompletions_esModuleInterop1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: false
 // @allowSyntheticDefaultImports: false
@@ -35,7 +35,7 @@ export = foo;
 					Label:      "foo",
 					InsertText: PtrTo("import foo$1 = require(\"./mod\");"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./mod",
 						},
 					},

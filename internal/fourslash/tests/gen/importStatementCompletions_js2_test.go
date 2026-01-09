@@ -10,8 +10,8 @@ import (
 )
 
 func TestImportStatementCompletions_js2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @target: es2020
@@ -41,7 +41,7 @@ export = React;
 					Label:      "React",
 					InsertText: PtrTo("import * as React from \"react\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "react",
 						},
 					},

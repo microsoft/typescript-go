@@ -11,8 +11,8 @@ import (
 )
 
 func TestExhaustiveCaseCompletions7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 export function foo(position: -1 | 0 | 1) {

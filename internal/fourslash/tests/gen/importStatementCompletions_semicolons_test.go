@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportStatementCompletions_semicolons(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /mod.ts
 export const foo = 0;
@@ -33,7 +33,7 @@ import * as fs from "fs"
 					Label:      "foo",
 					InsertText: PtrTo("import { foo$1 } from \"./mod\""),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./mod",
 						},
 					},

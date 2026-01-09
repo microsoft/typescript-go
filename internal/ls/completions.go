@@ -354,7 +354,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	switch data := data.(type) {
 	case *completionDataData:
 		optionalReplacementSpan := l.getOptionalReplacementSpan(data.location, file)
-		response := l.completionInfoFromData(
+		response, err := l.completionInfoFromData(
 			ctx,
 			checker,
 			file,
@@ -363,7 +363,9 @@ func (l *LanguageService) getCompletionsAtPosition(
 			position,
 			optionalReplacementSpan,
 		)
-		// !!! check if response is incomplete
+		if err != nil {
+			return nil, err
+		}
 		return response, nil
 	case *completionDataKeyword:
 		optionalReplacementSpan := l.getOptionalReplacementSpan(previousToken, file)
@@ -1665,7 +1667,7 @@ func (l *LanguageService) completionInfoFromData(
 	data *completionDataData,
 	position int,
 	optionalReplacementSpan *lsproto.Range,
-) *lsproto.CompletionList {
+) (*lsproto.CompletionList, error) {
 	keywordFilters := data.keywordFilters
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
@@ -1676,7 +1678,7 @@ func (l *LanguageService) completionInfoFromData(
 	if file.LanguageVariant == core.LanguageVariantJSX {
 		list := l.getJsxClosingTagCompletion(ctx, data.location, file, position)
 		if list != nil {
-			return list
+			return list, nil
 		}
 	}
 
@@ -1703,7 +1705,7 @@ func (l *LanguageService) completionInfoFromData(
 
 	isChecked := isCheckedFile(file, compilerOptions)
 	if isChecked && !isNewIdentifierLocation && len(data.symbols) == 0 && keywordFilters == KeywordCompletionFiltersNone {
-		return nil
+		return nil, nil
 	}
 
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
@@ -1753,14 +1755,18 @@ func (l *LanguageService) completionInfoFromData(
 
 	if contextToken != nil && !data.isRightOfOpenTag && !data.isRightOfDotOrQuestionDot {
 		if caseBlock := ast.FindAncestorKind(contextToken, ast.KindCaseBlock); caseBlock != nil {
-			if casesItem := l.getExhaustiveCaseSnippets(
+			casesItem, err := l.getExhaustiveCaseSnippets(
 				ctx,
 				caseBlock.AsCaseBlock(),
 				file,
 				compilerOptions,
 				l.program,
 				typeChecker,
-			); casesItem != nil {
+			)
+			if err != nil {
+				return nil, err
+			}
+			if casesItem != nil {
 				sortedEntries = append(sortedEntries, casesItem)
 			}
 		}
@@ -1779,7 +1785,7 @@ func (l *LanguageService) completionInfoFromData(
 		IsIncomplete: data.hasUnresolvedAutoImports,
 		ItemDefaults: itemDefaults,
 		Items:        sortedEntries,
-	}
+	}, nil
 }
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
@@ -5837,7 +5843,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 	options *core.CompilerOptions,
 	program *compiler.Program,
 	c *checker.Checker,
-) *lsproto.CompletionItem {
+) (*lsproto.CompletionItem, error) {
 	clauses := caseBlock.Clauses.Nodes
 	switchType := c.GetTypeAtLocation(caseBlock.AsNode().Parent.Expression())
 	if switchType != nil && switchType.IsUnion() && core.Every(switchType.Types(), isLiteral) {
@@ -5845,7 +5851,20 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		tracker := newCaseClauseTracker(c, clauses)
 		target := options.GetEmitScriptTarget()
 		quotePreference := lsutil.GetQuotePreference(file, l.UserPreferences())
-		// !!! importAdder
+		view, err := l.getPreparedAutoImportView(file)
+		if err != nil {
+			return nil, err
+		}
+		importAdder := autoimport.NewImportAdder(
+			ctx,
+			program,
+			c,
+			file,
+			view,
+			l.FormatOptions(),
+			l.converters,
+			l.UserPreferences(),
+		)
 		var elements []*ast.Expression
 		factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 		for _, t := range switchType.Types() {
@@ -5864,14 +5883,13 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 					}
 					tracker.addValue(enumValue)
 				}
-				// !!! importAdder
-				typeNode := c.TypeToTypeNode(t, caseBlock.AsNode(), nodebuilder.FlagsNone)
+				typeNode := autoimport.TypeToAutoImportableTypeNode(c, importAdder, t, caseBlock.AsNode())
 				if typeNode == nil {
-					return nil
+					return nil, nil
 				}
 				expr := typeNodeToExpression(typeNode, target, quotePreference, factory)
 				if expr == nil {
-					return nil
+					return nil, nil
 				}
 				elements = append(elements, expr)
 			} else if value := t.AsLiteralType().Value(); !tracker.hasValue(value) { // Literals
@@ -5880,28 +5898,27 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 					var bigInt *ast.Node
 					if v.Negative {
 						v.Negative = false
-						bigInt = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewBigIntLiteral(v.String()))
+						bigInt = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewBigIntLiteral(v.String(), ast.TokenFlagsNone))
 					} else {
-						bigInt = factory.NewBigIntLiteral(v.String())
+						bigInt = factory.NewBigIntLiteral(v.String(), ast.TokenFlagsNone)
 					}
 					elements = append(elements, bigInt)
 				case jsnum.Number:
 					var number *ast.Node
 					if v < 0 {
-						number = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewNumericLiteral(v.Abs().String()))
+						number = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewNumericLiteral(v.Abs().String(), ast.TokenFlagsNone))
 					} else {
-						number = factory.NewNumericLiteral(v.String())
+						number = factory.NewNumericLiteral(v.String(), ast.TokenFlagsNone)
 					}
 					elements = append(elements, number)
 				case string:
-					literal := factory.NewStringLiteral(v)
-					literal.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+					literal := factory.NewStringLiteral(v, core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone))
 					elements = append(elements, literal)
 				}
 			}
 		}
 		if len(elements) == 0 {
-			return nil
+			return nil, nil
 		}
 
 		newClauses := core.Map(elements, func(element *ast.Node) *ast.CaseClauseNode {
@@ -5922,15 +5939,15 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 
 		firstClause := printer.printNode(newClauses[0], file)
 		return &lsproto.CompletionItem{
-			Label:      firstClause + " ...",
-			Kind:       ptrTo(lsproto.CompletionItemKindSnippet),
-			SortText:   ptrTo(string(SortTextGlobalsOrKeywords)),
-			InsertText: strPtrTo(insertText),
-			// AdditionalTextEdits !!! importAdder
-			InsertTextFormat: core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
-		}
+			Label:               firstClause + " ...",
+			Kind:                ptrTo(lsproto.CompletionItemKindSnippet),
+			SortText:            ptrTo(string(SortTextGlobalsOrKeywords)),
+			InsertText:          strPtrTo(insertText),
+			AdditionalTextEdits: ptrTo(importAdder.Edits()),
+			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
+		}, nil
 	}
-	return nil
+	return nil, nil
 }
 
 func typeNodeToExpression(
@@ -5964,12 +5981,10 @@ func typeNodeToExpression(
 		literal := typeNode.AsLiteralTypeNode().Literal
 		switch literal.Kind {
 		case ast.KindStringLiteral:
-			expr := factory.NewStringLiteral(literal.Text())
-			expr.LiteralLikeData().TokenFlags |= core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
+			expr := factory.NewStringLiteral(literal.Text(), core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone))
 			return expr
 		case ast.KindNumericLiteral:
-			expr := factory.NewNumericLiteral(literal.Text())
-			expr.LiteralLikeData().TokenFlags |= literal.AsNumericLiteral().TokenFlags & ast.TokenFlagsNumericLiteralFlags
+			expr := factory.NewNumericLiteral(literal.Text(), literal.AsNumericLiteral().TokenFlags)
 			return expr
 		default:
 			return nil
@@ -5991,8 +6006,7 @@ func typeNodeToExpression(
 	case ast.KindTypeQuery:
 		return entityNameToExpression(typeNode.AsTypeQueryNode().ExprName, target, quotePreference, factory)
 	case ast.KindImportType:
-		// !!! importAdder
-		// debug.Fail(`We should not get an import type after calling 'codefix.typeToAutoImportableTypeNode'.`)
+		debug.Fail(`We should not get an import type after calling 'typeToAutoImportableTypeNode'.`)
 		return nil
 	}
 	return nil

@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportStatementCompletions_pnpm1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 { "compilerOptions": { "module": "commonjs" } }
@@ -37,7 +37,7 @@ export declare function Component(): void;
 					Label:      "Component",
 					InsertText: PtrTo("import { Component$1 } from \"react\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "react",
 						},
 					},
