@@ -295,7 +295,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	var redirectTargetsMap map[tspath.Path][]string
 	var deduplicatedPaths collections.Set[tspath.Path]
 	var packageIdToCanonicalPath map[module.PackageId]tspath.Path
-	if !loader.opts.Config.CompilerOptions().DisablePackageDeduplication.IsTrue() {
+	if !loader.opts.Config.CompilerOptions().DeduplicatePackages.IsFalse() {
 		redirectTargetsMap = make(map[tspath.Path][]string)
 		packageIdToCanonicalPath = make(map[module.PackageId]tspath.Path)
 	}

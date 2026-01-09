@@ -1,4 +1,4 @@
-//// [tests/cases/compiler/disablePackageDeduplication.ts] ////
+//// [tests/cases/compiler/deduplicatePackages.ts] ////
 
 //// [index.d.ts]
 import X from "x";

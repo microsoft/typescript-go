@@ -1,5 +1,5 @@
 // @noImplicitReferences: true
-// @disablePackageDeduplication: true,false
+// @deduplicatePackages: true,false
 
 // @Filename: /node_modules/a/index.d.ts
 import X from "x";

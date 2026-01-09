@@ -217,6 +217,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Composite = ParseTristate(value)
 	case "declarationDir":
 		allOptions.DeclarationDir = ParseString(value)
+	case "deduplicatePackages":
+		allOptions.DeduplicatePackages = ParseTristate(value)
 	case "diagnostics":
 		allOptions.Diagnostics = ParseTristate(value)
 	case "disableSizeLimit":
@@ -227,8 +229,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.DisableSolutionSearching = ParseTristate(value)
 	case "disableReferencedProjectLoad":
 		allOptions.DisableReferencedProjectLoad = ParseTristate(value)
-	case "disablePackageDeduplication":
-		allOptions.DisablePackageDeduplication = ParseTristate(value)
 	case "declarationMap":
 		allOptions.DeclarationMap = ParseTristate(value)
 	case "declaration":

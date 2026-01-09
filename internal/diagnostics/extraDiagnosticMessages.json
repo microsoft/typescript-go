@@ -87,7 +87,7 @@
         "category": "Error",
         "code": 5002
     },
-    "Disable deduplication of packages with the same name and version.": {
+    "Deduplicate packages with the same name and version.": {
         "category": "Message",
         "code": 100011
     }

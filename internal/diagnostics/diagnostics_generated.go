@@ -4276,7 +4276,7 @@ var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, ca
 
 var X_all_unless_singleThreaded_is_passed = &Message{code: 100010, category: CategoryMessage, key: "all_unless_singleThreaded_is_passed_100010", text: "all, unless --singleThreaded is passed."}
 
-var Disable_deduplication_of_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Disable_deduplication_of_packages_with_the_same_name_and_version_100011", text: "Disable deduplication of packages with the same name and version."}
+var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8554,8 +8554,8 @@ func keyToMessage(key Key) *Message {
 		return Set_the_number_of_projects_to_build_concurrently
 	case "all_unless_singleThreaded_is_passed_100010":
 		return X_all_unless_singleThreaded_is_passed
-	case "Disable_deduplication_of_packages_with_the_same_name_and_version_100011":
-		return Disable_deduplication_of_packages_with_the_same_name_and_version
+	case "Deduplicate_packages_with_the_same_name_and_version_100011":
+		return Deduplicate_packages_with_the_same_name_and_version
 	default:
 		return nil
 	}
