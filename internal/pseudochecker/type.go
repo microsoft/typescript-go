@@ -46,7 +46,7 @@ type PseudoType struct {
 	data pseudoTypeData
 }
 
-func NewPseudoType(kind PseudoTypeKind, data pseudoTypeData) *PseudoType {
+func newPseudoType(kind PseudoTypeKind, data pseudoTypeData) *PseudoType {
 	n := data.AsPseudoType()
 	n.Kind = kind
 	n.data = data
@@ -68,15 +68,15 @@ type PseudoTypeBase struct {
 }
 
 var (
-	PseudoTypeUndefined = NewPseudoType(PseudoTypeKindUndefined, &PseudoTypeBase{})
-	PseudoTypeNull      = NewPseudoType(PseudoTypeKindNull, &PseudoTypeBase{})
-	PseudoTypeAny       = NewPseudoType(PseudoTypeKindAny, &PseudoTypeBase{})
-	PseudoTypeString    = NewPseudoType(PseudoTypeKindString, &PseudoTypeBase{})
-	PseudoTypeNumber    = NewPseudoType(PseudoTypeKindNumber, &PseudoTypeBase{})
-	PseudoTypeBigInt    = NewPseudoType(PseudoTypeKindBigInt, &PseudoTypeBase{})
-	PseudoTypeBoolean   = NewPseudoType(PseudoTypeKindBoolean, &PseudoTypeBase{})
-	PseudoTypeFalse     = NewPseudoType(PseudoTypeKindFalse, &PseudoTypeBase{})
-	PseudoTypeTrue      = NewPseudoType(PseudoTypeKindTrue, &PseudoTypeBase{})
+	PseudoTypeUndefined = newPseudoType(PseudoTypeKindUndefined, &PseudoTypeBase{})
+	PseudoTypeNull      = newPseudoType(PseudoTypeKindNull, &PseudoTypeBase{})
+	PseudoTypeAny       = newPseudoType(PseudoTypeKindAny, &PseudoTypeBase{})
+	PseudoTypeString    = newPseudoType(PseudoTypeKindString, &PseudoTypeBase{})
+	PseudoTypeNumber    = newPseudoType(PseudoTypeKindNumber, &PseudoTypeBase{})
+	PseudoTypeBigInt    = newPseudoType(PseudoTypeKindBigInt, &PseudoTypeBase{})
+	PseudoTypeBoolean   = newPseudoType(PseudoTypeKindBoolean, &PseudoTypeBase{})
+	PseudoTypeFalse     = newPseudoType(PseudoTypeKindFalse, &PseudoTypeBase{})
+	PseudoTypeTrue      = newPseudoType(PseudoTypeKindTrue, &PseudoTypeBase{})
 )
 
 // PseudoTypeDirect directly encodes the type referred to by a given TypeNode
@@ -86,7 +86,7 @@ type PseudoTypeDirect struct {
 }
 
 func NewPseudoTypeDirect(typeNode *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindDirect, &PseudoTypeDirect{TypeNode: typeNode})
+	return newPseudoType(PseudoTypeKindDirect, &PseudoTypeDirect{TypeNode: typeNode})
 }
 
 func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*PseudoTypeDirect) }
@@ -100,7 +100,7 @@ type PseudoTypeInferred struct {
 }
 
 func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
 }
 
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }
@@ -114,7 +114,7 @@ type PseudoTypeNoResult struct {
 }
 
 func NewPseudoTypeNoResult(decl *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl})
+	return newPseudoType(PseudoTypeKindNoResult, &PseudoTypeNoResult{Declaration: decl})
 }
 
 func (t *PseudoType) AsPseudoTypeNoResult() *PseudoTypeNoResult { return t.data.(*PseudoTypeNoResult) }
@@ -137,7 +137,7 @@ type PseudoTypeMaybeConstLocation struct {
 }
 
 func NewPseudoTypeMaybeConstLocation(loc *ast.Node, ct *PseudoType, reg *PseudoType) *PseudoType {
-	return NewPseudoType(PseudoTypeKindMaybeConstLocation, &PseudoTypeMaybeConstLocation{Node: loc, ConstType: ct, RegularType: reg})
+	return newPseudoType(PseudoTypeKindMaybeConstLocation, &PseudoTypeMaybeConstLocation{Node: loc, ConstType: ct, RegularType: reg})
 }
 
 func (t *PseudoType) AsPseudoTypeMaybeConstLocation() *PseudoTypeMaybeConstLocation {
@@ -151,7 +151,7 @@ type PseudoTypeUnion struct {
 }
 
 func NewPseudoTypeUnion(types []*PseudoType) *PseudoType {
-	return NewPseudoType(PseudoTypeKindUnion, &PseudoTypeUnion{Types: types})
+	return newPseudoType(PseudoTypeKindUnion, &PseudoTypeUnion{Types: types})
 }
 
 func (t *PseudoType) AsPseudoTypeUnion() *PseudoTypeUnion {
@@ -178,7 +178,7 @@ type PseudoTypeSingleCallSignature struct {
 }
 
 func NewPseudoTypeSingleCallSignature(parameters []*PseudoParameter, typeParameters []*ast.TypeParameterDeclaration, returnType *PseudoType) *PseudoType {
-	return NewPseudoType(PseudoTypeKindSingleCallSignature, &PseudoTypeSingleCallSignature{
+	return newPseudoType(PseudoTypeKindSingleCallSignature, &PseudoTypeSingleCallSignature{
 		Parameters:     parameters,
 		TypeParameters: typeParameters,
 		ReturnType:     returnType,
@@ -196,7 +196,7 @@ type PseudoTypeTuple struct {
 }
 
 func NewPseudoTypeTuple(elements []*PseudoType) *PseudoType {
-	return NewPseudoType(PseudoTypeKindTuple, &PseudoTypeTuple{
+	return newPseudoType(PseudoTypeKindTuple, &PseudoTypeTuple{
 		Elements: elements,
 	})
 }
@@ -227,7 +227,7 @@ type pseudoObjectElementData interface {
 	AsPseudoObjectElement() *PseudoObjectElement
 }
 
-func NewPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, optional bool, data pseudoObjectElementData) *PseudoObjectElement {
+func newPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, optional bool, data pseudoObjectElementData) *PseudoObjectElement {
 	e := data.AsPseudoObjectElement()
 	e.Kind = kind
 	e.Name = name
@@ -243,7 +243,7 @@ type PseudoObjectMethod struct {
 }
 
 func NewPseudoObjectMethod(name *ast.Node, optional bool, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
-	return NewPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
+	return newPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
 		Parameters: parameters,
 		ReturnType: returnType,
 	})
@@ -260,7 +260,7 @@ type PseudoPropertyAssignment struct {
 }
 
 func NewPseudoPropertyAssignment(readonly bool, name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
-	return NewPseudoObjectElement(PseudoObjectElementKindPropertyAssignment, name, optional, &PseudoPropertyAssignment{
+	return newPseudoObjectElement(PseudoObjectElementKindPropertyAssignment, name, optional, &PseudoPropertyAssignment{
 		Readonly: readonly,
 		Type:     t,
 	})
@@ -276,7 +276,7 @@ type PseudoSetAccessor struct {
 }
 
 func NewPseudoSetAccessor(name *ast.Node, optional bool, p *PseudoParameter) *PseudoObjectElement {
-	return NewPseudoObjectElement(PseudoObjectElementKindSetAccessor, name, optional, &PseudoSetAccessor{
+	return newPseudoObjectElement(PseudoObjectElementKindSetAccessor, name, optional, &PseudoSetAccessor{
 		Parameter: p,
 	})
 }
@@ -291,7 +291,7 @@ type PseudoGetAccessor struct {
 }
 
 func NewPseudoGetAccessor(name *ast.Node, optional bool, t *PseudoType) *PseudoObjectElement {
-	return NewPseudoObjectElement(PseudoObjectElementKindGetAccessor, name, optional, &PseudoGetAccessor{
+	return newPseudoObjectElement(PseudoObjectElementKindGetAccessor, name, optional, &PseudoGetAccessor{
 		Type: t,
 	})
 }
@@ -307,7 +307,7 @@ type PseudoTypeObjectLiteral struct {
 }
 
 func NewPseudoTypeObjectLiteral(elements []*PseudoObjectElement) *PseudoType {
-	return NewPseudoType(PseudoTypeKindObjectLiteral, &PseudoTypeObjectLiteral{
+	return newPseudoType(PseudoTypeKindObjectLiteral, &PseudoTypeObjectLiteral{
 		Elements: elements,
 	})
 }
@@ -323,19 +323,19 @@ type PseudoTypeLiteral struct {
 }
 
 func NewPseudoTypeStringLiteral(node *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindStringLiteral, &PseudoTypeLiteral{
+	return newPseudoType(PseudoTypeKindStringLiteral, &PseudoTypeLiteral{
 		Node: node,
 	})
 }
 
 func NewPseudoTypeNumericLiteral(node *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindNumericLiteral, &PseudoTypeLiteral{
+	return newPseudoType(PseudoTypeKindNumericLiteral, &PseudoTypeLiteral{
 		Node: node,
 	})
 }
 
 func NewPseudoTypeBigIntLiteral(node *ast.Node) *PseudoType {
-	return NewPseudoType(PseudoTypeKindBigIntLiteral, &PseudoTypeLiteral{
+	return newPseudoType(PseudoTypeKindBigIntLiteral, &PseudoTypeLiteral{
 		Node: node,
 	})
 }
