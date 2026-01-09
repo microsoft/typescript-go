@@ -819,8 +819,11 @@ func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
 	node = node.Parent
 	for node != nil {
 		if node.Kind == ast.KindComputedPropertyName {
-			node = node.Parent.Parent
-			continue
+			if node.Parent != nil && node.Parent.Parent != nil {
+				node = node.Parent.Parent
+				continue
+			}
+			return nil
 		}
 		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(node) {
 			return node
@@ -834,8 +837,11 @@ func getContainingClassStaticBlock(node *ast.Node) *ast.Node {
 	node = node.Parent
 	for node != nil {
 		if node.Kind == ast.KindComputedPropertyName {
-			node = node.Parent.Parent
-			continue
+			if node.Parent != nil && node.Parent.Parent != nil {
+				node = node.Parent.Parent
+				continue
+			}
+			return nil
 		}
 		if ast.IsClassLike(node) || ast.IsFunctionLike(node) {
 			return nil

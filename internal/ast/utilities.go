@@ -3888,8 +3888,11 @@ func GetContainingFunction(node *Node) *Node {
 	node = node.Parent
 	for node != nil {
 		if node.Kind == KindComputedPropertyName {
-			node = node.Parent.Parent
-			continue
+			if node.Parent != nil && node.Parent.Parent != nil {
+				node = node.Parent.Parent
+				continue
+			}
+			return nil
 		}
 		if IsFunctionLike(node) {
 			return node
