@@ -40,8 +40,6 @@ class TagClosing {
     }
 
     onDidChangeTextDocument({ document, contentChanges, reason }: vscode.TextDocumentChangeEvent) {
-        console.log("Content changed!");
-
         if (contentChanges.length === 0 || reason === vscode.TextDocumentChangeReason.Undo || reason === vscode.TextDocumentChangeReason.Redo) {
             return;
         }
@@ -150,7 +148,6 @@ function requireActiveDocumentSetting(languageConfigSection: "typescript" | "jav
         () => {
             const activeEditor = vscode.window.activeTextEditor;
             if (!activeEditor) {
-                console.log("No active editor found!");
                 return false;
             }
 
