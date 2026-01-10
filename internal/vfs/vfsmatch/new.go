@@ -452,24 +452,24 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 }
 
 // matchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
-func (m *globMatcher) matchesFileParts(prefix, suffix string) int {
+func (m *globMatcher) matchesFileParts(prefix, suffix string) (int, bool) {
 	for i := range m.excludes {
 		if m.excludes[i].matchesParts(prefix, suffix) {
-			return -1
+			return 0, false
 		}
 	}
 	if len(m.includes) == 0 {
 		if m.hadIncludes {
-			return -1
+			return 0, false
 		}
-		return 0
+		return 0, true
 	}
 	for i := range m.includes {
 		if m.includes[i].matchesParts(prefix, suffix) {
-			return i
+			return i, true
 		}
 	}
-	return -1
+	return 0, false
 }
 
 // matchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
@@ -519,7 +519,7 @@ func (v *globVisitor) visit(path, absolutePath string, depth int) {
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(file, v.extensions) {
 			continue
 		}
-		if idx := v.fileMatcher.matchesFileParts(absPrefix, file); idx >= 0 {
+		if idx, ok := v.fileMatcher.matchesFileParts(absPrefix, file); ok {
 			v.results[idx] = append(v.results[idx], pathPrefix+file)
 		}
 	}
