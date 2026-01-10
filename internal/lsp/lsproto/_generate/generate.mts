@@ -151,6 +151,19 @@ const customStructures: Structure[] = [
             },
         ],
     },
+    {
+        name: "CustomTypeScriptClosingTagCompletion",
+        properties: [
+            // TODO: TextEdit?
+            {
+                name: "newText",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The text to insert at the closing tag position.",
+            },
+        ],
+        documentation: "CustomTypeScriptClosingTagCompletion is the response for the custom/TypeScript/textDocument/closingTagCompletion request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -200,6 +213,18 @@ const customEnumerations: Enumeration[] = [
             { name: "Required", value: 2, documentation: "Import must be marked type-only." },
             { name: "NotAllowed", value: 4, documentation: "Import cannot be marked type-only." },
         ],
+    },
+];
+
+// Custom requests to add to the model (TypeScript-specific LSP extensions)
+const customRequests: Request[] = [
+    {
+        method: "custom/TypeScript/textDocument/closingTagCompletion",
+        typeName: "CustomTypeScriptClosingTagCompletionRequest",
+        params: { kind: "reference", name: "TextDocumentPositionParams" },
+        result: { kind: "reference", name: "CustomTypeScriptClosingTagCompletion" },
+        messageDirection: "clientToServer",
+        documentation: "Request to get the closing tag completion at a given position.",
     },
 ];
 
@@ -301,9 +326,10 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom enumerations, custom structures, and synthetic structures to the model
+    // Add custom enumerations, custom structures, custom requests, and synthetic structures to the model
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
+    model.requests.push(...customRequests);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
