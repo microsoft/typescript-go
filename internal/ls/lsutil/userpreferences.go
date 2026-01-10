@@ -154,6 +154,11 @@ type UserPreferences struct {
 	DisableLineTextInReferences bool // !!!
 	DisplayPartsForJSDoc        bool // !!!
 	ReportStyleChecksAsWarnings bool // !!! If this changes, we need to ask the client to recompute diagnostics
+
+	// ------- Project Configuration -------
+
+	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
+	CustomConfigFileName string
 }
 
 type InlayHintsPreferences struct {
@@ -416,6 +421,8 @@ func (p *UserPreferences) parseWorker(config map[string]any) {
 			p.parsePreferences(values)
 		case "workspaceSymbols":
 			p.parseWorkspaceSymbols(values)
+		case "native-preview":
+			p.parseNativePreview(values)
 		case "format":
 			// !!!
 		case "tsserver":
@@ -600,6 +607,16 @@ func (p *UserPreferences) parseWorkspaceSymbols(prefs any) {
 	}
 }
 
+func (p *UserPreferences) parseNativePreview(prefs any) {
+	nativePreviewPrefs, ok := prefs.(map[string]any)
+	if !ok {
+		return
+	}
+	for name, value := range nativePreviewPrefs {
+		p.set(name, value)
+	}
+}
+
 func parseEnabledBool(v map[string]any) bool {
 	// vscode nested option
 	if enabled, ok := v["enabled"]; ok {
@@ -726,6 +743,8 @@ func (p *UserPreferences) set(name string, value any) {
 		p.CodeLens.ImplementationsCodeLensShowOnInterfaceMethods = parseBoolWithDefault(value, false)
 	case "implementationscodelensshowonallclassmethods":
 		p.CodeLens.ImplementationsCodeLensShowOnAllClassMethods = parseBoolWithDefault(value, false)
+	case "customconfigfilename":
+		p.CustomConfigFileName = tsoptions.ParseString(value)
 	}
 }
 
