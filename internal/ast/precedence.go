@@ -655,7 +655,8 @@ const (
 // Gets the precedence of a TypeNode
 func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 	switch n.Kind {
-	case KindConditionalType:
+	case KindConditionalType,
+		KindQuantifiedType:
 		return TypePrecedenceConditional
 	case KindJSDocOptionalType, KindJSDocVariadicType:
 		return TypePrecedenceJSDoc

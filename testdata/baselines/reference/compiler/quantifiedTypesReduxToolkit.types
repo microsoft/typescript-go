@@ -1,0 +1,273 @@
+//// [tests/cases/compiler/quantifiedTypesReduxToolkit.ts] ////
+
+=== quantifiedTypesReduxToolkit.ts ===
+// https://github.com/microsoft/TypeScript/issues/51612#issuecomment-1375431039
+
+declare const createSlice:
+>createSlice : <S extends object, Rs extends <T extends string> { [T1 in T]: <P> Reducer<S, T1, P>; }>(slice: { name: string; initialState: S; reducers: Rs; }) => Slice<S, Rs>
+
+  < S extends object
+  , Rs extends <T extends string> { [T1 in T]: <P> Reducer<S, T1, P> }
+  >
+    (slice: {
+>slice : { name: string; initialState: S; reducers: Rs; }
+
+      name: string,
+>name : string
+
+      initialState: S,
+>initialState : S
+
+      reducers: Rs
+>reducers : Rs
+
+    }) =>
+      Slice<S, Rs>
+
+type Reducer<S, T, P> =
+>Reducer : Reducer<S, T, P>
+
+  | ((state: S, action: P & { type: T }) => void)
+>state : S
+>action : P & { type: T; }
+>type : T
+
+  | { reducer: (state: S, action: P & { type: T }) => void
+>reducer : (state: S, action: P & { type: T; }) => void
+>state : S
+>action : P & { type: T; }
+>type : T
+
+    , prepare: (...a: never) => P
+>prepare : (...a: never) => P
+>a : never
+    }
+
+type Slice<S, Rs> = 
+>Slice : Slice<S, Rs>
+
+  { actions:
+>actions : { [K in keyof Rs]: Rs[K] extends { prepare: (...a: infer A) => infer R; } ? (...a: A) => { type: K; } & R : Rs[K] extends (state: never, action: PayloadAction<infer P>) => unknown ? (payload: P) => { type: K; payload: P; } : never; }
+
+      { [K in keyof Rs]:
+          Rs[K] extends { prepare: (...a: infer A) => infer R } ? (...a: A) => { type: K } & R :
+>prepare : (...a: A) => R
+>a : A
+>a : A
+>type : K
+
+          Rs[K] extends (state: never, action: PayloadAction<infer P>) => unknown ? (payload: P) => { type: K, payload: P } :
+>state : never
+>action : PayloadAction<P>
+>payload : P
+>type : K
+>payload : P
+
+          never
+      }
+  }
+
+type PayloadAction<P> =
+>PayloadAction : PayloadAction<P>
+
+  { type: string
+>type : string
+
+  , payload: P
+>payload : P
+  }
+
+const slice = createSlice({
+>slice : Slice<{ foo: string; }, { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: any; }>
+>createSlice({  name: "someSlice",  initialState: {    foo: "bar"  },  reducers: {    simpleReducer: (state, action: PayloadAction<string>) => {      state.foo = action.payload    },    reducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: char.repeat(repeats), extraStuff: true }      },      reducer: (state, action) => {        state.foo = action.payload      }    },    reducerWithAnotherPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action) => {        state.foo = state.foo.slice(0, action.payload)      },    },    invalidReducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action: PayloadAction<string>) => {        state.foo = action.payload      },    },  }}) : Slice<{ foo: string; }, { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: any; }>
+>createSlice : <S extends object, Rs extends <T extends string> { [T1 in T]: <P> Reducer<S, T1, P>; }>(slice: { name: string; initialState: S; reducers: Rs; }) => Slice<S, Rs>
+>{  name: "someSlice",  initialState: {    foo: "bar"  },  reducers: {    simpleReducer: (state, action: PayloadAction<string>) => {      state.foo = action.payload    },    reducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: char.repeat(repeats), extraStuff: true }      },      reducer: (state, action) => {        state.foo = action.payload      }    },    reducerWithAnotherPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action) => {        state.foo = state.foo.slice(0, action.payload)      },    },    invalidReducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action: PayloadAction<string>) => {        state.foo = action.payload      },    },  }} : { name: string; initialState: { foo: string; }; reducers: { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: PayloadAction<string>) => void; }; }; }
+
+  name: "someSlice",
+>name : string
+>"someSlice" : "someSlice"
+
+  initialState: {
+>initialState : { foo: string; }
+>{    foo: "bar"  } : { foo: string; }
+
+    foo: "bar"
+>foo : string
+>"bar" : "bar"
+
+  },
+  reducers: {
+>reducers : { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: PayloadAction<string>) => void; }; }
+>{    simpleReducer: (state, action: PayloadAction<string>) => {      state.foo = action.payload    },    reducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: char.repeat(repeats), extraStuff: true }      },      reducer: (state, action) => {        state.foo = action.payload      }    },    reducerWithAnotherPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action) => {        state.foo = state.foo.slice(0, action.payload)      },    },    invalidReducerWithPrepareNotation: {      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action: PayloadAction<string>) => {        state.foo = action.payload      },    },  } : { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: PayloadAction<string>) => void; }; }
+
+    simpleReducer: (state, action: PayloadAction<string>) => {
+>simpleReducer : (state: { foo: string; }, action: PayloadAction<string>) => void
+>(state, action: PayloadAction<string>) => {      state.foo = action.payload    } : (state: { foo: string; }, action: PayloadAction<string>) => void
+>state : { foo: string; }
+>action : PayloadAction<string>
+
+      state.foo = action.payload
+>state.foo = action.payload : string
+>state.foo : string
+>state : { foo: string; }
+>foo : string
+>action.payload : string
+>action : PayloadAction<string>
+>payload : string
+
+    },
+    reducerWithPrepareNotation: {
+>reducerWithPrepareNotation : { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }
+>{      prepare: (char: string, repeats: number) => {        return { payload: char.repeat(repeats), extraStuff: true }      },      reducer: (state, action) => {        state.foo = action.payload      }    } : { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }
+
+      prepare: (char: string, repeats: number) => {
+>prepare : (char: string, repeats: number) => { payload: string; extraStuff: boolean; }
+>(char: string, repeats: number) => {        return { payload: char.repeat(repeats), extraStuff: true }      } : (char: string, repeats: number) => { payload: string; extraStuff: boolean; }
+>char : string
+>repeats : number
+
+        return { payload: char.repeat(repeats), extraStuff: true }
+>{ payload: char.repeat(repeats), extraStuff: true } : { payload: string; extraStuff: true; }
+>payload : string
+>char.repeat(repeats) : string
+>char.repeat : (count: number) => string
+>char : string
+>repeat : (count: number) => string
+>repeats : number
+>extraStuff : true
+>true : true
+
+      },
+      reducer: (state, action) => {
+>reducer : (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void
+>(state, action) => {        state.foo = action.payload      } : (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void
+>state : { foo: string; }
+>action : { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }
+
+        state.foo = action.payload
+>state.foo = action.payload : string
+>state.foo : string
+>state : { foo: string; }
+>foo : string
+>action.payload : string
+>action : { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }
+>payload : string
+      }
+    },
+    reducerWithAnotherPrepareNotation: {
+>reducerWithAnotherPrepareNotation : { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }
+>{      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action) => {        state.foo = state.foo.slice(0, action.payload)      },    } : { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }
+
+      prepare: (char: string, repeats: number) => {
+>prepare : (char: string, repeats: number) => { payload: number; }
+>(char: string, repeats: number) => {        return { payload: repeats * char.length }      } : (char: string, repeats: number) => { payload: number; }
+>char : string
+>repeats : number
+
+        return { payload: repeats * char.length }
+>{ payload: repeats * char.length } : { payload: number; }
+>payload : number
+>repeats * char.length : number
+>repeats : number
+>char.length : number
+>char : string
+>length : number
+
+      },
+      reducer: (state, action) => {
+>reducer : (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void
+>(state, action) => {        state.foo = state.foo.slice(0, action.payload)      } : (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void
+>state : { foo: string; }
+>action : { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }
+
+        state.foo = state.foo.slice(0, action.payload)
+>state.foo = state.foo.slice(0, action.payload) : string
+>state.foo : string
+>state : { foo: string; }
+>foo : string
+>state.foo.slice(0, action.payload) : string
+>state.foo.slice : (start?: number, end?: number) => string
+>state.foo : string
+>state : { foo: string; }
+>foo : string
+>slice : (start?: number, end?: number) => string
+>0 : 0
+>action.payload : number
+>action : { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }
+>payload : number
+
+      },
+    },
+    invalidReducerWithPrepareNotation: {
+>invalidReducerWithPrepareNotation : { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: PayloadAction<string>) => void; }
+>{      prepare: (char: string, repeats: number) => {        return { payload: repeats * char.length }      },      reducer: (state, action: PayloadAction<string>) => {        state.foo = action.payload      },    } : { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: PayloadAction<string>) => void; }
+
+      prepare: (char: string, repeats: number) => {
+>prepare : (char: string, repeats: number) => { payload: number; }
+>(char: string, repeats: number) => {        return { payload: repeats * char.length }      } : (char: string, repeats: number) => { payload: number; }
+>char : string
+>repeats : number
+
+        return { payload: repeats * char.length }
+>{ payload: repeats * char.length } : { payload: number; }
+>payload : number
+>repeats * char.length : number
+>repeats : number
+>char.length : number
+>char : string
+>length : number
+
+      },
+      reducer: (state, action: PayloadAction<string>) => {
+>reducer : (state: { foo: string; }, action: PayloadAction<string>) => void
+>(state, action: PayloadAction<string>) => {        state.foo = action.payload      } : (state: { foo: string; }, action: PayloadAction<string>) => void
+>state : { foo: string; }
+>action : PayloadAction<string>
+
+        state.foo = action.payload
+>state.foo = action.payload : string
+>state.foo : string
+>state : { foo: string; }
+>foo : string
+>action.payload : string
+>action : PayloadAction<string>
+>payload : string
+
+      },
+    },
+  }
+})
+
+{
+  const _expectType: (payload: string) => PayloadAction<string> = slice.actions.simpleReducer
+>_expectType : (payload: string) => PayloadAction<string>
+>payload : string
+>slice.actions.simpleReducer : (payload: string) => { type: "simpleReducer"; payload: string; }
+>slice.actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>slice : Slice<{ foo: string; }, { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: any; }>
+>actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>simpleReducer : (payload: string) => { type: "simpleReducer"; payload: string; }
+}
+{
+  const _expectType: (char: string, repeats: number) => PayloadAction<string> = slice.actions.reducerWithPrepareNotation
+>_expectType : (char: string, repeats: number) => PayloadAction<string>
+>char : string
+>repeats : number
+>slice.actions.reducerWithPrepareNotation : (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }
+>slice.actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>slice : Slice<{ foo: string; }, { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: any; }>
+>actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>reducerWithPrepareNotation : (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }
+}
+{
+  const _expectType: (char: string, repeats: number) => PayloadAction<number> = slice.actions.reducerWithAnotherPrepareNotation
+>_expectType : (char: string, repeats: number) => PayloadAction<number>
+>char : string
+>repeats : number
+>slice.actions.reducerWithAnotherPrepareNotation : (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }
+>slice.actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>slice : Slice<{ foo: string; }, { simpleReducer: (state: { foo: string; }, action: PayloadAction<string>) => void; reducerWithPrepareNotation: { prepare: (char: string, repeats: number) => { payload: string; extraStuff: boolean; }; reducer: (state: { foo: string; }, action: { payload: string; extraStuff: boolean; } & { type: "reducerWithPrepareNotation"; }) => void; }; reducerWithAnotherPrepareNotation: { prepare: (char: string, repeats: number) => { payload: number; }; reducer: (state: { foo: string; }, action: { payload: number; } & { type: "reducerWithAnotherPrepareNotation"; }) => void; }; invalidReducerWithPrepareNotation: any; }>
+>actions : { simpleReducer: (payload: string) => { type: "simpleReducer"; payload: string; }; reducerWithPrepareNotation: (char: string, repeats: number) => { type: "reducerWithPrepareNotation"; } & { payload: string; extraStuff: boolean; }; reducerWithAnotherPrepareNotation: (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }; invalidReducerWithPrepareNotation: any; }
+>reducerWithAnotherPrepareNotation : (char: string, repeats: number) => { type: "reducerWithAnotherPrepareNotation"; } & { payload: number; }
+}
+

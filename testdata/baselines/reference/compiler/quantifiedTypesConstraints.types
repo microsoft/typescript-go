@@ -1,0 +1,32 @@
+//// [tests/cases/compiler/quantifiedTypesConstraints.ts] ////
+
+=== quantifiedTypesConstraints.ts ===
+type Input<T> = { values: T[], identifier: (value: T) => string }
+>Input : Input<T>
+>values : T[]
+>identifier : (value: T) => string
+>value : T
+
+declare const f: (t: <T extends object> Input<T>) => void
+>f : (t: <T extends object> Input<T>) => void
+>t : <T extends object> Input<T>
+
+f({
+>f({  values: ["a", "b", "c"],  identifier: v => v}) : void
+>f : (t: <T extends object> Input<T>) => void
+>{  values: ["a", "b", "c"],  identifier: v => v} : any
+
+  values: ["a", "b", "c"],
+>values : string[]
+>["a", "b", "c"] : string[]
+>"a" : "a"
+>"b" : "b"
+>"c" : "c"
+
+  identifier: v => v
+>identifier : (v: object) => object
+>v => v : (v: object) => object
+>v : object
+>v : object
+
+})

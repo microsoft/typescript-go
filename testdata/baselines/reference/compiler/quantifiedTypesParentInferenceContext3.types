@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/quantifiedTypesParentInferenceContext3.ts] ////
+
+=== quantifiedTypesParentInferenceContext3.ts ===
+declare const f: <A>(x: { a: A, f: [<T> ((a: A) => void)] }) => void
+>f : <A>(x: { a: A; f: [<T> (a: A) => void]; }) => void
+>x : { a: A; f: [<T> (a: A) => void]; }
+>a : A
+>f : [<T> (a: A) => void]
+>a : A
+
+f({ a: 0, f: [a => { a satisfies number; }] })
+>f({ a: 0, f: [a => { a satisfies number; }] }) : void
+>f : <A>(x: { a: A; f: [<T> (a: A) => void]; }) => void
+>{ a: 0, f: [a => { a satisfies number; }] } : { a: number; f: [(a: number) => void]; }
+>a : number
+>0 : 0
+>f : [(a: number) => void]
+>[a => { a satisfies number; }] : [(a: number) => void]
+>a => { a satisfies number; } : (a: number) => void
+>a : number
+>a satisfies number : number
+>a : number
+

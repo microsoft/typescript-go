@@ -1,0 +1,49 @@
+//// [tests/cases/compiler/quantifiedTypesNormalizedShapes.ts] ////
+
+=== quantifiedTypesNormalizedShapes.ts ===
+type NormalizedRecord<T extends { id: string }> =
+>NormalizedRecord : <Id extends string> { [K in Id]: Omit<T, "id"> & { id: K; }; }
+>id : string
+
+  <Id extends string> { [K in Id]: Omit<T, "id"> & { id: K } }
+>id : K
+
+interface Layer {
+  id: string
+>id : string
+
+  color: string
+>color : string
+}
+
+let layers: NormalizedRecord<Layer> = {
+>layers : <Id extends string> { [K in Id]: Omit<Layer, "id"> & { id: K; }; }
+>{  a: {    id: "a",    color: "green"  },  b: {    id: "a", // should have been "b"    color: "blue"  }} : any
+
+  a: {
+>a : { id: string; color: string; }
+>{    id: "a",    color: "green"  } : { id: string; color: string; }
+
+    id: "a",
+>id : string
+>"a" : "a"
+
+    color: "green"
+>color : string
+>"green" : "green"
+
+  },
+  b: {
+>b : { id: string; color: string; }
+>{    id: "a", // should have been "b"    color: "blue"  } : { id: string; color: string; }
+
+    id: "a", // should have been "b"
+>id : string
+>"a" : "a"
+
+    color: "blue"
+>color : string
+>"blue" : "blue"
+  }
+}
+

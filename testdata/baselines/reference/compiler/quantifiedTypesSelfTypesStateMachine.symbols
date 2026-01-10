@@ -1,0 +1,103 @@
+//// [tests/cases/compiler/quantifiedTypesSelfTypesStateMachine.ts] ////
+
+=== quantifiedTypesSelfTypesStateMachine.ts ===
+type ParseStateMachine<Self> = { [S in keyof Self]: { [E in keyof Self[S]]: keyof Self } }
+>ParseStateMachine : Symbol(ParseStateMachine, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 0))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 23))
+>S : Symbol(S, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 34))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 23))
+>E : Symbol(E, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 55))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 23))
+>S : Symbol(S, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 34))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 23))
+
+type StateMachine = <Self extends ParseStateMachine<Self>> Self
+>StateMachine : Symbol(StateMachine, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 90))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 1, 21))
+>ParseStateMachine : Symbol(ParseStateMachine, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 0))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 1, 21))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesStateMachine.ts, 1, 21))
+
+let trafficLights: StateMachine = {
+>trafficLights : Symbol(trafficLights, Decl(quantifiedTypesSelfTypesStateMachine.ts, 3, 3))
+>StateMachine : Symbol(StateMachine, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 90))
+
+  off: {
+>off : Symbol(off, Decl(quantifiedTypesSelfTypesStateMachine.ts, 3, 35))
+
+    ON: "red"
+>ON : Symbol(ON, Decl(quantifiedTypesSelfTypesStateMachine.ts, 4, 8))
+
+  },
+  red: {
+>red : Symbol(red, Decl(quantifiedTypesSelfTypesStateMachine.ts, 6, 4))
+
+    TICK: "yellow",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 7, 8))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 8, 19))
+
+  },
+  yellow: {
+>yellow : Symbol(yellow, Decl(quantifiedTypesSelfTypesStateMachine.ts, 10, 4))
+
+    TICK: "green",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 11, 11))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 12, 18))
+
+  },
+  green: {
+>green : Symbol(green, Decl(quantifiedTypesSelfTypesStateMachine.ts, 14, 4))
+
+    TICK: "red",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 15, 10))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 16, 16))
+  }
+}
+
+let trafficLightsInvalid: StateMachine = {
+>trafficLightsInvalid : Symbol(trafficLightsInvalid, Decl(quantifiedTypesSelfTypesStateMachine.ts, 21, 3))
+>StateMachine : Symbol(StateMachine, Decl(quantifiedTypesSelfTypesStateMachine.ts, 0, 90))
+
+  off: {
+>off : Symbol(off, Decl(quantifiedTypesSelfTypesStateMachine.ts, 21, 42))
+
+    ON: "red"
+>ON : Symbol(ON, Decl(quantifiedTypesSelfTypesStateMachine.ts, 22, 8))
+
+  },
+  red: {
+>red : Symbol(red, Decl(quantifiedTypesSelfTypesStateMachine.ts, 24, 4))
+
+    TICK: "yellow",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 25, 8))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 26, 19))
+
+  },
+  yellow: {
+>yellow : Symbol(yellow, Decl(quantifiedTypesSelfTypesStateMachine.ts, 28, 4))
+
+    TICK: "green",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 29, 11))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 30, 18))
+
+  },
+  green: {
+>green : Symbol(green, Decl(quantifiedTypesSelfTypesStateMachine.ts, 32, 4))
+
+    TICK: "reddd",
+>TICK : Symbol(TICK, Decl(quantifiedTypesSelfTypesStateMachine.ts, 33, 10))
+
+    OFF: "off"
+>OFF : Symbol(OFF, Decl(quantifiedTypesSelfTypesStateMachine.ts, 34, 18))
+  }
+}

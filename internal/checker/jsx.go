@@ -968,7 +968,7 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 	apparentAttributesType := attributesType
 	intrinsicClassAttribs := c.getJsxType(JsxNames.IntrinsicClassAttributes, context)
 	if !c.isErrorType(intrinsicClassAttribs) {
-		typeParams := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(intrinsicClassAttribs.symbol)
+		typeParams := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(intrinsicClassAttribs.symbol)
 		hostClassType := c.getReturnTypeOfSignature(sig)
 		var libraryManagedAttributeType *Type
 		if typeParams != nil {

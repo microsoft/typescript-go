@@ -1,0 +1,28 @@
+//// [tests/cases/compiler/allowQuantifiedTypes.ts] ////
+
+=== allowQuantifiedTypes.ts ===
+type T0 = <T extends object> { values: T[], identifier: (value: T) => string }
+>T0 : Symbol(T0, Decl(allowQuantifiedTypes.ts, 0, 0))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 0, 11))
+>values : Symbol(values, Decl(allowQuantifiedTypes.ts, 0, 30))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 0, 11))
+>identifier : Symbol(identifier, Decl(allowQuantifiedTypes.ts, 0, 43))
+>value : Symbol(value, Decl(allowQuantifiedTypes.ts, 0, 57))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 0, 11))
+
+type T1 = <T extends string>(t: T) => T
+>T1 : Symbol(T1, Decl(allowQuantifiedTypes.ts, 0, 78))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 1, 11))
+>t : Symbol(t, Decl(allowQuantifiedTypes.ts, 1, 29))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 1, 11))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 1, 11))
+
+type T2 = <T extends string> <U extends T>(u: U) => U 
+>T2 : Symbol(T2, Decl(allowQuantifiedTypes.ts, 1, 39))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 2, 11))
+>U : Symbol(U, Decl(allowQuantifiedTypes.ts, 2, 30))
+>T : Symbol(T, Decl(allowQuantifiedTypes.ts, 2, 11))
+>u : Symbol(u, Decl(allowQuantifiedTypes.ts, 2, 43))
+>U : Symbol(U, Decl(allowQuantifiedTypes.ts, 2, 30))
+>U : Symbol(U, Decl(allowQuantifiedTypes.ts, 2, 30))
+

@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/quantifiedTypesBasic2.ts] ////
+
+=== quantifiedTypesBasic2.ts ===
+declare const f1: (t: <T> T) => void
+>f1 : Symbol(f1, Decl(quantifiedTypesBasic2.ts, 0, 13))
+>t : Symbol(t, Decl(quantifiedTypesBasic2.ts, 0, 19))
+>T : Symbol(T, Decl(quantifiedTypesBasic2.ts, 0, 23))
+>T : Symbol(T, Decl(quantifiedTypesBasic2.ts, 0, 23))
+
+f1("hello")
+>f1 : Symbol(f1, Decl(quantifiedTypesBasic2.ts, 0, 13))
+
+declare const f2: (t: <T> { values: T[], identifier: (value: T) => string }) => void
+>f2 : Symbol(f2, Decl(quantifiedTypesBasic2.ts, 3, 13))
+>t : Symbol(t, Decl(quantifiedTypesBasic2.ts, 3, 19))
+>T : Symbol(T, Decl(quantifiedTypesBasic2.ts, 3, 23))
+>values : Symbol(values, Decl(quantifiedTypesBasic2.ts, 3, 27))
+>T : Symbol(T, Decl(quantifiedTypesBasic2.ts, 3, 23))
+>identifier : Symbol(identifier, Decl(quantifiedTypesBasic2.ts, 3, 40))
+>value : Symbol(value, Decl(quantifiedTypesBasic2.ts, 3, 54))
+>T : Symbol(T, Decl(quantifiedTypesBasic2.ts, 3, 23))
+
+f2({
+>f2 : Symbol(f2, Decl(quantifiedTypesBasic2.ts, 3, 13))
+
+  values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : Symbol(values, Decl(quantifiedTypesBasic2.ts, 4, 4))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 5, 12))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 5, 26))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 5, 40))
+
+  identifier: v => v.key
+>identifier : Symbol(identifier, Decl(quantifiedTypesBasic2.ts, 5, 53))
+>v : Symbol(v, Decl(quantifiedTypesBasic2.ts, 6, 13))
+>v.key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 5, 12))
+>v : Symbol(v, Decl(quantifiedTypesBasic2.ts, 6, 13))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 5, 12))
+
+})
+f2({
+>f2 : Symbol(f2, Decl(quantifiedTypesBasic2.ts, 3, 13))
+
+  values: [{ key: "a" }, { key: "b" }, { key: 0 }],
+>values : Symbol(values, Decl(quantifiedTypesBasic2.ts, 8, 4))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 9, 12))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 9, 26))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 9, 40))
+
+  identifier: v => v.key
+>identifier : Symbol(identifier, Decl(quantifiedTypesBasic2.ts, 9, 51))
+>v : Symbol(v, Decl(quantifiedTypesBasic2.ts, 10, 13))
+>v.key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 9, 12), Decl(quantifiedTypesBasic2.ts, 9, 40))
+>v : Symbol(v, Decl(quantifiedTypesBasic2.ts, 10, 13))
+>key : Symbol(key, Decl(quantifiedTypesBasic2.ts, 9, 12), Decl(quantifiedTypesBasic2.ts, 9, 40))
+
+})
+

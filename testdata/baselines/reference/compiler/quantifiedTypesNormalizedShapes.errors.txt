@@ -1,0 +1,26 @@
+quantifiedTypesNormalizedShapes.ts(15,5): error TS2322: Type '"a"' is not assignable to type '"b"'.
+
+
+==== quantifiedTypesNormalizedShapes.ts (1 errors) ====
+    type NormalizedRecord<T extends { id: string }> =
+      <Id extends string> { [K in Id]: Omit<T, "id"> & { id: K } }
+    
+    interface Layer {
+      id: string
+      color: string
+    }
+    
+    let layers: NormalizedRecord<Layer> = {
+      a: {
+        id: "a",
+        color: "green"
+      },
+      b: {
+        id: "a", // should have been "b"
+        ~~
+!!! error TS2322: Type '"a"' is not assignable to type '"b"'.
+!!! related TS6500 quantifiedTypesNormalizedShapes.ts:2:54: The expected type comes from property 'id' which is declared here on type 'Omit<Layer, "id"> & { id: "b"; }'
+        color: "blue"
+      }
+    }
+    

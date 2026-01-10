@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/allowQuantifiedTypes.ts] ////
+
+=== allowQuantifiedTypes.ts ===
+type T0 = <T extends object> { values: T[], identifier: (value: T) => string }
+>T0 : <T extends object> { values: T[]; identifier: (value: T) => string; }
+>values : T[]
+>identifier : (value: T) => string
+>value : T
+
+type T1 = <T extends string>(t: T) => T
+>T1 : T1
+>t : T
+
+type T2 = <T extends string> <U extends T>(u: U) => U 
+>T2 : <T extends string> <U extends T>(u: U) => U
+>u : U
+

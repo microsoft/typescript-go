@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/quantifiedTypesConstraints.ts] ////
+
+=== quantifiedTypesConstraints.ts ===
+type Input<T> = { values: T[], identifier: (value: T) => string }
+>Input : Symbol(Input, Decl(quantifiedTypesConstraints.ts, 0, 0))
+>T : Symbol(T, Decl(quantifiedTypesConstraints.ts, 0, 11))
+>values : Symbol(values, Decl(quantifiedTypesConstraints.ts, 0, 17))
+>T : Symbol(T, Decl(quantifiedTypesConstraints.ts, 0, 11))
+>identifier : Symbol(identifier, Decl(quantifiedTypesConstraints.ts, 0, 30))
+>value : Symbol(value, Decl(quantifiedTypesConstraints.ts, 0, 44))
+>T : Symbol(T, Decl(quantifiedTypesConstraints.ts, 0, 11))
+
+declare const f: (t: <T extends object> Input<T>) => void
+>f : Symbol(f, Decl(quantifiedTypesConstraints.ts, 1, 13))
+>t : Symbol(t, Decl(quantifiedTypesConstraints.ts, 1, 18))
+>T : Symbol(T, Decl(quantifiedTypesConstraints.ts, 1, 22))
+>Input : Symbol(Input, Decl(quantifiedTypesConstraints.ts, 0, 0))
+>T : Symbol(T, Decl(quantifiedTypesConstraints.ts, 1, 22))
+
+f({
+>f : Symbol(f, Decl(quantifiedTypesConstraints.ts, 1, 13))
+
+  values: ["a", "b", "c"],
+>values : Symbol(values, Decl(quantifiedTypesConstraints.ts, 3, 3))
+
+  identifier: v => v
+>identifier : Symbol(identifier, Decl(quantifiedTypesConstraints.ts, 4, 26))
+>v : Symbol(v, Decl(quantifiedTypesConstraints.ts, 5, 13))
+>v : Symbol(v, Decl(quantifiedTypesConstraints.ts, 5, 13))
+
+})

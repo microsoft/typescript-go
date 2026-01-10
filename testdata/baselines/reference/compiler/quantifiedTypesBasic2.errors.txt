@@ -1,0 +1,22 @@
+quantifiedTypesBasic2.ts(11,20): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+
+
+==== quantifiedTypesBasic2.ts (1 errors) ====
+    declare const f1: (t: <T> T) => void
+    f1("hello")
+    
+    declare const f2: (t: <T> { values: T[], identifier: (value: T) => string }) => void
+    f2({
+      values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+      identifier: v => v.key
+    })
+    f2({
+      values: [{ key: "a" }, { key: "b" }, { key: 0 }],
+      identifier: v => v.key
+                       ~~~~~
+!!! error TS2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TS2322:   Type 'number' is not assignable to type 'string'.
+!!! related TS6502 quantifiedTypesBasic2.ts:4:54: The expected type comes from the return type of this signature.
+    })
+    

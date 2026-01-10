@@ -135,7 +135,7 @@ func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
 }
 
 func (c *Checker) GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
-	return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+	return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol)
 }
 
 func (c *Checker) GetContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {

@@ -379,7 +379,7 @@ type SignatureLinks struct {
 	decoratorSignature *Signature // Signature for decorator as if invoked by the runtime
 }
 
-type TypeFlags uint32
+type TypeFlags uint64
 
 // Note that for types of different kinds, the numeric values of TypeFlags determine the order
 // computed by the CompareTypes function and therefore the order of constituent types in union types.
@@ -421,6 +421,7 @@ const (
 	TypeFlagsReserved1       TypeFlags = 1 << 29 // Used by union/intersection type construction
 	TypeFlagsReserved2       TypeFlags = 1 << 30 // Used by union/intersection type construction
 	TypeFlagsReserved3       TypeFlags = 1 << 31
+	TypeFlagsQuantified      TypeFlags = 1 << 32
 
 	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
 	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
@@ -445,7 +446,7 @@ const (
 	TypeFlagsUnionOrIntersection           = TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsStructuredType                = TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsTypeVariable                  = TypeFlagsTypeParameter | TypeFlagsIndexedAccess
-	TypeFlagsInstantiableNonPrimitive      = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution
+	TypeFlagsInstantiableNonPrimitive      = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution | TypeFlagsQuantified
 	TypeFlagsInstantiablePrimitive         = TypeFlagsIndex | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
 	TypeFlagsInstantiable                  = TypeFlagsInstantiableNonPrimitive | TypeFlagsInstantiablePrimitive
 	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
@@ -594,6 +595,7 @@ func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*Te
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
 func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
+func (t *Type) AsQuantifiedType() *QuantifiedType           { return t.data.(*QuantifiedType) }
 
 // Casts for embedded struct types
 
@@ -1098,6 +1100,12 @@ type ConditionalType struct {
 	resolvedConstraintOfDistributive *Type
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
+}
+
+type QuantifiedType struct {
+	ConstrainedType
+	typeParameters []*TypeParameter
+	baseType       *Type
 }
 
 // SignatureFlags

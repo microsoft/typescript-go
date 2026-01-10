@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/quantifiedTypesSelfTypesCaseInsensitve.ts] ////
+
+=== quantifiedTypesSelfTypesCaseInsensitve.ts ===
+type PasreCaseInsensitive<Self, T extends string> =
+>PasreCaseInsensitive : Symbol(PasreCaseInsensitive, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 0))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 26))
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 31))
+
+  Self extends string
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 26))
+
+    ? Lowercase<Self> extends Lowercase<T>
+>Lowercase : Symbol(Lowercase, Decl(lib.es5.d.ts, --, --))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 26))
+>Lowercase : Symbol(Lowercase, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 31))
+
+        ? Self
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 26))
+
+        : `Error: Type '${Self}' is not assignable to type 'CaseInsensitive<${T}>'`
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 26))
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 31))
+
+    : T
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 31))
+
+type CaseInsensitive<T extends string> = <Self> PasreCaseInsensitive<Self, T>
+>CaseInsensitive : Symbol(CaseInsensitive, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 5, 7))
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 7, 21))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 7, 42))
+>PasreCaseInsensitive : Symbol(PasreCaseInsensitive, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 0, 0))
+>Self : Symbol(Self, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 7, 42))
+>T : Symbol(T, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 7, 21))
+
+declare const setHeader: 
+>setHeader : Symbol(setHeader, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 9, 13))
+
+  (key: CaseInsensitive<"Set-Cookie" | "Accept">, value: string) => void
+>key : Symbol(key, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 10, 3))
+>CaseInsensitive : Symbol(CaseInsensitive, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 5, 7))
+>value : Symbol(value, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 10, 49))
+
+setHeader("Set-Cookie", "test")
+>setHeader : Symbol(setHeader, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 9, 13))
+
+setHeader("Accept", "test2")
+>setHeader : Symbol(setHeader, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 9, 13))
+
+setHeader("sEt-cOoKiE", "stop writing headers like this but ok")
+>setHeader : Symbol(setHeader, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 9, 13))
+
+setHeader("Acept", "nah this has a typo")
+>setHeader : Symbol(setHeader, Decl(quantifiedTypesSelfTypesCaseInsensitve.ts, 9, 13))
+

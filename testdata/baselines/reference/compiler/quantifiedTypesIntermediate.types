@@ -1,0 +1,192 @@
+//// [tests/cases/compiler/quantifiedTypesIntermediate.ts] ////
+
+=== quantifiedTypesIntermediate.ts ===
+type Input<T> = { values: T[], identifier: (value: T) => string }
+>Input : Input<T>
+>values : T[]
+>identifier : (value: T) => string
+>value : T
+
+declare const f: (t: (<T> Input<T>)[]) => void
+>f : (t: (<T> Input<T>)[]) => void
+>t : (<T> Input<T>)[]
+
+f([
+>f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  }]) : void
+>f : (t: (<T> Input<T>)[]) => void
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  }] : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }[]
+  {
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }
+
+    values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+    identifier: v => v.key
+>identifier : (v: { key: string; }) => string
+>v => v.key : (v: { key: string; }) => string
+>v : { key: string; }
+>v.key : string
+>v : { key: string; }
+>key : string
+  }
+])
+
+f([
+>f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }]) : void
+>f : (t: (<T> Input<T>)[]) => void
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : any[]
+  {
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : any
+
+    values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+    identifier: v => Number(v.key)
+>identifier : (v: { key: string; }) => number
+>v => Number(v.key) : (v: { key: string; }) => number
+>v : { key: string; }
+>Number(v.key) : number
+>Number : NumberConstructor
+>v.key : string
+>v : { key: string; }
+>key : string
+  }
+])
+
+
+f([
+>f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }]) : void
+>f : (t: (<T> Input<T>)[]) => void
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  }] : any[]
+  {
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }
+
+    values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+    identifier: v => v.key
+>identifier : (v: { key: string; }) => string
+>v => v.key : (v: { key: string; }) => string
+>v : { key: string; }
+>v.key : string
+>v : { key: string; }
+>key : string
+
+  },
+  {
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => Number(v.key)  } : any
+
+    values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+    identifier: v => Number(v.key)
+>identifier : (v: { key: string; }) => number
+>v => Number(v.key) : (v: { key: string; }) => number
+>v : { key: string; }
+>Number(v.key) : number
+>Number : NumberConstructor
+>v.key : string
+>v : { key: string; }
+>key : string
+  }
+])
+
+
+f([
+>f([  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ id: 1 }, { id: 2 }, { id: 3 }],    identifier: v => v.id.toString()  }]) : void
+>f : (t: (<T> Input<T>)[]) => void
+>[  {    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  },  {    values: [{ id: 1 }, { id: 2 }, { id: 3 }],    identifier: v => v.id.toString()  }] : ({ values: { key: string; }[]; identifier: (v: { key: string; }) => string; } | { values: { id: number; }[]; identifier: (v: { id: number; }) => string; })[]
+  {
+>{    values: [{ key: "a" }, { key: "b" }, { key: "c" }],    identifier: v => v.key  } : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }
+
+    values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+    identifier: v => v.key
+>identifier : (v: { key: string; }) => string
+>v => v.key : (v: { key: string; }) => string
+>v : { key: string; }
+>v.key : string
+>v : { key: string; }
+>key : string
+
+  },
+  {
+>{    values: [{ id: 1 }, { id: 2 }, { id: 3 }],    identifier: v => v.id.toString()  } : { values: { id: number; }[]; identifier: (v: { id: number; }) => string; }
+
+    values: [{ id: 1 }, { id: 2 }, { id: 3 }],
+>values : { id: number; }[]
+>[{ id: 1 }, { id: 2 }, { id: 3 }] : { id: number; }[]
+>{ id: 1 } : { id: number; }
+>id : number
+>1 : 1
+>{ id: 2 } : { id: number; }
+>id : number
+>2 : 2
+>{ id: 3 } : { id: number; }
+>id : number
+>3 : 3
+
+    identifier: v => v.id.toString()
+>identifier : (v: { id: number; }) => string
+>v => v.id.toString() : (v: { id: number; }) => string
+>v : { id: number; }
+>v.id.toString() : string
+>v.id.toString : (radix?: number) => string
+>v.id : number
+>v : { id: number; }
+>id : number
+>toString : (radix?: number) => string
+  }
+])
+

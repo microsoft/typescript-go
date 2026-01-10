@@ -2182,6 +2182,15 @@ func (p *Printer) emitImportTypeNode(node *ast.ImportTypeNode) {
 	p.exitNode(node.AsNode(), state)
 }
 
+func (p *Printer) emitQuantifiedTypeNpde(node *ast.QuantifiedTypeNode) {
+	state := p.enterNode(node.AsNode())
+	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
+	p.writeSpace()
+	// TODO: print parenthesis if BaseType is a function
+	p.emitTypeNode(node.BaseType, ast.TypePrecedenceConditional)
+	p.exitNode(node.AsNode(), state)
+}
+
 // emits a Type node in the `extends` clause of a ConditionalType
 func (p *Printer) emitTypeNodeInExtends(node *ast.TypeNode) {
 	savedInExtends := p.inExtends
@@ -2281,6 +2290,8 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitTemplateTypeSpan(node.AsTemplateLiteralTypeSpan())
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
+	case ast.KindQuantifiedType:
+		p.emitQuantifiedTypeNpde(node.AsQuantifiedTypeNode())
 
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
