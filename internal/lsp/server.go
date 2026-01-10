@@ -500,7 +500,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	if handler := handlers()[req.Method]; handler != nil {
 		return handler(s, ctx, req)
 	}
-	s.logger.Warn("unknown method", req.Method)
+	s.logger.Warn("unknown method ", req.Method)
 	if req.ID != nil {
 		s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
@@ -542,7 +542,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
+
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTypeScriptTextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
@@ -1000,7 +1001,7 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.TextDocumentClosingTagCompletionResponse, error) {
+func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomTypeScriptClosingTagCompletionResponse, error) {
 	return ls.ProvideClosingTagCompletion(ctx, params)
 }
 
