@@ -7328,9 +7328,9 @@ func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
 
 // we now have too many checkExpression* functions and it's a bit of a spagetti so maybe there is a better way to do this
 // but it's done this way to reduce the number of locations where a change has to be made for quantified types
-func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode CheckMode, contextualType *Type, parentInferenceContext *InferenceContext) *Type {
+func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, parentCheckMode CheckMode, contextualType *Type, parentInferenceContext *InferenceContext) *Type {
 	if node.Kind == ast.KindIdentifier { // to avoid recursion in some jsx test cases TODO: come up with a better fix
-		return c.checkExpressionExWorker(node, checkMode)
+		return c.checkExpressionExWorker(node, parentCheckMode)
 	}
 	if contextualType == nil {
 		contextualType = c.getApparentTypeOfContextualType(node, ContextFlagsNone)
@@ -7340,11 +7340,11 @@ func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode 
 	}
 	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
 	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
-		return c.checkExpressionExWorker(node, checkMode)
+		return c.checkExpressionExWorker(node, parentCheckMode)
 	}
 	baseType := contextualType.AsQuantifiedType().baseType
 	if parentInferenceContext != nil {
-		baseType = c.instantiateType(baseType, parentInferenceContext.mapper)
+		baseType = c.instantiateType(baseType, parentInferenceContext.nonFixingMapper)
 	}
 	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
 
@@ -7356,7 +7356,10 @@ func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode 
 		inferenceContext.nonFixingMapper = c.combineTypeMappers(inferenceContext.nonFixingMapper, parentInferenceContext.nonFixingMapper)
 		inferenceContext.mapper = c.combineTypeMappers(inferenceContext.mapper, parentInferenceContext.mapper)
 	}
-	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode|CheckModeSkipContextSensitive|CheckModeQuantifiedContextual)
+	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, parentCheckMode|CheckModeSkipContextSensitive|CheckModeQuantifiedContextual)
+	if t.objectFlags&ObjectFlagsNonInferrableType != 0 && parentCheckMode&CheckModeSkipContextSensitive != 0 {
+		return t
+	}
 	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
 	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
 
@@ -7366,10 +7369,10 @@ func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode 
 	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
 
 	// final
-	baseTypeInferred := c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
-	t = c.checkExpressionWithContextualType(node, baseTypeInferred, core.IfElse(parentInferenceContext != nil, parentInferenceContext, nil), CheckModeNormal|CheckModeQuantifiedContextual)
+	baseType = c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
+	t = c.checkExpressionWithContextualType(node, baseType, core.IfElse(parentInferenceContext != nil, parentInferenceContext, nil), CheckModeNormal|CheckModeQuantifiedContextual)
 
-	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseTypeInferred, c.assignableRelation, node, node, nil, nil) {
+	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseType, c.assignableRelation, node, node, nil, nil) {
 		return c.errorType // to avoid showing errors in parent TODO: maybe there is a better way to do this
 	}
 

@@ -94,12 +94,12 @@ let t0 = f([
 
 
 let t1 = f([
->t1 : any
->f([  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }]) : any
+>t1 : ((<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; }) extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol")[]
+>f([  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }]) : ((<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; }) extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol")[]
 >f : <T extends (<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; })[]>(a: [...T]) => { [K in keyof T]: T[K] extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol"; }
->[  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }] : [{ a: boolean; ab: (a: string | number) => number; bc: (b: number) => boolean; }, { a: string; ab: (a: "hello") => string; bc: (b: string) => number; extra: string; }]
+>[  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }] : any[]
   {
->{    a: true,    ab: a => +a,    bc: b => typeof b === "number"  } : { a: boolean; ab: (a: string | number) => number; bc: (b: number) => boolean; }
+>{    a: true,    ab: a => +a,    bc: b => typeof b === "number"  } : any
 
     a: true,
 >a : boolean
@@ -123,7 +123,7 @@ let t1 = f([
 
   },
   {
->{    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  } : { a: string; ab: (a: "hello") => string; bc: (b: string) => number; extra: string; }
+>{    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  } : any
 
     a: "hello",
 >a : string
