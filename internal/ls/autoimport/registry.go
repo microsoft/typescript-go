@@ -897,14 +897,13 @@ func (b *registryBuilder) buildProjectBucket(
 	var skippedFileCount int
 	var combinedStats extractorStats
 
-outer:
 	for _, file := range program.GetSourceFiles() {
 		if isIgnoredFile(program, file) {
 			continue
 		}
 		if fileExcludePatterns != nil && fileExcludePatterns.MatchString(file.FileName()) {
 			skippedFileCount++
-			continue outer
+			continue
 		}
 		// Skip all node_modules files - they are always handled by node_modules buckets.
 		// This simplifies the logic and ensures exports are indexed consistently.
