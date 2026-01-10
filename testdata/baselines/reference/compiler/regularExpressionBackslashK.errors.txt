@@ -1,0 +1,75 @@
+regularExpressionBackslashK.ts(7,28): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+regularExpressionBackslashK.ts(10,36): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+regularExpressionBackslashK.ts(16,27): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+regularExpressionBackslashK.ts(30,40): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+regularExpressionBackslashK.ts(33,27): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+regularExpressionBackslashK.ts(50,38): error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+
+
+==== regularExpressionBackslashK.ts (6 errors) ====
+    // Test that \k without < is an error when named groups are present
+    
+    // Valid: \k followed by <name> with named groups
+    const validBackref = /(?<foo>a)\k<foo>/;
+    
+    // Invalid: \k not followed by < when named groups are present (even in non-Unicode mode)
+    const invalidK = /(?<foo>a)\k/;
+                               ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Invalid: \k followed by other chars when named groups are present
+    const invalidKWithText = /(?<bar>x)\kb/;
+                                       ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Valid: \k without < is OK when there are NO named groups (identity escape)
+    const validIdentityEscape = /a\kb/;
+    
+    // Invalid: \k without < in Unicode mode (regardless of named groups)
+    const invalidKUnicode = /a\kb/u;
+                              ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Edge cases
+    
+    // Multiple named groups, valid backreferences
+    const multiGroup = /(?<a>x)(?<b>y)\k<a>\k<b>/;
+    
+    // Named group in alternation with \k in different branch
+    const alternation = /(?<foo>a)|\k<foo>/;
+    
+    // Named group with \k in lookahead
+    const lookahead = /(?<bar>b)(?=\k<bar>)/;
+    
+    // Named group with bare \k - should error
+    const bareKWithGroups = /(?<x>.)(?<y>.)\k/;
+                                           ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Bare \k at start when named group comes later - should still error
+    const bareKBeforeGroup = /\k(?<name>pattern)/;
+                              ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Identity escape \k is valid when no named groups at all
+    const noNamedGroups = /\ka\kb/;
+    
+    // Unicode characters
+    
+    // Unicode characters before named group
+    const unicodeBefore = /😀(?<foo>a)\k<foo>/;
+    
+    // Unicode characters after named group
+    const unicodeAfter = /(?<bar>b)\k<bar>😀/;
+    
+    // Unicode characters in between
+    const unicodeMiddle = /(?<x>.)😀\k<x>/;
+    
+    // Unicode with bare \k - should error
+    const unicodeWithBareK = /😀(?<name>.)\k/;
+                                         ~~
+!!! error TS1510: '\k' must be followed by a capturing group name enclosed in angle brackets.
+    
+    // Unicode without named groups and \k - should be OK
+    const unicodeNoGroups = /😀\k😀/;
+    
