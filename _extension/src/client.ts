@@ -10,19 +10,24 @@ import {
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
+import { codeLensShowLocationsCommandName } from "./commands";
+import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import {
     ExeInfo,
     getExe,
     jsTsLanguageModes,
 } from "./util";
 import { getLanguageForUri } from "./util";
-import { codeLensShowLocationsCommandName } from "./commands";
 
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
+
+    private isDisposed = false;
+    private disposables: vscode.Disposable[] = [];
+
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
@@ -146,10 +151,27 @@ export class Client {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
         }
 
+        this.disposables.push(
+            registerTagClosingFeature("typescript", this.clientOptions.documentSelector!, this.client),
+            registerTagClosingFeature("javascript", this.clientOptions.documentSelector!, this.client),
+        );
+
         return new vscode.Disposable(() => {
             this.dispose();
             vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
         });
+    }
+
+    dispose() {
+        if (this.isDisposed) {
+            return;
+        }
+
+        this.client?.dispose();
+        while (this.disposables.length > 0) {
+            const d = this.disposables.pop()!;
+            d.dispose();
+        }
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {
