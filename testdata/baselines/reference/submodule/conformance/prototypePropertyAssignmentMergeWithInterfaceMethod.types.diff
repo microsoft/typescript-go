@@ -9,18 +9,12 @@
  >query : query.Builder
  >query : any
 
-     begin(scope: Array<schema.Table>): Promise<void>
-->begin : (scope: Array<schema.Table>) => Promise<void>
-+>begin : (scope: schema.Table[]) => Promise<void>
- >scope : schema.Table[]
- >schema : any
-
 @@= skipped -13, +13 lines =@@
  >commit : () => Promise<void>
 
      exec(queries: Array<query.Builder>): Promise<Array<Array<Object>>>
 ->exec : (queries: Array<query.Builder>) => Promise<Array<Array<Object>>>
-+>exec : (queries: query.Builder[]) => Promise<Object[][]>
++>exec : (queries: Array<query.Builder>) => Promise<Object[][]>
  >queries : query.Builder[]
  >query : any
 
@@ -41,11 +35,8 @@
 
  /**
   * @param {!Array<!lf.schema.Table>} scope
-  * @return {!IThenable}
-  */
- lf.Transaction.prototype.begin = function(scope) {};
-->lf.Transaction.prototype.begin = function(scope) {} : (scope: Array<lf.schema.Table>) => IThenable
-+>lf.Transaction.prototype.begin = function(scope) {} : (scope: lf.schema.Table[]) => IThenable
+@@= skipped -14, +14 lines =@@
+ >lf.Transaction.prototype.begin = function(scope) {} : (scope: Array<lf.schema.Table>) => IThenable
  >lf.Transaction.prototype.begin : any
  >lf.Transaction.prototype : any
 ->lf.Transaction : typeof Transaction
@@ -56,6 +47,4 @@
 +>Transaction : any
  >prototype : any
  >begin : any
-->function(scope) {} : (scope: Array<lf.schema.Table>) => IThenable
-+>function(scope) {} : (scope: lf.schema.Table[]) => IThenable
- >scope : lf.schema.Table[]
+ >function(scope) {} : (scope: Array<lf.schema.Table>) => IThenable

@@ -1,15 +1,6 @@
 --- old.unionOfFunctionAndSignatureIsCallable.types
 +++ new.unionOfFunctionAndSignatureIsCallable.types
-@@= skipped -1, +1 lines =@@
-
- === unionOfFunctionAndSignatureIsCallable.ts ===
- function f1(c1: Function, c2: () => object,  callable: typeof c1 | typeof c2) {
-->f1 : (c1: Function, c2: () => object, callable: typeof c1 | typeof c2) => void
-+>f1 : (c1: Function, c2: () => object, callable: Function | (() => object)) => void
- >c1 : Function
- >c2 : () => object
- >callable : Function | (() => object)
-@@= skipped -18, +18 lines =@@
+@@= skipped -19, +19 lines =@@
  >c2 : () => object
 
      const c = callable();

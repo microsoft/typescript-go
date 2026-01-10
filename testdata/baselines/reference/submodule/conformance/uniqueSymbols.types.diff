@@ -18,45 +18,7 @@
  >constCall : unique symbol
  >yield constCall : any
  >constCall : unique symbol
-@@= skipped -303, +303 lines =@@
- >x : T
-
- declare function g(x: typeof s): void;
-->g : { (x: typeof s): void; (x: typeof N.s): void; }
-+>g : { (x: unique symbol): void; (x: unique symbol): void; }
- >x : unique symbol
- >s : unique symbol
-
- declare function g(x: typeof N.s): void;
-->g : { (x: typeof s): void; (x: typeof N.s): void; }
-+>g : { (x: unique symbol): void; (x: unique symbol): void; }
- >x : unique symbol
- >N.s : unique symbol
- >N : typeof N
-@@= skipped -241, +241 lines =@@
-
- g(s);
- >g(s) : void
-->g : { (x: typeof s): void; (x: typeof N.s): void; }
-+>g : { (x: unique symbol): void; (x: unique symbol): void; }
- >s : unique symbol
-
- g(N.s);
- >g(N.s) : void
-->g : { (x: typeof s): void; (x: typeof N.s): void; }
-+>g : { (x: unique symbol): void; (x: unique symbol): void; }
- >N.s : unique symbol
- >N : typeof N
- >s : unique symbol
-
- g(N["s"]);
- >g(N["s"]) : void
-->g : { (x: typeof s): void; (x: typeof N.s): void; }
-+>g : { (x: unique symbol): void; (x: unique symbol): void; }
- >N["s"] : unique symbol
- >N : typeof N
- >"s" : "s"
-@@= skipped -122, +122 lines =@@
+@@= skipped -666, +666 lines =@@
 
  interface Context {
      method1(): typeof s;
@@ -81,7 +43,7 @@
 
      method5(p?: typeof s): typeof s;
 ->method5 : (p?: typeof s) => typeof s
-+>method5 : (p?: unique symbol) => unique symbol
++>method5 : (p?: typeof s) => unique symbol
  >p : unique symbol
  >s : unique symbol
  >s : unique symbol
@@ -91,12 +53,12 @@
  const o4 = {
 ->o4 : { method1(p: typeof s): typeof s; method2(p: I["readonlyType"]): I["readonlyType"]; }
 ->{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: typeof s): typeof s; method2(p: I["readonlyType"]): I["readonlyType"]; }
-+>o4 : { method1(p: unique symbol): unique symbol; method2(p: unique symbol): unique symbol; }
-+>{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: unique symbol): unique symbol; method2(p: unique symbol): unique symbol; }
++>o4 : { method1(p: typeof s): unique symbol; method2(p: I["readonlyType"]): unique symbol; }
++>{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: typeof s): unique symbol; method2(p: I["readonlyType"]): unique symbol; }
 
      method1(p: typeof s): typeof s {
 ->method1 : (p: typeof s) => typeof s
-+>method1 : (p: unique symbol) => unique symbol
++>method1 : (p: typeof s) => unique symbol
  >p : unique symbol
  >s : unique symbol
  >s : unique symbol
@@ -105,7 +67,7 @@
      },
      method2(p: I["readonlyType"]): I["readonlyType"] {
 ->method2 : (p: I["readonlyType"]) => I["readonlyType"]
-+>method2 : (p: unique symbol) => unique symbol
++>method2 : (p: I["readonlyType"]) => unique symbol
  >p : unique symbol
 
          return p;
@@ -114,7 +76,7 @@
 
      method1(p: typeof s): typeof s {
 ->method1 : (p: typeof s) => typeof s
-+>method1 : (p: unique symbol) => unique symbol
++>method1 : (p: typeof s) => unique symbol
  >p : unique symbol
  >s : unique symbol
  >s : unique symbol
@@ -123,24 +85,7 @@
      }
      method2(p: I["readonlyType"]): I["readonlyType"] {
 ->method2 : (p: I["readonlyType"]) => I["readonlyType"]
-+>method2 : (p: unique symbol) => unique symbol
++>method2 : (p: I["readonlyType"]) => unique symbol
  >p : unique symbol
 
          return p;
-@@= skipped -9, +9 lines =@@
- };
-
- function funcInferredReturnType(obj: { method(p: typeof s): void }) {
-->funcInferredReturnType : (obj: { method(p: typeof s): void; }) => { method(p: typeof s): void; }
-->obj : { method(p: typeof s): void; }
-->method : (p: typeof s) => void
-+>funcInferredReturnType : (obj: { method(p: unique symbol): void; }) => { method(p: unique symbol): void; }
-+>obj : { method(p: unique symbol): void; }
-+>method : (p: unique symbol) => void
- >p : unique symbol
- >s : unique symbol
-
-     return obj;
-->obj : { method(p: typeof s): void; }
-+>obj : { method(p: unique symbol): void; }
- }

@@ -7,7 +7,7 @@ declare function all(a?: number, b?: number): void;
 >b : number
 
 declare function weird(a?: number | string, b?: number | string): void;
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >a : string | number
 >b : string | number
 
@@ -56,19 +56,19 @@ all(...ns)
 
 weird(...ns)
 >weird(...ns) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...ns : number
 >ns : number[]
 
 weird(...mixed)
 >weird(...mixed) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...mixed : string | number
 >mixed : (string | number)[]
 
 weird(...tuple)
 >weird(...tuple) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...tuple : string | number
 >tuple : [number, string]
 

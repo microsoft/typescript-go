@@ -1,11 +1,6 @@
 --- old.importMeta(module=commonjs,target=esnext).types
 +++ new.importMeta(module=commonjs,target=esnext).types
-@@= skipped -10, +10 lines =@@
- >response : Response
- >await fetch(new URL("../hamsters.jpg", import.meta.url).toString()) : Response
- >fetch(new URL("../hamsters.jpg", import.meta.url).toString()) : Promise<Response>
-->fetch : (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
-+>fetch : (input: URL | RequestInfo, init?: RequestInit) => Promise<Response>
+@@= skipped -14, +14 lines =@@
  >new URL("../hamsters.jpg", import.meta.url).toString() : string
  >new URL("../hamsters.jpg", import.meta.url).toString : () => string
  >new URL("../hamsters.jpg", import.meta.url) : URL
@@ -14,7 +9,7 @@
  >"../hamsters.jpg" : "../hamsters.jpg"
  >import.meta.url : string
  >import.meta : ImportMeta
-@@= skipped -45, +45 lines =@@
+@@= skipped -41, +41 lines =@@
  >src : string
  >URL.createObjectURL(blob) : string
  >URL.createObjectURL : (obj: Blob | MediaSource) => string

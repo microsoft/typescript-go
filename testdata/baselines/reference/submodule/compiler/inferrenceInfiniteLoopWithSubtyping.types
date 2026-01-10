@@ -25,7 +25,7 @@ export class ObjectTypeComposer<TSource, TContext> {
 >ObjectTypeComposer : ObjectTypeComposer<TSource, TContext>
 
   public setFields(fields: ObjMapReadOnly<Resolver>): this;
->setFields : (fields: Readonly<{ [key: string]: Readonly<Resolver>; }>) => this
+>setFields : (fields: ObjMapReadOnly<Resolver>) => this
 >fields : Readonly<{ [key: string]: Readonly<Resolver>; }>
 
   public addResolver<TResolverSource>(opts: { type?: Thunk<ComposeOutputTypeDefinition> }): this;

@@ -15,19 +15,16 @@
  >b : string | undefined
 
  type C1 = { x: { c: string } };
-@@= skipped -62, +62 lines =@@
- }
-
+@@= skipped -64, +64 lines =@@
  const foo1: Partial<{ something: any }> & { variables: {
-->foo1 : Partial<{ something: any; }> & { variables: { overrides?: OverridesInput; } & Partial<{ overrides?: OverridesInput; }>; }
-+>foo1 : Partial<{ something: any; }> & { variables: { overrides?: OverridesInput | undefined; } & Partial<{ overrides?: OverridesInput | undefined; }>; }
+ >foo1 : Partial<{ something: any; }> & { variables: { overrides?: OverridesInput; } & Partial<{ overrides?: OverridesInput; }>; }
  >something : any
 ->variables : { overrides?: OverridesInput; } & Partial<{ overrides?: OverridesInput; }>
 +>variables : { overrides?: OverridesInput | undefined; } & Partial<{ overrides?: OverridesInput | undefined; }>
 
      overrides?: OverridesInput;
  >overrides : OverridesInput | undefined
-@@= skipped -49, +49 lines =@@
+@@= skipped -47, +47 lines =@@
  >T1 : T1
 
      primary: { __typename?: 'Feature' } & { colors: { light: number, dark: number } },

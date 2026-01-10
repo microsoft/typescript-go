@@ -434,12 +434,12 @@ declare function f<T>(x: T): T;
 >x : T
 
 declare function g(x: typeof s): void;
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >x : unique symbol
 >s : unique symbol
 
 declare function g(x: typeof N.s): void;
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >x : unique symbol
 >N.s : unique symbol
 >N : typeof N
@@ -675,19 +675,19 @@ f<typeof N.s>(N["s"]);
 
 g(s);
 >g(s) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >s : unique symbol
 
 g(N.s);
 >g(N.s) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >N.s : unique symbol
 >N : typeof N
 >s : unique symbol
 
 g(N["s"]);
 >g(N["s"]) : void
->g : { (x: unique symbol): void; (x: unique symbol): void; }
+>g : { (x: typeof s): void; (x: typeof N.s): void; }
 >N["s"] : unique symbol
 >N : typeof N
 >"s" : "s"
@@ -813,7 +813,7 @@ interface Context {
 >s : unique symbol
 
     method5(p?: typeof s): typeof s;
->method5 : (p?: unique symbol) => unique symbol
+>method5 : (p?: typeof s) => unique symbol
 >p : unique symbol
 >s : unique symbol
 >s : unique symbol
@@ -867,11 +867,11 @@ const o3: Context = {
 // allowed when not emitting declarations
 
 const o4 = {
->o4 : { method1(p: unique symbol): unique symbol; method2(p: unique symbol): unique symbol; }
->{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: unique symbol): unique symbol; method2(p: unique symbol): unique symbol; }
+>o4 : { method1(p: typeof s): unique symbol; method2(p: I["readonlyType"]): unique symbol; }
+>{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: typeof s): unique symbol; method2(p: I["readonlyType"]): unique symbol; }
 
     method1(p: typeof s): typeof s {
->method1 : (p: unique symbol) => unique symbol
+>method1 : (p: typeof s) => unique symbol
 >p : unique symbol
 >s : unique symbol
 >s : unique symbol
@@ -881,7 +881,7 @@ const o4 = {
 
     },
     method2(p: I["readonlyType"]): I["readonlyType"] {
->method2 : (p: unique symbol) => unique symbol
+>method2 : (p: I["readonlyType"]) => unique symbol
 >p : unique symbol
 
         return p;
@@ -894,7 +894,7 @@ const ce0 = class {
 >class {    method1(p: typeof s): typeof s {        return p;    }    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : typeof ce0
 
     method1(p: typeof s): typeof s {
->method1 : (p: unique symbol) => unique symbol
+>method1 : (p: typeof s) => unique symbol
 >p : unique symbol
 >s : unique symbol
 >s : unique symbol
@@ -903,7 +903,7 @@ const ce0 = class {
 >p : unique symbol
     }
     method2(p: I["readonlyType"]): I["readonlyType"] {
->method2 : (p: unique symbol) => unique symbol
+>method2 : (p: I["readonlyType"]) => unique symbol
 >p : unique symbol
 
         return p;
@@ -912,13 +912,13 @@ const ce0 = class {
 };
 
 function funcInferredReturnType(obj: { method(p: typeof s): void }) {
->funcInferredReturnType : (obj: { method(p: unique symbol): void; }) => { method(p: unique symbol): void; }
->obj : { method(p: unique symbol): void; }
->method : (p: unique symbol) => void
+>funcInferredReturnType : (obj: { method(p: typeof s): void; }) => { method(p: typeof s): void; }
+>obj : { method(p: typeof s): void; }
+>method : (p: typeof s) => void
 >p : unique symbol
 >s : unique symbol
 
     return obj;
->obj : { method(p: unique symbol): void; }
+>obj : { method(p: typeof s): void; }
 }
 

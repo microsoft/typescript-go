@@ -29,14 +29,16 @@ export const g = o;
 
 //// [a.d.ts]
 export type SpecialString = string;
+type PrivateSpecialString = string;
 export declare namespace N {
     type SpecialString = string;
 }
-export declare const o: (p1: string, p2: string, p3: string) => {
-    foo: string;
-    bar: string;
-    baz: string;
+export declare const o: (p1: SpecialString, p2: PrivateSpecialString, p3: N.SpecialString) => {
+    foo: SpecialString;
+    bar: PrivateSpecialString;
+    baz: N.SpecialString;
 };
+export {};
 //// [b.d.ts]
 export declare const g: (p1: string, p2: string, p3: string) => {
     foo: string;
@@ -44,8 +46,9 @@ export declare const g: (p1: string, p2: string, p3: string) => {
     baz: string;
 };
 //// [c.d.ts]
-export declare const g: (p1: string, p2: string, p3: string) => {
-    foo: string;
+import { SpecialString } from "./a";
+export declare const g: (p1: SpecialString, p2: string, p3: string) => {
+    foo: SpecialString;
     bar: string;
     baz: string;
 };

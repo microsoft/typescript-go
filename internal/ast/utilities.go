@@ -3850,6 +3850,54 @@ func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
 
+func IsPrimitiveLiteralValue(node *Node, includeBigInt bool) bool {
+	switch node.Kind {
+	case KindTrueKeyword,
+		KindFalseKeyword,
+		KindNumericLiteral,
+		KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral:
+		return true
+	case KindBigIntLiteral:
+		return includeBigInt
+	case KindPrefixUnaryExpression:
+		if node.AsPrefixUnaryExpression().Operator == KindMinusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
+		}
+		if node.AsPrefixUnaryExpression().Operator == KindPlusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func HasInferredType(node *Node) bool {
+	// Debug.type<HasInferredType>(node); // !!!
+	switch node.Kind {
+	case KindParameter,
+		KindPropertySignature,
+		KindPropertyDeclaration,
+		KindBindingElement,
+		KindPropertyAccessExpression,
+		KindElementAccessExpression,
+		KindBinaryExpression,
+		KindVariableDeclaration,
+		KindExportAssignment,
+		KindJSExportAssignment,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindJSDocParameterTag,
+		KindJSDocPropertyTag,
+		KindCommonJSExport:
+		return true
+	default:
+		// assertType<never>(node); // !!!
+		return false
+	}
+}
+
 func IsKeyword(token Kind) bool {
 	return KindFirstKeyword <= token && token <= KindLastKeyword
 }

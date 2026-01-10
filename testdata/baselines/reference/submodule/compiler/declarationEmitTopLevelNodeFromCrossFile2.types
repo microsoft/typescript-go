@@ -15,7 +15,7 @@ export const _ = boxedBox;
 
 === boxedBox.d.ts ===
 export declare const boxedBox: import("./box").Box<{
->boxedBox : import("box").Box<{ boxed: import("box").Box<number>; }>
+>boxedBox : import("box").Box<{ boxed: import("./box").Box<number>; }>
 
     boxed: import("./box").Box<number>;
 >boxed : import("box").Box<number>

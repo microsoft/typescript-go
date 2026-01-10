@@ -21,7 +21,7 @@ module m2 {
 }
 
 var m2: {
->m2 : { (): import("declarationMaps").connectExport; test1: import("declarationMaps").connectModule; test2(): import("declarationMaps").connectModule; }
+>m2 : { (): import("declarationMaps").connectExport; test1: m2.connectModule; test2(): import("declarationMaps").connectModule; }
 
     (): m2.connectExport;
 >m2 : any
@@ -37,5 +37,5 @@ var m2: {
 };
 
 export = m2;
->m2 : { (): import("declarationMaps").connectExport; test1: import("declarationMaps").connectModule; test2(): import("declarationMaps").connectModule; }
+>m2 : { (): import("declarationMaps").connectExport; test1: m2.connectModule; test2(): import("declarationMaps").connectModule; }
 

@@ -1,15 +1,6 @@
 --- old.objectSpread.types
 +++ new.objectSpread.types
-@@= skipped -395, +395 lines =@@
-
- // optional
- function container(
-->container : (definiteBoolean: { sn: boolean; }, definiteString: { sn: string; }, optionalString: { sn?: string; }, optionalNumber: { sn?: number; }) => void
-+>container : (definiteBoolean: { sn: boolean; }, definiteString: { sn: string; }, optionalString: { sn?: string | undefined; }, optionalNumber: { sn?: number | undefined; }) => void
-
-     definiteBoolean: { sn: boolean },
- >definiteBoolean : { sn: boolean; }
-@@= skipped -11, +11 lines =@@
+@@= skipped -406, +406 lines =@@
  >sn : string
 
      optionalString: { sn?: string },

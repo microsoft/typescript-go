@@ -33,7 +33,7 @@ declare function foo<T>(v: T): {
     a: <T>(a: T) => T;
     b: () => T;
     c: <T>(v: T) => {
-        a: <T_1>(a: T_1) => T_1;
+        a: <T_1>(a: T) => T_1;
         b: () => T;
     };
 };

@@ -33,7 +33,7 @@ declare const bIndex: "key";
 >bIndex : "key"
 
 const b: { key: { x?: number } } = { key: {} };
->b : { key: { x?: number | undefined; }; }
+>b : { key: { x?: number; }; }
 >key : { x?: number | undefined; }
 >x : number | undefined
 >{ key: {} } : { key: {}; }
@@ -43,14 +43,14 @@ const b: { key: { x?: number } } = { key: {} };
 if (b[bIndex].x) {
 >b[bIndex].x : number | undefined
 >b[bIndex] : { x?: number | undefined; }
->b : { key: { x?: number | undefined; }; }
+>b : { key: { x?: number; }; }
 >bIndex : "key"
 >x : number | undefined
 
     b[bIndex].x // number
 >b[bIndex].x : number
 >b[bIndex] : { x?: number | undefined; }
->b : { key: { x?: number | undefined; }; }
+>b : { key: { x?: number; }; }
 >bIndex : "key"
 >x : number
 }

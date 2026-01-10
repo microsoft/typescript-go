@@ -35,7 +35,7 @@
 1.0lib-noErrors.ts(917,13): error TS2403: Subsequent variable declarations must have the same type.  Variable 'TypeError' must be of type 'TypeErrorConstructor', but here has type '{ (message?: string): TypeError; new (message?: string): TypeError; prototype: TypeError; }'.
 1.0lib-noErrors.ts(925,13): error TS2403: Subsequent variable declarations must have the same type.  Variable 'URIError' must be of type 'URIErrorConstructor', but here has type '{ (message?: string): URIError; new (message?: string): URIError; prototype: URIError; }'.
 1.0lib-noErrors.ts(1132,5): error TS2374: Duplicate index signature for type 'number'.
-1.0lib-noErrors.ts(1134,13): error TS2403: Subsequent variable declarations must have the same type.  Variable 'Array' must be of type 'ArrayConstructor', but here has type '{ (arrayLength?: number): any[]; <T>(arrayLength: number): T[]; <T>(...items: T[]): T[]; new (arrayLength?: number): any[]; new <T>(arrayLength: number): T[]; new <T>(...items: T[]): T[]; isArray(arg: any): boolean; prototype: any[]; }'.
+1.0lib-noErrors.ts(1134,13): error TS2403: Subsequent variable declarations must have the same type.  Variable 'Array' must be of type 'ArrayConstructor', but here has type '{ (arrayLength?: number): any[]; <T>(arrayLength: number): T[]; <T>(...items: T[]): T[]; new (arrayLength?: number): any[]; new <T>(arrayLength: number): T[]; new <T>(...items: T[]): T[]; isArray(arg: any): boolean; prototype: Array<any>; }'.
 
 
 ==== 1.0lib-noErrors.ts (34 errors) ====
@@ -1258,7 +1258,7 @@
     }
     declare var Array: {
                 ~~~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'Array' must be of type 'ArrayConstructor', but here has type '{ (arrayLength?: number): any[]; <T>(arrayLength: number): T[]; <T>(...items: T[]): T[]; new (arrayLength?: number): any[]; new <T>(arrayLength: number): T[]; new <T>(...items: T[]): T[]; isArray(arg: any): boolean; prototype: any[]; }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'Array' must be of type 'ArrayConstructor', but here has type '{ (arrayLength?: number): any[]; <T>(arrayLength: number): T[]; <T>(...items: T[]): T[]; new (arrayLength?: number): any[]; new <T>(arrayLength: number): T[]; new <T>(...items: T[]): T[]; isArray(arg: any): boolean; prototype: Array<any>; }'.
 !!! related TS6203 lib.es5.d.ts:--:--: 'Array' was also declared here.
         new (arrayLength?: number): any[];
         new <T>(arrayLength: number): T[];

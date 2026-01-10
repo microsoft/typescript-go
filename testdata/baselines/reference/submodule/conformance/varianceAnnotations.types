@@ -260,7 +260,7 @@ interface Child<A, B = unknown> extends Parent<A> {
 }
 
 function fn<A>(inp: Child<A>) {
->fn : <A>(inp: Child<A, unknown>) => void
+>fn : <A>(inp: Child<A>) => void
 >inp : Child<A, unknown>
 
     const a: Child<unknown> = inp;

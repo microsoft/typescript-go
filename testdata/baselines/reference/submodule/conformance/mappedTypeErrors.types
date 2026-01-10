@@ -88,7 +88,7 @@ function f3<T extends keyof Shape>(x: T) {
 }
 
 function f4<T extends keyof Named>(x: T) {
->f4 : <T extends "name">(x: T) => void
+>f4 : <T extends keyof Named>(x: T) => void
 >x : T
 
     let y: Pick<Shape, T>;

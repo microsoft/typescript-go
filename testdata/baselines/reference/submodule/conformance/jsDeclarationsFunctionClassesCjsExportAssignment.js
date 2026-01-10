@@ -186,7 +186,7 @@ declare namespace Context {
          * @param {HookHandler=} handle
          * @returns {State}
          */
-        construct(input: Input, handle?: import("./hook").HookHandler): State;
+        construct(input: Input, handle?: HookHandler | undefined): State;
     };
 }
 export = Context;

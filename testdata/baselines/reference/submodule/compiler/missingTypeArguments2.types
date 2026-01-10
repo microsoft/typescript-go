@@ -8,7 +8,7 @@ var x: () => A;
 >x : () => any
 
 (a: A) => { };
->(a: A) => { } : (a: any) => void
+>(a: A) => { } : (a: A) => void
 >a : any
 
 var y: A<A>;

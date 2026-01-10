@@ -332,7 +332,7 @@ type Nested = {
 >resp.resp.data satisfies string : string
 >resp.resp.data : string
 >resp.resp : { data: string; }
->resp : { type: "string"; resp: { data: string; }; }
+>resp : { type: 'string'; resp: { data: string; }; }
 >resp : { data: string; }
 >data : string
     }    
@@ -370,7 +370,7 @@ type Nested = {
 >resp.resp.data satisfies string : string
 >resp.resp.data : string
 >resp.resp : { data: string; }
->resp : { type: "string"; resp: { data: string; }; }
+>resp : { type: 'string'; resp: { data: string; }; }
 >resp : { data: string; }
 >data : string
     }    

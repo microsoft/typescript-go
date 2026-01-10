@@ -5,7 +5,7 @@
 
  function test<T extends 'foo' | 'bar'>(name: `get${Capitalize<T>}`) {
 ->test : <T extends "foo" | "bar">(name: `get${Capitalize<T>}`) => void
-+>test : <T extends "bar" | "foo">(name: `get${Capitalize<T>}`) => void
++>test : <T extends 'foo' | 'bar'>(name: `get${Capitalize<T>}`) => void
  >name : `get${Capitalize<T>}`
 
      let s1: string = name;

@@ -8,11 +8,8 @@
 +>x : () => any
 
  (a: A) => { };
-->(a: A) => { } : (a: A) => void
-+>(a: A) => { } : (a: any) => void
- >a : any
-
- var y: A<A>;
+ >(a: A) => { } : (a: A) => void
+@@= skipped -10, +10 lines =@@
  >y : A<any>
 
  (): A => null;

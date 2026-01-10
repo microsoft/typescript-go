@@ -6,7 +6,7 @@
 -  Type '(files: string[], format: "csv" | "json" | "xmlolololol") => void' is not assignable to type '(supplies?: any[]) => void'.
 -    Target signature provides too few arguments. Expected 2 or more, but got 1.
 +first.js(8,13): error TS2749: 'Wagon' refers to a value, but is being used as a type here. Did you mean 'typeof Wagon'?
-+first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[]) => number; }' is not a constructor function type.
++first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[] | undefined) => number; }' is not a constructor function type.
 +first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
  first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
 -generic.js(19,19): error TS2554: Expected 1 arguments, but got 0.
@@ -27,7 +27,7 @@
 -
 -
 -==== first.js (3 errors) ====
-+second.ts(14,25): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[]) => number; }' is not a constructor function type.
++second.ts(14,25): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[] | undefined) => number; }' is not a constructor function type.
 +second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
 +
 +
@@ -49,7 +49,7 @@
      // ok
      class Sql extends Wagon {
 +                      ~~~~~
-+!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[]) => number; }' is not a constructor function type.
++!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[] | undefined) => number; }' is not a constructor function type.
          constructor() {
              super(); // error: not enough arguments
 -            ~~~~~
@@ -91,7 +91,7 @@
 -!!! error TS2417:           Property 'circle' is missing in type 'Wagon' but required in type 'typeof Wagon'.
 -!!! related TS2728 first.js:9:1: 'circle' is declared here.
 +                            ~~~~~
-+!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[]) => number; }' is not a constructor function type.
++!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons?: Wagon[] | undefined) => number; }' is not a constructor function type.
          constructor(public drunkOO: true) {
              // error: wrong type
              super('nope');

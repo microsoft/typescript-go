@@ -1,28 +1,15 @@
 --- old.thisTypeErrors.types
 +++ new.thisTypeErrors.types
-@@= skipped -4, +4 lines =@@
- >x1 : any
-
- var x2: { a: this };
-->x2 : { a: this; }
-+>x2 : { a: any; }
- >a : any
-
- var x3: this[];
+@@= skipped -11, +11 lines =@@
  >x3 : any[]
 
  function f1(x: this): this {
 ->f1 : (x: this) => this
-+>f1 : (x: any) => any
++>f1 : (x: this) => any
  >x : any
 
      var y: this;
-@@= skipped -19, +19 lines =@@
-
- interface I1 {
-     a: { x: this };
-->a : { x: this; }
-+>a : { x: any; }
+@@= skipped -16, +16 lines =@@
  >x : any
 
      b: { (): this };
@@ -40,17 +27,12 @@
      e: { f(x: this): this };
 ->e : { f(x: this): this; }
 ->f : (x: this) => this
-+>e : { f(x: any): any; }
-+>f : (x: any) => any
++>e : { f(x: this): any; }
++>f : (x: this) => any
  >x : any
  }
 
 @@= skipped -23, +23 lines =@@
- >C1 : C1
-
-     a: { x: this };
-->a : { x: this; }
-+>a : { x: any; }
  >x : any
 
      b: { (): this };
@@ -68,17 +50,17 @@
      e: { f(x: this): this };
 ->e : { f(x: this): this; }
 ->f : (x: this) => this
-+>e : { f(x: any): any; }
-+>f : (x: any) => any
++>e : { f(x: this): any; }
++>f : (x: this) => any
  >x : any
  }
 
-@@= skipped -31, +31 lines =@@
+@@= skipped -27, +27 lines =@@
  >undefined : undefined
 
      static foo(x: this): this {
 ->foo : (x: this) => this
-+>foo : (x: any) => any
++>foo : (x: this) => any
  >x : any
 
          return undefined;
@@ -88,12 +70,12 @@
      x1 = {
 ->x1 : { g(x: this): this; }
 ->{        g(x: this): this {            return undefined;        }    } : { g(x: this): this; }
-+>x1 : { g(x: any): any; }
-+>{        g(x: this): this {            return undefined;        }    } : { g(x: any): any; }
++>x1 : { g(x: this): any; }
++>{        g(x: this): this {            return undefined;        }    } : { g(x: this): any; }
 
          g(x: this): this {
 ->g : (x: this) => this
-+>g : (x: any) => any
++>g : (x: this) => any
  >x : any
 
              return undefined;
@@ -102,7 +84,7 @@
 
          function g(x: this): this {
 ->g : (x: this) => this
-+>g : (x: any) => any
++>g : (x: this) => any
  >x : any
 
              return undefined;
@@ -111,12 +93,12 @@
          let x2 = {
 ->x2 : { h(x: this): this; }
 ->{            h(x: this): this {                return undefined;            }        } : { h(x: this): this; }
-+>x2 : { h(x: any): any; }
-+>{            h(x: this): this {                return undefined;            }        } : { h(x: any): any; }
++>x2 : { h(x: this): any; }
++>{            h(x: this): this {                return undefined;            }        } : { h(x: this): any; }
 
              h(x: this): this {
 ->h : (x: this) => this
-+>h : (x: any) => any
++>h : (x: this) => any
  >x : any
 
                  return undefined;

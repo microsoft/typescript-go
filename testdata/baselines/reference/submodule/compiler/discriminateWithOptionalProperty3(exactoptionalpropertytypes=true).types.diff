@@ -9,11 +9,3 @@
 
    args: ExecutionArgs,
  >args : ExecutionArgs
-@@= skipped -26, +26 lines =@@
-
-     return coercedVariableValues.errors;
- >coercedVariableValues.errors : readonly GraphQLError[]
-->coercedVariableValues : { errors: ReadonlyArray<GraphQLError>; coerced?: never; }
-+>coercedVariableValues : { errors: readonly GraphQLError[]; coerced?: never; }
- >errors : readonly GraphQLError[]
-   }
