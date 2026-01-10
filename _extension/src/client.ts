@@ -16,8 +16,7 @@ import {
     jsTsLanguageModes,
 } from "./util";
 import { getLanguageForUri } from "./util";
-
-const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
+import { codeLensShowLocationsCommandName } from "./commands";
 
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
@@ -147,33 +146,8 @@ export class Client {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
         }
 
-        const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
-            if (args.length !== 3) {
-                throw new Error("Unexpected number of arguments.");
-            }
-
-            const lspUri = args[0] as DocumentUri;
-            const lspPosition = args[1] as Position;
-            const lspLocations = args[2] as Location[];
-
-            const editorUri = vscode.Uri.parse(lspUri);
-            const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
-            const editorLocations = lspLocations.map(loc =>
-                new vscode.Location(
-                    vscode.Uri.parse(loc.uri),
-                    new vscode.Range(
-                        new vscode.Position(loc.range.start.line, loc.range.start.character),
-                        new vscode.Position(loc.range.end.line, loc.range.end.character),
-                    ),
-                )
-            );
-
-            vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
-        });
-
         return new vscode.Disposable(() => {
-            this.client?.stop();
-            codeLensLocationsCommand.dispose();
+            this.dispose();
             vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
         });
     }
