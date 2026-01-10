@@ -44,8 +44,9 @@ const (
 	CheckModeRestBindingElement   CheckMode = 1 << 5 // Checking a type that is going to be used to determine the type of a rest binding element
 	//   e.g. in `const { a, ...rest } = foo`, when checking the type of `foo` to determine the type of `rest`,
 	//   we need to preserve generic types instead of substituting them for constraints
-	CheckModeTypeOnly   CheckMode = 1 << 6 // Called from getTypeOfExpression, diagnostics may be omitted
-	CheckModeForceTuple CheckMode = 1 << 7
+	CheckModeTypeOnly             CheckMode = 1 << 6 // Called from getTypeOfExpression, diagnostics may be omitted
+	CheckModeForceTuple           CheckMode = 1 << 7
+	CheckModeQuantifiedContextual CheckMode = 1 << 8
 )
 
 type TypeSystemEntity any
@@ -7247,7 +7248,7 @@ func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
 	if contextualType.flags&TypeFlagsQuantified != 0 {
-		return c.checkExpressionExWithContextualType(node, checkMode, contextualType)
+		return c.checkExpressionExWithContextualType(node, checkMode, contextualType, inferenceContext)
 	}
 	contextNode := c.getContextNode(node)
 	c.pushContextualType(contextNode, contextualType, false /*isCache*/)
@@ -7322,42 +7323,56 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
-	return c.checkExpressionExWithContextualType(node, checkMode, nil)
+	return c.checkExpressionExWithContextualType(node, checkMode, nil, nil)
 }
 
-func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode CheckMode, contextualType *Type) *Type {
+// we now have too many checkExpression* functions and it's a bit of a spagetti so maybe there is a better way to do this
+// but it's done this way to reduce the number of locations where a change has to be made for quantified types
+func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, checkMode CheckMode, contextualType *Type, parentInferenceContext *InferenceContext) *Type {
 	if node.Kind == ast.KindIdentifier { // to avoid recursion in some jsx test cases TODO: come up with a better fix
 		return c.checkExpressionExWorker(node, checkMode)
 	}
 	if contextualType == nil {
 		contextualType = c.getApparentTypeOfContextualType(node, ContextFlagsNone)
 	}
+	if parentInferenceContext == nil {
+		parentInferenceContext = c.getInferenceContext(node)
+	}
 	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
 	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
 		return c.checkExpressionExWorker(node, checkMode)
 	}
 	baseType := contextualType.AsQuantifiedType().baseType
+	if parentInferenceContext != nil {
+		baseType = c.instantiateType(baseType, parentInferenceContext.mapper)
+	}
 	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
 
 	// context sensitive
 	// TODO: this is not needed if the node is not context sensitive
 	inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
-	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode|CheckModeSkipContextSensitive)
+	if parentInferenceContext != nil {
+		// probably a bad way to comvine inference contexts but works
+		inferenceContext.nonFixingMapper = c.combineTypeMappers(inferenceContext.nonFixingMapper, parentInferenceContext.nonFixingMapper)
+		inferenceContext.mapper = c.combineTypeMappers(inferenceContext.mapper, parentInferenceContext.mapper)
+	}
+	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, checkMode|CheckModeSkipContextSensitive|CheckModeQuantifiedContextual)
 	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
 	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
 
 	// normal
-	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal)
+	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal|CheckModeQuantifiedContextual)
 	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
 	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
 
 	// final
 	baseTypeInferred := c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
-	t = c.checkExpressionWithContextualType(node, baseTypeInferred, nil, CheckModeNormal)
+	t = c.checkExpressionWithContextualType(node, baseTypeInferred, core.IfElse(parentInferenceContext != nil, parentInferenceContext, nil), CheckModeNormal|CheckModeQuantifiedContextual)
 
 	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseTypeInferred, c.assignableRelation, node, node, nil, nil) {
 		return c.errorType // to avoid showing errors in parent TODO: maybe there is a better way to do this
 	}
+
 	return t
 }
 
@@ -9980,12 +9995,12 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, c
 func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) {
 	links := c.nodeLinks.Get(node)
 	// Check if function expression is contextually typed and assign parameter types if so.
-	if links.flags&NodeCheckFlagsContextChecked == 0 {
+	if links.flags&NodeCheckFlagsContextChecked == 0 || checkMode&CheckModeQuantifiedContextual != 0 {
 		contextualSignature := c.getContextualSignature(node)
 		// If a type check is started at a function expression that is an argument of a function call, obtaining the
 		// contextual type may recursively get back to here during overload resolution of the call. If so, we will have
 		// already assigned contextual types.
-		if links.flags&NodeCheckFlagsContextChecked == 0 {
+		if links.flags&NodeCheckFlagsContextChecked == 0 || checkMode&CheckModeQuantifiedContextual != 0 {
 			links.flags |= NodeCheckFlagsContextChecked
 			signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
 			if signature == nil {

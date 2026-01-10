@@ -2186,6 +2186,7 @@ func (p *Printer) emitQuantifiedTypeNpde(node *ast.QuantifiedTypeNode) {
 	state := p.enterNode(node.AsNode())
 	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
 	p.writeSpace()
+	// TODO: print parenthesis if BaseType is a function
 	p.emitTypeNode(node.BaseType, ast.TypePrecedenceConditional)
 	p.exitNode(node.AsNode(), state)
 }
