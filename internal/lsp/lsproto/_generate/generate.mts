@@ -174,7 +174,7 @@ const customStructures: Structure[] = [
         ],
     },
     {
-        name: "ClosingTagCompletionResponse",
+        name: "CustomTypeScriptClosingTagCompletion",
         properties: [
             // TODO: TextEdit?
             {
@@ -184,7 +184,7 @@ const customStructures: Structure[] = [
                 documentation: "The text to insert at the closing tag position.",
             },
         ],
-        documentation: "ClosingTagCompletionResponse is the response for the textDocument/closingTagCompletion request.",
+        documentation: "CustomTypeScriptClosingTagCompletion is the response for the custom/TypeScript/textDocument/closingTagCompletion request.",
     },
 ];
 
@@ -211,10 +211,10 @@ const customEnumerations: Enumeration[] = [
 // Custom requests to add to the model (TypeScript-specific LSP extensions)
 const customRequests: Request[] = [
     {
-        method: "textDocument/closingTagCompletion",
-        typeName: "TextDocumentClosingTagCompletionRequest",
+        method: "custom/TypeScript/textDocument/closingTagCompletion",
+        typeName: "CustomTypeScriptClosingTagCompletionRequest",
         params: { kind: "reference", name: "TextDocumentPositionParams" },
-        result: { kind: "reference", name: "ClosingTagCompletionResponse" },
+        result: { kind: "reference", name: "CustomTypeScriptClosingTagCompletion" },
         messageDirection: "clientToServer",
         documentation: "Request to get the closing tag completion at a given position.",
     },

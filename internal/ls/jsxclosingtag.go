@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, params *lsproto.TextDocumentPositionParams) (*lsproto.ClosingTagCompletionResponse, error) {
+func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, params *lsproto.TextDocumentPositionParams) (*lsproto.CustomTypeScriptClosingTagCompletion, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := l.converters.LineAndCharacterToPosition(sourceFile, params.Position)
 
@@ -25,7 +25,7 @@ func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, param
 	}
 
 	if element != nil && isUnclosedTag(element.AsJsxElement()) {
-		result := &lsproto.ClosingTagCompletionResponse{
+		result := &lsproto.CustomTypeScriptClosingTagCompletion{
 			// TODO: Slight divergence from Strada - we don't use the verbatim text from the opening tag.
 			NewText: strPtrTo("</" + element.AsJsxElement().OpeningElement.TagName().Text() + ">"),
 		}
@@ -40,7 +40,7 @@ func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, param
 	}
 
 	if fragment != nil && isUnclosedFragment(fragment.AsJsxFragment()) {
-		result := &lsproto.ClosingTagCompletionResponse{
+		result := &lsproto.CustomTypeScriptClosingTagCompletion{
 			NewText: strPtrTo("</>"),
 		}
 		return result, nil
