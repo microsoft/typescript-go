@@ -408,53 +408,84 @@ function StaticSetter() {
 //// [privateNameDuplicateField.js]
 "use strict";
 function Field() {
+    var _A_Field_Field_foo, _A_Field_Field_foo_1, _A_Field_Method_foo, _A_Field_Getter_foo, _A_Field_Setter_foo, _A_Field_StaticField_foo, _A_Field_StaticMethod_foo, _A_Field_StaticGetter_foo, _A_Field_StaticSetter_foo;
     // Error
     class A_Field_Field {
+        constructor() {
+            _A_Field_Field_foo_1.set(this, "foo");
+            _A_Field_Field_foo_1.set(this, "foo");
+        }
         #foo = "foo";
         #foo = "foo";
     }
+    _A_Field_Field_foo = new WeakMap(), _A_Field_Field_foo_1 = new WeakMap();
     // Error
     class A_Field_Method {
-        #foo = "foo";
+        constructor() {
+            _A_Field_Method_foo.set(this, "foo");
+        }
         #foo() { }
     }
+    _A_Field_Method_foo = new WeakMap();
     // Error
     class A_Field_Getter {
-        #foo = "foo";
+        constructor() {
+            _A_Field_Getter_foo.set(this, "foo");
+        }
         get #foo() { return ""; }
     }
+    _A_Field_Getter_foo = new WeakMap();
     // Error
     class A_Field_Setter {
-        #foo = "foo";
+        constructor() {
+            _A_Field_Setter_foo.set(this, "foo");
+        }
         set #foo(value) { }
     }
+    _A_Field_Setter_foo = new WeakMap();
     // Error
     class A_Field_StaticField {
-        #foo = "foo";
+        constructor() {
+            _A_Field_StaticField_foo.set(this, "foo");
+        }
         static #foo = "foo";
     }
+    _A_Field_StaticField_foo = new WeakMap();
     // Error
     class A_Field_StaticMethod {
-        #foo = "foo";
+        constructor() {
+            _A_Field_StaticMethod_foo.set(this, "foo");
+        }
         static #foo() { }
     }
+    _A_Field_StaticMethod_foo = new WeakMap();
     // Error
     class A_Field_StaticGetter {
-        #foo = "foo";
+        constructor() {
+            _A_Field_StaticGetter_foo.set(this, "foo");
+        }
         static get #foo() { return ""; }
     }
+    _A_Field_StaticGetter_foo = new WeakMap();
     // Error
     class A_Field_StaticSetter {
-        #foo = "foo";
+        constructor() {
+            _A_Field_StaticSetter_foo.set(this, "foo");
+        }
         static set #foo(value) { }
     }
+    _A_Field_StaticSetter_foo = new WeakMap();
 }
 function Method() {
+    var _A_Method_Field_foo;
     // Error
     class A_Method_Field {
+        constructor() {
+            _A_Method_Field_foo.set(this, "foo");
+        }
         #foo() { }
-        #foo = "foo";
     }
+    _A_Method_Field_foo = new WeakMap();
     // Error
     class A_Method_Method {
         #foo() { }
@@ -492,11 +523,15 @@ function Method() {
     }
 }
 function Getter() {
+    var _A_Getter_Field_foo;
     // Error
     class A_Getter_Field {
+        constructor() {
+            _A_Getter_Field_foo.set(this, "foo");
+        }
         get #foo() { return ""; }
-        #foo = "foo";
     }
+    _A_Getter_Field_foo = new WeakMap();
     // Error
     class A_Getter_Method {
         get #foo() { return ""; }
@@ -534,11 +569,15 @@ function Getter() {
     }
 }
 function Setter() {
+    var _A_Setter_Field_foo;
     // Error
     class A_Setter_Field {
+        constructor() {
+            _A_Setter_Field_foo.set(this, "foo");
+        }
         set #foo(value) { }
-        #foo = "foo";
     }
+    _A_Setter_Field_foo = new WeakMap();
     // Error
     class A_Setter_Method {
         set #foo(value) { }
@@ -576,11 +615,15 @@ function Setter() {
     }
 }
 function StaticField() {
+    var _A_StaticField_Field_foo;
     // Error
     class A_StaticField_Field {
+        constructor() {
+            _A_StaticField_Field_foo.set(this, "foo");
+        }
         static #foo = "foo";
-        #foo = "foo";
     }
+    _A_StaticField_Field_foo = new WeakMap();
     // Error
     class A_StaticField_Method {
         static #foo = "foo";
@@ -618,11 +661,15 @@ function StaticField() {
     }
 }
 function StaticMethod() {
+    var _A_StaticMethod_Field_foo;
     // Error
     class A_StaticMethod_Field {
+        constructor() {
+            _A_StaticMethod_Field_foo.set(this, "foo");
+        }
         static #foo() { }
-        #foo = "foo";
     }
+    _A_StaticMethod_Field_foo = new WeakMap();
     // Error
     class A_StaticMethod_Method {
         static #foo() { }
@@ -660,11 +707,15 @@ function StaticMethod() {
     }
 }
 function StaticGetter() {
+    var _A_StaticGetter_Field_foo;
     // Error
     class A_StaticGetter_Field {
+        constructor() {
+            _A_StaticGetter_Field_foo.set(this, "foo");
+        }
         static get #foo() { return ""; }
-        #foo = "foo";
     }
+    _A_StaticGetter_Field_foo = new WeakMap();
     // Error
     class A_StaticGetter_Method {
         static get #foo() { return ""; }
@@ -702,11 +753,15 @@ function StaticGetter() {
     }
 }
 function StaticSetter() {
+    var _A_StaticSetter_Field_foo;
     // Error
     class A_StaticSetter_Field {
+        constructor() {
+            _A_StaticSetter_Field_foo.set(this, "foo");
+        }
         static set #foo(value) { }
-        #foo = "foo";
     }
+    _A_StaticSetter_Field_foo = new WeakMap();
     // Error
     class A_StaticSetter_Method {
         static set #foo(value) { }

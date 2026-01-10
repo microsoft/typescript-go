@@ -12,7 +12,11 @@ class A {
 
 
 //// [privateNamesAndDecorators.js]
+var _A_foo;
 class A {
-    #foo = 1;
+    constructor() {
+        _A_foo.set(this, 1);
+    }
     #bar() { }
 }
+_A_foo = new WeakMap();

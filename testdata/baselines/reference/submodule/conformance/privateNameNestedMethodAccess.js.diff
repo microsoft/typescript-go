@@ -1,21 +1,16 @@
 --- old.privateNameNestedMethodAccess.js
 +++ new.privateNameNestedMethodAccess.js
-@@= skipped -26, +26 lines =@@
-
-
- //// [privateNameNestedMethodAccess.js]
--var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
--    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
--    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
--    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
--};
+@@= skipped -31, +31 lines =@@
+     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+ };
 -var _C_instances, _a, _C_foo, _C_bar, _C_baz_get;
++var _C_foo;
  class C {
--    constructor() {
+     constructor() {
 -        _C_instances.add(this);
--        _C_foo.set(this, 42);
--    }
-+    #foo = 42;
+         _C_foo.set(this, 42);
+     }
 +    #bar() { new C().#baz; }
 +    get #baz() { return 42; }
      m() {
@@ -40,13 +35,13 @@
 +        return class D {
 +            #bar() { }
 +            constructor() {
-+                new C().#foo;
++                __classPrivateFieldGet(new C(), _C_foo, "f");
 +                new C().#bar; // Error
 +                new C().#baz;
 +                new D().#bar;
 +            }
 +            n(x) {
-+                x.#foo;
++                __classPrivateFieldGet(x, _C_foo, "f");
 +                x.#bar;
 +                x.#unknown; // Error
 +            }
@@ -54,3 +49,4 @@
      }
  }
 -_a = C, _C_foo = new WeakMap(), _C_instances = new WeakSet(), _C_bar = function _C_bar() { __classPrivateFieldGet(new _a(), _C_instances, "a", _C_baz_get); }, _C_baz_get = function _C_baz_get() { return 42; };
++_C_foo = new WeakMap();

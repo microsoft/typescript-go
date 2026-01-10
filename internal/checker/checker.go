@@ -12374,7 +12374,7 @@ func (c *Checker) getBaseTypesIfUnrelated(leftType *Type, rightType *Type, isRel
 func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, right *ast.Node, leftType *Type, rightType *Type) {
 	if ast.IsAssignmentOperator(operator) {
 		// getters can be a subtype of setters, so to check for assignability we use the setter's type instead
-		if isCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
+		if IsCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
 			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
 		}
 		if c.checkReferenceExpression(left, diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access, diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access) {
