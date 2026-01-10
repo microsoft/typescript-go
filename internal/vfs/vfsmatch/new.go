@@ -140,8 +140,6 @@ func (p *globPattern) matchesParts(prefix, suffix string) bool {
 	return p.matchPathParts(prefix, suffix, 0, 0, false)
 }
 
-// matchesPrefix returns true if files under this directory path could match.
-// Used to skip directories during traversal.
 // matchesPrefixParts returns true if files under prefix+suffix could match.
 func (p *globPattern) matchesPrefixParts(prefix, suffix string) bool {
 	return p.matchPathParts(prefix, suffix, 0, 0, true)
@@ -286,10 +284,10 @@ func (p *globPattern) matchWildcard(segs []segment, s string) bool {
 		if len(s) < len(suffix) || !p.stringsEqual(suffix, s[len(s)-len(suffix):]) {
 			return false
 		}
-		return p.checkMinJsExclusion(s, segs)
+		return p.shouldIncludeMinJs(s, segs)
 	}
 
-	return p.matchSegments(segs, s) && p.checkMinJsExclusion(s, segs)
+	return p.matchSegments(segs, s) && p.shouldIncludeMinJs(s, segs)
 }
 
 // matchSegments matches segments against string s using an iterative algorithm.
@@ -344,8 +342,7 @@ func (p *globPattern) matchSegments(segs []segment, s string) bool {
 	return segIdx >= len(segs)
 }
 
-// checkMinJsExclusion returns false if this is a .min.js file that should be excluded.
-func (p *globPattern) checkMinJsExclusion(filename string, segs []segment) bool {
+func (p *globPattern) shouldIncludeMinJs(filename string, segs []segment) bool {
 	if !p.excludeMinJs {
 		return true
 	}
