@@ -39,7 +39,8 @@
         "build": "tsc -b",
         "build:test": "tsc -b test",
         "bench": "node --experimental-strip-types --no-warnings --conditions @typescript/source test/api.bench.ts",
-        "test": "node --test --experimental-strip-types --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
+        "test": "node --test --experimental-strip-types --no-warnings --conditions @typescript/source ./test/**/*.test.ts",
+        "test:lspapi": "node --test --test-name-pattern=.+ --experimental-strip-types --no-warnings --conditions @typescript/source ./test/lspApi.test.ts"
     },
     "devDependencies": {
         "tinybench": "^3.1.1"
