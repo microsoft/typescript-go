@@ -451,7 +451,8 @@ func newGlobMatcher(includeSpecs, excludeSpecs []string, basePath string, caseSe
 	return m
 }
 
-// matchesFileParts is like MatchesFile but matches against prefix+suffix without allocating.
+// matchesFileParts checks if prefix+suffix matches against the glob patterns.
+// Returns the index of the matching include pattern and true if matched, or (0, false) if not.
 func (m *globMatcher) matchesFileParts(prefix, suffix string) (int, bool) {
 	for i := range m.excludes {
 		if m.excludes[i].matchesParts(prefix, suffix) {
@@ -472,7 +473,7 @@ func (m *globMatcher) matchesFileParts(prefix, suffix string) (int, bool) {
 	return 0, false
 }
 
-// matchesDirectoryParts is like MatchesDirectory but matches against prefix+suffix without allocating.
+// matchesDirectoryParts checks if files under the directory prefix+suffix could match any pattern.
 func (m *globMatcher) matchesDirectoryParts(prefix, suffix string) bool {
 	for i := range m.excludes {
 		if m.excludes[i].matchesParts(prefix, suffix) {
