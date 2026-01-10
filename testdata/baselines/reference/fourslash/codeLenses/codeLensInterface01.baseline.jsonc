@@ -89,7 +89,7 @@
 
 // === Code Lenses ===
 // === /classPointable.ts ===
-// import { Pointable } from "./pointable";
+// import { [|Pointable|] } from "./pointable";
 // 
 // class Point implements [|Pointable|] {
 //   getX(): number {
@@ -98,7 +98,7 @@
 // --- (line: 7) skipped ---
 
 // === /objectPointable.ts ===
-// import { Pointable } from "./pointable";
+// import { [|Pointable|] } from "./pointable";
 // 
 // let x = 0;
 // let y = 0;
@@ -109,7 +109,7 @@
 // --- (line: 9) skipped ---
 
 // === /pointable.ts ===
-// export interface /*CODELENS: 2 references*/Pointable {
+// export interface /*CODELENS: 4 references*/Pointable {
 //   getX(): number;
 //   getY(): number;
 // }
