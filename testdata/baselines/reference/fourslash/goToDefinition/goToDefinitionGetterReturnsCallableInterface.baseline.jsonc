@@ -1,0 +1,34 @@
+// === goToDefinition ===
+// === /type.d.ts ===
+// export interface Disposable {
+//   dispose(): void;
+// }
+// 
+// export interface Event<T> {
+//   [|(
+//     listener: (e: T) => any,
+//     thisArgs?: any,
+//     disposables?: Disposable[]
+//   ): Disposable;|]
+// }
+// 
+// export interface TextDocumentChangeEvent<T> {
+// --- (line: 14) skipped ---
+
+// --- (line: 18) skipped ---
+//     uri: string;
+//   }
+// > {
+//   <|get [|onDidChangeContent|](): Event<TextDocumentChangeEvent<T>>;|>
+// }
+// 
+// export interface TextDocument {
+// --- (line: 26) skipped ---
+
+// === /index.ts ===
+// import { TextDocument, TextDocuments } from "./type";
+// 
+// var documents: TextDocuments<TextDocument>;
+// 
+// documents!.[|onDid/*GOTO DEF*/ChangeContent|]()
+// 
