@@ -7329,9 +7329,6 @@ func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
 // we now have too many checkExpression* functions and it's a bit of a spagetti so maybe there is a better way to do this
 // but it's done this way to reduce the number of locations where a change has to be made for quantified types
 func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, parentCheckMode CheckMode, contextualType *Type, parentInferenceContext *InferenceContext) *Type {
-	if node.Kind == ast.KindIdentifier { // to avoid recursion in some jsx test cases TODO: come up with a better fix
-		return c.checkExpressionExWorker(node, parentCheckMode)
-	}
 	if contextualType == nil {
 		contextualType = c.getApparentTypeOfContextualType(node, ContextFlagsNone)
 	}
