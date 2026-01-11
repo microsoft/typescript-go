@@ -7372,6 +7372,10 @@ func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, parentChec
 	baseType = c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
 	t = c.checkExpressionWithContextualType(node, baseType, core.IfElse(parentInferenceContext != nil, parentInferenceContext, nil), CheckModeNormal|CheckModeQuantifiedContextual)
 
+	if t.flags&TypeFlagsUnion != 0 {
+		return t // if it's a union then the subtype relation checking is non-trivial and we'll let the relater handle it
+	}
+
 	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseType, c.assignableRelation, node, node, nil, nil) {
 		return c.errorType // to avoid showing errors in parent TODO: maybe there is a better way to do this
 	}
@@ -10979,6 +10983,9 @@ func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) 
 }
 
 func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, left *ast.Node, leftType *Type, right *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
+	if leftType.flags&TypeFlagsQuantified != 0 {
+		return c.checkPropertyAccessExpressionOrQualifiedName(node, left, leftType.AsQuantifiedType().baseType, right, checkMode, writeOnly)
+	}
 	parentSymbol := c.getResolvedSymbolOrNil(left)
 	assignmentKind := getAssignmentTargetKind(node)
 	widenedType := leftType

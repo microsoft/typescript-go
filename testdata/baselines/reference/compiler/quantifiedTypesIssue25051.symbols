@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/quantifiedTypesIssue25051.ts] ////
+
+=== quantifiedTypesIssue25051.ts ===
+// https://github.com/microsoft/TypeScript/issues/25051
+
+type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
+>NumberRecord : Symbol(NumberRecord, Decl(quantifiedTypesIssue25051.ts, 0, 0))
+>kind : Symbol(kind, Decl(quantifiedTypesIssue25051.ts, 2, 21))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 2, 32))
+>f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 2, 43))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 2, 48))
+
+type StringRecord = { kind: "s", v: string, f: (v: string) => void };
+>StringRecord : Symbol(StringRecord, Decl(quantifiedTypesIssue25051.ts, 2, 69))
+>kind : Symbol(kind, Decl(quantifiedTypesIssue25051.ts, 3, 21))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 3, 32))
+>f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 3, 43))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 3, 48))
+
+type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+>BooleanRecord : Symbol(BooleanRecord, Decl(quantifiedTypesIssue25051.ts, 3, 69))
+>kind : Symbol(kind, Decl(quantifiedTypesIssue25051.ts, 4, 22))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 4, 33))
+>f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 4, 45))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 4, 50))
+
+type GenericRecord = <T> { kind: string, v: T, f: (v: T) => void };
+>GenericRecord : Symbol(GenericRecord, Decl(quantifiedTypesIssue25051.ts, 4, 72))
+>T : Symbol(T, Decl(quantifiedTypesIssue25051.ts, 5, 22))
+>kind : Symbol(kind, Decl(quantifiedTypesIssue25051.ts, 5, 26))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 5, 40))
+>T : Symbol(T, Decl(quantifiedTypesIssue25051.ts, 5, 22))
+>f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 5, 46))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 5, 51))
+>T : Symbol(T, Decl(quantifiedTypesIssue25051.ts, 5, 22))
+
+function processRecord(record: GenericRecord) {
+>processRecord : Symbol(processRecord, Decl(quantifiedTypesIssue25051.ts, 5, 67))
+>record : Symbol(record, Decl(quantifiedTypesIssue25051.ts, 7, 23))
+>GenericRecord : Symbol(GenericRecord, Decl(quantifiedTypesIssue25051.ts, 4, 72))
+
+  record.f(record.v);
+>record.f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 5, 46))
+>record : Symbol(record, Decl(quantifiedTypesIssue25051.ts, 7, 23))
+>f : Symbol(f, Decl(quantifiedTypesIssue25051.ts, 5, 46))
+>record.v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 5, 40))
+>record : Symbol(record, Decl(quantifiedTypesIssue25051.ts, 7, 23))
+>v : Symbol(v, Decl(quantifiedTypesIssue25051.ts, 5, 40))
+}
+processRecord({} as NumberRecord)
+>processRecord : Symbol(processRecord, Decl(quantifiedTypesIssue25051.ts, 5, 67))
+>NumberRecord : Symbol(NumberRecord, Decl(quantifiedTypesIssue25051.ts, 0, 0))
+
+processRecord({} as StringRecord)
+>processRecord : Symbol(processRecord, Decl(quantifiedTypesIssue25051.ts, 5, 67))
+>StringRecord : Symbol(StringRecord, Decl(quantifiedTypesIssue25051.ts, 2, 69))
+
+processRecord({} as BooleanRecord)
+>processRecord : Symbol(processRecord, Decl(quantifiedTypesIssue25051.ts, 5, 67))
+>BooleanRecord : Symbol(BooleanRecord, Decl(quantifiedTypesIssue25051.ts, 3, 69))
+
+processRecord({} as NumberRecord | StringRecord | BooleanRecord)
+>processRecord : Symbol(processRecord, Decl(quantifiedTypesIssue25051.ts, 5, 67))
+>NumberRecord : Symbol(NumberRecord, Decl(quantifiedTypesIssue25051.ts, 0, 0))
+>StringRecord : Symbol(StringRecord, Decl(quantifiedTypesIssue25051.ts, 2, 69))
+>BooleanRecord : Symbol(BooleanRecord, Decl(quantifiedTypesIssue25051.ts, 3, 69))
+
