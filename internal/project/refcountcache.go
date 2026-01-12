@@ -54,6 +54,11 @@ func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs Acqui
 	return entry.value
 }
 
+func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
+	_, ok := c.entries.Load(identity)
+	return ok
+}
+
 // Ref increments the reference count for an existing entry.
 // Panics if the entry does not exist.
 func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
