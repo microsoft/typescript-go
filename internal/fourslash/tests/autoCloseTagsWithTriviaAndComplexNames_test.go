@@ -83,6 +83,10 @@ const x =
 // Namespaced tag with hyphens
 const x =
 	<my-namespace:my-tag>/*8*/
+
+// @Filename: /9.tsx
+// Generic tag with no attributes
+const x = <SomeComponent<number>>/*9*/
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
