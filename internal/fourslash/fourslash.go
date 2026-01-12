@@ -2839,6 +2839,41 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 	}
 }
 
+// VerifyBaselineClosingTags generates a baseline for JSX closing tag completions at all markers.
+func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
+	t.Helper()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.CustomClosingTagCompletion], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.CustomClosingTagCompletion]{}, false
+		}
+
+		params := &lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
+			},
+			Position: marker.LSPosition,
+		}
+
+		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result}, true
+	})
+
+	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
+		return nil
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
+		if item == nil || item.NewText == nil {
+			return []string{"No closing tag"}
+		}
+		return []string{fmt.Sprintf("newText: %q", *item.NewText)}
+	}
+
+	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
+	f.addResultToBaseline(t, closingTagCmd, result)
+}
+
 // VerifySignatureHelpOptions contains options for verifying signature help.
 // All fields are optional - only specified fields will be verified.
 type VerifySignatureHelpOptions struct {
