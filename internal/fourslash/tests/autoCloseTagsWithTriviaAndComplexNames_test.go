@@ -19,7 +19,7 @@ func TestAutoCloseTagsWithTriviaAndComplexNames(t *testing.T) {
 const x = <
 	/** hello world! */
 	div /** hello world! */
-	>/*0*/;
+	>/*0*/
 
 // @Filename: /1.tsx
 // Single-line comments
@@ -27,7 +27,7 @@ const x =
 	<
 	// hello world!
 	div // hello world!
-	>/*1*/;
+	>/*1*/
 
 // @Filename: /2.tsx
 // Namespaced tag
@@ -44,7 +44,7 @@ const x = <
 	// post-colon
 	sometag
 	// post-id
-	>/*3*/;
+	>/*3*/
 
 // @Filename: /4.tsx
 // UppercaseComponent-named tag
@@ -52,7 +52,11 @@ const x = <SomeComponent>/*4*/
 
 // @Filename: /5.tsx
 // propertyAccess.Component-named tag
-const x = <someModule.SomeComponent>/*5*/
+const x = <
+	someModule
+	.
+	SomeComponent
+>/*5*/
 
 // @Filename: /6.tsx
 // propertyAccess.Component-named tag with single-line comments
