@@ -1,14 +1,9 @@
 import * as vscode from "vscode";
 import {
-    DocumentUri,
     LanguageClient,
-    LanguageClientOptions,
-    Location,
-    NotebookDocumentFilter,
-    Position,
-    ServerOptions,
+    LanguageClientOptions, NotebookDocumentFilter, ServerOptions,
     TextDocumentFilter,
-    TransportKind,
+    TransportKind
 } from "vscode-languageclient/node";
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
@@ -22,6 +17,7 @@ import { getLanguageForUri } from "./util";
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
+    private documentSelector: Array<{ scheme: string, language: string }>;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
 
@@ -34,11 +30,12 @@ export class Client {
     constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
+        this.documentSelector = [
+            ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
+            ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
+        ];
         this.clientOptions = {
-            documentSelector: [
-                ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
-                ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
-            ],
+            documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
@@ -152,8 +149,8 @@ export class Client {
         }
 
         this.disposables.push(
-            registerTagClosingFeature("typescript", this.clientOptions.documentSelector!, this.client),
-            registerTagClosingFeature("javascript", this.clientOptions.documentSelector!, this.client),
+            registerTagClosingFeature("typescript", this.documentSelector, this.client),
+            registerTagClosingFeature("javascript", this.documentSelector, this.client),
         );
 
         return new vscode.Disposable(() => {
