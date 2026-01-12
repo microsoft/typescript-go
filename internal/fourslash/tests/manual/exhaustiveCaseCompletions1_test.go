@@ -11,7 +11,7 @@ import (
 )
 
 func TestExhaustiveCaseCompletions1(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
@@ -51,9 +51,10 @@ switch (f) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "case 1: ...",
-					InsertText: PtrTo("case 1:\ncase E.A:\ncase E.B:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Label:            "case 1: ...",
+					InsertText:       PtrTo("case 1:$1\ncase E.A:$2\ncase E.B:$3"),
+					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},
@@ -67,25 +68,10 @@ switch (f) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "case E.A: ...",
-					InsertText: PtrTo("case E.A:\ncase E.B:\ncase E.C:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
-				},
-			},
-		},
-	})
-	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label:      "case F.D: ...",
-					InsertText: PtrTo("case F.D:\ncase F.E:\ncase F.F:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Label:            "case E.A: ...",
+					InsertText:       PtrTo("case E.A:$1\ncase E.B:$2\ncase E.C:$3"),
+					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},

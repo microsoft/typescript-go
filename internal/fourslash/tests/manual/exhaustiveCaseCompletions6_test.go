@@ -10,19 +10,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestExhaustiveCaseCompletions7(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+func TestExhaustiveCaseCompletions6(t *testing.T) {
+	t.Skip("missing completion user preferences")
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
-export function foo(position: -1 | 0 | 1) {
-    switch (position) {
-        /**/
-    }
+declare const p: 'A' | 'B' | 'C';
+
+switch (p) {
+    /*1*/
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
@@ -31,9 +31,10 @@ export function foo(position: -1 | 0 | 1) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "case -1: ...",
-					InsertText: PtrTo("case -1:\ncase 0:\ncase 1:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Label:            "case 'A': ...",
+					InsertText:       PtrTo("case 'A':$1\ncase 'B':$2\ncase 'C':$3"),
+					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},

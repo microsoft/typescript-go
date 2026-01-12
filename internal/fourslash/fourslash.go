@@ -1208,7 +1208,7 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".AdditionalTextEdits")
 	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
@@ -1241,6 +1241,9 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		assert.Equal(t, actualAutoImportFix.ModuleSpecifier, expectedAutoImportFix.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
 	} else {
 		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
+		if expected.AdditionalTextEdits != AnyTextEdits {
+			assertDeepEqual(t, actual.AdditionalTextEdits, expected.AdditionalTextEdits, prefix+" AdditionalTextEdits mismatch")
+		}
 	}
 
 	if expected.FilterText != nil {
@@ -1308,9 +1311,6 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		}
 
 		data := item.Data
-		if data == nil {
-			return false
-		}
 		if options.AutoImportFix != nil {
 			return data.AutoImport != nil &&
 				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
@@ -1327,7 +1327,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
 	}
 	item = f.resolveCompletionItem(t, item)
-	assert.Check(t, strings.Contains(*item.Detail, options.Description), "Completion item detail does not contain expected description.")
+	var actualDetail string
+	if item.Detail != nil {
+		actualDetail = *item.Detail
+	}
+	assert.Check(t, strings.Contains(actualDetail, options.Description), "Completion item detail does not contain expected description.")
 	if item.AdditionalTextEdits == nil {
 		t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
 	}

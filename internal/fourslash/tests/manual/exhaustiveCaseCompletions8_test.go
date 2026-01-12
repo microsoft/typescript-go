@@ -11,7 +11,7 @@ import (
 )
 
 func TestExhaustiveCaseCompletions8(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
@@ -31,9 +31,10 @@ export function foo(position: -1n | 0n) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "case 0n: ...",
-					InsertText: PtrTo("case 0n:\ncase -1n:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Label:            "case 0n: ...",
+					InsertText:       PtrTo("case 0n:$1\ncase -1n:$2"),
+					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
 				},
 			},
 		},

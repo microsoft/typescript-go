@@ -11,7 +11,7 @@ import (
 )
 
 func TestExhaustiveCaseCompletions2(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
@@ -46,7 +46,8 @@ switch (u) {
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:               "case 1: ...",
-					InsertText:          PtrTo("case 1:\ncase E.A:\ncase E.B:"),
+					InsertText:          PtrTo("case 1:$1\ncase E.A:$2\ncase E.B:$3"),
+					InsertTextFormat:    PtrTo(lsproto.InsertTextFormatSnippet),
 					SortText:            PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 				},
@@ -62,17 +63,17 @@ switch (u) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "case d.E.A: ...",
-					InsertText: PtrTo("case d.E.A:\ncase d.E.B:\ncase d.E.C:"),
-					SortText:   PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+					Label:            "case d.E.A: ...",
+					InsertText:       PtrTo("case d.E.A:$1\ncase d.E.B:$2\ncase d.E.C:$3"),
+					InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),
+					SortText:         PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
 		},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "case E.A: ...",
-		Source:      "SwitchCases/",
-		Description: "Includes imports of types referenced by 'case E.A: ...'",
+		Name:   "case 1: ...",
+		Source: "SwitchCases/",
 		NewFileContent: PtrTo(`import { E, u } from "./dep";
 switch (u) {
     case

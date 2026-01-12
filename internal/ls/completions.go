@@ -1763,6 +1763,7 @@ func (l *LanguageService) completionInfoFromData(
 				ctx,
 				caseBlock.AsCaseBlock(),
 				file,
+				position,
 				compilerOptions,
 				l.program,
 				typeChecker,
@@ -5847,6 +5848,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 	ctx context.Context,
 	caseBlock *ast.CaseBlock,
 	file *ast.SourceFile,
+	position int,
 	options *core.CompilerOptions,
 	program *compiler.Program,
 	c *checker.Checker,
@@ -5905,9 +5907,9 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 					var bigInt *ast.Node
 					if v.Negative {
 						v.Negative = false
-						bigInt = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewBigIntLiteral(v.String(), ast.TokenFlagsNone))
+						bigInt = factory.NewPrefixUnaryExpression(ast.KindMinusToken, factory.NewBigIntLiteral(v.String()+"n", ast.TokenFlagsNone))
 					} else {
-						bigInt = factory.NewBigIntLiteral(v.String(), ast.TokenFlagsNone)
+						bigInt = factory.NewBigIntLiteral(v.String()+"n", ast.TokenFlagsNone)
 					}
 					elements = append(elements, bigInt)
 				case jsnum.Number:
@@ -5945,13 +5947,20 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		}), newLineChar)
 
 		firstClause := printer.printNode(newClauses[0], file)
+		name := firstClause + " ..."
 		return &lsproto.CompletionItem{
-			Label:               firstClause + " ...",
+			Label:               name,
 			Kind:                ptrTo(lsproto.CompletionItemKindSnippet),
 			SortText:            ptrTo(string(SortTextGlobalsOrKeywords)),
 			InsertText:          strPtrTo(insertText),
 			AdditionalTextEdits: ptrTo(importAdder.Edits()),
 			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
+			Data: &lsproto.CompletionItemData{
+				FileName: file.FileName(),
+				Position: int32(position),
+				Name:     name,
+				Source:   string(completionSourceSwitchCases),
+			},
 		}, nil
 	}
 	return nil, nil
@@ -6096,7 +6105,7 @@ func (p *snippetPrinter) createSyntheticFile(node *ast.Node, text string, target
 		eof,
 	)
 	syntheticFile.Loc = core.NewTextRange(0, len(text))
-	ast.SetParentInChildren(syntheticFile) // !!! HERE: verify that this works
+	ast.SetParentInChildren(syntheticFile)
 	return syntheticFile.AsSourceFile()
 }
 
