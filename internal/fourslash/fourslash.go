@@ -2829,7 +2829,7 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 			},
 			Position: f.currentCaretPosition,
 		}
-		result := sendRequest(t, f, lsproto.CustomTypeScriptTextDocumentClosingTagCompletionInfo, params)
+		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
 
 		var actualText *string
 		if result != nil {

@@ -548,7 +548,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTypeScriptTextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
@@ -1043,7 +1043,7 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomTypeScriptClosingTagCompletionResponse, error) {
+func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomClosingTagCompletionResponse, error) {
 	return ls.ProvideClosingTagCompletion(ctx, params)
 }
 

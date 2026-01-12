@@ -21822,8 +21822,8 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
-// CustomTypeScriptClosingTagCompletion is the response for the custom/TypeScript/textDocument/closingTagCompletion request.
-type CustomTypeScriptClosingTagCompletion struct {
+// CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.
+type CustomClosingTagCompletion struct {
 	// The text to insert at the closing tag position.
 	NewText *string `json:"newText,omitzero"`
 }
@@ -23220,7 +23220,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
-	case MethodCustomTypeScriptTextDocumentClosingTagCompletion:
+	case MethodCustomTextDocumentClosingTagCompletion:
 		return unmarshalPtrTo[TextDocumentPositionParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
@@ -23419,8 +23419,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
-	case MethodCustomTypeScriptTextDocumentClosingTagCompletion:
-		return unmarshalValue[CustomTypeScriptClosingTagCompletionResponse](data)
+	case MethodCustomTextDocumentClosingTagCompletion:
+		return unmarshalValue[CustomClosingTagCompletionResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -23726,7 +23726,7 @@ const (
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
 	// Request to get the closing tag completion at a given position.
-	MethodCustomTypeScriptTextDocumentClosingTagCompletion Method = "custom/TypeScript/textDocument/closingTagCompletion"
+	MethodCustomTextDocumentClosingTagCompletion Method = "custom/textDocument/closingTagCompletion"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24235,11 +24235,11 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-// Response type for `custom/TypeScript/textDocument/closingTagCompletion`
-type CustomTypeScriptClosingTagCompletionResponse = *CustomTypeScriptClosingTagCompletion
+// Response type for `custom/textDocument/closingTagCompletion`
+type CustomClosingTagCompletionResponse = *CustomClosingTagCompletion
 
-// Type mapping info for `custom/TypeScript/textDocument/closingTagCompletion`
-var CustomTypeScriptTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomTypeScriptClosingTagCompletionResponse]{Method: MethodCustomTypeScriptTextDocumentClosingTagCompletion}
+// Type mapping info for `custom/textDocument/closingTagCompletion`
+var CustomTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomClosingTagCompletionResponse]{Method: MethodCustomTextDocumentClosingTagCompletion}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
