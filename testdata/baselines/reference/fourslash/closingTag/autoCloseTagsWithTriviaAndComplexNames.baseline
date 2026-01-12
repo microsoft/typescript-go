@@ -96,3 +96,28 @@
 // 
 
 
+=== /7.tsx ===
+// // Generic propertyAccess.Component-named tag
+// const x =
+// 	<
+// 	someModule.SomeComponent<string>
+// 	prop="stringValue"
+// 	>;
+//   ^
+// | ----------------------------------------------------------------------
+// | newText: "</someModule.SomeComponent>"
+// | ----------------------------------------------------------------------
+// 
+
+
+=== /8.tsx ===
+// // Namespaced tag with hyphens
+// const x =
+// 	<my-namespace:my-tag>
+//                       ^
+// | ----------------------------------------------------------------------
+// | newText: "</my-namespace:my-tag>"
+// | ----------------------------------------------------------------------
+// 
+
+
