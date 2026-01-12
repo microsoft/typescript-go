@@ -39,8 +39,6 @@ type ServerOptions struct {
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
-	// SetParentProcessId is called once the server knows its parent process ID.
-	// The callback should start monitoring the parent and exit the process if the parent dies.
 	SetParentProcessId func(parentPID int)
 }
 
@@ -784,7 +782,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		s.logger.SetVerbose(true)
 	}
 
-	// Start watching the parent process if a watchdog is configured and parent PID is provided.
 	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
 		s.startWatchdog(int(*params.ProcessId.Integer))
 	}
