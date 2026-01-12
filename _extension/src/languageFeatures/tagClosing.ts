@@ -14,11 +14,12 @@ class TagClosing {
     private disposed = false;
     private timeout: NodeJS.Timeout | undefined;
     private cancel: vscode.CancellationTokenSource | undefined;
+    private onDidChangeSubscription: vscode.Disposable | undefined;
     private readonly client: LanguageClient;
 
     constructor(client: LanguageClient) {
         this.client = client;
-        vscode.workspace.onDidChangeTextDocument(
+        this.onDidChangeSubscription = vscode.workspace.onDidChangeTextDocument(
             this.onDidChangeTextDocument,
             this,
         );
@@ -26,6 +27,9 @@ class TagClosing {
 
     dispose() {
         this.disposed = true;
+
+        this.onDidChangeSubscription?.dispose();
+        this.onDidChangeSubscription = undefined;
 
         if (this.timeout) {
             clearTimeout(this.timeout);
