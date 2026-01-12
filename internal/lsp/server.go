@@ -506,7 +506,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		s.logger.Info("handled method '", req.Method, "' in ", time.Since(start))
 		return err
 	}
-	s.logger.Warn("unknown method ", req.Method)
+	s.logger.Warn("unknown method '", req.Method, "'")
 	if req.ID != nil {
 		s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
 	}

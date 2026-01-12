@@ -47,13 +47,23 @@ class ConditionalRegistration {
         private readonly elseDoRegister?: () => vscode.Disposable,
     ) {
         for (const condition of conditions) {
-            condition.onDidChange(() => this.update());
+            const listener = condition.onDidChange(() => this.update());
+            this.didChangeListeners.push(listener);
         }
         this.update();
     }
 
+    private didChangeListeners: vscode.Disposable[] = [];
+
     public dispose() {
         this.state?.registration?.dispose();
+        while (this.didChangeListeners.length > 0) {
+            const d = this.didChangeListeners.pop()!;
+            d.dispose();
+        }
+        for (const c of this.conditions) {
+            c.dispose();
+        }
         this.state = undefined;
     }
 

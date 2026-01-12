@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import {
     LanguageClient,
-    LanguageClientOptions, NotebookDocumentFilter, ServerOptions,
+    LanguageClientOptions,
+    NotebookDocumentFilter,
+    ServerOptions,
     TextDocumentFilter,
-    TransportKind
+    TransportKind,
 } from "vscode-languageclient/node";
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
@@ -17,7 +19,7 @@ import { getLanguageForUri } from "./util";
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
-    private documentSelector: Array<{ scheme: string, language: string }>;
+    private documentSelector: Array<{ scheme: string; language: string; }>;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
 
@@ -164,6 +166,7 @@ export class Client {
         if (this.isDisposed) {
             return;
         }
+        this.isDisposed = true;
 
         this.client?.dispose();
         while (this.disposables.length > 0) {
