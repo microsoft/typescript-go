@@ -506,6 +506,44 @@ var (
 			CollapsedText: ptrTrue, // Unused by our testing, but set to exercise the code.
 		},
 	}
+	defaultDiagnosticCapabilities = &lsproto.DiagnosticClientCapabilities{
+		RelatedInformation: ptrTrue,
+		TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+			ValueSet: []lsproto.DiagnosticTag{
+				lsproto.DiagnosticTagUnnecessary,
+				lsproto.DiagnosticTagDeprecated,
+			},
+		},
+	}
+	defaultPublishDiagnosticCapabilities = &lsproto.PublishDiagnosticsClientCapabilities{
+		RelatedInformation: ptrTrue,
+		TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+			ValueSet: []lsproto.DiagnosticTag{
+				lsproto.DiagnosticTagUnnecessary,
+				lsproto.DiagnosticTagDeprecated,
+			},
+		},
+	}
+	DefaultCapabilities = &lsproto.ClientCapabilities{
+		General: &lsproto.GeneralClientCapabilities{
+			PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+		},
+		TextDocument: &lsproto.TextDocumentClientCapabilities{
+			Completion:         defaultCompletionCapabilities,
+			Diagnostic:         defaultDiagnosticCapabilities,
+			PublishDiagnostics: defaultPublishDiagnosticCapabilities,
+			Definition:         defaultDefinitionCapabilities,
+			TypeDefinition:     defaultTypeDefinitionCapabilities,
+			Implementation:     defaultImplementationCapabilities,
+			Hover:              defaultHoverCapabilities,
+			SignatureHelp:      defaultSignatureHelpCapabilities,
+			DocumentSymbol:     defaultDocumentSymbolCapabilities,
+			FoldingRange:       defaultFoldingRangeCapabilities,
+		},
+		Workspace: &lsproto.WorkspaceClientCapabilities{
+			Configuration: ptrTrue,
+		},
+	}
 )
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -523,26 +561,10 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.Diagnostic == nil {
-		capabilitiesWithDefaults.TextDocument.Diagnostic = &lsproto.DiagnosticClientCapabilities{
-			RelatedInformation: ptrTrue,
-			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
-				ValueSet: []lsproto.DiagnosticTag{
-					lsproto.DiagnosticTagUnnecessary,
-					lsproto.DiagnosticTagDeprecated,
-				},
-			},
-		}
+		capabilitiesWithDefaults.TextDocument.Diagnostic = defaultDiagnosticCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
-		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
-			RelatedInformation: ptrTrue,
-			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
-				ValueSet: []lsproto.DiagnosticTag{
-					lsproto.DiagnosticTagUnnecessary,
-					lsproto.DiagnosticTagDeprecated,
-				},
-			},
-		}
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = capabilitiesWithDefaults.TextDocument.PublishDiagnostics
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}

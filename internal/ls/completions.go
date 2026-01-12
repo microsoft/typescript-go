@@ -4881,7 +4881,6 @@ func (l *LanguageService) getCompletionItemDetails(
 		literal := symbolCompletion.literal
 		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat)
 	case symbolCompletion.cases != nil:
-		// !!! exhaustive case completions
 		return item
 	default:
 		// Didn't find a symbol with this name.  See if we can find a keyword instead.
@@ -5943,10 +5942,10 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			if clientSupportsItemSnippet(ctx) {
 				return fmt.Sprintf("%s$%d", printNode(clause), i+1)
 			}
-			return printNode(clause) // !!! HERE: should we print unescaped here?
+			return printer.printUnescapedNode(clause)
 		}), newLineChar)
 
-		firstClause := printer.printNode(newClauses[0], file)
+		firstClause := printer.printUnescapedNode(newClauses[0])
 		name := firstClause + " ..."
 		return &lsproto.CompletionItem{
 			Label:               name,
@@ -6053,23 +6052,23 @@ type snippetPrinter struct {
 }
 
 /** Snippet-escaping version of `printer.printNode`. */
-func (p *snippetPrinter) printNode(node *ast.Node, sourceFile *ast.SourceFile) string {
-	unescaped := p.printUnescapedNode(node, sourceFile)
+func (p *snippetPrinter) printNode(node *ast.Node) string {
+	unescaped := p.printUnescapedNode(node)
 	if len(p.writer.escapes) > 0 {
 		return core.ApplyBulkEdits(unescaped, p.writer.escapes)
 	}
 	return unescaped
 }
 
-func (p *snippetPrinter) printUnescapedNode(node *ast.Node, sourceFile *ast.SourceFile) string {
+func (p *snippetPrinter) printUnescapedNode(node *ast.Node) string {
 	p.writer.escapes = nil
 	p.writer.Clear()
-	p.printer.Write(node, nil /*sourceFile*/, p.writer, nil /*sourceMapGenerator*/) // !!! HERE: get rid of source file params
+	p.printer.Write(node, nil /*sourceFile*/, p.writer, nil /*sourceMapGenerator*/)
 	return p.writer.String()
 }
 
 func (p *snippetPrinter) printAndFormatNode(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile) string {
-	text := p.printUnescapedNode(node, sourceFile)
+	text := p.printUnescapedNode(node)
 	nodeWithPos := p.baseWriter.AssignPositionsToNode(node, p.factory)
 	syntheticFile := p.createSyntheticFile(nodeWithPos, text, sourceFile)
 	changes := format.FormatNodeGivenIndentation(
