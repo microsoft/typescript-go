@@ -102,7 +102,7 @@ class TagClosing {
             let response;
             try {
                 response = await this.client.sendRequest<{ newText: string; } | null>(
-                    "custom/TypeScript/textDocument/closingTagCompletion",
+                    "custom/textDocument/closingTagCompletion",
                     params,
                     this.cancel.token,
                 );
