@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -173,6 +174,8 @@ type Server struct {
 	parseCache *project.ParseCache
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
+
+	cpuProfiler pprof.CPUProfiler
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -498,7 +501,10 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	ctx = lsproto.WithClientCapabilities(ctx, &s.clientCapabilities)
 
 	if handler := handlers()[req.Method]; handler != nil {
-		return handler(s, ctx, req)
+		start := time.Now()
+		err := handler(s, ctx, req)
+		s.logger.Info("handled method '", req.Method, "' in ", time.Since(start))
+		return err
 	}
 	s.logger.Warn("unknown method", req.Method)
 	if req.ID != nil {
@@ -529,7 +535,6 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
@@ -543,6 +548,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
+	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
+	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
+
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*ls.LanguageService).ProvideRename)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementations)
@@ -553,6 +561,13 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
+
+	// Developer/debugging commands
+	registerRequestHandler(handlers, lsproto.CustomRunGCInfo, (*Server).handleRunGC)
+	registerRequestHandler(handlers, lsproto.CustomSaveHeapProfileInfo, (*Server).handleSaveHeapProfile)
+	registerRequestHandler(handlers, lsproto.CustomSaveAllocProfileInfo, (*Server).handleSaveAllocProfile)
+	registerRequestHandler(handlers, lsproto.CustomStartCPUProfileInfo, (*Server).handleStartCPUProfile)
+	registerRequestHandler(handlers, lsproto.CustomStopCPUProfileInfo, (*Server).handleStopCPUProfile)
 
 	return handlers
 })
@@ -615,6 +630,43 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		}
 		defer s.recover(req)
 		resp, err := fn(s, ctx, ls, params)
+		if err != nil {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.sendResult(req.ID, resp)
+		return nil
+	}
+}
+
+func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		var params Req
+		// Ignore empty params.
+		if req.Params != nil {
+			params = req.Params.(Req)
+		}
+		languageService, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		if err != nil {
+			return err
+		}
+		defer s.recover(req)
+		resp, err := fn(s, ctx, languageService, params)
+		if errors.Is(err, ls.ErrNeedsAutoImports) {
+			languageService, err = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())
+			if err != nil {
+				return err
+			}
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			resp, err = fn(s, ctx, languageService, params)
+			if errors.Is(err, ls.ErrNeedsAutoImports) {
+				panic(info.Method + " returned ErrNeedsAutoImports even after enabling auto imports")
+			}
+		}
 		if err != nil {
 			return err
 		}
@@ -1185,4 +1237,48 @@ func isBlockingMethod(method lsproto.Method) bool {
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+// Developer/debugging command handlers
+
+func (s *Server) handleRunGC(_ context.Context, _ any, _ *lsproto.RequestMessage) (lsproto.RunGCResponse, error) {
+	pprof.RunGC()
+	s.logger.Info("GC triggered")
+	return lsproto.Null{}, nil
+}
+
+func (s *Server) handleSaveHeapProfile(_ context.Context, params *lsproto.ProfileParams, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
+	filePath, err := pprof.SaveHeapProfile(params.Dir)
+	if err != nil {
+		return nil, err
+	}
+	s.logger.Info("Heap profile saved to: ", filePath)
+	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleSaveAllocProfile(_ context.Context, params *lsproto.ProfileParams, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
+	filePath, err := pprof.SaveAllocProfile(params.Dir)
+	if err != nil {
+		return nil, err
+	}
+	s.logger.Info("Allocation profile saved to: ", filePath)
+	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleStartCPUProfile(_ context.Context, params *lsproto.ProfileParams, _ *lsproto.RequestMessage) (lsproto.StartCPUProfileResponse, error) {
+	err := s.cpuProfiler.StartCPUProfile(params.Dir)
+	if err != nil {
+		return lsproto.Null{}, err
+	}
+	s.logger.Info("CPU profiling started, will save to: ", params.Dir)
+	return lsproto.Null{}, nil
+}
+
+func (s *Server) handleStopCPUProfile(_ context.Context, _ any, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
+	filePath, err := s.cpuProfiler.StopCPUProfile()
+	if err != nil {
+		return nil, err
+	}
+	s.logger.Info("CPU profile saved to: ", filePath)
+	return &lsproto.ProfileResult{File: filePath}, nil
 }
