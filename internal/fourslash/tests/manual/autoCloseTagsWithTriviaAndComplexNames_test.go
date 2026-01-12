@@ -49,6 +49,23 @@ const x = <
 // @Filename: /4.tsx
 // UppercaseComponent-named tag
 const x = <SomeComponent>/*4*/
+
+// @Filename: /5.tsx
+// propertyAccess.Component-named tag
+const x = <someModule.SomeComponent>/*5*/
+
+// @Filename: /6.tsx
+// propertyAccess.Component-named tag with single-line comments
+const x =
+	<
+	// pre-object
+	someModule
+	// pre-dot
+	.
+	// post-dot
+	SomeComponent
+	// post-id
+	>/*6*/;
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
