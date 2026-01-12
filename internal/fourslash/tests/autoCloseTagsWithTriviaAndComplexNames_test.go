@@ -70,6 +70,19 @@ const x =
 	SomeComponent
 	// post-id
 	>/*6*/;
+
+// @Filename: /7.tsx
+// Generic propertyAccess.Component-named tag
+const x =
+	<
+	someModule.SomeComponent<string>
+	prop="stringValue"
+	>/*7*/;
+
+// @Filename: /8.tsx
+// Namespaced tag with hyphens
+const x =
+	<my-namespace:my-tag>/*8*/
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
