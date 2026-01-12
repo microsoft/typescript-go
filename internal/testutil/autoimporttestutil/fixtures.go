@@ -204,7 +204,7 @@ func SetupMonorepoLifecycleSession(t *testing.T, config MonorepoSetupConfig) *Mo
 	builder := newFileMapBuilder(nil)
 
 	monorepoRoot := normalizeAbsolutePath(config.Root)
-	monorepoName := config.MonorepoPackageTemplate.Name
+	monorepoName := config.Name
 	if monorepoName == "" {
 		monorepoName = "monorepo"
 	}

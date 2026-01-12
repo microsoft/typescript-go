@@ -1892,7 +1892,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			autoImport.Fix.AutoImportFix,
 		)
 
-		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
+		if isShadowed := uniques[autoImport.Fix.Name]; !isShadowed {
 			uniques[autoImport.Fix.Name] = false
 			sortedEntries = append(sortedEntries, entry)
 		}
