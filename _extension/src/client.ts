@@ -217,14 +217,14 @@ export class Client {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        await this.client.sendRequest("custom/TypeScript/runGC");
+        await this.client.sendRequest("custom/runGC");
     }
 
     async saveHeapProfile(dir: string): Promise<string> {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        const result = await this.client.sendRequest<{ file: string; }>("custom/TypeScript/saveHeapProfile", { dir });
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveHeapProfile", { dir });
         return result.file;
     }
 
@@ -232,7 +232,7 @@ export class Client {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        const result = await this.client.sendRequest<{ file: string; }>("custom/TypeScript/saveAllocProfile", { dir });
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveAllocProfile", { dir });
         return result.file;
     }
 
@@ -240,14 +240,14 @@ export class Client {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        await this.client.sendRequest("custom/TypeScript/startCPUProfile", { dir });
+        await this.client.sendRequest("custom/startCPUProfile", { dir });
     }
 
     async stopCPUProfile(): Promise<string> {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        const result = await this.client.sendRequest<{ file: string; }>("custom/TypeScript/stopCPUProfile");
+        const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
         return result.file;
     }
 }

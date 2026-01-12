@@ -23320,15 +23320,15 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
-	case MethodCustomTypeScriptRunGC:
+	case MethodCustomRunGC:
 		return unmarshalEmpty(data)
-	case MethodCustomTypeScriptSaveHeapProfile:
+	case MethodCustomSaveHeapProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodCustomTypeScriptSaveAllocProfile:
+	case MethodCustomSaveAllocProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodCustomTypeScriptStartCPUProfile:
+	case MethodCustomStartCPUProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodCustomTypeScriptStopCPUProfile:
+	case MethodCustomStopCPUProfile:
 		return unmarshalEmpty(data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
@@ -23527,15 +23527,15 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
-	case MethodCustomTypeScriptRunGC:
+	case MethodCustomRunGC:
 		return unmarshalValue[RunGCResponse](data)
-	case MethodCustomTypeScriptSaveHeapProfile:
+	case MethodCustomSaveHeapProfile:
 		return unmarshalValue[SaveHeapProfileResponse](data)
-	case MethodCustomTypeScriptSaveAllocProfile:
+	case MethodCustomSaveAllocProfile:
 		return unmarshalValue[SaveAllocProfileResponse](data)
-	case MethodCustomTypeScriptStartCPUProfile:
+	case MethodCustomStartCPUProfile:
 		return unmarshalValue[StartCPUProfileResponse](data)
-	case MethodCustomTypeScriptStopCPUProfile:
+	case MethodCustomStopCPUProfile:
 		return unmarshalValue[StopCPUProfileResponse](data)
 	default:
 		return unmarshalAny(data)
@@ -23842,15 +23842,15 @@ const (
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
 	// Triggers garbage collection in the language server.
-	MethodCustomTypeScriptRunGC Method = "custom/TypeScript/runGC"
+	MethodCustomRunGC Method = "custom/runGC"
 	// Saves a heap profile to the specified directory.
-	MethodCustomTypeScriptSaveHeapProfile Method = "custom/TypeScript/saveHeapProfile"
+	MethodCustomSaveHeapProfile Method = "custom/saveHeapProfile"
 	// Saves an allocation profile to the specified directory.
-	MethodCustomTypeScriptSaveAllocProfile Method = "custom/TypeScript/saveAllocProfile"
+	MethodCustomSaveAllocProfile Method = "custom/saveAllocProfile"
 	// Starts CPU profiling, writing to the specified directory when stopped.
-	MethodCustomTypeScriptStartCPUProfile Method = "custom/TypeScript/startCPUProfile"
+	MethodCustomStartCPUProfile Method = "custom/startCPUProfile"
 	// Stops CPU profiling and saves the profile.
-	MethodCustomTypeScriptStopCPUProfile Method = "custom/TypeScript/stopCPUProfile"
+	MethodCustomStopCPUProfile Method = "custom/stopCPUProfile"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24359,35 +24359,35 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-// Response type for `custom/TypeScript/runGC`
+// Response type for `custom/runGC`
 type RunGCResponse = Null
 
-// Type mapping info for `custom/TypeScript/runGC`
-var CustomTypeScriptRunGCInfo = RequestInfo[any, RunGCResponse]{Method: MethodCustomTypeScriptRunGC}
+// Type mapping info for `custom/runGC`
+var CustomRunGCInfo = RequestInfo[any, RunGCResponse]{Method: MethodCustomRunGC}
 
-// Response type for `custom/TypeScript/saveHeapProfile`
+// Response type for `custom/saveHeapProfile`
 type SaveHeapProfileResponse = *ProfileResult
 
-// Type mapping info for `custom/TypeScript/saveHeapProfile`
-var CustomTypeScriptSaveHeapProfileInfo = RequestInfo[*ProfileParams, SaveHeapProfileResponse]{Method: MethodCustomTypeScriptSaveHeapProfile}
+// Type mapping info for `custom/saveHeapProfile`
+var CustomSaveHeapProfileInfo = RequestInfo[*ProfileParams, SaveHeapProfileResponse]{Method: MethodCustomSaveHeapProfile}
 
-// Response type for `custom/TypeScript/saveAllocProfile`
+// Response type for `custom/saveAllocProfile`
 type SaveAllocProfileResponse = *ProfileResult
 
-// Type mapping info for `custom/TypeScript/saveAllocProfile`
-var CustomTypeScriptSaveAllocProfileInfo = RequestInfo[*ProfileParams, SaveAllocProfileResponse]{Method: MethodCustomTypeScriptSaveAllocProfile}
+// Type mapping info for `custom/saveAllocProfile`
+var CustomSaveAllocProfileInfo = RequestInfo[*ProfileParams, SaveAllocProfileResponse]{Method: MethodCustomSaveAllocProfile}
 
-// Response type for `custom/TypeScript/startCPUProfile`
+// Response type for `custom/startCPUProfile`
 type StartCPUProfileResponse = Null
 
-// Type mapping info for `custom/TypeScript/startCPUProfile`
-var CustomTypeScriptStartCPUProfileInfo = RequestInfo[*ProfileParams, StartCPUProfileResponse]{Method: MethodCustomTypeScriptStartCPUProfile}
+// Type mapping info for `custom/startCPUProfile`
+var CustomStartCPUProfileInfo = RequestInfo[*ProfileParams, StartCPUProfileResponse]{Method: MethodCustomStartCPUProfile}
 
-// Response type for `custom/TypeScript/stopCPUProfile`
+// Response type for `custom/stopCPUProfile`
 type StopCPUProfileResponse = *ProfileResult
 
-// Type mapping info for `custom/TypeScript/stopCPUProfile`
-var CustomTypeScriptStopCPUProfileInfo = RequestInfo[any, StopCPUProfileResponse]{Method: MethodCustomTypeScriptStopCPUProfile}
+// Type mapping info for `custom/stopCPUProfile`
+var CustomStopCPUProfileInfo = RequestInfo[any, StopCPUProfileResponse]{Method: MethodCustomStopCPUProfile}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
