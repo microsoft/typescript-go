@@ -563,11 +563,11 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
 
 	// Developer/debugging commands
-	registerRequestHandler(handlers, lsproto.RunGCInfo, (*Server).handleRunGC)
-	registerRequestHandler(handlers, lsproto.SaveHeapProfileInfo, (*Server).handleSaveHeapProfile)
-	registerRequestHandler(handlers, lsproto.SaveAllocProfileInfo, (*Server).handleSaveAllocProfile)
-	registerRequestHandler(handlers, lsproto.StartCPUProfileInfo, (*Server).handleStartCPUProfile)
-	registerRequestHandler(handlers, lsproto.StopCPUProfileInfo, (*Server).handleStopCPUProfile)
+	registerRequestHandler(handlers, lsproto.CustomTypeScriptRunGCInfo, (*Server).handleRunGC)
+	registerRequestHandler(handlers, lsproto.CustomTypeScriptSaveHeapProfileInfo, (*Server).handleSaveHeapProfile)
+	registerRequestHandler(handlers, lsproto.CustomTypeScriptSaveAllocProfileInfo, (*Server).handleSaveAllocProfile)
+	registerRequestHandler(handlers, lsproto.CustomTypeScriptStartCPUProfileInfo, (*Server).handleStartCPUProfile)
+	registerRequestHandler(handlers, lsproto.CustomTypeScriptStopCPUProfileInfo, (*Server).handleStopCPUProfile)
 
 	return handlers
 })

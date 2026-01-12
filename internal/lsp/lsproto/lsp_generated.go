@@ -23320,15 +23320,15 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
-	case MethodRunGC:
+	case MethodCustomTypeScriptRunGC:
 		return unmarshalEmpty(data)
-	case MethodSaveHeapProfile:
+	case MethodCustomTypeScriptSaveHeapProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodSaveAllocProfile:
+	case MethodCustomTypeScriptSaveAllocProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodStartCPUProfile:
+	case MethodCustomTypeScriptStartCPUProfile:
 		return unmarshalPtrTo[ProfileParams](data)
-	case MethodStopCPUProfile:
+	case MethodCustomTypeScriptStopCPUProfile:
 		return unmarshalEmpty(data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
@@ -23527,15 +23527,15 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
-	case MethodRunGC:
+	case MethodCustomTypeScriptRunGC:
 		return unmarshalValue[RunGCResponse](data)
-	case MethodSaveHeapProfile:
+	case MethodCustomTypeScriptSaveHeapProfile:
 		return unmarshalValue[SaveHeapProfileResponse](data)
-	case MethodSaveAllocProfile:
+	case MethodCustomTypeScriptSaveAllocProfile:
 		return unmarshalValue[SaveAllocProfileResponse](data)
-	case MethodStartCPUProfile:
+	case MethodCustomTypeScriptStartCPUProfile:
 		return unmarshalValue[StartCPUProfileResponse](data)
-	case MethodStopCPUProfile:
+	case MethodCustomTypeScriptStopCPUProfile:
 		return unmarshalValue[StopCPUProfileResponse](data)
 	default:
 		return unmarshalAny(data)
@@ -23842,15 +23842,15 @@ const (
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
 	// Triggers garbage collection in the language server.
-	MethodRunGC Method = "$/runGC"
+	MethodCustomTypeScriptRunGC Method = "custom/TypeScript/runGC"
 	// Saves a heap profile to the specified directory.
-	MethodSaveHeapProfile Method = "$/saveHeapProfile"
+	MethodCustomTypeScriptSaveHeapProfile Method = "custom/TypeScript/saveHeapProfile"
 	// Saves an allocation profile to the specified directory.
-	MethodSaveAllocProfile Method = "$/saveAllocProfile"
+	MethodCustomTypeScriptSaveAllocProfile Method = "custom/TypeScript/saveAllocProfile"
 	// Starts CPU profiling, writing to the specified directory when stopped.
-	MethodStartCPUProfile Method = "$/startCPUProfile"
+	MethodCustomTypeScriptStartCPUProfile Method = "custom/TypeScript/startCPUProfile"
 	// Stops CPU profiling and saves the profile.
-	MethodStopCPUProfile Method = "$/stopCPUProfile"
+	MethodCustomTypeScriptStopCPUProfile Method = "custom/TypeScript/stopCPUProfile"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -24359,35 +24359,35 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-// Response type for `$/runGC`
+// Response type for `custom/TypeScript/runGC`
 type RunGCResponse = Null
 
-// Type mapping info for `$/runGC`
-var RunGCInfo = RequestInfo[any, RunGCResponse]{Method: MethodRunGC}
+// Type mapping info for `custom/TypeScript/runGC`
+var CustomTypeScriptRunGCInfo = RequestInfo[any, RunGCResponse]{Method: MethodCustomTypeScriptRunGC}
 
-// Response type for `$/saveHeapProfile`
+// Response type for `custom/TypeScript/saveHeapProfile`
 type SaveHeapProfileResponse = *ProfileResult
 
-// Type mapping info for `$/saveHeapProfile`
-var SaveHeapProfileInfo = RequestInfo[*ProfileParams, SaveHeapProfileResponse]{Method: MethodSaveHeapProfile}
+// Type mapping info for `custom/TypeScript/saveHeapProfile`
+var CustomTypeScriptSaveHeapProfileInfo = RequestInfo[*ProfileParams, SaveHeapProfileResponse]{Method: MethodCustomTypeScriptSaveHeapProfile}
 
-// Response type for `$/saveAllocProfile`
+// Response type for `custom/TypeScript/saveAllocProfile`
 type SaveAllocProfileResponse = *ProfileResult
 
-// Type mapping info for `$/saveAllocProfile`
-var SaveAllocProfileInfo = RequestInfo[*ProfileParams, SaveAllocProfileResponse]{Method: MethodSaveAllocProfile}
+// Type mapping info for `custom/TypeScript/saveAllocProfile`
+var CustomTypeScriptSaveAllocProfileInfo = RequestInfo[*ProfileParams, SaveAllocProfileResponse]{Method: MethodCustomTypeScriptSaveAllocProfile}
 
-// Response type for `$/startCPUProfile`
+// Response type for `custom/TypeScript/startCPUProfile`
 type StartCPUProfileResponse = Null
 
-// Type mapping info for `$/startCPUProfile`
-var StartCPUProfileInfo = RequestInfo[*ProfileParams, StartCPUProfileResponse]{Method: MethodStartCPUProfile}
+// Type mapping info for `custom/TypeScript/startCPUProfile`
+var CustomTypeScriptStartCPUProfileInfo = RequestInfo[*ProfileParams, StartCPUProfileResponse]{Method: MethodCustomTypeScriptStartCPUProfile}
 
-// Response type for `$/stopCPUProfile`
+// Response type for `custom/TypeScript/stopCPUProfile`
 type StopCPUProfileResponse = *ProfileResult
 
-// Type mapping info for `$/stopCPUProfile`
-var StopCPUProfileInfo = RequestInfo[any, StopCPUProfileResponse]{Method: MethodStopCPUProfile}
+// Type mapping info for `custom/TypeScript/stopCPUProfile`
+var CustomTypeScriptStopCPUProfileInfo = RequestInfo[any, StopCPUProfileResponse]{Method: MethodCustomTypeScriptStopCPUProfile}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}

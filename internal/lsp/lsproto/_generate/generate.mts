@@ -206,14 +206,14 @@ const customEnumerations: Enumeration[] = [
 // Custom requests to add to the model (tsgo-specific)
 const customRequests: Request[] = [
     {
-        method: "$/runGC",
+        method: "custom/TypeScript/runGC",
         typeName: "RunGCRequest",
         messageDirection: "clientToServer",
         result: { kind: "base", name: "null" },
         documentation: "Triggers garbage collection in the language server.",
     },
     {
-        method: "$/saveHeapProfile",
+        method: "custom/TypeScript/saveHeapProfile",
         typeName: "SaveHeapProfileRequest",
         params: { kind: "reference", name: "ProfileParams" },
         messageDirection: "clientToServer",
@@ -221,7 +221,7 @@ const customRequests: Request[] = [
         documentation: "Saves a heap profile to the specified directory.",
     },
     {
-        method: "$/saveAllocProfile",
+        method: "custom/TypeScript/saveAllocProfile",
         typeName: "SaveAllocProfileRequest",
         params: { kind: "reference", name: "ProfileParams" },
         messageDirection: "clientToServer",
@@ -229,7 +229,7 @@ const customRequests: Request[] = [
         documentation: "Saves an allocation profile to the specified directory.",
     },
     {
-        method: "$/startCPUProfile",
+        method: "custom/TypeScript/startCPUProfile",
         typeName: "StartCPUProfileRequest",
         params: { kind: "reference", name: "ProfileParams" },
         messageDirection: "clientToServer",
@@ -237,7 +237,7 @@ const customRequests: Request[] = [
         documentation: "Starts CPU profiling, writing to the specified directory when stopped.",
     },
     {
-        method: "$/stopCPUProfile",
+        method: "custom/TypeScript/stopCPUProfile",
         typeName: "StopCPUProfileRequest",
         messageDirection: "clientToServer",
         result: { kind: "reference", name: "ProfileResult" },
