@@ -2829,11 +2829,12 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 			},
 			Position: f.currentCaretPosition,
 		}
-		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+
+		requestResult := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
 
 		var actualText *string
-		if result != nil {
-			actualText = result.NewText
+		if closingTag := requestResult.CustomClosingTagCompletion; closingTag != nil {
+			actualText = &closingTag.NewText
 		}
 		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
 	}
@@ -2856,7 +2857,7 @@ func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 		}
 
 		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
-		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result}, true
+		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result.CustomClosingTagCompletion}, true
 	})
 
 	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
@@ -2864,10 +2865,10 @@ func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 	}
 
 	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
-		if item == nil || item.NewText == nil {
+		if item == nil {
 			return []string{"No closing tag"}
 		}
-		return []string{fmt.Sprintf("newText: %q", *item.NewText)}
+		return []string{fmt.Sprintf("newText: %q", item.NewText)}
 	}
 
 	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)

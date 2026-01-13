@@ -9,13 +9,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, params *lsproto.TextDocumentPositionParams) (*lsproto.CustomClosingTagCompletion, error) {
+func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, params *lsproto.TextDocumentPositionParams) (lsproto.CustomClosingTagCompletionResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := l.converters.LineAndCharacterToPosition(sourceFile, params.Position)
 
 	token := astnav.FindPrecedingToken(sourceFile, int(position))
 	if token == nil {
-		return nil, nil
+		return lsproto.CustomClosingTagCompletionResponse{}, nil
 	}
 
 	var element *ast.Node
@@ -27,11 +27,11 @@ func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, param
 
 	if element != nil && isUnclosedTag(element.AsJsxElement()) {
 		tagNameNode := element.AsJsxElement().OpeningElement.TagName()
-		result := &lsproto.CustomClosingTagCompletion{
+		result := lsproto.CustomClosingTagCompletion{
 			// Slight divergence from Strada - we don't use the verbatim text from the opening tag.
-			NewText: strPtrTo("</" + ast.EntityNameToString(tagNameNode, scanner.GetTextOfNode) + ">"),
+			NewText: "</" + ast.EntityNameToString(tagNameNode, scanner.GetTextOfNode) + ">",
 		}
-		return result, nil
+		return lsproto.CustomClosingTagCompletionResponse{CustomClosingTagCompletion: &result}, nil
 	}
 
 	var fragment *ast.Node
@@ -42,13 +42,13 @@ func (l *LanguageService) ProvideClosingTagCompletion(ctx context.Context, param
 	}
 
 	if fragment != nil && isUnclosedFragment(fragment.AsJsxFragment()) {
-		result := &lsproto.CustomClosingTagCompletion{
-			NewText: strPtrTo("</>"),
+		result := lsproto.CustomClosingTagCompletion{
+			NewText: "</>",
 		}
-		return result, nil
+		return lsproto.CustomClosingTagCompletionResponse{CustomClosingTagCompletion: &result}, nil
 	}
 
-	return nil, nil
+	return lsproto.CustomClosingTagCompletionResponse{}, nil
 }
 
 func isUnclosedTag(node *ast.JsxElement) bool {

@@ -152,13 +152,12 @@ const customStructures: Structure[] = [
         ],
     },
     {
+        // Longer-term, we may just want to use TextEdit.
         name: "CustomClosingTagCompletion",
         properties: [
-            // TODO: TextEdit?
             {
                 name: "newText",
                 type: { kind: "base", name: "string" },
-                optional: true,
                 documentation: "The text to insert at the closing tag position.",
             },
         ],
@@ -222,7 +221,13 @@ const customRequests: Request[] = [
         method: "custom/textDocument/closingTagCompletion",
         typeName: "CustomClosingTagCompletionRequest",
         params: { kind: "reference", name: "TextDocumentPositionParams" },
-        result: { kind: "reference", name: "CustomClosingTagCompletion" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "reference", name: "CustomClosingTagCompletion" },
+                { kind: "base", name: "null" },
+            ],
+        },
         messageDirection: "clientToServer",
         documentation: "Request to get the closing tag completion at a given position.",
     },

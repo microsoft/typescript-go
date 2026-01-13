@@ -21825,7 +21825,54 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 // CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.
 type CustomClosingTagCompletion struct {
 	// The text to insert at the closing tag position.
-	NewText *string `json:"newText,omitzero"`
+	NewText string `json:"newText"`
+}
+
+var _ json.UnmarshalerFrom = (*CustomClosingTagCompletion)(nil)
+
+func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingNewText uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"newText"`:
+			missing &^= missingNewText
+			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingNewText != 0 {
+			missingProps = append(missingProps, "newText")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
 }
 
 // Parameters for profiling requests.
@@ -24372,7 +24419,7 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
 // Response type for `custom/textDocument/closingTagCompletion`
-type CustomClosingTagCompletionResponse = *CustomClosingTagCompletion
+type CustomClosingTagCompletionResponse = CustomClosingTagCompletionOrNull
 
 // Type mapping info for `custom/textDocument/closingTagCompletion`
 var CustomTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomClosingTagCompletionResponse]{Method: MethodCustomTextDocumentClosingTagCompletion}
@@ -28660,6 +28707,42 @@ func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		return nil
 	}
 	return fmt.Errorf("invalid LSPAnyOrNull: %s", data)
+}
+
+type CustomClosingTagCompletionOrNull struct {
+	CustomClosingTagCompletion *CustomClosingTagCompletion
+}
+
+var _ json.MarshalerTo = (*CustomClosingTagCompletionOrNull)(nil)
+
+func (o *CustomClosingTagCompletionOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of CustomClosingTagCompletionOrNull is set", o.CustomClosingTagCompletion != nil)
+
+	if o.CustomClosingTagCompletion != nil {
+		return json.MarshalEncode(enc, o.CustomClosingTagCompletion)
+	}
+	return enc.WriteToken(jsontext.Null)
+}
+
+var _ json.UnmarshalerFrom = (*CustomClosingTagCompletionOrNull)(nil)
+
+func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = CustomClosingTagCompletionOrNull{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCustomClosingTagCompletion CustomClosingTagCompletion
+	if err := json.Unmarshal(data, &vCustomClosingTagCompletion); err == nil {
+		o.CustomClosingTagCompletion = &vCustomClosingTagCompletion
+		return nil
+	}
+	return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: %s", data)
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
