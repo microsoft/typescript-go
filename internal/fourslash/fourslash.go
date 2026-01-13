@@ -669,7 +669,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 			t.Fatalf(prefix+"%s request returned error: %s", info.Method, resp.Error.String())
 		}
 		if !resultOk {
-		t.Fatalf(prefix+"Unexpected %s response type: %T, error: %v", info.Method, resp.Result, resp.Error)
+			t.Fatalf(prefix+"Unexpected %s response type: %T, error: %v", info.Method, resp.Result, resp.Error)
 		}
 	}
 	return result
