@@ -19265,7 +19265,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 			resolvedSymbol := c.resolveName(param, paramSymbol.Name, ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 			paramSymbol = resolvedSymbol
 		}
-		if i == 0 && paramSymbol.Name == ast.InternalSymbolNameThis {
+		if i == 0 && paramSymbol != nil && paramSymbol.Name == ast.InternalSymbolNameThis {
 			hasThisParameter = true
 			thisParameter = param.Symbol()
 		} else {
