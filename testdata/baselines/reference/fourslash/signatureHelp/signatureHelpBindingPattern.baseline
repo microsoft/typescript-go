@@ -1,0 +1,220 @@
+// === SignatureHelp ===
+=== /signatureHelpBindingPattern.ts ===
+// // Empty object binding pattern
+// function emptyObj({}) {}
+// emptyObj()
+//          ^
+// | ----------------------------------------------------------------------
+// | emptyObj(**{}: {}**): void
+// | ----------------------------------------------------------------------
+// 
+// // Empty array binding pattern
+// function emptyArr([]) {}
+// emptyArr()
+//          ^
+// | ----------------------------------------------------------------------
+// | emptyArr(**[]: any[]**): void
+// | ----------------------------------------------------------------------
+// 
+// // Non-empty object binding pattern
+// function nonEmptyObj({a, b}: {a: number, b: string}) {}
+// nonEmptyObj()
+//             ^
+// | ----------------------------------------------------------------------
+// | nonEmptyObj(**{ a, b, }: {
+    a: number;
+    b: string;
+}**): void
+// | ----------------------------------------------------------------------
+// 
+// // Non-empty array binding pattern
+// function nonEmptyArr([x, y]: [number, string]) {}
+// nonEmptyArr()
+//             ^
+// | ----------------------------------------------------------------------
+// | nonEmptyArr(**[x, y,]: [
+    number,
+    string
+]**): void
+// | ----------------------------------------------------------------------
+// 
+// // Identifiers leading, binding pattern trailing
+// function idLeading(first: number, {a, b}: {a: number, b: string}) {}
+// idLeading()
+//           ^
+// | ----------------------------------------------------------------------
+// | idLeading(**first: number**, { a, b, }: {
+    a: number;
+    b: string;
+}): void
+// | ----------------------------------------------------------------------
+// 
+// // Binding pattern leading, identifiers trailing
+// function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
+// bindingLeading()
+//                ^
+// | ----------------------------------------------------------------------
+// | bindingLeading(**{ a, b, }: {
+    a: number;
+    b: string;
+}**, last: number): void
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 66,
+      "LSPosition": {
+        "line": 2,
+        "character": 9
+      },
+      "Name": "emptyObj",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "emptyObj({}: {}): void",
+          "parameters": [
+            {
+              "label": "{}: {}"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 134,
+      "LSPosition": {
+        "line": 6,
+        "character": 9
+      },
+      "Name": "emptyArr",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "emptyArr([]: any[]): void",
+          "parameters": [
+            {
+              "label": "[]: any[]"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 241,
+      "LSPosition": {
+        "line": 10,
+        "character": 12
+      },
+      "Name": "nonEmptyObj",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "nonEmptyObj({ a, b, }: {\n    a: number;\n    b: string;\n}): void",
+          "parameters": [
+            {
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 341,
+      "LSPosition": {
+        "line": 14,
+        "character": 12
+      },
+      "Name": "nonEmptyArr",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "nonEmptyArr([x, y,]: [\n    number,\n    string\n]): void",
+          "parameters": [
+            {
+              "label": "[x, y,]: [\n    number,\n    string\n]"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 472,
+      "LSPosition": {
+        "line": 18,
+        "character": 10
+      },
+      "Name": "idLeading",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "idLeading(first: number, { a, b, }: {\n    a: number;\n    b: string;\n}): void",
+          "parameters": [
+            {
+              "label": "first: number"
+            },
+            {
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 612,
+      "LSPosition": {
+        "line": 22,
+        "character": 15
+      },
+      "Name": "bindingLeading",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "bindingLeading({ a, b, }: {\n    a: number;\n    b: string;\n}, last: number): void",
+          "parameters": [
+            {
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+            },
+            {
+              "label": "last: number"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -18,53 +16,29 @@ func TestSignatureHelpBindingPattern(t *testing.T) {
 	const content = `
 // Empty object binding pattern
 function emptyObj({}) {}
-emptyObj(/*1*/)
+emptyObj(/*emptyObj*/)
 
 // Empty array binding pattern
 function emptyArr([]) {}
-emptyArr(/*2*/)
+emptyArr(/*emptyArr*/)
 
 // Non-empty object binding pattern
 function nonEmptyObj({a, b}: {a: number, b: string}) {}
-nonEmptyObj(/*3*/)
+nonEmptyObj(/*nonEmptyObj*/)
 
 // Non-empty array binding pattern
 function nonEmptyArr([x, y]: [number, string]) {}
-nonEmptyArr(/*4*/)
+nonEmptyArr(/*nonEmptyArr*/)
 
 // Identifiers leading, binding pattern trailing
 function idLeading(first: number, {a, b}: {a: number, b: string}) {}
-idLeading(/*5*/)
+idLeading(/*idLeading*/)
 
 // Binding pattern leading, identifiers trailing
 function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
-bindingLeading(/*6*/)
+bindingLeading(/*bindingLeading*/)
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-
-	ctx := &lsproto.SignatureHelpContext{
-		IsRetrigger:      false,
-		TriggerCharacter: PtrTo("("),
-		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
-	}
-
-	// Test all markers - each should work without crashing
-	f.GoToMarker(t, "1")
-	f.VerifySignatureHelpPresent(t, ctx)
-
-	f.GoToMarker(t, "2")
-	f.VerifySignatureHelpPresent(t, ctx)
-
-	f.GoToMarker(t, "3")
-	f.VerifySignatureHelpPresent(t, ctx)
-
-	f.GoToMarker(t, "4")
-	f.VerifySignatureHelpPresent(t, ctx)
-
-	f.GoToMarker(t, "5")
-	f.VerifySignatureHelpPresent(t, ctx)
-
-	f.GoToMarker(t, "6")
-	f.VerifySignatureHelpPresent(t, ctx)
+	f.VerifyBaselineSignatureHelp(t)
 }
