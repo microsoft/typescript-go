@@ -452,7 +452,13 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 	}
 	switch {
 	case ast.IsParameter(node):
-		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingParameterTag)
+		// Parameters with binding patterns (e.g., {a, b}) don't have a simple name to match against JSDoc.
+		// TypeScript also skips JSDoc matching for binding patterns.
+		name := node.Name()
+		if ast.IsBindingPattern(name) {
+			return nil
+		}
+		return getMatchingJSDocTag(c, node.Parent, name.Text(), isMatchingParameterTag)
 	case ast.IsTypeParameterDeclaration(node):
 		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingTemplateTag)
 	case ast.IsVariableDeclaration(node) && ast.IsVariableDeclarationList(node.Parent) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
