@@ -212,41 +212,18 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		return
 	}
 
-	if symbol.Name == ast.InternalSymbolNameDefault || symbol.Name == ast.InternalSymbolNameExportEquals {
-		namedSymbol := symbol
-		if s := binder.GetLocalSymbolForExportDefault(symbol); s != nil {
-			namedSymbol = s
-		}
-		export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-		if isUnusableName(export.localName) {
-			export.localName = export.Target.ExportName
-		}
-		if isUnusableName(export.localName) {
-			if target != nil {
-				namedSymbol = target
-				if s := binder.GetLocalSymbolForExportDefault(target); s != nil {
-					namedSymbol = s
-				}
-				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-				if isUnusableName(export.localName) {
-					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), core.ScriptTargetESNext, false)
-				}
-			} else {
-				export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
-			}
-		}
-	}
-
 	*exports = append(*exports, export)
 
 	if target != nil {
 		if syntax == ExportSyntaxEquals && target.Flags&ast.SymbolFlagsNamespace != 0 {
 			*exports = slices.Grow(*exports, len(target.Exports))
-			for _, namedExport := range target.Exports {
-				export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
-				if export != nil {
-					export.through = name
-					*exports = append(*exports, export)
+			for innerName, namedExport := range target.Exports {
+				if innerName != ast.InternalSymbolNameExportStar {
+					export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
+					if export != nil {
+						export.through = name
+						*exports = append(*exports, export)
+					}
 				}
 			}
 		}
@@ -339,6 +316,35 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 	} else {
 		export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), symbol, symbol.Declarations[0])
 		export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), symbol)
+	}
+
+	if symbol.Name == ast.InternalSymbolNameDefault || symbol.Name == ast.InternalSymbolNameExportEquals {
+		namedSymbol := symbol
+		if s := binder.GetLocalSymbolForExportDefault(symbol); s != nil {
+			namedSymbol = s
+		}
+		export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
+		if isUnusableName(export.localName) {
+			export.localName = export.Target.ExportName
+		}
+		if isUnusableName(export.localName) {
+			if targetSymbol != nil {
+				namedSymbol = targetSymbol
+				if s := binder.GetLocalSymbolForExportDefault(targetSymbol); s != nil {
+					namedSymbol = s
+				}
+				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
+				if isUnusableName(export.localName) {
+					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), core.ScriptTargetESNext, false)
+				}
+			} else {
+				export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), core.ScriptTargetESNext, false)
+			}
+		}
+	}
+
+	if isUnusableName(export.Name()) {
+		return nil, nil
 	}
 
 	e.stats.exports.Add(1)
