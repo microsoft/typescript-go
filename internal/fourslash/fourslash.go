@@ -637,7 +637,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 		t.Fatalf(prefix+"%s request returned error: %s", info.Method, resp.Error.String())
 	}
 	if !resultOk {
-		t.Fatalf(prefix+"Unexpected %s response type: %T", info.Method, resp.Result)
+		t.Fatalf(prefix+"Unexpected %s response type: %T, error: %v", info.Method, resp.Result, resp.Error)
 	}
 	return result
 }
@@ -945,6 +945,7 @@ type MarkerInput = any
 // !!! user preferences param
 // !!! completion context param
 func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *CompletionsExpectedList) VerifyCompletionsResult {
+	t.Helper()
 	var list *lsproto.CompletionList
 	switch marker := markerInput.(type) {
 	case string:
@@ -1015,6 +1016,12 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
+	// For performance, the server may return unsorted completion lists.
+	// The client is expected to sort them by SortText and then by Label.
+	// We are the client here.
+	if result.List != nil {
+		slices.SortStableFunc(result.List.Items, ls.CompareCompletionEntries)
+	}
 	return result.List
 }
 
@@ -1092,7 +1099,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			t.Fatal(prefix + "Expected exact completion list but also specified 'unsorted'.")
 		}
 		if len(actual) != len(expected.Exact) {
-			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
+			t.Fatalf(prefix+"Expected %d exact completion items but got %d.", len(expected.Exact), len(actual))
 		}
 		if len(actual) > 0 {
 			f.verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
@@ -1115,13 +1122,13 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			case string:
 				_, ok := nameToActualItems[item]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item)
 				}
 				delete(nameToActualItems, item)
 			case *lsproto.CompletionItem:
 				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item.Label)
 				}
 				actualItem := actualItems[0]
 				actualItems = actualItems[1:]
@@ -1147,12 +1154,12 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			case string:
 				_, ok := nameToActualItems[item]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item)
 				}
 			case *lsproto.CompletionItem:
 				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
-					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+					t.Fatalf("%sLabel '%s' not found in actual items.", prefix, item.Label)
 				}
 				actualItem := actualItems[0]
 				actualItems = actualItems[1:]
@@ -1169,7 +1176,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 	}
 	for _, exclude := range expected.Excludes {
 		if _, ok := nameToActualItems[exclude]; ok {
-			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
+			t.Fatalf("%sLabel '%s' should not be in actual items but was found.", prefix, exclude)
 		}
 	}
 }
@@ -1207,22 +1214,22 @@ var (
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
-	var actualAutoImportData, expectedAutoImportData *lsproto.AutoImportData
+	var actualAutoImportFix, expectedAutoImportFix *lsproto.AutoImportFix
 	if actual.Data != nil {
-		actualAutoImportData = actual.Data.AutoImport
+		actualAutoImportFix = actual.Data.AutoImport
 	}
 	if expected.Data != nil {
-		expectedAutoImportData = expected.Data.AutoImport
+		expectedAutoImportFix = expected.Data.AutoImport
 	}
-	if (actualAutoImportData == nil) != (expectedAutoImportData == nil) {
+	if (actualAutoImportFix == nil) != (expectedAutoImportFix == nil) {
 		t.Fatal(prefix + "Mismatch in auto-import data presence")
 	}
 
-	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportData != nil {
+	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportFix != nil {
 		actual = f.resolveCompletionItem(t, actual)
 	}
 
-	if actualAutoImportData != nil {
+	if actualAutoImportFix != nil {
 		assertDeepEqual(t, actual, expected, prefix, autoImportIgnoreOpts)
 		if expected.AdditionalTextEdits == AnyTextEdits {
 			assert.Check(t, actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0, prefix+" Expected non-nil AdditionalTextEdits for auto-import completion item")
@@ -1231,7 +1238,7 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			assertDeepEqual(t, actual.LabelDetails, expected.LabelDetails, prefix+" LabelDetails mismatch")
 		}
 
-		assert.Equal(t, actualAutoImportData.ModuleSpecifier, expectedAutoImportData.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
+		assert.Equal(t, actualAutoImportFix.ModuleSpecifier, expectedAutoImportFix.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
 	} else {
 		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
 	}
@@ -1274,7 +1281,7 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 type ApplyCodeActionFromCompletionOptions struct {
 	Name            string
 	Source          string
-	AutoImportData  *lsproto.AutoImportData
+	AutoImportFix   *lsproto.AutoImportFix
 	Description     string
 	NewFileContent  *string
 	NewRangeContent *string
@@ -1282,6 +1289,7 @@ type ApplyCodeActionFromCompletionOptions struct {
 }
 
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
+	t.Helper()
 	f.GoToMarker(t, *markerName)
 	var userPreferences *lsutil.UserPreferences
 	if options != nil && options.UserPreferences != nil {
@@ -1298,13 +1306,14 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		if item.Label != options.Name || item.Data == nil {
 			return false
 		}
+
 		data := item.Data
-		if options.AutoImportData != nil {
-			return data.AutoImport != nil && ((data.AutoImport.FileName == options.AutoImportData.FileName) &&
-				(options.AutoImportData.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier) &&
-				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
-				(options.AutoImportData.AmbientModuleName == "" || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
-				data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport)
+		if data == nil {
+			return false
+		}
+		if options.AutoImportFix != nil {
+			return data.AutoImport != nil &&
+				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
 		}
 		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
 			return true
@@ -1331,6 +1340,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 }
 
 func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []string, preferences *lsutil.UserPreferences) {
+	t.Helper()
 	fileName := f.activeFilename
 	ranges := f.Ranges()
 	var filteredRanges []*RangeMarker
@@ -1462,6 +1472,7 @@ func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
 	expectedModuleSpecifiers []string,
 	preferences *lsutil.UserPreferences,
 ) {
+	t.Helper()
 	f.GoToMarker(t, markerName)
 
 	if preferences != nil {
@@ -2807,6 +2818,61 @@ func (f *FourslashTest) quickInfoIsEmpty(t *testing.T) (bool, *lsproto.Hover) {
 func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, expectedDocumentation string) {
 	hover := f.getQuickInfoAtCurrentPosition(t)
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
+}
+
+func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
+	for marker, expectedText := range markersToNewText {
+		f.GoToMarker(t, marker)
+		params := &lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+
+		requestResult := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+
+		var actualText *string
+		if closingTag := requestResult.CustomClosingTagCompletion; closingTag != nil {
+			actualText = &closingTag.NewText
+		}
+		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
+	}
+}
+
+// VerifyBaselineClosingTags generates a baseline for JSX closing tag completions at all markers.
+func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
+	t.Helper()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.CustomClosingTagCompletion], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.CustomClosingTagCompletion]{}, false
+		}
+
+		params := &lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
+			},
+			Position: marker.LSPosition,
+		}
+
+		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result.CustomClosingTagCompletion}, true
+	})
+
+	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
+		return nil
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
+		if item == nil {
+			return []string{"No closing tag"}
+		}
+		return []string{fmt.Sprintf("newText: %q", item.NewText)}
+	}
+
+	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
+	f.addResultToBaseline(t, closingTagCmd, result)
 }
 
 // VerifySignatureHelpOptions contains options for verifying signature help.

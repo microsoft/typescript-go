@@ -36,6 +36,7 @@ type CompilerOptions struct {
 	Declaration                               Tristate                                  `json:"declaration,omitzero"`
 	DeclarationDir                            string                                    `json:"declarationDir,omitzero"`
 	DeclarationMap                            Tristate                                  `json:"declarationMap,omitzero"`
+	DeduplicatePackages                       Tristate                                  `json:"deduplicatePackages,omitzero"`
 	DisableSizeLimit                          Tristate                                  `json:"disableSizeLimit,omitzero"`
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
@@ -165,6 +166,8 @@ type noCopy struct{}
 // Lock is a no-op used by -copylocks checker from `go vet`.
 func (*noCopy) Lock()   {}
 func (*noCopy) Unlock() {}
+
+var EmptyCompilerOptions = &CompilerOptions{}
 
 var optionsType = reflect.TypeFor[CompilerOptions]()
 

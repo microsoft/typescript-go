@@ -196,22 +196,7 @@ func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 }
 
 func entityNameToString(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindThisKeyword:
-		return "this"
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if ast.NodeIsSynthesized(name) {
-			return name.Text()
-		}
-		return scanner.GetTextOfNode(name)
-	case ast.KindQualifiedName:
-		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
-	case ast.KindPropertyAccessExpression:
-		return entityNameToString(name.Expression()) + "." + entityNameToString(name.AsPropertyAccessExpression().Name())
-	case ast.KindJsxNamespacedName:
-		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name())
-	}
-	panic("Unhandled case in entityNameToString")
+	return ast.EntityNameToString(name, scanner.GetTextOfNode)
 }
 
 func getContainingQualifiedNameNode(node *ast.Node) *ast.Node {
@@ -1620,14 +1605,6 @@ func symbolsToArray(symbols ast.SymbolTable) []*ast.Symbol {
 		}
 	}
 	return result
-}
-
-// See comment on `declareModuleMember` in `binder.go`.
-func GetCombinedLocalAndExportSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
-	if symbol.ExportSymbol != nil {
-		return symbol.Flags | symbol.ExportSymbol.Flags
-	}
-	return symbol.Flags
 }
 
 func SkipAlias(symbol *ast.Symbol, checker *Checker) *ast.Symbol {
