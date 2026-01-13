@@ -474,15 +474,10 @@ func getCallExpressionName(node *ast.Node) string {
 }
 
 func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
-	args := callExpr.Arguments()
-	if len(args) == 0 {
-		return ""
-	}
 	var parts []string
-	for _, arg := range args {
+	for _, arg := range callExpr.Arguments() {
 		if ast.IsStringLiteralLike(arg) || ast.IsTemplateExpression(arg) {
-			text := scanner.GetTextOfNode(arg)
-			parts = append(parts, text)
+			parts = append(parts, scanner.GetTextOfNode(arg))
 		}
 	}
 	return strings.Join(parts, ", ")
