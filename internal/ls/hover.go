@@ -452,11 +452,10 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 	}
 	switch {
 	case ast.IsParameter(node):
-		// Parameters with binding patterns (e.g., {a, b}) don't have a simple name to match against JSDoc.
-		// TypeScript also skips JSDoc matching for binding patterns.
 		name := node.Name()
 		if ast.IsBindingPattern(name) {
-			return nil
+			// For binding patterns, match JSDoc @param tags by position rather than by name
+			return getJSDocParameterTagByPosition(c, node)
 		}
 		return getMatchingJSDocTag(c, node.Parent, name.Text(), isMatchingParameterTag)
 	case ast.IsTypeParameterDeclaration(node):
@@ -492,6 +491,51 @@ func getMatchingJSDocTag(c *checker.Checker, node *ast.Node, name string, match 
 					return tag
 				}
 			}
+		}
+	}
+	return nil
+}
+
+// getJSDocParameterTagByPosition finds a JSDoc @param tag for a binding pattern parameter by position.
+// Since binding patterns don't have a simple name, we match the @param tag at the same index as the parameter.
+func getJSDocParameterTagByPosition(c *checker.Checker, param *ast.Node) *ast.Node {
+	parent := param.Parent
+	if parent == nil {
+		return nil
+	}
+
+	// Find the parameter's index in the parent's parameters list
+	params := parent.Parameters()
+	paramIndex := -1
+	for i, p := range params {
+		if p.AsNode() == param {
+			paramIndex = i
+			break
+		}
+	}
+	if paramIndex < 0 {
+		return nil
+	}
+
+	// Get the JSDoc for the parent function/method
+	jsdoc := getJSDocOrTag(c, parent)
+	if jsdoc == nil || jsdoc.Kind != ast.KindJSDoc {
+		return nil
+	}
+
+	// Collect all @param tags in order
+	tags := jsdoc.AsJSDoc().Tags
+	if tags == nil {
+		return nil
+	}
+
+	paramTagIndex := 0
+	for _, tag := range tags.Nodes {
+		if tag.Kind == ast.KindJSDocParameterTag {
+			if paramTagIndex == paramIndex {
+				return tag
+			}
+			paramTagIndex++
 		}
 	}
 	return nil

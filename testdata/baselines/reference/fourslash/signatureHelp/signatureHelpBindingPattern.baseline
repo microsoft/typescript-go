@@ -8,6 +8,8 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | emptyObj(**{}: {}**): void
+// | - `{}: {}`: An empty object.
+
 // | ----------------------------------------------------------------------
 // 
 // /**
@@ -18,6 +20,8 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | emptyArr(**[]: any[]**): void
+// | - `[]: any[]`: An empty array.
+
 // | ----------------------------------------------------------------------
 // 
 // /**
@@ -31,6 +35,11 @@
     a: number;
     b: string;
 }**): void
+// | - `{ a, b, }: {
+    a: number;
+    b: string;
+}`: An object with a and b properties.
+
 // | ----------------------------------------------------------------------
 // 
 // /**
@@ -44,6 +53,11 @@
     number,
     string
 ]**): void
+// | - `[x, y,]: [
+    number,
+    string
+]`: A tuple with two elements.
+
 // | ----------------------------------------------------------------------
 // 
 // /**
@@ -67,6 +81,11 @@
     a: number;
     b: string;
 }**): void
+// | - `{ a, b, }: {
+    a: number;
+    b: string;
+}`: An object with a and b properties.
+
 // | ----------------------------------------------------------------------
 // 
 // /**
@@ -81,6 +100,11 @@
     a: number;
     b: string;
 }**, last: number): void
+// | - `{ a, b, }: {
+    a: number;
+    b: string;
+}`: An object with a and b properties.
+
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
@@ -109,7 +133,11 @@
           "label": "emptyObj({}: {}): void",
           "parameters": [
             {
-              "label": "{}: {}"
+              "label": "{}: {}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An empty object.\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -134,7 +162,11 @@
           "label": "emptyArr([]: any[]): void",
           "parameters": [
             {
-              "label": "[]: any[]"
+              "label": "[]: any[]",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An empty array.\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -159,7 +191,11 @@
           "label": "nonEmptyObj({ a, b, }: {\n    a: number;\n    b: string;\n}): void",
           "parameters": [
             {
-              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An object with a and b properties.\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -184,7 +220,11 @@
           "label": "nonEmptyArr([x, y,]: [\n    number,\n    string\n]): void",
           "parameters": [
             {
-              "label": "[x, y,]: [\n    number,\n    string\n]"
+              "label": "[x, y,]: [\n    number,\n    string\n]",
+              "documentation": {
+                "kind": "markdown",
+                "value": "A tuple with two elements.\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -216,7 +256,11 @@
               }
             },
             {
-              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An object with a and b properties.\n"
+              }
             }
           ],
           "activeParameter": 0
@@ -248,7 +292,11 @@
               }
             },
             {
-              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An object with a and b properties.\n"
+              }
             }
           ],
           "activeParameter": 1
@@ -273,7 +321,11 @@
           "label": "bindingLeading({ a, b, }: {\n    a: number;\n    b: string;\n}, last: number): void",
           "parameters": [
             {
-              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An object with a and b properties.\n"
+              }
             },
             {
               "label": "last: number",
@@ -305,7 +357,11 @@
           "label": "bindingLeading({ a, b, }: {\n    a: number;\n    b: string;\n}, last: number): void",
           "parameters": [
             {
-              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "An object with a and b properties.\n"
+              }
             },
             {
               "label": "last: number",
