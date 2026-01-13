@@ -1,6 +1,8 @@
 // === SignatureHelp ===
 === /signatureHelpBindingPattern.ts ===
-// // Empty object binding pattern
+// /**
+//  * @param options An empty object.
+//  */
 // function emptyObj({}) {}
 // emptyObj()
 //          ^
@@ -8,7 +10,9 @@
 // | emptyObj(**{}: {}**): void
 // | ----------------------------------------------------------------------
 // 
-// // Empty array binding pattern
+// /**
+//  * @param items An empty array.
+//  */
 // function emptyArr([]) {}
 // emptyArr()
 //          ^
@@ -16,7 +20,9 @@
 // | emptyArr(**[]: any[]**): void
 // | ----------------------------------------------------------------------
 // 
-// // Non-empty object binding pattern
+// /**
+//  * @param param An object with a and b properties.
+//  */
 // function nonEmptyObj({a, b}: {a: number, b: string}) {}
 // nonEmptyObj()
 //             ^
@@ -27,7 +33,9 @@
 }**): void
 // | ----------------------------------------------------------------------
 // 
-// // Non-empty array binding pattern
+// /**
+//  * @param tuple A tuple with two elements.
+//  */
 // function nonEmptyArr([x, y]: [number, string]) {}
 // nonEmptyArr()
 //             ^
@@ -38,20 +46,35 @@
 ]**): void
 // | ----------------------------------------------------------------------
 // 
-// // Identifiers leading, binding pattern trailing
+// /**
+//  * @param first The first number parameter.
+//  * @param second An object with a and b properties.
+//  */
 // function idLeading(first: number, {a, b}: {a: number, b: string}) {}
-// idLeading()
-//           ^
+// idLeading(123, { a: 1, b: 2 })
+//              ^
 // | ----------------------------------------------------------------------
 // | idLeading(**first: number**, { a, b, }: {
     a: number;
     b: string;
 }): void
+// | - `first: number`: The first number parameter.
+
+// | ----------------------------------------------------------------------
+//                              ^
+// | ----------------------------------------------------------------------
+// | idLeading(first: number, **{ a, b, }: {
+    a: number;
+    b: string;
+}**): void
 // | ----------------------------------------------------------------------
 // 
-// // Binding pattern leading, identifiers trailing
+// /**
+//  * @param first An object with a and b properties.
+//  * @param last The last number parameter.
+//  */
 // function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
-// bindingLeading()
+// bindingLeading({ a: 1, b: 2 }, 123 )
 //                ^
 // | ----------------------------------------------------------------------
 // | bindingLeading(**{ a, b, }: {
@@ -59,13 +82,22 @@
     b: string;
 }**, last: number): void
 // | ----------------------------------------------------------------------
+//                                    ^
+// | ----------------------------------------------------------------------
+// | bindingLeading({ a, b, }: {
+    a: number;
+    b: string;
+}, **last: number**): void
+// | - `last: number`: The last number parameter.
+
+// | ----------------------------------------------------------------------
 // 
 [
   {
     "marker": {
-      "Position": 66,
+      "Position": 77,
       "LSPosition": {
-        "line": 2,
+        "line": 4,
         "character": 9
       },
       "Name": "emptyObj",
@@ -88,9 +120,9 @@
   },
   {
     "marker": {
-      "Position": 134,
+      "Position": 154,
       "LSPosition": {
-        "line": 6,
+        "line": 10,
         "character": 9
       },
       "Name": "emptyArr",
@@ -113,9 +145,9 @@
   },
   {
     "marker": {
-      "Position": 241,
+      "Position": 284,
       "LSPosition": {
-        "line": 10,
+        "line": 16,
         "character": 12
       },
       "Name": "nonEmptyObj",
@@ -138,9 +170,9 @@
   },
   {
     "marker": {
-      "Position": 341,
+      "Position": 400,
       "LSPosition": {
-        "line": 14,
+        "line": 22,
         "character": 12
       },
       "Name": "nonEmptyArr",
@@ -163,10 +195,10 @@
   },
   {
     "marker": {
-      "Position": 472,
+      "Position": 589,
       "LSPosition": {
-        "line": 18,
-        "character": 10
+        "line": 29,
+        "character": 13
       },
       "Name": "idLeading",
       "Data": {}
@@ -177,7 +209,11 @@
           "label": "idLeading(first: number, { a, b, }: {\n    a: number;\n    b: string;\n}): void",
           "parameters": [
             {
-              "label": "first: number"
+              "label": "first: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first number parameter.\n"
+              }
             },
             {
               "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
@@ -191,9 +227,41 @@
   },
   {
     "marker": {
-      "Position": 612,
+      "Position": 605,
       "LSPosition": {
-        "line": 22,
+        "line": 29,
+        "character": 29
+      },
+      "Name": "bindingTrailing",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "idLeading(first: number, { a, b, }: {\n    a: number;\n    b: string;\n}): void",
+          "parameters": [
+            {
+              "label": "first: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first number parameter.\n"
+              }
+            },
+            {
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 797,
+      "LSPosition": {
+        "line": 36,
         "character": 15
       },
       "Name": "bindingLeading",
@@ -208,10 +276,46 @@
               "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
             },
             {
-              "label": "last: number"
+              "label": "last: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The last number parameter.\n"
+              }
             }
           ],
           "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 817,
+      "LSPosition": {
+        "line": 36,
+        "character": 35
+      },
+      "Name": "idTrailing",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "bindingLeading({ a, b, }: {\n    a: number;\n    b: string;\n}, last: number): void",
+          "parameters": [
+            {
+              "label": "{ a, b, }: {\n    a: number;\n    b: string;\n}"
+            },
+            {
+              "label": "last: number",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The last number parameter.\n"
+              }
+            }
+          ],
+          "activeParameter": 1
         }
       ],
       "activeSignature": 0

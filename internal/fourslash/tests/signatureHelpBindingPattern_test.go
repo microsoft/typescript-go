@@ -14,29 +14,43 @@ func TestSignatureHelpBindingPattern(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-// Empty object binding pattern
+/**
+ * @param options An empty object.
+ */
 function emptyObj({}) {}
 emptyObj(/*emptyObj*/)
 
-// Empty array binding pattern
+/**
+ * @param items An empty array.
+ */
 function emptyArr([]) {}
 emptyArr(/*emptyArr*/)
 
-// Non-empty object binding pattern
+/**
+ * @param param An object with a and b properties.
+ */
 function nonEmptyObj({a, b}: {a: number, b: string}) {}
 nonEmptyObj(/*nonEmptyObj*/)
 
-// Non-empty array binding pattern
+/**
+ * @param tuple A tuple with two elements.
+ */
 function nonEmptyArr([x, y]: [number, string]) {}
 nonEmptyArr(/*nonEmptyArr*/)
 
-// Identifiers leading, binding pattern trailing
+/**
+ * @param first The first number parameter.
+ * @param second An object with a and b properties.
+ */
 function idLeading(first: number, {a, b}: {a: number, b: string}) {}
-idLeading(/*idLeading*/)
+idLeading(123/*idLeading*/, { a: 1, b: 2 }/*bindingTrailing*/)
 
-// Binding pattern leading, identifiers trailing
+/**
+ * @param first An object with a and b properties.
+ * @param last The last number parameter.
+ */
 function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
-bindingLeading(/*bindingLeading*/)
+bindingLeading(/*bindingLeading*/{ a: 1, b: 2 }, 123 /*idTrailing*/)
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
