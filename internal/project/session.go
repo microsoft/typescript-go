@@ -100,8 +100,9 @@ type Session struct {
 	snapshotID atomic.Uint64
 
 	// snapshot is the current immutable state of all projects.
-	snapshot   *Snapshot
-	snapshotMu sync.RWMutex
+	snapshot         *Snapshot
+	snapshotMu       sync.RWMutex
+	snapshotUpdateMu sync.Mutex
 
 	pendingConfigChanges bool
 	configRWMu           sync.Mutex
@@ -404,20 +405,22 @@ func (s *Session) getSnapshot(
 	request ResourceRequest,
 ) *Snapshot {
 	var snapshot *Snapshot
+	s.snapshotUpdateMu.Lock()
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		return s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 			reason:          UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:     fileChanges,
 			ataChanges:      ataChanges,
 			newConfig:       newConfig,
 			ResourceRequest: request,
 		})
+		s.snapshotUpdateMu.Unlock()
+		return snapshot
 	}
-
 	// If there are no pending file changes, we can try to use the current snapshot.
 	s.snapshotMu.RLock()
 	snapshot = s.snapshot
@@ -457,6 +460,7 @@ func (s *Session) getSnapshot(
 			ResourceRequest: request,
 		})
 	}
+	s.snapshotUpdateMu.Unlock()
 	return snapshot
 }
 
