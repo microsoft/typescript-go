@@ -1279,6 +1279,14 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 		container = sourceFile.AsNode()
 	}
 
+	// If the container is from a different source file, use the entire source file as the container.
+	// This can happen when searching for references across multiple files where the container
+	// (e.g., from getReferencesForThisKeyword) comes from the original file but we're searching
+	// in a different file.
+	if ast.GetSourceFileOfNode(container) != sourceFile {
+		container = sourceFile.AsNode()
+	}
+
 	position := strings.Index(text[container.Pos():], symbolName)
 	endPos := container.End()
 	for position >= 0 && position < endPos {
