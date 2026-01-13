@@ -493,20 +493,20 @@ func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
 	return strings.Join(parts, ", ")
 }
 
-// cleanCallbackText cleans text by removing ECMAScript line terminators and trailing backslashes.
+// cleanCallbackText cleans text by truncating and removing ECMAScript line terminators.
 func cleanCallbackText(text string) string {
-	if len(text) > maxLength {
-		text = text[:maxLength] + "..."
+	// Truncate to maximum amount of characters to avoid large replace operations.
+	truncated := stringutil.TruncateByRunes(text, maxLength)
+	if len(truncated) < len(text) {
+		text = truncated + "..."
 	}
-	// Replace ECMAScript line terminators and remove trailing backslashes from each line:
-	// \n - Line Feed, \r - Carriage Return, \u2028 - Line separator, \u2029 - Paragraph separator
-	var result strings.Builder
-	for _, r := range text {
-		if r != '\n' && r != '\r' && r != '\u2028' && r != '\u2029' {
-			result.WriteRune(r)
+	// Remove ECMAScript line terminators.
+	return strings.Map(func(r rune) rune {
+		if stringutil.IsLineBreak(r) {
+			return -1 // -1 means delete this rune
 		}
-	}
-	return result.String()
+		return r
+	}, text)
 }
 
 func getInteriorModule(node *ast.Node) *ast.Node {
