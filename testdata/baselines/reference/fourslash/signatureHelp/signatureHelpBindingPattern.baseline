@@ -1,26 +1,26 @@
 // === SignatureHelp ===
 === /signatureHelpBindingPattern.ts ===
 // /**
-//  * @param options An empty object.
+//  * @param options An empty object binding pattern.
 //  */
 // function emptyObj({}) {}
 // emptyObj()
 //          ^
 // | ----------------------------------------------------------------------
 // | emptyObj(**{}: {}**): void
-// | - `{}: {}`: An empty object.
+// | - `{}: {}`: An empty object binding pattern.
 
 // | ----------------------------------------------------------------------
 // 
 // /**
-//  * @param items An empty array.
+//  * @param items An empty array binding pattern.
 //  */
 // function emptyArr([]) {}
 // emptyArr()
 //          ^
 // | ----------------------------------------------------------------------
 // | emptyArr(**[]: any[]**): void
-// | - `[]: any[]`: An empty array.
+// | - `[]: any[]`: An empty array binding pattern.
 
 // | ----------------------------------------------------------------------
 // 
@@ -119,7 +119,7 @@
 [
   {
     "marker": {
-      "Position": 77,
+      "Position": 93,
       "LSPosition": {
         "line": 4,
         "character": 9
@@ -136,7 +136,7 @@
               "label": "{}: {}",
               "documentation": {
                 "kind": "markdown",
-                "value": "An empty object.\n"
+                "value": "An empty object binding pattern.\n"
               }
             }
           ],
@@ -148,7 +148,7 @@
   },
   {
     "marker": {
-      "Position": 154,
+      "Position": 186,
       "LSPosition": {
         "line": 10,
         "character": 9
@@ -165,7 +165,7 @@
               "label": "[]: any[]",
               "documentation": {
                 "kind": "markdown",
-                "value": "An empty array.\n"
+                "value": "An empty array binding pattern.\n"
               }
             }
           ],
@@ -177,7 +177,7 @@
   },
   {
     "marker": {
-      "Position": 284,
+      "Position": 316,
       "LSPosition": {
         "line": 16,
         "character": 12
@@ -206,7 +206,7 @@
   },
   {
     "marker": {
-      "Position": 400,
+      "Position": 432,
       "LSPosition": {
         "line": 22,
         "character": 12
@@ -235,7 +235,7 @@
   },
   {
     "marker": {
-      "Position": 589,
+      "Position": 621,
       "LSPosition": {
         "line": 29,
         "character": 13
@@ -271,7 +271,7 @@
   },
   {
     "marker": {
-      "Position": 605,
+      "Position": 637,
       "LSPosition": {
         "line": 29,
         "character": 29
@@ -307,7 +307,7 @@
   },
   {
     "marker": {
-      "Position": 797,
+      "Position": 829,
       "LSPosition": {
         "line": 36,
         "character": 15
@@ -343,7 +343,7 @@
   },
   {
     "marker": {
-      "Position": 817,
+      "Position": 849,
       "LSPosition": {
         "line": 36,
         "character": 35

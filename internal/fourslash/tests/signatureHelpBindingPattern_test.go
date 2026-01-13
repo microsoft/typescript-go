@@ -15,13 +15,13 @@ func TestSignatureHelpBindingPattern(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
 /**
- * @param options An empty object.
+ * @param options An empty object binding pattern.
  */
 function emptyObj({}) {}
 emptyObj(/*emptyObj*/)
 
 /**
- * @param items An empty array.
+ * @param items An empty array binding pattern.
  */
 function emptyArr([]) {}
 emptyArr(/*emptyArr*/)
