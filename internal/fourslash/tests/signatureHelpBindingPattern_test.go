@@ -51,6 +51,17 @@ idLeading(123/*idLeading*/, { a: 1, b: 2 }/*bindingTrailing*/)
  */
 function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
 bindingLeading(/*bindingLeading*/{ a: 1, b: 2 }, 123 /*idTrailing*/)
+
+/**
+ * @param param1 {Object} The first parameter
+ * @param param1.a {number} Comment a
+ * @param param1.b {string} Comment b
+ * @param param2 {Object} The second parameter
+ * @param param2.c {boolean} Comment c
+ * @param param2.d {unknown} Comment d
+ */
+function multipleBindings({ a, b }, { c, d }) {}
+multipleBindings({ a: 0, b: "" }/*firstObjParam*/, { c: true, d: "" }/*secondObjParam*/)
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

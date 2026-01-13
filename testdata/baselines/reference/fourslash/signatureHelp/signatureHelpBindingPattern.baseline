@@ -116,6 +116,47 @@
 
 // | ----------------------------------------------------------------------
 // 
+// /**
+//  * @param param1 {Object} The first parameter
+//  * @param param1.a {number} Comment a
+//  * @param param1.b {string} Comment b
+//  * @param param2 {Object} The second parameter
+//  * @param param2.c {boolean} Comment c
+//  * @param param2.d {unknown} Comment d
+//  */
+// function multipleBindings({ a, b }, { c, d }) {}
+// multipleBindings({ a: 0, b: "" }, { c: true, d: "" })
+//                                 ^
+// | ----------------------------------------------------------------------
+// | multipleBindings(**{ a, b, }: {
+    a: any;
+    b: any;
+}**, { c, d, }: {
+    c: any;
+    d: any;
+}): void
+// | - `{ a, b, }: {
+    a: any;
+    b: any;
+}`: The first parameter
+
+// | ----------------------------------------------------------------------
+//                                                     ^
+// | ----------------------------------------------------------------------
+// | multipleBindings({ a, b, }: {
+    a: any;
+    b: any;
+}, **{ c, d, }: {
+    c: any;
+    d: any;
+}**): void
+// | - `{ c, d, }: {
+    c: any;
+    d: any;
+}`: The second parameter
+
+// | ----------------------------------------------------------------------
+// 
 [
   {
     "marker": {
@@ -368,6 +409,78 @@
               "documentation": {
                 "kind": "markdown",
                 "value": "The last number parameter.\n"
+              }
+            }
+          ],
+          "activeParameter": 1
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1188,
+      "LSPosition": {
+        "line": 47,
+        "character": 32
+      },
+      "Name": "firstObjParam",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "multipleBindings({ a, b, }: {\n    a: any;\n    b: any;\n}, { c, d, }: {\n    c: any;\n    d: any;\n}): void",
+          "parameters": [
+            {
+              "label": "{ a, b, }: {\n    a: any;\n    b: any;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first parameter\n"
+              }
+            },
+            {
+              "label": "{ c, d, }: {\n    c: any;\n    d: any;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The second parameter\n"
+              }
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 1208,
+      "LSPosition": {
+        "line": 47,
+        "character": 52
+      },
+      "Name": "secondObjParam",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "multipleBindings({ a, b, }: {\n    a: any;\n    b: any;\n}, { c, d, }: {\n    c: any;\n    d: any;\n}): void",
+          "parameters": [
+            {
+              "label": "{ a, b, }: {\n    a: any;\n    b: any;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The first parameter\n"
+              }
+            },
+            {
+              "label": "{ c, d, }: {\n    c: any;\n    d: any;\n}",
+              "documentation": {
+                "kind": "markdown",
+                "value": "The second parameter\n"
               }
             }
           ],
