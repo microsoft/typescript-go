@@ -45,9 +45,9 @@ type importsCollection struct {
 
 func newImportsKey(moduleSpecifier string, topLevelTypeOnly bool) string {
 	if topLevelTypeOnly {
-		return fmt.Sprintf("1|%s", moduleSpecifier)
+		return "1|" + moduleSpecifier
 	}
-	return fmt.Sprintf("0|%s", moduleSpecifier)
+	return "0|" + moduleSpecifier
 }
 
 type importAdder struct {
