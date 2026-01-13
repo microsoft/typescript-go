@@ -52,7 +52,7 @@ const b = new MyClass2/*2*/();`
 				&lsproto.CompletionItem{
 					Label: "MyClass",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "mylib",
 						},
 					},
@@ -63,13 +63,10 @@ const b = new MyClass2/*2*/();`
 		},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "MyClass",
-		Source:      "mylib",
-		Description: "Add import from \"mylib\"",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName: "MyClass",
-			FileName:   "/home/src/workspaces/project/packages/mylib/index.ts",
-		},
+		Name:          "MyClass",
+		Source:        "mylib",
+		Description:   "Add import from \"mylib\"",
+		AutoImportFix: &lsproto.AutoImportFix{},
 		NewFileContent: PtrTo(`import { MyClass } from "mylib";
 
 const a = new MyClass();

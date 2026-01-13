@@ -61,7 +61,7 @@ module.exports = {
 				&lsproto.CompletionItem{
 					Label: "defaults",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./third_party/marked/src/defaults",
 						},
 					},
@@ -78,9 +78,7 @@ module.exports = {
 		Name:        "defaults",
 		Source:      "./third_party/marked/src/defaults",
 		Description: "Add import from \"./third_party/marked/src/defaults\"",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName:      "defaults",
-			FileName:        "/home/src/workspaces/project/third_party/marked/src/defaults.js",
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "./third_party/marked/src/defaults",
 		},
 		NewFileContent: PtrTo(`import { defaults } from "./third_party/marked/src/defaults";
