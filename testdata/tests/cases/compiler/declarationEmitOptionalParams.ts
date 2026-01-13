@@ -1,4 +1,5 @@
 // @declaration: true
+// @strict: true
 // @noTypesAndSymbols: true
 
 // Simple optional string

@@ -1,4 +1,5 @@
 // @declaration: true
+// @strict: true
 // @noTypesAndSymbols: true
 
 export type NonEmptyArray<A> = [A, ...Array<A>]

@@ -1,4 +1,5 @@
 // @declaration: true
+// @strict: true
 // @noTypesAndSymbols: true
 
 export interface Effect<A, E = never, R = never> {
