@@ -302,15 +302,15 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 			}
 			export.ScriptElementKind = lsutil.GetSymbolKind(checkerLease.TryChecker(), targetSymbol, decl)
 			export.ScriptElementKindModifiers = lsutil.GetSymbolModifiers(checkerLease.TryChecker(), targetSymbol)
-			moduleID := ModuleID(ast.GetSourceFileOfNode(decl).Path())
+			targetModuleID := ModuleID(ast.GetSourceFileOfNode(decl).Path())
 			if parent != nil && parent.IsExternalModule() {
-				if targetModuleID, ok := e.getModuleIDForSymbol(parent); ok {
-					moduleID = targetModuleID
+				if id, ok := e.getModuleIDForSymbol(parent); ok {
+					targetModuleID = id
 				}
 			}
 			export.Target = ExportID{
 				ExportName: targetSymbol.Name,
-				ModuleID:   moduleID,
+				ModuleID:   targetModuleID,
 			}
 		}
 	} else {
