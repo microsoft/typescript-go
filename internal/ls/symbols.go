@@ -473,8 +473,6 @@ func getCallExpressionName(node *ast.Node) string {
 	return ""
 }
 
-// getCallExpressionLiteralArgs extracts string literal and template literal arguments from a call expression.
-// Returns the arguments as a comma-separated string suitable for display.
 func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
 	if !ast.IsCallExpression(callExpr) {
 		return ""
@@ -485,7 +483,7 @@ func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
 	}
 	var parts []string
 	for _, arg := range args.Nodes {
-		if ast.IsStringLiteralLike(arg) || ast.IsTemplateExpression(arg) || arg.Kind == ast.KindNoSubstitutionTemplateLiteral {
+		if ast.IsStringLiteralLike(arg) || ast.IsTemplateExpression(arg) {
 			text := scanner.GetTextOfNode(arg)
 			parts = append(parts, text)
 		}
@@ -493,17 +491,14 @@ func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
 	return strings.Join(parts, ", ")
 }
 
-// cleanCallbackText cleans text by truncating and removing ECMAScript line terminators.
 func cleanCallbackText(text string) string {
-	// Truncate to maximum amount of characters to avoid large replace operations.
 	truncated := stringutil.TruncateByRunes(text, maxLength)
 	if len(truncated) < len(text) {
 		text = truncated + "..."
 	}
-	// Remove ECMAScript line terminators.
 	return strings.Map(func(r rune) rune {
 		if stringutil.IsLineBreak(r) {
-			return -1 // -1 means delete this rune
+			return -1
 		}
 		return r
 	}, text)
