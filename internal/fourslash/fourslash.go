@@ -452,6 +452,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	<-f.server.InitComplete()
 }
 
+// If modifying the defaults, update GetDefaultCapabilities too.
 var (
 	ptrTrue                       = ptrTo(true)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
@@ -524,27 +525,89 @@ var (
 			},
 		},
 	}
-	DefaultCapabilities = &lsproto.ClientCapabilities{
+)
+
+func GetDefaultCapabilities() *lsproto.ClientCapabilities {
+	return &lsproto.ClientCapabilities{
 		General: &lsproto.GeneralClientCapabilities{
 			PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
 		},
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
-			Completion:         defaultCompletionCapabilities,
-			Diagnostic:         defaultDiagnosticCapabilities,
-			PublishDiagnostics: defaultPublishDiagnosticCapabilities,
-			Definition:         defaultDefinitionCapabilities,
-			TypeDefinition:     defaultTypeDefinitionCapabilities,
-			Implementation:     defaultImplementationCapabilities,
-			Hover:              defaultHoverCapabilities,
-			SignatureHelp:      defaultSignatureHelpCapabilities,
-			DocumentSymbol:     defaultDocumentSymbolCapabilities,
-			FoldingRange:       defaultFoldingRangeCapabilities,
+			Completion: &lsproto.CompletionClientCapabilities{
+				CompletionItem: &lsproto.ClientCompletionItemOptions{
+					SnippetSupport:          ptrTrue,
+					CommitCharactersSupport: ptrTrue,
+					PreselectSupport:        ptrTrue,
+					LabelDetailsSupport:     ptrTrue,
+					InsertReplaceSupport:    ptrTrue,
+					DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+				},
+				CompletionList: &lsproto.CompletionListCapabilities{
+					ItemDefaults: &[]string{"commitCharacters", "editRange"},
+				},
+			},
+			Diagnostic: &lsproto.DiagnosticClientCapabilities{
+				RelatedInformation: ptrTrue,
+				TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+					ValueSet: []lsproto.DiagnosticTag{
+						lsproto.DiagnosticTagUnnecessary,
+						lsproto.DiagnosticTagDeprecated,
+					},
+				},
+			},
+			PublishDiagnostics: &lsproto.PublishDiagnosticsClientCapabilities{
+				RelatedInformation: ptrTrue,
+				TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+					ValueSet: []lsproto.DiagnosticTag{
+						lsproto.DiagnosticTagUnnecessary,
+						lsproto.DiagnosticTagDeprecated,
+					},
+				},
+			},
+			Definition: &lsproto.DefinitionClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			TypeDefinition: &lsproto.TypeDefinitionClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			Implementation: &lsproto.ImplementationClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			Hover: &lsproto.HoverClientCapabilities{
+				ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+			},
+			SignatureHelp: &lsproto.SignatureHelpClientCapabilities{
+				SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+					DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+					ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+						LabelOffsetSupport: ptrTrue,
+					},
+					ActiveParameterSupport: ptrTrue,
+				},
+				ContextSupport: ptrTrue,
+			},
+			DocumentSymbol: &lsproto.DocumentSymbolClientCapabilities{
+				HierarchicalDocumentSymbolSupport: ptrTrue,
+			},
+			FoldingRange: &lsproto.FoldingRangeClientCapabilities{
+				RangeLimit: ptrTo[uint32](5000),
+				FoldingRangeKind: &lsproto.ClientFoldingRangeKindOptions{
+					ValueSet: &[]lsproto.FoldingRangeKind{
+						lsproto.FoldingRangeKindComment,
+						lsproto.FoldingRangeKindImports,
+						lsproto.FoldingRangeKindRegion,
+					},
+				},
+				FoldingRange: &lsproto.ClientFoldingRangeOptions{
+					CollapsedText: ptrTrue,
+				},
+			},
 		},
 		Workspace: &lsproto.WorkspaceClientCapabilities{
 			Configuration: ptrTrue,
 		},
 	}
-)
+}
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
 	var capabilitiesWithDefaults lsproto.ClientCapabilities
@@ -564,7 +627,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 		capabilitiesWithDefaults.TextDocument.Diagnostic = defaultDiagnosticCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
-		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = capabilitiesWithDefaults.TextDocument.PublishDiagnostics
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = defaultPublishDiagnosticCapabilities
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}

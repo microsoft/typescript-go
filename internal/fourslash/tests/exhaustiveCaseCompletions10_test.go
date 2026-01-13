@@ -18,9 +18,9 @@ declare const u: "$1" | "2";
 switch (u) {
     case/*1*/
 }`
-	capabilities := *fourslash.DefaultCapabilities
+	capabilities := fourslash.GetDefaultCapabilities()
 	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = PtrTo(false)
-	f, done := fourslash.NewFourslash(t, &capabilities, content)
+	f, done := fourslash.NewFourslash(t, capabilities, content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
