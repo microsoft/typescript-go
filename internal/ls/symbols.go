@@ -398,7 +398,7 @@ func mergeChildren(target *lsproto.DocumentSymbol, source *lsproto.DocumentSymbo
 // See `getUnnamedNodeLabel`.
 func isAnonymousName(name string) bool {
 	return name == "<function>" || name == "<class>" || name == "export=" || name == "default" ||
-		name == "constructor" || name == "()" || name == "new()" || name == "[]" || strings.HasSuffix(name, "() callback")
+		name == "constructor" || name == "()" || name == "new()" || name == "[]" || strings.HasSuffix(name, ") callback")
 }
 
 func getTextOfName(node *ast.Node) string {
@@ -432,7 +432,12 @@ func getUnnamedNodeLabel(node *ast.Node) string {
 		if ast.IsCallExpression(node.Parent) {
 			name := getCallExpressionName(node.Parent.Expression())
 			if name != "" {
-				return name + "() callback"
+				name = cleanCallbackText(name)
+				if len(name) > maxLength {
+					return name + " callback"
+				}
+				args := cleanCallbackText(getCallExpressionLiteralArgs(node.Parent))
+				return name + "(" + args + ") callback"
 			}
 		}
 		return "<function>"
@@ -466,6 +471,42 @@ func getCallExpressionName(node *ast.Node) string {
 		return right
 	}
 	return ""
+}
+
+// getCallExpressionLiteralArgs extracts string literal and template literal arguments from a call expression.
+// Returns the arguments as a comma-separated string suitable for display.
+func getCallExpressionLiteralArgs(callExpr *ast.Node) string {
+	if !ast.IsCallExpression(callExpr) {
+		return ""
+	}
+	args := callExpr.AsCallExpression().Arguments
+	if args == nil || len(args.Nodes) == 0 {
+		return ""
+	}
+	var parts []string
+	for _, arg := range args.Nodes {
+		if ast.IsStringLiteralLike(arg) || ast.IsTemplateExpression(arg) || arg.Kind == ast.KindNoSubstitutionTemplateLiteral {
+			text := scanner.GetTextOfNode(arg)
+			parts = append(parts, text)
+		}
+	}
+	return strings.Join(parts, ", ")
+}
+
+// cleanCallbackText cleans text by removing ECMAScript line terminators and trailing backslashes.
+func cleanCallbackText(text string) string {
+	if len(text) > maxLength {
+		text = text[:maxLength] + "..."
+	}
+	// Replace ECMAScript line terminators and remove trailing backslashes from each line:
+	// \n - Line Feed, \r - Carriage Return, \u2028 - Line separator, \u2029 - Paragraph separator
+	var result strings.Builder
+	for _, r := range text {
+		if r != '\n' && r != '\r' && r != '\u2028' && r != '\u2029' {
+			result.WriteRune(r)
+		}
+	}
+	return result.String()
 }
 
 func getInteriorModule(node *ast.Node) *ast.Node {
