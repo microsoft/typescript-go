@@ -394,10 +394,10 @@ func (r *resolutionState) mangleScopedPackageName(name string) string {
 }
 
 func (r *resolutionState) getPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
-	result, _ := tspath.ForEachAncestorDirectory(
+	result := tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
+		r.resolver.typingsLocation,
 		directory,
 		func(directory string) (*packagejson.InfoCacheEntry, bool) {
-			// !!! stop at global cache
 			if result := r.getPackageJsonInfo(directory, false /*onlyRecordFailures*/); result != nil {
 				return result, true
 			}

@@ -3,17 +3,21 @@ package ls
 import (
 	"context"
 	"fmt"
+	"iter"
 	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -49,7 +53,9 @@ func (l *LanguageService) getStringLiteralCompletions(
 	checker *checker.Checker,
 	compilerOptions *core.CompilerOptions,
 ) *lsproto.CompletionList {
-	// !!! reference comment
+	if isInReferenceComment(file, position) {
+		// !!! HERE: get triple slash reference completions
+	}
 	if IsInString(file, position, contextToken) {
 		if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
 			return nil
@@ -520,8 +526,300 @@ func getStringLiteralCompletionsFromModuleNames(
 	node *ast.LiteralExpression,
 	program *compiler.Program,
 ) *stringLiteralCompletions {
+	// !!! HERE: addReplacementSpan
 	// !!! needs `getModeForUsageLocationWorker`
 	return nil
+}
+
+func getStringLiteralCompletionsFromModuleNamesWorker(
+	file *ast.SourceFile,
+	node *ast.LiteralExpression,
+	program *compiler.Program,
+) any {
+	literalValue := tspath.NormalizeSlashes(node.Text())
+	var mode core.ResolutionMode
+	if ast.IsStringLiteralLike(node) {
+		mode = program.GetModeForUsageLocation(file, node)
+	}
+
+	options := program.Options()
+	if isPathRelativeToScript(literalValue) ||
+		(options.Paths.Size() == 0 && (tspath.IsRootedDiskPath(literalValue) || tspath.IsUrl(literalValue))) {
+		// !!! HERE: getCompletionEntriesForRelativeModules
+	} else {
+		// !!! HERE: getCompletionEntriesForNonRelativeModules
+	}
+}
+
+// Returns true if the path is explicitly relative (i.e. relative to . or ..)
+func isPathRelativeToScript(path string) bool {
+	return strings.HasPrefix(path, "./") || strings.HasPrefix(path, "../")
+}
+
+func getCompletionEntriesForRelativeModules(
+	literalValue string,
+	program *compiler.Program,
+) any {
+	options := program.Options()
+	if len(options.RootDirs) > 0 {
+		// !!! HERE: getCompletionEntriesForDirectoryFragmentWithRootDirs
+	} else {
+		return getCompletionEntriesForDirectoryFragment(literalValue)
+	}
+}
+
+type moduleCompletionKind int
+
+const (
+	moduleCompletionKindDirectory moduleCompletionKind = iota
+	moduleCompletionKindFile
+	moduleCompletionKindExternalModuleName
+)
+
+type moduleCompletionNameAndKind struct {
+	name      string
+	kind      moduleCompletionKind
+	extension string
+}
+
+type moduleCompletionNameAndKindSet struct {
+	names map[string]moduleCompletionNameAndKind
+}
+
+func (s *moduleCompletionNameAndKindSet) add(entry moduleCompletionNameAndKind) {
+	existing, ok := s.names[entry.name]
+	if !ok || existing.kind < entry.kind {
+		s.names[entry.name] = entry
+	}
+}
+
+// !!! HERE: initialize `result`
+// !!! HERE: this comment contradicts the comment below about filtering for basename... which is true?
+// Given a path ending at a directory, gets the completions for the path, and filters for those entries containing the basename.
+func getCompletionEntriesForDirectoryFragment(
+	fragment string,
+	scriptDirectory string,
+	program *compiler.Program,
+	moduleSpecifierIsRelative bool,
+	result *moduleCompletionNameAndKindSet,
+) moduleCompletionNameAndKindSet {
+	fragment = tspath.NormalizeSlashes(fragment)
+
+	// Remove the basename from the path.
+	// We don't use the basename to filter completions: the client is responsible for that filtering.
+	if !tspath.HasTrailingDirectorySeparator(fragment) {
+		fragment = tspath.GetDirectoryPath(fragment)
+	}
+
+	if fragment == "" {
+		fragment = "."
+	}
+
+	fragment = tspath.EnsureTrailingDirectorySeparator(fragment)
+
+	baseDirectory := tspath.ResolvePath(scriptDirectory, fragment)
+	if !moduleSpecifierIsRelative {
+		// Check for a version redirect.
+		packageJsonDirectory := program.GetNearestAncestorDirectoryWithPackageJson(baseDirectory)
+		if packageJsonDirectory != "" {
+			packageJsonPath := tspath.CombinePaths(packageJsonDirectory, "package.json")
+			packageJsonInfo := program.GetPackageJsonInfo(packageJsonPath)
+			if packageJsonInfo != nil && packageJsonInfo.Contents != nil &&
+				packageJsonInfo.Contents.TypesVersions.Type == packagejson.JSONValueTypeObject {
+				versionPaths := packageJsonInfo.Contents.GetVersionPaths(nil)
+				paths := versionPaths.GetPaths()
+				if paths.Size() > 0 {
+					pathInPackage := baseDirectory[len(tspath.EnsureTrailingDirectorySeparator(packageJsonDirectory)):]
+					if addCompletionEntriesFromPaths(result, program, pathInPackage, packageJsonDirectory, paths) {
+						// One of the `versionPaths` was matched, which will block relative resolution
+						// to files and folders from here.
+						// All reachable paths given the pattern match are already added.
+					}
+				}
+			}
+		}
+	}
+
+	if directoryExists(baseDirectory) {
+		return result
+	}
+
+	// !!! HERE
+}
+
+// Returns true if `fragment` was a match for any `paths`
+// (which should indicate whether any other path completions should be offered).
+func addCompletionEntriesFromPaths(
+	result moduleCompletionNameAndKindSet,
+	program *compiler.Program,
+	fragment string,
+	baseDirectory string,
+	paths *collections.OrderedMap[string, []string],
+) bool {
+	getPatternsForKeys := func(key string) []string {
+		return paths.GetOrZero(key)
+	}
+	comparePaths := func(a, b string) stringutil.Comparison {
+		patternA := core.TryParsePattern(a)
+		patternB := core.TryParsePattern(b)
+		lengthA := len(a)
+		if patternA.StarIndex != -1 {
+			lengthA = patternA.StarIndex
+		}
+		lengthB := len(b)
+		if patternB.StarIndex != -1 {
+			lengthB = patternB.StarIndex
+		}
+		return lengthA - lengthB
+	}
+	return addCompletionEntriesFromPathsOrExportsOrImports(
+		result,
+		program,
+		false, /*isExports*/
+		false, /*isImports*/
+		fragment,
+		baseDirectory,
+		paths.Keys(),
+		getPatternsForKeys,
+		comparePaths,
+	)
+}
+
+// Returns true if `fragment` was a match for any `paths`
+// (which should indicate whether any other path completions should be offered).
+func addCompletionEntriesFromPathsOrExportsOrImports(
+	result moduleCompletionNameAndKindSet,
+	program *compiler.Program,
+	isExports bool,
+	isImports bool,
+	fragment string,
+	baseDirectory string,
+	keys iter.Seq[string],
+	getPatternsForKey func(key string) []string,
+	comparePaths func(a, b string) stringutil.Comparison,
+) bool {
+	type pathResult struct {
+		results []moduleCompletionNameAndKind
+		matched bool
+	}
+	var pathResults []pathResult
+	var matchedPath *string
+	for key := range keys {
+		if key == "." {
+			continue
+		}
+		normalizedKey := strings.TrimPrefix(key, "./")               // Remove leading "./"
+		if (isExports || isImports) && strings.HasSuffix(key, "/") { // Normalize trailing "/" to "/*"
+			normalizedKey = normalizedKey + "*"
+		}
+		patterns := getPatternsForKey(key)
+		if len(patterns) > 0 {
+			pathPattern := core.TryParsePattern(normalizedKey)
+			if !pathPattern.IsValid() {
+				continue
+			}
+			isMatch := pathPattern.Matches(fragment)
+			var isLongestMatch bool
+			if isMatch {
+				if matchedPath == nil {
+					isLongestMatch = true
+				} else {
+					isLongestMatch = comparePaths(normalizedKey, *matchedPath) == stringutil.ComparisonLessThan
+				}
+			}
+			if isLongestMatch {
+				// If this is a higher priority match than anything we've seen so far, previous results from matches are invalid, e.g.
+				// for `import {} from "some-package/|"` with a typesVersions:
+				// {
+				//   "bar/*": ["bar/*"], // <-- 1. We add 'bar', but 'bar/*' doesn't match yet.
+				//   "*": ["dist/*"],    // <-- 2. We match here and add files from dist. 'bar' is still ok because it didn't come from a match.
+				//   "foo/*": ["foo/*"]  // <-- 3. We matched '*' earlier and added results from dist, but if 'foo/*' also matched,
+				// }                               results in dist would not be visible. 'bar' still stands because it didn't come from a match.
+				//                                 This is especially important if `dist/foo` is a folder, because if we fail to clear results
+				//                                 added by the '*' match, after typing `"some-package/foo/|"` we would get file results from both
+				//                                 ./dist/foo and ./foo, when only the latter will actually be resolvable.
+				//                                 See pathCompletionsTypesVersionsWildcard6.ts.
+				matchedPath = &normalizedKey
+				pathResults = core.Filter(pathResults, func(pr pathResult) bool {
+					return !pr.matched
+				})
+			}
+			if pathPattern.StarIndex == -1 ||
+				matchedPath == nil ||
+				comparePaths(normalizedKey, *matchedPath) != stringutil.ComparisonGreaterThan {
+				pathResults = append(pathResults, pathResult{
+					matched: isMatch,
+					results: getCompletionsForPathMapping(normalizedKey, patterns, fragment, baseDirectory, isExports, isImports, program),
+				})
+			}
+		}
+	}
+
+	for _, pr := range pathResults {
+		for _, res := range pr.results {
+			result.add(res)
+		}
+	}
+
+	return matchedPath != nil
+}
+
+func getCompletionsForPathMapping(
+	path string,
+	patterns []string,
+	fragment string,
+	packageDirectory string,
+	isExports bool,
+	isImports bool,
+	program *compiler.Program,
+) []moduleCompletionNameAndKind {
+	justPathMappingName := func(name string, kind moduleCompletionKind) []moduleCompletionNameAndKind {
+		if strings.HasPrefix(name, fragment) {
+			return []moduleCompletionNameAndKind{{
+				name: tspath.RemoveTrailingDirectorySeparator(name),
+				kind: kind,
+			}}
+		}
+		return nil
+	}
+
+	parsedPath := core.TryParsePattern(path)
+	if !parsedPath.IsValid() {
+		return nil
+	}
+	// No starts in the pattern.
+	if parsedPath.StarIndex == -1 {
+		// For a path mapping "foo": ["/x/y/z.ts"], add "foo" itself as a completion.
+		return justPathMappingName(path, moduleCompletionKindFile)
+	}
+
+	pathPrefix := parsedPath.Text[:parsedPath.StarIndex]
+	pathSuffix := parsedPath.Text[parsedPath.StarIndex+1:]
+	if !strings.HasPrefix(fragment, pathPrefix) {
+		starIsFullPathComponent := strings.HasSuffix(path, "/*")
+		if starIsFullPathComponent {
+			return justPathMappingName(pathPrefix, moduleCompletionKindDirectory)
+		}
+		var completions []moduleCompletionNameAndKind
+		for _, pattern := range patterns {
+			modules := getModulesForPathsPattern(
+				"",
+			)
+			for _, module := range modules {
+				module.name = pathPrefix + module.name + pathSuffix
+			}
+			completions = append(completions, modules...)
+		}
+	}
+	remainingFragment := fragment[len(pathPrefix):]
+	return core.FlatMap(
+		patterns,
+		func(pattern string) []moduleCompletionNameAndKind {
+			return getModulesForPathsPattern(
+				remainingFragment,
+			)
+		},
+	)
 }
 
 func walkUpParentheses(node *ast.Node) *ast.Node {
@@ -720,4 +1018,17 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		}
 	}
 	return item
+}
+
+func isInReferenceComment(file *ast.SourceFile, position int) bool {
+	commentRange := isInComment(file, position, astnav.GetTokenAtPosition(file, position))
+	if commentRange == nil {
+		return false
+	}
+	commentText := file.Text()[commentRange.Pos():commentRange.End()]
+	return hasTripleSlashPrefix(commentText)
+}
+
+func hasTripleSlashPrefix(commentText string) bool {
+	return strings.HasPrefix(commentText, "///") && strings.HasPrefix(strings.TrimSpace(commentText[3:]), "<")
 }
