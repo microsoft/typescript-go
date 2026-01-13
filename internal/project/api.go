@@ -8,6 +8,8 @@ import (
 
 func (s *Session) OpenProject(ctx context.Context, configFileName string) (*Project, error) {
 	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+
 	fileChanges, overlays, ataChanges, _ := s.flushChanges(ctx)
 	newSnapshot := s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 		fileChanges: fileChanges,
@@ -16,7 +18,6 @@ func (s *Session) OpenProject(ctx context.Context, configFileName string) (*Proj
 			OpenProjects: collections.NewSetFromItems(configFileName),
 		},
 	})
-	s.snapshotUpdateMu.Unlock()
 
 	if newSnapshot.apiError != nil {
 		return nil, newSnapshot.apiError

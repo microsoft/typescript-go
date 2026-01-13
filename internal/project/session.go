@@ -406,20 +406,20 @@ func (s *Session) getSnapshot(
 ) *Snapshot {
 	var snapshot *Snapshot
 	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		return s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 			reason:          UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:     fileChanges,
 			ataChanges:      ataChanges,
 			newConfig:       newConfig,
 			ResourceRequest: request,
 		})
-		s.snapshotUpdateMu.Unlock()
-		return snapshot
 	}
 	// If there are no pending file changes, we can try to use the current snapshot.
 	s.snapshotMu.RLock()
@@ -460,7 +460,6 @@ func (s *Session) getSnapshot(
 			ResourceRequest: request,
 		})
 	}
-	s.snapshotUpdateMu.Unlock()
 	return snapshot
 }
 
