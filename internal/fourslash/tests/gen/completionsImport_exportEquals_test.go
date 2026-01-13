@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_exportEquals(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @esModuleInterop: false
@@ -39,7 +39,7 @@ let x: b/*1*/;`
 				&lsproto.CompletionItem{
 					Label: "a",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},
@@ -60,7 +60,7 @@ let x: b/*1*/;`
 				&lsproto.CompletionItem{
 					Label: "b",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},

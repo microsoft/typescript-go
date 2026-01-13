@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_require_addToExisting(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: /a.js
@@ -36,7 +36,7 @@ x/**/`
 				&lsproto.CompletionItem{
 					Label: "x",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},

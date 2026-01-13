@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_packageJsonImportsPreference(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: preserve
 // @allowImportingTsExtensions: true
@@ -44,7 +44,7 @@ internalFoo/**/`
 				&lsproto.CompletionItem{
 					Label: "internalFoo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "#internal/foo",
 						},
 					},
@@ -65,7 +65,7 @@ internalFoo/**/`
 				&lsproto.CompletionItem{
 					Label: "internalFoo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./other",
 						},
 					},

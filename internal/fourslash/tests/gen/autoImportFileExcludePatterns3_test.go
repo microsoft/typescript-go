@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportFileExcludePatterns3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /ambient1.d.ts
@@ -39,7 +39,7 @@ declare module "foo" {
 					&lsproto.CompletionItem{
 						Label: "x",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "foo",
 							},
 						},
@@ -49,7 +49,7 @@ declare module "foo" {
 					&lsproto.CompletionItem{
 						Label: "y",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "foo",
 							},
 						},

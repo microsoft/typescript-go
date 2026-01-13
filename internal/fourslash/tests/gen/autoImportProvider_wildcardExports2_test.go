@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_wildcardExports2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/node_modules/pkg/package.json
 {
@@ -56,7 +56,7 @@ export function test(): void;
 				&lsproto.CompletionItem{
 					Label: "test",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "pkg/core/test",
 						},
 					},

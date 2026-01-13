@@ -198,7 +198,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 		case ast.KindJsxSelfClosingElement, ast.KindLabeledStatement, ast.KindBreakStatement, ast.KindContinueStatement:
 			return node.Parent
 		case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
-			if validImport := tryGetImportFromModuleSpecifier(node); validImport != nil {
+			if validImport := ast.TryGetImportFromModuleSpecifier(node); validImport != nil {
 				declOrStatement := ast.FindAncestor(validImport, func(*ast.Node) bool {
 					return ast.IsDeclaration(node) || ast.IsStatement(node) || ast.IsJSDocTag(node)
 				})
@@ -595,7 +595,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && node.Kind != ast.KindIdentifier {
+	if isRename && !isNodeEligibleForRename(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
@@ -725,7 +725,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 }
 
 func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
-	if data.OriginalNode.Kind != ast.KindIdentifier {
+	if !isNodeEligibleForRename(data.OriginalNode) {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -734,9 +734,10 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
+
 	for _, entry := range entries {
 		uri := l.getFileNameOfEntry(entry)
-		if l.UserPreferences().AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && tryGetImportFromModuleSpecifier(entry.node) != nil {
+		if l.UserPreferences().AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && ast.TryGetImportFromModuleSpecifier(entry.node) != nil {
 			continue
 		}
 		textEdit := &lsproto.TextEdit{
@@ -1448,55 +1449,6 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 		}}
 	}
 	return []*SymbolAndEntries{}
-}
-
-func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
-	if referencePath := findReferenceInPosition(sourceFile.ReferencedFiles, position); referencePath != nil {
-		if file := program.GetSourceFileFromReference(sourceFile, referencePath); file != nil {
-			return &refInfo{reference: referencePath, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if typeReferenceDirective := findReferenceInPosition(sourceFile.TypeReferenceDirectives, position); typeReferenceDirective != nil {
-		if reference := program.GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeReferenceDirective, sourceFile); reference != nil {
-			if file := program.GetSourceFile(reference.ResolvedFileName); file != nil {
-				return &refInfo{reference: typeReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-			}
-		}
-		return nil
-	}
-
-	if libReferenceDirective := findReferenceInPosition(sourceFile.LibReferenceDirectives, position); libReferenceDirective != nil {
-		if file := program.GetLibFileFromReference(libReferenceDirective); file != nil {
-			return &refInfo{reference: libReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if len(sourceFile.Imports()) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
-		return nil
-	}
-
-	node := astnav.GetTouchingToken(sourceFile, position)
-	if !isModuleSpecifierLike(node) || !tspath.IsExternalModuleNameRelative(node.Text()) {
-		return nil
-	}
-	if resolution := program.GetResolvedModuleFromModuleSpecifier(sourceFile, node); resolution != nil {
-		verifiedFileName := resolution.ResolvedFileName
-		fileName := resolution.ResolvedFileName
-		if fileName == "" {
-			fileName = tspath.ResolvePath(tspath.GetDirectoryPath(sourceFile.FileName()), node.Text())
-		}
-		return &refInfo{
-			file:       program.GetSourceFile(fileName),
-			fileName:   fileName,
-			reference:  nil,
-			unverified: verifiedFileName != "",
-		}
-	}
-
-	return nil
 }
 
 // -- Core algorithm for find all references --
@@ -2391,7 +2343,7 @@ func (state *refState) forEachRelatedSymbol(
 
 // Search for all occurrences of an identifier in a source file (and filter out the ones that match).
 func (state *refState) searchForName(sourceFile *ast.SourceFile, search *refSearch) {
-	if _, ok := getNameTable(sourceFile)[search.escapedText]; ok {
+	if _, ok := sourceFile.GetNameTable()[search.escapedText]; ok {
 		state.getReferencesInSourceFile(sourceFile, search, true /*addReferencesHere*/)
 	}
 }
@@ -2425,4 +2377,13 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 	// Update cache with the actual result
 	state.inheritsFromCache[key] = inherits
 	return inherits
+}
+
+func isNodeEligibleForRename(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		return true
+	default:
+		return false
+	}
 }

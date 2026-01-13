@@ -24,6 +24,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
       - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
@@ -149,7 +155,7 @@ jobs:
 
       - run: git add .
 
-      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         if: ${{ always() && matrix.config.coverage && github.event_name != 'merge_group' }}
         with:
           use_oidc: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
@@ -164,7 +170,7 @@ jobs:
           npx hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
           name: ${{ matrix.config.os }}-${{ (matrix.config.race && 'race') || 'norace' }}-new-baselines-artifact
@@ -264,12 +270,8 @@ jobs:
       - name: Regenerate fourslash tests and update failing test list
         run: |
           set -x
-          echo "" > ./internal/fourslash/_scripts/failingTests.txt
           npm run convertfourslash >/dev/null 2>&1 || true
-          npx hereby test >/dev/null || true
-          npx hereby baseline-accept || true
           npm run updatefailing >/dev/null 2>&1 || true
-          npx hereby baseline-accept || true
           rm -rf testdata/baselines/reference/fourslash || true
           npx hereby test >/dev/null || true
           npx hereby baseline-accept || true
@@ -290,6 +292,12 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
+      - uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          dotnet: false
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
@@ -375,7 +383,7 @@ jobs:
 
       - name: Upload baseline diff artifact
         if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: fix_baselines.patch
           path: fix_baselines.patch
