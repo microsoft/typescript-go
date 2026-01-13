@@ -9,74 +9,62 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-// Test for crash when requesting signature help for a function with binding pattern parameters.
-// This verifies that signature help works for binding patterns without crashing,
-// even though JSDoc parameter documentation is not available for binding patterns.
+// Tests for signature help with binding pattern parameters.
+// This covers the crash fix for binding patterns and various combinations
+// as requested in the issue.
 func TestSignatureHelpBindingPattern(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `
-function foo({}) {
-}
+// Empty object binding pattern
+function emptyObj({}) {}
+emptyObj(/*1*/)
 
-foo(/*$*/)
+// Empty array binding pattern
+function emptyArr([]) {}
+emptyArr(/*2*/)
+
+// Non-empty object binding pattern
+function nonEmptyObj({a, b}: {a: number, b: string}) {}
+nonEmptyObj(/*3*/)
+
+// Non-empty array binding pattern
+function nonEmptyArr([x, y]: [number, string]) {}
+nonEmptyArr(/*4*/)
+
+// Identifiers leading, binding pattern trailing
+function idLeading(first: number, {a, b}: {a: number, b: string}) {}
+idLeading(/*5*/)
+
+// Binding pattern leading, identifiers trailing
+function bindingLeading({a, b}: {a: number, b: string}, last: number) {}
+bindingLeading(/*6*/)
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	
-	// We expect signature help to work without crashing
-	f.GoToMarker(t, "$")
-	f.VerifySignatureHelpPresent(t, &lsproto.SignatureHelpContext{
+
+	ctx := &lsproto.SignatureHelpContext{
 		IsRetrigger:      false,
 		TriggerCharacter: PtrTo("("),
 		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
-	})
-}
+	}
 
-// Test that signature help works with JSDoc on functions with binding pattern parameters.
-// Note: JSDoc @param tags cannot match binding patterns, so the JSDoc comment won't
-// provide parameter-specific documentation, but the signature help should still work.
-func TestSignatureHelpBindingPatternWithJSDoc(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `
-/**
- * A function with a binding pattern parameter
- */
-function foo({a, b}: {a: number, b: string}) {
-}
+	// Test all markers - each should work without crashing
+	f.GoToMarker(t, "1")
+	f.VerifySignatureHelpPresent(t, ctx)
 
-foo(/*$*/)
-`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	
-	// We expect signature help to work without crashing
-	f.GoToMarker(t, "$")
-	f.VerifySignatureHelpPresent(t, &lsproto.SignatureHelpContext{
-		IsRetrigger:      false,
-		TriggerCharacter: PtrTo("("),
-		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
-	})
-}
+	f.GoToMarker(t, "2")
+	f.VerifySignatureHelpPresent(t, ctx)
 
-// Test array binding pattern
-func TestSignatureHelpArrayBindingPattern(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `
-function bar([x, y]: [number, number]) {
-}
+	f.GoToMarker(t, "3")
+	f.VerifySignatureHelpPresent(t, ctx)
 
-bar(/*$*/)
-`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	
-	f.GoToMarker(t, "$")
-	f.VerifySignatureHelpPresent(t, &lsproto.SignatureHelpContext{
-		IsRetrigger:      false,
-		TriggerCharacter: PtrTo("("),
-		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
-	})
+	f.GoToMarker(t, "4")
+	f.VerifySignatureHelpPresent(t, ctx)
+
+	f.GoToMarker(t, "5")
+	f.VerifySignatureHelpPresent(t, ctx)
+
+	f.GoToMarker(t, "6")
+	f.VerifySignatureHelpPresent(t, ctx)
 }
