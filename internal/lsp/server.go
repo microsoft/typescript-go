@@ -503,7 +503,9 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 func (s *Server) send(msg *lsproto.Message) {
 	select {
 	case s.outgoingQueue <- msg:
+		// sent
 	case <-s.ctx.Done():
+		// shutting down, drop message
 	}
 }
 

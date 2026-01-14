@@ -84,7 +84,9 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	for range cap(server.outgoingQueue) {
 		select {
 		case server.outgoingQueue <- dummyMsg:
+			// filled one slot
 		default:
+			// queue full
 		}
 	}
 
