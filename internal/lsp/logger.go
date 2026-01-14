@@ -41,7 +41,7 @@ func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {
 	case l.server.outgoingQueue <- notification.Message():
 		// sent
 	case <-l.server.ctx.Done():
-		// shutting down, drop message
+		fmt.Fprintln(l.server.stderr, message)
 	}
 }
 
