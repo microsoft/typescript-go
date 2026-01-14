@@ -53,9 +53,7 @@ func newImportsKey(moduleSpecifier string, topLevelTypeOnly bool) string {
 type importAdder struct {
 	// Context
 	ctx           context.Context
-	program       *compiler.Program
 	checker       *checker.Checker
-	file          *ast.SourceFile
 	view          *View
 	formatOptions *format.FormatCodeSettings
 	converters    *lsconv.Converters
@@ -81,9 +79,7 @@ func NewImportAdder(
 ) ImportAdder {
 	return &importAdder{
 		ctx:            ctx,
-		program:        program,
 		checker:        checker,
-		file:           file,
 		view:           view,
 		formatOptions:  formatOptions,
 		converters:     converters,
@@ -112,7 +108,7 @@ func (adder *importAdder) AddImportFromExportedSymbol(exportedSymbol *ast.Symbol
 		// debug.Assert(len(adder.ls.UserPreferences().AutoImportFileExcludePatterns) > 0)
 		return
 	}
-	fix := adder.getImportFixForSymbol(adder.view, adder.file, exportInfos, isValidTypeOnlyUseSite)
+	fix := adder.getImportFixForSymbol(adder.view, adder.view.importingFile, exportInfos, isValidTypeOnlyUseSite)
 	if fix != nil {
 		// !!! referenceImport -> propertyName
 		adder.addImport(fix)
@@ -121,18 +117,18 @@ func (adder *importAdder) AddImportFromExportedSymbol(exportedSymbol *ast.Symbol
 
 func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	// !!! organize imports?
-	tracker := change.NewTracker(adder.ctx, adder.program.Options(), adder.formatOptions, adder.converters)
-	quotePreference := lsutil.GetQuotePreference(adder.file, adder.preferences)
+	tracker := change.NewTracker(adder.ctx, adder.view.program.Options(), adder.formatOptions, adder.converters)
+	quotePreference := lsutil.GetQuotePreference(adder.view.importingFile, adder.preferences)
 	for _, fix := range adder.addToNamespace {
-		addNamespaceQualifier(fix, tracker, adder.file, locale.Default)
+		addNamespaceQualifier(fix, tracker, adder.view.importingFile, locale.Default)
 	}
 	for _, fix := range adder.importType {
-		addImportType(fix, adder.file, adder.preferences, tracker, locale.Default)
+		addImportType(fix, adder.view.importingFile, adder.preferences, tracker, locale.Default)
 	}
 	for clauseOrPattern, entry := range adder.addToExisting {
 		addToExistingImport(
 			tracker,
-			adder.file,
+			adder.view.importingFile,
 			clauseOrPattern,
 			entry.defaultImport,
 			slices.Collect(maps.Values(entry.namedImports)),
@@ -152,7 +148,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				newImport.defaultImport,
 				slices.Collect(maps.Values(newImport.namedImports)),
 				newImport.namespaceLikeImport,
-				adder.program.Options(),
+				adder.view.program.Options(),
 			)
 		} else {
 			declarations = getNewImports(
@@ -162,7 +158,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				newImport.defaultImport,
 				slices.Collect(maps.Values(newImport.namedImports)),
 				newImport.namespaceLikeImport,
-				adder.program.Options(),
+				adder.view.program.Options(),
 				adder.preferences,
 			)
 		}
@@ -170,17 +166,17 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	}
 
 	if len(newDeclarations) > 0 {
-		insertImports(tracker, adder.file, newDeclarations, true /*blankLineBetween*/, adder.preferences)
+		insertImports(tracker, adder.view.importingFile, newDeclarations, true /*blankLineBetween*/, adder.preferences)
 	}
 
-	return tracker.GetChanges()[adder.file.FileName()]
+	return tracker.GetChanges()[adder.view.importingFile.FileName()]
 }
 
 // addImport adds an import fix to the appropriate category based on its kind.
 // This batches imports so that multiple imports from the same module can be combined.
 func (adder *importAdder) addImport(fix *Fix) {
 	symbolName := fix.Name
-	compilerOptions := adder.program.Options()
+	compilerOptions := adder.view.program.Options()
 
 	switch fix.Kind {
 	case lsproto.AutoImportFixKindUseNamespace:
@@ -188,7 +184,7 @@ func (adder *importAdder) addImport(fix *Fix) {
 	case lsproto.AutoImportFixKindJsdocTypeImport:
 		adder.importType = append(adder.importType, fix)
 	case lsproto.AutoImportFixKindAddToExisting:
-		existingFix := getAddToExistingImportFix(adder.file, fix)
+		existingFix := getAddToExistingImportFix(adder.view.importingFile, fix)
 		entry := adder.addToExisting[existingFix.importClauseOrBindingPattern]
 		if entry == nil {
 			entry = &addToExistingState{
