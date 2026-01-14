@@ -43,6 +43,7 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
+	server.ctx = ctx
 
 	// Start write loop to drain queue
 	writeLoopDone := make(chan struct{})

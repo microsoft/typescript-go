@@ -130,8 +130,9 @@ var (
 )
 
 type Server struct {
-	r Reader
-	w Writer
+	r   Reader
+	w   Writer
+	ctx context.Context
 
 	stderr io.Writer
 
@@ -246,7 +247,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 // PublishDiagnostics implements project.Client.
 func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
-	s.outgoingQueue <- notification.Message()
+	s.send(notification.Message())
 	return nil
 }
 
@@ -300,6 +301,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 
 func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
+	s.ctx = ctx
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
 
@@ -452,7 +454,7 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	s.pendingServerRequests[*id] = responseChan
 	s.pendingServerRequestsMu.Unlock()
 
-	s.outgoingQueue <- req.Message()
+	s.send(req.Message())
 
 	select {
 	case <-ctx.Done():
@@ -494,7 +496,15 @@ func (s *Server) sendError(id *lsproto.ID, err error) {
 }
 
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
-	s.outgoingQueue <- resp.Message()
+	s.send(resp.Message())
+}
+
+// send writes a message to the outgoing queue, respecting context cancellation.
+func (s *Server) send(msg *lsproto.Message) {
+	select {
+	case s.outgoingQueue <- msg:
+	case <-s.ctx.Done():
+	}
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
