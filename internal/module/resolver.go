@@ -2026,19 +2026,28 @@ type ResolvedEntrypoints struct {
 type Ending int
 
 const (
+	// EndingFixed indicates that the module specifier cannot be changed without changing its resolution.
 	EndingFixed Ending = iota
+	// EndingExtensionChangeable indicates that the module specifier's extension portion was inferred from a
+	// file on disk, so an interchangeable one could be used instead (e.g. replacing .d.ts with .js).
 	EndingExtensionChangeable
+	// EndingChangeable indicates that the module specifier's file name and extension portion were inferred
+	// from a file on disk without being matched as part of an 'exports' pattern, so can be changed according
+	// to the importer's module resolution rules (e.g. an /index.d.ts may be dropped entirely in CommonJS settings).
 	EndingChangeable
 )
 
 type ResolvedEntrypoint struct {
-	// Symlink
+	// OriginalFileName is the symlink path if the entrypoint was discovered at a symlink. Empty otherwise.
 	OriginalFileName string
-	// Realpath
-	ResolvedFileName  string
-	ModuleSpecifier   string
-	Ending            Ending
+	// ResolvedFileName is the real path to the entrypoint file.
+	ResolvedFileName string
+	ModuleSpecifier  string
+	// Ending indicates whether the file name and extension portion of ModuleSpecifier is fixed or can be changed.
+	Ending Ending
+	// IncludeConditions are the conditions that a resolver must have to reach this entrypoint.
 	IncludeConditions *collections.Set[string]
+	// ExcludeConditions are the conditions that a resolver must not have to reach this entrypoint.
 	ExcludeConditions *collections.Set[string]
 }
 
