@@ -917,7 +917,8 @@ func decodeEntity(entity string) (rune, bool) {
 		for _, c := range entity {
 			if base == 16 && !stringutil.IsHexDigit(c) {
 				return 0, false
-			} else if base == 10 && !stringutil.IsDigit(c) {
+			}
+			if base == 10 && !stringutil.IsDigit(c) {
 				return 0, false
 			}
 		}
