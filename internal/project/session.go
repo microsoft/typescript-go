@@ -54,13 +54,13 @@ type SessionOptions struct {
 }
 
 type SessionInit struct {
-	Ctx         context.Context
-	Options     *SessionOptions
-	FS          vfs.FS
-	Client      Client
-	Logger      logging.Logger
-	NpmExecutor ata.NpmExecutor
-	ParseCache  *ParseCache
+	BackgroundCtx context.Context
+	Options       *SessionOptions
+	FS            vfs.FS
+	Client        Client
+	Logger        logging.Logger
+	NpmExecutor   ata.NpmExecutor
+	ParseCache    *ParseCache
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -145,7 +145,7 @@ func NewSession(init *SessionInit) *Session {
 	extendedConfigCache := NewExtendedConfigCache()
 
 	session := &Session{
-		backgroundCtx:       init.Ctx,
+		backgroundCtx:       init.BackgroundCtx,
 		options:             init.Options,
 		toPath:              toPath,
 		client:              init.Client,

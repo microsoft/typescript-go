@@ -55,7 +55,7 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	// Create session with the server's lifecycle context
 	server.initStarted.Store(true)
 	server.session = project.NewSession(&project.SessionInit{
-		Ctx: ctx,
+		BackgroundCtx: ctx,
 		Options: &project.SessionOptions{
 			CurrentDirectory:   "/test",
 			DefaultLibraryPath: bundled.LibPath(),

@@ -20,7 +20,7 @@ func TestRefCountingCaches(t *testing.T) {
 	setup := func(files map[string]any) *Session {
 		fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 		session := NewSession(&SessionInit{
-			Ctx: context.Background(),
+			BackgroundCtx: context.Background(),
 			Options: &SessionOptions{
 				CurrentDirectory:   "/",
 				DefaultLibraryPath: bundled.LibPath(),

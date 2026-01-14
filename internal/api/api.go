@@ -44,10 +44,10 @@ type API struct {
 func NewAPI(init *APIInit) *API {
 	api := &API{
 		session: project.NewSession(&project.SessionInit{
-			Ctx:     context.Background(),
-			Logger:  init.Logger,
-			FS:      init.FS,
-			Options: init.SessionOptions,
+			BackgroundCtx: context.Background(),
+			Logger:        init.Logger,
+			FS:            init.FS,
+			Options:       init.SessionOptions,
 		}),
 		projects: make(map[Handle[project.Project]]tspath.Path),
 		files:    make(handleMap[ast.SourceFile]),
