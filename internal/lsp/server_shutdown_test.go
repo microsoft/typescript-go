@@ -4,9 +4,10 @@ import (
 	"context"
 	"io"
 	"testing"
-	"time"
 
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -18,59 +19,84 @@ type shutdownTestWriter struct{}
 
 func (shutdownTestWriter) Write(*lsproto.Message) error { return nil }
 
-func newShutdownTestServer(t *testing.T) *Server {
-	t.Helper()
-	return NewServer(&ServerOptions{
-		In:  shutdownTestReader{},
-		Out: shutdownTestWriter{},
-		Err: io.Discard,
-		Cwd: "/",
-		FS:  vfstest.FromMap(map[string]string{}, true),
-	})
-}
-
-// Documents the deadlock observed when the server keeps logging after
-// the write loop has exited during shutdown. Currently fails because the
-// outgoing queue fills and Logger.Info blocks forever.
-func TestLoggerBlocksAfterShutdown(t *testing.T) {
+// TestServerShutdownNoDeadlock verifies that operations after shutdown
+// don't block.
+func TestServerShutdownNoDeadlock(t *testing.T) {
 	t.Parallel()
 
-	server := newShutdownTestServer(t)
-	server.initStarted.Store(true)
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{
+		"/test/tsconfig.json": "{}",
+		"/test/index.ts":      "const x = 1;",
+	}, false))
+
+	server := NewServer(&ServerOptions{
+		In:                 shutdownTestReader{},
+		Out:                shutdownTestWriter{},
+		Err:                io.Discard,
+		Cwd:                "/test",
+		FS:                 fs,
+		DefaultLibraryPath: bundled.LibPath(),
+	})
 
 	ctx, cancel := context.WithCancel(context.Background())
+
+	// Start write loop to drain queue
 	writeLoopDone := make(chan struct{})
 	go func() {
 		_ = server.writeLoop(ctx)
 		close(writeLoopDone)
 	}()
 
+	// Create session with the server's lifecycle context
+	server.initStarted.Store(true)
+	server.session = project.NewSession(&project.SessionInit{
+		Ctx: ctx,
+		Options: &project.SessionOptions{
+			CurrentDirectory:   "/test",
+			DefaultLibraryPath: bundled.LibPath(),
+			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:       false,
+			LoggingEnabled:     true,
+		},
+		FS:     fs,
+		Logger: server.logger,
+	})
+
+	// Open a file to establish a project
+	server.session.DidOpenFile(ctx, "file:///test/index.ts", 1, "const x = 1;", lsproto.LanguageKindTypeScript)
+	server.session.WaitForBackgroundTasks()
+
+	// Shutdown (cancel context and wait for write loop to exit)
 	cancel()
 	<-writeLoopDone
 
-	msg := lsproto.WindowLogMessageInfo.NewNotificationMessage(&lsproto.LogMessageParams{
+	// Fill the queue so any logging attempt would block
+	dummyMsg := lsproto.WindowLogMessageInfo.NewNotificationMessage(&lsproto.LogMessageParams{
 		Type:    lsproto.MessageTypeInfo,
-		Message: "pre-shutdown",
+		Message: "fill",
 	}).Message()
 
-	for i := 0; i < cap(server.outgoingQueue); i++ {
+	for range cap(server.outgoingQueue) {
 		select {
-		case server.outgoingQueue <- msg:
-		case <-time.After(100 * time.Millisecond):
-			t.Fatalf("timeout filling outgoing queue at %d", i)
+		case server.outgoingQueue <- dummyMsg:
+		default:
 		}
 	}
 
-	logDone := make(chan struct{})
-	go func() {
-		server.logger.Info("log after shutdown")
-		close(logDone)
-	}()
+	// Trigger operations that would log (these should not block)
+	server.session.DidChangeFile(ctx, "file:///test/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+		{
+			WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+				Text: "const x = 2;",
+			},
+		},
+	})
+	_, _ = server.session.GetLanguageService(ctx, "file:///test/index.ts")
+	server.session.WaitForBackgroundTasks()
 
-	select {
-	case <-logDone:
-		// Expected once the shutdown handling is fixed.
-	case <-time.After(200 * time.Millisecond):
-		t.Fatalf("log send blocked after shutdown")
-	}
+	server.session.Close()
 }

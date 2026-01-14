@@ -913,6 +913,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 
 	s.session = project.NewSession(&project.SessionInit{
+		Ctx: ctx,
 		Options: &project.SessionOptions{
 			CurrentDirectory:       cwd,
 			DefaultLibraryPath:     s.defaultLibraryPath,

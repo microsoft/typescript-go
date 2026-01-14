@@ -215,6 +215,7 @@ func SetupWithRealFS() (*project.Session, *SessionUtils) {
 	}
 
 	return project.NewSession(&project.SessionInit{
+		Ctx:         context.Background(),
 		FS:          fs,
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,
@@ -281,6 +282,7 @@ func GetSessionInitOptions(files map[string]any, options *project.SessionOptions
 	}
 
 	return &project.SessionInit{
+		Ctx:         context.Background(),
 		Options:     options,
 		FS:          fs,
 		Client:      clientMock,

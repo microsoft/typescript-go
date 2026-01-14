@@ -44,6 +44,7 @@ type API struct {
 func NewAPI(init *APIInit) *API {
 	api := &API{
 		session: project.NewSession(&project.SessionInit{
+			Ctx:     context.Background(),
 			Logger:  init.Logger,
 			FS:      init.FS,
 			Options: init.SessionOptions,
