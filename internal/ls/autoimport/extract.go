@@ -400,10 +400,7 @@ func (e *symbolExtractor) tryResolveSymbol(symbol *ast.Symbol, syntax ExportSynt
 }
 
 func shouldIgnoreSymbol(symbol *ast.Symbol) bool {
-	if symbol.Flags&ast.SymbolFlagsPrototype != 0 {
-		return true
-	}
-	return false
+	return symbol.Flags&ast.SymbolFlagsPrototype != 0
 }
 
 func getSyntax(symbol *ast.Symbol) ExportSyntax {

@@ -588,7 +588,7 @@ func (tx *LegacyDecoratorsTransformer) generateConstructorDecorationExpression(n
 
 	var classAlias *ast.Node
 	if tx.classAliases != nil {
-		classAlias, _ = tx.classAliases[tx.EmitContext().MostOriginal(node.AsNode())]
+		classAlias = tx.classAliases[tx.EmitContext().MostOriginal(node.AsNode())]
 	}
 
 	// When we used to transform to ES5/3 this would be moved inside an IIFE and should reference the name
