@@ -40,7 +40,7 @@ func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {
 	select {
 	case l.server.outgoingQueue <- notification.Message():
 		// sent
-	case <-l.server.ctx.Done():
+	case <-l.server.backgroundCtx.Done():
 		fmt.Fprintln(l.server.stderr, message)
 	}
 }

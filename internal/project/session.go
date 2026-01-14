@@ -70,13 +70,13 @@ type SessionInit struct {
 // next, it diffs them and updates file watchers and Automatic Type
 // Acquisition (ATA) state accordingly.
 type Session struct {
-	ctx         context.Context
-	options     *SessionOptions
-	toPath      func(string) tspath.Path
-	client      Client
-	logger      logging.Logger
-	npmExecutor ata.NpmExecutor
-	fs          *overlayFS
+	backgroundCtx context.Context
+	options       *SessionOptions
+	toPath        func(string) tspath.Path
+	client        Client
+	logger        logging.Logger
+	npmExecutor   ata.NpmExecutor
+	fs            *overlayFS
 
 	// parseCache is the ref-counted cache of source files used when
 	// creating programs during snapshot cloning.
@@ -145,7 +145,7 @@ func NewSession(init *SessionInit) *Session {
 	extendedConfigCache := NewExtendedConfigCache()
 
 	session := &Session{
-		ctx:                 init.Ctx,
+		backgroundCtx:       init.Ctx,
 		options:             init.Options,
 		toPath:              toPath,
 		client:              init.Client,
@@ -346,7 +346,7 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 	}
 
 	// Create a new cancellable context for the debounce task
-	debounceCtx, cancel := context.WithCancel(s.ctx)
+	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
 	s.diagnosticsRefreshCancel = cancel
 
 	// Enqueue the debounced diagnostics refresh
@@ -368,7 +368,7 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 		if s.options.LoggingEnabled {
 			s.logger.Log("Running scheduled diagnostics refresh")
 		}
-		if err := s.client.RefreshDiagnostics(s.ctx); err != nil && s.options.LoggingEnabled {
+		if err := s.client.RefreshDiagnostics(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing diagnostics: %v", err)
 		}
 	})
@@ -568,7 +568,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
 	// !!! userPreferences/configuration updates
-	s.backgroundQueue.Enqueue(s.ctx, func(ctx context.Context) {
+	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
@@ -666,7 +666,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
 	var errors []error
 	start := time.Now()
-	ctx := s.ctx
+	ctx := s.backgroundCtx
 	core.DiffMapsFunc(
 		oldSnapshot.ConfigFileRegistry.configs,
 		newSnapshot.ConfigFileRegistry.configs,
@@ -859,7 +859,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 
 func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
 	if oldPrefs.InlayHints != newPrefs.InlayHints {
-		if err := s.client.RefreshInlayHints(s.ctx); err != nil && s.options.LoggingEnabled {
+		if err := s.client.RefreshInlayHints(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
 	}
@@ -867,7 +867,7 @@ func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, ne
 
 func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
 	if oldPrefs.CodeLens != newPrefs.CodeLens {
-		if err := s.client.RefreshCodeLens(s.ctx); err != nil && s.options.LoggingEnabled {
+		if err := s.client.RefreshCodeLens(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
 	}
@@ -878,7 +878,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		return
 	}
 
-	ctx := s.ctx
+	ctx := s.backgroundCtx
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
@@ -927,7 +927,7 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA(newSnapshot.ID()) {
-			s.backgroundQueue.Enqueue(s.ctx, func(ctx context.Context) {
+			s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
 				var logTree *logging.LogTree
 				if s.options.LoggingEnabled {
 					logTree = logging.NewLogTree("Triggering ATA for project " + project.Name())

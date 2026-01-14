@@ -130,9 +130,9 @@ var (
 )
 
 type Server struct {
-	r   Reader
-	w   Writer
-	ctx context.Context
+	r             Reader
+	w             Writer
+	backgroundCtx context.Context
 
 	stderr io.Writer
 
@@ -301,7 +301,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 
 func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
-	s.ctx = ctx
+	s.backgroundCtx = ctx
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
 
