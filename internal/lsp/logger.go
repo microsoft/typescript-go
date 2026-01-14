@@ -3,7 +3,6 @@ package lsp
 import (
 	"fmt"
 	"sync"
-	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -11,15 +10,10 @@ import (
 
 var _ logging.Logger = (*logger)(nil)
 
-type messageSender struct {
-	fn func(*lsproto.Message) bool
-}
-
 type logger struct {
 	server  *Server
 	mu      sync.Mutex
 	verbose bool
-	sender  atomic.Pointer[messageSender]
 }
 
 func newLogger(server *Server) *logger {
@@ -28,28 +22,27 @@ func newLogger(server *Server) *logger {
 	}
 }
 
-func (l *logger) setSender(fn func(*lsproto.Message) bool) {
-	if fn == nil {
-		l.sender.Store(nil)
-	} else {
-		l.sender.Store(&messageSender{fn: fn})
-	}
-}
-
 func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {
 	if l == nil {
 		return
 	}
 
-	msg := lsproto.WindowLogMessageInfo.NewNotificationMessage(&lsproto.LogMessageParams{
+	if !l.server.initStarted.Load() {
+		fmt.Fprintln(l.server.stderr, message)
+		return
+	}
+
+	notification := lsproto.WindowLogMessageInfo.NewNotificationMessage(&lsproto.LogMessageParams{
 		Type:    msgType,
 		Message: message,
 	})
 
-	if s := l.sender.Load(); s != nil && s.fn(msg.Message()) {
-		return
+	select {
+	case l.server.outgoingQueue <- notification.Message():
+		// sent
+	case <-l.server.ctx.Done():
+		fmt.Fprintln(l.server.stderr, message)
 	}
-	fmt.Fprintln(l.server.stderr, message)
 }
 
 func (l *logger) Log(msg ...any) {

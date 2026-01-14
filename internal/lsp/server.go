@@ -130,12 +130,14 @@ var (
 )
 
 type Server struct {
-	r Reader
-	w Writer
+	r   Reader
+	w   Writer
+	ctx context.Context
 
 	stderr io.Writer
 
 	logger                  *logger
+	initStarted             atomic.Bool
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
@@ -299,21 +301,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 
 func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
-
-	// Set up logger's send function with context captured in closure.
-	// Before Run(): trySend is nil, logs go to stderr.
-	// During Run(): trySend sends to queue, falls back to stderr on shutdown.
-	// After Run(): trySend is nil again, logs go to stderr.
-	s.logger.setSender(func(msg *lsproto.Message) bool {
-		select {
-		case s.outgoingQueue <- msg:
-			return true
-		case <-ctx.Done():
-			return false
-		}
-	})
-	defer s.logger.setSender(nil)
-
+	s.ctx = ctx
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
 
@@ -790,6 +778,8 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	if s.initializeParams != nil {
 		return nil, lsproto.ErrorCodeInvalidRequest
 	}
+
+	s.initStarted.Store(true)
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
