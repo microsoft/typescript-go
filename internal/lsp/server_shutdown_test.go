@@ -43,7 +43,16 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	server.ctx = ctx
+
+	// Set up logger callback (simulating what Run() does)
+	server.logger.setSender(func(msg *lsproto.Message) bool {
+		select {
+		case server.outgoingQueue <- msg:
+			return true
+		case <-ctx.Done():
+			return false
+		}
+	})
 
 	// Start write loop to drain queue
 	writeLoopDone := make(chan struct{})
@@ -53,7 +62,6 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	}()
 
 	// Create session with the server's lifecycle context
-	server.initStarted.Store(true)
 	server.session = project.NewSession(&project.SessionInit{
 		Ctx: ctx,
 		Options: &project.SessionOptions{

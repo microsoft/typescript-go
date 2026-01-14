@@ -130,14 +130,12 @@ var (
 )
 
 type Server struct {
-	r   Reader
-	w   Writer
-	ctx context.Context
+	r Reader
+	w Writer
 
 	stderr io.Writer
 
 	logger                  *logger
-	initStarted             atomic.Bool
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
@@ -247,7 +245,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 // PublishDiagnostics implements project.Client.
 func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
-	s.send(notification.Message())
+	s.send(ctx, notification.Message())
 	return nil
 }
 
@@ -301,7 +299,21 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 
 func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
-	s.ctx = ctx
+
+	// Set up logger's send function with context captured in closure.
+	// Before Run(): trySend is nil, logs go to stderr.
+	// During Run(): trySend sends to queue, falls back to stderr on shutdown.
+	// After Run(): trySend is nil again, logs go to stderr.
+	s.logger.setSender(func(msg *lsproto.Message) bool {
+		select {
+		case s.outgoingQueue <- msg:
+			return true
+		case <-ctx.Done():
+			return false
+		}
+	})
+	defer s.logger.setSender(nil)
+
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
 
@@ -331,7 +343,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 		msg, err := s.read()
 		if err != nil {
 			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
-				s.sendError(nil, err)
+				s.sendError(ctx, nil, err)
 				continue
 			}
 			return err
@@ -344,9 +356,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 				if err != nil {
 					return err
 				}
-				s.sendResult(req.ID, resp)
+				s.sendResult(ctx, req.ID, resp)
 			} else {
-				s.sendError(req.ID, lsproto.ErrorCodeServerNotInitialized)
+				s.sendError(ctx, req.ID, lsproto.ErrorCodeServerNotInitialized)
 			}
 			continue
 		}
@@ -408,11 +420,11 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			handle := func() {
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
 					if errors.Is(err, context.Canceled) {
-						s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled)
+						s.sendError(requestCtx, req.ID, lsproto.ErrorCodeRequestCancelled)
 					} else if errors.Is(err, io.EOF) {
 						lspExit()
 					} else {
-						s.sendError(req.ID, err)
+						s.sendError(requestCtx, req.ID, err)
 					}
 				}
 
@@ -454,7 +466,7 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	s.pendingServerRequests[*id] = responseChan
 	s.pendingServerRequestsMu.Unlock()
 
-	s.send(req.Message())
+	s.send(ctx, req.Message())
 
 	select {
 	case <-ctx.Done():
@@ -473,20 +485,20 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
-func (s *Server) sendResult(id *lsproto.ID, result any) {
-	s.sendResponse(&lsproto.ResponseMessage{
+func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) {
+	s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID:     id,
 		Result: result,
 	})
 }
 
-func (s *Server) sendError(id *lsproto.ID, err error) {
+func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
-	s.sendResponse(&lsproto.ResponseMessage{
+	s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID: id,
 		Error: &lsproto.ResponseError{
 			Code:    int32(code),
@@ -495,16 +507,16 @@ func (s *Server) sendError(id *lsproto.ID, err error) {
 	})
 }
 
-func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
-	s.send(resp.Message())
+func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
+	s.send(ctx, resp.Message())
 }
 
 // send writes a message to the outgoing queue, respecting context cancellation.
-func (s *Server) send(msg *lsproto.Message) {
+func (s *Server) send(ctx context.Context, msg *lsproto.Message) {
 	select {
 	case s.outgoingQueue <- msg:
 		// sent
-	case <-s.ctx.Done():
+	case <-ctx.Done():
 		// shutting down, drop message
 	}
 }
@@ -520,7 +532,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
 	if req.ID != nil {
-		s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
+		s.sendError(ctx, req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
 	return nil
 }
@@ -626,7 +638,7 @@ func registerRequestHandler[Req, Resp any](
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(req.ID, resp)
+		s.sendResult(ctx, req.ID, resp)
 		return nil
 	}
 }
@@ -642,7 +654,7 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if err != nil {
 			return err
 		}
-		defer s.recover(req)
+		defer s.recover(ctx, req)
 		resp, err := fn(s, ctx, ls, params)
 		if err != nil {
 			return err
@@ -650,7 +662,7 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(req.ID, resp)
+		s.sendResult(ctx, req.ID, resp)
 		return nil
 	}
 }
@@ -666,7 +678,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if err != nil {
 			return err
 		}
-		defer s.recover(req)
+		defer s.recover(ctx, req)
 		resp, err := fn(s, ctx, languageService, params)
 		if errors.Is(err, ls.ErrNeedsAutoImports) {
 			languageService, err = s.session.GetLanguageServiceWithAutoImports(ctx, params.TextDocumentURI())
@@ -687,7 +699,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(req.ID, resp)
+		s.sendResult(ctx, req.ID, resp)
 		return nil
 	}
 }
@@ -708,12 +720,12 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		if err != nil {
 			return err
 		}
-		defer s.recover(req)
+		defer s.recover(ctx, req)
 		resp, err := fn(defaultLs, ctx, params, orchestrator)
 		if err != nil {
 			return err
 		}
-		s.sendResult(req.ID, resp)
+		s.sendResult(ctx, req.ID, resp)
 		return nil
 	}
 }
@@ -762,12 +774,12 @@ func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Conte
 	return defaultLs, orchestrator, err
 }
 
-func (s *Server) recover(req *lsproto.RequestMessage) {
+func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 	if r := recover(); r != nil {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			s.sendError(ctx, req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
 		}
@@ -778,8 +790,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	if s.initializeParams != nil {
 		return nil, lsproto.ErrorCodeInvalidRequest
 	}
-
-	s.initStarted.Store(true)
 
 	s.initializeParams = params
 	s.clientCapabilities = lsproto.ResolveClientCapabilities(params.Capabilities)
@@ -1093,7 +1103,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	defer s.recover(reqMsg)
+	defer s.recover(ctx, reqMsg)
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,
@@ -1130,7 +1140,7 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
 	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
-	defer s.recover(reqMsg)
+	defer s.recover(ctx, reqMsg)
 
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 	return ls.ProvideWorkspaceSymbols(
@@ -1184,7 +1194,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 		// based on non-existent files and line maps from shortened files.
 		return codeLens, lsproto.ErrorCodeContentModified
 	}
-	defer s.recover(reqMsg)
+	defer s.recover(ctx, reqMsg)
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
