@@ -2080,10 +2080,13 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 	)
 
 	if mainResolution.isResolved() {
-		result.Entrypoints = append(result.Entrypoints, &ResolvedEntrypoint{
-			ResolvedFileName: mainResolution.path,
-			ModuleSpecifier:  packageName,
-		})
+		result.Entrypoints = append(result.Entrypoints, r.createResolvedEntrypointHandlingSymlink(
+			mainResolution.path,
+			packageName,
+			nil,
+			nil,
+			EndingFixed,
+		))
 	}
 
 	comparePathsOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.host.FS().UseCaseSensitiveFileNames()}
