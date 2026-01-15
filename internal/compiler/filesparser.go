@@ -349,22 +349,24 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 				loader.opts.Host.Trace(trace.Message, trace.Args...)
 			}
 
-			var existingCanonicalPath tspath.Path
+			file := task.file
 			if packageIdToCanonicalPath != nil && data.packageId.Name != "" {
 				if canonical, exists := packageIdToCanonicalPath[data.packageId]; exists {
 					redirectTargetsMap[canonical] = append(redirectTargetsMap[canonical], task.normalizedFilePath)
-					existingCanonicalPath = canonical
 					deduplicatedPaths.Add(task.path)
 					deduplicatedPaths.Add(canonical)
-				} else {
+					filesByPath[task.path] = filesByPath[canonical]
+					if data.lowestDepth > 0 {
+						sourceFilesFoundSearchingNodeModules.Add(task.path)
+					}
+					continue
+				} else if file != nil {
 					packageIdToCanonicalPath[data.packageId] = task.path
 				}
 			}
 
-			if existingCanonicalPath == "" {
-				if subTasks := task.subTasks; len(subTasks) > 0 {
-					collectFiles(subTasks, seen)
-				}
+			if subTasks := task.subTasks; len(subTasks) > 0 {
+				collectFiles(subTasks, seen)
 			}
 
 			// Exclude automatic type directive tasks from include reason processing,
@@ -380,10 +382,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			if task.isForAutomaticTypeDirective {
 				typeResolutionsInFile[task.path] = task.typeResolutionsInFile
 				continue
-			}
-			file := task.file
-			if existingCanonicalPath != "" {
-				file = filesByPath[existingCanonicalPath]
 			}
 
 			path := task.path
@@ -401,7 +399,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			if task.libFile != nil {
 				libFiles = append(libFiles, file)
 				libFilesMap[path] = task.libFile
-			} else if existingCanonicalPath == "" {
+			} else {
 				files = append(files, file)
 			}
 			filesByPath[path] = file
