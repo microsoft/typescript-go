@@ -153,7 +153,7 @@ func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 }
 
 func GetRightMostAssignedExpression(node *Node) *Node {
-	for IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+	for IsAssignmentExpression(node, false /*excludeCompoundAssignment*/) {
 		node = node.AsBinaryExpression().Right
 	}
 	return node

@@ -19,24 +19,29 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX || node.Kind != ast.KindExpressionStatement {
 		return
 	}
+	// Loop here to support chained assignments, e.g. exports.a = exports.b = exports.c = 42
 	expr := node.Expression()
-	var export *ast.Node
-	switch ast.GetAssignmentDeclarationKind(expr) {
-	case ast.JSDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
-	case ast.JSDeclarationKindExportsProperty:
-		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(
-			nil,
-			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
-			nil, /*typeNode*/
-			p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
-	}
-	if export != nil {
+	for {
+		var export *ast.Node
+		switch ast.GetAssignmentDeclarationKind(expr) {
+		case ast.JSDeclarationKindModuleExports:
+			export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+		case ast.JSDeclarationKindExportsProperty:
+			// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
+			export = p.factory.NewCommonJSExport(
+				nil,
+				p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
+				nil, /*typeNode*/
+				p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
+		}
+		if export == nil {
+			break
+		}
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
 		p.reparseTags(export, jsdoc)
 		p.finishReparsedNode(export, expr)
+		expr = expr.AsBinaryExpression().Right
 	}
 }
 
@@ -597,9 +602,9 @@ func getFunctionLikeHost(host *ast.Node) *ast.Node {
 	} else if host.Kind == ast.KindReturnStatement {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindExpressionStatement {
-		if ast.IsBinaryExpression(host.Expression()) {
-			fun = host.Expression().AsBinaryExpression().Right
-		}
+		fun = ast.GetRightMostAssignedExpression(host.Expression())
+	} else if host.Kind == ast.KindCommonJSExport {
+		fun = ast.GetRightMostAssignedExpression(host.Initializer())
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun
