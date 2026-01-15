@@ -235,7 +235,7 @@ func (s *Session) Configure(config *Config) {
 }
 
 func (s *Session) InitializeWithConfig(config *Config) {
-	config.Ts = config.Ts.CopyOrDefault()
+	config.ts = config.ts.CopyOrDefault()
 	s.initialConfig = config
 	s.Configure(s.initialConfig)
 }
@@ -855,7 +855,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *Config, newPrefs *Config) {
-	if oldPrefs.js.InlayHints != newPrefs.js.InlayHints || oldPrefs.Ts.InlayHints != newPrefs.Ts.InlayHints {
+	if oldPrefs.js.InlayHints != newPrefs.js.InlayHints || oldPrefs.ts.InlayHints != newPrefs.ts.InlayHints {
 		if err := s.client.RefreshInlayHints(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
@@ -863,7 +863,7 @@ func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *Config, newPrefs *Config) 
 }
 
 func (s *Session) refreshCodeLensIfNeeded(oldPrefs *Config, newPrefs *Config) {
-	if oldPrefs.js.CodeLens != newPrefs.js.CodeLens || oldPrefs.Ts.CodeLens != newPrefs.Ts.CodeLens {
+	if oldPrefs.js.CodeLens != newPrefs.js.CodeLens || oldPrefs.ts.CodeLens != newPrefs.ts.CodeLens {
 		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
@@ -980,7 +980,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if newSnapshot.AutoImports.IsPreparedForImportingFile(
 			changedFile.FileName(),
 			project.configFilePath,
-			newSnapshot.config.Ts.OrDefault(),
+			newSnapshot.config.Ts(),
 		) {
 			return
 		}

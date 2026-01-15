@@ -113,30 +113,30 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 func (s *Snapshot) GetPreference(activeFile string) *lsutil.UserPreferences {
 	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
 	if tspath.ExtensionIsTs(fileEnding) {
-		if s.config.Ts != nil {
-			return s.config.Ts
+		if s.config.ts != nil {
+			return s.config.ts
 		} else if s.config.js != nil {
 			return s.config.js
 		}
 	} else {
 		if s.config.js != nil {
 			return s.config.js
-		} else if s.config.Ts != nil {
-			return s.config.Ts
+		} else if s.config.ts != nil {
+			return s.config.ts
 		}
 	}
 	return lsutil.NewDefaultUserPreferences()
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	if s.config.Ts != nil {
-		return s.config.Ts
+	if s.config.ts != nil {
+		return s.config.ts
 	}
 	return lsutil.NewDefaultUserPreferences()
 }
 
 func (s *Snapshot) FormatOptions() *lsutil.FormatCodeSettings {
-	return s.config.Ts.FormatCodeSettings
+	return s.config.ts.FormatCodeSettings
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {
@@ -391,7 +391,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.config.Ts)
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.config.ts)
 	}
 	prepareAutoImports := tspath.Path("")
 	if change.ResourceRequest.AutoImports != "" {
@@ -405,7 +405,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config.Ts,
+		UserPreferences: config.ts,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())

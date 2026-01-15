@@ -864,7 +864,7 @@ func TestSession(t *testing.T) {
 
 		session.Configure(project.NewConfig(nil))
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := session.Config().Ts
+		newPrefs := session.Config().Ts()
 		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
 		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
 

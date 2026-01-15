@@ -1,12 +1,15 @@
 package project
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 )
 
 type Config struct {
+	mu sync.Mutex
 	js *lsutil.UserPreferences
-	Ts *lsutil.UserPreferences
+	ts *lsutil.UserPreferences
 	// tsserverOptions
 }
 
@@ -14,26 +17,36 @@ type Config struct {
 func NewConfig(userPreferences *lsutil.UserPreferences) *Config {
 	return &Config{
 		js: userPreferences.CopyOrDefault(),
-		Ts: userPreferences.CopyOrDefault(),
+		ts: userPreferences.CopyOrDefault(),
 	}
 }
 
 func (c *Config) Copy() *Config {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return &Config{
-		Ts: c.Ts.CopyOrDefault(),
+		ts: c.ts.CopyOrDefault(),
 		js: c.js.CopyOrDefault(),
 	}
 }
 
 // any non-nil field in b is copied into a
 func (a *Config) CopyInto(b *Config) *Config {
-	if b.Ts != nil {
-		a.Ts = b.Ts.Copy()
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if b.ts != nil {
+		a.ts = b.ts.Copy()
 	}
 	if b.js != nil {
 		a.js = b.js.Copy()
 	}
 	return a
+}
+
+func (c *Config) Ts() *lsutil.UserPreferences {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.ts.CopyOrDefault()
 }
 
 func ParseConfiguration(items []any) *Config {
@@ -45,7 +58,7 @@ func ParseConfiguration(items []any) *Config {
 		} else if config, ok := item.(map[string]any); ok {
 			newConfig := &Config{}
 			if i < 2 {
-				newConfig.Ts = defaultConfig.Ts.ParseWorker(config)
+				newConfig.ts = defaultConfig.ts.ParseWorker(config)
 			} else {
 				newConfig.js = defaultConfig.js.ParseWorker(config)
 			}
