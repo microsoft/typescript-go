@@ -813,6 +813,7 @@ const completionPlus = new Map([
 function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): VerifyCompletionsCmd | undefined {
     let marker: string | undefined;
     let goArgs: VerifyCompletionsArgs | undefined;
+    const defaultGoArgs: VerifyCompletionsArgs = { preferences: "nil /*preferences*/" };
     const obj = getObjectLiteralExpression(arg);
     if (!obj) {
         console.error(`Expected object literal expression in verify.completions, got ${arg.getText()}`);
@@ -952,13 +953,13 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     expected += "\n}";
                 }
                 if (propName === "includes") {
-                    (goArgs ??= {}).includes = expected;
+                    (goArgs ??= defaultGoArgs).includes = expected;
                 }
                 else if (propName === "exact") {
-                    (goArgs ??= {}).exact = expected;
+                    (goArgs ??= defaultGoArgs).exact = expected;
                 }
                 else {
-                    (goArgs ??= {}).unsorted = expected;
+                    (goArgs ??= defaultGoArgs).unsorted = expected;
                 }
                 break;
             }
@@ -977,7 +978,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     }
                 }
                 excludes += "\n}";
-                (goArgs ??= {}).excludes = excludes;
+                (goArgs ??= defaultGoArgs).excludes = excludes;
                 break;
             }
             case "isNewIdentifierLocation":
@@ -985,7 +986,19 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     isNewIdentifierLocation = true;
                 }
                 break;
-            case "preferences":
+            case "preferences": {
+                if (!ts.isObjectLiteralExpression(init)) {
+                    console.error(`Expected object literal for user preferences, got ${init.getText()}`);
+                    return undefined;
+                }
+                const preferences = parseUserPreferences(init);
+                if (!preferences) {
+                    console.error(`Unrecognized user preferences: ${init.getText()}`);
+                    return undefined;
+                }
+                (goArgs ??= defaultGoArgs).preferences = preferences;
+                break;
+            }
             case "triggerCharacter":
                 break; // !!! parse once they're supported in fourslash
             case "defaultCommitCharacters":
@@ -1147,6 +1160,18 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                             },
                         },`);
                     }
+                    else if (init.getText().startsWith("completion.CompletionSource.")) {
+                        const source = init.getText().slice("completion.CompletionSource.".length);
+                        switch (source) {
+                            // Ignore switch snippet sources
+                            case "SwitchCases": {
+                                continue;
+                            }
+                            default:
+                                console.error(`Unrecognized source in expected completion item: ${init.getText()}`);
+                                return undefined;
+                        }
+                    }
                     else {
                         console.error(`Expected string literal for source/sourceDisplay, got ${init.getText()}`);
                         return undefined;
@@ -1168,6 +1193,11 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                     }
                     break;
                 }
+                case "isSnippet":
+                    if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                        itemProps.push(`InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),`);
+                    }
+                    break;
                 default:
                     console.error(`Unrecognized property in expected completion item: ${propName}`);
                     return undefined; // Unsupported property
@@ -1710,7 +1740,10 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                     preferences.push(`UseAliasesForRename: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "quotePreference":
-                    preferences.push(`QuotePreference: lsutil.QuotePreference(${prop.initializer.getText()})`);
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    preferences.push(`QuotePreference: lsutil.QuotePreference(${getGoStringLiteral(prop.initializer.text)})`);
                     break;
                 case "autoImportSpecifierExcludeRegexes":
                     const regexArrayArg = getArrayLiteralExpression(prop.initializer);
@@ -2771,6 +2804,7 @@ interface VerifyCompletionsArgs {
     excludes?: string;
     exact?: string;
     unsorted?: string;
+    preferences: string;
 }
 
 interface VerifyApplyCodeActionArgs {
@@ -3050,6 +3084,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
     Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}
     },
+    ${args?.preferences && !args.preferences.startsWith("nil") ? `UserPreferences: ${args.preferences},` : ""}
 }`;
     }
 
