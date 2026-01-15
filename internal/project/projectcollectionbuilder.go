@@ -292,7 +292,7 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 			retainProjectAndReferences(project)
 
 			// Retain all the ancestor projects
-			b.configFileRegistryBuilder.forEachConfigFileNameFor(openFile, openFilePath, func(configFileName string) {
+			b.configFileRegistryBuilder.forEachConfigFileNameFor(openFilePath, func(configFileName string) {
 				if ancestor := b.findOrCreateProject(configFileName, b.toPath(configFileName), projectLoadKindFind, logger); ancestor != nil {
 					retainProjectAndReferences(ancestor.Value())
 				}

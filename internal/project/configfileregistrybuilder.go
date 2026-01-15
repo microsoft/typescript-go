@@ -363,7 +363,8 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	logger.Log("Summarizing file changes")
 	hasExcessiveChanges := summary.HasExcessiveWatchEvents() && summary.IncludesWatchChangeOutsideNodeModules
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
-	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
+	deletedFiles := make(map[tspath.Path]string, summary.Deleted.Len())
+	createdOrDeletedConfigFiles := make(map[tspath.Path]struct{})
 	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
 	for uri := range summary.Changed.Keys() {
 		if tspath.ContainsIgnoredPath(string(uri)) {
@@ -371,7 +372,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		}
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
-		createdOrDeletedFiles[path] = struct{}{}
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			createdOrDeletedConfigFiles[path] = struct{}{}
+		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 	for uri := range summary.Deleted.Keys() {
@@ -380,7 +384,11 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		}
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
-		createdOrDeletedFiles[path] = struct{}{}
+		deletedFiles[path] = fileName
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			createdOrDeletedConfigFiles[path] = struct{}{}
+		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 	for uri := range summary.Created.Keys() {
@@ -390,7 +398,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		createdFiles[path] = fileName
-		createdOrDeletedFiles[path] = struct{}{}
+		createdOrDeletedConfigFiles[path] = struct{}{}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 
@@ -423,24 +431,54 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	}
 
 	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
-	for path := range createdOrDeletedFiles {
-		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
-			if hasExcessiveChanges {
-				return c.invalidateCache(logger)
-			}
-			directoryPath := path.GetDirectoryPath()
-			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
-				if directoryPath.ContainsPath(entry.Key()) {
-					if affectedFiles == nil {
-						affectedFiles = make(map[tspath.Path]struct{})
-					}
-					affectedFiles[entry.Key()] = struct{}{}
-					entry.Delete()
-				}
-				return true
-			})
+	for path := range createdOrDeletedConfigFiles {
+		if hasExcessiveChanges {
+			return c.invalidateCache(logger)
 		}
+		directoryPath := path.GetDirectoryPath()
+		c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+			if directoryPath.ContainsPath(entry.Key()) {
+				if affectedFiles == nil {
+					affectedFiles = make(map[tspath.Path]struct{})
+				}
+				affectedFiles[entry.Key()] = struct{}{}
+				entry.Delete()
+			}
+			return true
+		})
+	}
+
+	// Handle deletions of wildcard-included root files
+	for path, fileName := range deletedFiles {
+		if hasExcessiveChanges {
+			return c.invalidateCache(logger)
+		}
+		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+			entry.ChangeIf(
+				func(config *configFileEntry) bool {
+					if config.pendingReload != PendingReloadNone || config.commandLine == nil {
+						return false
+					}
+					if _, ok := config.commandLine.FileNamesByPath()[path]; ok {
+						// If the file is included in FileNames() but not matched by literal "files", it must be
+						// included via wildcard, which means a reload of filenames will remove it from the list.
+						// (Files explicitly specified in "files" are always included in the ParsedCommandLine,
+						// triggering a missing root file error during program construction.)
+						return config.commandLine.GetMatchedFileSpec(fileName) == ""
+					}
+					return false
+				},
+				func(config *configFileEntry) {
+					config.pendingReload = PendingReloadFileNames
+					if affectedProjects == nil {
+						affectedProjects = make(map[tspath.Path]struct{})
+					}
+					maps.Copy(affectedProjects, config.retainingProjects)
+					logger.Logf("Root files for config %s changed", entry.Key())
+				},
+			)
+			return true
+		})
 	}
 
 	// Handle possible root file creation
@@ -557,8 +595,8 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	return configName
 }
 
-func (c *configFileRegistryBuilder) forEachConfigFileNameFor(fileName string, path tspath.Path, cb func(configFileName string)) {
-	if isDynamicFileName(fileName) {
+func (c *configFileRegistryBuilder) forEachConfigFileNameFor(path tspath.Path, cb func(configFileName string)) {
+	if isDynamicFileName(string(path)) {
 		return
 	}
 
