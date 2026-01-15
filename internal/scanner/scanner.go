@@ -1363,10 +1363,7 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
-			// Backslash not followed by valid unicode escape - treat as unknown token
-			// without reporting an error. The parser will handle this based on its state.
-			s.pos++
-			s.token = ast.KindUnknown
+			s.scanInvalidCharacter()
 		}
 		return s.token
 	}
