@@ -11,6 +11,8 @@ type SymbolTracker interface {
 	GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost
 
 	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool
+	IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) bool
+	TrackEntityName(entityName *ast.Node, enclosingDeclaration *ast.Node) bool
 	ReportInaccessibleThisError()
 	ReportPrivateInBaseOfClassExpression(propertyName string)
 	ReportInaccessibleUniqueSymbolError()

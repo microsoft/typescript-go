@@ -341,13 +341,113 @@ func (b *NodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
 }
 
 func (b *NodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
-	return nil // !!!
+	enclosingDeclaration := b.ctx.enclosingDeclaration
+	isValid := true
+
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if !isValid {
+			return true
+		}
+
+		if ast.IsEntityName(node) || ast.IsEntityNameExpression(node) {
+			parent := node.Parent
+			shouldCheck := false
+			dontVisitChildren := false
+			if parent != nil {
+				switch parent.Kind {
+				case ast.KindTypeReference:
+					if parent.AsTypeReference().TypeName == node {
+						shouldCheck = true
+						dontVisitChildren = true
+					}
+				case ast.KindExpressionWithTypeArguments:
+					if parent.AsExpressionWithTypeArguments().Expression == node {
+						shouldCheck = true
+						dontVisitChildren = true
+					}
+				case ast.KindTypeQuery:
+					if parent.AsTypeQueryNode().ExprName == node {
+						shouldCheck = true
+						dontVisitChildren = true
+					}
+				case ast.KindImportType:
+					if parent.AsImportTypeNode().Qualifier == node {
+						shouldCheck = true
+						dontVisitChildren = true
+					}
+				}
+			}
+
+			if shouldCheck {
+				if !b.ctx.tracker.IsEntityNameVisible(node, enclosingDeclaration) {
+					isValid = false
+					return true
+				}
+				if dontVisitChildren {
+					return false
+				}
+			}
+		}
+		return node.ForEachChild(visit)
+	}
+
+	existing.ForEachChild(visit)
+
+	if !isValid {
+		return nil
+	}
+
+	var track func(node *ast.Node) bool
+	track = func(node *ast.Node) bool {
+		if ast.IsEntityName(node) || ast.IsEntityNameExpression(node) {
+			parent := node.Parent
+			shouldTrack := false
+			dontVisitChildren := false
+			if parent != nil {
+				switch parent.Kind {
+				case ast.KindTypeReference:
+					if parent.AsTypeReference().TypeName == node {
+						shouldTrack = true
+						dontVisitChildren = true
+					}
+				case ast.KindExpressionWithTypeArguments:
+					if parent.AsExpressionWithTypeArguments().Expression == node {
+						shouldTrack = true
+						dontVisitChildren = true
+					}
+				case ast.KindTypeQuery:
+					if parent.AsTypeQueryNode().ExprName == node {
+						shouldTrack = true
+						dontVisitChildren = true
+					}
+				case ast.KindImportType:
+					if parent.AsImportTypeNode().Qualifier == node {
+						shouldTrack = true
+						dontVisitChildren = true
+					}
+				}
+			}
+
+			if shouldTrack {
+				b.ctx.tracker.TrackEntityName(node, enclosingDeclaration)
+				if dontVisitChildren {
+					return false
+				}
+			}
+		}
+		return node.ForEachChild(track)
+	}
+
+	existing.ForEachChild(track)
+
+	return b.f.DeepCloneNode(existing)
 }
 
 func (b *NodeBuilderImpl) tryReuseExistingTypeNode(typeNode *ast.TypeNode, t *Type, host *ast.Node, addUndefined bool) *ast.TypeNode {
 	originalType := t
 	if addUndefined {
-		t = b.ch.getOptionalType(t, !ast.IsParameter(host))
+		t = b.ch.addOptionalityEx(t, !ast.IsParameter(host), true)
 	}
 	clone := b.tryReuseExistingNonParameterTypeNode(typeNode, t, host, nil)
 	if clone != nil {
@@ -1990,7 +2090,18 @@ func (b *NodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *
 * @param symbol - The symbol is used both to find an existing annotation if declaration is not provided, and to determine if `unique symbol` should be printed
  */
 func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol) *ast.Node {
-	// !!! node reuse logic
+	// Reuse existing node logic
+	if declaration != nil {
+		node := (*declaration).AsNode()
+		typeNode := node.Type()
+		if typeNode != nil {
+			result := b.tryReuseExistingTypeNode(typeNode, t, node, true)
+			if result != nil {
+				return result
+			}
+		}
+	}
+
 	if symbol == nil {
 		symbol = b.ch.getSymbolOfDeclaration(declaration)
 	}
@@ -2010,7 +2121,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
 	addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver().requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
 	if addUndefinedForParameter {
-		t = b.ch.getOptionalType(t, false)
+		t = b.ch.addOptionalityEx(t, false, true)
 	}
 
 	restoreFlags := b.saveRestoreFlags()

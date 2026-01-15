@@ -163,6 +163,16 @@ func (s *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration
 	return issuedDiagnostic
 }
 
+func (s *SymbolTrackerImpl) IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) bool {
+	result := s.resolver.IsEntityNameVisible(entityName, enclosingDeclaration)
+	return result.Accessibility == printer.SymbolAccessibilityAccessible
+}
+
+func (s *SymbolTrackerImpl) TrackEntityName(entityName *ast.Node, enclosingDeclaration *ast.Node) bool {
+	result := s.resolver.IsEntityNameVisible(entityName, enclosingDeclaration)
+	return s.handleSymbolAccessibilityError(result)
+}
+
 func (s *SymbolTrackerImpl) handleSymbolAccessibilityError(symbolAccessibilityResult printer.SymbolAccessibilityResult) bool {
 	if symbolAccessibilityResult.Accessibility == printer.SymbolAccessibilityAccessible {
 		// Add aliases back onto the possible imports list if they're not there so we can try them again with updated visibility info
