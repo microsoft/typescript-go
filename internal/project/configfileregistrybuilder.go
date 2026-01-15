@@ -29,9 +29,10 @@ type configFileRegistryBuilder struct {
 	sessionOptions       *SessionOptions
 	customConfigFileName string
 
-	base            *ConfigFileRegistry
-	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
-	configFileNames *dirty.Map[tspath.Path, *configFileNames]
+	base                        *ConfigFileRegistry
+	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
+	configFileNames             *dirty.Map[tspath.Path, *configFileNames]
+	customConfigFileNameChanged bool
 }
 
 func newConfigFileRegistryBuilder(
@@ -43,11 +44,12 @@ func newConfigFileRegistryBuilder(
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
-		fs:                   fs,
-		base:                 oldConfigFileRegistry,
-		sessionOptions:       sessionOptions,
-		extendedConfigCache:  extendedConfigCache,
-		customConfigFileName: customConfigFileName,
+		fs:                          fs,
+		base:                        oldConfigFileRegistry,
+		sessionOptions:              sessionOptions,
+		extendedConfigCache:         extendedConfigCache,
+		customConfigFileName:        customConfigFileName,
+		customConfigFileNameChanged: customConfigFileName != oldConfigFileRegistry.customConfigFileName,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -74,6 +76,11 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	if configFileNames, changedNames := c.configFileNames.Finalize(); changedNames {
 		ensureCloned()
 		newRegistry.configFileNames = configFileNames
+	}
+
+	if c.customConfigFileNameChanged {
+		ensureCloned()
+		newRegistry.customConfigFileName = c.customConfigFileName
 	}
 
 	return newRegistry
@@ -321,6 +328,22 @@ type changeFileResult struct {
 
 func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
+}
+
+// DidChangeCustomConfigFileName invalidates cached file->config mappings when the
+// customConfigFileName preference changes. Open files recompute lazily on access.
+// Returns true if the preference actually changed.
+func (c *configFileRegistryBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) changeFileResult {
+	if !c.customConfigFileNameChanged {
+		return changeFileResult{}
+	}
+
+	logger.Logf("Custom config file name changed from %q to %q; invalidating cache",
+		c.base.customConfigFileName, c.customConfigFileName)
+
+	c.configFileNames.Clear()
+
+	return changeFileResult{}
 }
 
 func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) changeFileResult {

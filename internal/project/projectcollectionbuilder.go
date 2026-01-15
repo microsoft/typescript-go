@@ -36,8 +36,9 @@ type ProjectCollectionBuilder struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
 
-	newSnapshotID           uint64
-	programStructureChanged bool
+	newSnapshotID              uint64
+	programStructureChanged    bool
+	defaultProjectsInvalidated bool
 
 	fileDefaultProjects map[tspath.Path]tspath.Path
 	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
@@ -353,6 +354,10 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	startTime := time.Now()
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
+	if b.defaultProjectsInvalidated {
+		b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		return
+	}
 	if b.fs.isOpenFile(path) {
 		hasChanges := b.programStructureChanged
 
@@ -542,6 +547,20 @@ func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 			logger.Log(fmt.Sprintf("Updated ATA state for project %s", projectPath))
 		}
 	}
+}
+
+func (b *ProjectCollectionBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) {
+	configChangeResult := b.configFileRegistryBuilder.DidChangeCustomConfigFileName(logger)
+	if configChangeResult.IsEmpty() {
+		return
+	}
+
+	// logChangeFileResult(configChangeResult, logger)
+
+	// Invalidate default project cache and lazily recompute per requested file.
+	// Avoid eagerly updating every open project's program on preference change.
+	b.fileDefaultProjects = nil
+	b.defaultProjectsInvalidated = true
 }
 
 func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
