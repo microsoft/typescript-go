@@ -1496,7 +1496,7 @@ func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
 			}
 		}
 	case KindCallExpression:
-		if IsInJSFile(node) && isBindableObjectDefinePropertyCall(node) {
+		if IsInJSFile(node) && IsBindableObjectDefinePropertyCall(node) {
 			entityName := node.Arguments()[0]
 			if IsExportsIdentifier(entityName) || IsModuleExportsAccessExpression(entityName) {
 				return JSDeclarationKindObjectDefinePropertyExports
@@ -1507,7 +1507,7 @@ func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
 	return JSDeclarationKindNone
 }
 
-func isBindableObjectDefinePropertyCall(node *Node) bool {
+func IsBindableObjectDefinePropertyCall(node *Node) bool {
 	if args := node.Arguments(); len(args) == 3 {
 		if expr := node.Expression(); IsPropertyAccessExpression(expr) &&
 			IsIdentifier(expr.Expression()) && expr.Expression().Text() == "Object" &&
