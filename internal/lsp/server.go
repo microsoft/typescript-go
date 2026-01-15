@@ -247,8 +247,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 // PublishDiagnostics implements project.Client.
 func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
 	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
-	s.send(ctx, notification.Message())
-	return nil
+	return s.send(ctx, notification.Message())
 }
 
 func (s *Server) RefreshInlayHints(ctx context.Context) error {
@@ -454,16 +453,21 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	s.pendingServerRequests[*id] = responseChan
 	s.pendingServerRequestsMu.Unlock()
 
-	s.send(ctx, req.Message())
-
-	select {
-	case <-ctx.Done():
+	defer func() {
 		s.pendingServerRequestsMu.Lock()
 		defer s.pendingServerRequestsMu.Unlock()
 		if respChan, ok := s.pendingServerRequests[*id]; ok {
 			close(respChan)
 			delete(s.pendingServerRequests, *id)
 		}
+	}()
+
+	if err := s.send(ctx, req.Message()); err != nil {
+		return *new(Resp), err
+	}
+
+	select {
+	case <-ctx.Done():
 		return *new(Resp), ctx.Err()
 	case resp := <-responseChan:
 		if resp.Error != nil {
@@ -473,20 +477,20 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
-func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) {
-	s.sendResponse(ctx, &lsproto.ResponseMessage{
+func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) error {
+	return s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID:     id,
 		Result: result,
 	})
 }
 
-func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
+func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) error {
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
-	s.sendResponse(ctx, &lsproto.ResponseMessage{
+	return s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID: id,
 		Error: &lsproto.ResponseError{
 			Code:    int32(code),
@@ -495,17 +499,17 @@ func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
 	})
 }
 
-func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
-	s.send(ctx, resp.Message())
+func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) error {
+	return s.send(ctx, resp.Message())
 }
 
 // send writes a message to the outgoing queue, respecting context cancellation.
-func (s *Server) send(ctx context.Context, msg *lsproto.Message) {
+func (s *Server) send(ctx context.Context, msg *lsproto.Message) error {
 	select {
 	case s.outgoingQueue <- msg:
-		// sent
+		return nil
 	case <-ctx.Done():
-		// shutting down, drop message
+		return ctx.Err()
 	}
 }
 
