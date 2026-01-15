@@ -105,7 +105,7 @@ func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *
 // SerializeTypeForDeclaration implements NodeBuilderInterface.
 func (b *NodeBuilder) SerializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol))
+	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol, true))
 }
 
 // SerializeTypeForExpression implements NodeBuilderInterface.
