@@ -2081,7 +2081,13 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 	} else if ast.IsVariableDeclaration(declaration) && ast.IsFunctionExpressionOrArrowFunction(declaration.Initializer()) {
 		fn := declaration.Initializer()
 		typeParameters, parameters, asteriskToken := extractExpandoHostParams(fn)
+		saveDiag := tx.state.getSymbolAccessibilityDiagnostic
+		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(declaration)
+		saveSuppressNewDiagnosticContexts := tx.suppressNewDiagnosticContexts
+		tx.suppressNewDiagnosticContexts = true
 		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/))
+		tx.suppressNewDiagnosticContexts = saveSuppressNewDiagnosticContexts
+		tx.state.getSymbolAccessibilityDiagnostic = saveDiag
 	} else {
 		return
 	}

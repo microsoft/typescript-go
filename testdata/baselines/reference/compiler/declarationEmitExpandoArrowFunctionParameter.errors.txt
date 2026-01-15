@@ -1,0 +1,54 @@
+story.ts(8,14): error TS4023: Exported variable 'Default' has or is using name 'Props' from external module "component" but cannot be named.
+story.ts(13,1): error TS4032: Property 'args' of exported interface has or is using name 'Props' from private module '"component"'.
+
+
+==== component.ts (0 errors) ====
+    interface Props<T extends string = string> {
+        colors: Array<T>;
+        value: T;
+        onValueChange: (value: T) => void;
+        disabled?: boolean;
+    }
+    
+    declare function forwardRef<T, P>(
+        render: (props: P, ref: { current: T | null }) => string
+    ): (props: P & { ref?: { current: T | null } }) => string;
+    
+    type FixedForwardRef = <T, P = {}>(
+        render: (props: P, ref: { current: T | null }) => string
+    ) => (props: P & { ref?: { current: T | null } }) => string;
+    
+    const GenericForwardRef = forwardRef as FixedForwardRef;
+    
+    function Inner<T extends string>(
+        { disabled, value, onValueChange, colors }: Props<T>,
+        ref: { current: HTMLButtonElement | null }
+    ) {
+        return "rendered";
+    }
+    
+    export const ColorPicker = GenericForwardRef(Inner);
+    
+==== story.ts (2 errors) ====
+    import { ColorPicker } from "./component";
+    
+    type StoryFn<T> = ((args: T extends (props: infer P) => any ? P : never) => string) & {
+        args?: Partial<T extends (props: infer P) => any ? P : never>;
+    };
+    
+    // Story with StoryFn<typeof ImportedGenericComponent>
+    export const Default: StoryFn<typeof ColorPicker> = (args) => {
+                 ~~~~~~~
+!!! error TS4023: Exported variable 'Default' has or is using name 'Props' from external module "component" but cannot be named.
+        return "story";
+    };
+    
+    // Property assignment on arrow function - TRIGGERS PANIC
+    Default.args = {
+    ~~~~~~~~~~~~~~~~
+        disabled: false,
+    ~~~~~~~~~~~~~~~~~~~~
+    };
+    ~
+!!! error TS4032: Property 'args' of exported interface has or is using name 'Props' from private module '"component"'.
+    
