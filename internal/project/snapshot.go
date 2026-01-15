@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"strings"
 	"sync/atomic"
 	"time"
 
@@ -110,33 +109,16 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) GetPreference(activeFile string) *lsutil.UserPreferences {
-	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
-	if tspath.ExtensionIsTs(fileEnding) {
-		if s.config.ts != nil {
-			return s.config.ts
-		} else if s.config.js != nil {
-			return s.config.js
-		}
-	} else {
-		if s.config.js != nil {
-			return s.config.js
-		} else if s.config.ts != nil {
-			return s.config.ts
-		}
-	}
-	return lsutil.NewDefaultUserPreferences()
+func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
+	return s.config.GetPreference(activeFile)
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	if s.config.ts != nil {
-		return s.config.ts
+	// returns `ts` config
+	if s.config.Ts() != nil {
+		return s.config.Ts()
 	}
 	return lsutil.NewDefaultUserPreferences()
-}
-
-func (s *Snapshot) FormatOptions() *lsutil.FormatCodeSettings {
-	return s.config.ts.FormatCodeSettings
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {

@@ -235,8 +235,7 @@ func (s *Session) Configure(config *Config) {
 }
 
 func (s *Session) InitializeWithConfig(config *Config) {
-	config.ts = config.ts.CopyOrDefault()
-	s.initialConfig = config
+	s.initialConfig = config.Copy() // initializes with non-nil config
 	s.Configure(s.initialConfig)
 }
 

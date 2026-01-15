@@ -1,13 +1,13 @@
 package project
 
 import (
-	"sync"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type Config struct {
-	mu sync.Mutex
 	js *lsutil.UserPreferences
 	ts *lsutil.UserPreferences
 	// tsserverOptions
@@ -22,8 +22,6 @@ func NewConfig(userPreferences *lsutil.UserPreferences) *Config {
 }
 
 func (c *Config) Copy() *Config {
-	c.mu.Lock()
-	defer c.mu.Unlock()
 	return &Config{
 		ts: c.ts.CopyOrDefault(),
 		js: c.js.CopyOrDefault(),
@@ -32,21 +30,47 @@ func (c *Config) Copy() *Config {
 
 // any non-nil field in b is copied into a
 func (a *Config) CopyInto(b *Config) *Config {
-	a.mu.Lock()
-	defer a.mu.Unlock()
+	newConfig := &Config{}
+
 	if b.ts != nil {
-		a.ts = b.ts.Copy()
+		newConfig.ts = b.ts.Copy()
+	} else {
+		newConfig.ts = a.ts.Copy()
 	}
+
 	if b.js != nil {
-		a.js = b.js.Copy()
+		newConfig.js = b.js.Copy()
+	} else {
+		newConfig.js = a.js.Copy()
 	}
+
 	return a
 }
 
 func (c *Config) Ts() *lsutil.UserPreferences {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	return c.ts.CopyOrDefault()
+	return c.ts
+}
+
+func (c *Config) Js() *lsutil.UserPreferences {
+	return c.js
+}
+
+func (c *Config) GetPreference(activeFile string) *lsutil.UserPreferences {
+	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
+	if tspath.ExtensionIsTs(fileEnding) {
+		if c.ts != nil {
+			return c.ts
+		} else if c.js != nil {
+			return c.js
+		}
+	} else {
+		if c.js != nil {
+			return c.js
+		} else if c.ts != nil {
+			return c.ts
+		}
+	}
+	return lsutil.NewDefaultUserPreferences()
 }
 
 func ParseConfiguration(items []any) *Config {

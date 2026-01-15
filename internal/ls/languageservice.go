@@ -31,7 +31,7 @@ func NewLanguageService(
 		host:                    host,
 		program:                 program,
 		converters:              host.Converters(),
-		activeConfig:            host.GetPreference(activeFile),
+		activeConfig:            host.GetPreferences(activeFile),
 		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
 	}
 }
