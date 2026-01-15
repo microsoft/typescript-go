@@ -29,7 +29,7 @@
 // === /a.js ===
 // let obj = {};
 // 
-// Object.defineProperty(obj, `prop`, { value: 0 });
+// Object.defineProperty(obj, `[|propRENAME|]`, { value: 0 });
 // 
 // obj = {
 //     [`[|propRENAME|]`]: 1

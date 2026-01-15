@@ -5,8 +5,9 @@
  // let obj = {};
  // 
 -// Object.defineProperty(obj, `/*RENAME*/[|propRENAME|]`, { value: 0 });
--// 
--// obj = {
++// Object.defineProperty(obj, `/*RENAME*/prop`, { value: 0 });
+ // 
+ // obj = {
 -//     [`[|propRENAME|]`]: 1
 -// };
 -// 
@@ -14,63 +15,33 @@
 -// obj['[|propRENAME|]'];
 -// obj["[|propRENAME|]"];
 -// obj[`[|propRENAME|]`];
--
--
--
--// === findRenameLocations ===
--// === /a.js ===
--// let obj = {};
--// 
++//     [`prop`]: 1
++// --- (line: 7) skipped ---
+
+
+
+@@= skipped -17, +12 lines =@@
+ // === /a.js ===
+ // let obj = {};
+ // 
 -// Object.defineProperty(obj, `[|propRENAME|]`, { value: 0 });
--// 
--// obj = {
++// Object.defineProperty(obj, `prop`, { value: 0 });
+ // 
+ // obj = {
 -//     [`/*RENAME*/[|propRENAME|]`]: 1
--// };
--// 
++//     [`/*RENAME*/prop`]: 1
+ // };
+ // 
 -// obj.[|propRENAME|];
 -// obj['[|propRENAME|]'];
 -// obj["[|propRENAME|]"];
 -// obj[`[|propRENAME|]`];
--
--
--
--// === findRenameLocations ===
--// === /a.js ===
--// let obj = {};
--// 
--// Object.defineProperty(obj, `[|propRENAME|]`, { value: 0 });
-+// Object.defineProperty(obj, `/*RENAME*/prop`, { value: 0 });
-+// 
-+// obj = {
-+//     [`prop`]: 1
-+// --- (line: 7) skipped ---
-+
-+
-+
-+// === findRenameLocations ===
-+// === /a.js ===
-+// let obj = {};
-+// 
-+// Object.defineProperty(obj, `prop`, { value: 0 });
-+// 
-+// obj = {
-+//     [`/*RENAME*/prop`]: 1
-+// };
-+// 
 +// obj.prop;
 +// --- (line: 10) skipped ---
-+
-+
-+
-+// === findRenameLocations ===
-+// === /a.js ===
-+// let obj = {};
-+// 
-+// Object.defineProperty(obj, `prop`, { value: 0 });
- // 
- // obj = {
- //     [`[|propRENAME|]`]: 1
-@@= skipped -49, +42 lines =@@
+
+
+
+@@= skipped -32, +30 lines =@@
 
  // === findRenameLocations ===
  // === /a.js ===
