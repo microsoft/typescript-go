@@ -809,7 +809,7 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 			// A `rootDir` compiler option strongly indicates the root location
 			rootDir = r.compilerOptions.RootDir
 		} else if r.compilerOptions.ConfigFilePath != "" {
-			// A project with common src dir set to `.`, so it shouldn't need to check any other locations
+			// When no explicit rootDir is set, treat the config file's directory as the project root, which establishes the common source directory, so no other locations need to be checked.
 			rootDir = tspath.GetDirectoryPath(r.compilerOptions.ConfigFilePath)
 		} else {
 			diagnostic := ast.NewDiagnostic(
