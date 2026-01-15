@@ -239,6 +239,14 @@ type PropertiesTypesKey struct {
 	includeOrigin bool
 }
 
+// NonExistentPropertyKey
+
+type NonExistentPropertyKey struct {
+	propNode       *ast.Node
+	containingType *Type
+	isUncheckedJS  bool
+}
+
 // FlowLoopKey
 
 type FlowLoopKey struct {
@@ -869,6 +877,7 @@ type Checker struct {
 	ambientModules                              []*ast.Symbol
 	withinUnreachableCode                       bool
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
+	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 
 	mu sync.Mutex
 }
@@ -11190,6 +11199,11 @@ func (c *Checker) checkPrivateIdentifierPropertyAccess(leftType *Type, right *as
 }
 
 func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *Type, isUncheckedJS bool) {
+	key := NonExistentPropertyKey{propNode, containingType, isUncheckedJS}
+	if c.nonExistentProperties.Has(key) {
+		return
+	}
+	c.nonExistentProperties.Add(key)
 	if ast.IsJSDocNameReferenceContext(propNode) {
 		return
 	}
