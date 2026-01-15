@@ -249,7 +249,7 @@ Open Files::
 }
 
 Projects::
-  [/dummy/tsconfig.json] 
+  [/dummy/tsconfig.json] *modified*
     /dummy/dummy.ts  
   [/myproject/tsconfig-src.json] *deleted*
     /myproject/src/helpers/functions.ts  

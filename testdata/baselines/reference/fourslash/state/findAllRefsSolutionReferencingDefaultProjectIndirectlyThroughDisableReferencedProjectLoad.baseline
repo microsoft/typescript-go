@@ -409,7 +409,7 @@ Projects::
   [/dev/null/inferred] *deleted*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/dummy/tsconfig.json] 
+  [/dummy/tsconfig.json] *modified*
     /dummy/dummy.ts  
 Open Files::
   [/dummy/dummy.ts] *new*

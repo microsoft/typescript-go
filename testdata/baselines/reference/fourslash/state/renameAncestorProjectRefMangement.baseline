@@ -186,6 +186,13 @@ Open Files::
   }
 }
 
+Projects::
+  [/projects/container/compositeExec/tsconfig.json] 
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/tsconfig.json] 
+  [/projects/temp/tsconfig.json] *modified*
+    /projects/temp/temp.ts  
 Open Files::
   [/projects/container/compositeExec/index.ts] 
     /projects/container/compositeExec/tsconfig.json  (default) 
@@ -235,7 +242,7 @@ Projects::
     /projects/container/lib/index.ts            
     /projects/container/compositeExec/index.ts  
   [/projects/container/tsconfig.json] *deleted*
-  [/projects/temp/tsconfig.json] 
+  [/projects/temp/tsconfig.json] *modified*
     /projects/temp/temp.ts  
 Open Files::
   [/projects/temp/temp.ts] *new*

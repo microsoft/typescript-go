@@ -375,6 +375,15 @@ Open Files::
   }
 }
 
+Projects::
+  [/myproject/dependency/tsconfig.json] 
+    /myproject/dependency/FnS.ts  
+  [/myproject/main/tsconfig.json] 
+    /myproject/decls/FnS.d.ts  
+    /myproject/main/main.ts    
+  [/myproject/tsconfig.json] 
+  [/random/tsconfig.json] *modified*
+    /random/random.ts  
 Open Files::
   [/myproject/dependency/FnS.ts] 
     /myproject/dependency/tsconfig.json  (default) 
@@ -426,7 +435,7 @@ Projects::
     /myproject/decls/FnS.d.ts  
     /myproject/main/main.ts    
   [/myproject/tsconfig.json] *deleted*
-  [/random/tsconfig.json] 
+  [/random/tsconfig.json] *modified*
     /random/random.ts  
 Open Files::
   [/random/random.ts] *new*
