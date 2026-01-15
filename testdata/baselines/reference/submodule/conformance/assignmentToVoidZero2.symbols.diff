@@ -9,9 +9,7 @@
  >j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
 
  exports.k = void 0;
-+>exports.k : Symbol(k, Decl(assignmentToVoidZero2.js, 0, 14))
  >exports : Symbol("assignmentToVoidZero2", Decl(assignmentToVoidZero2.js, 0, 0))
-+>k : Symbol(k, Decl(assignmentToVoidZero2.js, 0, 14))
 
  var o = {}
 ->o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3), Decl(assignmentToVoidZero2.js, 2, 10))
@@ -27,9 +25,7 @@
 
  o.y = void 0
 ->o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3), Decl(assignmentToVoidZero2.js, 2, 10))
-+>o.y : Symbol(y, Decl(assignmentToVoidZero2.js, 3, 7))
 +>o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3))
-+>y : Symbol(y, Decl(assignmentToVoidZero2.js, 3, 7))
 
  o.x + o.y
 ->o.x : Symbol(o.x, Decl(assignmentToVoidZero2.js, 2, 10))
@@ -39,9 +35,7 @@
 +>o.x : Symbol(x, Decl(assignmentToVoidZero2.js, 2, 10))
 +>o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3))
 +>x : Symbol(x, Decl(assignmentToVoidZero2.js, 2, 10))
-+>o.y : Symbol(y, Decl(assignmentToVoidZero2.js, 3, 7))
 +>o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3))
-+>y : Symbol(y, Decl(assignmentToVoidZero2.js, 3, 7))
 
  function C() {
  >C : Symbol(C, Decl(assignmentToVoidZero2.js, 5, 9))

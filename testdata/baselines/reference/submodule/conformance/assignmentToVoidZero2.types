@@ -10,27 +10,27 @@ exports.j = 1;
 
 exports.k = void 0;
 >exports.k = void 0 : undefined
->exports.k : undefined
+>exports.k : any
 >exports : typeof import("assignmentToVoidZero2")
->k : undefined
+>k : any
 >void 0 : undefined
 >0 : 0
 
 var o = {}
->o : { x: number; y: any; }
->{} : { x: number; y: any; }
+>o : { x: number; }
+>{} : { x: number; }
 
 o.x = 1
 >o.x = 1 : 1
 >o.x : number
->o : { x: number; y: any; }
+>o : { x: number; }
 >x : number
 >1 : 1
 
 o.y = void 0
 >o.y = void 0 : undefined
 >o.y : any
->o : { x: number; y: any; }
+>o : { x: number; }
 >y : any
 >void 0 : undefined
 >0 : 0
@@ -38,10 +38,10 @@ o.y = void 0
 o.x + o.y
 >o.x + o.y : any
 >o.x : number
->o : { x: number; y: any; }
+>o : { x: number; }
 >x : number
 >o.y : any
->o : { x: number; y: any; }
+>o : { x: number; }
 >y : any
 
 function C() {
@@ -79,10 +79,10 @@ c.p + c.q
 === importer.js ===
 import { j, k } from './assignmentToVoidZero2'
 >j : 1
->k : undefined
+>k : any
 
 j + k
 >j + k : any
 >j : 1
->k : undefined
+>k : any
 

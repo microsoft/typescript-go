@@ -16,7 +16,6 @@ class Foo {
     member = 10;
 }
 module.exports = new Foo();
-export var additional = 20;
 module.exports.additional = 20;
 
 

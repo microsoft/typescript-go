@@ -20,7 +20,6 @@ exports.default = validate;
 //// [index.js]
 const m = require("./exporter");
 module.exports = m.default;
-export var memberName = "thing";
 module.exports.memberName = "thing";
 
 

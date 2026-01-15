@@ -14,12 +14,9 @@ apply()
 
 //// [moduleExportAliasDuplicateAlias.js]
 "use strict";
-export var apply = undefined;
 module.exports.apply = undefined;
 function a() { }
-export var apply = a;
 module.exports.apply = a;
-export var apply = a;
 module.exports.apply = a;
 module.exports.apply();
 //// [test.js]

@@ -1,30 +1,14 @@
 --- old.modulePreserve4.js
 +++ new.modulePreserve4.js
-@@= skipped -108, +108 lines =@@
-
- //// [a.js]
- export const x = 0;
-+export var y = 0;
- module.exports.y = 0; // Error
- //// [b.js]
- export default 0;
-@@= skipped -14, +15 lines =@@
+@@= skipped -122, +122 lines =@@
  //// [f.cjs]
  export default 0;
  //// [g.js]
 -"use strict";
-+export var default = 0;
  exports.default = 0;
  //// [main1.js]
  import { x, y } from "./a"; // No y
-@@= skipped -66, +66 lines =@@
- import g1 from "./g"; // { default: 0 }
- const g2 = require("./g"); // { default: 0 }
- //// [main4.cjs]
-+export var x = require("./g");
- exports.x = require("./g");
- //// [dummy.js]
- export {}; // Silly test harness
+@@= skipped -72, +71 lines =@@
 
 
  //// [a.d.ts]
@@ -37,7 +21,7 @@
  export default _default;
  //// [c.d.ts]
  declare const _default: {
-@@= skipped -19, +21 lines =@@
+@@= skipped -13, +14 lines =@@
  declare const _default: () => void;
  export = _default;
  //// [e.d.mts]

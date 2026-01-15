@@ -109,7 +109,6 @@ export {}; // Silly test harness
 
 //// [a.js]
 export const x = 0;
-export var y = 0;
 module.exports.y = 0; // Error
 //// [b.js]
 export default 0;
@@ -124,7 +123,6 @@ module.exports = 0;
 //// [f.cjs]
 export default 0;
 //// [g.js]
-export var default = 0;
 exports.default = 0;
 //// [main1.js]
 import { x, y } from "./a"; // No y
@@ -190,7 +188,6 @@ const f2 = require("./f.cjs"); // { default: 0 }
 import g1 from "./g"; // { default: 0 }
 const g2 = require("./g"); // { default: 0 }
 //// [main4.cjs]
-export var x = require("./g");
 exports.x = require("./g");
 //// [dummy.js]
 export {}; // Silly test harness

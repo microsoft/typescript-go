@@ -23,4 +23,6 @@
 ->chrome : Symbol(chrome, Decl(index.js, 0, 3), Decl(index.js, 1, 22), Decl(index.js, 1, 74))
 ->devtools : Symbol(chrome.devtools, Decl(index.js, 0, 15), Decl(index.js, 2, 7))
 ->inspectedWindow : Symbol(chrome.devtools.inspectedWindow, Decl(index.js, 1, 74))
++>chrome.devtools : Symbol('devtools', Decl(index.js, 0, 15))
 +>chrome : Symbol(chrome, Decl(index.js, 0, 3))
++>devtools : Symbol('devtools', Decl(index.js, 0, 15))

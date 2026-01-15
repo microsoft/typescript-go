@@ -13,5 +13,7 @@ Object.defineProperty(chrome, 'devtools', { value: {}, enumerable: true })
 >enumerable : Symbol(enumerable, Decl(index.js, 1, 54))
 
 chrome.devtools.inspectedWindow = {}
+>chrome.devtools : Symbol('devtools', Decl(index.js, 0, 15))
 >chrome : Symbol(chrome, Decl(index.js, 0, 3))
+>devtools : Symbol('devtools', Decl(index.js, 0, 15))
 
