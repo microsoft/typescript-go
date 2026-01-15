@@ -87,15 +87,5 @@ import { ColorPicker } from "./component";
 type StoryFn<T> = ((args: T extends (props: infer P) => any ? P : never) => string) & {
     args?: Partial<T extends (props: infer P) => any ? P : never>;
 };
-export declare function Default(args: Props<string> & {
-    ref?: {
-        current: HTMLButtonElement | null;
-    } | undefined;
-}): string;
-export declare namespace Default {
-    var args: Partial<Props<string> & {
-        ref?: {
-            current: HTMLButtonElement | null;
-        } | undefined;
-    }> | undefined;
-}
+export declare const Default: StoryFn<typeof ColorPicker>;
+export {};
