@@ -340,6 +340,31 @@ func (b *NodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
 	}
 }
 
+func isEntityNameInTypePosition(node *ast.Node) (shouldCheckOrTrack bool, dontVisitChildren bool) {
+	parent := node.Parent
+	if parent != nil {
+		switch parent.Kind {
+		case ast.KindTypeReference:
+			if parent.AsTypeReference().TypeName == node {
+				return true, true
+			}
+		case ast.KindExpressionWithTypeArguments:
+			if parent.AsExpressionWithTypeArguments().Expression == node {
+				return true, true
+			}
+		case ast.KindTypeQuery:
+			if parent.AsTypeQueryNode().ExprName == node {
+				return true, true
+			}
+		case ast.KindImportType:
+			if parent.AsImportTypeNode().Qualifier == node {
+				return true, true
+			}
+		}
+	}
+	return false, false
+}
+
 func (b *NodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
 	enclosingDeclaration := b.ctx.enclosingDeclaration
 	isValid := true
@@ -351,33 +376,7 @@ func (b *NodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode)
 		}
 
 		if ast.IsEntityName(node) || ast.IsEntityNameExpression(node) {
-			parent := node.Parent
-			shouldCheck := false
-			dontVisitChildren := false
-			if parent != nil {
-				switch parent.Kind {
-				case ast.KindTypeReference:
-					if parent.AsTypeReference().TypeName == node {
-						shouldCheck = true
-						dontVisitChildren = true
-					}
-				case ast.KindExpressionWithTypeArguments:
-					if parent.AsExpressionWithTypeArguments().Expression == node {
-						shouldCheck = true
-						dontVisitChildren = true
-					}
-				case ast.KindTypeQuery:
-					if parent.AsTypeQueryNode().ExprName == node {
-						shouldCheck = true
-						dontVisitChildren = true
-					}
-				case ast.KindImportType:
-					if parent.AsImportTypeNode().Qualifier == node {
-						shouldCheck = true
-						dontVisitChildren = true
-					}
-				}
-			}
+			shouldCheck, dontVisitChildren := isEntityNameInTypePosition(node)
 
 			if shouldCheck {
 				if !b.ctx.tracker.IsEntityNameVisible(node, enclosingDeclaration) {
@@ -401,33 +400,7 @@ func (b *NodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode)
 	var track func(node *ast.Node) bool
 	track = func(node *ast.Node) bool {
 		if ast.IsEntityName(node) || ast.IsEntityNameExpression(node) {
-			parent := node.Parent
-			shouldTrack := false
-			dontVisitChildren := false
-			if parent != nil {
-				switch parent.Kind {
-				case ast.KindTypeReference:
-					if parent.AsTypeReference().TypeName == node {
-						shouldTrack = true
-						dontVisitChildren = true
-					}
-				case ast.KindExpressionWithTypeArguments:
-					if parent.AsExpressionWithTypeArguments().Expression == node {
-						shouldTrack = true
-						dontVisitChildren = true
-					}
-				case ast.KindTypeQuery:
-					if parent.AsTypeQueryNode().ExprName == node {
-						shouldTrack = true
-						dontVisitChildren = true
-					}
-				case ast.KindImportType:
-					if parent.AsImportTypeNode().Qualifier == node {
-						shouldTrack = true
-						dontVisitChildren = true
-					}
-				}
-			}
+			shouldTrack, dontVisitChildren := isEntityNameInTypePosition(node)
 
 			if shouldTrack {
 				b.ctx.tracker.TrackEntityName(node, enclosingDeclaration)
