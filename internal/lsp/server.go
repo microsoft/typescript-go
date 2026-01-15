@@ -477,20 +477,20 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
-func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) error {
-	return s.sendResponse(ctx, &lsproto.ResponseMessage{
+func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) {
+	s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID:     id,
 		Result: result,
 	})
 }
 
-func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) error {
+func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
-	return s.sendResponse(ctx, &lsproto.ResponseMessage{
+	s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID: id,
 		Error: &lsproto.ResponseError{
 			Code:    int32(code),
@@ -499,8 +499,8 @@ func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) error
 	})
 }
 
-func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) error {
-	return s.send(ctx, resp.Message())
+func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
+	_ = s.send(ctx, resp.Message())
 }
 
 // send writes a message to the outgoing queue, respecting context cancellation.
