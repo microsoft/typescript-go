@@ -555,10 +555,6 @@ func (b *ProjectCollectionBuilder) DidChangeCustomConfigFileName(logger *logging
 		return
 	}
 
-	// logChangeFileResult(configChangeResult, logger)
-
-	// Invalidate default project cache and lazily recompute per requested file.
-	// Avoid eagerly updating every open project's program on preference change.
 	b.fileDefaultProjects = nil
 	b.defaultProjectsInvalidated = true
 }
