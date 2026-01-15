@@ -116,9 +116,10 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
-// GetRedirectTargets implements checker.Program.
+// GetRedirectTargets returns the list of file paths that redirect to the given path.
+// These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
-	return nil // !!! TODO: project references support
+	return p.redirectTargetsMap[path]
 }
 
 // gets the original file that was included in program
@@ -245,6 +246,13 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	newOpts.Host = newHost
 	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
+		return NewProgram(newOpts), false
+	}
+	// If this file is part of a package redirect group (same package installed in multiple
+	// node_modules locations), we need to rebuild the program because the redirect targets
+	// might need recalculation.
+	if p.deduplicatedPaths.Has(changedFilePath) {
+		// File is either a canonical file or a redirect target; either way, need full rebuild
 		return NewProgram(newOpts), false
 	}
 	// TODO: reverify compiler options when config has changed?
@@ -433,17 +441,22 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		diagnostics := make([][]*ast.Diagnostic, len(p.files))
-		wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
-		for i, file := range p.files {
-			wg.Queue(func() {
-				diagnostics[i] = collect(ctx, file)
-			})
-		}
-		wg.RunAndWait()
+		diagnostics := p.collectDiagnosticsFromFiles(ctx, p.files, concurrent, collect)
 		result = slices.Concat(diagnostics...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
+}
+
+func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
+	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
+	wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
+	for i, file := range sourceFiles {
+		wg.Queue(func() {
+			diagnostics[i] = collect(ctx, file)
+		})
+	}
+	wg.RunAndWait()
+	return diagnostics
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -468,9 +481,10 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
+	diagnostics := p.collectDiagnosticsFromFiles(ctx, sourceFiles, true /*concurrent*/, p.getBindAndCheckDiagnosticsForFile)
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
-	for _, file := range sourceFiles {
-		result[file] = SortAndDeduplicateDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, file))
+	for i, diags := range diagnostics {
+		result[sourceFiles[i]] = SortAndDeduplicateDiagnostics(diags)
 	}
 	return result
 }
