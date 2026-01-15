@@ -67,9 +67,12 @@ func (l *LanguageService) ProvideDefinition(
 	declarations := getDeclarationsFromLocation(c, node)
 	calledDeclaration := tryGetSignatureDeclaration(c, node)
 	if calledDeclaration != nil {
-		// If we can resolve a call signature, remove all function-like declarations and add that signature.
-		nonFunctionDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
-		declarations = append(nonFunctionDeclarations, calledDeclaration)
+		// If we can resolve a call signature, remove all function-like declarations (except accessors) and add that signature.
+		// Accessors are kept because they show where the callable value comes from.
+		nonFunctionOrAccessorDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool {
+			return !ast.IsFunctionLike(node) || ast.IsAccessor(node)
+		})
+		declarations = append(nonFunctionOrAccessorDeclarations, calledDeclaration)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, reference), nil
 }
