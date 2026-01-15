@@ -26,8 +26,9 @@ apply();
 
 
 //// [moduleExportAliasDuplicateAlias.d.ts]
-export declare var apply: undefined;
-export declare var apply: undefined;
-export declare var apply: undefined;
+export declare var apply: typeof a | undefined;
+declare function a(): void;
+export declare var apply: typeof a | undefined;
+export declare var apply: typeof a | undefined;
 //// [test.d.ts]
 export {};

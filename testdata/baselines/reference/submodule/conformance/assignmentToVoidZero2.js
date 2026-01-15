@@ -41,7 +41,7 @@ assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
 
 
 //// [assignmentToVoidZero2.d.ts]
-export declare var j: number;
+export declare var j: 1;
 declare namespace o {
     var x: number;
 }

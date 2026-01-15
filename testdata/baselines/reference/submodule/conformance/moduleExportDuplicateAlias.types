@@ -2,21 +2,21 @@
 
 === test.js ===
 const { apply } = require('./moduleExportAliasDuplicateAlias')
->apply : undefined
+>apply : (() => void) | undefined
 >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
 >require : any
 >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
 
 apply()
->apply() : any
->apply : undefined
+>apply() : void
+>apply : (() => void) | undefined
 
 === moduleExportAliasDuplicateAlias.js ===
 exports.apply = undefined;
 >exports.apply = undefined : undefined
->exports.apply : undefined
+>exports.apply : (() => void) | undefined
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : undefined
+>apply : (() => void) | undefined
 >undefined : undefined
 
 function a() { }
@@ -30,14 +30,14 @@ exports.apply()
 
 exports.apply = a;
 >exports.apply = a : () => void
->exports.apply : undefined
+>exports.apply : (() => void) | undefined
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : undefined
+>apply : (() => void) | undefined
 >a : () => void
 
 exports.apply()
->exports.apply() : any
->exports.apply : undefined
+>exports.apply() : void
+>exports.apply : () => void
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : undefined
+>apply : () => void
 

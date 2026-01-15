@@ -26,4 +26,4 @@ declare class Foo {
 }
 declare const _default: Foo;
 export = _default;
-export declare var additional: number;
+export declare var additional: 20;

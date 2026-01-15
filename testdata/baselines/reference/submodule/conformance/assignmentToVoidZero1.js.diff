@@ -6,5 +6,5 @@
  //// [assignmentToVoidZero1.d.ts]
 -export const x: 1;
 -export const y: 2;
-+export declare var x: number;
-+export declare var y: number;
++export declare var x: 1;
++export declare var y: 2;

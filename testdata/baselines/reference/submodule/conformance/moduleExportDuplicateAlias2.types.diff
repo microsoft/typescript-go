@@ -5,16 +5,15 @@
  === test.js ===
  const { apply } = require('./moduleExportAliasDuplicateAlias')
 ->apply : () => void
-+>apply : undefined
++>apply : (() => void) | undefined
  >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
  >require : any
  >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
 
  apply()
-->apply() : void
+ >apply() : void
 ->apply : () => void
-+>apply() : any
-+>apply : undefined
++>apply : (() => void) | undefined
 
  === moduleExportAliasDuplicateAlias.js ===
  module.exports.apply = undefined;
@@ -24,11 +23,11 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : undefined
++>module.exports.apply : (() => void) | undefined
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : undefined
++>apply : (() => void) | undefined
  >undefined : undefined
 
  function a() { }
@@ -41,11 +40,11 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : undefined
++>module.exports.apply : (() => void) | undefined
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : undefined
++>apply : (() => void) | undefined
  >a : () => void
 
  module.exports.apply = a;
@@ -55,23 +54,20 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : undefined
++>module.exports.apply : (() => void) | undefined
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : undefined
++>apply : (() => void) | undefined
  >a : () => void
 
  module.exports.apply()
-->module.exports.apply() : void
-->module.exports.apply : () => void
+ >module.exports.apply() : void
+ >module.exports.apply : () => void
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->apply : () => void
-+>module.exports.apply() : any
-+>module.exports.apply : undefined
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : undefined
+ >apply : () => void
