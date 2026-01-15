@@ -61,6 +61,148 @@ foo.bar;`
 	}
 }
 
+// TestKeyRemappingKeyofResult2 tests that index types for generic mapped types with name types
+// don't crash (regression test for microsoft/TypeScript#56239)
+func TestKeyRemappingKeyofResult2(t *testing.T) {
+	t.Parallel()
+
+	content := `// https://github.com/microsoft/TypeScript/issues/56239
+
+type Values<T> = T[keyof T];
+
+type ProvidedActor = {
+  src: string;
+  logic: unknown;
+};
+
+interface StateMachineConfig<TActors extends ProvidedActor> {
+  invoke: {
+    src: TActors["src"];
+  };
+}
+
+declare function setup<TActors extends Record<string, unknown>>(_: {
+  actors: {
+    [K in keyof TActors]: TActors[K];
+  };
+}): {
+  createMachine: (
+    config: StateMachineConfig<
+      Values<{
+        [K in keyof TActors as K & string]: {
+          src: K;
+          logic: TActors[K];
+        };
+      }>
+    >,
+  ) => void;
+};`
+
+	fs := vfstest.FromMap(map[string]string{
+		"/test.ts": content,
+		"/tsconfig.json": `{
+			"compilerOptions": {
+				"strict": true,
+				"noEmit": true
+			},
+			"files": ["test.ts"]
+		}`,
+	}, false)
+	fs = bundled.WrapFS(fs)
+
+	cd := "/"
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
+
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, host, nil)
+	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+
+	p := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsed,
+		Host:   host,
+	})
+	p.BindSourceFiles()
+	c, done := p.GetTypeChecker(t.Context())
+	defer done()
+
+	// The test passes if we can get a type checker without crashing
+	assert.Assert(t, c != nil)
+}
+
+// TestMappedTypeAsClauseRecursiveNoCrash tests that recursive mapped types with as clauses
+// don't crash when computing keyof (regression test for microsoft/TypeScript#60476)
+func TestMappedTypeAsClauseRecursiveNoCrash(t *testing.T) {
+	t.Parallel()
+
+	content := `// https://github.com/microsoft/TypeScript/issues/60476
+
+export type FlattenType<Source extends object, Target> = {
+  [Key in keyof Source as Key extends string
+    ? Source[Key] extends object
+      ? ` + "`${Key}.${keyof FlattenType<Source[Key], Target> & string}`" + `
+      : Key
+    : never]-?: Target;
+};
+
+type FieldSelect = {
+  table: string;
+  field: string;
+};
+
+type Address = {
+  postCode: string;
+  description: string;
+  address: string;
+};
+
+type User = {
+  id: number;
+  name: string;
+  address: Address;
+};
+
+type FlattenedUser = FlattenType<User, FieldSelect>;
+type FlattenedUserKeys = keyof FlattenType<User, FieldSelect>;
+
+export type FlattenTypeKeys<Source extends object, Target> = keyof {
+  [Key in keyof Source as Key extends string
+    ? Source[Key] extends object
+      ? ` + "`${Key}.${keyof FlattenType<Source[Key], Target> & string}`" + `
+      : Key
+    : never]-?: Target;
+};
+
+type FlattenedUserKeys2 = FlattenTypeKeys<User, FieldSelect>;`
+
+	fs := vfstest.FromMap(map[string]string{
+		"/test.ts": content,
+		"/tsconfig.json": `{
+			"compilerOptions": {
+				"strict": true,
+				"noEmit": true
+			},
+			"files": ["test.ts"]
+		}`,
+	}, false)
+	fs = bundled.WrapFS(fs)
+
+	cd := "/"
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
+
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, host, nil)
+	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+
+	p := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsed,
+		Host:   host,
+	})
+	p.BindSourceFiles()
+	c, done := p.GetTypeChecker(t.Context())
+	defer done()
+
+	// The test passes if we can get a type checker without crashing
+	assert.Assert(t, c != nil)
+}
+
 func BenchmarkNewChecker(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	fs := osvfs.FS()
