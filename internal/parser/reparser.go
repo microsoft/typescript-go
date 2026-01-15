@@ -16,31 +16,27 @@ func (p *Parser) finishMutatedNode(node *ast.Node) {
 }
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
-	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
+	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX || node.Kind != ast.KindExpressionStatement {
 		return
 	}
-	if node.Kind != ast.KindExpressionStatement || node.Expression().Kind != ast.KindBinaryExpression {
-		return
-	}
-	bin := node.Expression().AsBinaryExpression()
-	kind := ast.GetAssignmentDeclarationKind(bin)
+	expr := node.Expression()
 	var export *ast.Node
-	switch kind {
+	switch ast.GetAssignmentDeclarationKind(expr) {
 	case ast.JSDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(bin.Right))
+		export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
 	case ast.JSDeclarationKindExportsProperty:
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 		export = p.factory.NewCommonJSExport(
 			nil,
-			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(bin.Left)),
+			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left)),
 			nil, /*typeNode*/
-			p.factory.DeepCloneReparse(bin.Right))
+			p.factory.DeepCloneReparse(expr.AsBinaryExpression().Right))
 	}
 	if export != nil {
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
 		p.reparseTags(export, jsdoc)
-		p.finishReparsedNode(export, bin.AsNode())
+		p.finishReparsedNode(export, expr)
 	}
 }
 
@@ -320,7 +316,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindExpressionStatement:
 			if parent.Expression().Kind == ast.KindBinaryExpression {
 				bin := parent.Expression().AsBinaryExpression()
-				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
+				if kind := ast.GetAssignmentDeclarationKind(bin.AsNode()); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
 					bin.AsMutable().SetType(p.factory.DeepCloneReparse(tag.TypeExpression().Type()))
 					p.finishMutatedNode(bin.AsNode())
 					return
@@ -389,7 +385,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindExpressionStatement:
 			if parent.Expression().Kind == ast.KindBinaryExpression {
 				bin := parent.Expression().AsBinaryExpression()
-				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
+				if kind := ast.GetAssignmentDeclarationKind(bin.AsNode()); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
 					bin.Right = p.makeNewCast(
 						p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
 						bin.Right,
