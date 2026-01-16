@@ -12,11 +12,17 @@ class A {
 
 
 //// [privateNameNestedClassNameConflict.js]
+var _A_foo;
 class A {
-    #foo;
     constructor() {
+        _A_foo.set(this, void 0);
+        var _A_foo_1;
         class A {
-            #foo;
+            constructor() {
+                _A_foo_1.set(this, void 0);
+            }
         }
+        _A_foo_1 = new WeakMap();
     }
 }
+_A_foo = new WeakMap();

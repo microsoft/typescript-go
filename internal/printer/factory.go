@@ -735,3 +735,58 @@ func (f *NodeFactory) NewRewriteRelativeImportExtensionsHelper(firstArgument *as
 		ast.NodeFlagsNone,
 	)
 }
+
+// Allocate a new call expression to the `__classPrivateFieldGet` helper
+func (f *NodeFactory) NewClassPrivateFieldGetHelper(receiver *ast.Expression, state *ast.Identifier, kind PrivateIdentifierKind, farg *ast.Identifier) *ast.Expression {
+	f.emitContext.RequestEmitHelper(classPrivateFieldGetHelper)
+	var arguments []*ast.Expression
+	if farg == nil {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			f.NewStringLiteral(kind.String(), ast.TokenFlagsNone),
+		}
+	} else {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			f.NewStringLiteral(kind.String(), ast.TokenFlagsNone),
+			farg.AsNode(),
+		}
+	}
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__classPrivateFieldGet"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(arguments),
+		ast.NodeFlagsNone,
+	)
+}
+
+// Allocate a new call expression to the `__classPrivateFieldSet` helper
+func (f *NodeFactory) NewClassPrivateFieldSetHelper(receiver *ast.Expression, state *ast.Identifier, value *ast.Expression, kind PrivateIdentifierKind, farg *ast.Identifier) *ast.Expression {
+	f.emitContext.RequestEmitHelper(classPrivateFieldSetHelper)
+	var arguments []*ast.Expression
+	if farg == nil {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			value,
+			f.NewStringLiteral(kind.String(), ast.TokenFlagsNone),
+		}
+	} else {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			f.NewStringLiteral(kind.String(), ast.TokenFlagsNone),
+			farg.AsNode(),
+		}
+	}
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__classPrivateFieldSet"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(arguments),
+		ast.NodeFlagsNone,
+	)
+}

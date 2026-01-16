@@ -25,8 +25,11 @@ k = "fooProp"; // Error
 
 //// [privateNamesAndkeyof.js]
 "use strict";
+var _A_fooField;
 class A {
-    #fooField = 3;
+    constructor() {
+        _A_fooField.set(this, 3);
+    }
     #fooMethod() { }
     ;
     get #fooProp() { return 1; }
@@ -36,6 +39,7 @@ class A {
     bar = 3;
     baz = 3;
 }
+_A_fooField = new WeakMap();
 // `keyof A` should not include '#foo*'
 let k = "bar"; // OK
 k = "baz"; // OK

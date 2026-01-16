@@ -1741,7 +1741,7 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 	// If the arg is not inlineable, we have to evaluate and ToString() it in the current scope
 	// Otherwise, we inline it in require() so that it's statically analyzable
 
-	needSyncEval := arg != nil && !isSimpleInlineableExpression(arg)
+	needSyncEval := arg != nil && !transformers.IsSimpleInlineableExpression(arg)
 
 	var promiseResolveArguments []*ast.Expression
 	if needSyncEval {

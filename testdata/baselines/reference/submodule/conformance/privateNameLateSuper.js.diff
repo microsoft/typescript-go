@@ -1,18 +1,13 @@
 --- old.privateNameLateSuper.js
 +++ new.privateNameLateSuper.js
-@@= skipped -11, +11 lines =@@
-
-
- //// [privateNameLateSuper.js]
--var _A_x;
- class B {
+@@= skipped -16, +16 lines =@@
  }
  class A extends B {
-+    #x;
      constructor() {
++        _A_x.set(this, void 0);
          void 0;
          super();
 -        _A_x.set(this, void 0);
      }
  }
--_A_x = new WeakMap();
+ _A_x = new WeakMap();

@@ -13,11 +13,10 @@
  class A {
 +    static #x = 5;
      constructor() {
--        var _B_x;
+         var _B_x;
          class B {
-+            #x = 5;
-             constructor() {
--                _B_x.set(this, 5);
+@@= skipped -14, +9 lines =@@
+                 _B_x.set(this, 5);
                  class C {
                      constructor() {
 -                        __classPrivateFieldGet(_a, _B_x, "f"); // error
@@ -25,8 +24,8 @@
                      }
                  }
              }
-         }
--        _B_x = new WeakMap();
+@@= skipped -8, +8 lines =@@
+         _B_x = new WeakMap();
      }
  }
 -_a = A;

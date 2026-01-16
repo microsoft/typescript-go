@@ -14,8 +14,13 @@ export declare function __classPrivateFieldSet<T extends object, V>(receiver: T,
 
 
 //// [main.js]
+import { __classPrivateFieldGet, __classPrivateFieldSet } from "tslib";
+var _C_a;
 export class C {
-    #a = 1;
+    constructor() {
+        _C_a.set(this, 1);
+    }
     #b() { this.#c = 42; }
-    set #c(v) { this.#a += v; }
+    set #c(v) { __classPrivateFieldSet(this, _C_a, __classPrivateFieldGet(this, _C_a, "f") + v, "f"); }
 }
+_C_a = new WeakMap();

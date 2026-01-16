@@ -55,8 +55,11 @@ class TestNonStatics {
 
 //// [privateNameWhenNotUseDefineForClassFieldsInEsNext.js]
 "use strict";
+var _TestWithStatics_prop, _TestNonStatics_prop;
 class TestWithStatics {
-    #prop = 0;
+    constructor() {
+        _TestWithStatics_prop.set(this, 0);
+    }
     static dd = new TestWithStatics().#prop; // OK
     static ["X_ z_ zz"] = class Inner {
         #foo = 10;
@@ -79,8 +82,11 @@ class TestWithStatics {
         }
     };
 }
+_TestWithStatics_prop = new WeakMap();
 class TestNonStatics {
-    #prop = 0;
+    constructor() {
+        _TestNonStatics_prop.set(this, 0);
+    }
     dd = new TestNonStatics().#prop; // OK
     ["X_ z_ zz"] = class Inner {
         #foo = 10;
@@ -103,3 +109,4 @@ class TestNonStatics {
         }
     };
 }
+_TestNonStatics_prop = new WeakMap();

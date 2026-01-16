@@ -17,10 +17,17 @@ class B {
 
 
 //// [privateNamesUnique-3.js]
+var _A_foo;
 class A {
-    #foo = 1;
+    constructor() {
+        _A_foo.set(this, 1);
+        // because static and instance private names
+        // share the same lexical scope
+        // https://tc39.es/proposal-class-fields/#prod-ClassBody
+    }
     static #foo = true; // error (duplicate)
 }
+_A_foo = new WeakMap();
 class B {
     static #foo = true;
     test(x) {

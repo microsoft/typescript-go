@@ -20,6 +20,11 @@ class C {
 
 //// [privateNameAndObjectRestSpread.js]
 "use strict";
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -31,17 +36,21 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+var _C_prop;
 class C {
-    #prop = 1;
+    constructor() {
+        _C_prop.set(this, 1);
+    }
     static #propStatic = 1;
     method(other) {
         const obj = Object.assign({}, other);
-        obj.#prop;
+        __classPrivateFieldGet(obj, _C_prop, "f");
         const rest = __rest(other, []);
-        rest.#prop;
+        __classPrivateFieldGet(rest, _C_prop, "f");
         const statics = Object.assign({}, C);
         statics.#propStatic;
         const sRest = __rest(C, []);
         sRest.#propStatic;
     }
 }
+_C_prop = new WeakMap();

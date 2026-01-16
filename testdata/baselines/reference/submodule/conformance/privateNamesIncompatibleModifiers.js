@@ -38,11 +38,14 @@ abstract class B {
 
 //// [privateNamesIncompatibleModifiers.js]
 "use strict";
+var _A_foo, _A_bar, _A_baz, _A_qux;
 class A {
-    #foo = 3; // Error
-    #bar = 3; // Error
-    #baz = 3; // Error
-    #qux = 3; // OK
+    constructor() {
+        _A_foo.set(this, 3); // Error
+        _A_bar.set(this, 3); // Error
+        _A_baz.set(this, 3); // Error
+        _A_qux.set(this, 3); // OK
+    }
     #fooMethod() { return 3; } // Error
     #barMethod() { return 3; } // Error
     #bazMethod() { return 3; } // Error
@@ -61,5 +64,6 @@ class A {
     async get #asyncProp() { return 1; } // Error
     async set #asyncProp(value) { } // Error
 }
+_A_foo = new WeakMap(), _A_bar = new WeakMap(), _A_baz = new WeakMap(), _A_qux = new WeakMap();
 class B {
 }

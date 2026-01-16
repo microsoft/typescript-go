@@ -5,84 +5,102 @@
  "use strict";
  function Field() {
 -    var _A_Field_Field_foo, _A_Field_Field_foo_1, _A_Field_Method_instances, _A_Field_Method_foo, _A_Field_Method_foo_1, _A_Field_Getter_instances, _A_Field_Getter_foo, _A_Field_Getter_foo_get, _A_Field_Setter_instances, _A_Field_Setter_foo, _A_Field_Setter_foo_set, _a, _A_Field_StaticField_foo, _A_Field_StaticField_foo_1, _b, _A_Field_StaticMethod_foo, _A_Field_StaticMethod_foo_1, _c, _A_Field_StaticGetter_foo, _A_Field_StaticGetter_foo_get, _d, _A_Field_StaticSetter_foo, _A_Field_StaticSetter_foo_set;
++    var _A_Field_Field_foo, _A_Field_Field_foo_1, _A_Field_Method_foo, _A_Field_Getter_foo, _A_Field_Setter_foo, _A_Field_StaticField_foo, _A_Field_StaticMethod_foo, _A_Field_StaticGetter_foo, _A_Field_StaticSetter_foo;
      // Error
      class A_Field_Field {
--        constructor() {
--            _A_Field_Field_foo_1.set(this, "foo");
--            _A_Field_Field_foo_1.set(this, "foo");
--        }
-         #foo = "foo";
-         #foo = "foo";
-     }
--    _A_Field_Field_foo = new WeakMap(), _A_Field_Field_foo_1 = new WeakMap();
+         constructor() {
+@@= skipped -14, +14 lines =@@
      // Error
      class A_Field_Method {
--        constructor() {
+         constructor() {
 -            _A_Field_Method_instances.add(this);
--        }
-         #foo = "foo";
++            _A_Field_Method_foo.set(this, "foo");
+         }
+-        #foo = "foo";
          #foo() { }
      }
 -    _A_Field_Method_foo = new WeakMap(), _A_Field_Method_instances = new WeakSet();
++    _A_Field_Method_foo = new WeakMap();
      // Error
      class A_Field_Getter {
--        constructor() {
+         constructor() {
 -            _A_Field_Getter_instances.add(this);
--        }
-         #foo = "foo";
++            _A_Field_Getter_foo.set(this, "foo");
+         }
+-        #foo = "foo";
          get #foo() { return ""; }
      }
 -    _A_Field_Getter_foo = new WeakMap(), _A_Field_Getter_instances = new WeakSet();
++    _A_Field_Getter_foo = new WeakMap();
      // Error
      class A_Field_Setter {
--        constructor() {
+         constructor() {
 -            _A_Field_Setter_instances.add(this);
--        }
-         #foo = "foo";
++            _A_Field_Setter_foo.set(this, "foo");
+         }
+-        #foo = "foo";
          set #foo(value) { }
      }
 -    _A_Field_Setter_foo = new WeakMap(), _A_Field_Setter_instances = new WeakSet();
++    _A_Field_Setter_foo = new WeakMap();
      // Error
      class A_Field_StaticField {
--        constructor() {
+         constructor() {
 -            _A_Field_StaticField_foo_1 = { value: "foo" };
--        }
-         #foo = "foo";
++            _A_Field_StaticField_foo.set(this, "foo");
+         }
+-        #foo = "foo";
          static #foo = "foo";
      }
 -    _a = A_Field_StaticField, _A_Field_StaticField_foo = new WeakMap();
 -    _A_Field_StaticField_foo_1 = { value: "foo" };
++    _A_Field_StaticField_foo = new WeakMap();
      // Error
      class A_Field_StaticMethod {
-         #foo = "foo";
+-        #foo = "foo";
++        constructor() {
++            _A_Field_StaticMethod_foo.set(this, "foo");
++        }
          static #foo() { }
      }
 -    _b = A_Field_StaticMethod, _A_Field_StaticMethod_foo = new WeakMap();
++    _A_Field_StaticMethod_foo = new WeakMap();
      // Error
      class A_Field_StaticGetter {
-         #foo = "foo";
+-        #foo = "foo";
++        constructor() {
++            _A_Field_StaticGetter_foo.set(this, "foo");
++        }
          static get #foo() { return ""; }
      }
 -    _c = A_Field_StaticGetter, _A_Field_StaticGetter_foo = new WeakMap();
++    _A_Field_StaticGetter_foo = new WeakMap();
      // Error
      class A_Field_StaticSetter {
-         #foo = "foo";
+-        #foo = "foo";
++        constructor() {
++            _A_Field_StaticSetter_foo.set(this, "foo");
++        }
          static set #foo(value) { }
      }
 -    _d = A_Field_StaticSetter, _A_Field_StaticSetter_foo = new WeakMap();
++    _A_Field_StaticSetter_foo = new WeakMap();
  }
  function Method() {
 -    var _A_Method_Field_instances, _A_Method_Field_foo, _A_Method_Field_foo_1, _A_Method_Method_instances, _A_Method_Method_foo, _A_Method_Method_foo_1, _A_Method_Getter_instances, _A_Method_Getter_foo, _A_Method_Getter_foo_get, _A_Method_Setter_instances, _A_Method_Setter_foo, _A_Method_Setter_foo_set, _A_Method_StaticField_instances, _a, _A_Method_StaticField_foo, _A_Method_StaticField_foo_1, _A_Method_StaticMethod_instances, _b, _A_Method_StaticMethod_foo, _A_Method_StaticMethod_foo_1, _A_Method_StaticGetter_instances, _c, _A_Method_StaticGetter_foo, _A_Method_StaticGetter_foo_get, _A_Method_StaticSetter_instances, _d, _A_Method_StaticSetter_foo, _A_Method_StaticSetter_foo_set;
++    var _A_Method_Field_foo;
      // Error
      class A_Method_Field {
--        constructor() {
+         constructor() {
 -            _A_Method_Field_instances.add(this);
 -            _A_Method_Field_foo_1.set(this, "foo");
--        }
++            _A_Method_Field_foo.set(this, "foo");
+         }
          #foo() { }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _A_Method_Field_foo_1 = new WeakMap(), _A_Method_Field_instances = new WeakSet();
++    _A_Method_Field_foo = new WeakMap();
      // Error
      class A_Method_Method {
 -        constructor() {
@@ -150,16 +168,18 @@
  }
  function Getter() {
 -    var _A_Getter_Field_instances, _A_Getter_Field_foo_get, _A_Getter_Field_foo, _A_Getter_Method_instances, _A_Getter_Method_foo_get, _A_Getter_Method_foo, _A_Getter_Getter_instances, _A_Getter_Getter_foo_get, _A_Getter_Getter_foo_1_get, _A_Getter_Setter_instances, _A_Getter_Setter_foo_get, _A_Getter_Setter_foo_set, _A_Getter_StaticField_instances, _a, _A_Getter_StaticField_foo_get, _A_Getter_StaticField_foo, _A_Getter_StaticMethod_instances, _b, _A_Getter_StaticMethod_foo_get, _A_Getter_StaticMethod_foo, _A_Getter_StaticGetter_instances, _c, _A_Getter_StaticGetter_foo_get, _A_Getter_StaticGetter_foo_1_get, _A_Getter_StaticSetter_instances, _d, _A_Getter_StaticSetter_foo_get, _A_Getter_StaticSetter_foo_set;
++    var _A_Getter_Field_foo;
      // Error
      class A_Getter_Field {
--        constructor() {
+         constructor() {
 -            _A_Getter_Field_instances.add(this);
--            _A_Getter_Field_foo.set(this, "foo");
--        }
+             _A_Getter_Field_foo.set(this, "foo");
+         }
          get #foo() { return ""; }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _A_Getter_Field_foo = new WeakMap(), _A_Getter_Field_instances = new WeakSet();
++    _A_Getter_Field_foo = new WeakMap();
      // Error
      class A_Getter_Method {
 -        constructor() {
@@ -226,16 +246,18 @@
  }
  function Setter() {
 -    var _A_Setter_Field_instances, _A_Setter_Field_foo_set, _A_Setter_Field_foo, _A_Setter_Method_instances, _A_Setter_Method_foo_set, _A_Setter_Method_foo, _A_Setter_Getter_instances, _A_Setter_Getter_foo_set, _A_Setter_Getter_foo_get, _A_Setter_Setter_instances, _A_Setter_Setter_foo_set, _A_Setter_Setter_foo_1_set, _A_Setter_StaticField_instances, _a, _A_Setter_StaticField_foo_set, _A_Setter_StaticField_foo, _A_Setter_StaticMethod_instances, _b, _A_Setter_StaticMethod_foo_set, _A_Setter_StaticMethod_foo, _A_Setter_StaticGetter_instances, _c, _A_Setter_StaticGetter_foo_set, _A_Setter_StaticGetter_foo_get, _A_Setter_StaticSetter_instances, _d, _A_Setter_StaticSetter_foo_set, _A_Setter_StaticSetter_foo_1_set;
++    var _A_Setter_Field_foo;
      // Error
      class A_Setter_Field {
--        constructor() {
+         constructor() {
 -            _A_Setter_Field_instances.add(this);
--            _A_Setter_Field_foo.set(this, "foo");
--        }
+             _A_Setter_Field_foo.set(this, "foo");
+         }
          set #foo(value) { }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _A_Setter_Field_foo = new WeakMap(), _A_Setter_Field_instances = new WeakSet();
++    _A_Setter_Field_foo = new WeakMap();
      // Error
      class A_Setter_Method {
 -        constructor() {
@@ -303,16 +325,19 @@
  }
  function StaticField() {
 -    var _a, _A_StaticField_Field_foo, _A_StaticField_Field_foo_1, _A_StaticField_Method_instances, _b, _A_StaticField_Method_foo, _A_StaticField_Method_foo_1, _A_StaticField_Getter_instances, _c, _A_StaticField_Getter_foo, _A_StaticField_Getter_foo_get, _A_StaticField_Setter_instances, _d, _A_StaticField_Setter_foo, _A_StaticField_Setter_foo_set, _e, _A_StaticField_StaticField_foo, _A_StaticField_StaticField_foo_1, _f, _A_StaticField_StaticMethod_foo, _A_StaticField_StaticMethod_foo_1, _g, _A_StaticField_StaticGetter_foo, _A_StaticField_StaticGetter_foo_get, _h, _A_StaticField_StaticSetter_foo, _A_StaticField_StaticSetter_foo_set;
++    var _A_StaticField_Field_foo;
      // Error
      class A_StaticField_Field {
--        constructor() {
+         constructor() {
 -            _A_StaticField_Field_foo_1.set(this, "foo");
--        }
++            _A_StaticField_Field_foo.set(this, "foo");
+         }
          static #foo = "foo";
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _a = A_StaticField_Field, _A_StaticField_Field_foo_1 = new WeakMap();
 -    _A_StaticField_Field_foo_1.set(A_StaticField_Field, "foo");
++    _A_StaticField_Field_foo = new WeakMap();
      // Error
      class A_StaticField_Method {
 -        constructor() {
@@ -369,15 +394,18 @@
  }
  function StaticMethod() {
 -    var _a, _A_StaticMethod_Field_foo, _A_StaticMethod_Field_foo_1, _A_StaticMethod_Method_instances, _b, _A_StaticMethod_Method_foo, _A_StaticMethod_Method_foo_1, _A_StaticMethod_Getter_instances, _c, _A_StaticMethod_Getter_foo, _A_StaticMethod_Getter_foo_get, _A_StaticMethod_Setter_instances, _d, _A_StaticMethod_Setter_foo, _A_StaticMethod_Setter_foo_set, _e, _A_StaticMethod_StaticField_foo, _A_StaticMethod_StaticField_foo_1, _f, _A_StaticMethod_StaticMethod_foo, _A_StaticMethod_StaticMethod_foo_1, _g, _A_StaticMethod_StaticGetter_foo, _A_StaticMethod_StaticGetter_foo_get, _h, _A_StaticMethod_StaticSetter_foo, _A_StaticMethod_StaticSetter_foo_set;
++    var _A_StaticMethod_Field_foo;
      // Error
      class A_StaticMethod_Field {
--        constructor() {
+         constructor() {
 -            _A_StaticMethod_Field_foo_1.set(this, "foo");
--        }
++            _A_StaticMethod_Field_foo.set(this, "foo");
+         }
          static #foo() { }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _a = A_StaticMethod_Field, _A_StaticMethod_Field_foo_1 = new WeakMap();
++    _A_StaticMethod_Field_foo = new WeakMap();
      // Error
      class A_StaticMethod_Method {
 -        constructor() {
@@ -433,15 +461,17 @@
  }
  function StaticGetter() {
 -    var _a, _A_StaticGetter_Field_foo_get, _A_StaticGetter_Field_foo, _A_StaticGetter_Method_instances, _b, _A_StaticGetter_Method_foo_get, _A_StaticGetter_Method_foo, _A_StaticGetter_Getter_instances, _c, _A_StaticGetter_Getter_foo_get, _A_StaticGetter_Getter_foo_1_get, _A_StaticGetter_Setter_instances, _d, _A_StaticGetter_Setter_foo_get, _A_StaticGetter_Setter_foo_set, _e, _A_StaticGetter_StaticField_foo_get, _A_StaticGetter_StaticField_foo, _f, _A_StaticGetter_StaticMethod_foo_get, _A_StaticGetter_StaticMethod_foo, _g, _A_StaticGetter_StaticGetter_foo_get, _A_StaticGetter_StaticGetter_foo_1_get, _h, _A_StaticGetter_StaticSetter_foo_get, _A_StaticGetter_StaticSetter_foo_set;
++    var _A_StaticGetter_Field_foo;
      // Error
      class A_StaticGetter_Field {
--        constructor() {
--            _A_StaticGetter_Field_foo.set(this, "foo");
--        }
+         constructor() {
+             _A_StaticGetter_Field_foo.set(this, "foo");
+         }
          static get #foo() { return ""; }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _a = A_StaticGetter_Field, _A_StaticGetter_Field_foo = new WeakMap();
++    _A_StaticGetter_Field_foo = new WeakMap();
      // Error
      class A_StaticGetter_Method {
 -        constructor() {
@@ -496,15 +526,17 @@
  }
  function StaticSetter() {
 -    var _a, _A_StaticSetter_Field_foo_set, _A_StaticSetter_Field_foo, _A_StaticSetter_Method_instances, _b, _A_StaticSetter_Method_foo_set, _A_StaticSetter_Method_foo, _A_StaticSetter_Getter_instances, _c, _A_StaticSetter_Getter_foo_set, _A_StaticSetter_Getter_foo_get, _A_StaticSetter_Setter_instances, _d, _A_StaticSetter_Setter_foo_set, _A_StaticSetter_Setter_foo_1_set, _e, _A_StaticSetter_StaticField_foo_set, _A_StaticSetter_StaticField_foo, _f, _A_StaticSetter_StaticMethod_foo_set, _A_StaticSetter_StaticMethod_foo, _g, _A_StaticSetter_StaticGetter_foo_set, _A_StaticSetter_StaticGetter_foo_get, _h, _A_StaticSetter_StaticSetter_foo_set, _A_StaticSetter_StaticSetter_foo_1_set;
++    var _A_StaticSetter_Field_foo;
      // Error
      class A_StaticSetter_Field {
--        constructor() {
--            _A_StaticSetter_Field_foo.set(this, "foo");
--        }
+         constructor() {
+             _A_StaticSetter_Field_foo.set(this, "foo");
+         }
          static set #foo(value) { }
-         #foo = "foo";
+-        #foo = "foo";
      }
 -    _a = A_StaticSetter_Field, _A_StaticSetter_Field_foo = new WeakMap();
++    _A_StaticSetter_Field_foo = new WeakMap();
      // Error
      class A_StaticSetter_Method {
 -        constructor() {

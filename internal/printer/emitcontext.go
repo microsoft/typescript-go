@@ -9,22 +9,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // Stores side-table information used during transformation that can be read by the printer to customize emit
 //
 // NOTE: EmitContext is not guaranteed to be thread-safe.
 type EmitContext struct {
-	Factory       *NodeFactory // Required. The NodeFactory to use to create new nodes
-	autoGenerate  map[*ast.MemberName]*AutoGenerateInfo
-	textSource    map[*ast.StringLiteralNode]*ast.Node
-	original      map[*ast.Node]*ast.Node
-	emitNodes     core.LinkStore[*ast.Node, emitNode]
-	assignedName  map[*ast.Node]*ast.Expression
-	classThis     map[*ast.Node]*ast.IdentifierNode
-	varScopeStack core.Stack[*varScope]
-	letScopeStack core.Stack[*varScope]
-	emitHelpers   collections.OrderedSet[*EmitHelper]
+	Factory         *NodeFactory // Required. The NodeFactory to use to create new nodes
+	autoGenerate    map[*ast.MemberName]*AutoGenerateInfo
+	textSource      map[*ast.StringLiteralNode]*ast.Node
+	original        map[*ast.Node]*ast.Node
+	emitNodes       core.LinkStore[*ast.Node, emitNode]
+	assignedName    map[*ast.Node]*ast.Expression
+	classThis       map[*ast.Node]*ast.IdentifierNode
+	varScopeStack   core.Stack[*varScope]
+	letScopeStack   core.Stack[*varScope]
+	classScopeStack core.Stack[*classScope]
+	emitHelpers     collections.OrderedSet[*EmitHelper]
 }
 
 type environmentFlags int
@@ -155,6 +157,24 @@ func (c *EmitContext) EndAndMergeVariableEnvironment(statements []*ast.Statement
 
 func (c *EmitContext) endAndMergeVariableEnvironment(statements []*ast.Statement) ([]*ast.Statement, bool) {
 	return c.mergeEnvironment(statements, c.EndVariableEnvironment())
+}
+
+// NOTE: This is the new implementation of `ClassLexicalEnvironment` in Strada
+type classScope struct {
+	facts ClassFacts
+
+	classContainer *ast.ClassLikeDeclaration
+	className      *ast.Node // used for prefixing generated variable names
+	// !!! weakSetName    *ast.Node // used for brand check on private methods
+
+	// A mapping of generated private names to information needed for transformation.
+	generatedIdentifiers map[*ast.Node]PrivateIdentifierInfo
+	// A mapping of private names to information needed for transformation.
+	identifiers map[string]PrivateIdentifierInfo
+
+	// Tracks what computed name expressions originating from elided names must be inlined
+	// at the next execution site, in document order
+	pendingExpressions []*ast.Expression
 }
 
 // Adds a `var` declaration to the current VariableEnvironment
@@ -366,6 +386,59 @@ func (c *EmitContext) isHoistedVariableStatement(node *ast.Statement) bool {
 	return c.isCustomPrologue(node) &&
 		ast.IsVariableStatement(node) &&
 		core.Every(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, isHoistedVariable)
+}
+
+func (c *EmitContext) StartClassLexicalEnvironment(node *ast.ClassLikeDeclaration) {
+	// classContainer
+	classContainer := node
+
+	// className
+	var className *ast.Node
+	name := ast.GetNameOfDeclaration(node)
+	if name != nil && ast.IsIdentifier(name) {
+		className = name
+	} else {
+		assignedName := c.AssignedName(node)
+		if assignedName != nil {
+			if ast.IsStringLiteral(assignedName) {
+				// If the class name was assigned from a string literal based on an Identifier, use the Identifier
+				// as the prefix.
+				if textSourceNode := c.textSource[assignedName]; textSourceNode != nil && ast.IsIdentifier(textSourceNode) {
+					className = textSourceNode
+				} else if scanner.IsIdentifierText(assignedName.Text(), core.LanguageVariantStandard) {
+					// If the class name was assigned from a string literal that is a valid identifier, create an
+					// identifier from it.
+					prefixName := c.Factory.NewIdentifier(assignedName.Text())
+					className = prefixName
+				}
+			}
+		}
+	}
+
+	// !!! Set WeakSet for private instance methods and accessor brand check
+
+	c.classScopeStack.Push(&classScope{
+		facts:          ClassFactsNone,
+		classContainer: classContainer,
+		className:      className,
+	})
+}
+
+func (c *EmitContext) EndClassLexicalEnvironment() {
+	c.classScopeStack.Pop()
+}
+
+func (c *EmitContext) GetClassContainer() *ast.ClassLikeDeclaration {
+	if c.classScopeStack.Len() == 0 {
+		return nil
+	}
+	scope := c.classScopeStack.Peek()
+	return scope.classContainer
+}
+
+func (c *EmitContext) GetClassFacts() ClassFacts {
+	scope := c.classScopeStack.Peek()
+	return scope.facts
 }
 
 //
@@ -588,6 +661,14 @@ func (c *EmitContext) SourceMapRange(node *ast.Node) core.TextRange {
 		return emitNode.sourceMapRange
 	}
 	return node.Loc
+}
+
+// Sets `EFNoComments` on a node and removes any leading and trailing synthetic comments.
+func (c *EmitContext) RemoveAllComments(node *ast.Node) {
+	c.AddEmitFlags(node, EFNoComments)
+	// !!! TODO: Also remove synthetic trailing/leading comments added by transforms
+	// emitNode.leadingComments = undefined;
+	// emitNode.trailingComments = undefined;
 }
 
 // Sets the range to use for a node when emitting source maps.
@@ -882,6 +963,91 @@ func (c *EmitContext) AddInitializationStatement(node *ast.Node) {
 	}
 	c.AddEmitFlags(node, EFCustomPrologue)
 	scope.initializationStatements = append(scope.initializationStatements, node)
+}
+
+func (c *EmitContext) AddPrivateIdentifierToEnvironment(node *ast.Node, name *ast.PrivateIdentifier) {
+	scope := c.classScopeStack.Peek()
+	scope.facts |= ClassFactsWillHoistInitializersToConstructor
+
+	previousInfo := c.GetPrivateIdentifierInfo(name.AsPrivateIdentifier())
+	isStatic := ast.HasStaticModifier(node)
+	isValid := (c.HasAutoGenerateInfo(name.AsNode()) || name.Text != "#constructor") && previousInfo == nil
+	if ast.IsAutoAccessorPropertyDeclaration(node) {
+		// !!!
+	} else if ast.IsPropertyDeclaration(node) {
+		if isStatic {
+			// !!!
+		} else {
+			className := scope.className
+			weakMapName := c.Factory.NewGeneratedNameForNodeEx(name.AsNode(), AutoGenerateOptions{
+				Prefix: "_" + className.Text() + "_",
+			})
+			c.AddVariableDeclaration(weakMapName)
+
+			c.setPrivateIdentifierInfo(name, NewPrivateIdentifierInstanceFieldInfo(
+				weakMapName.AsIdentifier(),
+				isValid,
+			))
+
+			scope.pendingExpressions = append(
+				scope.pendingExpressions,
+				c.Factory.NewAssignmentExpression(
+					weakMapName,
+					c.Factory.NewNewExpression(
+						c.Factory.NewIdentifier("WeakMap"),
+						nil, /*typeArguments*/
+						&ast.NodeList{},
+					),
+				),
+			)
+		}
+	} else if ast.IsMethodDeclaration(node) {
+		// !!!
+	} else if ast.IsGetAccessorDeclaration(node) {
+		// !!!
+	} else if ast.IsSetAccessorDeclaration(node) {
+		// !!!
+	}
+}
+
+func (c *EmitContext) setPrivateIdentifierInfo(name *ast.PrivateIdentifier, info PrivateIdentifierInfo) {
+	scope := c.classScopeStack.Peek()
+	if c.HasAutoGenerateInfo(name.AsNode()) {
+		if scope.generatedIdentifiers == nil {
+			scope.generatedIdentifiers = make(map[*ast.Node]PrivateIdentifierInfo)
+		}
+		scope.generatedIdentifiers[c.GetNodeForGeneratedName(name.AsNode())] = info
+	} else {
+		if scope.identifiers == nil {
+			scope.identifiers = make(map[string]PrivateIdentifierInfo)
+		}
+		scope.identifiers[name.Text] = info
+	}
+}
+
+// NOTE: This is the equivalent of `accessPrivateIdentifier` in Strada
+func (c *EmitContext) GetPrivateIdentifierInfo(name *ast.PrivateIdentifier) PrivateIdentifierInfo {
+	if c.classScopeStack.Len() == 0 {
+		return nil
+	}
+	scope := c.classScopeStack.Peek()
+	if c.HasAutoGenerateInfo(name.AsNode()) {
+		if scope.generatedIdentifiers == nil {
+			return nil
+		} else {
+			return scope.generatedIdentifiers[c.GetNodeForGeneratedName(name.AsNode())]
+		}
+	} else {
+		if scope.identifiers == nil {
+			return nil
+		}
+		return scope.identifiers[name.Text]
+	}
+}
+
+func (c *EmitContext) GetPendingExpressions() []*ast.Expression {
+	scope := c.classScopeStack.Peek()
+	return scope.pendingExpressions
 }
 
 func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *ast.NodeVisitor) *ast.BlockOrExpression {

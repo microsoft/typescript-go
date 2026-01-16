@@ -1450,6 +1450,18 @@ func GetAssignedName(node *Node) *Node {
 	return nil
 }
 
+func IsStaticPropertyDeclaration(member *ClassElement) bool {
+	return IsPropertyDeclaration(member) && HasStaticModifier(member)
+}
+
+func IsStaticPropertyDeclarationOrClassStaticBlockDeclaration(element *ClassElement) bool {
+	return IsStaticPropertyDeclaration(element) || IsClassStaticBlockDeclaration(element)
+}
+
+func GetStaticPropertiesAndClassStaticBlock(node *ClassLikeDeclaration) []*Node {
+	return core.Filter(node.Members(), IsStaticPropertyDeclarationOrClassStaticBlockDeclaration)
+}
+
 type JSDeclarationKind int
 
 const (
@@ -4239,4 +4251,17 @@ func isArgumentOfElementAccessExpression(node *Node) bool {
 	return node != nil && node.Parent != nil &&
 		node.Parent.Kind == KindElementAccessExpression &&
 		node.Parent.AsElementAccessExpression().ArgumentExpression == node
+}
+
+func GetEffectiveBaseTypeNode(node *Node) *Node {
+	baseType := GetClassExtendsHeritageElement(node)
+	// !!! TODO: JSDoc support
+	// if (baseType && isInJSFile(node)) {
+	//     // Prefer an @augments tag because it may have type parameters.
+	//     const tag = getJSDocAugmentsTag(node);
+	//     if (tag) {
+	//         return tag.class;
+	//     }
+	// }
+	return baseType
 }

@@ -49,8 +49,11 @@ export { }
 
 
 //// [privateNameInInExpressionTransform.js]
+var _Foo_field, _Bar_field;
 class Foo {
-    #field = 1;
+    constructor() {
+        _Foo_field.set(this, 1);
+    }
     #method() { }
     static #staticField = 2;
     static #staticMethod() { }
@@ -77,12 +80,16 @@ class Foo {
         10;
     }
 }
+_Foo_field = new WeakMap();
 class Bar {
-    #field = 1;
+    constructor() {
+        _Bar_field.set(this, 1);
+    }
     check(v) {
         #field in v; // expect Bar's 'field' WeakMap
     }
 }
+_Bar_field = new WeakMap();
 function syntaxError(v) {
     return #field in v; // expect `return in v` so runtime will have a syntax error
 }
