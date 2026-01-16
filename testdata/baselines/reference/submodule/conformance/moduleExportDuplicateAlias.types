@@ -2,37 +2,37 @@
 
 === test.js ===
 const { apply } = require('./moduleExportAliasDuplicateAlias')
->apply : (() => void) | undefined
+>apply : () => void
 >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
 >require : any
 >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
 
 apply()
 >apply() : void
->apply : (() => void) | undefined
+>apply : () => void
 
 === moduleExportAliasDuplicateAlias.js ===
 exports.apply = undefined;
 >exports.apply = undefined : undefined
->exports.apply : (() => void) | undefined
+>exports.apply : () => void
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : (() => void) | undefined
+>apply : () => void
 >undefined : undefined
 
 function a() { }
 >a : () => void
 
 exports.apply()
->exports.apply() : any
->exports.apply : undefined
+>exports.apply() : void
+>exports.apply : () => void
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : undefined
+>apply : () => void
 
 exports.apply = a;
 >exports.apply = a : () => void
->exports.apply : (() => void) | undefined
+>exports.apply : () => void
 >exports : typeof import("moduleExportAliasDuplicateAlias")
->apply : (() => void) | undefined
+>apply : () => void
 >a : () => void
 
 exports.apply()

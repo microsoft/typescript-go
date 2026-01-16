@@ -1,20 +1,6 @@
 --- old.moduleExportDuplicateAlias2.types
 +++ new.moduleExportDuplicateAlias2.types
-@@= skipped -1, +1 lines =@@
-
- === test.js ===
- const { apply } = require('./moduleExportAliasDuplicateAlias')
-->apply : () => void
-+>apply : (() => void) | undefined
- >require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
- >require : any
- >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
-
- apply()
- >apply() : void
-->apply : () => void
-+>apply : (() => void) | undefined
-
+@@= skipped -13, +13 lines =@@
  === moduleExportAliasDuplicateAlias.js ===
  module.exports.apply = undefined;
  >module.exports.apply = undefined : undefined
@@ -23,15 +9,15 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : (() => void) | undefined
++>module.exports.apply : () => void
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : (() => void) | undefined
++>apply : () => void
  >undefined : undefined
 
  function a() { }
-@@= skipped -24, +24 lines =@@
+@@= skipped -12, +12 lines =@@
 
  module.exports.apply = a;
  >module.exports.apply = a : () => void
@@ -40,11 +26,11 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : (() => void) | undefined
++>module.exports.apply : () => void
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : (() => void) | undefined
++>apply : () => void
  >a : () => void
 
  module.exports.apply = a;
@@ -54,11 +40,11 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->apply : any
-+>module.exports.apply : (() => void) | undefined
++>module.exports.apply : () => void
 +>module.exports : typeof import("moduleExportAliasDuplicateAlias")
 +>module : { "\"moduleExportAliasDuplicateAlias\"": typeof import("moduleExportAliasDuplicateAlias"); }
 +>exports : typeof import("moduleExportAliasDuplicateAlias")
-+>apply : (() => void) | undefined
++>apply : () => void
  >a : () => void
 
  module.exports.apply()

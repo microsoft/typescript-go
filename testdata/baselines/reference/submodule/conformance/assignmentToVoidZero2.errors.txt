@@ -1,23 +1,13 @@
-assignmentToVoidZero2.js(2,9): error TS2339: Property 'k' does not exist on type 'typeof import("assignmentToVoidZero2")'.
-assignmentToVoidZero2.js(5,3): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
-assignmentToVoidZero2.js(6,9): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
 assignmentToVoidZero2.js(12,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-importer.js(1,13): error TS2305: Module '"./assignmentToVoidZero2"' has no exported member 'k'.
 
 
-==== assignmentToVoidZero2.js (4 errors) ====
+==== assignmentToVoidZero2.js (1 errors) ====
     exports.j = 1;
     exports.k = void 0;
-            ~
-!!! error TS2339: Property 'k' does not exist on type 'typeof import("assignmentToVoidZero2")'.
     var o = {}
     o.x = 1
     o.y = void 0
-      ~
-!!! error TS2339: Property 'y' does not exist on type '{ x: number; }'.
     o.x + o.y
-            ~
-!!! error TS2339: Property 'y' does not exist on type '{ x: number; }'.
     
     function C() {
         this.p = 1
@@ -28,9 +18,7 @@ importer.js(1,13): error TS2305: Module '"./assignmentToVoidZero2"' has no expor
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     c.p + c.q
     
-==== importer.js (1 errors) ====
+==== importer.js (0 errors) ====
     import { j, k } from './assignmentToVoidZero2'
-                ~
-!!! error TS2305: Module '"./assignmentToVoidZero2"' has no exported member 'k'.
     j + k
     
