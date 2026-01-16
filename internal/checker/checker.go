@@ -48,6 +48,13 @@ const (
 	CheckModeForceTuple CheckMode = 1 << 7
 )
 
+// Recursion depth limits
+const (
+	// Maximum depth for destructuring pattern recursion in getSyntheticElementAccess.
+	// Matches the type instantiation depth limit used elsewhere in the checker.
+	maxDestructuringDepth = 100
+)
+
 type TypeSystemEntity any
 
 type TypeSystemPropertyName int32
@@ -17347,15 +17354,22 @@ func (c *Checker) getRestType(source *Type, properties []*ast.Node, symbol *ast.
 // We construct a synthetic element access expression corresponding to 'obj.x' such that the control
 // flow analyzer doesn't have to handle all the different syntactic forms.
 func (c *Checker) getFlowTypeOfDestructuring(node *ast.Node, declaredType *Type) *Type {
-	reference := c.getSyntheticElementAccess(node)
+	reference := c.getSyntheticElementAccess(node, 0)
 	if reference != nil {
 		return c.getFlowTypeOfReference(reference, declaredType)
 	}
 	return declaredType
 }
 
-func (c *Checker) getSyntheticElementAccess(node *ast.Node) *ast.Node {
-	parentAccess := c.getParentElementAccess(node)
+func (c *Checker) getSyntheticElementAccess(node *ast.Node, depth int) *ast.Node {
+	// Guard against excessive recursion in deeply nested destructuring patterns
+	if depth >= maxDestructuringDepth {
+		// Return nil to avoid stack overflow. This will cause the code to fall back
+		// to the declared type rather than computing flow-sensitive types.
+		return nil
+	}
+	
+	parentAccess := c.getParentElementAccess(node, depth+1)
 	if parentAccess != nil && getFlowNodeOfNode(parentAccess) != nil {
 		if propName, ok := c.getDestructuringPropertyName(node); ok {
 			literal := c.factory.NewStringLiteral(propName, ast.TokenFlagsNone)
@@ -17379,13 +17393,13 @@ func (c *Checker) getSyntheticElementAccess(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func (c *Checker) getParentElementAccess(node *ast.Node) *ast.Node {
+func (c *Checker) getParentElementAccess(node *ast.Node, depth int) *ast.Node {
 	ancestor := node.Parent.Parent
 	switch ancestor.Kind {
 	case ast.KindBindingElement, ast.KindPropertyAssignment:
-		return c.getSyntheticElementAccess(ancestor)
+		return c.getSyntheticElementAccess(ancestor, depth)
 	case ast.KindArrayLiteralExpression:
-		return c.getSyntheticElementAccess(node.Parent)
+		return c.getSyntheticElementAccess(node.Parent, depth)
 	case ast.KindVariableDeclaration:
 		return ancestor.Initializer()
 	case ast.KindBinaryExpression:
