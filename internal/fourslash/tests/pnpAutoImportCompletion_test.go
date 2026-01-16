@@ -164,7 +164,7 @@ aValue;
 				&lsproto.CompletionItem{
 					Label: "helperA",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "package-a/subpath",
 						},
 					},
@@ -176,7 +176,7 @@ aValue;
 				&lsproto.CompletionItem{
 					Label: "workspaceHelper",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "workspace-lib",
 						},
 					},

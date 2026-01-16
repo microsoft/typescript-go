@@ -850,7 +850,7 @@ func tryGetModuleNameAsPnpPackage(
 		nodeModulesDirectoryName = pnpPackageName + moduleSpecifier[parts.PackageRootIndex:]
 	}
 
-	return GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+	return module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 }
 
 func tryGetModuleNameAsNodeModule(

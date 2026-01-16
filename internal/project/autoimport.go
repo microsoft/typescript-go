@@ -9,8 +9,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 type autoImportBuilderFS struct {
@@ -61,6 +63,7 @@ type autoImportRegistryCloneHost struct {
 	parseCache        *ParseCache
 	fs                *sourceFS
 	currentDirectory  string
+	pnpApi            *pnp.PnpApi
 
 	filesMu sync.Mutex
 	files   []ParseCacheKey
@@ -75,10 +78,16 @@ func newAutoImportRegistryCloneHost(
 	currentDirectory string,
 	toPath func(fileName string) tspath.Path,
 ) *autoImportRegistryCloneHost {
+	pnpApi := pnp.InitPnpApi(snapshotFSBuilder.fs, currentDirectory)
+	if pnpApi != nil {
+		snapshotFSBuilder.fs = pnpvfs.From(snapshotFSBuilder.fs)
+	}
+
 	return &autoImportRegistryCloneHost{
 		projectCollection: projectCollection,
 		parseCache:        parseCache,
 		fs:                newSourceFS(false, &autoImportBuilderFS{snapshotFSBuilder: snapshotFSBuilder}, toPath),
+		pnpApi:            pnpApi,
 	}
 }
 
@@ -90,6 +99,11 @@ func (a *autoImportRegistryCloneHost) FS() vfs.FS {
 // GetCurrentDirectory implements autoimport.RegistryCloneHost.
 func (a *autoImportRegistryCloneHost) GetCurrentDirectory() string {
 	return a.currentDirectory
+}
+
+// PnpApi implements autoimport.RegistryCloneHost.
+func (a *autoImportRegistryCloneHost) PnpApi() *pnp.PnpApi {
+	return a.pnpApi
 }
 
 // GetDefaultProject implements autoimport.RegistryCloneHost.

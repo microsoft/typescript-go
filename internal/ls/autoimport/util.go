@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/wrapvfs"
@@ -252,6 +253,7 @@ func getPackageRealpathFuncs(fs vfs.FS, packageDir string) (toRealpath, toSymlin
 type resolutionHost struct {
 	fs               vfs.FS
 	currentDirectory string
+	pnpApi           *pnp.PnpApi
 }
 
 var _ module.ResolutionHost = (*resolutionHost)(nil)
@@ -264,10 +266,15 @@ func (rh *resolutionHost) FS() vfs.FS {
 	return rh.fs
 }
 
+func (rh *resolutionHost) PnpApi() *pnp.PnpApi {
+	return rh.pnpApi
+}
+
 func getModuleResolver(host RegistryCloneHost, realpath func(string) string) *module.Resolver {
 	rh := &resolutionHost{
 		fs:               wrapvfs.Wrap(host.FS(), wrapvfs.Replacements{Realpath: realpath}),
 		currentDirectory: host.GetCurrentDirectory(),
+		pnpApi:           host.PnpApi(),
 	}
 	return module.NewResolver(rh, core.EmptyCompilerOptions, "", "")
 }
