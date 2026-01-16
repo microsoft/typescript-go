@@ -330,7 +330,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 		msg, err := s.read()
 		if err != nil {
 			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
-				s.sendError(ctx, nil, err)
+				if err := s.sendError(ctx, nil, err); err != nil {
+					return err
+				}
 				continue
 			}
 			return err
@@ -343,9 +345,13 @@ func (s *Server) readLoop(ctx context.Context) error {
 				if err != nil {
 					return err
 				}
-				s.sendResult(ctx, req.ID, resp)
+				if err := s.sendResult(ctx, req.ID, resp); err != nil {
+					return err
+				}
 			} else {
-				s.sendError(ctx, req.ID, lsproto.ErrorCodeServerNotInitialized)
+				if err := s.sendError(ctx, req.ID, lsproto.ErrorCodeServerNotInitialized); err != nil {
+					return err
+				}
 			}
 			continue
 		}
@@ -407,11 +413,11 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			handle := func() {
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
 					if errors.Is(err, context.Canceled) {
-						s.sendError(requestCtx, req.ID, lsproto.ErrorCodeRequestCancelled)
+						_ = s.sendError(requestCtx, req.ID, lsproto.ErrorCodeRequestCancelled)
 					} else if errors.Is(err, io.EOF) {
 						lspExit()
 					} else {
-						s.sendError(requestCtx, req.ID, err)
+						_ = s.sendError(requestCtx, req.ID, err)
 					}
 				}
 
@@ -477,20 +483,20 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
-func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) {
-	s.sendResponse(ctx, &lsproto.ResponseMessage{
+func (s *Server) sendResult(ctx context.Context, id *lsproto.ID, result any) error {
+	return s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID:     id,
 		Result: result,
 	})
 }
 
-func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
+func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) error {
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
-	s.sendResponse(ctx, &lsproto.ResponseMessage{
+	return s.sendResponse(ctx, &lsproto.ResponseMessage{
 		ID: id,
 		Error: &lsproto.ResponseError{
 			Code:    int32(code),
@@ -499,8 +505,8 @@ func (s *Server) sendError(ctx context.Context, id *lsproto.ID, err error) {
 	})
 }
 
-func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) {
-	_ = s.send(ctx, resp.Message())
+func (s *Server) sendResponse(ctx context.Context, resp *lsproto.ResponseMessage) error {
+	return s.send(ctx, resp.Message())
 }
 
 // send writes a message to the outgoing queue, respecting context cancellation.
@@ -524,7 +530,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
 	if req.ID != nil {
-		s.sendError(ctx, req.ID, lsproto.ErrorCodeInvalidRequest)
+		_ = s.sendError(ctx, req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
 	return nil
 }
@@ -630,8 +636,7 @@ func registerRequestHandler[Req, Resp any](
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(ctx, req.ID, resp)
-		return nil
+		return s.sendResult(ctx, req.ID, resp)
 	}
 }
 
@@ -654,8 +659,7 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(ctx, req.ID, resp)
-		return nil
+		return s.sendResult(ctx, req.ID, resp)
 	}
 }
 
@@ -691,8 +695,7 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		s.sendResult(ctx, req.ID, resp)
-		return nil
+		return s.sendResult(ctx, req.ID, resp)
 	}
 }
 
@@ -717,8 +720,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		if err != nil {
 			return err
 		}
-		s.sendResult(ctx, req.ID, resp)
-		return nil
+		return s.sendResult(ctx, req.ID, resp)
 	}
 }
 
@@ -771,7 +773,7 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			s.sendError(ctx, req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			_ = s.sendError(ctx, req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
 		}
