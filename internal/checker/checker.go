@@ -13188,7 +13188,8 @@ func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
 	return ast.IsConstAssertion(parent) ||
-		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
+		// Avoid calling getContextualType if we're already computing contextual types to prevent infinite recursion
+		c.isValidConstAssertionArgument(node) && c.findContextualNode(node, true /*includeCaches*/) < 0 && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent) || ast.IsSpreadElement(parent)) && c.isConstContext(parent) ||
 		(ast.IsPropertyAssignment(parent) || ast.IsShorthandPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
 }
@@ -29749,6 +29750,10 @@ func (c *Checker) discriminateContextualTypeByObjectMembers(node *ast.Node, cont
 	if discriminated := c.discriminatedContextualTypes[key]; discriminated != nil {
 		return discriminated
 	}
+	// Set a sentinel value to detect re-entrant calls and prevent infinite recursion.
+	// This can happen when a shorthand property in the object literal references a variable
+	// being declared in a destructuring pattern with the same contextual type.
+	c.discriminatedContextualTypes[key] = contextualType
 	discriminated := c.getMatchingUnionConstituentForObjectLiteral(contextualType, node)
 	if discriminated == nil {
 		discriminantProperties := core.Filter(node.Properties(), func(p *ast.Node) bool {
