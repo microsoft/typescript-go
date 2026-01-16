@@ -303,9 +303,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			if result.Opened != "" {
 				panic("can only process one file open event at a time")
 			}
-			result.Opened = uri
-			if events.reopened && o != nil && o.Content() != events.openChange.Content {
+			if o != nil && o.Content() != events.openChange.Content {
 				result.Changed.Add(uri)
+			} else {
+				result.Opened = uri
 			}
 			newOverlays[path] = newOverlay(
 				uri.FileName(),
