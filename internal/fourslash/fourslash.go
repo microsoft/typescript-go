@@ -209,7 +209,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
-		Err: t.Output(),
+		Err: io.Discard,
 
 		Cwd:                "/",
 		FS:                 fs,
