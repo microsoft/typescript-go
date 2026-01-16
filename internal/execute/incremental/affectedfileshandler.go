@@ -265,6 +265,8 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
 	if existing, loaded := h.seenFileAndExportsOfFile.LoadOrStore(filePath, invalidateJsFiles); loaded && (existing || !invalidateJsFiles) {
 		return false
+	} else if existing && invalidateJsFiles {
+		h.seenFileAndExportsOfFile.Store(filePath, true)
 	}
 	if h.handleDtsMayChangeOfGlobalScope(dtsMayChange, filePath, invalidateJsFiles) {
 		return true
