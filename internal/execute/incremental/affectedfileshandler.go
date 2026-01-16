@@ -269,7 +269,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndReferences(dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
 	if existing, loaded := h.seenFileAndReferences.LoadOrStore(filePath, invalidateJsFiles); loaded && (existing || !invalidateJsFiles) {
 		return false
-	} else if existing && invalidateJsFiles {
+	} else if loaded && invalidateJsFiles {
 		h.seenFileAndReferences.Store(filePath, true)
 	}
 
