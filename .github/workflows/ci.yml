@@ -214,8 +214,6 @@ jobs:
       - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
       - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
-        with:
-          lint-cache: 'true'
 
       # Avoid duplicate PR annotations.
       - if: ${{ ! matrix.config.main }}
