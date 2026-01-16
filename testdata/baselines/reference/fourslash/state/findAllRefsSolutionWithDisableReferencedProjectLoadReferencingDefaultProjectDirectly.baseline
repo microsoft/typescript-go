@@ -245,7 +245,7 @@ Projects::
   [/dev/null/inferred] *deleted*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/dummy/tsconfig.json] *modified*
+  [/dummy/tsconfig.json] 
     /dummy/dummy.ts  
 Open Files::
   [/dummy/dummy.ts] *new*
@@ -256,7 +256,9 @@ Config::
       /dummy/tsconfig.json  
     RetainingOpenFiles:
       /dummy/dummy.ts  
-  [/myproject/tsconfig.json] *deleted*
+  [/myproject/tsconfig.json] *modified*
+    RetainingOpenFiles: *modified*
+      /myproject/src/main.ts  *deleted*
 Config File Names::
   [/dummy/dummy.ts] 
     NearestConfigFileName: /dummy/tsconfig.json
@@ -290,20 +292,16 @@ Projects::
   [/dev/null/inferred] *new*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/dummy/tsconfig.json] *modified*
+  [/dummy/tsconfig.json] *deleted*
     /dummy/dummy.ts  
 Open Files::
   [/myproject/src/main.ts] *new*
     /dev/null/inferred  (default) 
 Config::
-  [/dummy/tsconfig.json] *modified*
-    RetainingProjects:
-      /dummy/tsconfig.json  
+  [/dummy/tsconfig.json] *deleted*
+  [/myproject/tsconfig.json] *modified*
     RetainingOpenFiles: *modified*
-      /dummy/dummy.ts  *deleted*
-  [/myproject/tsconfig.json] *new*
-    RetainingOpenFiles:
-      /myproject/src/main.ts  
+      /myproject/src/main.ts  *new*
 Config File Names::
   [/dummy/dummy.ts] *deleted*
   [/myproject/src/main.ts] *new*
@@ -365,8 +363,6 @@ Projects::
   [/dev/null/inferred] *deleted*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/dummy/tsconfig.json] *deleted*
-    /dummy/dummy.ts  
   [/myproject/indirect3/tsconfig.json] *new*
     /myproject/target/src/helpers/functions.d.ts  
     /myproject/target/src/main.d.ts               
@@ -375,7 +371,6 @@ Open Files::
   [/myproject/indirect3/main.ts] *new*
     /myproject/indirect3/tsconfig.json  (default) 
 Config::
-  [/dummy/tsconfig.json] *deleted*
   [/myproject/indirect3/tsconfig.json] *new*
     RetainingProjects:
       /myproject/indirect3/tsconfig.json  
