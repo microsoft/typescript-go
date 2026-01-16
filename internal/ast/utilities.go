@@ -1286,7 +1286,7 @@ func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
 }
 
-func isVoidZero(node *Node) bool {
+func IsVoidZero(node *Node) bool {
 	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
 }
 
@@ -1477,7 +1477,7 @@ func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
 	switch node.Kind {
 	case KindBinaryExpression:
 		bin := node.AsBinaryExpression()
-		if bin.OperatorToken.Kind == KindEqualsToken && IsAccessExpression(bin.Left) && !isVoidZero(GetRightMostAssignedExpression(bin.Right)) {
+		if bin.OperatorToken.Kind == KindEqualsToken && IsAccessExpression(bin.Left) {
 			if IsInJSFile(bin.Left) {
 				if IsModuleExportsAccessExpression(bin.Left) {
 					return JSDeclarationKindModuleExports
