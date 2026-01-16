@@ -1,0 +1,181 @@
+//// [tests/cases/compiler/quantifiedTypesParentInferenceContext4.ts] ////
+
+=== quantifiedTypesParentInferenceContext4.ts ===
+declare const f:
+>f : Symbol(f, Decl(quantifiedTypesParentInferenceContext4.ts, 0, 13))
+
+  (x:
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 1, 3))
+
+    <A, B, D, E> {
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 5))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 7))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 10))
+>E : Symbol(E, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 13))
+
+      a: () => A,
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 18))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 5))
+
+      ab: (a: A) => B,
+>ab : Symbol(ab, Decl(quantifiedTypesParentInferenceContext4.ts, 3, 17))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 4, 11))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 5))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 7))
+
+      nested: <C> {
+>nested : Symbol(nested, Decl(quantifiedTypesParentInferenceContext4.ts, 4, 22))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 5, 15))
+
+        c: (b: B) => C,
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 5, 19))
+>b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 6, 12))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 7))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 5, 15))
+
+        cd: (c: C) => D,
+>cd : Symbol(cd, Decl(quantifiedTypesParentInferenceContext4.ts, 6, 23))
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 7, 13))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 5, 15))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 10))
+
+      },
+      de: (d: D) => E 
+>de : Symbol(de, Decl(quantifiedTypesParentInferenceContext4.ts, 8, 8))
+>d : Symbol(d, Decl(quantifiedTypesParentInferenceContext4.ts, 9, 11))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 10))
+>E : Symbol(E, Decl(quantifiedTypesParentInferenceContext4.ts, 2, 13))
+    }
+  ) => void
+
+// TODO: this should compile just like the f1 call
+f({
+>f : Symbol(f, Decl(quantifiedTypesParentInferenceContext4.ts, 0, 13))
+
+  a: () => ({ a: 0 }),
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 14, 3))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 15, 13))
+
+  ab: x => ({ ...x, b: "" }),
+>ab : Symbol(ab, Decl(quantifiedTypesParentInferenceContext4.ts, 15, 22))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 16, 5))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 16, 5))
+>b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 16, 19))
+
+  nested: {
+>nested : Symbol(nested, Decl(quantifiedTypesParentInferenceContext4.ts, 16, 29))
+
+    c: x => ({ ...x, c: +x.b }),
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 17, 11))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 18, 6))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 18, 6))
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 18, 20))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 18, 6))
+
+    cd: x => ({ ...x, d: Boolean(x.c) })
+>cd : Symbol(cd, Decl(quantifiedTypesParentInferenceContext4.ts, 18, 32))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 19, 7))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 19, 7))
+>d : Symbol(d, Decl(quantifiedTypesParentInferenceContext4.ts, 19, 21))
+>Boolean : Symbol(Boolean, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 19, 7))
+
+  },
+  de: x => ({ ...x, e: "" })
+>de : Symbol(de, Decl(quantifiedTypesParentInferenceContext4.ts, 20, 4))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 21, 5))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 21, 5))
+>e : Symbol(e, Decl(quantifiedTypesParentInferenceContext4.ts, 21, 19))
+
+})
+
+declare const f1:
+>f1 : Symbol(f1, Decl(quantifiedTypesParentInferenceContext4.ts, 24, 13))
+
+  <A, B, C, D, E>
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 3))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 5))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 8))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 11))
+>E : Symbol(E, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 14))
+
+  (x:
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 26, 3))
+     {
+      a: () => A,
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 27, 6))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 3))
+
+      ab: (a: A) => B,
+>ab : Symbol(ab, Decl(quantifiedTypesParentInferenceContext4.ts, 28, 17))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 29, 11))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 3))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 5))
+
+      nested: {
+>nested : Symbol(nested, Decl(quantifiedTypesParentInferenceContext4.ts, 29, 22))
+
+        c: (b: B) => C,
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 30, 15))
+>b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 31, 12))
+>B : Symbol(B, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 5))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 8))
+
+        cd: (c: C) => D,
+>cd : Symbol(cd, Decl(quantifiedTypesParentInferenceContext4.ts, 31, 23))
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 32, 13))
+>C : Symbol(C, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 8))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 11))
+
+      },
+      de: (d: D) => E 
+>de : Symbol(de, Decl(quantifiedTypesParentInferenceContext4.ts, 33, 8))
+>d : Symbol(d, Decl(quantifiedTypesParentInferenceContext4.ts, 34, 11))
+>D : Symbol(D, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 11))
+>E : Symbol(E, Decl(quantifiedTypesParentInferenceContext4.ts, 25, 14))
+    }
+  ) => void
+
+f1({
+>f1 : Symbol(f1, Decl(quantifiedTypesParentInferenceContext4.ts, 24, 13))
+
+  a: () => ({ a: 0 }),
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 38, 4))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext4.ts, 39, 13))
+
+  ab: x => ({ ...x, b: "" }),
+>ab : Symbol(ab, Decl(quantifiedTypesParentInferenceContext4.ts, 39, 22))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 5))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 5))
+>b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 19))
+
+  nested: {
+>nested : Symbol(nested, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 29))
+
+    c: x => ({ ...x, c: +x.b }),
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 41, 11))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 6))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 6))
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 20))
+>x.b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 19))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 6))
+>b : Symbol(b, Decl(quantifiedTypesParentInferenceContext4.ts, 40, 19))
+
+    cd: x => ({ ...x, d: Boolean(x.c) })
+>cd : Symbol(cd, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 32))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 43, 7))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 43, 7))
+>d : Symbol(d, Decl(quantifiedTypesParentInferenceContext4.ts, 43, 21))
+>Boolean : Symbol(Boolean, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>x.c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 20))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 43, 7))
+>c : Symbol(c, Decl(quantifiedTypesParentInferenceContext4.ts, 42, 20))
+
+  },
+  de: x => ({ ...x, e: "" })
+>de : Symbol(de, Decl(quantifiedTypesParentInferenceContext4.ts, 44, 4))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 45, 5))
+>x : Symbol(x, Decl(quantifiedTypesParentInferenceContext4.ts, 45, 5))
+>e : Symbol(e, Decl(quantifiedTypesParentInferenceContext4.ts, 45, 19))
+
+})

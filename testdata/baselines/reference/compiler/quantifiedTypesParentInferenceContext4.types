@@ -1,0 +1,201 @@
+//// [tests/cases/compiler/quantifiedTypesParentInferenceContext4.ts] ////
+
+=== quantifiedTypesParentInferenceContext4.ts ===
+declare const f:
+>f : (x: <A, B, D, E> { a: () => A; ab: (a: A) => B; nested: <C> { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }) => void
+
+  (x:
+>x : <A, B, D, E> { a: () => A; ab: (a: A) => B; nested: <C> { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }
+
+    <A, B, D, E> {
+      a: () => A,
+>a : () => A
+
+      ab: (a: A) => B,
+>ab : (a: A) => B
+>a : A
+
+      nested: <C> {
+>nested : <C> { c: (b: B) => C; cd: (c: C) => D; }
+
+        c: (b: B) => C,
+>c : (b: B) => C
+>b : B
+
+        cd: (c: C) => D,
+>cd : (c: C) => D
+>c : C
+
+      },
+      de: (d: D) => E 
+>de : (d: D) => E
+>d : D
+    }
+  ) => void
+
+// TODO: this should compile just like the f1 call
+f({
+>f({  a: () => ({ a: 0 }),  ab: x => ({ ...x, b: "" }),  nested: {    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  },  de: x => ({ ...x, e: "" })}) : void
+>f : (x: <A, B, D, E> { a: () => A; ab: (a: A) => B; nested: <C> { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }) => void
+>{  a: () => ({ a: 0 }),  ab: x => ({ ...x, b: "" }),  nested: {    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  },  de: x => ({ ...x, e: "" })} : { a: () => { a: number; }; ab: (x: { a: number; }) => { a: number; b: string; }; nested: { c: (x: unknown) => any; cd: (x: any) => any; }; de: (x: unknown) => any; }
+
+  a: () => ({ a: 0 }),
+>a : () => { a: number; }
+>() => ({ a: 0 }) : () => { a: number; }
+>({ a: 0 }) : { a: number; }
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+  ab: x => ({ ...x, b: "" }),
+>ab : (x: { a: number; }) => { a: number; b: string; }
+>x => ({ ...x, b: "" }) : (x: { a: number; }) => { a: number; b: string; }
+>x : { a: number; }
+>({ ...x, b: "" }) : { a: number; b: string; }
+>{ ...x, b: "" } : { a: number; b: string; }
+>x : { a: number; }
+>b : string
+>"" : ""
+
+  nested: {
+>nested : { c: (x: unknown) => any; cd: (x: any) => any; }
+>{    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  } : { c: (x: unknown) => any; cd: (x: any) => any; }
+
+    c: x => ({ ...x, c: +x.b }),
+>c : (x: unknown) => any
+>x => ({ ...x, c: +x.b }) : (x: unknown) => any
+>x : unknown
+>({ ...x, c: +x.b }) : any
+>{ ...x, c: +x.b } : any
+>x : unknown
+>c : number
+>+x.b : number
+>x.b : any
+>x : unknown
+>b : any
+
+    cd: x => ({ ...x, d: Boolean(x.c) })
+>cd : (x: any) => any
+>x => ({ ...x, d: Boolean(x.c) }) : (x: any) => any
+>x : any
+>({ ...x, d: Boolean(x.c) }) : any
+>{ ...x, d: Boolean(x.c) } : any
+>x : any
+>d : boolean
+>Boolean(x.c) : boolean
+>Boolean : BooleanConstructor
+>x.c : any
+>x : any
+>c : any
+
+  },
+  de: x => ({ ...x, e: "" })
+>de : (x: unknown) => any
+>x => ({ ...x, e: "" }) : (x: unknown) => any
+>x : unknown
+>({ ...x, e: "" }) : any
+>{ ...x, e: "" } : any
+>x : unknown
+>e : string
+>"" : ""
+
+})
+
+declare const f1:
+>f1 : <A, B, C, D, E>(x: { a: () => A; ab: (a: A) => B; nested: { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }) => void
+
+  <A, B, C, D, E>
+  (x:
+>x : { a: () => A; ab: (a: A) => B; nested: { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }
+     {
+      a: () => A,
+>a : () => A
+
+      ab: (a: A) => B,
+>ab : (a: A) => B
+>a : A
+
+      nested: {
+>nested : { c: (b: B) => C; cd: (c: C) => D; }
+
+        c: (b: B) => C,
+>c : (b: B) => C
+>b : B
+
+        cd: (c: C) => D,
+>cd : (c: C) => D
+>c : C
+
+      },
+      de: (d: D) => E 
+>de : (d: D) => E
+>d : D
+    }
+  ) => void
+
+f1({
+>f1({  a: () => ({ a: 0 }),  ab: x => ({ ...x, b: "" }),  nested: {    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  },  de: x => ({ ...x, e: "" })}) : void
+>f1 : <A, B, C, D, E>(x: { a: () => A; ab: (a: A) => B; nested: { c: (b: B) => C; cd: (c: C) => D; }; de: (d: D) => E; }) => void
+>{  a: () => ({ a: 0 }),  ab: x => ({ ...x, b: "" }),  nested: {    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  },  de: x => ({ ...x, e: "" })} : { a: () => { a: number; }; ab: (x: { a: number; }) => { a: number; b: string; }; nested: { c: (x: { a: number; b: string; }) => { a: number; b: string; c: number; }; cd: (x: { a: number; b: string; c: number; }) => { a: number; b: string; c: number; d: boolean; }; }; de: (x: { a: number; b: string; c: number; d: boolean; }) => { a: number; b: string; c: number; d: boolean; e: string; }; }
+
+  a: () => ({ a: 0 }),
+>a : () => { a: number; }
+>() => ({ a: 0 }) : () => { a: number; }
+>({ a: 0 }) : { a: number; }
+>{ a: 0 } : { a: number; }
+>a : number
+>0 : 0
+
+  ab: x => ({ ...x, b: "" }),
+>ab : (x: { a: number; }) => { a: number; b: string; }
+>x => ({ ...x, b: "" }) : (x: { a: number; }) => { a: number; b: string; }
+>x : { a: number; }
+>({ ...x, b: "" }) : { a: number; b: string; }
+>{ ...x, b: "" } : { a: number; b: string; }
+>x : { a: number; }
+>b : string
+>"" : ""
+
+  nested: {
+>nested : { c: (x: { a: number; b: string; }) => { a: number; b: string; c: number; }; cd: (x: { a: number; b: string; c: number; }) => { a: number; b: string; c: number; d: boolean; }; }
+>{    c: x => ({ ...x, c: +x.b }),    cd: x => ({ ...x, d: Boolean(x.c) })  } : { c: (x: { a: number; b: string; }) => { a: number; b: string; c: number; }; cd: (x: { a: number; b: string; c: number; }) => { a: number; b: string; c: number; d: boolean; }; }
+
+    c: x => ({ ...x, c: +x.b }),
+>c : (x: { a: number; b: string; }) => { a: number; b: string; c: number; }
+>x => ({ ...x, c: +x.b }) : (x: { a: number; b: string; }) => { a: number; b: string; c: number; }
+>x : { a: number; b: string; }
+>({ ...x, c: +x.b }) : { a: number; b: string; c: number; }
+>{ ...x, c: +x.b } : { a: number; b: string; c: number; }
+>x : { a: number; b: string; }
+>c : number
+>+x.b : number
+>x.b : string
+>x : { a: number; b: string; }
+>b : string
+
+    cd: x => ({ ...x, d: Boolean(x.c) })
+>cd : (x: { a: number; b: string; c: number; }) => { a: number; b: string; c: number; d: boolean; }
+>x => ({ ...x, d: Boolean(x.c) }) : (x: { a: number; b: string; c: number; }) => { a: number; b: string; c: number; d: boolean; }
+>x : { a: number; b: string; c: number; }
+>({ ...x, d: Boolean(x.c) }) : { a: number; b: string; c: number; d: boolean; }
+>{ ...x, d: Boolean(x.c) } : { a: number; b: string; c: number; d: boolean; }
+>x : { a: number; b: string; c: number; }
+>d : boolean
+>Boolean(x.c) : boolean
+>Boolean : BooleanConstructor
+>x.c : number
+>x : { a: number; b: string; c: number; }
+>c : number
+
+  },
+  de: x => ({ ...x, e: "" })
+>de : (x: { a: number; b: string; c: number; d: boolean; }) => { a: number; b: string; c: number; d: boolean; e: string; }
+>x => ({ ...x, e: "" }) : (x: { a: number; b: string; c: number; d: boolean; }) => { a: number; b: string; c: number; d: boolean; e: string; }
+>x : { a: number; b: string; c: number; d: boolean; }
+>({ ...x, e: "" }) : { a: number; b: string; c: number; d: boolean; e: string; }
+>{ ...x, e: "" } : { a: number; b: string; c: number; d: boolean; e: string; }
+>x : { a: number; b: string; c: number; d: boolean; }
+>e : string
+>"" : ""
+
+})
