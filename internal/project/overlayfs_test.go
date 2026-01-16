@@ -227,8 +227,8 @@ func TestProcessChanges(t *testing.T) {
 			},
 		})
 
-		// Should be marked as opened
-		assert.Equal(t, result.Opened, testURI1)
+		// Should not be marked as opened since it was already open
+		assert.Assert(t, result.Opened == "", "close then open should not mark as opened")
 		// Should also be marked as changed since it was closed and reopened
 		assert.Assert(t, result.Changed.Has(testURI1), "close then open should mark as changed")
 		// Should have the new content
