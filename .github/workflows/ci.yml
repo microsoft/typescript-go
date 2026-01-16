@@ -71,7 +71,7 @@ jobs:
             skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
             coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
+            skip: ${{ github.event_name == 'merge_group' || github.event_name == 'pull_request' }}
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
