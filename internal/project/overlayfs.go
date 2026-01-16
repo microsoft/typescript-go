@@ -299,12 +299,9 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		path := uri.Path(fs.fs.UseCaseSensitiveFileNames())
 		o := newOverlays[path]
 
-		if events.openChange != nil {
+		if events.openChange != nil && !(events.reopened && o != nil && o.Content() == events.openChange.Content) {
 			if result.Opened != "" {
 				panic("can only process one file open event at a time")
-			}
-			if events.reopened && o != nil && o.Content() == events.openChange.Content {
-				continue
 			}
 			result.Opened = uri
 			if events.reopened {
