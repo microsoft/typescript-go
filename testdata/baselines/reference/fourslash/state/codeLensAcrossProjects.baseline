@@ -736,29 +736,27 @@ Open Files::
   }
 }
 
+Projects::
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts            
+    /projects/container/compositeExec/index.ts  
+  [/projects/container/exec/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts   
+    /projects/container/exec/index.ts  
+  [/projects/container/lib/tsconfig.json] *deleted*
+    /projects/container/lib/index.ts  
+    /projects/container/lib/bar.ts    
+  [/projects/container/tsconfig.json] *deleted*
+  [/projects/temp/tsconfig.json] 
+    /projects/temp/temp.ts  
 Open Files::
   [/projects/temp/temp.ts] *new*
     /projects/temp/tsconfig.json  (default) 
 Config::
-  [/projects/container/compositeExec/tsconfig.json] 
-    RetainingProjects:
-      /projects/container/compositeExec/tsconfig.json  
-      /projects/container/tsconfig.json                
-  [/projects/container/exec/tsconfig.json] 
-    RetainingProjects:
-      /projects/container/exec/tsconfig.json  
-      /projects/container/tsconfig.json       
-  [/projects/container/lib/tsconfig.json] *modified*
-    RetainingProjects:
-      /projects/container/compositeExec/tsconfig.json  
-      /projects/container/exec/tsconfig.json           
-      /projects/container/lib/tsconfig.json            
-      /projects/container/tsconfig.json                
-    RetainingOpenFiles: *modified*
-      /projects/container/lib/index.ts  *deleted*
-  [/projects/container/tsconfig.json] 
-    RetainingProjects:
-      /projects/container/tsconfig.json  
+  [/projects/container/compositeExec/tsconfig.json] *deleted*
+  [/projects/container/exec/tsconfig.json] *deleted*
+  [/projects/container/lib/tsconfig.json] *deleted*
+  [/projects/container/tsconfig.json] *deleted*
   [/projects/temp/tsconfig.json] 
     RetainingProjects:
       /projects/temp/tsconfig.json  
