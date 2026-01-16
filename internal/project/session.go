@@ -16,7 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
@@ -88,8 +87,9 @@ type Session struct {
 	programCounter *programCounter
 
 	// read-only after initialization
-	initialPreferences                 *lsutil.UserPreferences
-	userPreferences                    *lsutil.UserPreferences // !!! update to Config
+	initialConfig *Config
+	// current config
+	workspaceConfig                    *Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -163,7 +163,7 @@ func NewSession(init *SessionInit) *Session {
 			init.Options,
 			&ConfigFileRegistry{},
 			nil,
-			Config{},
+			nil,
 			nil,
 			NewWatchedFiles(
 				"auto-import",
@@ -181,6 +181,8 @@ func NewSession(init *SessionInit) *Session {
 			),
 			toPath,
 		),
+		initialConfig:     NewConfig(nil),
+		workspaceConfig:   NewConfig(nil), // initialize so all `config`s are non-nil
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 		watches:           make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}
@@ -205,16 +207,11 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-// Gets current UserPreferences, always a copy
-func (s *Session) UserPreferences() *lsutil.UserPreferences {
+// Gets copy of current configuration
+func (s *Session) Config() *Config {
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
-	return s.userPreferences.Copy()
-}
-
-// Gets original UserPreferences of the session
-func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
-	return s.initialPreferences.CopyOrDefault()
+	return s.workspaceConfig.Copy()
 }
 
 // Trace implements module.ResolutionHost
@@ -222,23 +219,25 @@ func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
 }
 
-func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
+func (s *Session) Configure(config *Config) {
+	// `config` should never be nil
 	s.configRWMu.Lock()
 	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
+	oldConfig := s.workspaceConfig.Copy()
+	s.workspaceConfig = s.workspaceConfig.CopyInto(config)
 
 	// Tell the client to re-request certain commands depending on user preference changes.
-	oldUserPreferences := s.userPreferences
-	s.userPreferences = userPreferences
-	if oldUserPreferences != userPreferences && oldUserPreferences != nil && userPreferences != nil {
-		s.refreshInlayHintsIfNeeded(oldUserPreferences, userPreferences)
-		s.refreshCodeLensIfNeeded(oldUserPreferences, userPreferences)
+	if oldConfig != config {
+		s.refreshInlayHintsIfNeeded(oldConfig, config)
+		s.refreshCodeLensIfNeeded(oldConfig, config)
 	}
 }
 
-func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
-	s.initialPreferences = userPreferences.CopyOrDefault()
-	s.Configure(s.initialPreferences)
+func (s *Session) InitializeWithConfig(config *Config) {
+	config.ts = config.ts.CopyOrDefault()
+	s.initialConfig = config
+	s.Configure(s.initialConfig)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -472,7 +471,7 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	if project == nil {
 		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot), nil
+	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
@@ -518,7 +517,7 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 	if !project.HasFile(uri.FileName()) {
 		return nil
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot)
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName())
 }
 
 func (s *Session) GetSnapshotLoadingProjectTree(
@@ -546,7 +545,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, uri lsp
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
@@ -745,9 +744,7 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	defer s.configRWMu.Unlock()
 	var newConfig *Config
 	if s.pendingConfigChanges {
-		newConfig = &Config{
-			tsUserPreferences: s.userPreferences.Copy(),
-		}
+		newConfig = s.workspaceConfig.Copy()
 	}
 	s.pendingConfigChanges = false
 	return fileChanges, overlays, pendingATAChanges, newConfig
@@ -857,16 +854,16 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
 }
 
-func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
-	if oldPrefs.InlayHints != newPrefs.InlayHints {
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *Config, newPrefs *Config) {
+	if oldPrefs.js.InlayHints != newPrefs.js.InlayHints || oldPrefs.ts.InlayHints != newPrefs.ts.InlayHints {
 		if err := s.client.RefreshInlayHints(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
 	}
 }
 
-func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferences, newPrefs *lsutil.UserPreferences) {
-	if oldPrefs.CodeLens != newPrefs.CodeLens {
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs *Config, newPrefs *Config) {
+	if oldPrefs.js.CodeLens != newPrefs.js.CodeLens || oldPrefs.ts.CodeLens != newPrefs.ts.CodeLens {
 		if err := s.client.RefreshCodeLens(context.Background()); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
@@ -983,7 +980,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if newSnapshot.AutoImports.IsPreparedForImportingFile(
 			changedFile.FileName(),
 			project.configFilePath,
-			newSnapshot.config.tsUserPreferences.OrDefault(),
+			newSnapshot.config.Ts(),
 		) {
 			return
 		}
