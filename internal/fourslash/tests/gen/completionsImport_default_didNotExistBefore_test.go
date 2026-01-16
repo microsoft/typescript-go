@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_default_didNotExistBefore(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts
@@ -32,7 +32,7 @@ f/**/;`
 				&lsproto.CompletionItem{
 					Label: "foo",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},

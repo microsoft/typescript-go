@@ -1,15 +1,14 @@
 import * as vscode from "vscode";
 import {
-    DocumentUri,
     LanguageClient,
     LanguageClientOptions,
-    Location,
     NotebookDocumentFilter,
-    Position,
     ServerOptions,
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
+import { codeLensShowLocationsCommandName } from "./commands";
+import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import {
     ExeInfo,
     getExe,
@@ -17,31 +16,29 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
-const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
-
 export class Client {
-    private outputChannel: vscode.OutputChannel;
-    private traceOutputChannel: vscode.OutputChannel;
+    private outputChannel: vscode.LogOutputChannel;
+    private traceOutputChannel: vscode.LogOutputChannel;
+    private documentSelector: Array<{ scheme: string; language: string; }>;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
+
+    private isDisposed = false;
+    private disposables: vscode.Disposable[] = [];
+
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
+        this.documentSelector = [
+            ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
+            ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
+            ...jsTsLanguageModes.map(language => ({ scheme: "zip", language })),
+        ];
         this.clientOptions = {
-            documentSelector: [
-                ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
-                ...jsTsLanguageModes.map(language => ({
-                    scheme: "untitled",
-                    language,
-                })),
-                ...jsTsLanguageModes.map(language => ({
-                    scheme: "zip",
-                    language,
-                })),
-            ],
+            documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
@@ -110,16 +107,31 @@ export class Client {
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        const goMemLimit = config.get<string>("goMemLimit");
+        const env = { ...process.env };
+        if (goMemLimit) {
+            // Keep this regex aligned with the pattern in package.json.
+            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+                env.GOMEMLIMIT = goMemLimit;
+            }
+            else {
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            }
+        }
+
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
             debug: {
                 command: this.exe.path,
                 args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
+                options: { env },
             },
         };
 
@@ -135,35 +147,33 @@ export class Client {
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
 
-        const codeLensLocationsCommand = vscode.commands.registerCommand(codeLensShowLocationsCommandName, (...args: unknown[]) => {
-            if (args.length !== 3) {
-                throw new Error("Unexpected number of arguments.");
-            }
+        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
+            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
+        }
 
-            const lspUri = args[0] as DocumentUri;
-            const lspPosition = args[1] as Position;
-            const lspLocations = args[2] as Location[];
-
-            const editorUri = vscode.Uri.parse(lspUri);
-            const editorPosition = new vscode.Position(lspPosition.line, lspPosition.character);
-            const editorLocations = lspLocations.map(loc =>
-                new vscode.Location(
-                    vscode.Uri.parse(loc.uri),
-                    new vscode.Range(
-                        new vscode.Position(loc.range.start.line, loc.range.start.character),
-                        new vscode.Position(loc.range.end.line, loc.range.end.character),
-                    ),
-                )
-            );
-
-            vscode.commands.executeCommand("editor.action.showReferences", editorUri, editorPosition, editorLocations);
-        });
+        this.disposables.push(
+            registerTagClosingFeature("typescript", this.documentSelector, this.client),
+            registerTagClosingFeature("javascript", this.documentSelector, this.client),
+        );
 
         return new vscode.Disposable(() => {
-            this.client?.stop();
-            codeLensLocationsCommand.dispose();
+            this.dispose();
             vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
+            vscode.commands.executeCommand("setContext", "typescript.native-preview.cpuProfileRunning", false);
         });
+    }
+
+    dispose() {
+        if (this.isDisposed) {
+            return;
+        }
+        this.isDisposed = true;
+
+        this.client?.dispose();
+        while (this.disposables.length > 0) {
+            const d = this.disposables.pop()!;
+            d.dispose();
+        }
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {
@@ -196,5 +206,45 @@ export class Client {
         this.outputChannel.appendLine(`Restarting language server...`);
         this.client.restart();
         return new vscode.Disposable(() => {});
+    }
+
+    // Developer/debugging methods
+
+    async runGC(): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/runGC");
+    }
+
+    async saveHeapProfile(dir: string): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveHeapProfile", { dir });
+        return result.file;
+    }
+
+    async saveAllocProfile(dir: string): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/saveAllocProfile", { dir });
+        return result.file;
+    }
+
+    async startCPUProfile(dir: string): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/startCPUProfile", { dir });
+    }
+
+    async stopCPUProfile(): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
+        return result.file;
     }
 }

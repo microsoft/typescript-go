@@ -2,6 +2,7 @@ package ls
 
 import (
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/pnp"
@@ -16,4 +17,5 @@ type Host interface {
 	UserPreferences() *lsutil.UserPreferences
 	FormatOptions() *format.FormatCodeSettings
 	GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo
+	AutoImportRegistry() *autoimport.Registry
 }

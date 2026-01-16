@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_uriStyleNodeCoreModules2(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /node_modules/@types/node/index.d.ts
@@ -38,7 +38,7 @@ write/**/`
 					&lsproto.CompletionItem{
 						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "node:fs",
 							},
 						},
@@ -48,7 +48,7 @@ write/**/`
 					&lsproto.CompletionItem{
 						Label: "writeFile",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "node:fs/promises",
 							},
 						},

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -11,14 +12,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
-	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func isNonGlobalAmbientModule(node *ast.Node) bool {
-	return ast.IsModuleDeclaration(node) && ast.IsStringLiteral(node.Name())
+type regexPatternCacheKey struct {
+	pattern string
+	opts    regexp2.RegexOptions
 }
+
+var (
+	regexPatternCacheMu sync.RWMutex
+	regexPatternCache   = make(map[regexPatternCacheKey]*regexp2.Regexp)
+)
 
 func comparePathsByRedirectAndNumberOfDirectorySeparators(a ModulePath, b ModulePath) int {
 	if a.IsRedirect == b.IsRedirect {
@@ -34,18 +40,80 @@ func PathIsBareSpecifier(path string) bool {
 	return !tspath.PathIsAbsolute(path) && !tspath.PathIsRelative(path)
 }
 
-func isExcludedByRegex(moduleSpecifier string, excludes []string) bool {
+func IsExcludedByRegex(moduleSpecifier string, excludes []string) bool {
 	for _, pattern := range excludes {
-		compiled, err := regexp2.Compile(pattern, regexp2.None)
-		if err != nil {
+		re := stringToRegex(pattern)
+		if re == nil {
 			continue
 		}
-		match, _ := compiled.MatchString(moduleSpecifier)
+		match, _ := re.MatchString(moduleSpecifier)
 		if match {
 			return true
 		}
 	}
 	return false
+}
+
+func stringToRegex(pattern string) *regexp2.Regexp {
+	options := regexp2.RegexOptions(regexp2.ECMAScript)
+
+	if len(pattern) > 2 && pattern[0] == '/' {
+		lastSlash := strings.LastIndex(pattern, "/")
+		if lastSlash > 0 {
+			hasUnescapedMiddleSlash := false
+			for i := 1; i < lastSlash; i++ {
+				if pattern[i] == '/' && (i == 0 || pattern[i-1] != '\\') {
+					hasUnescapedMiddleSlash = true
+					break
+				}
+			}
+
+			if !hasUnescapedMiddleSlash {
+				flags := pattern[lastSlash+1:]
+				pattern = pattern[1:lastSlash]
+
+				for _, flag := range flags {
+					switch flag {
+					case 'i':
+						options |= regexp2.IgnoreCase
+					case 'u':
+						options |= regexp2.Unicode
+					}
+				}
+			}
+		}
+	}
+	key := regexPatternCacheKey{pattern, options}
+
+	regexPatternCacheMu.RLock()
+	re, ok := regexPatternCache[key]
+	regexPatternCacheMu.RUnlock()
+	if ok {
+		return re
+	}
+
+	regexPatternCacheMu.Lock()
+	defer regexPatternCacheMu.Unlock()
+
+	re, ok = regexPatternCache[key]
+	if ok {
+		return re
+	}
+
+	if len(regexPatternCache) > 1000 {
+		clear(regexPatternCache)
+	}
+
+	pattern = strings.Clone(pattern)
+	key.pattern = pattern
+
+	compiled, err := regexp2.Compile(pattern, options)
+	if err != nil {
+		regexPatternCache[key] = nil
+		return nil
+	}
+	regexPatternCache[key] = compiled
+	return compiled
 }
 
 /**
@@ -67,7 +135,7 @@ func ensurePathIsNonModuleName(path string) string {
 	return path
 }
 
-func getJsExtensionForDeclarationFileExtension(ext string) string {
+func GetJSExtensionForDeclarationFileExtension(ext string) string {
 	switch ext {
 	case tspath.ExtensionDts:
 		return tspath.ExtensionJs
@@ -82,7 +150,7 @@ func getJsExtensionForDeclarationFileExtension(ext string) string {
 }
 
 func getJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
-	result := tryGetJSExtensionForFile(fileName, options)
+	result := module.TryGetJSExtensionForFile(fileName, options)
 	if len(result) == 0 {
 		panic(fmt.Sprintf("Extension %s is unsupported:: FileName:: %s", extensionFromPath(fileName), fileName))
 	}
@@ -99,27 +167,6 @@ func extensionFromPath(path string) string {
 		panic(fmt.Sprintf("File %s has unknown extension.", path))
 	}
 	return ext
-}
-
-func tryGetJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
-	ext := tspath.TryGetExtensionFromPath(fileName)
-	switch ext {
-	case tspath.ExtensionTs, tspath.ExtensionDts:
-		return tspath.ExtensionJs
-	case tspath.ExtensionTsx:
-		if options.Jsx == core.JsxEmitPreserve {
-			return tspath.ExtensionJsx
-		}
-		return tspath.ExtensionJs
-	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionJson:
-		return ext
-	case tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs:
-		return tspath.ExtensionMjs
-	case tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs:
-		return tspath.ExtensionCjs
-	default:
-		return ""
-	}
 }
 
 func tryGetAnyFileFromPath(host ModuleSpecifierGenerationHost, path string) bool {
@@ -157,7 +204,7 @@ func getPathsRelativeToRootDirs(path string, rootDirs []string, useCaseSensitive
 	var results []string
 	for _, rootDir := range rootDirs {
 		relativePath := getRelativePathIfInSameVolume(path, rootDir, useCaseSensitiveFileNames)
-		if len(relativePath) > 0 && isPathRelativeToParent(relativePath) {
+		if !isPathRelativeToParent(relativePath) {
 			results = append(results, relativePath)
 		}
 	}
@@ -196,22 +243,6 @@ func prefersTsExtension(allowedEndings []ModuleSpecifierEnding) bool {
 		return tsPriority < jsPriority
 	}
 	return false
-}
-
-var typeScriptVersion = semver.MustParse(core.Version()) // TODO: unify with clone inside module resolver?
-
-func isApplicableVersionedTypesKey(conditions []string, key string) bool {
-	if !slices.Contains(conditions, "types") {
-		return false // only apply versioned types conditions if the types condition is applied
-	}
-	if !strings.HasPrefix(key, "types@") {
-		return false
-	}
-	range_, ok := semver.TryParseVersionRange(key[len("types@"):])
-	if !ok {
-		return false
-	}
-	return range_.Test(&typeScriptVersion)
 }
 
 func replaceFirstStar(s string, replacement string) string {
@@ -305,14 +336,6 @@ func GetNodeModulesPackageName(
 	return ""
 }
 
-func GetPackageNameFromTypesPackageName(mangledName string) string {
-	withoutAtTypePrefix := strings.TrimPrefix(mangledName, "@types/")
-	if withoutAtTypePrefix != mangledName {
-		return module.UnmangleScopedPackageName(withoutAtTypePrefix)
-	}
-	return mangledName
-}
-
 func allKeysStartWithDot(obj *collections.OrderedMap[string, packagejson.ExportsOrImports]) bool {
 	for k := range obj.Keys() {
 		if !strings.HasPrefix(k, ".") {
@@ -320,4 +343,134 @@ func allKeysStartWithDot(obj *collections.OrderedMap[string, packagejson.Exports
 		}
 	}
 	return true
+}
+
+func GetPackageNameFromDirectory(fileOrDirectoryPath string) string {
+	idx := strings.LastIndex(fileOrDirectoryPath, "/node_modules/")
+	if idx == -1 {
+		return ""
+	}
+
+	basename := fileOrDirectoryPath[idx+len("/node_modules/"):]
+	nextSlash := strings.Index(basename, "/")
+	if nextSlash == -1 {
+		return basename
+	}
+
+	if basename[0] != '@' || nextSlash == len(basename)-1 {
+		return basename[:nextSlash]
+	}
+
+	secondSlash := strings.Index(basename[nextSlash+1:], "/")
+	if secondSlash == -1 {
+		return basename
+	}
+
+	return basename[:nextSlash+1+secondSlash]
+}
+
+// ProcessEntrypointEnding processes a pre-computed module specifier from a package.json exports
+// entrypoint according to the entrypoint's Ending type and the user's preferred endings.
+func ProcessEntrypointEnding(
+	entrypoint *module.ResolvedEntrypoint,
+	prefs UserPreferences,
+	host ModuleSpecifierGenerationHost,
+	options *core.CompilerOptions,
+	importingSourceFile SourceFileForSpecifierGeneration,
+	allowedEndings []ModuleSpecifierEnding,
+) string {
+	specifier := entrypoint.ModuleSpecifier
+	if entrypoint.Ending == module.EndingFixed {
+		return specifier
+	}
+
+	if len(allowedEndings) == 0 {
+		allowedEndings = GetAllowedEndingsInPreferredOrder(
+			prefs,
+			host,
+			options,
+			importingSourceFile,
+			"",
+			host.GetDefaultResolutionModeForFile(importingSourceFile),
+		)
+	}
+
+	preferredEnding := allowedEndings[0]
+
+	// Handle declaration file extensions
+	dtsExtension := tspath.GetDeclarationFileExtension(specifier)
+	if dtsExtension != "" {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension, ModuleSpecifierEndingJsExtension:
+			// Map .d.ts -> .js, .d.mts -> .mjs, .d.cts -> .cjs
+			jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+			return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				// .d.mts/.d.cts must keep an extension; rewrite to .mjs/.cjs instead of dropping
+				if dtsExtension == tspath.ExtensionDts {
+					specifier = tspath.RemoveExtension(specifier, dtsExtension)
+					if preferredEnding == ModuleSpecifierEndingMinimal {
+						specifier = strings.TrimSuffix(specifier, "/index")
+					}
+					return specifier
+				}
+				jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+				return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+			}
+			// EndingExtensionChangeable - can only change extension, not remove it
+			jsExtension := GetJSExtensionForDeclarationFileExtension(dtsExtension)
+			return tspath.ChangeAnyExtension(specifier, jsExtension, []string{dtsExtension}, false)
+		}
+		return specifier
+	}
+
+	// Handle .ts/.tsx/.mts/.cts extensions
+	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionMts, tspath.ExtensionCts}) {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension:
+			return specifier
+		case ModuleSpecifierEndingJsExtension:
+			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+				return tspath.RemoveFileExtension(specifier) + jsExtension
+			}
+			return specifier
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				specifier = tspath.RemoveFileExtension(specifier)
+				if preferredEnding == ModuleSpecifierEndingMinimal {
+					specifier = strings.TrimSuffix(specifier, "/index")
+				}
+				return specifier
+			}
+			// EndingExtensionChangeable - can only change extension, not remove it
+			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+				return tspath.RemoveFileExtension(specifier) + jsExtension
+			}
+			return specifier
+		}
+		return specifier
+	}
+
+	// Handle .js/.jsx/.mjs/.cjs extensions
+	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+		switch preferredEnding {
+		case ModuleSpecifierEndingTsExtension, ModuleSpecifierEndingJsExtension:
+			return specifier
+		case ModuleSpecifierEndingMinimal, ModuleSpecifierEndingIndex:
+			if entrypoint.Ending == module.EndingChangeable {
+				specifier = tspath.RemoveFileExtension(specifier)
+				if preferredEnding == ModuleSpecifierEndingMinimal {
+					specifier = strings.TrimSuffix(specifier, "/index")
+				}
+				return specifier
+			}
+			// EndingExtensionChangeable - keep the extension
+			return specifier
+		}
+		return specifier
+	}
+
+	// For other extensions (like .json), return as-is
+	return specifier
 }

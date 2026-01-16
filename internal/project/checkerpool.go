@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"iter"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -80,7 +79,7 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 // GetCheckerForFileExclusive is the same as GetCheckerForFile but also locks a mutex associated with the checker.
 // Call `done` to free the lock.
 func (p *CheckerPool) GetCheckerForFileExclusive(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	panic("unimplemented") // implement if used by LS
+	return p.GetCheckerForFile(ctx, file)
 }
 
 func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
@@ -88,14 +87,6 @@ func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func())
 	defer p.mu.Unlock()
 	checker, index := p.getCheckerLocked(core.GetRequestID(ctx))
 	return checker, p.createRelease(core.GetRequestID(ctx), index, checker)
-}
-
-func (p *CheckerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {
-	panic("unimplemented")
-}
-
-func (p *CheckerPool) Count() int {
-	return p.maxCheckers
 }
 
 func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {

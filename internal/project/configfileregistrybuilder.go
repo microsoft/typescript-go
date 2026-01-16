@@ -111,8 +111,9 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.fs.fs)
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
+		oldCommandLine := entry.commandLine
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, nil /*optionsRaw*/, c, c)
-		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
+		c.updateExtendingConfigs(path, entry.commandLine, oldCommandLine)
 		c.updateRootFilesWatch(fileName, entry)
 		logger.Log("Finished loading config file")
 	default:
@@ -300,6 +301,9 @@ func (c *configFileRegistryBuilder) releaseConfigForProject(configFilePath tspat
 // didCloseFile removes the open file from the config entry. Once no projects
 // or files are associated with the config entry, it will be removed on the next call to `cleanup`.
 func (c *configFileRegistryBuilder) didCloseFile(path tspath.Path) {
+	if isDynamicFileName(string(path)) {
+		return
+	}
 	c.configFileNames.Delete(path)
 	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 		entry.ChangeIf(
@@ -450,13 +454,25 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	// Handle possible root file creation
 	if len(createdFiles) > 0 {
 		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+			var createdOpenFile bool
 			entry.ChangeIf(
 				func(config *configFileEntry) bool {
-					if config.commandLine == nil || config.rootFilesWatch == nil || config.pendingReload != PendingReloadNone {
+					if config.pendingReload != PendingReloadNone {
 						return false
 					}
 					logger.Logf("Checking if any of %d created files match root files for config %s", len(createdFiles), entry.Key())
 					for _, fileName := range createdFiles {
+						if _, ok := config.retainingOpenFiles[c.fs.toPath(fileName)]; ok {
+							// We saw a create event for a file that's already open, and when we first opened it,
+							// we tried to see if it belonged to this config, but we may have incorrectly answered
+							// "no" because we hadn't invalidated the config's file list since the file was created.
+							// Now that we're seeing a creation event for it, we need to reload the config's file names.
+							createdOpenFile = true
+							return true
+						}
+						if config.commandLine == nil || config.rootFilesWatch == nil {
+							continue
+						}
 						if config.commandLine.PossiblyMatchesFileName(fileName) {
 							return true
 						}
@@ -471,6 +487,16 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 					maps.Copy(affectedProjects, config.retainingProjects)
 					logger.Logf("Root files for config %s changed", entry.Key())
 					shouldInvalidateCache = hasExcessiveChanges
+					if createdOpenFile {
+						for openFilePath := range config.retainingOpenFiles {
+							if _, ok := createdFiles[openFilePath]; ok {
+								if affectedFiles == nil {
+									affectedFiles = make(map[tspath.Path]struct{})
+								}
+								affectedFiles[openFilePath] = struct{}{}
+							}
+						}
+					}
 				},
 			)
 			return !shouldInvalidateCache
@@ -601,9 +627,21 @@ func (c *configFileRegistryBuilder) PnpApi() *pnp.PnpApi {
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
-func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+	var content string
 	fh := c.fs.GetFileByPath(fileName, path)
-	return c.extendedConfigCache.Acquire(fh, path, parse)
+	if fh != nil {
+		content = fh.Content()
+	}
+
+	return c.extendedConfigCache.Acquire(path, ExtendedConfigParseArgs{
+		FileName:        fileName,
+		Content:         content,
+		FS:              c.fs,
+		ResolutionStack: resolutionStack,
+		Host:            host,
+		Cache:           c,
+	}).ExtendedConfigCacheEntry
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {

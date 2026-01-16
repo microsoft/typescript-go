@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportSuggestionsCache_exportUndefined(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 { "compilerOptions": { "module": "esnext" } }
@@ -40,7 +40,7 @@ export = x;
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
 					},
@@ -61,7 +61,7 @@ export = x;
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./undefinedAlias",
 						},
 					},

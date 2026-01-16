@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_exportEquals_anonymous(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @module: commonjs
@@ -49,7 +49,7 @@ fooB/*1*/`
 					&lsproto.CompletionItem{
 						Label: "fooBar",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./foo-bar",
 							},
 						},

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_jsxOpeningTagImportDefault(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @jsx: react
@@ -36,7 +36,7 @@ export function Index() {
 				&lsproto.CompletionItem{
 					Label: "Component",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./component",
 						},
 					},

@@ -221,6 +221,11 @@ Ensure 'use strict' is always emitted.
 type: boolean
 default: `false`, unless `strict` is set
 
+[94m--deduplicatePackages[39m
+Deduplicate packages with the same name and version.
+type: boolean
+default: true
+
 [94m--exactOptionalPropertyTypes[39m
 Interpret optional property types as written, rather than adding 'undefined'.
 type: boolean
@@ -653,6 +658,9 @@ Build all projects, including those that appear to be up to date.
 
 [94m--clean[39m
 Delete the outputs of all projects.
+
+[94m--builders[39m
+Set the number of projects to build concurrently.
 
 [94m--stopBuildOnErrors[39m
 Skip building downstream projects on error in upstream project.

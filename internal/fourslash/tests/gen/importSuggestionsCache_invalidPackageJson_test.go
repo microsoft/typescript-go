@@ -11,8 +11,8 @@ import (
 )
 
 func TestImportSuggestionsCache_invalidPackageJson(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/jsconfig.json
 {
@@ -47,7 +47,7 @@ readF/**/`
 				&lsproto.CompletionItem{
 					Label: "readFile",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "fs",
 						},
 					},

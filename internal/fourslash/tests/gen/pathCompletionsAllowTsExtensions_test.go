@@ -5,12 +5,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestPathCompletionsAllowTsExtensions(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @allowImportingTsExtensions: true
@@ -44,6 +45,7 @@ import {} from ".//**/"`
 				"foo.ts",
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierEnding: "js"},
 	})
 	f.Insert(t, "foo.ts\"\nimport {} from \"./")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{

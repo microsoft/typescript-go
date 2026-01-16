@@ -2226,6 +2226,8 @@ var This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_nam
 
 var The_current_host_does_not_support_the_0_option = &Message{code: 5001, category: CategoryError, key: "The_current_host_does_not_support_the_0_option_5001", text: "The current host does not support the '{0}' option."}
 
+var Option_0_requires_value_to_be_greater_than_1 = &Message{code: 5002, category: CategoryError, key: "Option_0_requires_value_to_be_greater_than_1_5002", text: "Option '{0}' requires value to be greater than '{1}'."}
+
 var Cannot_find_the_common_subdirectory_path_for_the_input_files = &Message{code: 5009, category: CategoryError, key: "Cannot_find_the_common_subdirectory_path_for_the_input_files_5009", text: "Cannot find the common subdirectory path for the input files."}
 
 var File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0 = &Message{code: 5010, category: CategoryError, key: "File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0_5010", text: "File specification cannot end in a recursive directory wildcard ('**'): '{0}'."}
@@ -4269,6 +4271,12 @@ var X_1_reference = &Message{code: 100006, category: CategoryMessage, key: "1_re
 var X_0_implementations = &Message{code: 100007, category: CategoryMessage, key: "_0_implementations_100007", text: "{0} implementations"}
 
 var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: "1_implementation_100008", text: "1 implementation"}
+
+var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, category: CategoryMessage, key: "Set_the_number_of_projects_to_build_concurrently_100009", text: "Set the number of projects to build concurrently."}
+
+var X_all_unless_singleThreaded_is_passed = &Message{code: 100010, category: CategoryMessage, key: "all_unless_singleThreaded_is_passed_100010", text: "all, unless --singleThreaded is passed."}
+
+var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
 
 var Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2 = &Message{code: 110001, category: CategoryError, key: "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001", text: "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}"}
 
@@ -6512,6 +6520,8 @@ func keyToMessage(key Key) *Message {
 		return This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_name_is_dynamic
 	case "The_current_host_does_not_support_the_0_option_5001":
 		return The_current_host_does_not_support_the_0_option
+	case "Option_0_requires_value_to_be_greater_than_1_5002":
+		return Option_0_requires_value_to_be_greater_than_1
 	case "Cannot_find_the_common_subdirectory_path_for_the_input_files_5009":
 		return Cannot_find_the_common_subdirectory_path_for_the_input_files
 	case "File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0_5010":
@@ -8556,6 +8566,12 @@ func keyToMessage(key Key) *Message {
 		return X_0_implementations
 	case "1_implementation_100008":
 		return X_1_implementation
+	case "Set_the_number_of_projects_to_build_concurrently_100009":
+		return Set_the_number_of_projects_to_build_concurrently
+	case "all_unless_singleThreaded_is_passed_100010":
+		return X_all_unless_singleThreaded_is_passed
+	case "Deduplicate_packages_with_the_same_name_and_version_100011":
+		return Deduplicate_packages_with_the_same_name_and_version
 	case "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_110001":
 		return Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2
 	case "_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_run_110002":

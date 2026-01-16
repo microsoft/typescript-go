@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_named_fromMergedDeclarations(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
 // @Filename: /a.ts
@@ -38,7 +38,7 @@ declare module "m" {
 				&lsproto.CompletionItem{
 					Label: "M",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "m",
 						},
 					},

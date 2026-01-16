@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_sortingModuleSpecifiers(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: tsconfig.json
 { "compilerOptions": { "module": "commonjs" } }
@@ -43,7 +43,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path",
 							},
 						},
@@ -53,7 +53,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path/posix",
 							},
 						},
@@ -63,7 +63,7 @@ normalize/**/`
 					&lsproto.CompletionItem{
 						Label: "normalize",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path/win32",
 							},
 						},

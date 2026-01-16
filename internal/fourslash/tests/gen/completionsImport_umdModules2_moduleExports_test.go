@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_umdModules2_moduleExports(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /package.json
 { "dependencies": { "@types/classnames": "*" } }
@@ -43,7 +43,7 @@ const el1 = <div className={class/*1*/}>foo</div>;`
 					Label:               "classNames",
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "classnames",
 						},
 					},

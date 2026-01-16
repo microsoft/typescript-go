@@ -5,13 +5,14 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionImportModuleSpecifierEndingTsxReact(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@jsx:react
 //@Filename:test.tsx
@@ -33,6 +34,7 @@ import { Test } from ".//**/"`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierEnding: "js"},
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -47,5 +49,6 @@ import { Test } from ".//**/"`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierEnding: "index"},
 	})
 }

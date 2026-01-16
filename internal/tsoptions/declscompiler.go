@@ -186,6 +186,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		// Not setting affectsSemanticDiagnostics or affectsBuildInfo because we dont want all diagnostics to go away, its handled in builder
 	},
 	{
+		Name:                    "deduplicatePackages",
+		Kind:                    CommandLineOptionTypeBoolean,
+		Category:                diagnostics.Type_Checking,
+		Description:             diagnostics.Deduplicate_packages_with_the_same_name_and_version,
+		DefaultValueDescription: true,
+		AffectsProgramStructure: true,
+	},
+	{
 		Name:                     "noEmit",
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShowInSimplifiedHelpView: true,
@@ -240,6 +248,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Category:                diagnostics.Command_line_Options,
 		Description:             diagnostics.Set_the_number_of_checkers_per_project,
 		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
+		minValue:                1,
 	},
 }
 

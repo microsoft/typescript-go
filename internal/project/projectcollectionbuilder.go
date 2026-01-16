@@ -91,7 +91,7 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 		newProjectCollection.configuredProjects = configuredProjects
 	}
 
-	if !changed && !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
+	if !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
 		ensureCloned()
 		newProjectCollection.fileDefaultProjects = b.fileDefaultProjects
 	}
@@ -102,7 +102,16 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	}
 
 	configFileRegistry := b.configFileRegistryBuilder.Finalize()
-	newProjectCollection.configFileRegistry = configFileRegistry
+	if configFileRegistry != b.base.configFileRegistry {
+		ensureCloned()
+		newProjectCollection.configFileRegistry = configFileRegistry
+	}
+
+	if !maps.Equal(b.apiOpenedProjects, b.base.apiOpenedProjects) {
+		ensureCloned()
+		newProjectCollection.apiOpenedProjects = b.apiOpenedProjects
+	}
+
 	return newProjectCollection, configFileRegistry
 }
 
@@ -340,6 +349,16 @@ func logChangeFileResult(result changeFileResult, logger *logging.LogTree) {
 	}
 }
 
+func (b *ProjectCollectionBuilder) cleanupInferredProject(logger *logging.LogTree) {
+	var inferredProjectFiles []string
+	for path, overlay := range b.fs.overlays {
+		if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
+			inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+		}
+	}
+	b.updateInferredProjectRoots(inferredProjectFiles, logger)
+}
+
 func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
@@ -351,6 +370,9 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		if result := b.findDefaultProject(fileName, path); result != nil {
 			hasChanges = b.updateProgram(result, logger) || hasChanges
 			if result.Value() != nil {
+				if hasChanges {
+					b.cleanupInferredProject(logger)
+				}
 				return
 			}
 		}
@@ -363,15 +385,7 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		if hasChanges {
 			// If the structure of other projects changed, we might need to move files
 			// in/out of the inferred project.
-			var inferredProjectFiles []string
-			for path, overlay := range b.fs.overlays {
-				if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
-					inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
-				}
-			}
-			if len(inferredProjectFiles) > 0 {
-				b.updateInferredProjectRoots(inferredProjectFiles, logger)
-			}
+			b.cleanupInferredProject(logger)
 		}
 
 		if b.inferredProject.Value() != nil {
@@ -414,7 +428,7 @@ func (b *ProjectCollectionBuilder) DidRequestProject(projectId tspath.Path, logg
 	}
 }
 
-func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map[tspath.Path]struct{}, logger *logging.LogTree) {
+func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectTreeRequest *ProjectTreeRequest, logger *logging.LogTree) {
 	startTime := time.Now()
 
 	var currentProjects []tspath.Path
@@ -430,10 +444,10 @@ func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map
 			if entry, ok := b.configuredProjects.Load(projectId); ok {
 				// If this project has potential project reference for any of the project we are loading ancestor tree for
 				// load this project first
-				if project := entry.Value(); project != nil && (projectsReferenced == nil || project.hasPotentialProjectReference(projectsReferenced)) {
+				if project := entry.Value(); project != nil && (projectTreeRequest.IsAllProjects() || project.hasPotentialProjectReference(projectTreeRequest)) {
 					b.updateProgram(entry, logger)
 				}
-				b.ensureProjectTree(wg, entry, projectsReferenced, &seenProjects, logger)
+				b.ensureProjectTree(wg, entry, projectTreeRequest, &seenProjects, logger)
 			}
 		})
 	}
@@ -441,14 +455,14 @@ func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map
 
 	if logger != nil {
 		elapsed := time.Since(startTime)
-		logger.Log(fmt.Sprintf("Completed project tree request for %v in %v", maps.Keys(projectsReferenced), elapsed))
+		logger.Log(fmt.Sprintf("Completed project tree request for %v in %v", projectTreeRequest.Projects(), elapsed))
 	}
 }
 
 func (b *ProjectCollectionBuilder) ensureProjectTree(
 	wg core.WorkGroup,
 	entry *dirty.SyncMapEntry[tspath.Path, *Project],
-	projectsReferenced map[tspath.Path]struct{},
+	projectTreeRequest *ProjectTreeRequest,
 	seenProjects *collections.SyncSet[tspath.Path],
 	logger *logging.LogTree,
 ) {
@@ -477,11 +491,10 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 	}
 	for _, childConfig := range children {
 		wg.Queue(func() {
-			if projectsReferenced != nil && program.RangeResolvedProjectReferenceInChildConfig(
+			if !projectTreeRequest.IsAllProjects() && program.RangeResolvedProjectReferenceInChildConfig(
 				childConfig,
 				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
-					_, isReferenced := projectsReferenced[referencePath]
-					return !isReferenced
+					return !projectTreeRequest.IsProjectReferenced(referencePath)
 				}) {
 				return
 			}
@@ -491,7 +504,7 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 			b.updateProgram(childProjectEntry, logger)
 
 			// Ensure children for this project
-			b.ensureProjectTree(wg, childProjectEntry, projectsReferenced, seenProjects, logger)
+			b.ensureProjectTree(wg, childProjectEntry, projectTreeRequest, seenProjects, logger)
 		})
 	}
 }
@@ -984,7 +997,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				project.ProgramUpdateKind = result.UpdateKind
 				project.ProgramLastUpdate = b.newSnapshotID
 				if result.UpdateKind == ProgramUpdateKindCloned {
-					project.host.seenFiles = oldHost.seenFiles
+					project.host.sourceFS.seenFiles = oldHost.sourceFS.seenFiles
 				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true

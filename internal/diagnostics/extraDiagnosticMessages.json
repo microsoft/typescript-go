@@ -35,6 +35,14 @@
         "category": "Message",
         "code": 100008
     },
+    "Set the number of projects to build concurrently.": {
+        "category": "Message",
+        "code": 100009
+    },
+    "all, unless --singleThreaded is passed.": {
+        "category": "Message",
+        "code": 100010
+    },
     "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}": {
         "category": "Error",
         "code": 110001
@@ -106,5 +114,13 @@
     "Option '--incremental' is only valid with a known configuration file (like 'tsconfig.json') or when '--tsBuildInfoFile' is explicitly provided.": {
         "category": "Error",
         "code": 5074
+    },
+    "Option '{0}' requires value to be greater than '{1}'.": {
+        "category": "Error",
+        "code": 5002
+    },
+    "Deduplicate packages with the same name and version.": {
+        "category": "Message",
+        "code": 100011
     }
 }

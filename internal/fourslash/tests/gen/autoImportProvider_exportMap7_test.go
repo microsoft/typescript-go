@@ -11,8 +11,8 @@ import (
 )
 
 func TestAutoImportProvider_exportMap7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
@@ -64,7 +64,7 @@ fooFrom/**/`
 				&lsproto.CompletionItem{
 					Label: "fooFromIndex",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "dependency",
 						},
 					},
@@ -74,7 +74,7 @@ fooFrom/**/`
 				&lsproto.CompletionItem{
 					Label: "fooFromLol",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "dependency/lol",
 						},
 					},

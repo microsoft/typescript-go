@@ -26,7 +26,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
 	// and it doesn't already exists in the symbol table.
 	copySymbol := func(symbol *ast.Symbol, meaning ast.SymbolFlags) {
-		if GetCombinedLocalAndExportSymbolFlags(symbol)&meaning != 0 {
+		if symbol.CombinedLocalAndExportSymbolFlags()&meaning != 0 {
 			id := symbol.Name
 			// We will copy all symbol regardless of its reserved name because
 			// symbolsToArray will check whether the key is a reserved name and
@@ -393,6 +393,13 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	return result
 }
 
+func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol {
+	if valueLinks := c.valueSymbolLinks.TryGet(symbol); valueLinks != nil {
+		return valueLinks.containingType.symbol
+	}
+	return nil
+}
+
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	if symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 		return core.MapNonNil(
@@ -669,6 +676,36 @@ func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral
 		}
 	}
 	return result
+}
+
+// GetContextualTypeForArrayLiteralAtPosition returns the contextual type for an element at the given position
+// in an array with the given contextual type.
+func (c *Checker) GetContextualTypeForArrayLiteralAtPosition(contextualArrayType *Type, arrayLiteral *ast.Node, position int) *Type {
+	if contextualArrayType == nil {
+		return nil
+	}
+	firstSpreadIndex, lastSpreadIndex := -1, -1
+	elementIndex := 0
+	elements := arrayLiteral.Elements()
+	for i, elem := range elements {
+		if elem.Pos() < position {
+			elementIndex++
+		}
+		if ast.IsSpreadElement(elem) {
+			if firstSpreadIndex == -1 {
+				firstSpreadIndex = i
+			}
+			lastSpreadIndex = i
+		}
+	}
+	// The array may be incomplete, so we don't know its final length.
+	return c.getContextualTypeForElementExpression(
+		contextualArrayType,
+		elementIndex,
+		-1, /*length*/
+		firstSpreadIndex,
+		lastSpreadIndex,
+	)
 }
 
 var knownGenericTypeNames = map[string]struct{}{

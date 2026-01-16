@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_preferUpdatingExistingImport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /deep/module/why/you/want/this/path.ts
@@ -40,7 +40,7 @@ y/**/`
 					&lsproto.CompletionItem{
 						Label: "y",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./deep/module/why/you/want/this/path",
 							},
 						},

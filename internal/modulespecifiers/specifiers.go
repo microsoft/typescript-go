@@ -51,7 +51,9 @@ func GetModuleSpecifiersWithInfo(
 ) ([]string, ResultKind) {
 	ambient := tryGetModuleNameFromAmbientModule(moduleSymbol, checker)
 	if len(ambient) > 0 {
-		// !!! todo forAutoImport
+		if forAutoImports && IsExcludedByRegex(ambient, userPreferences.AutoImportSpecifierExcludeRegexes) {
+			return nil, ResultKindAmbient
+		}
 		return []string{ambient}, ResultKindAmbient
 	}
 
@@ -60,9 +62,32 @@ func GetModuleSpecifiersWithInfo(
 		return nil, ResultKindNone
 	}
 
+	// Use original source file name when file is from project reference output
+	moduleFileName := host.GetSourceOfProjectReferenceIfOutputIncluded(moduleSourceFile)
+
+	return GetModuleSpecifiersForFileWithInfo(
+		importingSourceFile,
+		moduleFileName,
+		compilerOptions,
+		host,
+		userPreferences,
+		options,
+		forAutoImports,
+	)
+}
+
+func GetModuleSpecifiersForFileWithInfo(
+	importingSourceFile SourceFileForSpecifierGeneration,
+	moduleFileName string,
+	compilerOptions *core.CompilerOptions,
+	host ModuleSpecifierGenerationHost,
+	userPreferences UserPreferences,
+	options ModuleSpecifierOptions,
+	forAutoImports bool,
+) ([]string, ResultKind) {
 	modulePaths := getAllModulePathsWorker(
 		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
-		moduleSourceFile.FileName(),
+		moduleFileName,
 		host,
 		compilerOptions,
 		options,
@@ -81,7 +106,7 @@ func GetModuleSpecifiersWithInfo(
 
 func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker CheckerShape) string {
 	for _, decl := range moduleSymbol.Declarations {
-		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
+		if ast.IsModuleWithStringLiteralName(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().Text())) {
 			return decl.Name().Text()
 		}
 	}
@@ -101,7 +126,7 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 			continue
 		}
 
-		possibleContainer := ast.FindAncestor(d, isNonGlobalAmbientModule)
+		possibleContainer := ast.FindAncestor(d, ast.IsModuleWithStringLiteralName)
 		if possibleContainer == nil || possibleContainer.Parent == nil || !ast.IsSourceFile(possibleContainer.Parent) {
 			continue
 		}
@@ -398,7 +423,7 @@ func computeModuleSpecifiers(
 		if modulePath.IsInNodeModules {
 			specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
 		}
-		if len(specifier) > 0 && !(forAutoImport && isExcludedByRegex(specifier, preferences.excludeRegexes)) {
+		if len(specifier) > 0 && !(forAutoImport && IsExcludedByRegex(specifier, preferences.excludeRegexes)) {
 			nodeModulesSpecifiers = append(nodeModulesSpecifiers, specifier)
 			if modulePath.IsRedirect {
 				// If we got a specifier for a redirect, it was a bare package specifier (e.g. "@foo/bar",
@@ -420,7 +445,7 @@ func computeModuleSpecifiers(
 			preferences,
 			/*pathsOnly*/ modulePath.IsRedirect || len(specifier) > 0,
 		)
-		if len(local) == 0 || forAutoImport && isExcludedByRegex(local, preferences.excludeRegexes) {
+		if len(local) == 0 || forAutoImport && IsExcludedByRegex(local, preferences.excludeRegexes) {
 			continue
 		}
 		if modulePath.IsRedirect {
@@ -491,6 +516,13 @@ func getLocalModuleSpecifier(
 		})), allowedEndings, compilerOptions, host)
 	}
 
+	if (paths == nil && !compilerOptions.GetResolvePackageJsonImports()) || preferences.relativePreference == RelativePreferenceRelative {
+		if pathsOnly {
+			return ""
+		}
+		return relativePath
+	}
+
 	root := compilerOptions.GetPathsBasePath(host.GetCurrentDirectory())
 	baseDirectory := tspath.GetNormalizedAbsolutePath(root, host.GetCurrentDirectory())
 	relativeToBaseUrl := getRelativePathIfInSameVolume(moduleFileName, baseDirectory, host.UseCaseSensitiveFileNames())
@@ -539,8 +571,8 @@ func getLocalModuleSpecifier(
 		return relativePath
 	}
 
-	relativeIsExcluded := isExcludedByRegex(relativePath, preferences.excludeRegexes)
-	nonRelativeIsExcluded := isExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
+	relativeIsExcluded := IsExcludedByRegex(relativePath, preferences.excludeRegexes)
+	nonRelativeIsExcluded := IsExcludedByRegex(maybeNonRelative, preferences.excludeRegexes)
 	if !relativeIsExcluded && nonRelativeIsExcluded {
 		return relativePath
 	}
@@ -594,10 +626,13 @@ func getLocalModuleSpecifier(
 			//
 			return maybeNonRelative
 		}
+		if len(fromPackageJsonImports) > 0 {
+			return relativePath
+		}
 	}
 
 	// Prefer a relative import over a baseUrl import if it has fewer components.
-	if isPathRelativeToParent(maybeNonRelative) || strings.Count(relativePath, "/") < strings.Count(maybeNonRelative, "/") {
+	if isPathRelativeToParent(maybeNonRelative) || CountPathComponents(relativePath) < CountPathComponents(maybeNonRelative) {
 		return relativePath
 	}
 	return maybeNonRelative
@@ -620,13 +655,16 @@ func processEnding(
 
 	jsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingJsExtension)
 	tsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingTsExtension)
-	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) && tsPriority < jsPriority {
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) && tsPriority != -1 && tsPriority < jsPriority {
 		return fileName
 	}
-	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionDcts, tspath.ExtensionCts}) {
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionDcts}) {
 		inputExt := tspath.GetDeclarationFileExtension(fileName)
-		ext := getJsExtensionForDeclarationFileExtension(inputExt)
+		ext := GetJSExtensionForDeclarationFileExtension(inputExt)
 		return tspath.RemoveExtension(fileName, inputExt) + ext
+	}
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts}) {
+		return noExtension + getJSExtensionForFile(fileName, options)
 	}
 
 	switch allowedEndings[0] {
@@ -900,7 +938,7 @@ func tryGetModuleNameAsNodeModule(
 
 	// If the module was found in @types, get the actual Node package name
 	nodeModulesDirectoryName := moduleSpecifier[parts.TopLevelPackageNameIndex+1:]
-	return GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+	return module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 }
 
 type pkgJsonDirAttemptResult struct {
@@ -955,7 +993,7 @@ func tryDirectoryWithPackageJson(
 		if packageNameOverride != "" {
 			packageName = packageNameOverride
 		} else {
-			packageName = GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+			packageName = module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 		}
 
 		// Determine resolution mode for package.json exports condition matching.
@@ -1312,7 +1350,7 @@ func tryGetModuleNameFromExportsOrImports(
 		pathOrPattern := tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(packageDirectory, strValue), "")
 		var extensionSwappedTarget string
 		if tspath.HasTSFileExtension(targetFilePath) {
-			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + tryGetJSExtensionForFile(targetFilePath, options)
+			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + module.TryGetJSExtensionForFile(targetFilePath, options)
 		}
 		canTryTsExtension := preferTsExtension && tspath.HasImplementationTSFileExtension(targetFilePath)
 
@@ -1355,26 +1393,26 @@ func tryGetModuleNameFromExportsOrImports(
 		case MatchingModePattern:
 			leadingSlice, trailingSlice, _ := strings.Cut(pathOrPattern, "*")
 			caseSensitive := host.UseCaseSensitiveFileNames()
-			if canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if canTryTsExtension && stringutil.HasPrefixAndSuffixWithoutOverlap(targetFilePath, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(extensionSwappedTarget) > 0 && stringutil.HasPrefix(extensionSwappedTarget, leadingSlice, caseSensitive) && stringutil.HasSuffix(extensionSwappedTarget, trailingSlice, caseSensitive) {
+			if len(extensionSwappedTarget) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(extensionSwappedTarget, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := extensionSwappedTarget[len(leadingSlice) : len(extensionSwappedTarget)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if !canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if !canTryTsExtension && stringutil.HasPrefixAndSuffixWithoutOverlap(targetFilePath, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(outputFile) > 0 && stringutil.HasPrefix(outputFile, leadingSlice, caseSensitive) && stringutil.HasSuffix(outputFile, trailingSlice, caseSensitive) {
+			if len(outputFile) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(outputFile, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := outputFile[len(leadingSlice) : len(outputFile)-len(trailingSlice)]
 				return replaceFirstStar(packageName, starReplacement)
 			}
-			if len(declarationFile) > 0 && stringutil.HasPrefix(declarationFile, leadingSlice, caseSensitive) && stringutil.HasSuffix(declarationFile, trailingSlice, caseSensitive) {
+			if len(declarationFile) > 0 && stringutil.HasPrefixAndSuffixWithoutOverlap(declarationFile, leadingSlice, trailingSlice, caseSensitive) {
 				starReplacement := declarationFile[len(leadingSlice) : len(declarationFile)-len(trailingSlice)]
 				substituted := replaceFirstStar(packageName, starReplacement)
-				jsExtension := tryGetJSExtensionForFile(declarationFile, options)
+				jsExtension := module.TryGetJSExtensionForFile(declarationFile, options)
 				if len(jsExtension) > 0 {
 					return tspath.ChangeFullExtension(substituted, jsExtension)
 				}
@@ -1393,7 +1431,7 @@ func tryGetModuleNameFromExportsOrImports(
 		// conditional mapping
 		obj := exports.AsObject()
 		for key, value := range obj.Entries() {
-			if key == "default" || slices.Contains(conditions, key) || isApplicableVersionedTypesKey(conditions, key) {
+			if key == "default" || slices.Contains(conditions, key) || slices.Contains(conditions, "types") && module.IsApplicableVersionedTypesKey(key) {
 				result := tryGetModuleNameFromExportsOrImports(options, host, targetFilePath, packageDirectory, packageName, value, conditions, mode, isImports, preferTsExtension)
 				if len(result) > 0 {
 					return result

@@ -9,17 +9,11 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 
 let inputFileSet: Set<string> | undefined;
 
-const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
 const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
 const unparsedFiles: string[] = [];
-
-function getFailingTests(): Set<string> {
-    const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
-    return new Set(failingTestsList);
-}
 
 function getManualTests(): Set<string> {
     if (!fs.existsSync(manualTestsPath)) {
@@ -43,13 +37,13 @@ export function main() {
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
 
-    parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
+    parseTypeScriptFiles(getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.25", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string>, folder: string): void {
+function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -60,14 +54,14 @@ function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(failingTests, manualTests, filePath);
+            parseTypeScriptFiles(manualTests, filePath);
         }
         else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             const isServer = filePath.split(path.sep).includes("server");
             if (test) {
-                const testContent = generateGoTest(failingTests, test, isServer);
+                const testContent = generateGoTest(test, isServer);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
             }
@@ -93,6 +87,11 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
         else {
             goTest.commands.push(...result);
         }
+    }
+    if (goTest.commands.length === 0) {
+        console.error(`No commands parsed in file: ${filename}`);
+        unparsedFiles.push(filename);
+        return undefined;
     }
     return goTest;
 }
@@ -179,6 +178,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "importFixAtPosition":
                     // `verify.importFixAtPosition(...)`
                     return parseImportFixAtPositionArgs(callExpression.arguments);
+                case "importFixModuleSpecifiers":
+                    // `verify.importFixModuleSpecifiers(...)`
+                    return parseImportFixModuleSpecifiersArgs(callExpression.arguments);
                 case "quickInfoAt":
                 case "quickInfoExists":
                 case "quickInfoIs":
@@ -237,6 +239,26 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "outliningSpansInCurrentFile":
                 case "outliningHintSpansInCurrentFile":
                     return parseOutliningSpansArgs(callExpression.arguments);
+                case "navigationTree":
+                    return parseVerifyNavTree(callExpression.arguments);
+                case "navigationBar":
+                    return []; // Deprecated.
+                case "numberOfErrorsInCurrentFile":
+                    return parseNumberOfErrorsInCurrentFile(callExpression.arguments);
+                case "noErrors":
+                    return [{ kind: "verifyNoErrors" }];
+                case "errorExistsAtRange":
+                    return parseErrorExistsAtRange(callExpression.arguments);
+                case "currentLineContentIs":
+                    return parseCurrentLineContentIs(callExpression.arguments);
+                case "currentFileContentIs":
+                    return parseCurrentFileContentIs(callExpression.arguments);
+                case "errorExistsBetweenMarkers":
+                    return parseErrorExistsBetweenMarkers(callExpression.arguments);
+                case "errorExistsAfterMarker":
+                    return parseErrorExistsAfterMarker(callExpression.arguments);
+                case "errorExistsBeforeMarker":
+                    return parseErrorExistsBeforeMarker(callExpression.arguments);
             }
         }
         // `goTo....`
@@ -299,6 +321,32 @@ function parseEditStatement(funcName: string, args: readonly ts.Expression[]): E
             return {
                 kind: "edit",
                 goStatement: `f.Backspace(t, 1)`,
+            };
+        }
+        case "deleteAtCaret": {
+            const arg = args[0];
+            if (arg) {
+                let arg0;
+                if (arg0 = getNumericLiteral(arg)) {
+                    return {
+                        kind: "edit",
+                        goStatement: `f.DeleteAtCaret(t, ${arg0.text})`,
+                    };
+                }
+                // Handle 'string'.length expressions
+                const lengthValue = getStringLengthExpression(arg);
+                if (lengthValue !== undefined) {
+                    return {
+                        kind: "edit",
+                        goStatement: `f.DeleteAtCaret(t, ${lengthValue})`,
+                    };
+                }
+                console.error(`Expected numeric literal argument in edit.deleteAtCaret, got ${arg.getText()}`);
+                return undefined;
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.DeleteAtCaret(t, 1)`,
             };
         }
         default:
@@ -500,28 +548,9 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined 
                             }
                             dataProps.push(`ModuleSpecifier: ${getGoStringLiteral(moduleSpecifierInit.text)},`);
                             break;
-                        case "exportName":
-                            const exportNameInit = getStringLiteralLike(dataProp.initializer);
-                            if (!exportNameInit) {
-                                console.error(`Expected string literal for exportName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
-                                return undefined;
-                            }
-                            dataProps.push(`ExportName: ${getGoStringLiteral(exportNameInit.text)},`);
-                            break;
-                        case "fileName":
-                            const fileNameInit = getStringLiteralLike(dataProp.initializer);
-                            if (!fileNameInit) {
-                                console.error(`Expected string literal for fileName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
-                                return undefined;
-                            }
-                            dataProps.push(`FileName: ${getGoStringLiteral(fileNameInit.text)},`);
-                            break;
-                        default:
-                            console.error(`Unrecognized property in verify.applyCodeActionFromCompletion data: ${dataProp.getText()}`);
-                            return undefined;
                     }
                 }
-                props.push(`AutoImportData: &lsproto.AutoImportData{\n${dataProps.join("\n")}\n},`);
+                props.push(`AutoImportFix: &lsproto.AutoImportFix{\n${dataProps.join("\n")}\n},`);
                 break;
             case "description":
                 descInit = getStringLiteralLike(init);
@@ -610,6 +639,53 @@ function parseImportFixAtPositionArgs(args: readonly ts.Expression[]): VerifyImp
     }];
 }
 
+function parseImportFixModuleSpecifiersArgs(args: readonly ts.Expression[]): [VerifyImportFixModuleSpecifiersCmd] | undefined {
+    if (args.length < 2 || args.length > 3) {
+        console.error(`Expected 2-3 arguments in verify.importFixModuleSpecifiers, got ${args.length}`);
+        return undefined;
+    }
+
+    const markerArg = getStringLiteralLike(args[0]);
+    if (!markerArg) {
+        console.error(`Expected string literal for marker in verify.importFixModuleSpecifiers, got ${args[0].getText()}`);
+        return undefined;
+    }
+    const markerName = getGoStringLiteral(markerArg.text);
+
+    const arrayArg = getArrayLiteralExpression(args[1]);
+    if (!arrayArg) {
+        console.error(`Expected array literal for module specifiers in verify.importFixModuleSpecifiers, got ${args[1].getText()}`);
+        return undefined;
+    }
+
+    const moduleSpecifiers: string[] = [];
+    for (const elem of arrayArg.elements) {
+        const strElem = getStringLiteralLike(elem);
+        if (!strElem) {
+            console.error(`Expected string literal in module specifiers array, got ${elem.getText()}`);
+            return undefined;
+        }
+        moduleSpecifiers.push(getGoStringLiteral(strElem.text));
+    }
+
+    let preferences = "nil /*preferences*/";
+    if (args.length > 2 && ts.isObjectLiteralExpression(args[2])) {
+        const parsedPrefs = parseUserPreferences(args[2]);
+        if (!parsedPrefs) {
+            console.error(`Unrecognized user preferences in verify.importFixModuleSpecifiers: ${args[2].getText()}`);
+            return undefined;
+        }
+        preferences = parsedPrefs;
+    }
+
+    return [{
+        kind: "verifyImportFixModuleSpecifiers",
+        markerName,
+        moduleSpecifiers,
+        preferences,
+    }];
+}
+
 const completionConstants = new Map([
     ["completion.globals", "CompletionGlobals"],
     ["completion.globalTypes", "CompletionGlobalTypes"],
@@ -636,6 +712,7 @@ const completionPlus = new Map([
 function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): VerifyCompletionsCmd | undefined {
     let marker: string | undefined;
     let goArgs: VerifyCompletionsArgs | undefined;
+    const defaultGoArgs: VerifyCompletionsArgs = { preferences: "nil /*preferences*/" };
     const obj = getObjectLiteralExpression(arg);
     if (!obj) {
         console.error(`Expected object literal expression in verify.completions, got ${arg.getText()}`);
@@ -775,13 +852,13 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     expected += "\n}";
                 }
                 if (propName === "includes") {
-                    (goArgs ??= {}).includes = expected;
+                    (goArgs ??= defaultGoArgs).includes = expected;
                 }
                 else if (propName === "exact") {
-                    (goArgs ??= {}).exact = expected;
+                    (goArgs ??= defaultGoArgs).exact = expected;
                 }
                 else {
-                    (goArgs ??= {}).unsorted = expected;
+                    (goArgs ??= defaultGoArgs).unsorted = expected;
                 }
                 break;
             }
@@ -800,7 +877,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     }
                 }
                 excludes += "\n}";
-                (goArgs ??= {}).excludes = excludes;
+                (goArgs ??= defaultGoArgs).excludes = excludes;
                 break;
             }
             case "isNewIdentifierLocation":
@@ -808,7 +885,19 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                     isNewIdentifierLocation = true;
                 }
                 break;
-            case "preferences":
+            case "preferences": {
+                if (!ts.isObjectLiteralExpression(init)) {
+                    console.error(`Expected object literal for user preferences, got ${init.getText()}`);
+                    return undefined;
+                }
+                const preferences = parseUserPreferences(init);
+                if (!preferences) {
+                    console.error(`Unrecognized user preferences: ${init.getText()}`);
+                    return undefined;
+                }
+                (goArgs ??= defaultGoArgs).preferences = preferences;
+                break;
+            }
             case "triggerCharacter":
                 break; // !!! parse once they're supported in fourslash
             case "defaultCommitCharacters":
@@ -965,10 +1054,22 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                             break;
                         }
                         itemProps.push(`Data: &lsproto.CompletionItemData{
-                            AutoImport: &lsproto.AutoImportData{
+                            AutoImport: &lsproto.AutoImportFix{
                                 ModuleSpecifier: ${getGoStringLiteral(sourceInit.text)},
                             },
                         },`);
+                    }
+                    else if (init.getText().startsWith("completion.CompletionSource.")) {
+                        const source = init.getText().slice("completion.CompletionSource.".length);
+                        switch (source) {
+                            // Ignore switch snippet sources
+                            case "SwitchCases": {
+                                continue;
+                            }
+                            default:
+                                console.error(`Unrecognized source in expected completion item: ${init.getText()}`);
+                                return undefined;
+                        }
                     }
                     else {
                         console.error(`Expected string literal for source/sourceDisplay, got ${init.getText()}`);
@@ -991,6 +1092,11 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                     }
                     break;
                 }
+                case "isSnippet":
+                    if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                        itemProps.push(`InsertTextFormat: PtrTo(lsproto.InsertTextFormatSnippet),`);
+                    }
+                    break;
                 default:
                     console.error(`Unrecognized property in expected completion item: ${propName}`);
                     return undefined; // Unsupported property
@@ -1387,6 +1493,130 @@ function parseExpectedDiagnostic(expr: ts.Expression): string | undefined {
     return `&lsproto.Diagnostic{\n${diagnosticProps.join("\n")}\n}`;
 }
 
+function parseNumberOfErrorsInCurrentFile(args: readonly ts.Expression[]): [VerifyNumberOfErrorsInCurrentFileCmd] | undefined {
+    let arg0;
+    if (args.length !== 1 || !(arg0 = getNumericLiteral(args[0]))) {
+        console.error(`Expected a single numeric literal argument in verify.numberOfErrorsInCurrentFile, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyNumberOfErrorsInCurrentFile",
+        expectedCount: parseInt(arg0.text, 10),
+    }];
+}
+
+function parseErrorExistsAtRange(args: readonly ts.Expression[]): [VerifyErrorExistsAtRangeCmd] | undefined {
+    if (args.length < 2 || args.length > 3) {
+        console.error(`Expected 2 or 3 arguments in verify.errorExistsAtRange, got ${args.length}`);
+        return undefined;
+    }
+
+    // First arg is a range
+    const rangeArg = parseBaselineMarkerOrRangeArg(args[0]);
+    if (!rangeArg) {
+        console.error(`Expected range argument in verify.errorExistsAtRange, got ${args[0].getText()}`);
+        return undefined;
+    }
+
+    // Second arg is error code
+    let codeArg;
+    if (!(codeArg = getNumericLiteral(args[1]))) {
+        console.error(`Expected numeric literal for code in verify.errorExistsAtRange, got ${args[1].getText()}`);
+        return undefined;
+    }
+
+    // Third arg is optional message
+    let message = "";
+    if (args[2]) {
+        const messageArg = getStringLiteralLike(args[2]);
+        if (!messageArg) {
+            console.error(`Expected string literal for message in verify.errorExistsAtRange, got ${args[2].getText()}`);
+            return undefined;
+        }
+        message = messageArg.text;
+    }
+
+    return [{
+        kind: "verifyErrorExistsAtRange",
+        range: rangeArg,
+        code: parseInt(codeArg.text, 10),
+        message: message,
+    }];
+}
+
+function parseCurrentLineContentIs(args: readonly ts.Expression[]): [VerifyCurrentLineContentIsCmd] | undefined {
+    let arg0;
+    if (args.length !== 1 || !(arg0 = getStringLiteralLike(args[0]))) {
+        console.error(`Expected a single string literal argument in verify.currentLineContentIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyCurrentLineContentIs",
+        text: arg0.text,
+    }];
+}
+
+function parseCurrentFileContentIs(args: readonly ts.Expression[]): [VerifyCurrentFileContentIsCmd] | undefined {
+    let arg0;
+    if (args.length !== 1 || !(arg0 = getStringLiteralLike(args[0]))) {
+        console.error(`Expected a single string literal argument in verify.currentFileContentIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyCurrentFileContentIs",
+        text: arg0.text,
+    }];
+}
+
+function parseErrorExistsBetweenMarkers(args: readonly ts.Expression[]): [VerifyErrorExistsBetweenMarkersCmd] | undefined {
+    if (args.length !== 2) {
+        console.error(`Expected 2 arguments in verify.errorExistsBetweenMarkers, got ${args.length}`);
+        return undefined;
+    }
+    let startMarker, endMarker;
+    if (!(startMarker = getStringLiteralLike(args[0])) || !(endMarker = getStringLiteralLike(args[1]))) {
+        console.error(`Expected string literal arguments in verify.errorExistsBetweenMarkers, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    return [{
+        kind: "verifyErrorExistsBetweenMarkers",
+        startMarker: startMarker.text,
+        endMarker: endMarker.text,
+    }];
+}
+
+function parseErrorExistsAfterMarker(args: readonly ts.Expression[]): [VerifyErrorExistsAfterMarkerCmd] | undefined {
+    let markerName = "";
+    if (args.length > 0) {
+        const arg0 = getStringLiteralLike(args[0]);
+        if (!arg0) {
+            console.error(`Expected string literal argument in verify.errorExistsAfterMarker, got ${args[0].getText()}`);
+            return undefined;
+        }
+        markerName = arg0.text;
+    }
+    return [{
+        kind: "verifyErrorExistsAfterMarker",
+        markerName: markerName,
+    }];
+}
+
+function parseErrorExistsBeforeMarker(args: readonly ts.Expression[]): [VerifyErrorExistsBeforeMarkerCmd] | undefined {
+    let markerName = "";
+    if (args.length > 0) {
+        const arg0 = getStringLiteralLike(args[0]);
+        if (!arg0) {
+            console.error(`Expected string literal argument in verify.errorExistsBeforeMarker, got ${args[0].getText()}`);
+            return undefined;
+        }
+        markerName = arg0.text;
+    }
+    return [{
+        kind: "verifyErrorExistsBeforeMarker",
+        markerName: markerName,
+    }];
+}
+
 function stringToTristate(s: string): string {
     switch (s) {
         case "true":
@@ -1409,7 +1639,49 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                     preferences.push(`UseAliasesForRename: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "quotePreference":
-                    preferences.push(`QuotePreference: lsutil.QuotePreference(${prop.initializer.getText()})`);
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    preferences.push(`QuotePreference: lsutil.QuotePreference(${getGoStringLiteral(prop.initializer.text)})`);
+                    break;
+                case "autoImportSpecifierExcludeRegexes":
+                    const regexArrayArg = getArrayLiteralExpression(prop.initializer);
+                    if (!regexArrayArg) {
+                        return undefined;
+                    }
+                    const regexes: string[] = [];
+                    for (const elem of regexArrayArg.elements) {
+                        const strElem = getStringLiteralLike(elem);
+                        if (!strElem) {
+                            return undefined;
+                        }
+                        regexes.push(getGoStringLiteral(strElem.text));
+                    }
+                    preferences.push(`AutoImportSpecifierExcludeRegexes: []string{${regexes.join(", ")}}`);
+                    break;
+                case "importModuleSpecifierPreference":
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    preferences.push(`ImportModuleSpecifierPreference: ${prop.initializer.getText()}`);
+                    break;
+                case "importModuleSpecifierEnding":
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    preferences.push(`ImportModuleSpecifierEnding: ${prop.initializer.getText()}`);
+                    break;
+                case "includePackageJsonAutoImports":
+                    if (!ts.isStringLiteralLike(prop.initializer)) {
+                        return undefined;
+                    }
+                    preferences.push(`IncludePackageJsonAutoImports: ${prop.initializer.getText()}`);
+                    break;
+                case "allowRenameOfImportPath":
+                    preferences.push(`AllowRenameOfImportPath: ${prop.initializer.getText()}`);
+                    break;
+                case "preferTypeOnlyAutoImports":
+                    preferences.push(`PreferTypeOnlyAutoImports: ${prop.initializer.getText()}`);
                     break;
                 case "autoImportFileExcludePatterns":
                     const arrayArg = getArrayLiteralExpression(prop.initializer);
@@ -2273,6 +2545,13 @@ function parseVerifyNavigateToArg(arg: ts.Expression): string | undefined {
     }`;
 }
 
+function parseVerifyNavTree(args: readonly ts.Expression[]): [VerifyNavTreeCmd] | undefined {
+    // Ignore arguments and use baseline tests intead.
+    return [{
+        kind: "verifyNavigationTree",
+    }];
+}
+
 function parseNavToItem(arg: ts.Expression): string | undefined {
     let item = getNodeOfKind(arg, ts.isObjectLiteralExpression);
     if (!item) {
@@ -2348,11 +2627,15 @@ function getSymbolKind(kind: ts.Expression): string | undefined {
         console.error(`Expected string literal for symbol kind, got ${kind.getText()}`);
         return undefined;
     }
-    switch (result.text) {
+    return getSymbolKindWorker(result.text);
+}
+
+function getSymbolKindWorker(kind: string): string {
+    switch (kind) {
         case "script":
             return "SymbolKindFile";
         case "module":
-            return "SymbolKindModule";
+            return "SymbolKindNamespace";
         case "class":
         case "local class":
             return "SymbolKindClass";
@@ -2400,6 +2683,8 @@ function getSymbolKind(kind: ts.Expression): string | undefined {
             return "SymbolKindModule";
         case "string":
             return "SymbolKindString";
+        case "type":
+            return "SymbolKindClass";
         default:
             return "SymbolKindVariable";
     }
@@ -2418,6 +2703,7 @@ interface VerifyCompletionsArgs {
     excludes?: string;
     exact?: string;
     unsorted?: string;
+    preferences: string;
 }
 
 interface VerifyApplyCodeActionArgs {
@@ -2483,6 +2769,13 @@ interface VerifyBaselineInlayHintsCmd {
 interface VerifyImportFixAtPositionCmd {
     kind: "verifyImportFixAtPosition";
     expectedTexts: string[];
+    preferences: string;
+}
+
+interface VerifyImportFixModuleSpecifiersCmd {
+    kind: "verifyImportFixModuleSpecifiers";
+    markerName: string;
+    moduleSpecifiers: string[];
     preferences: string;
 }
 
@@ -2567,6 +2860,52 @@ interface VerifyOutliningSpansCmd {
     foldingRangeKind?: string;
 }
 
+interface VerifyNavTreeCmd {
+    kind: "verifyNavigationTree";
+}
+
+interface VerifyNumberOfErrorsInCurrentFileCmd {
+    kind: "verifyNumberOfErrorsInCurrentFile";
+    expectedCount: number;
+}
+
+interface VerifyNoErrorsCmd {
+    kind: "verifyNoErrors";
+}
+
+interface VerifyErrorExistsAtRangeCmd {
+    kind: "verifyErrorExistsAtRange";
+    range: string;
+    code: number;
+    message: string;
+}
+
+interface VerifyCurrentLineContentIsCmd {
+    kind: "verifyCurrentLineContentIs";
+    text: string;
+}
+
+interface VerifyCurrentFileContentIsCmd {
+    kind: "verifyCurrentFileContentIs";
+    text: string;
+}
+
+interface VerifyErrorExistsBetweenMarkersCmd {
+    kind: "verifyErrorExistsBetweenMarkers";
+    startMarker: string;
+    endMarker: string;
+}
+
+interface VerifyErrorExistsAfterMarkerCmd {
+    kind: "verifyErrorExistsAfterMarker";
+    markerName: string;
+}
+
+interface VerifyErrorExistsBeforeMarkerCmd {
+    kind: "verifyErrorExistsBeforeMarker";
+    markerName: string;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -2587,11 +2926,21 @@ type Cmd =
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
     | VerifyNavToCmd
+    | VerifyNavTreeCmd
     | VerifyBaselineInlayHintsCmd
     | VerifyImportFixAtPositionCmd
+    | VerifyImportFixModuleSpecifiersCmd
     | VerifyDiagnosticsCmd
     | VerifyBaselineDiagnosticsCmd
-    | VerifyOutliningSpansCmd;
+    | VerifyOutliningSpansCmd
+    | VerifyNumberOfErrorsInCurrentFileCmd
+    | VerifyNoErrorsCmd
+    | VerifyErrorExistsAtRangeCmd
+    | VerifyCurrentLineContentIsCmd
+    | VerifyCurrentFileContentIsCmd
+    | VerifyErrorExistsBetweenMarkersCmd
+    | VerifyErrorExistsAfterMarkerCmd
+    | VerifyErrorExistsBeforeMarkerCmd;
 
 function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpansCmd): string {
     if (foldingRangeKind) {
@@ -2622,6 +2971,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
     Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}
     },
+    ${args?.preferences && !args.preferences.startsWith("nil") ? `UserPreferences: ${args.preferences},` : ""}
 }`;
     }
 
@@ -2710,6 +3060,13 @@ function generateImportFixAtPosition({ expectedTexts, preferences }: VerifyImpor
         return `f.VerifyImportFixAtPosition(t, []string{}, ${preferences})`;
     }
     return `f.VerifyImportFixAtPosition(t, []string{\n${expectedTexts.join(",\n")},\n}, ${preferences})`;
+}
+
+function generateImportFixModuleSpecifiers({ markerName, moduleSpecifiers, preferences }: VerifyImportFixModuleSpecifiersCmd): string {
+    const specifiersArray = moduleSpecifiers.length === 0
+        ? "[]string{}"
+        : `[]string{${moduleSpecifiers.join(", ")}}`;
+    return `f.VerifyImportFixModuleSpecifiers(t, ${markerName}, ${specifiersArray}, ${preferences})`;
 }
 
 function generateSignatureHelpExpected(opts: VerifySignatureHelpOptions): string {
@@ -2877,6 +3234,8 @@ function generateCmd(cmd: Cmd): string {
             return generateBaselineInlayHints(cmd);
         case "verifyImportFixAtPosition":
             return generateImportFixAtPosition(cmd);
+        case "verifyImportFixModuleSpecifiers":
+            return generateImportFixModuleSpecifiers(cmd);
         case "verifyDiagnostics":
             const funcName = cmd.isSuggestion ? "VerifySuggestionDiagnostics" : "VerifyNonSuggestionDiagnostics";
             return `f.${funcName}(t, ${cmd.arg})`;
@@ -2894,6 +3253,24 @@ function generateCmd(cmd: Cmd): string {
             return generateNoSignatureHelpForTriggerReason(cmd);
         case "verifyOutliningSpans":
             return generateVerifyOutliningSpans(cmd);
+        case "verifyNavigationTree":
+            return `f.VerifyBaselineDocumentSymbol(t)`;
+        case "verifyNumberOfErrorsInCurrentFile":
+            return `f.VerifyNumberOfErrorsInCurrentFile(t, ${cmd.expectedCount})`;
+        case "verifyNoErrors":
+            return `f.VerifyNoErrors(t)`;
+        case "verifyErrorExistsAtRange":
+            return `f.VerifyErrorExistsAtRange(t, ${cmd.range}, ${cmd.code}, ${getGoStringLiteral(cmd.message)})`;
+        case "verifyCurrentLineContentIs":
+            return `f.VerifyCurrentLineContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+        case "verifyCurrentFileContentIs":
+            return `f.VerifyCurrentFileContentIs(t, ${getGoStringLiteral(cmd.text)})`;
+        case "verifyErrorExistsBetweenMarkers":
+            return `f.VerifyErrorExistsBetweenMarkers(t, ${getGoStringLiteral(cmd.startMarker)}, ${getGoStringLiteral(cmd.endMarker)})`;
+        case "verifyErrorExistsAfterMarker":
+            return `f.VerifyErrorExistsAfterMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
+        case "verifyErrorExistsBeforeMarker":
+            return `f.VerifyErrorExistsBeforeMarker(t, ${getGoStringLiteral(cmd.markerName)})`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
@@ -2906,22 +3283,23 @@ interface GoTest {
     commands: Cmd[];
 }
 
-function generateGoTest(failingTests: Set<string>, test: GoTest, isServer: boolean): string {
+function generateGoTest(test: GoTest, isServer: boolean): string {
     const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_").replaceAll(/[^a-zA-Z0-9_]/g, "");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
     // Only include these imports if the commands use them to avoid unused import errors.
-    if (commands.includes("core.")) {
+    // Use regex with word boundary to avoid false positives like "underscore." matching "core."
+    if (/\bcore\./.test(commands)) {
         imports.unshift(`"github.com/microsoft/typescript-go/internal/core"`);
     }
-    if (commands.includes("ls.")) {
+    if (/\bls\./.test(commands)) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls"`);
     }
-    if (commands.includes("lsutil.")) {
+    if (/\blsutil\./.test(commands)) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls/lsutil"`);
     }
-    if (commands.includes("lsproto.")) {
+    if (/\blsproto\./.test(commands)) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
     if (usesFourslashUtil(commands)) {
@@ -2937,8 +3315,8 @@ import (
 )
 
 func Test${testName}(t *testing.T) {
+    fourslash.SkipIfFailing(t)
     t.Parallel()
-    ${failingTests.has(testName) ? "t.Skip()" : ""}
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
     f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -2992,6 +3370,17 @@ function getNumericLiteral(node: ts.Node): ts.NumericLiteral | undefined {
 
 function getArrayLiteralExpression(node: ts.Node): ts.ArrayLiteralExpression | undefined {
     return getNodeOfKind(node, ts.isArrayLiteralExpression);
+}
+
+// Parses expressions like 'string'.length or "string".length and returns the length value
+function getStringLengthExpression(node: ts.Node): number | undefined {
+    if (ts.isPropertyAccessExpression(node) && node.name.text === "length") {
+        const stringLiteral = getStringLiteralLike(node.expression);
+        if (stringLiteral) {
+            return stringLiteral.text.length;
+        }
+    }
+    return undefined;
 }
 
 function getInitializer(name: ts.Identifier): ts.Expression | undefined {

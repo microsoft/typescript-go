@@ -5,13 +5,14 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionForStringLiteral_quotePreference3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = {
     "#": "a"
@@ -39,5 +40,6 @@ a[|./**/|]`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("double")},
 	})
 }

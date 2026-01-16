@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 import { Client } from "./client";
 import {
+    registerCodeLensShowLocationsCommand,
     registerEnablementCommands,
     registerLanguageCommands,
 } from "./commands";
@@ -12,8 +13,8 @@ import { setupVersionStatusItem } from "./versionStatusItem";
 export async function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
     registerEnablementCommands(context);
-    const output = vscode.window.createOutputChannel("typescript-native-preview", "log");
-    const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)");
+    const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
+    const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)", { log: true });
     context.subscriptions.push(output, traceOutput);
 
     let disposeLanguageFeatures: vscode.Disposable | undefined;
@@ -77,7 +78,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposeLanguageFeatures);
 }
 
-async function activateLanguageFeatures(context: vscode.ExtensionContext, output: vscode.OutputChannel, traceOutput: vscode.OutputChannel): Promise<vscode.Disposable> {
+async function activateLanguageFeatures(context: vscode.ExtensionContext, output: vscode.LogOutputChannel, traceOutput: vscode.LogOutputChannel): Promise<vscode.Disposable> {
     const disposables: vscode.Disposable[] = [];
 
     const client = new Client(output, traceOutput);
@@ -85,5 +86,6 @@ async function activateLanguageFeatures(context: vscode.ExtensionContext, output
     disposables.push(await client.initialize(context));
     disposables.push(setupStatusBar());
     disposables.push(...setupVersionStatusItem(client));
+    disposables.push(registerCodeLensShowLocationsCommand());
     return vscode.Disposable.from(...disposables);
 }
