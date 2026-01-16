@@ -14,11 +14,11 @@
 // new D();
 
 // === /b.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // new [|C|]();
 
 // === /c.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // class D extends C {
 //     constructor() {
 //         [|super|]();
@@ -50,11 +50,11 @@
 // new D();
 
 // === /b.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // new [|C|]();
 
 // === /c.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // class D extends C {
 //     constructor() {
 //         [|super|]();
@@ -86,11 +86,11 @@
 // new D();
 
 // === /b.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // new [|C|]();
 
 // === /c.ts ===
-// import { C } from "./a";
+// import { [|C|] } from "./a";
 // class D extends C {
 //     constructor() {
 //         [|super|]();
