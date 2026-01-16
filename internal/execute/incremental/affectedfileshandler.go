@@ -257,7 +257,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 			return
 		}
 		// Since references of changed file = affected files - we would have already handled d.ts emit and semantic diagnostics
-		// for those files. Now we need to hande files referencing those affected files to ensure correctness.
+		// for those files. Now we need to handle files referencing those affected files to ensure correctness.
 		for fileReferencingAffectedFile := range h.program.snapshot.referencedMap.getReferencedBy(fileReferencingChangedFile) {
 			if h.handleDtsMayChangeOfFileAndReferences(dtsMayChange, fileReferencingAffectedFile, invalidateJsFiles) {
 				return
