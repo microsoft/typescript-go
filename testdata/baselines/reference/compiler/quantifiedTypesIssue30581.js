@@ -1,7 +1,7 @@
-//// [tests/cases/compiler/quantifiedTypesIssue25051.ts] ////
+//// [tests/cases/compiler/quantifiedTypesIssue30581.ts] ////
 
-//// [quantifiedTypesIssue25051.ts]
-// https://github.com/microsoft/TypeScript/issues/25051
+//// [quantifiedTypesIssue30581.ts]
+// https://github.com/microsoft/TypeScript/issues/30581
 
 type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
 type StringRecord = { kind: "s", v: string, f: (v: string) => void };
@@ -16,8 +16,12 @@ processRecord({} as StringRecord)
 processRecord({} as BooleanRecord)
 processRecord({} as NumberRecord | StringRecord | BooleanRecord)
 
-//// [quantifiedTypesIssue25051.js]
-// https://github.com/microsoft/TypeScript/issues/25051
+function processRecord2(record1: GenericRecord, record2: GenericRecord) {
+  record1.f(record2.v); // TODO: should not compile
+}
+
+//// [quantifiedTypesIssue30581.js]
+// https://github.com/microsoft/TypeScript/issues/30581
 function processRecord(record) {
     record.f(record.v);
 }
@@ -25,3 +29,6 @@ processRecord({});
 processRecord({});
 processRecord({});
 processRecord({});
+function processRecord2(record1, record2) {
+    record1.f(record2.v); // TODO: should not compile
+}

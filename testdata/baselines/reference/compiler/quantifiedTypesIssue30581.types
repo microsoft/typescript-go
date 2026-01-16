@@ -1,7 +1,7 @@
-//// [tests/cases/compiler/quantifiedTypesIssue25051.ts] ////
+//// [tests/cases/compiler/quantifiedTypesIssue30581.ts] ////
 
-=== quantifiedTypesIssue25051.ts ===
-// https://github.com/microsoft/TypeScript/issues/25051
+=== quantifiedTypesIssue30581.ts ===
+// https://github.com/microsoft/TypeScript/issues/30581
 
 type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
 >NumberRecord : NumberRecord
@@ -68,3 +68,17 @@ processRecord({} as NumberRecord | StringRecord | BooleanRecord)
 >{} as NumberRecord | StringRecord | BooleanRecord : BooleanRecord | NumberRecord | StringRecord
 >{} : {}
 
+function processRecord2(record1: GenericRecord, record2: GenericRecord) {
+>processRecord2 : (record1: <T> { kind: string; v: T; f: (v: T) => void; }, record2: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>record1 : <T> { kind: string; v: T; f: (v: T) => void; }
+>record2 : <T> { kind: string; v: T; f: (v: T) => void; }
+
+  record1.f(record2.v); // TODO: should not compile
+>record1.f(record2.v) : void
+>record1.f : (v: T) => void
+>record1 : <T> { kind: string; v: T; f: (v: T) => void; }
+>f : (v: T) => void
+>record2.v : T
+>record2 : <T> { kind: string; v: T; f: (v: T) => void; }
+>v : T
+}
