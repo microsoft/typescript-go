@@ -86,5 +86,13 @@
     "Option '{0}' requires value to be greater than '{1}'.": {
         "category": "Error",
         "code": 5002
+    },
+    "Both type parameters are bound to different variables": {
+        "category": "Error",
+        "code": 5113
+    },
+    "Type parameter '{0}' is bounded to this variable": {
+        "category": "Error",
+        "code": 5114
     }
 }

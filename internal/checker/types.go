@@ -1032,6 +1032,7 @@ type TypeParameter struct {
 	mapper              *TypeMapper
 	isThisType          bool
 	resolvedDefaultType *Type
+	boundedTo           *ast.Symbol
 }
 
 // IndexFlags

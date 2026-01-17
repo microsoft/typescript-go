@@ -16129,6 +16129,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Ty
 					}
 					newT = c.cloneTypeParameter(t)
 					newT.objectFlags |= ObjectFlagsQuantifiedTypeParameter
+					newT.AsTypeParameter().boundedTo = symbol
 					mapper[t] = newT
 					return newT
 				}

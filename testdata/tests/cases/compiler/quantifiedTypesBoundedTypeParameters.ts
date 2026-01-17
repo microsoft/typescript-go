@@ -4,7 +4,7 @@ declare let f2: F
 
 f1.f(f1.v)
 
-f1.f(f2.v) // TOOD: better errors
+f1.f(f2.v)
 
 
 

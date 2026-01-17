@@ -1,5 +1,6 @@
-quantifiedTypesBoundedTypeParameters.ts(6,6): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+quantifiedTypesBoundedTypeParameters.ts(7,6): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
+  Both type parameters are bound to different variables
+    'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 
 
 ==== quantifiedTypesBoundedTypeParameters.ts (1 errors) ====
@@ -8,11 +9,14 @@ quantifiedTypesBoundedTypeParameters.ts(6,6): error TS2345: Argument of type 'T'
     declare let f2: F
     
     f1.f(f1.v)
+    
     f1.f(f2.v)
          ~~~~
 !!! error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
-!!! related TS2208 quantifiedTypesBoundedTypeParameters.ts:1:11: This type parameter might need an `extends T` constraint.
+!!! error TS2345:   Both type parameters are bound to different variables
+!!! error TS2345:     'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! related TS5114 quantifiedTypesBoundedTypeParameters.ts:3:13: Type parameter 'T' is bounded to this variable
+!!! related TS5114 quantifiedTypesBoundedTypeParameters.ts:2:13: Type parameter 'T' is bounded to this variable
     
     
     

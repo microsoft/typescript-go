@@ -4723,12 +4723,17 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 		}
 	}
 	r.reportRelationError(headMessage, source, target)
-	if source.flags&TypeFlagsTypeParameter != 0 && source.symbol != nil && len(source.symbol.Declarations) != 0 && r.c.getConstraintOfType(source) == nil {
-		syntheticParam := r.c.cloneTypeParameter(source)
-		syntheticParam.AsTypeParameter().constraint = r.c.instantiateType(target, newSimpleTypeMapper(source, syntheticParam))
-		if r.c.hasNonCircularBaseConstraint(syntheticParam) {
-			targetConstraintString := r.c.TypeToString(target)
-			r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(source.symbol.Declarations[0], diagnostics.This_type_parameter_might_need_an_extends_0_constraint, targetConstraintString))
+	if source.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 && target.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+		r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(source.AsTypeParameter().boundedTo.Declarations[0], diagnostics.Type_parameter_0_is_bounded_to_this_variable, r.c.TypeToString(source)))
+		r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(target.AsTypeParameter().boundedTo.Declarations[0], diagnostics.Type_parameter_0_is_bounded_to_this_variable, r.c.TypeToString(target)))
+	} else {
+		if source.flags&TypeFlagsTypeParameter != 0 && source.symbol != nil && len(source.symbol.Declarations) != 0 && r.c.getConstraintOfType(source) == nil {
+			syntheticParam := r.c.cloneTypeParameter(source)
+			syntheticParam.AsTypeParameter().constraint = r.c.instantiateType(target, newSimpleTypeMapper(source, syntheticParam))
+			if r.c.hasNonCircularBaseConstraint(syntheticParam) {
+				targetConstraintString := r.c.TypeToString(target)
+				r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(source.symbol.Declarations[0], diagnostics.This_type_parameter_might_need_an_extends_0_constraint, targetConstraintString))
+			}
 		}
 	}
 }
@@ -4762,6 +4767,9 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			r.errorChain = nil // Only report this error once
 			r.reportError(diagnostics.X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType)
 		}
+	}
+	if target.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 && generalizedSource.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+		r.reportError(diagnostics.Both_type_parameters_are_bound_to_different_variables)
 	}
 	if message == nil {
 		switch {
