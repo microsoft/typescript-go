@@ -226,6 +226,7 @@ const (
 	KindNamedTupleMember
 	KindTemplateLiteralType
 	KindTemplateLiteralTypeSpan
+	KindQuantifiedType
 	KindImportType
 	// Binding patterns
 	KindObjectBindingPattern

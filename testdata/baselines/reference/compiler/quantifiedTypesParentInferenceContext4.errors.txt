@@ -1,0 +1,59 @@
+quantifiedTypesParentInferenceContext4.ts(19,16): error TS2698: Spread types may only be created from object types.
+quantifiedTypesParentInferenceContext4.ts(19,28): error TS2339: Property 'b' does not exist on type 'unknown'.
+quantifiedTypesParentInferenceContext4.ts(22,15): error TS2698: Spread types may only be created from object types.
+
+
+==== quantifiedTypesParentInferenceContext4.ts (3 errors) ====
+    declare const f:
+      (x:
+        <A, B, D, E> {
+          a: () => A,
+          ab: (a: A) => B,
+          nested: <C> {
+            c: (b: B) => C,
+            cd: (c: C) => D,
+          },
+          de: (d: D) => E 
+        }
+      ) => void
+    
+    // TODO: this should compile just like the f1 call
+    f({
+      a: () => ({ a: 0 }),
+      ab: x => ({ ...x, b: "" }),
+      nested: {
+        c: x => ({ ...x, c: +x.b }),
+                   ~~~~
+!!! error TS2698: Spread types may only be created from object types.
+                               ~
+!!! error TS2339: Property 'b' does not exist on type 'unknown'.
+        cd: x => ({ ...x, d: Boolean(x.c) })
+      },
+      de: x => ({ ...x, e: "" })
+                  ~~~~
+!!! error TS2698: Spread types may only be created from object types.
+    })
+    
+    declare const f1:
+      <A, B, C, D, E>
+      (x:
+         {
+          a: () => A,
+          ab: (a: A) => B,
+          nested: {
+            c: (b: B) => C,
+            cd: (c: C) => D,
+          },
+          de: (d: D) => E 
+        }
+      ) => void
+    
+    f1({
+      a: () => ({ a: 0 }),
+      ab: x => ({ ...x, b: "" }),
+      nested: {
+        c: x => ({ ...x, c: +x.b }),
+        cd: x => ({ ...x, d: Boolean(x.c) })
+      },
+      de: x => ({ ...x, e: "" })
+    })

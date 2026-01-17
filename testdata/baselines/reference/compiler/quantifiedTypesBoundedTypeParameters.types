@@ -1,0 +1,82 @@
+//// [tests/cases/compiler/quantifiedTypesBoundedTypeParameters.ts] ////
+
+=== quantifiedTypesBoundedTypeParameters.ts ===
+type F = <T> { v: T, f: (v: T) => void };
+>F : <T> { v: T; f: (v: T) => void; }
+>v : T
+>f : (v: T) => void
+>v : T
+
+declare let f1: F
+>f1 : <T> { v: T; f: (v: T) => void; }
+
+declare let f2: F
+>f2 : <T> { v: T; f: (v: T) => void; }
+
+f1.f(f1.v)
+>f1.f(f1.v) : void
+>f1.f : (v: T) => void
+>f1 : <T> { v: T; f: (v: T) => void; }
+>f : (v: T) => void
+>f1.v : T
+>f1 : <T> { v: T; f: (v: T) => void; }
+>v : T
+
+f1.f(f2.v)
+>f1.f(f2.v) : void
+>f1.f : (v: T) => void
+>f1 : <T> { v: T; f: (v: T) => void; }
+>f : (v: T) => void
+>f2.v : T
+>f2 : <T> { v: T; f: (v: T) => void; }
+>v : T
+
+
+
+/*
+declare const f: (a: <T> {
+  produce: (arg: string) => T,
+  consume: (arg: T) => unknown,
+  prop: <U> {
+    produce: (arg: T) => U,
+    consume: (arg: U) => unknown,
+  }
+}) => void
+
+f({
+  produce: a => Number(a),
+  consume: x => {
+    x satisfies number
+  },
+  prop: {
+    produce: x => {
+      x satisfies number
+      return Boolean(x)
+    },
+    consume: y => {
+      y satisfies boolean
+    }
+  }
+})
+*/
+
+/*
+declare const smallest:
+  <T extends OneOf<number | string>>(xs: T[]) => T
+
+smallest([1, 2, 3])
+smallest(["a", "b", "c"])
+
+smallest([1, "b", 3])
+smallest([1, 2, undefined])
+
+type OneOf<Spec> =
+  <Actual> (
+    Actual extends Spec
+      ? IsUnit<Actual> extends true ? Actual : never
+      : Spec
+  )
+
+type IsUnit<U> =
+  [U] extends (U extends unknown ? [U] : never) ? true : false
+*/

@@ -44,8 +44,9 @@ const (
 	CheckModeRestBindingElement   CheckMode = 1 << 5 // Checking a type that is going to be used to determine the type of a rest binding element
 	//   e.g. in `const { a, ...rest } = foo`, when checking the type of `foo` to determine the type of `rest`,
 	//   we need to preserve generic types instead of substituting them for constraints
-	CheckModeTypeOnly   CheckMode = 1 << 6 // Called from getTypeOfExpression, diagnostics may be omitted
-	CheckModeForceTuple CheckMode = 1 << 7
+	CheckModeTypeOnly             CheckMode = 1 << 6 // Called from getTypeOfExpression, diagnostics may be omitted
+	CheckModeForceTuple           CheckMode = 1 << 7
+	CheckModeQuantifiedContextual CheckMode = 1 << 8
 )
 
 type TypeSystemEntity any
@@ -7256,6 +7257,9 @@ func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts
 }
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
+	if contextualType.flags&TypeFlagsQuantified != 0 {
+		return c.checkExpressionExWithContextualType(node, checkMode, contextualType, inferenceContext)
+	}
 	contextNode := c.getContextNode(node)
 	c.pushContextualType(contextNode, contextualType, false /*isCache*/)
 	c.pushInferenceContext(contextNode, inferenceContext)
@@ -7329,6 +7333,64 @@ func (c *Checker) checkExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
+	return c.checkExpressionExWithContextualType(node, checkMode, nil, nil)
+}
+
+// we now have too many checkExpression* functions and it's a bit of a spagetti so maybe there is a better way to do this
+// but it's done this way to reduce the number of locations where a change has to be made for quantified types
+func (c *Checker) checkExpressionExWithContextualType(node *ast.Node, parentCheckMode CheckMode, contextualType *Type, parentInferenceContext *InferenceContext) *Type {
+	if contextualType == nil {
+		contextualType = c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	}
+	if parentInferenceContext == nil {
+		parentInferenceContext = c.getInferenceContext(node)
+	}
+	isAlreadyContextuallyChecking := c.contextualInfos != nil && core.Some(c.contextualInfos, func(info ContextualInfo) bool { return info.node == node })
+	if contextualType == nil || contextualType.flags&TypeFlagsQuantified == 0 || isAlreadyContextuallyChecking {
+		return c.checkExpressionExWorker(node, parentCheckMode)
+	}
+	baseType := contextualType.AsQuantifiedType().baseType
+	if parentInferenceContext != nil {
+		baseType = c.instantiateType(baseType, parentInferenceContext.nonFixingMapper)
+	}
+	typeParameters := core.Map(contextualType.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *Type { return tp.AsType() })
+
+	// context sensitive
+	// TODO: this is not needed if the node is not context sensitive
+	inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+	if parentInferenceContext != nil {
+		// probably a bad way to comvine inference contexts but works
+		inferenceContext.nonFixingMapper = c.combineTypeMappers(inferenceContext.nonFixingMapper, parentInferenceContext.nonFixingMapper)
+		inferenceContext.mapper = c.combineTypeMappers(inferenceContext.mapper, parentInferenceContext.mapper)
+	}
+	t := c.checkExpressionWithContextualType(node, baseType, inferenceContext, parentCheckMode|CheckModeSkipContextSensitive|CheckModeQuantifiedContextual)
+	if t.objectFlags&ObjectFlagsNonInferrableType != 0 && parentCheckMode&CheckModeSkipContextSensitive != 0 {
+		return t
+	}
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments := c.instantiateTypes(typeParameters, inferenceContext.nonFixingMapper)
+
+	// normal
+	t = c.checkExpressionWithContextualType(node, baseType, inferenceContext, CheckModeNormal|CheckModeQuantifiedContextual)
+	c.inferTypes(inferenceContext.inferences, t, baseType, InferencePriorityNone, false)
+	typeArguments = c.instantiateTypes(typeParameters, inferenceContext.mapper)
+
+	// final
+	baseType = c.instantiateType(baseType, newTypeMapper(typeParameters, typeArguments))
+	t = c.checkExpressionWithContextualType(node, baseType, core.IfElse(parentInferenceContext != nil, parentInferenceContext, nil), CheckModeNormal|CheckModeQuantifiedContextual)
+
+	if t.flags&TypeFlagsUnion != 0 {
+		return t // if it's a union then the subtype relation checking is non-trivial and we'll let the relater handle it
+	}
+
+	if !c.checkTypeRelatedToAndOptionallyElaborate(t, baseType, c.assignableRelation, node, node, nil, nil) {
+		return c.errorType // to avoid showing errors in parent TODO: maybe there is a better way to do this
+	}
+
+	return t
+}
+
+func (c *Checker) checkExpressionExWorker(node *ast.Node, checkMode CheckMode) *Type {
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
@@ -9947,12 +10009,12 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, c
 func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) {
 	links := c.nodeLinks.Get(node)
 	// Check if function expression is contextually typed and assign parameter types if so.
-	if links.flags&NodeCheckFlagsContextChecked == 0 {
+	if links.flags&NodeCheckFlagsContextChecked == 0 || checkMode&CheckModeQuantifiedContextual != 0 {
 		contextualSignature := c.getContextualSignature(node)
 		// If a type check is started at a function expression that is an argument of a function call, obtaining the
 		// contextual type may recursively get back to here during overload resolution of the call. If so, we will have
 		// already assigned contextual types.
-		if links.flags&NodeCheckFlagsContextChecked == 0 {
+		if links.flags&NodeCheckFlagsContextChecked == 0 || checkMode&CheckModeQuantifiedContextual != 0 {
 			links.flags |= NodeCheckFlagsContextChecked
 			signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
 			if signature == nil {
@@ -10928,6 +10990,9 @@ func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) 
 }
 
 func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, left *ast.Node, leftType *Type, right *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
+	if leftType.flags&TypeFlagsQuantified != 0 {
+		return c.checkPropertyAccessExpressionOrQualifiedName(node, left, leftType.AsQuantifiedType().baseType, right, checkMode, writeOnly)
+	}
 	parentSymbol := c.getResolvedSymbolOrNil(left)
 	assignmentKind := getAssignmentTargetKind(node)
 	widenedType := leftType
@@ -16054,6 +16119,22 @@ func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Ty
 		if t == nil {
 			panic("Unexpected nil type")
 		}
+		if t.objectFlags&ObjectFlagsContainsQuantifiedType != 0 {
+			mapper := make(map[*Type]*Type)
+			t = c.instantiateType(t, newFunctionTypeMapper(func(t *Type) *Type {
+				if t.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+					newT, seen := mapper[t]
+					if seen {
+						return newT
+					}
+					newT = c.cloneTypeParameter(t)
+					newT.objectFlags |= ObjectFlagsQuantifiedTypeParameter
+					mapper[t] = newT
+					return newT
+				}
+				return t
+			}))
+		}
 		// For a contextually typed parameter it is possible that a type has already
 		// been assigned (in assignTypeToParameterAndFixTypeParameters), and we want
 		// to preserve this type. In fact, we need to _prefer_ that type, but it won't
@@ -16821,7 +16902,7 @@ func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *ast.Symbol) *Type {
 		t := c.newObjectType(kind, symbol)
 		links.declaredType = t
 		outerTypeParameters := c.getOuterTypeParametersOfClassOrInterface(symbol)
-		typeParameters := c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(outerTypeParameters, symbol)
+		typeParameters := c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(outerTypeParameters, symbol)
 		// A class or interface is generic if it has type parameters or a "this" type. We always give classes a "this" type
 		// because it is not feasible to analyze all members to determine if the "this" type escapes the class (in particular,
 		// property types inferred from initializers and method return types inferred from return statements are very hard
@@ -20880,7 +20961,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// If we merged instantiations of a generic type, we replicate the symbol parent resetting behavior we used
 						// to do when we recorded multiple distinct symbols so that we still get, eg, `Array<T>.length` printed
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
-						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
+						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(singleProp.Parent)) != 0
 					} else {
 						if propSet.Size() == 0 {
 							propSet.Add(singleProp)
@@ -21608,7 +21689,25 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 	flags := t.flags
 	switch {
 	case flags&TypeFlagsTypeParameter != 0:
-		return m.Map(t)
+		newT := m.Map(t)
+		if newT.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+			newT.AsTypeParameter().mapper = c.combineTypeMappers(newT.AsTypeParameter().mapper, m)
+		}
+		return newT
+	case flags&TypeFlagsQuantified != 0:
+		return c.newQuantifiedType(
+			core.Map(
+				c.instantiateTypes(
+					core.Map(
+						t.AsQuantifiedType().typeParameters,
+						func(tp *TypeParameter) *Type { return tp.AsType() },
+					),
+					m,
+				),
+				func(t *Type) *TypeParameter { return t.AsTypeParameter() },
+			),
+			c.instantiateType(t.AsQuantifiedType().baseType, m),
+		)
 	case flags&TypeFlagsObject != 0:
 		objectFlags := t.objectFlags
 		if objectFlags&(ObjectFlagsReference|ObjectFlagsAnonymous|ObjectFlagsMapped) != 0 {
@@ -22280,6 +22379,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromInferTypeNode(node)
 	case ast.KindImportType:
 		return c.getTypeFromImportTypeNode(node)
+	case ast.KindQuantifiedType:
+		return c.getTypeFromQuantifiedTypeNode(node)
 	default:
 		return c.errorType
 	}
@@ -23046,7 +23147,7 @@ func (c *Checker) getAliasSymbolForTypeNode(node *ast.Node) *ast.Symbol {
 
 func (c *Checker) getTypeArgumentsForAliasSymbol(symbol *ast.Symbol) []*Type {
 	if symbol != nil {
-		return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+		return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol)
 	}
 	return nil
 }
@@ -23081,7 +23182,7 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindCallSignature, ast.KindConstructSignature,
 			ast.KindMethodSignature, ast.KindFunctionType, ast.KindConstructorType, ast.KindFunctionDeclaration,
 			ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType,
-			ast.KindConditionalType:
+			ast.KindConditionalType, ast.KindQuantifiedType:
 			outerTypeParameters := c.getOuterTypeParameters(node, includeThisTypes)
 			if (kind == ast.KindFunctionExpression || kind == ast.KindArrowFunction || ast.IsObjectLiteralMethod(node)) && c.isContextSensitive(node) {
 				signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
@@ -23119,14 +23220,14 @@ func (c *Checker) getInferTypeParameters(node *ast.Node) []*Type {
 }
 
 // The local type parameters are the combined set of type parameters from all declarations of the class,
-// interface, or type alias.
-func (c *Checker) getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
-	return c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(nil, symbol)
+// interface, type alias or quantified type
+func (c *Checker) getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol *ast.Symbol) []*Type {
+	return c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(nil, symbol)
 }
 
-func (c *Checker) appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(types []*Type, symbol *ast.Symbol) []*Type {
+func (c *Checker) appendLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(types []*Type, symbol *ast.Symbol) []*Type {
 	for _, node := range symbol.Declarations {
-		if ast.NodeKindIs(node, ast.KindInterfaceDeclaration, ast.KindClassDeclaration, ast.KindClassExpression) || isTypeAlias(node) {
+		if ast.NodeKindIs(node, ast.KindInterfaceDeclaration, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindQuantifiedType) || isTypeAlias(node) {
 			types = c.appendTypeParameters(types, node.TypeParameters())
 		}
 	}
@@ -23163,7 +23264,7 @@ func (c *Checker) getDeclaredTypeOfTypeAlias(symbol *ast.Symbol) *Type {
 		typeNode := declaration.Type()
 		t := c.getTypeFromTypeNode(typeNode)
 		if c.popTypeResolution() {
-			typeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+			typeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol)
 			if len(typeParameters) != 0 {
 				// Initialize the instantiation cache for generic type aliases. The declared type corresponds to
 				// an instantiation of the type alias with the type parameters supplied as type arguments.
@@ -23957,6 +24058,26 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 	return links.resolvedType
 }
 
+func (c *Checker) getTypeFromQuantifiedTypeNode(node *ast.Node) *Type {
+	links := c.typeNodeLinks.Get(node)
+	if links.resolvedType == nil {
+		typeParameters := core.Map(node.AsQuantifiedTypeNode().TypeParameters.Nodes, func(typeParameterNode *ast.Node) *Type {
+			return c.getDeclaredTypeOfTypeParameter(typeParameterNode.Symbol())
+		})
+		newTypeParameters := core.Map(typeParameters, func(tp *Type) *Type {
+			newTp := c.cloneTypeParameter(tp)
+			newTp.objectFlags |= ObjectFlagsQuantifiedTypeParameter
+			return newTp
+		})
+		mapper := newTypeMapper(typeParameters, newTypeParameters)
+		links.resolvedType = c.newQuantifiedType(
+			core.Map(c.instantiateTypes(typeParameters, mapper), func(t *Type) *TypeParameter { return t.AsTypeParameter() }),
+			c.instantiateType(c.getTypeFromTypeNode(node.AsQuantifiedTypeNode().BaseType), mapper),
+		)
+	}
+	return links.resolvedType
+}
+
 func (c *Checker) getIdentifierChain(node *ast.Node) []*ast.Node {
 	if ast.IsIdentifier(node) {
 		return []*ast.Node{node}
@@ -24546,6 +24667,13 @@ func (c *Checker) newSubstitutionType(baseType *Type, constraint *Type) *Type {
 	data.baseType = baseType
 	data.constraint = constraint
 	return c.newType(TypeFlagsSubstitution, ObjectFlagsNone, data)
+}
+
+func (c *Checker) newQuantifiedType(typeParamters []*TypeParameter, baseType *Type) *Type {
+	data := &QuantifiedType{}
+	data.typeParameters = typeParamters
+	data.baseType = baseType
+	return c.newType(TypeFlagsQuantified, ObjectFlagsContainsQuantifiedType, data)
 }
 
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
@@ -26692,6 +26820,11 @@ func (c *Checker) getBaseConstraintOrType(t *Type) *Type {
 }
 
 func (c *Checker) getBaseConstraintOfType(t *Type) *Type {
+	if t.flags&TypeFlagsQuantified != 0 {
+		return c.getBaseConstraintOfType(
+			t.AsQuantifiedType().baseType,
+		)
+	}
 	if t.flags&(TypeFlagsInstantiableNonPrimitive|TypeFlagsUnionOrIntersection|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 || c.isGenericTupleType(t) {
 		constraint := c.getResolvedBaseConstraint(t, nil)
 		if constraint != c.noConstraintType && constraint != c.circularConstraintType {
@@ -29685,6 +29818,9 @@ func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags C
 	instantiatedType := c.instantiateContextualType(contextualType, node, contextFlags)
 	if instantiatedType != nil && !(contextFlags&ContextFlagsNoConstraints != 0 && instantiatedType.flags&TypeFlagsTypeVariable != 0) {
 		apparentType := c.mapTypeEx(instantiatedType, func(t *Type) *Type {
+			if t.flags&TypeFlagsQuantified != 0 {
+				return t
+			}
 			if t.objectFlags&ObjectFlagsMapped != 0 {
 				return t
 			}

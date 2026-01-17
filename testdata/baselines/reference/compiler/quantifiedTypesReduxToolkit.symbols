@@ -1,0 +1,297 @@
+//// [tests/cases/compiler/quantifiedTypesReduxToolkit.ts] ////
+
+=== quantifiedTypesReduxToolkit.ts ===
+// https://github.com/microsoft/TypeScript/issues/51612#issuecomment-1375431039
+
+declare const createSlice:
+>createSlice : Symbol(createSlice, Decl(quantifiedTypesReduxToolkit.ts, 2, 13))
+
+  < S extends object
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 3, 3))
+
+  , Rs extends <T extends string> { [T1 in T]: <P> Reducer<S, T1, P> }
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 4, 3))
+>T : Symbol(T, Decl(quantifiedTypesReduxToolkit.ts, 4, 16))
+>T1 : Symbol(T1, Decl(quantifiedTypesReduxToolkit.ts, 4, 37))
+>T : Symbol(T, Decl(quantifiedTypesReduxToolkit.ts, 4, 16))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 4, 48))
+>Reducer : Symbol(Reducer, Decl(quantifiedTypesReduxToolkit.ts, 11, 18))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 3, 3))
+>T1 : Symbol(T1, Decl(quantifiedTypesReduxToolkit.ts, 4, 37))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 4, 48))
+
+  >
+    (slice: {
+>slice : Symbol(slice, Decl(quantifiedTypesReduxToolkit.ts, 6, 5))
+
+      name: string,
+>name : Symbol(name, Decl(quantifiedTypesReduxToolkit.ts, 6, 13))
+
+      initialState: S,
+>initialState : Symbol(initialState, Decl(quantifiedTypesReduxToolkit.ts, 7, 19))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 3, 3))
+
+      reducers: Rs
+>reducers : Symbol(reducers, Decl(quantifiedTypesReduxToolkit.ts, 8, 22))
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 4, 3))
+
+    }) =>
+      Slice<S, Rs>
+>Slice : Symbol(Slice, Decl(quantifiedTypesReduxToolkit.ts, 17, 5))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 3, 3))
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 4, 3))
+
+type Reducer<S, T, P> =
+>Reducer : Symbol(Reducer, Decl(quantifiedTypesReduxToolkit.ts, 11, 18))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 13, 13))
+>T : Symbol(T, Decl(quantifiedTypesReduxToolkit.ts, 13, 15))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 13, 18))
+
+  | ((state: S, action: P & { type: T }) => void)
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 14, 6))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 13, 13))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 14, 15))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 13, 18))
+>type : Symbol(type, Decl(quantifiedTypesReduxToolkit.ts, 14, 29))
+>T : Symbol(T, Decl(quantifiedTypesReduxToolkit.ts, 13, 15))
+
+  | { reducer: (state: S, action: P & { type: T }) => void
+>reducer : Symbol(reducer, Decl(quantifiedTypesReduxToolkit.ts, 15, 5))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 15, 16))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 13, 13))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 15, 25))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 13, 18))
+>type : Symbol(type, Decl(quantifiedTypesReduxToolkit.ts, 15, 39))
+>T : Symbol(T, Decl(quantifiedTypesReduxToolkit.ts, 13, 15))
+
+    , prepare: (...a: never) => P
+>prepare : Symbol(prepare, Decl(quantifiedTypesReduxToolkit.ts, 16, 5))
+>a : Symbol(a, Decl(quantifiedTypesReduxToolkit.ts, 16, 16))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 13, 18))
+    }
+
+type Slice<S, Rs> = 
+>Slice : Symbol(Slice, Decl(quantifiedTypesReduxToolkit.ts, 17, 5))
+>S : Symbol(S, Decl(quantifiedTypesReduxToolkit.ts, 19, 11))
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 19, 13))
+
+  { actions:
+>actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+
+      { [K in keyof Rs]:
+>K : Symbol(K, Decl(quantifiedTypesReduxToolkit.ts, 21, 9))
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 19, 13))
+
+          Rs[K] extends { prepare: (...a: infer A) => infer R } ? (...a: A) => { type: K } & R :
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 19, 13))
+>K : Symbol(K, Decl(quantifiedTypesReduxToolkit.ts, 21, 9))
+>prepare : Symbol(prepare, Decl(quantifiedTypesReduxToolkit.ts, 22, 25))
+>a : Symbol(a, Decl(quantifiedTypesReduxToolkit.ts, 22, 36))
+>A : Symbol(A, Decl(quantifiedTypesReduxToolkit.ts, 22, 47))
+>R : Symbol(R, Decl(quantifiedTypesReduxToolkit.ts, 22, 59))
+>a : Symbol(a, Decl(quantifiedTypesReduxToolkit.ts, 22, 67))
+>A : Symbol(A, Decl(quantifiedTypesReduxToolkit.ts, 22, 47))
+>type : Symbol(type, Decl(quantifiedTypesReduxToolkit.ts, 22, 80))
+>K : Symbol(K, Decl(quantifiedTypesReduxToolkit.ts, 21, 9))
+>R : Symbol(R, Decl(quantifiedTypesReduxToolkit.ts, 22, 59))
+
+          Rs[K] extends (state: never, action: PayloadAction<infer P>) => unknown ? (payload: P) => { type: K, payload: P } :
+>Rs : Symbol(Rs, Decl(quantifiedTypesReduxToolkit.ts, 19, 13))
+>K : Symbol(K, Decl(quantifiedTypesReduxToolkit.ts, 21, 9))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 23, 25))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 23, 38))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 23, 66))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 23, 85))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 23, 66))
+>type : Symbol(type, Decl(quantifiedTypesReduxToolkit.ts, 23, 101))
+>K : Symbol(K, Decl(quantifiedTypesReduxToolkit.ts, 21, 9))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 23, 110))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 23, 66))
+
+          never
+      }
+  }
+
+type PayloadAction<P> =
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 28, 19))
+
+  { type: string
+>type : Symbol(type, Decl(quantifiedTypesReduxToolkit.ts, 29, 3))
+
+  , payload: P
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 30, 3))
+>P : Symbol(P, Decl(quantifiedTypesReduxToolkit.ts, 28, 19))
+  }
+
+const slice = createSlice({
+>slice : Symbol(slice, Decl(quantifiedTypesReduxToolkit.ts, 33, 5))
+>createSlice : Symbol(createSlice, Decl(quantifiedTypesReduxToolkit.ts, 2, 13))
+
+  name: "someSlice",
+>name : Symbol(name, Decl(quantifiedTypesReduxToolkit.ts, 33, 27))
+
+  initialState: {
+>initialState : Symbol(initialState, Decl(quantifiedTypesReduxToolkit.ts, 34, 20))
+
+    foo: "bar"
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+
+  },
+  reducers: {
+>reducers : Symbol(reducers, Decl(quantifiedTypesReduxToolkit.ts, 37, 4))
+
+    simpleReducer: (state, action: PayloadAction<string>) => {
+>simpleReducer : Symbol(simpleReducer, Decl(quantifiedTypesReduxToolkit.ts, 38, 13))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 39, 20))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 39, 26))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+
+      state.foo = action.payload
+>state.foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 39, 20))
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>action.payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 30, 3))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 39, 26))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 30, 3))
+
+    },
+    reducerWithPrepareNotation: {
+>reducerWithPrepareNotation : Symbol(reducerWithPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 41, 6))
+
+      prepare: (char: string, repeats: number) => {
+>prepare : Symbol(prepare, Decl(quantifiedTypesReduxToolkit.ts, 42, 33))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 43, 16))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 43, 29))
+
+        return { payload: char.repeat(repeats), extraStuff: true }
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 44, 16))
+>char.repeat : Symbol(String.repeat, Decl(lib.es2015.core.d.ts, --, --))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 43, 16))
+>repeat : Symbol(String.repeat, Decl(lib.es2015.core.d.ts, --, --))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 43, 29))
+>extraStuff : Symbol(extraStuff, Decl(quantifiedTypesReduxToolkit.ts, 44, 47))
+
+      },
+      reducer: (state, action) => {
+>reducer : Symbol(reducer, Decl(quantifiedTypesReduxToolkit.ts, 45, 8))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 46, 16))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 46, 22))
+
+        state.foo = action.payload
+>state.foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 46, 16))
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>action.payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 44, 16))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 46, 22))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 44, 16))
+      }
+    },
+    reducerWithAnotherPrepareNotation: {
+>reducerWithAnotherPrepareNotation : Symbol(reducerWithAnotherPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 49, 6))
+
+      prepare: (char: string, repeats: number) => {
+>prepare : Symbol(prepare, Decl(quantifiedTypesReduxToolkit.ts, 50, 40))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 51, 16))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 51, 29))
+
+        return { payload: repeats * char.length }
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 52, 16))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 51, 29))
+>char.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 51, 16))
+>length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+
+      },
+      reducer: (state, action) => {
+>reducer : Symbol(reducer, Decl(quantifiedTypesReduxToolkit.ts, 53, 8))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 54, 16))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 54, 22))
+
+        state.foo = state.foo.slice(0, action.payload)
+>state.foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 54, 16))
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state.foo.slice : Symbol(String.slice, Decl(lib.es5.d.ts, --, --))
+>state.foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 54, 16))
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>slice : Symbol(String.slice, Decl(lib.es5.d.ts, --, --))
+>action.payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 52, 16))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 54, 22))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 52, 16))
+
+      },
+    },
+    invalidReducerWithPrepareNotation: {
+>invalidReducerWithPrepareNotation : Symbol(invalidReducerWithPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 57, 6))
+
+      prepare: (char: string, repeats: number) => {
+>prepare : Symbol(prepare, Decl(quantifiedTypesReduxToolkit.ts, 58, 40))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 59, 16))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 59, 29))
+
+        return { payload: repeats * char.length }
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 60, 16))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 59, 29))
+>char.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 59, 16))
+>length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+
+      },
+      reducer: (state, action: PayloadAction<string>) => {
+>reducer : Symbol(reducer, Decl(quantifiedTypesReduxToolkit.ts, 61, 8))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 62, 16))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 62, 22))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+
+        state.foo = action.payload
+>state.foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>state : Symbol(state, Decl(quantifiedTypesReduxToolkit.ts, 62, 16))
+>foo : Symbol(foo, Decl(quantifiedTypesReduxToolkit.ts, 35, 17))
+>action.payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 30, 3))
+>action : Symbol(action, Decl(quantifiedTypesReduxToolkit.ts, 62, 22))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 30, 3))
+
+      },
+    },
+  }
+})
+
+{
+  const _expectType: (payload: string) => PayloadAction<string> = slice.actions.simpleReducer
+>_expectType : Symbol(_expectType, Decl(quantifiedTypesReduxToolkit.ts, 70, 7))
+>payload : Symbol(payload, Decl(quantifiedTypesReduxToolkit.ts, 70, 22))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+>slice.actions.simpleReducer : Symbol(simpleReducer, Decl(quantifiedTypesReduxToolkit.ts, 38, 13))
+>slice.actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>slice : Symbol(slice, Decl(quantifiedTypesReduxToolkit.ts, 33, 5))
+>actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>simpleReducer : Symbol(simpleReducer, Decl(quantifiedTypesReduxToolkit.ts, 38, 13))
+}
+{
+  const _expectType: (char: string, repeats: number) => PayloadAction<string> = slice.actions.reducerWithPrepareNotation
+>_expectType : Symbol(_expectType, Decl(quantifiedTypesReduxToolkit.ts, 73, 7))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 73, 22))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 73, 35))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+>slice.actions.reducerWithPrepareNotation : Symbol(reducerWithPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 41, 6))
+>slice.actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>slice : Symbol(slice, Decl(quantifiedTypesReduxToolkit.ts, 33, 5))
+>actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>reducerWithPrepareNotation : Symbol(reducerWithPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 41, 6))
+}
+{
+  const _expectType: (char: string, repeats: number) => PayloadAction<number> = slice.actions.reducerWithAnotherPrepareNotation
+>_expectType : Symbol(_expectType, Decl(quantifiedTypesReduxToolkit.ts, 76, 7))
+>char : Symbol(char, Decl(quantifiedTypesReduxToolkit.ts, 76, 22))
+>repeats : Symbol(repeats, Decl(quantifiedTypesReduxToolkit.ts, 76, 35))
+>PayloadAction : Symbol(PayloadAction, Decl(quantifiedTypesReduxToolkit.ts, 26, 3))
+>slice.actions.reducerWithAnotherPrepareNotation : Symbol(reducerWithAnotherPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 49, 6))
+>slice.actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>slice : Symbol(slice, Decl(quantifiedTypesReduxToolkit.ts, 33, 5))
+>actions : Symbol(actions, Decl(quantifiedTypesReduxToolkit.ts, 20, 3))
+>reducerWithAnotherPrepareNotation : Symbol(reducerWithAnotherPrepareNotation, Decl(quantifiedTypesReduxToolkit.ts, 49, 6))
+}
+

@@ -1,0 +1,84 @@
+//// [tests/cases/compiler/quantifiedTypesCorrelatedUnions.ts] ////
+
+=== quantifiedTypesCorrelatedUnions.ts ===
+// https://github.com/microsoft/TypeScript/issues/30581
+
+type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
+>NumberRecord : NumberRecord
+>kind : "n"
+>v : number
+>f : (v: number) => void
+>v : number
+
+type StringRecord = { kind: "s", v: string, f: (v: string) => void };
+>StringRecord : StringRecord
+>kind : "s"
+>v : string
+>f : (v: string) => void
+>v : string
+
+type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+>BooleanRecord : BooleanRecord
+>kind : "b"
+>v : boolean
+>f : (v: boolean) => void
+>v : boolean
+
+type GenericRecord = <T> { kind: string, v: T, f: (v: T) => void };
+>GenericRecord : <T> { kind: string; v: T; f: (v: T) => void; }
+>kind : string
+>v : T
+>f : (v: T) => void
+>v : T
+
+function processRecord(record: GenericRecord) {
+>processRecord : (record: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>record : <T> { kind: string; v: T; f: (v: T) => void; }
+
+  record.f(record.v);
+>record.f(record.v) : void
+>record.f : (v: T) => void
+>record : <T> { kind: string; v: T; f: (v: T) => void; }
+>f : (v: T) => void
+>record.v : T
+>record : <T> { kind: string; v: T; f: (v: T) => void; }
+>v : T
+}
+processRecord({} as NumberRecord)
+>processRecord({} as NumberRecord) : void
+>processRecord : (record: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>{} as NumberRecord : NumberRecord
+>{} : {}
+
+processRecord({} as StringRecord)
+>processRecord({} as StringRecord) : void
+>processRecord : (record: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>{} as StringRecord : StringRecord
+>{} : {}
+
+processRecord({} as BooleanRecord)
+>processRecord({} as BooleanRecord) : void
+>processRecord : (record: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>{} as BooleanRecord : BooleanRecord
+>{} : {}
+
+processRecord({} as NumberRecord | StringRecord | BooleanRecord)
+>processRecord({} as NumberRecord | StringRecord | BooleanRecord) : void
+>processRecord : (record: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>{} as NumberRecord | StringRecord | BooleanRecord : BooleanRecord | NumberRecord | StringRecord
+>{} : {}
+
+function processRecord2(record1: GenericRecord, record2: GenericRecord) {
+>processRecord2 : (record1: <T> { kind: string; v: T; f: (v: T) => void; }, record2: <T_1> { kind: string; v: T_1; f: (v: T_1) => void; }) => void
+>record1 : <T> { kind: string; v: T; f: (v: T) => void; }
+>record2 : <T> { kind: string; v: T; f: (v: T) => void; }
+
+  record1.f(record2.v); // TODO: better error
+>record1.f(record2.v) : void
+>record1.f : (v: T) => void
+>record1 : <T> { kind: string; v: T; f: (v: T) => void; }
+>f : (v: T) => void
+>record2.v : T
+>record2 : <T> { kind: string; v: T; f: (v: T) => void; }
+>v : T
+}

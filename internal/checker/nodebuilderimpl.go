@@ -903,7 +903,7 @@ func (b *NodeBuilderImpl) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 func (b *NodeBuilderImpl) getTypeParametersOfClassOrInterface(symbol *ast.Symbol) []*Type {
 	result := make([]*Type, 0)
 	result = append(result, b.ch.getOuterTypeParametersOfClassOrInterface(symbol)...)
-	result = append(result, b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)...)
+	result = append(result, b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol)...)
 	return result
 }
 
@@ -1528,7 +1528,7 @@ func (b *NodeBuilderImpl) typeParametersToTypeParameterDeclarations(symbol *ast.
 	targetSymbol := b.ch.getTargetSymbol(symbol)
 	if targetSymbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface|ast.SymbolFlagsAlias) != 0 {
 		var results []*ast.Node
-		params := b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+		params := b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAliasOrQuantifiedType(symbol)
 		for _, param := range params {
 			results = append(results, b.typeParameterToDeclaration(param))
 		}
@@ -3116,6 +3116,16 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		} else {
 			return typeNode
 		}
+	}
+	if t.flags&TypeFlagsQuantified != 0 {
+		return b.f.NewQuantifiedTypeNode(
+			b.f.NewNodeList(
+				core.Map(t.AsQuantifiedType().typeParameters, func(typeParamter *TypeParameter) *ast.Node {
+					return b.typeParameterToDeclaration(typeParamter.AsType())
+				}),
+			),
+			b.typeToTypeNode(t.AsQuantifiedType().baseType),
+		)
 	}
 
 	panic("Should be unreachable.")

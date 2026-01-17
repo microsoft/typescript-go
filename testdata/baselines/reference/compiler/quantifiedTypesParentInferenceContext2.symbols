@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/quantifiedTypesParentInferenceContext2.ts] ////
+
+=== quantifiedTypesParentInferenceContext2.ts ===
+declare const f: <A>(a: A, f: [<T> ((a: A) => void)]) => void
+>f : Symbol(f, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 13))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 18))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 21))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 18))
+>f : Symbol(f, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 26))
+>T : Symbol(T, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 32))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 37))
+>A : Symbol(A, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 18))
+
+f(0, [a => {}])
+>f : Symbol(f, Decl(quantifiedTypesParentInferenceContext2.ts, 0, 13))
+>a : Symbol(a, Decl(quantifiedTypesParentInferenceContext2.ts, 1, 6))
+

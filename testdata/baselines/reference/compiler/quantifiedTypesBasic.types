@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/quantifiedTypesBasic.ts] ////
+
+=== quantifiedTypesBasic.ts ===
+let t0: <T> T = "hello"
+>t0 : <T> T
+>"hello" : "hello"
+
+let t1: <T> { values: T[], identifier: (value: T) => string } = {
+>t1 : <T> { values: T[]; identifier: (value: T) => string; }
+>values : T[]
+>identifier : (value: T) => string
+>value : T
+>{  values: [{ key: "a" }, { key: "b" }, { key: "c" }],  identifier: v => v.key} : { values: { key: string; }[]; identifier: (v: { key: string; }) => string; }
+
+  values: [{ key: "a" }, { key: "b" }, { key: "c" }],
+>values : { key: string; }[]
+>[{ key: "a" }, { key: "b" }, { key: "c" }] : { key: string; }[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: "c" } : { key: string; }
+>key : string
+>"c" : "c"
+
+  identifier: v => v.key
+>identifier : (v: { key: string; }) => string
+>v => v.key : (v: { key: string; }) => string
+>v : { key: string; }
+>v.key : string
+>v : { key: string; }
+>key : string
+}
+
+let t2: <T> { values: T[], identifier: (value: T) => string } = {
+>t2 : <T> { values: T[]; identifier: (value: T) => string; }
+>values : T[]
+>identifier : (value: T) => string
+>value : T
+>{  values: [{ key: "a" }, { key: "b" }, { key: 0 }],  identifier: v => v.key} : any
+
+  values: [{ key: "a" }, { key: "b" }, { key: 0 }],
+>values : ({ key: string; } | { key: number; })[]
+>[{ key: "a" }, { key: "b" }, { key: 0 }] : ({ key: string; } | { key: number; })[]
+>{ key: "a" } : { key: string; }
+>key : string
+>"a" : "a"
+>{ key: "b" } : { key: string; }
+>key : string
+>"b" : "b"
+>{ key: 0 } : { key: number; }
+>key : number
+>0 : 0
+
+  identifier: v => v.key
+>identifier : (v: { key: string; } | { key: number; }) => string | number
+>v => v.key : (v: { key: string; } | { key: number; }) => string | number
+>v : { key: string; } | { key: number; }
+>v.key : string | number
+>v : { key: string; } | { key: number; }
+>key : string | number
+}
+

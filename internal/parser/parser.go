@@ -2480,6 +2480,21 @@ func (p *Parser) parseType() *ast.TypeNode {
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsTypeExcludesFlags, false)
 	var typeNode *ast.TypeNode
+	if p.token == ast.KindLessThanToken {
+		state := p.mark()
+		p.parseFunctionOrConstructorType()
+		couldParseFunctionType := len(p.diagnostics) == state.diagnosticsLen
+		// TODO: see if there's a more standard way to do "try" parse
+		p.rewind(state)
+		if !couldParseFunctionType {
+			pos := p.nodePos()
+			typeParameters := p.parseTypeParameters()
+			baseType := p.parseType()
+			typeNode = p.finishNode(p.factory.NewQuantifiedTypeNode(typeParameters, baseType), pos)
+			p.contextFlags = saveContextFlags
+			return typeNode
+		}
+	}
 	if p.isStartOfFunctionTypeOrConstructorType() {
 		typeNode = p.parseFunctionOrConstructorType()
 	} else {

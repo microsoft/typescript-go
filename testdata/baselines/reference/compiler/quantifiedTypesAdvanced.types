@@ -1,0 +1,151 @@
+//// [tests/cases/compiler/quantifiedTypesAdvanced.ts] ////
+
+=== quantifiedTypesAdvanced.ts ===
+declare const f:
+>f : <T extends (<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; })[]>(a: [...T]) => { [K in keyof T]: T[K] extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol"; }
+
+  <T extends (<A extends string | number, B, C> { a: A, ab: (a: A) => B, bc?: (b: B) => C })[]>(a: [...T]) =>
+>a : A
+>ab : (a: A) => B
+>a : A
+>bc : (b: B) => C
+>b : B
+>a : [...T]
+
+      { [K in keyof T]: T[K] extends { bc: (...a: never) => infer C } ? C : "lol" }
+>bc : (...a: never) => C
+>a : never
+
+let t0 = f([
+>t0 : [boolean, number, "lol"]
+>f([  {    a: "0",    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => {      b satisfies string      return +b    }  },  {    a: 42,    ab: a => a.toString()  }]) : [boolean, number, "lol"]
+>f : <T extends (<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; })[]>(a: [...T]) => { [K in keyof T]: T[K] extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol"; }
+>[  {    a: "0",    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => {      b satisfies string      return +b    }  },  {    a: 42,    ab: a => a.toString()  }] : [{ a: "0"; ab: (a: "0") => number; bc: (b: number) => boolean; }, { a: "hello"; ab: (a: "hello") => string; bc: (b: string) => number; }, { a: 42; ab: (a: 42) => string; }]
+  {
+>{    a: "0",    ab: a => +a,    bc: b => typeof b === "number"  } : { a: "0"; ab: (a: "0") => number; bc: (b: number) => boolean; }
+
+    a: "0",
+>a : "0"
+>"0" : "0"
+
+    ab: a => +a,
+>ab : (a: "0") => number
+>a => +a : (a: "0") => number
+>a : "0"
+>+a : number
+>a : "0"
+
+    bc: b => typeof b === "number"
+>bc : (b: number) => boolean
+>b => typeof b === "number" : (b: number) => boolean
+>b : number
+>typeof b === "number" : boolean
+>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+>b : number
+>"number" : "number"
+
+  },
+  {
+>{    a: "hello",    ab: a => a + " world",    bc: b => {      b satisfies string      return +b    }  } : { a: "hello"; ab: (a: "hello") => string; bc: (b: string) => number; }
+
+    a: "hello",
+>a : "hello"
+>"hello" : "hello"
+
+    ab: a => a + " world",
+>ab : (a: "hello") => string
+>a => a + " world" : (a: "hello") => string
+>a : "hello"
+>a + " world" : string
+>a : "hello"
+>" world" : " world"
+
+    bc: b => {
+>bc : (b: string) => number
+>b => {      b satisfies string      return +b    } : (b: string) => number
+>b : string
+
+      b satisfies string
+>b satisfies string : string
+>b : string
+
+      return +b
+>+b : number
+>b : string
+    }
+  },
+  {
+>{    a: 42,    ab: a => a.toString()  } : { a: 42; ab: (a: 42) => string; }
+
+    a: 42,
+>a : 42
+>42 : 42
+
+    ab: a => a.toString()
+>ab : (a: 42) => string
+>a => a.toString() : (a: 42) => string
+>a : 42
+>a.toString() : string
+>a.toString : (radix?: number) => string
+>a : 42
+>toString : (radix?: number) => string
+  }
+])
+
+
+let t1 = f([
+>t1 : ((<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; }) extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol")[]
+>f([  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }]) : ((<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; }) extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol")[]
+>f : <T extends (<A extends string | number, B, C> { a: A; ab: (a: A) => B; bc?: (b: B) => C; })[]>(a: [...T]) => { [K in keyof T]: T[K] extends { bc: (...a: never) => infer C_1; } ? C_1 : "lol"; }
+>[  {    a: true,    ab: a => +a,    bc: b => typeof b === "number"  },  {    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  }] : any[]
+  {
+>{    a: true,    ab: a => +a,    bc: b => typeof b === "number"  } : any
+
+    a: true,
+>a : boolean
+>true : true
+
+    ab: a => +a,
+>ab : (a: string | number) => number
+>a => +a : (a: string | number) => number
+>a : string | number
+>+a : number
+>a : string | number
+
+    bc: b => typeof b === "number"
+>bc : (b: number) => boolean
+>b => typeof b === "number" : (b: number) => boolean
+>b : number
+>typeof b === "number" : boolean
+>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+>b : number
+>"number" : "number"
+
+  },
+  {
+>{    a: "hello",    ab: a => a + " world",    bc: b => +b,    extra: "foo" // TODO: an extra property should be allowed  } : any
+
+    a: "hello",
+>a : string
+>"hello" : "hello"
+
+    ab: a => a + " world",
+>ab : (a: "hello") => string
+>a => a + " world" : (a: "hello") => string
+>a : "hello"
+>a + " world" : string
+>a : "hello"
+>" world" : " world"
+
+    bc: b => +b,
+>bc : (b: string) => number
+>b => +b : (b: string) => number
+>b : string
+>+b : number
+>b : string
+
+    extra: "foo" // TODO: an extra property should be allowed
+>extra : string
+>"foo" : "foo"
+  }
+])

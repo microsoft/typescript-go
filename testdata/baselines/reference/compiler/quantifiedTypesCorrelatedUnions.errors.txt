@@ -1,0 +1,27 @@
+quantifiedTypesCorrelatedUnions.ts(17,13): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+
+
+==== quantifiedTypesCorrelatedUnions.ts (1 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/30581
+    
+    type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
+    type StringRecord = { kind: "s", v: string, f: (v: string) => void };
+    type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+    type GenericRecord = <T> { kind: string, v: T, f: (v: T) => void };
+    
+    function processRecord(record: GenericRecord) {
+      record.f(record.v);
+    }
+    processRecord({} as NumberRecord)
+    processRecord({} as StringRecord)
+    processRecord({} as BooleanRecord)
+    processRecord({} as NumberRecord | StringRecord | BooleanRecord)
+    
+    function processRecord2(record1: GenericRecord, record2: GenericRecord) {
+      record1.f(record2.v); // TODO: better error
+                ~~~~~~~~~
+!!! error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
+!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! related TS2208 quantifiedTypesCorrelatedUnions.ts:6:23: This type parameter might need an `extends T` constraint.
+    }

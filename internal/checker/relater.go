@@ -168,6 +168,31 @@ func (c *Checker) areTypesComparable(type1 *Type, type2 *Type) bool {
 }
 
 func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation) bool {
+	if target.flags&TypeFlagsQuantified != 0 {
+		if source.flags&TypeFlagsQuantified != 0 {
+			return source == target
+		}
+		baseType := target.AsQuantifiedType().baseType
+		typeParameters := core.Map(target.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() })
+
+		if source.flags&TypeFlagsUnion == 0 {
+			inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			c.inferTypes(inferenceContext.inferences, source, baseType, InferencePriorityNone, false)
+			return c.isTypeRelatedTo(source, c.instantiateType(baseType, inferenceContext.mapper), relation)
+		}
+
+		for _, sourceMember := range source.AsUnionType().types {
+			inferenceContext := c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			c.inferTypes(inferenceContext.inferences, sourceMember, baseType, InferencePriorityNone, false)
+			result := c.isTypeRelatedTo(sourceMember, c.instantiateType(baseType, inferenceContext.mapper), relation)
+			if result {
+				continue
+			}
+			return result
+		}
+
+		return true
+	}
 	if isFreshLiteralType(source) {
 		source = source.AsLiteralType().regularType
 	}
@@ -2553,6 +2578,32 @@ func (r *Relater) isRelatedTo(source *Type, target *Type, recursionFlags Recursi
 }
 
 func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recursionFlags RecursionFlags, reportErrors bool, headMessage *diagnostics.Message, intersectionState IntersectionState) Ternary {
+	if originalTarget.flags&TypeFlagsQuantified != 0 {
+		if originalSource.flags&TypeFlagsQuantified != 0 && originalSource == originalTarget {
+			return TernaryTrue
+		}
+		baseType := originalTarget.AsQuantifiedType().baseType
+		typeParameters := core.Map(originalTarget.AsQuantifiedType().typeParameters, func(t *TypeParameter) *Type { return t.AsType() })
+
+		if originalSource.flags&TypeFlagsUnion == 0 {
+			inferenceContext := r.c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			r.c.inferTypes(inferenceContext.inferences, originalSource, baseType, InferencePriorityNone, false)
+			return r.isRelatedToEx(originalSource, r.c.instantiateType(baseType, inferenceContext.mapper), recursionFlags, reportErrors, headMessage, intersectionState)
+		}
+
+		for _, originalSourceMember := range originalSource.AsUnionType().types {
+			inferenceContext := r.c.newInferenceContext(typeParameters, nil, InferenceFlagsNone, nil)
+			r.c.inferTypes(inferenceContext.inferences, originalSourceMember, baseType, InferencePriorityNone, false)
+			result := r.isRelatedToEx(originalSourceMember, r.c.instantiateType(baseType, inferenceContext.mapper), recursionFlags, reportErrors, headMessage, intersectionState)
+			if result == TernaryTrue {
+				continue
+			}
+			return result
+		}
+
+		return TernaryTrue
+	}
+
 	if originalSource == originalTarget {
 		return TernaryTrue
 	}
