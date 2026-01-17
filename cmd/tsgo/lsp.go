@@ -26,6 +26,7 @@ func runLSP(args []string) int {
 	_ = pipe
 	socket := flag.String("socket", "", "use socket for communication")
 	_ = socket
+	defaultLibraryPathArg := flag.String("defaultLibraryPath", "", "directory with the default libraries such as lib.es5.d.ts etc")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
@@ -42,7 +43,12 @@ func runLSP(args []string) int {
 	}
 
 	fs := bundled.WrapFS(osvfs.FS())
-	defaultLibraryPath := bundled.LibPath()
+	var defaultLibraryPath string
+	if *defaultLibraryPathArg != "" {
+		defaultLibraryPath = *defaultLibraryPathArg
+	} else {
+		defaultLibraryPath = bundled.LibPath()
+	}
 	typingsLocation := getGlobalTypingsCacheLocation()
 
 	s := lsp.NewServer(&lsp.ServerOptions{
