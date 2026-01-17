@@ -123,12 +123,13 @@ func newSnapshotFSBuilder(
 			if childPath == parentPath {
 				break // reached root
 			}
+			baseName := tspath.GetBaseFileName(child)
 			if dir, ok := overlayDirectories[parentPath]; ok {
-				dir[childPath] = child
+				dir[childPath] = baseName
 			} else {
 				dir := make(map[tspath.Path]string)
 				overlayDirectories[parentPath] = dir
-				dir[childPath] = child
+				dir[childPath] = baseName
 			}
 			childPath = parentPath
 			child = parent
@@ -163,14 +164,15 @@ func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 			if childPath == parentPath {
 				break // reached root
 			}
+			baseName := tspath.GetBaseFileName(child)
 			if dirEntry, ok := s.diskDirectories.Get(parentPath); ok {
 				dirEntry.Change(func(dir dirty.CloneableMap[tspath.Path, string]) {
-					dir[childPath] = child
+					dir[childPath] = baseName
 				})
 				break
 			} else {
 				dir := make(dirty.CloneableMap[tspath.Path, string])
-				dir[childPath] = child
+				dir[childPath] = baseName
 				s.diskDirectories.Add(parentPath, dir)
 			}
 			childPath = parentPath
