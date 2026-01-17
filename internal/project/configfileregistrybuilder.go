@@ -24,13 +24,15 @@ var (
 // configFileRegistry, producing a new clone with `finalize()` after
 // all changes have been made.
 type configFileRegistryBuilder struct {
-	fs                  *snapshotFSBuilder
-	extendedConfigCache *ExtendedConfigCache
-	sessionOptions      *SessionOptions
+	fs                   *snapshotFSBuilder
+	extendedConfigCache  *ExtendedConfigCache
+	sessionOptions       *SessionOptions
+	customConfigFileName string
 
-	base            *ConfigFileRegistry
-	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
-	configFileNames *dirty.Map[tspath.Path, *configFileNames]
+	base                        *ConfigFileRegistry
+	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
+	configFileNames             *dirty.Map[tspath.Path, *configFileNames]
+	customConfigFileNameChanged bool
 }
 
 func newConfigFileRegistryBuilder(
@@ -38,13 +40,16 @@ func newConfigFileRegistryBuilder(
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *ExtendedConfigCache,
 	sessionOptions *SessionOptions,
+	customConfigFileName string,
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
-		fs:                  fs,
-		base:                oldConfigFileRegistry,
-		sessionOptions:      sessionOptions,
-		extendedConfigCache: extendedConfigCache,
+		fs:                          fs,
+		base:                        oldConfigFileRegistry,
+		sessionOptions:              sessionOptions,
+		extendedConfigCache:         extendedConfigCache,
+		customConfigFileName:        customConfigFileName,
+		customConfigFileNameChanged: customConfigFileName != oldConfigFileRegistry.customConfigFileName,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -71,6 +76,11 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	if configFileNames, changedNames := c.configFileNames.Finalize(); changedNames {
 		ensureCloned()
 		newRegistry.configFileNames = configFileNames
+	}
+
+	if c.customConfigFileNameChanged {
+		ensureCloned()
+		newRegistry.customConfigFileName = c.customConfigFileName
 	}
 
 	return newRegistry
@@ -323,6 +333,22 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
+// DidChangeCustomConfigFileName invalidates cached file->config mappings when the
+// customConfigFileName preference changes. Open files recompute lazily on access.
+// Returns true if the preference actually changed.
+func (c *configFileRegistryBuilder) DidChangeCustomConfigFileName(logger *logging.LogTree) changeFileResult {
+	if !c.customConfigFileNameChanged {
+		return changeFileResult{}
+	}
+
+	logger.Logf("Custom config file name changed from %q to %q; invalidating cache",
+		c.base.customConfigFileName, c.customConfigFileName)
+
+	c.configFileNames.Clear()
+
+	return changeFileResult{}
+}
+
 func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
@@ -523,19 +549,37 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
+	// Prefer custom config file if provided; search ancestors with correct skip behavior.
+	if c.customConfigFileName != "" {
+		skipCustom := skipSearchInDirectoryOfFile
+		if result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
+			customConfigFilePath := tspath.CombinePaths(directory, c.customConfigFileName)
+			if !skipCustom && c.FS().FileExists(customConfigFilePath) {
+				return customConfigFilePath, true
+			}
+			skipCustom = false
+			return "", false
+		}); result != "" {
+			logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+			return result
+		}
+	}
+
+	// Fallback to tsconfig.json/jsconfig.json
+	skip := skipSearchInDirectoryOfFile
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(tsconfigPath) {
+		if !skip && c.FS().FileExists(tsconfigPath) {
 			return tsconfigPath, true
 		}
 		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(jsconfigPath) {
+		if !skip && c.FS().FileExists(jsconfigPath) {
 			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
 		}
-		skipSearchInDirectoryOfFile = false
+		skip = false
 		return "", false
 	})
 	logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
