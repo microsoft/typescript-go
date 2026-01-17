@@ -1,6 +1,6 @@
-//// [tests/cases/compiler/quantifiedTypesIssue30581.ts] ////
+//// [tests/cases/compiler/quantifiedTypesCorrelatedUnions.ts] ////
 
-=== quantifiedTypesIssue30581.ts ===
+=== quantifiedTypesCorrelatedUnions.ts ===
 // https://github.com/microsoft/TypeScript/issues/30581
 
 type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
@@ -69,11 +69,11 @@ processRecord({} as NumberRecord | StringRecord | BooleanRecord)
 >{} : {}
 
 function processRecord2(record1: GenericRecord, record2: GenericRecord) {
->processRecord2 : (record1: <T> { kind: string; v: T; f: (v: T) => void; }, record2: <T> { kind: string; v: T; f: (v: T) => void; }) => void
+>processRecord2 : (record1: <T> { kind: string; v: T; f: (v: T) => void; }, record2: <T_1> { kind: string; v: T_1; f: (v: T_1) => void; }) => void
 >record1 : <T> { kind: string; v: T; f: (v: T) => void; }
 >record2 : <T> { kind: string; v: T; f: (v: T) => void; }
 
-  record1.f(record2.v); // TODO: should not compile
+  record1.f(record2.v); // TODO: better error
 >record1.f(record2.v) : void
 >record1.f : (v: T) => void
 >record1 : <T> { kind: string; v: T; f: (v: T) => void; }

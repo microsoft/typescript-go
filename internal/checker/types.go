@@ -498,10 +498,12 @@ const (
 	ObjectFlagsCouldContainTypeVariablesComputed          ObjectFlags = 1 << 19 // CouldContainTypeVariables flag has been computed
 	ObjectFlagsCouldContainTypeVariables                  ObjectFlags = 1 << 20 // Type could contain a type variable
 	ObjectFlagsMembersResolved                            ObjectFlags = 1 << 21 // Members have been resolved
+	ObjectFlagsContainsQuantifiedType                     ObjectFlags = 1 << 22
+	ObjectFlagsQuantifiedTypeParameter                    ObjectFlags = 1 << 23
 
 	ObjectFlagsClassOrInterface   = ObjectFlagsClass | ObjectFlagsInterface
 	ObjectFlagsRequiresWidening   = ObjectFlagsContainsWideningType | ObjectFlagsContainsObjectOrArrayLiteral
-	ObjectFlagsPropagatingFlags   = ObjectFlagsContainsWideningType | ObjectFlagsContainsObjectOrArrayLiteral | ObjectFlagsNonInferrableType
+	ObjectFlagsPropagatingFlags   = ObjectFlagsContainsWideningType | ObjectFlagsContainsObjectOrArrayLiteral | ObjectFlagsNonInferrableType | ObjectFlagsContainsQuantifiedType
 	ObjectFlagsInstantiatedMapped = ObjectFlagsMapped | ObjectFlagsInstantiated
 	// Object flags that uniquely identify the kind of ObjectType
 	ObjectFlagsObjectTypeKindMask = ObjectFlagsClassOrInterface | ObjectFlagsReference | ObjectFlagsTuple | ObjectFlagsAnonymous | ObjectFlagsMapped | ObjectFlagsReverseMapped | ObjectFlagsEvolvingArray | ObjectFlagsInstantiationExpressionType | ObjectFlagsSingleSignatureType

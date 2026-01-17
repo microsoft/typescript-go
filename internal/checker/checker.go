@@ -16119,6 +16119,22 @@ func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Ty
 		if t == nil {
 			panic("Unexpected nil type")
 		}
+		if t.objectFlags&ObjectFlagsContainsQuantifiedType != 0 {
+			mapper := make(map[*Type]*Type)
+			t = c.instantiateType(t, newFunctionTypeMapper(func(t *Type) *Type {
+				if t.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+					newT, seen := mapper[t]
+					if seen {
+						return newT
+					}
+					newT = c.cloneTypeParameter(t)
+					newT.objectFlags |= ObjectFlagsQuantifiedTypeParameter
+					mapper[t] = newT
+					return newT
+				}
+				return t
+			}))
+		}
 		// For a contextually typed parameter it is possible that a type has already
 		// been assigned (in assignTypeToParameterAndFixTypeParameters), and we want
 		// to preserve this type. In fact, we need to _prefer_ that type, but it won't
@@ -21670,16 +21686,23 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 	flags := t.flags
 	switch {
 	case flags&TypeFlagsTypeParameter != 0:
-		return m.Map(t)
+		newT := m.Map(t)
+		if newT.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
+			newT.AsTypeParameter().mapper = c.combineTypeMappers(newT.AsTypeParameter().mapper, m)
+		}
+		return newT
 	case flags&TypeFlagsQuantified != 0:
 		return c.newQuantifiedType(
-			t.AsQuantifiedType().typeParameters,
-			// TODO: the following does not work figure out a way to do it
-			/*core.Map(t.AsQuantifiedType().typeParameters, func(tp *TypeParameter) *TypeParameter {
-				newTp := c.cloneTypeParameter(tp.AsType())
-				newTp.AsTypeParameter().constraint = c.instantiateType(newTp.AsTypeParameter().constraint, m)
-				return newTp.AsTypeParameter()
-			}),*/
+			core.Map(
+				c.instantiateTypes(
+					core.Map(
+						t.AsQuantifiedType().typeParameters,
+						func(tp *TypeParameter) *Type { return tp.AsType() },
+					),
+					m,
+				),
+				func(t *Type) *TypeParameter { return t.AsTypeParameter() },
+			),
 			c.instantiateType(t.AsQuantifiedType().baseType, m),
 		)
 	case flags&TypeFlagsObject != 0:
@@ -24035,11 +24058,18 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 func (c *Checker) getTypeFromQuantifiedTypeNode(node *ast.Node) *Type {
 	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
+		typeParameters := core.Map(node.AsQuantifiedTypeNode().TypeParameters.Nodes, func(typeParameterNode *ast.Node) *Type {
+			return c.getDeclaredTypeOfTypeParameter(typeParameterNode.Symbol())
+		})
+		newTypeParameters := core.Map(typeParameters, func(tp *Type) *Type {
+			newTp := c.cloneTypeParameter(tp)
+			newTp.objectFlags |= ObjectFlagsQuantifiedTypeParameter
+			return newTp
+		})
+		mapper := newTypeMapper(typeParameters, newTypeParameters)
 		links.resolvedType = c.newQuantifiedType(
-			core.Map(node.AsQuantifiedTypeNode().TypeParameters.Nodes, func(typeParameterNode *ast.Node) *TypeParameter {
-				return c.getDeclaredTypeOfTypeParameter(typeParameterNode.Symbol()).AsTypeParameter()
-			}),
-			c.getTypeFromTypeNode(node.AsQuantifiedTypeNode().BaseType),
+			core.Map(c.instantiateTypes(typeParameters, mapper), func(t *Type) *TypeParameter { return t.AsTypeParameter() }),
+			c.instantiateType(c.getTypeFromTypeNode(node.AsQuantifiedTypeNode().BaseType), mapper),
 		)
 	}
 	return links.resolvedType
@@ -24640,7 +24670,7 @@ func (c *Checker) newQuantifiedType(typeParamters []*TypeParameter, baseType *Ty
 	data := &QuantifiedType{}
 	data.typeParameters = typeParamters
 	data.baseType = baseType
-	return c.newType(TypeFlagsQuantified, ObjectFlagsNone, data)
+	return c.newType(TypeFlagsQuantified, ObjectFlagsContainsQuantifiedType, data)
 }
 
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
