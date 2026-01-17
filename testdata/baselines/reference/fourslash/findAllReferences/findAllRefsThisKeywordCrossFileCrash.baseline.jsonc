@@ -1,0 +1,37 @@
+// === findAllReferences ===
+// === /largeFile.ts ===
+// --- (line: 12) skipped ---
+//         private property010: string = "long string value to increase file size and push positions forward significantly";
+//         
+//         constructor() {
+//             /*FIND ALL REFS*/[|this|].property001 = "init";
+//         }
+//         
+//         someMethod() {
+//             return [|this|];
+//         }
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /largeFile.ts ===
+// --- (line: 12) skipped ---
+//         private property010: string = "long string value to increase file size and push positions forward significantly";
+//         
+//         constructor() {
+//             [|this|].property001 = "init";
+//         }
+//         
+//         someMethod() {
+//             return /*FIND ALL REFS*/[|this|];
+//         }
+//     }
+// }
+
+
+
+// === findAllReferences ===
+// === /a.ts ===
+// class A { m() { return /*FIND ALL REFS*/[|this|]; } }
