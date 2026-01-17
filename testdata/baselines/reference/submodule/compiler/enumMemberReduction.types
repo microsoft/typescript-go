@@ -47,7 +47,7 @@ enum MyStringEnumWithEmpty {
 }
 
 export function fn(optionalEnum: MyEnum | undefined) {
->fn : (optionalEnum: MyEnum) => MyEnum
+>fn : (optionalEnum: MyEnum | undefined) => MyEnum
 >optionalEnum : MyEnum
 
   return optionalEnum ?? MyEnum.A;
@@ -59,7 +59,7 @@ export function fn(optionalEnum: MyEnum | undefined) {
 }
 
 export function fn2(optionalEnum: MyEnum | undefined) {
->fn2 : (optionalEnum: MyEnum) => MyEnum.B | MyEnum.C
+>fn2 : (optionalEnum: MyEnum | undefined) => MyEnum.B | MyEnum.C
 >optionalEnum : MyEnum
 
   return optionalEnum || MyEnum.B;

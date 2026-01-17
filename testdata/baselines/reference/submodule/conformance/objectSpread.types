@@ -396,7 +396,7 @@ let changeTypeBoth: { a: string, b: number } =
 
 // optional
 function container(
->container : (definiteBoolean: { sn: boolean; }, definiteString: { sn: string; }, optionalString: { sn?: string | undefined; }, optionalNumber: { sn?: number | undefined; }) => void
+>container : (definiteBoolean: { sn: boolean; }, definiteString: { sn: string; }, optionalString: { sn?: string; }, optionalNumber: { sn?: number; }) => void
 
     definiteBoolean: { sn: boolean },
 >definiteBoolean : { sn: boolean; }

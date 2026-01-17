@@ -301,7 +301,7 @@ namespace GH30170 {
 >val : Blue | Yellow
 
     function drawWithColor(currentColor: 'blue' | 'yellow' | undefined) {
->drawWithColor : (currentColor: "blue" | "yellow") => void
+>drawWithColor : (currentColor: 'blue' | 'yellow' | undefined) => void
 >currentColor : "blue" | "yellow"
 
         return draw({ color: currentColor });
@@ -552,25 +552,25 @@ namespace GH58603 {
 >value : undefined
     
     function test(obj: { kind: "a" | "b", value: number | undefined }) {
->test : (obj: { kind: "a" | "b"; value: number; }) => void
->obj : { kind: "a" | "b"; value: number; }
+>test : (obj: { kind: "a" | "b"; value: number | undefined; }) => void
+>obj : { kind: "a" | "b"; value: number | undefined; }
 >kind : "a" | "b"
 >value : number
 
         let x1: Foo = obj;
 >x1 : Foo
->obj : { kind: "a" | "b"; value: number; }
+>obj : { kind: "a" | "b"; value: number | undefined; }
 
         let x2: Foo = { kind: obj.kind, value: obj.value };
 >x2 : Foo
 >{ kind: obj.kind, value: obj.value } : { kind: "a" | "b"; value: number; }
 >kind : "a" | "b"
 >obj.kind : "a" | "b"
->obj : { kind: "a" | "b"; value: number; }
+>obj : { kind: "a" | "b"; value: number | undefined; }
 >kind : "a" | "b"
 >value : number
 >obj.value : number
->obj : { kind: "a" | "b"; value: number; }
+>obj : { kind: "a" | "b"; value: number | undefined; }
 >value : number
     }
 }

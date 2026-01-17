@@ -406,7 +406,7 @@ function f4() {
 >"foo" : "foo"
 
     const c2: { a : 0 | 1, b: "foo" | "bar" } = { a: 1, b: "foo" };
->c2 : { a: 0 | 1; b: "bar" | "foo"; }
+>c2 : { a: 0 | 1; b: "foo" | "bar"; }
 >a : 0 | 1
 >b : "bar" | "foo"
 >{ a: 1, b: "foo" } : { a: 1; b: "foo"; }
@@ -424,7 +424,7 @@ function f4() {
 >"foo" : "foo"
 
     let x2: { a : 0 | 1, b: "foo" | "bar" } = { a: 1, b: "foo" };
->x2 : { a: 0 | 1; b: "bar" | "foo"; }
+>x2 : { a: 0 | 1; b: "foo" | "bar"; }
 >a : 0 | 1
 >b : "bar" | "foo"
 >{ a: 1, b: "foo" } : { a: 1; b: "foo"; }

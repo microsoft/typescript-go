@@ -1,0 +1,45 @@
+--- old.inferFromGenericFunctionReturnTypes3.types
++++ new.inferFromGenericFunctionReturnTypes3.types
+@@= skipped -38, +38 lines =@@
+ }
+
+ function wrapBar(value: 'bar'): Wrap<'bar'> {
+->wrapBar : (value: "bar") => Wrap<"bar">
++>wrapBar : (value: 'bar') => Wrap<"bar">
+ >value : "bar"
+
+     return { value };
+@@= skipped -18, +18 lines =@@
+     const inferred = wrapBar(value);
+ >inferred : Wrap<"bar">
+ >wrapBar(value) : Wrap<"bar">
+->wrapBar : (value: "bar") => Wrap<"bar">
++>wrapBar : (value: 'bar') => Wrap<"bar">
+ >value : "bar"
+
+     const literal = wrapBar('bar');
+ >literal : Wrap<"bar">
+ >wrapBar('bar') : Wrap<"bar">
+->wrapBar : (value: "bar") => Wrap<"bar">
++>wrapBar : (value: 'bar') => Wrap<"bar">
+ >'bar' : "bar"
+
+     const value2: string = 'bar';
+@@= skipped -16, +16 lines =@@
+     const literal2 = wrapBar(value2);  // Error
+ >literal2 : Wrap<"bar">
+ >wrapBar(value2) : Wrap<"bar">
+->wrapBar : (value: "bar") => Wrap<"bar">
++>wrapBar : (value: 'bar') => Wrap<"bar">
+ >value2 : string
+
+     return wrap(value);
+@@= skipped -179, +179 lines =@@
+
+ interface Person {
+   phoneNumbers: {
+->phoneNumbers : { __typename: "PhoneNumber"; }[]
++>phoneNumbers : { __typename: 'PhoneNumber'; }[]
+
+     __typename: 'PhoneNumber';
+ >__typename : "PhoneNumber"

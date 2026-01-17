@@ -64,4 +64,4 @@ type BaseFactory = typeof import('./base');
  * @param {InstanceType<BaseFactory["Base"]>} base
  * @returns {InstanceType<BaseFactory["Base"]>}
  */
-declare const test: (base: {}) => {};
+declare const test: (base: InstanceType<BaseFactory["Base"]>) => {};

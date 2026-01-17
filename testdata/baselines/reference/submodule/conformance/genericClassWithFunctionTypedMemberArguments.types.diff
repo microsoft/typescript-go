@@ -5,7 +5,7 @@
 
          foo<T>(x: (a: T) => T) {
 ->foo : <T>(x: (a: T) => T) => T
-+>foo : <T_1>(x: (a: T_1) => T_1) => T_1
++>foo : <T_1>(x: (a: T) => T) => T_1
  >x : (a: T) => T
  >a : T
 
@@ -14,7 +14,7 @@
 
          foo2<T, U>(x: T, cb: (a: T) => U) {
 ->foo2 : <T, U>(x: T, cb: (a: T) => U) => U
-+>foo2 : <T_1, U>(x: T_1, cb: (a: T_1) => U) => U
++>foo2 : <T_1, U>(x: T, cb: (a: T) => U) => U
  >x : T
  >cb : (a: T) => U
  >a : T
@@ -23,7 +23,7 @@
 
          foo3<T,U>(x: T, cb: (a: T) => U, y: U) {
 ->foo3 : <T, U>(x: T, cb: (a: T) => U, y: U) => U
-+>foo3 : <T_1, U_1>(x: T_1, cb: (a: T_1) => U_1, y: U_1) => U_1
++>foo3 : <T_1, U_1>(x: T, cb: (a: T) => U, y: U) => U_1
  >x : T
  >cb : (a: T) => U
  >a : T

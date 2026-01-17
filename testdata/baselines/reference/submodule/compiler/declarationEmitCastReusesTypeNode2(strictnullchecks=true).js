@@ -29,48 +29,48 @@ export function fnWithPartialAnnotationOnDefaultparam(x: {} & { name: string } =
 
 
 //// [declarationEmitCastReusesTypeNode2.d.ts]
-export declare let vLet: {
+export declare let vLet: {} & {
     name: string;
 };
-export declare const vConst: {
+export declare const vConst: {} & {
     name: string;
 };
-export declare function fn(p?: {
+export declare function fn(p?: {} & {
     name: string;
 }): void;
 export declare function fnWithRequiredDefaultParam(p: {
     name: string;
 } | undefined, req: number): void;
 export declare class C {
-    ctorField: {
+    ctorField: {} & {
         name: string;
     };
-    field: {
+    field: {} & {
         name: string;
     };
     optField?: {
         name: string;
     } | undefined;
-    readonly roFiled: {
+    readonly roFiled: {} & {
         name: string;
     };
-    method(p?: {
+    method(p?: {} & {
         name: string;
     }): void;
     methodWithRequiredDefault(p: {
         name: string;
     } | undefined, req: number): void;
-    constructor(ctorField?: {
+    constructor(ctorField?: {} & {
         name: string;
     });
     get x(): {
         name: string;
     };
-    set x(v: {
+    set x(v: {} & {
         name: string;
     });
 }
-declare const _default: {
+declare const _default: {} & {
     name: string;
 };
 export default _default;

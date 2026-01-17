@@ -35,34 +35,29 @@
  >aIndex : "key"
  >x : number
  }
-@@= skipped -28, +28 lines =@@
- >bIndex : "key"
+@@= skipped -29, +29 lines =@@
 
  const b: { key: { x?: number } } = { key: {} };
-->b : { key: { x?: number; }; }
+ >b : { key: { x?: number; }; }
 ->key : { x?: number; }
-+>b : { key: { x?: number | undefined; }; }
 +>key : { x?: number | undefined; }
  >x : number | undefined
  >{ key: {} } : { key: {}; }
  >key : {}
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
 
  if (b[bIndex].x) {
  >b[bIndex].x : number | undefined
 ->b[bIndex] : { x?: number; }
-->b : { key: { x?: number; }; }
 +>b[bIndex] : { x?: number | undefined; }
-+>b : { key: { x?: number | undefined; }; }
+ >b : { key: { x?: number; }; }
  >bIndex : "key"
  >x : number | undefined
 
      b[bIndex].x // number
  >b[bIndex].x : number
 ->b[bIndex] : { x?: number; }
-->b : { key: { x?: number; }; }
 +>b[bIndex] : { x?: number | undefined; }
-+>b : { key: { x?: number | undefined; }; }
+ >b : { key: { x?: number; }; }
  >bIndex : "key"
  >x : number
- }

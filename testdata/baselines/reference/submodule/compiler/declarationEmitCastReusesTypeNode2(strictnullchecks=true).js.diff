@@ -1,23 +1,7 @@
 --- old.declarationEmitCastReusesTypeNode2(strictnullchecks=true).js
 +++ new.declarationEmitCastReusesTypeNode2(strictnullchecks=true).js
-@@= skipped -28, +28 lines =@@
-
-
- //// [declarationEmitCastReusesTypeNode2.d.ts]
--export declare let vLet: {} & {
--    name: string;
--};
--export declare const vConst: {} & {
--    name: string;
--};
--export declare function fn(p?: {} & {
-+export declare let vLet: {
-+    name: string;
-+};
-+export declare const vConst: {
-+    name: string;
-+};
-+export declare function fn(p?: {
+@@= skipped -37, +37 lines =@@
+ export declare function fn(p?: {} & {
      name: string;
  }): void;
 -export declare function fnWithRequiredDefaultParam(p: ({} & {
@@ -26,54 +10,37 @@
 -}) | undefined, req: number): void;
 +} | undefined, req: number): void;
  export declare class C {
--    ctorField: {} & {
--        name: string;
--    };
--    field: {} & {
--        name: string;
--    };
+     ctorField: {} & {
+         name: string;
+@@= skipped -10, +10 lines =@@
+     field: {} & {
+         name: string;
+     };
 -    optField?: {} & {
--        name: string;
--    };
--    readonly roFiled: {} & {
--        name: string;
--    };
--    method(p?: {} & {
-+    ctorField: {
-+        name: string;
-+    };
-+    field: {
-+        name: string;
-+    };
 +    optField?: {
-+        name: string;
+         name: string;
+-    };
 +    } | undefined;
-+    readonly roFiled: {
-+        name: string;
-+    };
-+    method(p?: {
+     readonly roFiled: {} & {
+         name: string;
+     };
+     method(p?: {} & {
          name: string;
      }): void;
 -    methodWithRequiredDefault(p: ({} & {
 +    methodWithRequiredDefault(p: {
          name: string;
 -    }) | undefined, req: number): void;
--    constructor(ctorField?: {} & {
 +    } | undefined, req: number): void;
-+    constructor(ctorField?: {
+     constructor(ctorField?: {} & {
          name: string;
      });
 -    get x(): {} & {
 +    get x(): {
          name: string;
      };
--    set x(v: {} & {
-+    set x(v: {
-         name: string;
-     });
- }
--declare const _default: {} & {
-+declare const _default: {
+     set x(v: {} & {
+@@= skipped -26, +26 lines =@@
      name: string;
  };
  export default _default;

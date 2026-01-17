@@ -5,7 +5,7 @@
 
  function nestedExports() {
 ->nestedExports : () => void
-+>nestedExports : { (): void; default: 12; }
++>nestedExports : { (): void; default: number; }
 
      export { staticParam }
  >staticParam : any

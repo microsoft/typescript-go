@@ -5,8 +5,20 @@
      },
      {
 -      "value": "prototype"
+-    },
+-    {
+-      "value": ": "
+-    },
+-    {
+-      "value": "DivElement",
 +      "value": "prototype",
-+      "location": {},
+       "location": {},
++    },
++    {
++      "value": ": "
++    },
++    {
++      "value": "DivElement"
      },
      {
-       "value": ": "
+       "value": " "

@@ -1,15 +1,6 @@
 --- old.spreadObjectOrFalsy.types
 +++ new.spreadObjectOrFalsy.types
-@@= skipped -57, +57 lines =@@
- // Repro from #46976
-
- function g1<T extends {}, A extends { z: (T | undefined) & T }>(a: A) {
-->g1 : <T extends {}, A extends { z: (T | undefined) & T; }>(a: A) => T
-+>g1 : <T extends {}, A extends { z: T; }>(a: A) => T
- >z : T
- >a : A
-
-@@= skipped -41, +41 lines =@@
+@@= skipped -98, +98 lines =@@
 
              this.data.toLocaleLowerCase();
  >this.data.toLocaleLowerCase() : string

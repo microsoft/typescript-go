@@ -87,14 +87,14 @@ module Errors {
 >a2 : any
 
     declare function foo12(a2: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>): typeof a2;
->foo12 : { (a2: (x: Base[], y: Derived2[]) => Derived[]): (x: Base[], y: Derived2[]) => Derived[]; (a2: any): any; }
->a2 : (x: Base[], y: Derived2[]) => Derived[]
+>foo12 : { (a2: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>): (x: Array<Base>, y: Array<Derived2>) => Derived[]; (a2: any): any; }
+>a2 : (x: Array<Base>, y: Array<Derived2>) => Derived[]
 >x : Base[]
 >y : Derived2[]
->a2 : (x: Base[], y: Derived2[]) => Derived[]
+>a2 : (x: Array<Base>, y: Array<Derived2>) => Derived[]
 
     declare function foo12(a2: any): any;
->foo12 : { (a2: (x: Base[], y: Derived2[]) => Derived[]): (x: Base[], y: Derived2[]) => Derived[]; (a2: any): any; }
+>foo12 : { (a2: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>): (x: Array<Base>, y: Array<Derived2>) => Derived[]; (a2: any): any; }
 >a2 : any
 
     declare function foo15(a2: (x: { a: string; b: number }) => number): typeof a2;
@@ -345,36 +345,36 @@ module Errors {
 >r5arg2 : (x: { foo: string; }, y: { foo: string; bar: string; }) => Base
 
     var r6arg = (x: Array<Base>, y: Array<Derived2>) => <Array<Derived>>null;
->r6arg : (x: Base[], y: Derived2[]) => Derived[]
->(x: Array<Base>, y: Array<Derived2>) => <Array<Derived>>null : (x: Base[], y: Derived2[]) => Derived[]
+>r6arg : (x: Array<Base>, y: Array<Derived2>) => Derived[]
+>(x: Array<Base>, y: Array<Derived2>) => <Array<Derived>>null : (x: Array<Base>, y: Array<Derived2>) => Derived[]
 >x : Base[]
 >y : Derived2[]
 ><Array<Derived>>null : Derived[]
 
     var r6arg2 = <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null;
->r6arg2 : <T extends Derived2[]>(x: Base[], y: Base[]) => T
-><T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null : <T extends Derived2[]>(x: Base[], y: Base[]) => T
+>r6arg2 : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
+><T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
 >x : Base[]
 >y : Base[]
 ><T>null : T
 
     var r6 = foo12(r6arg); // (x: Array<Base>, y: Array<Derived2>) => Array<Derived>
->r6 : (x: Base[], y: Derived2[]) => Derived[]
->foo12(r6arg) : (x: Base[], y: Derived2[]) => Derived[]
->foo12 : { (a2: (x: Base[], y: Derived2[]) => Derived[]): (x: Base[], y: Derived2[]) => Derived[]; (a2: any): any; }
->r6arg : (x: Base[], y: Derived2[]) => Derived[]
+>r6 : (x: Array<Base>, y: Array<Derived2>) => Derived[]
+>foo12(r6arg) : (x: Array<Base>, y: Array<Derived2>) => Derived[]
+>foo12 : { (a2: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>): (x: Array<Base>, y: Array<Derived2>) => Derived[]; (a2: any): any; }
+>r6arg : (x: Array<Base>, y: Array<Derived2>) => Derived[]
 
     var r6a = [r6arg2, r6arg];
->r6a : ((x: Base[], y: Derived2[]) => Derived[])[]
->[r6arg2, r6arg] : ((x: Base[], y: Derived2[]) => Derived[])[]
->r6arg2 : <T extends Derived2[]>(x: Base[], y: Base[]) => T
->r6arg : (x: Base[], y: Derived2[]) => Derived[]
+>r6a : ((x: Array<Base>, y: Array<Derived2>) => Derived[])[]
+>[r6arg2, r6arg] : ((x: Array<Base>, y: Array<Derived2>) => Derived[])[]
+>r6arg2 : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
+>r6arg : (x: Array<Base>, y: Array<Derived2>) => Derived[]
 
     var r6b = [r6arg, r6arg2];
->r6b : ((x: Base[], y: Derived2[]) => Derived[])[]
->[r6arg, r6arg2] : ((x: Base[], y: Derived2[]) => Derived[])[]
->r6arg : (x: Base[], y: Derived2[]) => Derived[]
->r6arg2 : <T extends Derived2[]>(x: Base[], y: Base[]) => T
+>r6b : ((x: Array<Base>, y: Array<Derived2>) => Derived[])[]
+>[r6arg, r6arg2] : ((x: Array<Base>, y: Array<Derived2>) => Derived[])[]
+>r6arg : (x: Array<Base>, y: Array<Derived2>) => Derived[]
+>r6arg2 : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
 
     var r7arg = <T>(x: { a: T; b: T }) => <T>null;
 >r7arg : <T>(x: { a: T; b: T; }) => T

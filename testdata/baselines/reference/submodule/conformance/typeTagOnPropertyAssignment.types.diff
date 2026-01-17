@@ -1,0 +1,26 @@
+--- old.typeTagOnPropertyAssignment.types
++++ new.typeTagOnPropertyAssignment.types
+@@= skipped -1, +1 lines =@@
+
+ === typeTagOnPropertyAssignment.js ===
+ const o = {
+->o : { a: "a"; n: () => "b"; }
+->{    /**     * @type {"a"}     */    a: "a",    /** @type {() => 'b'} */    n: () => 'b'} : { a: "a"; n: () => "b"; }
++>o : { a: "a"; n: () => 'b'; }
++>{    /**     * @type {"a"}     */    a: "a",    /** @type {() => 'b'} */    n: () => 'b'} : { a: "a"; n: () => 'b'; }
+
+     /**
+      * @type {"a"}
+@@= skipped -19, +19 lines =@@
+ };
+ o.a
+ >o.a : "a"
+->o : { a: "a"; n: () => "b"; }
++>o : { a: "a"; n: () => 'b'; }
+ >a : "a"
+
+ o.n
+ >o.n : () => "b"
+->o : { a: "a"; n: () => "b"; }
++>o : { a: "a"; n: () => 'b'; }
+ >n : () => "b"

@@ -1,0 +1,10 @@
+--- old.mappedTypeGenericInstantiationPreservesHomomorphism.types
++++ new.mappedTypeGenericInstantiationPreservesHomomorphism.types
+@@= skipped -16, +16 lines =@@
+ ><T extends unknown[]>(...args: T) => usePrivateType(...args) : <T extends unknown[]>(...args: T) => T[any] extends infer T_1 ? { [K in keyof T_1]: T_1[K]; } : never
+ >args : T
+ >usePrivateType(...args) : T[any] extends infer T_1 ? { [K in keyof T_1]: T_1[K]; } : never
+->usePrivateType : <T_1 extends unknown[]>(...args: T_1) => T_1[any] extends infer T_2 ? { [K in keyof T_2]: T_2[K]; } : never
++>usePrivateType : <T_1 extends unknown[]>(...args: T) => T_1[any] extends infer T_2 ? { [K in keyof T_2]: T_2[K]; } : never
+ >...args : unknown
+ >args : T

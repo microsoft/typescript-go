@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/pseudochecker"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -88,6 +89,7 @@ type NodeBuilderImpl struct {
 	f  *ast.NodeFactory
 	ch *Checker
 	e  *printer.EmitContext
+	pc *pseudochecker.PseudoChecker
 
 	// cache
 	links       core.LinkStore[*ast.Node, NodeBuilderLinks]
@@ -114,7 +116,7 @@ func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast
 	if idToSymbol == nil {
 		idToSymbol = make(map[*ast.IdentifierNode]*ast.Symbol)
 	}
-	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol}
+	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker()}
 	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
 	return b
 }
@@ -340,10 +342,6 @@ func (b *NodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
 	}
 }
 
-func (b *NodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
-	return nil // !!!
-}
-
 func (b *NodeBuilderImpl) tryReuseExistingTypeNode(typeNode *ast.TypeNode, t *Type, host *ast.Node, addUndefined bool) *ast.TypeNode {
 	originalType := t
 	if addUndefined {
@@ -418,7 +416,7 @@ func (b *NodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.Typ
 		annotationType = b.getTypeFromTypeNode(existing, true)
 	}
 	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t) {
-		result := b.tryReuseExistingTypeNodeHelper(existing)
+		result := b.tryReuseExistingNodeHelper(existing)
 		if result != nil {
 			return result
 		}
@@ -1259,7 +1257,7 @@ func (b *NodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 	}
 	if !ast.NodeIsSynthesized(range_) || (range_.Flags&ast.NodeFlagsSynthesized == 0) || b.ctx.enclosingFile == nil || b.ctx.enclosingFile != ast.GetSourceFileOfNode(b.e.MostOriginal(range_)) {
 		original := range_
-		range_ = range_.Clone(b.f) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions
+		range_ = b.f.DeepCloneNode(range_) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions, deep clone so inner nodes have positions stripped
 		if symbol, ok := b.idToSymbol[original]; ok {
 			b.idToSymbol[range_] = symbol
 		}
@@ -1503,7 +1501,7 @@ func (b *NodeBuilderImpl) typeToTypeNodeHelperWithPossibleReusableTypeNode(t *Ty
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 	if typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
-		reused := b.tryReuseExistingTypeNodeHelper(typeNode)
+		reused := b.tryReuseExistingNodeHelper(typeNode)
 		if reused != nil {
 			return reused
 		}
@@ -1558,7 +1556,7 @@ func (b *NodeBuilderImpl) symbolToParameterDeclaration(parameterSymbol *ast.Symb
 	parameterDeclaration := getEffectiveParameterDeclaration(parameterSymbol)
 
 	parameterType := b.ch.getTypeOfSymbol(parameterSymbol)
-	parameterTypeNode := b.serializeTypeForDeclaration(parameterDeclaration, parameterType, parameterSymbol)
+	parameterTypeNode := b.serializeTypeForDeclaration(parameterDeclaration, parameterType, parameterSymbol, true)
 	var modifiers *ast.ModifierList
 	if b.ctx.flags&nodebuilder.FlagsOmitParameterModifiers == 0 && preserveModifierFlags && parameterDeclaration != nil && ast.CanHaveModifiers(parameterDeclaration) {
 		originals := core.Filter(parameterDeclaration.ModifierNodes(), ast.IsModifier)
@@ -1989,8 +1987,16 @@ func (b *NodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *
 * @param type - The type to write; an existing annotation must match this type if it's used, otherwise this is the type serialized as a new type node
 * @param symbol - The symbol is used both to find an existing annotation if declaration is not provided, and to determine if `unique symbol` should be printed
  */
-func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol) *ast.Node {
-	// !!! node reuse logic
+func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol, tryReuse bool) *ast.Node {
+	if declaration == nil {
+		if symbol != nil {
+			declaration = symbol.ValueDeclaration
+			if declaration == nil {
+				// TODO: prefer annotated declarations like in strada (but does this ever even matter in practice? All callers should supply a declaration!)
+				declaration = core.FirstOrNil(symbol.Declarations)
+			}
+		}
+	}
 	if symbol == nil {
 		symbol = b.ch.getSymbolOfDeclaration(declaration)
 	}
@@ -2019,8 +2025,31 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	})) {
 		b.ctx.flags |= nodebuilder.FlagsAllowUniqueESSymbolType
 	}
-	result := b.typeToTypeNode(t) // !!! expressionOrTypeToTypeNode
+	var result *ast.Node
+	// !!! expandable hover support
+	if tryReuse && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
+		remove := b.addSymbolTypeToContext(symbol, t)
+		var pt *pseudochecker.PseudoType
+		if ast.IsAccessor(declaration) {
+			pt = b.pc.GetTypeOfAccessor(declaration)
+		} else {
+			pt = b.pc.GetTypeOfDeclaration(declaration)
+		}
+		annotated := b.pseudoTypeToType(pt)
+		if annotated == t || annotated != nil && b.ch.isErrorType(annotated) {
+			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
+			// see: canReuseTypeNodeAnnotation in strada for context
+			result = b.pseudoTypeToNode(pt)
+		}
+		remove()
+	}
+	if result == nil {
+		result = b.typeToTypeNode(t)
+	}
 	restoreFlags()
+	if result == nil {
+		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
 	return result
 }
 
@@ -2298,7 +2327,7 @@ func (b *NodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 			b.ctx.reverseMappedStack = append(b.ctx.reverseMappedStack, propertySymbol)
 		}
 		if propertyType != nil {
-			propertyTypeNode = b.serializeTypeForDeclaration(nil /*declaration*/, propertyType, propertySymbol)
+			propertyTypeNode = b.serializeTypeForDeclaration(nil /*declaration*/, propertyType, propertySymbol, true)
 		} else {
 			propertyTypeNode = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
@@ -2480,7 +2509,14 @@ func (b *NodeBuilderImpl) createAnonymousTypeNode(t *Type) *ast.TypeNode {
 		if isInstantiationExpressionType {
 			instantiationExpressionType := t.AsInstantiationExpressionType()
 			existing := instantiationExpressionType.node
-			if ast.IsTypeQueryNode(existing) {
+			//  instantiationExpressionType.node is unreliable for constituents of unions and intersections.
+			// declare const Err: typeof ErrImpl & (<T>() => T);
+			// type ErrAlias<U> = typeof Err<U>;
+			// declare const e: ErrAlias<number>;
+			// ErrAlias<number> = typeof Err<number> = typeof ErrImpl & (<number>() => number)
+			// The problem is each constituent of the intersection will be associated with typeof Err<number>
+			// And when extracting a type for typeof ErrImpl from typeof Err<number> does not make sense.
+			if ast.IsTypeQueryNode(existing) && b.getTypeFromTypeNode(existing, false) == t {
 				typeNode := b.tryReuseExistingNonParameterTypeNode(existing, t, nil, nil)
 				if typeNode != nil {
 					return typeNode

@@ -1,24 +1,6 @@
 --- old.instantiateContextualTypes.types
 +++ new.instantiateContextualTypes.types
-@@= skipped -66, +66 lines =@@
- // #22149
-
- declare function useStringOrNumber<T extends string | number>(t: T, useIt: T extends string ? ((s: string) => void) : ((n: number) => void)): void;
-->useStringOrNumber : <T extends string | number>(t: T, useIt: T extends string ? ((s: string) => void) : ((n: number) => void)) => void
-+>useStringOrNumber : <T extends string | number>(t: T, useIt: T extends string ? (s: string) => void : (n: number) => void) => void
- >t : T
- >useIt : T extends string ? (s: string) => void : (n: number) => void
- >s : string
-@@= skipped -8, +8 lines =@@
-
- useStringOrNumber("", foo => {});
- >useStringOrNumber("", foo => {}) : void
-->useStringOrNumber : <T extends string | number>(t: T, useIt: T extends string ? ((s: string) => void) : ((n: number) => void)) => void
-+>useStringOrNumber : <T extends string | number>(t: T, useIt: T extends string ? (s: string) => void : (n: number) => void) => void
- >"" : ""
- >foo => {} : (foo: string) => void
- >foo : string
-@@= skipped -148, +148 lines =@@
+@@= skipped -222, +222 lines =@@
  }
 
  type CreateElementChildren<P> =

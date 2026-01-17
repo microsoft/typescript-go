@@ -36,18 +36,16 @@
 
      x;  // Unreachable
  >x : string
- }
-
+@@= skipped -9, +9 lines =@@
  function f11(x: string | undefined, fail: (message?: string) => never) {
-->f11 : (x: string | undefined, fail: (message?: string) => never) => void
-+>f11 : (x: string | undefined, fail: (message?: string | undefined) => never) => void
+ >f11 : (x: string | undefined, fail: (message?: string) => never) => void
  >x : string | undefined
 ->fail : (message?: string) => never
 +>fail : (message?: string | undefined) => never
  >message : string | undefined
 
      if (x === undefined) fail("undefined argument");
-@@= skipped -17, +17 lines =@@
+@@= skipped -8, +8 lines =@@
  >x : string | undefined
  >undefined : undefined
  >fail("undefined argument") : never
@@ -56,19 +54,16 @@
  >"undefined argument" : "undefined argument"
 
      x.length;  // string
-@@= skipped -10, +10 lines =@@
- }
-
+@@= skipped -12, +12 lines =@@
  function f12(x: number, fail: (message?: string) => never): number {
-->f12 : (x: number, fail: (message?: string) => never) => number
-+>f12 : (x: number, fail: (message?: string | undefined) => never) => number
+ >f12 : (x: number, fail: (message?: string) => never) => number
  >x : number
 ->fail : (message?: string) => never
 +>fail : (message?: string | undefined) => never
  >message : string | undefined
 
      if (x >= 0) return x;
-@@= skipped -13, +13 lines =@@
+@@= skipped -11, +11 lines =@@
 
      fail("negative number");
  >fail("negative number") : never
@@ -77,19 +72,16 @@
  >"negative number" : "negative number"
 
      x;  // Unreachable
-@@= skipped -8, +8 lines =@@
- }
-
+@@= skipped -10, +10 lines =@@
  function f13(x: string, fail: (message?: string) => never) {
-->f13 : (x: string, fail: (message?: string) => never) => void
-+>f13 : (x: string, fail: (message?: string | undefined) => never) => void
+ >f13 : (x: string, fail: (message?: string) => never) => void
  >x : string
 ->fail : (message?: string) => never
 +>fail : (message?: string | undefined) => never
  >message : string | undefined
 
      x;  // string
-@@= skipped -10, +10 lines =@@
+@@= skipped -8, +8 lines =@@
 
      fail();
  >fail() : never

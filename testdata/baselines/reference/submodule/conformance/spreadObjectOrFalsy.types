@@ -58,7 +58,7 @@ function f6<T extends object | undefined>(a: T) {
 // Repro from #46976
 
 function g1<T extends {}, A extends { z: (T | undefined) & T }>(a: A) {
->g1 : <T extends {}, A extends { z: T; }>(a: A) => T
+>g1 : <T extends {}, A extends { z: (T | undefined) & T; }>(a: A) => T
 >z : T
 >a : A
 

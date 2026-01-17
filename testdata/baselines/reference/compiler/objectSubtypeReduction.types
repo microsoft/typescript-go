@@ -11,9 +11,9 @@ function foo(x?: object) {
 >Object.entries(x || {})        .sort(([k1, v1], [k2, v2]) => v1.name.localeCompare(v2.name)) : [string, any][]
 >Object.entries(x || {})        .sort : (compareFn?: ((a: [string, any], b: [string, any]) => number) | undefined) => [string, any][]
 >Object.entries(x || {}) : [string, any][]
->Object.entries : { <T>(o: ArrayLike<T> | { [s: string]: T; }): [string, T][]; (o: {}): [string, any][]; }
+>Object.entries : { <T>(o: { [s: string]: T; } | ArrayLike<T>): [string, T][]; (o: {}): [string, any][]; }
 >Object : ObjectConstructor
->entries : { <T>(o: ArrayLike<T> | { [s: string]: T; }): [string, T][]; (o: {}): [string, any][]; }
+>entries : { <T>(o: { [s: string]: T; } | ArrayLike<T>): [string, T][]; (o: {}): [string, any][]; }
 >x || {} : object
 >x : object | undefined
 >{} : {}

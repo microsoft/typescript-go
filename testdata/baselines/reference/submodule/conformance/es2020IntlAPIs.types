@@ -25,13 +25,13 @@ function log(locale: string) {
     `${new Intl.DateTimeFormat(locale).format(date)} ${new Intl.NumberFormat(locale).format(count)}`
 >`${new Intl.DateTimeFormat(locale).format(date)} ${new Intl.NumberFormat(locale).format(count)}` : string
 >new Intl.DateTimeFormat(locale).format(date) : string
->new Intl.DateTimeFormat(locale).format : (date?: number | Date) => string
+>new Intl.DateTimeFormat(locale).format : (date?: Date | number) => string
 >new Intl.DateTimeFormat(locale) : Intl.DateTimeFormat
 >Intl.DateTimeFormat : Intl.DateTimeFormatConstructor
 >Intl : typeof Intl
 >DateTimeFormat : Intl.DateTimeFormatConstructor
 >locale : string
->format : (date?: number | Date) => string
+>format : (date?: Date | number) => string
 >date : Date
 >new Intl.NumberFormat(locale).format(count) : string
 >new Intl.NumberFormat(locale).format : { (value: number): string; (value: number | bigint): string; }

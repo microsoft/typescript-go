@@ -12,99 +12,7 @@
  >/\bbug (\d+)/i : RegExp
 
              if (bugs) {
-@@= skipped -1974, +1974 lines =@@
- >[] : undefined[]
-
-         var timeFunction: (
-->timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-+>timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
-
-             benchmark: Benchmark,
- >benchmark : Benchmark
-@@= skipped -12, +12 lines =@@
- >name : string
-
-             f?: (bench?: { (): void; }) => void
-->f : (bench?: { (): void; }) => void
-+>f : (bench?: () => void) => void
- >bench : () => void
-
-         ) => void;
-
-         timeFunction = function (
-->timeFunction = function (            benchmark: Benchmark,            description: string = benchmark.description,            name: string = '',            f = benchmark.bench        ): void {            var t = new Timer();            t.start();            var subBenchmark = function (name, f): void {                timeFunction(benchmark, description, name, f);            }            f.call(benchmark, subBenchmark);            t.end();            benchmark.addTimingFor(name, t.time);        } : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-->timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-->function (            benchmark: Benchmark,            description: string = benchmark.description,            name: string = '',            f = benchmark.bench        ): void {            var t = new Timer();            t.start();            var subBenchmark = function (name, f): void {                timeFunction(benchmark, description, name, f);            }            f.call(benchmark, subBenchmark);            t.end();            benchmark.addTimingFor(name, t.time);        } : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-+>timeFunction = function (            benchmark: Benchmark,            description: string = benchmark.description,            name: string = '',            f = benchmark.bench        ): void {            var t = new Timer();            t.start();            var subBenchmark = function (name, f): void {                timeFunction(benchmark, description, name, f);            }            f.call(benchmark, subBenchmark);            t.end();            benchmark.addTimingFor(name, t.time);        } : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
-+>timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
-+>function (            benchmark: Benchmark,            description: string = benchmark.description,            name: string = '',            f = benchmark.bench        ): void {            var t = new Timer();            t.start();            var subBenchmark = function (name, f): void {                timeFunction(benchmark, description, name, f);            }            f.call(benchmark, subBenchmark);            t.end();            benchmark.addTimingFor(name, t.time);        } : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
-
-             benchmark: Benchmark,
- >benchmark : Benchmark
-@@= skipped -24, +24 lines =@@
- >'' : ""
-
-             f = benchmark.bench
-->f : (bench?: { (): void; }) => void
-+>f : (bench?: () => void) => void
- >benchmark.bench : (subBench?: () => void) => void
- >benchmark : Benchmark
- >bench : (subBench?: () => void) => void
-@@= skipped -26, +26 lines =@@
-
-                 timeFunction(benchmark, description, name, f);
- >timeFunction(benchmark, description, name, f) : void
-->timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-+>timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
- >benchmark : Benchmark
- >description : string
- >name : any
-@@= skipped -10, +10 lines =@@
-             f.call(benchmark, subBenchmark);
- >f.call(benchmark, subBenchmark) : any
- >f.call : (this: Function, thisArg: any, ...argArray: any[]) => any
-->f : (bench?: { (): void; }) => void
-+>f : (bench?: () => void) => void
- >call : (this: Function, thisArg: any, ...argArray: any[]) => any
- >benchmark : Benchmark
- >subBenchmark : (name: any, f: any) => void
-@@= skipped -74, +74 lines =@@
-
-                     timeFunction(b);
- >timeFunction(b) : void
-->timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: { (): void; }) => void) => void
-+>timeFunction : (benchmark: Benchmark, description?: string, name?: string, f?: (bench?: () => void) => void) => void
- >b : Benchmark
-
-                     b.afterEach();
-@@= skipped -693, +693 lines =@@
-
-                 compileString(testCode, 'test.ts', function (compilerResult) {
- >compileString(testCode, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
-->compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
-+>compileString : (code: string, unitName: string, callback: (res: CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
- >testCode : any
- >'test.ts' : "test.ts"
- >function (compilerResult) {                    errors = compilerResult.errors;                } : (compilerResult: CompilerResult) => void
-@@= skipped -617, +617 lines =@@
-
-                 compileString(code, 'test.ts', function (compilerResult) {
- >compileString(code, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
-->compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
-+>compileString : (code: string, unitName: string, callback: (res: CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
- >code : string
- >'test.ts' : "test.ts"
- >function (compilerResult) {                    errors = compilerResult.errors;                } : (compilerResult: CompilerResult) => void
-@@= skipped -755, +755 lines =@@
-           * @param references the set of referenced files used by the given code
-           */
-         export function generateDeclFile(code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]): string {
-->generateDeclFile : (code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]) => string
-+>generateDeclFile : (code: string, verifyNoDeclFile: boolean, unitName?: string, compilationContext?: CompilationContext, references?: TypeScript.IFileReference[]) => string
- >code : string
- >verifyNoDeclFile : boolean
- >unitName : string
-@@= skipped -375, +375 lines =@@
+@@= skipped -4560, +4560 lines =@@
                          var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
  >match : RegExpMatchArray
  >errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/) : RegExpMatchArray
@@ -130,29 +38,7 @@
  >/[^\/]*$/ : RegExp
  >0 : 0
 
-@@= skipped -122, +122 lines =@@
-             try {
-                 compileString(code, filename, callback, context, references);
- >compileString(code, filename, callback, context, references) : void
-->compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
-+>compileString : (code: string, unitName: string, callback: (res: CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
- >code : string
- >filename : string
- >callback : (res: CompilerResult) => void
-@@= skipped -38, +38 lines =@@
-         }
-
-         export function compileUnits(units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void , settingsCallback?: () => void ) {
-->compileUnits : (units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void, settingsCallback?: () => void) => void
-+>compileUnits : (units: TestCaseParser.TestUnitData[], callback: (res: CompilerResult) => void, settingsCallback?: () => void) => void
- >units : TestCaseParser.TestUnitData[]
- >TestCaseParser : any
-->callback : (res: Compiler.CompilerResult) => void
-+>callback : (res: CompilerResult) => void
- >res : CompilerResult
- >Compiler : any
- >settingsCallback : () => void
-@@= skipped -22, +22 lines =@@
+@@= skipped -182, +182 lines =@@
  >unitName : string
  >switchToForwardSlashes(lastUnit.name).match(/[^\/]*$/)[0] : string
  >switchToForwardSlashes(lastUnit.name).match(/[^\/]*$/) : RegExpMatchArray
@@ -168,38 +54,7 @@
  >/[^\/]*$/ : RegExp
  >0 : 0
 
-@@= skipped -41, +41 lines =@@
- >lastUnit : TestCaseParser.TestUnitData
- >content : string
- >unitName : string
-->callback : (res: Compiler.CompilerResult) => void
-+>callback : (res: CompilerResult) => void
- >settingsCallback : () => void
- >compilationContext : CompilationContext
- >lastUnit.references : TypeScript.IFileReference[]
-@@= skipped -36, +36 lines =@@
-         }
-
-         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
-->compileString : (code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
-+>compileString : (code: string, unitName: string, callback: (res: CompilerResult) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) => void
- >code : string
- >unitName : string
-->callback : (res: Compiler.CompilerResult) => void
-+>callback : (res: CompilerResult) => void
- >res : CompilerResult
- >Compiler : any
- >context : CompilationContext
-@@= skipped -127, +127 lines =@@
-
-             callback(new CompilerResult(stdout.toArray(), errors, scripts));
- >callback(new CompilerResult(stdout.toArray(), errors, scripts)) : void
-->callback : (res: Compiler.CompilerResult) => void
-+>callback : (res: CompilerResult) => void
- >new CompilerResult(stdout.toArray(), errors, scripts) : CompilerResult
- >CompilerResult : typeof CompilerResult
- >stdout.toArray() : { filename: string; file: WriterAggregator; }[]
-@@= skipped -295, +295 lines =@@
+@@= skipped -499, +499 lines =@@
                      var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
  >isRef : RegExpMatchArray
  >line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/) : RegExpMatchArray
@@ -211,19 +66,7 @@
  >/reference\spath='(\w*_?\w*\.?d?\.ts)'/ : RegExp
 
                      if (isRef) {
-@@= skipped -1586, +1586 lines =@@
-
-             return JSON.stringify({ usePullLanguageService: usePull });
- >JSON.stringify({ usePullLanguageService: usePull }) : string
-->JSON.stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; }
-+>JSON.stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
- >JSON : JSON
-->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; }
-+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
- >{ usePullLanguageService: usePull } : { usePullLanguageService: boolean; }
- >usePullLanguageService : boolean
- >usePull : boolean
-@@= skipped -147, +147 lines =@@
+@@= skipped -1733, +1733 lines =@@
  >path : string
  >path.match(/[^\/]*$/)[0] : string
  >path.match(/[^\/]*$/) : RegExpMatchArray

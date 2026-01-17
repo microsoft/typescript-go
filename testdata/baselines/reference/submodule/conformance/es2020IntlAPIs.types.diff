@@ -1,22 +1,6 @@
 --- old.es2020IntlAPIs.types
 +++ new.es2020IntlAPIs.types
-@@= skipped -24, +24 lines =@@
-     `${new Intl.DateTimeFormat(locale).format(date)} ${new Intl.NumberFormat(locale).format(count)}`
- >`${new Intl.DateTimeFormat(locale).format(date)} ${new Intl.NumberFormat(locale).format(count)}` : string
- >new Intl.DateTimeFormat(locale).format(date) : string
-->new Intl.DateTimeFormat(locale).format : (date?: Date | number) => string
-+>new Intl.DateTimeFormat(locale).format : (date?: number | Date) => string
- >new Intl.DateTimeFormat(locale) : Intl.DateTimeFormat
- >Intl.DateTimeFormat : Intl.DateTimeFormatConstructor
- >Intl : typeof Intl
- >DateTimeFormat : Intl.DateTimeFormatConstructor
- >locale : string
-->format : (date?: Date | number) => string
-+>format : (date?: number | Date) => string
- >date : Date
- >new Intl.NumberFormat(locale).format(count) : string
- >new Intl.NumberFormat(locale).format : { (value: number): string; (value: number | bigint): string; }
-@@= skipped -39, +39 lines =@@
+@@= skipped -63, +63 lines =@@
  const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'narrow' });
  >rtf1 : Intl.RelativeTimeFormat
  >new Intl.RelativeTimeFormat('en', { style: 'narrow' }) : Intl.RelativeTimeFormat

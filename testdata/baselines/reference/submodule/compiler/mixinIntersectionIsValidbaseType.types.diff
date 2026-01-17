@@ -67,7 +67,7 @@
 +>class A extends Serializable(SuperClass) {    } : { new (...args: any[]): A; init(...args: any[]): void; prototype: AMixin.A; } & K
 +>A : { new (...args: any[]): A; init(...args: any[]): void; prototype: AMixin.A; } & K
 +>Serializable(SuperClass) : Serializable.SerializableLocal & Initable
-+>Serializable : <K_1 extends Constructor<Initable> & Initable>(SuperClass: K_1) => { new (...args: any[]): SerializableLocal; init(...args: any[]): void; prototype: Serializable.SerializableLocal; } & K_1
++>Serializable : <K_1 extends Constructor<Initable> & Initable>(SuperClass: K) => { new (...args: any[]): SerializableLocal; init(...args: any[]): void; prototype: Serializable.SerializableLocal; } & K_1
  >SuperClass : K
 
      };
