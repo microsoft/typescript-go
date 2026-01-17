@@ -1,6 +1,9 @@
 package project
 
 import (
+	"fmt"
+
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
@@ -22,9 +25,13 @@ type ExtendedConfigCacheEntry struct {
 
 type ExtendedConfigCache = RefCountCache[tspath.Path, *ExtendedConfigCacheEntry, ExtendedConfigParseArgs]
 
-func NewExtendedConfigCache() *ExtendedConfigCache {
+func NewExtendedConfigCache(logger logging.Logger) *ExtendedConfigCache {
 	return NewRefCountCache(
-		RefCountCacheOptions{},
+		RefCountCacheOptions{
+			Trace: func(format string, args ...any) {
+				logger.Log(fmt.Sprintf("ExtendedConfigCache: "+format, args...))
+			},
+		},
 		func(path tspath.Path, args ExtendedConfigParseArgs) *ExtendedConfigCacheEntry {
 			result := &ExtendedConfigCacheEntry{
 				ExtendedConfigCacheEntry: tsoptions.ParseExtendedConfig(args.FileName, path, args.ResolutionStack, args.Host, args.Cache),
