@@ -68,7 +68,7 @@ func newProjectCollectionBuilder(
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, nil),
 		newSnapshotID:                      newSnapshotID,
-		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
+		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
 	}

@@ -46,7 +46,7 @@ func newConfigFileRegistryBuilder(
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
 
-		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
+		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
 	}
 }
