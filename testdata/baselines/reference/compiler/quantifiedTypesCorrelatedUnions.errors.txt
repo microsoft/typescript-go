@@ -1,5 +1,5 @@
 quantifiedTypesCorrelatedUnions.ts(17,13): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-  Both type parameters are bound to different variables
+  Both type parameters are bounded to different variables
     'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 
 
@@ -23,7 +23,7 @@ quantifiedTypesCorrelatedUnions.ts(17,13): error TS2345: Argument of type 'T' is
       record1.f(record2.v); // TODO: better error
                 ~~~~~~~~~
 !!! error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-!!! error TS2345:   Both type parameters are bound to different variables
+!!! error TS2345:   Both type parameters are bounded to different variables
 !!! error TS2345:     'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 !!! related TS5114 quantifiedTypesCorrelatedUnions.ts:16:49: Type parameter 'T' is bounded to this variable
 !!! related TS5114 quantifiedTypesCorrelatedUnions.ts:16:25: Type parameter 'T' is bounded to this variable

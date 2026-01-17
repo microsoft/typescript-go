@@ -2362,7 +2362,7 @@ var Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information = &Me
 
 var X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error = &Message{code: 5112, category: CategoryError, key: "tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConf_5112", text: "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error."}
 
-var Both_type_parameters_are_bound_to_different_variables = &Message{code: 5113, category: CategoryError, key: "Both_type_parameters_are_bound_to_different_variables_5113", text: "Both type parameters are bound to different variables"}
+var Both_type_parameters_are_bounded_to_different_variables = &Message{code: 5113, category: CategoryError, key: "Both_type_parameters_are_bounded_to_different_variables_5113", text: "Both type parameters are bounded to different variables"}
 
 var Type_parameter_0_is_bounded_to_this_variable = &Message{code: 5114, category: CategoryError, key: "Type_parameter_0_is_bounded_to_this_variable_5114", text: "Type parameter '{0}' is bounded to this variable"}
 
@@ -6642,8 +6642,8 @@ func keyToMessage(key Key) *Message {
 		return Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information
 	case "tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConf_5112":
 		return X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error
-	case "Both_type_parameters_are_bound_to_different_variables_5113":
-		return Both_type_parameters_are_bound_to_different_variables
+	case "Both_type_parameters_are_bounded_to_different_variables_5113":
+		return Both_type_parameters_are_bounded_to_different_variables
 	case "Type_parameter_0_is_bounded_to_this_variable_5114":
 		return Type_parameter_0_is_bounded_to_this_variable
 	case "Generates_a_sourcemap_for_each_corresponding_d_ts_file_6000":

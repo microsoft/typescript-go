@@ -87,7 +87,7 @@
         "category": "Error",
         "code": 5002
     },
-    "Both type parameters are bound to different variables": {
+    "Both type parameters are bounded to different variables": {
         "category": "Error",
         "code": 5113
     },

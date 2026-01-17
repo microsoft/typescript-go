@@ -4769,7 +4769,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		}
 	}
 	if target.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 && generalizedSource.objectFlags&ObjectFlagsQuantifiedTypeParameter != 0 {
-		r.reportError(diagnostics.Both_type_parameters_are_bound_to_different_variables)
+		r.reportError(diagnostics.Both_type_parameters_are_bounded_to_different_variables)
 	}
 	if message == nil {
 		switch {

@@ -1,5 +1,5 @@
 quantifiedTypesBoundedTypeParameters.ts(7,6): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-  Both type parameters are bound to different variables
+  Both type parameters are bounded to different variables
     'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 
 
@@ -13,7 +13,7 @@ quantifiedTypesBoundedTypeParameters.ts(7,6): error TS2345: Argument of type 'T'
     f1.f(f2.v)
          ~~~~
 !!! error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
-!!! error TS2345:   Both type parameters are bound to different variables
+!!! error TS2345:   Both type parameters are bounded to different variables
 !!! error TS2345:     'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
 !!! related TS5114 quantifiedTypesBoundedTypeParameters.ts:3:13: Type parameter 'T' is bounded to this variable
 !!! related TS5114 quantifiedTypesBoundedTypeParameters.ts:2:13: Type parameter 'T' is bounded to this variable
