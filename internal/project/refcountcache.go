@@ -86,6 +86,34 @@ func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
 	c.Trace("end ref %v: ref count: %d", identity, entry.refCount)
 }
 
+// RefIfExists increments the reference count for an existing entry.
+// Returns true if successful, false if the entry does not exist or was deleted.
+// This is safe to use when concurrent disposal may have removed the entry.
+func (c *RefCountCache[K, V, AcquireArgs]) RefIfExists(identity K) bool {
+	c.Trace("begin refIfExists %v", identity)
+	entry, ok := c.entries.Load(identity)
+	if !ok {
+		c.Trace("end refIfExists %v: entry not found", identity)
+		return false
+	}
+	entry.mu.Lock()
+	defer entry.mu.Unlock()
+	if entry.refCount <= 0 && !c.Options.DisableDeletion {
+		// Entry was deleted while we were acquiring the lock
+		// Try to recreate it with the cached value
+		newEntry, loaded := c.loadOrStoreNewLockedEntry(identity)
+		defer newEntry.mu.Unlock()
+		if !loaded {
+			newEntry.value = entry.value
+		}
+		c.Trace("end refIfExists %v: recreated with ref count: %d", identity, newEntry.refCount)
+		return true
+	}
+	entry.refCount++
+	c.Trace("end refIfExists %v: ref count: %d", identity, entry.refCount)
+	return true
+}
+
 // Deref decrements the reference count for an entry.
 // When the refcount reaches zero, the entry is removed from the cache
 // (unless DisableDeletion is set).

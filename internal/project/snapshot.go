@@ -264,6 +264,28 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	// Option 1 fix for race condition: Ref all extended configs from the old snapshot
+	// at the START of Clone. This prevents concurrent disposal of other snapshots from
+	// removing extended configs that we may need to reference.
+	// We'll deref the ones we don't need at the end of Clone.
+	oldExtendedConfigs := make(map[tspath.Path]bool)
+	for _, config := range s.ConfigFileRegistry.configs {
+		if config.commandLine != nil {
+			for _, file := range config.commandLine.ExtendedSourceFiles() {
+				path := session.toPath(file)
+				if !oldExtendedConfigs[path] {
+					oldExtendedConfigs[path] = true
+					if !session.extendedConfigCache.RefIfExists(path) {
+						// Entry was already disposed by concurrent operation - this is unexpected
+						// but we'll handle it gracefully. The config will be re-acquired during
+						// building if needed.
+						logger.Logf("Warning: extended config file was concurrently disposed: %s", file)
+					}
+				}
+			}
+		}
+	}
+
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
@@ -438,18 +460,31 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 		}
 	}
-	for path, config := range newSnapshot.ConfigFileRegistry.configs {
-		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
-			if prevConfig, ok := s.ConfigFileRegistry.configs[path]; ok {
-				if prevConfig.commandLine != nil && config.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile {
-					logger.Logf("Ref extended config files of config: %s", config.commandLine.ConfigFile.SourceFile.FileName())
-					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
-						// Ref count extended configs that were already loaded in the previous snapshot.
-						// New/changed ones were handled during config file registry building.
-						if !session.extendedConfigCache.Has(s.toPath(file)) {
-							panic(fmt.Errorf("expected extended config file to be in cache\nconfig file: %s\nextended config file: %s", config.commandLine.ConfigFile.SourceFile.FileName(), file))
-						}
-						session.extendedConfigCache.Ref(s.toPath(file))
+	// Handle extended config refs based on whether configs were unchanged, changed, or removed.
+	// At the START of Clone, we reffed all extended configs from the old snapshot.
+	// Now we need to:
+	// - For UNCHANGED configs (same ConfigFile): keep the ref (no action needed)
+	// - For CHANGED configs (different ConfigFile): deref old extended configs
+	// - For REMOVED configs (not in new snapshot): deref old extended configs
+	for path, prevConfig := range s.ConfigFileRegistry.configs {
+		if prevConfig.commandLine != nil {
+			newConfig, inNewSnapshot := newSnapshot.ConfigFileRegistry.configs[path]
+			configUnchanged := inNewSnapshot &&
+				newConfig.commandLine != nil &&
+				newConfig.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile
+
+			if configUnchanged {
+				// Config unchanged - keep the refs we added at the start of Clone
+				logger.Logf("Keeping extended config refs for unchanged config: %s", prevConfig.commandLine.ConfigFile.SourceFile.FileName())
+			} else {
+				// Config was changed or removed - deref the old extended configs
+				// (the refs we added at the start of Clone are no longer needed;
+				// changed configs had their new extended configs acquired during building)
+				logger.Logf("Deref extended config files for changed/removed config: %s", prevConfig.commandLine.ConfigFile.SourceFile.FileName())
+				for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
+					path := session.toPath(file)
+					if oldExtendedConfigs[path] {
+						session.extendedConfigCache.Deref(path)
 					}
 				}
 			}
