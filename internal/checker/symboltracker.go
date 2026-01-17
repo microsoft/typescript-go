@@ -48,6 +48,21 @@ func (this *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclarat
 	return false
 }
 
+func (this *SymbolTrackerImpl) IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) bool {
+	if this.inner == nil {
+		return true
+	}
+	return this.inner.IsEntityNameVisible(entityName, enclosingDeclaration)
+}
+
+func (this *SymbolTrackerImpl) TrackEntityName(entityName *ast.Node, enclosingDeclaration *ast.Node) bool {
+	if this.inner != nil && this.inner.TrackEntityName(entityName, enclosingDeclaration) {
+		this.onDiagnosticReported()
+		return true
+	}
+	return false
+}
+
 func (this *SymbolTrackerImpl) ReportInaccessibleThisError() {
 	this.onDiagnosticReported()
 	if this.inner == nil {
