@@ -1,0 +1,65 @@
+quantifiedTypesBoundedTypeParameters.ts(6,6): error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+
+
+==== quantifiedTypesBoundedTypeParameters.ts (1 errors) ====
+    type F = <T> { v: T, f: (v: T) => void };
+    declare let f1: F
+    declare let f2: F
+    
+    f1.f(f1.v)
+    f1.f(f2.v)
+         ~~~~
+!!! error TS2345: Argument of type 'T' is not assignable to parameter of type 'T'.
+!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+!!! related TS2208 quantifiedTypesBoundedTypeParameters.ts:1:11: This type parameter might need an `extends T` constraint.
+    
+    
+    
+    /*
+    declare const f: (a: <T> {
+      produce: (arg: string) => T,
+      consume: (arg: T) => unknown,
+      prop: <U> {
+        produce: (arg: T) => U,
+        consume: (arg: U) => unknown,
+      }
+    }) => void
+    
+    f({
+      produce: a => Number(a),
+      consume: x => {
+        x satisfies number
+      },
+      prop: {
+        produce: x => {
+          x satisfies number
+          return Boolean(x)
+        },
+        consume: y => {
+          y satisfies boolean
+        }
+      }
+    })
+    */
+    
+    /*
+    declare const smallest:
+      <T extends OneOf<number | string>>(xs: T[]) => T
+    
+    smallest([1, 2, 3])
+    smallest(["a", "b", "c"])
+    
+    smallest([1, "b", 3])
+    smallest([1, 2, undefined])
+    
+    type OneOf<Spec> =
+      <Actual> (
+        Actual extends Spec
+          ? IsUnit<Actual> extends true ? Actual : never
+          : Spec
+      )
+    
+    type IsUnit<U> =
+      [U] extends (U extends unknown ? [U] : never) ? true : false
+    */
