@@ -75,6 +75,11 @@
         "category": "Message",
         "code": 1549
     },
+    "Using a string literal as an enum member name via a computed property is deprecated. Use a simple string literal instead.": {
+        "category": "Suggestion",
+        "code": 1550,
+        "reportsDeprecated": true
+    },
     "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
         "category": "Error",
         "code": 5112
@@ -90,5 +95,13 @@
     "Deduplicate packages with the same name and version.": {
         "category": "Message",
         "code": 100011
+    },
+    "Remove unnecessary computed property name syntax": {
+        "category": "Message",
+        "code": 95198
+    },
+    "Remove all unnecessary computed property name syntax": {
+        "category": "Message",
+        "code": 95199
     }
 }

@@ -928,6 +928,8 @@ var X_await_using_declarations_are_not_allowed_in_ambient_contexts = &Message{co
 
 var Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1549, category: CategoryMessage, key: "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549", text: "Ignore the tsconfig found and build with commandline options and files."}
 
+var Using_a_string_literal_as_an_enum_member_name_via_a_computed_property_is_deprecated_Use_a_simple_string_literal_instead = &Message{code: 1550, category: CategorySuggestion, key: "Using_a_string_literal_as_an_enum_member_name_via_a_computed_property_is_deprecated_Use_a_simple_str_1550", text: "Using a string literal as an enum member name via a computed property is deprecated. Use a simple string literal instead.", reportsDeprecated: true}
+
 var The_types_of_0_are_incompatible_between_these_types = &Message{code: 2200, category: CategoryError, key: "The_types_of_0_are_incompatible_between_these_types_2200", text: "The types of '{0}' are incompatible between these types."}
 
 var The_types_returned_by_0_are_incompatible_between_these_types = &Message{code: 2201, category: CategoryError, key: "The_types_returned_by_0_are_incompatible_between_these_types_2201", text: "The types returned by '{0}' are incompatible between these types."}
@@ -4254,6 +4256,10 @@ var Add_resolution_mode_import_attribute = &Message{code: 95196, category: Categ
 
 var Add_resolution_mode_import_attribute_to_all_type_only_imports_that_need_it = &Message{code: 95197, category: CategoryMessage, key: "Add_resolution_mode_import_attribute_to_all_type_only_imports_that_need_it_95197", text: "Add 'resolution-mode' import attribute to all type-only imports that need it"}
 
+var Remove_unnecessary_computed_property_name_syntax = &Message{code: 95198, category: CategoryMessage, key: "Remove_unnecessary_computed_property_name_syntax_95198", text: "Remove unnecessary computed property name syntax"}
+
+var Remove_all_unnecessary_computed_property_name_syntax = &Message{code: 95199, category: CategoryMessage, key: "Remove_all_unnecessary_computed_property_name_syntax_95199", text: "Remove all unnecessary computed property name syntax"}
+
 var Do_not_print_diagnostics = &Message{code: 100000, category: CategoryMessage, key: "Do_not_print_diagnostics_100000", text: "Do not print diagnostics."}
 
 var Run_in_single_threaded_mode = &Message{code: 100001, category: CategoryMessage, key: "Run_in_single_threaded_mode_100001", text: "Run in single threaded mode."}
@@ -5206,6 +5212,8 @@ func keyToMessage(key Key) *Message {
 		return X_await_using_declarations_are_not_allowed_in_ambient_contexts
 	case "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549":
 		return Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files
+	case "Using_a_string_literal_as_an_enum_member_name_via_a_computed_property_is_deprecated_Use_a_simple_str_1550":
+		return Using_a_string_literal_as_an_enum_member_name_via_a_computed_property_is_deprecated_Use_a_simple_string_literal_instead
 	case "The_types_of_0_are_incompatible_between_these_types_2200":
 		return The_types_of_0_are_incompatible_between_these_types
 	case "The_types_returned_by_0_are_incompatible_between_these_types_2201":
@@ -8532,6 +8540,10 @@ func keyToMessage(key Key) *Message {
 		return Add_resolution_mode_import_attribute
 	case "Add_resolution_mode_import_attribute_to_all_type_only_imports_that_need_it_95197":
 		return Add_resolution_mode_import_attribute_to_all_type_only_imports_that_need_it
+	case "Remove_unnecessary_computed_property_name_syntax_95198":
+		return Remove_unnecessary_computed_property_name_syntax
+	case "Remove_all_unnecessary_computed_property_name_syntax_95199":
+		return Remove_all_unnecessary_computed_property_name_syntax
 	case "Do_not_print_diagnostics_100000":
 		return Do_not_print_diagnostics
 	case "Run_in_single_threaded_mode_100001":
