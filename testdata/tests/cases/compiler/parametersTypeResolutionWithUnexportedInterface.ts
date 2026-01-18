@@ -1,4 +1,6 @@
 // @strict: true
+// @declaration: true
+// @outDir: dist
 // @filename: lib.ts
 interface Options {
   verbose?: boolean;
@@ -9,8 +11,6 @@ export const doSomething = (input: string, options?: Options): string => {
 };
 
 // @filename: index.ts
-// @declaration: true
-// @outdir: dist
 import { doSomething } from "./lib";
 
 // Using Parameters<typeof fn>[1] to extract the options type
