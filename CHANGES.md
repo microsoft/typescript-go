@@ -340,7 +340,7 @@ Although classes are a much better way to write this code.
 
 #### Initializing exports to `undefined`:
 
-To accommodate the pattern of initializing CommonJS exports to `undefined` (sometimes written as `void 0`) and then subseqently assigning their intended values, when CommonJS exports have multiple assignments and an initial assignment of `undefined`, the `undefined` is ignored when determining the type of the export.
+To accommodate the pattern of initializing CommonJS exports to `undefined` (sometimes written as `void 0`) and then subsequently assigning their intended values, when CommonJS exports have multiple assignments and an initial assignment of `undefined`, the `undefined` is ignored when determining the type of the export.
 
 ```js
 exports.foo = exports.bar = void 0;
