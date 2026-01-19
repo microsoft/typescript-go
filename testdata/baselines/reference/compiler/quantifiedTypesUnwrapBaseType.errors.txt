@@ -1,0 +1,93 @@
+quantifiedTypesUnwrapBaseType.ts(6,5): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+
+
+==== quantifiedTypesUnwrapBaseType.ts (1 errors) ====
+    const f = (x: <T> [T, NoInfer<T>]) => {
+      let [t0, t1] = x
+    }
+    
+    const g = (f: <T> ((t: T) => T)) => {
+      f(0)
+        ~
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
+!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
+    declare const str: string;
+    declare const num: number;
+    function acceptString(str: string) { }
+    function acceptNumber(num: number) { }
+    
+    const arr: (<T> [T, (t: T) => void])[] = [
+        [str, acceptString],
+        [num, acceptNumber],
+        [str, acceptNumber], // should be error
+    ];
+    
+    for (const pair of arr) {
+        const [arg, func] = pair;
+        func(arg); // should be no error
+    }
+    */
+    /*
+    declare const f: (a: <T> {
+      produce: (arg: string) => T,
+      consume: (arg: T) => unknown,
+      prop: <U> {
+        produce: (arg: T) => U,
+        consume: (arg: U) => unknown,
+      }
+    }) => void
+    
+    f({
+      produce: a => Number(a),
+      consume: x => {
+        x satisfies number
+      },
+      prop: {
+        produce: x => {
+          x satisfies number
+          return Boolean(x)
+        },
+        consume: y => {
+          y satisfies boolean
+        }
+      }
+    })
+    */
+    
+    /*
+    declare const smallest:
+      <T extends OneOf<number | string>>(xs: T[]) => T
+    
+    smallest([1, 2, 3])
+    smallest(["a", "b", "c"])
+    
+    smallest([1, "b", 3])
+    smallest([1, 2, undefined])
+    
+    type OneOf<Spec> =
+      <Actual> (
+        Actual extends Spec
+          ? IsUnit<Actual> extends true ? Actual : never
+          : Spec
+      )
+    
+    type IsUnit<U> =
+      [U] extends (U extends unknown ? [U] : never) ? true : false
+    */

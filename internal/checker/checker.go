@@ -8380,6 +8380,9 @@ func (c *Checker) resolveCallExpression(node *ast.Node, candidatesOutArray *[]*S
 	}
 	var callChainFlags SignatureFlags
 	funcType := c.checkExpression(node.Expression())
+	if funcType.flags&TypeFlagsQuantified != 0 {
+		funcType = funcType.AsQuantifiedType().baseType
+	}
 	if isCallChain(node) {
 		nonOptionalType := c.getOptionalExpressionType(funcType, node.Expression())
 		switch {
@@ -17297,6 +17300,9 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 		parentType = c.GetNonNullableType(parentType)
 	} else if c.strictNullChecks && pattern.Parent.Initializer() != nil && !(c.hasTypeFacts(c.getTypeOfInitializer(pattern.Parent.Initializer()), TypeFactsEQUndefined)) {
 		parentType = c.getTypeWithFacts(parentType, TypeFactsNEUndefined)
+	}
+	if parentType.flags&TypeFlagsQuantified != 0 {
+		parentType = parentType.AsQuantifiedType().baseType
 	}
 	accessFlags := AccessFlagsExpressionPosition | core.IfElse(noTupleBoundsCheck || c.hasDefaultValue(declaration), AccessFlagsAllowMissing, 0)
 	var t *Type
