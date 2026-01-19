@@ -837,7 +837,7 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 				jsAndDtsExtensions := []string{tspath.ExtensionMjs, tspath.ExtensionCjs, tspath.ExtensionJs, tspath.ExtensionJson, tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}
 				for _, ext := range jsAndDtsExtensions {
 					if tspath.FileExtensionIs(possibleInputBase, ext) {
-						inputExts := r.getPossibleOriginalInputExtensionForExtension(possibleInputBase)
+						inputExts := tspath.GetPossibleOriginalInputExtensionForExtension(possibleInputBase)
 						for _, possibleExt := range inputExts {
 							if !extensionIsOk(r.extensions, possibleExt) {
 								continue
@@ -870,19 +870,6 @@ func (r *resolutionState) getOutputDirectoriesForBaseDirectory(commonSourceDirGu
 		candidateDirectories = append(candidateDirectories, tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(currentDir, r.compilerOptions.OutDir), r.resolver.host.GetCurrentDirectory()))
 	}
 	return candidateDirectories
-}
-
-func (r *resolutionState) getPossibleOriginalInputExtensionForExtension(path string) []string {
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMjs, tspath.ExtensionMts}) {
-		return []string{tspath.ExtensionMts, tspath.ExtensionMjs}
-	}
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCjs, tspath.ExtensionCts}) {
-		return []string{tspath.ExtensionCts, tspath.ExtensionCjs}
-	}
-	if tspath.FileExtensionIs(path, ".d.json.ts") {
-		return []string{tspath.ExtensionJson}
-	}
-	return []string{tspath.ExtensionTsx, tspath.ExtensionTs, tspath.ExtensionJsx, tspath.ExtensionJs}
 }
 
 func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOnly bool) *resolved {
