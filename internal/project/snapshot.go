@@ -280,6 +280,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		fs.markDirtyFiles(change.fileChanges)
+		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects

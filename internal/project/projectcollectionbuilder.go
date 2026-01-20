@@ -177,14 +177,7 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 }
 
 func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
-	changedFiles := make([]tspath.Path, 0, len(summary.Closed)+summary.Changed.Len())
-	for uri, hash := range summary.Closed {
-		fileName := uri.FileName()
-		path := b.toPath(fileName)
-		if fh := b.fs.GetFileByPath(fileName, path); fh == nil || fh.Hash() != hash {
-			changedFiles = append(changedFiles, path)
-		}
-	}
+	changedFiles := make([]tspath.Path, 0, summary.Changed.Len())
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
 		path := b.toPath(fileName)
@@ -194,6 +187,8 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	configChangeLogger := logger.Fork("Checking for changes affecting config files")
 	configChangeResult := b.configFileRegistryBuilder.DidChangeFiles(summary, configChangeLogger)
 	logChangeFileResult(configChangeResult, configChangeLogger)
+
+	b.programStructureChanged = b.markProjectsAffectedByConfigChanges(configChangeResult, logger)
 
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
 		// Only consider change/delete; creates are handled by the config file registry
@@ -210,10 +205,10 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 
 		// Handle closed and changed files
 		b.markFilesChanged(entry, changedFiles, lsproto.FileChangeTypeChanged, logger)
-		if entry.Value().Kind == KindInferred && len(summary.Closed) > 0 {
+		if entry.Value().Kind == KindInferred && summary.Closed.Len() > 0 {
 			rootFilesMap := entry.Value().CommandLine.FileNamesByPath()
 			newRootFiles := entry.Value().CommandLine.FileNames()
-			for uri := range summary.Closed {
+			for uri := range summary.Closed.Keys() {
 				fileName := uri.FileName()
 				path := b.toPath(fileName)
 				if _, ok := rootFilesMap[path]; ok {
@@ -334,8 +329,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		b.configFileRegistryBuilder.Cleanup()
 	}
-
-	b.programStructureChanged = b.markProjectsAffectedByConfigChanges(configChangeResult, logger)
 }
 
 func logChangeFileResult(result changeFileResult, logger *logging.LogTree) {
@@ -999,12 +992,10 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
-					if b.sessionOptions.WatchEnabled {
-						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
-						project.programFilesWatch = programFilesWatch
-						project.failedLookupsWatch = failedLookupsWatch
-						project.affectingLocationsWatch = affectingLocationsWatch
-					}
+					programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
+					project.programFilesWatch = programFilesWatch
+					project.failedLookupsWatch = failedLookupsWatch
+					project.affectingLocationsWatch = affectingLocationsWatch
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""

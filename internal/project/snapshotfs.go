@@ -94,6 +94,7 @@ func (s *SnapshotFS) isFile(path tspath.Path) bool {
 
 type snapshotFSBuilder struct {
 	fs                 vfs.FS
+	prevOverlays       map[tspath.Path]*Overlay
 	overlays           map[tspath.Path]*Overlay
 	overlayDirectories map[tspath.Path]map[tspath.Path]string
 	diskFiles          *dirty.SyncMap[tspath.Path, *diskFile]
@@ -138,6 +139,7 @@ func newSnapshotFSBuilder(
 
 	return &snapshotFSBuilder{
 		fs:                 cachedFS,
+		prevOverlays:       prevOverlays,
 		overlays:           overlays,
 		overlayDirectories: overlayDirectories,
 		diskFiles:          dirty.NewSyncMap(diskFiles),
@@ -248,24 +250,40 @@ func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
 	return entries
 }
 
-func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
+func (s *snapshotFSBuilder) reloadEntry(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
 	entry.Locked(func(entry dirty.Value[*diskFile]) {
-		if entry.Value() != nil && !entry.Value().MatchesDiskText() {
-			if content, ok := s.fs.ReadFile(entry.Value().fileName); ok {
-				entry.Change(func(file *diskFile) {
-					file.content = content
-					file.hash = xxh3.HashString128(content)
-					file.needsReload = false
-				})
-			} else {
-				entry.Delete()
-			}
+		if entry.Value() != nil {
+			s.reloadLockedEntry(entry)
 		}
 	})
 	if entry == nil || entry.Value() == nil {
 		return nil
 	}
 	return entry.Value()
+}
+
+func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
+	entry.Locked(func(entry dirty.Value[*diskFile]) {
+		if entry.Value() != nil && !entry.Value().MatchesDiskText() {
+			s.reloadLockedEntry(entry)
+		}
+	})
+	if entry == nil || entry.Value() == nil {
+		return nil
+	}
+	return entry.Value()
+}
+
+func (s *snapshotFSBuilder) reloadLockedEntry(entry dirty.Value[*diskFile]) {
+	if content, ok := s.fs.ReadFile(entry.Value().fileName); ok {
+		entry.Change(func(file *diskFile) {
+			file.content = content
+			file.hash = xxh3.HashString128(content)
+			file.needsReload = false
+		})
+	} else {
+		entry.Delete()
+	}
 }
 
 func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary) bool {
@@ -321,6 +339,34 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 			})
 		}
 	}
+}
+
+func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummary) FileChangeSummary {
+	if change.Opened != "" && !isDynamicFileName(change.Opened.FileName()) {
+		path := s.toPath(change.Opened.FileName())
+		if entry, ok := s.diskFiles.Load(path); !ok || entry.Original() == nil {
+			change.Created.Add(change.Opened)
+		}
+	}
+	for uri := range change.Closed.Keys() {
+		fileName := uri.FileName()
+		if isDynamicFileName(fileName) {
+			continue
+		}
+		path := s.toPath(fileName)
+		if entry, ok := s.diskFiles.Load(path); ok {
+			// We may have ignored watcher events while the file was open, so force a reload.
+			fh := s.reloadEntry(entry)
+			if fh != nil {
+				if fh.Hash() != s.prevOverlays[path].Hash() {
+					change.Changed.Add(uri)
+				}
+				continue
+			}
+		}
+		change.Deleted.Add(uri)
+	}
+	return change
 }
 
 // sourceFS is a vfs.FS that sources files from a FileSource and tracks seen files.
