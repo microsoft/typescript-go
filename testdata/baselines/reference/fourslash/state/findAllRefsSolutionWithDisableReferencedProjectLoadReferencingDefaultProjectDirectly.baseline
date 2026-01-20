@@ -245,7 +245,7 @@ Projects::
   [/dev/null/inferred] *deleted*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/dummy/tsconfig.json] *modified*
+  [/dummy/tsconfig.json] 
     /dummy/dummy.ts  
 Open Files::
   [/dummy/dummy.ts] *new*
@@ -256,7 +256,9 @@ Config::
       /dummy/tsconfig.json  
     RetainingOpenFiles:
       /dummy/dummy.ts  
-  [/myproject/tsconfig.json] *deleted*
+  [/myproject/tsconfig.json] *modified*
+    RetainingOpenFiles: *modified*
+      /myproject/src/main.ts  *deleted*
 Config File Names::
   [/dummy/dummy.ts] 
     NearestConfigFileName: /dummy/tsconfig.json
@@ -297,9 +299,9 @@ Open Files::
     /dev/null/inferred  (default) 
 Config::
   [/dummy/tsconfig.json] *deleted*
-  [/myproject/tsconfig.json] *new*
-    RetainingOpenFiles:
-      /myproject/src/main.ts  
+  [/myproject/tsconfig.json] *modified*
+    RetainingOpenFiles: *modified*
+      /myproject/src/main.ts  *new*
 Config File Names::
   [/dummy/dummy.ts] *deleted*
   [/myproject/src/main.ts] *new*

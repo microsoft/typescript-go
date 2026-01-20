@@ -71,7 +71,7 @@ Open Files::
 Projects::
   [/myproject/playground/tsconfig-json/tsconfig.json] *new*
     /myproject/playground/tsconfig-json/src/src.ts  
-  [/myproject/playground/tsconfig.json] *modified*
+  [/myproject/playground/tsconfig.json] 
     /myproject/playground/tests.ts                     
     /myproject/playground/tsconfig-json/src/src.ts     
     /myproject/playground/tsconfig-json/tests/spec.ts  

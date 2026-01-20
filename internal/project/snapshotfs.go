@@ -233,10 +233,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	if file, ok := s.overlays[path]; ok {
 		return file
 	}
-	if entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true}); entry != nil {
-		return s.reloadEntryIfNeeded(entry)
-	}
-	return nil
+	return s.getDiskFile(fileName, path, false)
 }
 
 func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
@@ -248,6 +245,16 @@ func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
 
 	readDirectoryIntoEntries(overlayDirectories, s.isOpenFile, &entries)
 	return entries
+}
+
+func (s *snapshotFSBuilder) getDiskFile(fileName string, path tspath.Path, forceReload bool) FileHandle {
+	if entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true}); entry != nil {
+		if forceReload {
+			return s.reloadEntry(entry)
+		}
+		return s.reloadEntryIfNeeded(entry)
+	}
+	return nil
 }
 
 func (s *snapshotFSBuilder) reloadEntry(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) FileHandle {
@@ -354,15 +361,12 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 			continue
 		}
 		path := s.toPath(fileName)
-		if entry, ok := s.diskFiles.Load(path); ok {
-			// We may have ignored watcher events while the file was open, so force a reload.
-			fh := s.reloadEntry(entry)
-			if fh != nil {
-				if fh.Hash() != s.prevOverlays[path].Hash() {
-					change.Changed.Add(uri)
-				}
-				continue
+		// We may have ignored watcher events while the file was open, so force a reload.
+		if fh := s.getDiskFile(fileName, path, true /*forceReload*/); fh != nil {
+			if fh.Hash() != s.prevOverlays[path].Hash() {
+				change.Changed.Add(uri)
 			}
+			continue
 		}
 		change.Deleted.Add(uri)
 	}

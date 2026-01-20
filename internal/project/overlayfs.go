@@ -303,7 +303,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			}
 			if o != nil && o.Content() != events.openChange.Content {
 				result.Changed.Add(uri)
-			} else {
+			} else if o == nil {
 				result.Opened = uri
 			}
 			newOverlays[path] = newOverlay(
