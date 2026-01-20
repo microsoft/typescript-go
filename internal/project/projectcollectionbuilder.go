@@ -244,10 +244,10 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	})
 
 	// Handle opened file
-	if summary.Opened != "" {
-		fileName := summary.Opened.FileName()
-		path := b.toPath(fileName)
+	if summary.Opened != "" || summary.Reopened != "" {
 		var toRemoveProjects collections.Set[tspath.Path]
+		fileName := core.FirstNonZero(summary.Opened, summary.Reopened).FileName()
+		path := b.toPath(fileName)
 		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 			toRemoveProjects.Add(entry.Key())

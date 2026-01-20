@@ -292,6 +292,16 @@ Open Files::
   }
 }
 
+Projects::
+  [/dummy/tsconfig.json] 
+    /dummy/dummy.ts  
+  [/myproject/tsconfig-src.json] *deleted*
+    /myproject/src/helpers/functions.ts  
+    /myproject/src/main.ts               
+  [/myproject/tsconfig.json] *deleted*
+    /myproject/src/helpers/functions.ts  
+    /myproject/src/main.ts               
+    /myproject/own/main.ts               
 Open Files::
   [/dummy/dummy.ts] *new*
     /dummy/tsconfig.json  (default) 
@@ -301,17 +311,8 @@ Config::
       /dummy/tsconfig.json  
     RetainingOpenFiles:
       /dummy/dummy.ts  
-  [/myproject/tsconfig-src.json] *modified*
-    RetainingProjects:
-      /myproject/tsconfig-src.json  
-      /myproject/tsconfig.json      
-    RetainingOpenFiles: *modified*
-      /myproject/src/main.ts  *deleted*
-  [/myproject/tsconfig.json] *modified*
-    RetainingProjects:
-      /myproject/tsconfig.json  
-    RetainingOpenFiles: *modified*
-      /myproject/src/main.ts  *deleted*
+  [/myproject/tsconfig-src.json] *deleted*
+  [/myproject/tsconfig.json] *deleted*
 Config File Names::
   [/dummy/dummy.ts] 
     NearestConfigFileName: /dummy/tsconfig.json
@@ -344,10 +345,10 @@ Open Files::
 Projects::
   [/dummy/tsconfig.json] *deleted*
     /dummy/dummy.ts  
-  [/myproject/tsconfig-src.json] 
+  [/myproject/tsconfig-src.json] *new*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
-  [/myproject/tsconfig.json] 
+  [/myproject/tsconfig.json] *new*
     /myproject/src/helpers/functions.ts  
     /myproject/src/main.ts               
     /myproject/own/main.ts               
@@ -357,17 +358,17 @@ Open Files::
     /myproject/tsconfig.json      
 Config::
   [/dummy/tsconfig.json] *deleted*
-  [/myproject/tsconfig-src.json] *modified*
+  [/myproject/tsconfig-src.json] *new*
     RetainingProjects:
       /myproject/tsconfig-src.json  
       /myproject/tsconfig.json      
-    RetainingOpenFiles: *modified*
-      /myproject/src/main.ts  *new*
-  [/myproject/tsconfig.json] *modified*
+    RetainingOpenFiles:
+      /myproject/src/main.ts  
+  [/myproject/tsconfig.json] *new*
     RetainingProjects:
       /myproject/tsconfig.json  
-    RetainingOpenFiles: *modified*
-      /myproject/src/main.ts  *new*
+    RetainingOpenFiles:
+      /myproject/src/main.ts  
 Config File Names::
   [/dummy/dummy.ts] *deleted*
   [/myproject/src/main.ts] *new*

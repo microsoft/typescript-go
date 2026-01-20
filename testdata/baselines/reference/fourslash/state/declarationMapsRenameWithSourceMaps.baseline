@@ -399,22 +399,19 @@ Open Files::
   }
 }
 
+Projects::
+  [/myproject/dependency/tsconfig.json] *deleted*
+    /myproject/dependency/FnS.ts  
+  [/myproject/tsconfig.json] *deleted*
+  [/random/tsconfig.json] 
+    /random/random.ts  
 Open Files::
   [/random/random.ts] *new*
     /random/tsconfig.json  (default) 
 Config::
-  [/myproject/dependency/tsconfig.json] *modified*
-    RetainingProjects:
-      /myproject/dependency/tsconfig.json  
-      /myproject/tsconfig.json             
-    RetainingOpenFiles: *modified*
-      /myproject/dependency/FnS.ts  *deleted*
-  [/myproject/main/tsconfig.json] 
-    RetainingProjects:
-      /myproject/tsconfig.json  
-  [/myproject/tsconfig.json] 
-    RetainingProjects:
-      /myproject/tsconfig.json  
+  [/myproject/dependency/tsconfig.json] *deleted*
+  [/myproject/main/tsconfig.json] *deleted*
+  [/myproject/tsconfig.json] *deleted*
   [/random/tsconfig.json] 
     RetainingProjects:
       /random/tsconfig.json  

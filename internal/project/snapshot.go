@@ -339,7 +339,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
-	if len(change.fileChanges.Opened) != 0 {
+	if change.fileChanges.Opened != "" || change.fileChanges.Reopened != "" {
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
 		if len(projectsWithNewProgramStructure) > 0 {
 			cleanFilesStart := time.Now()
