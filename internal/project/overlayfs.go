@@ -306,13 +306,12 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			} else {
 				result.Opened = uri
 			}
-			o = newOverlay(
+			newOverlays[path] = newOverlay(
 				uri.FileName(),
 				events.openChange.Content,
 				events.openChange.Version,
 				lsconv.LanguageKindToScriptKind(events.openChange.LanguageKind),
 			)
-			newOverlays[path] = o
 			continue
 		}
 
