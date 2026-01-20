@@ -993,6 +993,7 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 }
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
+	t.Helper()
 	prefix := f.getCurrentPositionPrefix()
 	var userPreferences *lsutil.UserPreferences
 	if expected != nil {
@@ -1004,6 +1005,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 }
 
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
+	t.Helper()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -3206,6 +3208,7 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
+	t.Helper()
 	reset := f.ConfigureWithReset(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,

@@ -194,7 +194,10 @@ func (l *LanguageService) convertPathCompletions(
 	isNewIdentifierLocation := true // The user may type in a path that doesn't yet exist, creating a "new identifier" with respect to the collection of identifiers the server is aware of.
 	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
 	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
-		replacementSpan := l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
+		var replacementSpan *lsproto.Range
+		if pathCompletion.textRange != nil {
+			replacementSpan = l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
+		}
 		return l.createLSPCompletionItem(
 			ctx,
 			pathCompletion.name,
@@ -1106,7 +1109,11 @@ func getBaseDirectoriesFromRootDirs(rootDirs []string, basePath string, scriptDi
 	}
 	for _, rootDirectory := range normalizedRootDirs {
 		if tspath.ContainsPath(rootDirectory, scriptDirectory, comparePathsOptions) {
-			relativeDirectory = scriptDirectory[len(rootDirectory):]
+			if len(rootDirectory) > len(scriptDirectory) {
+				relativeDirectory = ""
+			} else {
+				relativeDirectory = scriptDirectory[len(rootDirectory):]
+			}
 			break
 		}
 	}
@@ -1118,7 +1125,6 @@ func getBaseDirectoriesFromRootDirs(rootDirs []string, basePath string, scriptDi
 	}
 	directories = append(directories, tspath.RemoveTrailingDirectorySeparator(scriptDirectory))
 
-	// Deduplicate using case-sensitive comparison
 	return deduplicateStrings(directories)
 }
 
