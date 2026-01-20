@@ -9,14 +9,14 @@ import (
 )
 
 func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
-	return getReparsedNodeForNode(getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
+	return GetReparsedNodeForNode(getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
 		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
 	}))
 }
 
 // If the given node is a declaration name node in a JSDoc comment that is subject to reparsing, return the declaration name node
 // for the corresponding reparsed construct. Otherwise, just return the node.
-func getReparsedNodeForNode(node *ast.Node) *ast.Node {
+func GetReparsedNodeForNode(node *ast.Node) *ast.Node {
 	if node.Flags&ast.NodeFlagsJSDoc != 0 && (ast.IsIdentifier(node) || ast.IsPrivateIdentifier(node)) {
 		parent := node.Parent
 		if (ast.IsJSDocTypedefTag(parent) || ast.IsJSDocCallbackTag(parent) || ast.IsJSDocPropertyTag(parent) || ast.IsJSDocParameterTag(parent) || ast.IsImportClause(parent) || ast.IsImportSpecifier(parent)) && parent.Name() == node {
