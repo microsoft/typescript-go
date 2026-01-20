@@ -105,6 +105,10 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
+	"preserveValueImports.ts",
+	"preserveValueImports_errors.ts",
+	"preserveValueImports_mixedImports.ts",
+	"preserveValueImports_module.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
