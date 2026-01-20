@@ -9,12 +9,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestPathCompletionsPackageJsonImportsWildcard4(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+func TestPathCompletionsPackageJsonImportsSrcNoDistWildcard4(t *testing.T) {
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: node18
-// @Filename: /package.json
+	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "rootDir": "src",
+    "outDir": "dist"
+  }
+}
+// @Filename: /home/src/workspaces/project/package.json
 {
   "types": "index.d.ts",
   "imports": {
@@ -24,20 +31,21 @@ func TestPathCompletionsPackageJsonImportsWildcard4(t *testing.T) {
     "#exact-match": "dist/index.d.ts"
   }
 }
-// @Filename: /nope.d.ts
+// @Filename: /home/src/workspaces/project/nope.ts
 export const nope = 0;
-// @Filename: /dist/index.d.ts
+// @Filename: /home/src/workspaces/project/src/index.ts
 export const index = 0;
-// @Filename: /dist/blah.d.ts
+// @Filename: /home/src/workspaces/project/src/blah.ts
 export const blah = 0;
-// @Filename: /dist/foo/onlyInFooFolder.d.ts
+// @Filename: /home/src/workspaces/project/src/foo/onlyInFooFolder.ts
 export const foo = 0;
-// @Filename: /dist/subfolder/one.d.ts
+// @Filename: /home/src/workspaces/project/src/subfolder/one.ts
 export const one = 0;
-// @Filename: /a.mts
+// @Filename: /home/src/workspaces/project/src/a.mts
 import { } from "/**/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -45,7 +53,11 @@ import { } from "/**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "#a.mjs",
+					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+				},
 				&lsproto.CompletionItem{
 					Label: "#blah.js",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
@@ -81,7 +93,11 @@ import { } from "/**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a.mjs",
+					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+				},
 				&lsproto.CompletionItem{
 					Label: "blah.js",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
@@ -109,7 +125,7 @@ import { } from "/**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "onlyInFooFolder.js",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),

@@ -57,6 +57,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 	compilerOptions *core.CompilerOptions,
 ) *lsproto.CompletionList {
 	if isInReferenceComment(file, position) {
+		return nil
 		// !!! HERE: get triple slash reference completions
 	}
 	if IsInString(file, position, contextToken) {
@@ -733,7 +734,7 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 					packageJsonInfo := program.GetPackageJsonInfo(packageFile)
 					if packageJsonInfo != nil && packageJsonInfo.Exists() {
 						seenPackageScope = true
-						exportsOrImportsLookup(&packageJsonInfo.Contents.Imports, fragment, directory, false, true)
+						exportsOrImportsLookup(&packageJsonInfo.Contents.Imports, fragment, directory, false /*isExports*/, true /*isImports*/)
 					}
 				}
 			}
@@ -1637,10 +1638,9 @@ func (l *LanguageService) getModulesForPathsPattern(
 			completePrefix = tspath.EnsureTrailingDirectorySeparator(directory) + normalizedPrefixBase
 		}
 
-		matches := readDirectory(
+		matches := l.ReadDirectory(
 			directory,
 			extensionOptions.extensionsToSearch,
-			nil, /*exclude*/
 			includeGlobs,
 		)
 
@@ -1675,7 +1675,7 @@ func (l *LanguageService) getModulesForPathsPattern(
 	}
 
 	getDirectoryMatches := func(directoryName string) []moduleCompletionNameAndKind {
-		directories := getDirectories(directoryName)
+		directories := l.GetDirectories(directoryName)
 		var result []moduleCompletionNameAndKind
 		for _, dir := range directories {
 			if dir != "node_modules" {
@@ -1712,19 +1712,6 @@ func (l *LanguageService) getModulesForPathsPattern(
 	}
 
 	return matches
-}
-
-func readDirectory(
-	path string,
-	extensions []string,
-	exclude []string,
-	include []string,
-) []string {
-	return nil // !!! HERE: decide how to implement: use registry? snapshot fs?
-}
-
-func getDirectories(directoryName string) []string {
-	return nil // !!! HERE: decide how to implement: use registry? snapshot fs?
 }
 
 func containsSlash(fragment string) bool {

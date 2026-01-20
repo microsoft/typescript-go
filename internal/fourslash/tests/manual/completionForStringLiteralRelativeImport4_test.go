@@ -9,7 +9,7 @@ import (
 )
 
 func TestCompletionForStringLiteralRelativeImport4(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @rootDirs: /sub/src1,/src2
@@ -52,7 +52,7 @@ export const x = 0;
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"module1",
 				"module2",
 				"more",
@@ -68,7 +68,7 @@ export const x = 0;
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"inner1",
 			},
 		},

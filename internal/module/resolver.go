@@ -656,12 +656,13 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 				if isPattern {
 					combinedLookup = strings.ReplaceAll(targetString, "*", subpath)
 				}
+				scopeContainingDirectory := tspath.EnsureTrailingDirectorySeparator(scope.PackageDirectory)
 				if r.tracer != nil {
 					r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2, "imports", key, combinedLookup)
-					r.tracer.write(diagnostics.Resolving_module_0_from_1, combinedLookup, scope.PackageDirectory+"/")
+					r.tracer.write(diagnostics.Resolving_module_0_from_1, combinedLookup, scopeContainingDirectory)
 				}
 				name, containingDirectory := r.name, r.containingDirectory
-				r.name, r.containingDirectory = combinedLookup, scope.PackageDirectory+"/"
+				r.name, r.containingDirectory = combinedLookup, scopeContainingDirectory
 				defer func() {
 					r.name, r.containingDirectory = name, containingDirectory
 				}()
