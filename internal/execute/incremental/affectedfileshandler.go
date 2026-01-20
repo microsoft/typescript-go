@@ -200,7 +200,8 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 		return
 	}
 
-	// At this point affectedFile is actually changed file with change in signature.
+	// At this point affectedFile is actually one of the changed files
+	// that has some change in its .d.ts signature.
 
 	// Since isolated modules dont change js files, files affected by change in signature is itself
 	// But we need to cleanup semantic diagnostics and queue dts emit for affected files
@@ -278,7 +279,8 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndReferences(dtsMayChang
 	}
 	h.handleDtsMayChangeOf(dtsMayChange, filePath, invalidateJsFiles)
 
-	// Remove the diagnostics of files that imports this file and references to this (direct or indirect)
+	// Remove the diagnostics of files that import this file and
+	// any files that are referenced by it (directly or indirectly)
 	for referencingFilePath := range h.program.snapshot.referencedMap.getReferencedBy(filePath) {
 		if h.handleDtsMayChangeOfFileAndReferences(dtsMayChange, referencingFilePath, invalidateJsFiles) {
 			return true
