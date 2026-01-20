@@ -14,7 +14,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -19259,16 +19258,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		flags |= SignatureFlagsIsUntypedSignatureInJSFile
 	}
 	for i, param := range declaration.Parameters() {
-		// Get the reparsed parameter if it's from a JSDoc comment
-		reparsedParam := param
-		if param.Name() != nil && param.Name().Flags&ast.NodeFlagsJSDoc != 0 {
-			reparsedName := astnav.GetReparsedNodeForNode(param.Name())
-			if reparsedName != param.Name() && reparsedName.Parent != nil {
-				reparsedParam = reparsedName.Parent
-			}
-		}
-		
-		paramSymbol := reparsedParam.Symbol()
+		paramSymbol := param.Symbol()
 		typeNode := param.Type()
 		// Include parameter symbol instead of property symbol in the signature
 		if paramSymbol != nil && paramSymbol.Flags&ast.SymbolFlagsProperty != 0 && !ast.IsBindingPattern(param.Name()) {
