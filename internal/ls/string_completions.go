@@ -1996,6 +1996,10 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		pathCompletions := completion.fromPaths
 		for _, pathCompletion := range pathCompletions {
 			if pathCompletion.name == name {
+				detail := name
+				if !strings.HasSuffix(name, pathCompletion.extension) {
+					detail += pathCompletion.extension
+				}
 				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}

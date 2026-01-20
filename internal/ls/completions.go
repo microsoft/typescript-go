@@ -4364,7 +4364,6 @@ func (l *LanguageService) createLSPCompletionItem(
 
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
-	var detail *string
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
 		if insertText == "" {
@@ -4377,18 +4376,6 @@ func (l *LanguageService) createLSPCompletionItem(
 	}
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
-	}
-	if kind == lsproto.CompletionItemKindFile {
-		for _, extensionModifier := range lsutil.FileExtensionKindModifiers {
-			if kindModifiers.Has(extensionModifier) {
-				if strings.HasSuffix(name, string(extensionModifier)) {
-					detail = ptrTo(name)
-				} else {
-					detail = ptrTo(name + string(extensionModifier))
-				}
-				break
-			}
-		}
 	}
 
 	if hasAction && source != "" {
@@ -4406,7 +4393,6 @@ func (l *LanguageService) createLSPCompletionItem(
 		LabelDetails:     labelDetails,
 		Kind:             &kind,
 		Tags:             tags,
-		Detail:           detail,
 		Preselect:        boolToPtr(preselect),
 		SortText:         ptrTo(string(sortText)),
 		FilterText:       strPtrTo(filterText),
