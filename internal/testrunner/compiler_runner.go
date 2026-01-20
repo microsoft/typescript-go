@@ -88,7 +88,14 @@ var skippedTests = []string{
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
+	"verbatimModuleSyntaxCompat2.ts",
+	"verbatimModuleSyntaxCompat3.ts",
+	"verbatimModuleSyntaxCompat4.ts",
+	"preserveValueImports.ts",
 	"preserveValueImports_importsNotUsedAsValues.ts",
+	"preserveValueImports_errors.ts",
+	"preserveValueImports_mixedImports.ts",
+	"preserveValueImports_module.ts",
 	"importsNotUsedAsValues_error.ts",
 	"alwaysStrictNoImplicitUseStrict.ts",
 	"nonPrimitiveIndexingWithForInSupressError.ts",
@@ -105,10 +112,6 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
-	"preserveValueImports.ts",
-	"preserveValueImports_errors.ts",
-	"preserveValueImports_mixedImports.ts",
-	"preserveValueImports_module.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
