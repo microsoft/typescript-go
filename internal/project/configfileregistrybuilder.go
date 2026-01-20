@@ -403,7 +403,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		createdFiles[path] = fileName
-		createdOrDeletedConfigFiles[path] = struct{}{}
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			createdOrDeletedConfigFiles[path] = struct{}{}
+		}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 
@@ -455,9 +458,6 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 
 	// Handle deletions of wildcard-included root files
 	for path, fileName := range deletedFiles {
-		if hasExcessiveChanges {
-			return c.invalidateCache(logger)
-		}
 		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 			entry.ChangeIf(
 				func(config *configFileEntry) bool {
@@ -480,10 +480,14 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 					}
 					maps.Copy(affectedProjects, config.retainingProjects)
 					logger.Logf("Root files for config %s changed", entry.Key())
+					shouldInvalidateCache = hasExcessiveChanges
 				},
 			)
-			return true
+			return !shouldInvalidateCache
 		})
+		if shouldInvalidateCache {
+			return c.invalidateCache(logger)
+		}
 	}
 
 	// Handle possible root file creation
