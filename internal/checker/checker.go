@@ -17940,24 +17940,15 @@ func (c *Checker) getWidenedProperty(prop *ast.Symbol, context *WideningContext)
 
 func (c *Checker) getPropertiesOfContext(context *WideningContext) []*ast.Symbol {
 	if context.resolvedProperties == nil {
-		names := make([]string, 0, 8)
-		symbols := make(map[string]*ast.Symbol)
-
+		names := collections.NewOrderedMapWithSizeHint[string, *ast.Symbol](8)
 		for _, t := range c.getSiblingsOfContext(context) {
 			if isObjectLiteralType(t) && t.objectFlags&ObjectFlagsContainsSpread == 0 {
 				for _, prop := range c.getPropertiesOfType(t) {
-					if _, ok := symbols[prop.Name]; !ok {
-						names = append(names, prop.Name)
-					}
-					symbols[prop.Name] = prop
+					names.Set(prop.Name, prop)
 				}
 			}
 		}
-		resolvedProperties := make([]*ast.Symbol, 0, len(names))
-		for _, name := range names {
-			resolvedProperties = append(resolvedProperties, symbols[name])
-		}
-		context.resolvedProperties = resolvedProperties
+		context.resolvedProperties = slices.Collect(names.Values())
 	}
 	return context.resolvedProperties
 }
