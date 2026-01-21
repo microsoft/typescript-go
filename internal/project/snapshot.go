@@ -422,6 +422,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)
+		if project.Program != nil {
+			for _, file := range project.Program.SourceFiles() {
+				session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+			}
+		}
 		if project.ProgramLastUpdate == newSnapshotID {
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
@@ -441,8 +446,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	for _, config := range newSnapshot.ConfigFileRegistry.configs {
 		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
 			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
-				// Ref all extended configs for this snapshot. Since parsing uses Load (not Acquire),
-				// we ref explicitly here based on the deduped ExtendedSourceFiles() list.
 				session.extendedConfigCache.Ref(newSnapshot.toPath(file))
 			}
 		}

@@ -143,7 +143,7 @@ func NewSession(init *SessionInit) *Session {
 	if parseCache == nil {
 		parseCache = NewParseCache(RefCountCacheOptions{})
 	}
-	extendedConfigCache := NewExtendedConfigCache(init.Logger)
+	extendedConfigCache := NewExtendedConfigCache()
 
 	session := &Session{
 		backgroundCtx:       init.BackgroundCtx,
