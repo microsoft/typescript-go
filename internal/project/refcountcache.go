@@ -4,12 +4,14 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type refCountCacheEntry[V any] struct {
 	mu       sync.Mutex
 	value    V
 	refCount int
+	deleted  bool
 }
 
 type RefCountCacheOptions struct {
@@ -45,10 +47,20 @@ func NewRefCountCache[K comparable, V any, AcquireArgs any](
 //
 // The caller is responsible for calling Deref when done with the value.
 func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs AcquireArgs) V {
-	entry, loaded := c.loadOrStoreNewLockedEntry(identity)
+	entry, loaded := c.loadOrStoreLockedEntry(identity, true)
 	defer entry.mu.Unlock()
 	if !loaded || c.isExpired != nil && c.isExpired(identity, entry.value, acquireArgs) {
-		// New entry - parse the value
+		entry.value = c.parse(identity, acquireArgs)
+	}
+	return entry.value
+}
+
+// Load retrieves or creates a cache entry without modifying the ref count.
+// The caller should explicitly Ref later if the result is used.
+func (c *RefCountCache[K, V, AcquireArgs]) Load(identity K, acquireArgs AcquireArgs) V {
+	entry, loaded := c.loadOrStoreLockedEntry(identity, false)
+	defer entry.mu.Unlock()
+	if !loaded || c.isExpired != nil && c.isExpired(identity, entry.value, acquireArgs) {
 		entry.value = c.parse(identity, acquireArgs)
 	}
 	return entry.value
@@ -68,13 +80,11 @@ func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
 	}
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
-	if entry.refCount <= 0 && !c.Options.DisableDeletion {
-		// Entry was deleted while we were acquiring the lock
-		newEntry, loaded := c.loadOrStoreNewLockedEntry(identity)
+	if entry.deleted {
+		// Entry was deleted while we were acquiring the lock; recover it
+		newEntry, _ := c.loadOrStoreLockedEntry(identity, true)
 		defer newEntry.mu.Unlock()
-		if !loaded {
-			newEntry.value = entry.value
-		}
+		newEntry.value = entry.value
 		return
 	}
 	entry.refCount++
@@ -92,25 +102,29 @@ func (c *RefCountCache[K, V, AcquireArgs]) Deref(identity K) {
 	defer entry.mu.Unlock()
 	entry.refCount--
 	if entry.refCount <= 0 && !c.Options.DisableDeletion {
+		entry.deleted = true
 		c.entries.Delete(identity)
 	}
 }
 
-// loadOrStoreNewLockedEntry loads an existing entry or creates a new one.
-// The returned entry's mutex is locked and its refCount is incremented
-// (or initialized to 1 in the case of a new entry).
-func (c *RefCountCache[K, V, AcquireArgs]) loadOrStoreNewLockedEntry(key K) (*refCountCacheEntry[V], bool) {
-	entry := &refCountCacheEntry[V]{refCount: 1}
+// loadOrStoreLockedEntry loads an existing entry or creates a new one.
+// The returned entry's mutex is locked. If ref is true, the refCount is
+// incremented (or initialized to 1 for a new entry).
+func (c *RefCountCache[K, V, AcquireArgs]) loadOrStoreLockedEntry(key K, ref bool) (*refCountCacheEntry[V], bool) {
+	entry := &refCountCacheEntry[V]{refCount: core.IfElse(ref, 1, 0)}
 	entry.mu.Lock()
 	existing, loaded := c.entries.LoadOrStore(key, entry)
 	if loaded {
+		entry.mu.Unlock()
 		existing.mu.Lock()
-		if existing.refCount <= 0 && !c.Options.DisableDeletion {
+		if existing.deleted {
 			// Existing entry was deleted while we were acquiring the lock
 			existing.mu.Unlock()
-			return c.loadOrStoreNewLockedEntry(key)
+			return c.loadOrStoreLockedEntry(key, ref)
 		}
-		existing.refCount++
+		if ref {
+			existing.refCount++
+		}
 		return existing, true
 	}
 	return entry, false

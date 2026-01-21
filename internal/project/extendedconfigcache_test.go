@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -119,10 +118,6 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 	t.Run("multi-extends shared ancestor counted once", func(t *testing.T) {
 		t.Parallel()
 
-		if os.Getenv("TSGO_REPRO_EXTENDED_CONFIG_REFCOUNT") == "" {
-			t.Skip("repro test for extended config refcount mismatch; set TSGO_REPRO_EXTENDED_CONFIG_REFCOUNT=1 to run")
-		}
-
 		// One config extends *two* configs; both extend a shared root.
 		// Expected behavior: ExtendedSourceFiles() is deduped, so the shared root should only
 		// be ref'd once for this config.
@@ -173,6 +168,9 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 	t.Run("ExtendedSourceFiles can contain same path twice (case-insensitive)", func(t *testing.T) {
 		t.Parallel()
 
+		// This test is descriptive, not prescriptive. This seems bad and unintentional,
+		// but is here to show that while the problem exists in the underlying config parsing
+		// API, it doesn't disrupt the cache ref counting.
 		files := map[string]any{
 			"/project/tsconfig.json": `{
 				"extends": ["./Shared.json", "./shared.json"]
@@ -198,12 +196,6 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 		assert.Equal(t, len(extended), 2)
 		assert.Equal(t, extended[0], "/project/Shared.json")
 		assert.Equal(t, extended[1], "/project/shared.json")
-
-		uniquePaths := make(map[tspath.Path]struct{})
-		for _, fileName := range extended {
-			uniquePaths[tspath.ToPath(fileName, h.GetCurrentDirectory(), h.FS().UseCaseSensitiveFileNames())] = struct{}{}
-		}
-		assert.Equal(t, len(uniquePaths), 1)
 	})
 
 	t.Run("project system dedupes case-only extends via cache", func(t *testing.T) {
@@ -244,7 +236,7 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 		// (not reparsed), so tsconfig.common.json doesn't get Acquired again. But when projectA
 		// is closed, tsconfig.common.json gets deref'd. If projectB didn't properly ref
 		// tsconfig.common.json, it will be deleted and cause a panic on next snapshot clone.
-		transitiveFiles := map[string]any{
+		files := map[string]any{
 			"/user/username/projects/shared/tsconfig.common.json": `{
 					"compilerOptions": { "strict": true }
 				}`,
@@ -263,10 +255,10 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 			"/user/username/projects/other/src/main.ts":    "const other = 3;",
 		}
 
-		session := setup(transitiveFiles)
+		session := setup(files)
 
 		// Step 1: Open file in projectA - this parses the full extends chain
-		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectA/src/main.ts", 1, transitiveFiles["/user/username/projects/projectA/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectA/src/main.ts", 1, files["/user/username/projects/projectA/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Verify extended configs are in cache with correct ref counts
 		baseEntry, baseOk := session.extendedConfigCache.entries.Load("/user/username/projects/shared/tsconfig.base.json")
@@ -278,12 +270,12 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 
 		// Step 2: Open file in projectB - this should acquire tsconfig.base.json from cache
 		// (not reparse it), and should also ref tsconfig.common.json (but doesn't due to bug)
-		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectB/src/main.ts", 1, transitiveFiles["/user/username/projects/projectB/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.DidOpenFile(context.Background(), "file:///user/username/projects/projectB/src/main.ts", 1, files["/user/username/projects/projectB/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Step 3: Close projectA file and open an unrelated file to force projectA cleanup
 		session.DidCloseFile(context.Background(), "file:///user/username/projects/projectA/src/main.ts")
 		// Opening another file triggers cleanup of closed projects
-		session.DidOpenFile(context.Background(), "file:///user/username/projects/other/src/main.ts", 1, transitiveFiles["/user/username/projects/other/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.DidOpenFile(context.Background(), "file:///user/username/projects/other/src/main.ts", 1, files["/user/username/projects/other/src/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Close the other file too so only projectB remains
 		session.DidCloseFile(context.Background(), "file:///user/username/projects/other/src/main.ts")

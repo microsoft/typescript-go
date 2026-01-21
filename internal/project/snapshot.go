@@ -438,17 +438,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 		}
 	}
-	for path, config := range newSnapshot.ConfigFileRegistry.configs {
+	for _, config := range newSnapshot.ConfigFileRegistry.configs {
 		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
-			if prevConfig, ok := s.ConfigFileRegistry.configs[path]; ok {
-				if prevConfig.commandLine != nil && config.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile {
-					logger.Logf("Ref extended config files of config: %s", config.commandLine.ConfigFile.SourceFile.FileName())
-					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
-						// Ref count extended configs that were already loaded in the previous snapshot.
-						// New/changed ones were handled during config file registry building.
-						session.extendedConfigCache.Ref(s.toPath(file))
-					}
-				}
+			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
+				// Ref all extended configs for this snapshot. Since parsing uses Load (not Acquire),
+				// we ref explicitly here based on the deduped ExtendedSourceFiles() list.
+				session.extendedConfigCache.Ref(newSnapshot.toPath(file))
 			}
 		}
 	}
