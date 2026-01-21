@@ -1,4 +1,5 @@
 // @strict: true
+// @noEmit: true
 
 // Minimal repro for performance issue with nested spreads on discriminated union types
 // with intersection base types. This file should typecheck in reasonable time (< 1s).
