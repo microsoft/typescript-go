@@ -478,7 +478,7 @@ func (s *Snapshot) dispose(session *Session) {
 	}
 	for _, config := range s.ConfigFileRegistry.configs {
 		if config.commandLine != nil {
-			session.logger.Logf("Disposing snapshot %d: deref extended config files of config: %s", s.id, config.commandLine.ConfigFile.SourceFile.FileName())
+			// session.logger.Logf("Disposing snapshot %d: deref extended config files of config: %s", s.id, config.commandLine.ConfigFile.SourceFile.FileName())
 			for _, file := range config.commandLine.ExtendedSourceFiles() {
 				session.extendedConfigCache.Deref(session.toPath(file))
 			}
