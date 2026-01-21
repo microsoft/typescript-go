@@ -25,21 +25,6 @@ declare global {
 >global : Symbol(global, Decl(esm.d.mts, 3, 1))
 
     var expectedCondition: "import";
->expectedCondition : Symbol(expectedCondition, Decl(esm.d.mts, 5, 7), Decl(cjs.d.ts, 5, 7))
-}
-
-=== /node_modules/pkg/cjs.d.ts ===
-// This file should NOT be resolved - it's the "default" condition fallback
-export interface PkgType {
->PkgType : Symbol(PkgType, Decl(cjs.d.ts, 0, 0))
-
-    cjs: true;  // Different shape - will cause error if wrong file is used
->cjs : Symbol(PkgType.cjs, Decl(cjs.d.ts, 1, 26))
-}
-declare global {
->global : Symbol(global, Decl(cjs.d.ts, 3, 1))
-
-    var expectedCondition: "default";  // Conflicts with esm.d.mts if both are loaded
->expectedCondition : Symbol(expectedCondition, Decl(esm.d.mts, 5, 7), Decl(cjs.d.ts, 5, 7))
+>expectedCondition : Symbol(expectedCondition, Decl(esm.d.mts, 5, 7))
 }
 

@@ -28,16 +28,15 @@ Directory '/.src/node_modules' does not exist, skipping all lookups in it.
 Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
 File '/node_modules/pkg/package.json' exists according to earlier cached lookups.
 Entering conditional exports.
-Saw non-matching condition 'import'.
-Matched 'exports' condition 'default'.
+Matched 'exports' condition 'import'.
 Entering conditional exports.
 Matched 'exports' condition 'types'.
-Using 'exports' subpath '.' with target './cjs.d.ts'.
-File '/node_modules/pkg/cjs.d.ts' exists - use it as a name resolution result.
+Using 'exports' subpath '.' with target './esm.d.mts'.
+File '/node_modules/pkg/esm.d.mts' exists - use it as a name resolution result.
 'package.json' does not have a 'peerDependencies' field.
 Resolved under condition 'types'.
 Exiting conditional exports.
-Resolved under condition 'default'.
+Resolved under condition 'import'.
 Exiting conditional exports.
-Resolving real path for '/node_modules/pkg/cjs.d.ts', result '/node_modules/pkg/cjs.d.ts'.
-======== Type reference directive 'pkg' was successfully resolved to '/node_modules/pkg/cjs.d.ts' with Package ID 'pkg/cjs.d.ts@1.0.0', primary: false. ========
+Resolving real path for '/node_modules/pkg/esm.d.mts', result '/node_modules/pkg/esm.d.mts'.
+======== Type reference directive 'pkg' was successfully resolved to '/node_modules/pkg/esm.d.mts' with Package ID 'pkg/esm.d.mts@1.0.0', primary: false. ========
