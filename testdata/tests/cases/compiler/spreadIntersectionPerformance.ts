@@ -32,11 +32,10 @@ type Action =
   | Base & { type: '10'; settings: S10 }
   | Base & { type: '11'; settings: S11 };
 
+declare function read<T>(arg: T): void;
 declare const step: Action;
 
 read({
   ...step,
   settings: { ...step.settings, input: { ...step.settings.input, k: ['5'] } },
 });
-
-declare function read<T>(arg: T): void;
