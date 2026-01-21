@@ -16,7 +16,6 @@ type RefCountCacheOptions struct {
 	// DisableDeletion prevents entries from being removed from the cache.
 	// Used for testing.
 	DisableDeletion bool
-	Trace           func(format string, args ...any)
 }
 
 type RefCountCache[K comparable, V any, AcquireArgs any] struct {
@@ -46,15 +45,12 @@ func NewRefCountCache[K comparable, V any, AcquireArgs any](
 //
 // The caller is responsible for calling Deref when done with the value.
 func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs AcquireArgs) V {
-	c.Trace("begin acquire %v", identity)
 	entry, loaded := c.loadOrStoreNewLockedEntry(identity)
 	defer entry.mu.Unlock()
 	if !loaded || c.isExpired != nil && c.isExpired(identity, entry.value, acquireArgs) {
 		// New entry - parse the value
-		c.Trace("parsing %v", identity)
 		entry.value = c.parse(identity, acquireArgs)
 	}
-	c.Trace("end acquire %v: ref count: %d", identity, entry.refCount)
 	return entry.value
 }
 
@@ -66,7 +62,6 @@ func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
 // Ref increments the reference count for an existing entry.
 // Panics if the entry does not exist.
 func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
-	c.Trace("begin ref %v", identity)
 	entry, ok := c.entries.Load(identity)
 	if !ok {
 		panic("cache entry not found")
@@ -83,17 +78,14 @@ func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
 		return
 	}
 	entry.refCount++
-	c.Trace("end ref %v: ref count: %d", identity, entry.refCount)
 }
 
 // Deref decrements the reference count for an entry.
 // When the refcount reaches zero, the entry is removed from the cache
 // (unless DisableDeletion is set).
 func (c *RefCountCache[K, V, AcquireArgs]) Deref(identity K) {
-	c.Trace("begin deref %v", identity)
 	entry, ok := c.entries.Load(identity)
 	if !ok {
-		c.Trace("end deref: %v: entry not found", identity)
 		return
 	}
 	entry.mu.Lock()
@@ -102,7 +94,6 @@ func (c *RefCountCache[K, V, AcquireArgs]) Deref(identity K) {
 	if entry.refCount <= 0 && !c.Options.DisableDeletion {
 		c.entries.Delete(identity)
 	}
-	c.Trace("end deref %v: ref count: %d", identity, entry.refCount)
 }
 
 // loadOrStoreNewLockedEntry loads an existing entry or creates a new one.
@@ -123,10 +114,4 @@ func (c *RefCountCache[K, V, AcquireArgs]) loadOrStoreNewLockedEntry(key K) (*re
 		return existing, true
 	}
 	return entry, false
-}
-
-func (c *RefCountCache[K, V, AcquireArgs]) Trace(format string, args ...any) {
-	if c.Options.Trace != nil {
-		c.Options.Trace(format, args...)
-	}
 }

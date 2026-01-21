@@ -446,9 +446,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
 						// Ref count extended configs that were already loaded in the previous snapshot.
 						// New/changed ones were handled during config file registry building.
-						if !session.extendedConfigCache.Has(s.toPath(file)) {
-							panic(fmt.Errorf("expected extended config file to be in cache\nconfig file: %s\nextended config file: %s", config.commandLine.ConfigFile.SourceFile.FileName(), file))
-						}
 						session.extendedConfigCache.Ref(s.toPath(file))
 					}
 				}
@@ -478,7 +475,6 @@ func (s *Snapshot) dispose(session *Session) {
 	}
 	for _, config := range s.ConfigFileRegistry.configs {
 		if config.commandLine != nil {
-			// session.logger.Logf("Disposing snapshot %d: deref extended config files of config: %s", s.id, config.commandLine.ConfigFile.SourceFile.FileName())
 			for _, file := range config.commandLine.ExtendedSourceFiles() {
 				session.extendedConfigCache.Deref(session.toPath(file))
 			}
