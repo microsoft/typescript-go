@@ -422,12 +422,14 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)
-		if project.Program != nil {
-			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
-			}
-		}
 		if project.ProgramLastUpdate == newSnapshotID {
+			// Only ref source files when the program was created/updated in this snapshot.
+			// This matches dispose, which only derefs when programCounter reaches zero.
+			if project.Program != nil {
+				for _, file := range project.Program.SourceFiles() {
+					session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
 			// so it's GC'd and to ensure the project can't access any data not already in the
