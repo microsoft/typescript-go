@@ -387,8 +387,8 @@ func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*as
 		// This ensures that identifiers in the expression are correctly identified as references and
 		// transformed to property access expressions (e.g., `Foo` -> `Foo_1.Foo` for named imports).
 		grandparentNode := tx.pushNode(tx.currentModuleInfo.exportEquals.AsNode())
+		defer tx.popNode(grandparentNode)
 		expressionResult := tx.Visitor().VisitNode(tx.currentModuleInfo.exportEquals.Expression)
-		tx.popNode(grandparentNode)
 		if expressionResult != nil {
 			statement := tx.Factory().NewExpressionStatement(
 				tx.Factory().NewAssignmentExpression(
