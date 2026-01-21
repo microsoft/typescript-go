@@ -1101,6 +1101,9 @@ func (l *LanguageService) getCompletionData(
 		if err != nil {
 			return err
 		}
+		if view == nil {
+			return nil
+		}
 
 		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
 		return nil
@@ -5863,6 +5866,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		if err != nil {
 			return nil, err
 		}
+		// view may be nil for untitled/dynamic files
 		importAdder := autoimport.NewImportAdder(
 			ctx,
 			program,

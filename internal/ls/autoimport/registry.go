@@ -410,8 +410,11 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 	neededDirectories := make(map[tspath.Path]string)
 	for path, fileName := range change.OpenFiles {
 		neededProjects[core.FirstResult(b.host.GetDefaultProject(path))] = struct{}{}
-		if strings.HasPrefix(fileName, "^/") {
+		if tspath.IsDynamicFileName(fileName) {
 			continue
+		}
+		if !b.specifierCache.Has(path) {
+			b.specifierCache.Set(path, &collections.SyncMap[tspath.Path, string]{})
 		}
 		dir := fileName
 		dirPath := path
@@ -426,10 +429,6 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 				break
 			}
 			neededDirectories[dirPath] = dir
-		}
-
-		if !b.specifierCache.Has(path) {
-			b.specifierCache.Set(path, &collections.SyncMap[tspath.Path, string]{})
 		}
 	}
 

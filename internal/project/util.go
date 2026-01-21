@@ -1,7 +1,7 @@
 package project
 
-import "strings"
+import "github.com/microsoft/typescript-go/internal/tspath"
 
 func isDynamicFileName(fileName string) bool {
-	return strings.HasPrefix(fileName, "^")
+	return tspath.IsDynamicFileName(fileName)
 }
