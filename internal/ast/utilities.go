@@ -153,7 +153,7 @@ func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 }
 
 func GetRightMostAssignedExpression(node *Node) *Node {
-	for IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+	for IsAssignmentExpression(node, false /*excludeCompoundAssignment*/) {
 		node = node.AsBinaryExpression().Right
 	}
 	return node
@@ -1286,7 +1286,7 @@ func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
 }
 
-func isVoidZero(node *Node) bool {
+func IsVoidZero(node *Node) bool {
 	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
 }
 
@@ -1394,15 +1394,16 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	// !!!
 	switch declaration.Kind {
-	case KindBinaryExpression:
-		bin := declaration.AsBinaryExpression()
-		kind := GetAssignmentDeclarationKind(bin)
-		if kind == JSDeclarationKindProperty || kind == JSDeclarationKindThisProperty {
-			if name := GetElementOrPropertyAccessName(bin.Left); name != nil {
+	case KindBinaryExpression, KindCallExpression:
+		switch GetAssignmentDeclarationKind(declaration) {
+		case JSDeclarationKindProperty, JSDeclarationKindThisProperty, JSDeclarationKindExportsProperty:
+			left := declaration.AsBinaryExpression().Left
+			if name := GetElementOrPropertyAccessName(left); name != nil {
 				return name
-			} else {
-				return bin.Left
 			}
+			return left
+		case JSDeclarationKindObjectDefinePropertyValue, JSDeclarationKindObjectDefinePropertyExports:
+			return declaration.Arguments()[1]
 		}
 		return nil
 	case KindExportAssignment, KindJSExportAssignment:
@@ -1454,36 +1455,69 @@ type JSDeclarationKind int
 
 const (
 	JSDeclarationKindNone JSDeclarationKind = iota
-	/// module.exports = expr
+	// module.exports = expr
 	JSDeclarationKindModuleExports
-	/// exports.name = expr
-	/// module.exports.name = expr
+	// exports.name = expr
+	// module.exports.name = expr
 	JSDeclarationKindExportsProperty
-	/// this.name = expr
+	// this.name = expr
 	JSDeclarationKindThisProperty
-	/// F.name = expr, F[name] = expr
+	// F.name = expr, F[name] = expr, in JS or TS file
 	JSDeclarationKindProperty
+	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
+	// Object.defineProperty(x, 'name', { get: Function, set: Function });
+	// Object.defineProperty(x, 'name', { get: Function });
+	// Object.defineProperty(x, 'name', { set: Function });
+	JSDeclarationKindObjectDefinePropertyValue
+	// Object.defineProperty(exports || module.exports, 'name', ...);
+	JSDeclarationKindObjectDefinePropertyExports
 )
 
-func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
-	if bin.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(bin.Left) {
-		return JSDeclarationKindNone
-	}
-	if IsInJSFile(bin.Left) && IsModuleExportsAccessExpression(bin.Left) {
-		return JSDeclarationKindModuleExports
-	} else if IsInJSFile(bin.Left) &&
-		(IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
-		GetElementOrPropertyAccessName(bin.Left) != nil {
-		return JSDeclarationKindExportsProperty
-	}
-	if IsInJSFile(bin.Left) && bin.Left.Expression().Kind == KindThisKeyword {
-		return JSDeclarationKindThisProperty
-	}
-	if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && IsIdentifier(bin.Left.Name()) ||
-		bin.Left.Kind == KindElementAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) {
-		return JSDeclarationKindProperty
+func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
+	switch node.Kind {
+	case KindBinaryExpression:
+		bin := node.AsBinaryExpression()
+		if bin.OperatorToken.Kind == KindEqualsToken && IsAccessExpression(bin.Left) {
+			if IsInJSFile(bin.Left) {
+				if IsModuleExportsAccessExpression(bin.Left) {
+					return JSDeclarationKindModuleExports
+				}
+				if (IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
+					GetElementOrPropertyAccessName(bin.Left) != nil {
+					return JSDeclarationKindExportsProperty
+				}
+				if bin.Left.Expression().Kind == KindThisKeyword {
+					return JSDeclarationKindThisProperty
+				}
+			}
+			if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && IsIdentifier(bin.Left.Name()) ||
+				bin.Left.Kind == KindElementAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) {
+				return JSDeclarationKindProperty
+			}
+		}
+	case KindCallExpression:
+		if IsInJSFile(node) && IsBindableObjectDefinePropertyCall(node) {
+			entityName := node.Arguments()[0]
+			if IsExportsIdentifier(entityName) || IsModuleExportsAccessExpression(entityName) {
+				return JSDeclarationKindObjectDefinePropertyExports
+			}
+			return JSDeclarationKindObjectDefinePropertyValue
+		}
 	}
 	return JSDeclarationKindNone
+}
+
+func IsBindableObjectDefinePropertyCall(node *Node) bool {
+	if args := node.Arguments(); len(args) == 3 {
+		if expr := node.Expression(); IsPropertyAccessExpression(expr) &&
+			IsIdentifier(expr.Expression()) && expr.Expression().Text() == "Object" &&
+			expr.Name().Text() == "defineProperty" &&
+			IsStringOrNumericLiteralLike(args[1]) &&
+			IsBindableStaticNameExpression(args[0] /*excludeThisKeyword*/, true) {
+			return true
+		}
+	}
+	return false
 }
 
 /**
@@ -1517,31 +1551,17 @@ func IsEntityNameExpression(node *Node) bool {
 }
 
 func IsEntityNameExpressionEx(node *Node, allowJS bool) bool {
-	if node.Kind == KindIdentifier || IsPropertyAccessEntityNameExpression(node, allowJS) {
-		return true
-	}
-	if allowJS {
-		return node.Kind == KindThisKeyword || isElementAccessEntityNameExpression(node, allowJS)
-	}
-	return false
+	return IsIdentifier(node) ||
+		IsPropertyAccessEntityNameExpression(node, allowJS) ||
+		allowJS && (node.Kind == KindThisKeyword || isElementAccessEntityNameExpression(node, allowJS))
 }
 
 func IsPropertyAccessEntityNameExpression(node *Node, allowJS bool) bool {
-	if node.Kind == KindPropertyAccessExpression {
-		expr := node.AsPropertyAccessExpression()
-		return expr.Name().Kind == KindIdentifier && IsEntityNameExpressionEx(expr.Expression, allowJS)
-	}
-	return false
+	return IsPropertyAccessExpression(node) && node.Name().Kind == KindIdentifier && IsEntityNameExpressionEx(node.Expression(), allowJS)
 }
 
 func isElementAccessEntityNameExpression(node *Node, allowJS bool) bool {
-	if node.Kind == KindElementAccessExpression {
-		expr := node.AsElementAccessExpression()
-		if IsStringOrNumericLiteralLike(SkipParentheses(expr.ArgumentExpression)) {
-			return IsEntityNameExpressionEx(expr.Expression, allowJS)
-		}
-	}
-	return false
+	return IsElementAccessExpression(node) && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression) && IsEntityNameExpressionEx(node.Expression(), allowJS)
 }
 
 func IsDottedName(node *Node) bool {
@@ -2009,6 +2029,25 @@ func IsComputedNonLiteralName(name *Node) bool {
 
 func IsQuestionToken(node *Node) bool {
 	return node != nil && node.Kind == KindQuestionToken
+}
+
+func EntityNameToString(name *Node, getTextOfNode func(*Node) string) string {
+	switch name.Kind {
+	case KindThisKeyword:
+		return "this"
+	case KindIdentifier, KindPrivateIdentifier:
+		if NodeIsSynthesized(name) || getTextOfNode == nil {
+			return name.Text()
+		}
+		return getTextOfNode(name)
+	case KindQualifiedName:
+		return EntityNameToString(name.AsQualifiedName().Left, getTextOfNode) + "." + EntityNameToString(name.AsQualifiedName().Right, getTextOfNode)
+	case KindPropertyAccessExpression:
+		return EntityNameToString(name.Expression(), getTextOfNode) + "." + EntityNameToString(name.AsPropertyAccessExpression().Name(), getTextOfNode)
+	case KindJsxNamespacedName:
+		return EntityNameToString(name.AsJsxNamespacedName().Namespace, getTextOfNode) + ":" + EntityNameToString(name.AsJsxNamespacedName().Name(), getTextOfNode)
+	}
+	panic("Unhandled case in EntityNameToString")
 }
 
 func GetTextOfPropertyName(name *Node) string {
@@ -2726,6 +2765,10 @@ func IsModuleExportsAccessExpression(node *Node) bool {
 		}
 	}
 	return false
+}
+
+func IsModuleExportsQualifiedName(node *Node) bool {
+	return IsQualifiedName(node) && IsModuleIdentifier(node.AsQualifiedName().Left) && node.AsQualifiedName().Right.Text() == "exports"
 }
 
 func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.CompilerOptions) bool {
@@ -4180,6 +4223,25 @@ func GetRestParameterElementType(node *ParameterDeclarationNode) *Node {
 		return core.FirstOrNil(node.AsTypeReferenceNode().TypeArguments.Nodes)
 	}
 	return nil
+}
+
+func TagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
+	if lhs.Kind != rhs.Kind {
+		return false
+	}
+	switch lhs.Kind {
+	case KindIdentifier:
+		return lhs.Text() == rhs.Text()
+	case KindThisKeyword:
+		return true
+	case KindJsxNamespacedName:
+		return lhs.AsJsxNamespacedName().Namespace.Text() == rhs.AsJsxNamespacedName().Namespace.Text() &&
+			lhs.AsJsxNamespacedName().Name().Text() == rhs.AsJsxNamespacedName().Name().Text()
+	case KindPropertyAccessExpression:
+		return lhs.AsPropertyAccessExpression().Name().Text() == rhs.AsPropertyAccessExpression().Name().Text() &&
+			TagNamesAreEquivalent(lhs.Expression(), rhs.Expression())
+	}
+	panic("Unhandled case in TagNamesAreEquivalent")
 }
 
 func isTagName(node *Node) bool {

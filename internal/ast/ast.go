@@ -2133,6 +2133,9 @@ type (
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
 	CallOrNewExpression            = Node // CallExpression | NewExpression
+	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
+	AnyImportSyntax                = Node // ImportDeclaration | ImportEqualsDeclaration
+	AnyImportOrRequireStatement    = Node // AnyImportSyntax | RequireVariableStatement
 )
 
 // Aliases for node singletons
@@ -2251,7 +2254,7 @@ func GetDeclarationFromName(name *Node) *Declaration {
 			return nil
 		}
 		binExp := parent.Parent
-		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp) != JSDeclarationKindNone {
 			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
 			leftHasSymbol := false
 			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
@@ -6834,6 +6837,7 @@ func IsElementAccessExpression(node *Node) bool {
 
 type CallExpression struct {
 	ExpressionBase
+	DeclarationBase
 	compositeNodeBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
@@ -11166,7 +11170,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				}
 			}
 		case KindBinaryExpression:
-			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			switch GetAssignmentDeclarationKind(node) {
 			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
 				addDeclaration(node)
 			}

@@ -206,11 +206,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	fsFromMap := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	fs := bundled.WrapFS(fsFromMap)
 
-	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
-		Err: &err,
+		Err: io.Discard,
 
 		Cwd:                "/",
 		FS:                 fs,
@@ -452,6 +451,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	<-f.server.InitComplete()
 }
 
+// If modifying the defaults, update GetDefaultCapabilities too.
 var (
 	ptrTrue                       = ptrTo(true)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
@@ -506,7 +506,107 @@ var (
 			CollapsedText: ptrTrue, // Unused by our testing, but set to exercise the code.
 		},
 	}
+	defaultDiagnosticCapabilities = &lsproto.DiagnosticClientCapabilities{
+		RelatedInformation: ptrTrue,
+		TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+			ValueSet: []lsproto.DiagnosticTag{
+				lsproto.DiagnosticTagUnnecessary,
+				lsproto.DiagnosticTagDeprecated,
+			},
+		},
+	}
+	defaultPublishDiagnosticCapabilities = &lsproto.PublishDiagnosticsClientCapabilities{
+		RelatedInformation: ptrTrue,
+		TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+			ValueSet: []lsproto.DiagnosticTag{
+				lsproto.DiagnosticTagUnnecessary,
+				lsproto.DiagnosticTagDeprecated,
+			},
+		},
+	}
 )
+
+func GetDefaultCapabilities() *lsproto.ClientCapabilities {
+	return &lsproto.ClientCapabilities{
+		General: &lsproto.GeneralClientCapabilities{
+			PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+		},
+		TextDocument: &lsproto.TextDocumentClientCapabilities{
+			Completion: &lsproto.CompletionClientCapabilities{
+				CompletionItem: &lsproto.ClientCompletionItemOptions{
+					SnippetSupport:          ptrTrue,
+					CommitCharactersSupport: ptrTrue,
+					PreselectSupport:        ptrTrue,
+					LabelDetailsSupport:     ptrTrue,
+					InsertReplaceSupport:    ptrTrue,
+					DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+				},
+				CompletionList: &lsproto.CompletionListCapabilities{
+					ItemDefaults: &[]string{"commitCharacters", "editRange"},
+				},
+			},
+			Diagnostic: &lsproto.DiagnosticClientCapabilities{
+				RelatedInformation: ptrTrue,
+				TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+					ValueSet: []lsproto.DiagnosticTag{
+						lsproto.DiagnosticTagUnnecessary,
+						lsproto.DiagnosticTagDeprecated,
+					},
+				},
+			},
+			PublishDiagnostics: &lsproto.PublishDiagnosticsClientCapabilities{
+				RelatedInformation: ptrTrue,
+				TagSupport: &lsproto.ClientDiagnosticsTagOptions{
+					ValueSet: []lsproto.DiagnosticTag{
+						lsproto.DiagnosticTagUnnecessary,
+						lsproto.DiagnosticTagDeprecated,
+					},
+				},
+			},
+			Definition: &lsproto.DefinitionClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			TypeDefinition: &lsproto.TypeDefinitionClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			Implementation: &lsproto.ImplementationClientCapabilities{
+				LinkSupport: ptrTrue,
+			},
+			Hover: &lsproto.HoverClientCapabilities{
+				ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+			},
+			SignatureHelp: &lsproto.SignatureHelpClientCapabilities{
+				SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+					DocumentationFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+					ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+						LabelOffsetSupport: ptrTrue,
+					},
+					ActiveParameterSupport: ptrTrue,
+				},
+				ContextSupport: ptrTrue,
+			},
+			DocumentSymbol: &lsproto.DocumentSymbolClientCapabilities{
+				HierarchicalDocumentSymbolSupport: ptrTrue,
+			},
+			FoldingRange: &lsproto.FoldingRangeClientCapabilities{
+				RangeLimit: ptrTo[uint32](5000),
+				FoldingRangeKind: &lsproto.ClientFoldingRangeKindOptions{
+					ValueSet: &[]lsproto.FoldingRangeKind{
+						lsproto.FoldingRangeKindComment,
+						lsproto.FoldingRangeKindImports,
+						lsproto.FoldingRangeKindRegion,
+					},
+				},
+				FoldingRange: &lsproto.ClientFoldingRangeOptions{
+					CollapsedText: ptrTrue,
+				},
+			},
+		},
+		Workspace: &lsproto.WorkspaceClientCapabilities{
+			Configuration: ptrTrue,
+		},
+	}
+}
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
 	var capabilitiesWithDefaults lsproto.ClientCapabilities
@@ -523,26 +623,10 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.Diagnostic == nil {
-		capabilitiesWithDefaults.TextDocument.Diagnostic = &lsproto.DiagnosticClientCapabilities{
-			RelatedInformation: ptrTrue,
-			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
-				ValueSet: []lsproto.DiagnosticTag{
-					lsproto.DiagnosticTagUnnecessary,
-					lsproto.DiagnosticTagDeprecated,
-				},
-			},
-		}
+		capabilitiesWithDefaults.TextDocument.Diagnostic = defaultDiagnosticCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
-		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
-			RelatedInformation: ptrTrue,
-			TagSupport: &lsproto.ClientDiagnosticsTagOptions{
-				ValueSet: []lsproto.DiagnosticTag{
-					lsproto.DiagnosticTagUnnecessary,
-					lsproto.DiagnosticTagDeprecated,
-				},
-			},
-		}
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = defaultPublishDiagnosticCapabilities
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
@@ -900,7 +984,7 @@ type CompletionsExpectedList struct {
 	IsIncomplete    bool
 	ItemDefaults    *CompletionsExpectedItemDefaults
 	Items           *CompletionsExpectedItems
-	UserPreferences *lsutil.UserPreferences // !!! allow user preferences in fourslash
+	UserPreferences *lsutil.UserPreferences
 }
 
 type Ignored = struct{}
@@ -1208,7 +1292,7 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".AdditionalTextEdits")
 	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
@@ -1241,6 +1325,9 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		assert.Equal(t, actualAutoImportFix.ModuleSpecifier, expectedAutoImportFix.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
 	} else {
 		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
+		if expected.AdditionalTextEdits != AnyTextEdits {
+			assertDeepEqual(t, actual.AdditionalTextEdits, expected.AdditionalTextEdits, prefix+" AdditionalTextEdits mismatch")
+		}
 	}
 
 	if expected.FilterText != nil {
@@ -1308,9 +1395,6 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		}
 
 		data := item.Data
-		if data == nil {
-			return false
-		}
 		if options.AutoImportFix != nil {
 			return data.AutoImport != nil &&
 				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
@@ -1327,7 +1411,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
 	}
 	item = f.resolveCompletionItem(t, item)
-	assert.Check(t, strings.Contains(*item.Detail, options.Description), "Completion item detail does not contain expected description.")
+	var actualDetail string
+	if item.Detail != nil {
+		actualDetail = *item.Detail
+	}
+	assert.Check(t, strings.Contains(actualDetail, options.Description), "Completion item detail does not contain expected description.")
 	if item.AdditionalTextEdits == nil {
 		t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
 	}
@@ -2818,6 +2906,61 @@ func (f *FourslashTest) quickInfoIsEmpty(t *testing.T) (bool, *lsproto.Hover) {
 func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, expectedDocumentation string) {
 	hover := f.getQuickInfoAtCurrentPosition(t)
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
+}
+
+func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
+	for marker, expectedText := range markersToNewText {
+		f.GoToMarker(t, marker)
+		params := &lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+
+		requestResult := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+
+		var actualText *string
+		if closingTag := requestResult.CustomClosingTagCompletion; closingTag != nil {
+			actualText = &closingTag.NewText
+		}
+		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
+	}
+}
+
+// VerifyBaselineClosingTags generates a baseline for JSX closing tag completions at all markers.
+func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
+	t.Helper()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.CustomClosingTagCompletion], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.CustomClosingTagCompletion]{}, false
+		}
+
+		params := &lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
+			},
+			Position: marker.LSPosition,
+		}
+
+		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result.CustomClosingTagCompletion}, true
+	})
+
+	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
+		return nil
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
+		if item == nil {
+			return []string{"No closing tag"}
+		}
+		return []string{fmt.Sprintf("newText: %q", item.NewText)}
+	}
+
+	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
+	f.addResultToBaseline(t, closingTagCmd, result)
 }
 
 // VerifySignatureHelpOptions contains options for verifying signature help.

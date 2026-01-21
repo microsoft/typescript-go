@@ -186,7 +186,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
 					node.Parent.Parent,
 					nil))
-			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression.AsBinaryExpression()) != ast.JSDeclarationKindNone {
+			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}
 		}
@@ -322,8 +322,7 @@ func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 		return len(node.Text()) == len(searchSymbolName) && (isLiteralNameOfPropertyDeclarationOrIndexAccess(node) ||
 			isNameOfModuleDeclaration(node) ||
 			isExpressionOfExternalModuleImportEqualsDeclaration(node) ||
-			// !!! object.defineProperty
-			// (ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node) ||
+			ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node ||
 			ast.IsImportOrExportSpecifier(node.Parent))
 	case ast.KindNumericLiteral:
 		return isLiteralNameOfPropertyDeclarationOrIndexAccess(node) && len(node.Text()) == len(searchSymbolName)
@@ -595,7 +594,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if isRename && node.Kind != ast.KindIdentifier {
+	if isRename && !isNodeEligibleForRename(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
 
@@ -725,7 +724,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 }
 
 func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *lsproto.RenameParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.WorkspaceEditOrNull, error) {
-	if data.OriginalNode.Kind != ast.KindIdentifier {
+	if !isNodeEligibleForRename(data.OriginalNode) {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 
@@ -734,6 +733,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
+
 	for _, entry := range entries {
 		uri := l.getFileNameOfEntry(entry)
 		if l.UserPreferences().AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && ast.TryGetImportFromModuleSpecifier(entry.node) != nil {
@@ -1448,55 +1448,6 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 		}}
 	}
 	return []*SymbolAndEntries{}
-}
-
-func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
-	if referencePath := findReferenceInPosition(sourceFile.ReferencedFiles, position); referencePath != nil {
-		if file := program.GetSourceFileFromReference(sourceFile, referencePath); file != nil {
-			return &refInfo{reference: referencePath, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if typeReferenceDirective := findReferenceInPosition(sourceFile.TypeReferenceDirectives, position); typeReferenceDirective != nil {
-		if reference := program.GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeReferenceDirective, sourceFile); reference != nil {
-			if file := program.GetSourceFile(reference.ResolvedFileName); file != nil {
-				return &refInfo{reference: typeReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-			}
-		}
-		return nil
-	}
-
-	if libReferenceDirective := findReferenceInPosition(sourceFile.LibReferenceDirectives, position); libReferenceDirective != nil {
-		if file := program.GetLibFileFromReference(libReferenceDirective); file != nil {
-			return &refInfo{reference: libReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if len(sourceFile.Imports()) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
-		return nil
-	}
-
-	node := astnav.GetTouchingToken(sourceFile, position)
-	if !isModuleSpecifierLike(node) || !tspath.IsExternalModuleNameRelative(node.Text()) {
-		return nil
-	}
-	if resolution := program.GetResolvedModuleFromModuleSpecifier(sourceFile, node); resolution != nil {
-		verifiedFileName := resolution.ResolvedFileName
-		fileName := resolution.ResolvedFileName
-		if fileName == "" {
-			fileName = tspath.ResolvePath(tspath.GetDirectoryPath(sourceFile.FileName()), node.Text())
-		}
-		return &refInfo{
-			file:       program.GetSourceFile(fileName),
-			fileName:   fileName,
-			reference:  nil,
-			unverified: verifiedFileName != "",
-		}
-	}
-
-	return nil
 }
 
 // -- Core algorithm for find all references --
@@ -2425,4 +2376,13 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 	// Update cache with the actual result
 	state.inheritsFromCache[key] = inherits
 	return inherits
+}
+
+func isNodeEligibleForRename(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		return true
+	default:
+		return false
+	}
 }

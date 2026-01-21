@@ -151,6 +151,18 @@ const customStructures: Structure[] = [
             },
         ],
     },
+    {
+        // Longer-term, we may just want to use TextEdit.
+        name: "CustomClosingTagCompletion",
+        properties: [
+            {
+                name: "newText",
+                type: { kind: "base", name: "string" },
+                documentation: "The text to insert at the closing tag position.",
+            },
+        ],
+        documentation: "CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -202,6 +214,88 @@ const customEnumerations: Enumeration[] = [
         ],
     },
 ];
+
+// Custom requests to add to the model (tsgo-specific)
+const customRequests: Request[] = [
+    {
+        method: "custom/textDocument/closingTagCompletion",
+        typeName: "CustomClosingTagCompletionRequest",
+        params: { kind: "reference", name: "TextDocumentPositionParams" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "reference", name: "CustomClosingTagCompletion" },
+                { kind: "base", name: "null" },
+            ],
+        },
+        messageDirection: "clientToServer",
+        documentation: "Request to get the closing tag completion at a given position.",
+    },
+    {
+        method: "custom/runGC",
+        typeName: "RunGCRequest",
+        messageDirection: "clientToServer",
+        result: { kind: "base", name: "null" },
+        documentation: "Triggers garbage collection in the language server.",
+    },
+    {
+        method: "custom/saveHeapProfile",
+        typeName: "SaveHeapProfileRequest",
+        params: { kind: "reference", name: "ProfileParams" },
+        messageDirection: "clientToServer",
+        result: { kind: "reference", name: "ProfileResult" },
+        documentation: "Saves a heap profile to the specified directory.",
+    },
+    {
+        method: "custom/saveAllocProfile",
+        typeName: "SaveAllocProfileRequest",
+        params: { kind: "reference", name: "ProfileParams" },
+        messageDirection: "clientToServer",
+        result: { kind: "reference", name: "ProfileResult" },
+        documentation: "Saves an allocation profile to the specified directory.",
+    },
+    {
+        method: "custom/startCPUProfile",
+        typeName: "StartCPUProfileRequest",
+        params: { kind: "reference", name: "ProfileParams" },
+        messageDirection: "clientToServer",
+        result: { kind: "base", name: "null" },
+        documentation: "Starts CPU profiling, writing to the specified directory when stopped.",
+    },
+    {
+        method: "custom/stopCPUProfile",
+        typeName: "StopCPUProfileRequest",
+        messageDirection: "clientToServer",
+        result: { kind: "reference", name: "ProfileResult" },
+        documentation: "Stops CPU profiling and saves the profile.",
+    },
+];
+
+// Custom structures for profiling requests/responses
+customStructures.push(
+    {
+        name: "ProfileParams",
+        properties: [
+            {
+                name: "dir",
+                type: { kind: "base", name: "string" },
+                documentation: "The directory path where the profile should be saved.",
+            },
+        ],
+        documentation: "Parameters for profiling requests.",
+    },
+    {
+        name: "ProfileResult",
+        properties: [
+            {
+                name: "file",
+                type: { kind: "base", name: "string" },
+                documentation: "The file path where the profile was saved.",
+            },
+        ],
+        documentation: "Result of a profiling request.",
+    },
+);
 
 // Track which custom Data structures were declared explicitly
 const explicitDataStructures = new Set(customStructures.map(s => s.name));
@@ -301,9 +395,10 @@ function patchAndPreprocessModel() {
         });
     }
 
-    // Add custom enumerations, custom structures, and synthetic structures to the model
+    // Add custom enumerations, custom structures, custom requests, and synthetic structures to the model
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
+    model.requests.push(...customRequests);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
