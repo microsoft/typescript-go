@@ -61,7 +61,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"affectedFilesPendingEmit":[[2,17],[4,17],[3,17],[5,17],[6,17],[7,17]],"emitSignatures":[2,3,4,5,6,7]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"affectedFilesPendingEmit":[[2,17],[4,17],[3,17],[5,17],[6,17],[7,17]],"emitSignatures":[2,3,4,5,6,7]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -100,7 +100,7 @@ declare const console: { log(msg: any): void; };
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -142,7 +142,7 @@ declare const console: { log(msg: any): void; };
       "original": {
         "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -244,7 +244,7 @@ declare const console: { log(msg: any): void; };
       "original": 7
     }
   ],
-  "size": 1868
+  "size": 1886
 }
 
 tsconfig.json::
@@ -337,7 +337,7 @@ function someFunc(arguments, ...rest) {
 }
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":1},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":1},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"latestChangedDtsFile":"./src/noChangeFileWithEmitSpecificError.d.ts"}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":"commonjs"},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"latestChangedDtsFile":"./src/noChangeFileWithEmitSpecificError.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -376,7 +376,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -387,7 +387,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}",
         "signature": "8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -398,7 +398,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}",
         "signature": "4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -409,7 +409,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -420,7 +420,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -431,7 +431,7 @@ function someFunc(arguments, ...rest) {
       "original": {
         "version": "12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",
         "signature": "b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -444,7 +444,7 @@ function someFunc(arguments, ...rest) {
         "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
         "signature": "86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -471,7 +471,7 @@ function someFunc(arguments, ...rest) {
     ]
   },
   "latestChangedDtsFile": "./src/noChangeFileWithEmitSpecificError.d.ts",
-  "size": 2590
+  "size": 2653
 }
 
 tsconfig.json::
@@ -542,7 +542,7 @@ exports.classC = classC;
 
 //// [/home/src/workspaces/project/src/indirectClass.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"f5da9f4ab128bbaf87adf83ca7ae8e2d-export class classC {\n    prop1 = 1;\n}","signature":"e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n","impliedNodeFormat":1},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":1},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"semanticDiagnosticsPerFile":[[4,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]],[5,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]]],"latestChangedDtsFile":"./src/class.d.ts"}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"f5da9f4ab128bbaf87adf83ca7ae8e2d-export class classC {\n    prop1 = 1;\n}","signature":"e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":"commonjs"},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"semanticDiagnosticsPerFile":[[4,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]],[5,[{"pos":76,"end":80,"code":2551,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_Did_you_mean_2_2551","messageArgs":["prop","classC","prop1"],"relatedInformation":[{"file":2,"pos":26,"end":31,"code":2728,"category":3,"messageKey":"_0_is_declared_here_2728","messageArgs":["prop1"]}]}]]],"latestChangedDtsFile":"./src/class.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -581,7 +581,7 @@ exports.classC = classC;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -592,7 +592,7 @@ exports.classC = classC;
       "original": {
         "version": "f5da9f4ab128bbaf87adf83ca7ae8e2d-export class classC {\n    prop1 = 1;\n}",
         "signature": "e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -603,7 +603,7 @@ exports.classC = classC;
       "original": {
         "version": "2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}",
         "signature": "4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -614,7 +614,7 @@ exports.classC = classC;
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -625,7 +625,7 @@ exports.classC = classC;
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -636,7 +636,7 @@ exports.classC = classC;
       "original": {
         "version": "12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",
         "signature": "b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -649,7 +649,7 @@ exports.classC = classC;
         "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
         "signature": "86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -738,7 +738,7 @@ exports.classC = classC;
     ]
   ],
   "latestChangedDtsFile": "./src/class.d.ts",
-  "size": 3201
+  "size": 3264
 }
 
 tsconfig.json::
@@ -771,7 +771,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":1},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":1},"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":1},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"affectedFilesPendingEmit":[[2,17],[4,16],[3,17],[5,16]],"latestChangedDtsFile":"./src/class.d.ts","emitSignatures":[[2,"e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n"],[4,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"],[5,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":"commonjs"},"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":"commonjs"},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"affectedFilesPendingEmit":[[2,17],[4,16],[3,17],[5,16]],"latestChangedDtsFile":"./src/class.d.ts","emitSignatures":[[2,"e36cbd492db9c71062d723d518b6277f-export declare class classC {\n    prop1: number;\n}\n"],[4,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"],[5,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -810,7 +810,7 @@ Output::
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -821,7 +821,7 @@ Output::
       "original": {
         "version": "5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}",
         "signature": "8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -832,7 +832,7 @@ Output::
       "original": {
         "version": "2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}",
         "signature": "4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -855,7 +855,7 @@ Output::
       "original": {
         "version": "12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",
         "signature": "b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -868,7 +868,7 @@ Output::
         "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
         "signature": "86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -955,7 +955,7 @@ Output::
       ]
     }
   ],
-  "size": 2648
+  "size": 2693
 }
 
 tsconfig.json::
@@ -999,7 +999,7 @@ exports.classC = classC;
 
 //// [/home/src/workspaces/project/src/indirectClass.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":1},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":1},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"latestChangedDtsFile":"./src/class.d.ts"}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","signature":"8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","signature":"4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"},{"version":"12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}","signature":"b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n","impliedNodeFormat":"commonjs"},{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","signature":"86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"latestChangedDtsFile":"./src/class.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1038,7 +1038,7 @@ exports.classC = classC;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1049,7 +1049,7 @@ exports.classC = classC;
       "original": {
         "version": "5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}",
         "signature": "8743eb01f3ddad300611aa9bbf6b6c0a-export declare class classC {\n    prop: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1060,7 +1060,7 @@ exports.classC = classC;
       "original": {
         "version": "2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}",
         "signature": "4c7e50f9604f4038b2f1bafae04987bb-import { classC } from './class';\nexport declare class indirectClass {\n    classC: classC;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1071,7 +1071,7 @@ exports.classC = classC;
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1082,7 +1082,7 @@ exports.classC = classC;
       "original": {
         "version": "1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1093,7 +1093,7 @@ exports.classC = classC;
       "original": {
         "version": "12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",
         "signature": "b46de008dd76697ce12a1dca20c0bf9e-export declare function writeLog(s: string): void;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -1106,7 +1106,7 @@ exports.classC = classC;
         "version": "f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}",
         "signature": "86b693f65e0d5bed7e4ac554c2edb8ba-declare function someFunc(arguments: boolean, ...rest: any[]): void;\n",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -1133,7 +1133,7 @@ exports.classC = classC;
     ]
   },
   "latestChangedDtsFile": "./src/class.d.ts",
-  "size": 2562
+  "size": 2625
 }
 
 tsconfig.json::

@@ -137,7 +137,7 @@ export interface Session {
 Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n","impliedNodeFormat":1},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -168,7 +168,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -179,7 +179,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
       "original": {
         "version": "1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}",
         "signature": "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -190,7 +190,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
       "original": {
         "version": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
         "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -210,7 +210,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1463
+  "size": 1490
 }
 
 src/pure/tsconfig.json::
@@ -292,7 +292,7 @@ export interface Session {
 
 //// [/user/username/projects/reexport/out/pure/session.js] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"f993dc94313f77cb079d7ee366b10997-export interface Session {\n    foo: number;\n    bar: number;\n}","signature":"5daeec8bad73c67127f3b3aae951c919-export interface Session {\n    foo: number;\n    bar: number;\n}\n","impliedNodeFormat":1},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./session.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"f993dc94313f77cb079d7ee366b10997-export interface Session {\n    foo: number;\n    bar: number;\n}","signature":"5daeec8bad73c67127f3b3aae951c919-export interface Session {\n    foo: number;\n    bar: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./session.d.ts"}
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -323,7 +323,7 @@ export interface Session {
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -334,7 +334,7 @@ export interface Session {
       "original": {
         "version": "f993dc94313f77cb079d7ee366b10997-export interface Session {\n    foo: number;\n    bar: number;\n}",
         "signature": "5daeec8bad73c67127f3b3aae951c919-export interface Session {\n    foo: number;\n    bar: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -345,7 +345,7 @@ export interface Session {
       "original": {
         "version": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
         "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -365,7 +365,7 @@ export interface Session {
     ]
   },
   "latestChangedDtsFile": "./session.d.ts",
-  "size": 1480
+  "size": 1507
 }
 
 src/pure/tsconfig.json::
@@ -435,7 +435,7 @@ export interface Session {
 
 //// [/user/username/projects/reexport/out/pure/session.js] *rewrite with same content*
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n","impliedNodeFormat":1},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./session.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n","impliedNodeFormat":"commonjs"},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./session.d.ts"}
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -466,7 +466,7 @@ export interface Session {
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -477,7 +477,7 @@ export interface Session {
       "original": {
         "version": "1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}",
         "signature": "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -488,7 +488,7 @@ export interface Session {
       "original": {
         "version": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
         "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -508,7 +508,7 @@ export interface Session {
     ]
   },
   "latestChangedDtsFile": "./session.d.ts",
-  "size": 1465
+  "size": 1492
 }
 
 src/pure/tsconfig.json::

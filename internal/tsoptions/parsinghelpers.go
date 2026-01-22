@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -460,7 +461,19 @@ func floatOrInt32ToFlag[T ~int32](value any) T {
 	if v, ok := value.(T); ok {
 		return v
 	}
-	return T(value.(float64))
+	if f, ok := value.(float64); ok {
+		return T(f)
+	}
+	// Handle string values (e.g., from JSON unmarshaling of enum values)
+	if s, ok := value.(string); ok {
+		var result T
+		// Use JSON unmarshaling to convert the string value
+		data := []byte(`"` + s + `"`)
+		if err := json.Unmarshal(data, &result); err == nil {
+			return result
+		}
+	}
+	return T(0)
 }
 
 func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {

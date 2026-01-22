@@ -101,7 +101,7 @@ exports.Other = void 0;
 exports.Other = 0;
 
 //// [/home/src/workspaces/solution/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.d.ts","../src/other/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;","signature":"9820e072d57306b22c4790242196d240-export declare const Other = 0;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./other.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.d.ts","../src/other/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;","signature":"9820e072d57306b22c4790242196d240-export declare const Other = 0;\n","impliedNodeFormat":"commonjs"}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./other.d.ts"}
 //// [/home/src/workspaces/solution/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -127,7 +127,7 @@ exports.Other = 0;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -138,7 +138,7 @@ exports.Other = 0;
       "original": {
         "version": "d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;",
         "signature": "9820e072d57306b22c4790242196d240-export declare const Other = 0;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -147,7 +147,7 @@ exports.Other = 0;
     "outDir": "./"
   },
   "latestChangedDtsFile": "./other.d.ts",
-  "size": 1126
+  "size": 1144
 }
 
 src/other/tsconfig.json::

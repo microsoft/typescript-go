@@ -66,7 +66,7 @@ function logMessage(person) {
 export {};
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":1},"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"fileIdsList":[[2]],"options":{"module":"esnext"},"referencedMap":[[3,1]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -97,7 +97,7 @@ export {};
       "original": {
         "version": "778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -119,14 +119,14 @@ export {};
     ]
   ],
   "options": {
-    "module": 99
+    "module": "esnext"
   },
   "referencedMap": {
     "./main.ts": [
       "./MessageablePerson.ts"
     ]
   },
-  "size": 1651
+  "size": 1666
 }
 
 tsconfig.json::
@@ -173,7 +173,7 @@ Found 1 error in main.ts[90m:3[0m
 //// [/home/src/workspaces/project/MessageablePerson.js] *rewrite with same content*
 //// [/home/src/workspaces/project/main.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"fc3bcee26e986c769691717bfbe49525-const Messageable = () => {\n    return class MessageableClass {\n        protected message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","signature":"9bca542f83dba4822510bd12bc5e9db9-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n\n(116,7): error4094: Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094\nmessage\n\n(116,7): error9027: Add_a_type_annotation_to_the_variable_0_9027\nwrapper\n","impliedNodeFormat":1},{"version":"f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":131,"end":138,"code":2445,"category":1,"messageKey":"Property_0_is_protected_and_only_accessible_within_class_1_and_its_subclasses_2445","messageArgs":["message","MessageableClass"]}]]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"fc3bcee26e986c769691717bfbe49525-const Messageable = () => {\n    return class MessageableClass {\n        protected message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","signature":"9bca542f83dba4822510bd12bc5e9db9-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n\n(116,7): error4094: Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094\nmessage\n\n(116,7): error9027: Add_a_type_annotation_to_the_variable_0_9027\nwrapper\n","impliedNodeFormat":"commonjs"},{"version":"f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"module":"esnext"},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":131,"end":138,"code":2445,"category":1,"messageKey":"Property_0_is_protected_and_only_accessible_within_class_1_and_its_subclasses_2445","messageArgs":["message","MessageableClass"]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -204,7 +204,7 @@ Found 1 error in main.ts[90m:3[0m
       "original": {
         "version": "778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -215,7 +215,7 @@ Found 1 error in main.ts[90m:3[0m
       "original": {
         "version": "fc3bcee26e986c769691717bfbe49525-const Messageable = () => {\n    return class MessageableClass {\n        protected message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;",
         "signature": "9bca542f83dba4822510bd12bc5e9db9-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n\n(116,7): error4094: Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094\nmessage\n\n(116,7): error9027: Add_a_type_annotation_to_the_variable_0_9027\nwrapper\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -226,7 +226,7 @@ Found 1 error in main.ts[90m:3[0m
       "original": {
         "version": "f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -236,7 +236,7 @@ Found 1 error in main.ts[90m:3[0m
     ]
   ],
   "options": {
-    "module": 99
+    "module": "esnext"
   },
   "referencedMap": {
     "./main.ts": [
@@ -261,7 +261,7 @@ Found 1 error in main.ts[90m:3[0m
       ]
     ]
   ],
-  "size": 2435
+  "size": 2468
 }
 
 tsconfig.json::
@@ -309,7 +309,7 @@ Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *rewrite with same content*
 //// [/home/src/workspaces/project/main.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","signature":"3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n","impliedNodeFormat":1},{"version":"f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","signature":"3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n","impliedNodeFormat":"commonjs"},{"version":"f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"module":"esnext"},"referencedMap":[[3,1]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -340,7 +340,7 @@ Output::
       "original": {
         "version": "778b786cd1eca831889c50ded7c79c1d-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };\ntype ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;\ntype InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -351,7 +351,7 @@ Output::
       "original": {
         "version": "500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;",
         "signature": "3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -362,7 +362,7 @@ Output::
       "original": {
         "version": "f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -372,14 +372,14 @@ Output::
     ]
   ],
   "options": {
-    "module": 99
+    "module": "esnext"
   },
   "referencedMap": {
     "./main.ts": [
       "./MessageablePerson.ts"
     ]
   },
-  "size": 2015
+  "size": 2048
 }
 
 tsconfig.json::

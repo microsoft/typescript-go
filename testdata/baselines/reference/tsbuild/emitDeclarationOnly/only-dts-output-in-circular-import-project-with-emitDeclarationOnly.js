@@ -99,7 +99,7 @@ export { B } from "./b";
 export { C } from "./c";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./src/c.ts","./src/b.ts","./src/a.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}","signature":"57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n","impliedNodeFormat":1},{"version":"635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}","signature":"2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n","impliedNodeFormat":1},{"version":"0c094e56b7619bf6cde26939daf7a796-import { B } from \"./b\";\n\nexport interface A {\n    b: B;\n}","signature":"2904de9e1ae84b014654eae6ae9d57b8-import { B } from \"./b\";\nexport interface A {\n    b: B;\n}\n","impliedNodeFormat":1},{"version":"9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";","signature":"c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n","impliedNodeFormat":1}],"fileIdsList":[[3],[2],[4],[2,3,4]],"options":{"alwaysStrict":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationMap":false,"esModuleInterop":true,"module":1,"outDir":"./lib","rootDir":"./src","strict":true,"sourceMap":true,"target":1},"referencedMap":[[4,1],[3,2],[2,3],[5,4]],"latestChangedDtsFile":"./lib/index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./src/c.ts","./src/b.ts","./src/a.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}","signature":"57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n","impliedNodeFormat":"commonjs"},{"version":"635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}","signature":"2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n","impliedNodeFormat":"commonjs"},{"version":"0c094e56b7619bf6cde26939daf7a796-import { B } from \"./b\";\n\nexport interface A {\n    b: B;\n}","signature":"2904de9e1ae84b014654eae6ae9d57b8-import { B } from \"./b\";\nexport interface A {\n    b: B;\n}\n","impliedNodeFormat":"commonjs"},{"version":"9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";","signature":"c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2],[4],[2,3,4]],"options":{"alwaysStrict":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationMap":false,"esModuleInterop":true,"module":"commonjs","outDir":"./lib","rootDir":"./src","strict":true,"sourceMap":true,"target":"es5"},"referencedMap":[[4,1],[3,2],[2,3],[5,4]],"latestChangedDtsFile":"./lib/index.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -134,7 +134,7 @@ export { C } from "./c";
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -145,7 +145,7 @@ export { C } from "./c";
       "original": {
         "version": "e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}",
         "signature": "57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -156,7 +156,7 @@ export { C } from "./c";
       "original": {
         "version": "635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}",
         "signature": "2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -167,7 +167,7 @@ export { C } from "./c";
       "original": {
         "version": "0c094e56b7619bf6cde26939daf7a796-import { B } from \"./b\";\n\nexport interface A {\n    b: B;\n}",
         "signature": "2904de9e1ae84b014654eae6ae9d57b8-import { B } from \"./b\";\nexport interface A {\n    b: B;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -178,7 +178,7 @@ export { C } from "./c";
       "original": {
         "version": "9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";",
         "signature": "c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -205,12 +205,12 @@ export { C } from "./c";
     "declaration": true,
     "declarationMap": false,
     "esModuleInterop": true,
-    "module": 1,
+    "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
     "sourceMap": true,
-    "target": 1
+    "target": "es5"
   },
   "referencedMap": {
     "./src/a.ts": [
@@ -229,7 +229,7 @@ export { C } from "./c";
     ]
   },
   "latestChangedDtsFile": "./lib/index.d.ts",
-  "size": 2278
+  "size": 2336
 }
 
 tsconfig.json::
@@ -272,7 +272,7 @@ export interface A {
 }
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./src/c.ts","./src/b.ts","./src/a.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}","signature":"57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n","impliedNodeFormat":1},{"version":"635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}","signature":"2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n","impliedNodeFormat":1},{"version":"078c59719381373c2fc227a7b5ee0f0b-import { B } from \"./b\";\n\nexport interface A {\n    b: B; foo: any;\n}","signature":"ddf8205c0552214926ecdcce4664e925-import { B } from \"./b\";\nexport interface A {\n    b: B;\n    foo: any;\n}\n","impliedNodeFormat":1},{"version":"9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";","signature":"c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n","impliedNodeFormat":1}],"fileIdsList":[[3],[2],[4],[2,3,4]],"options":{"alwaysStrict":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationMap":false,"esModuleInterop":true,"module":1,"outDir":"./lib","rootDir":"./src","strict":true,"sourceMap":true,"target":1},"referencedMap":[[4,1],[3,2],[2,3],[5,4]],"latestChangedDtsFile":"./lib/a.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./src/c.ts","./src/b.ts","./src/a.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}","signature":"57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n","impliedNodeFormat":"commonjs"},{"version":"635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}","signature":"2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n","impliedNodeFormat":"commonjs"},{"version":"078c59719381373c2fc227a7b5ee0f0b-import { B } from \"./b\";\n\nexport interface A {\n    b: B; foo: any;\n}","signature":"ddf8205c0552214926ecdcce4664e925-import { B } from \"./b\";\nexport interface A {\n    b: B;\n    foo: any;\n}\n","impliedNodeFormat":"commonjs"},{"version":"9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";","signature":"c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[3],[2],[4],[2,3,4]],"options":{"alwaysStrict":true,"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationMap":false,"esModuleInterop":true,"module":"commonjs","outDir":"./lib","rootDir":"./src","strict":true,"sourceMap":true,"target":"es5"},"referencedMap":[[4,1],[3,2],[2,3],[5,4]],"latestChangedDtsFile":"./lib/a.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -307,7 +307,7 @@ export interface A {
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -318,7 +318,7 @@ export interface A {
       "original": {
         "version": "e8d66a87a10151e3d8c84e04e3d962c9-import { A } from \"./a\";\n\nexport interface C {\n    a: A;\n}",
         "signature": "57c1fb7dd5816e999a47a54abfd60004-import { A } from \"./a\";\nexport interface C {\n    a: A;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -329,7 +329,7 @@ export interface A {
       "original": {
         "version": "635cd13fa5127837a0f61aa9d436e764-import { C } from \"./c\";\n\nexport interface B {\n    b: C;\n}",
         "signature": "2c6af9ce6f102ba192048b07d4b44ebf-import { C } from \"./c\";\nexport interface B {\n    b: C;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -340,7 +340,7 @@ export interface A {
       "original": {
         "version": "078c59719381373c2fc227a7b5ee0f0b-import { B } from \"./b\";\n\nexport interface A {\n    b: B; foo: any;\n}",
         "signature": "ddf8205c0552214926ecdcce4664e925-import { B } from \"./b\";\nexport interface A {\n    b: B;\n    foo: any;\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -351,7 +351,7 @@ export interface A {
       "original": {
         "version": "9752277022f460184d673fd343fe2c3f-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";",
         "signature": "c689f6bb5a7ac5a812528f5b6ccb6872-export { A } from \"./a\";\nexport { B } from \"./b\";\nexport { C } from \"./c\";\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -378,12 +378,12 @@ export interface A {
     "declaration": true,
     "declarationMap": false,
     "esModuleInterop": true,
-    "module": 1,
+    "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
     "sourceMap": true,
-    "target": 1
+    "target": "es5"
   },
   "referencedMap": {
     "./src/a.ts": [
@@ -402,7 +402,7 @@ export interface A {
     ]
   },
   "latestChangedDtsFile": "./lib/a.d.ts",
-  "size": 2299
+  "size": 2357
 }
 
 tsconfig.json::

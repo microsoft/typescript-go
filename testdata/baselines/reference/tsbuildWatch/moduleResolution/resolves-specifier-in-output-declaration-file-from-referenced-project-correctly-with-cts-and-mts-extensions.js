@@ -151,7 +151,7 @@ export type { TheNum } from './const.cjs';
 export {};
 
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2022.full.d.ts","../const.cts","../index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":1},{"version":"7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';","signature":"2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n","impliedNodeFormat":99}],"fileIdsList":[[2]],"options":{"composite":true,"module":100,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2022.full.d.ts","../const.cts","../index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":"commonjs"},{"version":"7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';","signature":"2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n","impliedNodeFormat":"esnext"}],"fileIdsList":[[2]],"options":{"composite":true,"module":"node16","outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -182,7 +182,7 @@ export {};
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -193,7 +193,7 @@ export {};
       "original": {
         "version": "be0f939ab1143e4064a3742586332724-export type TheNum = 42;",
         "signature": "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -204,7 +204,7 @@ export {};
       "original": {
         "version": "7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';",
         "signature": "2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n",
-        "impliedNodeFormat": 99
+        "impliedNodeFormat": "esnext"
       }
     }
   ],
@@ -215,7 +215,7 @@ export {};
   ],
   "options": {
     "composite": true,
-    "module": 100,
+    "module": "node16",
     "outDir": "./"
   },
   "referencedMap": {
@@ -224,7 +224,7 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1403
+  "size": 1432
 }
 
 packages/pkg2/tsconfig.json::
@@ -410,7 +410,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 export type { TheNum } from './const.cjs';
 
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2022.full.d.ts","../const.cts","../index.cts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":1},{"version":"7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';","signature":"2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":100,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.cts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2022.full.d.ts","../const.cts","../index.cts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":"commonjs"},{"version":"7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';","signature":"2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"composite":true,"module":"node16","outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.cts"}
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -441,7 +441,7 @@ export type { TheNum } from './const.cjs';
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -452,7 +452,7 @@ export type { TheNum } from './const.cjs';
       "original": {
         "version": "be0f939ab1143e4064a3742586332724-export type TheNum = 42;",
         "signature": "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -463,7 +463,7 @@ export type { TheNum } from './const.cjs';
       "original": {
         "version": "7bb214373f4d1876e9a0040d287d1b6e-export type { TheNum } from './const.cjs';",
         "signature": "2c7786a1f125eb57a4db00a4d58e384a-export type { TheNum } from './const.cjs';\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -474,7 +474,7 @@ export type { TheNum } from './const.cjs';
   ],
   "options": {
     "composite": true,
-    "module": 100,
+    "module": "node16",
     "outDir": "./"
   },
   "referencedMap": {
@@ -483,7 +483,7 @@ export type { TheNum } from './const.cjs';
     ]
   },
   "latestChangedDtsFile": "./index.d.cts",
-  "size": 1404
+  "size": 1436
 }
 
 packages/pkg2/tsconfig.json::

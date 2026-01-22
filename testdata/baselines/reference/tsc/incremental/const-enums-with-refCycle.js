@@ -85,7 +85,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 let a = 1 /* A.ONE */;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"5fe80ccba36a579325309b8069ecdcbf-export const AWorker  = 10","signature":"6bac69de224c872c50dea01f4c4b43d6-export declare const AWorker = 10;\n","impliedNodeFormat":1},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":1},{"version":"fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}","signature":"d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n","impliedNodeFormat":1},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./file.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"5fe80ccba36a579325309b8069ecdcbf-export const AWorker  = 10","signature":"6bac69de224c872c50dea01f4c4b43d6-export declare const AWorker = 10;\n","impliedNodeFormat":"commonjs"},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":"commonjs"},{"version":"fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}","signature":"d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n","impliedNodeFormat":"commonjs"},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./file.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -120,7 +120,7 @@ let a = 1 /* A.ONE */;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -131,7 +131,7 @@ let a = 1 /* A.ONE */;
       "original": {
         "version": "5fe80ccba36a579325309b8069ecdcbf-export const AWorker  = 10",
         "signature": "6bac69de224c872c50dea01f4c4b43d6-export declare const AWorker = 10;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -142,7 +142,7 @@ let a = 1 /* A.ONE */;
       "original": {
         "version": "27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}",
         "signature": "f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -153,7 +153,7 @@ let a = 1 /* A.ONE */;
       "original": {
         "version": "fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}",
         "signature": "d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -164,7 +164,7 @@ let a = 1 /* A.ONE */;
       "original": {
         "version": "f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -196,7 +196,7 @@ let a = 1 /* A.ONE */;
     ]
   },
   "latestChangedDtsFile": "./file.d.ts",
-  "size": 1865
+  "size": 1910
 }
 
 tsconfig.json::
@@ -231,7 +231,7 @@ exports.AWorker = 20;
 
 //// [/home/src/workspaces/project/b.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cfd897966c854a85734f846eebdc2522-export const AWorker  = 20","signature":"9ae79a49b184a51267da768d96c0c874-export declare const AWorker = 20;\n","impliedNodeFormat":1},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":1},{"version":"fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}","signature":"d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n","impliedNodeFormat":1},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./aworker.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"cfd897966c854a85734f846eebdc2522-export const AWorker  = 20","signature":"9ae79a49b184a51267da768d96c0c874-export declare const AWorker = 20;\n","impliedNodeFormat":"commonjs"},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":"commonjs"},{"version":"fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}","signature":"d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n","impliedNodeFormat":"commonjs"},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./aworker.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -266,7 +266,7 @@ exports.AWorker = 20;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -277,7 +277,7 @@ exports.AWorker = 20;
       "original": {
         "version": "cfd897966c854a85734f846eebdc2522-export const AWorker  = 20",
         "signature": "9ae79a49b184a51267da768d96c0c874-export declare const AWorker = 20;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -288,7 +288,7 @@ exports.AWorker = 20;
       "original": {
         "version": "27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}",
         "signature": "f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -299,7 +299,7 @@ exports.AWorker = 20;
       "original": {
         "version": "fd5de56c8fb277639e17b90c496b1f4e-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 1\n}",
         "signature": "d315610a03cc0f05df42654a56107b7a-export declare const enum A {\n    ONE = 1\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -310,7 +310,7 @@ exports.AWorker = 20;
       "original": {
         "version": "f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -342,7 +342,7 @@ exports.AWorker = 20;
     ]
   },
   "latestChangedDtsFile": "./aworker.d.ts",
-  "size": 1868
+  "size": 1913
 }
 
 tsconfig.json::
@@ -397,7 +397,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 let a = 2 /* A.ONE */;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0abee34025663fa477c509e26cf273a2-export const AWorker  = 30","signature":"d29f137c75d23f69893ba2fa8bbe5074-export declare const AWorker = 30;\n","impliedNodeFormat":1},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":1},{"version":"91ccb4a8cfdae5e306e69639971e3c6c-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 2\n}","signature":"3705929e4c6d5205d1a7e3d88e35d3e7-export declare const enum A {\n    ONE = 2\n}\n","impliedNodeFormat":1},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./b.d.ts"}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.d.ts","./aworker.ts","./c.ts","./b.ts","./file.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"0abee34025663fa477c509e26cf273a2-export const AWorker  = 30","signature":"d29f137c75d23f69893ba2fa8bbe5074-export declare const AWorker = 30;\n","impliedNodeFormat":"commonjs"},{"version":"27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}","signature":"f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n","impliedNodeFormat":"commonjs"},{"version":"91ccb4a8cfdae5e306e69639971e3c6c-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 2\n}","signature":"3705929e4c6d5205d1a7e3d88e35d3e7-export declare const enum A {\n    ONE = 2\n}\n","impliedNodeFormat":"commonjs"},{"version":"f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2,3],[4],[3]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,3]],"latestChangedDtsFile":"./b.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -432,7 +432,7 @@ let a = 2 /* A.ONE */;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -443,7 +443,7 @@ let a = 2 /* A.ONE */;
       "original": {
         "version": "0abee34025663fa477c509e26cf273a2-export const AWorker  = 30",
         "signature": "d29f137c75d23f69893ba2fa8bbe5074-export declare const AWorker = 30;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -454,7 +454,7 @@ let a = 2 /* A.ONE */;
       "original": {
         "version": "27be335cb83f09e0543d1a6458f51e79-import {A} from \"./b\"\nlet b = A.ONE\nexport {A}",
         "signature": "f6d90ac6a94594899853de488fc81940-import { A } from \"./b\";\nexport { A };\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -465,7 +465,7 @@ let a = 2 /* A.ONE */;
       "original": {
         "version": "91ccb4a8cfdae5e306e69639971e3c6c-import { AWorker } from \"./aworker\"\nimport { A as ACycle } from \"./c\"\nexport const enum A {\n    ONE = 2\n}",
         "signature": "3705929e4c6d5205d1a7e3d88e35d3e7-export declare const enum A {\n    ONE = 2\n}\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -476,7 +476,7 @@ let a = 2 /* A.ONE */;
       "original": {
         "version": "f69fa3d8747995fb7603cfd9c694aa6b-import {A} from \"./c\"\nlet a = A.ONE",
         "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -508,7 +508,7 @@ let a = 2 /* A.ONE */;
     ]
   },
   "latestChangedDtsFile": "./b.d.ts",
-  "size": 1862
+  "size": 1907
 }
 
 tsconfig.json::

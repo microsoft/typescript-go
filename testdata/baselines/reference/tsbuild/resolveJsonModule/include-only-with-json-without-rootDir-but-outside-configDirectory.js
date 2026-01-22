@@ -80,7 +80,7 @@ const hello_json_1 = __importDefault(require("../../hello.json"));
 exports.default = hello_json_1.default.hello;
 
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.d.ts","../../hello.json","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"18e7247c85a6a2e7a4ec2e284716edd8-{\n    \"hello\": \"world\"\n}"},{"version":"6f9721ccc194272bc2b0e0566ab15e63-import hello from \"../../hello.json\"\nexport default hello.hello","signature":"a44184f4ac1ed50126ac624c885b51a8-declare const _default: string;\nexport default _default;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"allowSyntheticDefaultImports":true,"composite":true,"esModuleInterop":true,"module":1,"outDir":"./","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/index.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.d.ts","../../hello.json","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":"commonjs"},{"version":"18e7247c85a6a2e7a4ec2e284716edd8-{\n    \"hello\": \"world\"\n}"},{"version":"6f9721ccc194272bc2b0e0566ab15e63-import hello from \"../../hello.json\"\nexport default hello.hello","signature":"a44184f4ac1ed50126ac624c885b51a8-declare const _default: string;\nexport default _default;\n","impliedNodeFormat":"commonjs"}],"fileIdsList":[[2]],"options":{"allowSyntheticDefaultImports":true,"composite":true,"esModuleInterop":true,"module":"commonjs","outDir":"./","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/index.d.ts"}
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -107,7 +107,7 @@ exports.default = hello_json_1.default.hello;
       "original": {
         "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     },
     {
@@ -127,7 +127,7 @@ exports.default = hello_json_1.default.hello;
       "original": {
         "version": "6f9721ccc194272bc2b0e0566ab15e63-import hello from \"../../hello.json\"\nexport default hello.hello",
         "signature": "a44184f4ac1ed50126ac624c885b51a8-declare const _default: string;\nexport default _default;\n",
-        "impliedNodeFormat": 1
+        "impliedNodeFormat": "commonjs"
       }
     }
   ],
@@ -140,7 +140,7 @@ exports.default = hello_json_1.default.hello;
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "esModuleInterop": true,
-    "module": 1,
+    "module": "commonjs",
     "outDir": "./",
     "skipDefaultLibCheck": true
   },
@@ -150,7 +150,7 @@ exports.default = hello_json_1.default.hello;
     ]
   },
   "latestChangedDtsFile": "./src/index.d.ts",
-  "size": 1431
+  "size": 1458
 }
 
 project/tsconfig.json::
