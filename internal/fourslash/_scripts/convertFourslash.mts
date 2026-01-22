@@ -187,6 +187,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "quickInfos":
                     // `verify.quickInfo...(...)`
                     return parseQuickInfoArgs(func.text, callExpression.arguments);
+                case "organizeImports":
+                    // `verify.organizeImports(...)`
+                    return parseOrganizeImportsArgs(callExpression.arguments);
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return parseBaselineFindAllReferencesArgs(callExpression.arguments);
@@ -1959,6 +1962,193 @@ function parseQuickInfoArgs(funcName: string, args: readonly ts.Expression[]): V
     return undefined;
 }
 
+function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrganizeImportsCmd] | undefined {
+    if (args.length < 1 || args.length > 3) {
+        console.error(`Expected 1-3 arguments in verify.organizeImports, got ${args.length}`);
+        return undefined;
+    }
+
+    const expectedContent = getStringLiteralLike(args[0]);
+    if (!expectedContent) {
+        console.error(`Expected string literal as first argument in verify.organizeImports, got ${args[0].getText()}`);
+        return undefined;
+    }
+
+    let mode = "nil";
+    if (args.length >= 2 && args[1].getText() !== "undefined") {
+        const modeExpr = args[1];
+        if (
+            ts.isPropertyAccessExpression(modeExpr) &&
+            modeExpr.expression.getText() === "ts.OrganizeImportsMode"
+        ) {
+            const modeName = modeExpr.name.text;
+            switch (modeName) {
+                case "RemoveUnused":
+                    mode = "PtrTo(organizeimports.OrganizeImportsModeRemoveUnused)";
+                    break;
+                case "SortAndCombine":
+                    mode = "PtrTo(organizeimports.OrganizeImportsModeSortAndCombine)";
+                    break;
+                case "All":
+                    mode = "PtrTo(organizeimports.OrganizeImportsModeAll)";
+                    break;
+                default:
+                    console.error(`Unsupported organize imports mode: ${modeName}`);
+                    return undefined;
+            }
+        }
+        else {
+            console.error(`Unsupported organize imports mode: ${modeExpr.getText()}`);
+            return undefined;
+        }
+    }
+
+    let preferences = "nil";
+    if (args.length >= 3) {
+        const prefsObj = getObjectLiteralExpression(args[2]);
+        if (!prefsObj) {
+            console.error(`Expected object literal for preferences in verify.organizeImports, got ${args[2].getText()}`);
+            return undefined;
+        }
+
+        const prefsFields: string[] = [];
+        for (const prop of prefsObj.properties) {
+            if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+                continue;
+            }
+            const propName = prop.name.text;
+            const propValue = prop.initializer;
+
+            const goFieldName = propName.charAt(0).toUpperCase() + propName.slice(1);
+
+            if (propName === "organizeImportsIgnoreCase") {
+                if (ts.isStringLiteral(propValue) && propValue.text === "auto") {
+                    prefsFields.push(`${goFieldName}: core.TSUnknown`);
+                }
+                else if (propValue.kind === ts.SyntaxKind.TrueKeyword) {
+                    prefsFields.push(`${goFieldName}: core.TSTrue`);
+                }
+                else if (propValue.kind === ts.SyntaxKind.FalseKeyword) {
+                    prefsFields.push(`${goFieldName}: core.TSFalse`);
+                }
+                else {
+                    console.error(`Unsupported value for organizeImportsIgnoreCase: ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            else if (propName === "organizeImportsCollation") {
+                if (ts.isStringLiteral(propValue)) {
+                    if (propValue.text === "unicode") {
+                        prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsCollationUnicode`);
+                    }
+                    else if (propValue.text === "ordinal") {
+                        prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsCollationOrdinal`);
+                    }
+                    else {
+                        console.error(`Unsupported value for organizeImportsCollation: ${propValue.text}`);
+                        return undefined;
+                    }
+                }
+                else {
+                    console.error(`Expected string literal for organizeImportsCollation, got ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            else if (propName === "organizeImportsCaseFirst") {
+                if (ts.isStringLiteral(propValue)) {
+                    if (propValue.text === "upper") {
+                        prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsCaseFirstUpper`);
+                    }
+                    else if (propValue.text === "lower") {
+                        prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsCaseFirstLower`);
+                    }
+                    else {
+                        console.error(`Unsupported value for organizeImportsCaseFirst: ${propValue.text}`);
+                        return undefined;
+                    }
+                }
+                else if (propValue.kind === ts.SyntaxKind.FalseKeyword) {
+                    prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsCaseFirstFalse`);
+                }
+                else {
+                    console.error(`Expected string literal or false for organizeImportsCaseFirst, got ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            else if (propName === "organizeImportsTypeOrder") {
+                if (ts.isStringLiteral(propValue)) {
+                    const typeOrderValue = propValue.text;
+                    switch (typeOrderValue) {
+                        case "last":
+                            prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsTypeOrderLast`);
+                            break;
+                        case "inline":
+                            prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsTypeOrderInline`);
+                            break;
+                        case "first":
+                            prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsTypeOrderFirst`);
+                            break;
+                        default:
+                            console.error(`Unsupported value for organizeImportsTypeOrder: ${typeOrderValue}`);
+                            return undefined;
+                    }
+                }
+                else {
+                    console.error(`Expected string literal for organizeImportsTypeOrder, got ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            // Special handling for boolean fields (not Tristate)
+            else if (propName === "organizeImportsNumericCollation" || propName === "organizeImportsAccentCollation") {
+                if (propValue.kind === ts.SyntaxKind.TrueKeyword) {
+                    prefsFields.push(`${goFieldName}: true`);
+                }
+                else if (propValue.kind === ts.SyntaxKind.FalseKeyword) {
+                    prefsFields.push(`${goFieldName}: false`);
+                }
+                else {
+                    console.error(`Expected boolean for ${propName}, got ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            // organizeImportsLocale is a plain string, not a pointer
+            else if (propName === "organizeImportsLocale") {
+                if (ts.isStringLiteral(propValue)) {
+                    prefsFields.push(`${goFieldName}: ${getGoStringLiteral(propValue.text)}`);
+                }
+                else {
+                    console.error(`Expected string literal for organizeImportsLocale, got ${propValue.getText()}`);
+                    return undefined;
+                }
+            }
+            // Default handling for other string properties
+            else if (ts.isStringLiteral(propValue)) {
+                prefsFields.push(`${goFieldName}: PtrTo(${getGoStringLiteral(propValue.text)})`);
+            }
+            else if (propValue.kind === ts.SyntaxKind.TrueKeyword) {
+                prefsFields.push(`${goFieldName}: core.TSTrue`);
+            }
+            else if (propValue.kind === ts.SyntaxKind.FalseKeyword) {
+                prefsFields.push(`${goFieldName}: core.TSFalse`);
+            }
+            else {
+                prefsFields.push(`${goFieldName}: ${propValue.getText()}`);
+            }
+        }
+
+        if (prefsFields.length > 0) {
+            preferences = `&lsutil.UserPreferences{\n${prefsFields.join(",\n")},\n}`;
+        }
+    }
+
+    return [{
+        kind: "verifyOrganizeImports",
+        expectedContent: expectedContent.text,
+        mode,
+        preferences,
+    }];
+}
+
 function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
     if (args.length !== 0) {
         // All calls are currently empty!
@@ -2798,6 +2988,13 @@ interface VerifyQuickInfoCmd {
     docs?: string;
 }
 
+interface VerifyOrganizeImportsCmd {
+    kind: "verifyOrganizeImports";
+    expectedContent: string;
+    mode: string;
+    preferences: string;
+}
+
 interface VerifyRenameInfoCmd {
     kind: "renameInfoSucceeded" | "renameInfoFailed";
     preferences: string;
@@ -2923,6 +3120,7 @@ type Cmd =
     | GoToCmd
     | EditCmd
     | VerifyQuickInfoCmd
+    | VerifyOrganizeImportsCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
     | VerifyNavToCmd
@@ -3039,6 +3237,10 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
         case "notQuickInfoExists":
             return `f.VerifyNotQuickInfoExists(t)`;
     }
+}
+
+function generateOrganizeImports({ expectedContent, mode, preferences }: VerifyOrganizeImportsCmd): string {
+    return `f.VerifyOrganizeImports(t, ${getGoMultiLineStringLiteral(expectedContent)}, ${mode}, ${preferences})`;
 }
 
 function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenameCmd): string {
@@ -3223,6 +3425,8 @@ function generateCmd(cmd: Cmd): string {
         case "quickInfoExists":
         case "notQuickInfoExists":
             return generateQuickInfoCommand(cmd);
+        case "verifyOrganizeImports":
+            return generateOrganizeImports(cmd);
         case "verifyBaselineRename":
         case "verifyBaselineRenameAtRangesWithText":
             return generateBaselineRename(cmd);
@@ -3301,6 +3505,9 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
     }
     if (/\blsproto\./.test(commands)) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
+    }
+    if (/\borganizeimports\./.test(commands)) {
+        imports.push(`"github.com/microsoft/typescript-go/internal/ls/organizeimports"`);
     }
     if (usesFourslashUtil(commands)) {
         imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);

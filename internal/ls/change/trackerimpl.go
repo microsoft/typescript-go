@@ -126,9 +126,13 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 	nodeIn := node
 	eofToken := t.Factory.NewToken(ast.KindEndOfFile)
 	if ast.IsStatement(node) {
+		text := ""
+		if node.Pos() >= 0 {
+			text = sourceFile.Text()
+		}
 		nodeIn = t.Factory.NewSourceFile(
 			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
-			"",
+			text,
 			t.Factory.NewNodeList([]*ast.Node{node}),
 			t.Factory.NewToken(ast.KindEndOfFile),
 		)

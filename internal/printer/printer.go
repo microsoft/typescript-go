@@ -4429,7 +4429,7 @@ func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
 
 func (p *Printer) emitList(emit func(p *Printer, node *ast.Node), parentNode *ast.Node, children *ast.NodeList, format ListFormat) {
 	if p.shouldEmitOnMultipleLines(parentNode) {
-		format |= LFPreferNewLine
+		format |= LFPreferNewLine | LFIndented
 	}
 
 	p.emitListRange(emit, parentNode, children, format, -1 /*start*/, -1 /*count*/)

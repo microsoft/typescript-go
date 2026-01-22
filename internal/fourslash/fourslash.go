@@ -26,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -1365,6 +1366,72 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
+	}
+}
+
+func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, mode *organizeimports.OrganizeImportsMode, preferences *lsutil.UserPreferences) {
+	t.Helper()
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	// Determine the code action kind based on the mode
+	codeActionKind := lsproto.CodeActionKindSourceOrganizeImports
+	if mode != nil {
+		switch *mode {
+		case organizeimports.OrganizeImportsModeSortAndCombine:
+			codeActionKind = ls.CodeActionKindSourceOrganizeImportsSortAndCombine
+		case organizeimports.OrganizeImportsModeRemoveUnused:
+			codeActionKind = ls.CodeActionKindSourceOrganizeImportsRemoveUnused
+		}
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: lsproto.Position{Line: 0, Character: 0},
+			End:   f.converters.PositionToLineAndCharacter(f.getScriptInfo(f.activeFilename), core.TextPos(len(f.getScriptInfo(f.activeFilename).content))),
+		},
+		Context: &lsproto.CodeActionContext{
+			Only: &[]lsproto.CodeActionKind{codeActionKind},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	if result.CommandOrCodeActionArray == nil || len(*result.CommandOrCodeActionArray) == 0 {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	var organizeAction *lsproto.CodeAction
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == codeActionKind {
+			organizeAction = item.CodeAction
+			break
+		}
+	}
+
+	if organizeAction == nil {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+	if organizeAction.Edit != nil && organizeAction.Edit.Changes != nil {
+		for uri, edits := range *organizeAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Organize imports changed unexpected file: %s (expected %s)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actualContent := f.getScriptInfo(f.activeFilename).content
+	if actualContent != expectedContent {
+		t.Fatalf("Organize imports result doesn't match.\nExpected:\n%s\n\nActual:\n%s", expectedContent, actualContent)
 	}
 }
 

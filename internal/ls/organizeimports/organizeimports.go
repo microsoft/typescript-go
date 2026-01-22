@@ -5,11 +5,14 @@ import (
 	"context"
 	"math"
 	"slices"
+	"strings"
+	"unicode"
 
 	"golang.org/x/text/collate"
 	"golang.org/x/text/language"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -63,8 +66,8 @@ func OrganizeImports(
 
 	moduleSpecifierComparer := defaultComparer
 	namedImportComparer := defaultComparer
-	typeOrder := lsutil.OrganizeImportsTypeOrderLast
-	if preferences != nil && preferences.OrganizeImportsTypeOrder != lsutil.OrganizeImportsTypeOrderAuto {
+	typeOrder := lsutil.OrganizeImportsTypeOrderAuto
+	if preferences != nil {
 		typeOrder = preferences.OrganizeImportsTypeOrder
 	}
 
@@ -98,7 +101,7 @@ func OrganizeImports(
 	if mode != OrganizeImportsModeRemoveUnused {
 		topLevelExportGroupDecls := getTopLevelExportGroups(sourceFile)
 		for _, exportGroupDecl := range topLevelExportGroupDecls {
-			organizeExportsWorker(exportGroupDecl, comparer.namedImportComparer, sourceFile, changeTracker)
+			organizeExportsWorker(exportGroupDecl, comparer, sourceFile, changeTracker)
 		}
 	}
 
@@ -128,7 +131,7 @@ func OrganizeImports(
 					ambientModuleExportDecls = append(ambientModuleExportDecls, s)
 				}
 			}
-			organizeExportsWorker(ambientModuleExportDecls, comparer.namedImportComparer, sourceFile, changeTracker)
+			organizeExportsWorker(ambientModuleExportDecls, comparer, sourceFile, changeTracker)
 		}
 	}
 }
@@ -206,6 +209,10 @@ func organizeImportsWorker(
 				change.TrailingTriviaOptionInclude,
 			)
 		} else {
+			for _, imp := range newImportDecls {
+				changeTracker.SetEmitFlags(imp.AsNode(), printer.EFNoLeadingComments)
+			}
+
 			options := change.NodeOptions{
 				LeadingTriviaOption:  change.LeadingTriviaOptionExclude, // Preserve header comment
 				TrailingTriviaOption: change.TrailingTriviaOptionInclude,
@@ -213,16 +220,12 @@ func organizeImportsWorker(
 			}
 
 			newNodes := core.Map(newImportDecls, func(s *ast.Statement) *ast.Node { return s.AsNode() })
-			changeTracker.ReplaceNode(sourceFile, oldImportDecls[0].AsNode(), newNodes[0], &options)
+			changeTracker.ReplaceNodeWithNodes(sourceFile, oldImportDecls[0].AsNode(), newNodes, &options)
 
 			if len(oldImportDecls) > 1 {
 				for i := 1; i < len(oldImportDecls); i++ {
 					changeTracker.Delete(sourceFile, oldImportDecls[i].AsNode())
 				}
-			}
-
-			if len(newImportDecls) > 1 {
-				changeTracker.InsertNodesAfter(sourceFile, newNodes[0], newNodes[1:])
 			}
 		}
 	}
@@ -362,36 +365,118 @@ func isDeclarationUsed(
 		return true
 	}
 
-	identifierText := identifier.Text
-	used := false
+	return isSymbolReferencedInFile(identifier, symbol, typeChecker, sourceFile)
+}
 
-	sourceFile.AsNode().ForEachChild(func(node *ast.Node) bool {
-		if used {
+func isSymbolReferencedInFile(
+	definition *ast.Identifier,
+	symbol *ast.Symbol,
+	typeChecker *checker.Checker,
+	sourceFile *ast.SourceFile,
+) bool {
+	identifierText := definition.Text
+	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
+		if !ast.IsIdentifier(token) {
+			continue
+		}
+		id := token.AsIdentifier()
+		if id == definition || id.Text != identifierText {
+			continue
+		}
+		refSymbol := typeChecker.GetSymbolAtLocation(token)
+		if refSymbol == symbol {
 			return true
 		}
-
-		node.ForEachChild(func(n *ast.Node) bool {
-			if used {
+		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
+			shorthandSymbol := typeChecker.GetShorthandAssignmentValueSymbol(token.Parent)
+			if shorthandSymbol == symbol {
 				return true
 			}
-
-			if n.Kind == ast.KindIdentifier {
-				id := n.AsIdentifier()
-				if id != identifier && id.Text == identifierText {
-					refSymbol := typeChecker.GetSymbolAtLocation(n)
-					if refSymbol == symbol {
-						used = true
-						return true
-					}
-				}
+		}
+		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
+			localSymbol := getLocalSymbolForExportSpecifier(token, refSymbol, token.Parent.AsExportSpecifier(), typeChecker)
+			if localSymbol == symbol {
+				return true
 			}
-			return false
-		})
+		}
+	}
+	return false
+}
 
-		return false
+func getPossibleSymbolReferenceNodes(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []*ast.Node {
+	return core.MapNonNil(getPossibleSymbolReferencePositions(sourceFile, symbolName, container), func(pos int) *ast.Node {
+		if referenceLocation := astnav.GetTouchingPropertyName(sourceFile, pos); referenceLocation != sourceFile.AsNode() {
+			return referenceLocation
+		}
+		return nil
 	})
+}
 
-	return used
+func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []int {
+	positions := []int{}
+
+	if symbolName == "" {
+		return positions
+	}
+
+	text := sourceFile.Text()
+	sourceLength := len(text)
+	symbolNameLength := len(symbolName)
+
+	if container == nil {
+		container = sourceFile.AsNode()
+	}
+
+	searchStart := container.Pos()
+	if searchStart < 0 {
+		searchStart = 0
+	}
+	endPos := container.End()
+	if endPos < 0 || endPos > sourceLength {
+		endPos = sourceLength
+	}
+
+	position := strings.Index(text[searchStart:], symbolName)
+	if position >= 0 {
+		position += searchStart
+	}
+
+	for position >= 0 {
+		if position > endPos {
+			break
+		}
+
+		endPosition := position + symbolNameLength
+
+		if (position == 0 || !scanner.IsIdentifierPart(rune(text[position-1]))) &&
+			(endPosition >= sourceLength || !scanner.IsIdentifierPart(rune(text[endPosition]))) {
+			positions = append(positions, position)
+		}
+
+		nextStart := position + symbolNameLength + 1
+		if nextStart >= sourceLength {
+			break
+		}
+		foundIndex := strings.Index(text[nextStart:], symbolName)
+		if foundIndex == -1 {
+			break
+		}
+		position = nextStart + foundIndex
+	}
+
+	return positions
+}
+
+func getLocalSymbolForExportSpecifier(
+	node *ast.Node,
+	refSymbol *ast.Symbol,
+	exportSpecifier *ast.ExportSpecifier,
+	typeChecker *checker.Checker,
+) *ast.Symbol {
+	if exportSpecifier.PropertyName != nil {
+		return refSymbol
+	}
+	return typeChecker.GetExportSpecifierLocalTargetSymbol(exportSpecifier.AsNode())
 }
 
 func filterUsedImportSpecifiers(
@@ -543,7 +628,7 @@ func coalesceImportsWorker(
 			}
 
 			newImportSpecifiers = append(newImportSpecifiers, getNewImportSpecifiers(group.namedImports, factory)...)
-			slices.SortFunc(newImportSpecifiers, specifierComparer)
+			slices.SortStableFunc(newImportSpecifiers, specifierComparer)
 
 			var newNamedImports *ast.NamedImportBindings
 			if len(newImportSpecifiers) == 0 {
@@ -707,6 +792,9 @@ func getCategorizedImports(importDecls []*ast.Statement) categorizedImports {
 }
 
 func rangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
+	if r.Pos() < 0 || r.End() < 0 {
+		return true
+	}
 	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, r.Pos())
 	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, r.End())
 	return startLine == endLine
@@ -765,6 +853,7 @@ func tryGetNamedBindingElements(namedImport *ast.Statement) []*ast.Statement {
 
 func groupByNewlineContiguous(sourceFile *ast.SourceFile, decls []*ast.Statement) [][]*ast.Statement {
 	s := scanner.NewScanner()
+	s.SetSkipTrivia(false) // Must not skip trivia to detect newlines
 	var groups [][]*ast.Statement
 	var currentGroup []*ast.Statement
 
@@ -784,10 +873,25 @@ func groupByNewlineContiguous(sourceFile *ast.SourceFile, decls []*ast.Statement
 }
 
 func isNewGroup(sourceFile *ast.SourceFile, decl *ast.Statement, s *scanner.Scanner) bool {
-	startPos := scanner.SkipTrivia(sourceFile.Text(), decl.Pos())
 	fullStart := decl.Pos()
+	if fullStart < 0 {
+		return false
+	}
+
+	text := sourceFile.Text()
+	textLen := len(text)
+
+	if fullStart >= textLen {
+		return false
+	}
+
+	startPos := scanner.SkipTrivia(text, fullStart)
+	if startPos <= fullStart {
+		return false
+	}
+
 	triviaLen := startPos - fullStart
-	s.SetText(sourceFile.Text()[fullStart:startPos])
+	s.SetText(text[fullStart:startPos])
 
 	numberOfNewLines := 0
 	for s.TokenStart() < triviaLen {
@@ -973,9 +1077,10 @@ func getOrganizeImportsOrdinalStringComparer(ignoreCase bool) func(a, b string) 
 
 func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences *lsutil.UserPreferences) func(a, b string) int {
 	resolvedLocale := getOrganizeImportsLocale(preferences)
-	caseFirst := preferences.OrganizeImportsCaseFirst
-	numeric := preferences.OrganizeImportsNumericCollation
-	accents := preferences.OrganizeImportsAccentCollation
+
+	caseFirst := lsutil.OrganizeImportsCaseFirstFalse
+	numeric := false
+	accents := true
 
 	if preferences != nil {
 		caseFirst = preferences.OrganizeImportsCaseFirst
@@ -983,8 +1088,7 @@ func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences *lsuti
 		accents = preferences.OrganizeImportsAccentCollation
 	}
 
-	localeParsed, _ := locale.Parse(resolvedLocale)
-	tag := language.Tag(localeParsed)
+	tag, _ := language.Parse(resolvedLocale)
 
 	var opts []collate.Option
 
@@ -992,24 +1096,74 @@ func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences *lsuti
 		opts = append(opts, collate.Numeric)
 	}
 
-	if ignoreCase {
-		if accents {
-			opts = append(opts, collate.IgnoreCase)
-		} else {
-			opts = append(opts, collate.IgnoreCase, collate.IgnoreDiacritics)
-		}
-	} else {
-		if !accents {
-			opts = append(opts, collate.IgnoreDiacritics)
+	looseOpts := append([]collate.Option{}, opts...)
+	looseOpts = append(looseOpts, collate.Loose)
+	looseCollator := collate.New(tag, looseOpts...)
+
+	if !ignoreCase {
+		caseInsensitiveOpts := append([]collate.Option{}, opts...)
+		caseInsensitiveOpts = append(caseInsensitiveOpts, collate.IgnoreCase)
+		caseInsensitiveCollator := collate.New(tag, caseInsensitiveOpts...)
+
+		fullCollator := collate.New(tag, opts...)
+
+		return func(a, b string) int {
+			var primaryCmp int
+			if !accents {
+				primaryCmp = looseCollator.CompareString(a, b)
+			} else {
+				primaryCmp = caseInsensitiveCollator.CompareString(a, b)
+			}
+			if primaryCmp != 0 {
+				return primaryCmp
+			}
+
+			aRunes := []rune(a)
+			bRunes := []rune(b)
+			minLen := len(aRunes)
+			if len(bRunes) < minLen {
+				minLen = len(bRunes)
+			}
+
+			for i := 0; i < minLen; i++ {
+				aUpper := unicode.IsUpper(aRunes[i])
+				bUpper := unicode.IsUpper(bRunes[i])
+				if aUpper != bUpper {
+					switch caseFirst {
+					case lsutil.OrganizeImportsCaseFirstUpper:
+						if aUpper {
+							return -1
+						}
+						return 1
+					case lsutil.OrganizeImportsCaseFirstLower:
+						if !aUpper {
+							return -1
+						}
+						return 1
+					default:
+						if aUpper {
+							return 1
+						}
+						return -1
+					}
+				}
+			}
+
+			if !accents {
+				if len(aRunes) != len(bRunes) {
+					return len(aRunes) - len(bRunes)
+				}
+				return 0
+			}
+
+			return fullCollator.CompareString(a, b)
 		}
 	}
 
-	if caseFirst != lsutil.OrganizeImportsCaseFirstFalse && !ignoreCase {
-		switch caseFirst {
-		case lsutil.OrganizeImportsCaseFirstUpper:
-			opts = append(opts, collate.OptionsFromTag(tag))
-		case lsutil.OrganizeImportsCaseFirstLower:
-			opts = append(opts, collate.OptionsFromTag(tag))
+	if ignoreCase {
+		opts = append(opts, collate.IgnoreCase)
+		if !accents {
+			opts = append(opts, collate.Loose)
 		}
 	}
 
@@ -1173,6 +1327,27 @@ func compareImportOrExportSpecifiers(s1 *ast.Node, s2 *ast.Node, comparer func(a
 	}
 }
 
+// compareExportSpecifiers compares two export specifiers considering type order.
+func compareExportSpecifiers(s1 *ast.Node, s2 *ast.Node, comparer func(a, b string) int, typeOrder lsutil.OrganizeImportsTypeOrder) int {
+	s1Name := s1.Name().Text()
+	s2Name := s2.Name().Text()
+
+	switch typeOrder {
+	case lsutil.OrganizeImportsTypeOrderFirst:
+		if cmp := core.CompareBooleans(s2.IsTypeOnly(), s1.IsTypeOnly()); cmp != 0 {
+			return cmp
+		}
+		return comparer(s1Name, s2Name)
+	case lsutil.OrganizeImportsTypeOrderInline:
+		return comparer(s1Name, s2Name)
+	default: // OrganizeImportsTypeOrderLast or Auto (defaults to Last)
+		if cmp := core.CompareBooleans(s1.IsTypeOnly(), s2.IsTypeOnly()); cmp != 0 {
+			return cmp
+		}
+		return comparer(s1Name, s2Name)
+	}
+}
+
 func GetNamedImportSpecifierComparer(preferences *lsutil.UserPreferences, comparer func(a, b string) int) func(s1, s2 *ast.Node) int {
 	if comparer == nil {
 		ignoreCase := false
@@ -1241,7 +1416,7 @@ func getTopLevelExportGroups(sourceFile *ast.SourceFile) [][]*ast.Statement {
 			}
 		} else {
 			i++
-			if len(topLevelExportGroups) > 0 && len(topLevelExportGroups[groupIndex]) > 0 {
+			if groupIndex < len(topLevelExportGroups) && len(topLevelExportGroups[groupIndex]) > 0 {
 				groupIndex++
 			}
 		}
@@ -1258,7 +1433,7 @@ func getTopLevelExportGroups(sourceFile *ast.SourceFile) [][]*ast.Statement {
 
 func organizeExportsWorker(
 	oldExportDecls []*ast.Statement,
-	specifierComparer func(a, b string) int,
+	comparer comparerSettings,
 	sourceFile *ast.SourceFile,
 	changeTracker *change.Tracker,
 ) {
@@ -1267,10 +1442,10 @@ func organizeExportsWorker(
 	}
 
 	specifierComparerFunc := func(s1, s2 *ast.Node) int {
-		return specifierComparer(s1.Name().Text(), s2.Name().Text())
+		return compareExportSpecifiers(s1, s2, comparer.namedImportComparer, comparer.typeOrder)
 	}
 
-	newExportDecls := coalesceExportsWorker(oldExportDecls, specifierComparerFunc)
+	newExportDecls := coalesceExportsWorker(oldExportDecls, specifierComparerFunc, comparer.moduleSpecifierComparer, sourceFile, changeTracker)
 
 	if len(oldExportDecls) > 0 {
 		if len(newExportDecls) == 0 {
@@ -1289,16 +1464,12 @@ func organizeExportsWorker(
 			}
 
 			newNodes := core.Map(newExportDecls, func(s *ast.Statement) *ast.Node { return s.AsNode() })
-			changeTracker.ReplaceNode(sourceFile, oldExportDecls[0].AsNode(), newNodes[0], &options)
+			changeTracker.ReplaceNodeWithNodes(sourceFile, oldExportDecls[0].AsNode(), newNodes, &options)
 
 			if len(oldExportDecls) > 1 {
 				for i := 1; i < len(oldExportDecls); i++ {
 					changeTracker.Delete(sourceFile, oldExportDecls[i].AsNode())
 				}
-			}
-
-			if len(newExportDecls) > 1 {
-				changeTracker.InsertNodesAfter(sourceFile, newNodes[0], newNodes[1:])
 			}
 		}
 	}
@@ -1307,58 +1478,94 @@ func organizeExportsWorker(
 func coalesceExportsWorker(
 	exportGroup []*ast.Statement,
 	specifierComparer func(s1, s2 *ast.Node) int,
+	moduleSpecifierComparer func(a, b string) int,
+	sourceFile *ast.SourceFile,
+	changeTracker *change.Tracker,
 ) []*ast.Statement {
 	if len(exportGroup) == 0 {
 		return exportGroup
 	}
 
-	categorized := getCategorizedExports(exportGroup)
-	var coalescedExports []*ast.Statement
+	exportsByModuleSpecifier := make(map[string][]*ast.Statement)
+	var moduleSpecifierOrder []string
 
-	if categorized.exportWithoutClause != nil {
-		coalescedExports = append(coalescedExports, categorized.exportWithoutClause)
+	for _, exportDecl := range exportGroup {
+		export := exportDecl.AsExportDeclaration()
+		var moduleSpecifier string
+		if export.ModuleSpecifier != nil {
+			moduleSpecifier = export.ModuleSpecifier.Text()
+		}
+		if _, exists := exportsByModuleSpecifier[moduleSpecifier]; !exists {
+			moduleSpecifierOrder = append(moduleSpecifierOrder, moduleSpecifier)
+		}
+		exportsByModuleSpecifier[moduleSpecifier] = append(exportsByModuleSpecifier[moduleSpecifier], exportDecl)
 	}
 
+	slices.SortStableFunc(moduleSpecifierOrder, func(a, b string) int {
+		if a == "" && b != "" {
+			return 1
+		}
+		if a != "" && b == "" {
+			return -1
+		}
+		return moduleSpecifierComparer(a, b)
+	})
+
+	var coalescedExports []*ast.Statement
 	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 
-	for _, group := range [][]*ast.Statement{categorized.namedExports, categorized.typeOnlyExports} {
-		if len(group) == 0 {
-			continue
+	for _, moduleSpecifier := range moduleSpecifierOrder {
+		group := exportsByModuleSpecifier[moduleSpecifier]
+
+		categorized := getCategorizedExports(group)
+
+		if categorized.exportWithoutClause != nil {
+			coalescedExports = append(coalescedExports, categorized.exportWithoutClause)
 		}
 
-		var newExportSpecifiers []*ast.Node
-		for _, exportDecl := range group {
-			exportClause := exportDecl.AsExportDeclaration().ExportClause
-			if exportClause != nil && exportClause.Kind == ast.KindNamedExports {
-				namedExports := exportClause.AsNamedExports()
-				newExportSpecifiers = append(newExportSpecifiers, namedExports.Elements.Nodes...)
+		for _, subGroup := range [][]*ast.Statement{categorized.namedExports, categorized.typeOnlyExports} {
+			if len(subGroup) == 0 {
+				continue
 			}
-		}
 
-		slices.SortFunc(newExportSpecifiers, specifierComparer)
-
-		exportDecl := group[0].AsExportDeclaration()
-
-		var updatedExportClause *ast.NamedExportBindings
-		if exportDecl.ExportClause != nil {
-			if exportDecl.ExportClause.Kind == ast.KindNamedExports {
-				namedExports := exportDecl.ExportClause.AsNamedExports()
-				sortedList := factory.NewNodeList(newExportSpecifiers)
-				updatedExportClause = factory.UpdateNamedExports(namedExports, sortedList)
-			} else {
-				updatedExportClause = exportDecl.ExportClause
+			var newExportSpecifiers []*ast.Node
+			for _, exportDecl := range subGroup {
+				exportClause := exportDecl.AsExportDeclaration().ExportClause
+				if exportClause != nil && exportClause.Kind == ast.KindNamedExports {
+					namedExports := exportClause.AsNamedExports()
+					newExportSpecifiers = append(newExportSpecifiers, namedExports.Elements.Nodes...)
+				}
 			}
-		}
 
-		newExportDecl := factory.UpdateExportDeclaration(
-			exportDecl,
-			exportDecl.Modifiers(),
-			exportDecl.IsTypeOnly,
-			updatedExportClause,
-			exportDecl.ModuleSpecifier,
-			exportDecl.Attributes,
-		)
-		coalescedExports = append(coalescedExports, newExportDecl)
+			slices.SortStableFunc(newExportSpecifiers, specifierComparer)
+
+			exportDecl := subGroup[0].AsExportDeclaration()
+
+			var updatedExportClause *ast.NamedExportBindings
+			if exportDecl.ExportClause != nil {
+				if exportDecl.ExportClause.Kind == ast.KindNamedExports {
+					namedExports := exportDecl.ExportClause.AsNamedExports()
+					sortedList := factory.NewNodeList(newExportSpecifiers)
+					updatedExportClause = factory.UpdateNamedExports(namedExports, sortedList)
+
+					if sourceFile != nil && !ast.NodeIsSynthesized(namedExports.AsNode()) && !rangeIsOnSingleLine(namedExports.Loc, sourceFile) {
+						changeTracker.SetEmitFlags(updatedExportClause.AsNode(), printer.EFMultiLine)
+					}
+				} else {
+					updatedExportClause = exportDecl.ExportClause
+				}
+			}
+
+			newExportDecl := factory.UpdateExportDeclaration(
+				exportDecl,
+				exportDecl.Modifiers(),
+				exportDecl.IsTypeOnly,
+				updatedExportClause,
+				exportDecl.ModuleSpecifier,
+				exportDecl.Attributes,
+			)
+			coalescedExports = append(coalescedExports, newExportDecl)
+		}
 	}
 
 	return coalescedExports
