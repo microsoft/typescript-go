@@ -34,7 +34,7 @@ CompilerOptions::
     "lib.es2022.d.ts"
   ],
   "strict": false,
-  "target": 7,
+  "target": "es2020",
   "configFilePath": "/tsconfig.json"
 }
 

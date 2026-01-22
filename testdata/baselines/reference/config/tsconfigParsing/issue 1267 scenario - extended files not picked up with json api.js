@@ -96,8 +96,8 @@ CompilerOptions::
   "lib": [
     "lib.esnext.d.ts"
   ],
-  "module": 199,
-  "moduleResolution": 99,
+  "module": "nodenext",
+  "moduleResolution": "nodenext",
   "noImplicitAny": true,
   "outDir": "/dist",
   "resolveJsonModule": true,
@@ -105,7 +105,7 @@ CompilerOptions::
   "rootDir": "/src",
   "strictPropertyInitialization": false,
   "sourceMap": true,
-  "target": 99,
+  "target": "esnext",
   "types": [
     "node",
     "vitest/globals"

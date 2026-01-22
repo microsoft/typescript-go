@@ -390,6 +390,42 @@ const (
 	ModuleDetectionKindForce  ModuleDetectionKind = 3
 )
 
+func (m ModuleDetectionKind) String() string {
+	switch m {
+	case ModuleDetectionKindAuto:
+		return "auto"
+	case ModuleDetectionKindLegacy:
+		return "legacy"
+	case ModuleDetectionKindForce:
+		return "force"
+	default:
+		return ""
+	}
+}
+
+func (m ModuleDetectionKind) MarshalJSON() ([]byte, error) {
+	s := m.String()
+	if s == "" {
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (m *ModuleDetectionKind) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "auto", "1":
+		*m = ModuleDetectionKindAuto
+	case "legacy", "2":
+		*m = ModuleDetectionKindLegacy
+	case "force", "3":
+		*m = ModuleDetectionKindForce
+	default:
+		*m = ModuleDetectionKindNone
+	}
+	return nil
+}
+
 type ModuleKind int32
 
 const (
@@ -426,6 +462,80 @@ func (moduleKind ModuleKind) SupportsImportAttributes() bool {
 	return ModuleKindNode18 <= moduleKind && moduleKind <= ModuleKindNodeNext ||
 		moduleKind == ModuleKindPreserve ||
 		moduleKind == ModuleKindESNext
+}
+
+func (m ModuleKind) MarshalJSON() ([]byte, error) {
+	var s string
+	switch m {
+	case ModuleKindNone:
+		s = "none"
+	case ModuleKindCommonJS:
+		s = "commonjs"
+	case ModuleKindAMD:
+		s = "amd"
+	case ModuleKindUMD:
+		s = "umd"
+	case ModuleKindSystem:
+		s = "system"
+	case ModuleKindES2015:
+		s = "es2015"
+	case ModuleKindES2020:
+		s = "es2020"
+	case ModuleKindES2022:
+		s = "es2022"
+	case ModuleKindESNext:
+		s = "esnext"
+	case ModuleKindNode16:
+		s = "node16"
+	case ModuleKindNode18:
+		s = "node18"
+	case ModuleKindNode20:
+		s = "node20"
+	case ModuleKindNodeNext:
+		s = "nodenext"
+	case ModuleKindPreserve:
+		s = "preserve"
+	default:
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (m *ModuleKind) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "none", "0":
+		*m = ModuleKindNone
+	case "commonjs", "1":
+		*m = ModuleKindCommonJS
+	case "amd", "2":
+		*m = ModuleKindAMD
+	case "umd", "3":
+		*m = ModuleKindUMD
+	case "system", "4":
+		*m = ModuleKindSystem
+	case "es6", "es2015", "5":
+		*m = ModuleKindES2015
+	case "es2020", "6":
+		*m = ModuleKindES2020
+	case "es2022", "7":
+		*m = ModuleKindES2022
+	case "esnext", "99":
+		*m = ModuleKindESNext
+	case "node16", "100":
+		*m = ModuleKindNode16
+	case "node18", "101":
+		*m = ModuleKindNode18
+	case "node20", "102":
+		*m = ModuleKindNode20
+	case "nodenext", "199":
+		*m = ModuleKindNodeNext
+	case "preserve", "200":
+		*m = ModuleKindPreserve
+	default:
+		*m = ModuleKindNone
+	}
+	return nil
 }
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
@@ -481,6 +591,44 @@ func (m ModuleResolutionKind) String() string {
 	}
 }
 
+func (m ModuleResolutionKind) MarshalJSON() ([]byte, error) {
+	var s string
+	switch m {
+	case ModuleResolutionKindClassic:
+		s = "classic"
+	case ModuleResolutionKindNode10:
+		s = "node10"
+	case ModuleResolutionKindNode16:
+		s = "node16"
+	case ModuleResolutionKindNodeNext:
+		s = "nodenext"
+	case ModuleResolutionKindBundler:
+		s = "bundler"
+	default:
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (m *ModuleResolutionKind) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "classic", "1":
+		*m = ModuleResolutionKindClassic
+	case "node", "node10", "2":
+		*m = ModuleResolutionKindNode10
+	case "node16", "3":
+		*m = ModuleResolutionKindNode16
+	case "nodenext", "99":
+		*m = ModuleResolutionKindNodeNext
+	case "bundler", "100":
+		*m = ModuleResolutionKindBundler
+	default:
+		*m = ModuleResolutionKindUnknown
+	}
+	return nil
+}
+
 type NewLineKind int32
 
 const (
@@ -509,6 +657,32 @@ func (newLine NewLineKind) GetNewLineCharacter() string {
 	}
 }
 
+func (n NewLineKind) MarshalJSON() ([]byte, error) {
+	var s string
+	switch n {
+	case NewLineKindCRLF:
+		s = "crlf"
+	case NewLineKindLF:
+		s = "lf"
+	default:
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (n *NewLineKind) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "crlf", "1":
+		*n = NewLineKindCRLF
+	case "lf", "2":
+		*n = NewLineKindLF
+	default:
+		*n = NewLineKindNone
+	}
+	return nil
+}
+
 type ScriptTarget int32
 
 const (
@@ -530,6 +704,74 @@ const (
 	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
 )
 
+func (t ScriptTarget) MarshalJSON() ([]byte, error) {
+	var s string
+	switch t {
+	case ScriptTargetES5:
+		s = "es5"
+	case ScriptTargetES2015:
+		s = "es2015"
+	case ScriptTargetES2016:
+		s = "es2016"
+	case ScriptTargetES2017:
+		s = "es2017"
+	case ScriptTargetES2018:
+		s = "es2018"
+	case ScriptTargetES2019:
+		s = "es2019"
+	case ScriptTargetES2020:
+		s = "es2020"
+	case ScriptTargetES2021:
+		s = "es2021"
+	case ScriptTargetES2022:
+		s = "es2022"
+	case ScriptTargetES2023:
+		s = "es2023"
+	case ScriptTargetES2024:
+		s = "es2024"
+	case ScriptTargetESNext:
+		s = "esnext"
+	default:
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (t *ScriptTarget) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "es3", "0":
+		*t = ScriptTargetES3
+	case "es5", "1":
+		*t = ScriptTargetES5
+	case "es6", "es2015", "2":
+		*t = ScriptTargetES2015
+	case "es2016", "3":
+		*t = ScriptTargetES2016
+	case "es2017", "4":
+		*t = ScriptTargetES2017
+	case "es2018", "5":
+		*t = ScriptTargetES2018
+	case "es2019", "6":
+		*t = ScriptTargetES2019
+	case "es2020", "7":
+		*t = ScriptTargetES2020
+	case "es2021", "8":
+		*t = ScriptTargetES2021
+	case "es2022", "9":
+		*t = ScriptTargetES2022
+	case "es2023", "10":
+		*t = ScriptTargetES2023
+	case "es2024", "11":
+		*t = ScriptTargetES2024
+	case "esnext", "99":
+		*t = ScriptTargetESNext
+	default:
+		*t = ScriptTargetNone
+	}
+	return nil
+}
+
 type JsxEmit int32
 
 const (
@@ -540,3 +782,41 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+func (j JsxEmit) MarshalJSON() ([]byte, error) {
+	var s string
+	switch j {
+	case JsxEmitPreserve:
+		s = "preserve"
+	case JsxEmitReactNative:
+		s = "react-native"
+	case JsxEmitReact:
+		s = "react"
+	case JsxEmitReactJSX:
+		s = "react-jsx"
+	case JsxEmitReactJSXDev:
+		s = "react-jsxdev"
+	default:
+		return []byte("null"), nil
+	}
+	return []byte(`"` + s + `"`), nil
+}
+
+func (j *JsxEmit) UnmarshalJSON(data []byte) error {
+	str := strings.Trim(string(data), `"`)
+	switch strings.ToLower(str) {
+	case "preserve", "1":
+		*j = JsxEmitPreserve
+	case "react-native", "2":
+		*j = JsxEmitReactNative
+	case "react", "3":
+		*j = JsxEmitReact
+	case "react-jsx", "4":
+		*j = JsxEmitReactJSX
+	case "react-jsxdev", "5":
+		*j = JsxEmitReactJSXDev
+	default:
+		*j = JsxEmitNone
+	}
+	return nil
+}

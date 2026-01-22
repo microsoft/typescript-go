@@ -36,10 +36,10 @@ Fs::
 configFileName:: /apath/tsconfig.json
 CompilerOptions::
 {
-  "jsx": 3,
-  "module": 99,
-  "moduleResolution": 100,
-  "moduleDetection": 1,
+  "jsx": "react",
+  "module": "esnext",
+  "moduleResolution": "bundler",
+  "moduleDetection": "auto",
   "noImplicitAny": true,
   "outDir": "/apath/dist",
   "paths": {
@@ -48,7 +48,7 @@ CompilerOptions::
     ]
   },
   "strict": true,
-  "target": 4,
+  "target": "es2017",
   "configFilePath": "/apath/tsconfig.json",
   "pathsBasePath": "/apath"
 }
