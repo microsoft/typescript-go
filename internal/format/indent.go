@@ -346,7 +346,7 @@ func getVisualListRange(node *ast.Node, list core.TextRange, sourceFile *ast.Sou
 	if next == nil {
 		nextStart = list.End()
 	} else {
-		nextStart = next.Pos()
+		nextStart = astnav.GetStartOfNode(next, sourceFile, false)
 	}
 	return core.NewTextRange(priorEnd, nextStart)
 }
