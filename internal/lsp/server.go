@@ -430,7 +430,6 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 					delete(s.pendingClientRequests, *req.ID)
 					s.pendingClientRequestsMu.Unlock()
 				}
-
 			}
 
 			if isBlockingMethod(req.Method) {
