@@ -40,7 +40,7 @@ type Snapshot struct {
 	AutoImports                        *autoimport.Registry
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	config                             *Config
+	allUserPreferences                 *lsutil.UserPreferenceConfig
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -53,13 +53,13 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	config *Config,
+	allUserPreferences *lsutil.UserPreferenceConfig,
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-	if config == nil {
-		config = NewConfig(nil) // disallow nil config
+	if allUserPreferences == nil {
+		allUserPreferences = lsutil.NewUserPreferenceConfig(nil) // disallow nil config
 	}
 	s := &Snapshot{
 		id: id,
@@ -71,7 +71,7 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		config:                             config,
+		allUserPreferences:                 allUserPreferences,
 		AutoImports:                        autoImports,
 		autoImportsWatch:                   autoImportsWatch,
 	}
@@ -110,13 +110,13 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 }
 
 func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
-	return s.config.GetPreference(activeFile)
+	return s.allUserPreferences.GetPreferences(activeFile)
 }
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	// returns `ts` config
-	if s.config.Ts() != nil {
-		return s.config.Ts()
+	// returns `ts`
+	if s.allUserPreferences.Ts() != nil {
+		return s.allUserPreferences.Ts()
 	}
 	return lsutil.NewDefaultUserPreferences()
 }
@@ -196,7 +196,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	newConfig                          *Config
+	newConfig                          *lsutil.UserPreferenceConfig
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
@@ -355,7 +355,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	config := s.config
+	config := s.allUserPreferences
 	if change.newConfig != nil {
 		config = config.CopyInto(change.newConfig)
 	}
@@ -373,7 +373,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.config.ts)
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.Ts())
 	}
 	prepareAutoImports := tspath.Path("")
 	if change.ResourceRequest.AutoImports != "" {
@@ -387,7 +387,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config.ts,
+		UserPreferences: config.Ts(),
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())

@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
@@ -89,9 +90,9 @@ type Session struct {
 	programCounter *programCounter
 
 	// read-only after initialization
-	initialConfig *Config
-	// current config
-	workspaceConfig                    *Config
+	initialUserPreferenceConfig *lsutil.UserPreferenceConfig
+	// current preferences
+	workspaceUserPreferenceConfig      *lsutil.UserPreferenceConfig
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -106,8 +107,8 @@ type Session struct {
 	snapshotMu       sync.RWMutex
 	snapshotUpdateMu sync.Mutex
 
-	pendingConfigChanges bool
-	configRWMu           sync.Mutex
+	pendingUserPreferenceConfigChanges bool
+	userPreferenceConfigRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
@@ -184,10 +185,10 @@ func NewSession(init *SessionInit) *Session {
 			),
 			toPath,
 		),
-		initialConfig:     NewConfig(nil),
-		workspaceConfig:   NewConfig(nil), // initialize so all `config`s are non-nil
-		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
-		watches:           make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		initialUserPreferenceConfig:   lsutil.NewUserPreferenceConfig(nil),
+		workspaceUserPreferenceConfig: lsutil.NewUserPreferenceConfig(nil), // initialize so all `config`s are non-nil
+		pendingATAChanges:             make(map[tspath.Path]*ATAStateChange),
+		watches:                       make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -211,10 +212,10 @@ func (s *Session) GetCurrentDirectory() string {
 }
 
 // Gets copy of current configuration
-func (s *Session) Config() *Config {
-	s.configRWMu.Lock()
-	defer s.configRWMu.Unlock()
-	return s.workspaceConfig.Copy()
+func (s *Session) Config() *lsutil.UserPreferenceConfig {
+	s.userPreferenceConfigRWMu.Lock()
+	defer s.userPreferenceConfigRWMu.Unlock()
+	return s.workspaceUserPreferenceConfig.Copy()
 }
 
 // Trace implements module.ResolutionHost
@@ -222,13 +223,13 @@ func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
 }
 
-func (s *Session) Configure(config *Config) {
+func (s *Session) Configure(config *lsutil.UserPreferenceConfig) {
 	// `config` should never be nil
-	s.configRWMu.Lock()
-	defer s.configRWMu.Unlock()
-	s.pendingConfigChanges = true
-	oldConfig := s.workspaceConfig.Copy()
-	s.workspaceConfig = s.workspaceConfig.CopyInto(config)
+	s.userPreferenceConfigRWMu.Lock()
+	defer s.userPreferenceConfigRWMu.Unlock()
+	s.pendingUserPreferenceConfigChanges = true
+	oldConfig := s.workspaceUserPreferenceConfig.Copy()
+	s.workspaceUserPreferenceConfig = s.workspaceUserPreferenceConfig.CopyInto(config)
 
 	// Tell the client to re-request certain commands depending on user preference changes.
 	if oldConfig != config {
@@ -237,9 +238,9 @@ func (s *Session) Configure(config *Config) {
 	}
 }
 
-func (s *Session) InitializeWithConfig(config *Config) {
-	s.initialConfig = config.Copy() // initializes with non-nil config
-	s.Configure(s.initialConfig)
+func (s *Session) InitializeWithConfig(config *lsutil.UserPreferenceConfig) {
+	s.initialUserPreferenceConfig = config.Copy() // initializes with non-nil config
+	s.Configure(s.initialUserPreferenceConfig)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -734,7 +735,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay, map[tspath.Path]*ATAStateChange, *Config) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay, map[tspath.Path]*ATAStateChange, *lsutil.UserPreferenceConfig) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -742,14 +743,14 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
-	s.configRWMu.Lock()
-	defer s.configRWMu.Unlock()
-	var newConfig *Config
-	if s.pendingConfigChanges {
-		newConfig = s.workspaceConfig.Copy()
+	s.userPreferenceConfigRWMu.Lock()
+	defer s.userPreferenceConfigRWMu.Unlock()
+	var newUserPreferenceConfig *lsutil.UserPreferenceConfig
+	if s.pendingUserPreferenceConfigChanges {
+		newUserPreferenceConfig = s.workspaceUserPreferenceConfig.Copy()
 	}
-	s.pendingConfigChanges = false
-	return fileChanges, overlays, pendingATAChanges, newConfig
+	s.pendingUserPreferenceConfigChanges = false
+	return fileChanges, overlays, pendingATAChanges, newUserPreferenceConfig
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
@@ -856,16 +857,16 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
 }
 
-func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *Config, newPrefs *Config) {
-	if oldPrefs.js.InlayHints != newPrefs.js.InlayHints || oldPrefs.ts.InlayHints != newPrefs.ts.InlayHints {
+func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserPreferenceConfig, newPrefs *lsutil.UserPreferenceConfig) {
+	if oldPrefs.Js().InlayHints != newPrefs.Js().InlayHints || oldPrefs.Ts().InlayHints != newPrefs.Ts().InlayHints {
 		if err := s.client.RefreshInlayHints(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
 	}
 }
 
-func (s *Session) refreshCodeLensIfNeeded(oldPrefs *Config, newPrefs *Config) {
-	if oldPrefs.js.CodeLens != newPrefs.js.CodeLens || oldPrefs.ts.CodeLens != newPrefs.ts.CodeLens {
+func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserPreferenceConfig, newPrefs *lsutil.UserPreferenceConfig) {
+	if oldPrefs.Js().CodeLens != newPrefs.Js().CodeLens || oldPrefs.Ts().CodeLens != newPrefs.Ts().CodeLens {
 		if err := s.client.RefreshCodeLens(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
@@ -982,7 +983,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if newSnapshot.AutoImports.IsPreparedForImportingFile(
 			changedFile.FileName(),
 			project.configFilePath,
-			newSnapshot.config.Ts(),
+			newSnapshot.allUserPreferences.Ts(),
 		) {
 			return
 		}
