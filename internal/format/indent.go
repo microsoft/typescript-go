@@ -322,7 +322,8 @@ func getList(list *ast.NodeList, r core.TextRange, node *ast.Node, sourceFile *a
 	if list == nil {
 		return nil
 	}
-	if r.ContainedBy(getVisualListRange(node, list.Loc, sourceFile)) {
+	visualRange := getVisualListRange(node, list.Loc, sourceFile)
+	if r.ContainedBy(visualRange) {
 		return list
 	}
 	return nil
@@ -341,9 +342,19 @@ func getVisualListRange(node *ast.Node, list core.TextRange, sourceFile *ast.Sou
 	} else {
 		priorEnd = prior.End()
 	}
-	next := astnav.FindNextToken(prior, node, sourceFile)
+	// Find the token that comes after the list ends
+	// Start searching from list.End() + a small offset to skip past any trailing punctuation in the list
+	searchPos := list.End() + 1
+	// Keep searching forward until we find a token that starts at or after list.End()
+	next := astnav.FindPrecedingToken(sourceFile, searchPos)
+	for next != nil && next.End() <= list.End() && searchPos < sourceFile.End() {
+		searchPos++
+		next = astnav.FindPrecedingToken(sourceFile, searchPos)
+	}
 	var nextStart int
-	if next == nil {
+	if next == nil || next.Pos() < list.End() {
+		// If we didn't find a token after the list, or the token we found starts before the list ends,
+		// just use the list's end position
 		nextStart = list.End()
 	} else {
 		nextStart = astnav.GetStartOfNode(next, sourceFile, false)
