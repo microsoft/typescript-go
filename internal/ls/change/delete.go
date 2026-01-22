@@ -200,7 +200,6 @@ func deleteNodeInList(t *Tracker, deletedNodesInLists map[*ast.Node]bool, source
 		deleteNode(t, sourceFile, node, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
 		return
 	}
-	debug.Assert(containingList != nil, "containingList should not be nil")
 	index := slices.Index(containingList.Nodes, node)
 	debug.Assert(index != -1, "node should be in containing list")
 
