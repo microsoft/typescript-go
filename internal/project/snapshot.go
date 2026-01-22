@@ -265,7 +265,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if !fs.watchChangesOverlapCache(change.fileChanges) {
@@ -280,6 +280,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		fs.markDirtyFiles(change.fileChanges)
+		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
@@ -338,7 +339,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
-	if len(change.fileChanges.Opened) != 0 {
+	if change.fileChanges.Opened != "" || change.fileChanges.Reopened != "" {
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
 		if len(projectsWithNewProgramStructure) > 0 {
 			cleanFilesStart := time.Now()
@@ -423,6 +424,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)
 		if project.ProgramLastUpdate == newSnapshotID {
+			// Only ref source files when the program was created/updated in this snapshot.
+			// This matches dispose, which only derefs when programCounter reaches zero.
+			if project.Program != nil {
+				for _, file := range project.Program.SourceFiles() {
+					session.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
 			// so it's GC'd and to ensure the project can't access any data not already in the
@@ -438,16 +446,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 		}
 	}
-	for path, config := range newSnapshot.ConfigFileRegistry.configs {
+	for _, config := range newSnapshot.ConfigFileRegistry.configs {
 		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
-			if prevConfig, ok := s.ConfigFileRegistry.configs[path]; ok {
-				if prevConfig.commandLine != nil && config.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile {
-					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
-						// Ref count extended configs that were already loaded in the previous snapshot.
-						// New/changed ones were handled during config file registry building.
-						session.extendedConfigCache.Ref(s.toPath(file))
-					}
-				}
+			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
+				session.extendedConfigCache.Ref(newSnapshot.toPath(file))
 			}
 		}
 	}

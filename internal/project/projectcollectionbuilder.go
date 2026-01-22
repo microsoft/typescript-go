@@ -29,6 +29,7 @@ type ProjectCollectionBuilder struct {
 	sessionOptions      *SessionOptions
 	parseCache          *ParseCache
 	extendedConfigCache *ExtendedConfigCache
+	toPath              func(fileName string) tspath.Path
 
 	ctx                                context.Context
 	fs                                 *snapshotFSBuilder
@@ -61,6 +62,7 @@ func newProjectCollectionBuilder(
 	return &ProjectCollectionBuilder{
 		ctx:                                ctx,
 		fs:                                 fs,
+		toPath:                             fs.toPath,
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		sessionOptions:                     sessionOptions,
 		parseCache:                         parseCache,
@@ -68,7 +70,7 @@ func newProjectCollectionBuilder(
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, nil),
 		newSnapshotID:                      newSnapshotID,
-		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
+		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
 	}
@@ -100,7 +102,16 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	}
 
 	configFileRegistry := b.configFileRegistryBuilder.Finalize()
-	newProjectCollection.configFileRegistry = configFileRegistry
+	if configFileRegistry != b.base.configFileRegistry {
+		ensureCloned()
+		newProjectCollection.configFileRegistry = configFileRegistry
+	}
+
+	if !maps.Equal(b.apiOpenedProjects, b.base.apiOpenedProjects) {
+		ensureCloned()
+		newProjectCollection.apiOpenedProjects = b.apiOpenedProjects
+	}
+
 	return newProjectCollection, configFileRegistry
 }
 
@@ -168,14 +179,7 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 }
 
 func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
-	changedFiles := make([]tspath.Path, 0, len(summary.Closed)+summary.Changed.Len())
-	for uri, hash := range summary.Closed {
-		fileName := uri.FileName()
-		path := b.toPath(fileName)
-		if fh := b.fs.GetFileByPath(fileName, path); fh == nil || fh.Hash() != hash {
-			changedFiles = append(changedFiles, path)
-		}
-	}
+	changedFiles := make([]tspath.Path, 0, summary.Changed.Len())
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
 		path := b.toPath(fileName)
@@ -185,6 +189,8 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	configChangeLogger := logger.Fork("Checking for changes affecting config files")
 	configChangeResult := b.configFileRegistryBuilder.DidChangeFiles(summary, configChangeLogger)
 	logChangeFileResult(configChangeResult, configChangeLogger)
+
+	b.programStructureChanged = b.markProjectsAffectedByConfigChanges(configChangeResult, logger)
 
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
 		// Only consider change/delete; creates are handled by the config file registry
@@ -201,10 +207,10 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 
 		// Handle closed and changed files
 		b.markFilesChanged(entry, changedFiles, lsproto.FileChangeTypeChanged, logger)
-		if entry.Value().Kind == KindInferred && len(summary.Closed) > 0 {
+		if entry.Value().Kind == KindInferred && summary.Closed.Len() > 0 {
 			rootFilesMap := entry.Value().CommandLine.FileNamesByPath()
 			newRootFiles := entry.Value().CommandLine.FileNames()
-			for uri := range summary.Closed {
+			for uri := range summary.Closed.Keys() {
 				fileName := uri.FileName()
 				path := b.toPath(fileName)
 				if _, ok := rootFilesMap[path]; ok {
@@ -240,10 +246,10 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	})
 
 	// Handle opened file
-	if summary.Opened != "" {
-		fileName := summary.Opened.FileName()
-		path := b.toPath(fileName)
+	if summary.Opened != "" || summary.Reopened != "" {
 		var toRemoveProjects collections.Set[tspath.Path]
+		fileName := core.FirstNonZero(summary.Opened, summary.Reopened).FileName()
+		path := b.toPath(fileName)
 		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 			toRemoveProjects.Add(entry.Key())
@@ -292,7 +298,7 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 			retainProjectAndReferences(project)
 
 			// Retain all the ancestor projects
-			b.configFileRegistryBuilder.forEachConfigFileNameFor(openFile, openFilePath, func(configFileName string) {
+			b.configFileRegistryBuilder.forEachConfigFileNameFor(openFilePath, func(configFileName string) {
 				if ancestor := b.findOrCreateProject(configFileName, b.toPath(configFileName), projectLoadKindFind, logger); ancestor != nil {
 					retainProjectAndReferences(ancestor.Value())
 				}
@@ -325,8 +331,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		b.configFileRegistryBuilder.Cleanup()
 	}
-
-	b.programStructureChanged = b.markProjectsAffectedByConfigChanges(configChangeResult, logger)
 }
 
 func logChangeFileResult(result changeFileResult, logger *logging.LogTree) {
@@ -896,10 +900,6 @@ func (b *ProjectCollectionBuilder) findOrCreateProject(
 	return entry
 }
 
-func (b *ProjectCollectionBuilder) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, b.sessionOptions.CurrentDirectory, b.fs.fs.UseCaseSensitiveFileNames())
-}
-
 func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []string, logger *logging.LogTree) bool {
 	if len(rootFileNames) == 0 {
 		if b.inferredProject.Value() != nil {
@@ -990,12 +990,10 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
-					if b.sessionOptions.WatchEnabled {
-						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
-						project.programFilesWatch = programFilesWatch
-						project.failedLookupsWatch = failedLookupsWatch
-						project.affectingLocationsWatch = affectingLocationsWatch
-					}
+					programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
+					project.programFilesWatch = programFilesWatch
+					project.failedLookupsWatch = failedLookupsWatch
+					project.affectingLocationsWatch = affectingLocationsWatch
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""
