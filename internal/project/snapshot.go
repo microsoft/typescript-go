@@ -357,7 +357,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	config := s.config
 	if change.newConfig != nil {
-		config.CopyInto(change.newConfig)
+		config = config.CopyInto(change.newConfig)
 	}
 
 	autoImportHost := newAutoImportRegistryCloneHost(

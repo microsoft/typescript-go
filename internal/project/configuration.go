@@ -33,18 +33,18 @@ func (a *Config) CopyInto(b *Config) *Config {
 	newConfig := &Config{}
 
 	if b.ts != nil {
-		newConfig.ts = b.ts.Copy()
+		newConfig.ts = b.ts
 	} else {
-		newConfig.ts = a.ts.Copy()
+		newConfig.ts = a.ts
 	}
 
 	if b.js != nil {
-		newConfig.js = b.js.Copy()
+		newConfig.js = b.js
 	} else {
-		newConfig.js = a.js.Copy()
+		newConfig.js = a.js
 	}
 
-	return a
+	return newConfig
 }
 
 func (c *Config) Ts() *lsutil.UserPreferences {
