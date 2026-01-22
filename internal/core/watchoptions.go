@@ -51,3 +51,58 @@ func (w *WatchOptions) WatchInterval() time.Duration {
 	}
 	return watchInterval
 }
+
+func (w WatchFileKind) MarshalJSON() ([]byte, error) {
+	switch w {
+	case WatchFileKindNone:
+		return []byte("null"), nil
+	case WatchFileKindFixedPollingInterval:
+		return []byte(`"fixedpollinginterval"`), nil
+	case WatchFileKindPriorityPollingInterval:
+		return []byte(`"prioritypollinginterval"`), nil
+	case WatchFileKindDynamicPriorityPolling:
+		return []byte(`"dynamicprioritypolling"`), nil
+	case WatchFileKindFixedChunkSizePolling:
+		return []byte(`"fixedchunksizepolling"`), nil
+	case WatchFileKindUseFsEvents:
+		return []byte(`"usefsevents"`), nil
+	case WatchFileKindUseFsEventsOnParentDirectory:
+		return []byte(`"usefseventsonparentdirectory"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (w WatchDirectoryKind) MarshalJSON() ([]byte, error) {
+	switch w {
+	case WatchDirectoryKindNone:
+		return []byte("null"), nil
+	case WatchDirectoryKindUseFsEvents:
+		return []byte(`"usefsevents"`), nil
+	case WatchDirectoryKindFixedPollingInterval:
+		return []byte(`"fixedpollinginterval"`), nil
+	case WatchDirectoryKindDynamicPriorityPolling:
+		return []byte(`"dynamicprioritypolling"`), nil
+	case WatchDirectoryKindFixedChunkSizePolling:
+		return []byte(`"fixedchunksizepolling"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (p PollingKind) MarshalJSON() ([]byte, error) {
+	switch p {
+	case PollingKindNone:
+		return []byte("null"), nil
+	case PollingKindFixedInterval:
+		return []byte(`"fixedinterval"`), nil
+	case PollingKindPriorityInterval:
+		return []byte(`"priorityinterval"`), nil
+	case PollingKindDynamicPriority:
+		return []byte(`"dynamicpriority"`), nil
+	case PollingKindFixedChunkSize:
+		return []byte(`"fixedchunksize"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}

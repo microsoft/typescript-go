@@ -540,3 +540,139 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+func (j JsxEmit) MarshalJSON() ([]byte, error) {
+	switch j {
+	case JsxEmitNone:
+		return []byte("null"), nil
+	case JsxEmitPreserve:
+		return []byte(`"preserve"`), nil
+	case JsxEmitReactNative:
+		return []byte(`"react-native"`), nil
+	case JsxEmitReact:
+		return []byte(`"react"`), nil
+	case JsxEmitReactJSX:
+		return []byte(`"react-jsx"`), nil
+	case JsxEmitReactJSXDev:
+		return []byte(`"react-jsxdev"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (s ScriptTarget) MarshalJSON() ([]byte, error) {
+	switch s {
+	case ScriptTargetNone:
+		return []byte("null"), nil
+	case ScriptTargetES5:
+		return []byte(`"es5"`), nil
+	case ScriptTargetES2015:
+		return []byte(`"es2015"`), nil
+	case ScriptTargetES2016:
+		return []byte(`"es2016"`), nil
+	case ScriptTargetES2017:
+		return []byte(`"es2017"`), nil
+	case ScriptTargetES2018:
+		return []byte(`"es2018"`), nil
+	case ScriptTargetES2019:
+		return []byte(`"es2019"`), nil
+	case ScriptTargetES2020:
+		return []byte(`"es2020"`), nil
+	case ScriptTargetES2021:
+		return []byte(`"es2021"`), nil
+	case ScriptTargetES2022:
+		return []byte(`"es2022"`), nil
+	case ScriptTargetES2023:
+		return []byte(`"es2023"`), nil
+	case ScriptTargetES2024:
+		return []byte(`"es2024"`), nil
+	case ScriptTargetESNext:
+		return []byte(`"esnext"`), nil
+	case ScriptTargetJSON:
+		return []byte(`"json"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (m ModuleKind) MarshalJSON() ([]byte, error) {
+	switch m {
+	case ModuleKindNone:
+		return []byte("null"), nil
+	case ModuleKindCommonJS:
+		return []byte(`"commonjs"`), nil
+	case ModuleKindAMD:
+		return []byte(`"amd"`), nil
+	case ModuleKindUMD:
+		return []byte(`"umd"`), nil
+	case ModuleKindSystem:
+		return []byte(`"system"`), nil
+	case ModuleKindES2015:
+		return []byte(`"es2015"`), nil
+	case ModuleKindES2020:
+		return []byte(`"es2020"`), nil
+	case ModuleKindES2022:
+		return []byte(`"es2022"`), nil
+	case ModuleKindESNext:
+		return []byte(`"esnext"`), nil
+	case ModuleKindNode16:
+		return []byte(`"node16"`), nil
+	case ModuleKindNode18:
+		return []byte(`"node18"`), nil
+	case ModuleKindNode20:
+		return []byte(`"node20"`), nil
+	case ModuleKindNodeNext:
+		return []byte(`"nodenext"`), nil
+	case ModuleKindPreserve:
+		return []byte(`"preserve"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (m ModuleResolutionKind) MarshalJSON() ([]byte, error) {
+	switch m {
+	case ModuleResolutionKindUnknown:
+		return []byte("null"), nil
+	case ModuleResolutionKindClassic:
+		return []byte(`"classic"`), nil
+	case ModuleResolutionKindNode10:
+		return []byte(`"node10"`), nil
+	case ModuleResolutionKindNode16:
+		return []byte(`"node16"`), nil
+	case ModuleResolutionKindNodeNext:
+		return []byte(`"nodenext"`), nil
+	case ModuleResolutionKindBundler:
+		return []byte(`"bundler"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (m ModuleDetectionKind) MarshalJSON() ([]byte, error) {
+	switch m {
+	case ModuleDetectionKindNone:
+		return []byte("null"), nil
+	case ModuleDetectionKindAuto:
+		return []byte(`"auto"`), nil
+	case ModuleDetectionKindLegacy:
+		return []byte(`"legacy"`), nil
+	case ModuleDetectionKindForce:
+		return []byte(`"force"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
+
+func (n NewLineKind) MarshalJSON() ([]byte, error) {
+	switch n {
+	case NewLineKindNone:
+		return []byte("null"), nil
+	case NewLineKindCRLF:
+		return []byte(`"crlf"`), nil
+	case NewLineKindLF:
+		return []byte(`"lf"`), nil
+	default:
+		return []byte("null"), nil
+	}
+}
