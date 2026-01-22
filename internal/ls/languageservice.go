@@ -91,7 +91,6 @@ func (l *LanguageService) GetECMALineInfo(fileName string) *sourcemap.ECMALineIn
 
 // getPreparedAutoImportView returns an auto-import view for the given file if the registry is prepared
 // to provide up-to-date auto-imports for it. If not, it returns ErrNeedsAutoImports.
-// Returns nil for dynamic/untitled files since we can't compute import paths for them.
 func (l *LanguageService) getPreparedAutoImportView(fromFile *ast.SourceFile) (*autoimport.View, error) {
 	registry := l.host.AutoImportRegistry()
 	if !registry.IsPreparedForImportingFile(fromFile.FileName(), l.projectPath, l.UserPreferences()) {
@@ -104,7 +103,6 @@ func (l *LanguageService) getPreparedAutoImportView(fromFile *ast.SourceFile) (*
 
 // getCurrentAutoImportView returns an auto-import view for the given file, based on the current state
 // of the auto-import registry, which may or may not be up-to-date.
-// Returns nil for dynamic/untitled files since we can't compute import paths for them.
 func (l *LanguageService) getCurrentAutoImportView(fromFile *ast.SourceFile) *autoimport.View {
 	return autoimport.NewView(
 		l.host.AutoImportRegistry(),
