@@ -343,12 +343,17 @@ func getVisualListRange(node *ast.Node, list core.TextRange, sourceFile *ast.Sou
 		priorEnd = prior.End()
 	}
 	// Find the token that comes after the list ends
-	// Start searching from list.End() + a small offset to skip past any trailing punctuation in the list
+	// We search from list.End() forward to find the first token that starts at or after list.End()
+	// Most lists have closing tokens immediately after, so this loop typically runs only 1-2 iterations
 	searchPos := list.End() + 1
-	// Keep searching forward until we find a token that starts at or after list.End()
 	next := astnav.FindPrecedingToken(sourceFile, searchPos)
-	for next != nil && next.End() <= list.End() && searchPos < sourceFile.End() {
+	// Advance until we find a token that starts after the list end (or reach source file end)
+	// Limit the search to avoid performance issues with very large files
+	maxSearchDistance := 10 // Reasonable limit since closing tokens are typically very close
+	searchDistance := 0
+	for next != nil && next.End() <= list.End() && searchDistance < maxSearchDistance && searchPos < sourceFile.End() {
 		searchPos++
+		searchDistance++
 		next = astnav.FindPrecedingToken(sourceFile, searchPos)
 	}
 	var nextStart int

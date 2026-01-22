@@ -245,17 +245,7 @@ func addToExistingImport(
 				specsToCompareAgainst := existingSpecifiers
 				if promoteFromTypeOnly && len(existingSpecifiers) > 0 {
 					specsToCompareAgainst = core.Map(existingSpecifiers, func(e *ast.Node) *ast.Node {
-						spec := e.AsImportSpecifier()
-						var propertyName *ast.Node
-						if spec.PropertyName != nil {
-							propertyName = spec.PropertyName
-						}
-						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
-							true, // isTypeOnly
-							propertyName,
-							spec.Name(),
-						)
-						return syntheticSpec
+						return createSyntheticImportSpecifier(ct.NodeFactory, e.AsImportSpecifier(), true)
 					})
 				}
 
@@ -1015,6 +1005,21 @@ func isIndexFileName(fileName string) bool {
 	return false
 }
 
+// createSyntheticImportSpecifier creates a synthetic import specifier with the given type-only status
+// while preserving the property name and identifier from the original specifier.
+// This is useful for comparison and sorting operations.
+func createSyntheticImportSpecifier(factory *ast.NodeFactory, spec *ast.ImportSpecifier, isTypeOnly bool) *ast.Node {
+	var propertyName *ast.Node
+	if spec.PropertyName != nil {
+		propertyName = spec.PropertyName
+	}
+	return factory.NewImportSpecifier(
+		isTypeOnly,
+		propertyName,
+		spec.Name(),
+	)
+}
+
 func promoteFromTypeOnly(
 	changes *change.Tracker,
 	aliasDeclaration *ast.Declaration,
@@ -1169,15 +1174,7 @@ func promoteImportClause(
 							return e
 						}
 						// Will have type modifier added
-						var prop *ast.Node
-						if s.PropertyName != nil {
-							prop = s.PropertyName
-						}
-						return changes.NodeFactory.NewImportSpecifier(
-							true, // isTypeOnly
-							prop,
-							s.Name(),
-						)
+						return createSyntheticImportSpecifier(changes.NodeFactory, s, true)
 					})
 					// Filter out nils (the promoted element)
 					specsWithTypeModifiers = core.Filter(specsWithTypeModifiers, func(e *ast.Node) bool { return e != nil })
