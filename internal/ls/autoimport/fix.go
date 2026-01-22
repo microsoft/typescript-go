@@ -1137,10 +1137,20 @@ func promoteImportClause(
 					}
 					// If not already at index 0, move it there
 					if aliasIndex > 0 {
-						// Delete the specifier from its current position
-						changes.Delete(sourceFile, aliasDeclaration)
-						// Insert it at index 0
-						changes.InsertImportSpecifierAtIndex(sourceFile, aliasDeclaration, namedImports, 0)
+						// Create a new specifier with isTypeOnly=false for insertion
+						spec := aliasDeclaration.AsImportSpecifier()
+						newSpecifier := changes.NodeFactory.NewImportSpecifier(
+							false, // isTypeOnly - promoting from type-only to value
+							spec.PropertyName,
+							spec.Name(),
+						)
+						// Delete the old specifier from its current position using DeleteRange
+						// instead of Delete to avoid issues with GetContainingList
+						startPos := scanner.GetTokenPosOfNode(aliasDeclaration, sourceFile, false)
+						endPos := aliasDeclaration.End()
+						changes.DeleteRange(sourceFile, core.NewTextRange(startPos, endPos))
+						// Insert the new specifier at index 0
+						changes.InsertImportSpecifierAtIndex(sourceFile, newSpecifier, namedImports, 0)
 					}
 				}
 

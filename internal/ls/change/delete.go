@@ -194,13 +194,7 @@ func deleteNode(t *Tracker, sourceFile *ast.SourceFile, node *ast.Node, leadingT
 
 func deleteNodeInList(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourceFile *ast.SourceFile, node *ast.Node) {
 	containingList := format.GetContainingList(node, sourceFile)
-	if containingList == nil {
-		// In rare cases, GetContainingList may return nil for nodes that have been
-		// manipulated during tracking operations (e.g., when promoting type-only imports
-		// and reordering import specifiers). Fall back to simple node deletion.
-		deleteNode(t, sourceFile, node, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
-		return
-	}
+	debug.Assert(containingList != nil, "containingList should not be nil")
 	index := slices.Index(containingList.Nodes, node)
 	debug.Assert(index != -1, "node should be in containing list")
 
