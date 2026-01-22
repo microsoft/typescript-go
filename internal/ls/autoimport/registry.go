@@ -413,9 +413,6 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 		if tspath.IsDynamicFileName(fileName) {
 			continue
 		}
-		if !b.specifierCache.Has(path) {
-			b.specifierCache.Set(path, &collections.SyncMap[tspath.Path, string]{})
-		}
 		dir := fileName
 		dirPath := path
 		for {
@@ -429,6 +426,10 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 				break
 			}
 			neededDirectories[dirPath] = dir
+		}
+
+		if !b.specifierCache.Has(path) {
+			b.specifierCache.Set(path, &collections.SyncMap[tspath.Path, string]{})
 		}
 	}
 
