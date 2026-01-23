@@ -26,9 +26,9 @@ export const x = 0;
 // @Filename: /node_modules/foo/dist/dir/x.d.ts
 /export const x = 0;
 // @Filename: /a.mts
-import {} from "[|foo/bar/|]/*0*/";
-import {} from "[|foo/bar/dir/|]/*1*/"; // invalid
-import {} from "foo/bar/_/*2*/";
+import {} from "foo/bar//*0*/";
+import {} from "foo/bar/dir//*1*/"; // invalid
+import {} from "foo/bar/[|_|]/*2*/";
 import {} from "foo/bar/_dir//*3*/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
@@ -41,59 +41,17 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "bar/_b/suffix",
+					Label: "_b/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						TextEdit: &lsproto.TextEdit{
-							NewText: "bar/_b/suffix",
-							Range:   f.Ranges()[0].LSRange,
-						},
-					},
 				},
 				&lsproto.CompletionItem{
-					Label: "bar/_dir/suffix",
+					Label: "_dir",
 					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						TextEdit: &lsproto.TextEdit{
-							NewText: "bar/_dir/suffix",
-							Range:   f.Ranges()[0].LSRange,
-						},
-					},
 				},
 			},
 		},
 	})
-	// f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
-	// 	IsIncomplete: false,
-	// 	ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-	// 		CommitCharacters: &[]string{},
-	// 		EditRange:        Ignored,
-	// 	},
-	// 	Items: &fourslash.CompletionsExpectedItems{
-	// 		Exact: []fourslash.CompletionsExpectedItem{
-	// 			&lsproto.CompletionItem{
-	// 				Label: "bar/_b/suffix",
-	// 				Kind:  PtrTo(lsproto.CompletionItemKindFile),
-	// 				TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-	// 					TextEdit: &lsproto.TextEdit{
-	// 						NewText: "bar/_b/suffix",
-	// 						Range:   f.Ranges()[1].LSRange,
-	// 					},
-	// 				},
-	// 			},
-	// 			&lsproto.CompletionItem{
-	// 				Label: "bar/_dir/suffix",
-	// 				Kind:  PtrTo(lsproto.CompletionItemKindFolder),
-	// 				TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-	// 					TextEdit: &lsproto.TextEdit{
-	// 						NewText: "bar/_dir/suffix",
-	// 						Range:   f.Ranges()[1].LSRange,
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// })
+	f.VerifyCompletions(t, "1", nil)
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -103,12 +61,24 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "b",
+					Label: "_b/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							Range:   f.Ranges()[0].LSRange,
+							NewText: "_b/suffix",
+						},
+					},
 				},
 				&lsproto.CompletionItem{
-					Label: "dir",
+					Label: "_dir",
 					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							Range:   f.Ranges()[0].LSRange,
+							NewText: "_dir",
+						},
+					},
 				},
 			},
 		},
@@ -122,7 +92,7 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "x",
+					Label: "x/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
 				},
 			},
