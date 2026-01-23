@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -28,5 +29,5 @@ import a from "A";
 import b from "B";
 import d from "D";
 
-console.log(a, b, c, d)`, "source.organizeImports", nil)
+console.log(a, b, c, d)`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

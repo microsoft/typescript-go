@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -69,5 +70,5 @@ export class MyClass {
     }
     someFunction();
   }
-}`, "source.organizeImports", nil)
+}`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

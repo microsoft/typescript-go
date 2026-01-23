@@ -47,9 +47,9 @@ func OrganizeImports(
 	preferences *lsutil.UserPreferences,
 	kind lsproto.CodeActionKind,
 ) {
-	shouldSort := kind == "source.organizeImports.sortAndCombine" || kind == lsproto.CodeActionKindSourceOrganizeImports
+	shouldSort := kind == lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine || kind == lsproto.CodeActionKindSourceOrganizeImports
 	shouldCombine := shouldSort
-	shouldRemove := kind == "source.organizeImports.removeUnused" || kind == lsproto.CodeActionKindSourceOrganizeImports
+	shouldRemove := kind == lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused || kind == lsproto.CodeActionKindSourceOrganizeImports
 	topLevelImportDecls := filterImportDeclarations(sourceFile.Statements.Nodes)
 	topLevelImportGroupDecls := groupByNewlineContiguous(sourceFile, topLevelImportDecls)
 
@@ -90,7 +90,7 @@ func OrganizeImports(
 		organizeImportsWorker(importGroupDecl, comparer, shouldSort, shouldCombine, shouldRemove, sourceFile, program, changeTracker, ctx)
 	}
 
-	if kind != "source.organizeImports.removeUnused" {
+	if kind != lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused {
 		topLevelExportGroupDecls := getTopLevelExportGroups(sourceFile)
 		for _, exportGroupDecl := range topLevelExportGroupDecls {
 			organizeExportsWorker(exportGroupDecl, comparer, sourceFile, changeTracker)
@@ -116,7 +116,7 @@ func OrganizeImports(
 			organizeImportsWorker(importGroupDecl, comparer, shouldSort, shouldCombine, shouldRemove, sourceFile, program, changeTracker, ctx)
 		}
 
-		if kind != "source.organizeImports.removeUnused" {
+		if kind != lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused {
 			var ambientModuleExportDecls []*ast.Statement
 			for _, s := range moduleBody.Statements.Nodes {
 				if s.Kind == ast.KindExportDeclaration {

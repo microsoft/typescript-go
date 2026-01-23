@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -46,7 +47,7 @@ console.log(e, f, F, g, G, H, h);`
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(e, f, F, g, G, H, h);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSTrue,
 	})
 	f.VerifyOrganizeImports(t, `import {
@@ -67,7 +68,7 @@ console.log(e, f, F, g, G, H, h);`, "source.organizeImports", &lsutil.UserPrefer
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(e, f, F, g, G, H, h);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSFalse,
 	})
 }

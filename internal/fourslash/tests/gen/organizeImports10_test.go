@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -24,5 +25,5 @@ export function fun() { /* ... */ }
 	f.VerifyOrganizeImports(t, `import type { ZodType } from './declaration';
 
 /** Intended to be used in combination with {@link ZodType} */
-export function fun() { /* ... */ }`, "source.organizeImports", nil)
+export function fun() { /* ... */ }`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

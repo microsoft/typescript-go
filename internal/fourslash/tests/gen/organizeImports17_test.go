@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -19,7 +20,7 @@ import { aa, CaseInsensitively, sorted } from "aardvark";`
 	defer done()
 	f.VerifyOrganizeImports(t, `import { aa, CaseInsensitively, sorted } from "aardvark";
 import { Both } from "module-specifiers-unsorted";
-`, "source.organizeImports.sortAndCombine", &lsutil.UserPreferences{
+`, lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine, &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSUnknown,
 	})
 }

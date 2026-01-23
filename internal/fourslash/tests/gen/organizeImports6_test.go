@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -33,5 +34,5 @@ import * as anotherThing from "someopath"; /* small comment */ // single line on
 * and there
 */
 
-anotherThing;`, "source.organizeImports", nil)
+anotherThing;`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -26,26 +27,26 @@ export { A, type B, C };`
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, "source.organizeImports", nil)
+`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { A, type B, C };
-`, "source.organizeImports", &lsutil.UserPreferences{
+`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
 	})
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { type B, A, C };
-`, "source.organizeImports", &lsutil.UserPreferences{
+`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
 	})
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, "source.organizeImports", &lsutil.UserPreferences{
+`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -38,5 +39,5 @@ export { C } from "./C";
 export { bFuncA } from "./A";
 export { bFuncB } from "./B";
 export { bFuncC } from "./C";
-`, "source.organizeImports", nil)
+`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

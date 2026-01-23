@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -34,5 +35,5 @@ export {
     PersonDefinitions as NameDefinitions,
     PersonDefinitions
 } from './a';
-`, "source.organizeImports", nil)
+`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

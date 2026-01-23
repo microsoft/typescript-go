@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -24,7 +25,7 @@ console.log(a1, a2, a100);`
 import * as a100 from "./a100";
 import * as a2 from "./a2";
 
-console.log(a1, a2, a100);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(a1, a2, a100);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase:       core.TSFalse,
 		OrganizeImportsCollation:        lsutil.OrganizeImportsCollationUnicode,
 		OrganizeImportsNumericCollation: false,
@@ -33,7 +34,7 @@ console.log(a1, a2, a100);`, "source.organizeImports", &lsutil.UserPreferences{
 import * as a2 from "./a2";
 import * as a100 from "./a100";
 
-console.log(a1, a2, a100);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(a1, a2, a100);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase:       core.TSFalse,
 		OrganizeImportsCollation:        lsutil.OrganizeImportsCollationUnicode,
 		OrganizeImportsNumericCollation: true,

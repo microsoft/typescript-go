@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -26,12 +27,12 @@ console.log(abc, Abc, bc, Bc, I, R, M);`
     R,
 } from 'a';
 import { abc, Abc, bc, Bc } from 'b';
-console.log(abc, Abc, bc, Bc, I, R, M);`, "source.organizeImports", nil)
+console.log(abc, Abc, bc, Bc, I, R, M);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 	f.VerifyOrganizeImports(t, `import {
     I,
     M,
     R,
 } from 'a';
 import { abc, Abc, bc, Bc } from 'b';
-console.log(abc, Abc, bc, Bc, I, R, M);`, "source.organizeImports", nil)
+console.log(abc, Abc, bc, Bc, I, R, M);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

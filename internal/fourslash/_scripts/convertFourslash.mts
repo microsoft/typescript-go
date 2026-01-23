@@ -1974,7 +1974,7 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
         return undefined;
     }
 
-    let mode = '"source.organizeImports"';
+    let mode = "lsproto.CodeActionKindSourceOrganizeImports";
     if (args.length >= 2 && args[1].getText() !== "undefined") {
         const modeExpr = args[1];
         if (
@@ -1984,13 +1984,13 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
             const modeName = modeExpr.name.text;
             switch (modeName) {
                 case "RemoveUnused":
-                    mode = '"source.organizeImports.removeUnused"';
+                    mode = "lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused";
                     break;
                 case "SortAndCombine":
-                    mode = '"source.organizeImports.sortAndCombine"';
+                    mode = "lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine";
                     break;
                 case "All":
-                    mode = '"source.organizeImports"';
+                    mode = "lsproto.CodeActionKindSourceOrganizeImports";
                     break;
                 default:
                     console.error(`Unsupported organize imports mode: ${modeName}`);
@@ -3505,9 +3505,6 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
     }
     if (/\blsproto\./.test(commands)) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
-    }
-    if (/\borganizeimports\./.test(commands)) {
-        imports.push(`"github.com/microsoft/typescript-go/internal/ls/organizeimports"`);
     }
     if (usesFourslashUtil(commands)) {
         imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);

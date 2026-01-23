@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -27,20 +28,20 @@ console.log(A, B, C, D, E);`
 	defer done()
 	f.VerifyOrganizeImports(t, `import { A, C, D, type B, type E } from "foo";
 
-console.log(A, B, C, D, E);`, "source.organizeImports", nil)
+console.log(A, B, C, D, E);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 	f.VerifyOrganizeImports(t, `import { A, type B, C, D, type E } from "foo";
 
-console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
 	})
 	f.VerifyOrganizeImports(t, `import { type B, type E, A, C, D } from "foo";
 
-console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
 	})
 	f.VerifyOrganizeImports(t, `import { A, C, D, type B, type E } from "foo";
 
-console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
 	})
 }

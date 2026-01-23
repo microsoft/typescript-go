@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -16,5 +17,5 @@ foo;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOrganizeImports(t, `import { foo } from "foo";
-foo;`, "source.organizeImports", nil)
+foo;`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

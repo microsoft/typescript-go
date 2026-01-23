@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -23,5 +24,5 @@ export { g, e, b, c };`
 import { e } from "bar";
 import { g } from "foo";
 
-export { g, e, b, c };`, "source.organizeImports.removeUnused", nil)
+export { g, e, b, c };`, lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused, nil)
 }

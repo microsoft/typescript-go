@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -20,5 +21,5 @@ export { b };`
 	f.VerifyOrganizeImports(t, `const a = 1;
 const b = 1;
 export { a, b };
-`, "source.organizeImports", nil)
+`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }

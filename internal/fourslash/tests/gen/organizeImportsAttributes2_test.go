@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -28,5 +29,5 @@ import { A as D } from "./a" assert { type: "b" };
 import { E } from "./a" with { type: "a" };
 import { Z } from "./z";
 
-export type G = A | B | C | D | E | F | Z;`, "source.organizeImports", nil)
+export type G = A | B | C | D | E | F | Z;`, lsproto.CodeActionKindSourceOrganizeImports, nil)
 }
