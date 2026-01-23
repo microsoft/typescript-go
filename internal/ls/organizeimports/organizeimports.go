@@ -427,10 +427,7 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 		container = sourceFile.AsNode()
 	}
 
-	searchStart := container.Pos()
-	if searchStart < 0 {
-		searchStart = 0
-	}
+	searchStart := max(container.Pos(), 0)
 	endPos := container.End()
 	if endPos < 0 || endPos > sourceLength {
 		endPos = sourceLength
@@ -725,7 +722,9 @@ func getImportAttributesKey(attributes *ast.ImportAttributesNode) string {
 	}
 
 	importAttrs := attributes.AsImportAttributes()
-	key := importAttrs.Token.String() + " "
+	var key strings.Builder
+	key.WriteString(importAttrs.Token.String())
+	key.WriteString(" ")
 
 	attrNodes := make([]*ast.Node, len(importAttrs.Attributes.Nodes))
 	copy(attrNodes, importAttrs.Attributes.Nodes)
@@ -737,16 +736,19 @@ func getImportAttributesKey(attributes *ast.ImportAttributesNode) string {
 
 	for _, attrNode := range attrNodes {
 		attr := attrNode.AsImportAttribute()
-		key += attr.Name().Text() + ":"
+		key.WriteString(attr.Name().Text())
+		key.WriteString(":")
 		if ast.IsStringLiteralLike(attr.Value.AsNode()) {
-			key += `"` + attr.Value.Text() + `"`
+			key.WriteString(`"`)
+			key.WriteString(attr.Value.Text())
+			key.WriteString(`"`)
 		} else {
-			key += attr.Value.AsNode().Text()
+			key.WriteString(attr.Value.AsNode().Text())
 		}
-		key += " "
+		key.WriteString(" ")
 	}
 
-	return key
+	return key.String()
 }
 
 func getCategorizedImports(importDecls []*ast.Statement) categorizedImports {
@@ -1120,12 +1122,9 @@ func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences *lsuti
 
 			aRunes := []rune(a)
 			bRunes := []rune(b)
-			minLen := len(aRunes)
-			if len(bRunes) < minLen {
-				minLen = len(bRunes)
-			}
+			minLen := min(len(aRunes), len(bRunes))
 
-			for i := 0; i < minLen; i++ {
+			for i := range minLen {
 				aUpper := unicode.IsUpper(aRunes[i])
 				bUpper := unicode.IsUpper(bRunes[i])
 				if aUpper != bUpper {
