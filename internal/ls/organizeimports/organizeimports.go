@@ -8,9 +8,6 @@ import (
 	"strings"
 	"unicode"
 
-	"golang.org/x/text/collate"
-	"golang.org/x/text/language"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -24,6 +21,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"golang.org/x/text/collate"
+	"golang.org/x/text/language"
 )
 
 var (
