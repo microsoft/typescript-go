@@ -14,17 +14,17 @@ func TestCompletionForStringLiteralExport(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings
-// @Filename: test.ts
+// @Filename: fourslash/test.ts
 export * from "./some/*0*/
 export * from "./sub/some/*1*/";
 export * from "[|some-/*2*/|]";
 export * from "..//*3*/";
 export {} from ".//*4*/";
-// @Filename: someFile1.ts
+// @Filename: fourslash/someFile1.ts
 /*someFile1*/
-// @Filename: sub/someFile2.ts
+// @Filename: fourslash/sub/someFile2.ts
 /*someFile2*/
-// @Filename: my_typings/some-module/index.d.ts
+// @Filename: fourslash/my_typings/some-module/index.d.ts
 export var x = 9;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

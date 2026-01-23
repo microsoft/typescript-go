@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"iter"
@@ -658,7 +659,7 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 
 	if paths != nil && paths.Size() > 0 {
 		absolute := compilerOptions.GetPathsBasePath(program.GetCurrentDirectory())
-		l.addCompletionEntriesFromPaths(result, program, fragment, absolute, extensionOptions, paths)
+		l.addCompletionEntriesFromPaths(result, program, "" /*fragmentPrefix*/, fragment, absolute, extensionOptions, paths)
 	}
 
 	fragmentDirectory := getFragmentDirectory(fragment)
@@ -694,13 +695,14 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 			conditions := module.GetConditions(compilerOptions, mode)
 
 			// Returns true if the search should stop.
-			exportsOrImportsLookup := func(lookupTable *packagejson.ExportsOrImports, fragment string, baseDirectory string, isExports bool, isImports bool) bool {
+			exportsOrImportsLookup := func(lookupTable *packagejson.ExportsOrImports, fragmentPrefix string, fragment string, baseDirectory string, isExports bool, isImports bool) bool {
 				if lookupTable == nil || lookupTable.Type != packagejson.JSONValueTypeObject {
-					return lookupTable != nil
+					return lookupTable != nil && lookupTable.Type != packagejson.JSONValueTypeNotPresent
 				}
 				keys := lookupTable.AsObject().Keys()
 				l.addCompletionEntriesFromPathsOrExportsOrImports(
 					result,
+					fragmentPrefix,
 					program,
 					isExports,
 					isImports,
@@ -727,14 +729,14 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 				return true
 			}
 
-			importsLookup := func(directory string) {
+			importsLookup := func(directory string, fragmentPrefix string) {
 				if resolvePackageJsonImports && !seenPackageScope {
 					packageFile := tspath.CombinePaths(directory, "package.json")
 					// !!! HERE: does this have enough packageJson infos?
 					packageJsonInfo := program.GetPackageJsonInfo(packageFile)
 					if packageJsonInfo != nil && packageJsonInfo.Exists() {
 						seenPackageScope = true
-						exportsOrImportsLookup(&packageJsonInfo.Contents.Imports, fragment, directory, false /*isExports*/, true /*isImports*/)
+						exportsOrImportsLookup(&packageJsonInfo.Contents.Imports, fragmentPrefix, fragment, directory, false /*isExports*/, true /*isImports*/)
 					}
 				}
 			}
@@ -752,7 +754,7 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 						result,
 					)
 				}
-				importsLookup(ancestor)
+				importsLookup(ancestor, "" /*fragmentPrefix*/)
 				return nil, false
 			}
 
@@ -777,7 +779,7 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 						packagePath = tspath.CombinePaths(packagePath, subName)
 					}
 					if resolvePackageJsonImports && strings.HasPrefix(packagePath, "#") {
-						importsLookup(ancestor)
+						importsLookup(ancestor, packagePath)
 						return nil, false
 					}
 					packageDirectory := tspath.CombinePaths(ancestor, "node_modules", packagePath)
@@ -793,6 +795,7 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 						}
 						if exportsOrImportsLookup(
 							&packageJsonInfo.Contents.Exports,
+							packagePath,
 							fragmentSubpath,
 							packageDirectory,
 							true,  /*isExports*/
@@ -1242,10 +1245,11 @@ func (l *LanguageService) getCompletionEntriesForDirectoryFragment(
 				paths := versionPaths.GetPaths()
 				if paths.Size() > 0 {
 					pathInPackage := baseDirectory[len(tspath.EnsureTrailingDirectorySeparator(packageJsonDirectory)):]
-					if l.addCompletionEntriesFromPaths(result, program, pathInPackage, packageJsonDirectory, extensionOptions, paths) {
+					if l.addCompletionEntriesFromPaths(result, program, "" /*fragmentPrefix*/, pathInPackage, packageJsonDirectory, extensionOptions, paths) {
 						// One of the `versionPaths` was matched, which will block relative resolution
 						// to files and folders from here.
 						// All reachable paths given the pattern match are already added.
+						return result
 					}
 				}
 			}
@@ -1310,6 +1314,7 @@ func (l *LanguageService) getCompletionEntriesForDirectoryFragment(
 func (l *LanguageService) addCompletionEntriesFromPaths(
 	result *moduleCompletionNameAndKindSet,
 	program *compiler.Program,
+	fragmentPrefix string,
 	fragment string,
 	baseDirectory string,
 	extensionOptions *extensionOptions,
@@ -1329,10 +1334,11 @@ func (l *LanguageService) addCompletionEntriesFromPaths(
 		if patternB.StarIndex != -1 {
 			lengthB = patternB.StarIndex
 		}
-		return lengthA - lengthB
+		return cmp.Compare(lengthB, lengthA)
 	}
 	return l.addCompletionEntriesFromPathsOrExportsOrImports(
 		result,
+		fragmentPrefix,
 		program,
 		false, /*isExports*/
 		false, /*isImports*/
@@ -1347,8 +1353,10 @@ func (l *LanguageService) addCompletionEntriesFromPaths(
 
 // Returns true if `fragment` was a match for any `paths`
 // (which should indicate whether any other path completions should be offered).
+// `fragmentPrefix` is the prefix of the original fragment that was already matched (e.g. by a package name), fragment is the original fragment minus the prefix.
 func (l *LanguageService) addCompletionEntriesFromPathsOrExportsOrImports(
 	result *moduleCompletionNameAndKindSet,
+	fragmentPrefix string,
 	program *compiler.Program,
 	isExports bool,
 	isImports bool,
@@ -1427,6 +1435,7 @@ func (l *LanguageService) addCompletionEntriesFromPathsOrExportsOrImports(
 
 	for _, pr := range pathResults {
 		for _, res := range pr.results {
+			res.name = fragmentPrefix + "/" + res.name
 			result.add(res)
 		}
 	}
@@ -1473,7 +1482,7 @@ func (l *LanguageService) getCompletionsForPathMapping(
 		}
 		var completions []moduleCompletionNameAndKind
 		for _, pattern := range patterns {
-			modules := l.getModulesForPathsPattern(
+			modules, _ := l.getModulesForPathsPattern(
 				"", /*fragment*/
 				packageDirectory,
 				pattern,
@@ -1493,7 +1502,7 @@ func (l *LanguageService) getCompletionsForPathMapping(
 	return core.FlatMap(
 		patterns,
 		func(pattern string) []moduleCompletionNameAndKind {
-			return l.getModulesForPathsPattern(
+			modules, fragmentDir := l.getModulesForPathsPattern(
 				remainingFragment,
 				packageDirectory,
 				pattern,
@@ -1502,10 +1511,20 @@ func (l *LanguageService) getCompletionsForPathMapping(
 				extensionOptions,
 				program,
 			)
+			for i := range modules {
+				modules[i].name = pathPrefix + fragmentDir + modules[i].name + pathSuffix
+			}
+			return modules
 		},
 	)
 }
 
+// The input fragment is relative to the path pattern's prefix:
+// e.g. if path = "bar/_*/baz", and fragment = "bar/_dir", then fragment is "dir".
+// The names are relative to the path pattern's prefix and fragment directory :
+// e.g. if path = "bar/_*/baz", and fragment = "bar/_dir/a", and we find result "abd",
+// then the output fragment directory is "dir",
+// and the result should be interpreted as "bar/_dir/abd".
 func (l *LanguageService) getModulesForPathsPattern(
 	fragment string,
 	packageDirectory string,
@@ -1514,10 +1533,10 @@ func (l *LanguageService) getModulesForPathsPattern(
 	isImports bool,
 	extensionOptions *extensionOptions,
 	program *compiler.Program,
-) []moduleCompletionNameAndKind {
+) ([]moduleCompletionNameAndKind, string) {
 	parsed := core.TryParsePattern(pattern)
 	if !parsed.IsValid() || parsed.StarIndex == -1 {
-		return nil
+		return nil, ""
 	}
 
 	prefix := parsed.Text[:parsed.StarIndex]
@@ -1711,7 +1730,7 @@ func (l *LanguageService) getModulesForPathsPattern(
 		}
 	}
 
-	return matches
+	return matches, fragmentDirectory
 }
 
 func containsSlash(fragment string) bool {

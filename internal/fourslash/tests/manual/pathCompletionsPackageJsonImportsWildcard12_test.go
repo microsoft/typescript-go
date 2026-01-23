@@ -9,28 +9,27 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionsPaths_pathMapping_nonTrailingWildcard1(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+func TestPathCompletionsPackageJsonImportsWildcard12(t *testing.T) {
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /src/b.ts
+	const content = `// @module: node18
+// @Filename: /package.json
+ {
+   "name": "repo",
+   "imports": {
+     "#foo/_*/suffix": "./src/*.ts"
+   }
+ }
+// @Filename: /src/b.ts
 export const x = 0;
 // @Filename: /src/dir/x.ts
 /export const x = 0;
 // @Filename: /src/a.ts
-import {} from "foo//*0*/";
-import {} from "foo/dir//*1*/"; // invalid
-import {} from "foo/_/*2*/";
-import {} from "foo/_dir//*3*/";
-// @Filename: /tsconfig.json
-{
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "foo/_*/suffix": ["src/*.ts"]
-        }
-    }
-}`
+import {} from "[|#foo/|]/*0*/";
+import {} from "[|#foo/dir/|]/*1*/"; // invalid
+import {} from "#foo/_/*2*/";
+import {} from "#foo/_dir//*3*/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{
@@ -42,16 +41,34 @@ import {} from "foo/_dir//*3*/";
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "foo/_a/suffix",
+					Label: "#foo/_a/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_a/suffix",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
-					Label: "foo/_b/suffix",
+					Label: "#foo/_b/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_b/suffix",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
-					Label: "foo/_dir/suffix",
+					Label: "#foo/_dir/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_dir/suffix",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},
@@ -65,16 +82,34 @@ import {} from "foo/_dir//*3*/";
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "foo/_a/suffix",
+					Label: "#foo/_a/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_a/suffix",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
-					Label: "foo/_b/suffix",
+					Label: "#foo/_b/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_b/suffix",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
-					Label: "foo/_dir/suffix",
+					Label: "#foo/_dir/suffix",
 					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#foo/_dir/suffix",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 			},
 		},

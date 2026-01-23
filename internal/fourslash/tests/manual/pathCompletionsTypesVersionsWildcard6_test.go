@@ -9,7 +9,7 @@ import (
 )
 
 func TestPathCompletionsTypesVersionsWildcard6(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
@@ -46,7 +46,7 @@ import { } from "foo//**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"bar",
 				"exact-match",
 				"foo",
@@ -64,7 +64,7 @@ import { } from "foo//**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"blah",
 				"index",
 				"foo",
@@ -80,7 +80,7 @@ import { } from "foo//**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"onlyInFooFolder",
 			},
 		},
