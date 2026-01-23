@@ -229,7 +229,7 @@ func (s *Session) Configure(config *lsutil.UserConfig) {
 	defer s.userConfigRWMu.Unlock()
 	s.pendingUserConfigChanges = true
 	oldConfig := s.workspaceUserConfig.Copy()
-	s.workspaceUserConfig = s.workspaceUserConfig.CopyInto(config)
+	s.workspaceUserConfig = s.workspaceUserConfig.Merge(config)
 
 	// Tell the client to re-request certain commands depending on user preference changes.
 	if oldConfig != config {
@@ -857,7 +857,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 }
 
 func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserConfig, newPrefs *lsutil.UserConfig) {
-	if oldPrefs.Js().InlayHints != newPrefs.Js().InlayHints || oldPrefs.Ts().InlayHints != newPrefs.Ts().InlayHints {
+	if oldPrefs.JS().InlayHints != newPrefs.JS().InlayHints || oldPrefs.TS().InlayHints != newPrefs.TS().InlayHints {
 		if err := s.client.RefreshInlayHints(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing inlay hints: %v", err)
 		}
@@ -865,7 +865,7 @@ func (s *Session) refreshInlayHintsIfNeeded(oldPrefs *lsutil.UserConfig, newPref
 }
 
 func (s *Session) refreshCodeLensIfNeeded(oldPrefs *lsutil.UserConfig, newPrefs *lsutil.UserConfig) {
-	if oldPrefs.Js().CodeLens != newPrefs.Js().CodeLens || oldPrefs.Ts().CodeLens != newPrefs.Ts().CodeLens {
+	if oldPrefs.JS().CodeLens != newPrefs.JS().CodeLens || oldPrefs.TS().CodeLens != newPrefs.TS().CodeLens {
 		if err := s.client.RefreshCodeLens(s.backgroundCtx); err != nil && s.options.LoggingEnabled {
 			s.logger.Logf("Error refreshing code lens: %v", err)
 		}
@@ -982,7 +982,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		if newSnapshot.AutoImports.IsPreparedForImportingFile(
 			changedFile.FileName(),
 			project.configFilePath,
-			newSnapshot.allUserPreferences.Ts(),
+			newSnapshot.allUserPreferences.TS(),
 		) {
 			return
 		}

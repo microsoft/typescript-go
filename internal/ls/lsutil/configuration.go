@@ -27,7 +27,7 @@ func (c *UserConfig) Copy() *UserConfig {
 }
 
 // any non-nil field in b is copied into a
-func (a *UserConfig) CopyInto(b *UserConfig) *UserConfig {
+func (a *UserConfig) Merge(b *UserConfig) *UserConfig {
 	newUserConfig := &UserConfig{}
 
 	if b.ts != nil {
@@ -45,11 +45,11 @@ func (a *UserConfig) CopyInto(b *UserConfig) *UserConfig {
 	return newUserConfig
 }
 
-func (c *UserConfig) Ts() *UserPreferences {
+func (c *UserConfig) TS() *UserPreferences {
 	return c.ts
 }
 
-func (c *UserConfig) Js() *UserPreferences {
+func (c *UserConfig) JS() *UserPreferences {
 	return c.js
 }
 
@@ -93,7 +93,7 @@ func ParseNewUserConfig(items []any) *UserConfig {
 				newConfig.js = defaultPref.js.ParseWorker(config)
 			}
 
-			c = c.CopyInto(newConfig)
+			c = c.Merge(newConfig)
 		} else if item, ok := item.(*UserPreferences); ok {
 			// case for fourslash -- fourslash sends the entire userPreferences over
 			// !!! support format and js/ts distinction?

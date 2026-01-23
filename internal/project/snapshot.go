@@ -115,8 +115,8 @@ func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
 
 func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
 	// returns `ts`
-	if s.allUserPreferences.Ts() != nil {
-		return s.allUserPreferences.Ts()
+	if s.allUserPreferences.TS() != nil {
+		return s.allUserPreferences.TS()
 	}
 	return lsutil.NewDefaultUserPreferences()
 }
@@ -358,7 +358,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	config := s.allUserPreferences
 	if change.newConfig != nil {
-		config = config.CopyInto(change.newConfig)
+		config = config.Merge(change.newConfig)
 	}
 
 	autoImportHost := newAutoImportRegistryCloneHost(
@@ -374,7 +374,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.Ts())
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.TS())
 	}
 	prepareAutoImports := tspath.Path("")
 	if change.ResourceRequest.AutoImports != "" {
@@ -388,7 +388,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config.Ts(),
+		UserPreferences: config.TS(),
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())
