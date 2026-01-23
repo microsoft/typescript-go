@@ -1459,7 +1459,10 @@ func (l *LanguageService) getCompletionsForPathMapping(
 
 	pathPrefix := parsedPath.Text[:parsedPath.StarIndex]
 	pathSuffix := parsedPath.Text[parsedPath.StarIndex+1:]
-	fragmentDirectory := tspath.EnsureTrailingDirectorySeparator(getFragmentDirectory(fragment))
+	fragmentDirectory := getFragmentDirectory(fragment)
+	if fragmentDirectory != "" {
+		fragmentDirectory = tspath.EnsureTrailingDirectorySeparator(fragmentDirectory)
+	}
 	if !strings.HasPrefix(fragment, pathPrefix) {
 		// Fragment doesn't match the path mapping prefix at all:
 		// we cannot extend it via this path.
