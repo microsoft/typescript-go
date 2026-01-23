@@ -29,5 +29,5 @@ export { b };
 
 const c = 1;
 export { c };
-`, nil, nil)
+`, "source.organizeImports", nil)
 }

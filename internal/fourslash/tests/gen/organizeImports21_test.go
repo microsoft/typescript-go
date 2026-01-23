@@ -34,5 +34,5 @@ export {
     PersonDefinitions as NameDefinitions,
     PersonDefinitions
 } from './a';
-`, nil, nil)
+`, "source.organizeImports", nil)
 }

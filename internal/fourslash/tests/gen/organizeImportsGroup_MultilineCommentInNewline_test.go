@@ -32,5 +32,5 @@ import a from "A";
 import b from "B";
 import d from "D";
 
-console.log(a, b, c, d)`, nil, nil)
+console.log(a, b, c, d)`, "source.organizeImports", nil)
 }

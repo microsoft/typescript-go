@@ -69,5 +69,5 @@ export class MyClass {
     }
     someFunction();
   }
-}`, nil, nil)
+}`, "source.organizeImports", nil)
 }

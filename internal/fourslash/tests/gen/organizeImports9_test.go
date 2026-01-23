@@ -16,5 +16,5 @@ a(b, d);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyOrganizeImports(t, `import { a, b, d } from "foo";
-a(b, d);`, nil, nil)
+a(b, d);`, "source.organizeImports", nil)
 }

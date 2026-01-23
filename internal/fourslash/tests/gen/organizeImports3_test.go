@@ -24,5 +24,5 @@ console.log(Foo, Bar);`
     Foo
 } from "foo";
 
-console.log(Foo, Bar);`, nil, nil)
+console.log(Foo, Bar);`, "source.organizeImports", nil)
 }

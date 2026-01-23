@@ -26,12 +26,12 @@ console.log(abc, Abc, bc, Bc, I, R, M);`
     R,
 } from 'a';
 import { abc, Abc, bc, Bc } from 'b';
-console.log(abc, Abc, bc, Bc, I, R, M);`, nil, nil)
+console.log(abc, Abc, bc, Bc, I, R, M);`, "source.organizeImports", nil)
 	f.VerifyOrganizeImports(t, `import {
     I,
     M,
     R,
 } from 'a';
 import { abc, Abc, bc, Bc } from 'b';
-console.log(abc, Abc, bc, Bc, I, R, M);`, nil, nil)
+console.log(abc, Abc, bc, Bc, I, R, M);`, "source.organizeImports", nil)
 }

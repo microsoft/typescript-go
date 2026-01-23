@@ -24,5 +24,5 @@ export function fun() { /* ... */ }
 	f.VerifyOrganizeImports(t, `import type { ZodType } from './declaration';
 
 /** Intended to be used in combination with {@link ZodType} */
-export function fun() { /* ... */ }`, nil, nil)
+export function fun() { /* ... */ }`, "source.organizeImports", nil)
 }

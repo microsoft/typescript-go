@@ -58,7 +58,7 @@ console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`
     func9,
 } from "foo";
 interface Use extends Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Type9 {}
-console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, nil, nil)
+console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, "source.organizeImports", nil)
 	f.VerifyOrganizeImports(t, `import {
     func1,
     func2,
@@ -80,7 +80,7 @@ console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, ni
     Type9,
 } from "foo";
 interface Use extends Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Type9 {}
-console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, nil, &lsutil.UserPreferences{
+console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSTrue,
 	})
 }

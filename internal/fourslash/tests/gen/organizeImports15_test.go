@@ -38,5 +38,5 @@ import { foo } from "./a";`
 
 // comment 2
 
-`, nil, nil)
+`, "source.organizeImports", nil)
 }

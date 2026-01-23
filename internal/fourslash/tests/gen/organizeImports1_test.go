@@ -46,7 +46,7 @@ console.log(e, f, F, g, G, H, h);`
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, nil, &lsutil.UserPreferences{
+console.log(e, f, F, g, G, H, h);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSTrue,
 	})
 	f.VerifyOrganizeImports(t, `import {
@@ -67,7 +67,7 @@ console.log(e, f, F, g, G, H, h);`, nil, &lsutil.UserPreferences{
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, nil, &lsutil.UserPreferences{
+console.log(e, f, F, g, G, H, h);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSFalse,
 	})
 }

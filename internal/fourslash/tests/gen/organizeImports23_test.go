@@ -28,7 +28,7 @@ console.log(abc, Abc, I, R, M);`
 } from 'a';
 import { abc, Abc, type bc, type Bc } from 'b';
 type x = bc | Bc;
-console.log(abc, Abc, I, R, M);`, nil, nil)
+console.log(abc, Abc, I, R, M);`, "source.organizeImports", nil)
 	f.VerifyOrganizeImports(t, `import {
     I,
     M,
@@ -36,5 +36,5 @@ console.log(abc, Abc, I, R, M);`, nil, nil)
 } from 'a';
 import { abc, Abc, type bc, type Bc } from 'b';
 type x = bc | Bc;
-console.log(abc, Abc, I, R, M);`, nil, nil)
+console.log(abc, Abc, I, R, M);`, "source.organizeImports", nil)
 }

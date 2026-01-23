@@ -33,5 +33,5 @@ import * as anotherThing from "someopath"; /* small comment */ // single line on
 * and there
 */
 
-anotherThing;`, nil, nil)
+anotherThing;`, "source.organizeImports", nil)
 }

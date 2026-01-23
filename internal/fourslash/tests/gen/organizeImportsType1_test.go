@@ -27,20 +27,20 @@ console.log(A, B, C, D, E);`
 	defer done()
 	f.VerifyOrganizeImports(t, `import { A, C, D, type B, type E } from "foo";
 
-console.log(A, B, C, D, E);`, nil, nil)
+console.log(A, B, C, D, E);`, "source.organizeImports", nil)
 	f.VerifyOrganizeImports(t, `import { A, type B, C, D, type E } from "foo";
 
-console.log(A, B, C, D, E);`, nil, &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
 	})
 	f.VerifyOrganizeImports(t, `import { type B, type E, A, C, D } from "foo";
 
-console.log(A, B, C, D, E);`, nil, &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
 	})
 	f.VerifyOrganizeImports(t, `import { A, C, D, type B, type E } from "foo";
 
-console.log(A, B, C, D, E);`, nil, &lsutil.UserPreferences{
+console.log(A, B, C, D, E);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
 	})
 }

@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -34,14 +35,6 @@ var (
 	}
 )
 
-type OrganizeImportsMode int
-
-const (
-	OrganizeImportsModeAll            OrganizeImportsMode = 0
-	OrganizeImportsModeSortAndCombine OrganizeImportsMode = 1
-	OrganizeImportsModeRemoveUnused   OrganizeImportsMode = 2
-)
-
 // OrganizeImports organizes imports by:
 //  1. Removing unused imports
 //  2. Coalescing imports from the same module
@@ -52,12 +45,11 @@ func OrganizeImports(
 	changeTracker *change.Tracker,
 	program *compiler.Program,
 	preferences *lsutil.UserPreferences,
-	mode OrganizeImportsMode,
+	kind lsproto.CodeActionKind,
 ) {
-	shouldSort := mode == OrganizeImportsModeSortAndCombine || mode == OrganizeImportsModeAll
+	shouldSort := kind == "source.organizeImports.sortAndCombine" || kind == lsproto.CodeActionKindSourceOrganizeImports
 	shouldCombine := shouldSort
-	shouldRemove := mode == OrganizeImportsModeRemoveUnused || mode == OrganizeImportsModeAll
-
+	shouldRemove := kind == "source.organizeImports.removeUnused" || kind == lsproto.CodeActionKindSourceOrganizeImports
 	topLevelImportDecls := filterImportDeclarations(sourceFile.Statements.Nodes)
 	topLevelImportGroupDecls := groupByNewlineContiguous(sourceFile, topLevelImportDecls)
 
@@ -98,7 +90,7 @@ func OrganizeImports(
 		organizeImportsWorker(importGroupDecl, comparer, shouldSort, shouldCombine, shouldRemove, sourceFile, program, changeTracker, ctx)
 	}
 
-	if mode != OrganizeImportsModeRemoveUnused {
+	if kind != "source.organizeImports.removeUnused" {
 		topLevelExportGroupDecls := getTopLevelExportGroups(sourceFile)
 		for _, exportGroupDecl := range topLevelExportGroupDecls {
 			organizeExportsWorker(exportGroupDecl, comparer, sourceFile, changeTracker)
@@ -124,7 +116,7 @@ func OrganizeImports(
 			organizeImportsWorker(importGroupDecl, comparer, shouldSort, shouldCombine, shouldRemove, sourceFile, program, changeTracker, ctx)
 		}
 
-		if mode != OrganizeImportsModeRemoveUnused {
+		if kind != "source.organizeImports.removeUnused" {
 			var ambientModuleExportDecls []*ast.Statement
 			for _, s := range moduleBody.Statements.Nodes {
 				if s.Kind == ast.KindExportDeclaration {

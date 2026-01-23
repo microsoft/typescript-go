@@ -28,7 +28,7 @@ console.log(A, À, B);`
     B,
 } from './foo';
 
-console.log(A, À, B);`, nil, &lsutil.UserPreferences{
+console.log(A, À, B);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase:      core.TSFalse,
 		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
 		OrganizeImportsAccentCollation: false,
@@ -39,7 +39,7 @@ console.log(A, À, B);`, nil, &lsutil.UserPreferences{
     B,
 } from './foo';
 
-console.log(A, À, B);`, nil, &lsutil.UserPreferences{
+console.log(A, À, B);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase:      core.TSFalse,
 		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
 		OrganizeImportsAccentCollation: true,

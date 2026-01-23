@@ -28,5 +28,5 @@ import * as something from "path"; /**
  */
 
 something;
-somethingElse;`, nil, nil)
+somethingElse;`, "source.organizeImports", nil)
 }

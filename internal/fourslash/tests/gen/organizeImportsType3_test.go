@@ -36,7 +36,7 @@ console.log(A, a, B, b, c, C, d, D);`
     type c,
     d
 } from './foo';
-console.log(A, a, B, b, c, C, d, D);`, nil, &lsutil.UserPreferences{
+console.log(A, a, B, b, c, C, d, D);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSFalse,
 		OrganizeImportsTypeOrder:  lsutil.OrganizeImportsTypeOrderInline,
 	})

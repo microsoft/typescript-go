@@ -50,12 +50,6 @@ var codeFixProviders = []*CodeFixProvider{
 	// Add more code fix providers here as they are implemented
 }
 
-// Code action kinds for organize imports variants
-const (
-	CodeActionKindSourceOrganizeImportsSortAndCombine lsproto.CodeActionKind = "source.organizeImports.sortAndCombine"
-	CodeActionKindSourceOrganizeImportsRemoveUnused   lsproto.CodeActionKind = "source.organizeImports.removeUnused"
-)
-
 // ProvideCodeActions returns code actions for the given range and context
 func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsproto.CodeActionParams) (lsproto.CodeActionResponse, error) {
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
@@ -65,23 +59,8 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	// Handle source actions (like organize imports)
 	if params.Context != nil && params.Context.Only != nil {
 		for _, kind := range *params.Context.Only {
-			switch kind {
-			case lsproto.CodeActionKindSourceOrganizeImports:
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, params.TextDocument.Uri, organizeimports.OrganizeImportsModeAll)
-				if organizeAction != nil {
-					actions = append(actions, *organizeAction)
-				}
-			case CodeActionKindSourceOrganizeImportsSortAndCombine:
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, params.TextDocument.Uri, organizeimports.OrganizeImportsModeSortAndCombine)
-				if organizeAction != nil {
-					actions = append(actions, *organizeAction)
-				}
-			case CodeActionKindSourceOrganizeImportsRemoveUnused:
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, params.TextDocument.Uri, organizeimports.OrganizeImportsModeRemoveUnused)
-				if organizeAction != nil {
-					actions = append(actions, *organizeAction)
-				}
-			}
+			organizeAction := l.createOrganizeImportsAction(ctx, program, file, params.TextDocument.Uri, kind)
+			actions = append(actions, *organizeAction)
 		}
 	}
 
@@ -134,7 +113,7 @@ func (l *LanguageService) createOrganizeImportsAction(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	uri lsproto.DocumentUri,
-	mode organizeimports.OrganizeImportsMode,
+	kind lsproto.CodeActionKind,
 ) *lsproto.CommandOrCodeAction {
 	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
 
@@ -144,19 +123,8 @@ func (l *LanguageService) createOrganizeImportsAction(
 		changeTracker,
 		program,
 		l.UserPreferences(),
-		mode,
+		kind,
 	)
-
-	// Determine the code action kind based on the mode
-	var kind lsproto.CodeActionKind
-	switch mode {
-	case organizeimports.OrganizeImportsModeSortAndCombine:
-		kind = CodeActionKindSourceOrganizeImportsSortAndCombine
-	case organizeimports.OrganizeImportsModeRemoveUnused:
-		kind = CodeActionKindSourceOrganizeImportsRemoveUnused
-	default:
-		kind = lsproto.CodeActionKindSourceOrganizeImports
-	}
 
 	changes := changeTracker.GetChanges()
 	if len(changes) == 0 {

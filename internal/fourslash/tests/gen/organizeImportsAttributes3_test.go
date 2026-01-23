@@ -28,5 +28,5 @@ import { C, E, F } from "./a" assert { type: "a" };
 import { A as D, Y } from "./a" assert { type: "b" };
 import { Z } from "./z";
 
-export type G = A | B | C | D | E | F | Y | Z;`, nil, nil)
+export type G = A | B | C | D | E | F | Y | Z;`, "source.organizeImports", nil)
 }

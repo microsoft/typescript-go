@@ -26,7 +26,7 @@ import * as _Ab from "./_Ab";
 import * as _aB from "./_aB";
 import * as aB from "./aB";
 
-console.log(_aB, _Ab, aB, Ab);`, nil, &lsutil.UserPreferences{
+console.log(_aB, _Ab, aB, Ab);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSFalse,
 		OrganizeImportsCollation:  lsutil.OrganizeImportsCollationOrdinal,
 	})
@@ -35,7 +35,7 @@ import * as _Ab from "./_Ab";
 import * as aB from "./aB";
 import * as Ab from "./Ab";
 
-console.log(_aB, _Ab, aB, Ab);`, nil, &lsutil.UserPreferences{
+console.log(_aB, _Ab, aB, Ab);`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsIgnoreCase: core.TSFalse,
 		OrganizeImportsCollation:  lsutil.OrganizeImportsCollationUnicode,
 	})

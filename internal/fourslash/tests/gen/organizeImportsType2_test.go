@@ -26,26 +26,26 @@ export { A, type B, C };`
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, nil, nil)
+`, "source.organizeImports", nil)
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { A, type B, C };
-`, nil, &lsutil.UserPreferences{
+`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
 	})
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { type B, A, C };
-`, nil, &lsutil.UserPreferences{
+`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
 	})
 	f.VerifyOrganizeImports(t, `type A = string;
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, nil, &lsutil.UserPreferences{
+`, "source.organizeImports", &lsutil.UserPreferences{
 		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
 	})
 }

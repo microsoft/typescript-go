@@ -21,5 +21,5 @@ declare export * from "foo";`
 	f.VerifyOrganizeImports(t, `declare export default class A {}
 declare export * from "foo";
 declare export { a, b };
-`, nil, nil)
+`, "source.organizeImports", nil)
 }

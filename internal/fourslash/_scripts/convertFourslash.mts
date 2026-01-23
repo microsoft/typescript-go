@@ -1974,7 +1974,7 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
         return undefined;
     }
 
-    let mode = "nil";
+    let mode = '"source.organizeImports"';
     if (args.length >= 2 && args[1].getText() !== "undefined") {
         const modeExpr = args[1];
         if (
@@ -1984,13 +1984,13 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
             const modeName = modeExpr.name.text;
             switch (modeName) {
                 case "RemoveUnused":
-                    mode = "PtrTo(organizeimports.OrganizeImportsModeRemoveUnused)";
+                    mode = '"source.organizeImports.removeUnused"';
                     break;
                 case "SortAndCombine":
-                    mode = "PtrTo(organizeimports.OrganizeImportsModeSortAndCombine)";
+                    mode = '"source.organizeImports.sortAndCombine"';
                     break;
                 case "All":
-                    mode = "PtrTo(organizeimports.OrganizeImportsModeAll)";
+                    mode = '"source.organizeImports"';
                     break;
                 default:
                     console.error(`Unsupported organize imports mode: ${modeName}`);

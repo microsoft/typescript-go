@@ -27,5 +27,5 @@ import { A as D } from "./file" assert { type: "b" };
 import { E } from "./file" with { type: "a" };
 import { A as F } from "./file" with { type: "b" };
 
-type G = A | B | C | D | E | F;`, nil, nil)
+type G = A | B | C | D | E | F;`, "source.organizeImports", nil)
 }

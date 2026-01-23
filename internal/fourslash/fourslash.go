@@ -26,7 +26,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
-	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -1369,23 +1368,12 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	}
 }
 
-func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, mode *organizeimports.OrganizeImportsMode, preferences *lsutil.UserPreferences) {
+func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
 	t.Helper()
 
 	if preferences != nil {
 		reset := f.ConfigureWithReset(t, preferences)
 		defer reset()
-	}
-
-	// Determine the code action kind based on the mode
-	codeActionKind := lsproto.CodeActionKindSourceOrganizeImports
-	if mode != nil {
-		switch *mode {
-		case organizeimports.OrganizeImportsModeSortAndCombine:
-			codeActionKind = ls.CodeActionKindSourceOrganizeImportsSortAndCombine
-		case organizeimports.OrganizeImportsModeRemoveUnused:
-			codeActionKind = ls.CodeActionKindSourceOrganizeImportsRemoveUnused
-		}
 	}
 
 	params := &lsproto.CodeActionParams{

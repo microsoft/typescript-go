@@ -37,5 +37,5 @@ import './';`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToFile(t, "test.tsx")
-	f.VerifyOrganizeImports(t, `export default () => <div></div>`, nil, nil)
+	f.VerifyOrganizeImports(t, `export default () => <div></div>`, "source.organizeImports", nil)
 }
