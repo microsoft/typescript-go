@@ -40,7 +40,7 @@ type Snapshot struct {
 	AutoImports                        *autoimport.Registry
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	allUserPreferences                 *lsutil.UserPreferenceConfig
+	allUserPreferences                 *lsutil.UserConfig
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -53,13 +53,13 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	allUserPreferences *lsutil.UserPreferenceConfig,
+	allUserPreferences *lsutil.UserConfig,
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	if allUserPreferences == nil {
-		allUserPreferences = lsutil.NewUserPreferenceConfig(nil) // disallow nil config
+		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
 	}
 	s := &Snapshot{
 		id: id,
@@ -196,7 +196,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	newConfig                          *lsutil.UserPreferenceConfig
+	newConfig                          *lsutil.UserConfig
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest

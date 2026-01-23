@@ -272,11 +272,11 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferenceConfig, error) {
+func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
 		// if no configuration request capapbility, return default config
-		return lsutil.NewUserPreferenceConfig(nil), nil
+		return lsutil.NewUserConfig(nil), nil
 	}
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
@@ -295,9 +295,9 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserPreferen
 		},
 	})
 	if err != nil {
-		return &lsutil.UserPreferenceConfig{}, fmt.Errorf("configure request failed: %w", err)
+		return &lsutil.UserConfig{}, fmt.Errorf("configure request failed: %w", err)
 	}
-	return lsutil.ParseNewUserPreferenceConfiguration(configs), nil
+	return lsutil.ParseNewUserConfig(configs), nil
 }
 
 func (s *Server) Run(ctx context.Context) error {
@@ -963,7 +963,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if err != nil {
 		return err
 	}
-	s.session.InitializeWithConfig(userPreferences)
+	s.session.InitializeWithUserConfig(userPreferences)
 
 	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
@@ -1010,10 +1010,10 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 	if params.Settings == nil {
 		return nil
 	} else if settings, ok := params.Settings.([]any); ok {
-		s.session.Configure(lsutil.ParseNewUserPreferenceConfiguration(settings))
+		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		// fourslash case
-		s.session.Configure(lsutil.ParseNewUserPreferenceConfiguration([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
+		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
 	}
 	return nil
 }

@@ -6,55 +6,54 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type UserPreferenceConfig struct {
+type UserConfig struct {
 	js *UserPreferences
 	ts *UserPreferences
-	// tsserverOptions
 }
 
 // if `userPreferences` is nil, this function will return a config with default userPreferences
-func NewUserPreferenceConfig(userPreferences *UserPreferences) *UserPreferenceConfig {
-	return &UserPreferenceConfig{
+func NewUserConfig(userPreferences *UserPreferences) *UserConfig {
+	return &UserConfig{
 		js: userPreferences.CopyOrDefault(),
 		ts: userPreferences.CopyOrDefault(),
 	}
 }
 
-func (c *UserPreferenceConfig) Copy() *UserPreferenceConfig {
-	return &UserPreferenceConfig{
+func (c *UserConfig) Copy() *UserConfig {
+	return &UserConfig{
 		ts: c.ts.CopyOrDefault(),
 		js: c.js.CopyOrDefault(),
 	}
 }
 
 // any non-nil field in b is copied into a
-func (a *UserPreferenceConfig) CopyInto(b *UserPreferenceConfig) *UserPreferenceConfig {
-	newAllPreferences := &UserPreferenceConfig{}
+func (a *UserConfig) CopyInto(b *UserConfig) *UserConfig {
+	newUserConfig := &UserConfig{}
 
 	if b.ts != nil {
-		newAllPreferences.ts = b.ts
+		newUserConfig.ts = b.ts
 	} else {
-		newAllPreferences.ts = a.ts
+		newUserConfig.ts = a.ts
 	}
 
 	if b.js != nil {
-		newAllPreferences.js = b.js
+		newUserConfig.js = b.js
 	} else {
-		newAllPreferences.js = a.js
+		newUserConfig.js = a.js
 	}
 
-	return newAllPreferences
+	return newUserConfig
 }
 
-func (c *UserPreferenceConfig) Ts() *UserPreferences {
+func (c *UserConfig) Ts() *UserPreferences {
 	return c.ts
 }
 
-func (c *UserPreferenceConfig) Js() *UserPreferences {
+func (c *UserConfig) Js() *UserPreferences {
 	return c.js
 }
 
-func (c *UserPreferenceConfig) GetPreferences(activeFile string) *UserPreferences {
+func (c *UserConfig) GetPreferences(activeFile string) *UserPreferences {
 	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
 	if tspath.ExtensionIsTs(fileEnding) {
 		if c.ts != nil {
@@ -72,14 +71,14 @@ func (c *UserPreferenceConfig) GetPreferences(activeFile string) *UserPreference
 	return NewDefaultUserPreferences()
 }
 
-func ParseNewUserPreferenceConfiguration(items []any) *UserPreferenceConfig {
-	defaultPref := NewUserPreferenceConfig(nil)
-	c := NewUserPreferenceConfig(nil)
+func ParseNewUserConfig(items []any) *UserConfig {
+	defaultPref := NewUserConfig(nil)
+	c := NewUserConfig(nil)
 	for i, item := range items {
 		if item == nil {
 			// continue
 		} else if config, ok := item.(map[string]any); ok {
-			newConfig := &UserPreferenceConfig{}
+			newConfig := &UserConfig{}
 			if i < 2 {
 				newConfig.ts = defaultPref.ts.ParseWorker(config)
 			} else {
@@ -89,7 +88,7 @@ func ParseNewUserPreferenceConfiguration(items []any) *UserPreferenceConfig {
 		} else if item, ok := item.(*UserPreferences); ok {
 			// case for fourslash -- fourslash sends the entire userPreferences over
 			// !!! support format and js/ts distinction?
-			return NewUserPreferenceConfig(item)
+			return NewUserConfig(item)
 		}
 	}
 	return c
