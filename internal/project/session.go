@@ -108,7 +108,7 @@ type Session struct {
 	snapshotUpdateMu sync.Mutex
 
 	pendingUserConfigChanges bool
-	userConfigRWMu                     sync.Mutex
+	userConfigRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are

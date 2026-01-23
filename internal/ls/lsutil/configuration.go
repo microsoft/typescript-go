@@ -79,7 +79,7 @@ func ParseNewUserConfig(items []any) *UserConfig {
 			// continue
 		} else if config, ok := item.(map[string]any); ok {
 			newConfig := &UserConfig{}
-		 switch(i) {
+			switch i {
 			case 0:
 				// if provided, parse and set "ts/js" as base config
 				defaultPref = NewUserConfig(defaultPref.ts.ParseWorker(config))

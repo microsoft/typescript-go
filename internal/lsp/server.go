@@ -282,7 +282,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 		Items: []*lsproto.ConfigurationItem{
 			{
 				Section: ptrTo("ts/js"),
-			},			
+			},
 			{
 				Section: ptrTo("typescript"),
 			},
