@@ -536,12 +536,12 @@ func coalesceImportsWorker(
 
 		factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 
-		for _, group := range []importGroup{categorized.regularImports, categorized.typeOnlyImports} {
+		for i, group := range []importGroup{categorized.regularImports, categorized.typeOnlyImports} {
 			if group.isEmpty() {
 				continue
 			}
 
-			isTypeOnly := &group == &categorized.typeOnlyImports
+			isTypeOnly := i == 1
 
 			if !isTypeOnly && len(group.defaultImports) == 1 && len(group.namespaceImports) == 1 && len(group.namedImports) == 0 {
 				defaultImport := group.defaultImports[0]

@@ -2004,7 +2004,7 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
     }
 
     let preferences = "nil";
-    if (args.length >= 3) {
+    if (args.length >= 3 && args[2].getText() !== "undefined") {
         const prefsObj = getObjectLiteralExpression(args[2]);
         if (!prefsObj) {
             console.error(`Expected object literal for preferences in verify.organizeImports, got ${args[2].getText()}`);
