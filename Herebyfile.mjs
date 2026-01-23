@@ -1138,7 +1138,7 @@ export const buildNativePreviewPackages = task({
                 `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
             ];
 
-            fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
+            await fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
 
             await generateLibs(out);
 
@@ -1159,7 +1159,7 @@ export const buildNativePreviewPackages = task({
         }
         else {
             const buildLimit = pLimit(os.availableParallelism());
-            await Promise.all(platformBuilders.map(buildLimit));
+            await Promise.all(platformBuilders.map(f => buildLimit(f)));
         }
     },
 });
