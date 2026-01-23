@@ -79,11 +79,20 @@ func ParseNewUserConfig(items []any) *UserConfig {
 			// continue
 		} else if config, ok := item.(map[string]any); ok {
 			newConfig := &UserConfig{}
-			if i < 2 {
+		 switch(i) {
+			case 0:
+				// if provided, parse and set "ts/js" as base config
+				defaultPref = NewUserConfig(defaultPref.ts.ParseWorker(config))
+				c = defaultPref.Copy()
+				continue
+			case 1:
+				// typescript
 				newConfig.ts = defaultPref.ts.ParseWorker(config)
-			} else {
+			case 2:
+				// javascript
 				newConfig.js = defaultPref.js.ParseWorker(config)
 			}
+
 			c = c.CopyInto(newConfig)
 		} else if item, ok := item.(*UserPreferences); ok {
 			// case for fourslash -- fourslash sends the entire userPreferences over

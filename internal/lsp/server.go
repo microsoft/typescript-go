@@ -281,16 +281,13 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
+				Section: ptrTo("ts/js"),
+			},			
+			{
 				Section: ptrTo("typescript"),
 			},
 			{
-				Section: ptrTo("ts"),
-			},
-			{
 				Section: ptrTo("javascript"),
-			},
-			{
-				Section: ptrTo("js"),
 			},
 		},
 	})
@@ -1013,7 +1010,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		// fourslash case
-		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["typescript"], settings["ts"], settings["javascript"], settings["js"]}))
+		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["ts/js"], settings["typescript"], settings["javascript"]}))
 	}
 	return nil
 }
