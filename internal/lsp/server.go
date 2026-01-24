@@ -777,11 +777,11 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(map[string]string{
-				"type":          "request-internal-error",
-				"errorCode":     lsproto.ErrorCodeInternalError.String(),
-				"requestMethod": string(req.Method),
-				"stack":         string(stack),
+			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(&lsproto.TelemetryEventRequestFailureParams{
+				Type:          "request-internal-error",
+				ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+				RequestMethod: string(req.Method),
+				Stack:         string(stack),
 			})
 			s.send(telMsg.Message())
 			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))

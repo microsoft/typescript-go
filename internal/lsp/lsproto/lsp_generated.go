@@ -21875,6 +21875,95 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	return nil
 }
 
+// TelemetryEventParams contains information about a telemetry event.
+type TelemetryEventRequestFailureParams struct {
+	// The type of the telemetry event.
+	Type string `json:"type"`
+
+	// The error code associated with the event.
+	ErrorCode string `json:"errorCode"`
+
+	// The method of the request that caused the event.
+	RequestMethod string `json:"requestMethod"`
+
+	// The stack trace associated with the event.
+	Stack string `json:"stack"`
+}
+
+var _ json.UnmarshalerFrom = (*TelemetryEventRequestFailureParams)(nil)
+
+func (s *TelemetryEventRequestFailureParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingType uint = 1 << iota
+		missingErrorCode
+		missingRequestMethod
+		missingStack
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"type"`:
+			missing &^= missingType
+			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
+				return err
+			}
+		case `"errorCode"`:
+			missing &^= missingErrorCode
+			if err := json.UnmarshalDecode(dec, &s.ErrorCode); err != nil {
+				return err
+			}
+		case `"requestMethod"`:
+			missing &^= missingRequestMethod
+			if err := json.UnmarshalDecode(dec, &s.RequestMethod); err != nil {
+				return err
+			}
+		case `"stack"`:
+			missing &^= missingStack
+			if err := json.UnmarshalDecode(dec, &s.Stack); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingType != 0 {
+			missingProps = append(missingProps, "type")
+		}
+		if missing&missingErrorCode != 0 {
+			missingProps = append(missingProps, "errorCode")
+		}
+		if missing&missingRequestMethod != 0 {
+			missingProps = append(missingProps, "requestMethod")
+		}
+		if missing&missingStack != 0 {
+			missingProps = append(missingProps, "stack")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // Parameters for profiling requests.
 type ProfileParams struct {
 	// The directory path where the profile should be saved.

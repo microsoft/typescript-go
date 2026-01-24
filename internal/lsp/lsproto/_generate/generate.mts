@@ -163,6 +163,32 @@ const customStructures: Structure[] = [
         ],
         documentation: "CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.",
     },
+    {
+        name: "TelemetryEventRequestFailureParams",
+        properties: [
+            {
+                name: "type",
+                type: { kind: "base", name: "string" },
+                documentation: "The type of the telemetry event.",
+            },
+            {
+                name: "errorCode",
+                type: { kind: "base", name: "string" },
+                documentation: "The error code associated with the event.",
+            },
+            {
+                name: "requestMethod",
+                type: { kind: "base", name: "string" },
+                documentation: "The method of the request that caused the event.",
+            },
+            {
+                name: "stack",
+                type: { kind: "base", name: "string" },
+                documentation: "The stack trace associated with the event.",
+            },
+        ],
+        documentation: "TelemetryEventParams contains information about a telemetry event.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
