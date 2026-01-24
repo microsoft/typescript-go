@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+
+import type { TelemetryReporter } from "@vscode/extension-telemetry";
 import {
     LanguageClient,
     LanguageClientOptions,
@@ -7,6 +9,7 @@ import {
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
+
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import {
@@ -19,6 +22,8 @@ import { getLanguageForUri } from "./util";
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
+    private telemetryReporter: TelemetryReporter;
+
     private documentSelector: Array<{ scheme: string; language: string; }>;
     private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
@@ -29,9 +34,10 @@ export class Client {
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: TelemetryReporter) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
+        this.telemetryReporter = telemetryReporter;
         this.documentSelector = [
             ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
             ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
@@ -100,6 +106,9 @@ export class Client {
     async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
+        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
+            version: this.exe.version,
+        });
 
         // Get pprofDir
         const config = vscode.workspace.getConfiguration("typescript.native-preview");
@@ -150,7 +159,27 @@ export class Client {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
         }
 
+        type TelemetryData = {
+            type: string;
+            errorCode: string;
+            requestMethod: string;
+            stack: string;
+        };
+
+        const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
+            this.outputChannel.appendLine(`Telemetry event: ${JSON.stringify(d)}`);
+            if (d.type === "request-internal-error") {
+                this.outputChannel.appendLine(`Sanitized stack:\n${sanitizeStack(d.stack)}`);
+                this.telemetryReporter.sendTelemetryErrorEvent("languageServer.errorResponse", {
+                    errorCode: d.errorCode,
+                    requestMethod: d.requestMethod.replaceAll("/", "."),
+                    stack: sanitizeStack(d.stack),
+                });
+            }
+        });
+
         this.disposables.push(
+            serverTelemetryListener,
             registerTagClosingFeature("typescript", this.documentSelector, this.client),
             registerTagClosingFeature("javascript", this.documentSelector, this.client),
         );
@@ -186,6 +215,7 @@ export class Client {
         }
 
         this.onStartedCallbacks.add(callback);
+
         return new vscode.Disposable(() => {
             this.onStartedCallbacks.delete(callback);
         });
@@ -246,4 +276,34 @@ export class Client {
         const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
         return result.file;
     }
+}
+
+const newline = /\r?\n/;
+const pathPatternForStack = /(?<=^\s*)\S.+\/(?=typescript-go\/internal)/;
+
+function sanitizeStack(stack: string): string {
+    const lines = stack.split(newline).slice(1);
+    const sanitizedLines = lines.map(line => {
+        const origLength = line.length;
+
+        // Get rid of github.com/microsoft/... OR local paths for our package
+        line = line.replace(pathPatternForStack, "");
+
+        // If no replacement was made, it's not ours.
+        // We can create a list of allowed packages at some point if we need.
+        if (line.length === origLength) {
+            return line.replace(/(\s*).+/, "$1(REDACTED FRAME)");
+        }
+
+        // Remove function parameters
+        if (line.endsWith(")")) {
+            const openParenIndex = line.lastIndexOf("(");
+            if (openParenIndex >= 0) {
+                line = line.slice(0, openParenIndex) + "()";
+            }
+        }
+        line = line.replaceAll("/", "|>");
+        return line;
+    });
+    return sanitizedLines.join("\n");
 }

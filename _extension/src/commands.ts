@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+
+import type { TelemetryReporter } from "@vscode/extension-telemetry";
 import type {
     DocumentUri,
     Location,
@@ -8,22 +10,31 @@ import type {
 import { Client } from "./client";
 import { restartExtHostOnChangeIfNeeded } from "./util";
 
-export function registerEnablementCommands(context: vscode.ExtensionContext): void {
+export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: TelemetryReporter): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
+        telemetryReporter.sendTelemetryEvent("enable-native-preview");
         updateUseTsgoSetting(true);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
+        telemetryReporter.sendTelemetryEvent("disable-native-preview");
         updateUseTsgoSetting(false);
     }));
 }
 
-export function registerLanguageCommands(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel): vscode.Disposable[] {
+export function registerLanguageCommands(
+    context: vscode.ExtensionContext,
+    client: Client,
+    outputChannel: vscode.OutputChannel,
+    traceOutputChannel: vscode.OutputChannel,
+    telemetryReporter: TelemetryReporter,
+): vscode.Disposable[] {
     const disposables: vscode.Disposable[] = [];
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", () => {
+        telemetryReporter.sendTelemetryEvent("restart-language-server");
         return client.restart(context);
     }));
 
@@ -41,6 +52,7 @@ export function registerLanguageCommands(context: vscode.ExtensionContext, clien
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
+        telemetryReporter.sendTelemetryEvent("report-issue");
         vscode.commands.executeCommand("workbench.action.openIssueReporter", {
             extensionId: "TypeScriptTeam.native-preview",
         });
