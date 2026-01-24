@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/quantifiedTypesCorrelatedUnions1.ts] ////
+
+=== quantifiedTypesCorrelatedUnions1.ts ===
+// https://github.com/microsoft/TypeScript/issues/30581#issuecomment-493492463
+
+declare const str: string;
+>str : string
+
+declare const num: number;
+>num : number
+
+function acceptString(str: string) { }
+>acceptString : (str: string) => void
+>str : string
+
+function acceptNumber(num: number) { }
+>acceptNumber : (num: number) => void
+>num : number
+
+const arr: (<T> [T, (t: NoInfer<T>) => void])[] = [
+>arr : (<T> [T, (t: NoInfer<T>) => void])[]
+>t : NoInfer<T>
+>[    [str, acceptString],    [num, acceptNumber],    [str, acceptNumber], // error as expected] : any[]
+
+    [str, acceptString],
+>[str, acceptString] : [string, (str: string) => void]
+>str : string
+>acceptString : (str: string) => void
+
+    [num, acceptNumber],
+>[num, acceptNumber] : [number, (num: number) => void]
+>num : number
+>acceptNumber : (num: number) => void
+
+    [str, acceptNumber], // error as expected
+>[str, acceptNumber] : any
+>str : string
+>acceptNumber : (num: number) => void
+
+];
+
+for (const pair of arr) {
+>pair : <T> [T, (t: NoInfer<T>) => void]
+>arr : (<T> [T, (t: NoInfer<T>) => void])[]
+
+    const [arg, func] = pair; // no error
+>arg : T
+>func : (t: NoInfer<T>) => void
+>pair : <T> [T, (t: NoInfer<T>) => void]
+
+    func(arg);
+>func(arg) : void
+>func : (t: NoInfer<T>) => void
+>arg : T
+}
+

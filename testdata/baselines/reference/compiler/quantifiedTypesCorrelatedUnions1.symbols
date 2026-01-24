@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/quantifiedTypesCorrelatedUnions1.ts] ////
+
+=== quantifiedTypesCorrelatedUnions1.ts ===
+// https://github.com/microsoft/TypeScript/issues/30581#issuecomment-493492463
+
+declare const str: string;
+>str : Symbol(str, Decl(quantifiedTypesCorrelatedUnions1.ts, 2, 13))
+
+declare const num: number;
+>num : Symbol(num, Decl(quantifiedTypesCorrelatedUnions1.ts, 3, 13))
+
+function acceptString(str: string) { }
+>acceptString : Symbol(acceptString, Decl(quantifiedTypesCorrelatedUnions1.ts, 3, 26))
+>str : Symbol(str, Decl(quantifiedTypesCorrelatedUnions1.ts, 4, 22))
+
+function acceptNumber(num: number) { }
+>acceptNumber : Symbol(acceptNumber, Decl(quantifiedTypesCorrelatedUnions1.ts, 4, 38))
+>num : Symbol(num, Decl(quantifiedTypesCorrelatedUnions1.ts, 5, 22))
+
+const arr: (<T> [T, (t: NoInfer<T>) => void])[] = [
+>arr : Symbol(arr, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 5))
+>T : Symbol(T, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 13))
+>T : Symbol(T, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 13))
+>t : Symbol(t, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 21))
+>NoInfer : Symbol(NoInfer, Decl(lib.es5.d.ts, --, --))
+>T : Symbol(T, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 13))
+
+    [str, acceptString],
+>str : Symbol(str, Decl(quantifiedTypesCorrelatedUnions1.ts, 2, 13))
+>acceptString : Symbol(acceptString, Decl(quantifiedTypesCorrelatedUnions1.ts, 3, 26))
+
+    [num, acceptNumber],
+>num : Symbol(num, Decl(quantifiedTypesCorrelatedUnions1.ts, 3, 13))
+>acceptNumber : Symbol(acceptNumber, Decl(quantifiedTypesCorrelatedUnions1.ts, 4, 38))
+
+    [str, acceptNumber], // error as expected
+>str : Symbol(str, Decl(quantifiedTypesCorrelatedUnions1.ts, 2, 13))
+>acceptNumber : Symbol(acceptNumber, Decl(quantifiedTypesCorrelatedUnions1.ts, 4, 38))
+
+];
+
+for (const pair of arr) {
+>pair : Symbol(pair, Decl(quantifiedTypesCorrelatedUnions1.ts, 13, 10))
+>arr : Symbol(arr, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 5))
+
+    const [arg, func] = pair; // no error
+>arg : Symbol(arg, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 11))
+>func : Symbol(func, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 15))
+>pair : Symbol(pair, Decl(quantifiedTypesCorrelatedUnions1.ts, 13, 10))
+
+    func(arg);
+>func : Symbol(func, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 15))
+>arg : Symbol(arg, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 11))
+}
+

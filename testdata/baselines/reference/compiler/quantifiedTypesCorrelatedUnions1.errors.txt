@@ -1,0 +1,28 @@
+quantifiedTypesCorrelatedUnions1.ts(11,11): error TS2322: Type '(num: number) => void' is not assignable to type '(t: string) => void'.
+  Types of parameters 'num' and 't' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+
+
+==== quantifiedTypesCorrelatedUnions1.ts (1 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/30581#issuecomment-493492463
+    
+    declare const str: string;
+    declare const num: number;
+    function acceptString(str: string) { }
+    function acceptNumber(num: number) { }
+    
+    const arr: (<T> [T, (t: NoInfer<T>) => void])[] = [
+        [str, acceptString],
+        [num, acceptNumber],
+        [str, acceptNumber], // error as expected
+              ~~~~~~~~~~~~
+!!! error TS2322: Type '(num: number) => void' is not assignable to type '(t: string) => void'.
+!!! error TS2322:   Types of parameters 'num' and 't' are incompatible.
+!!! error TS2322:     Type 'string' is not assignable to type 'number'.
+    ];
+    
+    for (const pair of arr) {
+        const [arg, func] = pair; // no error
+        func(arg);
+    }
+    
