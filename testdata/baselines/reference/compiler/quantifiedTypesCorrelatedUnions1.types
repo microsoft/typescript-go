@@ -43,12 +43,12 @@ for (const pair of arr) {
 >pair : <T> [T, (t: NoInfer<T>) => void]
 >arr : (<T> [T, (t: NoInfer<T>) => void])[]
 
-    const [arg, func] = pair; // no error
+    const [arg, func] = pair;
 >arg : T
 >func : (t: NoInfer<T>) => void
 >pair : <T> [T, (t: NoInfer<T>) => void]
 
-    func(arg);
+    func(arg); // no error
 >func(arg) : void
 >func : (t: NoInfer<T>) => void
 >arg : T

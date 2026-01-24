@@ -22,7 +22,7 @@ quantifiedTypesCorrelatedUnions1.ts(11,11): error TS2322: Type '(num: number) =>
     ];
     
     for (const pair of arr) {
-        const [arg, func] = pair; // no error
-        func(arg);
+        const [arg, func] = pair;
+        func(arg); // no error
     }
     

@@ -12,6 +12,6 @@ const arr: (<T> [T, (t: NoInfer<T>) => void])[] = [
 ];
 
 for (const pair of arr) {
-    const [arg, func] = pair; // no error
-    func(arg);
+    const [arg, func] = pair;
+    func(arg); // no error
 }

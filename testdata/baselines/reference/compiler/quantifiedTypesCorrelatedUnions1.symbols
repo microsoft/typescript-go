@@ -43,12 +43,12 @@ for (const pair of arr) {
 >pair : Symbol(pair, Decl(quantifiedTypesCorrelatedUnions1.ts, 13, 10))
 >arr : Symbol(arr, Decl(quantifiedTypesCorrelatedUnions1.ts, 7, 5))
 
-    const [arg, func] = pair; // no error
+    const [arg, func] = pair;
 >arg : Symbol(arg, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 11))
 >func : Symbol(func, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 15))
 >pair : Symbol(pair, Decl(quantifiedTypesCorrelatedUnions1.ts, 13, 10))
 
-    func(arg);
+    func(arg); // no error
 >func : Symbol(func, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 15))
 >arg : Symbol(arg, Decl(quantifiedTypesCorrelatedUnions1.ts, 14, 11))
 }
