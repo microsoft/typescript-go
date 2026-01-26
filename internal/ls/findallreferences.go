@@ -593,7 +593,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	program, sourceFile := l.getProgramAndFile(uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
+	node := ast.GetReparsedNodeForNode(astnav.GetTouchingPropertyName(sourceFile, position))
 	if isRename && !isNodeEligibleForRename(node) {
 		return SymbolAndEntriesData{OriginalNode: node, Position: position}, false
 	}
@@ -1252,7 +1252,7 @@ func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.K
 
 func getPossibleSymbolReferenceNodes(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []*ast.Node {
 	return core.MapNonNil(getPossibleSymbolReferencePositions(sourceFile, symbolName, container), func(pos int) *ast.Node {
-		if referenceLocation := astnav.GetTouchingPropertyName(sourceFile, pos); referenceLocation != sourceFile.AsNode() {
+		if referenceLocation := ast.GetReparsedNodeForNode(astnav.GetTouchingPropertyName(sourceFile, pos)); referenceLocation != sourceFile.AsNode() {
 			return referenceLocation
 		}
 		return nil
@@ -1827,7 +1827,7 @@ func (state *refState) markSearchedSymbols(sourceFile *ast.SourceFile, symbols [
 }
 
 func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, position int, search *refSearch, addReferencesHere bool) {
-	referenceLocation := astnav.GetTouchingPropertyName(sourceFile, position)
+	referenceLocation := ast.GetReparsedNodeForNode(astnav.GetTouchingPropertyName(sourceFile, position))
 
 	if !isValidReferencePosition(referenceLocation, search.text) {
 		// This wasn't the start of a token.  Check to see if it might be a
