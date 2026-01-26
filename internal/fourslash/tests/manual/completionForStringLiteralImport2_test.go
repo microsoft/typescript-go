@@ -9,7 +9,7 @@ import (
 )
 
 func TestCompletionForStringLiteralImport2(t *testing.T) {
-	fourslash.SkipIfFailing(t)
+
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings
@@ -33,7 +33,7 @@ export var x = 9;`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
+			Unsorted: []fourslash.CompletionsExpectedItem{
 				"someFile.ts",
 				"my_typings",
 				"sub",

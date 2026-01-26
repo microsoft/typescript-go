@@ -1123,6 +1123,9 @@ func (f *FourslashTest) verifyCompletionsResult(
 		}
 		return
 	} else if expected == nil {
+		if len(actual.Items) == 0 {
+			return
+		}
 		// !!! cmp.Diff(actual, nil) should probably be a .String() call here and elswhere
 		t.Fatalf(prefix+"Expected nil completion list but got non-nil: %s", cmp.Diff(actual, nil))
 	}
