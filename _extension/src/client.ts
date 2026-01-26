@@ -279,7 +279,7 @@ export class Client {
 }
 
 const newline = /\r?\n/;
-const pathPatternForStack = /(?<=^\s*)\S.+\/(?=typescript-go\/internal)/;
+const pathPatternForStack = /(^\s*)\S.+\/(?=typescript-go\/internal)/;
 
 function sanitizeStack(stack: string): string {
     const lines = stack.split(newline).slice(1);
@@ -287,7 +287,7 @@ function sanitizeStack(stack: string): string {
         const origLength = line.length;
 
         // Get rid of github.com/microsoft/... OR local paths for our package
-        line = line.replace(pathPatternForStack, "");
+        line = line.replace(pathPatternForStack, "$1");
 
         // If no replacement was made, it's not ours.
         // We can create a list of allowed packages at some point if we need.
