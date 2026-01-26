@@ -1,0 +1,454 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Serializable {
+    serialize(): string;
+}
+
+interface Comparable<T> {
+    compareTo(other: T): number;
+}
+
+interface Named {
+    name: string;
+}
+
+interface Timestamped {
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface Entity extends Named, Timestamped {
+    id: string;
+}
+
+abstract class BaseModel implements Serializable {
+    abstract serialize(): string;
+}
+
+class User extends BaseModel implements Entity, Comparable<User> {
+    id: string = "";
+    name: string = "";
+    createdAt: Date = new Date();
+    updatedAt: Date = new Date();
+    
+    serialize(): string {
+        return JSON.stringify(this);
+    }
+    
+    compareTo(other: User): number {
+        return this.name.localeCompare(other.name);
+    }
+}
+
+class AdminUser extends User {
+    permissions: string[] = [];
+}
+
+class SuperAdmin extends AdminUser {
+    canManageAdmins: boolean = true;
+}
+
+class GuestUser extends User {
+    sessionId: string = "";
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Serializable {\n    serialize(): string;\n}\n\ninterface Comparable<T> {\n    compareTo(other: T): number;\n}\n\ninterface Named {\n    name: string;\n}\n\ninterface Timestamped {\n    createdAt: Date;\n    updatedAt: Date;\n}\n\ninterface Entity extends Named, Timestamped {\n    id: string;\n}\n\nabstract class BaseModel implements Serializable {\n    abstract serialize(): string;\n}\n\nclass User extends BaseModel implements Entity, Comparable<User> {\n    id: string = \"\";\n    name: string = \"\";\n    createdAt: Date = new Date();\n    updatedAt: Date = new Date();\n    \n    serialize(): string {\n        return JSON.stringify(this);\n    }\n    \n    compareTo(other: User): number {\n        return this.name.localeCompare(other.name);\n    }\n}\n\nclass AdminUser extends User {\n    permissions: string[] = [];\n}\n\nclass SuperAdmin extends AdminUser {\n    canManageAdmins: boolean = true;\n}\n\nclass GuestUser extends User {\n    sessionId: string = \"\";\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 21,
+      "character": 15
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "BaseModel",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 21,
+          "character": 0
+        },
+        "end": {
+          "line": 23,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 21,
+          "character": 15
+        },
+        "end": {
+          "line": 21,
+          "character": 24
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "BaseModel",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 21,
+          "character": 0
+        },
+        "end": {
+          "line": 23,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 21,
+          "character": 15
+        },
+        "end": {
+          "line": 21,
+          "character": 24
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Serializable",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 22
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "User",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 25,
+          "character": 0
+        },
+        "end": {
+          "line": 38,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 25,
+          "character": 6
+        },
+        "end": {
+          "line": 25,
+          "character": 10
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "AdminUser",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 40,
+          "character": 0
+        },
+        "end": {
+          "line": 42,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 40,
+          "character": 6
+        },
+        "end": {
+          "line": 40,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "SuperAdmin",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 44,
+          "character": 0
+        },
+        "end": {
+          "line": 46,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 44,
+          "character": 6
+        },
+        "end": {
+          "line": 44,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "GuestUser",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 48,
+          "character": 0
+        },
+        "end": {
+          "line": 50,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 48,
+          "character": 6
+        },
+        "end": {
+          "line": 48,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: BaseModel
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:22:1-24:2
+│ │ 22: abstract class BaseModel implements Serializable {
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 23:     abstract serialize(): string;
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 24: }
+│ │     ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:22:16-22:25
+│ │ 22: abstract class BaseModel implements Serializable {
+│ │                    ^^^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Serializable
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ 1: interface Serializable {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 2:     serialize(): string;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:1:11-1:23
+│ │ │ │ 1: interface Serializable {
+│ │ │ │              ^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: User
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:26:1-39:2
+│ │ │ │ 26: class User extends BaseModel implements Entity, Comparable<User> {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 27:     id: string = "";
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 28:     name: string = "";
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 29:     createdAt: Date = new Date();
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 30:     updatedAt: Date = new Date();
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 31:     
+│ │ │ │     ^^^^
+│ │ │ │ 32:     serialize(): string {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 33:         return JSON.stringify(this);
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 34:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 35:     
+│ │ │ │     ^^^^
+│ │ │ │ 36:     compareTo(other: User): number {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 37:         return this.name.localeCompare(other.name);
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 38:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 39: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:26:7-26:11
+│ │ │ │ 26: class User extends BaseModel implements Entity, Comparable<User> {
+│ │ │ │           ^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: AdminUser
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:41:1-43:2
+│ │ │ │ │ │ 41: class AdminUser extends User {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 42:     permissions: string[] = [];
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 43: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:41:7-41:16
+│ │ │ │ │ │ 41: class AdminUser extends User {
+│ │ │ │ │ │           ^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ├ subtypes:
+│ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ ╭ name: SuperAdmin
+│ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ ╭ /a.ts:45:1-47:2
+│ │ │ │ │ │ │ │ 45: class SuperAdmin extends AdminUser {
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 46:     canManageAdmins: boolean = true;
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 47: }
+│ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ ╭ /a.ts:45:7-45:17
+│ │ │ │ │ │ │ │ 45: class SuperAdmin extends AdminUser {
+│ │ │ │ │ │ │ │           ^^^^^^^^^^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ╰ subtypes: none
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: GuestUser
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:49:1-51:2
+│ │ │ │ │ │ 49: class GuestUser extends User {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 50:     sessionId: string = "";
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 51: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:49:7-49:16
+│ │ │ │ │ │ 49: class GuestUser extends User {
+│ │ │ │ │ │           ^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ subtypes: none

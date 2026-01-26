@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // TypeHierarchyDeclaration represents a node that can appear in the type hierarchy.
@@ -192,6 +193,9 @@ func getTypeDeclarationFromSymbol(symbol *ast.Symbol) *ast.Node {
 }
 
 // getSymbolKindForTypeHierarchy determines the LSP SymbolKind for a type hierarchy item.
+// Note: LSP doesn't have a dedicated TypeAlias kind, so we use Struct which is a better
+// representation than TypeParameter (used by some implementations). TypeParameter (26)
+// is specifically for generic type parameters like T, U, not for type aliases.
 func getSymbolKindForTypeHierarchy(node *ast.Node) lsproto.SymbolKind {
 	if node == nil {
 		return lsproto.SymbolKindClass
@@ -203,7 +207,10 @@ func getSymbolKindForTypeHierarchy(node *ast.Node) lsproto.SymbolKind {
 	case ast.IsInterfaceDeclaration(node):
 		return lsproto.SymbolKindInterface
 	case ast.IsTypeAliasDeclaration(node):
-		return lsproto.SymbolKindTypeParameter // LSP doesn't have TypeAlias, use TypeParameter
+		// LSP doesn't have TypeAlias, use Struct as it's closer semantically than TypeParameter.
+		// TypeParameter (26) is for generic type params (T, U), not type aliases.
+		// Struct (23) represents a compound type which is what type aliases often define.
+		return lsproto.SymbolKindStruct
 	case ast.IsTypeParameterDeclaration(node):
 		return lsproto.SymbolKindTypeParameter
 	case isTypeHierarchyMixinVariable(node):
@@ -238,32 +245,127 @@ func getTypeHierarchyItemName(node *ast.Node) string {
 	return "<anonymous>"
 }
 
+// getTypeHierarchyKindModifiers returns additional kind modifiers for a type hierarchy declaration.
+// These help distinguish different kinds of type relationships in the UI.
+// Modifiers are returned as comma-separated strings (e.g., "abstract", "conditional,extends").
+func getTypeHierarchyKindModifiers(node *ast.Node) string {
+	if node == nil {
+		return ""
+	}
+
+	var modifiers []string
+
+	// Check for abstract classes
+	if ast.IsClassDeclaration(node) || ast.IsClassExpression(node) {
+		if (ast.GetCombinedModifierFlags(node) & ast.ModifierFlagsAbstract) != 0 {
+			modifiers = append(modifiers, "abstract")
+		}
+	}
+
+	// Check for mixin variables
+	if isTypeHierarchyMixinVariable(node) {
+		modifiers = append(modifiers, "mixin")
+	}
+
+	// Check for type alias specific modifiers
+	if ast.IsTypeAliasDeclaration(node) {
+		typeNode := node.AsTypeAliasDeclaration().Type
+		if typeNode != nil {
+			switch typeNode.Kind {
+			case ast.KindConditionalType:
+				modifiers = append(modifiers, "conditional")
+				// Check if it uses infer keyword
+				if containsInferType(typeNode) {
+					modifiers = append(modifiers, "infer")
+				} else {
+					modifiers = append(modifiers, "extends")
+				}
+			case ast.KindIntersectionType:
+				modifiers = append(modifiers, "intersection")
+			case ast.KindUnionType:
+				modifiers = append(modifiers, "union")
+			case ast.KindMappedType:
+				modifiers = append(modifiers, "mapped")
+			case ast.KindTupleType:
+				modifiers = append(modifiers, "tuple")
+			case ast.KindTemplateLiteralType:
+				modifiers = append(modifiers, "template")
+			case ast.KindIndexedAccessType:
+				modifiers = append(modifiers, "indexed")
+			case ast.KindTypeOperator:
+				typeOp := typeNode.AsTypeOperatorNode()
+				switch typeOp.Operator {
+				case ast.KindKeyOfKeyword:
+					modifiers = append(modifiers, "keyof")
+				case ast.KindReadonlyKeyword:
+					modifiers = append(modifiers, "readonly")
+				default:
+					modifiers = append(modifiers, "alias")
+				}
+			case ast.KindTypeReference:
+				// Simple type alias (type Foo = Bar)
+				modifiers = append(modifiers, "alias")
+			}
+		}
+	}
+
+	return strings.Join(modifiers, ",")
+}
+
+// containsInferType checks if a type node contains an infer type.
+func containsInferType(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+
+	if node.Kind == ast.KindInferType {
+		return true
+	}
+
+	// Recursively check children
+	found := false
+	node.ForEachChild(func(child *ast.Node) bool {
+		if containsInferType(child) {
+			found = true
+			return true // Stop iteration
+		}
+		return false // Continue iteration
+	})
+
+	return found
+}
+
 // createTypeHierarchyItem creates an LSP TypeHierarchyItem for the given declaration.
 func (l *LanguageService) createTypeHierarchyItem(program *compiler.Program, declaration *ast.Node) *lsproto.TypeHierarchyItem {
 	if declaration == nil {
 		return nil
 	}
 
-	file := ast.GetSourceFileOfNode(declaration)
-	if file == nil {
+	sourceFile := ast.GetSourceFileOfNode(declaration)
+	if sourceFile == nil {
 		return nil
 	}
 
-	script := l.getScript(file.AsSourceFile().FileName())
+	script := l.getScript(sourceFile.FileName())
+	if script == nil {
+		return nil
+	}
 
 	name := getTypeHierarchyItemName(declaration)
 	kind := getSymbolKindForTypeHierarchy(declaration)
 
-	// Get the range of the entire declaration
-	startPos := declaration.Pos()
+	// Get the range of the entire declaration, skipping leading trivia (whitespace, comments)
+	// This matches TypeScript's behavior of using skipTrivia with stopAtComments: true
+	startPos := scanner.SkipTriviaEx(sourceFile.Text(), declaration.Pos(), &scanner.SkipTriviaOptions{StopAtComments: true})
 	endPos := declaration.End()
 	range_ := l.converters.ToLSPRange(script, core.NewTextRange(startPos, endPos))
 
-	// Get the selection range (usually just the name)
+	// Get the selection range (usually just the name), also skipping trivia
 	refNode := getTypeHierarchyDeclarationReferenceNode(declaration)
 	var selectionRange lsproto.Range
 	if refNode != nil {
-		selectionRange = l.converters.ToLSPRange(script, core.NewTextRange(refNode.Pos(), refNode.End()))
+		nameStart := scanner.SkipTrivia(sourceFile.Text(), refNode.Pos())
+		selectionRange = l.converters.ToLSPRange(script, core.NewTextRange(nameStart, refNode.End()))
 	} else {
 		selectionRange = range_
 	}
@@ -271,24 +373,49 @@ func (l *LanguageService) createTypeHierarchyItem(program *compiler.Program, dec
 	// Get detail (type signature)
 	var detail *string
 	c, done := program.GetTypeChecker(context.Background())
-	t := c.GetDeclaredTypeOfSymbol(c.GetSymbolAtLocation(declaration))
-	done()
-	if t != nil {
-		typeStr := c.TypeToString(t)
-		detail = &typeStr
+	symbol := c.GetSymbolAtLocation(declaration)
+	if symbol != nil {
+		t := c.GetDeclaredTypeOfSymbol(symbol)
+		if t != nil {
+			typeStr := c.TypeToString(t)
+			detail = &typeStr
+		}
 	}
+	done()
 
 	return &lsproto.TypeHierarchyItem{
 		Name:           name,
 		Kind:           kind,
 		Detail:         detail,
-		Uri:            lsconv.FileNameToDocumentURI(file.AsSourceFile().FileName()),
+		Uri:            lsconv.FileNameToDocumentURI(sourceFile.FileName()),
 		Range:          range_,
 		SelectionRange: selectionRange,
 		Data:           &lsproto.TypeHierarchyItemData{
 			// Custom data preserved between requests
 		},
 	}
+}
+
+// resolveTypeHierarchyDeclarationAtPosition resolves the type hierarchy declaration
+// at the given position in a source file. This helper function extracts common logic
+// used by supertypes and subtypes handlers to avoid code duplication.
+func (l *LanguageService) resolveTypeHierarchyDeclarationAtPosition(
+	program *compiler.Program,
+	file *ast.SourceFile,
+	pos int,
+) TypeHierarchyDeclaration {
+	var node *ast.Node
+	if pos == 0 {
+		node = file.AsNode()
+	} else {
+		node = astnav.GetTouchingPropertyName(file, pos)
+	}
+
+	if node == nil {
+		return nil
+	}
+
+	return resolveTypeHierarchyDeclaration(program, node)
 }
 
 // ProvidePrepareTypeHierarchy prepares the type hierarchy at the given position.
@@ -298,23 +425,18 @@ func (l *LanguageService) ProvidePrepareTypeHierarchy(
 	position lsproto.Position,
 ) (lsproto.TypeHierarchyPrepareResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
-
-	if node == nil || node.Kind == ast.KindSourceFile {
+	pos := int(l.converters.LineAndCharacterToPosition(file, position))
+	declaration := l.resolveTypeHierarchyDeclarationAtPosition(program, file, pos)
+	if declaration == nil || declaration.Kind == ast.KindSourceFile {
 		return lsproto.TypeHierarchyItemsOrNull{}, nil
 	}
 
-	declaration := resolveTypeHierarchyDeclaration(program, node)
-	if declaration == nil {
+	hierarchyItem := l.createTypeHierarchyItem(program, declaration)
+	if hierarchyItem == nil {
 		return lsproto.TypeHierarchyItemsOrNull{}, nil
 	}
 
-	item := l.createTypeHierarchyItem(program, declaration)
-	if item == nil {
-		return lsproto.TypeHierarchyItemsOrNull{}, nil
-	}
-
-	items := []*lsproto.TypeHierarchyItem{item}
+	items := []*lsproto.TypeHierarchyItem{hierarchyItem}
 	return lsproto.TypeHierarchyItemsOrNull{TypeHierarchyItems: &items}, nil
 }
 
@@ -331,13 +453,7 @@ func (l *LanguageService) ProvideTypeHierarchySupertypes(
 	}
 
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
-	node := astnav.GetTouchingPropertyName(file, pos)
-
-	if node == nil {
-		return lsproto.TypeHierarchyItemsOrNull{}, nil
-	}
-
-	declaration := resolveTypeHierarchyDeclaration(program, node)
+	declaration := l.resolveTypeHierarchyDeclarationAtPosition(program, file, pos)
 	if declaration == nil {
 		return lsproto.TypeHierarchyItemsOrNull{}, nil
 	}
@@ -364,13 +480,7 @@ func (l *LanguageService) ProvideTypeHierarchySubtypes(
 	}
 
 	pos := int(l.converters.LineAndCharacterToPosition(file, item.SelectionRange.Start))
-	node := astnav.GetTouchingPropertyName(file, pos)
-
-	if node == nil {
-		return lsproto.TypeHierarchyItemsOrNull{}, nil
-	}
-
-	declaration := resolveTypeHierarchyDeclaration(program, node)
+	declaration := l.resolveTypeHierarchyDeclarationAtPosition(program, file, pos)
 	if declaration == nil {
 		return lsproto.TypeHierarchyItemsOrNull{}, nil
 	}
@@ -490,8 +600,12 @@ func (l *LanguageService) getSubtypes(
 	c, done := program.GetTypeChecker(context.Background())
 	defer done()
 
-	// Get the symbol for the declaration
-	symbol := c.GetSymbolAtLocation(declaration)
+	// Get the symbol for the declaration - use the name node for GetSymbolAtLocation
+	nameNode := declaration.Name()
+	if nameNode == nil {
+		return nil
+	}
+	symbol := c.GetSymbolAtLocation(nameNode)
 	if symbol == nil {
 		return nil
 	}
@@ -686,6 +800,8 @@ func resolveTypeReferenceToDeclaration(c *checker.Checker, typeRef *ast.Node) *a
 }
 
 // collectReferencedTypesFromTypeNode collects type declarations referenced in a type node.
+// For type hierarchy purposes, we only want concrete types (classes, interfaces, type aliases),
+// not type parameters, as those represent the structural relationship.
 func collectReferencedTypesFromTypeNode(c *checker.Checker, typeNode *ast.Node, seen map[*ast.Node]bool, callback func(*ast.Node)) {
 	if typeNode == nil {
 		return
@@ -694,8 +810,11 @@ func collectReferencedTypesFromTypeNode(c *checker.Checker, typeNode *ast.Node, 
 	switch typeNode.Kind {
 	case ast.KindTypeReference:
 		if decl := resolveTypeReferenceToDeclaration(c, typeNode); decl != nil && !seen[decl] {
-			seen[decl] = true
-			callback(decl)
+			// Filter out type parameters - they're not concrete types we want in the hierarchy
+			if !ast.IsTypeParameterDeclaration(decl) {
+				seen[decl] = true
+				callback(decl)
+			}
 		}
 
 	case ast.KindIntersectionType:
@@ -711,9 +830,12 @@ func collectReferencedTypesFromTypeNode(c *checker.Checker, typeNode *ast.Node, 
 		}
 
 	case ast.KindConditionalType:
-		// For conditional types, collect the check and extends types
+		// For conditional types like `T extends Dog ? true : false`:
+		// - CheckType (T) is often a type parameter, which we skip
+		// - ExtendsType (Dog) is the constraint/base type we want to show
+		// We only collect the ExtendsType as it represents the structural relationship
 		condType := typeNode.AsConditionalTypeNode()
-		collectReferencedTypesFromTypeNode(c, condType.CheckType, seen, callback)
+		// Only collect ExtendsType, not CheckType (which is often just a type parameter T)
 		collectReferencedTypesFromTypeNode(c, condType.ExtendsType, seen, callback)
 
 	case ast.KindMappedType:

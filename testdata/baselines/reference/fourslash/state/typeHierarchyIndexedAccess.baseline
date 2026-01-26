@@ -1,0 +1,142 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Person {
+    name: string;
+    age: number;
+    address: {
+        street: string;
+        city: string;
+    };
+}
+
+// Indexed access types
+type PersonName = Person["name"];
+
+type PersonAddress = Person["address"];
+
+type PersonKeys = keyof Person;
+
+// Nested indexed access
+type PersonCity = Person["address"]["city"];
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Person {\n    name: string;\n    age: number;\n    address: {\n        street: string;\n        city: string;\n    };\n}\n\n// Indexed access types\ntype PersonName = Person[\"name\"];\n\ntype PersonAddress = Person[\"address\"];\n\ntype PersonKeys = keyof Person;\n\n// Nested indexed access\ntype PersonCity = Person[\"address\"][\"city\"];"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 10,
+      "character": 5
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "PersonName",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 0
+        },
+        "end": {
+          "line": 10,
+          "character": 33
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 10,
+          "character": 5
+        },
+        "end": {
+          "line": 10,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "PersonName",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 0
+        },
+        "end": {
+          "line": 10,
+          "character": 33
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 10,
+          "character": 5
+        },
+        "end": {
+          "line": 10,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: PersonName
+├ kind: struct
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:10:1-11:34
+│ │ 10: // Indexed access types
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 11: type PersonName = Person["name"];
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:11:6-11:16
+│ │ 11: type PersonName = Person["name"];
+│ │          ^^^^^^^^^^
+│ ╰
+├ supertypes: none
+╰ subtypes: none

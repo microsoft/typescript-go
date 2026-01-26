@@ -1,0 +1,148 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface User {
+    name: string;
+    email: string;
+    age: number;
+}
+
+// Mapped type
+type ReadonlyUser = {
+    readonly [K in keyof User]: User[K];
+};
+
+// Partial-like
+type PartialUser = {
+    [K in keyof User]?: User[K];
+};
+
+// Pick-like
+type UserNameAndEmail = {
+    [K in "name" | "email"]: User[K];
+};
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface User {\n    name: string;\n    email: string;\n    age: number;\n}\n\n// Mapped type\ntype ReadonlyUser = {\n    readonly [K in keyof User]: User[K];\n};\n\n// Partial-like\ntype PartialUser = {\n    [K in keyof User]?: User[K];\n};\n\n// Pick-like\ntype UserNameAndEmail = {\n    [K in \"name\" | \"email\"]: User[K];\n};"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 7,
+      "character": 5
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "ReadonlyUser",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 0
+        },
+        "end": {
+          "line": 9,
+          "character": 2
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 7,
+          "character": 5
+        },
+        "end": {
+          "line": 7,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "ReadonlyUser",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 0
+        },
+        "end": {
+          "line": 9,
+          "character": 2
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 7,
+          "character": 5
+        },
+        "end": {
+          "line": 7,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: ReadonlyUser
+├ kind: struct
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:7:1-10:3
+│ │  7: // Mapped type
+│ │     ^^^^^^^^^^^^^^
+│ │  8: type ReadonlyUser = {
+│ │     ^^^^^^^^^^^^^^^^^^^^^
+│ │  9:     readonly [K in keyof User]: User[K];
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 10: };
+│ │     ^^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:8:6-8:18
+│ │ 8: type ReadonlyUser = {
+│ │         ^^^^^^^^^^^^
+│ ╰
+├ supertypes: none
+╰ subtypes: none

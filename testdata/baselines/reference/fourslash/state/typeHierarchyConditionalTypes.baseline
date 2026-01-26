@@ -1,0 +1,249 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Animal {
+    name: string;
+}
+
+interface Dog extends Animal {
+    bark(): void;
+}
+
+interface Cat extends Animal {
+    meow(): void;
+}
+
+// Basic conditional type
+type IsDog<T> = T extends Dog ? true : false;
+
+// Conditional type with different results
+type AnimalSound<T> = T extends Dog ? "bark" : T extends Cat ? "meow" : "unknown";
+
+// Extract utility type pattern
+type ExtractDog<T> = T extends Dog ? T : never;
+
+// Inferring in conditional types
+type ReturnTypeOf<T> = T extends (...args: any[]) => infer R ? R : never;
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Animal {\n    name: string;\n}\n\ninterface Dog extends Animal {\n    bark(): void;\n}\n\ninterface Cat extends Animal {\n    meow(): void;\n}\n\n// Basic conditional type\ntype IsDog<T> = T extends Dog ? true : false;\n\n// Conditional type with different results\ntype AnimalSound<T> = T extends Dog ? \"bark\" : T extends Cat ? \"meow\" : \"unknown\";\n\n// Extract utility type pattern\ntype ExtractDog<T> = T extends Dog ? T : never;\n\n// Inferring in conditional types\ntype ReturnTypeOf<T> = T extends (...args: any[]) => infer R ? R : never;"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 13,
+      "character": 5
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "IsDog",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 13,
+          "character": 45
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 13,
+          "character": 5
+        },
+        "end": {
+          "line": 13,
+          "character": 10
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "IsDog",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 13,
+          "character": 45
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 13,
+          "character": 5
+        },
+        "end": {
+          "line": 13,
+          "character": 10
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Dog",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 10
+        },
+        "end": {
+          "line": 4,
+          "character": 13
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Animal",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: IsDog
+├ kind: struct
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:13:1-14:46
+│ │ 13: // Basic conditional type
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 14: type IsDog<T> = T extends Dog ? true : false;
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:14:6-14:11
+│ │ 14: type IsDog<T> = T extends Dog ? true : false;
+│ │          ^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Dog
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:5:1-7:2
+│ │ │ │ 5: interface Dog extends Animal {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:     bark(): void;
+│ │ │ │    ^^^^^^^^^^^^^^^^^
+│ │ │ │ 7: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:5:11-5:14
+│ │ │ │ 5: interface Dog extends Animal {
+│ │ │ │              ^^^
+│ │ │ ╰
+│ │ ├ supertypes:
+│ │ │ ╭ supertype:
+│ │ │ │ ╭ name: Animal
+│ │ │ │ ├ kind: interface
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ │ │ 1: interface Animal {
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 2:     name: string;
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 3: }
+│ │ │ │ │ │    ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:1:11-1:17
+│ │ │ │ │ │ 1: interface Animal {
+│ │ │ │ │ │              ^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ supertypes: none
+╰ subtypes: none

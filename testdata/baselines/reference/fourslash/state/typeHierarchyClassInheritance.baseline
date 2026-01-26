@@ -1,0 +1,294 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+class Animal {
+    name: string = "";
+}
+
+class Mammal extends Animal {
+    hasFur: boolean = true;
+}
+
+class Dog extends Mammal {
+    breed: string = "";
+}
+
+class Cat extends Mammal {
+    indoor: boolean = true;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "class Animal {\n    name: string = \"\";\n}\n\nclass Mammal extends Animal {\n    hasFur: boolean = true;\n}\n\nclass Dog extends Mammal {\n    breed: string = \"\";\n}\n\nclass Cat extends Mammal {\n    indoor: boolean = true;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 4,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Mammal",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 6
+        },
+        "end": {
+          "line": 4,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Mammal",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 6
+        },
+        "end": {
+          "line": 4,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Animal",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Cat",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 14,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 12,
+          "character": 6
+        },
+        "end": {
+          "line": 12,
+          "character": 9
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Dog",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 10,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 6
+        },
+        "end": {
+          "line": 8,
+          "character": 9
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Mammal
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:5:1-7:2
+│ │ 5: class Mammal extends Animal {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 6:     hasFur: boolean = true;
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 7: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:5:7-5:13
+│ │ 5: class Mammal extends Animal {
+│ │          ^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Animal
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ 1: class Animal {
+│ │ │ │    ^^^^^^^^^^^^^^
+│ │ │ │ 2:     name: string = "";
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:1:7-1:13
+│ │ │ │ 1: class Animal {
+│ │ │ │          ^^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: Cat
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:13:1-15:2
+│ │ │ │ 13: class Cat extends Mammal {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 14:     indoor: boolean = true;
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 15: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:13:7-13:10
+│ │ │ │ 13: class Cat extends Mammal {
+│ │ │ │           ^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none
+│ ╭ subtype:
+│ │ ╭ name: Dog
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:9:1-11:2
+│ │ │ │  9: class Dog extends Mammal {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 10:     breed: string = "";
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 11: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:9:7-9:10
+│ │ │ │ 9: class Dog extends Mammal {
+│ │ │ │          ^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none

@@ -1,0 +1,404 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+class Level0 {
+    prop0: string = "";
+}
+
+class Level1 extends Level0 {
+    prop1: string = "";
+}
+
+class Level2 extends Level1 {
+    prop2: string = "";
+}
+
+class Level3 extends Level2 {
+    prop3: string = "";
+}
+
+class Level4 extends Level3 {
+    prop4: string = "";
+}
+
+class Level5 extends Level4 {
+    prop5: string = "";
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "class Level0 {\n    prop0: string = \"\";\n}\n\nclass Level1 extends Level0 {\n    prop1: string = \"\";\n}\n\nclass Level2 extends Level1 {\n    prop2: string = \"\";\n}\n\nclass Level3 extends Level2 {\n    prop3: string = \"\";\n}\n\nclass Level4 extends Level3 {\n    prop4: string = \"\";\n}\n\nclass Level5 extends Level4 {\n    prop5: string = \"\";\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Level0",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level0",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 6
+        },
+        "end": {
+          "line": 0,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level1",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 6
+        },
+        "end": {
+          "line": 4,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level2",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 10,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 6
+        },
+        "end": {
+          "line": 8,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level3",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 14,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 12,
+          "character": 6
+        },
+        "end": {
+          "line": 12,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level4",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 0
+        },
+        "end": {
+          "line": 18,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 16,
+          "character": 6
+        },
+        "end": {
+          "line": 16,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Level5",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 20,
+          "character": 0
+        },
+        "end": {
+          "line": 22,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 20,
+          "character": 6
+        },
+        "end": {
+          "line": 20,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Level0
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:1:1-3:2
+│ │ 1: class Level0 {
+│ │    ^^^^^^^^^^^^^^
+│ │ 2:     prop0: string = "";
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 3: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:1:7-1:13
+│ │ 1: class Level0 {
+│ │          ^^^^^^
+│ ╰
+├ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: Level1
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:5:1-7:2
+│ │ │ │ 5: class Level1 extends Level0 {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:     prop1: string = "";
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 7: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:5:7-5:13
+│ │ │ │ 5: class Level1 extends Level0 {
+│ │ │ │          ^^^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: Level2
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:9:1-11:2
+│ │ │ │ │ │  9: class Level2 extends Level1 {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 10:     prop2: string = "";
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 11: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:9:7-9:13
+│ │ │ │ │ │ 9: class Level2 extends Level1 {
+│ │ │ │ │ │          ^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ├ subtypes:
+│ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ ╭ name: Level3
+│ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ ╭ /a.ts:13:1-15:2
+│ │ │ │ │ │ │ │ 13: class Level3 extends Level2 {
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 14:     prop3: string = "";
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 15: }
+│ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ ╭ /a.ts:13:7-13:13
+│ │ │ │ │ │ │ │ 13: class Level3 extends Level2 {
+│ │ │ │ │ │ │ │           ^^^^^^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ├ subtypes:
+│ │ │ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ │ │ ╭ name: Level4
+│ │ │ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ │ │ ╭ /a.ts:17:1-19:2
+│ │ │ │ │ │ │ │ │ │ 17: class Level4 extends Level3 {
+│ │ │ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ 18:     prop4: string = "";
+│ │ │ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ 19: }
+│ │ │ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ │ │ ╭ /a.ts:17:7-17:13
+│ │ │ │ │ │ │ │ │ │ 17: class Level4 extends Level3 {
+│ │ │ │ │ │ │ │ │ │           ^^^^^^
+│ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ ├ subtypes:
+│ │ │ │ │ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ │ │ │ │ ╭ name: Level5
+│ │ │ │ │ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ │ │ │ │ ╭ /a.ts:21:1-23:2
+│ │ │ │ │ │ │ │ │ │ │ │ 21: class Level5 extends Level4 {
+│ │ │ │ │ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ │ │ 22:     prop5: string = "";
+│ │ │ │ │ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ │ │ │ │ 23: }
+│ │ │ │ │ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ │ │ │ │ ╭ /a.ts:21:7-21:13
+│ │ │ │ │ │ │ │ │ │ │ │ 21: class Level5 extends Level4 {
+│ │ │ │ │ │ │ │ │ │ │ │           ^^^^^^
+│ │ │ │ │ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ │ │ │ │ ╰ subtypes: none
