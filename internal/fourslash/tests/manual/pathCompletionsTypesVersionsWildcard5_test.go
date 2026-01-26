@@ -72,17 +72,17 @@ import { } from "foo//**/";`
 			},
 		},
 	})
-	// f.Insert(t, "foo/")
-	// f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
-	// 	IsIncomplete: false,
-	// 	ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-	// 		CommitCharacters: &[]string{},
-	// 		EditRange:        Ignored,
-	// 	},
-	// 	Items: &fourslash.CompletionsExpectedItems{
-	// 		Unsorted: []fourslash.CompletionsExpectedItem{
-	// 			"onlyInFooFolder",
-	// 		},
-	// 	},
-	// })
+	f.Insert(t, "foo/")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				"onlyInFooFolder",
+			},
+		},
+	})
 }
