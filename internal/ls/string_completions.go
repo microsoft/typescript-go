@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -58,8 +59,8 @@ func (l *LanguageService) getStringLiteralCompletions(
 	compilerOptions *core.CompilerOptions,
 ) *lsproto.CompletionList {
 	if isInReferenceComment(file, position) {
-		return nil
-		// !!! HERE: get triple slash reference completions
+		entries := l.getTripleSlashReferenceCompletions(file, position, l.GetProgram(), checker)
+		return l.convertPathCompletions(ctx, entries, file, position)
 	}
 	if IsInString(file, position, contextToken) {
 		if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
@@ -872,7 +873,7 @@ func (l *LanguageService) getCompletionEntriesFromTypings(
 
 	globalCacheLocation := program.GetGlobalTypingsCacheLocation()
 	tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(globalCacheLocation, scriptPath, func(directory string) (any, bool) {
-		typesDir := tspath.CombinePaths(tspath.GetDirectoryPath(directory), "node_modules/@types")
+		typesDir := tspath.CombinePaths(directory, "node_modules/@types")
 		l.getCompletionEntriesFromTypingsDirectories(typesDir, options, fragmentDirectory, extensionOptions, program, seen, result)
 		return nil, false
 	})
@@ -2049,4 +2050,128 @@ func isInReferenceComment(file *ast.SourceFile, position int) bool {
 
 func hasTripleSlashPrefix(commentText string) bool {
 	return strings.HasPrefix(commentText, "///") && strings.HasPrefix(strings.TrimSpace(commentText[3:]), "<")
+}
+
+// Matches a triple slash reference directive with an incomplete string literal for its path.
+// Used to determine if the caret is currently within the string literal and capture the literal
+// fragment for completions.
+// For example, this matches
+//
+// /// <reference path="fragment
+//
+// but not
+//
+// /// <reference path="fragment"
+
+// Returns (prefix, kind, toComplete, ok) where:
+//   - prefix is everything up to and including the opening quote
+//   - kind is either "path" or "types"
+//   - toComplete is the fragment after the opening quote
+//   - ok indicates whether the match was successful
+func parseTripleSlashDirectiveFragment(text string) (prefix string, kind string, toComplete string, ok bool) {
+	rest := text
+	if !strings.HasPrefix(rest, "///") {
+		return "", "", "", false
+	}
+
+	rest = rest[len("///"):]
+	rest = strings.TrimLeftFunc(rest, stringutil.IsWhiteSpaceLike)
+
+	// <reference
+	if !strings.HasPrefix(rest, "<reference") {
+		return "", "", "", false
+	}
+	rest = rest[len("<reference"):]
+
+	if len(rest) == 0 || !stringutil.IsWhiteSpaceLike(rune(rest[0])) {
+		return "", "", "", false
+	}
+	rest = strings.TrimLeftFunc(rest, stringutil.IsWhiteSpaceLike)
+
+	// path or types
+	if strings.HasPrefix(rest, "path") {
+		kind = "path"
+		rest = rest[len("path"):]
+	} else if strings.HasPrefix(rest, "types") {
+		kind = "types"
+		rest = rest[len("types"):]
+	} else {
+		return "", "", "", false
+	}
+
+	// Skip optional whitespace, then must have "="
+	rest = strings.TrimLeftFunc(rest, stringutil.IsWhiteSpaceLike)
+	if !strings.HasPrefix(rest, "=") {
+		return "", "", "", false
+	}
+	rest = rest[1:]
+
+	// Skip optional whitespace, then must have opening quote (' or ")
+	rest = strings.TrimLeftFunc(rest, stringutil.IsWhiteSpaceLike)
+	if len(rest) == 0 || (rest[0] != '\'' && rest[0] != '"') {
+		return "", "", "", false
+	}
+	rest = rest[1:]
+
+	// The toComplete part is everything after the opening quote
+	if strings.ContainsAny(rest, `'"`) {
+		return "", "", "", false
+	}
+	toComplete = rest
+	prefix = text[:len(text)-len(toComplete)]
+	return prefix, kind, toComplete, true
+}
+
+func (l *LanguageService) getTripleSlashReferenceCompletions(
+	file *ast.SourceFile,
+	position int,
+	program *compiler.Program,
+	checker *checker.Checker,
+) []*pathCompletion {
+	compilerOptions := program.Options()
+	token := astnav.GetTokenAtPosition(file, position)
+	commentRanges := slices.Collect(scanner.GetLeadingCommentRanges(&ast.NodeFactory{}, file.Text(), token.Pos()))
+
+	var foundRange *ast.CommentRange
+	for i := range commentRanges {
+		commentRange := &commentRanges[i]
+		if position >= commentRange.Pos() && position <= commentRange.End() {
+			foundRange = commentRange
+			break
+		}
+	}
+	if foundRange == nil {
+		return nil
+	}
+
+	text := file.Text()[foundRange.Pos():position]
+	prefix, kind, toComplete, ok := parseTripleSlashDirectiveFragment(text)
+	if !ok {
+		return nil
+	}
+
+	scriptPath := tspath.GetDirectoryPath(string(file.Path()))
+
+	var names []moduleCompletionNameAndKind
+	switch kind {
+	case "path":
+		extensionOptions := l.getExtensionOptions(compilerOptions, referenceKindFileName, file, core.ResolutionModeNone, nil /*checker*/)
+		result := l.getCompletionEntriesForDirectoryFragment(
+			toComplete,
+			scriptPath,
+			extensionOptions,
+			program,
+			true, /*moduleSpecifierIsRelative*/
+			string(file.Path()),
+			&moduleCompletionNameAndKindSet{names: make(map[string]moduleCompletionNameAndKind)},
+		)
+		names = slices.Collect(maps.Values(result.names))
+	case "types":
+		extensionOptions := l.getExtensionOptions(compilerOptions, referenceKindModuleSpecifier, file, core.ResolutionModeNone, nil /*checker*/)
+		result := &moduleCompletionNameAndKindSet{names: make(map[string]moduleCompletionNameAndKind)}
+		l.getCompletionEntriesFromTypings(program, scriptPath, getFragmentDirectory(toComplete), extensionOptions, result)
+		names = slices.Collect(maps.Values(result.names))
+	}
+
+	return addReplacementSpans(toComplete, foundRange.Pos()+len(prefix), names)
 }

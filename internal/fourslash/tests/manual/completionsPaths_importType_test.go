@@ -71,16 +71,16 @@ type B = import(".//*2*/");
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
+					Label: "node_modules",
+					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
+				},
+				&lsproto.CompletionItem{
 					Label: "ns",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
 				},
 				&lsproto.CompletionItem{
 					Label: "user",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
-				},
-				&lsproto.CompletionItem{
-					Label: "node_modules",
-					Kind:  PtrTo(lsproto.CompletionItemKindFolder),
 				},
 			},
 		},
