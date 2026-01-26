@@ -1,3 +1,6 @@
 *.vsix
 dist/
 lib/
+
+# Output of '@vscode/telemetry-extractor'.
+declarations-resolved.json

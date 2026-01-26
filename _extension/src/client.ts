@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 
-import type { TelemetryReporter } from "@vscode/extension-telemetry";
 import {
     LanguageClient,
     LanguageClientOptions,
@@ -12,6 +11,13 @@ import {
 
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
+import {
+    LanguageServerErrorResponse,
+    LanguageServerErrorResponseClassification,
+    LanguageServerStart,
+    LanguageServerStartClassification,
+    TelemetryReporter,
+} from "./telemetryReporting";
 import {
     ExeInfo,
     getExe,
@@ -106,7 +112,7 @@ export class Client {
     async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
-        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
+        this.telemetryReporter.publicLog2<LanguageServerStart, LanguageServerStartClassification>("languageServer.start", {
             version: this.exe.version,
         });
 
@@ -170,7 +176,7 @@ export class Client {
             this.outputChannel.appendLine(`Telemetry event: ${JSON.stringify(d)}`);
             if (d.type === "request-internal-error") {
                 this.outputChannel.appendLine(`Sanitized stack:\n${sanitizeStack(d.stack)}`);
-                this.telemetryReporter.sendTelemetryErrorEvent("languageServer.errorResponse", {
+                this.telemetryReporter.publicLogError2<LanguageServerErrorResponse, LanguageServerErrorResponseClassification>("languageServer.errorResponse", {
                     errorCode: d.errorCode,
                     requestMethod: d.requestMethod.replaceAll("/", "."),
                     stack: sanitizeStack(d.stack),
