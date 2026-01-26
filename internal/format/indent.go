@@ -341,12 +341,13 @@ func getVisualListRange(node *ast.Node, list core.TextRange, sourceFile *ast.Sou
 	} else {
 		priorEnd = prior.End()
 	}
-	next := astnav.FindNextToken(prior, node, sourceFile)
+	// Find the token that starts at or after list.End() using the scanner
+	scan := scanner.GetScannerForSourceFile(sourceFile, list.End())
 	var nextStart int
-	if next == nil {
+	if scan.Token() == ast.KindEndOfFile {
 		nextStart = list.End()
 	} else {
-		nextStart = astnav.GetStartOfNode(next, sourceFile, false)
+		nextStart = scan.TokenStart()
 	}
 	return core.NewTextRange(priorEnd, nextStart)
 }

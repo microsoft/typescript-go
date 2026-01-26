@@ -31,8 +31,8 @@ let x: AAA = new BBB()`
 	f.GoToFile(t, "/foo.ts")
 	f.VerifyImportFixAtPosition(t, []string{
 		`import {
-    type AAA,
     BBB,
+    type AAA,
 } from "./bar";
 
 let x: AAA = new BBB()`,
