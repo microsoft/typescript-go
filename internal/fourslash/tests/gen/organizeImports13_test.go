@@ -38,7 +38,8 @@ interface Use extends Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Ty
 console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     Type1,
     Type2,
     Type3,
@@ -59,8 +60,12 @@ console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`
     func9,
 } from "foo";
 interface Use extends Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Type9 {}
-console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
-	f.VerifyOrganizeImports(t, `import {
+console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
+	f.VerifyOrganizeImports(t,
+		`import {
     func1,
     func2,
     func3,
@@ -81,7 +86,10 @@ console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, ls
     Type9,
 } from "foo";
 interface Use extends Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Type9 {}
-console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSTrue,
-	})
+console.log(func1, func2, func3, func4, func5, func6, func7, func8, func9);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSTrue,
+		},
+	)
 }

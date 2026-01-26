@@ -24,7 +24,8 @@ import b from "B";
 console.log(a, b, c, d)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `// polyfill
+	f.VerifyOrganizeImports(t,
+		`// polyfill
 import c from "C";
 /*
 * demo
@@ -33,5 +34,8 @@ import a from "A";
 import b from "B";
 import d from "D";
 
-console.log(a, b, c, d)`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+console.log(a, b, c, d)`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

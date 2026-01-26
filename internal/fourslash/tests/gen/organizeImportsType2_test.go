@@ -23,30 +23,46 @@ const C = "hello";
 export { A, type B, C };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `type A = string;
+	f.VerifyOrganizeImports(t,
+		`type A = string;
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, lsproto.CodeActionKindSourceOrganizeImports, nil)
-	f.VerifyOrganizeImports(t, `type A = string;
+`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
+	f.VerifyOrganizeImports(t,
+		`type A = string;
 type B = string;
 const C = "hello";
 export { A, type B, C };
-`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
-	})
-	f.VerifyOrganizeImports(t, `type A = string;
+`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderInline,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`type A = string;
 type B = string;
 const C = "hello";
 export { type B, A, C };
-`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
-	})
-	f.VerifyOrganizeImports(t, `type A = string;
+`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderFirst,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`type A = string;
 type B = string;
 const C = "hello";
 export { A, C, type B };
-`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
-	})
+`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsTypeOrder: lsutil.OrganizeImportsTypeOrderLast,
+		},
+	)
 }

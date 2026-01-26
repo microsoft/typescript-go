@@ -23,26 +23,34 @@ func TestOrganizeImportsUnicode3(t *testing.T) {
 console.log(A, À, B);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     À,
     A,
     B,
 } from './foo';
 
-console.log(A, À, B);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase:      core.TSFalse,
-		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsAccentCollation: false,
-	})
-	f.VerifyOrganizeImports(t, `import {
+console.log(A, À, B);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase:      core.TSFalse,
+			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsAccentCollation: false,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`import {
     A,
     À,
     B,
 } from './foo';
 
-console.log(A, À, B);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase:      core.TSFalse,
-		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsAccentCollation: true,
-	})
+console.log(A, À, B);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase:      core.TSFalse,
+			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsAccentCollation: true,
+		},
+	)
 }

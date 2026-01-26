@@ -21,22 +21,30 @@ import * as A from "./A";
 console.log(A, À, B);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import * as À from "./À";
+	f.VerifyOrganizeImports(t,
+		`import * as À from "./À";
 import * as A from "./A";
 import * as B from "./B";
 
-console.log(A, À, B);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase:      core.TSFalse,
-		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsAccentCollation: false,
-	})
-	f.VerifyOrganizeImports(t, `import * as A from "./A";
+console.log(A, À, B);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase:      core.TSFalse,
+			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsAccentCollation: false,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`import * as A from "./A";
 import * as À from "./À";
 import * as B from "./B";
 
-console.log(A, À, B);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase:      core.TSFalse,
-		OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsAccentCollation: true,
-	})
+console.log(A, À, B);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase:      core.TSFalse,
+			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsAccentCollation: true,
+		},
+	)
 }

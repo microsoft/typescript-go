@@ -27,7 +27,8 @@ func TestOrganizeImportsType3(t *testing.T) {
 console.log(A, a, B, b, c, C, d, D);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     type A,
     b as B,
     c as C,
@@ -37,8 +38,11 @@ console.log(A, a, B, b, c, C, d, D);`
     type c,
     d
 } from './foo';
-console.log(A, a, B, b, c, C, d, D);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSFalse,
-		OrganizeImportsTypeOrder:  lsutil.OrganizeImportsTypeOrderInline,
-	})
+console.log(A, a, B, b, c, C, d, D);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSFalse,
+			OrganizeImportsTypeOrder:  lsutil.OrganizeImportsTypeOrderInline,
+		},
+	)
 }

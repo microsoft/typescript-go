@@ -22,20 +22,28 @@ type x = bc | Bc;
 console.log(abc, Abc, I, R, M);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     I,
     M,
     R,
 } from 'a';
 import { abc, Abc, type bc, type Bc } from 'b';
 type x = bc | Bc;
-console.log(abc, Abc, I, R, M);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
-	f.VerifyOrganizeImports(t, `import {
+console.log(abc, Abc, I, R, M);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
+	f.VerifyOrganizeImports(t,
+		`import {
     I,
     M,
     R,
 } from 'a';
 import { abc, Abc, type bc, type Bc } from 'b';
 type x = bc | Bc;
-console.log(abc, Abc, I, R, M);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+console.log(abc, Abc, I, R, M);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

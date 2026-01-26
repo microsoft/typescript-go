@@ -26,7 +26,8 @@ import * as anotherThingElse from "someotherpath";
 anotherThing;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `/* some comment here
+	f.VerifyOrganizeImports(t,
+		`/* some comment here
 * and there
 */
 import * as anotherThing from "someopath"; /* small comment */ // single line one.
@@ -34,5 +35,8 @@ import * as anotherThing from "someopath"; /* small comment */ // single line on
 * and there
 */
 
-anotherThing;`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+anotherThing;`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

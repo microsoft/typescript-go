@@ -24,5 +24,9 @@ import * as AnotherThing from "somepath";/**
 import * as AnotherThingElse from "someotherpath";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, ``, lsproto.CodeActionKindSourceOrganizeImports, nil)
+	f.VerifyOrganizeImports(t,
+		``,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

@@ -23,11 +23,15 @@ import { B } from "./a";
 export type G = A | B | C | D | E | F | Z;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import { A, B } from "./a";
+	f.VerifyOrganizeImports(t,
+		`import { A, B } from "./a";
 import { C, F } from "./a" assert { type: "a" };
 import { A as D } from "./a" assert { type: "b" };
 import { E } from "./a" with { type: "a" };
 import { Z } from "./z";
 
-export type G = A | B | C | D | E | F | Z;`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+export type G = A | B | C | D | E | F | Z;`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

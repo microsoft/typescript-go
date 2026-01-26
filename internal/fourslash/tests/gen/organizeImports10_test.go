@@ -22,8 +22,12 @@ export function fun() { /* ... */ }
  export type { ZodType }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import type { ZodType } from './declaration';
+	f.VerifyOrganizeImports(t,
+		`import type { ZodType } from './declaration';
 
 /** Intended to be used in combination with {@link ZodType} */
-export function fun() { /* ... */ }`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+export function fun() { /* ... */ }`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

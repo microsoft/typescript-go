@@ -20,10 +20,14 @@ func TestOrganizeImports2(t *testing.T) {
 console.log(Foo, Bar);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     Bar,
     Foo
 } from "foo";
 
-console.log(Foo, Bar);`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+console.log(Foo, Bar);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

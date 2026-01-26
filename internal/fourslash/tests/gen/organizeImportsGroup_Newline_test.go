@@ -21,11 +21,15 @@ import b from "B";
 console.log(a, b, c, d)`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import c from "C";
+	f.VerifyOrganizeImports(t,
+		`import c from "C";
 
 import a from "A"; // not count
 import b from "B";
 import d from "D";
 
-console.log(a, b, c, d)`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+console.log(a, b, c, d)`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

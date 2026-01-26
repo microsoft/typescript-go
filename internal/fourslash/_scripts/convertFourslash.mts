@@ -3240,7 +3240,11 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
 }
 
 function generateOrganizeImports({ expectedContent, mode, preferences }: VerifyOrganizeImportsCmd): string {
-    return `f.VerifyOrganizeImports(t, ${getGoMultiLineStringLiteral(expectedContent)}, ${mode}, ${preferences})`;
+    return `f.VerifyOrganizeImports(t, 
+        ${getGoMultiLineStringLiteral(expectedContent)}, 
+        ${mode}, 
+        ${preferences},
+    )`;
 }
 
 function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenameCmd): string {

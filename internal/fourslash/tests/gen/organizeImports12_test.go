@@ -19,8 +19,12 @@ declare export { a, b };
 declare export * from "foo";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `declare export default class A {}
+	f.VerifyOrganizeImports(t,
+		`declare export default class A {}
 declare export * from "foo";
 declare export { a, b };
-`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

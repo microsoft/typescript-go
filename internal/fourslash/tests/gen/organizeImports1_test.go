@@ -31,7 +31,8 @@ console.log(a, B, b, c, C, d, D);
 console.log(e, f, F, g, G, H, h);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import {
+	f.VerifyOrganizeImports(t,
+		`import {
     a,
     b,
     b as B,
@@ -47,10 +48,14 @@ console.log(e, f, F, g, G, H, h);`
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSTrue,
-	})
-	f.VerifyOrganizeImports(t, `import {
+console.log(e, f, F, g, G, H, h);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSTrue,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`import {
     b as B,
     c as C,
     d as D,
@@ -68,7 +73,10 @@ console.log(e, f, F, g, G, H, h);`, lsproto.CodeActionKindSourceOrganizeImports,
 } from './foo';
 
 console.log(a, B, b, c, C, d, D);
-console.log(e, f, F, g, G, H, h);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSFalse,
-	})
+console.log(e, f, F, g, G, H, h);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSFalse,
+		},
+	)
 }

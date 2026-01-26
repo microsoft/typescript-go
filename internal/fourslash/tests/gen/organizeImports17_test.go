@@ -18,9 +18,13 @@ func TestOrganizeImports17(t *testing.T) {
 import { aa, CaseInsensitively, sorted } from "aardvark";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import { aa, CaseInsensitively, sorted } from "aardvark";
+	f.VerifyOrganizeImports(t,
+		`import { aa, CaseInsensitively, sorted } from "aardvark";
 import { Both } from "module-specifiers-unsorted";
-`, lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSUnknown,
-	})
+`,
+		lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSUnknown,
+		},
+	)
 }

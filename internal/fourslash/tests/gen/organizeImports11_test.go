@@ -45,7 +45,8 @@ export class MyClass {
  export type TypeC = () => string;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import { TypeA, TypeB, TypeC } from './my-types';
+	f.VerifyOrganizeImports(t,
+		`import { TypeA, TypeB, TypeC } from './my-types';
 
 /**
  * MyClass {@link TypeA}
@@ -70,5 +71,8 @@ export class MyClass {
     }
     someFunction();
   }
-}`, lsproto.CodeActionKindSourceOrganizeImports, nil)
+}`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		nil,
+	)
 }

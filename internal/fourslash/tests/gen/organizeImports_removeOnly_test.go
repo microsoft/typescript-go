@@ -20,9 +20,13 @@ import { g } from "foo";
 export { g, e, b, c };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import { c, b } from "foo";
+	f.VerifyOrganizeImports(t,
+		`import { c, b } from "foo";
 import { e } from "bar";
 import { g } from "foo";
 
-export { g, e, b, c };`, lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused, nil)
+export { g, e, b, c };`,
+		lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused,
+		nil,
+	)
 }

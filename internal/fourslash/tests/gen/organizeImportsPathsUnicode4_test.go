@@ -22,24 +22,32 @@ import * as _Ab from "./_Ab";
 console.log(_aB, _Ab, aB, Ab);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t, `import * as _Ab from "./_Ab";
+	f.VerifyOrganizeImports(t,
+		`import * as _Ab from "./_Ab";
 import * as _aB from "./_aB";
 import * as Ab from "./Ab";
 import * as aB from "./aB";
 
-console.log(_aB, _Ab, aB, Ab);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSFalse,
-		OrganizeImportsCollation:  lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsCaseFirst:  lsutil.OrganizeImportsCaseFirstUpper,
-	})
-	f.VerifyOrganizeImports(t, `import * as _aB from "./_aB";
+console.log(_aB, _Ab, aB, Ab);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSFalse,
+			OrganizeImportsCollation:  lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsCaseFirst:  lsutil.OrganizeImportsCaseFirstUpper,
+		},
+	)
+	f.VerifyOrganizeImports(t,
+		`import * as _aB from "./_aB";
 import * as _Ab from "./_Ab";
 import * as aB from "./aB";
 import * as Ab from "./Ab";
 
-console.log(_aB, _Ab, aB, Ab);`, lsproto.CodeActionKindSourceOrganizeImports, &lsutil.UserPreferences{
-		OrganizeImportsIgnoreCase: core.TSFalse,
-		OrganizeImportsCollation:  lsutil.OrganizeImportsCollationUnicode,
-		OrganizeImportsCaseFirst:  lsutil.OrganizeImportsCaseFirstLower,
-	})
+console.log(_aB, _Ab, aB, Ab);`,
+		lsproto.CodeActionKindSourceOrganizeImports,
+		&lsutil.UserPreferences{
+			OrganizeImportsIgnoreCase: core.TSFalse,
+			OrganizeImportsCollation:  lsutil.OrganizeImportsCollationUnicode,
+			OrganizeImportsCaseFirst:  lsutil.OrganizeImportsCaseFirstLower,
+		},
+	)
 }
