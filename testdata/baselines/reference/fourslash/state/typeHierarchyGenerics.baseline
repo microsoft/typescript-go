@@ -142,7 +142,7 @@ Config File Names::
   "method": "typeHierarchy/supertypes",
   "params": {
     "item": {
-      "name": "Repository",
+      "name": "Repository<T>",
       "kind": 11,
       "uri": "file:///a.ts",
       "range": {
@@ -293,7 +293,7 @@ Config File Names::
 │ ╰
 ├ supertypes:
 │ ╭ supertype:
-│ │ ╭ name: Repository
+│ │ ╭ name: Repository<T>
 │ │ ├ kind: interface
 │ │ ├ file: /a.ts
 │ │ ├ span:

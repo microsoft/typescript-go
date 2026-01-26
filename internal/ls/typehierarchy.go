@@ -15,6 +15,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
+// DefaultTypeHierarchyMaxResults is the default maximum number of subtypes to return.
+// This limits the number of subtypes to prevent performance issues with large codebases.
+// The value matches TypeScript's default.
+const DefaultTypeHierarchyMaxResults = 1000
+
 // TypeHierarchyDeclaration represents a node that can appear in the type hierarchy.
 // This includes classes, interfaces, type aliases, and mixin variables.
 type TypeHierarchyDeclaration = *ast.Node
@@ -337,6 +342,13 @@ func containsInferType(node *ast.Node) bool {
 
 // createTypeHierarchyItem creates an LSP TypeHierarchyItem for the given declaration.
 func (l *LanguageService) createTypeHierarchyItem(program *compiler.Program, declaration *ast.Node) *lsproto.TypeHierarchyItem {
+	return l.createTypeHierarchyItemWithName(program, declaration, "")
+}
+
+// createTypeHierarchyItemWithName creates a TypeHierarchyItem with an optional display name override.
+// The displayName parameter allows passing a name that includes type arguments
+// (e.g., "Repository<T>" instead of just "Repository").
+func (l *LanguageService) createTypeHierarchyItemWithName(program *compiler.Program, declaration *ast.Node, displayName string) *lsproto.TypeHierarchyItem {
 	if declaration == nil {
 		return nil
 	}
@@ -351,7 +363,11 @@ func (l *LanguageService) createTypeHierarchyItem(program *compiler.Program, dec
 		return nil
 	}
 
-	name := getTypeHierarchyItemName(declaration)
+	// Use displayName if provided, otherwise use the declaration name
+	name := displayName
+	if name == "" {
+		name = getTypeHierarchyItemName(declaration)
+	}
 	kind := getSymbolKindForTypeHierarchy(declaration)
 
 	// Get the range of the entire declaration, skipping leading trivia (whitespace, comments)
@@ -394,6 +410,23 @@ func (l *LanguageService) createTypeHierarchyItem(program *compiler.Program, dec
 			// Custom data preserved between requests
 		},
 	}
+}
+
+// getDisplayNameFromTypeNode returns the display name for a type node, including type arguments.
+// For example, "Repository<T>" instead of just "Repository".
+// This matches TypeScript's getDisplayNameFromTypeNode behavior.
+func getDisplayNameFromTypeNode(sourceFile *ast.SourceFile, typeNode *ast.Node) string {
+	if typeNode == nil || sourceFile == nil {
+		return ""
+	}
+	// Get the text of the type node from the source file, skipping leading trivia
+	text := sourceFile.Text()
+	start := scanner.SkipTrivia(text, typeNode.Pos())
+	end := typeNode.End()
+	if start >= end || start < 0 || end > len(text) {
+		return ""
+	}
+	return text[start:end]
 }
 
 // resolveTypeHierarchyDeclarationAtPosition resolves the type hierarchy declaration
@@ -505,26 +538,33 @@ func (l *LanguageService) getSupertypes(program *compiler.Program, declaration *
 	c, done := program.GetTypeChecker(context.Background())
 	defer done()
 
+	// Helper to add type hierarchy item with display name from type node
+	addTypeHierarchyItem := func(typeRef *ast.Node, decl *ast.Node) {
+		if decl == nil || seen[decl] {
+			return
+		}
+		seen[decl] = true
+		// Get display name from the type reference node (includes type arguments like "Repository<T>")
+		displayName := getDisplayNameFromTypeNode(ast.GetSourceFileOfNode(typeRef), typeRef)
+		if item := l.createTypeHierarchyItemWithName(program, decl, displayName); item != nil {
+			results = append(results, item)
+		}
+	}
+
 	switch {
 	case ast.IsClassDeclaration(declaration) || ast.IsClassExpression(declaration):
 		// Get base class
 		if baseType := getEffectiveBaseTypeNode(declaration); baseType != nil {
-			if baseDecl := resolveTypeReferenceToDeclaration(c, baseType); baseDecl != nil && !seen[baseDecl] {
-				seen[baseDecl] = true
-				if item := l.createTypeHierarchyItem(program, baseDecl); item != nil {
-					results = append(results, item)
-				}
+			if baseDecl := resolveTypeReferenceToDeclaration(c, baseType); baseDecl != nil {
+				addTypeHierarchyItem(baseType, baseDecl)
 			}
 		}
 
 		// Get implemented interfaces
 		for _, heritage := range getHeritageClausesWithKind(declaration, ast.KindImplementsKeyword) {
 			for _, typeRef := range heritage.Types.Nodes {
-				if decl := resolveTypeReferenceToDeclaration(c, typeRef); decl != nil && !seen[decl] {
-					seen[decl] = true
-					if item := l.createTypeHierarchyItem(program, decl); item != nil {
-						results = append(results, item)
-					}
+				if decl := resolveTypeReferenceToDeclaration(c, typeRef); decl != nil {
+					addTypeHierarchyItem(typeRef, decl)
 				}
 			}
 		}
@@ -533,11 +573,8 @@ func (l *LanguageService) getSupertypes(program *compiler.Program, declaration *
 		// Get extended interfaces
 		for _, heritage := range getHeritageClausesWithKind(declaration, ast.KindExtendsKeyword) {
 			for _, typeRef := range heritage.Types.Nodes {
-				if decl := resolveTypeReferenceToDeclaration(c, typeRef); decl != nil && !seen[decl] {
-					seen[decl] = true
-					if item := l.createTypeHierarchyItem(program, decl); item != nil {
-						results = append(results, item)
-					}
+				if decl := resolveTypeReferenceToDeclaration(c, typeRef); decl != nil {
+					addTypeHierarchyItem(typeRef, decl)
 				}
 			}
 		}
@@ -596,6 +633,7 @@ func (l *LanguageService) getSubtypes(
 
 	var results []*lsproto.TypeHierarchyItem
 	seen := make(map[*ast.Node]bool)
+	maxResults := DefaultTypeHierarchyMaxResults
 
 	c, done := program.GetTypeChecker(context.Background())
 	defer done()
@@ -612,8 +650,17 @@ func (l *LanguageService) getSubtypes(
 
 	// For now, scan all source files for heritage clauses
 	// A full implementation would use FindAllReferences with implementations flag
+	// Use early termination with maxResults to prevent performance issues
+	reachedLimit := false
 	for _, sourceFile := range program.GetSourceFiles() {
+		if reachedLimit {
+			break
+		}
 		scanForSubtypes(sourceFile, declaration, symbol, seen, func(decl *ast.Node) {
+			if len(results) >= maxResults {
+				reachedLimit = true
+				return
+			}
 			if item := l.createTypeHierarchyItem(program, decl); item != nil {
 				results = append(results, item)
 			}
