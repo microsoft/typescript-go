@@ -52,9 +52,12 @@ func (h *host) Trace(msg *diagnostics.Message, args ...any) {
 
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	// Cache dts and json files as they will be reused
-	return h.sourceFiles.loadOrStoreNewIf(opts, h.host.GetSourceFile, func(value *ast.SourceFile) bool {
-		return value != nil && (tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson))
-	})
+	return h.sourceFiles.loadOrStoreNewIf(
+		opts,
+		h.host.GetSourceFile,
+		(tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson)),
+		func(value *ast.SourceFile) bool { return value != nil },
+	)
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
