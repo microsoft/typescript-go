@@ -521,6 +521,7 @@ func getStringLiteralCompletionsFromModuleNames(
 	program *compiler.Program,
 ) *stringLiteralCompletions {
 	// !!! needs `getModeForUsageLocationWorker`
+	// TODO investigate if we will need to update this for pnp, once available
 	return nil
 }
 
