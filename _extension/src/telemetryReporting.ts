@@ -48,7 +48,7 @@ export type LanguageServerStart = {
 };
 
 export type LanguageServerStartClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the TypeScript Native Preview language server starts";
     version: string;
 };
@@ -60,7 +60,7 @@ export type LanguageServerErrorResponse = {
 };
 
 export type LanguageServerErrorResponseClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the TypeScript Native Preview language server returns an error response";
     errorCode: { classification: "CallstackOrException"; purpose: "PerformanceAndHealth"; comment: "The error code returned by the language server"; };
     requestMethod: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "The method of the request that caused the error"; };
@@ -70,28 +70,28 @@ export type LanguageServerErrorResponseClassification = {
 export type EnableNativePreview = {};
 
 export type EnableNativePreviewClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the user enables TypeScript Native Preview";
 };
 
 export type DisableNativePreview = {};
 
 export type DisableNativePreviewClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the user disables TypeScript Native Preview";
 };
 
 export type RestartLanguageServer = {};
 
 export type RestartLanguageServerClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the user restarts the TypeScript Native Preview language server";
 };
 
 export type ReportIssue = {};
 
 export type ReportIssueClassification = {
-    owner: "DanielRosenwasser";
+    owner: "joj";
     comment: "Event emitted when the user decides to report an issue through the command palette.";
 };
 
