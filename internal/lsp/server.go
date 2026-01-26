@@ -281,7 +281,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
-				Section: ptrTo("ts/js"),
+				Section: ptrTo("js/ts"),
 			},
 			{
 				Section: ptrTo("typescript"),
@@ -970,8 +970,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 				RegisterOptions: &lsproto.RegisterOptions{
 					DidChangeConfiguration: &lsproto.DidChangeConfigurationRegistrationOptions{
 						Section: &lsproto.StringOrStrings{
-							// !!! Both the 'javascript' and 'js/ts' scopes need to be watched for settings as well.
-							Strings: &[]string{"typescript"},
+							Strings: &[]string{"js/ts", "typescript", "javascript"},
 						},
 					},
 				},
@@ -1010,7 +1009,7 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 		s.session.Configure(lsutil.ParseNewUserConfig(settings))
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		// fourslash case
-		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["ts/js"], settings["typescript"], settings["javascript"]}))
+		s.session.Configure(lsutil.ParseNewUserConfig([]any{settings["js/ts"], settings["typescript"], settings["javascript"]}))
 	}
 	return nil
 }
