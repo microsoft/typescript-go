@@ -184,6 +184,7 @@ TestCompletionsRecommended_union
 TestCompletionsRedeclareModuleAsGlobal
 TestCompletionsStringsWithTriggerCharacter
 TestCompletionsSymbolMembers
+TestCompletionsTriggerCharacter
 TestCompletionsTuple
 TestCompletionsUniqueSymbol_import
 TestCompletionsUniqueSymbol1
@@ -364,6 +365,7 @@ TestMemberListOnContextualThis
 TestMultiModuleFundule
 TestNgProxy1
 TestNgProxy4
+TestNodeModulesImportCompletions1
 TestNoQuickInfoForLabel
 TestNoQuickInfoInWhitespace
 TestNumericPropertyNames

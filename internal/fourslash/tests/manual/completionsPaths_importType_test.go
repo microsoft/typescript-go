@@ -71,18 +71,6 @@ type B = import(".//*2*/");
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label: "lib",
-					Kind:  PtrTo(lsproto.CompletionItemKindFile),
-				},
-				&lsproto.CompletionItem{
-					Label: "lib.decorators",
-					Kind:  PtrTo(lsproto.CompletionItemKindFile),
-				},
-				&lsproto.CompletionItem{
-					Label: "lib.decorators.legacy",
-					Kind:  PtrTo(lsproto.CompletionItemKindFile),
-				},
-				&lsproto.CompletionItem{
 					Label: "ns",
 					Kind:  PtrTo(lsproto.CompletionItemKindFile),
 				},
