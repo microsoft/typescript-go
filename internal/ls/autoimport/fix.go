@@ -245,7 +245,17 @@ func addToExistingImport(
 				specsToCompareAgainst := existingSpecifiers
 				if promoteFromTypeOnly && len(existingSpecifiers) > 0 {
 					specsToCompareAgainst = core.Map(existingSpecifiers, func(e *ast.Node) *ast.Node {
-						return createSyntheticImportSpecifier(ct.NodeFactory, e.AsImportSpecifier(), true)
+						spec := e.AsImportSpecifier()
+						var propertyName *ast.Node
+						if spec.PropertyName != nil {
+							propertyName = spec.PropertyName
+						}
+						syntheticSpec := ct.NodeFactory.NewImportSpecifier(
+							true, // isTypeOnly
+							propertyName,
+							spec.Name(),
+						)
+						return syntheticSpec
 					})
 				}
 
@@ -1005,21 +1015,6 @@ func isIndexFileName(fileName string) bool {
 	return false
 }
 
-// createSyntheticImportSpecifier creates a synthetic import specifier with the given type-only status
-// while preserving the property name and identifier from the original specifier.
-// This is useful for comparison and sorting operations.
-func createSyntheticImportSpecifier(factory *ast.NodeFactory, spec *ast.ImportSpecifier, isTypeOnly bool) *ast.Node {
-	var propertyName *ast.Node
-	if spec.PropertyName != nil {
-		propertyName = spec.PropertyName
-	}
-	return factory.NewImportSpecifier(
-		isTypeOnly,
-		propertyName,
-		spec.Name(),
-	)
-}
-
 func promoteFromTypeOnly(
 	changes *change.Tracker,
 	aliasDeclaration *ast.Declaration,
@@ -1121,23 +1116,14 @@ func promoteImportClause(
 			namedImportsData := namedImports.AsNamedImports()
 			if len(namedImportsData.Elements.Nodes) > 1 {
 				// Check if the list is sorted and if we need to reorder
-				// When converting to inline type modifiers, we should use inline type ordering
-				prefsForInlineType := preferences
-				if prefsForInlineType == nil {
-					prefsForInlineType = &lsutil.UserPreferences{}
-				}
-				// Clone the preferences and set type order to inline
-				prefsClone := *prefsForInlineType
-				prefsClone.OrganizeImportsTypeOrder = lsutil.OrganizeImportsTypeOrderInline
-				
-				specifierComparer, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(
+				_, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(
 					importClause.Parent,
 					sourceFile,
-					&prefsClone,
+					preferences,
 				)
 
 				// If the alias declaration is an ImportSpecifier and the list is sorted,
-				// determine the correct position for the promoted (non-type-only) specifier
+				// move it to index 0 (since it will be the only non-type-only import)
 				if isSorted.IsFalse() == false && // isSorted !== false
 					aliasDeclaration != nil &&
 					aliasDeclaration.Kind == ast.KindImportSpecifier {
@@ -1149,45 +1135,12 @@ func promoteImportClause(
 							break
 						}
 					}
-					// Create a new specifier node with the same properties
-					spec := aliasDeclaration.AsImportSpecifier()
-					var propertyName *ast.Node
-					if spec.PropertyName != nil {
-						propertyName = spec.PropertyName
-					}
-					newSpecifier := changes.NodeFactory.NewImportSpecifier(
-						false, // isTypeOnly - this specifier is being promoted to non-type-only
-						propertyName,
-						spec.Name(),
-					)
-					
-					// Determine the correct insertion index for the promoted specifier
-					// We need to compute what the list will look like after adding type modifiers to existing elements
-					specsWithTypeModifiers := core.Map(namedImportsData.Elements.Nodes, func(e *ast.Node) *ast.Node {
-						if e == aliasDeclaration {
-							// This is the element being promoted, skip it for now
-							return nil
-						}
-						s := e.AsImportSpecifier()
-						if s.IsTypeOnly {
-							// Already type-only
-							return e
-						}
-						// Will have type modifier added
-						return createSyntheticImportSpecifier(changes.NodeFactory, s, true)
-					})
-					// Filter out nils (the promoted element)
-					specsWithTypeModifiers = core.Filter(specsWithTypeModifiers, func(e *ast.Node) bool { return e != nil })
-					
-					// Find the correct insertion index using the comparer
-					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(specsWithTypeModifiers, newSpecifier, specifierComparer)
-					
-					// Only delete and re-insert if the position changes
-					if insertionIndex != aliasIndex {
+					// If not already at index 0, move it there
+					if aliasIndex > 0 {
 						// Delete the specifier from its current position
 						changes.Delete(sourceFile, aliasDeclaration)
-						// Insert the new specifier at the correct index
-						changes.InsertImportSpecifierAtIndex(sourceFile, newSpecifier, namedImports, insertionIndex)
+						// Insert it at index 0
+						changes.InsertImportSpecifierAtIndex(sourceFile, aliasDeclaration, namedImports, 0)
 					}
 				}
 
