@@ -210,10 +210,11 @@ type Registry struct {
 	specifierCache map[tspath.Path]*collections.SyncMap[tspath.Path, string]
 }
 
-func NewRegistry(toPath func(fileName string) tspath.Path) *Registry {
+func NewRegistry(toPath func(fileName string) tspath.Path, preferences *lsutil.UserPreferences) *Registry {
 	return &Registry{
-		toPath:      toPath,
-		directories: make(map[tspath.Path]*directory),
+		toPath:          toPath,
+		userPreferences: preferences,
+		directories:     make(map[tspath.Path]*directory),
 	}
 }
 
@@ -410,7 +411,7 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 	neededDirectories := make(map[tspath.Path]string)
 	for path, fileName := range change.OpenFiles {
 		neededProjects[core.FirstResult(b.host.GetDefaultProject(path))] = struct{}{}
-		if strings.HasPrefix(fileName, "^/") {
+		if tspath.IsDynamicFileName(fileName) {
 			continue
 		}
 		dir := fileName
