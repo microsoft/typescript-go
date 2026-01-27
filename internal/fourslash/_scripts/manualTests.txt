@@ -1,6 +1,7 @@
 autoCloseFragment
 autoCloseTag
 autoImportPackageRootPathTypeModule
+completionForStringLiteral_details
 completionForStringLiteralExport
 completionForStringLiteralImport1
 completionForStringLiteralImport2
