@@ -723,7 +723,6 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 			importsLookup := func(directory string) {
 				if resolvePackageJsonImports && !seenPackageScope {
 					packageFile := tspath.CombinePaths(directory, "package.json")
-					// !!! HERE: does this have enough packageJson infos?
 					packageJsonInfo := program.GetPackageJsonInfo(packageFile)
 					if packageJsonInfo != nil && packageJsonInfo.Exists() {
 						seenPackageScope = true
@@ -775,9 +774,6 @@ func (l *LanguageService) getCompletionEntriesForNonRelativeModules(
 					}
 					packageDirectory := tspath.CombinePaths(ancestor, "node_modules", packagePath)
 					packageFile := tspath.CombinePaths(packageDirectory, "package.json")
-					// !!! HERE: does this have enough packageJson infos?
-					// probably not, only node_modules dependencies *in the program*,
-					// but we might need a transitive dependency (see `foundGlobal` comment)
 					packageJsonInfo := program.GetPackageJsonInfo(packageFile)
 					if packageJsonInfo != nil && packageJsonInfo.Exists() {
 						fragmentSubpath := strings.Join(components, "/")
@@ -943,7 +939,6 @@ func (l *LanguageService) enumerateNodeModulesVisibleToScript(scriptPath string)
 
 	tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(globalCacheLocation, scriptPath, func(directory string) (any, bool) {
 		packageJsonPath := tspath.CombinePaths(directory, "package.json")
-		// !!! HERE: does this have enough packageJson infos?
 		packageJsonInfo := l.program.GetPackageJsonInfo(packageJsonPath)
 		if packageJsonInfo != nil && packageJsonInfo.Exists() && packageJsonInfo.Contents != nil {
 			packageJsonInfo.Contents.RangeDependencies(func(name, version, dependencyField string) bool {
@@ -1246,7 +1241,6 @@ func (l *LanguageService) getCompletionEntriesForDirectoryFragment(
 		}
 	}
 
-	// !!! HERE: only use directoryExists if we're resolving relative imports? Is it ok to do this if the above call to `addCompletionEntriesFromPaths` failed?
 	if !l.host.DirectoryExists(baseDirectory) {
 		return result
 	}
@@ -1255,7 +1249,7 @@ func (l *LanguageService) getCompletionEntriesForDirectoryFragment(
 	files := l.ReadDirectory(
 		baseDirectory,
 		extensionOptions.extensionsToSearch,
-		[]string{"./*"}, /*include*/ // !!! HERE: do we need this?
+		[]string{"./*"}, /*include*/
 	)
 
 	for _, filePath := range files {
