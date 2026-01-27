@@ -1012,6 +1012,27 @@ func (f *FourslashTest) FormatDocument(t *testing.T, filename string) {
 	f.applyTextEdits(t, *result.TextEdits)
 }
 
+func (f *FourslashTest) FormatSelection(t *testing.T, startName, endName string) {
+	startMarker := f.MarkerByName(t, startName)
+	endMarker := f.MarkerByName(t, endName)
+	assert.Equal(t, startMarker.fileName, endMarker.fileName)
+
+	result := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, &lsproto.DocumentRangeFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(startMarker.fileName),
+		},
+		Range: lsproto.Range{
+			Start: startMarker.LSPosition,
+			End:   endMarker.LSPosition,
+		},
+		Options: f.userPreferences.FormatCodeSettings.ToLSFormatOptions(),
+	})
+	if result.TextEdits == nil {
+		return
+	}
+	f.applyTextEdits(t, *result.TextEdits)
+}
+
 func (f *FourslashTest) VerifyCurrentFileContent(t *testing.T, expectedContent string) {
 	t.Helper()
 	actualContent := f.getScriptInfo(f.activeFilename).content
@@ -2906,6 +2927,9 @@ func (f *FourslashTest) getSelection() core.TextRange {
 
 // Updates f.currentCaretPosition
 func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) int {
+	if len(edits) == 0 {
+		return 0
+	}
 	script := f.getScriptInfo(f.activeFilename)
 	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
