@@ -1,3 +1,5 @@
+autoCloseFragment
+autoCloseTag
 autoImportPackageRootPathTypeModule
 completionListInClosedFunction05
 completionListWithLabel
@@ -9,7 +11,6 @@ completionsImport_reexportTransient
 completionsSelfDeclaring1
 completionsWithDeprecatedTag4
 completionsWithStringReplacementMode1
-formatOnEnterInComment
 duplicatePackageServices_fileChanges
 exhaustiveCaseCompletions1
 exhaustiveCaseCompletions2
@@ -19,6 +20,7 @@ exhaustiveCaseCompletions5
 exhaustiveCaseCompletions6
 exhaustiveCaseCompletions7
 exhaustiveCaseCompletions8
+formatOnEnterInComment
 getOutliningSpans
 importNameCodeFix_uriStyleNodeCoreModules1
 importNameCodeFixDefaultExport7
@@ -49,17 +51,5 @@ renameDefaultKeyword
 renameForDefaultExport01
 semicolonFormattingInsideAComment
 semicolonFormattingInsideAStringLiteral
-tsxCompletion12
-jsDocFunctionSignatures2
-jsDocFunctionSignatures12
-getOutliningSpans
-incrementalParsingWithJsDoc
-autoCloseFragment
-autoCloseTag
-completionsWithStringReplacementMode1
-jsdocParameterNameCompletion
 stringLiteralCompletionsInPositionTypedUsingRest
 tsxCompletion12
-importNameCodeFix_uriStyleNodeCoreModules1
-importNameCodeFixDefaultExport7
-importNameCodeFixOptionalImport0

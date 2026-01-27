@@ -52,17 +52,18 @@ function main() {
         testNames.push(testName);
     }
 
-    let manualTests: string[] = [];
+    let manualTestsSet: Set<string> = new Set();
     if (fs.existsSync(manualTestsPath)) {
         const content = fs.readFileSync(manualTestsPath, "utf-8");
-        manualTests = content.split("\n").map(line => line.trim()).filter(line => line.length > 0);
+        manualTestsSet = new Set(content.split("\n").map(line => line.trim()).filter(line => line.length > 0));
     }
 
     for (const testName of testNames) {
-        if (!manualTests.includes(testName)) {
-            manualTests.push(testName);
+        if (!manualTestsSet.has(testName)) {
+            manualTestsSet.add(testName);
         }
     }
+    const manualTests = Array.from(manualTestsSet);
     manualTests.sort((a, b) => a.localeCompare(b, "en-US"));
     fs.writeFileSync(manualTestsPath, [...manualTests, ""].join("\n"), "utf-8");
 }
