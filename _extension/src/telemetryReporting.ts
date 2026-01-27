@@ -24,22 +24,6 @@ type LogTelemetrySignature = <
     data?: StrictPropertyCheck<T, E>,
 ) => void;
 
-declare let x: TelemetryReporter;
-
-function publicLogError2<E extends ClassifiedEvent<OmitMetadata<T>> = never, T extends IGDPRProperty = never>(eventName: string, data?: StrictPropertyCheck<T, E>): Promise<void> {}
-
-publicLogError2<LanguageServerStart, LanguageServerStartClassification>("languageServer.start", { version: "1.0.0" });
-
-// export interface EventNameToPropertiesMap {
-//     "languageServer.start": LanguageServerStart;
-//     "languageServer.errorResponse": LanguageServerErrorResponse;
-
-//     "enable-native-preview": EnableNativePreview;
-//     "disable-native-preview": DisableNativePreview;
-//     "restart-language-server": RestartLanguageServer;
-//     "report-issue": ReportIssue;
-// }
-
 // Note that all of the following types are defined as type aliases rather than interfaces
 // because of how object type literals are related with respect to index signatures in TypeScript.
 
