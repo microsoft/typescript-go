@@ -207,7 +207,7 @@ var E;
     E[E["A"] = 0] = "A";
 })(E || (E = {}));
 (function (E) {
-    E["B"] = A;
+    E["B"] = E.A;
     if (typeof E.B !== "string") E[E.B] = "B";
 })(E || (E = {}));`},
 
@@ -268,7 +268,7 @@ func TestNamespaceTransformer(t *testing.T) {
     N.x = 1;
 })(N || (N = {}));
 (function (N) {
-    x;
+    N.x;
 })(N || (N = {}));`},
 
 		{title: "exported array binding pattern", input: "namespace N { export var [x] = [1]; }", output: `var N;
@@ -342,11 +342,48 @@ func TestNamespaceTransformer(t *testing.T) {
     N.f = f;
 })(N || (N = {}));`},
 
+		{title: "exported function call across namespaces", input: "namespace N { export function Foo() {} } namespace N { Foo(); }", output: `var N;
+(function (N) {
+    function Foo() { }
+    N.Foo = Foo;
+})(N || (N = {}));
+(function (N) {
+    N.Foo();
+})(N || (N = {}));`},
+
 		{title: "export class", input: "namespace N { export class C {} }", output: `var N;
 (function (N) {
     class C {
     }
     N.C = C;
+})(N || (N = {}));`},
+
+		{title: "class extends across namespaces", input: "namespace A { export class TypeA {} } namespace A { export class TypeB extends TypeA {} }", output: `var A;
+(function (A) {
+    class TypeA {
+    }
+    A.TypeA = TypeA;
+})(A || (A = {}));
+(function (A) {
+    class TypeB extends A.TypeA {
+    }
+    A.TypeB = TypeB;
+})(A || (A = {}));`},
+
+		{title: "three namespace blocks with class inheritance", input: "namespace N { export class A {} } namespace N { export class B extends A {} } namespace N { class C extends B {} }", output: `var N;
+(function (N) {
+    class A {
+    }
+    N.A = A;
+})(N || (N = {}));
+(function (N) {
+    class B extends N.A {
+    }
+    N.B = B;
+})(N || (N = {}));
+(function (N) {
+    class C extends N.B {
+    }
 })(N || (N = {}));`},
 
 		{title: "export enum", input: "namespace N { export enum E {A} }", output: `var N;

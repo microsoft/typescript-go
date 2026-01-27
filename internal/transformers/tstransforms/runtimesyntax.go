@@ -1,7 +1,5 @@
 package tstransforms
 
-// !!! Unqualified enum member references across merged enum declarations are not currently supported (e.g `enum E {A}; enum E {B=A}`)
-// !!! Unqualified namespace member references across merged namespace declarations are not currently supported (e.g `namespace N { export var x = 1; }; namespace N { x; }`).
 // !!! SourceMaps and Comments need to be validated
 
 import (
@@ -1048,7 +1046,18 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
 		}
 		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
-		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) && container.Contains(location) {
+		// Get symbols from the original nodes (before transformation) since transformed nodes may not have symbols
+		var currentNamespaceSymbol *ast.Symbol
+		var currentEnumSymbol *ast.Symbol
+		if tx.currentNamespace != nil {
+			currentNamespaceSymbol = tx.EmitContext().MostOriginal(tx.currentNamespace).Symbol()
+		}
+		if tx.currentEnum != nil {
+			currentEnumSymbol = tx.EmitContext().MostOriginal(tx.currentEnum).Symbol()
+		}
+		if container != nil &&
+			((ast.IsModuleDeclaration(container) && currentNamespaceSymbol != nil && container.Symbol() == currentNamespaceSymbol) ||
+				(ast.IsEnumDeclaration(container) && currentEnumSymbol != nil && container.Symbol() == currentEnumSymbol)) {
 			containerName := tx.getNamespaceContainerName(container)
 
 			memberName := node.Clone(tx.Factory())
