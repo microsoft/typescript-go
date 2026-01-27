@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -117,7 +116,7 @@ func (l *LanguageService) createOrganizeImportsAction(
 ) *lsproto.CommandOrCodeAction {
 	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
 
-	organizeimports.OrganizeImports(
+	l.OrganizeImports(
 		ctx,
 		file,
 		changeTracker,
