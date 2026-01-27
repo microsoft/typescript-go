@@ -10,7 +10,6 @@ import (
 )
 
 func TestCompletionsPaths_pathMapping_nonTrailingWildcard1(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /src/b.ts

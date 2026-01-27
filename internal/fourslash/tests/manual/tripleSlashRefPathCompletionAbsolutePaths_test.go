@@ -9,7 +9,6 @@ import (
 )
 
 func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tests/cases/fourslash/tests/test0.ts

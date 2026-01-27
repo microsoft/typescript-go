@@ -2012,7 +2012,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 				if !strings.HasSuffix(name, pathCompletion.extension) {
 					detail += pathCompletion.extension
 				}
-				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
+				return createCompletionDetails(item, detail, "" /*documentation*/, docFormat)
 			}
 		}
 	case completion.fromProperties != nil:

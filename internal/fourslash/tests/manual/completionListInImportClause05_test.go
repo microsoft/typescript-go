@@ -9,7 +9,6 @@ import (
 )
 
 func TestCompletionListInImportClause05(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: app.ts

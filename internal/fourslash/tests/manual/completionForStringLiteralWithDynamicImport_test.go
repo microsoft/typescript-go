@@ -10,7 +10,6 @@ import (
 )
 
 func TestCompletionForStringLiteralWithDynamicImport(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings

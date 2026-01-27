@@ -10,7 +10,6 @@ import (
 )
 
 func TestCompletionsPaths_importType(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
