@@ -14,9 +14,9 @@ import (
 func TestCompletionImportKeywordNoCrash(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	
+
 	emptyCommitChars := []string{}
-	
+
 	// Test with "super" keyword
 	{
 		const content = `import super/*1*/`
@@ -34,7 +34,7 @@ func TestCompletionImportKeywordNoCrash(t *testing.T) {
 		})
 		done()
 	}
-	
+
 	// Test with "this" keyword
 	{
 		const content = `import this/*1*/`
