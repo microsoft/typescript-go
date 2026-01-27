@@ -14,21 +14,42 @@ import (
 func TestCompletionImportKeywordNoCrash(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `import super/*1*/`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
-	// We don't care about the exact completions, just that it doesn't crash
-	// The completion list should include at least the "type" keyword
+	
 	emptyCommitChars := []string{}
-	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &emptyCommitChars,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				"type",
+	
+	// Test with "super" keyword
+	{
+		const content = `import super/*1*/`
+		f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+		f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &emptyCommitChars,
 			},
-		},
-	})
+			Items: &fourslash.CompletionsExpectedItems{
+				Includes: []fourslash.CompletionsExpectedItem{
+					"type",
+				},
+			},
+		})
+		done()
+	}
+	
+	// Test with "this" keyword
+	{
+		const content = `import this/*1*/`
+		f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+		f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &emptyCommitChars,
+			},
+			Items: &fourslash.CompletionsExpectedItems{
+				Includes: []fourslash.CompletionsExpectedItem{
+					"type",
+				},
+			},
+		})
+		done()
+	}
 }
