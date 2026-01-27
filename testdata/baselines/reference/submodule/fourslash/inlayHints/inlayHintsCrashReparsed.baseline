@@ -1,0 +1,19 @@
+// === Inlay Hints ===
+module.exports = function () {
+                            ^
+{
+  "position": {
+    "line": 0,
+    "character": 28
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "number"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
