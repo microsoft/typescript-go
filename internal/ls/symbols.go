@@ -680,7 +680,7 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 		case ast.JSDeclarationKindThisProperty, ast.JSDeclarationKindProperty, ast.JSDeclarationKindObjectDefinePropertyValue:
 			return lsproto.SymbolKindProperty
 		}
-	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
+	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral:
 		// String literals used as property names (e.g., in Object.defineProperty)
 		return lsproto.SymbolKindProperty
 	}
