@@ -21,11 +21,11 @@ import (
 func (l *LanguageService) OrganizeImports(
 	ctx context.Context,
 	sourceFile *ast.SourceFile,
-	changeTracker *change.Tracker,
 	program *compiler.Program,
 	preferences *lsutil.UserPreferences,
 	kind lsproto.CodeActionKind,
-) {
+) map[string][]*lsproto.TextEdit {
+	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
 	shouldSort := kind == lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine || kind == lsproto.CodeActionKindSourceOrganizeImports
 	shouldCombine := shouldSort
 	shouldRemove := kind == lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused || kind == lsproto.CodeActionKindSourceOrganizeImports
@@ -105,6 +105,8 @@ func (l *LanguageService) OrganizeImports(
 			organizeExportsWorker(ambientModuleExportDecls, comparer, sourceFile, changeTracker)
 		}
 	}
+
+	return changeTracker.GetChanges()
 }
 
 type organizeImportsComparerSettings struct {

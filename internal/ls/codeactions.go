@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -58,7 +57,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	// Handle source actions (like organize imports)
 	if params.Context != nil && params.Context.Only != nil {
 		for _, kind := range *params.Context.Only {
-			organizeAction := l.createOrganizeImportsAction(ctx, program, file, params.TextDocument.Uri, kind)
+			organizeAction := l.createOrganizeImportsAction(ctx, program, file, kind)
 			actions = append(actions, *organizeAction)
 		}
 	}
@@ -111,21 +110,15 @@ func (l *LanguageService) createOrganizeImportsAction(
 	ctx context.Context,
 	program *compiler.Program,
 	file *ast.SourceFile,
-	uri lsproto.DocumentUri,
 	kind lsproto.CodeActionKind,
 ) *lsproto.CommandOrCodeAction {
-	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
-
-	l.OrganizeImports(
+	changes := l.OrganizeImports(
 		ctx,
 		file,
-		changeTracker,
 		program,
 		l.UserPreferences(),
 		kind,
 	)
-
-	changes := changeTracker.GetChanges()
 	if len(changes) == 0 {
 		return &lsproto.CommandOrCodeAction{
 			CodeAction: &lsproto.CodeAction{
