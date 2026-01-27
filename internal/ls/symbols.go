@@ -192,20 +192,32 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 					}
 				}
 			}
-		case ast.KindBinaryExpression:
-			binaryExpr := node.AsBinaryExpression()
+		case ast.KindBinaryExpression, ast.KindCallExpression:
 			assignmentKind := ast.GetAssignmentDeclarationKind(node)
 			switch assignmentKind {
 			// `module.exports = ...`` should be reparsed into a JSExportAssignment,
 			// and `exports.a = ...`` into a CommonJSExport.
 			case ast.JSDeclarationKindNone, ast.JSDeclarationKindThisProperty,
-				ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty:
+				ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty,
+				ast.JSDeclarationKindObjectDefinePropertyExports:
 				node.ForEachChild(visit)
-			case ast.JSDeclarationKindProperty:
+			case ast.JSDeclarationKindProperty, ast.JSDeclarationKindObjectDefinePropertyValue:
+				var target *ast.Expression
+				var targetFunction *ast.Expression
+				var definition *ast.Node
 				// `A.b = ... ` or `A.prototype.b = ...`
-				target := binaryExpr.Left
-				targetFunction := target.Expression()
-				if isPrototypeExpando(binaryExpr) {
+				if ast.IsBinaryExpression(node) {
+					binaryExpr := node.AsBinaryExpression()
+					target = binaryExpr.Left
+					targetFunction = target.Expression()
+					definition = binaryExpr.Right
+				} else { // `Object.defineProperty(A, "b", {...})`
+					args := node.Arguments()
+					target = args[1]
+					targetFunction = args[0]
+					definition = args[2]
+				}
+				if isPrototypeExpando(targetFunction) {
 					targetFunction = targetFunction.Expression()
 					// If we see a prototype assignment, start tracking the target as an expando target.
 					if ast.IsIdentifier(targetFunction) {
@@ -215,7 +227,7 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 				if ast.IsIdentifier(targetFunction) &&
 					expandoTargets.Has(targetFunction.Text()) {
 					endNode := startNode(node)
-					addSymbolForNode(target, getSymbolsForNode(binaryExpr.Right))
+					addSymbolForNode(target, getSymbolsForNode(definition))
 					endNode()
 				} else {
 					node.ForEachChild(visit)
@@ -236,9 +248,8 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 	return mergeExpandos(symbols)
 }
 
-// Binary expression is `f.prototype.prop`.
-func isPrototypeExpando(binaryExpr *ast.BinaryExpression) bool {
-	target := binaryExpr.Left.Expression()
+// Target is `f.prototype`.
+func isPrototypeExpando(target *ast.Node) bool {
 	if ast.IsAccessExpression(target) {
 		accessName := ast.GetElementOrPropertyAccessName(target)
 		return accessName != nil && accessName.Text() == "prototype"
@@ -255,7 +266,7 @@ func (l *LanguageService) newDocumentSymbol(node *ast.Node, children []*lsproto.
 	var name *ast.Node
 	// Expando properties
 	if ast.IsBinaryExpression(node) {
-		if isPrototypeExpando(node.AsBinaryExpression()) { // `f.prototype.prop = ...`
+		if isPrototypeExpando(node.AsBinaryExpression().Left.Expression()) { // `f.prototype.prop = ...`
 			name = node.AsBinaryExpression().Left.Expression().Expression()
 		} else { // `f[prop] = ...`
 			name = node.AsBinaryExpression().Left.Expression()
@@ -266,10 +277,18 @@ func (l *LanguageService) newDocumentSymbol(node *ast.Node, children []*lsproto.
 		} else if ast.IsElementAccessExpression(node) {
 			name = node.AsElementAccessExpression().ArgumentExpression
 		}
+	} else if ast.IsCallExpression(node) { // `Object.defineProperty(f, 'prop', ...)` or `Object.defineProperty(f.prototype, 'prop', ...)`
+		args := node.Arguments()
+		name = args[0]
+		if isPrototypeExpando(name) {
+			name = name.Expression()
+		}
 	} else if ast.IsIdentifier(node) || ast.IsPrivateIdentifier(node) {
 		name = node
 	} else if ast.IsSpreadAssignment(node) && ast.IsIdentifier(node.Expression()) {
 		name = node.Expression()
+	} else if ast.IsStringLiteralLike(node) {
+		name = node
 	} else {
 		name = ast.GetNameOfDeclaration(node)
 	}
@@ -673,12 +692,15 @@ func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
 			return lsproto.SymbolKindProperty
 		}
 		return lsproto.SymbolKindVariable
-	case ast.KindBinaryExpression:
+	case ast.KindBinaryExpression, ast.KindCallExpression:
 		kind := ast.GetAssignmentDeclarationKind(node)
 		switch kind {
-		case ast.JSDeclarationKindThisProperty, ast.JSDeclarationKindProperty:
+		case ast.JSDeclarationKindThisProperty, ast.JSDeclarationKindProperty, ast.JSDeclarationKindObjectDefinePropertyValue:
 			return lsproto.SymbolKindProperty
 		}
+	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
+		// String literals used as property names (e.g., in Object.defineProperty)
+		return lsproto.SymbolKindProperty
 	}
 	return lsproto.SymbolKindVariable
 }
