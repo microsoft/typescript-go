@@ -154,7 +154,6 @@ func (s *Snapshot) GetDirectories(path string) []string {
 	return s.fs.fs.GetAccessibleEntries(path).Directories
 }
 
-// !!! is this cached?? should it be??
 func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return vfs.ReadDirectory(s.fs.fs, currentDir, path, extensions, excludes, includes, depth)
 }
