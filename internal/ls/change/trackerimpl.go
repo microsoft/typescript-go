@@ -127,7 +127,10 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 	eofToken := t.Factory.NewToken(ast.KindEndOfFile)
 	if ast.IsStatement(node) {
 		text := ""
-		if node.Pos() >= 0 {
+		// OrganizeImports uses nodes from the old tree for preserving comments when emitting,
+		// which causes text to be indexed with the positions of the old nodes.
+		// For more details, check PR #2331
+		if !ast.NodeIsSynthesized(node) {
 			text = sourceFile.Text()
 		}
 		nodeIn = t.Factory.NewSourceFile(
