@@ -243,10 +243,12 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			}
 		case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
 			prefix := core.IfElse(flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
+			// Get all signatures from the symbol for overload count
+			allSignatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol), checker.SignatureKindCall)
 			if ast.IsIdentifier(node) && ast.IsFunctionLikeDeclaration(node.Parent) && node.Parent.Name() == node {
 				declaration = node.Parent
 				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(declaration)}
-				writeSignatures(&b, c, signatures, container, isAlias, prefix, symbol)
+				writeSignatures(&b, c, signatures, len(allSignatures), container, isAlias, prefix, symbol)
 			} else {
 				signatures := getSignaturesAtLocation(c, symbol, checker.SignatureKindCall, node)
 				if len(signatures) == 1 {
@@ -254,7 +256,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 						declaration = d
 					}
 				}
-				writeSignatures(&b, c, signatures, container, isAlias, prefix, symbol)
+				writeSignatures(&b, c, signatures, len(allSignatures), container, isAlias, prefix, symbol)
 			}
 		case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
 			if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
@@ -262,7 +264,9 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			} else if node.Kind == ast.KindConstructorKeyword && (ast.IsConstructorDeclaration(node.Parent) || ast.IsConstructSignatureDeclaration(node.Parent)) {
 				declaration = node.Parent
 				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(declaration)}
-				writeSignatures(&b, c, signatures, container, isAlias, "constructor ", symbol)
+				// Get all construct signatures for overload count
+				allSignatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol), checker.SignatureKindConstruct)
+				writeSignatures(&b, c, signatures, len(allSignatures), container, isAlias, "constructor ", symbol)
 			} else {
 				var signatures []*checker.Signature
 				if flags&ast.SymbolFlagsClass != 0 && getCallOrNewExpression(node) != nil {
@@ -272,7 +276,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
 						declaration = d
 					}
-					writeSignatures(&b, c, signatures, container, isAlias, "constructor ", symbol)
+					writeSignatures(&b, c, signatures, len(signatures), container, isAlias, "constructor ", symbol)
 				} else {
 					b.WriteString(core.IfElse(flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
 					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
@@ -411,7 +415,7 @@ func writeTypeParams(b *strings.Builder, c *checker.Checker, params []*checker.T
 	}
 }
 
-func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*checker.Signature, container *ast.Node, isAlias bool, prefix string, symbol *ast.Symbol) {
+func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*checker.Signature, totalOverloadCount int, container *ast.Node, isAlias bool, prefix string, symbol *ast.Symbol) {
 	for i, sig := range signatures {
 		if i != 0 {
 			b.WriteString("\n")
@@ -426,6 +430,12 @@ func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*check
 		b.WriteString(prefix)
 		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 		b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
+	}
+	// Add overload count suffix if there are multiple overloads
+	if totalOverloadCount > 1 {
+		b.WriteString(" (+")
+		b.WriteString(fmt.Sprintf("%d", totalOverloadCount-1))
+		b.WriteString(core.IfElse(totalOverloadCount == 2, " overload)", " overloads)"))
 	}
 }
 

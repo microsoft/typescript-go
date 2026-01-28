@@ -5,7 +5,7 @@
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function (Missing)(param: string): void
-// | function (Missing)(): void
+// | function (Missing)(): void (+1 overload)
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -19,7 +19,7 @@
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function (Missing)(param: string): void
-// | function (Missing)(): void
+// | function (Missing)(): void (+1 overload)
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -42,7 +42,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction (Missing)(param: string): void\nfunction (Missing)(): void\n```\n"
+        "value": "```tsx\nfunction (Missing)(param: string): void\nfunction (Missing)(): void (+1 overload)\n```\n"
       },
       "range": {
         "start": {
@@ -81,7 +81,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction (Missing)(param: string): void\nfunction (Missing)(): void\n```\n"
+        "value": "```tsx\nfunction (Missing)(param: string): void\nfunction (Missing)(): void (+1 overload)\n```\n"
       },
       "range": {
         "start": {
