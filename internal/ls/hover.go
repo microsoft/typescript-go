@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -434,7 +435,7 @@ func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*check
 	// Add overload count suffix if there are multiple overloads
 	if totalOverloadCount > 1 {
 		b.WriteString(" (+")
-		b.WriteString(fmt.Sprintf("%d", totalOverloadCount-1))
+		b.WriteString(strconv.Itoa(totalOverloadCount - 1))
 		b.WriteString(core.IfElse(totalOverloadCount == 2, " overload)", " overloads)"))
 	}
 }
