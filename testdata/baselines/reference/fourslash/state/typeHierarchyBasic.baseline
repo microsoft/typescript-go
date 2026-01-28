@@ -1,0 +1,305 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Base {
+    method(): void;
+}
+
+interface Middle extends Base {
+    anotherMethod(): void;
+}
+
+class Derived implements Middle {
+    method(): void {}
+    anotherMethod(): void {}
+}
+
+class SubDerived extends Derived {
+    additionalMethod(): void {}
+}
+//// [/tsconfig.json] *new* 
+{}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Base {\n    method(): void;\n}\n\ninterface Middle extends Base {\n    anotherMethod(): void;\n}\n\nclass Derived implements Middle {\n    method(): void {}\n    anotherMethod(): void {}\n}\n\nclass SubDerived extends Derived {\n    additionalMethod(): void {}\n}"
+    }
+  }
+}
+
+Projects::
+  [/tsconfig.json] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /tsconfig.json  (default) 
+Config::
+  [/tsconfig.json] *new*
+    RetainingProjects:
+      /tsconfig.json  
+    RetainingOpenFiles:
+      /a.ts  
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: /tsconfig.json
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 8,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Derived",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 11,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 6
+        },
+        "end": {
+          "line": 8,
+          "character": 13
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Derived",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 11,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 6
+        },
+        "end": {
+          "line": 8,
+          "character": 13
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Middle",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 10
+        },
+        "end": {
+          "line": 4,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Base",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 14
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "SubDerived",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 0
+        },
+        "end": {
+          "line": 15,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 13,
+          "character": 6
+        },
+        "end": {
+          "line": 13,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Derived
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:9:1-12:2
+│ │  9: class Derived implements Middle {
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 10:     method(): void {}
+│ │     ^^^^^^^^^^^^^^^^^^^^^
+│ │ 11:     anotherMethod(): void {}
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 12: }
+│ │     ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:9:7-9:14
+│ │ 9: class Derived implements Middle {
+│ │          ^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Middle
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:5:1-7:2
+│ │ │ │ 5: interface Middle extends Base {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:     anotherMethod(): void;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 7: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:5:11-5:17
+│ │ │ │ 5: interface Middle extends Base {
+│ │ │ │              ^^^^^^
+│ │ │ ╰
+│ │ ├ supertypes:
+│ │ │ ╭ supertype:
+│ │ │ │ ╭ name: Base
+│ │ │ │ ├ kind: interface
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 2:     method(): void;
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 3: }
+│ │ │ │ │ │    ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:1:11-1:15
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │              ^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: SubDerived
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:14:1-16:2
+│ │ │ │ 14: class SubDerived extends Derived {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 15:     additionalMethod(): void {}
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 16: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:14:7-14:17
+│ │ │ │ 14: class SubDerived extends Derived {
+│ │ │ │           ^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none

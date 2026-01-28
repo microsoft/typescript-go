@@ -1,0 +1,196 @@
+UseCaseSensitiveFileNames: true
+//// [/base.ts] *new* 
+export interface IBase {
+    baseProp: string;
+}
+//// [/derived.ts] *new* 
+import { IBase } from './base';
+
+export class Derived implements IBase {
+    baseProp: string = "";
+    derivedProp: number = 0;
+}
+//// [/subderived.ts] *new* 
+import { Derived } from './derived';
+
+export class SubDerived extends Derived {
+    subProp: boolean = false;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///derived.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "import { IBase } from './base';\n\nexport class Derived implements IBase {\n    baseProp: string = \"\";\n    derivedProp: number = 0;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /base.ts     
+    /derived.ts  
+Open Files::
+  [/derived.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/derived.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///derived.ts"
+    },
+    "position": {
+      "line": 2,
+      "character": 13
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Derived",
+      "kind": 5,
+      "uri": "file:///derived.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 0
+        },
+        "end": {
+          "line": 5,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 2,
+          "character": 13
+        },
+        "end": {
+          "line": 2,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Derived",
+      "kind": 5,
+      "uri": "file:///derived.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 0
+        },
+        "end": {
+          "line": 5,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 2,
+          "character": 13
+        },
+        "end": {
+          "line": 2,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "IBase",
+      "kind": 11,
+      "uri": "file:///base.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 17
+        },
+        "end": {
+          "line": 0,
+          "character": 22
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Derived
+├ kind: class
+├ file: /derived.ts
+├ span:
+│ ╭ /derived.ts:3:1-6:2
+│ │ 3: export class Derived implements IBase {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 4:     baseProp: string = "";
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 5:     derivedProp: number = 0;
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 6: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /derived.ts:3:14-3:21
+│ │ 3: export class Derived implements IBase {
+│ │                 ^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: IBase
+│ │ ├ kind: interface
+│ │ ├ file: /base.ts
+│ │ ├ span:
+│ │ │ ╭ /base.ts:1:1-3:2
+│ │ │ │ 1: export interface IBase {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 2:     baseProp: string;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /base.ts:1:18-1:23
+│ │ │ │ 1: export interface IBase {
+│ │ │ │                     ^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+╰ subtypes: none

@@ -1,0 +1,245 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface HasName {
+    name: string;
+}
+
+interface HasAge {
+    age: number;
+}
+
+interface HasEmail {
+    email: string;
+}
+
+type Person = HasName & HasAge;
+
+type Employee = Person & HasEmail & {
+    employeeId: string;
+};
+
+interface Manager extends Employee {
+    department: string;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface HasName {\n    name: string;\n}\n\ninterface HasAge {\n    age: number;\n}\n\ninterface HasEmail {\n    email: string;\n}\n\ntype Person = HasName & HasAge;\n\ntype Employee = Person & HasEmail & {\n    employeeId: string;\n};\n\ninterface Manager extends Employee {\n    department: string;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 12,
+      "character": 5
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Person",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 12,
+          "character": 31
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 12,
+          "character": 5
+        },
+        "end": {
+          "line": 12,
+          "character": 11
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Person",
+      "kind": 23,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 12,
+          "character": 31
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 12,
+          "character": 5
+        },
+        "end": {
+          "line": 12,
+          "character": 11
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "HasAge",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 10
+        },
+        "end": {
+          "line": 4,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "HasName",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Person
+├ kind: struct
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:13:1-13:32
+│ │ 13: type Person = HasName & HasAge;
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:13:6-13:12
+│ │ 13: type Person = HasName & HasAge;
+│ │          ^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: HasAge
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:5:1-7:2
+│ │ │ │ 5: interface HasAge {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:     age: number;
+│ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ 7: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:5:11-5:17
+│ │ │ │ 5: interface HasAge {
+│ │ │ │              ^^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+│ ╭ supertype:
+│ │ ╭ name: HasName
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ 1: interface HasName {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 2:     name: string;
+│ │ │ │    ^^^^^^^^^^^^^^^^^
+│ │ │ │ 3: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:1:11-1:18
+│ │ │ │ 1: interface HasName {
+│ │ │ │              ^^^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+╰ subtypes: none

@@ -1,0 +1,322 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Base {
+    baseProp: string;
+}
+
+interface MiddleA extends Base {
+    propA: number;
+}
+
+interface MiddleB extends Base {
+    propB: boolean;
+}
+
+// Diamond inheritance - should deduplicate Base in supertypes
+class Diamond implements MiddleA, MiddleB {
+    baseProp: string = "";
+    propA: number = 0;
+    propB: boolean = false;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Base {\n    baseProp: string;\n}\n\ninterface MiddleA extends Base {\n    propA: number;\n}\n\ninterface MiddleB extends Base {\n    propB: boolean;\n}\n\n// Diamond inheritance - should deduplicate Base in supertypes\nclass Diamond implements MiddleA, MiddleB {\n    baseProp: string = \"\";\n    propA: number = 0;\n    propB: boolean = false;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 13,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Diamond",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 17,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 13,
+          "character": 6
+        },
+        "end": {
+          "line": 13,
+          "character": 13
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Diamond",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 12,
+          "character": 0
+        },
+        "end": {
+          "line": 17,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 13,
+          "character": 6
+        },
+        "end": {
+          "line": 13,
+          "character": 13
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "MiddleA",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 4,
+          "character": 10
+        },
+        "end": {
+          "line": 4,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Base",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 14
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "MiddleB",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 10,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 10
+        },
+        "end": {
+          "line": 8,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Diamond
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:13:1-18:2
+│ │ 13: // Diamond inheritance - should deduplicate Base in supertypes
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 14: class Diamond implements MiddleA, MiddleB {
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 15:     baseProp: string = "";
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 16:     propA: number = 0;
+│ │     ^^^^^^^^^^^^^^^^^^^^^^
+│ │ 17:     propB: boolean = false;
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 18: }
+│ │     ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:14:7-14:14
+│ │ 14: class Diamond implements MiddleA, MiddleB {
+│ │           ^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: MiddleA
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:5:1-7:2
+│ │ │ │ 5: interface MiddleA extends Base {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 6:     propA: number;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^
+│ │ │ │ 7: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:5:11-5:18
+│ │ │ │ 5: interface MiddleA extends Base {
+│ │ │ │              ^^^^^^^
+│ │ │ ╰
+│ │ ├ supertypes:
+│ │ │ ╭ supertype:
+│ │ │ │ ╭ name: Base
+│ │ │ │ ├ kind: interface
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 2:     baseProp: string;
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 3: }
+│ │ │ │ │ │    ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:1:11-1:15
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │              ^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ supertypes: none
+│ ╭ supertype:
+│ │ ╭ name: MiddleB
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:9:1-11:2
+│ │ │ │  9: interface MiddleB extends Base {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 10:     propB: boolean;
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 11: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:9:11-9:18
+│ │ │ │ 9: interface MiddleB extends Base {
+│ │ │ │              ^^^^^^^
+│ │ │ ╰
+│ │ ├ supertypes:
+│ │ │ ╭ supertype:
+│ │ │ │ ╭ name: Base
+│ │ │ │ ├ kind: interface
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:1:1-3:2
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 2:     baseProp: string;
+│ │ │ │ │ │    ^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 3: }
+│ │ │ │ │ │    ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:1:11-1:15
+│ │ │ │ │ │ 1: interface Base {
+│ │ │ │ │ │              ^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ supertypes: ...
+╰ subtypes: none

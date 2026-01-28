@@ -1,0 +1,61 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Simple variable - not a type hierarchy item
+const simpleVar = 42;
+
+// Function - not a type hierarchy item  
+function simpleFunction() {
+    return "hello";
+}
+
+// Primitive type alias - should work but have no supertypes
+type StringAlias = string;
+
+// Enum - not typically part of type hierarchy
+enum Color {
+    Red,
+    Green,
+    Blue
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Simple variable - not a type hierarchy item\nconst simpleVar = 42;\n\n// Function - not a type hierarchy item  \nfunction simpleFunction() {\n    return \"hello\";\n}\n\n// Primitive type alias - should work but have no supertypes\ntype StringAlias = string;\n\n// Enum - not typically part of type hierarchy\nenum Color {\n    Red,\n    Green,\n    Blue\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 6
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+No type hierarchy items available

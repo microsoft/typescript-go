@@ -1,0 +1,367 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Error hierarchy - extending built-in Error
+class ApplicationError extends Error {
+    constructor(message: string, public code: number) {
+        super(message);
+        this.name = 'ApplicationError';
+    }
+}
+
+class ValidationError extends ApplicationError {
+    constructor(message: string, public field: string) {
+        super(message, 400);
+    }
+}
+
+class NetworkError extends ApplicationError {
+    constructor(message: string, public statusCode: number) {
+        super(message, statusCode);
+    }
+}
+
+class NotFoundError extends NetworkError {
+    constructor(resource: string) {
+        super(resource + " not found", 404);
+    }
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Error hierarchy - extending built-in Error\nclass ApplicationError extends Error {\n    constructor(message: string, public code: number) {\n        super(message);\n        this.name = 'ApplicationError';\n    }\n}\n\nclass ValidationError extends ApplicationError {\n    constructor(message: string, public field: string) {\n        super(message, 400);\n    }\n}\n\nclass NetworkError extends ApplicationError {\n    constructor(message: string, public statusCode: number) {\n        super(message, statusCode);\n    }\n}\n\nclass NotFoundError extends NetworkError {\n    constructor(resource: string) {\n        super(resource + \" not found\", 404);\n    }\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "ApplicationError",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 6
+        },
+        "end": {
+          "line": 1,
+          "character": 22
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "ApplicationError",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 6,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 6
+        },
+        "end": {
+          "line": 1,
+          "character": 22
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Error",
+      "kind": 11,
+      "uri": "bundled:///libs/lib.es5.d.ts",
+      "range": {
+        "start": {
+          "line": 1074,
+          "character": 0
+        },
+        "end": {
+          "line": 1078,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1074,
+          "character": 10
+        },
+        "end": {
+          "line": 1074,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "NetworkError",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 0
+        },
+        "end": {
+          "line": 18,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 14,
+          "character": 6
+        },
+        "end": {
+          "line": 14,
+          "character": 18
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "NotFoundError",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 20,
+          "character": 0
+        },
+        "end": {
+          "line": 24,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 20,
+          "character": 6
+        },
+        "end": {
+          "line": 20,
+          "character": 19
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "ValidationError",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 8,
+          "character": 0
+        },
+        "end": {
+          "line": 12,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 8,
+          "character": 6
+        },
+        "end": {
+          "line": 8,
+          "character": 21
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: ApplicationError
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:1:1-7:2
+│ │ 1: // Error hierarchy - extending built-in Error
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 2: class ApplicationError extends Error {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 3:     constructor(message: string, public code: number) {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 4:         super(message);
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 5:         this.name = 'ApplicationError';
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 6:     }
+│ │    ^^^^^
+│ │ 7: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:2:7-2:23
+│ │ 2: class ApplicationError extends Error {
+│ │          ^^^^^^^^^^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Error
+│ │ ├ kind: interface
+│ │ ├ file: bundled:///libs/lib.es5.d.ts
+│ │ ├ span:
+│ │ │ ╭ <external>:1075:1-1079:2
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ <external>:1075:11-1075:16
+│ │ │ ╰
+│ │ ╰ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: NetworkError
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:15:1-19:2
+│ │ │ │ 15: class NetworkError extends ApplicationError {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 16:     constructor(message: string, public statusCode: number) {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 17:         super(message, statusCode);
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 18:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 19: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:15:7-15:19
+│ │ │ │ 15: class NetworkError extends ApplicationError {
+│ │ │ │           ^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: NotFoundError
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:21:1-25:2
+│ │ │ │ │ │ 21: class NotFoundError extends NetworkError {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 22:     constructor(resource: string) {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 23:         super(resource + " not found", 404);
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 24:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 25: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:21:7-21:20
+│ │ │ │ │ │ 21: class NotFoundError extends NetworkError {
+│ │ │ │ │ │           ^^^^^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ subtypes: none
+│ ╭ subtype:
+│ │ ╭ name: ValidationError
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:9:1-13:2
+│ │ │ │  9: class ValidationError extends ApplicationError {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 10:     constructor(message: string, public field: string) {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 11:         super(message, 400);
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 12:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 13: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:9:7-9:22
+│ │ │ │ 9: class ValidationError extends ApplicationError {
+│ │ │ │          ^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none

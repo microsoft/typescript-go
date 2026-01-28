@@ -1,0 +1,377 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+interface Repository<T> {
+    find(id: string): T | null;
+    save(entity: T): void;
+    delete(id: string): void;
+}
+
+interface CacheableRepository<T> extends Repository<T> {
+    clearCache(): void;
+}
+
+class BaseRepository<T> implements Repository<T> {
+    find(id: string): T | null { return null; }
+    save(entity: T): void {}
+    delete(id: string): void {}
+}
+
+class CachedRepository<T> extends BaseRepository<T> implements CacheableRepository<T> {
+    private cache: Map<string, T> = new Map();
+    clearCache(): void { this.cache.clear(); }
+}
+
+interface Entity {
+    id: string;
+}
+
+class User implements Entity {
+    id: string = "";
+    name: string = "";
+}
+
+class UserRepository extends CachedRepository<User> {
+    findByName(name: string): User | null { return null; }
+}
+
+class AdminRepository extends UserRepository {
+    findAdmins(): User[] { return []; }
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "interface Repository<T> {\n    find(id: string): T | null;\n    save(entity: T): void;\n    delete(id: string): void;\n}\n\ninterface CacheableRepository<T> extends Repository<T> {\n    clearCache(): void;\n}\n\nclass BaseRepository<T> implements Repository<T> {\n    find(id: string): T | null { return null; }\n    save(entity: T): void {}\n    delete(id: string): void {}\n}\n\nclass CachedRepository<T> extends BaseRepository<T> implements CacheableRepository<T> {\n    private cache: Map<string, T> = new Map();\n    clearCache(): void { this.cache.clear(); }\n}\n\ninterface Entity {\n    id: string;\n}\n\nclass User implements Entity {\n    id: string = \"\";\n    name: string = \"\";\n}\n\nclass UserRepository extends CachedRepository<User> {\n    findByName(name: string): User | null { return null; }\n}\n\nclass AdminRepository extends UserRepository {\n    findAdmins(): User[] { return []; }\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 10,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "BaseRepository",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 10,
+          "character": 0
+        },
+        "end": {
+          "line": 14,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 10,
+          "character": 6
+        },
+        "end": {
+          "line": 10,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "BaseRepository",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 10,
+          "character": 0
+        },
+        "end": {
+          "line": 14,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 10,
+          "character": 6
+        },
+        "end": {
+          "line": 10,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Repository<T>",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 4,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "CachedRepository",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 0
+        },
+        "end": {
+          "line": 19,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 16,
+          "character": 6
+        },
+        "end": {
+          "line": 16,
+          "character": 22
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "UserRepository",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 30,
+          "character": 0
+        },
+        "end": {
+          "line": 32,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 30,
+          "character": 6
+        },
+        "end": {
+          "line": 30,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "AdminRepository",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 34,
+          "character": 0
+        },
+        "end": {
+          "line": 36,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 34,
+          "character": 6
+        },
+        "end": {
+          "line": 34,
+          "character": 21
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: BaseRepository
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:11:1-15:2
+│ │ 11: class BaseRepository<T> implements Repository<T> {
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 12:     find(id: string): T | null { return null; }
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 13:     save(entity: T): void {}
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 14:     delete(id: string): void {}
+│ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 15: }
+│ │     ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:11:7-11:21
+│ │ 11: class BaseRepository<T> implements Repository<T> {
+│ │           ^^^^^^^^^^^^^^
+│ ╰
+├ supertypes:
+│ ╭ supertype:
+│ │ ╭ name: Repository<T>
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:1:1-5:2
+│ │ │ │ 1: interface Repository<T> {
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 2:     find(id: string): T | null;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 3:     save(entity: T): void;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 4:     delete(id: string): void;
+│ │ │ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 5: }
+│ │ │ │    ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:1:11-1:21
+│ │ │ │ 1: interface Repository<T> {
+│ │ │ │              ^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: CachedRepository
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:17:1-20:2
+│ │ │ │ 17: class CachedRepository<T> extends BaseRepository<T> implements CacheableRepository<T> {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 18:     private cache: Map<string, T> = new Map();
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 19:     clearCache(): void { this.cache.clear(); }
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 20: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:17:7-17:23
+│ │ │ │ 17: class CachedRepository<T> extends BaseRepository<T> implements CacheableRepository<T> {
+│ │ │ │           ^^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: UserRepository
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:31:1-33:2
+│ │ │ │ │ │ 31: class UserRepository extends CachedRepository<User> {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 32:     findByName(name: string): User | null { return null; }
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 33: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:31:7-31:21
+│ │ │ │ │ │ 31: class UserRepository extends CachedRepository<User> {
+│ │ │ │ │ │           ^^^^^^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ├ subtypes:
+│ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ ╭ name: AdminRepository
+│ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ ╭ /a.ts:35:1-37:2
+│ │ │ │ │ │ │ │ 35: class AdminRepository extends UserRepository {
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 36:     findAdmins(): User[] { return []; }
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 37: }
+│ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ ╭ /a.ts:35:7-35:22
+│ │ │ │ │ │ │ │ 35: class AdminRepository extends UserRepository {
+│ │ │ │ │ │ │ │           ^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ╰ subtypes: none

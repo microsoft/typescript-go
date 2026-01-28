@@ -1,0 +1,154 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Mixin pattern
+type Constructor<T = {}> = new (...args: any[]) => T;
+
+function Timestamped<TBase extends Constructor>(Base: TBase) {
+    return class extends Base {
+        timestamp = Date.now();
+    };
+}
+
+function Activatable<TBase extends Constructor>(Base: TBase) {
+    return class extends Base {
+        isActivated = false;
+        activate() { this.isActivated = true; }
+        deactivate() { this.isActivated = false; }
+    };
+}
+
+class User {
+    name: string = "";
+}
+
+// Class using mixins
+const TimestampedUser = Timestamped(User);
+const ActivatableTimestampedUser = Activatable(Timestamped(User));
+
+class SpecialUser extends ActivatableTimestampedUser {
+    special: boolean = true;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Mixin pattern\ntype Constructor<T = {}> = new (...args: any[]) => T;\n\nfunction Timestamped<TBase extends Constructor>(Base: TBase) {\n    return class extends Base {\n        timestamp = Date.now();\n    };\n}\n\nfunction Activatable<TBase extends Constructor>(Base: TBase) {\n    return class extends Base {\n        isActivated = false;\n        activate() { this.isActivated = true; }\n        deactivate() { this.isActivated = false; }\n    };\n}\n\nclass User {\n    name: string = \"\";\n}\n\n// Class using mixins\nconst TimestampedUser = Timestamped(User);\nconst ActivatableTimestampedUser = Activatable(Timestamped(User));\n\nclass SpecialUser extends ActivatableTimestampedUser {\n    special: boolean = true;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 17,
+      "character": 6
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "User",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 0
+        },
+        "end": {
+          "line": 19,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 17,
+          "character": 6
+        },
+        "end": {
+          "line": 17,
+          "character": 10
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "User",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 0
+        },
+        "end": {
+          "line": 19,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 17,
+          "character": 6
+        },
+        "end": {
+          "line": 17,
+          "character": 10
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: User
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:18:1-20:2
+│ │ 18: class User {
+│ │     ^^^^^^^^^^^^
+│ │ 19:     name: string = "";
+│ │     ^^^^^^^^^^^^^^^^^^^^^^
+│ │ 20: }
+│ │     ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:18:7-18:11
+│ │ 18: class User {
+│ │           ^^^^
+│ ╰
+├ supertypes: none
+╰ subtypes: none

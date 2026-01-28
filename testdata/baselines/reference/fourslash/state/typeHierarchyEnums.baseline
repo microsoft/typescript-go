@@ -1,0 +1,75 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Basic numeric enum
+enum Direction {
+    North,
+    South,
+    East,
+    West,
+}
+
+// String enum
+enum Color {
+    Red = 'RED',
+    Green = 'GREEN',
+    Blue = 'BLUE',
+}
+
+// Const enum
+const enum LogLevel {
+    Debug = 0,
+    Info = 1,
+    Warning = 2,
+    Error = 3,
+}
+
+// Enum member types
+type DirectionNorth = Direction.North;
+
+// Interface using enum
+interface Compass {
+    current: Direction;
+    history: Direction[];
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Basic numeric enum\nenum Direction {\n    North,\n    South,\n    East,\n    West,\n}\n\n// String enum\nenum Color {\n    Red = 'RED',\n    Green = 'GREEN',\n    Blue = 'BLUE',\n}\n\n// Const enum\nconst enum LogLevel {\n    Debug = 0,\n    Info = 1,\n    Warning = 2,\n    Error = 3,\n}\n\n// Enum member types\ntype DirectionNorth = Direction.North;\n\n// Interface using enum\ninterface Compass {\n    current: Direction;\n    history: Direction[];\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 5
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+No type hierarchy items available

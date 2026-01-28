@@ -1,0 +1,62 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Named class expression assigned to variable
+const MyClass = class NamedClass {
+    prop: string = "";
+};
+
+// Anonymous class expression
+const AnotherClass = class {
+    prop: number = 0;
+};
+
+// Class expression extending another class
+class BaseClass {
+    baseProp: boolean = true;
+}
+
+const DerivedClass = class extends BaseClass {
+    derivedProp: string = "";
+};
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Named class expression assigned to variable\nconst MyClass = class NamedClass {\n    prop: string = \"\";\n};\n\n// Anonymous class expression\nconst AnotherClass = class {\n    prop: number = 0;\n};\n\n// Class expression extending another class\nclass BaseClass {\n    baseProp: boolean = true;\n}\n\nconst DerivedClass = class extends BaseClass {\n    derivedProp: string = \"\";\n};"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 6
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+No type hierarchy items available

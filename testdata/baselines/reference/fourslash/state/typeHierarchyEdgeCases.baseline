@@ -1,0 +1,315 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Self-referencing interface (use unique name to avoid DOM Node conflict)
+interface ASTNode {
+    value: string;
+    children: ASTNode[];
+}
+
+// Mutually referencing types
+interface TreeASTNode extends ASTNode {
+    parent: TreeASTNode | null;
+}
+
+class ConcreteASTNode implements ASTNode {
+    value: string = "";
+    children: ASTNode[] = [];
+}
+
+// Multiple levels of self-reference
+class TreeASTNodeImpl implements TreeASTNode {
+    value: string = "";
+    children: ASTNode[] = [];
+    parent: TreeASTNode | null = null;
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Self-referencing interface (use unique name to avoid DOM Node conflict)\ninterface ASTNode {\n    value: string;\n    children: ASTNode[];\n}\n\n// Mutually referencing types\ninterface TreeASTNode extends ASTNode {\n    parent: TreeASTNode | null;\n}\n\nclass ConcreteASTNode implements ASTNode {\n    value: string = \"\";\n    children: ASTNode[] = [];\n}\n\n// Multiple levels of self-reference\nclass TreeASTNodeImpl implements TreeASTNode {\n    value: string = \"\";\n    children: ASTNode[] = [];\n    parent: TreeASTNode | null = null;\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 10
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "ASTNode",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 4,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 10
+        },
+        "end": {
+          "line": 1,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "ASTNode",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 4,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 10
+        },
+        "end": {
+          "line": 1,
+          "character": 17
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "ConcreteASTNode",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 0
+        },
+        "end": {
+          "line": 14,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 11,
+          "character": 6
+        },
+        "end": {
+          "line": 11,
+          "character": 21
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "TreeASTNode",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 0
+        },
+        "end": {
+          "line": 9,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 7,
+          "character": 10
+        },
+        "end": {
+          "line": 7,
+          "character": 21
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "TreeASTNodeImpl",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 16,
+          "character": 0
+        },
+        "end": {
+          "line": 21,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 17,
+          "character": 6
+        },
+        "end": {
+          "line": 17,
+          "character": 21
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: ASTNode
+├ kind: interface
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:1:1-5:2
+│ │ 1: // Self-referencing interface (use unique name to avoid DOM Node conflict)
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 2: interface ASTNode {
+│ │    ^^^^^^^^^^^^^^^^^^^
+│ │ 3:     value: string;
+│ │    ^^^^^^^^^^^^^^^^^^
+│ │ 4:     children: ASTNode[];
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 5: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:2:11-2:18
+│ │ 2: interface ASTNode {
+│ │              ^^^^^^^
+│ ╰
+├ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: ConcreteASTNode
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:12:1-15:2
+│ │ │ │ 12: class ConcreteASTNode implements ASTNode {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 13:     value: string = "";
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 14:     children: ASTNode[] = [];
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 15: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:12:7-12:22
+│ │ │ │ 12: class ConcreteASTNode implements ASTNode {
+│ │ │ │           ^^^^^^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none
+│ ╭ subtype:
+│ │ ╭ name: TreeASTNode
+│ │ ├ kind: interface
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:7:1-10:2
+│ │ │ │  7: // Mutually referencing types
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │  8: interface TreeASTNode extends ASTNode {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │  9:     parent: TreeASTNode | null;
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 10: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:8:11-8:22
+│ │ │ │ 8: interface TreeASTNode extends ASTNode {
+│ │ │ │              ^^^^^^^^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: TreeASTNodeImpl
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:17:1-22:2
+│ │ │ │ │ │ 17: // Multiple levels of self-reference
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 18: class TreeASTNodeImpl implements TreeASTNode {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 19:     value: string = "";
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 20:     children: ASTNode[] = [];
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 21:     parent: TreeASTNode | null = null;
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 22: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:18:7-18:22
+│ │ │ │ │ │ 18: class TreeASTNodeImpl implements TreeASTNode {
+│ │ │ │ │ │           ^^^^^^^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ subtypes: none

@@ -1,0 +1,208 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+// Interface declaration merging
+interface Mergeable {
+    firstMethod(): void;
+}
+
+interface Mergeable {
+    secondMethod(): void;
+}
+
+// Class implementing merged interface
+class MergedImpl implements Mergeable {
+    firstMethod(): void {}
+    secondMethod(): void {}
+}
+
+// Namespace with interface
+namespace MyNamespace {
+    export interface NamespaceInterface {
+        nsMethod(): void;
+    }
+    
+    export class NamespaceClass implements NamespaceInterface {
+        nsMethod(): void {}
+    }
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "// Interface declaration merging\ninterface Mergeable {\n    firstMethod(): void;\n}\n\ninterface Mergeable {\n    secondMethod(): void;\n}\n\n// Class implementing merged interface\nclass MergedImpl implements Mergeable {\n    firstMethod(): void {}\n    secondMethod(): void {}\n}\n\n// Namespace with interface\nnamespace MyNamespace {\n    export interface NamespaceInterface {\n        nsMethod(): void;\n    }\n    \n    export class NamespaceClass implements NamespaceInterface {\n        nsMethod(): void {}\n    }\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 1,
+      "character": 10
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Mergeable",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 10
+        },
+        "end": {
+          "line": 1,
+          "character": 19
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Mergeable",
+      "kind": 11,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 1,
+          "character": 10
+        },
+        "end": {
+          "line": 1,
+          "character": 19
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "MergedImpl",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 9,
+          "character": 0
+        },
+        "end": {
+          "line": 13,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 10,
+          "character": 6
+        },
+        "end": {
+          "line": 10,
+          "character": 16
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Mergeable
+├ kind: interface
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:1:1-4:2
+│ │ 1: // Interface declaration merging
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 2: interface Mergeable {
+│ │    ^^^^^^^^^^^^^^^^^^^^^
+│ │ 3:     firstMethod(): void;
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 4: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:2:11-2:20
+│ │ 2: interface Mergeable {
+│ │              ^^^^^^^^^
+│ ╰
+├ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: MergedImpl
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:10:1-14:2
+│ │ │ │ 10: // Class implementing merged interface
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 11: class MergedImpl implements Mergeable {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 12:     firstMethod(): void {}
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 13:     secondMethod(): void {}
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 14: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:11:7-11:17
+│ │ │ │ 11: class MergedImpl implements Mergeable {
+│ │ │ │           ^^^^^^^^^^
+│ │ │ ╰
+│ │ ╰ subtypes: none
