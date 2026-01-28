@@ -113,7 +113,7 @@ export class Client {
     async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
-        this.telemetryReporter.publicLog2<tr.LSServerStart, tr.LSStartClassification>("languageServer.start", {
+        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
             version: this.exe.version,
         });
 
@@ -177,7 +177,7 @@ export class Client {
             this.outputChannel.appendLine(`Telemetry event: ${JSON.stringify(d)}`);
             if (d.type === "request-internal-error") {
                 this.outputChannel.appendLine(`Sanitized stack:\n${sanitizeStack(d.stack)}`);
-                this.telemetryReporter.publicLogError2<tr.LSErrorResponse, tr.LSErrorResponseClassification>("languageServer.errorResponse", {
+                this.telemetryReporter.sendTelemetryErrorEvent("languageServer.errorResponse", {
                     errorCode: d.errorCode,
                     requestMethod: d.requestMethod.replaceAll("/", "."),
                     stack: sanitizeStack(d.stack),
@@ -333,7 +333,7 @@ class ReportingErrorHandler implements ErrorHandler {
             errorAction = ErrorAction.Continue;
         }
 
-        this.telemetryReporter.publicLogError2<tr.LSConnectionError, tr.LSConnectionErrorClassification>("languageServer.connectionError", {
+        this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionError", {
             causedServerShutdown: errorAction === ErrorAction.Shutdown,
         });
 
@@ -358,7 +358,7 @@ class ReportingErrorHandler implements ErrorHandler {
             }
         }
 
-        this.telemetryReporter.publicLogError2<tr.LSServerConnectionClosed, tr.LSServerConnectionClosedClassification>("languageServer.connectionClosed", {
+        this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
             exceededMaxRestarts: resultingAction === CloseAction.DoNotRestart,
         });
 

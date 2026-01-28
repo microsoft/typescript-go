@@ -13,13 +13,13 @@ import { restartExtHostOnChangeIfNeeded } from "./util";
 export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        telemetryReporter.publicLog2<tr.EnableNativePreview, tr.EnableNativePreviewClassification>("enable-native-preview");
+        telemetryReporter.sendTelemetryEvent("enable-native-preview");
         updateUseTsgoSetting(true);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        telemetryReporter.publicLog2<tr.DisableNativePreview, tr.DisableNativePreviewClassification>("disable-native-preview");
+        telemetryReporter.sendTelemetryEvent("disable-native-preview");
         updateUseTsgoSetting(false);
     }));
 }
@@ -34,7 +34,7 @@ export function registerLanguageCommands(
     const disposables: vscode.Disposable[] = [];
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", () => {
-        telemetryReporter.publicLog2<tr.RestartLanguageServer, tr.RestartLanguageServerClassification>("restart-language-server");
+        telemetryReporter.sendTelemetryEvent("restart-language-server");
         return client.restart(context);
     }));
 
@@ -52,7 +52,7 @@ export function registerLanguageCommands(
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
-        telemetryReporter.publicLog2<tr.ReportIssue, tr.ReportIssueClassification>("report-issue");
+        telemetryReporter.sendTelemetryEvent("report-issue");
         vscode.commands.executeCommand("workbench.action.openIssueReporter", {
             extensionId: "TypeScriptTeam.native-preview",
         });
