@@ -17,17 +17,7 @@ import {
 
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
-import {
-    LanguageServerConnectionClosed,
-    LanguageServerConnectionClosedClassification,
-    LanguageServerConnectionError,
-    LanguageServerConnectionErrorClassification,
-    LanguageServerErrorResponse,
-    LanguageServerErrorResponseClassification,
-    LanguageServerStart,
-    LanguageServerStartClassification,
-    TelemetryReporter,
-} from "./telemetryReporting";
+import * as tr from "./telemetryReporting";
 import {
     ExeInfo,
     getExe,
@@ -38,7 +28,7 @@ import { getLanguageForUri } from "./util";
 export class Client {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
-    private telemetryReporter: TelemetryReporter;
+    private telemetryReporter: tr.TelemetryReporter;
 
     private documentSelector: Array<{ scheme: string; language: string; }>;
     private clientOptions: LanguageClientOptions;
@@ -50,7 +40,7 @@ export class Client {
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
 
-    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: TelemetryReporter) {
+    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: tr.TelemetryReporter) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.telemetryReporter = telemetryReporter;
@@ -123,7 +113,7 @@ export class Client {
     async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
-        this.telemetryReporter.publicLog2<LanguageServerStart, LanguageServerStartClassification>("languageServer.start", {
+        this.telemetryReporter.publicLog2<tr.LanguageServerStart, tr.LanguageServerStartClassification>("languageServer.start", {
             version: this.exe.version,
         });
 
@@ -187,7 +177,7 @@ export class Client {
             this.outputChannel.appendLine(`Telemetry event: ${JSON.stringify(d)}`);
             if (d.type === "request-internal-error") {
                 this.outputChannel.appendLine(`Sanitized stack:\n${sanitizeStack(d.stack)}`);
-                this.telemetryReporter.publicLogError2<LanguageServerErrorResponse, LanguageServerErrorResponseClassification>("languageServer.errorResponse", {
+                this.telemetryReporter.publicLogError2<tr.LanguageServerErrorResponse, tr.LanguageServerErrorResponseClassification>("languageServer.errorResponse", {
                     errorCode: d.errorCode,
                     requestMethod: d.requestMethod.replaceAll("/", "."),
                     stack: sanitizeStack(d.stack),
@@ -327,11 +317,11 @@ function sanitizeStack(stack: string): string {
 
 // Adapted from the default error handler in vscode-languageclient.
 class ReportingErrorHandler implements ErrorHandler {
-    telemetryReporter: TelemetryReporter;
+    telemetryReporter: tr.TelemetryReporter;
     maxRestartCount: number;
     restarts: number[];
 
-    constructor(telemetryReporter: TelemetryReporter, maxRestartCount: number) {
+    constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
         this.telemetryReporter = telemetryReporter;
         this.maxRestartCount = maxRestartCount;
         this.restarts = [];
@@ -343,7 +333,7 @@ class ReportingErrorHandler implements ErrorHandler {
             errorAction = ErrorAction.Continue;
         }
 
-        this.telemetryReporter.publicLogError2<LanguageServerConnectionError, LanguageServerConnectionErrorClassification>("languageServer.connectionError", {
+        this.telemetryReporter.publicLogError2<tr.LanguageServerConnectionError, tr.LanguageServerConnectionErrorClassification>("languageServer.connectionError", {
             causedServerShutdown: errorAction === ErrorAction.Shutdown,
         });
 
@@ -368,7 +358,7 @@ class ReportingErrorHandler implements ErrorHandler {
             }
         }
 
-        this.telemetryReporter.publicLogError2<LanguageServerConnectionClosed, LanguageServerConnectionClosedClassification>("languageServer.connectionClosed", {
+        this.telemetryReporter.publicLogError2<tr.LanguageServerConnectionClosed, tr.LanguageServerConnectionClosedClassification>("languageServer.connectionClosed", {
             exceededMaxRestarts: resultingAction === CloseAction.DoNotRestart,
         });
 
