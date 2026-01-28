@@ -35,7 +35,7 @@ function foo(x: any): any {
 					Label:    "foo",
 					Kind:     PtrTo(lsproto.CompletionItemKindFunction),
 					SortText: PtrTo(string(ls.SortTextLocationPriority)),
-					Detail:   PtrTo("function foo(x: string): string\nfunction foo(x: number): number"),
+					Detail:   PtrTo("function foo(x: string): string\nfunction foo(x: number): number (+1 overload)"),
 				},
 			},
 		},
