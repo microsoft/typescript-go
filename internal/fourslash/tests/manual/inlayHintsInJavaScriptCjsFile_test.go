@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestInlayHintsCrashReparsed(t *testing.T) {
+func TestInlayHintsOnModuleExportsWithFunctionExpression(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
