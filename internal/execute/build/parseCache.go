@@ -2,7 +2,6 @@ package build
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 )
@@ -13,8 +12,7 @@ type parseCacheEntry[V any] struct {
 }
 
 type parseCache[K comparable, V any] struct {
-	entries      collections.SyncMap[K, *parseCacheEntry[V]]
-	entriesCount atomic.Int64
+	entries collections.SyncMap[K, *parseCacheEntry[V]]
 }
 
 func (c *parseCache[K, V]) loadOrStoreNew(key K, parse func(K) V) V {
@@ -38,8 +36,6 @@ func (c *parseCache[K, V]) loadOrStoreNewIf(
 				return entry.value
 			}
 			newEntry = entry
-		} else {
-			c.entriesCount.Add(1)
 		}
 	}
 	newEntry.value = parse(key)
