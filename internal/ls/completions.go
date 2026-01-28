@@ -4928,6 +4928,11 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	}
 
 	completionData, err := l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSTrue, IncludeCompletionsForImportStatements: core.TSTrue})
+	if errors.Is(err, ErrNeedsAutoImports) {
+		// If auto-imports are not ready, retry without them. We don't need auto-imports to resolve
+		// non-auto-import completions, and auto-import completions are handled separately.
+		completionData, err = l.getCompletionData(ctx, ch, file, position, &lsutil.UserPreferences{IncludeCompletionsForModuleExports: core.TSFalse, IncludeCompletionsForImportStatements: core.TSFalse})
+	}
 	if err != nil {
 		panic(err)
 	}

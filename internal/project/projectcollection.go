@@ -185,7 +185,7 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(path tspath.Path,
 			if project.CommandLine == nil {
 				return nil
 			}
-			return core.Map(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
+			return core.MapNonNil(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
 				return c.configuredProjects[c.toPath(configFileName)]
 			})
 		},
