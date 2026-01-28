@@ -52,16 +52,16 @@ func (h *host) Trace(msg *diagnostics.Message, args ...any) {
 
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	// Cache dts and json files as they will be reused
-	return h.sourceFiles.loadOrStoreNewIf(
-		opts,
-		h.host.GetSourceFile,
-		(tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson)),
-		func(value *ast.SourceFile) bool { return value != nil },
-	)
+	if tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
+		if value, loaded := h.sourceFiles.loadOrStore(opts, h.host.GetSourceFile); !loaded || value != nil {
+			return value
+		}
+	}
+	return h.host.GetSourceFile(opts)
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	return h.resolvedReferences.loadOrStoreNew(path, func(path tspath.Path) *tsoptions.ParsedCommandLine {
+	parsed, _ := h.resolvedReferences.loadOrStore(path, func(path tspath.Path) *tsoptions.ParsedCommandLine {
 		configStart := h.orchestrator.opts.Sys.Now()
 		// Wrap command line options in "compilerOptions" key to match tsconfig.json structure
 		var commandLineRaw *collections.OrderedMap[string, any]
@@ -75,6 +75,7 @@ func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *t
 		h.configTimes.Store(path, configTime)
 		return commandLine
 	})
+	return parsed
 }
 
 func (h *host) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {

@@ -129,6 +129,12 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 	}
 	buildResult.filesToDelete = append(buildResult.filesToDelete, t.result.filesToDelete...)
 	t.result = nil
+
+	if buildResult.statistics.ProjectsBuilt > 0 && buildResult.statistics.ProjectsBuilt%50 == 0 {
+		fmt.Fprintf(orchestrator.opts.Sys.Writer(), "Projects built: %d\n", buildResult.statistics.ProjectsBuilt)
+		orchestrator.host.sourceFiles.compact(orchestrator.opts.Sys.Writer())
+	}
+
 	close(t.reportDone)
 }
 
