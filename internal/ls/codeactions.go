@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -53,6 +54,14 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 	var actions []lsproto.CommandOrCodeAction
 
+	// Handle source actions (like organize imports)
+	if params.Context != nil && params.Context.Only != nil {
+		for _, kind := range *params.Context.Only {
+			organizeAction := l.createOrganizeImportsAction(ctx, program, file, kind)
+			actions = append(actions, *organizeAction)
+		}
+	}
+
 	// Process diagnostics in the context to generate quick fixes
 	if params.Context != nil && params.Context.Diagnostics != nil {
 		for _, diag := range params.Context.Diagnostics {
@@ -94,6 +103,45 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	}
 
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
+}
+
+// createOrganizeImportsAction creates the organize imports code action
+func (l *LanguageService) createOrganizeImportsAction(
+	ctx context.Context,
+	program *compiler.Program,
+	file *ast.SourceFile,
+	kind lsproto.CodeActionKind,
+) *lsproto.CommandOrCodeAction {
+	changes := l.OrganizeImports(
+		ctx,
+		file,
+		program,
+		l.UserPreferences(),
+		kind,
+	)
+	if len(changes) == 0 {
+		return &lsproto.CommandOrCodeAction{
+			CodeAction: &lsproto.CodeAction{
+				Title: "Organize Imports",
+				Kind:  &kind,
+				Edit:  &lsproto.WorkspaceEdit{Changes: &map[lsproto.DocumentUri][]*lsproto.TextEdit{}},
+			},
+		}
+	}
+
+	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	for fileName, edits := range changes {
+		fileURI := lsconv.FileNameToDocumentURI(fileName)
+		lspChanges[fileURI] = edits
+	}
+
+	return &lsproto.CommandOrCodeAction{
+		CodeAction: &lsproto.CodeAction{
+			Title: "Organize Imports",
+			Kind:  &kind,
+			Edit:  &lsproto.WorkspaceEdit{Changes: &lspChanges},
+		},
+	}
 }
 
 // containsErrorCode checks if the error code is in the list
