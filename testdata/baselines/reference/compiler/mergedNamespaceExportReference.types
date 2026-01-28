@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/mergedNamespaceExportReference.ts] ////
+
+=== mergedNamespaceExportReference.ts ===
+// Test that references to exported namespace members across merged namespace
+// declarations are correctly qualified in the emitted JavaScript.
+
+namespace N {
+>N : typeof N
+
+    export function foo() { return 1; }
+>foo : () => number
+>1 : 1
+
+    export var x = 1;
+>x : number
+>1 : 1
+
+    export class C {}
+>C : C
+}
+
+namespace N {
+>N : typeof N
+
+    // These should emit as N.foo(), N.x, and N.C
+    foo();
+>foo() : number
+>foo : () => number
+
+    x;
+>x : number
+
+    class D extends C {}
+>D : D
+>C : C
+}
+
