@@ -364,30 +364,41 @@ func compareImportKind(s1 *ast.Statement, s2 *ast.Statement) int {
 // 5. Named imports
 // 6. ImportEqualsDeclarations
 // 7. Require variable statements
+const (
+	importKindOrderSideEffect   = 0
+	importKindOrderTypeOnly     = 1
+	importKindOrderNamespace    = 2
+	importKindOrderDefault      = 3
+	importKindOrderNamed        = 4
+	importKindOrderImportEquals = 5
+	importKindOrderRequire      = 6
+	importKindOrderUnknown      = 7
+)
+
 func getImportKindOrder(s1 *ast.Statement) int {
 	switch s1.Kind {
 	case ast.KindImportDeclaration:
 		importDecl := s1.AsImportDeclaration()
 		if importDecl.ImportClause == nil {
-			return 0 // Side-effect import
+			return importKindOrderSideEffect
 		}
 		importClause := importDecl.ImportClause.AsImportClause()
 		if importClause.IsTypeOnly() {
-			return 1 // Type-only import
+			return importKindOrderTypeOnly
 		}
 		if importClause.NamedBindings != nil && importClause.NamedBindings.Kind == ast.KindNamespaceImport {
-			return 2 // Namespace import
+			return importKindOrderNamespace
 		}
 		if importClause.Name() != nil {
-			return 3 // Default import
+			return importKindOrderDefault
 		}
-		return 4 // Named imports
+		return importKindOrderNamed
 	case ast.KindImportEqualsDeclaration:
-		return 5
+		return importKindOrderImportEquals
 	case ast.KindVariableStatement:
-		return 6 // Require statement
+		return importKindOrderRequire
 	default:
-		return 7
+		return importKindOrderUnknown
 	}
 }
 
