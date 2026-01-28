@@ -1856,9 +1856,12 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 	}
 
 	parent := referenceLocation.Parent
-	if parent.Kind == ast.KindImportSpecifier && parent.PropertyName() == referenceLocation {
+	if parent.Kind == ast.KindImportSpecifier && search.comingFrom == ImpExpKindExport {
+		propName := parent.PropertyName()
 		// This is added through `singleReferences` in ImportsResult. If we happen to see it again, don't add it again.
-		return
+		if propName == referenceLocation || (propName == nil && parent.Name() == referenceLocation) {
+			return
+		}
 	}
 
 	if parent.Kind == ast.KindExportSpecifier {
@@ -2109,6 +2112,14 @@ func (state *refState) searchForImportsOfExport(exportLocation *ast.Node, export
 func (state *refState) shouldAddSingleReference(singleRef *ast.Node) bool {
 	if !state.hasMatchingMeaning(singleRef) {
 		return false
+	}
+	// Check if this node is already in any reference group to avoid duplicates
+	for _, symbolAndEntries := range state.result {
+		for _, ref := range symbolAndEntries.references {
+			if ref.node == singleRef {
+				return false
+			}
+		}
 	}
 	if state.options.use != referenceUseRename {
 		return true

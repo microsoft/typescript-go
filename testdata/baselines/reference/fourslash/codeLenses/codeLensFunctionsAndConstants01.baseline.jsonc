@@ -1,7 +1,7 @@
 // === Code Lenses ===
 // === /exports.ts ===
 // let callCount = 0;
-// export function /*CODELENS: 3 references*/foo(n: number): void {
+// export function /*CODELENS: 4 references*/foo(n: number): void {
 //   callCount++;
 //   if (n > 0) {
 // 	[|foo|](n - 1);
@@ -17,7 +17,7 @@
 // 
 
 // === /importer.ts ===
-// import { foo, bar } from "./exports";
+// import { [|foo|], bar } from "./exports";
 // 
 // [|foo|](5);
 // console.log(bar);
@@ -27,7 +27,7 @@
 
 // === Code Lenses ===
 // === /importer.ts ===
-// import { foo, bar } from "./exports";
+// import { foo, [|bar|] } from "./exports";
 // 
 // foo(5);
 // console.log([|bar|]);
@@ -38,5 +38,5 @@
 // 
 // foo(5);
 // 
-// export const /*CODELENS: 1 reference*/bar = 123;
+// export const /*CODELENS: 2 references*/bar = 123;
 // 

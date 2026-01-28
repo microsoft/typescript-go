@@ -376,6 +376,11 @@ func getSearchesFromDirectImports(
 				} else {
 					localSymbol = checker.GetSymbolAtLocation(name)
 				}
+				// Include import specifiers as references to the exported symbol.
+				// Export specifiers are handled by getReferencesAtExportSpecifier, so skip them here.
+				if !ast.IsExportSpecifier(element) {
+					singleReferences = append(singleReferences, name)
+				}
 				addSearch(name, localSymbol)
 			}
 		}
