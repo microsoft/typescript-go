@@ -324,6 +324,68 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 				return strings.ReplaceAll(s, "bundled:///libs/", "")
 			},
 		}
+	case findAllReferencesCmd:
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				var commandLines []string
+				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
+				testFilePrefix := "/tests/cases/fourslash"
+				serverTestFilePrefix := "/server"
+				contextSpanOpening := "<|"
+				contextSpanClosing := "|>"
+				replacer := strings.NewReplacer(
+					testFilePrefix, "",
+					serverTestFilePrefix, "",
+					contextSpanOpening, "",
+					contextSpanClosing, "",
+				)
+				// Match location data like {| isWriteAccess: true, isDefinition: true |}
+				objectRangeRegex := regexp.MustCompile(`{\| [^|]* \|}`)
+				definitionsStr := "// === Definitions ==="
+				detailsStr := "// === Details ==="
+				lines := strings.Split(s, "\n")
+				var isInCommand bool
+				var isInDetails bool
+				var isInDefinitions bool
+				for _, line := range lines {
+					matches := commandPrefix.FindStringSubmatch(line)
+					if len(matches) > 0 {
+						isInDetails = false
+						isInDefinitions = false
+						commandName := matches[1]
+						if commandName == string(findAllReferencesCmd) {
+							isInCommand = true
+						} else {
+							isInCommand = false
+						}
+					}
+					if isInCommand {
+						if strings.Contains(line, definitionsStr) || strings.Contains(line, detailsStr) {
+							isInDefinitions = strings.Contains(line, definitionsStr)
+							isInDetails = strings.Contains(line, detailsStr)
+							// Drop blank line before definitions/details
+							if len(commandLines) > 0 && commandLines[len(commandLines)-1] == "" {
+								commandLines = commandLines[:len(commandLines)-1]
+							}
+						}
+						// We don't diff the definitions or details sections
+						if !(isInDefinitions || isInDetails) {
+							fixedLine := replacer.Replace(line)
+							fixedLine = objectRangeRegex.ReplaceAllString(fixedLine, "")
+							commandLines = append(commandLines, fixedLine)
+						} else if isInDetails && line == "  ]" {
+							isInDetails = false
+						} else if isInDefinitions && len(line) == 0 {
+							isInDefinitions = false
+							commandLines = append(commandLines, line)
+						}
+					}
+				}
+				return strings.Join(dropTrailingEmptyLines(commandLines), "\n")
+			},
+		}
 	default:
 		return baseline.Options{
 			Subfolder: subfolder,
