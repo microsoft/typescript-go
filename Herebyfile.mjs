@@ -58,6 +58,7 @@ const { values: rawOptions } = parseArgs({
         fix: { type: "boolean" },
         debug: { type: "boolean" },
         dirty: { type: "boolean" },
+        release: { type: "boolean" },
 
         insiders: { type: "boolean" },
 
@@ -182,6 +183,19 @@ export const lib = task({
 });
 
 /**
+ * Gets the release build flags for stripping debug info.
+ * @param {string} [versionOverride] Optional version to embed in the binary.
+ * @returns {string[]}
+ */
+function getReleaseBuildFlags(versionOverride) {
+    let ldflags = "-ldflags=-s -w";
+    if (versionOverride) {
+        ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${versionOverride}`;
+    }
+    return ["-trimpath", ldflags];
+}
+
+/**
  * @param {object} [opts]
  * @param {string} [opts.out]
  * @param {AbortSignal} [opts.abortSignal]
@@ -191,14 +205,14 @@ export const lib = task({
 function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
-    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "release")} -o ${out} ./cmd/tsgo`;
+    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "nodebug")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
     name: "tsgo:build",
     description: "Builds the tsgo binary.",
     run: async () => {
-        await buildTsgo();
+        await buildTsgo({ extraFlags: options.release ? getReleaseBuildFlags() : [] });
     },
 });
 
@@ -1107,11 +1121,7 @@ export const buildNativePreviewPackages = task({
         await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
         // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
 
-        let ldflags = "-ldflags=-s -w";
-        if (options.setPrerelease) {
-            ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${getVersion()}`;
-        }
-        const extraFlags = ["-trimpath", ldflags];
+        const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
 
         const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
             const packageJson = {

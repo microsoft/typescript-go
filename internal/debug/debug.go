@@ -1,4 +1,4 @@
-//go:build !release
+//go:build !nodebug
 
 package debug
 
