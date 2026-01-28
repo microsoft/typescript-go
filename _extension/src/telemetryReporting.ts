@@ -27,43 +27,43 @@ type LogTelemetrySignature = <
 // Note that all of the following types are defined as type aliases rather than interfaces
 // because of how object type literals are related with respect to index signatures in TypeScript.
 
-export type LanguageServerStart = {
+export type LSServerStart = {
     version: string;
 };
 
-export type LanguageServerStartClassification = {
+export type LSStartClassification = {
     owner: "joj";
     comment: "Event emitted when the TypeScript language server starts";
     version: string;
 };
 
-export type LanguageServerConnectionError = {
+export type LSConnectionError = {
     causedServerShutdown: boolean;
 };
 
-export type LanguageServerConnectionErrorClassification = {
+export type LSConnectionErrorClassification = {
     owner: "joj";
     comment: "Event emitted when the TypeScript language server encounters a connection error";
     causedServerShutdown: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "Whether the error caused the language server to shut down"; };
 };
 
-export type LanguageServerConnectionClosed = {
+export type LSServerConnectionClosed = {
     exceededMaxRestarts: boolean;
 };
 
-export type LanguageServerConnectionClosedClassification = {
+export type LSServerConnectionClosedClassification = {
     owner: "joj";
     comment: "Event emitted when the TypeScript language server encounters a connection error";
     exceededMaxRestarts: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "Whether the language server closed enough times such that it restarted"; };
 };
 
-export type LanguageServerErrorResponse = {
+export type LSErrorResponse = {
     errorCode: string;
     requestMethod: string;
     stack: string;
 };
 
-export type LanguageServerErrorResponseClassification = {
+export type LSErrorResponseClassification = {
     owner: "joj";
     comment: "Event emitted when the TypeScript language server returns an error response";
     errorCode: { classification: "CallstackOrException"; purpose: "PerformanceAndHealth"; comment: "The error code returned by the language server"; };
