@@ -33,8 +33,28 @@ export type LanguageServerStart = {
 
 export type LanguageServerStartClassification = {
     owner: "joj";
-    comment: "Event emitted when the TypeScript Native Preview language server starts";
+    comment: "Event emitted when the TypeScript language server starts";
     version: string;
+};
+
+export type LanguageServerConnectionError = {
+    causedServerShutdown: boolean;
+};
+
+export type LanguageServerConnectionErrorClassification = {
+    owner: "joj";
+    comment: "Event emitted when the TypeScript language server encounters a connection error";
+    causedServerShutdown: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "Whether the error caused the language server to shut down"; };
+};
+
+export type LanguageServerConnectionClosed = {
+    exceededMaxRestarts: boolean;
+};
+
+export type LanguageServerConnectionClosedClassification = {
+    owner: "joj";
+    comment: "Event emitted when the TypeScript language server encounters a connection error";
+    exceededMaxRestarts: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "Whether the language server closed enough times such that it restarted"; };
 };
 
 export type LanguageServerErrorResponse = {
@@ -45,7 +65,7 @@ export type LanguageServerErrorResponse = {
 
 export type LanguageServerErrorResponseClassification = {
     owner: "joj";
-    comment: "Event emitted when the TypeScript Native Preview language server returns an error response";
+    comment: "Event emitted when the TypeScript language server returns an error response";
     errorCode: { classification: "CallstackOrException"; purpose: "PerformanceAndHealth"; comment: "The error code returned by the language server"; };
     requestMethod: { classification: "SystemMetaData"; purpose: "PerformanceAndHealth"; comment: "The method of the request that caused the error"; };
     stack: { classification: "CallstackOrException"; purpose: "PerformanceAndHealth"; comment: "The callstack of the error"; };
@@ -76,7 +96,7 @@ export type ReportIssue = {};
 
 export type ReportIssueClassification = {
     owner: "joj";
-    comment: "Event emitted when the user decides to report an issue through the command palette.";
+    comment: "Event emitted when the user decides to report an issue on TypeScript Native Preview through the command palette.";
 };
 
 // The following types are from

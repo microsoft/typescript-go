@@ -1,8 +1,14 @@
 import * as vscode from "vscode";
 
 import {
+    CloseAction,
+    CloseHandlerResult,
+    ErrorAction,
+    ErrorHandler,
+    ErrorHandlerResult,
     LanguageClient,
     LanguageClientOptions,
+    Message,
     NotebookDocumentFilter,
     ServerOptions,
     TextDocumentFilter,
@@ -12,6 +18,10 @@ import {
 import { codeLensShowLocationsCommandName } from "./commands";
 import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import {
+    LanguageServerConnectionClosed,
+    LanguageServerConnectionClosedClassification,
+    LanguageServerConnectionError,
+    LanguageServerConnectionErrorClassification,
     LanguageServerErrorResponse,
     LanguageServerErrorResponseClassification,
     LanguageServerStart,
@@ -55,6 +65,7 @@ export class Client {
             initializationOptions: {
                 codeLensShowLocationsCommandName,
             },
+            errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -312,4 +323,62 @@ function sanitizeStack(stack: string): string {
         return line;
     });
     return sanitizedLines.join("\n");
+}
+
+// Adapted from the default error handler in vscode-languageclient.
+class ReportingErrorHandler implements ErrorHandler {
+    telemetryReporter: TelemetryReporter;
+    maxRestartCount: number;
+    restarts: number[];
+
+    constructor(telemetryReporter: TelemetryReporter, maxRestartCount: number) {
+        this.telemetryReporter = telemetryReporter;
+        this.maxRestartCount = maxRestartCount;
+        this.restarts = [];
+    }
+
+    error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
+        let errorAction = ErrorAction.Shutdown;
+        if (count && count <= 3) {
+            errorAction = ErrorAction.Continue;
+        }
+
+        this.telemetryReporter.publicLogError2<LanguageServerConnectionError, LanguageServerConnectionErrorClassification>("languageServer.connectionError", {
+            causedServerShutdown: errorAction === ErrorAction.Shutdown,
+        });
+
+        return { action: errorAction };
+    }
+
+    closed(): CloseHandlerResult | Promise<CloseHandlerResult> {
+        let resultingAction: CloseAction;
+
+        this.restarts.push(Date.now());
+        if (this.restarts.length <= this.maxRestartCount) {
+            resultingAction = CloseAction.Restart;
+        }
+        else {
+            const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
+            if (diff <= 3 * 60 * 1000) {
+                resultingAction = CloseAction.DoNotRestart;
+            }
+            else {
+                this.restarts.shift();
+                resultingAction = CloseAction.Restart;
+            }
+        }
+
+        this.telemetryReporter.publicLogError2<LanguageServerConnectionClosed, LanguageServerConnectionClosedClassification>("languageServer.connectionClosed", {
+            exceededMaxRestarts: resultingAction === CloseAction.DoNotRestart,
+        });
+
+        if (resultingAction === CloseAction.DoNotRestart) {
+            return {
+                action: resultingAction,
+                message: `The typescript.native-preview-lsp server crashed ${this.maxRestartCount + 1} times in the last 3 minutes. The server will not be restarted. See the output for more information.`,
+            };
+        }
+
+        return { action: resultingAction };
+    }
 }
