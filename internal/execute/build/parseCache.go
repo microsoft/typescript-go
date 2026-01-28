@@ -2,45 +2,30 @@ package build
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
-type parseCacheEntry[V any] struct {
+type parseCacheEntry[V comparable] struct {
 	value V
 	mu    sync.Mutex
 }
 
-type parseCache[K comparable, V any] struct {
-	entries      collections.SyncMap[K, *parseCacheEntry[V]]
-	entriesCount atomic.Int64
+type parseCache[K comparable, V comparable] struct {
+	entries collections.SyncMap[K, *parseCacheEntry[V]]
 }
 
-func (c *parseCache[K, V]) loadOrStoreNew(key K, parse func(K) V) V {
-	return c.loadOrStoreNewIf(key, parse, true, func(value V) bool { return true })
-}
-
-func (c *parseCache[K, V]) loadOrStoreNewIf(
-	key K,
-	parse func(K) V,
-	canCacheKey bool,
-	canUseCacheValue func(V) bool,
-) V {
+func (c *parseCache[K, V]) loadOrStore(key K, parse func(K) V, allowNonZero bool) V {
 	newEntry := &parseCacheEntry[V]{}
 	newEntry.mu.Lock()
 	defer newEntry.mu.Unlock()
-	if canCacheKey {
-		if entry, loaded := c.entries.LoadOrStore(key, newEntry); loaded {
-			entry.mu.Lock()
-			defer entry.mu.Unlock()
-			if canUseCacheValue(entry.value) {
-				return entry.value
-			}
-			newEntry = entry
-		} else {
-			c.entriesCount.Add(1)
+	if entry, loaded := c.entries.LoadOrStore(key, newEntry); loaded {
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
+		if allowNonZero && entry.value != *new(V) {
+			return entry.value
 		}
+		newEntry = entry
 	}
 	newEntry.value = parse(key)
 	return newEntry.value
