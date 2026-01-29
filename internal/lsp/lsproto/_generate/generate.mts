@@ -440,6 +440,12 @@ function patchAndPreprocessModel() {
         }
     }
 
+    for (const notification of model.notifications) {
+        if (notification.typeName === "TelemetryEventNotification") {
+            notification.params = { kind: "reference", name: "TelemetryEvent" };
+        }
+    }
+
     // Create placeholder structures for Data types that weren't explicitly declared
     for (const dataTypeName of neededDataStructures) {
         const baseName = dataTypeName.replace(/Data$/, "");

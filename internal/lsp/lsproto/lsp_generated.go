@@ -23589,7 +23589,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	case MethodWindowLogMessage:
 		return unmarshalPtrTo[LogMessageParams](data)
 	case MethodTelemetryEvent:
-		return unmarshalAny(data)
+		return unmarshalPtrTo[TelemetryEvent](data)
 	case MethodTextDocumentDidOpen:
 		return unmarshalPtrTo[DidOpenTextDocumentParams](data)
 	case MethodTextDocumentDidChange:
@@ -24672,7 +24672,7 @@ var WindowShowMessageInfo = NotificationInfo[*ShowMessageParams]{Method: MethodW
 var WindowLogMessageInfo = NotificationInfo[*LogMessageParams]{Method: MethodWindowLogMessage}
 
 // Type mapping info for `telemetry/event`
-var TelemetryEventInfo = NotificationInfo[any]{Method: MethodTelemetryEvent}
+var TelemetryEventInfo = NotificationInfo[*TelemetryEvent]{Method: MethodTelemetryEvent}
 
 // Type mapping info for `textDocument/didOpen`
 var TextDocumentDidOpenInfo = NotificationInfo[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
