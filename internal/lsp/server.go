@@ -1270,8 +1270,8 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 
 	// Start accepting connections in the background
 	go func() {
-		if err := apiSession.Run(ctx, transport); err != nil {
-			s.logger.Errorf("API session %s: %v", apiSession.ID(), err)
+		if apiErr := apiSession.Run(ctx, transport); apiErr != nil {
+			s.logger.Errorf("API session %s: %v", apiSession.ID(), apiErr)
 		}
 	}()
 
