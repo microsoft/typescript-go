@@ -19,6 +19,7 @@ export interface TelemetryReporter {
     sendTelemetryErrorEvent(eventName: "languageServer.connectionError", data: LSConnectionError): void;
     sendTelemetryErrorEvent(eventName: "languageServer.connectionClosed", data: LSServerConnectionClosed): void;
     sendTelemetryErrorEvent(eventName: "languageServer.errorResponse", data: LSErrorResponse): void;
+    sendTelemetryErrorEvent(eventName: "languageServer.unexpectedTelemetryPurpose", data: UnexpectedTelemetryPurpose): void;
 
     sendTelemetryEventUntyped(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void;
     sendTelemetryErrorEventUntyped(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void;
@@ -70,3 +71,7 @@ export type DisableNativePreview = {};
 export type RestartLanguageServer = {};
 
 export type ReportIssue = {};
+
+export type UnexpectedTelemetryPurpose = {
+    telemetryPurpose: string;
+};

@@ -183,6 +183,9 @@ export class Client {
                     break;
                 default:
                     const _: never = d.telemetryPurpose;
+                    this.telemetryReporter.sendTelemetryErrorEvent("languageServer.unexpectedTelemetryPurpose", {
+                        telemetryPurpose: String(d.telemetryPurpose),
+                    });
                     break;
             }
         });
