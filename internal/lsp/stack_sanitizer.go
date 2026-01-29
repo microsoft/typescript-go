@@ -24,10 +24,11 @@ func sanitizeStackTrace(stack string) string {
 
 		i := 0
 		// Skip whitespace
-		for i = 0; i < len(line); i++ {
+		for range line {
 			if line[i] != ' ' && line[i] != '\t' {
 				break
 			}
+			i++
 		}
 
 		result.WriteString(line[:i])

@@ -777,6 +777,11 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
+			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			if err != nil {
+				panic(err)
+			}
+
 			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(&lsproto.TelemetryEvent{
 				EventName:        "languageServer.errorResponse",
 				TelemetryPurpose: lsproto.TelemetryPurposeError,
@@ -786,8 +791,7 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 					Stack:         sanitizeStackTrace(string(stack)),
 				},
 			})
-			s.send(telMsg.Message())
-			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			err = s.send(telMsg.Message())
 			if err != nil {
 				panic(err)
 			}
