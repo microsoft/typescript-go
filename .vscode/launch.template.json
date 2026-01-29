@@ -8,12 +8,10 @@
             "name": "Launch VS Code extension",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}/_extension",
-                "--extensionDevelopmentPath=${workspaceRoot}/_examples/lsp-server-communication"
+                "--extensionDevelopmentPath=${workspaceRoot}/_extension"
             ],
             "outFiles": [
-                "${workspaceRoot}/_extension/dist/**/*.js",
-                "${workspaceRoot}/_examples/lsp-server-communication/out/**/*.js"
+                "${workspaceRoot}/_extension/dist/**/*.js"
             ],
             "autoAttachChildProcesses": true,
             "preLaunchTask": "Watch for extension run"

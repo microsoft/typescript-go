@@ -118,29 +118,6 @@
             }
         },
         {
-            "label": "Watch example extension",
-            "type": "npm",
-            "script": "example:watch",
-            "isBackground": true,
-            "group": "build",
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "never"
-            },
-            "problemMatcher": {
-                "owner": "esbuild",
-                "fileLocation": "autoDetect",
-                "pattern": {
-                    "regexp": ""
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "\\[watch\\] build started",
-                    "endsPattern": "\\[watch\\] build finished"
-                }
-            }
-        },
-        {
             "label": "Watch api package",
             "type": "npm",
             "script": "watch",
@@ -160,7 +137,6 @@
             "dependsOn": [
                 "Watch api package",
                 "Watch extension",
-                "Watch example extension",
                 "Watch"
             ]
         }

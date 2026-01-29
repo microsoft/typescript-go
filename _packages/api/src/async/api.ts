@@ -1,4 +1,6 @@
 /// <reference path="../node.ts" preserve="true" />
+import { SymbolFlags } from "#symbolFlags";
+import { TypeFlags } from "#typeFlags";
 import type {
     Node,
     SourceFile,
@@ -8,9 +10,7 @@ import {
     ObjectRegistry,
     type Project as BaseProject,
     type Symbol as BaseSymbol,
-    SymbolFlags,
     type Type as BaseType,
-    TypeFlags,
 } from "../base/index.ts";
 import { RemoteSourceFile } from "../node.ts";
 import type {
