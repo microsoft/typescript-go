@@ -9,29 +9,29 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestPathCompletionsPackageJsonExportsWildcard12(t *testing.T) {
+func TestPathCompletionsPackageJsonExportsWildcard2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
-// @Filename: /node_modules/foo/package.json
- {
-   "name": "foo",
-   "exports": {
-     "./bar/_*/suffix": "./dist/*.js"
-   }
- }
-// @Filename: /node_modules/foo/dist/b.d.ts
-export const x = 0;
-// @Filename: /node_modules/foo/dist/dir/x.d.ts
-/export const x = 0;
-// @Filename: /a.mts
-import {} from "foo/bar//*0*/";
-import {} from "foo/bar/dir//*1*/"; // invalid
-import {} from "foo/bar/[|_|]/*2*/";
-import {} from "foo/bar/_dir//*3*/";`
+// @Filename: /node_modules/salesforce-pageobjects/package.json
+{
+  "name": "salesforce-pageobjects",
+  "version": "1.0.0",
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.mjs",
+      "default": "./dist/*.js"
+    }
+  }
+}
+// @Filename: /node_modules/salesforce-pageobjects/dist/action/pageObjects/actionRenderer.d.ts
+export const actionRenderer = 0;
+// @Filename: /index.mts
+import { } from "salesforce-pageobjects//**/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -40,20 +40,15 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:  "_b/suffix",
-					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("_b/suffix"),
-				},
-				&lsproto.CompletionItem{
-					Label:  "_dir",
+					Label:  "action",
 					Kind:   PtrTo(lsproto.CompletionItemKindFolder),
-					Detail: PtrTo("_dir"),
+					Detail: PtrTo("action"),
 				},
 			},
 		},
 	})
-	f.VerifyCompletions(t, "1", nil)
-	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
+	f.Insert(t, "action/")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -62,31 +57,15 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:  "_b/suffix",
-					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("_b/suffix"),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						TextEdit: &lsproto.TextEdit{
-							Range:   f.Ranges()[0].LSRange,
-							NewText: "_b/suffix",
-						},
-					},
-				},
-				&lsproto.CompletionItem{
-					Label:  "_dir",
+					Label:  "pageObjects",
 					Kind:   PtrTo(lsproto.CompletionItemKindFolder),
-					Detail: PtrTo("_dir"),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						TextEdit: &lsproto.TextEdit{
-							Range:   f.Ranges()[0].LSRange,
-							NewText: "_dir",
-						},
-					},
+					Detail: PtrTo("pageObjects"),
 				},
 			},
 		},
 	})
-	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
+	f.Insert(t, "pageObjects/")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -95,9 +74,9 @@ import {} from "foo/bar/_dir//*3*/";`
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:  "x/suffix",
+					Label:  "actionRenderer",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("x/suffix"),
+					Detail: PtrTo("actionRenderer"),
 				},
 			},
 		},

@@ -167,6 +167,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				false, /*preselect*/
 				"",    /*source*/
 				nil,   /*autoImportEntryData*/
+				nil,   /*detail*/
 			)
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
@@ -201,6 +202,10 @@ func (l *LanguageService) convertPathCompletions(
 		if pathCompletion.textRange != nil {
 			replacementSpan = l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
 		}
+		detail := pathCompletion.name
+		if !strings.HasSuffix(pathCompletion.name, pathCompletion.extension) {
+			detail += pathCompletion.extension
+		}
 		return l.createLSPCompletionItem(
 			ctx,
 			pathCompletion.name,
@@ -220,6 +225,7 @@ func (l *LanguageService) convertPathCompletions(
 			false, /*preselect*/
 			"",    /*source*/
 			nil,   /*autoImportEntryData*/
+			&detail,
 		)
 	})
 	itemDefaults := l.setItemDefaults(
@@ -2005,16 +2011,9 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 ) *lsproto.CompletionItem {
 	switch {
 	case completion.fromPaths != nil:
-		pathCompletions := completion.fromPaths
-		for _, pathCompletion := range pathCompletions {
-			if pathCompletion.name == name {
-				detail := name
-				if !strings.HasSuffix(name, pathCompletion.extension) {
-					detail += pathCompletion.extension
-				}
-				return createCompletionDetails(item, detail, "" /*documentation*/, docFormat)
-			}
-		}
+		// Path completions have eagerly-resolved details so the client can show an accurate icon
+		// for items of file kind based on the file extension provided in the item detail.
+		return item
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {

@@ -9,39 +9,36 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestPathCompletionsPackageJsonImportsWildcard1(t *testing.T) {
+func TestPathCompletionsPackageJsonImportsSrcNoDistWildcard6(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: node18
-// @Filename: /package.json
+	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "rootDir": "src",
+    "outDir": "dist"
+  }
+}
+// @Filename: /home/src/workspaces/project/package.json
 {
   "name": "foo",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "imports": {
-    "#*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*.mjs",
-      "default": "./dist/*.js"
-    },
-    "#arguments": {
-      "types": "./dist/arguments/index.d.ts",
-      "import": "./dist/arguments/index.mjs",
-      "default": "./dist/arguments/index.js"
-    }
+    "#*": "./dist/*?.d.ts"
   }
 }
-// @Filename: /dist/index.d.ts
+// @Filename: /home/src/workspaces/project/src/index.ts
 export const index = 0;
-// @Filename: /dist/blah.d.ts
+// @Filename: /home/src/workspaces/project/src/blah?.ts
 export const blah = 0;
-// @Filename: /dist/arguments/index.d.ts
-export const arguments = 0;
-// @Filename: /index.mts
+// @Filename: /home/src/workspaces/project/src/m.mts
 import { } from "/**/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
+	f.MarkTestAsStradaServer()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -49,21 +46,11 @@ import { } from "/**/";`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Unsorted: []fourslash.CompletionsExpectedItem{
+			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "#blah",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
 					Detail: PtrTo("#blah"),
-				},
-				&lsproto.CompletionItem{
-					Label:  "#index",
-					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#index"),
-				},
-				&lsproto.CompletionItem{
-					Label:  "#arguments",
-					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#arguments"),
 				},
 			},
 		},
