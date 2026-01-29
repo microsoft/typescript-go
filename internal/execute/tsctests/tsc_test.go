@@ -33,6 +33,21 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: nil,
 		},
 		{
+			subScenario: "adds color when FORCE_COLOR is set",
+			env: map[string]string{
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
+			subScenario: "does not add color when NO_COLOR is set even if FORCE_COLOR is set",
+			env: map[string]string{
+				"NO_COLOR":    "true",
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
 			subScenario:     "when build not first argument",
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
@@ -1879,6 +1894,52 @@ func TestTscIncremental(t *testing.T) {
 			},
 			cwd:        "/home/project",
 			ignoreCase: true,
+		},
+		{
+			subScenario: "const enums with refCycle",
+			files: FileMap{
+				"/home/src/workspaces/project/file.ts": stringtestutil.Dedent(`
+					import {A} from "./c"
+					let a = A.ONE
+				`),
+				"/home/src/workspaces/project/b.ts": stringtestutil.Dedent(`
+					import { AWorker } from "./aworker"
+					import { A as ACycle } from "./c"
+					export const enum A {
+						ONE = 1
+					}
+				`),
+				"/home/src/workspaces/project/c.ts": stringtestutil.Dedent(`
+					import {A} from "./b"
+					let b = A.ONE
+					export {A}
+				`),
+				"/home/src/workspaces/project/aworker.ts": stringtestutil.Dedent(`
+					export const AWorker  = 10
+				`),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+					}
+				}`),
+			},
+			commandLineArgs: []string{},
+			edits: []*tscEdit{
+				{
+					caption: "change aworker",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/aworker.ts", "10", "20")
+					},
+				},
+				{
+					caption: "change aworker and enum value",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/aworker.ts", "20", "30")
+						sys.replaceFileText("/home/src/workspaces/project/b.ts", "1", "2")
+					},
+				},
+			},
 		},
 	}
 

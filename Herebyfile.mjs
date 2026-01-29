@@ -19,7 +19,7 @@ import which from "which";
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
-const isCI = !!process.env.CI;
+const isCI = !!process.env.CI || !!process.env.TF_BUILD;
 
 const $pipe = _$({ verbose: "short" });
 const $ = _$({ verbose: "short", stdio: "inherit" });
@@ -1113,9 +1113,7 @@ export const buildNativePreviewPackages = task({
         }
         const extraFlags = ["-trimpath", ldflags];
 
-        const buildLimit = pLimit(os.availableParallelism());
-
-        await Promise.all(platforms.map(async ({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => {
+        const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
             const packageJson = {
                 ...inputPackageJson,
                 bin: undefined,
@@ -1140,19 +1138,29 @@ export const buildNativePreviewPackages = task({
                 `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
             ];
 
-            fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
+            await fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
 
-            await Promise.all([
-                generateLibs(out),
-                buildLimit(() =>
-                    buildTsgo({
-                        out,
-                        env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
-                        extraFlags,
-                    })
-                ),
-            ]);
-        }));
+            await generateLibs(out);
+
+            await buildTsgo({
+                out,
+                env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
+                extraFlags,
+            });
+        });
+
+        if (isCI) {
+            for (const build of platformBuilders) {
+                await build();
+                // Build machines have too little space.
+                // Clear the Go build cache between platforms.
+                await $`go clean -cache`;
+            }
+        }
+        else {
+            const buildLimit = pLimit(os.availableParallelism());
+            await Promise.all(platformBuilders.map(f => buildLimit(f)));
+        }
     },
 });
 
@@ -1307,7 +1315,8 @@ export const packNativePreviewExtensions = task({
         await rimraf(builtVsix);
         await fs.promises.mkdir(builtVsix, { recursive: true });
 
-        await $({ cwd: extensionDir })`npm run bundle`;
+        // We don't use vscode:prepublish, as that would run the build for each package below.
+        await $({ cwd: extensionDir })`npm run bundle:release`;
 
         let version = "0.0.0";
         if (options.forRelease) {
@@ -1341,7 +1350,6 @@ export const packNativePreviewExtensions = task({
             const packageJsonPath = path.join(thisExtensionDir, "package.json");
             const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
             packageJson.version = version;
-            packageJson.main = "dist/extension.bundle.js";
             fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
             await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));

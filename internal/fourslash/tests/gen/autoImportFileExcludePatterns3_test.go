@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -39,7 +40,7 @@ declare module "foo" {
 					&lsproto.CompletionItem{
 						Label: "x",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "foo",
 							},
 						},
@@ -49,7 +50,7 @@ declare module "foo" {
 					&lsproto.CompletionItem{
 						Label: "y",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "foo",
 							},
 						},
@@ -58,6 +59,7 @@ declare module "foo" {
 					},
 				}, false),
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/ambient1.d.ts"}},
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -68,5 +70,6 @@ declare module "foo" {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: CompletionGlobals,
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/ambient*"}},
 	})
 }
