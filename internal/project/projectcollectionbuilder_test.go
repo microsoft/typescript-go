@@ -521,8 +521,8 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		// is deleted from the project root, requesting language service for the dependency
 		// correctly moves it to an inferred project.
 		files := map[string]any{
-			"/project/tsconfig.json": `{"compilerOptions": {"strict": true}}`,
-			"/project/index.ts":      `import { helper } from "./node_modules/dep/index";`,
+			"/project/tsconfig.json":               `{"compilerOptions": {"strict": true}}`,
+			"/project/index.ts":                    `import { helper } from "./node_modules/dep/index";`,
 			"/project/node_modules/dep/index.d.ts": `export declare function helper(): void;`,
 		}
 		session, _ := projecttestutil.Setup(files)
