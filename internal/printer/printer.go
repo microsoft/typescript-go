@@ -4317,6 +4317,9 @@ func (p *Printer) emitJSDocNode(node *ast.Node) {
 //
 
 func (p *Printer) emitShebangIfNeeded(node *ast.SourceFile) {
+	if ast.NodeIsSynthesized(node.AsNode()) {
+		return
+	}
 	shebang := scanner.GetShebang(node.Text())
 	if shebang != "" {
 		p.writeComment(shebang)
