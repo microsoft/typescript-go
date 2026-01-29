@@ -287,36 +287,6 @@ export class Client {
     }
 }
 
-const newline = /\r?\n/;
-const pathPatternForStack = /(^\s*)\S.+\/(?=typescript-go\/internal)/;
-
-function sanitizeStack(stack: string): string {
-    const lines = stack.split(newline).slice(1);
-    const sanitizedLines = lines.map(line => {
-        const origLength = line.length;
-
-        // Get rid of github.com/microsoft/... OR local paths for our package
-        line = line.replace(pathPatternForStack, "$1");
-
-        // If no replacement was made, it's not ours.
-        // We can create a list of allowed packages at some point if we need.
-        if (line.length === origLength) {
-            return line.replace(/(\s*).+/, "$1(REDACTED FRAME)");
-        }
-
-        // Remove function parameters
-        if (line.endsWith(")")) {
-            const openParenIndex = line.lastIndexOf("(");
-            if (openParenIndex >= 0) {
-                line = line.slice(0, openParenIndex) + "()";
-            }
-        }
-        line = line.replaceAll("/", "|>");
-        return line;
-    });
-    return sanitizedLines.join("\n");
-}
-
 // Adapted from the default error handler in vscode-languageclient.
 class ReportingErrorHandler implements ErrorHandler {
     telemetryReporter: tr.TelemetryReporter;
