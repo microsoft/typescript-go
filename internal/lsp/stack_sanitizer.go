@@ -2,6 +2,8 @@ package lsp
 
 import (
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func sanitizeStackTrace(stack string) string {
@@ -15,8 +17,7 @@ func sanitizeStackTrace(stack string) string {
 
 	result := &strings.Builder{}
 
-	// TODO: Use an iterator to avoid allocation.
-	for lineNum, line := range strings.Split(stack, "\n") {
+	for lineNum, line := range core.Enumerate(strings.Lines(stack)) {
 		if lineNum > 0 {
 			result.WriteByte('\n')
 		}
