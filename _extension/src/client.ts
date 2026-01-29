@@ -168,14 +168,14 @@ export class Client {
 
         type TelemetryData = {
             eventName: string;
-            telemetryPurpose: "general" | "error";
+            telemetryPurpose: "usage" | "error";
             properties: Record<string, string>;
             measurements: Record<string, number>;
         };
 
         const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
             switch (d.telemetryPurpose) {
-                case "general":
+                case "usage":
                     this.telemetryReporter.sendTelemetryEventUntyped(d.eventName, d.properties, d.measurements);
                     break;
                 case "error":
