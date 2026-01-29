@@ -15,14 +15,14 @@ type parseCache[K comparable, V comparable] struct {
 	entries collections.SyncMap[K, *parseCacheEntry[V]]
 }
 
-func (c *parseCache[K, V]) loadOrStore(key K, parse func(K) V, allowNonZero bool) V {
+func (c *parseCache[K, V]) loadOrStore(key K, parse func(K) V, allowZero bool) V {
 	newEntry := &parseCacheEntry[V]{}
 	newEntry.mu.Lock()
 	defer newEntry.mu.Unlock()
 	if entry, loaded := c.entries.LoadOrStore(key, newEntry); loaded {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
-		if allowNonZero && entry.value != *new(V) {
+		if allowZero || entry.value != *new(V) {
 			return entry.value
 		}
 		newEntry = entry

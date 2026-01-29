@@ -53,7 +53,7 @@ func (h *host) Trace(msg *diagnostics.Message, args ...any) {
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	if tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
 		// Cache dts and json files as they will be reused
-		return h.sourceFiles.loadOrStore(opts, h.host.GetSourceFile, false /* allowNonZero */)
+		return h.sourceFiles.loadOrStore(opts, h.host.GetSourceFile, false /* allowZero */)
 	}
 	return h.host.GetSourceFile(opts)
 }
@@ -72,7 +72,7 @@ func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *t
 		configTime := h.orchestrator.opts.Sys.Now().Sub(configStart)
 		h.configTimes.Store(path, configTime)
 		return commandLine
-	}, true /* allowNonZero */)
+	}, true /* allowZero */)
 }
 
 func (h *host) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {
