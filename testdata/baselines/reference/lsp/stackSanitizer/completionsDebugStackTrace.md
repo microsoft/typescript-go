@@ -1,4 +1,4 @@
-Test name: `TestSanitizedStackTraceCompletionsRequest`
+Test name: `TestSanitizedDebugStackTraceCompletionsRequest`
 
 # Unsanitized input:
 
