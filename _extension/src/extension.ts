@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 
-import { TelemetryReporter } from "@vscode/extension-telemetry";
 import { Client } from "./client";
 import {
     registerCodeLensShowLocationsCommand,
@@ -14,10 +13,16 @@ import {
 } from "./util";
 import { setupVersionStatusItem } from "./versionStatusItem";
 
+import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
+import {
+    createTelemetryReporter,
+    TelemetryReporter,
+} from "./telemetryReporting";
+
 export async function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
 
-    const telemetryReporter = new TelemetryReporter(aiConnectionString);
+    const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
 
     registerEnablementCommands(context, telemetryReporter);

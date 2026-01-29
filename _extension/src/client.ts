@@ -167,21 +167,23 @@ export class Client {
         }
 
         type TelemetryData = {
-            type: string;
-            errorCode: string;
-            requestMethod: string;
-            stack: string;
+            eventName: string;
+            telemetryPurpose: "general" | "error";
+            properties: Record<string, string>;
+            measurements: Record<string, number>;
         };
 
         const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
-            this.outputChannel.appendLine(`Telemetry event: ${JSON.stringify(d)}`);
-            if (d.type === "request-internal-error") {
-                this.outputChannel.appendLine(`Sanitized stack:\n${sanitizeStack(d.stack)}`);
-                this.telemetryReporter.sendTelemetryErrorEvent("languageServer.errorResponse", {
-                    errorCode: d.errorCode,
-                    requestMethod: d.requestMethod.replaceAll("/", "."),
-                    stack: sanitizeStack(d.stack),
-                });
+            switch (d.telemetryPurpose) {
+                case "general":
+                    this.telemetryReporter.sendTelemetryEventUntyped(d.eventName, d.properties, d.measurements);
+                    break;
+                case "error":
+                    this.telemetryReporter.sendTelemetryErrorEventUntyped(d.eventName, d.properties, d.measurements);
+                    break;
+                default:
+                    const _: never = d.telemetryPurpose;
+                    break;
             }
         });
 
@@ -334,7 +336,8 @@ class ReportingErrorHandler implements ErrorHandler {
         }
 
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionError", {
-            causedServerShutdown: errorAction === ErrorAction.Shutdown,
+            // TODO: action instead of causedServerShutdown
+            causedServerShutdown: String(errorAction === ErrorAction.Shutdown),
         });
 
         return { action: errorAction };
@@ -359,7 +362,8 @@ class ReportingErrorHandler implements ErrorHandler {
         }
 
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
-            exceededMaxRestarts: resultingAction === CloseAction.DoNotRestart,
+            // TODO: action instead of exceededMaxRestarts
+            exceededMaxRestarts: String(resultingAction === CloseAction.DoNotRestart),
         });
 
         if (resultingAction === CloseAction.DoNotRestart) {

@@ -164,13 +164,34 @@ const customStructures: Structure[] = [
         documentation: "CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.",
     },
     {
-        name: "TelemetryEventRequestFailureParams",
+        name: "TelemetryEvent",
         properties: [
             {
-                name: "type",
+                name: "eventName",
                 type: { kind: "base", name: "string" },
-                documentation: "The type of the telemetry event.",
+                documentation: "The name of the telemetry event.",
             },
+            {
+                name: "telemetryPurpose",
+                type: { kind: "reference", name: "TelemetryPurpose" },
+                documentation: "Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).",
+            },
+            {
+                name: "properties",
+                type: { kind: "reference", name: "LSPAny" },
+                documentation: "The properties associated with the event.",
+            },
+            {
+                name: "measurements",
+                type: { kind: "reference", name: "LSPAny" },
+                documentation: "The measurements associated with the event.",
+            },
+        ],
+        documentation: "TelemetryEvent contains information about a telemetry event.",
+    },
+    {
+        name: "RequestFailureTelemetryProperties",
+        properties: [
             {
                 name: "errorCode",
                 type: { kind: "base", name: "string" },
@@ -187,7 +208,7 @@ const customStructures: Structure[] = [
                 documentation: "The stack trace associated with the event.",
             },
         ],
-        documentation: "TelemetryEventParams contains information about a telemetry event.",
+        documentation: "RequestFailureTelemetryProperties contains failure information when an LSP request manages to recover.",
     },
 ];
 
@@ -237,6 +258,14 @@ const customEnumerations: Enumeration[] = [
             { name: "Allowed", value: 1, documentation: "Import may be marked type-only if needed." },
             { name: "Required", value: 2, documentation: "Import must be marked type-only." },
             { name: "NotAllowed", value: 4, documentation: "Import cannot be marked type-only." },
+        ],
+    },
+    {
+        name: "TelemetryPurpose",
+        type: { kind: "base", name: "string" },
+        values: [
+            { name: "Usage", value: "usage", documentation: "The event represents telemetry on general usage." },
+            { name: "Error", value: "error", documentation: "The event represents telemetry on errors." },
         ],
     },
 ];

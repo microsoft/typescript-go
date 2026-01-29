@@ -22,6 +22,8 @@ export interface TelemetryReporter {
 
     sendTelemetryEventUntyped(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void;
     sendTelemetryErrorEventUntyped(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void;
+
+    dispose(): void;
 }
 
 export function createTelemetryReporter(vscReporter: VSCodeTelemetryReporter): TelemetryReporter {
@@ -30,6 +32,8 @@ export function createTelemetryReporter(vscReporter: VSCodeTelemetryReporter): T
         sendTelemetryErrorEvent,
         sendTelemetryEventUntyped: sendTelemetryEvent,
         sendTelemetryErrorEventUntyped: sendTelemetryErrorEvent,
+
+        dispose: () => vscReporter.dispose(),
     };
 
     function sendTelemetryEvent(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void {

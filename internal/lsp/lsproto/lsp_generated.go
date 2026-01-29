@@ -21875,11 +21875,97 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	return nil
 }
 
-// TelemetryEventParams contains information about a telemetry event.
-type TelemetryEventRequestFailureParams struct {
-	// The type of the telemetry event.
-	Type string `json:"type"`
+// TelemetryEvent contains information about a telemetry event.
+type TelemetryEvent struct {
+	// The name of the telemetry event.
+	EventName string `json:"eventName"`
 
+	// Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).
+	TelemetryPurpose TelemetryPurpose `json:"telemetryPurpose"`
+
+	// The properties associated with the event.
+	Properties any `json:"properties"`
+
+	// The measurements associated with the event.
+	Measurements any `json:"measurements"`
+}
+
+var _ json.UnmarshalerFrom = (*TelemetryEvent)(nil)
+
+func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingEventName uint = 1 << iota
+		missingTelemetryPurpose
+		missingProperties
+		missingMeasurements
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"eventName"`:
+			missing &^= missingEventName
+			if err := json.UnmarshalDecode(dec, &s.EventName); err != nil {
+				return err
+			}
+		case `"telemetryPurpose"`:
+			missing &^= missingTelemetryPurpose
+			if err := json.UnmarshalDecode(dec, &s.TelemetryPurpose); err != nil {
+				return err
+			}
+		case `"properties"`:
+			missing &^= missingProperties
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		case `"measurements"`:
+			missing &^= missingMeasurements
+			if err := json.UnmarshalDecode(dec, &s.Measurements); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingEventName != 0 {
+			missingProps = append(missingProps, "eventName")
+		}
+		if missing&missingTelemetryPurpose != 0 {
+			missingProps = append(missingProps, "telemetryPurpose")
+		}
+		if missing&missingProperties != 0 {
+			missingProps = append(missingProps, "properties")
+		}
+		if missing&missingMeasurements != 0 {
+			missingProps = append(missingProps, "measurements")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// RequestFailureTelemetryProperties contains failure information when an LSP request manages to recover.
+type RequestFailureTelemetryProperties struct {
 	// The error code associated with the event.
 	ErrorCode string `json:"errorCode"`
 
@@ -21890,12 +21976,11 @@ type TelemetryEventRequestFailureParams struct {
 	Stack string `json:"stack"`
 }
 
-var _ json.UnmarshalerFrom = (*TelemetryEventRequestFailureParams)(nil)
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryProperties)(nil)
 
-func (s *TelemetryEventRequestFailureParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (s *RequestFailureTelemetryProperties) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	const (
-		missingType uint = 1 << iota
-		missingErrorCode
+		missingErrorCode uint = 1 << iota
 		missingRequestMethod
 		missingStack
 		_missingLast
@@ -21915,11 +22000,6 @@ func (s *TelemetryEventRequestFailureParams) UnmarshalJSONFrom(dec *jsontext.Dec
 			return err
 		}
 		switch string(name) {
-		case `"type"`:
-			missing &^= missingType
-			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
-				return err
-			}
 		case `"errorCode"`:
 			missing &^= missingErrorCode
 			if err := json.UnmarshalDecode(dec, &s.ErrorCode); err != nil {
@@ -21946,9 +22026,6 @@ func (s *TelemetryEventRequestFailureParams) UnmarshalJSONFrom(dec *jsontext.Dec
 
 	if missing != 0 {
 		var missingProps []string
-		if missing&missingType != 0 {
-			missingProps = append(missingProps, "type")
-		}
 		if missing&missingErrorCode != 0 {
 			missingProps = append(missingProps, "errorCode")
 		}
@@ -23321,6 +23398,15 @@ func (e AddAsTypeOnly) String() string {
 		return fmt.Sprintf("AddAsTypeOnly(%d)", e)
 	}
 }
+
+type TelemetryPurpose string
+
+const (
+	// The event represents telemetry on general usage.
+	TelemetryPurposeUsage TelemetryPurpose = "usage"
+	// The event represents telemetry on errors.
+	TelemetryPurposeError TelemetryPurpose = "error"
+)
 
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
