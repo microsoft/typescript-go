@@ -42,7 +42,7 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "#for-everywhere",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#for-everywhere"),
+					Detail: PtrTo("#for-everywhere.js"),
 				},
 			},
 		},

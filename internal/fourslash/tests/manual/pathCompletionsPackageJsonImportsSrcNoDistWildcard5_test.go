@@ -72,12 +72,12 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "#blah",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#blah"),
+					Detail: PtrTo("#blah.mts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "#index",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#index"),
+					Detail: PtrTo("#index.mts"),
 				},
 			},
 		},

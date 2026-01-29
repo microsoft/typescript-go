@@ -1438,11 +1438,12 @@ func (l *LanguageService) getCompletionsForPathMapping(
 	extensionOptions *extensionOptions,
 	program *compiler.Program,
 ) []moduleCompletionNameAndKind {
-	justPathMappingName := func(name string, kind moduleCompletionKind) []moduleCompletionNameAndKind {
+	justPathMappingName := func(name string, kind moduleCompletionKind, extension string) []moduleCompletionNameAndKind {
 		if strings.HasPrefix(name, fragment) {
 			return []moduleCompletionNameAndKind{{
-				name: tspath.RemoveTrailingDirectorySeparator(name),
-				kind: kind,
+				name:      tspath.RemoveTrailingDirectorySeparator(name),
+				kind:      kind,
+				extension: extension,
 			}}
 		}
 		return nil
@@ -1455,7 +1456,9 @@ func (l *LanguageService) getCompletionsForPathMapping(
 	// No stars in the pattern.
 	if parsedPath.StarIndex == -1 {
 		// For a path mapping "foo": ["/x/y/z.ts"], add "foo" itself as a completion.
-		return justPathMappingName(path, moduleCompletionKindFile)
+		pattern := core.FirstOrNil(patterns)
+		extension := getFileExtension(pattern)
+		return justPathMappingName(path, moduleCompletionKindFile, extension)
 	}
 
 	pathPrefix := parsedPath.Text[:parsedPath.StarIndex]
@@ -1472,7 +1475,7 @@ func (l *LanguageService) getCompletionsForPathMapping(
 		}
 		starIsFullPathComponent := strings.HasSuffix(path, "/*")
 		if starIsFullPathComponent {
-			return justPathMappingName(pathPrefix, moduleCompletionKindDirectory)
+			return justPathMappingName(pathPrefix, moduleCompletionKindDirectory, "" /*extension*/)
 		}
 		// If path is e.g. `foo/bar/*`, and fragment is `foo/b`, then remaining directory prefix is `bar/`,
 		remainingDirectoryPrefix := pathPrefix[len(fragmentDirectory):]
@@ -1517,6 +1520,14 @@ func (l *LanguageService) getCompletionsForPathMapping(
 			return modules
 		},
 	)
+}
+
+func getFileExtension(fileName string) string {
+	extension := tspath.TryGetExtensionFromPath(fileName)
+	if extension == "" {
+		extension = tspath.GetAnyExtensionFromPath(fileName, nil /*extensions*/, false /*ignoreCase*/)
+	}
+	return extension
 }
 
 // The input fragment is relative to the path pattern's prefix:
@@ -1681,6 +1692,9 @@ func (l *LanguageService) getModulesForPathsPattern(
 						extensionOptions,
 						isExportsOrImportsWildcard,
 					)
+					if extension == "" {
+						extension = getFileExtension(match)
+					}
 					result = append(result, moduleCompletionNameAndKind{
 						name:      name,
 						kind:      moduleCompletionKindFile,

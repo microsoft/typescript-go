@@ -42,7 +42,7 @@ import {} from "foo/bar/_dir//*3*/";`
 				&lsproto.CompletionItem{
 					Label:  "_b/suffix",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("_b/suffix"),
+					Detail: PtrTo("_b/suffix.d.ts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "_dir",
@@ -64,7 +64,7 @@ import {} from "foo/bar/_dir//*3*/";`
 				&lsproto.CompletionItem{
 					Label:  "_b/suffix",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("_b/suffix"),
+					Detail: PtrTo("_b/suffix.d.ts"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
 							Range:   f.Ranges()[0].LSRange,
@@ -97,7 +97,7 @@ import {} from "foo/bar/_dir//*3*/";`
 				&lsproto.CompletionItem{
 					Label:  "x/suffix",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("x/suffix"),
+					Detail: PtrTo("x/suffix.d.ts"),
 				},
 			},
 		},

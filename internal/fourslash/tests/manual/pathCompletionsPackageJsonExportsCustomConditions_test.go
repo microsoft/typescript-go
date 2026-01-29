@@ -40,7 +40,7 @@ import { } from "foo//**/";`
 				&lsproto.CompletionItem{
 					Label:  "only-with-custom-conditions",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("only-with-custom-conditions"),
+					Detail: PtrTo("only-with-custom-conditions.js"),
 				},
 			},
 		},

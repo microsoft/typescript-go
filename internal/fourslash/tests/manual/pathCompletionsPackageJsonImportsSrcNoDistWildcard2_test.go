@@ -84,7 +84,7 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "actionRenderer",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("actionRenderer"),
+					Detail: PtrTo("actionRenderer.ts"),
 				},
 			},
 		},

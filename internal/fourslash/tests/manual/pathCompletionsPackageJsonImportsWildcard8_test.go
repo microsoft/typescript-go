@@ -39,7 +39,7 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "#blah",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#blah"),
+					Detail: PtrTo("#blah.d.ts"),
 				},
 			},
 		},

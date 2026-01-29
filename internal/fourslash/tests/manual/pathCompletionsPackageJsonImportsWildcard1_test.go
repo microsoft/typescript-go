@@ -53,17 +53,17 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "#blah",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#blah"),
+					Detail: PtrTo("#blah.d.ts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "#index",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#index"),
+					Detail: PtrTo("#index.d.ts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "#arguments",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#arguments"),
+					Detail: PtrTo("#arguments.d.ts"),
 				},
 			},
 		},

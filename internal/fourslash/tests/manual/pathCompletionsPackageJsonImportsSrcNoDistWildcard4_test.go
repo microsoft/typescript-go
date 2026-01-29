@@ -86,7 +86,7 @@ import { } from "/**/";`
 				&lsproto.CompletionItem{
 					Label:  "#exact-match",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("#exact-match"),
+					Detail: PtrTo("#exact-match.d.ts"),
 				},
 			},
 		},

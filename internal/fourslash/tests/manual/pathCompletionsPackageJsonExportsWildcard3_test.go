@@ -45,12 +45,12 @@ import { } from "foo//**/";`
 				&lsproto.CompletionItem{
 					Label:  "component-blah",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("component-blah"),
+					Detail: PtrTo("component-blah.d.ts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "component-index",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("component-index"),
+					Detail: PtrTo("component-index.d.ts"),
 				},
 				&lsproto.CompletionItem{
 					Label:  "component-subfolder",
@@ -72,7 +72,7 @@ import { } from "foo//**/";`
 				&lsproto.CompletionItem{
 					Label:  "one",
 					Kind:   PtrTo(lsproto.CompletionItemKindFile),
-					Detail: PtrTo("one"),
+					Detail: PtrTo("one.d.ts"),
 				},
 			},
 		},
