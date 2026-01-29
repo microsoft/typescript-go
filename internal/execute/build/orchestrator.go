@@ -315,7 +315,7 @@ func (o *Orchestrator) rangeTask(f func(path tspath.Path, task *BuildTask)) {
 	if o.opts.Command.CompilerOptions.SingleThreaded.IsTrue() {
 		numRoutines = 1
 	} else if builders := o.opts.Command.BuildOptions.Builders; builders != nil {
-		numRoutines = int(*builders)
+		numRoutines = *builders
 	}
 
 	var currentTaskIndex atomic.Int64
@@ -339,7 +339,7 @@ func (o *Orchestrator) rangeTask(f func(path tspath.Path, task *BuildTask)) {
 		runTask()
 	} else {
 		wg := core.NewWorkGroup(false)
-		for i := 0; i < numRoutines; i++ {
+		for range numRoutines {
 			wg.Queue(runTask)
 		}
 		wg.RunAndWait()
