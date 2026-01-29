@@ -866,10 +866,14 @@ const getSignTempDir = memoize(async () => {
     return dir;
 });
 
+function runCleanSignTempDirectory() {
+    return rimraf(builtSignTmp);
+}
+
 const cleanSignTempDirectory = task({
     name: "clean:sign-tmp",
     hiddenFromTaskList: true,
-    run: () => rimraf(builtSignTmp),
+    run: runCleanSignTempDirectory,
 });
 
 let signCount = 0;
@@ -1190,312 +1194,339 @@ const nativePreviewPlatforms = memoize(() => {
     }
 });
 
+async function runBuildNativePreviewPackages() {
+    await rimraf(builtNpm);
+
+    const platforms = nativePreviewPlatforms();
+
+    const inputDir = "./_packages/native-preview";
+
+    const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
+    inputPackageJson.version = getVersion();
+    delete inputPackageJson.private;
+    delete inputPackageJson.engines;
+
+    const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
+    inputPackageJson.gitHead = gitHead;
+
+    const mainPackage = {
+        ...inputPackageJson,
+        optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+    };
+
+    const mainPackageDir = mainNativePreviewPackage.npmDir;
+
+    await fs.promises.mkdir(mainPackageDir, { recursive: true });
+
+    await cpWithoutNodeModulesOrTsconfig(inputDir, mainPackageDir);
+
+    await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
+    await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
+    // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
+
+    const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
+
+    const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
+        const packageJson = {
+            ...inputPackageJson,
+            bin: undefined,
+            imports: undefined,
+            name: npmPackageName,
+            os: [nodeOs],
+            cpu: [nodeArch],
+            exports: {
+                "./package.json": "./package.json",
+            },
+        };
+
+        const out = path.join(npmDir, "lib");
+        await fs.promises.mkdir(out, { recursive: true });
+        await fs.promises.writeFile(path.join(npmDir, "package.json"), JSON.stringify(packageJson, undefined, 4));
+        await fs.promises.copyFile("LICENSE", path.join(npmDir, "LICENSE"));
+        await fs.promises.copyFile("NOTICE.txt", path.join(npmDir, "NOTICE.txt"));
+
+        const readme = [
+            `# \`${npmPackageName}\``,
+            "",
+            `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
+        ];
+
+        await fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
+
+        await generateLibs(out);
+
+        await buildTsgo({
+            out,
+            env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
+            extraFlags,
+        });
+    });
+
+    if (isCI) {
+        for (const build of platformBuilders) {
+            await build();
+            // Build machines have too little space.
+            // Clear the Go build cache between platforms.
+            await $`go clean -cache`;
+        }
+    }
+    else {
+        const buildLimit = pLimit(os.availableParallelism());
+        await Promise.all(platformBuilders.map(f => buildLimit(f)));
+    }
+}
+
 export const buildNativePreviewPackages = task({
     name: "native-preview:build-packages",
     hiddenFromTaskList: true,
-    run: async () => {
-        await rimraf(builtNpm);
+    run: runBuildNativePreviewPackages,
+});
 
-        const platforms = nativePreviewPlatforms();
+async function runSignNativePreviewPackages() {
+    if (!options.forRelease) {
+        throw new Error("This task should not be run in non-release builds.");
+    }
 
-        const inputDir = "./_packages/native-preview";
+    const platforms = nativePreviewPlatforms();
 
-        const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
-        inputPackageJson.version = getVersion();
-        delete inputPackageJson.private;
-        delete inputPackageJson.engines;
+    /** @type {Map<Cert, { tmpName: string; path: string }[]>} */
+    const filelistByCert = new Map();
+    for (const { npmDir, nodeOs, cert, npmDirName } of platforms) {
+        let certFilelist = filelistByCert.get(cert);
+        if (!certFilelist) {
+            filelistByCert.set(cert, certFilelist = []);
+        }
+        certFilelist.push({
+            tmpName: npmDirName,
+            path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsgo.exe" : "tsgo"),
+        });
+    }
 
-        const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
-        inputPackageJson.gitHead = gitHead;
+    const tmp = await getSignTempDir();
 
-        const mainPackage = {
-            ...inputPackageJson,
-            optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+    /** @type {DDSignFileList} */
+    const filelist = {
+        SignFileRecordList: [],
+    };
+
+    /** @type {{ path: string; unsignedZipPath: string; signedZipPath: string; notarizedZipPath: string; }[]} */
+    const macZips = [];
+
+    // First, sign the files.
+
+    for (const [cert, filelistPaths] of filelistByCert) {
+        switch (cert) {
+            case "Microsoft400":
+                filelist.SignFileRecordList.push({
+                    SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
+                    Certs: cert,
+                    MacAppName: undefined,
+                });
+                break;
+            case "LinuxSign":
+                filelist.SignFileRecordList.push({
+                    SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig" })),
+                    Certs: cert,
+                    MacAppName: undefined,
+                });
+                break;
+            case "MacDeveloperHarden":
+                // Mac signing requires putting files into zips and then signing those,
+                // along with a notarization step.
+                for (const p of filelistPaths) {
+                    const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
+                    const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
+                    const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
+
+                    const zip = new AdmZip();
+                    zip.addLocalFile(p.path);
+                    zip.writeZip(unsignedZipPath);
+
+                    macZips.push({
+                        path: p.path,
+                        unsignedZipPath,
+                        signedZipPath,
+                        notarizedZipPath,
+                    });
+                }
+                filelist.SignFileRecordList.push({
+                    SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath })),
+                    Certs: cert,
+                    MacAppName: undefined, // MacAppName is only for notarization
+                });
+                break;
+            default:
+                throw new Error(`Unknown cert: ${cert}`);
+        }
+    }
+
+    await sign(filelist);
+
+    // All of the files have been signed in place / had signatures added.
+
+    if (macZips.length) {
+        // Now, notarize the Mac files.
+
+        /** @type {DDSignFileList} */
+        const notarizeFilelist = {
+            SignFileRecordList: [
+                {
+                    SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
+                    Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
+                    MacAppName: "MicrosoftTypeScript",
+                },
+            ],
         };
 
-        const mainPackageDir = mainNativePreviewPackage.npmDir;
+        // Notarizing does not change the file, it just sends it to Apple, so ignore the case
+        // where the input files are the same as the output files.
+        await sign(notarizeFilelist, /*unchangedOutputOkay*/ true);
 
-        await fs.promises.mkdir(mainPackageDir, { recursive: true });
+        // Finally, unzip the notarized files and move them back to their original locations.
 
-        await cpWithoutNodeModulesOrTsconfig(inputDir, mainPackageDir);
-
-        await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
-        await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
-        // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
-
-        const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
-
-        const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
-            const packageJson = {
-                ...inputPackageJson,
-                bin: undefined,
-                imports: undefined,
-                name: npmPackageName,
-                os: [nodeOs],
-                cpu: [nodeArch],
-                exports: {
-                    "./package.json": "./package.json",
-                },
-            };
-
-            const out = path.join(npmDir, "lib");
-            await fs.promises.mkdir(out, { recursive: true });
-            await fs.promises.writeFile(path.join(npmDir, "package.json"), JSON.stringify(packageJson, undefined, 4));
-            await fs.promises.copyFile("LICENSE", path.join(npmDir, "LICENSE"));
-            await fs.promises.copyFile("NOTICE.txt", path.join(npmDir, "NOTICE.txt"));
-
-            const readme = [
-                `# \`${npmPackageName}\``,
-                "",
-                `This package provides ${nodeOs}-${nodeArch} support for [${mainNativePreviewPackage.npmPackageName}](https://www.npmjs.com/package/${mainNativePreviewPackage.npmPackageName}).`,
-            ];
-
-            await fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
-
-            await generateLibs(out);
-
-            await buildTsgo({
-                out,
-                env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
-                extraFlags,
-            });
-        });
-
-        if (isCI) {
-            for (const build of platformBuilders) {
-                await build();
-                // Build machines have too little space.
-                // Clear the Go build cache between platforms.
-                await $`go clean -cache`;
-            }
+        for (const p of macZips) {
+            const zip = new AdmZip(p.notarizedZipPath);
+            zip.extractEntryTo(path.basename(p.path), path.dirname(p.path), false, true);
         }
-        else {
-            const buildLimit = pLimit(os.availableParallelism());
-            await Promise.all(platformBuilders.map(f => buildLimit(f)));
+
+        // chmod +x the unzipped files.
+
+        for (const p of macZips) {
+            await fs.promises.chmod(p.path, 0o755);
         }
-    },
-});
+    }
+}
 
 export const signNativePreviewPackages = task({
     name: "native-preview:sign-packages",
     hiddenFromTaskList: true,
-    run: async () => {
-        if (!options.forRelease) {
-            throw new Error("This task should not be run in non-release builds.");
-        }
-
-        const platforms = nativePreviewPlatforms();
-
-        /** @type {Map<Cert, { tmpName: string; path: string }[]>} */
-        const filelistByCert = new Map();
-        for (const { npmDir, nodeOs, cert, npmDirName } of platforms) {
-            let certFilelist = filelistByCert.get(cert);
-            if (!certFilelist) {
-                filelistByCert.set(cert, certFilelist = []);
-            }
-            certFilelist.push({
-                tmpName: npmDirName,
-                path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsgo.exe" : "tsgo"),
-            });
-        }
-
-        const tmp = await getSignTempDir();
-
-        /** @type {DDSignFileList} */
-        const filelist = {
-            SignFileRecordList: [],
-        };
-
-        /** @type {{ path: string; unsignedZipPath: string; signedZipPath: string; notarizedZipPath: string; }[]} */
-        const macZips = [];
-
-        // First, sign the files.
-
-        for (const [cert, filelistPaths] of filelistByCert) {
-            switch (cert) {
-                case "Microsoft400":
-                    filelist.SignFileRecordList.push({
-                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
-                        Certs: cert,
-                        MacAppName: undefined,
-                    });
-                    break;
-                case "LinuxSign":
-                    filelist.SignFileRecordList.push({
-                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig" })),
-                        Certs: cert,
-                        MacAppName: undefined,
-                    });
-                    break;
-                case "MacDeveloperHarden":
-                    // Mac signing requires putting files into zips and then signing those,
-                    // along with a notarization step.
-                    for (const p of filelistPaths) {
-                        const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
-                        const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
-                        const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
-
-                        const zip = new AdmZip();
-                        zip.addLocalFile(p.path);
-                        zip.writeZip(unsignedZipPath);
-
-                        macZips.push({
-                            path: p.path,
-                            unsignedZipPath,
-                            signedZipPath,
-                            notarizedZipPath,
-                        });
-                    }
-                    filelist.SignFileRecordList.push({
-                        SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath })),
-                        Certs: cert,
-                        MacAppName: undefined, // MacAppName is only for notarization
-                    });
-                    break;
-                default:
-                    throw new Error(`Unknown cert: ${cert}`);
-            }
-        }
-
-        await sign(filelist);
-
-        // All of the files have been signed in place / had signatures added.
-
-        if (macZips.length) {
-            // Now, notarize the Mac files.
-
-            /** @type {DDSignFileList} */
-            const notarizeFilelist = {
-                SignFileRecordList: [
-                    {
-                        SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
-                        Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
-                        MacAppName: "MicrosoftTypeScript",
-                    },
-                ],
-            };
-
-            // Notarizing does not change the file, it just sends it to Apple, so ignore the case
-            // where the input files are the same as the output files.
-            await sign(notarizeFilelist, /*unchangedOutputOkay*/ true);
-
-            // Finally, unzip the notarized files and move them back to their original locations.
-
-            for (const p of macZips) {
-                const zip = new AdmZip(p.notarizedZipPath);
-                zip.extractEntryTo(path.basename(p.path), path.dirname(p.path), false, true);
-            }
-
-            // chmod +x the unsipped files.
-
-            for (const p of macZips) {
-                await fs.promises.chmod(p.path, 0o755);
-            }
-        }
-    },
+    run: runSignNativePreviewPackages,
 });
+
+async function runPackNativePreviewPackages() {
+    const platforms = nativePreviewPlatforms();
+    await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
+        const { stdout } = await $pipe`npm pack --json ${npmDir}`;
+        const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
+        await fs.promises.rename(filename, npmTarball);
+    }));
+
+    // npm packages need to be published in reverse dep order, e.g. such that no package
+    // is published before its dependencies.
+    const publishOrder = [
+        ...platforms.map(p => p.npmTarball),
+        mainNativePreviewPackage.npmTarball,
+    ].map(p => path.basename(p));
+
+    const publishOrderPath = path.join(builtNpm, "publish-order.txt");
+    await fs.promises.writeFile(publishOrderPath, publishOrder.join("\n") + "\n");
+}
 
 export const packNativePreviewPackages = task({
     name: "native-preview:pack-packages",
     hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
-    run: async () => {
-        const platforms = nativePreviewPlatforms();
-        await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
-            const { stdout } = await $pipe`npm pack --json ${npmDir}`;
-            const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
-            await fs.promises.rename(filename, npmTarball);
-        }));
-
-        // npm packages need to be published in reverse dep order, e.g. such that no package
-        // is published before its dependencies.
-        const publishOrder = [
-            ...platforms.map(p => p.npmTarball),
-            mainNativePreviewPackage.npmTarball,
-        ].map(p => path.basename(p));
-
-        const publishOrderPath = path.join(builtNpm, "publish-order.txt");
-        await fs.promises.writeFile(publishOrderPath, publishOrder.join("\n") + "\n");
-    },
+    run: runPackNativePreviewPackages,
 });
+
+async function runPackNativePreviewExtensions() {
+    await rimraf(builtVsix);
+    await fs.promises.mkdir(builtVsix, { recursive: true });
+
+    // We don't use vscode:prepublish, as that would run the build for each package below.
+    await $({ cwd: extensionDir })`npm run bundle:release`;
+
+    let version = "0.0.0";
+    if (options.forRelease) {
+        // No real semver prerelease versioning.
+        // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+        assert(options.setPrerelease, "forRelease is true but setPrerelease is not set");
+        const prerelease = options.setPrerelease;
+        assert(typeof prerelease === "string", "setPrerelease is not a string");
+        // parse `dev.<number>.<number>`.
+        const match = prerelease.match(/dev\.(\d+)\.(\d+)/);
+        if (!match) {
+            throw new Error(`Prerelease version should be in the form of dev.<number>.<number>, but got ${prerelease}`);
+        }
+        // Set version to `0.<number>.<number>`.
+        version = `0.${match[1]}.${match[2]}`;
+    }
+
+    console.log("Version:", version);
+
+    const platforms = nativePreviewPlatforms();
+    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+
+    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+        const npmLibDir = path.join(npmDir, "lib");
+        const extensionLibDir = path.join(thisExtensionDir, "lib");
+        await fs.promises.mkdir(extensionLibDir, { recursive: true });
+
+        await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
+        await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
+
+        const packageJsonPath = path.join(thisExtensionDir, "package.json");
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+        packageJson.version = version;
+        packageJson.main = "dist/extension.bundle.js";
+        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
+
+        await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
+
+        await $({ cwd: thisExtensionDir })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+
+        if (options.forRelease) {
+            await $({ cwd: thisExtensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+            await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+        }
+    }));
+}
 
 export const packNativePreviewExtensions = task({
     name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
-    run: async () => {
-        await rimraf(builtVsix);
-        await fs.promises.mkdir(builtVsix, { recursive: true });
-
-        // We don't use vscode:prepublish, as that would run the build for each package below.
-        await $({ cwd: extensionDir })`npm run bundle:release`;
-
-        let version = "0.0.0";
-        if (options.forRelease) {
-            // No real semver prerelease versioning.
-            // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-            assert(options.setPrerelease, "forRelease is true but setPrerelease is not set");
-            const prerelease = options.setPrerelease;
-            assert(typeof prerelease === "string", "setPrerelease is not a string");
-            // parse `dev.<number>.<number>`.
-            const match = prerelease.match(/dev\.(\d+)\.(\d+)/);
-            if (!match) {
-                throw new Error(`Prerelease version should be in the form of dev.<number>.<number>, but got ${prerelease}`);
-            }
-            // Set version to `0.<number>.<number>`.
-            version = `0.${match[1]}.${match[2]}`;
-        }
-
-        console.log("Version:", version);
-
-        const platforms = nativePreviewPlatforms();
-        const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
-
-        await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
-            const npmLibDir = path.join(npmDir, "lib");
-            const extensionLibDir = path.join(thisExtensionDir, "lib");
-            await fs.promises.mkdir(extensionLibDir, { recursive: true });
-
-            await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
-            await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
-
-            const packageJsonPath = path.join(thisExtensionDir, "package.json");
-            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-            packageJson.version = version;
-            fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
-
-            await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
-
-            await $({ cwd: thisExtensionDir })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
-
-            if (options.forRelease) {
-                await $({ cwd: thisExtensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
-                await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
-            }
-        }));
-    },
+    run: runPackNativePreviewExtensions,
 });
+
+async function runSignNativePreviewExtensions() {
+    if (!options.forRelease) {
+        throw new Error("This task should not be run in non-release builds.");
+    }
+
+    const platforms = nativePreviewPlatforms();
+    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+
+    await sign({
+        SignFileRecordList: [
+            {
+                SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
+                Certs: "VSCodePublisher",
+                MacAppName: undefined,
+            },
+        ],
+    });
+}
 
 export const signNativePreviewExtensions = task({
     name: "native-preview:sign-extensions",
     hiddenFromTaskList: true,
+    run: runSignNativePreviewExtensions,
+});
+
+export const nativePreviewRelease = task({
+    name: "native-preview:release",
+    hiddenFromTaskList: true,
     run: async () => {
         if (!options.forRelease) {
-            throw new Error("This task should not be run in non-release builds.");
+            throw new Error("native-preview:release requires --forRelease and --setPrerelease flags. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
-
-        const platforms = nativePreviewPlatforms();
-        const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
-
-        await sign({
-            SignFileRecordList: [
-                {
-                    SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
-                    Certs: "VSCodePublisher",
-                    MacAppName: undefined,
-                },
-            ],
-        });
+        await runBuildNativePreviewPackages();
+        await runSignNativePreviewPackages();
+        await runPackNativePreviewPackages();
+        await runPackNativePreviewExtensions();
+        await runSignNativePreviewExtensions();
+        await runCleanSignTempDirectory();
     },
 });
 
