@@ -5,7 +5,12 @@ import (
 )
 
 func sanitizeStackTrace(stack string) string {
+	// TODO: should we just look for the first '(' and
+	// just strip everything before the prior newline?
 	startIndex := strings.Index(stack, "runtime/debug.Stack()")
+	if startIndex < 0 {
+		return ""
+	}
 	stack = stack[startIndex:]
 
 	result := &strings.Builder{}
