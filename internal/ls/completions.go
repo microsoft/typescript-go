@@ -6128,7 +6128,7 @@ func (p *snippetPrinter) createSyntheticFile(node *ast.Node, text string, target
 }
 
 func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
-	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter())
+	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter(), 0)
 	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), nil /*emitContext*/)
 	writer := &snippetEmitTextWriter{
 		ChangeTrackerWriter: baseWriter,

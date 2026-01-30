@@ -636,7 +636,7 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 
 func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, kind ast.Kind, loc core.TextRange) {
 	if kind == ast.KindMultiLineCommentTrivia {
-		indentSize := len(getIndentString(1))
+		indentSize := GetDefaultIndentSize()
 		firstLine := scanner.ComputeLineOfPosition(lineMap, loc.Pos())
 		lineCount := len(lineMap)
 		firstCommentLineIndent := -1
@@ -676,7 +676,7 @@ func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, k
 				spacesToEmit := currentWriterIndentSpacing - firstCommentLineIndent + calculateIndent(text, pos, nextLineStart)
 				if spacesToEmit > 0 {
 					numberOfSingleSpacesToEmit := spacesToEmit % indentSize
-					indentSizeSpaceString := getIndentString((spacesToEmit - numberOfSingleSpacesToEmit) / indentSize)
+					indentSizeSpaceString := getIndentString((spacesToEmit-numberOfSingleSpacesToEmit)/indentSize, indentSize)
 
 					// Write indent size string ( in eg 1: = "", 2: "" , 3: string with 8 spaces 4: string with 12 spaces
 					p.writer.RawWrite(indentSizeSpaceString)
@@ -4745,7 +4745,7 @@ func (p *Printer) emitListItems(
 func (p *Printer) Emit(node *ast.Node, sourceFile *ast.SourceFile) string {
 	// ensure a reusable writer
 	if p.ownWriter == nil {
-		p.ownWriter = NewTextWriter(p.Options.NewLine.GetNewLineCharacter())
+		p.ownWriter = NewTextWriter(p.Options.NewLine.GetNewLineCharacter(), 0)
 	}
 
 	p.Write(node, sourceFile, p.ownWriter, nil /*sourceMapGenerator*/)

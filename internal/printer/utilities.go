@@ -859,7 +859,7 @@ func IsPinnedComment(text string, comment ast.CommentRange) bool {
 
 func calculateIndent(text string, pos int, end int) int {
 	currentLineIndent := 0
-	indentSize := len(getIndentString(1))
+	indentSize := GetDefaultIndentSize()
 	for pos < end {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		if !stringutil.IsWhiteSpaceSingleLine(ch) {
