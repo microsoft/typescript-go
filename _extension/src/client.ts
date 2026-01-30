@@ -169,8 +169,8 @@ export class Client {
         type TelemetryData = {
             eventName: string;
             telemetryPurpose: "usage" | "error";
-            properties: Record<string, string>;
-            measurements: Record<string, number>;
+            properties?: Record<string, string>;
+            measurements?: Record<string, number>;
         };
 
         const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {

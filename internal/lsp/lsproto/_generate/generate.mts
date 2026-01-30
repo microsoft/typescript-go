@@ -177,20 +177,18 @@ const customStructures: Structure[] = [
                 documentation: "Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).",
             },
             {
+                // Currently, only RequestFailureTelemetryProperties is sent.
+                // Update to a union if needed in the future.
                 name: "properties",
-                type: {
-                    kind: "or",
-                    items: [
-                        { kind: "reference", name: "RequestFailureTelemetryProperties" },
-                        { kind: "base", name: "null" },
-                    ],
-                },
+                optional: true,
+                type: { kind: "reference", name: "RequestFailureTelemetryProperties" },
                 documentation: "The properties associated with the event.",
             },
             {
                 // Currently, nothing sends measurements.
-                // Update as a union if needed in the future.
+                // Update (possibly to a union) if needed in the future.
                 name: "measurements",
+                optional: true,
                 type: { kind: "literal", value: { properties: [] } },
                 documentation: "The measurements associated with the event.",
             },

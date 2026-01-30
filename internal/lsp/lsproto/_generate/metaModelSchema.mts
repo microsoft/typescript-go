@@ -463,7 +463,7 @@ export type TypeAlias = {
 	/**
 	 * An optional documentation.
 	 */
-	 documentation?: string;
+	documentation?: string;
 
 	/**
 	 * Since when (release number) this structure is

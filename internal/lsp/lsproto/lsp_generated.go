@@ -21884,10 +21884,10 @@ type TelemetryEvent struct {
 	TelemetryPurpose TelemetryPurpose `json:"telemetryPurpose"`
 
 	// The properties associated with the event.
-	Properties RequestFailureTelemetryPropertiesOrNull `json:"properties"`
+	Properties *RequestFailureTelemetryProperties `json:"properties,omitzero"`
 
 	// The measurements associated with the event.
-	Measurements struct{} `json:"measurements"`
+	Measurements *struct{} `json:"measurements,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*TelemetryEvent)(nil)
@@ -21896,8 +21896,6 @@ func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	const (
 		missingEventName uint = 1 << iota
 		missingTelemetryPurpose
-		missingProperties
-		missingMeasurements
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -21926,12 +21924,10 @@ func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"properties"`:
-			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
 			}
 		case `"measurements"`:
-			missing &^= missingMeasurements
 			if err := json.UnmarshalDecode(dec, &s.Measurements); err != nil {
 				return err
 			}
@@ -21951,12 +21947,6 @@ func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		if missing&missingTelemetryPurpose != 0 {
 			missingProps = append(missingProps, "telemetryPurpose")
-		}
-		if missing&missingProperties != 0 {
-			missingProps = append(missingProps, "properties")
-		}
-		if missing&missingMeasurements != 0 {
-			missingProps = append(missingProps, "measurements")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
@@ -27609,42 +27599,6 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *j
 		return nil
 	}
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
-}
-
-type RequestFailureTelemetryPropertiesOrNull struct {
-	RequestFailureTelemetryProperties *RequestFailureTelemetryProperties
-}
-
-var _ json.MarshalerTo = (*RequestFailureTelemetryPropertiesOrNull)(nil)
-
-func (o *RequestFailureTelemetryPropertiesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
-	assertAtMostOne("more than one element of RequestFailureTelemetryPropertiesOrNull is set", o.RequestFailureTelemetryProperties != nil)
-
-	if o.RequestFailureTelemetryProperties != nil {
-		return json.MarshalEncode(enc, o.RequestFailureTelemetryProperties)
-	}
-	return enc.WriteToken(jsontext.Null)
-}
-
-var _ json.UnmarshalerFrom = (*RequestFailureTelemetryPropertiesOrNull)(nil)
-
-func (o *RequestFailureTelemetryPropertiesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	*o = RequestFailureTelemetryPropertiesOrNull{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vRequestFailureTelemetryProperties RequestFailureTelemetryProperties
-	if err := json.Unmarshal(data, &vRequestFailureTelemetryProperties); err == nil {
-		o.RequestFailureTelemetryProperties = &vRequestFailureTelemetryProperties
-		return nil
-	}
-	return fmt.Errorf("invalid RequestFailureTelemetryPropertiesOrNull: %s", data)
 }
 
 type LocationOrLocationsOrDefinitionLinksOrNull struct {
