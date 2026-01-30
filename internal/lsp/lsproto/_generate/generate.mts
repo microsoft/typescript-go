@@ -168,7 +168,7 @@ const customStructures: Structure[] = [
         properties: [
             {
                 name: "eventName",
-                type: { kind: "stringLiteral", value: "errorResponse" },
+                type: { kind: "stringLiteral", value: "languageServer.errorResponse" },
                 documentation: "The name of the telemetry event.",
             },
             {
@@ -642,7 +642,7 @@ function resolveType(type: Type): GoType {
         }
 
         case "stringLiteral": {
-            const typeName = `StringLiteral${titleCase(type.value)}`;
+            const typeName = `StringLiteral${type.value.split(".").map(titleCase).join("")}`;
             typeInfo.literalTypes.set(String(type.value), typeName);
             return { name: typeName, needsPointer: false };
         }

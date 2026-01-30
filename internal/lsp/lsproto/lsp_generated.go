@@ -21878,7 +21878,7 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 // A RequestFailureTelemetryEvent is sent when a request fails and the server recovers.
 type RequestFailureTelemetryEvent struct {
 	// The name of the telemetry event.
-	EventName StringLiteralErrorResponse `json:"eventName"`
+	EventName StringLiteralLanguageServerErrorResponse `json:"eventName"`
 
 	// Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).
 	TelemetryPurpose StringLiteralError `json:"telemetryPurpose"`
@@ -29294,24 +29294,24 @@ func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
-// StringLiteralErrorResponse is a literal type for "errorResponse"
-type StringLiteralErrorResponse struct{}
+// StringLiteralLanguageServerErrorResponse is a literal type for "languageServer.errorResponse"
+type StringLiteralLanguageServerErrorResponse struct{}
 
-var _ json.MarshalerTo = StringLiteralErrorResponse{}
+var _ json.MarshalerTo = StringLiteralLanguageServerErrorResponse{}
 
-func (o StringLiteralErrorResponse) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteValue(jsontext.Value(`"errorResponse"`))
+func (o StringLiteralLanguageServerErrorResponse) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"languageServer.errorResponse"`))
 }
 
-var _ json.UnmarshalerFrom = &StringLiteralErrorResponse{}
+var _ json.UnmarshalerFrom = &StringLiteralLanguageServerErrorResponse{}
 
-func (o *StringLiteralErrorResponse) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (o *StringLiteralLanguageServerErrorResponse) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	v, err := dec.ReadValue()
 	if err != nil {
 		return err
 	}
-	if string(v) != `"errorResponse"` {
-		return fmt.Errorf("expected StringLiteralErrorResponse value %s, got %s", `"errorResponse"`, v)
+	if string(v) != `"languageServer.errorResponse"` {
+		return fmt.Errorf("expected StringLiteralLanguageServerErrorResponse value %s, got %s", `"languageServer.errorResponse"`, v)
 	}
 	return nil
 }
