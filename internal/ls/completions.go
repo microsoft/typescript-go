@@ -1914,6 +1914,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			false, /*preselect*/
 			autoImport.Fix.ModuleSpecifier,
 			autoImport.Fix.AutoImportFix,
+			nil, /*detail*/
 		)
 
 		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
@@ -2213,7 +2214,8 @@ func (l *LanguageService) createCompletionItem(
 		hasAction,
 		preselect,
 		source,
-		nil,
+		nil, /*autoImportFix*/
+		nil, /*detail*/
 	)
 }
 
@@ -4299,6 +4301,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		false, /*preselect*/
 		"",    /*source*/
 		nil,   /*autoImportEntryData*/ // !!! jsx autoimports
+		nil,   /*detail*/
 	)
 	items := []*lsproto.CompletionItem{item}
 	itemDefaults := l.setItemDefaults(
@@ -4336,6 +4339,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	preselect bool,
 	source string,
 	autoImportFix *lsproto.AutoImportFix,
+	detail *string,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	data := &lsproto.CompletionItemData{
@@ -4368,7 +4372,6 @@ func (l *LanguageService) createLSPCompletionItem(
 
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
-	var detail *string
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
 		if insertText == "" {
@@ -4381,18 +4384,6 @@ func (l *LanguageService) createLSPCompletionItem(
 	}
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
-	}
-	if kind == lsproto.CompletionItemKindFile {
-		for _, extensionModifier := range lsutil.FileExtensionKindModifiers {
-			if kindModifiers.Has(extensionModifier) {
-				if strings.HasSuffix(name, string(extensionModifier)) {
-					detail = ptrTo(name)
-				} else {
-					detail = ptrTo(name + string(extensionModifier))
-				}
-				break
-			}
-		}
 	}
 
 	if hasAction && source != "" {
@@ -4485,6 +4476,7 @@ func (l *LanguageService) getLabelStatementCompletions(
 					false, /*preselect*/
 					"",    /*source*/
 					nil,   /*autoImportEntryData*/
+					nil,   /*detail*/
 				))
 			}
 		}
