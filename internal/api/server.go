@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -20,6 +21,9 @@ type StdioServerOptions struct {
 	DefaultLibraryPath string
 	// FS is the filesystem to use. If nil, the OS filesystem is used.
 	FS vfs.FS
+	// Callbacks specifies which filesystem operations should be delegated
+	// to the client (e.g., "readFile", "fileExists"). Empty means no callbacks.
+	Callbacks []string
 }
 
 // StdioServer runs an API session over STDIO using MessagePack protocol.
@@ -43,13 +47,18 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 		baseFS = bundled.WrapFS(osvfs.FS())
 	}
 
-	// Wrap the base FS with CallbackFS to support client-provided virtual filesystems
-	callbackFS := NewCallbackFS(baseFS)
+	// Wrap the base FS with CallbackFS if callbacks are requested
+	var callbackFS *CallbackFS
+	var fs vfs.FS = baseFS
+	if len(options.Callbacks) > 0 {
+		callbackFS = NewCallbackFS(baseFS, options.Callbacks)
+		fs = callbackFS
+	}
 
 	projectSession := project.NewSession(&project.SessionInit{
 		BackgroundCtx: context.Background(),
 		Logger:        nil, // TODO: Add logging support
-		FS:            callbackFS,
+		FS:            fs,
 		Options: &project.SessionOptions{
 			CurrentDirectory:   options.Cwd,
 			DefaultLibraryPath: options.DefaultLibraryPath,
@@ -59,7 +68,6 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 	})
 
 	session := NewSession(projectSession, &SessionOptions{
-		CallbackFS:         callbackFS,
 		UseBinaryResponses: true,
 		SyncRequests:       true, // msgpack protocol requires synchronous request handling
 	})
@@ -75,10 +83,25 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 // Run starts the server and blocks until the connection closes.
 func (s *StdioServer) Run(ctx context.Context) error {
 	transport := NewStdioTransport(s.options.In, s.options.Out)
+	defer transport.Close()
+	defer s.session.Close()
 
-	return s.session.RunWithProtocol(ctx, transport, func(rw io.ReadWriter) Protocol {
-		return NewMessagePackProtocol(rw)
-	})
+	// Accept connection from transport
+	rwc, err := transport.Accept()
+	if err != nil {
+		return fmt.Errorf("failed to accept connection: %w", err)
+	}
+
+	// Create protocol and connection
+	protocol := NewMessagePackProtocol(rwc)
+	conn := NewSyncConn(rwc, protocol, s.session)
+
+	// If callbacks are enabled, set the connection on the FS
+	if s.callbackFS != nil {
+		s.callbackFS.SetConnection(ctx, conn)
+	}
+
+	return conn.Run(ctx)
 }
 
 // Close closes the server and releases resources.

@@ -80,8 +80,7 @@ func createHandle[T any](prefix rune, id any) Handle[T] {
 }
 
 const (
-	MethodConfigure Method = "configure"
-	MethodRelease   Method = "release"
+	MethodRelease Method = "release"
 
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodLoadProject              Method = "loadProject"
@@ -97,7 +96,6 @@ const (
 
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodRelease:                  unmarshallerFor[string],
-	MethodConfigure:                unmarshallerFor[ConfigureParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
@@ -108,11 +106,6 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
 	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
-}
-
-type ConfigureParams struct {
-	Callbacks []string `json:"callbacks"`
-	LogFile   string   `json:"logFile"`
 }
 
 type ParseConfigFileParams struct {

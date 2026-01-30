@@ -2,79 +2,77 @@ package api
 
 import (
 	"context"
-	"sync"
+	"fmt"
 	"time"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-// CallbackFS wraps a base filesystem and can delegate certain operations
+// CallbackFS wraps a base filesystem and delegates certain operations
 // to the client via RPC callbacks. This allows the API client to provide
 // a virtual filesystem (e.g., in-memory files for testing).
+//
+// The callbacks to enable are specified at construction time via the
+// --callbacks CLI flag. The connection is set via SetConnection after
+// the transport connection is established.
 type CallbackFS struct {
-	base vfs.FS
-
-	mu               sync.RWMutex
-	conn             Conn
-	ctx              context.Context
+	base             vfs.FS
 	enabledCallbacks map[string]bool
+
+	// conn and ctx are set after connection is established
+	conn Conn
+	ctx  context.Context
 }
+
+// Callback names that can be enabled
+const (
+	CbReadFile             = "readFile"
+	CbFileExists           = "fileExists"
+	CbDirectoryExists      = "directoryExists"
+	CbGetAccessibleEntries = "getAccessibleEntries"
+	CbRealpath             = "realpath"
+)
 
 // NewCallbackFS creates a new CallbackFS wrapping the given base filesystem.
-func NewCallbackFS(base vfs.FS) *CallbackFS {
+// The callbacks slice specifies which filesystem operations should be delegated
+// to the client (e.g., "readFile", "fileExists").
+func NewCallbackFS(base vfs.FS, callbacks []string) *CallbackFS {
+	enabled := make(map[string]bool, len(callbacks))
+	for _, cb := range callbacks {
+		enabled[cb] = true
+	}
 	return &CallbackFS{
 		base:             base,
-		enabledCallbacks: make(map[string]bool),
+		enabledCallbacks: enabled,
 	}
 }
 
-// Configure enables the specified callbacks and sets the connection for RPC calls.
-// This should be called when the client sends the "configure" message.
-func (fs *CallbackFS) Configure(ctx context.Context, conn Conn, callbacks []string) {
-	fs.mu.Lock()
-	defer fs.mu.Unlock()
+// SetConnection sets the RPC connection for callbacks.
+// This must be called after the transport connection is established
+// but before any filesystem operations that need callbacks.
+func (fs *CallbackFS) SetConnection(ctx context.Context, conn Conn) {
 	fs.ctx = ctx
 	fs.conn = conn
-	fs.enabledCallbacks = make(map[string]bool)
-	for _, cb := range callbacks {
-		fs.enabledCallbacks[cb] = true
-	}
 }
 
 // isEnabled returns true if the named callback is enabled.
 func (fs *CallbackFS) isEnabled(name string) bool {
-	fs.mu.RLock()
-	defer fs.mu.RUnlock()
 	return fs.enabledCallbacks[name]
 }
 
 // call invokes a callback on the client and returns the result.
 func (fs *CallbackFS) call(name string, arg any) ([]byte, error) {
-	fs.mu.RLock()
-	conn := fs.conn
-	ctx := fs.ctx
-	fs.mu.RUnlock()
-
-	if conn == nil {
-		return nil, nil
+	if fs.conn == nil {
+		return nil, fmt.Errorf("CallbackFS: %s called before connection set", name)
 	}
 
-	result, err := conn.Call(ctx, name, arg)
+	result, err := fs.conn.Call(fs.ctx, name, arg)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
-
-// Callback names
-const (
-	cbReadFile             = "readFile"
-	cbFileExists           = "fileExists"
-	cbDirectoryExists      = "directoryExists"
-	cbGetAccessibleEntries = "getAccessibleEntries"
-	cbRealpath             = "realpath"
-)
 
 // UseCaseSensitiveFileNames implements vfs.FS.
 func (fs *CallbackFS) UseCaseSensitiveFileNames() bool {
@@ -83,81 +81,74 @@ func (fs *CallbackFS) UseCaseSensitiveFileNames() bool {
 
 // ReadFile implements vfs.FS.
 func (fs *CallbackFS) ReadFile(path string) (contents string, ok bool) {
-	if fs.isEnabled(cbReadFile) {
-		result, err := fs.call(cbReadFile, path)
+	if fs.isEnabled(CbReadFile) {
+		result, err := fs.call(CbReadFile, path)
 		if err != nil {
+			panic(err)
+		}
+		if string(result) == "null" {
 			return "", false
 		}
-		if result == nil || len(result) == 0 || string(result) == "null" {
-			return "", false
+		if len(result) > 0 {
+			var content string
+			if err := json.Unmarshal(result, &content); err != nil {
+				panic(err)
+			}
+			return content, true
 		}
-		var content string
-		if err := json.Unmarshal(result, &content); err != nil {
-			return "", false
-		}
-		return content, true
 	}
 	return fs.base.ReadFile(path)
 }
 
 // FileExists implements vfs.FS.
 func (fs *CallbackFS) FileExists(path string) bool {
-	if fs.isEnabled(cbFileExists) {
-		result, err := fs.call(cbFileExists, path)
+	if fs.isEnabled(CbFileExists) {
+		result, err := fs.call(CbFileExists, path)
 		if err != nil {
-			return false
+			panic(err)
 		}
-		if result == nil || len(result) == 0 {
-			return false
+		if len(result) > 0 {
+			return string(result) == "true"
 		}
-		var exists bool
-		if err := json.Unmarshal(result, &exists); err != nil {
-			return false
-		}
-		return exists
 	}
 	return fs.base.FileExists(path)
 }
 
 // DirectoryExists implements vfs.FS.
 func (fs *CallbackFS) DirectoryExists(path string) bool {
-	if fs.isEnabled(cbDirectoryExists) {
-		result, err := fs.call(cbDirectoryExists, path)
+	if fs.isEnabled(CbDirectoryExists) {
+		result, err := fs.call(CbDirectoryExists, path)
 		if err != nil {
-			return false
+			panic(err)
 		}
-		if result == nil || len(result) == 0 {
-			return false
+		if len(result) > 0 {
+			return string(result) == "true"
 		}
-		var exists bool
-		if err := json.Unmarshal(result, &exists); err != nil {
-			return false
-		}
-		return exists
 	}
 	return fs.base.DirectoryExists(path)
 }
 
 // GetAccessibleEntries implements vfs.FS.
 func (fs *CallbackFS) GetAccessibleEntries(path string) vfs.Entries {
-	if fs.isEnabled(cbGetAccessibleEntries) {
-		result, err := fs.call(cbGetAccessibleEntries, path)
+	if fs.isEnabled(CbGetAccessibleEntries) {
+		result, err := fs.call(CbGetAccessibleEntries, path)
 		if err != nil {
-			return vfs.Entries{}
+			panic(err)
 		}
-		if result == nil || len(result) == 0 || string(result) == "null" {
-			return vfs.Entries{}
-		}
-		var entries struct {
-			Files       []string `json:"files"`
-			Directories []string `json:"directories"`
-		}
-		if err := json.Unmarshal(result, &entries); err != nil {
-			return vfs.Entries{}
-		}
-		return vfs.Entries{
-			Files:       entries.Files,
-			Directories: entries.Directories,
+		if len(result) > 0 {
+			var rawEntries *struct {
+				Files       []string `json:"files"`
+				Directories []string `json:"directories"`
+			}
+			if err := json.Unmarshal(result, &rawEntries); err != nil {
+				panic(err)
+			}
+			if rawEntries != nil {
+				return vfs.Entries{
+					Files:       rawEntries.Files,
+					Directories: rawEntries.Directories,
+				}
+			}
 		}
 	}
 	return fs.base.GetAccessibleEntries(path)
@@ -165,19 +156,18 @@ func (fs *CallbackFS) GetAccessibleEntries(path string) vfs.Entries {
 
 // Realpath implements vfs.FS.
 func (fs *CallbackFS) Realpath(path string) string {
-	if fs.isEnabled(cbRealpath) {
-		result, err := fs.call(cbRealpath, path)
+	if fs.isEnabled(CbRealpath) {
+		result, err := fs.call(CbRealpath, path)
 		if err != nil {
-			return path
+			panic(err)
 		}
-		if result == nil || len(result) == 0 || string(result) == "null" {
-			return path
+		if len(result) > 0 {
+			var realpath string
+			if err := json.Unmarshal(result, &realpath); err != nil {
+				panic(err)
+			}
+			return realpath
 		}
-		var realpath string
-		if err := json.Unmarshal(result, &realpath); err != nil {
-			return path
-		}
-		return realpath
 	}
 	return fs.base.Realpath(path)
 }

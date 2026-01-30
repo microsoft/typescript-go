@@ -53,6 +53,7 @@ func (c *SyncConn) Run(ctx context.Context) error {
 		case <-c.closedChan:
 			return ErrConnClosed
 		default:
+			// Non-blocking check - continue to read messages
 		}
 
 		c.mu.Lock()
@@ -154,6 +155,7 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontex
 		case <-c.closedChan:
 			return nil, ErrConnClosed
 		default:
+			// Non-blocking check - continue to read response
 		}
 
 		msg, err := c.protocol.ReadMessage()

@@ -60,6 +60,7 @@ func (c *AsyncConn) Run(ctx context.Context) error {
 		case <-c.closedChan:
 			return ErrConnClosed
 		default:
+			// Non-blocking check - continue to read messages
 		}
 
 		msg, err := c.protocol.ReadMessage()

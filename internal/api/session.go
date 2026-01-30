@@ -35,10 +35,6 @@ type Session struct {
 	// conn is the connection for this session, set when Run is called.
 	conn Conn
 
-	// callbackFS is the callback filesystem for this session, if any.
-	// It is configured when the client sends the "configure" message.
-	callbackFS *CallbackFS
-
 	// useBinaryResponses controls whether certain responses (like getSourceFile)
 	// return raw binary data instead of base64-encoded JSON.
 	// This is set to true when using MessagePackProtocol.
@@ -73,8 +69,6 @@ var _ Handler = (*Session)(nil)
 type SessionOptions struct {
 	// OnClose is called when the session is closed.
 	OnClose func()
-	// CallbackFS is the callback filesystem for virtual FS support.
-	CallbackFS *CallbackFS
 	// UseBinaryResponses enables binary responses for msgpack protocol.
 	UseBinaryResponses bool
 	// SyncRequests enables synchronous request handling.
@@ -93,7 +87,6 @@ func NewSession(projectSession *project.Session, options *SessionOptions) *Sessi
 	}
 	if options != nil {
 		s.onClose = options.OnClose
-		s.callbackFS = options.CallbackFS
 		s.useBinaryResponses = options.UseBinaryResponses
 		s.syncRequests = options.SyncRequests
 	}
@@ -162,8 +155,6 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params jsont
 		return s.handleGetTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodGetTypesOfSymbols):
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
-	case string(MethodConfigure):
-		return s.handleConfigure(ctx, parsed.(*ConfigureParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -204,16 +195,6 @@ func (s *Session) handleRelease(ctx context.Context, handle *string) (any, error
 	default:
 		return nil, fmt.Errorf("%w: unknown handle type %q", ErrClientError, prefix)
 	}
-}
-
-// handleConfigure handles the configure method.
-// This enables callbacks for filesystem operations (readFile, fileExists, etc.)
-// allowing the client to provide a virtual filesystem.
-func (s *Session) handleConfigure(ctx context.Context, params *ConfigureParams) (any, error) {
-	if s.callbackFS != nil && s.conn != nil {
-		s.callbackFS.Configure(ctx, s.conn, params.Callbacks)
-	}
-	return nil, nil
 }
 
 // handleGetDefaultProjectForFile returns the default project for a given file.
@@ -265,7 +246,7 @@ func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectPara
 	configFileName := s.toAbsoluteFileName(params.ConfigFileName)
 	proj, err := s.projectSession.OpenProject(ctx, configFileName)
 	if err != nil {
-		return nil, fmt.Errorf("%w: failed to load project: %v", ErrClientError, err)
+		return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
 	}
 
 	// Refresh snapshot after loading a new project
@@ -663,6 +644,7 @@ func (s *Session) RunWithProtocol(ctx context.Context, transport Transport, prot
 	} else {
 		s.conn = NewAsyncConnWithProtocol(rwc, protocol, s)
 	}
+
 	return s.conn.Run(ctx)
 }
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -16,11 +17,18 @@ import (
 func runAPI(args []string) int {
 	flag := flag.NewFlagSet("api", flag.ContinueOnError)
 	cwd := flag.String("cwd", core.Must(os.Getwd()), "current working directory")
+	callbacks := flag.String("callbacks", "", "comma-separated list of FS callbacks to enable (readFile,fileExists,directoryExists,getAccessibleEntries,realpath)")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
 
 	defaultLibraryPath := bundled.LibPath()
+
+	// Parse callbacks list
+	var callbacksList []string
+	if *callbacks != "" {
+		callbacksList = strings.Split(*callbacks, ",")
+	}
 
 	s := api.NewStdioServer(&api.StdioServerOptions{
 		In:                 os.Stdin,
@@ -28,6 +36,7 @@ func runAPI(args []string) int {
 		Err:                os.Stderr,
 		Cwd:                *cwd,
 		DefaultLibraryPath: defaultLibraryPath,
+		Callbacks:          callbacksList,
 	})
 	defer s.Close()
 

@@ -10,7 +10,7 @@ import (
 // newPipeListener creates a Unix domain socket listener.
 func newPipeListener(path string) (net.Listener, error) {
 	// Remove any existing socket file
-	_ = os.Remove(path)
+	_ = os.Remove(path) //nolint:forbidigo
 	return net.Listen("unix", path)
 }
 
