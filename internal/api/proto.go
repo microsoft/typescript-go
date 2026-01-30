@@ -97,6 +97,7 @@ const (
 
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodRelease:                  unmarshallerFor[string],
+	MethodConfigure:                unmarshallerFor[ConfigureParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],

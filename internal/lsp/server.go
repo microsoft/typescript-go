@@ -1251,8 +1251,10 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 	}
 
 	var apiSession *api.Session
-	apiSession = api.NewSession(s.session, func() {
-		s.removeAPISession(apiSession.ID())
+	apiSession = api.NewSession(s.session, &api.SessionOptions{
+		OnClose: func() {
+			s.removeAPISession(apiSession.ID())
+		},
 	})
 
 	// Use provided pipe path or generate a unique one

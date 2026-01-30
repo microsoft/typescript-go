@@ -134,7 +134,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 }
                 node.forEachChild(visit);
             });
-            project.getSymbolAtPosition("program.ts", positions);
+            project.getSymbolsAtPositions("program.ts", positions);
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             file.forEachChild(function visit(node) {
@@ -152,7 +152,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 }
                 node.forEachChild(visit);
             });
-            project.getSymbolAtLocation(nodes);
+            project.getSymbolsAtLocations(nodes);
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             const checker = tsProgram.getTypeChecker();

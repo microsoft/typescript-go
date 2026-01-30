@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"sync"
 	"sync/atomic"
 
@@ -15,6 +16,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var sessionIDCounter atomic.Uint64
@@ -30,7 +33,20 @@ type Session struct {
 	onClose        func()
 
 	// conn is the connection for this session, set when Run is called.
-	conn *Conn
+	conn Conn
+
+	// callbackFS is the callback filesystem for this session, if any.
+	// It is configured when the client sends the "configure" message.
+	callbackFS *CallbackFS
+
+	// useBinaryResponses controls whether certain responses (like getSourceFile)
+	// return raw binary data instead of base64-encoded JSON.
+	// This is set to true when using MessagePackProtocol.
+	useBinaryResponses bool
+
+	// syncRequests enables synchronous request handling.
+	// This is required for protocols like msgpack that use method names as response IDs.
+	syncRequests bool
 
 	// snapshot is the current snapshot for this session.
 	// It is retained until the client requests an update.
@@ -53,18 +69,35 @@ type Session struct {
 // Ensure Session implements Handler
 var _ Handler = (*Session)(nil)
 
+// SessionOptions configures an API session.
+type SessionOptions struct {
+	// OnClose is called when the session is closed.
+	OnClose func()
+	// CallbackFS is the callback filesystem for virtual FS support.
+	CallbackFS *CallbackFS
+	// UseBinaryResponses enables binary responses for msgpack protocol.
+	UseBinaryResponses bool
+	// SyncRequests enables synchronous request handling.
+	// This is required for protocols like msgpack that use method names as response IDs.
+	SyncRequests bool
+}
+
 // NewSession creates a new API session with the given project session.
-// The onClose callback is called when the session is closed to allow
-// cleanup (e.g., removing from a server's session map).
-func NewSession(projectSession *project.Session, onClose func()) *Session {
+func NewSession(projectSession *project.Session, options *SessionOptions) *Session {
 	id := sessionIDCounter.Add(1)
-	return &Session{
+	s := &Session{
 		id:             formatSessionID(id),
 		projectSession: projectSession,
-		onClose:        onClose,
 		symbolRegistry: make(map[Handle[ast.Symbol]]*ast.Symbol),
 		typeRegistry:   make(map[Handle[checker.Type]]*checker.Type),
 	}
+	if options != nil {
+		s.onClose = options.OnClose
+		s.callbackFS = options.CallbackFS
+		s.useBinaryResponses = options.UseBinaryResponses
+		s.syncRequests = options.SyncRequests
+	}
+	return s
 }
 
 // ID returns the unique identifier for this session.
@@ -86,6 +119,18 @@ func (s *Session) ensureSnapshot() {
 
 // HandleRequest implements Handler.
 func (s *Session) HandleRequest(ctx context.Context, method string, params jsontext.Value) (any, error) {
+	// Handle simple methods that don't need param parsing
+	switch method {
+	case "echo":
+		// Return raw binary for msgpack protocol compatibility
+		if s.useBinaryResponses {
+			return RawBinary(params), nil
+		}
+		return params, nil
+	case "ping":
+		return "pong", nil
+	}
+
 	parsed, err := unmarshalPayload(method, params)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrInvalidRequest, err)
@@ -97,6 +142,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params jsont
 	switch method {
 	case string(MethodRelease):
 		return s.handleRelease(ctx, parsed.(*string))
+	case string(MethodParseConfigFile):
+		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
+	case string(MethodLoadProject):
+		return s.handleLoadProject(ctx, parsed.(*LoadProjectParams))
 	case string(MethodGetDefaultProjectForFile):
 		return s.handleGetDefaultProjectForFile(ctx, parsed.(*GetDefaultProjectForFileParams))
 	case string(MethodGetSourceFile):
@@ -113,8 +162,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params jsont
 		return s.handleGetTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodGetTypesOfSymbols):
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
-	case "ping":
-		return "pong", nil
+	case string(MethodConfigure):
+		return s.handleConfigure(ctx, parsed.(*ConfigureParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -157,6 +206,16 @@ func (s *Session) handleRelease(ctx context.Context, handle *string) (any, error
 	}
 }
 
+// handleConfigure handles the configure method.
+// This enables callbacks for filesystem operations (readFile, fileExists, etc.)
+// allowing the client to provide a virtual filesystem.
+func (s *Session) handleConfigure(ctx context.Context, params *ConfigureParams) (any, error) {
+	if s.callbackFS != nil && s.conn != nil {
+		s.callbackFS.Configure(ctx, s.conn, params.Callbacks)
+	}
+	return nil, nil
+}
+
 // handleGetDefaultProjectForFile returns the default project for a given file.
 func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *GetDefaultProjectForFileParams) (*ProjectResponse, error) {
 	uri := lsproto.DocumentUri("file://" + params.FileName)
@@ -169,8 +228,57 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 	return NewProjectResponse(proj), nil
 }
 
+// handleParseConfigFile parses a tsconfig.json file and returns its contents.
+func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfigFileParams) (*ConfigFileResponse, error) {
+	configFileName := s.toAbsoluteFileName(params.FileName)
+	configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)
+	if !ok {
+		return nil, fmt.Errorf("%w: could not read file %q", ErrClientError, configFileName)
+	}
+
+	configDir := tspath.GetDirectoryPath(configFileName)
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(
+		configFileName,
+		s.toPath(configFileName),
+		configFileContent,
+	)
+	parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		s.projectSession,
+		configDir,
+		nil, /*existingOptions*/
+		nil, /*existingOptionsRaw*/
+		configFileName,
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+
+	return &ConfigFileResponse{
+		FileNames: parsedCommandLine.FileNames(),
+		Options:   parsedCommandLine.CompilerOptions(),
+	}, nil
+}
+
+// handleLoadProject explicitly loads a TypeScript project from a config file.
+func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectParams) (*ProjectResponse, error) {
+	configFileName := s.toAbsoluteFileName(params.ConfigFileName)
+	proj, err := s.projectSession.OpenProject(ctx, configFileName)
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to load project: %v", ErrClientError, err)
+	}
+
+	// Refresh snapshot after loading a new project
+	if s.snapshotRelease != nil {
+		s.snapshotRelease()
+	}
+	s.snapshot, s.snapshotRelease = s.projectSession.Snapshot()
+
+	return NewProjectResponse(proj), nil
+}
+
 // handleGetSourceFile returns a source file from a project.
-func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFileParams) (*SourceFileResponse, error) {
+func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
 	projectName := parseProjectHandle(params.Project)
 	proj := s.snapshot.ProjectCollection.GetProjectByPath(projectName)
 	if proj == nil {
@@ -194,7 +302,10 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
 
-	// Base64 encode for JSON transport
+	// Return raw binary for msgpack protocol, or base64 for JSON
+	if s.useBinaryResponses {
+		return RawBinary(data), nil
+	}
 	return &SourceFileResponse{
 		Data: base64.StdEncoding.EncodeToString(data),
 	}, nil
@@ -520,7 +631,17 @@ func (s *Session) Close() {
 // Run accepts a connection on the transport, runs the session until
 // the connection closes or an error occurs, then cleans up resources.
 // This is a blocking call that should be run in a goroutine.
+// It uses JSONRPCProtocol by default.
 func (s *Session) Run(ctx context.Context, transport Transport) error {
+	return s.RunWithProtocol(ctx, transport, nil)
+}
+
+// ProtocolFactory creates a Protocol for a given ReadWriter.
+type ProtocolFactory func(rw io.ReadWriter) Protocol
+
+// RunWithProtocol is like Run but allows specifying a custom protocol.
+// If protocolFactory is nil, JSONRPCProtocol is used.
+func (s *Session) RunWithProtocol(ctx context.Context, transport Transport, protocolFactory ProtocolFactory) error {
 	defer transport.Close()
 	defer s.Close()
 
@@ -530,15 +651,36 @@ func (s *Session) Run(ctx context.Context, transport Transport) error {
 		return fmt.Errorf("failed to accept connection: %w", err)
 	}
 
-	s.conn = NewConn(rwc, s)
+	var protocol Protocol
+	if protocolFactory != nil {
+		protocol = protocolFactory(rwc)
+	} else {
+		protocol = NewJSONRPCProtocol(rwc)
+	}
+
+	if s.syncRequests {
+		s.conn = NewSyncConn(rwc, protocol, s)
+	} else {
+		s.conn = NewAsyncConnWithProtocol(rwc, protocol, s)
+	}
 	return s.conn.Run(ctx)
 }
 
 // Conn returns the connection for this session, or nil if not yet connected.
-func (s *Session) Conn() *Conn {
+func (s *Session) Conn() Conn {
 	return s.conn
 }
 
 func formatSessionID(id uint64) string {
 	return fmt.Sprintf("api-session-%d", id)
+}
+
+// toAbsoluteFileName converts a file name to an absolute path.
+func (s *Session) toAbsoluteFileName(fileName string) string {
+	return tspath.GetNormalizedAbsolutePath(fileName, s.projectSession.GetCurrentDirectory())
+}
+
+// toPath converts a file name to a normalized path.
+func (s *Session) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, s.projectSession.GetCurrentDirectory(), s.projectSession.FS().UseCaseSensitiveFileNames())
 }

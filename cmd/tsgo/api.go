@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -21,15 +22,16 @@ func runAPI(args []string) int {
 
 	defaultLibraryPath := bundled.LibPath()
 
-	s := api.NewServer(&api.ServerOptions{
+	s := api.NewStdioServer(&api.StdioServerOptions{
 		In:                 os.Stdin,
 		Out:                os.Stdout,
 		Err:                os.Stderr,
 		Cwd:                *cwd,
 		DefaultLibraryPath: defaultLibraryPath,
 	})
+	defer s.Close()
 
-	if err := s.Run(); err != nil && !errors.Is(err, io.EOF) {
+	if err := s.Run(context.Background()); err != nil && !errors.Is(err, io.EOF) {
 		fmt.Println(err)
 		return 1
 	}
