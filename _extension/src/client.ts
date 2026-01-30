@@ -309,9 +309,19 @@ class ReportingErrorHandler implements ErrorHandler {
             errorAction = ErrorAction.Continue;
         }
 
+        let actionString = "";
+        switch (errorAction) {
+            case ErrorAction.Continue:
+                actionString = "continue";
+                break;
+            case ErrorAction.Shutdown:
+                actionString = "shutdown";
+                break;
+            default:
+                const _: never = errorAction;
+        }
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionError", {
-            // TODO: action instead of causedServerShutdown
-            causedServerShutdown: String(errorAction === ErrorAction.Shutdown),
+            resultingAction: actionString,
         });
 
         return { action: errorAction };
@@ -335,9 +345,19 @@ class ReportingErrorHandler implements ErrorHandler {
             }
         }
 
+        let actionString = "";
+        switch (resultingAction) {
+            case CloseAction.DoNotRestart:
+                actionString = "doNotRestart";
+                break;
+            case CloseAction.Restart:
+                actionString = "restart";
+                break;
+            default:
+                const _: never = resultingAction;
+        }
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
-            // TODO: action instead of exceededMaxRestarts
-            exceededMaxRestarts: String(resultingAction === CloseAction.DoNotRestart),
+            resultingAction: actionString,
         });
 
         if (resultingAction === CloseAction.DoNotRestart) {

@@ -51,11 +51,11 @@ export type LSServerStart = {
 };
 
 export type LSConnectionError = {
-    causedServerShutdown: string;
+    resultingAction: string;
 };
 
 export type LSServerConnectionClosed = {
-    exceededMaxRestarts: string;
+    resultingAction: string;
 };
 
 export type LSErrorResponse = {
