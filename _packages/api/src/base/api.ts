@@ -85,31 +85,19 @@ export interface Project<Async extends boolean> {
      * Get the symbol at a specific location in a source file.
      */
     getSymbolAtLocation(node: Node): MaybeAsync<Async, Symbol<Async> | undefined>;
-
-    /**
-     * Get symbols at multiple locations.
-     */
-    getSymbolsAtLocations(nodes: readonly Node[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
+    getSymbolAtLocation(nodes: readonly Node[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
     /**
      * Get the symbol at a specific position in a file.
      */
     getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
-
-    /**
-     * Get symbols at multiple positions in a file.
-     */
-    getSymbolsAtPositions(fileName: string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
+    getSymbolAtPosition(fileName: string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
     /**
      * Get the type of a symbol.
      */
     getTypeOfSymbol(symbol: Symbol<Async>): MaybeAsync<Async, Type<Async> | undefined>;
-
-    /**
-     * Get types of multiple symbols.
-     */
-    getTypesOfSymbols(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
+    getTypeOfSymbol(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
 }
 
 /**

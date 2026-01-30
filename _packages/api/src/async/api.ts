@@ -148,60 +148,60 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
         return new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
     }
 
-    async getSymbolAtLocation(node: Node): Promise<AsyncSymbol | undefined> {
+    getSymbolAtLocation(node: Node): Promise<AsyncSymbol | undefined>;
+    getSymbolAtLocation(nodes: readonly Node[]): Promise<(AsyncSymbol | undefined)[]>;
+    async getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Promise<AsyncSymbol | (AsyncSymbol | undefined)[] | undefined> {
         this.ensureNotDisposed();
+        if (Array.isArray(nodeOrNodes)) {
+            const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtLocations", {
+                project: this.id,
+                locations: nodeOrNodes.map(node => node.id),
+            });
+            return data.map(d => d ? this.objectRegistry.getSymbol(d) : undefined);
+        }
         const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtLocation", {
             project: this.id,
-            location: node.id,
+            location: (nodeOrNodes as Node).id,
         });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    async getSymbolsAtLocations(nodes: readonly Node[]): Promise<(AsyncSymbol | undefined)[]> {
+    getSymbolAtPosition(fileName: string, position: number): Promise<AsyncSymbol | undefined>;
+    getSymbolAtPosition(fileName: string, positions: readonly number[]): Promise<(AsyncSymbol | undefined)[]>;
+    async getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Promise<AsyncSymbol | (AsyncSymbol | undefined)[] | undefined> {
         this.ensureNotDisposed();
-        const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtLocations", {
-            project: this.id,
-            locations: nodes.map(node => node.id),
-        });
-        return data.map(d => d ? this.objectRegistry.getSymbol(d) : undefined);
-    }
-
-    async getSymbolAtPosition(fileName: string, position: number): Promise<AsyncSymbol | undefined> {
-        this.ensureNotDisposed();
-        const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtPosition", {
-            project: this.id,
-            fileName,
-            position,
-        });
-        return data ? this.objectRegistry.getSymbol(data) : undefined;
-    }
-
-    async getSymbolsAtPositions(fileName: string, positions: readonly number[]): Promise<(AsyncSymbol | undefined)[]> {
-        this.ensureNotDisposed();
+        if (typeof positionOrPositions === "number") {
+            const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtPosition", {
+                project: this.id,
+                fileName,
+                position: positionOrPositions,
+            });
+            return data ? this.objectRegistry.getSymbol(data) : undefined;
+        }
         const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtPositions", {
             project: this.id,
             fileName,
-            positions,
+            positions: positionOrPositions,
         });
         return data.map(d => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
-    async getTypeOfSymbol(symbol: AsyncSymbol): Promise<AsyncType | undefined> {
+    getTypeOfSymbol(symbol: AsyncSymbol): Promise<AsyncType | undefined>;
+    getTypeOfSymbol(symbols: readonly AsyncSymbol[]): Promise<(AsyncType | undefined)[]>;
+    async getTypeOfSymbol(symbolOrSymbols: AsyncSymbol | readonly AsyncSymbol[]): Promise<AsyncType | (AsyncType | undefined)[] | undefined> {
         this.ensureNotDisposed();
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = await this.client.apiRequest<(TypeResponse | null)[]>("getTypesOfSymbols", {
+                project: this.id,
+                symbols: symbolOrSymbols.map(s => s.ensureNotDisposed().id),
+            });
+            return data.map(d => d ? this.objectRegistry.getType(d) : undefined);
+        }
         const data = await this.client.apiRequest<TypeResponse | null>("getTypeOfSymbol", {
             project: this.id,
-            symbol: symbol.ensureNotDisposed().id,
+            symbol: (symbolOrSymbols as AsyncSymbol).ensureNotDisposed().id,
         });
         return data ? this.objectRegistry.getType(data) : undefined;
-    }
-
-    async getTypesOfSymbols(symbols: readonly AsyncSymbol[]): Promise<(AsyncType | undefined)[]> {
-        this.ensureNotDisposed();
-        const data = await this.client.apiRequest<(TypeResponse | null)[]>("getTypesOfSymbols", {
-            project: this.id,
-            symbols: symbols.map(s => s.ensureNotDisposed().id),
-        });
-        return data.map(d => d ? this.objectRegistry.getType(d) : undefined);
     }
 }
 

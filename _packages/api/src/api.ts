@@ -64,7 +64,6 @@ export class API implements BaseAPI<false> {
 
     constructor(options: APIOptions) {
         this.client = new Client(options);
-        // Create registry with factories - we use arrow functions to capture `this.client` and `this.objectRegistry`
         this.objectRegistry = new ObjectRegistry<Project, Symbol, Type>(
             {
                 createProject: data => new Project(this.client, this.objectRegistry, data),
@@ -130,40 +129,40 @@ export class Project extends DisposableObject implements BaseProject<false> {
         return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
 
-    getSymbolAtLocation(node: Node): Symbol | undefined {
+    getSymbolAtLocation(node: Node): Symbol | undefined;
+    getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
+    getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | (Symbol | undefined)[] | undefined {
         this.ensureNotDisposed();
-        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: node.id });
+        if (Array.isArray(nodeOrNodes)) {
+            const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodeOrNodes.map(node => node.id) });
+            return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
+        }
+        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: (nodeOrNodes as Node).id });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolsAtLocations(nodes: readonly Node[]): (Symbol | undefined)[] {
+    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
+    getSymbolAtPosition(fileName: string, positions: readonly number[]): (Symbol | undefined)[];
+    getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
         this.ensureNotDisposed();
-        const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodes.map(node => node.id) });
+        if (typeof positionOrPositions === "number") {
+            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position: positionOrPositions });
+            return data ? this.objectRegistry.getSymbol(data) : undefined;
+        }
+        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions: positionOrPositions });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined {
+    getTypeOfSymbol(symbol: Symbol): Type | undefined;
+    getTypeOfSymbol(symbols: readonly Symbol[]): (Type | undefined)[];
+    getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Type | (Type | undefined)[] | undefined {
         this.ensureNotDisposed();
-        const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position });
-        return data ? this.objectRegistry.getSymbol(data) : undefined;
-    }
-
-    getSymbolsAtPositions(fileName: string, positions: readonly number[]): (Symbol | undefined)[] {
-        this.ensureNotDisposed();
-        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions });
-        return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
-    }
-
-    getTypeOfSymbol(symbol: Symbol): Type | undefined {
-        this.ensureNotDisposed();
-        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: symbol.ensureNotDisposed().id });
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
+            return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
+        }
+        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
         return data ? this.objectRegistry.getType(data) : undefined;
-    }
-
-    getTypesOfSymbols(symbols: readonly Symbol[]): (Type | undefined)[] {
-        this.ensureNotDisposed();
-        const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbols.map(s => s.ensureNotDisposed().id) });
-        return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
     }
 }
 
