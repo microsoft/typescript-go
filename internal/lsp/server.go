@@ -786,7 +786,7 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 				panic(err)
 			}
 
-			err = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.RequestFailureTelemetryEventOrNull{
+			err = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
 				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
 					Properties: &lsproto.RequestFailureTelemetryProperties{
 						ErrorCode:     lsproto.ErrorCodeInternalError.String(),

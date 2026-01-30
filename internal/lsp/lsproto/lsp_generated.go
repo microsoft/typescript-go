@@ -23387,15 +23387,6 @@ func (e AddAsTypeOnly) String() string {
 	}
 }
 
-type TelemetryPurpose string
-
-const (
-	// The event represents telemetry on general usage.
-	TelemetryPurposeUsage TelemetryPurpose = "usage"
-	// The event represents telemetry on errors.
-	TelemetryPurposeError TelemetryPurpose = "error"
-)
-
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
 	case MethodTextDocumentImplementation:
@@ -23577,7 +23568,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	case MethodWindowLogMessage:
 		return unmarshalPtrTo[LogMessageParams](data)
 	case MethodTelemetryEvent:
-		return unmarshalPtrTo[RequestFailureTelemetryEventOrNull](data)
+		return unmarshalPtrTo[TelemetryEvent](data)
 	case MethodTextDocumentDidOpen:
 		return unmarshalPtrTo[DidOpenTextDocumentParams](data)
 	case MethodTextDocumentDidChange:
@@ -24660,7 +24651,7 @@ var WindowShowMessageInfo = NotificationInfo[*ShowMessageParams]{Method: MethodW
 var WindowLogMessageInfo = NotificationInfo[*LogMessageParams]{Method: MethodWindowLogMessage}
 
 // Type mapping info for `telemetry/event`
-var TelemetryEventInfo = NotificationInfo[RequestFailureTelemetryEventOrNull]{Method: MethodTelemetryEvent}
+var TelemetryEventInfo = NotificationInfo[TelemetryEvent]{Method: MethodTelemetryEvent}
 
 // Type mapping info for `textDocument/didOpen`
 var TextDocumentDidOpenInfo = NotificationInfo[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
@@ -24694,6 +24685,10 @@ var CancelRequestInfo = NotificationInfo[*CancelParams]{Method: MethodCancelRequ
 
 // Type mapping info for `$/progress`
 var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
+
+// Type aliases
+
+type TelemetryEvent = RequestFailureTelemetryEventOrNull
 
 // Union types
 
@@ -27599,42 +27594,6 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *j
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
-type RequestFailureTelemetryEventOrNull struct {
-	RequestFailureTelemetryEvent *RequestFailureTelemetryEvent
-}
-
-var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
-
-func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
-	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
-
-	if o.RequestFailureTelemetryEvent != nil {
-		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
-	}
-	return enc.WriteToken(jsontext.Null)
-}
-
-var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
-
-func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	*o = RequestFailureTelemetryEventOrNull{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vRequestFailureTelemetryEvent RequestFailureTelemetryEvent
-	if err := json.Unmarshal(data, &vRequestFailureTelemetryEvent); err == nil {
-		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
-		return nil
-	}
-	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
-}
-
 type LocationOrLocationsOrDefinitionLinksOrNull struct {
 	Location        *Location
 	Locations       *[]Location
@@ -28942,6 +28901,42 @@ func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *jsontext.Decod
 		return nil
 	}
 	return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: %s", data)
+}
+
+type RequestFailureTelemetryEventOrNull struct {
+	RequestFailureTelemetryEvent *RequestFailureTelemetryEvent
+}
+
+var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
+
+	if o.RequestFailureTelemetryEvent != nil {
+		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
+	}
+	return enc.WriteToken(jsontext.Null)
+}
+
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = RequestFailureTelemetryEventOrNull{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vRequestFailureTelemetryEvent RequestFailureTelemetryEvent
+	if err := json.Unmarshal(data, &vRequestFailureTelemetryEvent); err == nil {
+		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
+		return nil
+	}
+	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {

@@ -15,6 +15,7 @@ import type {
     Request,
     Structure,
     Type,
+    TypeAlias,
 } from "./metaModelSchema.mts";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
@@ -255,14 +256,6 @@ const customEnumerations: Enumeration[] = [
             { name: "NotAllowed", value: 4, documentation: "Import cannot be marked type-only." },
         ],
     },
-    {
-        name: "TelemetryPurpose",
-        type: { kind: "base", name: "string" },
-        values: [
-            { name: "Usage", value: "usage", documentation: "The event represents telemetry on general usage." },
-            { name: "Error", value: "error", documentation: "The event represents telemetry on errors." },
-        ],
-    },
 ];
 
 // Custom requests to add to the model (tsgo-specific)
@@ -318,6 +311,19 @@ const customRequests: Request[] = [
         messageDirection: "clientToServer",
         result: { kind: "reference", name: "ProfileResult" },
         documentation: "Stops CPU profiling and saves the profile.",
+    },
+];
+
+const customTypeAliases: TypeAlias[] = [
+    {
+        name: "TelemetryEvent",
+        type: {
+            kind: "or",
+            items: [
+                { kind: "reference", name: "RequestFailureTelemetryEvent" },
+                { kind: "base", name: "null" },
+            ],
+        },
     },
 ];
 
@@ -438,11 +444,8 @@ function patchAndPreprocessModel() {
     for (const notification of model.notifications) {
         if (notification.typeName === "TelemetryEventNotification") {
             notification.params = {
-                kind: "or",
-                items: [
-                    { kind: "reference", name: "RequestFailureTelemetryEvent" },
-                    { kind: "base", name: "null" },
-                ],
+                kind: "reference",
+                name: "TelemetryEvent",
             };
         }
     }
@@ -592,6 +595,11 @@ function resolveType(type: Type): GoType {
             const typeAliasOverride = typeAliasOverrides.get(type.name);
             if (typeAliasOverride) {
                 return typeAliasOverride;
+            }
+
+            const nonResolved = nonResolvedAliases.has(type.name);
+            if (nonResolved) {
+                return { name: type.name, needsPointer: false };
             }
 
             // Check if this is a type alias that resolves to a union type
@@ -869,6 +877,12 @@ const typeAliasOverrides = new Map([
     ["LSPObject", { name: "map[string]any", needsPointer: false }],
     ["uint64", { name: "uint64", needsPointer: false }],
 ]);
+
+// These type aliases are intentionally not resolved to their underlying types.
+// It means that we can end up with non-normalized union types in some places.
+// Also, unlike other type aliases, these will get a type alias in the generated source code.
+// We may want to eventually do this for all type aliases though.
+const nonResolvedAliases = new Set(customTypeAliases.map(ta => ta.name));
 
 /**
  * First pass: Resolve all type information
@@ -1641,6 +1655,15 @@ function generateCode() {
             writeLine(`var ${methodName}Info = NotificationInfo[${paramGoType}]{Method: Method${methodName}}`);
         }
 
+        writeLine("");
+    }
+
+    // Generate type aliases
+    writeLine("// Type aliases\n");
+    for (const aliasName of customTypeAliases) {
+        const resolvedType = resolveType(aliasName.type);
+        const goType = resolvedType.needsPointer ? `*${resolvedType.name}` : resolvedType.name;
+        writeLine(`type ${aliasName.name} = ${goType}`);
         writeLine("");
     }
 
