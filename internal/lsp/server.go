@@ -509,6 +509,10 @@ func (s *Server) sendError(id *lsproto.ID, err error) error {
 	})
 }
 
+func (s *Server) sendNotification(notification *lsproto.RequestMessage) error {
+	return s.send(notification.Message())
+}
+
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	return s.send(resp.Message())
 }
@@ -793,7 +797,7 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 					},
 				},
 			})
-			err = s.send(telMsg.Message())
+			err = s.sendNotification(telMsg)
 			if err != nil {
 				panic(err)
 			}
