@@ -21875,27 +21875,25 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	return nil
 }
 
-// TelemetryEvent contains information about a telemetry event.
-type TelemetryEvent struct {
+// A RequestFailureTelemetryEvent is sent when a request fails and the server recovers.
+type RequestFailureTelemetryEvent struct {
 	// The name of the telemetry event.
-	EventName string `json:"eventName"`
+	EventName StringLiteralErrorResponse `json:"eventName"`
 
 	// Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).
-	TelemetryPurpose TelemetryPurpose `json:"telemetryPurpose"`
+	TelemetryPurpose StringLiteralError `json:"telemetryPurpose"`
 
 	// The properties associated with the event.
-	Properties *RequestFailureTelemetryProperties `json:"properties,omitzero"`
-
-	// The measurements associated with the event.
-	Measurements *struct{} `json:"measurements,omitzero"`
+	Properties *RequestFailureTelemetryProperties `json:"properties"`
 }
 
-var _ json.UnmarshalerFrom = (*TelemetryEvent)(nil)
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEvent)(nil)
 
-func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (s *RequestFailureTelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	const (
 		missingEventName uint = 1 << iota
 		missingTelemetryPurpose
+		missingProperties
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -21924,11 +21922,8 @@ func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 				return err
 			}
 		case `"properties"`:
+			missing &^= missingProperties
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
-				return err
-			}
-		case `"measurements"`:
-			if err := json.UnmarshalDecode(dec, &s.Measurements); err != nil {
 				return err
 			}
 		default:
@@ -21947,6 +21942,9 @@ func (s *TelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		}
 		if missing&missingTelemetryPurpose != 0 {
 			missingProps = append(missingProps, "telemetryPurpose")
+		}
+		if missing&missingProperties != 0 {
+			missingProps = append(missingProps, "properties")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
@@ -23579,7 +23577,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	case MethodWindowLogMessage:
 		return unmarshalPtrTo[LogMessageParams](data)
 	case MethodTelemetryEvent:
-		return unmarshalPtrTo[TelemetryEvent](data)
+		return unmarshalPtrTo[RequestFailureTelemetryEventOrNull](data)
 	case MethodTextDocumentDidOpen:
 		return unmarshalPtrTo[DidOpenTextDocumentParams](data)
 	case MethodTextDocumentDidChange:
@@ -24662,7 +24660,7 @@ var WindowShowMessageInfo = NotificationInfo[*ShowMessageParams]{Method: MethodW
 var WindowLogMessageInfo = NotificationInfo[*LogMessageParams]{Method: MethodWindowLogMessage}
 
 // Type mapping info for `telemetry/event`
-var TelemetryEventInfo = NotificationInfo[*TelemetryEvent]{Method: MethodTelemetryEvent}
+var TelemetryEventInfo = NotificationInfo[RequestFailureTelemetryEventOrNull]{Method: MethodTelemetryEvent}
 
 // Type mapping info for `textDocument/didOpen`
 var TextDocumentDidOpenInfo = NotificationInfo[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
@@ -27601,6 +27599,42 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *j
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
+type RequestFailureTelemetryEventOrNull struct {
+	RequestFailureTelemetryEvent *RequestFailureTelemetryEvent
+}
+
+var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
+
+	if o.RequestFailureTelemetryEvent != nil {
+		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
+	}
+	return enc.WriteToken(jsontext.Null)
+}
+
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = RequestFailureTelemetryEventOrNull{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vRequestFailureTelemetryEvent RequestFailureTelemetryEvent
+	if err := json.Unmarshal(data, &vRequestFailureTelemetryEvent); err == nil {
+		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
+		return nil
+	}
+	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
+}
+
 type LocationOrLocationsOrDefinitionLinksOrNull struct {
 	Location        *Location
 	Locations       *[]Location
@@ -29256,6 +29290,50 @@ func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 	if string(v) != `"snippet"` {
 		return fmt.Errorf("expected StringLiteralSnippet value %s, got %s", `"snippet"`, v)
+	}
+	return nil
+}
+
+// StringLiteralErrorResponse is a literal type for "errorResponse"
+type StringLiteralErrorResponse struct{}
+
+var _ json.MarshalerTo = StringLiteralErrorResponse{}
+
+func (o StringLiteralErrorResponse) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"errorResponse"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralErrorResponse{}
+
+func (o *StringLiteralErrorResponse) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"errorResponse"` {
+		return fmt.Errorf("expected StringLiteralErrorResponse value %s, got %s", `"errorResponse"`, v)
+	}
+	return nil
+}
+
+// StringLiteralError is a literal type for "error"
+type StringLiteralError struct{}
+
+var _ json.MarshalerTo = StringLiteralError{}
+
+func (o StringLiteralError) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"error"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralError{}
+
+func (o *StringLiteralError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"error"` {
+		return fmt.Errorf("expected StringLiteralError value %s, got %s", `"error"`, v)
 	}
 	return nil
 }

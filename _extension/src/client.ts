@@ -174,12 +174,13 @@ export class Client {
         };
 
         const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
+            const eventName = "languageServer." + d.eventName;
             switch (d.telemetryPurpose) {
                 case "usage":
-                    this.telemetryReporter.sendTelemetryEventUntyped(d.eventName, d.properties, d.measurements);
+                    this.telemetryReporter.sendTelemetryEventUntyped(eventName, d.properties, d.measurements);
                     break;
                 case "error":
-                    this.telemetryReporter.sendTelemetryErrorEventUntyped(d.eventName, d.properties, d.measurements);
+                    this.telemetryReporter.sendTelemetryErrorEventUntyped(eventName, d.properties, d.measurements);
                     break;
                 default:
                     const _: never = d.telemetryPurpose;

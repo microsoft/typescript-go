@@ -786,13 +786,13 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 				panic(err)
 			}
 
-			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(&lsproto.TelemetryEvent{
-				EventName:        "languageServer.errorResponse",
-				TelemetryPurpose: lsproto.TelemetryPurposeError,
-				Properties: &lsproto.RequestFailureTelemetryProperties{
-					ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-					RequestMethod: string(req.Method),
-					Stack:         sanitizeStackTrace(string(stack)),
+			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(lsproto.RequestFailureTelemetryEventOrNull{
+				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+					Properties: &lsproto.RequestFailureTelemetryProperties{
+						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+						RequestMethod: string(req.Method),
+						Stack:         sanitizeStackTrace(string(stack)),
+					},
 				},
 			})
 			err = s.sendNotification(telMsg)

@@ -164,36 +164,25 @@ const customStructures: Structure[] = [
         documentation: "CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.",
     },
     {
-        name: "TelemetryEvent",
+        name: "RequestFailureTelemetryEvent",
         properties: [
             {
                 name: "eventName",
-                type: { kind: "base", name: "string" },
+                type: { kind: "stringLiteral", value: "errorResponse" },
                 documentation: "The name of the telemetry event.",
             },
             {
                 name: "telemetryPurpose",
-                type: { kind: "reference", name: "TelemetryPurpose" },
+                type: { kind: "stringLiteral", value: "error" },
                 documentation: "Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).",
             },
             {
-                // Currently, only RequestFailureTelemetryProperties is sent.
-                // Update to a union if needed in the future.
                 name: "properties",
-                optional: true,
                 type: { kind: "reference", name: "RequestFailureTelemetryProperties" },
                 documentation: "The properties associated with the event.",
             },
-            {
-                // Currently, nothing sends measurements.
-                // Update (possibly to a union) if needed in the future.
-                name: "measurements",
-                optional: true,
-                type: { kind: "literal", value: { properties: [] } },
-                documentation: "The measurements associated with the event.",
-            },
         ],
-        documentation: "TelemetryEvent contains information about a telemetry event.",
+        documentation: "A RequestFailureTelemetryEvent is sent when a request fails and the server recovers.",
     },
     {
         name: "RequestFailureTelemetryProperties",
@@ -448,7 +437,13 @@ function patchAndPreprocessModel() {
 
     for (const notification of model.notifications) {
         if (notification.typeName === "TelemetryEventNotification") {
-            notification.params = { kind: "reference", name: "TelemetryEvent" };
+            notification.params = {
+                kind: "or",
+                items: [
+                    { kind: "reference", name: "RequestFailureTelemetryEvent" },
+                    { kind: "base", name: "null" },
+                ],
+            };
         }
     }
 
