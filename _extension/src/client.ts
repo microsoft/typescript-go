@@ -199,7 +199,7 @@ export class Client {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        return this.client.sendRequest<{ sessionId: string; pipePath: string; }>("$/initializeAPISession", {});
+        return this.client.sendRequest<{ sessionId: string; pipePath: string; }>("custom/initializeAPISession", {});
     }
 
     async restart(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
