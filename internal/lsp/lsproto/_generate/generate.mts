@@ -178,12 +178,20 @@ const customStructures: Structure[] = [
             },
             {
                 name: "properties",
-                type: { kind: "reference", name: "LSPAny" },
+                type: {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "RequestFailureTelemetryProperties" },
+                        { kind: "base", name: "null" },
+                    ],
+                },
                 documentation: "The properties associated with the event.",
             },
             {
+                // Currently, nothing sends measurements.
+                // Update as a union if needed in the future.
                 name: "measurements",
-                type: { kind: "reference", name: "LSPAny" },
+                type: { kind: "literal", value: { properties: [] } },
                 documentation: "The measurements associated with the event.",
             },
         ],
