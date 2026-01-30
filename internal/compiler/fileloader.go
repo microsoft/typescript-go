@@ -51,7 +51,7 @@ type fileLoader struct {
 }
 
 type redirectsFile struct {
-	// Index of file after which to insert this redirect file while iterating program files
+	// Index of file at which this redirect file needs to be iterated
 	index    int
 	fileName string
 	path     tspath.Path
