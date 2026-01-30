@@ -30,10 +30,6 @@
             "@typescript/source": "./src/async/api.ts",
             "default": "./dist/async/api.js"
         },
-        "./base": {
-            "@typescript/source": "./src/base/index.ts",
-            "default": "./dist/base/index.js"
-        },
         "./base/*": {
             "@typescript/source": "./src/base/*.ts",
             "default": "./dist/base/*.js"

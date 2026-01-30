@@ -7,11 +7,11 @@ import type {
 } from "@typescript/ast";
 import {
     type API as BaseAPI,
-    ObjectRegistry,
     type Project as BaseProject,
     type Symbol as BaseSymbol,
     type Type as BaseType,
-} from "../base/index.ts";
+} from "../base/api.ts";
+import { ObjectRegistry } from "../base/objectRegistry.ts";
 import { RemoteSourceFile } from "../node.ts";
 import type {
     ConfigResponse,
@@ -27,6 +27,13 @@ export { SymbolFlags, TypeFlags };
 export interface LSPConnectionOptions {
     /** Path to the Unix domain socket for API communication */
     pipePath: string;
+}
+
+export interface AsyncAPIOptions {
+    /** Path to the tsgo executable */
+    tsserverPath: string;
+    /** Current working directory */
+    cwd?: string;
 }
 
 /** Type alias for the async object registry */
@@ -62,8 +69,11 @@ export class AsyncAPI implements BaseAPI<true> {
     private client: AsyncClient;
     private objectRegistry: AsyncObjectRegistry;
 
-    private constructor(client: AsyncClient) {
-        this.client = client;
+    /**
+     * Create an AsyncAPI instance by spawning a new tsgo process.
+     */
+    constructor(options: AsyncAPIOptions) {
+        this.client = new AsyncClient(options);
         // Create registry with factories - fire-and-forget release for async
         this.objectRegistry = new ObjectRegistry<AsyncProject, AsyncSymbol, AsyncType>(
             {
@@ -83,7 +93,19 @@ export class AsyncAPI implements BaseAPI<true> {
      */
     static fromLSPConnection(options: LSPConnectionOptions): AsyncAPI {
         const client = new AsyncClient(options);
-        return new AsyncAPI(client);
+        const api = Object.create(AsyncAPI.prototype) as AsyncAPI;
+        api.client = client;
+        api.objectRegistry = new ObjectRegistry<AsyncProject, AsyncSymbol, AsyncType>(
+            {
+                createProject: data => new AsyncProject(client, api.objectRegistry, data),
+                createSymbol: data => new AsyncSymbol(api.objectRegistry, data),
+                createType: data => new AsyncType(api.objectRegistry, data),
+            },
+            id => {
+                client.apiRequest("release", id).catch(() => {});
+            },
+        );
+        return api;
     }
 
     async parseConfigFile(fileName: string): Promise<ConfigResponse> {

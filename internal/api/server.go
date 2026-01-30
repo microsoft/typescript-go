@@ -24,6 +24,9 @@ type StdioServerOptions struct {
 	// Callbacks specifies which filesystem operations should be delegated
 	// to the client (e.g., "readFile", "fileExists"). Empty means no callbacks.
 	Callbacks []string
+	// Async enables JSON-RPC protocol with async connection handling.
+	// When false (default), uses MessagePack protocol with sync connection.
+	Async bool
 }
 
 // StdioServer runs an API session over STDIO using MessagePack protocol.
@@ -68,8 +71,8 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 	})
 
 	session := NewSession(projectSession, &SessionOptions{
-		UseBinaryResponses: true,
-		SyncRequests:       true, // msgpack protocol requires synchronous request handling
+		UseBinaryResponses: !options.Async, // Only msgpack uses binary responses
+		SyncRequests:       !options.Async, // Only msgpack protocol requires synchronous request handling
 	})
 
 	return &StdioServer{
@@ -92,9 +95,15 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to accept connection: %w", err)
 	}
 
-	// Create protocol and connection
-	protocol := NewMessagePackProtocol(rwc)
-	conn := NewSyncConn(rwc, protocol, s.session)
+	// Create protocol and connection based on async mode
+	var conn Conn
+	if s.options.Async {
+		protocol := NewJSONRPCProtocol(rwc)
+		conn = NewAsyncConnWithProtocol(rwc, protocol, s.session)
+	} else {
+		protocol := NewMessagePackProtocol(rwc)
+		conn = NewSyncConn(rwc, protocol, s.session)
+	}
 
 	// If callbacks are enabled, set the connection on the FS
 	if s.callbackFS != nil {

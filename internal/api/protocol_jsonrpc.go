@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 )
 
@@ -13,6 +14,8 @@ type JSONRPCProtocol struct {
 	reader *jsonrpc.Reader
 	writer *jsonrpc.Writer
 }
+
+var _ Protocol = (*JSONRPCProtocol)(nil)
 
 // NewJSONRPCProtocol creates a new JSON-RPC protocol handler.
 func NewJSONRPCProtocol(rw io.ReadWriter) *JSONRPCProtocol {
@@ -44,7 +47,7 @@ func (p *JSONRPCProtocol) WriteRequest(id *jsonrpc.ID, method string, params any
 		Method: method,
 		Params: params,
 	}
-	data, err := json.Marshal(msg)
+	data, err := json.Marshal(msg, jsontext.AllowInvalidUTF8(true))
 	if err != nil {
 		return err
 	}
@@ -70,7 +73,7 @@ func (p *JSONRPCProtocol) WriteResponse(id *jsonrpc.ID, result any) error {
 		ID:     id,
 		Result: result,
 	}
-	data, err := json.Marshal(msg)
+	data, err := json.Marshal(msg, jsontext.AllowInvalidUTF8(true))
 	if err != nil {
 		return err
 	}

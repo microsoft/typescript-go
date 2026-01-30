@@ -44,6 +44,8 @@ type MessagePackProtocol struct {
 	w *bufio.Writer
 }
 
+var _ Protocol = (*MessagePackProtocol)(nil)
+
 // NewMessagePackProtocol creates a new msgpack protocol handler.
 func NewMessagePackProtocol(rw io.ReadWriter) *MessagePackProtocol {
 	return &MessagePackProtocol{

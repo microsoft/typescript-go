@@ -18,6 +18,7 @@ func runAPI(args []string) int {
 	flag := flag.NewFlagSet("api", flag.ContinueOnError)
 	cwd := flag.String("cwd", core.Must(os.Getwd()), "current working directory")
 	callbacks := flag.String("callbacks", "", "comma-separated list of FS callbacks to enable (readFile,fileExists,directoryExists,getAccessibleEntries,realpath)")
+	async := flag.Bool("async", false, "use JSON-RPC protocol instead of MessagePack (for async API)")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
@@ -37,6 +38,7 @@ func runAPI(args []string) int {
 		Cwd:                *cwd,
 		DefaultLibraryPath: defaultLibraryPath,
 		Callbacks:          callbacksList,
+		Async:              *async,
 	})
 	defer s.Close()
 

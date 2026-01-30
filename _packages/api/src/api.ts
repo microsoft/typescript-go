@@ -8,11 +8,11 @@ import type {
 import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
-    ObjectRegistry,
     type Project as BaseProject,
     type Symbol as BaseSymbol,
     type Type as BaseType,
-} from "./base/index.ts";
+} from "./base/api.ts";
+import { ObjectRegistry } from "./base/objectRegistry.ts";
 import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
 import { RemoteSourceFile } from "./node.ts";

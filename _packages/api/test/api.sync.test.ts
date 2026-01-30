@@ -19,7 +19,7 @@ import {
     test,
 } from "node:test";
 import { fileURLToPath } from "node:url";
-import { runBenchmarks } from "./api.bench.ts";
+import { runBenchmarks } from "./api.sync.bench.ts";
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
