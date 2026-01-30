@@ -135,7 +135,6 @@
         {
             "label": "Watch for extension run",
             "dependsOn": [
-                "Watch api package",
                 "Watch extension",
                 "Watch"
             ]
