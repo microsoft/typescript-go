@@ -509,8 +509,8 @@ func (s *Server) sendError(id *lsproto.ID, err error) error {
 	})
 }
 
-func (s *Server) sendNotification(notification *lsproto.RequestMessage) error {
-	return s.send(notification.Message())
+func sendNotification[Params any](s *Server, info lsproto.NotificationInfo[Params], params Params) error {
+	return s.send(info.NewNotificationMessage(params).Message())
 }
 
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
@@ -786,7 +786,7 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 				panic(err)
 			}
 
-			telMsg := lsproto.TelemetryEventInfo.NewNotificationMessage(lsproto.RequestFailureTelemetryEventOrNull{
+			err = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.RequestFailureTelemetryEventOrNull{
 				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
 					Properties: &lsproto.RequestFailureTelemetryProperties{
 						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
@@ -795,7 +795,6 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 					},
 				},
 			})
-			err = s.sendNotification(telMsg)
 			if err != nil {
 				panic(err)
 			}
