@@ -1,7 +1,0 @@
-======== Resolving type reference directive 'testpkg/globals', containing file '/.src/__inferred type names__.ts', root directory '/node_modules'. ========
-Resolving with primary search path '/node_modules'.
-File '/node_modules/testpkg/globals.d.ts' exists - use it as a name resolution result.
-Found 'package.json' at '/node_modules/testpkg/package.json'.
-'package.json' does not have a 'peerDependencies' field.
-Resolving real path for '/node_modules/testpkg/globals.d.ts', result '/node_modules/testpkg/globals.d.ts'.
-======== Type reference directive 'testpkg/globals' was successfully resolved to '/node_modules/testpkg/globals.d.ts' with Package ID 'testpkg/globals.d.ts@1.0.0', primary: true. ========
