@@ -10,11 +10,11 @@ import type { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/exten
 // The "untyped" variants are provided for when properties/measurements are not known
 // from the editor client - for example, when forwarding telemetry events from the language server.
 export interface TelemetryReporter {
+    sendTelemetryEvent(eventName: "cmd.enableNativePreview"): void;
+    sendTelemetryEvent(eventName: "cmd.disableNativePreview"): void;
+    sendTelemetryEvent(eventName: "cmd.restartLanguageServer"): void;
+    sendTelemetryEvent(eventName: "cmd.reportIssue"): void;
     sendTelemetryEvent(eventName: "languageServer.start", data: LSServerStart): void;
-    sendTelemetryEvent(eventName: "enable-native-preview"): void;
-    sendTelemetryEvent(eventName: "disable-native-preview"): void;
-    sendTelemetryEvent(eventName: "restart-language-server"): void;
-    sendTelemetryEvent(eventName: "report-issue"): void;
 
     sendTelemetryErrorEvent(eventName: "languageServer.connectionError", data: LSConnectionError): void;
     sendTelemetryErrorEvent(eventName: "languageServer.connectionClosed", data: LSServerConnectionClosed): void;
