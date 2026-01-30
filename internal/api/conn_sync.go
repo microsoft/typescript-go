@@ -15,8 +15,6 @@ import (
 
 // SyncConn manages bidirectional communication with synchronous request handling.
 // Requests are handled one at a time inline, and outgoing calls are serialized.
-// This is designed for protocols like msgpack that use method names as response IDs
-// and require single-threaded request/response handling.
 type SyncConn struct {
 	rwc      io.ReadWriteCloser
 	protocol Protocol
@@ -71,9 +69,10 @@ func (c *SyncConn) Run(ctx context.Context) error {
 			c.handleRequest(ctx, msg)
 		} else if msg.IsNotification() {
 			c.handleNotification(ctx, msg)
+		} else {
+			// Responses are not expected in the main loop - they are read inline by Call().
+			return errors.New("api: unexpected response message in sync connection")
 		}
-		// Responses are not expected in the main loop for sync conn -
-		// they are read inline by Call().
 	}
 }
 
@@ -137,7 +136,7 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontex
 	// 1. The msgpack protocol uses method names as response IDs
 	// 2. The handler code (project internals) may spawn goroutines that call
 	//    filesystem callbacks concurrently
-	// 3. We need to ensure write→read pairs are atomic
+	// 3. We need to ensure write/read pairs are atomic
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -148,31 +147,29 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontex
 	}
 
 	// Read the response inline.
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-c.closedChan:
-			return nil, ErrConnClosed
-		default:
-			// Non-blocking check - continue to read response
-		}
-
-		msg, err := c.protocol.ReadMessage()
-		if err != nil {
-			return nil, err
-		}
-
-		if msg.IsResponse() && msg.ID != nil && msg.ID.String() == method {
-			if msg.Error != nil {
-				return nil, fmt.Errorf("api: remote error [%d]: %s", msg.Error.Code, msg.Error.Message)
-			}
-			return msg.Result, nil
-		}
-
-		// Unexpected message while waiting for response
-		return nil, fmt.Errorf("api: unexpected message while waiting for %q response", method)
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-c.closedChan:
+		return nil, ErrConnClosed
+	default:
+		// Non-blocking check - continue to read response
 	}
+
+	msg, err := c.protocol.ReadMessage()
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.IsResponse() && msg.ID != nil && msg.ID.String() == method {
+		if msg.Error != nil {
+			return nil, fmt.Errorf("api: remote error [%d]: %s", msg.Error.Code, msg.Error.Message)
+		}
+		return msg.Result, nil
+	}
+
+	// Unexpected message while waiting for response
+	return nil, fmt.Errorf("api: unexpected message while waiting for %q response", method)
 }
 
 // Notify sends a notification to the client (no response expected).
