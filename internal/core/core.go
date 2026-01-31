@@ -109,7 +109,7 @@ func MapFiltered[T any, U any](slice []T, f func(T) (U, bool)) []U {
 	return result
 }
 
-func FlatMap[T any, U comparable](slice []T, f func(T) []U) []U {
+func FlatMap[T any, U any](slice []T, f func(T) []U) []U {
 	var result []U
 	for _, value := range slice {
 		mapped := f(value)
@@ -266,6 +266,16 @@ func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
 	return *new(U)
 }
 
+func FirstNonZero[T comparable](values ...T) T {
+	var zero T
+	for _, value := range values {
+		if value != zero {
+			return value
+		}
+	}
+	return zero
+}
+
 func Concatenate[T any](s1 []T, s2 []T) []T {
 	if len(s2) == 0 {
 		return s1
@@ -315,6 +325,30 @@ func ReplaceElement[T any](slice []T, i int, t T) []T {
 func InsertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	i, _ := slices.BinarySearchFunc(slice, element, cmp)
 	return slices.Insert(slice, i, element)
+}
+
+// MinAllFunc returns all minimum elements from xs according to the comparison function cmp.
+func MinAllFunc[T any](xs []T, cmp func(a, b T) int) []T {
+	if len(xs) == 0 {
+		return nil
+	}
+
+	m := xs[0]
+	mins := []T{m}
+
+	for _, x := range xs[1:] {
+		c := cmp(x, m)
+		switch {
+		case c < 0:
+			m = x
+			mins = mins[:0]
+			mins = append(mins, x)
+		case c == 0:
+			mins = append(mins, x)
+		}
+	}
+
+	return mins
 }
 
 func AppendIfUnique[T comparable](slice []T, element T) []T {
@@ -617,19 +651,32 @@ func comparableValuesEqual[T comparable](a, b T) bool {
 	return a == b
 }
 
+// DiffMaps compares two maps m1 and m2 and calls the provided callbacks for added, removed, and changed entries.
+// onAdded is called for each key-value pair that is in m2 but not in m1.
+// onRemoved is called for each key-value pair that is in m1 but not in m2.
+// onChanged is called for each key where the value in m1 differs from the value in m2.
 func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
 	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
 }
 
-func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
-	for k, v2 := range m2 {
-		if _, ok := m1[k]; !ok {
-			onAdded(k, v2)
+// DiffMapsFunc compares two maps m1 and m2 and calls the provided callbacks for added, removed, and changed entries.
+// onAdded is called for each key-value pair that is in m2 but not in m1.
+// onRemoved is called for each key-value pair that is in m1 but not in m2.
+// onChanged is called for each key where the value in m1 differs from the value in m2.
+func DiffMapsFunc[K comparable, V1 any, V2 any](m1 map[K]V1, m2 map[K]V2, equalValues func(V1, V2) bool, onAdded func(K, V2), onRemoved func(K, V1), onChanged func(K, V1, V2)) {
+	if onAdded != nil {
+		for k, v2 := range m2 {
+			if _, ok := m1[k]; !ok {
+				onAdded(k, v2)
+			}
 		}
+	}
+	if onChanged == nil && onRemoved == nil {
+		return
 	}
 	for k, v1 := range m1 {
 		if v2, ok := m2[k]; ok {
-			if !equalValues(v1, v2) {
+			if onChanged != nil && !equalValues(v1, v2) {
 				onChanged(k, v1, v2)
 			}
 		} else {
@@ -646,6 +693,24 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	}
 	maps.Copy(dst, src)
 	return dst
+}
+
+// UnorderedEqual returns true if s1 and s2 contain the same elements, regardless of order.
+func UnorderedEqual[T comparable](s1 []T, s2 []T) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	counts := make(map[T]int)
+	for _, v := range s1 {
+		counts[v]++
+	}
+	for _, v := range s2 {
+		counts[v]--
+		if counts[v] < 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func Deduplicate[T comparable](slice []T) []T {

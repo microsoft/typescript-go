@@ -41,7 +41,7 @@ Button/**/`
 					&lsproto.CompletionItem{
 						Label: "Button",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./lib/main",
 							},
 						},
@@ -50,6 +50,7 @@ Button/**/`
 					},
 				}, false),
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/index.*"}},
 	})
 	f.VerifyImportFixModuleSpecifiers(t, "", []string{"./lib/main", "./lib/components/button/Button"}, &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/index.*"}})
 }

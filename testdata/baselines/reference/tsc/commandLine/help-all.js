@@ -221,6 +221,11 @@ Ensure 'use strict' is always emitted.
 type: boolean
 default: `false`, unless `strict` is set
 
+[94m--deduplicatePackages[39m
+Deduplicate packages with the same name and version.
+type: boolean
+default: true
+
 [94m--exactOptionalPropertyTypes[39m
 Interpret optional property types as written, rather than adding 'undefined'.
 type: boolean
@@ -581,13 +586,6 @@ default: false
 Enable color and formatting in TypeScript's output to make compiler errors easier to read.
 type: boolean
 default: true
-
-### Backwards Compatibility
-
-[94m--preserveValueImports[39m
-Preserve unused imported values in the JavaScript output that would otherwise be removed.
-type: boolean
-default: false
 
 ### Completeness
 
