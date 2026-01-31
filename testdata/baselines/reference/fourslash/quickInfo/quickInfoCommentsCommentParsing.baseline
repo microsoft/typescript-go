@@ -325,7 +325,7 @@
 // ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function f1(a: number): any
+// | function f1(a: number): any (+1 overload)
 // | ```
 // | fn f1 with number
 // | 
@@ -336,7 +336,7 @@
 // ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | function f1(b: string): any
+// | function f1(b: string): any (+1 overload)
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -1385,7 +1385,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(a: number): any\n```\nfn f1 with number\n\n*@param* `b` — about b\n"
+        "value": "```tsx\nfunction f1(a: number): any (+1 overload)\n```\nfn f1 with number\n\n*@param* `b` — about b\n"
       },
       "range": {
         "start": {
@@ -1412,7 +1412,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(b: string): any\n```\n"
+        "value": "```tsx\nfunction f1(b: string): any (+1 overload)\n```\n"
       },
       "range": {
         "start": {
