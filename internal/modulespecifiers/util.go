@@ -28,7 +28,10 @@ var (
 
 func comparePathsByRedirectAndNumberOfDirectorySeparators(a ModulePath, b ModulePath) int {
 	if a.IsRedirect == b.IsRedirect {
-		return strings.Count(a.FileName, "/") - strings.Count(b.FileName, "/")
+		if c := strings.Count(a.FileName, "/") - strings.Count(b.FileName, "/"); c != 0 {
+			return c
+		}
+		return strings.Compare(a.FileName, b.FileName)
 	}
 	if a.IsRedirect {
 		return 1
