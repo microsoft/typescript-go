@@ -5,14 +5,14 @@ import { a } from "a";
 >a : (x: import("a/node_modules/x").default) => void
 
 import { b } from "b";
->b : import("b/node_modules/x").default
+>b : import("a/node_modules/x").default
 
 import { c } from "c";
 >c : import("c/node_modules/x").default
 
 a(b); // Works
 >a(b) : void
->a : (x: import("a/node_modules/x").default) => void
+>a : (x: import("b/node_modules/x").default) => void
 >b : import("a/node_modules/x").default
 
 a(c); // Error, these are from different versions of the library.
