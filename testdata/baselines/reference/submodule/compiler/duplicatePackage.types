@@ -5,7 +5,7 @@ import { a } from "a";
 >a : (x: import("a/node_modules/x").default) => void
 
 import { b } from "b";
->b : X
+>b : import("b/node_modules/x").default
 
 import { c } from "c";
 >c : import("c/node_modules/x").default
@@ -13,7 +13,7 @@ import { c } from "c";
 a(b); // Works
 >a(b) : void
 >a : (x: import("a/node_modules/x").default) => void
->b : X
+>b : import("a/node_modules/x").default
 
 a(c); // Error, these are from different versions of the library.
 >a(c) : void
@@ -38,16 +38,16 @@ export default class X {
 
 === /node_modules/b/index.d.ts ===
 import X from "x";
->X : any
+>X : typeof X
 
 export const b: X;
 >b : X
 
 === /node_modules/b/node_modules/x/index.d.ts ===
 content not parsed
->content : any
->not : any
->parsed : any
+>X : X
+
+>x : number
 
 === /node_modules/c/index.d.ts ===
 import X from "x";

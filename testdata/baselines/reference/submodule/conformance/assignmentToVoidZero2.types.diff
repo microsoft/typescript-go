@@ -11,12 +11,10 @@
 
  exports.k = void 0;
  >exports.k = void 0 : undefined
-->exports.k : any
+ >exports.k : any
 ->exports : typeof import("assignmentToVoidZero2")
-->k : any
-+>exports.k : undefined
 +>exports : typeof import("./assignmentToVoidZero2")
-+>k : undefined
+ >k : any
  >void 0 : undefined
  >0 : 0
 
@@ -97,13 +95,3 @@
  >q : any
 
  === importer.js ===
- import { j, k } from './assignmentToVoidZero2'
- >j : 1
-->k : any
-+>k : undefined
-
- j + k
- >j + k : any
- >j : 1
-->k : any
-+>k : undefined

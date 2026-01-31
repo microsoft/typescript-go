@@ -44,9 +44,10 @@ type API struct {
 func NewAPI(init *APIInit) *API {
 	api := &API{
 		session: project.NewSession(&project.SessionInit{
-			Logger:  init.Logger,
-			FS:      init.FS,
-			Options: init.SessionOptions,
+			BackgroundCtx: context.Background(),
+			Logger:        init.Logger,
+			FS:            init.FS,
+			Options:       init.SessionOptions,
 		}),
 		projects: make(map[Handle[project.Project]]tspath.Path),
 		files:    make(handleMap[ast.SourceFile]),
@@ -161,7 +162,7 @@ func (api *API) GetSymbolAtPosition(ctx context.Context, projectId Handle[projec
 		return nil, errors.New("project not found")
 	}
 
-	languageService := ls.NewLanguageService(project.GetProgram(), snapshot)
+	languageService := ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot, fileName)
 	symbol, err := languageService.GetSymbolAtPosition(ctx, fileName, position)
 	if err != nil || symbol == nil {
 		return nil, err
@@ -203,7 +204,7 @@ func (api *API) GetSymbolAtLocation(ctx context.Context, projectId Handle[projec
 	if node == nil {
 		return nil, fmt.Errorf("node of kind %s not found at position %d in file %q", kind.String(), pos, sourceFile.FileName())
 	}
-	languageService := ls.NewLanguageService(project.GetProgram(), snapshot)
+	languageService := ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot, sourceFile.FileName())
 	symbol := languageService.GetSymbolAtLocation(ctx, node)
 	if symbol == nil {
 		return nil, nil
@@ -233,7 +234,7 @@ func (api *API) GetTypeOfSymbol(ctx context.Context, projectId Handle[project.Pr
 	if !ok {
 		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
 	}
-	languageService := ls.NewLanguageService(project.GetProgram(), snapshot)
+	languageService := ls.NewLanguageService(project.ConfigFilePath(), project.GetProgram(), snapshot, "")
 	t := languageService.GetTypeOfSymbol(ctx, symbol)
 	if t == nil {
 		return nil, nil

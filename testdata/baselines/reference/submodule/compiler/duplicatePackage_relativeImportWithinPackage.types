@@ -5,12 +5,12 @@ import { use } from "foo/use";
 >use : (o: import("foo").C) => void
 
 import { o } from "a";
->o : import("a/node_modules/foo").C
+>o : import("foo").C
 
 use(o);
 >use(o) : void
 >use : (o: import("foo").C) => void
->o : import("a/node_modules/foo").C
+>o : import("foo").C
 
 === /node_modules/a/node_modules/foo/index.d.ts ===
 export class C {

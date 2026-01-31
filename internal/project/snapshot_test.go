@@ -20,6 +20,7 @@ func TestSnapshot(t *testing.T) {
 	setup := func(files map[string]any) *Session {
 		fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 		session := NewSession(&SessionInit{
+			BackgroundCtx: context.Background(),
 			Options: &SessionOptions{
 				CurrentDirectory:   "/",
 				DefaultLibraryPath: bundled.LibPath(),
@@ -67,7 +68,7 @@ func TestSnapshot(t *testing.T) {
 		assert.Equal(t, snapshotBefore.ProjectCollection.InferredProject(), snapshotAfter.ProjectCollection.InferredProject())
 		assert.Equal(t, snapshotAfter.ProjectCollection.InferredProject().ProgramUpdateKind, ProgramUpdateKindNewFiles)
 		// host for inferred project should not change
-		assert.Equal(t, snapshotAfter.ProjectCollection.InferredProject().host.compilerFS.source, snapshotBefore.fs)
+		assert.Equal(t, snapshotAfter.ProjectCollection.InferredProject().host.sourceFS.source, snapshotBefore.fs)
 	})
 
 	t.Run("cached disk files are cleaned up", func(t *testing.T) {

@@ -39,10 +39,6 @@
         "category": "Message",
         "code": 100009
     },
-    "all, unless --singleThreaded is passed.": {
-        "category": "Message",
-        "code": 100010
-    },
     "Non-relative paths are not allowed. Did you forget a leading './'?": {
         "category": "Error",
         "code": 5090
@@ -86,5 +82,9 @@
     "Option '{0}' requires value to be greater than '{1}'.": {
         "category": "Error",
         "code": 5002
+    },
+    "Deduplicate packages with the same name and version.": {
+        "category": "Message",
+        "code": 100011
     }
 }

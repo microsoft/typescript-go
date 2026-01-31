@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -47,7 +48,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionA",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "~/noIndex/a",
 						},
 					},
@@ -57,7 +58,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "~/withIndex",
 						},
 					},
@@ -66,6 +67,7 @@ myFunction/**/`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "non-relative"},
 	})
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -78,7 +80,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionA",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "../noIndex/a",
 						},
 					},
@@ -88,7 +90,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "../withIndex",
 						},
 					},
@@ -97,6 +99,7 @@ myFunction/**/`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "relative"},
 	})
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -109,7 +112,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionA",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "../noIndex/a",
 						},
 					},
@@ -119,7 +122,7 @@ myFunction/**/`
 				&lsproto.CompletionItem{
 					Label: "myFunctionB",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "../withIndex",
 						},
 					},
@@ -128,5 +131,6 @@ myFunction/**/`
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{ImportModuleSpecifierPreference: "project-relative"},
 	})
 }
