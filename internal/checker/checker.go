@@ -13436,7 +13436,7 @@ func (c *Checker) isReadonlyAssignmentDeclaration(node *ast.Node) bool {
 			} else {
 				writableType = c.getTypeOfSymbol(writableProp)
 			}
-			return writableType.flags&TypeFlagsBooleanLiteral != 0 && getBooleanLiteralValue(writableType) == false
+			return writableType.flags&TypeFlagsBooleanLiteral != 0 && !getBooleanLiteralValue(writableType)
 		}
 		return true
 	}
