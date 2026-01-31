@@ -9,27 +9,9 @@ import (
 )
 
 func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
-	return getReparsedNodeForNode(getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
+	return getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
 		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
-	}))
-}
-
-// If the given node is a declaration name node in a JSDoc comment that is subject to reparsing, return the declaration name node
-// for the corresponding reparsed construct. Otherwise, just return the node.
-func getReparsedNodeForNode(node *ast.Node) *ast.Node {
-	if node.Flags&ast.NodeFlagsJSDoc != 0 && (ast.IsIdentifier(node) || ast.IsPrivateIdentifier(node)) {
-		parent := node.Parent
-		if (ast.IsJSDocTypedefTag(parent) || ast.IsJSDocCallbackTag(parent) || ast.IsJSDocPropertyTag(parent) || ast.IsJSDocParameterTag(parent) || ast.IsImportClause(parent) || ast.IsImportSpecifier(parent)) && parent.Name() == node {
-			// Reparsing preserves the location of the name. Thus, a search at the position of the name with JSDoc excluded
-			// finds the containing reparsed declaration node.
-			if reparsed := ast.GetNodeAtPosition(ast.GetSourceFileOfNode(node), node.Pos(), false); reparsed != nil {
-				if name := reparsed.Name(); name != nil && name.Pos() == node.Pos() {
-					return name
-				}
-			}
-		}
-	}
-	return node
+	})
 }
 
 func GetTouchingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
@@ -451,6 +433,9 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 }
 
 func isValidPrecedingNode(node *ast.Node, sourceFile *ast.SourceFile) bool {
+	if node.Kind == ast.KindEndOfFile {
+		return len(node.JSDoc(sourceFile)) > 0
+	}
 	start := GetStartOfNode(node, sourceFile, false /*includeJSDoc*/)
 	width := node.End() - start
 	return !(ast.IsWhitespaceOnlyJsxText(node) || width == 0)

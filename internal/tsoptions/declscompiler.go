@@ -186,6 +186,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		// Not setting affectsSemanticDiagnostics or affectsBuildInfo because we dont want all diagnostics to go away, its handled in builder
 	},
 	{
+		Name:                    "deduplicatePackages",
+		Kind:                    CommandLineOptionTypeBoolean,
+		Category:                diagnostics.Type_Checking,
+		Description:             diagnostics.Deduplicate_packages_with_the_same_name_and_version,
+		DefaultValueDescription: true,
+		AffectsProgramStructure: true,
+	},
+	{
 		Name:                     "noEmit",
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShowInSimplifiedHelpView: true,
@@ -1160,16 +1168,6 @@ var optionsForCompiler = []*CommandLineOption{
 		Description:                diagnostics.Emit_ECMAScript_standard_compliant_class_fields,
 		DefaultValueDescription:    diagnostics.X_true_for_ES2022_and_above_including_ESNext,
 	},
-	{
-		Name:                    "preserveValueImports",
-		Kind:                    CommandLineOptionTypeBoolean,
-		AffectsEmit:             true,
-		AffectsBuildInfo:        true,
-		Category:                diagnostics.Backwards_Compatibility,
-		Description:             diagnostics.Preserve_unused_imported_values_in_the_JavaScript_output_that_would_otherwise_be_removed,
-		DefaultValueDescription: false,
-	},
-
 	{
 		// A list of plugins to load in the language service
 		Name:           "plugins",
