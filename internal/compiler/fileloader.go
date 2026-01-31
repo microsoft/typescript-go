@@ -180,7 +180,9 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 		toParse = make([]resolvedRef, 0, len(automaticTypeDirectiveNames))
 		typeResolutionsInFile = make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(automaticTypeDirectiveNames))
 		for _, name := range automaticTypeDirectiveNames {
-			resolutionMode := core.ModuleKindNodeNext
+			// Under node16/nodenext module resolution, load `types`/ata include names as cjs resolution results by passing an `undefined` mode.
+			// Under bundler module resolution, this also triggers the "import" condition to be used.
+			resolutionMode := core.ResolutionModeNone
 			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
 			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
@@ -217,41 +219,6 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 	}
 	rootTasks := createProjectReferenceParseTasks(projectReferences)
 	parser.parse(rootTasks)
-
-	// Add files from project references as root if the module kind is 'none'.
-	// This ensures that files from project references are included in the root tasks
-	// when no module system is specified, allowing including all files for global symbol merging
-	// !!! sheetal Do we really need it?
-	if len(p.opts.Config.FileNames()) != 0 {
-		for index, resolved := range p.projectReferenceFileMapper.getResolvedProjectReferences() {
-			if resolved == nil || resolved.CompilerOptions().GetEmitModuleKind() != core.ModuleKindNone {
-				continue
-			}
-			if p.opts.canUseProjectReferenceSource() {
-				for _, fileName := range resolved.FileNames() {
-					p.rootTasks = append(p.rootTasks, &parseTask{
-						normalizedFilePath: fileName,
-						includeReason: &FileIncludeReason{
-							kind: fileIncludeKindSourceFromProjectReference,
-							data: index,
-						},
-					})
-				}
-			} else {
-				for outputDts := range resolved.GetOutputDeclarationAndSourceFileNames() {
-					if outputDts != "" {
-						p.rootTasks = append(p.rootTasks, &parseTask{
-							normalizedFilePath: outputDts,
-							includeReason: &FileIncludeReason{
-								kind: fileIncludeKindOutputFromProjectReference,
-								data: index,
-							},
-						})
-					}
-				}
-			}
-		}
-	}
 }
 
 func (p *fileLoader) sortLibs(libFiles []*ast.SourceFile) {

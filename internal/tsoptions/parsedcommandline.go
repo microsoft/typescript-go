@@ -101,7 +101,7 @@ func (p *ParsedCommandLine) ParseInputOutputNames() {
 		sourceToOutput := map[tspath.Path]*SourceOutputAndProjectReference{}
 		outputDtsToSource := map[tspath.Path]*SourceOutputAndProjectReference{}
 
-		for outputDts, source := range p.GetOutputDeclarationAndSourceFileNames() {
+		for outputDts, source := range p.getOutputDeclarationAndSourceFileNames() {
 			path := tspath.ToPath(source, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 			projectReference := &SourceOutputAndProjectReference{
 				Source:    source,
@@ -145,7 +145,7 @@ func (p *ParsedCommandLine) UseCaseSensitiveFileNames() bool {
 	return p.comparePathsOptions.UseCaseSensitiveFileNames
 }
 
-func (p *ParsedCommandLine) GetOutputDeclarationAndSourceFileNames() iter.Seq2[string, string] {
+func (p *ParsedCommandLine) getOutputDeclarationAndSourceFileNames() iter.Seq2[string, string] {
 	return func(yield func(dtsName string, inputName string) bool) {
 		for _, fileName := range p.ParsedConfig.FileNames {
 			var outputDts string
