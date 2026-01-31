@@ -220,7 +220,7 @@ func getAllModulePathsWorker(
 			}
 		}
 		if len(pathsInDirectory) > 0 {
-			slices.SortStableFunc(pathsInDirectory, comparePathsByRedirectAndNumberOfDirectorySeparators)
+			slices.SortFunc(pathsInDirectory, comparePathsByRedirectAndNumberOfDirectorySeparators)
 			sortedPaths = append(sortedPaths, pathsInDirectory...)
 		}
 		newDirectory := tspath.GetDirectoryPath(directory)
@@ -231,7 +231,7 @@ func getAllModulePathsWorker(
 	}
 	if len(allFileNames) > 0 {
 		remainingPaths := slices.Collect(maps.Values(allFileNames))
-		slices.SortStableFunc(remainingPaths, comparePathsByRedirectAndNumberOfDirectorySeparators)
+		slices.SortFunc(remainingPaths, comparePathsByRedirectAndNumberOfDirectorySeparators)
 		sortedPaths = append(sortedPaths, remainingPaths...)
 	}
 	return sortedPaths
