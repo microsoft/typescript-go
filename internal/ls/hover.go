@@ -209,8 +209,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				if i != 0 {
 					b.WriteString(", ")
 				}
-				symbol := tp.Symbol()
-				b.WriteString(c.SymbolToStringEx(symbol, nil, ast.SymbolFlagsNone, symbolFormatFlags))
+				b.WriteString(c.SymbolToStringEx(tp.Symbol(), nil, ast.SymbolFlagsNone, symbolFormatFlags))
 				cons := c.GetConstraintOfTypeParameter(tp)
 				if cons != nil {
 					b.WriteString(" extends ")
