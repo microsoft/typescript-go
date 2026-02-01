@@ -1,0 +1,46 @@
+distributeControlFlowReturn.ts(7,5): error TS2322: Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }[]' is not assignable to type 'Layer[]'.
+  Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }' is not assignable to type 'Layer'.
+    Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }' is not assignable to type '{ labels: { selectedFieldName: "C"; }; }'.
+      Types of property 'labels' are incompatible.
+        Type '{ selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }' is not assignable to type '{ selectedFieldName: "C"; }'.
+          Type '{ selectedFieldName: "A" | "B"; }' is not assignable to type '{ selectedFieldName: "C"; }'.
+            Types of property 'selectedFieldName' are incompatible.
+              Type '"A" | "B"' is not assignable to type '"C"'.
+                Type '"A"' is not assignable to type '"C"'.
+
+
+==== distributeControlFlowReturn.ts (1 errors) ====
+    type Layer = 
+      | { labels: { selectedFieldName: "A" | "B" } }
+      | { labels: { selectedFieldName: "C" } }
+    
+    declare let layers: Layer[]
+    
+    let newLayers: Layer[] = layers.map(layer => {
+        ~~~~~~~~~
+!!! error TS2322: Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }[]' is not assignable to type 'Layer[]'.
+!!! error TS2322:   Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }' is not assignable to type 'Layer'.
+!!! error TS2322:     Type '{ labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }' is not assignable to type '{ labels: { selectedFieldName: "C"; }; }'.
+!!! error TS2322:       Types of property 'labels' are incompatible.
+!!! error TS2322:         Type '{ selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }' is not assignable to type '{ selectedFieldName: "C"; }'.
+!!! error TS2322:           Type '{ selectedFieldName: "A" | "B"; }' is not assignable to type '{ selectedFieldName: "C"; }'.
+!!! error TS2322:             Types of property 'selectedFieldName' are incompatible.
+!!! error TS2322:               Type '"A" | "B"' is not assignable to type '"C"'.
+!!! error TS2322:                 Type '"A"' is not assignable to type '"C"'.
+      return { labels: layer.labels }
+    })
+    
+    let newLayersManualFix: Layer[] = layers.map(layer => {
+      switch (layer.labels.selectedFieldName) {
+        case "A": return { labels: layer.labels }
+        case "B": return { labels: layer.labels }
+        case "C": return { labels: layer.labels }
+      }
+    })
+    
+    let newLayersDistributeFix: Layer[] = layers.map(layer => {
+      distribute (layer) {
+        return { labels: layer.labels }
+      }
+    })
+    

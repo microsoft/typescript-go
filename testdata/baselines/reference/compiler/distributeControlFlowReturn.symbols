@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/distributeControlFlowReturn.ts] ////
+
+=== distributeControlFlowReturn.ts ===
+type Layer = 
+>Layer : Symbol(Layer, Decl(distributeControlFlowReturn.ts, 0, 0))
+
+  | { labels: { selectedFieldName: "A" | "B" } }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5))
+>selectedFieldName : Symbol(selectedFieldName, Decl(distributeControlFlowReturn.ts, 1, 15))
+
+  | { labels: { selectedFieldName: "C" } }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 2, 5))
+>selectedFieldName : Symbol(selectedFieldName, Decl(distributeControlFlowReturn.ts, 2, 15))
+
+declare let layers: Layer[]
+>layers : Symbol(layers, Decl(distributeControlFlowReturn.ts, 4, 11))
+>Layer : Symbol(Layer, Decl(distributeControlFlowReturn.ts, 0, 0))
+
+let newLayers: Layer[] = layers.map(layer => {
+>newLayers : Symbol(newLayers, Decl(distributeControlFlowReturn.ts, 6, 3))
+>Layer : Symbol(Layer, Decl(distributeControlFlowReturn.ts, 0, 0))
+>layers.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layers : Symbol(layers, Decl(distributeControlFlowReturn.ts, 4, 11))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 6, 36))
+
+  return { labels: layer.labels }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 7, 10))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 6, 36))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+
+})
+
+let newLayersManualFix: Layer[] = layers.map(layer => {
+>newLayersManualFix : Symbol(newLayersManualFix, Decl(distributeControlFlowReturn.ts, 10, 3))
+>Layer : Symbol(Layer, Decl(distributeControlFlowReturn.ts, 0, 0))
+>layers.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layers : Symbol(layers, Decl(distributeControlFlowReturn.ts, 4, 11))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 10, 45))
+
+  switch (layer.labels.selectedFieldName) {
+>layer.labels.selectedFieldName : Symbol(selectedFieldName, Decl(distributeControlFlowReturn.ts, 1, 15), Decl(distributeControlFlowReturn.ts, 2, 15))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 10, 45))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>selectedFieldName : Symbol(selectedFieldName, Decl(distributeControlFlowReturn.ts, 1, 15), Decl(distributeControlFlowReturn.ts, 2, 15))
+
+    case "A": return { labels: layer.labels }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 12, 22))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 10, 45))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+
+    case "B": return { labels: layer.labels }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 13, 22))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 10, 45))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+
+    case "C": return { labels: layer.labels }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 14, 22))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 10, 45))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+  }
+})
+
+let newLayersDistributeFix: Layer[] = layers.map(layer => {
+>newLayersDistributeFix : Symbol(newLayersDistributeFix, Decl(distributeControlFlowReturn.ts, 18, 3))
+>Layer : Symbol(Layer, Decl(distributeControlFlowReturn.ts, 0, 0))
+>layers.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layers : Symbol(layers, Decl(distributeControlFlowReturn.ts, 4, 11))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 18, 49))
+
+  distribute (layer) {
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 18, 49))
+
+    return { labels: layer.labels }
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 20, 12))
+>layer.labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+>layer : Symbol(layer, Decl(distributeControlFlowReturn.ts, 18, 49))
+>labels : Symbol(labels, Decl(distributeControlFlowReturn.ts, 1, 5), Decl(distributeControlFlowReturn.ts, 2, 5))
+  }
+})
+

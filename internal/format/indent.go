@@ -456,6 +456,7 @@ func NodeWillIndentChild(settings *FormatCodeSettings, parent *ast.Node, child *
 		ast.KindForOfStatement,
 		ast.KindForStatement,
 		ast.KindIfStatement,
+		ast.KindDistributeStatement,
 		ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodDeclaration,

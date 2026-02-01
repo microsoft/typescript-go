@@ -90,5 +90,13 @@
     "Deduplicate packages with the same name and version.": {
         "category": "Message",
         "code": 100011
+    },
+    "The body of an distribute statement cannot be the empty statement": {
+        "category": "Error",
+        "code": 1550
+    },
+    "Distribute statements require the expression to be an identifier or qualified name": {
+        "category": "Error",
+        "code": 1551
     }
 }

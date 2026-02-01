@@ -928,6 +928,10 @@ var X_await_using_declarations_are_not_allowed_in_ambient_contexts = &Message{co
 
 var Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1549, category: CategoryMessage, key: "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549", text: "Ignore the tsconfig found and build with commandline options and files."}
 
+var The_body_of_an_distribute_statement_cannot_be_the_empty_statement = &Message{code: 1550, category: CategoryError, key: "The_body_of_an_distribute_statement_cannot_be_the_empty_statement_1550", text: "The body of an distribute statement cannot be the empty statement"}
+
+var Distribute_statements_require_the_expression_to_be_an_identifier_or_qualified_name = &Message{code: 1551, category: CategoryError, key: "Distribute_statements_require_the_expression_to_be_an_identifier_or_qualified_name_1551", text: "Distribute statements require the expression to be an identifier or qualified name"}
+
 var The_types_of_0_are_incompatible_between_these_types = &Message{code: 2200, category: CategoryError, key: "The_types_of_0_are_incompatible_between_these_types_2200", text: "The types of '{0}' are incompatible between these types."}
 
 var The_types_returned_by_0_are_incompatible_between_these_types = &Message{code: 2201, category: CategoryError, key: "The_types_returned_by_0_are_incompatible_between_these_types_2201", text: "The types returned by '{0}' are incompatible between these types."}
@@ -5206,6 +5210,10 @@ func keyToMessage(key Key) *Message {
 		return X_await_using_declarations_are_not_allowed_in_ambient_contexts
 	case "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1549":
 		return Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files
+	case "The_body_of_an_distribute_statement_cannot_be_the_empty_statement_1550":
+		return The_body_of_an_distribute_statement_cannot_be_the_empty_statement
+	case "Distribute_statements_require_the_expression_to_be_an_identifier_or_qualified_name_1551":
+		return Distribute_statements_require_the_expression_to_be_an_identifier_or_qualified_name
 	case "The_types_of_0_are_incompatible_between_these_types_2200":
 		return The_types_of_0_are_incompatible_between_these_types
 	case "The_types_returned_by_0_are_incompatible_between_these_types_2201":

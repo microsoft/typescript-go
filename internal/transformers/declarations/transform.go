@@ -203,6 +203,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindForOfStatement,
 		ast.KindForStatement,
 		ast.KindIfStatement,
+		ast.KindDistributeStatement,
 		ast.KindLabeledStatement,
 		ast.KindReturnStatement,
 		ast.KindSwitchStatement,

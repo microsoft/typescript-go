@@ -363,6 +363,9 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 
+	case ast.KindDistributeStatement:
+		return tx.Visitor().VisitNode(node.AsDistributeStatement().Statement)
+
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}

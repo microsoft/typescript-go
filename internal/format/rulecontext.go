@@ -371,7 +371,8 @@ func isControlDeclContext(context *FormattingContext) bool {
 		ast.KindWhileStatement,
 		ast.KindTryStatement,
 		ast.KindDoStatement,
-		ast.KindWithStatement:
+		ast.KindWithStatement,
+		ast.KindDistributeStatement:
 		// TODO
 		// case ast.KindElseClause:
 		fallthrough
@@ -557,7 +558,8 @@ func isStatementConditionContext(context *FormattingContext) bool {
 		ast.KindForInStatement,
 		ast.KindForOfStatement,
 		ast.KindDoStatement,
-		ast.KindWhileStatement:
+		ast.KindWhileStatement,
+		ast.KindDistributeStatement:
 		return true
 
 	default:

@@ -790,6 +790,7 @@ type Checker struct {
 	flowAnalysisDisabled                        bool
 	flowInvocationCount                         int
 	flowTypeCache                               map[*ast.Node]*Type
+	flowDistributeTypes                         map[*ast.Node]*Type
 	lastFlowNode                                *ast.FlowNode
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
@@ -1037,6 +1038,7 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
 	c.flowNodeReachable = make(map[*ast.FlowNode]bool)
 	c.flowNodePostSuper = make(map[*ast.FlowNode]bool)
+	c.flowDistributeTypes = make(map[*ast.Node]*Type)
 	c.subtypeRelation = &Relation{}
 	c.strictSubtypeRelation = &Relation{}
 	c.assignableRelation = &Relation{}
@@ -2253,6 +2255,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkExpressionStatement(node)
 	case ast.KindIfStatement:
 		c.checkIfStatement(node)
+	case ast.KindDistributeStatement:
+		c.checkDistributeStatement(node)
 	case ast.KindDoStatement:
 		c.checkDoStatement(node)
 	case ast.KindWhileStatement:
@@ -3709,6 +3713,45 @@ func (c *Checker) checkIfStatement(node *ast.Node) {
 		c.error(data.ThenStatement, diagnostics.The_body_of_an_if_statement_cannot_be_the_empty_statement)
 	}
 	c.checkSourceElement(data.ElseStatement)
+}
+
+func (c *Checker) checkDistributeStatement(node *ast.Node) {
+	c.checkGrammarStatementInAmbientContext(node)
+	data := node.AsDistributeStatement()
+	t := c.checkExpression(data.Expression)
+	if t.flags&TypeFlagsUnion == 0 {
+		c.checkSourceElement(data.Statement)
+	} else {
+		for _, memberType := range t.AsUnionType().types {
+			c.flowDistributeTypes[data.Expression] = memberType
+			c.uncheckNodeRecursively(data.Statement)
+			c.checkSourceElement(data.Statement)
+		}
+		delete(c.flowDistributeTypes, data.Expression)
+		// TODO: set `.resolvedType` of each node to be a union of all above checks
+	}
+}
+
+func (c *Checker) uncheckNodeRecursively(node *ast.Node) {
+	var visitor ast.Visitor
+	visitor = func(node *ast.Node) bool {
+		if c.typeNodeLinks.Has(node) {
+			c.typeNodeLinks.Get(node).resolvedType = nil
+		}
+		if c.signatureLinks.Has(node) {
+			c.signatureLinks.Get(node).resolvedSignature = nil
+		}
+		if c.valueSymbolLinks.Has(node.Symbol()) {
+			c.valueSymbolLinks.Get(node.Symbol()).resolvedType = nil
+		}
+		if c.nodeLinks.Has(node) {
+			c.nodeLinks.Get(node).flags &= ^NodeCheckFlagsTypeChecked
+			c.nodeLinks.Get(node).flags &= ^NodeCheckFlagsContextChecked
+		}
+		node.ForEachChild(visitor)
+		return false
+	}
+	visitor(node)
 }
 
 func (c *Checker) checkTestingKnownTruthyCallableOrAwaitableOrEnumMemberType(condExpr *ast.Node, condType *Type, body *ast.Node) {
@@ -19783,7 +19826,44 @@ func (c *Checker) checkAndAggregateReturnExpressionTypes(fn *ast.Node, checkMode
 			hasReturnOfTypeNever = true
 			return false
 		}
-		t := c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
+		var t *Type
+		if fn.Body().SubtreeFacts()&ast.SubtreeContainsDistributeStatement == 0 {
+			t = c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
+		} else {
+			var closestDistributeStatement *ast.Node
+			visitingNode := returnStatement
+			for {
+				if visitingNode == nil {
+					break
+				}
+				if ast.IsDistributeStatement(visitingNode) {
+					closestDistributeStatement = visitingNode
+					break // TODO: support nested distribute statements
+				}
+				visitingNode = visitingNode.Parent
+			}
+			if closestDistributeStatement == nil {
+				t = c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
+			} else {
+				distributedType := c.checkExpressionCachedEx(closestDistributeStatement.Expression(), checkMode & ^CheckModeSkipGenericFunctions)
+				if distributedType.flags&TypeFlagsUnion == 0 {
+					t = c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
+				} else {
+					for _, memberType := range distributedType.AsUnionType().types {
+						c.flowDistributeTypes[closestDistributeStatement.Expression()] = memberType
+						c.uncheckNodeRecursively(closestDistributeStatement.Statement())
+						if t == nil {
+							t = c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions)
+						} else {
+							t = c.getUnionType([]*Type{
+								t, c.checkExpressionCachedEx(expr, checkMode & ^CheckModeSkipGenericFunctions),
+							})
+						}
+						delete(c.flowDistributeTypes, closestDistributeStatement.Expression())
+					}
+				}
+			}
+		}
 		if functionFlags&FunctionFlagsAsync != 0 {
 			// From within an async function you can return either a non-promise value or a promise. Any
 			// Promise/A+ compatible implementation will always assimilate any foreign promise, so the

@@ -54,6 +54,7 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 	case ast.KindComputedPropertyName,
 		ast.KindDecorator,
 		ast.KindIfStatement,
+		ast.KindDistributeStatement,
 		ast.KindDoStatement,
 		ast.KindWhileStatement,
 		ast.KindWithStatement,

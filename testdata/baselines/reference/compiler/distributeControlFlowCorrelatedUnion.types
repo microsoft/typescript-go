@@ -1,0 +1,90 @@
+//// [tests/cases/compiler/distributeControlFlowCorrelatedUnion.ts] ////
+
+=== distributeControlFlowCorrelatedUnion.ts ===
+type A = { type: "a", value: boolean }
+>A : A
+>type : "a"
+>value : boolean
+
+type B = { type: "b", value: string }
+>B : B
+>type : "b"
+>value : string
+
+const handlers = {
+>handlers : { a: (action: A) => void; b: (action: B) => void; }
+>{  a: (action: A) => {},  b: (action: B) => {},} : { a: (action: A) => void; b: (action: B) => void; }
+
+  a: (action: A) => {},
+>a : (action: A) => void
+>(action: A) => {} : (action: A) => void
+>action : A
+
+  b: (action: B) => {},
+>b : (action: B) => void
+>(action: B) => {} : (action: B) => void
+>action : B
+}
+
+const handle = (action: A | B) => {
+>handle : (action: A | B) => void
+>(action: A | B) => {  handlers[action.type](action)  distribute (action) {    handlers[action.type](action)  }  handlers[action.type]({ type: "a", value: true })  distribute (action) {    handlers[action.type]({ type: "a", value: true })  }} : (action: A | B) => void
+>action : A | B
+
+  handlers[action.type](action)
+>handlers[action.type](action) : void
+>handlers[action.type] : ((action: A) => void) | ((action: B) => void)
+>handlers : { a: (action: A) => void; b: (action: B) => void; }
+>action.type : "a" | "b"
+>action : A | B
+>type : "a" | "b"
+>action : A | B
+
+  distribute (action) {
+>action : A | B
+
+    handlers[action.type](action)
+>handlers[action.type](action) : void
+>handlers[action.type] : ((action: A) => void) | ((action: B) => void)
+>handlers : { a: (action: A) => void; b: (action: B) => void; }
+>action.type : "a" | "b"
+>action : A | B
+>type : "a" | "b"
+>action : A | B
+  }
+
+  handlers[action.type]({ type: "a", value: true })
+>handlers[action.type]({ type: "a", value: true }) : void
+>handlers[action.type] : ((action: A) => void) | ((action: B) => void)
+>handlers : { a: (action: A) => void; b: (action: B) => void; }
+>action.type : "a" | "b"
+>action : A | B
+>type : "a" | "b"
+>{ type: "a", value: true } : { type: string; value: boolean; }
+>type : string
+>"a" : "a"
+>value : boolean
+>true : true
+
+  distribute (action) {
+>action : A | B
+
+    handlers[action.type]({ type: "a", value: true })
+>handlers[action.type]({ type: "a", value: true }) : void
+>handlers[action.type] : ((action: A) => void) | ((action: B) => void)
+>handlers : { a: (action: A) => void; b: (action: B) => void; }
+>action.type : "a" | "b"
+>action : A | B
+>type : "a" | "b"
+>{ type: "a", value: true } : { type: "a"; value: boolean; }
+>type : "a"
+>"a" : "a"
+>value : boolean
+>true : true
+  }
+}
+
+
+
+
+
