@@ -9,7 +9,6 @@ import (
 )
 
 func TestAugmentedTypesModule2(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /*11*/m2f(x: number) { };
