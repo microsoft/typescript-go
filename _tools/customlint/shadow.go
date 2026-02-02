@@ -93,22 +93,14 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			return
 		}
 		for _, expr := range n.Lhs {
-			ident, ok := expr.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			idents = append(idents, ident)
+			idents = append(idents, expr.(*ast.Ident))
 		}
 	case *ast.GenDecl:
 		if n.Tok != token.VAR {
 			return
 		}
 		for _, spec := range n.Specs {
-			valueSpec, ok := spec.(*ast.ValueSpec)
-			if !ok {
-				continue
-			}
-			idents = append(idents, valueSpec.Names...)
+			idents = append(idents, spec.(*ast.ValueSpec).Names...)
 		}
 	}
 
@@ -138,16 +130,6 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		}
 		// Don't complain if the types differ: that implies the programmer really wants two different things.
 		if !types.Identical(obj.Type(), shadowed.Type()) {
-			continue
-		}
-
-		uses := s.objectUses[obj]
-		var lastUse *ast.Ident
-		if len(uses) > 0 {
-			lastUse = uses[len(uses)-1]
-		}
-		if lastUse == nil {
-			// Unused variable?
 			continue
 		}
 
