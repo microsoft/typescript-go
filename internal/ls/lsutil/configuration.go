@@ -62,8 +62,7 @@ func (c *UserConfig) JS() *UserPreferences {
 }
 
 func (c *UserConfig) GetPreferences(activeFile string) *UserPreferences {
-	fileEnding := tspath.GetAnyExtensionFromPath(activeFile, nil, true)
-	if activeFile == "" || tspath.ExtensionIsTs(fileEnding) {
+	if activeFile == "" || tspath.ExtensionIsTs(tspath.GetAnyExtensionFromPath(activeFile, nil, true)) {
 		if c.ts != nil {
 			return c.ts
 		} else if c.js != nil {
