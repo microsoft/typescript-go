@@ -145,7 +145,7 @@ func anyIdentExported(idents []*ast.Ident) bool {
 	return false
 }
 
-func (u *unexportedAPIPass) checkFieldIfNamesExported(field *ast.Field) (stop bool) {
+func (u *unexportedAPIPass) checkExportedField(field *ast.Field) (stop bool) {
 	// For embedded fields (no names), handle specially
 	if len(field.Names) == 0 {
 		return u.checkEmbeddedField(field)
@@ -234,7 +234,7 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 
 	switch expr := expr.(type) {
 	case *ast.StructType:
-		return slices.ContainsFunc(expr.Fields.List, u.checkFieldIfNamesExported)
+		return slices.ContainsFunc(expr.Fields.List, u.checkExportedField)
 	case *ast.StarExpr:
 		return u.checkExpr(expr.X)
 	case *ast.Ident:
@@ -263,12 +263,12 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		return u.checkExpr(expr.Len) || u.checkExpr(expr.Elt)
 	case *ast.SelectorExpr:
 		if !expr.Sel.IsExported() {
-			u.pass.Reportf(u.currDecl.Pos(), "exported API %s references unexported identifier %s", u.file.Name.Name, expr.Sel.Name)
+			u.pass.Reportf(expr.Sel.Pos(), "exported API references unexported identifier %s", expr.Sel.Name)
 			return true
 		}
 		return false
 	case *ast.InterfaceType:
-		return slices.ContainsFunc(expr.Methods.List, u.checkFieldIfNamesExported)
+		return slices.ContainsFunc(expr.Methods.List, u.checkExportedField)
 	case *ast.ChanType:
 		return u.checkExpr(expr.Value)
 	case *ast.FuncType:

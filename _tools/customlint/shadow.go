@@ -39,14 +39,14 @@ func (s *shadowPass) run() (any, error) {
 	s.inspect = s.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	s.cfgs = s.pass.ResultOf[ctrlflow.Analyzer].(*ctrlflow.CFGs)
 
-	s.objectDefs = make(map[types.Object]*ast.Ident)
+	s.objectDefs = make(map[types.Object]*ast.Ident, len(s.pass.TypesInfo.Defs))
 	for id, obj := range s.pass.TypesInfo.Defs {
 		if obj != nil {
 			s.objectDefs[obj] = id
 		}
 	}
 
-	s.objectUses = make(map[types.Object][]*ast.Ident)
+	s.objectUses = make(map[types.Object][]*ast.Ident, len(s.pass.TypesInfo.Uses))
 	for id, obj := range s.pass.TypesInfo.Uses {
 		if obj != nil {
 			s.objectUses[obj] = append(s.objectUses[obj], id)
