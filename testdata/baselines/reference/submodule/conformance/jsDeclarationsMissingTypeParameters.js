@@ -49,7 +49,7 @@ function w() { return null; }
 declare function x(y?: Array | undefined): void;
 /** @param {function (Array)} func Invoked
  */
-declare function y(func: any): void;
+declare function y(func: function): void;
 /**
  * @return {(Array.<> | null)} list of devices
  */
