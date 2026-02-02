@@ -168,9 +168,6 @@ func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowDecl token.Pos, sha
 			break
 		}
 	}
-	if start == nil {
-		return 0, true
-	}
 
 	seen := make(map[*cfg.Block]struct{})
 	var reachable func(b *cfg.Block) (reachablePos token.Pos, found bool)
