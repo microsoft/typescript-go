@@ -411,13 +411,14 @@ async function runTests() {
         if (trackingDir) {
             const unusedBaselines = await checkUnusedBaselines(trackingDir);
             if (unusedBaselines.length > 0) {
-                console.log(pc.yellow(`\nFound ${unusedBaselines.length} unused baseline file(s):`));
+                console.error(pc.red(`\nFound ${unusedBaselines.length} unused baseline file(s):`));
                 for (const baseline of unusedBaselines.slice(0, 20)) {
-                    console.log(pc.yellow(`  ${baseline}`));
+                    console.error(pc.red(`  ${baseline}`));
                 }
                 if (unusedBaselines.length > 20) {
-                    console.log(pc.yellow(`  ... and ${unusedBaselines.length - 20} more`));
+                    console.error(pc.red(`  ... and ${unusedBaselines.length - 20} more`));
                 }
+                throw new Error(`Found ${unusedBaselines.length} unused baseline file(s). Delete them or ensure they are used by tests.`);
             }
         }
     }
