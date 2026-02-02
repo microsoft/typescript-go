@@ -13,14 +13,21 @@ import (
 var emptyCaseAnalyzer = &analysis.Analyzer{
 	Name: "emptycase",
 	Doc:  "finds empty switch/select cases",
-	Run:  runEmptyCase,
 	Requires: []*analysis.Analyzer{
 		inspect.Analyzer,
 	},
+	Run: func(pass *analysis.Pass) (any, error) {
+		return (&emptyCasePass{pass: pass}).run()
+	},
 }
 
-func runEmptyCase(pass *analysis.Pass) (any, error) {
-	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+type emptyCasePass struct {
+	pass *analysis.Pass
+	file *ast.File
+}
+
+func (e *emptyCasePass) run() (any, error) {
+	inspect := e.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	nodeFilter := []ast.Node{
 		(*ast.File)(nil),
@@ -28,26 +35,21 @@ func runEmptyCase(pass *analysis.Pass) (any, error) {
 		(*ast.SelectStmt)(nil),
 	}
 
-	// The inspect package doesn't tell us up front which file is being used,
-	// so keep track of it as part of the traversal. The file is the first node
-	// so will be set before any other nodes are visited.
-	var file *ast.File
-
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
 		switch n := n.(type) {
 		case *ast.File:
-			file = n
+			e.file = n
 		case *ast.SwitchStmt:
-			checkCases(pass, file, n.Body)
+			e.checkCases(n.Body)
 		case *ast.SelectStmt:
-			checkCases(pass, file, n.Body)
+			e.checkCases(n.Body)
 		}
 	})
 
 	return nil, nil
 }
 
-func checkCases(pass *analysis.Pass, file *ast.File, clause *ast.BlockStmt) {
+func (e *emptyCasePass) checkCases(clause *ast.BlockStmt) {
 	endOfBlock := clause.End()
 
 	for i, stmt := range clause.List {
@@ -55,11 +57,11 @@ func checkCases(pass *analysis.Pass, file *ast.File, clause *ast.BlockStmt) {
 		if next := i + 1; next < len(clause.List) {
 			nextCasePos = clause.List[next].Pos()
 		}
-		checkCaseStatement(pass, file, stmt, nextCasePos)
+		e.checkCaseStatement(stmt, nextCasePos)
 	}
 }
 
-func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, nextCasePos token.Pos) {
+func (e *emptyCasePass) checkCaseStatement(stmt ast.Stmt, nextCasePos token.Pos) {
 	var body []ast.Stmt
 	var colon token.Pos
 
@@ -85,11 +87,11 @@ func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, next
 	}
 
 	afterColon := colon + 1
-	if _, found := slices.BinarySearchFunc(file.Comments, posRange{afterColon, nextCasePos}, posRangeCmp); found {
+	if _, found := slices.BinarySearchFunc(e.file.Comments, posRange{afterColon, nextCasePos}, posRangeCmp); found {
 		return
 	}
 
-	pass.Report(analysis.Diagnostic{
+	e.pass.Report(analysis.Diagnostic{
 		Pos:     stmt.Pos(),
 		End:     afterColon,
 		Message: "this case block is empty and will do nothing",
