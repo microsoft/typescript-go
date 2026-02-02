@@ -1,6 +1,7 @@
 package customlint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"slices"
@@ -71,7 +72,7 @@ func (e *emptyCasePass) checkCaseStatement(stmt ast.Stmt, nextCasePos token.Pos)
 		body = stmt.Body
 		colon = stmt.Colon
 	default:
-		return
+		panic(fmt.Sprintf("unexpected statement type %T in case block", stmt))
 	}
 
 	if len(body) == 1 {
