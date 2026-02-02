@@ -275,7 +275,7 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 	default:
 		var buf bytes.Buffer
 		_ = format.Node(&buf, u.pass.Fset, expr)
-		panic(fmt.Sprintf("%T, unhandled case %T: %s", u.currDecl, expr, buf.String()))
+		panic(fmt.Sprintf("unhandled expression type %T: %s", expr, buf.String()))
 	}
 }
 
@@ -354,6 +354,6 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 		// For type aliases, check the underlying aliased type
 		return u.checkType(typ.Rhs())
 	default:
-		panic(fmt.Sprintf("unhandled type %T", typ))
+		panic(fmt.Sprintf("unhandled types.Type %T", typ))
 	}
 }

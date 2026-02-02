@@ -72,7 +72,7 @@ func (e *emptyCasePass) checkCaseStatement(stmt ast.Stmt, nextCasePos token.Pos)
 		body = stmt.Body
 		colon = stmt.Colon
 	default:
-		panic(fmt.Sprintf("unexpected statement type %T in case block", stmt))
+		panic(fmt.Sprintf("unhandled statement type %T", stmt))
 	}
 
 	if len(body) == 1 {

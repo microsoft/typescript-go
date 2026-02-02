@@ -2,6 +2,7 @@ package customlint
 
 import (
 	"cmp"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -225,7 +226,7 @@ func (s *shadowPass) cfgFor(n ast.Node) *cfg.CFG {
 	case *ast.FuncLit:
 		return s.cfgs.FuncLit(n)
 	default:
-		panic("unexpected node type")
+		panic(fmt.Sprintf("unhandled node type %T", n))
 	}
 }
 
