@@ -1,8 +1,6 @@
 package lsutil
 
 import (
-	"strings"
-
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -64,7 +62,7 @@ func (c *UserConfig) JS() *UserPreferences {
 }
 
 func (c *UserConfig) GetPreferences(activeFile string) *UserPreferences {
-	fileEnding := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(activeFile, nil, true), ".")
+	fileEnding := tspath.GetAnyExtensionFromPath(activeFile, nil, true)
 	if activeFile == "" || tspath.ExtensionIsTs(fileEnding) {
 		if c.ts != nil {
 			return c.ts
