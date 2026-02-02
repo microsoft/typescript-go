@@ -331,7 +331,6 @@ async function collectUsedBaselines(trackingDir) {
 
     const trackingFiles = await fs.promises.readdir(trackingDir);
     for (const file of trackingFiles) {
-        if (!file.endsWith(".txt")) continue;
         const content = await fs.promises.readFile(path.join(trackingDir, file), "utf-8");
         for (const line of content.split("\n")) {
             const trimmed = line.trim();
