@@ -309,6 +309,7 @@ const baselineTrackingEnabled = ![
     options.noembed,
     options.concurrentTestPrograms,
     options.race,
+    options.dirty,
 ].some(Boolean);
 
 const goTestSumFlags = [
