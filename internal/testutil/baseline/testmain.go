@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 )
@@ -61,20 +62,15 @@ func Track() func() {
 	}
 }
 
-// checkTracking panics if a baseline is being used without TestMain having called Track().
-// This is called on the first baseline access.
-func checkTracking() {
-	if trackingDir != "" && !trackingInitialized {
-		panic("baseline: package uses baselines but TestMain did not call baseline.Track(). " +
-			"Please add a TestMain function with: defer baseline.Track()()")
-	}
-}
-
 // recordBaseline adds a baseline file path to the recorded set.
 // The path should be relative to the baselines/reference directory.
-func recordBaseline(relativePath string) {
-	checkTracking()
+func recordBaseline(t testing.TB, relativePath string) {
 	if trackingDir != "" {
+		if !trackingInitialized {
+			t.Error("baseline: package uses baselines but TestMain did not call baseline.Track(). " +
+				"Please add a TestMain function with: defer baseline.Track()()")
+			return
+		}
 		recordedBaselines.Add(relativePath)
 	}
 }
