@@ -34,18 +34,16 @@ type unexportedAPIPass struct {
 
 func (u *unexportedAPIPass) run() (any, error) {
 	u.checked = make(map[types.Object]bool)
-	inspect := u.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+	in := u.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-	nodeFilter := []ast.Node{
+	for c := range in.Root().Preorder(
 		(*ast.File)(nil),
 		(*ast.FuncDecl)(nil),
 		(*ast.TypeSpec)(nil),
 		(*ast.ValueSpec)(nil),
-	}
-
-	inspect.Preorder(nodeFilter, func(n ast.Node) {
-		u.currDecl = n
-		switch n := n.(type) {
+	) {
+		u.currDecl = c.Node()
+		switch n := c.Node().(type) {
 		case *ast.File:
 			u.file = n
 		case *ast.FuncDecl:
@@ -55,7 +53,7 @@ func (u *unexportedAPIPass) run() (any, error) {
 		case *ast.ValueSpec:
 			u.checkValueSpec(n)
 		}
-	})
+	}
 
 	return nil, nil
 }

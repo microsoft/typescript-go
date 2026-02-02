@@ -63,13 +63,13 @@ func (s *shadowPass) run() (any, error) {
 
 	s.fnTypeToParent = make(map[*ast.FuncType]ast.Node)
 
-	for n := range s.inspect.PreorderSeq(
+	for c := range s.inspect.Root().Preorder(
 		(*ast.FuncDecl)(nil),
 		(*ast.FuncLit)(nil),
 		(*ast.AssignStmt)(nil),
 		(*ast.GenDecl)(nil),
 	) {
-		switch n := n.(type) {
+		switch n := c.Node().(type) {
 		case *ast.FuncDecl:
 			s.fnTypeToParent[n.Type] = n
 		case *ast.FuncLit:

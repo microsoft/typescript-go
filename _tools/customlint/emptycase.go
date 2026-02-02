@@ -27,16 +27,14 @@ type emptyCasePass struct {
 }
 
 func (e *emptyCasePass) run() (any, error) {
-	inspect := e.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+	in := e.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-	nodeFilter := []ast.Node{
+	for c := range in.Root().Preorder(
 		(*ast.File)(nil),
 		(*ast.SwitchStmt)(nil),
 		(*ast.SelectStmt)(nil),
-	}
-
-	inspect.Preorder(nodeFilter, func(n ast.Node) {
-		switch n := n.(type) {
+	) {
+		switch n := c.Node().(type) {
 		case *ast.File:
 			e.file = n
 		case *ast.SwitchStmt:
@@ -44,7 +42,7 @@ func (e *emptyCasePass) run() (any, error) {
 		case *ast.SelectStmt:
 			e.checkCases(n.Body)
 		}
-	})
+	}
 
 	return nil, nil
 }
