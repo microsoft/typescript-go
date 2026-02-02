@@ -253,8 +253,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 
 // PublishDiagnostics implements project.Client.
 func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
-	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
-	return s.send(notification.Message())
+	return sendNotification(s, lsproto.TextDocumentPublishDiagnosticsInfo, params)
 }
 
 func (s *Server) RefreshInlayHints(ctx context.Context) error {
@@ -515,6 +514,10 @@ func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	})
 }
 
+func sendNotification[Params any](s *Server, info lsproto.NotificationInfo[Params], params Params) error {
+	return s.send(info.NewNotificationMessage(params).Message())
+}
+
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	return s.send(resp.Message())
 }
@@ -535,7 +538,11 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	if handler := handlers()[req.Method]; handler != nil {
 		start := time.Now()
 		err := handler(s, ctx, req)
-		s.logger.Info("handled method '", req.Method, "' (", req.ID, ") in ", time.Since(start))
+		idStr := ""
+		if req.ID != nil {
+			idStr = " (" + req.ID.String() + ")"
+		}
+		s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
 		return err
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
@@ -785,6 +792,19 @@ func (s *Server) recover(ctx context.Context, req *lsproto.RequestMessage) {
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
 			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			if err != nil {
+				panic(err)
+			}
+
+			err = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+					Properties: &lsproto.RequestFailureTelemetryProperties{
+						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+						RequestMethod: string(req.Method),
+						Stack:         sanitizeStackTrace(string(stack)),
+					},
+				},
+			})
 			if err != nil {
 				panic(err)
 			}
