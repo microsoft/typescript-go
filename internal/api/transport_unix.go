@@ -3,6 +3,7 @@
 package api
 
 import (
+	"fmt"
 	"net"
 	"os"
 )
@@ -16,5 +17,6 @@ func newPipeListener(path string) (net.Listener, error) {
 
 // GeneratePipePath returns a platform-appropriate pipe path for the given name.
 func GeneratePipePath(name string) string {
-	return os.TempDir() + "/" + name + ".sock"
+	//nolint:forbidigo
+	return fmt.Sprintf("%s/%s.sock", os.TempDir(), name)
 }
