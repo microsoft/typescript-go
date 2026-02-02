@@ -13,13 +13,13 @@ import { restartExtHostOnChangeIfNeeded } from "./util";
 export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        telemetryReporter.sendTelemetryEvent("cmd.enableNativePreview");
+        telemetryReporter.sendTelemetryEvent("command.enableNativePreview");
         updateUseTsgoSetting(true);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        telemetryReporter.sendTelemetryEvent("cmd.disableNativePreview");
+        telemetryReporter.sendTelemetryEvent("command.disableNativePreview");
         updateUseTsgoSetting(false);
     }));
 }
@@ -34,7 +34,7 @@ export function registerLanguageCommands(
     const disposables: vscode.Disposable[] = [];
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", () => {
-        telemetryReporter.sendTelemetryEvent("cmd.restartLanguageServer");
+        telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
         return client.restart(context);
     }));
 
@@ -52,7 +52,7 @@ export function registerLanguageCommands(
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
-        telemetryReporter.sendTelemetryEvent("cmd.reportIssue");
+        telemetryReporter.sendTelemetryEvent("command.reportIssue");
         vscode.commands.executeCommand("workbench.action.openIssueReporter", {
             extensionId: "TypeScriptTeam.native-preview",
         });
