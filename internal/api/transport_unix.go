@@ -16,5 +16,5 @@ func newPipeListener(path string) (net.Listener, error) {
 
 // GeneratePipePath returns a platform-appropriate pipe path for the given name.
 func GeneratePipePath(name string) string {
-	return "/tmp/" + name + ".sock"
+	return os.TempDir() + "/" + name + ".sock"
 }

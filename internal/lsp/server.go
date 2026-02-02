@@ -1304,7 +1304,6 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 		if apiErr := conn.Run(s.backgroundCtx); apiErr != nil {
 			s.logger.Errorf("API session %s: %v", apiSession.ID(), apiErr)
 		}
-		conn.Close()
 	}()
 
 	s.apiSessions[apiSession.ID()] = apiSession

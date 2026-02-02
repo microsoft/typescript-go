@@ -26,9 +26,6 @@ type AsyncConn struct {
 	pending   map[jsonrpc.ID]chan *Message
 	pendingMu sync.Mutex
 	writeMu   sync.Mutex
-
-	closed     atomic.Bool
-	closedChan chan struct{}
 }
 
 // NewAsyncConn creates a new async connection with the given transport and handler.
@@ -40,27 +37,19 @@ func NewAsyncConn(rwc io.ReadWriteCloser, handler Handler) *AsyncConn {
 // NewAsyncConnWithProtocol creates a new async connection with a custom protocol.
 func NewAsyncConnWithProtocol(rwc io.ReadWriteCloser, protocol Protocol, handler Handler) *AsyncConn {
 	return &AsyncConn{
-		rwc:        rwc,
-		protocol:   protocol,
-		handler:    handler,
-		pending:    make(map[jsonrpc.ID]chan *Message),
-		closedChan: make(chan struct{}),
+		rwc:      rwc,
+		protocol: protocol,
+		handler:  handler,
+		pending:  make(map[jsonrpc.ID]chan *Message),
 	}
 }
 
 // Run starts processing messages on the connection.
-// It blocks until the connection is closed or an error occurs.
+// It blocks until the context is cancelled or an error occurs.
 func (c *AsyncConn) Run(ctx context.Context) error {
-	defer c.Close()
-
 	for {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			return ctx.Err()
-		case <-c.closedChan:
-			return ErrConnClosed
-		default:
-			// Non-blocking check - continue to read messages
 		}
 
 		msg, err := c.protocol.ReadMessage()
@@ -147,10 +136,6 @@ func (c *AsyncConn) handleNotification(ctx context.Context, msg *Message) {
 
 // Call sends a request to the client and waits for a response.
 func (c *AsyncConn) Call(ctx context.Context, method string, params any) (jsontext.Value, error) {
-	if c.closed.Load() {
-		return nil, ErrConnClosed
-	}
-
 	// Create unique request ID
 	id := jsonrpc.NewIDString(fmt.Sprintf("api%d", c.seq.Add(1)))
 
@@ -181,8 +166,6 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (jsonte
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
-	case <-c.closedChan:
-		return nil, ErrConnClosed
 	case resp := <-responseChan:
 		if resp.Error != nil {
 			return nil, fmt.Errorf("api: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
@@ -193,29 +176,7 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (jsonte
 
 // Notify sends a notification to the client (no response expected).
 func (c *AsyncConn) Notify(ctx context.Context, method string, params any) error {
-	if c.closed.Load() {
-		return ErrConnClosed
-	}
-
 	c.writeMu.Lock()
 	defer c.writeMu.Unlock()
 	return c.protocol.WriteNotification(method, params)
-}
-
-// Close closes the connection.
-func (c *AsyncConn) Close() error {
-	if c.closed.CompareAndSwap(false, true) {
-		close(c.closedChan)
-
-		// Cancel all pending requests
-		c.pendingMu.Lock()
-		for id, ch := range c.pending {
-			delete(c.pending, id)
-			close(ch)
-		}
-		c.pendingMu.Unlock()
-
-		return c.rwc.Close()
-	}
-	return nil
 }

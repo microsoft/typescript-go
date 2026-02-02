@@ -24,7 +24,7 @@ type Handler interface {
 // Conn represents a bidirectional connection for API communication.
 type Conn interface {
 	// Run starts processing messages on the connection.
-	// It blocks until the connection is closed or an error occurs.
+	// It blocks until the context is cancelled or an error occurs.
 	Run(ctx context.Context) error
 
 	// Call sends a request to the client and waits for a response.
@@ -32,9 +32,6 @@ type Conn interface {
 
 	// Notify sends a notification to the client (no response expected).
 	Notify(ctx context.Context, method string, params any) error
-
-	// Close closes the connection.
-	Close() error
 }
 
 // UnmarshalParams is a helper to unmarshal params into a typed struct.

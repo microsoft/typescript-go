@@ -7,7 +7,6 @@ import (
 	"io"
 	"runtime/debug"
 	"sync"
-	"sync/atomic"
 
 	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
@@ -24,34 +23,23 @@ type SyncConn struct {
 	// This ensures that concurrent calls from handler goroutines (e.g., project code
 	// spawning goroutines that invoke filesystem callbacks) don't corrupt the stream.
 	mu sync.Mutex
-
-	closed     atomic.Bool
-	closedChan chan struct{}
 }
 
 // NewSyncConn creates a new sync connection with the given transport and handler.
 func NewSyncConn(rwc io.ReadWriteCloser, protocol Protocol, handler Handler) *SyncConn {
 	return &SyncConn{
-		rwc:        rwc,
-		protocol:   protocol,
-		handler:    handler,
-		closedChan: make(chan struct{}),
+		rwc:      rwc,
+		protocol: protocol,
+		handler:  handler,
 	}
 }
 
 // Run starts processing messages on the connection.
-// It blocks until the connection is closed or an error occurs.
+// It blocks until the context is cancelled or an error occurs.
 func (c *SyncConn) Run(ctx context.Context) error {
-	defer c.Close()
-
 	for {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			return ctx.Err()
-		case <-c.closedChan:
-			return ErrConnClosed
-		default:
-			// Non-blocking check - continue to read messages
 		}
 
 		c.mu.Lock()
@@ -128,10 +116,6 @@ func (c *SyncConn) handleNotification(ctx context.Context, msg *Message) {
 // Call sends a request to the client and waits for a response.
 // This method is safe to call from multiple goroutines - calls are serialized.
 func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontext.Value, error) {
-	if c.closed.Load() {
-		return nil, ErrConnClosed
-	}
-
 	// Serialize all Call operations. This is critical because:
 	// 1. The msgpack protocol uses method names as response IDs
 	// 2. The handler code (project internals) may spawn goroutines that call
@@ -146,16 +130,11 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontex
 		return nil, err
 	}
 
-	// Read the response inline.
-	select {
-	case <-ctx.Done():
+	if ctx.Err() != nil {
 		return nil, ctx.Err()
-	case <-c.closedChan:
-		return nil, ErrConnClosed
-	default:
-		// Non-blocking check - continue to read response
 	}
 
+	// Read the response inline.
 	msg, err := c.protocol.ReadMessage()
 	if err != nil {
 		return nil, err
@@ -174,20 +153,7 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (jsontex
 
 // Notify sends a notification to the client (no response expected).
 func (c *SyncConn) Notify(ctx context.Context, method string, params any) error {
-	if c.closed.Load() {
-		return ErrConnClosed
-	}
-
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	return c.protocol.WriteNotification(method, params)
-}
-
-// Close closes the connection.
-func (c *SyncConn) Close() error {
-	if c.closed.CompareAndSwap(false, true) {
-		close(c.closedChan)
-		return c.rwc.Close()
-	}
-	return nil
 }

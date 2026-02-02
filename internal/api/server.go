@@ -90,7 +90,6 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		protocol := NewMessagePackProtocol(rwc)
 		conn = NewSyncConn(rwc, protocol, session)
 	}
-	defer conn.Close()
 
 	// If callbacks are enabled, set the connection on the FS
 	if callbackFS != nil {
