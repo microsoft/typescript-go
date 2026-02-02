@@ -178,11 +178,6 @@ func (s *shadowPass) report(ident *ast.Ident, shadowed types.Object, use token.P
 	}
 }
 
-func (s *shadowPass) reportWithUse(ident *ast.Ident, use token.Pos) {
-	line := s.pass.Fset.Position(use).Line
-	s.pass.ReportRangef(ident, "declaration of %q shadows declaration at line %d", ident.Name, line)
-}
-
 func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowDecl token.Pos, shadowUses []*ast.Ident) (reachablePos token.Pos, found bool) {
 	var start *cfg.Block
 	for _, b := range c.Blocks {
@@ -268,10 +263,6 @@ func posInBlock(b *cfg.Block, pos token.Pos) bool {
 
 func comparePos[T ast.Node](a, b T) int {
 	return cmp.Compare(a.Pos(), b.Pos())
-}
-
-func nodeContainsPos(node ast.Node, pos token.Pos) bool {
-	return node.Pos() <= pos && pos <= node.End()
 }
 
 func isTypeName(obj types.Object) bool {
