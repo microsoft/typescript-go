@@ -418,7 +418,16 @@ async function runTests() {
                 if (unusedBaselines.length > 20) {
                     console.error(pc.red(`  ... and ${unusedBaselines.length - 20} more`));
                 }
-                throw new Error(`Found ${unusedBaselines.length} unused baseline file(s). Delete them or ensure they are used by tests.`);
+
+                // Create .delete files for each unused baseline so baseline-accept can remove them
+                for (const baseline of unusedBaselines) {
+                    const deleteFilePath = path.join(localBaseline, baseline + ".delete");
+                    await fs.promises.mkdir(path.dirname(deleteFilePath), { recursive: true });
+                    await fs.promises.writeFile(deleteFilePath, "");
+                }
+                console.error(pc.red(`\nRun 'hereby baseline-accept' to delete them.`));
+
+                throw new Error(`Found ${unusedBaselines.length} unused baseline file(s). Run 'hereby baseline-accept' to delete them.`);
             }
         }
     }
