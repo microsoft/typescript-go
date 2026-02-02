@@ -33,9 +33,9 @@ function isSpawnOptions(options: AsyncClientOptions): options is AsyncClientSpaw
  * over STDIO (spawned process) or a Unix domain socket using JSON-RPC.
  */
 export class AsyncClient {
-    private socket: Socket | null = null;
-    private process: ChildProcess | null = null;
-    private connection: MessageConnection | null = null;
+    private socket: Socket | undefined;
+    private process: ChildProcess | undefined;
+    private connection: MessageConnection | undefined;
     private options: AsyncClientOptions;
     private connected = false;
 
@@ -57,22 +57,32 @@ export class AsyncClient {
     private async connectViaSpawn(options: AsyncClientSpawnOptions): Promise<void> {
         const { spawn } = await import("node:child_process");
 
-        const args = [
-            "--api",
-            "--async",
-            "-cwd",
-            options.cwd ?? process.cwd(),
-        ];
+        return new Promise((resolve, reject) => {
+            const args = [
+                "--api",
+                "--async",
+                "--cwd",
+                options.cwd ?? process.cwd(),
+            ];
 
-        this.process = spawn(options.tsserverPath, args, {
-            stdio: ["pipe", "pipe", "inherit"],
+            this.process = spawn(options.tsserverPath, args, {
+                stdio: ["pipe", "pipe", "inherit"],
+            });
+
+            this.process.once("error", error => {
+                reject(new Error(`Failed to start tsgo process: ${error.message}`));
+            });
+
+            this.process.once("spawn", () => {
+                this.connected = true;
+                resolve();
+            });
+
+            const reader = new StreamMessageReader(this.process.stdout!);
+            const writer = new StreamMessageWriter(this.process.stdin!);
+            this.connection = createMessageConnection(reader, writer);
+            this.connection.listen();
         });
-
-        const reader = new StreamMessageReader(this.process.stdout!);
-        const writer = new StreamMessageWriter(this.process.stdin!);
-        this.connection = createMessageConnection(reader, writer);
-        this.connection.listen();
-        this.connected = true;
     }
 
     private async connectViaSocket(options: AsyncClientSocketOptions): Promise<void> {
@@ -88,7 +98,7 @@ export class AsyncClient {
                 resolve();
             });
 
-            this.socket.on("error", error => {
+            this.socket.once("error", error => {
                 reject(new Error(`Socket error: ${error.message}`));
             });
         });
@@ -109,15 +119,20 @@ export class AsyncClient {
     async close(): Promise<void> {
         if (this.connection) {
             this.connection.dispose();
-            this.connection = null;
+            this.connection = undefined;
         }
         if (this.socket) {
             this.socket.destroy();
-            this.socket = null;
+            this.socket = undefined;
         }
         if (this.process) {
-            this.process.kill();
-            this.process = null;
+            // Close stdin to unblock the server's read loop, allowing it to exit cleanly.
+            // The server is blocked on stdin.Read(), so just sending SIGTERM would deadlock:
+            // - Node won't exit while child is alive
+            // - Child can't process SIGTERM while blocked on read
+            // - Read won't error until stdin is closed
+            this.process.stdin?.end();
+            this.process = undefined;
         }
         this.connected = false;
     }

@@ -1271,11 +1271,7 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 	}
 
 	var apiSession *api.Session
-	apiSession = api.NewSession(s.session, &api.SessionOptions{
-		OnClose: func() {
-			s.removeAPISession(apiSession.ID())
-		},
-	})
+	apiSession = api.NewSession(s.session, nil)
 
 	// Use provided pipe path or generate a unique one
 	var pipePath string
@@ -1292,9 +1288,23 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 
 	// Start accepting connections in the background
 	go func() {
-		if apiErr := apiSession.Run(ctx, transport); apiErr != nil {
+		defer func() {
+			transport.Close()
+			apiSession.Close()
+			s.removeAPISession(apiSession.ID())
+		}()
+
+		rwc, acceptErr := transport.Accept()
+		if acceptErr != nil {
+			s.logger.Errorf("API session %s: failed to accept connection: %v", apiSession.ID(), acceptErr)
+			return
+		}
+
+		conn := api.NewAsyncConn(rwc, apiSession)
+		if apiErr := conn.Run(s.backgroundCtx); apiErr != nil {
 			s.logger.Errorf("API session %s: %v", apiSession.ID(), apiErr)
 		}
+		conn.Close()
 	}()
 
 	s.apiSessions[apiSession.ID()] = apiSession

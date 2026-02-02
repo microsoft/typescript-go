@@ -10,13 +10,12 @@ export interface ClientOptions {
 
 export class Client {
     private channel: SyncRpcChannel;
-    private decoder = new TextDecoder();
     private encoder = new TextEncoder();
 
     constructor(options: ClientOptions) {
         const args = [
             "--api",
-            "-cwd",
+            "--cwd",
             options.cwd ?? process.cwd(),
         ];
 

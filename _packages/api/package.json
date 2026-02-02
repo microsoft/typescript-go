@@ -44,11 +44,12 @@
         }
     },
     "scripts": {
+        "node": "node --experimental-strip-types --no-warnings --conditions @typescript/source",
         "build": "tsc -b",
         "watch": "tsc -b --watch",
         "build:test": "tsc -b test",
-        "bench": "node --experimental-strip-types --no-warnings --conditions @typescript/source test/api.bench.ts",
-        "test": "node --test --experimental-strip-types --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
+        "bench": "npm run node -- test/api.bench.ts",
+        "test": "npm run node -- --test ./test/**/*.test.ts"
     },
     "devDependencies": {
         "tinybench": "^3.1.1"

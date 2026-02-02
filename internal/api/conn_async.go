@@ -151,8 +151,25 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (jsonte
 		return nil, ErrConnClosed
 	}
 
-	id := jsonrpc.NewIDString(method)
+	// Create unique request ID
+	id := jsonrpc.NewIDString(fmt.Sprintf("api%d", c.seq.Add(1)))
 
+	// Register response channel BEFORE sending request to avoid race
+	responseChan := make(chan *Message, 1)
+	c.pendingMu.Lock()
+	c.pending[*id] = responseChan
+	c.pendingMu.Unlock()
+
+	defer func() {
+		c.pendingMu.Lock()
+		defer c.pendingMu.Unlock()
+		if ch, ok := c.pending[*id]; ok {
+			close(ch)
+			delete(c.pending, *id)
+		}
+	}()
+
+	// Send the request
 	c.writeMu.Lock()
 	err := c.protocol.WriteRequest(id, method, params)
 	c.writeMu.Unlock()
@@ -161,21 +178,12 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (jsonte
 		return nil, err
 	}
 
-	ch := make(chan *Message, 1)
-
-	c.pendingMu.Lock()
-	c.pending[*id] = ch
-	c.pendingMu.Unlock()
-
 	select {
 	case <-ctx.Done():
-		c.pendingMu.Lock()
-		delete(c.pending, *id)
-		c.pendingMu.Unlock()
 		return nil, ctx.Err()
 	case <-c.closedChan:
 		return nil, ErrConnClosed
-	case resp := <-ch:
+	case resp := <-responseChan:
 		if resp.Error != nil {
 			return nil, fmt.Errorf("api: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
 		}

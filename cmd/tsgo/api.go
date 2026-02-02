@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -40,10 +40,12 @@ func runAPI(args []string) int {
 		Callbacks:          callbacksList,
 		Async:              *async,
 	})
-	defer s.Close()
 
-	if err := s.Run(context.Background()); err != nil && !errors.Is(err, io.EOF) {
-		fmt.Println(err)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	if err := s.Run(ctx); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 	return 0

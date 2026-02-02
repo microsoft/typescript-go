@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"sync"
 	"sync/atomic"
 
@@ -30,19 +29,9 @@ var sessionIDCounter atomic.Uint64
 type Session struct {
 	id             string
 	projectSession *project.Session
-	onClose        func()
 
-	// conn is the connection for this session, set when Run is called.
-	conn Conn
-
-	// useBinaryResponses controls whether certain responses (like getSourceFile)
-	// return raw binary data instead of base64-encoded JSON.
 	// This is set to true when using MessagePackProtocol.
 	useBinaryResponses bool
-
-	// syncRequests enables synchronous request handling.
-	// This is required for protocols like msgpack that use method names as response IDs.
-	syncRequests bool
 
 	// snapshot is the current snapshot for this session.
 	// It is retained until the client requests an update.
@@ -67,13 +56,8 @@ var _ Handler = (*Session)(nil)
 
 // SessionOptions configures an API session.
 type SessionOptions struct {
-	// OnClose is called when the session is closed.
-	OnClose func()
 	// UseBinaryResponses enables binary responses for msgpack protocol.
 	UseBinaryResponses bool
-	// SyncRequests enables synchronous request handling.
-	// This is required for protocols like msgpack that use method names as response IDs.
-	SyncRequests bool
 }
 
 // NewSession creates a new API session with the given project session.
@@ -86,9 +70,7 @@ func NewSession(projectSession *project.Session, options *SessionOptions) *Sessi
 		typeRegistry:   make(map[Handle[checker.Type]]*checker.Type),
 	}
 	if options != nil {
-		s.onClose = options.OnClose
 		s.useBinaryResponses = options.UseBinaryResponses
-		s.syncRequests = options.SyncRequests
 	}
 	return s
 }
@@ -586,71 +568,11 @@ func (s *Session) resolveTypeHandle(handle Handle[checker.Type]) (*checker.Type,
 
 // Close closes the session and triggers the onClose callback.
 func (s *Session) Close() {
-	// Clear registries
-	s.symbolRegistryMu.Lock()
-	s.symbolRegistry = nil
-	s.symbolRegistryMu.Unlock()
-
-	s.typeRegistryMu.Lock()
-	s.typeRegistry = nil
-	s.typeRegistryMu.Unlock()
-
 	if s.snapshotRelease != nil {
 		s.snapshotRelease()
 		s.snapshotRelease = nil
 		s.snapshot = nil
 	}
-	if s.conn != nil {
-		s.conn.Close()
-		s.conn = nil
-	}
-	if s.onClose != nil {
-		s.onClose()
-	}
-}
-
-// Run accepts a connection on the transport, runs the session until
-// the connection closes or an error occurs, then cleans up resources.
-// This is a blocking call that should be run in a goroutine.
-// It uses JSONRPCProtocol by default.
-func (s *Session) Run(ctx context.Context, transport Transport) error {
-	return s.RunWithProtocol(ctx, transport, nil)
-}
-
-// ProtocolFactory creates a Protocol for a given ReadWriter.
-type ProtocolFactory func(rw io.ReadWriter) Protocol
-
-// RunWithProtocol is like Run but allows specifying a custom protocol.
-// If protocolFactory is nil, JSONRPCProtocol is used.
-func (s *Session) RunWithProtocol(ctx context.Context, transport Transport, protocolFactory ProtocolFactory) error {
-	defer transport.Close()
-	defer s.Close()
-
-	// Accept a single connection for this session
-	rwc, err := transport.Accept()
-	if err != nil {
-		return fmt.Errorf("failed to accept connection: %w", err)
-	}
-
-	var protocol Protocol
-	if protocolFactory != nil {
-		protocol = protocolFactory(rwc)
-	} else {
-		protocol = NewJSONRPCProtocol(rwc)
-	}
-
-	if s.syncRequests {
-		s.conn = NewSyncConn(rwc, protocol, s)
-	} else {
-		s.conn = NewAsyncConnWithProtocol(rwc, protocol, s)
-	}
-
-	return s.conn.Run(ctx)
-}
-
-// Conn returns the connection for this session, or nil if not yet connected.
-func (s *Session) Conn() Conn {
-	return s.conn
 }
 
 func formatSessionID(id uint64) string {
