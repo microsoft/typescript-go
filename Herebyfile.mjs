@@ -303,8 +303,7 @@ const goTestEnv = {
     ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}),
 };
 
-// Enable baseline tracking only for full runs
-const baselineTrackingEnabled = ![
+const baselineTrackingEnabled = isTypeScriptSubmoduleCloned() && ![
     options.tests,
     options.noembed,
     options.concurrentTestPrograms,
