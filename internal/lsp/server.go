@@ -246,8 +246,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 
 // PublishDiagnostics implements project.Client.
 func (s *Server) PublishDiagnostics(ctx context.Context, params *lsproto.PublishDiagnosticsParams) error {
-	notification := lsproto.TextDocumentPublishDiagnosticsInfo.NewNotificationMessage(params)
-	return s.send(notification.Message())
+	return sendNotification(s, lsproto.TextDocumentPublishDiagnosticsInfo, params)
 }
 
 func (s *Server) RefreshInlayHints(ctx context.Context) error {
