@@ -82,14 +82,14 @@ func writeRecordedBaselines(trackingPath string) {
 	f, err := os.Create(trackingPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "baseline: failed to create tracking file %s: %v\n", trackingPath, err)
-		return
+		os.Exit(1)
 	}
 	defer f.Close()
 
 	for baseline := range recordedBaselines.Keys() {
 		if _, err := fmt.Fprintln(f, baseline); err != nil {
 			fmt.Fprintf(os.Stderr, "baseline: failed to write to tracking file %s: %v\n", trackingPath, err)
-			return
+			os.Exit(1)
 		}
 	}
 }
