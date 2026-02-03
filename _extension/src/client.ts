@@ -25,7 +25,7 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
-export class Client {
+export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
     private telemetryReporter: tr.TelemetryReporter;
@@ -38,7 +38,6 @@ export class Client {
     private disposables: vscode.Disposable[] = [];
 
     private exe: ExeInfo | undefined;
-    private onStartedCallbacks: Set<() => void> = new Set();
 
     constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: tr.TelemetryReporter) {
         this.outputChannel = outputChannel;
@@ -105,12 +104,7 @@ export class Client {
         };
     }
 
-    async initialize(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
-        const exe = await getExe(context);
-        return this.start(context, exe);
-    }
-
-    async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<vscode.Disposable> {
+    async start(exe: { path: string; version: string; }): Promise<void> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
         this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
@@ -159,8 +153,6 @@ export class Client {
 
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
-        vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
-        this.onStartedCallbacks.forEach(callback => callback());
 
         if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
@@ -195,21 +187,15 @@ export class Client {
             registerTagClosingFeature("typescript", this.documentSelector, this.client),
             registerTagClosingFeature("javascript", this.documentSelector, this.client),
         );
-
-        return new vscode.Disposable(() => {
-            this.dispose();
-            vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-            vscode.commands.executeCommand("setContext", "typescript.native-preview.cpuProfileRunning", false);
-        });
     }
 
-    dispose() {
+    async dispose() {
         if (this.isDisposed) {
             return;
         }
         this.isDisposed = true;
 
-        this.client?.dispose();
+        await this.client?.dispose();
         while (this.disposables.length > 0) {
             const d = this.disposables.pop()!;
             d.dispose();
@@ -218,19 +204,6 @@ export class Client {
 
     getCurrentExe(): { path: string; version: string; } | undefined {
         return this.exe;
-    }
-
-    onStarted(callback: () => void): vscode.Disposable {
-        if (this.exe) {
-            callback();
-            return new vscode.Disposable(() => {});
-        }
-
-        this.onStartedCallbacks.add(callback);
-
-        return new vscode.Disposable(() => {
-            this.onStartedCallbacks.delete(callback);
-        });
     }
 
     /**
@@ -244,20 +217,22 @@ export class Client {
         return this.client.sendRequest<{ sessionId: string; pipePath: string; }>("custom/initializeAPISession", {});
     }
 
-    async restart(context: vscode.ExtensionContext): Promise<vscode.Disposable> {
+    /**
+     * Restart the language server if the executable path has not changed.
+     * Returns true if a restart was performed.
+     */
+    async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
         if (!this.client) {
             return Promise.reject(new Error("Language client is not initialized"));
         }
         const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
-            this.outputChannel.appendLine(`Executable path changed from ${this.exe?.path} to ${exe.path}`);
-            this.outputChannel.appendLine(`Restarting language server with new executable...`);
-            return this.start(context, exe);
+            return false;
         }
 
         this.outputChannel.appendLine(`Restarting language server...`);
-        this.client.restart();
-        return new vscode.Disposable(() => {});
+        await this.client.restart();
+        return true;
     }
 
     // Developer/debugging methods
