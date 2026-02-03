@@ -51,10 +51,10 @@ func (s *StdioServer) Run(ctx context.Context) error {
 
 	fs := bundled.WrapFS(osvfs.FS())
 
-	// Wrap the base FS with CallbackFS if callbacks are requested
-	var callbackFS *CallbackFS
+	// Wrap the base FS with callbackFS if callbacks are requested
+	var callbackFS *callbackFS
 	if len(s.options.Callbacks) > 0 {
-		callbackFS = NewCallbackFS(fs, s.options.Callbacks)
+		callbackFS = newCallbackFS(fs, s.options.Callbacks)
 		fs = callbackFS
 	}
 
