@@ -20,20 +20,18 @@ import type {
     SymbolResponse,
     TypeResponse,
 } from "../proto.ts";
-import { AsyncClient } from "./client.ts";
+import {
+    AsyncClient,
+    type AsyncClientSocketOptions,
+    type AsyncClientSpawnOptions,
+} from "./client.ts";
 
 export { SymbolFlags, TypeFlags };
 
-export interface LSPConnectionOptions {
-    /** Path to the Unix domain socket for API communication */
-    pipePath: string;
+export interface LSPConnectionOptions extends AsyncClientSocketOptions {
 }
 
-export interface AsyncAPIOptions {
-    /** Path to the tsgo executable */
-    tsserverPath: string;
-    /** Current working directory */
-    cwd?: string;
+export interface AsyncAPIOptions extends AsyncClientSpawnOptions {
 }
 
 /** Type alias for the async object registry */
@@ -89,7 +87,7 @@ export class AsyncAPI implements BaseAPI<true> {
 
     /**
      * Create an AsyncAPI instance from an existing LSP connection's API session.
-     * Use this when connecting to an API pipe provided by an LSP server via $/initializeAPISession.
+     * Use this when connecting to an API pipe provided by an LSP server via custom/initializeAPISession.
      */
     static fromLSPConnection(options: LSPConnectionOptions): AsyncAPI {
         const client = new AsyncClient(options);

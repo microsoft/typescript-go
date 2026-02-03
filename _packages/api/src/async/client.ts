@@ -11,7 +11,7 @@ import {
 } from "vscode-jsonrpc/node";
 
 export interface AsyncClientSocketOptions {
-    /** Path to the Unix domain socket for API communication */
+    /** Path to the Unix domain socket or Windows named pipe for API communication */
     pipePath: string;
 }
 
