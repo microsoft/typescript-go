@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"strings"
 	"unicode/utf16"
+	"unicode/utf8"
 	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -175,6 +176,13 @@ func decodeBytes(s string) (contents string, ok bool) {
 	}
 	if len(s) >= 3 && s[0] == 0xEF && s[1] == 0xBB && s[2] == 0xBF {
 		s = s[3:]
+	}
+
+	// Ensure the string is valid UTF-8 to prevent panics during JSON marshaling
+	// (e.g., in buildInfo serialization or LSP responses).
+	// Invalid UTF-8 sequences are replaced with the Unicode replacement character (U+FFFD).
+	if !utf8.ValidString(s) {
+		s = strings.ToValidUTF8(s, string(utf8.RuneError))
 	}
 
 	return s, true

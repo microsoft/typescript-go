@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/locale"
 	"golang.org/x/text/language"
@@ -133,11 +135,18 @@ func StringifyArgs(args []any) []string {
 
 	result := make([]string, len(args))
 	for i, arg := range args {
-		if s, ok := arg.(string); ok {
-			result[i] = s
+		var s string
+		if str, ok := arg.(string); ok {
+			s = str
 		} else {
-			result[i] = fmt.Sprintf("%v", arg)
+			s = fmt.Sprintf("%v", arg)
 		}
+		// Ensure the string is valid UTF-8 to prevent JSON marshaling panics
+		// when diagnostic args contain text from source files with invalid encoding.
+		if !utf8.ValidString(s) {
+			s = strings.ToValidUTF8(s, string(utf8.RuneError))
+		}
+		result[i] = s
 	}
 	return result
 }
