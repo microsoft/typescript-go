@@ -5,7 +5,8 @@ Found 'package.json' at '/.src/package.json'.
 Using 'imports' subpath '#cjs' with target './index.cjs'.
 File name '/.src/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/index.cts' exists - use it as a name resolution result.
-======== Module name '#cjs' was successfully resolved to '/.src/index.cts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#cjs' was successfully resolved to '/.src/index.cts' with Package ID 'package/index.cts@'. ========
 ======== Resolving module '#mjs' from '/.src/index.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -13,7 +14,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#mjs' with target './index.mjs'.
 File name '/.src/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/index.mts' exists - use it as a name resolution result.
-======== Module name '#mjs' was successfully resolved to '/.src/index.mts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#mjs' was successfully resolved to '/.src/index.mts' with Package ID 'package/index.mts@'. ========
 ======== Resolving module '#type' from '/.src/index.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -21,7 +23,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#type' with target './index.js'.
 File name '/.src/index.js' has a '.js' extension - stripping it.
 File '/.src/index.ts' exists - use it as a name resolution result.
-======== Module name '#type' was successfully resolved to '/.src/index.ts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#type' was successfully resolved to '/.src/index.ts' with Package ID 'package/index.ts@'. ========
 ======== Resolving module '#cjs' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -29,7 +32,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#cjs' with target './index.cjs'.
 File name '/.src/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/index.cts' exists - use it as a name resolution result.
-======== Module name '#cjs' was successfully resolved to '/.src/index.cts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#cjs' was successfully resolved to '/.src/index.cts' with Package ID 'package/index.cts@'. ========
 ======== Resolving module '#mjs' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -37,7 +41,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#mjs' with target './index.mjs'.
 File name '/.src/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/index.mts' exists - use it as a name resolution result.
-======== Module name '#mjs' was successfully resolved to '/.src/index.mts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#mjs' was successfully resolved to '/.src/index.mts' with Package ID 'package/index.mts@'. ========
 ======== Resolving module '#type' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -45,7 +50,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#type' with target './index.js'.
 File name '/.src/index.js' has a '.js' extension - stripping it.
 File '/.src/index.ts' exists - use it as a name resolution result.
-======== Module name '#type' was successfully resolved to '/.src/index.ts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#type' was successfully resolved to '/.src/index.ts' with Package ID 'package/index.ts@'. ========
 ======== Resolving module '#cjs' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -53,7 +59,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#cjs' with target './index.cjs'.
 File name '/.src/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/index.cts' exists - use it as a name resolution result.
-======== Module name '#cjs' was successfully resolved to '/.src/index.cts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#cjs' was successfully resolved to '/.src/index.cts' with Package ID 'package/index.cts@'. ========
 ======== Resolving module '#mjs' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -61,7 +68,8 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#mjs' with target './index.mjs'.
 File name '/.src/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/index.mts' exists - use it as a name resolution result.
-======== Module name '#mjs' was successfully resolved to '/.src/index.mts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#mjs' was successfully resolved to '/.src/index.mts' with Package ID 'package/index.mts@'. ========
 ======== Resolving module '#type' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -69,4 +77,5 @@ File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#type' with target './index.js'.
 File name '/.src/index.js' has a '.js' extension - stripping it.
 File '/.src/index.ts' exists - use it as a name resolution result.
-======== Module name '#type' was successfully resolved to '/.src/index.ts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '#type' was successfully resolved to '/.src/index.ts' with Package ID 'package/index.ts@'. ========

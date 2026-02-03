@@ -1722,17 +1722,16 @@ func (r *resolutionState) getPackageId(resolvedFileName string, packageInfo *pac
 	if packageInfo.Exists() {
 		packageJsonContent := packageInfo.Contents
 		if name, ok := packageJsonContent.Name.GetValue(); ok {
-			if version, ok := packageJsonContent.Version.GetValue(); ok {
-				var subModuleName string
-				if len(resolvedFileName) > len(packageInfo.PackageDirectory) {
-					subModuleName = resolvedFileName[len(packageInfo.PackageDirectory)+1:]
-				}
-				return PackageId{
-					Name:             name,
-					Version:          version,
-					SubModuleName:    subModuleName,
-					PeerDependencies: r.readPackageJsonPeerDependencies(packageInfo),
-				}
+			version, _ := packageJsonContent.Version.GetValue()
+			var subModuleName string
+			if len(resolvedFileName) > len(packageInfo.PackageDirectory) {
+				subModuleName = resolvedFileName[len(packageInfo.PackageDirectory)+1:]
+			}
+			return PackageId{
+				Name:             name,
+				Version:          version,
+				SubModuleName:    subModuleName,
+				PeerDependencies: r.readPackageJsonPeerDependencies(packageInfo),
 			}
 		}
 	}

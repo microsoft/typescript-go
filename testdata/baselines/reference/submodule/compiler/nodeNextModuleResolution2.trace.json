@@ -20,5 +20,6 @@ Directory '/a/b/node_modules/@types' does not exist, skipping all lookups in it.
 Found 'package.json' at '/a/node_modules/foo/package.json'.
 Using 'exports' subpath '.' with target './index.d.ts'.
 File '/a/node_modules/foo/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/a/node_modules/foo/index.d.ts', result '/a/node_modules/foo/index.d.ts'.
-======== Module name 'foo' was successfully resolved to '/a/node_modules/foo/index.d.ts'. ========
+======== Module name 'foo' was successfully resolved to '/a/node_modules/foo/index.d.ts' with Package ID 'foo/index.d.ts@'. ========

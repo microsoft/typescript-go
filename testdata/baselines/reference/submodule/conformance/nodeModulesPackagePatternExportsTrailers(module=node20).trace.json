@@ -9,8 +9,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/index.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -22,8 +23,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/index.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -36,8 +38,9 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist.
 File '/.src/node_modules/inner/index.tsx' does not exist.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========
 ======== Resolving module 'inner/cjs/index.cjs' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -49,8 +52,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -62,8 +66,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/index.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -76,8 +81,9 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========
 ======== Resolving module 'inner/cjs/index.cjs' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -89,8 +95,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -102,8 +109,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -116,8 +124,9 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========
 ======== Resolving module 'inner/cjs/index.cjs' from '/.src/node_modules/inner/test.d.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -126,8 +135,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/node_modules/inner/test.d.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -136,8 +146,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/node_modules/inner/test.d.ts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -147,8 +158,9 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========
 ======== Resolving module 'inner/cjs/index.cjs' from '/.src/node_modules/inner/test.d.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -157,8 +169,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/node_modules/inner/test.d.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -167,8 +180,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/node_modules/inner/test.d.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
@@ -178,8 +192,9 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========
 ======== Resolving module 'inner/cjs/index.cjs' from '/.src/node_modules/inner/test.d.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -188,8 +203,9 @@ Using 'exports' subpath './cjs/*.cjs' with target './index.cjs'.
 File name '/.src/node_modules/inner/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/node_modules/inner/index.cts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.cts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.cts', result '/.src/node_modules/inner/index.d.cts'.
-======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts'. ========
+======== Module name 'inner/cjs/index.cjs' was successfully resolved to '/.src/node_modules/inner/index.d.cts' with Package ID 'inner/index.d.cts@'. ========
 ======== Resolving module 'inner/mjs/index.mjs' from '/.src/node_modules/inner/test.d.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -198,8 +214,9 @@ Using 'exports' subpath './mjs/*.mjs' with target './index.mjs'.
 File name '/.src/node_modules/inner/index.mjs' has a '.mjs' extension - stripping it.
 File '/.src/node_modules/inner/index.mts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.mts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.mts', result '/.src/node_modules/inner/index.d.mts'.
-======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts'. ========
+======== Module name 'inner/mjs/index.mjs' was successfully resolved to '/.src/node_modules/inner/index.d.mts' with Package ID 'inner/index.d.mts@'. ========
 ======== Resolving module 'inner/js/index.js' from '/.src/node_modules/inner/test.d.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -209,5 +226,6 @@ File name '/.src/node_modules/inner/index.js' has a '.js' extension - stripping 
 File '/.src/node_modules/inner/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/inner/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/inner/index.d.ts', result '/.src/node_modules/inner/index.d.ts'.
-======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts'. ========
+======== Module name 'inner/js/index.js' was successfully resolved to '/.src/node_modules/inner/index.d.ts' with Package ID 'inner/index.d.ts@'. ========

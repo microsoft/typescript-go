@@ -46,8 +46,8 @@ ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96m../node_modules/lib2/index.d.ts[0m:[93m1[0m:[93m26[0m - [91merror[0m[90m TS1149: [0mFile name '/home/node_modules/somelib/index.d.ts' differs from already included file name '/home/node_modules/someLib/index.d.ts' only in casing.
   The file is in the program because:
-    Imported via 'someLib' from file '/home/node_modules/lib1/index.d.ts'
-    Imported via 'somelib' from file '/home/node_modules/lib2/index.d.ts'
+    Imported via 'someLib' from file '/home/node_modules/lib1/index.d.ts' with packageId 'somelib/index.d.ts@'
+    Imported via 'somelib' from file '/home/node_modules/lib2/index.d.ts' with packageId 'somelib/index.d.ts@'
 
 [7m1[0m import type { Foo } from 'somelib';
 [7m [0m [91m                         ~~~~~~~~~[0m

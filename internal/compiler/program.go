@@ -1696,9 +1696,7 @@ func (p *Program) collectPackageNames() {
 								// and unfortunately in lots of fourslash tests
 								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
 							}
-							if name != "" {
-								p.resolvedPackageNames.Add(name)
-							}
+							p.resolvedPackageNames.Add(name)
 							continue
 						}
 					}
