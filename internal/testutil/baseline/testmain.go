@@ -1,6 +1,7 @@
 package baseline
 
 import (
+	"bufio"
 	"fmt"
 	"hash/fnv"
 	"os"
@@ -79,17 +80,24 @@ func writeRecordedBaselines(trackingPath string) {
 		return
 	}
 
+	if err := doWriteRecordedBaselines(trackingPath); err != nil {
+		fmt.Fprintf(os.Stderr, "baseline: failed to write tracking file %s: %v\n", trackingPath, err)
+		os.Exit(1)
+	}
+}
+
+func doWriteRecordedBaselines(trackingPath string) error {
 	f, err := os.Create(trackingPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "baseline: failed to create tracking file %s: %v\n", trackingPath, err)
-		os.Exit(1)
+		return err
 	}
 	defer f.Close()
 
+	w := bufio.NewWriter(f)
 	for baseline := range recordedBaselines.Keys() {
-		if _, err := fmt.Fprintln(f, baseline); err != nil {
-			fmt.Fprintf(os.Stderr, "baseline: failed to write to tracking file %s: %v\n", trackingPath, err)
-			os.Exit(1)
+		if _, err := fmt.Fprintln(w, baseline); err != nil {
+			return err
 		}
 	}
+	return w.Flush()
 }
