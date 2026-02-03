@@ -6,8 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
-	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -81,12 +79,17 @@ func writeRecordedBaselines(trackingPath string) {
 		return
 	}
 
-	// Collect and sort baselines for deterministic output
-	baselines := recordedBaselines.ToSlice()
-	slices.Sort(baselines)
+	f, err := os.Create(trackingPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "baseline: failed to create tracking file %s: %v\n", trackingPath, err)
+		return
+	}
+	defer f.Close()
 
-	content := strings.Join(baselines, "\n") + "\n"
-	if err := os.WriteFile(trackingPath, []byte(content), 0o644); err != nil {
-		fmt.Fprintf(os.Stderr, "baseline: failed to write tracking file %s: %v\n", trackingPath, err)
+	for baseline := range recordedBaselines.Keys() {
+		if _, err := fmt.Fprintln(f, baseline); err != nil {
+			fmt.Fprintf(os.Stderr, "baseline: failed to write to tracking file %s: %v\n", trackingPath, err)
+			return
+		}
 	}
 }
