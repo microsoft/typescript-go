@@ -77,7 +77,7 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Factory().UpdateNamedImports(n, elements)
 	case ast.KindImportSpecifier:
-		if !tx.shouldEmitAliasDeclaration(node) {
+		if node.IsTypeOnly() || !tx.shouldEmitAliasDeclaration(node) {
 			// elide type-only or unused imports
 			return nil
 		}
