@@ -140,7 +140,6 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 			t.Factory.NewToken(ast.KindEndOfFile),
 		)
 	}
-	fmt.Printf("indent size: %d\n", t.formatSettings.IndentSize)
 	writer := printer.NewChangeTrackerWriter(t.newLine, t.formatSettings.IndentSize)
 	printer.NewPrinter(
 		printer.PrinterOptions{
