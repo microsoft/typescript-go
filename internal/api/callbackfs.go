@@ -54,7 +54,7 @@ func newCallbackFS(base vfs.FS, callbacks []string) *callbackFS {
 	enabled := make(map[string]bool, len(callbacks))
 	for _, cb := range callbacks {
 		if !isCallbackName(cb) {
-			panic(fmt.Sprintf("unknown callback name: %s", cb))
+			panic("unknown callback name: " + cb)
 		}
 		enabled[cb] = true
 	}
