@@ -46,7 +46,6 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 		if n.ImportClause != nil {
 			importClause := tx.Visitor().VisitNode(n.ImportClause)
 			if importClause == nil {
-				// All import bindings were elided, so elide the import declaration
 				return nil
 			}
 			return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
