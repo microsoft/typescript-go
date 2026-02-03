@@ -166,7 +166,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 
 						// String literals should have a stop both inside and outside their quotes.
 						if ast.IsStringLiteral(node) || node.Kind == ast.KindTemplateExpression || node.Kind == ast.KindNoSubstitutionTemplateLiteral {
-							result = pushSelectionRange(result, start+1, end-1)
+							// Only add inner content range if there's actually content (handles unterminated literals)
+							if start+1 < end-1 {
+								result = pushSelectionRange(result, start+1, end-1)
+							}
 						}
 					}
 
