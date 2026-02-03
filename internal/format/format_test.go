@@ -59,3 +59,36 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatJSDocInNestedScope(t *testing.T) {
+	t.Parallel()
+	// Issue: LSP server crashes (panics) when attempting to format a JavaScript/TypeScript file
+	// containing a JSDoc @type annotation inside a callback function.
+	// The panic occurs because negative indentation values (-1 used as sentinel)
+	// are passed to strings.Repeat causing "negative Repeat count" panic.
+
+	text := `document.addEventListener('DOMContentLoaded', () => {
+    /** @type {NodeListOf<HTMLSpanElement>} */
+    const elements = document.querySelectorAll('.test')
+});`
+
+	ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		EditorSettings: lsutil.EditorSettings{
+			TabSize:                4,
+			IndentSize:             4,
+			BaseIndentSize:         0,
+			NewLineCharacter:       "\n",
+			ConvertTabsToSpaces:    true,
+			IndentStyle:            lsutil.IndentStyleSmart,
+			TrimTrailingWhitespace: true,
+		},
+	}, "\n")
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.js",
+		Path:     "/test.js",
+	}, text, core.ScriptKindJS)
+
+	// This should not panic with "strings: negative Repeat count"
+	// The formatting may not produce perfect output, but it shouldn't crash
+	_ = format.FormatDocument(ctx, sourceFile)
+}

@@ -860,6 +860,12 @@ func isComment(kind ast.Kind) bool {
 }
 
 func (w *formatSpanWorker) insertIndentation(pos int, indentation int, lineAdded bool) {
+	// Negative indentation is used as a sentinel value to indicate "no indentation computed"
+	// Skip formatting in this case
+	if indentation < 0 {
+		return
+	}
+	
 	indentationString := getIndentationString(indentation, w.formattingContext.Options)
 	if lineAdded {
 		// new line is added before the token by the formatting rules
@@ -912,6 +918,12 @@ func (w *formatSpanWorker) indentTriviaItems(trivia []TextRangeWithKind, comment
 }
 
 func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, indentation int, firstLineIsIndented bool, indentFinalLine bool) {
+	// Negative indentation is used as a sentinel value to indicate "no indentation computed"
+	// Skip formatting in this case
+	if indentation < 0 {
+		return
+	}
+	
 	// split comment in lines
 	startLine := scanner.GetECMALineOfPosition(w.sourceFile, commentRange.Pos())
 	endLine := scanner.GetECMALineOfPosition(w.sourceFile, commentRange.End())
@@ -973,6 +985,12 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 }
 
 func getIndentationString(indentation int, options *lsutil.FormatCodeSettings) string {
+	// Negative indentation is used as a sentinel value to indicate "no indentation computed"
+	// Return empty string in this case to avoid panic in strings.Repeat
+	if indentation < 0 {
+		return ""
+	}
+	
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
