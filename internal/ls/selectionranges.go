@@ -142,6 +142,17 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 						}
 					}
 
+					// Synthesize a stop for '${ ... }' since '${' and '}' actually belong to siblings.
+					if ast.IsTemplateSpan(parent) {
+						templateSpan := parent.AsTemplateSpan()
+						if templateSpan.Literal != nil {
+							// Start from just before the '${' and end after the '}'
+							spanStart := node.Pos() - 2 // Back up 2 chars for '${'
+							spanEnd := astnav.GetStartOfNode(templateSpan.Literal, sourceFile, false) + 1 // Include the '}'
+							result = pushSelectionRange(result, spanStart, spanEnd)
+						}
+					}
+
 					if !shouldSkipNode(node, parent) {
 						start := astnav.GetStartOfNode(node, sourceFile, false)
 						end := node.End()
@@ -161,7 +172,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 
 		visitNodes := func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
 			if nodes != nil && len(nodes.Nodes) > 0 {
-				shouldSkipList := parent != nil && ast.IsVariableDeclarationList(parent)
+				shouldSkipList := parent != nil && (ast.IsVariableDeclarationList(parent) || ast.IsTemplateExpression(parent))
 
 				if !shouldSkipList {
 					start := astnav.GetStartOfNode(nodes.Nodes[0], sourceFile, false)
