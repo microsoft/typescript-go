@@ -147,9 +147,15 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 						templateSpan := parent.AsTemplateSpan()
 						if templateSpan.Literal != nil {
 							// Start from just before the '${' and end after the '}'
-							spanStart := node.Pos() - 2 // Back up 2 chars for '${'
-							spanEnd := astnav.GetStartOfNode(templateSpan.Literal, sourceFile, false) + 1 // Include the '}'
-							result = pushSelectionRange(result, spanStart, spanEnd)
+							// The '${' is 2 characters before the expression start
+							spanStart := node.Pos() - 2
+							// The '}' is the first character of the template literal (middle or tail)
+							spanEnd := astnav.GetStartOfNode(templateSpan.Literal, sourceFile, false) + 1
+							// Validate the positions are reasonable
+							text := sourceFile.Text()
+							if spanStart >= 0 && spanEnd <= len(text) && spanStart < spanEnd {
+								result = pushSelectionRange(result, spanStart, spanEnd)
+							}
 						}
 					}
 
