@@ -2254,7 +2254,7 @@ func GetDeclarationFromName(name *Node) *Declaration {
 			return nil
 		}
 		binExp := parent.Parent
-		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp) != JSDeclarationKindNone {
 			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
 			leftHasSymbol := false
 			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
@@ -6837,6 +6837,7 @@ func IsElementAccessExpression(node *Node) bool {
 
 type CallExpression struct {
 	ExpressionBase
+	DeclarationBase
 	compositeNodeBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
@@ -10768,6 +10769,7 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
@@ -11005,9 +11007,7 @@ func (node *SourceFile) GetOrCreateToken(
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
 	loc := core.NewTextRange(pos, end)
-	if node.tokenCache == nil {
-		node.tokenCache = make(map[core.TextRange]*Node)
-	} else if token, ok := node.tokenCache[loc]; ok {
+	if token, ok := node.tokenCache[loc]; ok {
 		if token.Kind != kind {
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
@@ -11018,6 +11018,9 @@ func (node *SourceFile) GetOrCreateToken(
 	}
 	if parent.Flags&NodeFlagsReparsed != 0 {
 		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
+	}
+	if node.tokenCache == nil {
+		node.tokenCache = make(map[core.TextRange]*Node)
 	}
 	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
@@ -11169,7 +11172,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				}
 			}
 		case KindBinaryExpression:
-			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			switch GetAssignmentDeclarationKind(node) {
 			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
 				addDeclaration(node)
 			}

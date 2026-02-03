@@ -39,10 +39,6 @@
         "category": "Message",
         "code": 100009
     },
-    "all, unless --singleThreaded is passed.": {
-        "category": "Message",
-        "code": 100010
-    },
     "Your application tried to access '{0}'. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since '{0}' isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}": {
         "category": "Error",
         "code": 110001

@@ -341,7 +341,7 @@ func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 		}
 		for _, typeRoot := range typeRoots {
 			candidate := r.getCandidateFromTypeRoot(typeRoot)
-			directoryExists := r.resolver.host.FS().DirectoryExists(candidate)
+			directoryExists := r.resolver.host.FS().DirectoryExists(typeRoot)
 			if !directoryExists && r.tracer != nil {
 				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, typeRoot)
 			}
@@ -398,10 +398,10 @@ func (r *resolutionState) mangleScopedPackageName(name string) string {
 }
 
 func (r *resolutionState) getPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
-	result, _ := tspath.ForEachAncestorDirectory(
+	result := tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
+		r.resolver.typingsLocation,
 		directory,
 		func(directory string) (*packagejson.InfoCacheEntry, bool) {
-			// !!! stop at global cache
 			if result := r.getPackageJsonInfo(directory, false /*onlyRecordFailures*/); result != nil {
 				return result, true
 			}
@@ -661,12 +661,13 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 				if isPattern {
 					combinedLookup = strings.ReplaceAll(targetString, "*", subpath)
 				}
+				scopeContainingDirectory := tspath.EnsureTrailingDirectorySeparator(scope.PackageDirectory)
 				if r.tracer != nil {
 					r.tracer.write(diagnostics.Using_0_subpath_1_with_target_2, "imports", key, combinedLookup)
-					r.tracer.write(diagnostics.Resolving_module_0_from_1, combinedLookup, scope.PackageDirectory+"/")
+					r.tracer.write(diagnostics.Resolving_module_0_from_1, combinedLookup, scopeContainingDirectory)
 				}
 				name, containingDirectory := r.name, r.containingDirectory
-				r.name, r.containingDirectory = combinedLookup, scope.PackageDirectory+"/"
+				r.name, r.containingDirectory = combinedLookup, scopeContainingDirectory
 				defer func() {
 					r.name, r.containingDirectory = name, containingDirectory
 				}()
@@ -726,6 +727,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 			finalPath = tspath.GetNormalizedAbsolutePath(resolvedTarget+subpath, r.resolver.host.GetCurrentDirectory())
 		}
 		if inputLink := r.tryLoadInputFileForPath(finalPath, subpath, tspath.CombinePaths(scope.PackageDirectory, "package.json"), isImports); !inputLink.shouldContinueSearching() {
+			inputLink.packageId = r.getPackageId(inputLink.path, scope)
 			return inputLink
 		}
 		if result := r.loadFileNameFromPackageJSONField(extensions, finalPath, targetString, false /*onlyRecordFailures*/); !result.shouldContinueSearching() {
@@ -812,9 +814,9 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 		if r.compilerOptions.RootDir != "" {
 			// A `rootDir` compiler option strongly indicates the root location
 			rootDir = r.compilerOptions.RootDir
-		} else if r.compilerOptions.Composite.IsTrue() && r.compilerOptions.ConfigFilePath != "" {
-			// A `composite` project is using project references and has it's common src dir set to `.`, so it shouldn't need to check any other locations
-			rootDir = r.compilerOptions.ConfigFilePath
+		} else if r.compilerOptions.ConfigFilePath != "" {
+			// When no explicit rootDir is set, treat the config file's directory as the project root, which establishes the common source directory, so no other locations need to be checked.
+			rootDir = tspath.GetDirectoryPath(r.compilerOptions.ConfigFilePath)
 		} else {
 			diagnostic := ast.NewDiagnostic(
 				nil,
@@ -842,7 +844,7 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 				jsAndDtsExtensions := []string{tspath.ExtensionMjs, tspath.ExtensionCjs, tspath.ExtensionJs, tspath.ExtensionJson, tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}
 				for _, ext := range jsAndDtsExtensions {
 					if tspath.FileExtensionIs(possibleInputBase, ext) {
-						inputExts := r.getPossibleOriginalInputExtensionForExtension(possibleInputBase)
+						inputExts := tspath.GetPossibleOriginalInputExtensionForExtension(possibleInputBase)
 						for _, possibleExt := range inputExts {
 							if !extensionIsOk(r.extensions, possibleExt) {
 								continue
@@ -875,19 +877,6 @@ func (r *resolutionState) getOutputDirectoriesForBaseDirectory(commonSourceDirGu
 		candidateDirectories = append(candidateDirectories, tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(currentDir, r.compilerOptions.OutDir), r.resolver.host.GetCurrentDirectory()))
 	}
 	return candidateDirectories
-}
-
-func (r *resolutionState) getPossibleOriginalInputExtensionForExtension(path string) []string {
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMjs, tspath.ExtensionMts}) {
-		return []string{tspath.ExtensionMts, tspath.ExtensionMjs}
-	}
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCjs, tspath.ExtensionCts}) {
-		return []string{tspath.ExtensionCts, tspath.ExtensionCjs}
-	}
-	if tspath.FileExtensionIs(path, ".d.json.ts") {
-		return []string{tspath.ExtensionJson}
-	}
-	return []string{tspath.ExtensionTsx, tspath.ExtensionTs, tspath.ExtensionJsx, tspath.ExtensionJs}
 }
 
 func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOnly bool) *resolved {

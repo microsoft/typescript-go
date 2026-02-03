@@ -26,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var ErrNeedsAutoImports = errors.New("completion list needs auto imports")
@@ -1069,6 +1070,9 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	shouldOfferImportCompletions := func() bool {
+		if tspath.IsDynamicFileName(file.FileName()) {
+			return false
+		}
 		// If already typing an import statement, provide completions for it.
 		if importStatementCompletion != nil {
 			return true
@@ -1910,6 +1914,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			false, /*preselect*/
 			autoImport.Fix.ModuleSpecifier,
 			autoImport.Fix.AutoImportFix,
+			nil, /*detail*/
 		)
 
 		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
@@ -2209,7 +2214,8 @@ func (l *LanguageService) createCompletionItem(
 		hasAction,
 		preselect,
 		source,
-		nil,
+		nil, /*autoImportFix*/
+		nil, /*detail*/
 	)
 }
 
@@ -4295,6 +4301,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		false, /*preselect*/
 		"",    /*source*/
 		nil,   /*autoImportEntryData*/ // !!! jsx autoimports
+		nil,   /*detail*/
 	)
 	items := []*lsproto.CompletionItem{item}
 	itemDefaults := l.setItemDefaults(
@@ -4332,6 +4339,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	preselect bool,
 	source string,
 	autoImportFix *lsproto.AutoImportFix,
+	detail *string,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	data := &lsproto.CompletionItemData{
@@ -4364,7 +4372,6 @@ func (l *LanguageService) createLSPCompletionItem(
 
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
-	var detail *string
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierOptional) {
 		if insertText == "" {
@@ -4377,18 +4384,6 @@ func (l *LanguageService) createLSPCompletionItem(
 	}
 	if kindModifiers.Has(lsutil.ScriptElementKindModifierDeprecated) {
 		tags = &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated}
-	}
-	if kind == lsproto.CompletionItemKindFile {
-		for _, extensionModifier := range lsutil.FileExtensionKindModifiers {
-			if kindModifiers.Has(extensionModifier) {
-				if strings.HasSuffix(name, string(extensionModifier)) {
-					detail = ptrTo(name)
-				} else {
-					detail = ptrTo(name + string(extensionModifier))
-				}
-				break
-			}
-		}
 	}
 
 	if hasAction && source != "" {
@@ -4481,6 +4476,7 @@ func (l *LanguageService) getLabelStatementCompletions(
 					false, /*preselect*/
 					"",    /*source*/
 					nil,   /*autoImportEntryData*/
+					nil,   /*detail*/
 				))
 			}
 		}
@@ -5103,7 +5099,9 @@ func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Nod
 		result.replacementSpan = l.getSingleLineReplacementSpanForImportCompletionNode(candidate)
 		result.couldBeTypeOnlyImportSpecifier = couldBeTypeOnlyImportSpecifier(candidate, contextToken)
 		if ast.IsImportDeclaration(candidate) {
-			result.isTopLevelTypeOnly = candidate.ImportClause().IsTypeOnly()
+			if importClause := candidate.ImportClause(); importClause != nil {
+				result.isTopLevelTypeOnly = importClause.IsTypeOnly()
+			}
 		} else if candidate.Kind == ast.KindImportEqualsDeclaration {
 			result.isTopLevelTypeOnly = candidate.IsTypeOnly()
 		}
@@ -5119,7 +5117,9 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 		node = ancestor
 	}
 	sourceFile := ast.GetSourceFileOfNode(node)
-	if printer.GetLinesBetweenPositions(sourceFile, node.Pos(), node.End()) == 0 {
+	// Use token position (excluding JSDoc/trivia) instead of node.Pos() to avoid including JSDoc comments
+	tokenPos := scanner.GetTokenPosOfNode(node, sourceFile, false /*includeJSDoc*/)
+	if printer.GetLinesBetweenPositions(sourceFile, tokenPos, node.End()) == 0 {
 		return l.createLspRangeFromNode(node, sourceFile)
 	}
 
@@ -5859,20 +5859,25 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		tracker := newCaseClauseTracker(c, clauses)
 		target := options.GetEmitScriptTarget()
 		quotePreference := lsutil.GetQuotePreference(file, l.UserPreferences())
-		view, err := l.getPreparedAutoImportView(file)
-		if err != nil {
-			return nil, err
+		// Tolerate a nil import adder in untitled files.
+		var importAdder autoimport.ImportAdder
+		if !tspath.IsDynamicFileName(file.FileName()) {
+			view, err := l.getPreparedAutoImportView(file)
+			if err != nil {
+				return nil, err
+			}
+			importAdder = autoimport.NewImportAdder(
+				ctx,
+				program,
+				c,
+				file,
+				view,
+				l.FormatOptions(),
+				l.converters,
+				l.UserPreferences(),
+			)
 		}
-		importAdder := autoimport.NewImportAdder(
-			ctx,
-			program,
-			c,
-			file,
-			view,
-			l.FormatOptions(),
-			l.converters,
-			l.UserPreferences(),
-		)
+
 		var elements []*ast.Expression
 		factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 		for _, t := range switchType.Types() {
@@ -5947,12 +5952,18 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 
 		firstClause := printer.printUnescapedNode(newClauses[0])
 		name := firstClause + " ..."
+
+		var additionalTextEdits *[]*lsproto.TextEdit
+		if importAdder != nil {
+			additionalTextEdits = ptrTo(importAdder.Edits())
+		}
+
 		return &lsproto.CompletionItem{
 			Label:               name,
 			Kind:                ptrTo(lsproto.CompletionItemKindSnippet),
 			SortText:            ptrTo(string(SortTextGlobalsOrKeywords)),
 			InsertText:          strPtrTo(insertText),
-			AdditionalTextEdits: ptrTo(importAdder.Edits()),
+			AdditionalTextEdits: additionalTextEdits,
 			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), ptrTo(lsproto.InsertTextFormatSnippet), nil),
 			Data: &lsproto.CompletionItemData{
 				FileName: file.FileName(),
