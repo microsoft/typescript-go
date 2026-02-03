@@ -146,6 +146,11 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 						start := astnav.GetStartOfNode(node, sourceFile, false)
 						end := node.End()
 						result = pushSelectionRange(result, start, end)
+
+						// String literals should have a stop both inside and outside their quotes.
+						if ast.IsStringLiteral(node) || node.Kind == ast.KindTemplateExpression || node.Kind == ast.KindNoSubstitutionTemplateLiteral {
+							result = pushSelectionRange(result, start+1, end-1)
+						}
 					}
 
 					next = node
