@@ -61,6 +61,14 @@ export class SessionManager implements vscode.Disposable {
         }
     }
 
+    async initializeAPIConnection(pipePath?: string): Promise<string> {
+        if (!this.currentSession) {
+            throw new Error("Language server is not running.");
+        }
+        const result = await this.currentSession.client.initializeAPISession(pipePath);
+        return result.pipePath;
+    }
+
     dispose(): void {
         this.disposables.forEach(d => d.dispose());
         this.currentSession?.dispose();
@@ -75,9 +83,9 @@ export class SessionManager implements vscode.Disposable {
  * it also owns the commands and UI elements that should only be active while the
  * server is running.
  */
-export class Session implements vscode.Disposable {
+class Session implements vscode.Disposable {
+    client: Client;
     private disposables: vscode.Disposable[] = [];
-    private client: Client;
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
     private telemetryReporter: TelemetryReporter;

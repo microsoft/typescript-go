@@ -15,7 +15,7 @@ export interface ExtensionAPI {
     initializeAPIConnection(pipePath?: string): Promise<string>;
 }
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
@@ -87,4 +87,11 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     await sessionManager.start(context);
+
+    return {
+        onLanguageServerInitialized: languageServerInitializedEventEmitter.event,
+        async initializeAPIConnection(pipePath?: string): Promise<string> {
+            return sessionManager.initializeAPIConnection(pipePath);
+        },
+    };
 }
