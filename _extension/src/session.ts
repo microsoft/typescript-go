@@ -15,17 +15,20 @@ export class SessionManager implements vscode.Disposable {
     private currentSession?: Session;
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
+    private initializedEventEmitter: vscode.EventEmitter<void>;
     private telemetryReporter: TelemetryReporter;
 
     constructor(
         context: vscode.ExtensionContext,
         outputChannel: vscode.LogOutputChannel,
         traceOutputChannel: vscode.LogOutputChannel,
+        initializedEventEmitter: vscode.EventEmitter<void>,
         telemetryReporter: TelemetryReporter,
     ) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.telemetryReporter = telemetryReporter;
+        this.initializedEventEmitter = initializedEventEmitter;
         this.registerCommands(context);
     }
 
@@ -50,7 +53,7 @@ export class SessionManager implements vscode.Disposable {
             this.outputChannel.appendLine("Restarting TypeScript Native Preview...");
             await this.currentSession.dispose();
         }
-        this.currentSession = new Session(this.outputChannel, this.traceOutputChannel, this.telemetryReporter);
+        this.currentSession = new Session(this.outputChannel, this.traceOutputChannel, this.initializedEventEmitter, this.telemetryReporter);
         return this.currentSession.start(context);
     }
 
@@ -90,8 +93,13 @@ class Session implements vscode.Disposable {
     private traceOutputChannel: vscode.LogOutputChannel;
     private telemetryReporter: TelemetryReporter;
 
-    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: TelemetryReporter) {
-        this.client = new Client(outputChannel, traceOutputChannel, telemetryReporter);
+    constructor(
+        outputChannel: vscode.LogOutputChannel,
+        traceOutputChannel: vscode.LogOutputChannel,
+        initializedEventEmitter: vscode.EventEmitter<void>,
+        telemetryReporter: TelemetryReporter,
+    ) {
+        this.client = new Client(outputChannel, traceOutputChannel, initializedEventEmitter, telemetryReporter);
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.telemetryReporter = telemetryReporter;

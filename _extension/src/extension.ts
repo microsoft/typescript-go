@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();
     context.subscriptions.push(languageServerInitializedEventEmitter);
 
-    const sessionManager = new SessionManager(context, output, traceOutput, telemetryReporter);
+    const sessionManager = new SessionManager(context, output, traceOutput, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async event => {

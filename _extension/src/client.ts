@@ -28,6 +28,7 @@ import { getLanguageForUri } from "./util";
 export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
+    private initializedEventEmitter: vscode.EventEmitter<void>;
     private telemetryReporter: tr.TelemetryReporter;
 
     private documentSelector: Array<{ scheme: string; language: string; }>;
@@ -39,9 +40,15 @@ export class Client implements vscode.Disposable {
 
     private exe: ExeInfo | undefined;
 
-    constructor(outputChannel: vscode.LogOutputChannel, traceOutputChannel: vscode.LogOutputChannel, telemetryReporter: tr.TelemetryReporter) {
+    constructor(
+        outputChannel: vscode.LogOutputChannel,
+        traceOutputChannel: vscode.LogOutputChannel,
+        initializedEventEmitter: vscode.EventEmitter<void>,
+        telemetryReporter: tr.TelemetryReporter,
+    ) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
+        this.initializedEventEmitter = initializedEventEmitter;
         this.telemetryReporter = telemetryReporter;
         this.documentSelector = [
             ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
@@ -150,6 +157,10 @@ export class Client implements vscode.Disposable {
             serverOptions,
             this.clientOptions,
         );
+
+        this.client.onNotification("initialized", () => {
+            this.initializedEventEmitter.fire();
+        });
 
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
