@@ -44,8 +44,6 @@ exports.Value = Value;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseProcessor = void 0;
 exports.processRecord = processRecord;
-// Import Value as a value (no `type` keyword), but only use it in type positions
-require("./provider");
 function processRecord(value, // parameter type
 callback) {
     // return type

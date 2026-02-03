@@ -40,15 +40,20 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindImportDeclaration:
-		if !tx.isElisionBlocked(node) {
-			n := node.AsImportDeclaration()
-			// Do not elide a side-effect only import declaration.
-			//  import "foo";
-			if n.ImportClause != nil {
-				importClause := tx.Visitor().VisitNode(n.ImportClause)
-				if importClause == nil {
-					return nil
-				}
+		n := node.AsImportDeclaration()
+		// Do not elide a side-effect only import declaration.
+		//  import "foo";
+		if n.ImportClause != nil {
+			importClause := tx.Visitor().VisitNode(n.ImportClause)
+			if importClause == nil {
+				// All import bindings were elided, so elide the import declaration
+				return nil
+			}
+			if !tx.isElisionBlocked(node) {
+				return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
+			}
+			// If elision is blocked but importClause changed, we still need to update
+			if importClause != n.ImportClause {
 				return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
 			}
 		}
