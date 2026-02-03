@@ -46,7 +46,7 @@ TSFILE:  /home/src/workspaces/project/index.d.ts
 ../../tslibs/TS/Lib/lib.esnext.full.d.ts
    Default library for target 'ESNext'
 node_modules/ky/distribution/index.d.ts
-   Imported via 'ky' from file 'index.ts' with packageId 'ky/distribution/index.d.ts@'
+   Imported via 'ky' from file 'index.ts'
    File is ECMAScript module because 'node_modules/ky/package.json' has field "type" with value "module"
 index.ts
    Matched by default include pattern '**/*'
@@ -104,7 +104,7 @@ TSFILE:  /home/src/workspaces/project/index.d.ts
 ../../tslibs/TS/Lib/lib.esnext.full.d.ts
    Default library for target 'ESNext'
 node_modules/ky/distribution/index.d.ts
-   Imported via 'ky' from file 'index.ts' with packageId 'ky/distribution/index.d.ts@'
+   Imported via 'ky' from file 'index.ts'
    File is ECMAScript module because 'node_modules/ky/package.json' has field "type" with value "module"
 index.ts
    Matched by default include pattern '**/*'
@@ -140,7 +140,7 @@ TSFILE:  /home/src/workspaces/project/tsconfig.tsbuildinfo
 ../../tslibs/TS/Lib/lib.esnext.full.d.ts
    Default library for target 'ESNext'
 node_modules/ky/distribution/index.d.ts
-   Imported via 'ky' from file 'index.ts' with packageId 'ky/distribution/index.d.ts@'
+   Imported via 'ky' from file 'index.ts'
    File is ECMAScript module because 'node_modules/ky/package.json' has field "type" with value "module"
 index.ts
    Matched by default include pattern '**/*'

@@ -79,9 +79,8 @@ Found 'package.json' at '/home/src/workspaces/project/node_modules/@types/pg/pac
 'package.json' does not have a 'typings' field.
 'package.json' has 'types' field 'index.d.ts' that references '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts'.
 File '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts' exists - use it as a name resolution result.
-'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts', result '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts'.
-======== Module name 'pg' was successfully resolved to '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts' with Package ID '@types/pg/index.d.ts@'. ========
+======== Module name 'pg' was successfully resolved to '/home/src/workspaces/project/node_modules/@types/pg/index.d.ts'. ========
 ======== Resolving type reference directive 'pg', containing file '/home/src/workspaces/project/b/__inferred type names__.ts', root directory '/home/src/workspaces/project/b/node_modules/@types,/home/src/workspaces/project/node_modules/@types,/home/src/workspaces/node_modules/@types,/home/src/node_modules/@types,/home/node_modules/@types,/node_modules/@types'. ========
 Resolving with primary search path '/home/src/workspaces/project/b/node_modules/@types, /home/src/workspaces/project/node_modules/@types, /home/src/workspaces/node_modules/@types, /home/src/node_modules/@types, /home/node_modules/@types, /node_modules/@types'.
 Directory '/home/src/workspaces/project/b/node_modules/@types' does not exist, skipping all lookups in it.
@@ -95,7 +94,7 @@ Resolving real path for '/home/src/workspaces/project/node_modules/@types/pg/ind
 ../../tslibs/TS/Lib/lib.es2022.full.d.ts
    Default library for target 'ES2022'
 node_modules/@types/pg/index.d.ts
-   Imported via "pg" from file 'b/src/index.ts' with packageId '@types/pg/index.d.ts@'
+   Imported via "pg" from file 'b/src/index.ts'
    Entry point for implicit type library 'pg'
    File is CommonJS module because 'node_modules/@types/pg/package.json' does not have field "type"
 b/src/index.ts
