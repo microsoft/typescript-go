@@ -14,7 +14,7 @@ import (
 func TestCompletionJSDocBeforePropertyNoCrash(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `export class SomeInterface {
+	const content = `export interface SomeInterface {
     /** ruh-roh! */
     /*a*/property: string;
 }
