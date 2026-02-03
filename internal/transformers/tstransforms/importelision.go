@@ -49,13 +49,7 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 				// All import bindings were elided, so elide the import declaration
 				return nil
 			}
-			if !tx.isElisionBlocked(node) {
-				return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
-			}
-			// If elision is blocked but importClause changed, we still need to update
-			if importClause != n.ImportClause {
-				return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
-			}
+			return tx.Factory().UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, tx.Visitor().VisitNode(n.Attributes))
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindImportClause:
