@@ -119,14 +119,21 @@ export function registerLanguageCommands(
     }));
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection", async () => {
+        const result = await client.initializeAPISession();
+        return result.pipePath;
+    }));
+
+    disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection.ui", async () => {
         try {
             const result = await client.initializeAPISession();
-            return result.pipePath;
+            const copy = await vscode.window.showInformationMessage(`API session initialized. Listening on: ${result.pipePath}`, "Copy");
+            if (copy === "Copy") {
+                await vscode.env.clipboard.writeText(result.pipePath);
+            }
         }
         catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(`Failed to initialize API session: ${message}`);
-            throw error;
         }
     }));
 

@@ -143,7 +143,7 @@
                 "category": "Developer"
             },
             {
-                "command": "typescript.native-preview.initializeAPIConnection",
+                "command": "typescript.native-preview.initializeAPIConnection.ui",
                 "title": "Initialize API Connection",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "Developer: TypeScript Native Preview"
