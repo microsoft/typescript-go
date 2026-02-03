@@ -127,10 +127,7 @@ type RegistryBucket struct {
 	// file paths, and values describe the ways of importing the package that would resolve
 	// to that file.
 	Entrypoints map[tspath.Path][]*module.ResolvedEntrypoint
-	// PackagesWithExports tracks which packages have an "exports" field in their package.json.
-	// This is used to filter out EndingChangeable entrypoints for packages that have exports.
-	PackagesWithExports *collections.Set[string]
-	Index               *Index[*Export]
+	Index       *Index[*Export]
 }
 
 func newRegistryBucket() *RegistryBucket {
@@ -151,7 +148,6 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 		DependencyNames:      b.DependencyNames,
 		AmbientModuleNames:   b.AmbientModuleNames,
 		Entrypoints:          b.Entrypoints,
-		PackagesWithExports:  b.PackagesWithExports,
 		Index:                b.Index,
 	}
 }
@@ -1009,7 +1005,6 @@ type packageExtractionResult struct {
 	packageFiles                             map[string]map[tspath.Path]string
 	ambientModuleNames                       map[string][]string
 	entrypoints                              []*module.ResolvedEntrypoints
-	packagesWithExports                      *collections.Set[string]
 	projectReferencePackages                 *collections.Set[string]
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
@@ -1031,7 +1026,6 @@ func (b *registryBuilder) extractPackages(
 		exports:                                  make(map[tspath.Path][]*Export),
 		packageFiles:                             make(map[string]map[tspath.Path]string),
 		ambientModuleNames:                       make(map[string][]string),
-		packagesWithExports:                      &collections.Set[string]{},
 		projectReferencePackages:                 &collections.Set[string]{},
 		possibleFailedAmbientModuleLookupSources: &collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]{},
 		possibleFailedAmbientModuleLookupTargets: &collections.SyncSet[string]{},
@@ -1129,9 +1123,6 @@ func (b *registryBuilder) extractPackages(
 
 			entrypointsMu.Lock()
 			result.entrypoints = append(result.entrypoints, packageEntrypoints)
-			if packageEntrypoints.PackageHasExports {
-				result.packagesWithExports.Add(packageName)
-			}
 			entrypointsMu.Unlock()
 
 			aliasResolver := createAliasResolver(packageName, packageEntrypoints.Entrypoints, toSymlink, resolver)
@@ -1220,13 +1211,12 @@ func (b *registryBuilder) buildNodeModulesBucket(
 
 	result := &bucketBuildResult{
 		bucket: &RegistryBucket{
-			Index:               &Index[*Export]{},
-			DependencyNames:     dependencies,
-			PackageFiles:        allPackageFiles,
-			AmbientModuleNames:  extraction.ambientModuleNames,
-			Paths:               paths,
-			Entrypoints:         make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports)),
-			PackagesWithExports: extraction.packagesWithExports,
+			Index:              &Index[*Export]{},
+			DependencyNames:    dependencies,
+			PackageFiles:       allPackageFiles,
+			AmbientModuleNames: extraction.ambientModuleNames,
+			Paths:              paths,
+			Entrypoints:        make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports)),
 			state: BucketState{
 				fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
 			},

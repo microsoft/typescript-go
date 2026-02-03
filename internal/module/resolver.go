@@ -2022,9 +2022,6 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 type ResolvedEntrypoints struct {
 	Entrypoints           []*ResolvedEntrypoint
 	FailedLookupLocations []string
-	// PackageHasExports indicates whether the package has an "exports" field in its package.json.
-	// When true, only files explicitly exposed via exports should be importable.
-	PackageHasExports bool
 }
 
 type Ending int
@@ -2071,11 +2068,10 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		return &ResolvedEntrypoints{
 			Entrypoints:           entrypoints,
 			FailedLookupLocations: state.failedLookupLocations,
-			PackageHasExports:     true,
 		}
 	}
 
-	result := &ResolvedEntrypoints{PackageHasExports: false}
+	result := &ResolvedEntrypoints{}
 	mainResolution := state.loadNodeModuleFromDirectoryWorker(
 		extensions,
 		packageJson.PackageDirectory,
