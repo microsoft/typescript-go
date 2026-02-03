@@ -79,6 +79,8 @@ export function test(value: Value): Value { return value; }
 
 ## Root Cause Analysis
 
+## Root Cause Analysis
+
 ### Import Elision Logic
 The import elision logic is in `/internal/transformers/tstransforms/importelision.go`:
 
@@ -114,30 +116,52 @@ It calls `isReferencedAliasDeclaration` which checks `aliasLinks.referenced` in 
 The issue is that when processing an import clause with both type and non-type imports:
 1. The `type ValueData` specifier is correctly elided (marked as type-only)
 2. The `Value` specifier should also be elided (only used in types)
-3. BUT: Something is incorrectly marking `Value` as referenced
+3. BUT: `Value`'s `aliasLinks.referenced` is incorrectly being set to `true`
 
-The presence of the `type` import specifier seems to be triggering some code path that marks the non-type import as referenced, even though it's only used in type positions.
+The presence of the `type` import specifier in the same import statement seems to be triggering some code path that marks the non-type import as referenced, even though it's only used in type positions.
 
-## Investigation Needed
+### Comparison with TypeScript
 
-### Hypothesis
-When the import clause contains a mix of `type` and non-`type` imports, there may be:
+TypeScript's `markSymbolOfAliasDeclarationIfTypeOnly` function (in `checker.ts` around line 4385) has additional parameters `immediateTarget` and `finalTarget` and includes logic to check if the target resolves to a type-only declaration:
 
-1. **Shared alias resolution**: The import clause might be sharing some state or resolution logic that causes the regular import to be marked as referenced when the type import is processed.
+```typescript
+function markSymbolOfAliasDeclarationIfTypeOnlyWorker(
+    aliasDeclarationLinks: SymbolLinks, 
+    target: Symbol | undefined, 
+    overwriteEmpty: boolean
+): boolean {
+    if (target && (aliasDeclarationLinks.typeOnlyDeclaration === undefined || overwriteEmpty && aliasDeclarationLinks.typeOnlyDeclaration === false)) {
+        const exportSymbol = target.exports?.get(InternalSymbolName.ExportEquals) ?? target;
+        const typeOnly = exportSymbol.declarations && find(exportSymbol.declarations, isTypeOnlyImportOrExportDeclaration);
+        aliasDeclarationLinks.typeOnlyDeclaration = typeOnly ?? getSymbolLinks(exportSymbol).typeOnlyDeclaration ?? false;
+    }
+    return !!aliasDeclarationLinks.typeOnlyDeclaration;
+}
+```
 
-2. **Import clause level check**: There might be a check at the import clause level that marks all non-type imports as referenced if any import is used.
+The tsgo version is missing this additional logic to check if the alias target is type-only.
 
-3. **Symbol merging issue**: The symbols for `Value` and `ValueData` might be getting merged or confused, causing the reference tracking to conflate them.
+## Hypothesis
 
-### Next Steps
+There are two possible root causes:
 
-1. **Add debugging**: Insert logging in `markAliasSymbolAsReferenced` to trace when and why `Value` is being marked as referenced.
+### Hypothesis 1: Missing Type-Only Target Check
+The `markSymbolOfAliasDeclarationIfTypeOnly` function in tsgo is missing logic to check if the alias target resolves to a type-only declaration. When `Value` is imported alongside `type ValueData`, the function should check if all uses of `Value` are in type-only positions, but this check is not implemented.
 
-2. **Check import clause processing**: Investigate how `KindImportClause` handles mixed type/non-type imports.
+**Evidence**: TypeScript's version has `markSymbolOfAliasDeclarationIfTypeOnlyWorker` that checks the target symbol's declarations for type-only status.
 
-3. **Symbol resolution**: Check if there's symbol confusion between `Value` (the class) and its usage in type positions.
+### Hypothesis 2: Incorrect Reference Marking
+When type references are resolved (via `resolveEntityName` called from `getTypeFromTypeReference`), something is incorrectly marking the import alias as referenced. The code should distinguish between:
+- Type-level reference: Should NOT mark `aliasLinks.referenced = true`
+- Value-level reference: Should mark `aliasLinks.referenced = true`
 
-4. **Compare with TypeScript**: Look at TypeScript's `checker.ts` to see how it handles this case differently.
+**Evidence**: The import works correctly when there's NO `type` import in the same statement, suggesting that the presence of the type-only import is affecting how the non-type import is processed.
+
+## Most Likely Cause
+
+Based on the investigation, **Hypothesis 2** appears most likely. The bug manifests ONLY when there's a mix of type-only and non-type-only imports in the same import statement, which suggests that something in the import processing logic is incorrectly treating all non-type-only imports as referenced when any import from that module is used (even if only in type positions).
+
+The reference marking likely happens during the initial checking of the import declaration or during binding, where the code doesn't properly distinguish between imports that will be used at runtime vs imports that will only be used in type positions.
 
 ## Files to Investigate
 
