@@ -865,7 +865,7 @@ func (w *formatSpanWorker) insertIndentation(pos int, indentation int, lineAdded
 	if indentation < 0 {
 		return
 	}
-	
+
 	indentationString := getIndentationString(indentation, w.formattingContext.Options)
 	if lineAdded {
 		// new line is added before the token by the formatting rules
@@ -923,7 +923,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	if indentation < 0 {
 		return
 	}
-	
+
 	// split comment in lines
 	startLine := scanner.GetECMALineOfPosition(w.sourceFile, commentRange.Pos())
 	endLine := scanner.GetECMALineOfPosition(w.sourceFile, commentRange.End())
@@ -990,7 +990,7 @@ func getIndentationString(indentation int, options *lsutil.FormatCodeSettings) s
 	if indentation < 0 {
 		return ""
 	}
-	
+
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
