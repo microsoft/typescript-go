@@ -13,7 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -181,8 +181,7 @@ func (s *Session) handleRelease(ctx context.Context, handle *string) (any, error
 
 // handleGetDefaultProjectForFile returns the default project for a given file.
 func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *GetDefaultProjectForFileParams) (*ProjectResponse, error) {
-	uri := lsproto.DocumentUri("file://" + params.FileName)
-
+	uri := lsconv.FileNameToDocumentURI(params.FileName)
 	proj := s.snapshot.GetDefaultProject(uri)
 	if proj == nil {
 		return nil, fmt.Errorf("%w: no project found for file %s", ErrClientError, params.FileName)
