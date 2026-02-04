@@ -381,12 +381,12 @@ func DetectNamedImportOrganizationBySort(
 	originalGroups []*ast.Statement,
 	comparersToTest []func(a, b string) int,
 	typesToTest []OrganizeImportsTypeOrder,
-) (comparer func(a, b string) int, typeOrder OrganizeImportsTypeOrder, isSorted bool, found bool) {
+) (comparer func(a, b string) int, typeOrder OrganizeImportsTypeOrder, found bool) {
 	result := detectNamedImportOrganizationBySort(originalGroups, comparersToTest, typesToTest)
 	if result == nil {
-		return nil, OrganizeImportsTypeOrderLast, false, false
+		return nil, OrganizeImportsTypeOrderLast, false
 	}
-	return result.namedImportComparer, result.typeOrder, result.isSorted, true
+	return result.namedImportComparer, result.typeOrder, true
 }
 
 func detectNamedImportOrganizationBySort(

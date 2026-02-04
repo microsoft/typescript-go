@@ -48,7 +48,7 @@ func (l *LanguageService) OrganizeImports(
 	}
 
 	if typeOrder == lsutil.OrganizeImportsTypeOrderAuto || preferences.OrganizeImportsIgnoreCase.IsUnknown() {
-		namedImportComparer2, typeOrder2, _, found := lsutil.DetectNamedImportOrganizationBySort(topLevelImportDecls, comparersToTest, typeOrdersToTest)
+		namedImportComparer2, typeOrder2, found := lsutil.DetectNamedImportOrganizationBySort(topLevelImportDecls, comparersToTest, typeOrdersToTest)
 		if found {
 			if namedImportComparer == nil || preferences.OrganizeImportsIgnoreCase.IsUnknown() {
 				namedImportComparer = namedImportComparer2
