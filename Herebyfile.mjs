@@ -367,6 +367,14 @@ export const testTools = task({
     run: runTestTools,
 });
 
+export const buildAPI = task({
+    name: "build:api",
+    description: "Builds @typescript/api and @typescript/ast.",
+    run: async () => {
+        await $`npm run -w @typescript/api build`;
+    },
+});
+
 export const buildAPITests = task({
     name: "build:api:test",
     description: "Builds the @typescript/api tests.",
