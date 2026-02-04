@@ -687,7 +687,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		if len(declarations) > 0 {
 			name := declarations[0].Name()
 			if ast.IsIdentifier(name) {
-				return name;
+				return name
 			}
 		}
 	}
