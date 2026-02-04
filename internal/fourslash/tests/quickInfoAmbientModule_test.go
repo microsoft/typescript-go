@@ -11,7 +11,7 @@ func TestQuickInfoAmbientModule(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `declare module "*.css/*1*/";`
+	const content = `declare module "*.css"/*1*/;`
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
