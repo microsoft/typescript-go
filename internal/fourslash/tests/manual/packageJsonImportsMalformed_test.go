@@ -18,7 +18,7 @@ import * as b from "#/b.";
 b.foo();
 
 // @Filename: /src/b.ts
-export function foo() {};
+export function foo() {}
 
 // @Filename: /package.json
 {
@@ -42,7 +42,7 @@ export function foo() {};
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	
+
 	// Request diagnostics for src/a.ts - this should NOT crash
 	// The malformed package.json might produce some diagnostics, but that's fine
 	f.VerifyDiagnostics(t, nil)

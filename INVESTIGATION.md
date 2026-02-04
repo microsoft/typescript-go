@@ -26,7 +26,7 @@ The crash occurs with a malformed `package.json` imports mapping:
 When importing `#/b.`, the following happens:
 
 1. **Import statement**: `import * as b from "#/b."`
-   - Note: The import literally ends with a dot, no extension (e.g., from fourslash marker position)
+   - Note: The import literally ends with a dot, no extension. This is an unusual but valid import specifier.
 
 2. **Pattern matching**:
    - Pattern key: `"#/*"`
