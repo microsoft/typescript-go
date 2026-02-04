@@ -411,7 +411,7 @@ func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) [
 
 	var keywords []*ast.Node
 	token := lsutil.GetFirstToken(node, sourceFile)
-	if token.Kind == ast.KindTryKeyword {
+	if token != nil && token.Kind == ast.KindTryKeyword {
 		keywords = append(keywords, token)
 	}
 
