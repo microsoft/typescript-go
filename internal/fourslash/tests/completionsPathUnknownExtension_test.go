@@ -47,7 +47,9 @@ import "#//*$*/"
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{},
+			Includes: []fourslash.CompletionsExpectedItem{
+				"some-file.ruhroh",
+			},
 		},
 	})
 }
