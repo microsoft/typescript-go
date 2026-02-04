@@ -12,7 +12,7 @@ import { createTelemetryReporter } from "./telemetryReporting";
 
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
-    initializeAPIConnection(pipePath?: string): Promise<string>;
+    initializeAPIConnection(pipe?: string): Promise<string>;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
@@ -90,8 +90,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     return {
         onLanguageServerInitialized: languageServerInitializedEventEmitter.event,
-        async initializeAPIConnection(pipePath?: string): Promise<string> {
-            return sessionManager.initializeAPIConnection(pipePath);
+        async initializeAPIConnection(pipe?: string): Promise<string> {
+            return sessionManager.initializeAPIConnection(pipe);
         },
     };
 }

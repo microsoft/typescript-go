@@ -1,6 +1,6 @@
 import {
-    AsyncAPI,
-    type AsyncProject,
+    API,
+    type Project,
 } from "@typescript/api/async";
 import {
     type Node,
@@ -37,8 +37,8 @@ export async function runBenchmarks(singleIteration?: boolean) {
         } : undefined,
     });
 
-    let api: AsyncAPI;
-    let project: AsyncProject;
+    let api: API;
+    let project: Project;
     let tsProgram: ts.Program;
     let file: SourceFile;
     let tsFile: ts.SourceFile;
@@ -139,7 +139,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     async function spawnAPI() {
-        api = new AsyncAPI({
+        api = new API({
             cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         });

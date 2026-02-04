@@ -214,14 +214,14 @@ export class Client implements vscode.Disposable {
     }
 
     /**
-     * Initialize an API session and return the pipe path for connecting.
+     * Initialize an API session and return the socket path for connecting.
      * This allows other extensions to get a direct connection to the API server.
      */
-    async initializeAPISession(pipePath?: string): Promise<{ sessionId: string; pipePath: string; }> {
+    async initializeAPISession(pipe?: string): Promise<{ sessionId: string; pipe: string; }> {
         if (!this.client) {
             throw new Error("Language client is not initialized");
         }
-        return this.client.sendRequest<{ sessionId: string; pipePath: string; }>("custom/initializeAPISession", { pipePath });
+        return this.client.sendRequest<{ sessionId: string; pipe: string; }>("custom/initializeAPISession", { pipe });
     }
 
     /**

@@ -64,12 +64,12 @@ export class SessionManager implements vscode.Disposable {
         }
     }
 
-    async initializeAPIConnection(pipePath?: string): Promise<string> {
+    async initializeAPIConnection(pipe?: string): Promise<string> {
         if (!this.currentSession) {
             throw new Error("Language server is not running.");
         }
-        const result = await this.currentSession.client.initializeAPISession(pipePath);
-        return result.pipePath;
+        const result = await this.currentSession.client.initializeAPISession(pipe);
+        return result.pipe;
     }
 
     async dispose(): Promise<void> {
@@ -203,15 +203,15 @@ class Session implements vscode.Disposable {
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection", async () => {
             const result = await this.client.initializeAPISession();
-            return result.pipePath;
+            return result.pipe;
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection.ui", async () => {
             try {
                 const result = await this.client.initializeAPISession();
-                const copy = await vscode.window.showInformationMessage(`API session initialized. Listening on: ${result.pipePath}`, "Copy");
+                const copy = await vscode.window.showInformationMessage(`API session initialized. Listening on: ${result.pipe}`, "Copy");
                 if (copy === "Copy") {
-                    await vscode.env.clipboard.writeText(result.pipePath);
+                    await vscode.env.clipboard.writeText(result.pipe);
                 }
             }
             catch (error) {

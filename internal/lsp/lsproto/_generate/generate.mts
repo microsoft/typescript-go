@@ -232,7 +232,7 @@ const customStructures: Structure[] = [
         name: "InitializeAPISessionParams",
         properties: [
             {
-                name: "pipePath",
+                name: "pipe",
                 type: { kind: "base", name: "string" },
                 optional: true,
                 documentation: "Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.",
@@ -249,7 +249,7 @@ const customStructures: Structure[] = [
                 documentation: "The unique identifier for this API session.",
             },
             {
-                name: "pipePath",
+                name: "pipe",
                 type: { kind: "base", name: "string" },
                 documentation: "The path to the named pipe or Unix domain socket for API communication.",
             },

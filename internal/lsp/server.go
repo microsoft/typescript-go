@@ -1275,8 +1275,8 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 
 	// Use provided pipe path or generate a unique one
 	var pipePath string
-	if params.PipePath != nil && *params.PipePath != "" {
-		pipePath = *params.PipePath
+	if params.Pipe != nil && *params.Pipe != "" {
+		pipePath = *params.Pipe
 	} else {
 		pipePath = s.generateAPIPipePath()
 	}
@@ -1289,12 +1289,12 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 	// Start accepting connections in the background
 	go func() {
 		defer func() {
-			transport.Close()
 			apiSession.Close()
 			s.removeAPISession(apiSession.ID())
 		}()
 
 		rwc, acceptErr := transport.Accept()
+		_ = transport.Close()
 		if acceptErr != nil {
 			s.logger.Errorf("API session %s: failed to accept connection: %v", apiSession.ID(), acceptErr)
 			return
@@ -1310,7 +1310,7 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 
 	return &lsproto.InitializeAPISessionResult{
 		SessionId: apiSession.ID(),
-		PipePath:  pipePath,
+		Pipe:      pipePath,
 	}, nil
 }
 

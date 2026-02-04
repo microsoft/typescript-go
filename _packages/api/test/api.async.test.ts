@@ -1,5 +1,5 @@
 import {
-    AsyncAPI,
+    API,
     SymbolFlags,
     TypeFlags,
 } from "@typescript/api/async";
@@ -38,9 +38,9 @@ after(() => {
     fs.rmSync(fixtureDir, { recursive: true, force: true });
 });
 
-describe("AsyncAPI", () => {
+describe("API", () => {
     test("parseConfigFile", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const config = await api.parseConfigFile(path.join(fixtureDir, "tsconfig.json"));
             assert.ok(config.fileNames.some(f => f.endsWith("src/index.ts")));
@@ -52,9 +52,9 @@ describe("AsyncAPI", () => {
     });
 });
 
-describe("AsyncProject", () => {
+describe("Project", () => {
     test("getSymbolAtPosition", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
             const symbol = await project.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
@@ -68,7 +68,7 @@ describe("AsyncProject", () => {
     });
 
     test("getSymbolAtLocation", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
             const sourceFile = await project.getSourceFile(path.join(fixtureDir, "src/index.ts"));
@@ -89,7 +89,7 @@ describe("AsyncProject", () => {
     });
 
     test("getTypeOfSymbol", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
             const symbol = await project.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
@@ -104,9 +104,9 @@ describe("AsyncProject", () => {
     });
 });
 
-describe("AsyncSourceFile", () => {
+describe("SourceFile", () => {
     test("file properties", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
             const sourceFile = await project.getSourceFile(path.join(fixtureDir, "src/index.ts"));
@@ -121,7 +121,7 @@ describe("AsyncSourceFile", () => {
     });
 
     test("extended data", async () => {
-        const api = spawnAsyncAPI();
+        const api = spawnAPI();
         try {
             const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
             const sourceFile = await project.getSourceFile(path.join(fixtureDir, "src/index.ts"));
@@ -147,7 +147,7 @@ test("async unicode escapes", async () => {
     fs.writeFileSync(path.join(unicodeDir, "1.ts"), `"😃"`);
     fs.writeFileSync(path.join(unicodeDir, "2.ts"), `"\\ud83d\\ude03"`);
 
-    const api = spawnAsyncAPI();
+    const api = spawnAPI();
     try {
         const project = await api.loadProject(path.join(unicodeDir, "tsconfig.json"));
 
@@ -170,7 +170,7 @@ test("async unicode escapes", async () => {
 });
 
 test("async Object equality", async () => {
-    const api = spawnAsyncAPI();
+    const api = spawnAPI();
     try {
         const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
         assert.strictEqual(project, await api.loadProject(path.join(fixtureDir, "tsconfig.json")));
@@ -185,7 +185,7 @@ test("async Object equality", async () => {
 });
 
 test("async Dispose", async () => {
-    const api = spawnAsyncAPI();
+    const api = spawnAPI();
     try {
         const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
         const symbol = await project.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
@@ -197,7 +197,7 @@ test("async Dispose", async () => {
             await project.getTypeOfSymbol(symbol);
         }, {
             name: "Error",
-            message: "AsyncSymbol is disposed",
+            message: "Symbol is disposed",
         });
 
         const symbol2 = await project.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
@@ -213,8 +213,8 @@ test("async Benchmarks", async () => {
     await runBenchmarks(/*singleIteration*/ true);
 });
 
-function spawnAsyncAPI() {
-    return new AsyncAPI({
+function spawnAPI() {
+    return new API({
         cwd: repoRoot,
         tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
     });

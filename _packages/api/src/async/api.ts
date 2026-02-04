@@ -21,23 +21,23 @@ import type {
     TypeResponse,
 } from "../proto.ts";
 import {
-    AsyncClient,
-    type AsyncClientSocketOptions,
-    type AsyncClientSpawnOptions,
+    Client,
+    type ClientSocketOptions,
+    type ClientSpawnOptions,
 } from "./client.ts";
 
 export { SymbolFlags, TypeFlags };
 
-export interface LSPConnectionOptions extends AsyncClientSocketOptions {
+export interface LSPConnectionOptions extends ClientSocketOptions {
 }
 
-export interface AsyncAPIOptions extends AsyncClientSpawnOptions {
+export interface APIOptions extends ClientSpawnOptions {
 }
 
 /** Type alias for the async object registry */
-export type AsyncObjectRegistry = ObjectRegistry<AsyncProject, AsyncSymbol, AsyncType>;
+type AsyncObjectRegistry = ObjectRegistry<Project, Symbol, Type>;
 
-export abstract class AsyncDisposableObject {
+export abstract class DisposableObject {
     private disposed: boolean = false;
     protected objectRegistry: AsyncObjectRegistry;
     abstract readonly id: string;
@@ -63,21 +63,21 @@ export abstract class AsyncDisposableObject {
     }
 }
 
-export class AsyncAPI implements BaseAPI<true> {
-    private client: AsyncClient;
+export class API implements BaseAPI<true> {
+    private client: Client;
     private objectRegistry: AsyncObjectRegistry;
 
     /**
-     * Create an AsyncAPI instance by spawning a new tsgo process.
+     * Create an API instance by spawning a new tsgo process.
      */
-    constructor(options: AsyncAPIOptions) {
-        this.client = new AsyncClient(options);
+    constructor(options: APIOptions) {
+        this.client = new Client(options);
         // Create registry with factories - fire-and-forget release for async
-        this.objectRegistry = new ObjectRegistry<AsyncProject, AsyncSymbol, AsyncType>(
+        this.objectRegistry = new ObjectRegistry<Project, Symbol, Type>(
             {
-                createProject: data => new AsyncProject(this.client, this.objectRegistry, data),
-                createSymbol: data => new AsyncSymbol(this.objectRegistry, data),
-                createType: data => new AsyncType(this.objectRegistry, data),
+                createProject: data => new Project(this.client, this.objectRegistry, data),
+                createSymbol: data => new Symbol(this.objectRegistry, data),
+                createType: data => new Type(this.objectRegistry, data),
             },
             id => {
                 this.client.apiRequest("release", id).catch(() => {});
@@ -86,18 +86,18 @@ export class AsyncAPI implements BaseAPI<true> {
     }
 
     /**
-     * Create an AsyncAPI instance from an existing LSP connection's API session.
+     * Create an API instance from an existing LSP connection's API session.
      * Use this when connecting to an API pipe provided by an LSP server via custom/initializeAPISession.
      */
-    static fromLSPConnection(options: LSPConnectionOptions): AsyncAPI {
-        const client = new AsyncClient(options);
-        const api = Object.create(AsyncAPI.prototype) as AsyncAPI;
+    static fromLSPConnection(options: LSPConnectionOptions): API {
+        const client = new Client(options);
+        const api = Object.create(API.prototype) as API;
         api.client = client;
-        api.objectRegistry = new ObjectRegistry<AsyncProject, AsyncSymbol, AsyncType>(
+        api.objectRegistry = new ObjectRegistry<Project, Symbol, Type>(
             {
-                createProject: data => new AsyncProject(client, api.objectRegistry, data),
-                createSymbol: data => new AsyncSymbol(api.objectRegistry, data),
-                createType: data => new AsyncType(api.objectRegistry, data),
+                createProject: data => new Project(client, api.objectRegistry, data),
+                createSymbol: data => new Symbol(api.objectRegistry, data),
+                createType: data => new Type(api.objectRegistry, data),
             },
             id => {
                 client.apiRequest("release", id).catch(() => {});
@@ -110,12 +110,12 @@ export class AsyncAPI implements BaseAPI<true> {
         return this.client.apiRequest<ConfigResponse>("parseConfigFile", { fileName });
     }
 
-    async loadProject(configFileName: string): Promise<AsyncProject> {
+    async loadProject(configFileName: string): Promise<Project> {
         const data = await this.client.apiRequest<ProjectResponse>("loadProject", { configFileName });
         return this.objectRegistry.getProject(data);
     }
 
-    async getDefaultProjectForFile(fileName: string): Promise<AsyncProject | undefined> {
+    async getDefaultProjectForFile(fileName: string): Promise<Project | undefined> {
         const data = await this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", { fileName });
         return data ? this.objectRegistry.getProject(data) : undefined;
     }
@@ -126,8 +126,8 @@ export class AsyncAPI implements BaseAPI<true> {
     }
 }
 
-export class AsyncProject extends AsyncDisposableObject implements BaseProject<true> {
-    private client: AsyncClient;
+export class Project extends DisposableObject implements BaseProject<true> {
+    private client: Client;
     private decoder = new TextDecoder();
 
     readonly id: string;
@@ -135,7 +135,7 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
     compilerOptions!: Record<string, unknown>;
     rootFiles!: readonly string[];
 
-    constructor(client: AsyncClient, objectRegistry: AsyncObjectRegistry, data: ProjectResponse) {
+    constructor(client: Client, objectRegistry: AsyncObjectRegistry, data: ProjectResponse) {
         super(objectRegistry);
         this.id = data.id;
         this.client = client;
@@ -168,9 +168,9 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
         return new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
     }
 
-    getSymbolAtLocation(node: Node): Promise<AsyncSymbol | undefined>;
-    getSymbolAtLocation(nodes: readonly Node[]): Promise<(AsyncSymbol | undefined)[]>;
-    async getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Promise<AsyncSymbol | (AsyncSymbol | undefined)[] | undefined> {
+    getSymbolAtLocation(node: Node): Promise<Symbol | undefined>;
+    getSymbolAtLocation(nodes: readonly Node[]): Promise<(Symbol | undefined)[]>;
+    async getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
         this.ensureNotDisposed();
         if (Array.isArray(nodeOrNodes)) {
             const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsAtLocations", {
@@ -186,9 +186,9 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Promise<AsyncSymbol | undefined>;
-    getSymbolAtPosition(fileName: string, positions: readonly number[]): Promise<(AsyncSymbol | undefined)[]>;
-    async getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Promise<AsyncSymbol | (AsyncSymbol | undefined)[] | undefined> {
+    getSymbolAtPosition(fileName: string, position: number): Promise<Symbol | undefined>;
+    getSymbolAtPosition(fileName: string, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
+    async getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
         this.ensureNotDisposed();
         if (typeof positionOrPositions === "number") {
             const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtPosition", {
@@ -206,9 +206,9 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
         return data.map(d => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
-    getTypeOfSymbol(symbol: AsyncSymbol): Promise<AsyncType | undefined>;
-    getTypeOfSymbol(symbols: readonly AsyncSymbol[]): Promise<(AsyncType | undefined)[]>;
-    async getTypeOfSymbol(symbolOrSymbols: AsyncSymbol | readonly AsyncSymbol[]): Promise<AsyncType | (AsyncType | undefined)[] | undefined> {
+    getTypeOfSymbol(symbol: Symbol): Promise<Type | undefined>;
+    getTypeOfSymbol(symbols: readonly Symbol[]): Promise<(Type | undefined)[]>;
+    async getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<Type | (Type | undefined)[] | undefined> {
         this.ensureNotDisposed();
         if (Array.isArray(symbolOrSymbols)) {
             const data = await this.client.apiRequest<(TypeResponse | null)[]>("getTypesOfSymbols", {
@@ -219,13 +219,13 @@ export class AsyncProject extends AsyncDisposableObject implements BaseProject<t
         }
         const data = await this.client.apiRequest<TypeResponse | null>("getTypeOfSymbol", {
             project: this.id,
-            symbol: (symbolOrSymbols as AsyncSymbol).ensureNotDisposed().id,
+            symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id,
         });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 }
 
-export class AsyncSymbol extends AsyncDisposableObject implements BaseSymbol<true> {
+export class Symbol extends DisposableObject implements BaseSymbol<true> {
     readonly id: string;
     readonly name: string;
     readonly flags: SymbolFlags;
@@ -240,7 +240,7 @@ export class AsyncSymbol extends AsyncDisposableObject implements BaseSymbol<tru
     }
 }
 
-export class AsyncType extends AsyncDisposableObject implements BaseType<true> {
+export class Type extends DisposableObject implements BaseType<true> {
     readonly id: string;
     readonly flags: TypeFlags;
 

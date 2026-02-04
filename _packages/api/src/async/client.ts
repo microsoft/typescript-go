@@ -10,36 +10,36 @@ import {
     StreamMessageWriter,
 } from "vscode-jsonrpc/node";
 
-export interface AsyncClientSocketOptions {
+export interface ClientSocketOptions {
     /** Path to the Unix domain socket or Windows named pipe for API communication */
-    pipePath: string;
+    pipe: string;
 }
 
-export interface AsyncClientSpawnOptions {
+export interface ClientSpawnOptions {
     /** Path to the tsgo executable */
     tsserverPath: string;
     /** Current working directory */
     cwd?: string;
 }
 
-export type AsyncClientOptions = AsyncClientSocketOptions | AsyncClientSpawnOptions;
+export type ClientOptions = ClientSocketOptions | ClientSpawnOptions;
 
-function isSpawnOptions(options: AsyncClientOptions): options is AsyncClientSpawnOptions {
+function isSpawnOptions(options: ClientOptions): options is ClientSpawnOptions {
     return "tsserverPath" in options;
 }
 
 /**
- * AsyncClient handles communication with the TypeScript API server
+ * Client handles communication with the TypeScript API server
  * over STDIO (spawned process) or a Unix domain socket using JSON-RPC.
  */
-export class AsyncClient {
+export class Client {
     private socket: Socket | undefined;
     private process: ChildProcess | undefined;
     private connection: MessageConnection | undefined;
-    private options: AsyncClientOptions;
+    private options: ClientOptions;
     private connected = false;
 
-    constructor(options: AsyncClientOptions) {
+    constructor(options: ClientOptions) {
         this.options = options;
     }
 
@@ -54,7 +54,7 @@ export class AsyncClient {
         }
     }
 
-    private async connectViaSpawn(options: AsyncClientSpawnOptions): Promise<void> {
+    private async connectViaSpawn(options: ClientSpawnOptions): Promise<void> {
         const { spawn } = await import("node:child_process");
 
         return new Promise((resolve, reject) => {
@@ -85,11 +85,11 @@ export class AsyncClient {
         });
     }
 
-    private async connectViaSocket(options: AsyncClientSocketOptions): Promise<void> {
+    private async connectViaSocket(options: ClientSocketOptions): Promise<void> {
         const { createConnection } = await import("node:net");
 
         return new Promise((resolve, reject) => {
-            this.socket = createConnection(options.pipePath, () => {
+            this.socket = createConnection(options.pipe, () => {
                 const reader = new SocketMessageReader(this.socket!);
                 const writer = new SocketMessageWriter(this.socket!);
                 this.connection = createMessageConnection(reader, writer);

@@ -30,7 +30,7 @@ export interface APIOptions extends BaseAPIOptions {
 }
 
 /** Type alias for the sync object registry */
-export type SyncObjectRegistry = ObjectRegistry<Project, Symbol, Type>;
+type SyncObjectRegistry = ObjectRegistry<Project, Symbol, Type>;
 
 export abstract class DisposableObject {
     private disposed: boolean = false;

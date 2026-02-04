@@ -22138,7 +22138,7 @@ func (s *ProfileResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 // Parameters for the initializeAPISession request.
 type InitializeAPISessionParams struct {
 	// Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.
-	PipePath *string `json:"pipePath,omitzero"`
+	Pipe *string `json:"pipe,omitzero"`
 }
 
 // Result for the initializeAPISession request.
@@ -22147,7 +22147,7 @@ type InitializeAPISessionResult struct {
 	SessionId string `json:"sessionId"`
 
 	// The path to the named pipe or Unix domain socket for API communication.
-	PipePath string `json:"pipePath"`
+	Pipe string `json:"pipe"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializeAPISessionResult)(nil)
@@ -22155,7 +22155,7 @@ var _ json.UnmarshalerFrom = (*InitializeAPISessionResult)(nil)
 func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	const (
 		missingSessionId uint = 1 << iota
-		missingPipePath
+		missingPipe
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -22178,9 +22178,9 @@ func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 			if err := json.UnmarshalDecode(dec, &s.SessionId); err != nil {
 				return err
 			}
-		case `"pipePath"`:
-			missing &^= missingPipePath
-			if err := json.UnmarshalDecode(dec, &s.PipePath); err != nil {
+		case `"pipe"`:
+			missing &^= missingPipe
+			if err := json.UnmarshalDecode(dec, &s.Pipe); err != nil {
 				return err
 			}
 		default:
@@ -22197,8 +22197,8 @@ func (s *InitializeAPISessionResult) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 		if missing&missingSessionId != 0 {
 			missingProps = append(missingProps, "sessionId")
 		}
-		if missing&missingPipePath != 0 {
-			missingProps = append(missingProps, "pipePath")
+		if missing&missingPipe != 0 {
+			missingProps = append(missingProps, "pipe")
 		}
 		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
 	}
