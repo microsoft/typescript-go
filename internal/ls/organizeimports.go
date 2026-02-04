@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // OrganizeImports organizes imports by:
@@ -30,7 +31,7 @@ func (l *LanguageService) OrganizeImports(
 	shouldCombine := shouldSort
 	shouldRemove := kind == lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused || kind == lsproto.CodeActionKindSourceOrganizeImports
 	topLevelImportDecls := lsutil.FilterImportDeclarations(sourceFile.Statements.Nodes)
-	topLevelImportGroupDecls := lsutil.GroupByNewlineContiguous(sourceFile, topLevelImportDecls)
+	topLevelImportGroupDecls := groupByNewlineContiguous(sourceFile, topLevelImportDecls)
 
 	comparersToTest, typeOrdersToTest := lsutil.GetDetectionLists(preferences)
 	defaultComparer := comparersToTest[0]
@@ -89,7 +90,7 @@ func (l *LanguageService) OrganizeImports(
 		moduleBody := ambientModule.Body.AsModuleBlock()
 
 		ambientModuleImportDecls := lsutil.FilterImportDeclarations(moduleBody.Statements.Nodes)
-		ambientModuleImportGroupDecls := lsutil.GroupByNewlineContiguous(sourceFile, ambientModuleImportDecls)
+		ambientModuleImportGroupDecls := groupByNewlineContiguous(sourceFile, ambientModuleImportDecls)
 
 		for _, importGroupDecl := range ambientModuleImportGroupDecls {
 			organizeImportsWorker(importGroupDecl, comparer, shouldSort, shouldCombine, shouldRemove, sourceFile, program, changeTracker, ctx)
@@ -327,6 +328,63 @@ func hasModuleDeclarationMatchingSpecifier(sourceFile *ast.SourceFile, moduleSpe
 	for _, moduleName := range sourceFile.ModuleAugmentations {
 		if ast.IsStringLiteral(moduleName) && moduleName.Text() == moduleSpecifierText {
 			return true
+		}
+	}
+
+	return false
+}
+
+// groupByNewlineContiguous groups declarations by blank lines between them.
+func groupByNewlineContiguous(sourceFile *ast.SourceFile, decls []*ast.Statement) [][]*ast.Statement {
+	s := scanner.NewScanner()
+	s.SetSkipTrivia(false) // Must not skip trivia to detect newlines
+	var groups [][]*ast.Statement
+	var currentGroup []*ast.Statement
+
+	for _, decl := range decls {
+		if len(currentGroup) > 0 && isNewGroup(sourceFile, decl, s) {
+			groups = append(groups, currentGroup)
+			currentGroup = nil
+		}
+		currentGroup = append(currentGroup, decl)
+	}
+
+	if len(currentGroup) > 0 {
+		groups = append(groups, currentGroup)
+	}
+
+	return groups
+}
+
+func isNewGroup(sourceFile *ast.SourceFile, decl *ast.Statement, s *scanner.Scanner) bool {
+	fullStart := decl.Pos()
+	if fullStart < 0 {
+		return false
+	}
+
+	text := sourceFile.Text()
+	textLen := len(text)
+
+	if fullStart >= textLen {
+		return false
+	}
+
+	startPos := scanner.SkipTrivia(text, fullStart)
+	if startPos <= fullStart {
+		return false
+	}
+
+	triviaLen := startPos - fullStart
+	s.SetText(text[fullStart:startPos])
+
+	numberOfNewLines := 0
+	for s.TokenStart() < triviaLen {
+		tokenKind := s.Scan()
+		if tokenKind == ast.KindNewLineTrivia {
+			numberOfNewLines++
+			if numberOfNewLines >= 2 {
+				return true
+			}
 		}
 	}
 
@@ -665,7 +723,7 @@ func getTopLevelExportGroups(sourceFile *ast.SourceFile) [][]*ast.Statement {
 
 	var result [][]*ast.Statement
 	for _, exportGroup := range topLevelExportGroups {
-		subGroups := lsutil.GroupByNewlineContiguous(sourceFile, exportGroup)
+		subGroups := groupByNewlineContiguous(sourceFile, exportGroup)
 		result = append(result, subGroups...)
 	}
 

@@ -37,63 +37,6 @@ func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
 	return result
 }
 
-// GroupByNewlineContiguous groups declarations by blank lines between them.
-func GroupByNewlineContiguous(sourceFile *ast.SourceFile, decls []*ast.Statement) [][]*ast.Statement {
-	s := scanner.NewScanner()
-	s.SetSkipTrivia(false) // Must not skip trivia to detect newlines
-	var groups [][]*ast.Statement
-	var currentGroup []*ast.Statement
-
-	for _, decl := range decls {
-		if len(currentGroup) > 0 && isNewGroup(sourceFile, decl, s) {
-			groups = append(groups, currentGroup)
-			currentGroup = nil
-		}
-		currentGroup = append(currentGroup, decl)
-	}
-
-	if len(currentGroup) > 0 {
-		groups = append(groups, currentGroup)
-	}
-
-	return groups
-}
-
-func isNewGroup(sourceFile *ast.SourceFile, decl *ast.Statement, s *scanner.Scanner) bool {
-	fullStart := decl.Pos()
-	if fullStart < 0 {
-		return false
-	}
-
-	text := sourceFile.Text()
-	textLen := len(text)
-
-	if fullStart >= textLen {
-		return false
-	}
-
-	startPos := scanner.SkipTrivia(text, fullStart)
-	if startPos <= fullStart {
-		return false
-	}
-
-	triviaLen := startPos - fullStart
-	s.SetText(text[fullStart:startPos])
-
-	numberOfNewLines := 0
-	for s.TokenStart() < triviaLen {
-		tokenKind := s.Scan()
-		if tokenKind == ast.KindNewLineTrivia {
-			numberOfNewLines++
-			if numberOfNewLines >= 2 {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
 // RangeIsOnSingleLine returns true if the given text range is on a single line.
 func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	if r.Pos() < 0 || r.End() < 0 {
