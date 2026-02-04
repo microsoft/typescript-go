@@ -40,20 +40,17 @@ func (l *LanguageService) OrganizeImports(
 
 	moduleSpecifierComparer := defaultComparer
 	namedImportComparer := defaultComparer
-	typeOrder := lsutil.OrganizeImportsTypeOrderAuto
-	if preferences != nil {
-		typeOrder = preferences.OrganizeImportsTypeOrder
-	}
+	typeOrder := preferences.OrganizeImportsTypeOrder
 
-	if preferences == nil || preferences.OrganizeImportsIgnoreCase.IsUnknown() {
+	if preferences.OrganizeImportsIgnoreCase.IsUnknown() {
 		result, _ := lsutil.DetectModuleSpecifierCaseBySort(topLevelImportGroupDecls, comparersToTest)
 		moduleSpecifierComparer = result
 	}
 
-	if typeOrder == lsutil.OrganizeImportsTypeOrderAuto || (preferences != nil && preferences.OrganizeImportsIgnoreCase.IsUnknown()) {
+	if typeOrder == lsutil.OrganizeImportsTypeOrderAuto || preferences.OrganizeImportsIgnoreCase.IsUnknown() {
 		namedImportComparer2, typeOrder2, _, found := lsutil.DetectNamedImportOrganizationBySort(topLevelImportDecls, comparersToTest, typeOrdersToTest)
 		if found {
-			if namedImportComparer == nil || (preferences != nil && preferences.OrganizeImportsIgnoreCase.IsUnknown()) {
+			if namedImportComparer == nil || preferences.OrganizeImportsIgnoreCase.IsUnknown() {
 				namedImportComparer = namedImportComparer2
 			}
 			if typeOrder == lsutil.OrganizeImportsTypeOrderAuto {
