@@ -20,7 +20,8 @@ type triviaPositionKey interface { // *astNode | *ast.NodeList
 }
 
 func NewChangeTrackerWriter(newline string, indentSize int) *ChangeTrackerWriter {
-	if indentSize <= 0 {
+	// TODO: Callers passing -1 should pass actual indent options once indent-related formatting is ported.
+	if indentSize < 0 {
 		indentSize = 4
 	}
 	ctw := &ChangeTrackerWriter{
