@@ -525,7 +525,7 @@ type caseSensitivityDetectionResult struct {
 	isSorted bool
 }
 
-// DetectModuleSpecifierCaseBySort detects the case sensitivity of module specifiers based on existing sort order.
+// DetectModuleSpecifierCaseBySort detects the order of module specifiers based on import statements throughout the module/file
 func DetectModuleSpecifierCaseBySort(importDeclsByGroup [][]*ast.Statement, comparersToTest []func(a, b string) int) (comparer func(a, b string) int, isSorted bool) {
 	moduleSpecifiersByGroup := make([][]string, 0, len(importDeclsByGroup))
 	for _, importGroup := range importDeclsByGroup {
