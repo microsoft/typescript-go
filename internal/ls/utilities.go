@@ -683,8 +683,12 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// /**/<var|let| [|n:ame|] ...
 	if node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword &&
 		ast.IsVariableDeclarationList(parent) && len(parent.AsVariableDeclarationList().Declarations.Nodes) == 1 {
-		if decl := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration(); ast.IsIdentifier(decl.Name()) {
-			return decl.Name()
+		declarations := parent.AsVariableDeclarationList().Declarations.Nodes
+		if len(declarations) > 0 {
+			name := declarations[0].Name()
+			if ast.IsIdentifier(name) {
+				return name;
+			}
 		}
 	}
 
