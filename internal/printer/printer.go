@@ -501,7 +501,7 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 		}
 
 		if firstChild == nil {
-			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.nextListElementPos > 0 && firstChild.Pos() == p.nextListElementPos {
 			// If this child starts at the beginning of a list item in a parent list, its leading
@@ -596,7 +596,7 @@ func (p *Printer) getClosingLineTerminatorCount(parentNode *ast.Node, lastChild 
 			return 1
 		}
 		if lastChild == nil {
-			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.currentSourceFile != nil && parentNode != nil && !ast.PositionIsSynthesized(parentNode.Pos()) && !ast.NodeIsSynthesized(lastChild) && (lastChild.Parent == nil || lastChild.Parent == parentNode) {
 			if p.Options.PreserveSourceNewlines {
@@ -762,7 +762,7 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 		return false
 	}
 
-	if !ast.NodeIsSynthesized(body.AsNode()) && p.currentSourceFile != nil && !rangeIsOnSingleLine(body.Loc, p.currentSourceFile) {
+	if !ast.NodeIsSynthesized(body.AsNode()) && p.currentSourceFile != nil && !RangeIsOnSingleLine(body.Loc, p.currentSourceFile) {
 		return false
 	}
 
@@ -4482,7 +4482,7 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 
 	if isEmpty {
 		// Write a line terminator if the parent node was multi-line
-		if format&LFMultiLine != 0 && !(p.Options.PreserveSourceNewlines && (parentNode == nil || p.currentSourceFile != nil && rangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile))) {
+		if format&LFMultiLine != 0 && !(p.Options.PreserveSourceNewlines && (parentNode == nil || p.currentSourceFile != nil && RangeIsOnSingleLine(parentNode.Loc, p.currentSourceFile))) {
 			p.writeLine()
 		} else if format&LFSpaceBetweenBraces != 0 && format&LFNoSpaceIfEmpty == 0 {
 			p.writeSpace()

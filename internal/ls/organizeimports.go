@@ -531,7 +531,7 @@ func coalesceImportsWorker(
 
 			if sourceFile != nil && newNamedImports != nil && firstNamedImport != nil {
 				firstNamedBindings := firstNamedImport.AsImportDeclaration().ImportClause.AsImportClause().NamedBindings
-				if !ast.NodeIsSynthesized(firstNamedBindings.AsNode()) && !lsutil.RangeIsOnSingleLine(firstNamedBindings.Loc, sourceFile) {
+				if !ast.NodeIsSynthesized(firstNamedBindings.AsNode()) && !printer.RangeIsOnSingleLine(firstNamedBindings.Loc, sourceFile) {
 					changeTracker.SetEmitFlags(newNamedImports.AsNode(), printer.EFMultiLine)
 				}
 			}
@@ -847,7 +847,7 @@ func coalesceExportsWorker(
 					sortedList := factory.NewNodeList(newExportSpecifiers)
 					updatedExportClause = factory.UpdateNamedExports(namedExports, sortedList)
 
-					if sourceFile != nil && !ast.NodeIsSynthesized(namedExports.AsNode()) && !lsutil.RangeIsOnSingleLine(namedExports.Loc, sourceFile) {
+					if sourceFile != nil && !ast.NodeIsSynthesized(namedExports.AsNode()) && !printer.RangeIsOnSingleLine(namedExports.Loc, sourceFile) {
 						changeTracker.SetEmitFlags(updatedExportClause.AsNode(), printer.EFMultiLine)
 					}
 				} else {

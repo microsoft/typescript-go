@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"golang.org/x/text/collate"
@@ -31,16 +30,6 @@ func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
 	return core.Filter(statements, func(stmt *ast.Statement) bool {
 		return stmt.Kind == ast.KindImportDeclaration
 	})
-}
-
-// RangeIsOnSingleLine returns true if the given text range is on a single line.
-func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
-	if r.Pos() < 0 || r.End() < 0 {
-		return true
-	}
-	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, r.Pos())
-	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, r.End())
-	return startLine == endLine
 }
 
 // GetImportAttributesKey returns a key for grouping imports by their attributes.

@@ -330,7 +330,7 @@ func isNotPrologueDirective(node *ast.Node) bool {
 	return !ast.IsPrologueDirective(node)
 }
 
-func rangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
+func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	return rangeStartIsOnSameLineAsRangeEnd(r, r, sourceFile)
 }
 
