@@ -1601,10 +1601,13 @@ func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions
 	if extensions&extensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&extensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
 			extension := tspath.TryExtractTSExtension(path)
+			// resolvedUsingTsExtension should be true if the original module specifier has a TS extension.
+			// Check r.name (the original module specifier) rather than packageJSONValue (which may be a pattern).
+			resolvedUsingTsExtension := tspath.TryExtractTSExtension(r.name) != ""
 			return &resolved{
 				path:                     path,
 				extension:                extension,
-				resolvedUsingTsExtension: packageJSONValue != "" && !strings.HasSuffix(packageJSONValue, extension),
+				resolvedUsingTsExtension: resolvedUsingTsExtension,
 			}
 		}
 		return continueSearching()
