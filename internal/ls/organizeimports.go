@@ -136,7 +136,7 @@ func organizeImportsWorker(
 
 	// Header comment preservation is handled via LeadingTriviaOptionExclude in the change tracker below
 
-	processedImports := oldImportDecls
+	processedImports := slices.Clone(oldImportDecls)
 	if shouldRemove {
 		typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
 		defer done()
