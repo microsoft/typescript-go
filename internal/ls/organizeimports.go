@@ -38,8 +38,12 @@ func (l *LanguageService) OrganizeImports(
 	comparersToTest, typeOrdersToTest := lsutil.GetDetectionLists(preferences)
 	defaultComparer := comparersToTest[0]
 
-	moduleSpecifierComparer := defaultComparer
-	namedImportComparer := defaultComparer
+	var moduleSpecifierComparer func(a, b string) int
+	var namedImportComparer func(a, b string) int
+	if !preferences.OrganizeImportsIgnoreCase.IsUnknown() {
+		moduleSpecifierComparer = defaultComparer
+		namedImportComparer = defaultComparer
+	}
 	typeOrder := preferences.OrganizeImportsTypeOrder
 
 	if preferences.OrganizeImportsIgnoreCase.IsUnknown() {
