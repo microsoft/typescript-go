@@ -176,33 +176,31 @@ func organizeImportsWorker(
 		})
 	}
 
-	if len(oldImportDecls) > 0 {
-		if len(newImportDecls) == 0 {
-			changeTracker.DeleteNodeRange(
-				sourceFile,
-				oldImportDecls[0].AsNode(),
-				oldImportDecls[len(oldImportDecls)-1].AsNode(),
-				change.LeadingTriviaOptionExclude, // Preserve header comment
-				change.TrailingTriviaOptionInclude,
-			)
-		} else {
-			for _, imp := range newImportDecls {
-				changeTracker.SetEmitFlags(imp.AsNode(), printer.EFNoLeadingComments)
-			}
+	if len(newImportDecls) == 0 {
+		changeTracker.DeleteNodeRange(
+			sourceFile,
+			oldImportDecls[0].AsNode(),
+			oldImportDecls[len(oldImportDecls)-1].AsNode(),
+			change.LeadingTriviaOptionExclude, // Preserve header comment
+			change.TrailingTriviaOptionInclude,
+		)
+	} else {
+		for _, imp := range newImportDecls {
+			changeTracker.SetEmitFlags(imp.AsNode(), printer.EFNoLeadingComments)
+		}
 
-			options := change.NodeOptions{
-				LeadingTriviaOption:  change.LeadingTriviaOptionExclude, // Preserve header comment
-				TrailingTriviaOption: change.TrailingTriviaOptionInclude,
-				Suffix:               "\n",
-			}
+		options := change.NodeOptions{
+			LeadingTriviaOption:  change.LeadingTriviaOptionExclude, // Preserve header comment
+			TrailingTriviaOption: change.TrailingTriviaOptionInclude,
+			Suffix:               "\n",
+		}
 
-			newNodes := core.Map(newImportDecls, func(s *ast.Statement) *ast.Node { return s.AsNode() })
-			changeTracker.ReplaceNodeWithNodes(sourceFile, oldImportDecls[0].AsNode(), newNodes, &options)
+		newNodes := core.Map(newImportDecls, func(s *ast.Statement) *ast.Node { return s.AsNode() })
+		changeTracker.ReplaceNodeWithNodes(sourceFile, oldImportDecls[0].AsNode(), newNodes, &options)
 
-			if len(oldImportDecls) > 1 {
-				for i := 1; i < len(oldImportDecls); i++ {
-					changeTracker.Delete(sourceFile, oldImportDecls[i].AsNode())
-				}
+		if len(oldImportDecls) > 1 {
+			for i := 1; i < len(oldImportDecls); i++ {
+				changeTracker.Delete(sourceFile, oldImportDecls[i].AsNode())
 			}
 		}
 	}
