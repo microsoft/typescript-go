@@ -25,7 +25,6 @@ func (l *LanguageService) OrganizeImports(
 	ctx context.Context,
 	sourceFile *ast.SourceFile,
 	program *compiler.Program,
-	preferences *lsutil.UserPreferences,
 	kind lsproto.CodeActionKind,
 ) map[string][]*lsproto.TextEdit {
 	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
@@ -35,6 +34,7 @@ func (l *LanguageService) OrganizeImports(
 	topLevelImportDecls := lsutil.FilterImportDeclarations(sourceFile.Statements.Nodes)
 	topLevelImportGroupDecls := groupByNewlineContiguous(sourceFile, topLevelImportDecls)
 
+	preferences := l.UserPreferences()
 	comparersToTest, typeOrdersToTest := lsutil.GetDetectionLists(preferences)
 	defaultComparer := comparersToTest[0]
 

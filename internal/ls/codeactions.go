@@ -116,7 +116,6 @@ func (l *LanguageService) createOrganizeImportsAction(
 		ctx,
 		file,
 		program,
-		l.UserPreferences(),
 		kind,
 	)
 	if len(changes) == 0 {
