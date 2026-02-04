@@ -28,13 +28,9 @@ var (
 
 // FilterImportDeclarations filters out non-import declarations from a list of statements.
 func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
-	var result []*ast.Statement
-	for _, stmt := range statements {
-		if stmt.Kind == ast.KindImportDeclaration {
-			result = append(result, stmt)
-		}
-	}
-	return result
+	return core.Filter(statements, func(stmt *ast.Statement) bool {
+		return stmt.Kind == ast.KindImportDeclaration
+	})
 }
 
 // RangeIsOnSingleLine returns true if the given text range is on a single line.
