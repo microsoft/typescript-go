@@ -228,9 +228,6 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 	defer done()
 
 	compilerOptions := program.Options()
-	jsxNamespace := typeChecker.GetJsxNamespace(sourceFile.AsNode())
-	jsxFragmentFactory := typeChecker.GetJsxFragmentFactory(sourceFile.AsNode())
-
 	jsxElementsPresent := (sourceFile.AsNode().SubtreeFacts() & ast.SubtreeContainsJsx) != 0
 	jsxModeNeedsExplicitImport := compilerOptions.Jsx == core.JsxEmitReact || compilerOptions.Jsx == core.JsxEmitReactNative
 
@@ -248,7 +245,7 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 		name := clause.Name()
 		namedBindings := clause.NamedBindings
 
-		if name != nil && !isDeclarationUsed(name.AsIdentifier(), jsxNamespace, jsxFragmentFactory, jsxElementsPresent, jsxModeNeedsExplicitImport, typeChecker, sourceFile) {
+		if name != nil && !typeChecker.IsDeclarationUsed(sourceFile, name.AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
 			name = nil
 		}
 
@@ -256,12 +253,12 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 			switch namedBindings.Kind {
 			case ast.KindNamespaceImport:
 				nsImport := namedBindings.AsNamespaceImport()
-				if !isDeclarationUsed(nsImport.Name().AsIdentifier(), jsxNamespace, jsxFragmentFactory, jsxElementsPresent, jsxModeNeedsExplicitImport, typeChecker, sourceFile) {
+				if !typeChecker.IsDeclarationUsed(sourceFile, nsImport.Name().AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
 					namedBindings = nil
 				}
 			case ast.KindNamedImports:
 				namedImports := namedBindings.AsNamedImports()
-				newElements := filterUsedImportSpecifiers(namedImports.Elements.Nodes, jsxNamespace, jsxFragmentFactory, jsxElementsPresent, jsxModeNeedsExplicitImport, typeChecker, sourceFile)
+				newElements := filterUsedImportSpecifiers(namedImports.Elements.Nodes, typeChecker, sourceFile, jsxElementsPresent, jsxModeNeedsExplicitImport)
 				if len(newElements) == 0 {
 					namedBindings = nil
 				} else if len(newElements) < len(namedImports.Elements.Nodes) {
@@ -304,81 +301,17 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 	return usedImports
 }
 
-func isDeclarationUsed(
-	identifier *ast.Identifier,
-	jsxNamespace string,
-	jsxFragmentFactory string,
-	jsxElementsPresent bool,
-	jsxModeNeedsExplicitImport bool,
-	typeChecker *checker.Checker,
-	sourceFile *ast.SourceFile,
-) bool {
-	if jsxElementsPresent && jsxModeNeedsExplicitImport {
-		identifierText := identifier.Text
-		if identifierText == jsxNamespace {
-			return true
-		}
-		if jsxFragmentFactory != "" && identifierText == jsxFragmentFactory {
-			return true
-		}
-	}
-
-	symbol := typeChecker.GetSymbolAtLocation(identifier.AsNode())
-	if symbol == nil {
-		return true
-	}
-
-	return isSymbolReferencedInFile(identifier, symbol, typeChecker, sourceFile)
-}
-
-func isSymbolReferencedInFile(
-	definition *ast.Identifier,
-	symbol *ast.Symbol,
-	typeChecker *checker.Checker,
-	sourceFile *ast.SourceFile,
-) bool {
-	identifierText := definition.Text
-	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
-		if !ast.IsIdentifier(token) {
-			continue
-		}
-		id := token.AsIdentifier()
-		if id == definition || id.Text != identifierText {
-			continue
-		}
-		refSymbol := typeChecker.GetSymbolAtLocation(token)
-		if refSymbol == symbol {
-			return true
-		}
-		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
-			shorthandSymbol := typeChecker.GetShorthandAssignmentValueSymbol(token.Parent)
-			if shorthandSymbol == symbol {
-				return true
-			}
-		}
-		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
-			localSymbol := getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier(), typeChecker)
-			if localSymbol == symbol {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func filterUsedImportSpecifiers(
 	elements []*ast.Statement,
-	jsxNamespace string,
-	jsxFragmentFactory string,
-	jsxElementsPresent bool,
-	jsxModeNeedsExplicitImport bool,
 	typeChecker *checker.Checker,
 	sourceFile *ast.SourceFile,
+	jsxElementsPresent bool,
+	jsxModeNeedsExplicitImport bool,
 ) []*ast.Statement {
 	var result []*ast.Statement
 	for _, elem := range elements {
 		spec := elem.AsImportSpecifier()
-		if isDeclarationUsed(spec.Name().AsIdentifier(), jsxNamespace, jsxFragmentFactory, jsxElementsPresent, jsxModeNeedsExplicitImport, typeChecker, sourceFile) {
+		if typeChecker.IsDeclarationUsed(sourceFile, spec.Name().AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
 			result = append(result, elem)
 		}
 	}
