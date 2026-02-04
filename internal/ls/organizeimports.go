@@ -3,6 +3,7 @@ package ls
 import (
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -13,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 // OrganizeImports organizes imports by:
@@ -334,6 +336,42 @@ func hasModuleDeclarationMatchingSpecifier(sourceFile *ast.SourceFile, moduleSpe
 	return false
 }
 
+// getImportAttributesKey returns a key for grouping imports by their attributes.
+func getImportAttributesKey(attributes *ast.ImportAttributesNode) string {
+	if attributes == nil {
+		return ""
+	}
+
+	importAttrs := attributes.AsImportAttributes()
+	var key strings.Builder
+	key.WriteString(importAttrs.Token.String())
+	key.WriteString(" ")
+
+	attrNodes := make([]*ast.Node, len(importAttrs.Attributes.Nodes))
+	copy(attrNodes, importAttrs.Attributes.Nodes)
+	slices.SortFunc(attrNodes, func(a, b *ast.Node) int {
+		aName := a.AsImportAttribute().Name().Text()
+		bName := b.AsImportAttribute().Name().Text()
+		return stringutil.CompareStringsCaseSensitive(aName, bName)
+	})
+
+	for _, attrNode := range attrNodes {
+		attr := attrNode.AsImportAttribute()
+		key.WriteString(attr.Name().Text())
+		key.WriteString(":")
+		if ast.IsStringLiteralLike(attr.Value.AsNode()) {
+			key.WriteString(`"`)
+			key.WriteString(attr.Value.Text())
+			key.WriteString(`"`)
+		} else {
+			key.WriteString(attr.Value.AsNode().Text())
+		}
+		key.WriteString(" ")
+	}
+
+	return key.String()
+}
+
 // groupByNewlineContiguous groups declarations by blank lines between them.
 func groupByNewlineContiguous(sourceFile *ast.SourceFile, decls []*ast.Statement) [][]*ast.Statement {
 	s := scanner.NewScanner()
@@ -406,7 +444,7 @@ func coalesceImportsWorker(
 	var attributeKeys []string
 
 	for _, importDecl := range importDecls {
-		key := lsutil.GetImportAttributesKey(importDecl.AsImportDeclaration().Attributes)
+		key := getImportAttributesKey(importDecl.AsImportDeclaration().Attributes)
 		if _, exists := importGroupsByAttributes[key]; !exists {
 			attributeKeys = append(attributeKeys, key)
 		}

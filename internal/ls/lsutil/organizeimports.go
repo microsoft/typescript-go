@@ -3,8 +3,6 @@ package lsutil
 import (
 	"cmp"
 	"math"
-	"slices"
-	"strings"
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -30,42 +28,6 @@ func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
 	return core.Filter(statements, func(stmt *ast.Statement) bool {
 		return stmt.Kind == ast.KindImportDeclaration
 	})
-}
-
-// GetImportAttributesKey returns a key for grouping imports by their attributes.
-func GetImportAttributesKey(attributes *ast.ImportAttributesNode) string {
-	if attributes == nil {
-		return ""
-	}
-
-	importAttrs := attributes.AsImportAttributes()
-	var key strings.Builder
-	key.WriteString(importAttrs.Token.String())
-	key.WriteString(" ")
-
-	attrNodes := make([]*ast.Node, len(importAttrs.Attributes.Nodes))
-	copy(attrNodes, importAttrs.Attributes.Nodes)
-	slices.SortFunc(attrNodes, func(a, b *ast.Node) int {
-		aName := a.AsImportAttribute().Name().Text()
-		bName := b.AsImportAttribute().Name().Text()
-		return stringutil.CompareStringsCaseSensitive(aName, bName)
-	})
-
-	for _, attrNode := range attrNodes {
-		attr := attrNode.AsImportAttribute()
-		key.WriteString(attr.Name().Text())
-		key.WriteString(":")
-		if ast.IsStringLiteralLike(attr.Value.AsNode()) {
-			key.WriteString(`"`)
-			key.WriteString(attr.Value.Text())
-			key.WriteString(`"`)
-		} else {
-			key.WriteString(attr.Value.AsNode().Text())
-		}
-		key.WriteString(" ")
-	}
-
-	return key.String()
 }
 
 // GetDetectionLists returns the lists of comparers and type orders to test for organize imports detection.
