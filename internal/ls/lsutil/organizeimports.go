@@ -584,7 +584,7 @@ func measureSortedness[T any](arr []T, comparer func(a, b T) int) int {
 	return i
 }
 
-// GetNamedImportSpecifierComparerWithDetection returns a specifier comparer based on detecting the existing sort order.
+// GetNamedImportSpecifierComparerWithDetection returns a specifier comparer based on detecting the existing sort order within a single import statement
 func GetNamedImportSpecifierComparerWithDetection(importDecl *ast.Node, sourceFile *ast.SourceFile, preferences *UserPreferences) (specifierComparer func(s1, s2 *ast.Node) int, isSorted core.Tristate) {
 	comparersToTest, typeOrdersToTest := GetDetectionLists(preferences)
 
