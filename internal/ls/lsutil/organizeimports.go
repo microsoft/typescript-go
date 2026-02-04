@@ -227,8 +227,8 @@ func GetExternalModuleName(specifier *ast.Expression) string {
 	return ""
 }
 
-// CompareModuleSpecifiersWorker compares two module specifiers using the given comparer.
-func CompareModuleSpecifiersWorker(m1 *ast.Expression, m2 *ast.Expression, comparer func(a, b string) int) int {
+// CompareModuleSpecifiers compares two module specifiers using the given comparer.
+func CompareModuleSpecifiers(m1 *ast.Expression, m2 *ast.Expression, comparer func(a, b string) int) int {
 	name1 := GetExternalModuleName(m1)
 	name2 := GetExternalModuleName(m2)
 	if cmp := core.CompareBooleans(name1 == "", name2 == ""); cmp != 0 {
@@ -292,7 +292,7 @@ func getImportKindOrder(s1 *ast.Statement) int {
 
 // CompareImportsOrRequireStatements compares two import or require statements.
 func CompareImportsOrRequireStatements(s1 *ast.Statement, s2 *ast.Statement, comparer func(a, b string) int) int {
-	if cmp := CompareModuleSpecifiersWorker(getModuleSpecifierExpression(s1), getModuleSpecifierExpression(s2), comparer); cmp != 0 {
+	if cmp := CompareModuleSpecifiers(getModuleSpecifierExpression(s1), getModuleSpecifierExpression(s2), comparer); cmp != 0 {
 		return cmp
 	}
 	return compareImportKind(s1, s2)
@@ -316,27 +316,6 @@ func compareImportOrExportSpecifiers(s1 *ast.Node, s2 *ast.Node, comparer func(a
 	case OrganizeImportsTypeOrderInline:
 		return comparer(s1Name, s2Name)
 	default: // OrganizeImportsTypeOrderLast
-		if cmp := core.CompareBooleans(s1.IsTypeOnly(), s2.IsTypeOnly()); cmp != 0 {
-			return cmp
-		}
-		return comparer(s1Name, s2Name)
-	}
-}
-
-// CompareExportSpecifiers compares two export specifiers considering type order.
-func CompareExportSpecifiers(s1 *ast.Node, s2 *ast.Node, comparer func(a, b string) int, typeOrder OrganizeImportsTypeOrder) int {
-	s1Name := s1.Name().Text()
-	s2Name := s2.Name().Text()
-
-	switch typeOrder {
-	case OrganizeImportsTypeOrderFirst:
-		if cmp := core.CompareBooleans(s2.IsTypeOnly(), s1.IsTypeOnly()); cmp != 0 {
-			return cmp
-		}
-		return comparer(s1Name, s2Name)
-	case OrganizeImportsTypeOrderInline:
-		return comparer(s1Name, s2Name)
-	default: // OrganizeImportsTypeOrderLast or Auto (defaults to Last)
 		if cmp := core.CompareBooleans(s1.IsTypeOnly(), s2.IsTypeOnly()); cmp != 0 {
 			return cmp
 		}

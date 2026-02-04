@@ -148,7 +148,7 @@ func organizeImportsWorker(
 				if len(a) == 0 || len(b) == 0 {
 					return 0
 				}
-				return lsutil.CompareModuleSpecifiersWorker(
+				return lsutil.CompareModuleSpecifiers(
 					a[0].ModuleSpecifier(),
 					b[0].ModuleSpecifier(),
 					comparer.moduleSpecifierComparer,
@@ -778,9 +778,10 @@ func organizeExportsWorker(
 		return
 	}
 
-	specifierComparerFunc := func(s1, s2 *ast.Node) int {
-		return lsutil.CompareExportSpecifiers(s1, s2, comparer.namedImportComparer, comparer.typeOrder)
-	}
+	specifierComparerFunc := lsutil.GetNamedImportSpecifierComparer(
+		&lsutil.UserPreferences{OrganizeImportsTypeOrder: comparer.typeOrder},
+		comparer.namedImportComparer,
+	)
 
 	newExportDecls := coalesceExportsWorker(oldExportDecls, specifierComparerFunc, comparer.moduleSpecifierComparer, sourceFile, changeTracker)
 
