@@ -138,7 +138,9 @@ func organizeImportsWorker(
 
 	processedImports := oldImportDecls
 	if shouldRemove {
-		processedImports = removeUnusedImports(processedImports, sourceFile, program, ctx)
+		typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
+		defer done()
+		processedImports = removeUnusedImports(processedImports, sourceFile, typeChecker, program)
 	}
 
 	var newImportDecls []*ast.Statement
@@ -225,10 +227,7 @@ func groupByModuleSpecifier(imports []*ast.Statement) [][]*ast.Statement {
 	return result
 }
 
-func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, program *compiler.Program, ctx context.Context) []*ast.Statement {
-	typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
-	defer done()
-
+func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, typeChecker *checker.Checker, program *compiler.Program) []*ast.Statement {
 	compilerOptions := program.Options()
 	jsxElementsPresent := (sourceFile.AsNode().SubtreeFacts() & ast.SubtreeContainsJsx) != 0
 	jsxModeNeedsExplicitImport := compilerOptions.Jsx == core.JsxEmitReact || compilerOptions.Jsx == core.JsxEmitReactNative
