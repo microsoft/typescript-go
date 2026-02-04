@@ -203,8 +203,7 @@ func getModuleSpecifierExpression(declaration *ast.Statement) *ast.Expression {
 	case ast.KindImportDeclaration:
 		return declaration.ModuleSpecifier()
 	case ast.KindVariableStatement:
-		variableStatement := declaration.AsVariableStatement()
-		declarations := variableStatement.DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+		declarations := declaration.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
 		if len(declarations) > 0 {
 			decl := declarations[0]
 			initializer := decl.Initializer()
