@@ -14810,25 +14810,31 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
 					if tsExtension == "" {
-						panic("should be able to extract TS extension from string that passes IsDeclarationFileName")
+						// Skip error reporting if we can't extract a TS extension.
+						// This can happen with malformed package.json mappings where the pattern
+						// substitution results in a module reference without a valid TS extension.
+					} else {
+						c.error(
+							errorNode,
+							diagnostics.A_declaration_file_cannot_be_imported_without_import_type_Did_you_mean_to_import_an_implementation_file_0_instead,
+							c.getSuggestedImportSource(moduleReference, tsExtension, mode),
+						)
 					}
-					c.error(
-						errorNode,
-						diagnostics.A_declaration_file_cannot_be_imported_without_import_type_Did_you_mean_to_import_an_implementation_file_0_instead,
-						c.getSuggestedImportSource(moduleReference, tsExtension, mode),
-					)
 				}
 			} else if resolvedModule.ResolvedUsingTsExtension && !c.compilerOptions.AllowImportingTsExtensionsFrom(importingSourceFile.FileName()) {
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
 					if tsExtension == "" {
-						panic("should be able to extract TS extension from string that passes IsDeclarationFileName")
+						// Skip error reporting if we can't extract a TS extension.
+						// This can happen with malformed package.json mappings where the pattern
+						// substitution results in a module reference without a valid TS extension.
+					} else {
+						c.error(
+							errorNode,
+							diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
+							tsExtension,
+						)
 					}
-					c.error(
-						errorNode,
-						diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
-						tsExtension,
-					)
 				}
 			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
 				location.Flags&ast.NodeFlagsAmbient == 0 &&
