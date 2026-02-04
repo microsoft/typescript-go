@@ -157,6 +157,7 @@ export class Client implements vscode.Disposable {
             serverOptions,
             this.clientOptions,
         );
+        this.disposables.push(this.client);
 
         this.client.onNotification("initialized", () => {
             this.initializedEventEmitter.fire();
@@ -200,17 +201,12 @@ export class Client implements vscode.Disposable {
         );
     }
 
-    async dispose() {
+    async dispose(): Promise<void> {
         if (this.isDisposed) {
             return;
         }
         this.isDisposed = true;
-
-        await this.client?.dispose();
-        while (this.disposables.length > 0) {
-            const d = this.disposables.pop()!;
-            d.dispose();
-        }
+        await Promise.all(this.disposables.map(d => d.dispose()));
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {

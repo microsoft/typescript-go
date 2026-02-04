@@ -72,9 +72,9 @@ export class SessionManager implements vscode.Disposable {
         return result.pipePath;
     }
 
-    dispose(): void {
-        this.disposables.forEach(d => d.dispose());
-        this.currentSession?.dispose();
+    async dispose(): Promise<void> {
+        await this.currentSession?.dispose();
+        await Promise.all(this.disposables.map(d => d.dispose()));
     }
 }
 
@@ -100,6 +100,7 @@ class Session implements vscode.Disposable {
         telemetryReporter: TelemetryReporter,
     ) {
         this.client = new Client(outputChannel, traceOutputChannel, initializedEventEmitter, telemetryReporter);
+        this.disposables.push(this.client);
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.telemetryReporter = telemetryReporter;
@@ -223,8 +224,7 @@ class Session implements vscode.Disposable {
     async dispose(): Promise<void> {
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.cpuProfileRunning", false);
-        await this.client.dispose();
-        this.disposables.forEach(d => d.dispose());
+        await Promise.all(this.disposables.map(d => d.dispose()));
     }
 }
 
