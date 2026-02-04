@@ -351,7 +351,7 @@ func GetImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *
 	}))
 }
 
-// GetOrganizeImportsStringComparerWithDetection returns a comparer based on detection of the existing import order.
+// GetOrganizeImportsStringComparerWithDetection returns a string comparer based on detecting the order of import statements by the module specifier
 func GetOrganizeImportsStringComparerWithDetection(originalImportDecls []*ast.Statement, preferences *UserPreferences) (comparer func(a, b string) int, isSorted bool) {
 	result, sorted := DetectModuleSpecifierCaseBySort([][]*ast.Statement{originalImportDecls}, getComparers(preferences))
 	return result, sorted
@@ -376,7 +376,7 @@ type namedImportSortResult struct {
 	isSorted            bool
 }
 
-// DetectNamedImportOrganizationBySort detects the organization of named imports by analyzing the existing sort order.
+// DetectNamedImportOrganizationBySort detects the order of named imports throughout the file by considering the named imports in each statement as a group
 func DetectNamedImportOrganizationBySort(
 	originalGroups []*ast.Statement,
 	comparersToTest []func(a, b string) int,
