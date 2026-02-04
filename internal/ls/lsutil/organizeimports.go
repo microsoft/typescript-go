@@ -205,8 +205,7 @@ func getModuleSpecifierExpression(declaration *ast.Statement) *ast.Expression {
 	case ast.KindVariableStatement:
 		declarations := declaration.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
 		if len(declarations) > 0 {
-			decl := declarations[0]
-			initializer := decl.Initializer()
+			initializer := declarations[0].Initializer()
 			if initializer != nil && initializer.Kind == ast.KindCallExpression {
 				callExpr := initializer.AsCallExpression()
 				if len(callExpr.Arguments.Nodes) > 0 {
