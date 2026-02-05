@@ -117,6 +117,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params jsont
 	switch method {
 	case string(MethodRelease):
 		return s.handleRelease(ctx, parsed.(*string))
+	case string(MethodAdoptLSPState):
+		return s.handleAdoptLSPState(ctx)
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
 	case string(MethodLoadProject):
@@ -146,6 +148,16 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params jsont
 func (s *Session) HandleNotification(ctx context.Context, method string, params jsontext.Value) error {
 	// TODO: Implement notification handling
 	return nil
+}
+
+func (s *Session) handleAdoptLSPState(ctx context.Context) (any, error) {
+	releaseOldSnapshot := s.snapshotRelease
+	s.snapshot, s.snapshotRelease = s.projectSession.Snapshot()
+	if releaseOldSnapshot != nil {
+		releaseOldSnapshot()
+	}
+
+	return nil, nil
 }
 
 // handleRelease releases a handle from the session's registries.
@@ -225,7 +237,7 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 // handleLoadProject explicitly loads a TypeScript project from a config file.
 func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectParams) (*ProjectResponse, error) {
 	configFileName := s.toAbsoluteFileName(params.ConfigFileName)
-	proj, err := s.projectSession.OpenProject(ctx, configFileName)
+	proj, snapshot, release, err := s.projectSession.OpenProject(ctx, configFileName)
 	if err != nil {
 		return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
 	}
@@ -234,7 +246,7 @@ func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectPara
 	if s.snapshotRelease != nil {
 		s.snapshotRelease()
 	}
-	s.snapshot, s.snapshotRelease = s.projectSession.Snapshot()
+	s.snapshot, s.snapshotRelease = snapshot, release
 
 	return NewProjectResponse(proj), nil
 }

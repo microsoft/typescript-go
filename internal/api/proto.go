@@ -82,6 +82,7 @@ func createHandle[T any](prefix rune, id any) Handle[T] {
 const (
 	MethodRelease Method = "release"
 
+	MethodAdoptLSPState            Method = "adoptLSPState"
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodLoadProject              Method = "loadProject"
 	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
@@ -96,6 +97,7 @@ const (
 
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodRelease:                  unmarshallerFor[string],
+	MethodAdoptLSPState:            noParams,
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
@@ -226,4 +228,8 @@ func unmarshallerFor[T any](data []byte) (any, error) {
 		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
 	}
 	return &v, nil
+}
+
+func noParams(data []byte) (any, error) {
+	return nil, nil
 }

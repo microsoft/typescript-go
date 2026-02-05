@@ -114,6 +114,16 @@ export class API implements BaseAPI<true> {
         return this.client.apiRequest<ConfigResponse>("parseConfigFile", { fileName: resolveFileName(file) });
     }
 
+    /**
+     * Adopt the latest state from the LSP server.
+     * This updates the session to use the LSP's current snapshot and clears all
+     * registered symbols and types since they reference the old snapshot.
+     * Only meaningful when connected to an LSP server via `fromLSPConnection`.
+     */
+    async adoptLSPState(): Promise<void> {
+        await this.client.apiRequest<boolean>("adoptLSPState");
+    }
+
     async loadProject(configFile: FileIdentifier | string): Promise<Project> {
         const data = await this.client.apiRequest<ProjectResponse>("loadProject", { configFileName: resolveFileName(configFile) });
         return this.objectRegistry.getProject(data);
