@@ -33,6 +33,21 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: nil,
 		},
 		{
+			subScenario: "adds color when FORCE_COLOR is set",
+			env: map[string]string{
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
+			subScenario: "does not add color when NO_COLOR is set even if FORCE_COLOR is set",
+			env: map[string]string{
+				"NO_COLOR":    "true",
+				"FORCE_COLOR": "true",
+			},
+			commandLineArgs: nil,
+		},
+		{
 			subScenario:     "when build not first argument",
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
@@ -242,7 +257,6 @@ func TestTscComposite(t *testing.T) {
 			commandLineArgs: []string{"--composite", "false"},
 		},
 		{
-			// !!! sheetal null is not reflected in final options
 			subScenario: "when setting composite null on command line",
 			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
@@ -710,7 +724,6 @@ func TestTscDeclarationEmit(t *testing.T) {
 			commandLineArgs:  []string{"-p", "D:\\Work\\pkg1", "--explainFiles"},
 		},
 		{
-			// !!! sheetal redirected files not yet implemented
 			subScenario: "when same version is referenced through source and another symlinked package",
 			files: FileMap{
 				`/user/username/projects/myproject/plugin-two/index.d.ts`:                               pluginTwoDts(),
@@ -727,7 +740,6 @@ func TestTscDeclarationEmit(t *testing.T) {
 			commandLineArgs: []string{"-p", "plugin-one", "--explainFiles"},
 		},
 		{
-			// !!! sheetal redirected files not yet implemented
 			subScenario: "when same version is referenced through source and another symlinked package with indirect link",
 			files: FileMap{
 				`/user/username/projects/myproject/plugin-two/package.json`: stringtestutil.Dedent(`

@@ -3,6 +3,7 @@ package project_test
 import (
 	"context"
 	"maps"
+	"slices"
 	"strings"
 	"testing"
 
@@ -685,6 +686,7 @@ func TestSession(t *testing.T) {
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/x.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 
 			err = utils.FS().Remove("/home/projects/TS/p1/src/x.ts")
@@ -700,8 +702,16 @@ func TestSession(t *testing.T) {
 			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			program = ls.GetProgram()
+			// File name is still in the command line, was explicitly included
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/x.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
+
+			// Open file to trigger cleanup
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
+			snapshot, release := session.Snapshot()
+			defer release()
+			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/x.ts") == nil)
 		})
 
 		t.Run("delete wildcard included file", func(t *testing.T) {
@@ -722,6 +732,7 @@ func TestSession(t *testing.T) {
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 			program := ls.GetProgram()
+			assert.Check(t, slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 0)
 
 			err = utils.FS().Remove("/home/projects/TS/p1/src/index.ts")
@@ -737,7 +748,15 @@ func TestSession(t *testing.T) {
 			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 			program = ls.GetProgram()
+			// File name is gone from the command line, was originally included via wildcard
+			assert.Check(t, !slices.Contains(program.CommandLine().ParsedConfig.FileNames, "/home/projects/TS/p1/src/index.ts"))
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 1)
+
+			// Open file to trigger cleanup
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
+			snapshot, release := session.Snapshot()
+			defer release()
+			assert.Check(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts") == nil)
 		})
 
 		t.Run("create explicitly included file", func(t *testing.T) {
@@ -872,18 +891,63 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(&lsutil.UserPreferences{})
-
+		session.Configure(lsutil.NewUserConfig(nil))
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := session.UserPreferences()
+		newPrefs := session.Config().TS()
 		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
 		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
-		session.Configure(newPrefs)
+
+		session.Configure(lsutil.NewUserConfig(newPrefs))
 
 		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
 		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()
 		assert.Equal(t, len(codeLensRefreshCalls), 1, "expected one RefreshCodeLens call after code lens preference change")
 		assert.Equal(t, len(inlayHintsRefreshCalls), 1, "expected one RefreshInlayHints call after inlay hints preference change")
+	})
+
+	t.Run("config parsing", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": "{}",
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, _ := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+
+		configMap1 := map[string]any{
+			"UseAliasesForRename":       true,
+			"QuotePreference":           "single",
+			"OrganizeImportsIgnoreCase": true,
+		}
+		// set "typescript" options only
+		session.Configure(lsutil.ParseNewUserConfig([]any{nil, configMap1, nil}))
+		actualConfig1 := session.Config()
+		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
+		expectedPrefs1.UseAliasesForRename = core.TSTrue
+		expectedPrefs1.QuotePreference = lsutil.QuotePreferenceSingle
+		expectedPrefs1.OrganizeImportsIgnoreCase = core.TSTrue
+
+		// "javascript" options should default to ts
+		assert.DeepEqual(t, *actualConfig1.TS(), *expectedPrefs1)
+		assert.DeepEqual(t, *actualConfig1.JS(), *expectedPrefs1)
+
+		configMap2 := map[string]any{
+			"UseAliasesForRename":       false,
+			"QuotePreference":           "double",
+			"OrganizeImportsIgnoreCase": false,
+		}
+		// set "javascript" options only
+		session.Configure(lsutil.ParseNewUserConfig([]any{nil, nil, configMap2}))
+		actualConfig2 := session.Config()
+		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
+		expectedPrefs2.UseAliasesForRename = core.TSFalse
+		expectedPrefs2.QuotePreference = lsutil.QuotePreferenceDouble
+		expectedPrefs2.OrganizeImportsIgnoreCase = core.TSFalse
+		// "typescript" options should not change
+		assert.DeepEqual(t, *actualConfig2.TS(), *expectedPrefs1)
+		assert.DeepEqual(t, *actualConfig2.JS(), *expectedPrefs2)
 	})
 }
 

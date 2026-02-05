@@ -144,7 +144,7 @@
             }
         ]
     },
-    "main": "./dist/extension.js",
+    "main": "./dist/extension.bundle.js",
     "files": [
         "dist/extension.bundle.js",
         "lib",
@@ -153,16 +153,19 @@
         "logo.png"
     ],
     "scripts": {
-        "build": "tsc",
-        "watch": "tsc --watch",
-        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --minify"
+        "build": "tsc && npm run bundle",
+        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --sourcemap",
+        "watch": "npm run bundle -- --watch",
+        "//vscode:prepublish": "we do not use this hook; the Herebyfile runs bundle:release once instead",
+        "bundle:release": "npm run bundle -- --minify"
     },
     "dependencies": {
+        "@vscode/extension-telemetry": "^1.4.0",
         "vscode-languageclient": "^10.0.0-next.19"
     },
     "devDependencies": {
-        "@types/vscode": "^1.106.1",
+        "@types/vscode": "~1.106.1",
         "@vscode/vsce": "^3.7.1",
-        "esbuild": "^0.27.1"
+        "esbuild": "^0.27.2"
     }
 }

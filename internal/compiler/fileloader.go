@@ -50,6 +50,24 @@ type fileLoader struct {
 	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
 }
 
+type redirectsFile struct {
+	// Index of file at which this redirect file needs to be iterated
+	index    int
+	fileName string
+	path     tspath.Path
+	target   tspath.Path
+}
+
+var _ ast.HasFileName = (*redirectsFile)(nil)
+
+func (r *redirectsFile) FileName() string {
+	return r.fileName
+}
+
+func (r *redirectsFile) Path() tspath.Path {
+	return r.path
+}
+
 type processedFiles struct {
 	resolver                      *module.Resolver
 	files                         []*ast.SourceFile
@@ -70,9 +88,9 @@ type processedFiles struct {
 	outputFileToProjectReferenceSource map[tspath.Path]string
 	// Key is a file path. Value is the list of files that redirect to it (same package, different install location)
 	redirectTargetsMap map[tspath.Path][]string
-	// Any paths involved in deduplication, including canonical paths and redirected paths
-	deduplicatedPaths  collections.Set[tspath.Path]
-	finishedProcessing bool
+	// filesByPath for redirect files
+	redirectFilesByPath map[tspath.Path]*redirectsFile
+	finishedProcessing  bool
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -180,7 +198,9 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 		toParse = make([]resolvedRef, 0, len(automaticTypeDirectiveNames))
 		typeResolutionsInFile = make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(automaticTypeDirectiveNames))
 		for _, name := range automaticTypeDirectiveNames {
-			resolutionMode := core.ModuleKindNodeNext
+			// Under node16/nodenext module resolution, load `types`/ata include names as cjs resolution results by passing an `undefined` mode.
+			// Under bundler module resolution, this also triggers the "import" condition to be used.
+			resolutionMode := core.ResolutionModeNone
 			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
 			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
