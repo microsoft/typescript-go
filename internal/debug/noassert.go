@@ -1,4 +1,4 @@
-//go:build nodebug
+//go:build noasert
 
 package debug
 
