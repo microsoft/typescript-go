@@ -104,6 +104,10 @@ const goBuildFlags = [
     ...(options.debug ? ["-gcflags=all=-N -l"] : []),
 ];
 
+const goBuildEnv = {
+    ...(options.race ? {} : { CGO_ENABLED: "0" }),
+};
+
 /**
  * @template T
  * @param {() => T} fn
@@ -192,7 +196,8 @@ export const lib = task({
 function buildTsgo(opts) {
     opts ||= {};
     const out = opts.out ?? "./built/local/";
-    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "release")} -o ${out} ./cmd/tsgo`;
+    const env = { ...goBuildEnv, ...opts.env };
+    return $({ cancelSignal: opts.abortSignal, env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${options.debug ? goBuildTags("noembed") : goBuildTags("noembed", "release")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
@@ -297,6 +302,7 @@ function goTestFlags(taskName) {
 }
 
 const goTestEnv = {
+    ...goBuildEnv,
     ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
     // Go test caching takes a long time on Windows.
     // https://github.com/golang/go/issues/72992
