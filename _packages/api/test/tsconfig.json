@@ -1,5 +1,6 @@
 {
     "extends": "../tsconfig.dev.json",
+    "exclude": ["testProject"],
     "references": [
         { "path": ".." }
     ]

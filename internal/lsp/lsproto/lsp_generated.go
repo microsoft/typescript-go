@@ -23591,6 +23591,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[CancelParams](data)
 	case MethodProgress:
 		return unmarshalPtrTo[ProgressParams](data)
+	case MethodHandleCustomLspApiCommand:
+		return unmarshalPtrTo[HandleCustomLspApiCommandParams](data)
 	default:
 		return unmarshalAny(data)
 	}
