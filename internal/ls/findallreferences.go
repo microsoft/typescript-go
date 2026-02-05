@@ -186,7 +186,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
 					node.Parent.Parent,
 					nil))
-			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression.AsBinaryExpression()) != ast.JSDeclarationKindNone {
+			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}
 		}
@@ -322,8 +322,7 @@ func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 		return len(node.Text()) == len(searchSymbolName) && (isLiteralNameOfPropertyDeclarationOrIndexAccess(node) ||
 			isNameOfModuleDeclaration(node) ||
 			isExpressionOfExternalModuleImportEqualsDeclaration(node) ||
-			// !!! object.defineProperty
-			// (ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node) ||
+			ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node ||
 			ast.IsImportOrExportSpecifier(node.Parent))
 	case ast.KindNumericLiteral:
 		return isLiteralNameOfPropertyDeclarationOrIndexAccess(node) && len(node.Text()) == len(searchSymbolName)
@@ -755,7 +754,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 
 func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, checker *checker.Checker) string {
 	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
-		node := entry.node
+		node := ast.GetReparsedNodeForNode(entry.node)
 		kind := entry.kind
 		parent := node.Parent
 		name := originalNode.Text()
@@ -1136,8 +1135,8 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	}
 
 	filesToSearch := sourceFiles
-	if searchSpaceNode.Kind == ast.KindSourceFile {
-		filesToSearch = []*ast.SourceFile{searchSpaceNode.AsSourceFile()}
+	if searchSpaceNode.Kind != ast.KindSourceFile {
+		filesToSearch = []*ast.SourceFile{ast.GetSourceFileOfNode(searchSpaceNode)}
 	}
 	references := core.Map(
 		core.FlatMap(filesToSearch, func(sourceFile *ast.SourceFile) []*ast.Node {
