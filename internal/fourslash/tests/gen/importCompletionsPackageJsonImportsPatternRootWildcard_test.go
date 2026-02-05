@@ -8,31 +8,36 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestAutoImportModuleNone1(t *testing.T) {
+func TestImportCompletionsPackageJsonImportsPatternRootWildcard(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: none
-// @moduleResolution: bundler
-// @target: es5
-// @Filename: /node_modules/dep/index.d.ts
-export const x: number;
-// @Filename: /index.ts
- x/**/`
+	const content = `// @module: nodenext
+// @Filename: /package.json
+{
+  "imports": {
+    "#/*": "./src/*"
+  }
+}
+// @Filename: /src/something.ts
+export function something(name: string): any;
+// @Filename: /src/features/bar.ts
+export function bar(): any;
+// @Filename: /a.ts
+import {} from "#//*1*/";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
+			CommitCharacters: &[]string{},
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Excludes: []string{
-				"x",
+			Exact: []fourslash.CompletionsExpectedItem{
+				"something.js",
+				"features",
 			},
 		},
 	})
-	f.ReplaceLine(t, 0, "import { x } from 'dep'; x;")
-	f.VerifyNonSuggestionDiagnostics(t, nil)
 }
