@@ -8,7 +8,9 @@ import type {
 import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
+    type FileIdentifier,
     type Project as BaseProject,
+    resolveFileName,
     type Symbol as BaseSymbol,
     type Type as BaseType,
 } from "./base/api.ts";
@@ -24,6 +26,8 @@ import type {
 } from "./proto.ts";
 
 export { SymbolFlags, TypeFlags };
+export type { FileIdentifier };
+export { documentURIToFileName, fileNameToDocumentURI } from "./path.ts";
 
 export interface APIOptions extends BaseAPIOptions {
     fs?: FileSystem;
@@ -74,12 +78,12 @@ export class API implements BaseAPI<false> {
         );
     }
 
-    parseConfigFile(fileName: string): ConfigResponse {
-        return this.client.request("parseConfigFile", { fileName });
+    parseConfigFile(file: FileIdentifier | string): ConfigResponse {
+        return this.client.request("parseConfigFile", { fileName: resolveFileName(file) });
     }
 
-    loadProject(configFileName: string): Project {
-        const data = this.client.request("loadProject", { configFileName });
+    loadProject(configFile: FileIdentifier | string): Project {
+        const data = this.client.request("loadProject", { configFileName: resolveFileName(configFile) });
         return this.objectRegistry.getProject(data);
     }
 
@@ -123,9 +127,9 @@ export class Project extends DisposableObject implements BaseProject<false> {
         this.loadData(this.client.request("loadProject", { configFileName: this.configFileName }));
     }
 
-    getSourceFile(fileName: string): SourceFile | undefined {
+    getSourceFile(file: FileIdentifier | string): SourceFile | undefined {
         this.ensureNotDisposed();
-        const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
+        const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName: resolveFileName(file) });
         return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
 
@@ -141,10 +145,11 @@ export class Project extends DisposableObject implements BaseProject<false> {
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
-    getSymbolAtPosition(fileName: string, positions: readonly number[]): (Symbol | undefined)[];
-    getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
+    getSymbolAtPosition(file: FileIdentifier | string, position: number): Symbol | undefined;
+    getSymbolAtPosition(file: FileIdentifier | string, positions: readonly number[]): (Symbol | undefined)[];
+    getSymbolAtPosition(file: FileIdentifier | string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
         this.ensureNotDisposed();
+        const fileName = resolveFileName(file);
         if (typeof positionOrPositions === "number") {
             const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position: positionOrPositions });
             return data ? this.objectRegistry.getSymbol(data) : undefined;

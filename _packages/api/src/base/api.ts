@@ -13,6 +13,10 @@ import type {
     Node,
     SourceFile,
 } from "@typescript/ast";
+import {
+    documentURIToFileName,
+    fileNameToDocumentURI,
+} from "../path.ts";
 import type {
     ConfigResponse,
     ProjectResponse,
@@ -20,6 +24,46 @@ import type {
 import type { MaybeAsync } from "./types.ts";
 
 export { SymbolFlags, TypeFlags };
+
+/**
+ * A file identifier that can be either a file name (path) or a document URI.
+ *
+ * @example
+ * // Using a file name
+ * project.getSourceFile({ fileName: "/path/to/file.ts" });
+ *
+ * // Using a URI
+ * project.getSourceFile({ uri: "file:///path/to/file.ts" });
+ */
+export type FileIdentifier = { fileName: string; } | { uri: string; };
+
+/**
+ * Resolves a FileIdentifier to a file name.
+ * If the identifier contains a URI, it is converted to a file name.
+ */
+export function resolveFileName(identifier: FileIdentifier | string): string {
+    if (typeof identifier === "string") {
+        return identifier;
+    }
+    if ("fileName" in identifier) {
+        return identifier.fileName;
+    }
+    return documentURIToFileName(identifier.uri);
+}
+
+/**
+ * Resolves a FileIdentifier to a document URI.
+ * If the identifier contains a file name, it is converted to a URI.
+ */
+export function resolveDocumentURI(identifier: FileIdentifier | string): string {
+    if (typeof identifier === "string") {
+        return fileNameToDocumentURI(identifier);
+    }
+    if ("uri" in identifier) {
+        return identifier.uri;
+    }
+    return fileNameToDocumentURI(identifier.fileName);
+}
 
 /**
  * Options for creating an API instance.
@@ -40,12 +84,12 @@ export interface API<Async extends boolean> {
     /**
      * Parse a tsconfig.json file.
      */
-    parseConfigFile(fileName: string): MaybeAsync<Async, ConfigResponse>;
+    parseConfigFile(file: FileIdentifier | string): MaybeAsync<Async, ConfigResponse>;
 
     /**
      * Load a TypeScript project from a tsconfig.json file.
      */
-    loadProject(configFileName: string): MaybeAsync<Async, Project<Async>>;
+    loadProject(configFile: FileIdentifier | string): MaybeAsync<Async, Project<Async>>;
 
     /**
      * Close the API connection and release all resources.
@@ -77,9 +121,9 @@ export interface Project<Async extends boolean> {
     reload(): MaybeAsync<Async, void>;
 
     /**
-     * Get a source file from the project by file name.
+     * Get a source file from the project by file name or URI.
      */
-    getSourceFile(fileName: string): MaybeAsync<Async, SourceFile | undefined>;
+    getSourceFile(file: FileIdentifier | string): MaybeAsync<Async, SourceFile | undefined>;
 
     /**
      * Get the symbol at a specific location in a source file.
@@ -90,8 +134,8 @@ export interface Project<Async extends boolean> {
     /**
      * Get the symbol at a specific position in a file.
      */
-    getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
-    getSymbolAtPosition(fileName: string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
+    getSymbolAtPosition(file: FileIdentifier | string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
+    getSymbolAtPosition(file: FileIdentifier | string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
     /**
      * Get the type of a symbol.

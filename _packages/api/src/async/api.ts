@@ -7,7 +7,9 @@ import type {
 } from "@typescript/ast";
 import {
     type API as BaseAPI,
+    type FileIdentifier,
     type Project as BaseProject,
+    resolveFileName,
     type Symbol as BaseSymbol,
     type Type as BaseType,
 } from "../base/api.ts";
@@ -27,6 +29,8 @@ import {
 } from "./client.ts";
 
 export { SymbolFlags, TypeFlags };
+export type { FileIdentifier };
+export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 export interface LSPConnectionOptions extends ClientSocketOptions {
 }
@@ -106,17 +110,17 @@ export class API implements BaseAPI<true> {
         return api;
     }
 
-    async parseConfigFile(fileName: string): Promise<ConfigResponse> {
-        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { fileName });
+    async parseConfigFile(file: FileIdentifier | string): Promise<ConfigResponse> {
+        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { fileName: resolveFileName(file) });
     }
 
-    async loadProject(configFileName: string): Promise<Project> {
-        const data = await this.client.apiRequest<ProjectResponse>("loadProject", { configFileName });
+    async loadProject(configFile: FileIdentifier | string): Promise<Project> {
+        const data = await this.client.apiRequest<ProjectResponse>("loadProject", { configFileName: resolveFileName(configFile) });
         return this.objectRegistry.getProject(data);
     }
 
-    async getDefaultProjectForFile(fileName: string): Promise<Project | undefined> {
-        const data = await this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", { fileName });
+    async getDefaultProjectForFile(file: FileIdentifier | string): Promise<Project | undefined> {
+        const data = await this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", { fileName: resolveFileName(file) });
         return data ? this.objectRegistry.getProject(data) : undefined;
     }
 
@@ -154,11 +158,11 @@ export class Project extends DisposableObject implements BaseProject<true> {
         this.loadData(data);
     }
 
-    async getSourceFile(fileName: string): Promise<SourceFile | undefined> {
+    async getSourceFile(file: FileIdentifier | string): Promise<SourceFile | undefined> {
         this.ensureNotDisposed();
         const response = await this.client.apiRequest<SourceFileResponse | null>("getSourceFile", {
             project: this.id,
-            fileName,
+            fileName: resolveFileName(file),
         });
         if (!response?.data) {
             return undefined;
@@ -186,10 +190,11 @@ export class Project extends DisposableObject implements BaseProject<true> {
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Promise<Symbol | undefined>;
-    getSymbolAtPosition(fileName: string, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
-    async getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
+    getSymbolAtPosition(file: FileIdentifier | string, position: number): Promise<Symbol | undefined>;
+    getSymbolAtPosition(file: FileIdentifier | string, positions: readonly number[]): Promise<(Symbol | undefined)[]>;
+    async getSymbolAtPosition(file: FileIdentifier | string, positionOrPositions: number | readonly number[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
         this.ensureNotDisposed();
+        const fileName = resolveFileName(file);
         if (typeof positionOrPositions === "number") {
             const data = await this.client.apiRequest<SymbolResponse | null>("getSymbolAtPosition", {
                 project: this.id,
