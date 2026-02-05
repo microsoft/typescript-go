@@ -116,8 +116,6 @@ export class API implements BaseAPI<true> {
 
     /**
      * Adopt the latest state from the LSP server.
-     * This updates the session to use the LSP's current snapshot and clears all
-     * registered symbols and types since they reference the old snapshot.
      * Only meaningful when connected to an LSP server via `fromLSPConnection`.
      */
     async adoptLSPState(): Promise<void> {
