@@ -539,7 +539,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Type_Checking,
 		Description:              diagnostics.Enable_all_strict_type_checking_options,
-		DefaultValueDescription:  false,
+		DefaultValueDescription:  true,
 	},
 	{
 		Name:                       "noImplicitAny",

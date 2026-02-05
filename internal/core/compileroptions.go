@@ -301,7 +301,7 @@ func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
 	if value != TSUnknown {
 		return value == TSTrue
 	}
-	return options.Strict == TSTrue
+	return options.Strict != TSFalse
 }
 
 func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
