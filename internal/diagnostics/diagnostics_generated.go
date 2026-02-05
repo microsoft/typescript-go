@@ -3342,6 +3342,8 @@ var X_true_for_ES2022_and_above_including_ESNext = &Message{code: 6930, category
 
 var List_of_file_name_suffixes_to_search_when_resolving_a_module = &Message{code: 6931, category: CategoryError, key: "List_of_file_name_suffixes_to_search_when_resolving_a_module_6931", text: "List of file name suffixes to search when resolving a module."}
 
+var Import_JSON_files_as_const_assertions = &Message{code: 6933, category: CategoryMessage, key: "Import_JSON_files_as_const_assertions_6933", text: "Import JSON files as const assertions."}
+
 var Variable_0_implicitly_has_an_1_type = &Message{code: 7005, category: CategoryError, key: "Variable_0_implicitly_has_an_1_type_7005", text: "Variable '{0}' implicitly has an '{1}' type."}
 
 var Parameter_0_implicitly_has_an_1_type = &Message{code: 7006, category: CategoryError, key: "Parameter_0_implicitly_has_an_1_type_7006", text: "Parameter '{0}' implicitly has an '{1}' type."}
@@ -7618,6 +7620,8 @@ func keyToMessage(key Key) *Message {
 		return X_true_for_ES2022_and_above_including_ESNext
 	case "List_of_file_name_suffixes_to_search_when_resolving_a_module_6931":
 		return List_of_file_name_suffixes_to_search_when_resolving_a_module
+	case "Import_JSON_files_as_const_assertions_6933":
+		return Import_JSON_files_as_const_assertions
 	case "Variable_0_implicitly_has_an_1_type_7005":
 		return Variable_0_implicitly_has_an_1_type
 	case "Parameter_0_implicitly_has_an_1_type_7006":

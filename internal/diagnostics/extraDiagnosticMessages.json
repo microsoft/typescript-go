@@ -86,5 +86,9 @@
     "Deduplicate packages with the same name and version.": {
         "category": "Message",
         "code": 100011
+    },
+    "Import JSON files as const assertions.": {
+        "category": "Message",
+        "code": 6933
     }
 }
