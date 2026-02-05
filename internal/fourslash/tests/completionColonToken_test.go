@@ -25,36 +25,16 @@ function c(enum: /*c*/) {}
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: CompletionGlobals,
-		},
-	})
-
-	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: CompletionGlobals,
-		},
-	})
-
-	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: CompletionGlobals,
-		},
-	})
+	for _, marker := range f.Ranges() {
+		f.VerifyCompletions(t, marker, &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &DefaultCommitCharacters,
+				EditRange:        Ignored,
+			},
+			Items: &fourslash.CompletionsExpectedItems{
+				Includes: CompletionGlobals,
+			},
+		})
+	}
 }

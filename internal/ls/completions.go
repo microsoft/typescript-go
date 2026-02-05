@@ -1206,22 +1206,14 @@ func (l *LanguageService) getCompletionData(
 			return globalsSearchContinue, nil
 		}
 
-		var parent *ast.Node
+		var importAttributes *ast.Node
 		switch contextToken.Kind {
 		case ast.KindOpenBraceToken, ast.KindCommaToken:
-			parent = contextToken.Parent
+			importAttributes = contextToken.Parent
 		case ast.KindColonToken:
-			parent = contextToken.Parent.Parent
+			importAttributes = contextToken.Parent.Parent
 		}
-
-		if parent == nil {
-			return globalsSearchContinue, nil
-		}
-
-		var importAttributes *ast.ImportAttributesNode
-		if ast.IsImportAttributes(parent) {
-			importAttributes = parent
-		} else {
+		if importAttributes == nil || !ast.IsImportAttributes(importAttributes) {
 			return globalsSearchContinue, nil
 		}
 
