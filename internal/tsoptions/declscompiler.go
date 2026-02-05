@@ -330,7 +330,7 @@ var optionsForCompiler = []*CommandLineOption{
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.Language_and_Environment,
 		Description:              diagnostics.Set_the_JavaScript_language_version_for_emitted_JavaScript_and_include_compatible_library_declarations,
-		DefaultValueDescription:  core.ScriptTargetES5,
+		DefaultValueDescription:  core.ScriptTargetLatestStandard,
 	},
 
 	// moduleOptionDeclaration,
