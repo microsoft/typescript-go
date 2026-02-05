@@ -47,6 +47,8 @@ jobs:
 
       - run: npx hereby build
 
+      - run: npx hereby native-preview:release --forRelease --setPrerelease dev.0.0
+
   extension:
     runs-on: ubuntu-latest
     steps:
