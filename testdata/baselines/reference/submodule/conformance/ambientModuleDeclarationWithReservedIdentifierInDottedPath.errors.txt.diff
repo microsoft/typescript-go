@@ -1,0 +1,18 @@
+--- old.ambientModuleDeclarationWithReservedIdentifierInDottedPath.errors.txt
++++ new.ambientModuleDeclarationWithReservedIdentifierInDottedPath.errors.txt
+@@= skipped -0, +0 lines =@@
+ ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts(11,1): error TS2304: Cannot find name 'declare'.
+-ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts(11,9): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts(11,9): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+ ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts(11,16): error TS2819: Namespace name cannot be 'debugger'.
+ ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts(11,25): error TS1005: ';' expected.
+
+@@= skipped -18, +18 lines =@@
+     ~~~~~~~
+ !!! error TS2304: Cannot find name 'declare'.
+             ~~~~~~
+-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+                    ~~~~~~~~
+ !!! error TS2819: Namespace name cannot be 'debugger'.
+                             ~

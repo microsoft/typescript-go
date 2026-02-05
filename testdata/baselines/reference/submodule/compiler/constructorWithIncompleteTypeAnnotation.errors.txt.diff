@@ -1,5 +1,12 @@
 --- old.constructorWithIncompleteTypeAnnotation.errors.txt
 +++ new.constructorWithIncompleteTypeAnnotation.errors.txt
+@@= skipped -0, +0 lines =@@
+ constructorWithIncompleteTypeAnnotation.ts(11,13): error TS2503: Cannot find namespace 'module'.
+-constructorWithIncompleteTypeAnnotation.ts(11,13): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++constructorWithIncompleteTypeAnnotation.ts(11,13): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+ constructorWithIncompleteTypeAnnotation.ts(11,19): error TS1005: ';' expected.
+ constructorWithIncompleteTypeAnnotation.ts(22,35): error TS1005: ')' expected.
+ constructorWithIncompleteTypeAnnotation.ts(22,39): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
 @@= skipped -38, +38 lines =@@
  constructorWithIncompleteTypeAnnotation.ts(159,30): error TS1005: '{' expected.
  constructorWithIncompleteTypeAnnotation.ts(159,31): error TS2304: Cannot find name 'Property'.
@@ -18,7 +25,16 @@
  constructorWithIncompleteTypeAnnotation.ts(235,27): error TS1005: ',' expected.
  constructorWithIncompleteTypeAnnotation.ts(235,28): error TS2693: 'number' only refers to a type, but is being used as a value here.
  constructorWithIncompleteTypeAnnotation.ts(235,36): error TS1005: ';' expected.
-@@= skipped -169, +169 lines =@@
+@@= skipped -53, +53 lines =@@
+                 ~~~~~~
+ !!! error TS2503: Cannot find namespace 'module'.
+                 ~~~~~~
+-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+                       ~
+ !!! error TS1005: ';' expected.
+     
+@@= skipped -116, +116 lines =@@
                  var undef = undefined;
      
                  var  _\uD4A5\u7204\uC316\uE59F  = local;
