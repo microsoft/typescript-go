@@ -680,11 +680,12 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		}
 	}
 
-	// /**/<var|let| [|n:ame|] ...
-	if node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword &&
+	// /**/<var|let|const> [|name|] ...
+	if (node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword) &&
 		ast.IsVariableDeclarationList(parent) && len(parent.AsVariableDeclarationList().Declarations.Nodes) == 1 {
-		if decl := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration(); ast.IsIdentifier(decl.Name()) {
-			return decl.Name()
+		declaration := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+		if ast.IsIdentifier(declaration.Name()) {
+			return declaration.Name()
 		}
 	}
 
@@ -998,10 +999,10 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 		if node.Kind != ast.KindQualifiedName {
 			name = core.IfElse(node.Parent.Kind == ast.KindQualifiedName && node.Parent.AsQualifiedName().Right == node, node.Parent, nil)
 		}
-		if name == nil || name.Parent.Kind == ast.KindImportEqualsDeclaration {
-			return ast.SemanticMeaningNamespace
+		if name != nil && name.Parent.Kind == ast.KindImportEqualsDeclaration {
+			return ast.SemanticMeaningAll
 		}
-		return ast.SemanticMeaningAll
+		return ast.SemanticMeaningNamespace
 	case ast.IsDeclarationName(node):
 		return getMeaningFromDeclaration(parent)
 	case ast.IsEntityName(node) && ast.IsJSDocNameReferenceContext(node):
