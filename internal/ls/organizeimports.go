@@ -140,7 +140,7 @@ func organizeImportsWorker(
 	if shouldRemove {
 		typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
 		defer done()
-		processedImports = removeUnusedImports(processedImports, sourceFile, typeChecker, program)
+		processedImports = removeUnusedImports(processedImports, sourceFile, typeChecker, program, changeTracker)
 	}
 
 	var newImportDecls []*ast.Statement
@@ -227,7 +227,7 @@ func groupByModuleSpecifier(imports []*ast.Statement) [][]*ast.Statement {
 	return result
 }
 
-func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, typeChecker *checker.Checker, program *compiler.Program) []*ast.Statement {
+func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, typeChecker *checker.Checker, program *compiler.Program, changeTracker *change.Tracker) []*ast.Statement {
 	compilerOptions := program.Options()
 	jsxElementsPresent := (sourceFile.AsNode().SubtreeFacts() & ast.SubtreeContainsJsx) != 0
 	jsxModeNeedsExplicitImport := compilerOptions.Jsx == core.JsxEmitReact || compilerOptions.Jsx == core.JsxEmitReactNative
@@ -259,12 +259,17 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 				}
 			case ast.KindNamedImports:
 				namedImports := namedBindings.AsNamedImports()
+				originalBindings := namedBindings
 				newElements := filterUsedImportSpecifiers(namedImports.Elements.Nodes, typeChecker, sourceFile, jsxElementsPresent, jsxModeNeedsExplicitImport)
 				if len(newElements) == 0 {
 					namedBindings = nil
 				} else if len(newElements) < len(namedImports.Elements.Nodes) {
 					newList := factory.NewNodeList(newElements)
-					namedBindings = factory.UpdateNamedImports(namedImports, newList).AsNode()
+					updatedNamedImports := factory.UpdateNamedImports(namedImports, newList)
+					namedBindings = updatedNamedImports.AsNode()
+				}
+				if namedBindings != nil && !ast.NodeIsSynthesized(originalBindings.AsNode()) && !printer.RangeIsOnSingleLine(originalBindings.Loc, sourceFile) {
+					changeTracker.SetEmitFlags(namedBindings, printer.EFMultiLine)
 				}
 			}
 		}
