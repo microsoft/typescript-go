@@ -110,7 +110,7 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
                 one of:  es5, es6/es2015, es2016, es2017, es2018, es2019, es2020, es2021, es2022, es2023, es2024, esnext
 
-               default:  es5
+               default:  es2024
 
 
 [94m           --module, -m  [39mSpecify what module code is generated.
@@ -138,8 +138,8 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
                          23.array, es2023.collection, es2023.intl, es2024.arraybuffer, es2024.collection, es2024.object/
                          esnext.object, es2024.promise, es2024.regexp/esnext.regexp, es2024.sharedmemory, es2024.string/
                          esnext.string, esnext.array, esnext.collection, esnext.intl, esnext.disposable, esnext.promise,
-                          esnext.decorators, esnext.iterator, esnext.float16, esnext.error, esnext.sharedmemory, decorat
-                         ors, decorators.legacy
+                          esnext.decorators, esnext.iterator, esnext.float16, esnext.typedarrays, esnext.error, esnext.s
+                         haredmemory, decorators, decorators.legacy
 
                default:  undefined
 
@@ -184,7 +184,7 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
                   type:  boolean
 
-               default:  false
+               default:  true
 
 
 [94m                --types  [39mSpecify type package names to be included without being referenced in a source file.
