@@ -12,7 +12,7 @@ func TestSyntacticClassifications1(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// comment
-module M {
+namespace M {
     var v = 0 + 1;
     var s = "string";
 
@@ -25,7 +25,7 @@ module M {
     interface I {
     }
 
-    module M1.M2 {
+    namespace M1.M2 {
     }
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

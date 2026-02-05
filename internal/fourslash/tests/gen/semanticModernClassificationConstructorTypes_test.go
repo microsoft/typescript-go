@@ -11,7 +11,8 @@ func TestSemanticModernClassificationConstructorTypes(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `Object.create(null);
+	const content = `// @lib: es5
+Object.create(null);
 const x = Promise.resolve(Number.MAX_VALUE);
 if (x instanceof Promise) {}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
