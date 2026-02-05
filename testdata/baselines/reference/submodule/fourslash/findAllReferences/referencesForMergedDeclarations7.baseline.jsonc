@@ -1,19 +1,21 @@
 // === findAllReferences ===
 // === /referencesForMergedDeclarations7.ts ===
 // interface Foo { }
-// module Foo {
+// namespace Foo {
 //     export interface /*FIND ALL REFS*/[|Bar|] { }
 //     export module Bar { export interface Baz { } }
 //     export function Bar() { }
 // }
-// --- (line: 7) skipped ---
+// 
+// // module, value and type
+// import a2 = Foo.[|Bar|];
 
 
 
 // === findAllReferences ===
 // === /referencesForMergedDeclarations7.ts ===
 // interface Foo { }
-// module Foo {
+// namespace Foo {
 //     export interface Bar { }
 //     export module /*FIND ALL REFS*/[|Bar|] { export interface Baz { } }
 //     export function Bar() { }
@@ -27,24 +29,24 @@
 // === findAllReferences ===
 // === /referencesForMergedDeclarations7.ts ===
 // interface Foo { }
-// module Foo {
+// namespace Foo {
 //     export interface Bar { }
 //     export module Bar { export interface Baz { } }
 //     export function /*FIND ALL REFS*/[|Bar|]() { }
 // }
 // 
 // // module, value and type
-// import a2 = Foo.Bar;
+// import a2 = Foo.[|Bar|];
 
 
 
 // === findAllReferences ===
 // === /referencesForMergedDeclarations7.ts ===
 // interface Foo { }
-// module Foo {
-//     export interface Bar { }
+// namespace Foo {
+//     export interface [|Bar|] { }
 //     export module [|Bar|] { export interface Baz { } }
-//     export function Bar() { }
+//     export function [|Bar|]() { }
 // }
 // 
 // // module, value and type

@@ -1847,8 +1847,8 @@ func tryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
 	noExtension := tspath.RemoveExtension(fileName, tspath.ExtensionTs)
 	lastDotIndex := strings.LastIndex(noExtension, ".")
 	ext := noExtension[lastDotIndex:]
-	dIndex := strings.Index(noExtension, ".d.")
-	return noExtension[:dIndex] + ext
+	before, _, _ := strings.Cut(noExtension, ".d.")
+	return before + ext
 }
 
 func walkUpParentheses(node *ast.Node) *ast.Node {
@@ -1939,10 +1939,8 @@ func kindModifiersFromExtension(extension string) lsutil.ScriptElementKindModifi
 		return lsutil.ScriptElementKindModifierCts
 	case tspath.ExtensionTsBuildInfo:
 		panic(fmt.Sprintf("Extension %v is unsupported.", tspath.ExtensionTsBuildInfo))
-	case "":
-		return lsutil.ScriptElementKindModifierNone
 	default:
-		panic(fmt.Sprintf("Unexpected extension: %v", extension))
+		return lsutil.ScriptElementKindModifierNone
 	}
 }
 
