@@ -390,6 +390,29 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.decoder.decode(text);
     }
 
+    private getChildAtNodeIndex(parent: number, index: number): RemoteNode | RemoteNodeList | undefined {
+        let next = parent + 1;
+        let count = 0;
+        while (next !== 0) {
+            let child = new RemoteNode(this.view, this.decoder, next, this);
+
+            if (child.parent.index !== parent) {
+                return undefined;
+            }
+
+            if (count === index) {
+                if (child.kind == KIND_NODE_LIST) {
+                    return new RemoteNodeList(this.view, this.decoder, child.index, this);
+                } else {
+                    return child;
+                }
+            }
+
+            count += 1;
+            next = child.next;
+        }
+    }
+
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
         const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
         let child = (this._children ??= new Map()).get(pos);
@@ -487,7 +510,8 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         // were present, we would have `parameters = children[5]`, but since `postfixToken` and `astersiskToken` are
         // missing, we have `parameters = children[5 - 2]`.
         const propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
-        return this.getOrCreateChildAtNodeIndex(this.index + 1 + propertyIndex);
+        return this.getChildAtNodeIndex(this.index, propertyIndex);
+        // return this.getOrCreateChildAtNodeIndex(this.index + 1 + propertyIndex);
     }
 
     __print(): string {
