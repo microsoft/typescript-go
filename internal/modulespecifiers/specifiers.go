@@ -62,9 +62,12 @@ func GetModuleSpecifiersWithInfo(
 		return nil, ResultKindNone
 	}
 
+	// Use original source file name when file is from project reference output
+	moduleFileName := host.GetSourceOfProjectReferenceIfOutputIncluded(moduleSourceFile)
+
 	return GetModuleSpecifiersForFileWithInfo(
 		importingSourceFile,
-		moduleSourceFile.FileName(),
+		moduleFileName,
 		compilerOptions,
 		host,
 		userPreferences,
@@ -205,6 +208,11 @@ func getAllModulePathsWorker(
 		allFileNames[p.FileName] = p
 	}
 
+	useCaseSensitiveFileNames := info.UseCaseSensitiveFileNames
+	comparePaths := func(a, b ModulePath) int {
+		return comparePathsByRedirect(a, b, useCaseSensitiveFileNames)
+	}
+
 	// Sort by paths closest to importing file Name directory
 	sortedPaths := make([]ModulePath, 0, len(paths))
 	for directory := info.SourceDirectory; len(allFileNames) != 0; {
@@ -217,7 +225,7 @@ func getAllModulePathsWorker(
 			}
 		}
 		if len(pathsInDirectory) > 0 {
-			slices.SortStableFunc(pathsInDirectory, comparePathsByRedirectAndNumberOfDirectorySeparators)
+			slices.SortFunc(pathsInDirectory, comparePaths)
 			sortedPaths = append(sortedPaths, pathsInDirectory...)
 		}
 		newDirectory := tspath.GetDirectoryPath(directory)
@@ -228,7 +236,7 @@ func getAllModulePathsWorker(
 	}
 	if len(allFileNames) > 0 {
 		remainingPaths := slices.Collect(maps.Values(allFileNames))
-		slices.SortStableFunc(remainingPaths, comparePathsByRedirectAndNumberOfDirectorySeparators)
+		slices.SortFunc(remainingPaths, comparePaths)
 		sortedPaths = append(sortedPaths, remainingPaths...)
 	}
 	return sortedPaths
@@ -1074,7 +1082,7 @@ func tryGetModuleNameFromPaths(
 			if len(pattern) == 0 {
 				pattern = normalized
 			}
-			indexOfStar := strings.Index(pattern, "*")
+			prefix, suffix, ok := strings.Cut(pattern, "*")
 
 			// In module resolution, if `pattern` itself has an extension, a file with that extension is looked up directly,
 			// meaning a '.ts' or '.d.ts' extension is allowed to resolve. This is distinct from the case where a '*' substitution
@@ -1133,9 +1141,7 @@ func tryGetModuleNameFromPaths(
 				})
 			}
 
-			if indexOfStar != -1 {
-				prefix := pattern[0:indexOfStar]
-				suffix := pattern[indexOfStar+1:]
+			if ok {
 				for _, c := range candidates {
 					value := c.value
 					if len(value) >= len(prefix)+len(suffix) &&

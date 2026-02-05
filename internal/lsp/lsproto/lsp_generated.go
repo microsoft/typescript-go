@@ -21822,6 +21822,213 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
+// CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.
+type CustomClosingTagCompletion struct {
+	// The text to insert at the closing tag position.
+	NewText string `json:"newText"`
+}
+
+var _ json.UnmarshalerFrom = (*CustomClosingTagCompletion)(nil)
+
+func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingNewText uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"newText"`:
+			missing &^= missingNewText
+			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingNewText != 0 {
+			missingProps = append(missingProps, "newText")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// A RequestFailureTelemetryEvent is sent when a request fails and the server recovers.
+type RequestFailureTelemetryEvent struct {
+	// The name of the telemetry event.
+	EventName StringLiteralLanguageServerErrorResponse `json:"eventName"`
+
+	// Indicates whether the reason for generating the event (e.g. general usage telemetry or errors).
+	TelemetryPurpose StringLiteralError `json:"telemetryPurpose"`
+
+	// The properties associated with the event.
+	Properties *RequestFailureTelemetryProperties `json:"properties"`
+}
+
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEvent)(nil)
+
+func (s *RequestFailureTelemetryEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingEventName uint = 1 << iota
+		missingTelemetryPurpose
+		missingProperties
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"eventName"`:
+			missing &^= missingEventName
+			if err := json.UnmarshalDecode(dec, &s.EventName); err != nil {
+				return err
+			}
+		case `"telemetryPurpose"`:
+			missing &^= missingTelemetryPurpose
+			if err := json.UnmarshalDecode(dec, &s.TelemetryPurpose); err != nil {
+				return err
+			}
+		case `"properties"`:
+			missing &^= missingProperties
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingEventName != 0 {
+			missingProps = append(missingProps, "eventName")
+		}
+		if missing&missingTelemetryPurpose != 0 {
+			missingProps = append(missingProps, "telemetryPurpose")
+		}
+		if missing&missingProperties != 0 {
+			missingProps = append(missingProps, "properties")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
+// RequestFailureTelemetryProperties contains failure information when an LSP request manages to recover.
+type RequestFailureTelemetryProperties struct {
+	// The error code associated with the event.
+	ErrorCode string `json:"errorCode"`
+
+	// The method of the request that caused the event.
+	RequestMethod string `json:"requestMethod"`
+
+	// The stack trace associated with the event.
+	Stack string `json:"stack"`
+}
+
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryProperties)(nil)
+
+func (s *RequestFailureTelemetryProperties) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	const (
+		missingErrorCode uint = 1 << iota
+		missingRequestMethod
+		missingStack
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"errorCode"`:
+			missing &^= missingErrorCode
+			if err := json.UnmarshalDecode(dec, &s.ErrorCode); err != nil {
+				return err
+			}
+		case `"requestMethod"`:
+			missing &^= missingRequestMethod
+			if err := json.UnmarshalDecode(dec, &s.RequestMethod); err != nil {
+				return err
+			}
+		case `"stack"`:
+			missing &^= missingStack
+			if err := json.UnmarshalDecode(dec, &s.Stack); err != nil {
+				return err
+			}
+		default:
+			// Ignore unknown properties.
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingErrorCode != 0 {
+			missingProps = append(missingProps, "errorCode")
+		}
+		if missing&missingRequestMethod != 0 {
+			missingProps = append(missingProps, "requestMethod")
+		}
+		if missing&missingStack != 0 {
+			missingProps = append(missingProps, "stack")
+		}
+		return fmt.Errorf("missing required properties: %s", strings.Join(missingProps, ", "))
+	}
+
+	return nil
+}
+
 // Parameters for profiling requests.
 type ProfileParams struct {
 	// The directory path where the profile should be saved.
@@ -23320,6 +23527,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
+	case MethodCustomTextDocumentClosingTagCompletion:
+		return unmarshalPtrTo[TextDocumentPositionParams](data)
 	case MethodCustomRunGC:
 		return unmarshalEmpty(data)
 	case MethodCustomSaveHeapProfile:
@@ -23359,7 +23568,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	case MethodWindowLogMessage:
 		return unmarshalPtrTo[LogMessageParams](data)
 	case MethodTelemetryEvent:
-		return unmarshalAny(data)
+		return unmarshalPtrTo[TelemetryEvent](data)
 	case MethodTextDocumentDidOpen:
 		return unmarshalPtrTo[DidOpenTextDocumentParams](data)
 	case MethodTextDocumentDidChange:
@@ -23527,6 +23736,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
+	case MethodCustomTextDocumentClosingTagCompletion:
+		return unmarshalValue[CustomClosingTagCompletionResponse](data)
 	case MethodCustomRunGC:
 		return unmarshalValue[RunGCResponse](data)
 	case MethodCustomSaveHeapProfile:
@@ -23841,6 +24052,8 @@ const (
 	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
+	// Request to get the closing tag completion at a given position.
+	MethodCustomTextDocumentClosingTagCompletion Method = "custom/textDocument/closingTagCompletion"
 	// Triggers garbage collection in the language server.
 	MethodCustomRunGC Method = "custom/runGC"
 	// Saves a heap profile to the specified directory.
@@ -24359,6 +24572,12 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
+// Response type for `custom/textDocument/closingTagCompletion`
+type CustomClosingTagCompletionResponse = CustomClosingTagCompletionOrNull
+
+// Type mapping info for `custom/textDocument/closingTagCompletion`
+var CustomTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomClosingTagCompletionResponse]{Method: MethodCustomTextDocumentClosingTagCompletion}
+
 // Response type for `custom/runGC`
 type RunGCResponse = Null
 
@@ -24432,7 +24651,7 @@ var WindowShowMessageInfo = NotificationInfo[*ShowMessageParams]{Method: MethodW
 var WindowLogMessageInfo = NotificationInfo[*LogMessageParams]{Method: MethodWindowLogMessage}
 
 // Type mapping info for `telemetry/event`
-var TelemetryEventInfo = NotificationInfo[any]{Method: MethodTelemetryEvent}
+var TelemetryEventInfo = NotificationInfo[TelemetryEvent]{Method: MethodTelemetryEvent}
 
 // Type mapping info for `textDocument/didOpen`
 var TextDocumentDidOpenInfo = NotificationInfo[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
@@ -24466,6 +24685,10 @@ var CancelRequestInfo = NotificationInfo[*CancelParams]{Method: MethodCancelRequ
 
 // Type mapping info for `$/progress`
 var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
+
+// Type aliases
+
+type TelemetryEvent = RequestFailureTelemetryEventOrNull
 
 // Union types
 
@@ -28644,6 +28867,78 @@ func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return fmt.Errorf("invalid LSPAnyOrNull: %s", data)
 }
 
+type CustomClosingTagCompletionOrNull struct {
+	CustomClosingTagCompletion *CustomClosingTagCompletion
+}
+
+var _ json.MarshalerTo = (*CustomClosingTagCompletionOrNull)(nil)
+
+func (o *CustomClosingTagCompletionOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of CustomClosingTagCompletionOrNull is set", o.CustomClosingTagCompletion != nil)
+
+	if o.CustomClosingTagCompletion != nil {
+		return json.MarshalEncode(enc, o.CustomClosingTagCompletion)
+	}
+	return enc.WriteToken(jsontext.Null)
+}
+
+var _ json.UnmarshalerFrom = (*CustomClosingTagCompletionOrNull)(nil)
+
+func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = CustomClosingTagCompletionOrNull{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCustomClosingTagCompletion CustomClosingTagCompletion
+	if err := json.Unmarshal(data, &vCustomClosingTagCompletion); err == nil {
+		o.CustomClosingTagCompletion = &vCustomClosingTagCompletion
+		return nil
+	}
+	return fmt.Errorf("invalid CustomClosingTagCompletionOrNull: %s", data)
+}
+
+type RequestFailureTelemetryEventOrNull struct {
+	RequestFailureTelemetryEvent *RequestFailureTelemetryEvent
+}
+
+var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrNull is set", o.RequestFailureTelemetryEvent != nil)
+
+	if o.RequestFailureTelemetryEvent != nil {
+		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
+	}
+	return enc.WriteToken(jsontext.Null)
+}
+
+var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrNull)(nil)
+
+func (o *RequestFailureTelemetryEventOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*o = RequestFailureTelemetryEventOrNull{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vRequestFailureTelemetryEvent RequestFailureTelemetryEvent
+	if err := json.Unmarshal(data, &vRequestFailureTelemetryEvent); err == nil {
+		o.RequestFailureTelemetryEvent = &vRequestFailureTelemetryEvent
+		return nil
+	}
+	return fmt.Errorf("invalid RequestFailureTelemetryEventOrNull: %s", data)
+}
+
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
 	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
 	TextDocumentFilterScheme       *TextDocumentFilterScheme
@@ -28990,6 +29285,50 @@ func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 	if string(v) != `"snippet"` {
 		return fmt.Errorf("expected StringLiteralSnippet value %s, got %s", `"snippet"`, v)
+	}
+	return nil
+}
+
+// StringLiteralLanguageServerErrorResponse is a literal type for "languageServer.errorResponse"
+type StringLiteralLanguageServerErrorResponse struct{}
+
+var _ json.MarshalerTo = StringLiteralLanguageServerErrorResponse{}
+
+func (o StringLiteralLanguageServerErrorResponse) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"languageServer.errorResponse"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralLanguageServerErrorResponse{}
+
+func (o *StringLiteralLanguageServerErrorResponse) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"languageServer.errorResponse"` {
+		return fmt.Errorf("expected StringLiteralLanguageServerErrorResponse value %s, got %s", `"languageServer.errorResponse"`, v)
+	}
+	return nil
+}
+
+// StringLiteralError is a literal type for "error"
+type StringLiteralError struct{}
+
+var _ json.MarshalerTo = StringLiteralError{}
+
+func (o StringLiteralError) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"error"`))
+}
+
+var _ json.UnmarshalerFrom = &StringLiteralError{}
+
+func (o *StringLiteralError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"error"` {
+		return fmt.Errorf("expected StringLiteralError value %s, got %s", `"error"`, v)
 	}
 	return nil
 }

@@ -185,7 +185,8 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(path tspath.Path,
 			if project.CommandLine == nil {
 				return nil
 			}
-			return core.Map(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
+			// A referenced project may not be loaded if `disableReferencedProjectLoad` is true.
+			return core.MapNonNil(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
 				return c.configuredProjects[c.toPath(configFileName)]
 			})
 		},
@@ -227,9 +228,11 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(path tspath.Path,
 func (c *ProjectCollection) clone() *ProjectCollection {
 	return &ProjectCollection{
 		toPath:              c.toPath,
+		configFileRegistry:  c.configFileRegistry,
 		configuredProjects:  c.configuredProjects,
 		inferredProject:     c.inferredProject,
 		fileDefaultProjects: c.fileDefaultProjects,
+		apiOpenedProjects:   c.apiOpenedProjects,
 	}
 }
 

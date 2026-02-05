@@ -116,9 +116,10 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
-// GetRedirectTargets implements checker.Program.
+// GetRedirectTargets returns the list of file paths that redirect to the given path.
+// These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
-	return nil // !!! TODO: project references support
+	return p.redirectTargetsMap[path]
 }
 
 // gets the original file that was included in program
@@ -240,9 +241,17 @@ func NewProgram(opts ProgramOptions) *Program {
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
-	oldFile := p.filesByPath[changedFilePath]
 	newOpts := p.opts
 	newOpts.Host = newHost
+
+	// If this file is part of a package redirect group (same package installed in multiple
+	// node_modules locations), we need to rebuild the program because the redirect targets
+	// might need recalculation.
+	if _, exists := p.redirectFilesByPath[changedFilePath]; exists {
+		return NewProgram(newOpts), false
+	}
+
+	oldFile := p.filesByPath[changedFilePath]
 	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
@@ -433,17 +442,22 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		diagnostics := make([][]*ast.Diagnostic, len(p.files))
-		wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
-		for i, file := range p.files {
-			wg.Queue(func() {
-				diagnostics[i] = collect(ctx, file)
-			})
-		}
-		wg.RunAndWait()
+		diagnostics := p.collectDiagnosticsFromFiles(ctx, p.files, concurrent, collect)
 		result = slices.Concat(diagnostics...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
+}
+
+func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
+	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
+	wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
+	for i, file := range sourceFiles {
+		wg.Queue(func() {
+			diagnostics[i] = collect(ctx, file)
+		})
+	}
+	wg.RunAndWait()
+	return diagnostics
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -468,9 +482,10 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
+	diagnostics := p.collectDiagnosticsFromFiles(ctx, sourceFiles, true /*concurrent*/, p.getBindAndCheckDiagnosticsForFile)
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
-	for _, file := range sourceFiles {
-		result[file] = SortAndDeduplicateDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, file))
+	for i, diags := range diagnostics {
+		result[sourceFiles[i]] = SortAndDeduplicateDiagnostics(diags)
 	}
 	return result
 }
@@ -883,7 +898,7 @@ func (p *Program) verifyCompilerOptions() {
 	moduleKind := options.GetEmitModuleKind()
 
 	if options.AllowImportingTsExtensions.IsTrue() && !(options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()) {
-		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set)
+		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewriteRelativeImportExtensions_is_set)
 	}
 
 	moduleResolution := options.GetModuleResolutionKind()
@@ -1391,9 +1406,10 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		}
 	}
 
+	newLine := p.Options().NewLine.GetNewLineCharacter()
 	writerPool := &sync.Pool{
 		New: func() any {
-			return printer.NewTextWriter(p.Options().NewLine.GetNewLineCharacter())
+			return printer.NewTextWriter(newLine)
 		},
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
@@ -1561,6 +1577,8 @@ func (p *Program) HasSameFileNames(other *Program) bool {
 	return maps.EqualFunc(p.filesByPath, other.filesByPath, func(a, b *ast.SourceFile) bool {
 		// checks for casing differences on case-insensitive file systems
 		return a.FileName() == b.FileName()
+	}) && maps.EqualFunc(p.redirectFilesByPath, other.redirectFilesByPath, func(a, b *redirectsFile) bool {
+		return a.FileName() == b.FileName()
 	})
 }
 
@@ -1584,15 +1602,40 @@ func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
-	for _, file := range p.GetSourceFiles() {
+	filesExplained := 0
+	explainFile := func(file ast.HasFileName) {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
 			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
-		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
+		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file.Path(), toRelativeFileName) {
 			fmt.Fprintln(w, "  ", diag.Localize(locale))
 		}
+		filesExplained++
 	}
+
+	redirectFiles := slices.Collect(maps.Values(p.redirectFilesByPath))
+	slices.SortFunc(redirectFiles, func(a, b *redirectsFile) int {
+		return a.index - b.index
+	})
+
+	files := p.GetSourceFiles()
+	sourceFileIndex := 0
+	explainSourceFiles := func(endIndex int) {
+		for filesExplained < endIndex {
+			explainFile(files[sourceFileIndex])
+			sourceFileIndex++
+		}
+	}
+
+	for _, redirectFile := range redirectFiles {
+		// Explain all sourceFiles till we reach this redirectFile index
+		explainSourceFiles(redirectFile.index)
+		explainFile(redirectFile)
+	}
+
+	// Explain any remaining sourceFiles
+	explainSourceFiles(len(files) + len(redirectFiles))
 }
 
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
@@ -1676,13 +1719,25 @@ func (p *Program) collectPackageNames() {
 							if !resolvedModule.IsExternalLibraryImport {
 								continue
 							}
+							// Priority order for getting package name:
+							// 1. PackageId.Name (requires both name and version in package.json)
 							name := resolvedModule.PackageId.Name
 							if name == "" {
-								// node_modules package, but no name in package.json - this can happen in a monorepo package,
-								// and unfortunately in lots of fourslash tests
+								// 2. GetPackageScopeForPath - get name from package.json in the package directory
+								if packageScope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); packageScope != nil && packageScope.Exists() {
+									if scopeName, ok := packageScope.Contents.Name.GetValue(); ok {
+										name = scopeName
+									}
+								}
+							}
+							if name == "" {
+								// 3. GetPackageNameFromDirectory - extract from node_modules path
 								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
 							}
-							p.resolvedPackageNames.Add(name)
+							// 4. If all fail, don't add empty string
+							if name != "" {
+								p.resolvedPackageNames.Add(name)
+							}
 							continue
 						}
 					}

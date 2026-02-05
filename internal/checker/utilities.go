@@ -196,22 +196,7 @@ func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 }
 
 func entityNameToString(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindThisKeyword:
-		return "this"
-	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if ast.NodeIsSynthesized(name) {
-			return name.Text()
-		}
-		return scanner.GetTextOfNode(name)
-	case ast.KindQualifiedName:
-		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
-	case ast.KindPropertyAccessExpression:
-		return entityNameToString(name.Expression()) + "." + entityNameToString(name.AsPropertyAccessExpression().Name())
-	case ast.KindJsxNamespacedName:
-		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name())
-	}
-	panic("Unhandled case in entityNameToString")
+	return ast.EntityNameToString(name, scanner.GetTextOfNode)
 }
 
 func getContainingQualifiedNameNode(node *ast.Node) *ast.Node {
@@ -506,7 +491,7 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
-		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
+		if c := int(t1.AsIndexType().indexFlags) - int(t2.AsIndexType().indexFlags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:

@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -14,7 +15,8 @@ func TestAutoImportFileExcludePatterns3(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: commonjs
+	const content = `// @lib: es5
+// @module: commonjs
 // @Filename: /ambient1.d.ts
 declare module "foo" {
    export const x = 1;
@@ -58,6 +60,7 @@ declare module "foo" {
 					},
 				}, false),
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/ambient1.d.ts"}},
 	})
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -68,5 +71,6 @@ declare module "foo" {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: CompletionGlobals,
 		},
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"/**/ambient*"}},
 	})
 }

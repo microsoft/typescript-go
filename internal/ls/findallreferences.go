@@ -186,7 +186,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
 					node.Parent.Parent,
 					nil))
-			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression.AsBinaryExpression()) != ast.JSDeclarationKindNone {
+			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}
 		}
@@ -322,8 +322,7 @@ func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 		return len(node.Text()) == len(searchSymbolName) && (isLiteralNameOfPropertyDeclarationOrIndexAccess(node) ||
 			isNameOfModuleDeclaration(node) ||
 			isExpressionOfExternalModuleImportEqualsDeclaration(node) ||
-			// !!! object.defineProperty
-			// (ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node) ||
+			ast.IsCallExpression(node.Parent) && ast.IsBindableObjectDefinePropertyCall(node.Parent) && node.Parent.Arguments()[1] == node ||
 			ast.IsImportOrExportSpecifier(node.Parent))
 	case ast.KindNumericLiteral:
 		return isLiteralNameOfPropertyDeclarationOrIndexAccess(node) && len(node.Text()) == len(searchSymbolName)
@@ -755,7 +754,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 
 func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, checker *checker.Checker) string {
 	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
-		node := entry.node
+		node := ast.GetReparsedNodeForNode(entry.node)
 		kind := entry.kind
 		parent := node.Parent
 		name := originalNode.Text()
@@ -1136,8 +1135,8 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	}
 
 	filesToSearch := sourceFiles
-	if searchSpaceNode.Kind == ast.KindSourceFile {
-		filesToSearch = []*ast.SourceFile{searchSpaceNode.AsSourceFile()}
+	if searchSpaceNode.Kind != ast.KindSourceFile {
+		filesToSearch = []*ast.SourceFile{ast.GetSourceFileOfNode(searchSpaceNode)}
 	}
 	references := core.Map(
 		core.FlatMap(filesToSearch, func(sourceFile *ast.SourceFile) []*ast.Node {
@@ -1449,55 +1448,6 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 		}}
 	}
 	return []*SymbolAndEntries{}
-}
-
-func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
-	if referencePath := findReferenceInPosition(sourceFile.ReferencedFiles, position); referencePath != nil {
-		if file := program.GetSourceFileFromReference(sourceFile, referencePath); file != nil {
-			return &refInfo{reference: referencePath, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if typeReferenceDirective := findReferenceInPosition(sourceFile.TypeReferenceDirectives, position); typeReferenceDirective != nil {
-		if reference := program.GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeReferenceDirective, sourceFile); reference != nil {
-			if file := program.GetSourceFile(reference.ResolvedFileName); file != nil {
-				return &refInfo{reference: typeReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-			}
-		}
-		return nil
-	}
-
-	if libReferenceDirective := findReferenceInPosition(sourceFile.LibReferenceDirectives, position); libReferenceDirective != nil {
-		if file := program.GetLibFileFromReference(libReferenceDirective); file != nil {
-			return &refInfo{reference: libReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
-		}
-		return nil
-	}
-
-	if len(sourceFile.Imports()) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
-		return nil
-	}
-
-	node := astnav.GetTouchingToken(sourceFile, position)
-	if !isModuleSpecifierLike(node) || !tspath.IsExternalModuleNameRelative(node.Text()) {
-		return nil
-	}
-	if resolution := program.GetResolvedModuleFromModuleSpecifier(sourceFile, node); resolution != nil {
-		verifiedFileName := resolution.ResolvedFileName
-		fileName := resolution.ResolvedFileName
-		if fileName == "" {
-			fileName = tspath.ResolvePath(tspath.GetDirectoryPath(sourceFile.FileName()), node.Text())
-		}
-		return &refInfo{
-			file:       program.GetSourceFile(fileName),
-			fileName:   fileName,
-			reference:  nil,
-			unverified: verifiedFileName != "",
-		}
-	}
-
-	return nil
 }
 
 // -- Core algorithm for find all references --

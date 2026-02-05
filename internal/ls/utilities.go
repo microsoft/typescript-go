@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -18,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
@@ -678,11 +680,12 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 		}
 	}
 
-	// /**/<var|let| [|n:ame|] ...
-	if node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword &&
+	// /**/<var|let|const> [|name|] ...
+	if (node.Kind == ast.KindVarKeyword || node.Kind == ast.KindConstKeyword || node.Kind == ast.KindLetKeyword) &&
 		ast.IsVariableDeclarationList(parent) && len(parent.AsVariableDeclarationList().Declarations.Nodes) == 1 {
-		if decl := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration(); ast.IsIdentifier(decl.Name()) {
-			return decl.Name()
+		declaration := parent.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+		if ast.IsIdentifier(declaration.Name()) {
+			return declaration.Name()
 		}
 	}
 
@@ -981,7 +984,7 @@ func symbolFlagsHaveMeaning(flags ast.SymbolFlags, meaning ast.SemanticMeaning) 
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 	// todo: check if this function needs to be changed for jsdoc updates
-	node = getAdjustedLocation(node, false /*forRename*/, nil)
+	node = getAdjustedLocation(ast.GetReparsedNodeForNode(node), false /*forRename*/, nil)
 	parent := node.Parent
 	switch {
 	case ast.IsSourceFile(node):
@@ -996,10 +999,10 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 		if node.Kind != ast.KindQualifiedName {
 			name = core.IfElse(node.Parent.Kind == ast.KindQualifiedName && node.Parent.AsQualifiedName().Right == node, node.Parent, nil)
 		}
-		if name == nil || name.Parent.Kind == ast.KindImportEqualsDeclaration {
-			return ast.SemanticMeaningNamespace
+		if name != nil && name.Parent.Kind == ast.KindImportEqualsDeclaration {
+			return ast.SemanticMeaningAll
 		}
-		return ast.SemanticMeaningAll
+		return ast.SemanticMeaningNamespace
 	case ast.IsDeclarationName(node):
 		return getMeaningFromDeclaration(parent)
 	case ast.IsEntityName(node) && ast.IsJSDocNameReferenceContext(node):
@@ -1481,6 +1484,56 @@ func toContextRange(textRange *core.TextRange, contextFile *ast.SourceFile, cont
 	if contextRange.Pos() != textRange.Pos() || contextRange.End() != textRange.End() {
 		return &contextRange
 	}
+	return nil
+}
+
+func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
+	if referencePath := findReferenceInPosition(sourceFile.ReferencedFiles, position); referencePath != nil {
+		if file := program.GetSourceFileFromReference(sourceFile, referencePath); file != nil {
+			return &refInfo{reference: referencePath, fileName: file.FileName(), file: file, unverified: false}
+		}
+		return nil
+	}
+
+	if typeReferenceDirective := findReferenceInPosition(sourceFile.TypeReferenceDirectives, position); typeReferenceDirective != nil {
+		if reference := program.GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeReferenceDirective, sourceFile); reference != nil {
+			if file := program.GetSourceFile(reference.ResolvedFileName); file != nil {
+				return &refInfo{reference: typeReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
+			}
+		}
+		return nil
+	}
+
+	if libReferenceDirective := findReferenceInPosition(sourceFile.LibReferenceDirectives, position); libReferenceDirective != nil {
+		if file := program.GetLibFileFromReference(libReferenceDirective); file != nil {
+			return &refInfo{reference: libReferenceDirective, fileName: file.FileName(), file: file, unverified: false}
+		}
+		return nil
+	}
+
+	if len(sourceFile.Imports()) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
+		return nil
+	}
+
+	node := astnav.GetTouchingToken(sourceFile, position)
+	if !isModuleSpecifierLike(node) || !tspath.IsExternalModuleNameRelative(node.Text()) {
+		return nil
+	}
+
+	if resolution := program.GetResolvedModuleFromModuleSpecifier(sourceFile, node); resolution != nil {
+		verifiedFileName := resolution.ResolvedFileName
+		fileName := resolution.ResolvedFileName
+		if fileName == "" {
+			fileName = tspath.ResolvePath(tspath.GetDirectoryPath(sourceFile.FileName()), node.Text())
+		}
+		return &refInfo{
+			file:       program.GetSourceFile(fileName),
+			fileName:   fileName,
+			reference:  nil,
+			unverified: verifiedFileName != "",
+		}
+	}
+
 	return nil
 }
 

@@ -2,16 +2,31 @@ import * as vscode from "vscode";
 
 import { Client } from "./client";
 import {
+    registerCodeLensShowLocationsCommand,
     registerEnablementCommands,
     registerLanguageCommands,
 } from "./commands";
 import { setupStatusBar } from "./statusBar";
-import { needsExtHostRestartOnChange } from "./util";
+import {
+    aiConnectionString,
+    needsExtHostRestartOnChange,
+} from "./util";
 import { setupVersionStatusItem } from "./versionStatusItem";
+
+import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
+import {
+    createTelemetryReporter,
+    TelemetryReporter,
+} from "./telemetryReporting";
 
 export async function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-    registerEnablementCommands(context);
+
+    const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
+    context.subscriptions.push(telemetryReporter);
+
+    registerEnablementCommands(context, telemetryReporter);
+
     const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
     const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)", { log: true });
     context.subscriptions.push(output, traceOutput);
@@ -33,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
             else {
                 const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
                 if (useTsgo) {
-                    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
+                    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput, telemetryReporter);
                     context.subscriptions.push(disposeLanguageFeatures);
                 }
                 else {
@@ -73,17 +88,23 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
     }
 
-    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
+    disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput, telemetryReporter);
     context.subscriptions.push(disposeLanguageFeatures);
 }
 
-async function activateLanguageFeatures(context: vscode.ExtensionContext, output: vscode.LogOutputChannel, traceOutput: vscode.LogOutputChannel): Promise<vscode.Disposable> {
+async function activateLanguageFeatures(
+    context: vscode.ExtensionContext,
+    output: vscode.LogOutputChannel,
+    traceOutput: vscode.LogOutputChannel,
+    telemetryReporter: TelemetryReporter,
+): Promise<vscode.Disposable> {
     const disposables: vscode.Disposable[] = [];
 
-    const client = new Client(output, traceOutput);
-    disposables.push(...registerLanguageCommands(context, client, output, traceOutput));
+    const client = new Client(output, traceOutput, telemetryReporter);
+    disposables.push(...registerLanguageCommands(context, client, output, traceOutput, telemetryReporter));
     disposables.push(await client.initialize(context));
     disposables.push(setupStatusBar());
     disposables.push(...setupVersionStatusItem(client));
+    disposables.push(registerCodeLensShowLocationsCommand());
     return vscode.Disposable.from(...disposables);
 }
