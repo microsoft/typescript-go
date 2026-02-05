@@ -14821,14 +14821,16 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			} else if resolvedModule.ResolvedUsingTsExtension && !c.compilerOptions.AllowImportingTsExtensionsFrom(importingSourceFile.FileName()) {
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
-					if tsExtension == "" {
-						panic("should be able to extract TS extension from string that passes IsDeclarationFileName")
+					// If tsExtension is empty, it means the module reference doesn't actually contain a TS extension
+					// in the specifier (e.g., resolution happened via moduleSuffixes). In this case, skip the error
+					// since the user didn't use a TS extension in their import statement.
+					if tsExtension != "" {
+						c.error(
+							errorNode,
+							diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
+							tsExtension,
+						)
 					}
-					c.error(
-						errorNode,
-						diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
-						tsExtension,
-					)
 				}
 			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
 				location.Flags&ast.NodeFlagsAmbient == 0 &&
