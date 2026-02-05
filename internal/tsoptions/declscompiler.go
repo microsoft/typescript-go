@@ -627,10 +627,9 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsSourceFile:       true,
 		AffectsEmit:             true,
 		AffectsBuildInfo:        true,
-		strictFlag:              true,
 		Category:                diagnostics.Type_Checking,
 		Description:             diagnostics.Ensure_use_strict_is_always_emitted,
-		DefaultValueDescription: diagnostics.X_true_unless_strict_is_false,
+		DefaultValueDescription: true,
 	},
 
 	// Additional Checks

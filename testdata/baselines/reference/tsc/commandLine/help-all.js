@@ -219,7 +219,7 @@ default: undefined
 [94m--alwaysStrict[39m
 Ensure 'use strict' is always emitted.
 type: boolean
-default: `true`, unless `strict` is `false`
+default: true
 
 [94m--deduplicatePackages[39m
 Deduplicate packages with the same name and version.
