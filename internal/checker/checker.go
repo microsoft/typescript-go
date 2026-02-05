@@ -15155,7 +15155,20 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, node *ast.Node
 		symbol = c.getMergedSymbol(c.resolveIndirectionAlias(c.getSymbolOfDeclaration(node), symbol))
 	}
 	if symbol != nil {
-		if !suppressInteropError && symbol.Flags&(ast.SymbolFlagsModule|ast.SymbolFlagsVariable) == 0 && ast.GetDeclarationOfKind(symbol, ast.KindSourceFile) == nil {
+		// Check if we should emit the interop error
+		shouldEmitInteropError := !suppressInteropError &&
+			symbol.Flags&(ast.SymbolFlagsModule|ast.SymbolFlagsVariable) == 0 &&
+			ast.GetDeclarationOfKind(symbol, ast.KindSourceFile) == nil
+		// For JavaScript CommonJS modules, skip the error if esModuleInterop is explicitly enabled
+		// This handles the case where module.exports = { ... } creates an export= symbol
+		// that doesn't have ValueModule flag (unlike TypeScript where properties are exported directly)
+		if shouldEmitInteropError && c.compilerOptions.ESModuleInterop.IsTrue() {
+			targetFile := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
+			if targetFile != nil && ast.IsInJSFile(targetFile) {
+				shouldEmitInteropError = false
+			}
+		}
+		if shouldEmitInteropError {
 			compilerOptionName := core.IfElse(c.moduleKind >= core.ModuleKindES2015, "allowSyntheticDefaultImports", "esModuleInterop")
 			c.error(moduleSpecifier, diagnostics.This_module_can_only_be_referenced_with_ECMAScript_imports_Slashexports_by_turning_on_the_0_flag_and_referencing_its_default_export, compilerOptionName)
 			return symbol
