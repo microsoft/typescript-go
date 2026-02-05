@@ -2,7 +2,7 @@
 +++ new.truthinessCallExpressionCoercion4.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+a.js(3,12): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++a.js(3,12): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 +a.js(4,5): error TS1231: An export assignment must be at the top level of a file or module declaration.
 +
 +
@@ -11,7 +11,7 @@
 +    
 +    if (typeof module === 'object' && module.exports) {
 +               ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 +        module.exports = fn;
 +        ~~~~~~
 +!!! error TS1231: An export assignment must be at the top level of a file or module declaration.

@@ -176,8 +176,8 @@ export { _exported_10 as "j" };
 //// [DtsFileErrors]
 
 
-out/index.d.ts(36,15): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-out/index.d.ts(47,15): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+out/index.d.ts(36,15): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+out/index.d.ts(47,15): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 
 
 ==== out/index.d.ts (2 errors) ====
@@ -218,7 +218,7 @@ out/index.d.ts(47,15): error TS2580: Cannot find name 'module'. Do you need to i
     }, b: {
         y: typeof module.exports.b;
                   ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     }): void;
     declare const _exported_5: typeof g;
     export { _exported_5 as "g" };
@@ -231,7 +231,7 @@ out/index.d.ts(47,15): error TS2580: Cannot find name 'module'. Do you need to i
     }, b: {
         y: typeof module.exports.b;
                   ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
     }): void;
     declare const _exported_6: typeof hh;
     export { _exported_6 as "h" };

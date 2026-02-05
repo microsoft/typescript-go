@@ -4,7 +4,7 @@ parseInvalidNames.ts(1,15): error TS1005: ';' expected.
 parseInvalidNames.ts(2,1): error TS2304: Cannot find name 'interface'.
 parseInvalidNames.ts(2,11): error TS2427: Interface name cannot be '100'.
 parseInvalidNames.ts(2,15): error TS1005: ';' expected.
-parseInvalidNames.ts(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+parseInvalidNames.ts(3,1): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 parseInvalidNames.ts(3,8): error TS2819: Namespace name cannot be '100'.
 parseInvalidNames.ts(3,12): error TS1005: ';' expected.
 parseInvalidNames.ts(4,1): error TS2304: Cannot find name 'type'.
@@ -19,7 +19,7 @@ parseInvalidNames.ts(7,8): error TS2304: Cannot find name 'interface'.
 parseInvalidNames.ts(7,18): error TS2427: Interface name cannot be '100'.
 parseInvalidNames.ts(7,22): error TS1005: ';' expected.
 parseInvalidNames.ts(8,1): error TS1128: Declaration or statement expected.
-parseInvalidNames.ts(8,8): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+parseInvalidNames.ts(8,8): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
 parseInvalidNames.ts(8,15): error TS2819: Namespace name cannot be '100'.
 parseInvalidNames.ts(8,19): error TS1005: ';' expected.
 parseInvalidNames.ts(9,1): error TS1128: Declaration or statement expected.
@@ -45,7 +45,7 @@ parseInvalidNames.ts(9,17): error TS1005: ';' expected.
 !!! error TS1005: ';' expected.
     module 100 {}
     ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
            ~~~
 !!! error TS2819: Namespace name cannot be '100'.
                ~
@@ -80,7 +80,7 @@ parseInvalidNames.ts(9,17): error TS1005: ';' expected.
     ~~~~~~
 !!! error TS1128: Declaration or statement expected.
            ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
                   ~~~
 !!! error TS2819: Namespace name cannot be '100'.
                       ~

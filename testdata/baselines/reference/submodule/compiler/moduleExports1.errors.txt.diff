@@ -1,0 +1,22 @@
+--- old.moduleExports1.errors.txt
++++ new.moduleExports1.errors.txt
+@@= skipped -1, +1 lines =@@
+ moduleExports1.ts(3,1): error TS1185: Merge conflict marker encountered.
+ moduleExports1.ts(5,1): error TS1185: Merge conflict marker encountered.
+ moduleExports1.ts(7,1): error TS1185: Merge conflict marker encountered.
+-moduleExports1.ts(19,6): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+-moduleExports1.ts(19,22): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++moduleExports1.ts(19,6): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
++moduleExports1.ts(19,22): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+
+
+ ==== moduleExports1.ts (6 errors) ====
+@@= skipped -33, +33 lines =@@
+     
+     if (!module.exports) module.exports = "";
+          ~~~~~~
+-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+                          ~~~~~~
+-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++!!! error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
