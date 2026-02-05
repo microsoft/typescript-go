@@ -1600,7 +1600,10 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions, candidate string, packageJSONValue string, onlyRecordFailures bool) *resolved {
 	if extensions&extensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&extensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
-			extension := tspath.TryExtractTSExtension(path)
+			// Use candidate (not path) to extract extension, matching TypeScript behavior.
+			// When moduleSuffixes transforms the path, we still use the original candidate's extension
+			// for determining resolvedUsingTsExtension to avoid false positives.
+			extension := tspath.TryExtractTSExtension(candidate)
 			return &resolved{
 				path:                     path,
 				extension:                extension,
