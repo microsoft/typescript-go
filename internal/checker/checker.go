@@ -794,6 +794,8 @@ type Checker struct {
 	lastFlowNodeReachable                       bool
 	flowNodeReachable                           map[*ast.FlowNode]bool
 	flowNodePostSuper                           map[*ast.FlowNode]bool
+	potentialWeakMapSetCollisions               []*ast.Node
+	potentialReflectCollisions                  []*ast.Node
 	renamedBindingElementsInTypes               []*ast.Node
 	contextualInfos                             []ContextualInfo
 	inferenceContextInfos                       []InferenceContextInfo
@@ -2127,6 +2129,8 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
+		c.potentialWeakMapSetCollisions = nil
+		c.potentialReflectCollisions = nil
 		c.checkSourceElements(sourceFile.Statements.Nodes)
 		c.checkDeferredNodes(sourceFile)
 		if ast.IsExternalOrCommonJSModule(sourceFile) {
@@ -2143,6 +2147,18 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			}
 		} else {
 			c.wasCanceled = true
+		}
+		if len(c.potentialWeakMapSetCollisions) > 0 {
+			for _, node := range c.potentialWeakMapSetCollisions {
+				c.checkWeakMapSetCollision(node)
+			}
+			c.potentialWeakMapSetCollisions = nil
+		}
+		if len(c.potentialReflectCollisions) > 0 {
+			for _, node := range c.potentialReflectCollisions {
+				c.checkReflectCollision(node)
+			}
+			c.potentialReflectCollisions = nil
 		}
 		c.ctx = nil
 		c.reportedUnreachableNodes.Clear()
@@ -2621,6 +2637,7 @@ func (c *Checker) checkPropertyDeclaration(node *ast.Node) {
 		c.checkGrammarComputedPropertyName(node.Name())
 	}
 	c.checkVariableLikeDeclaration(node)
+	c.setNodeLinksForPrivateIdentifierScope(node)
 	// property signatures already report "initializer not allowed in ambient context" elsewhere
 	if ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) && ast.IsPropertyDeclaration(node) {
 		if node.Initializer() != nil {
@@ -2718,6 +2735,7 @@ func (c *Checker) checkMethodDeclaration(node *ast.Node) {
 	if ast.IsPrivateIdentifier(node.Name()) && ast.GetContainingClass(node) == nil {
 		c.error(node, diagnostics.Private_identifiers_are_not_allowed_outside_class_bodies)
 	}
+	c.setNodeLinksForPrivateIdentifierScope(node)
 }
 
 func (c *Checker) checkClassStaticBlockDeclaration(node *ast.Node) {
@@ -2885,6 +2903,7 @@ func (c *Checker) checkAccessorDeclaration(node *ast.Node) {
 		c.checkAllCodePathsInNonVoidFunctionReturnOrThrow(node, returnType)
 	}
 	c.checkSourceElement(node.Body())
+	c.setNodeLinksForPrivateIdentifierScope(node)
 }
 
 func (c *Checker) checkTypeReferenceNode(node *ast.Node) {
@@ -10254,13 +10273,19 @@ func (c *Checker) assignBindingElementTypes(pattern *ast.Node, parentType *Type)
 }
 
 func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.Node) {
-	c.checkCollisionWithRequireExportsInGeneratedCode(node, name)
-	switch {
-	case name == nil:
+	if name == nil {
 		return
-	case ast.IsClassLike(node):
+	}
+	c.checkCollisionWithRequireExportsInGeneratedCode(node, name)
+	c.checkCollisionWithGlobalPromiseInGeneratedCode(node, name)
+	c.recordPotentialCollisionWithWeakMapSetInGeneratedCode(node, name)
+	c.recordPotentialCollisionWithReflectInGeneratedCode(node, name)
+	if ast.IsClassLike(node) {
 		c.checkTypeNameIsReserved(name, diagnostics.Class_name_cannot_be_0)
-	case ast.IsEnumDeclaration(node):
+		if node.Flags&ast.NodeFlagsAmbient == 0 {
+			c.checkClassNameCollisionWithObject(name)
+		}
+	} else if ast.IsEnumDeclaration(node) {
 		c.checkTypeNameIsReserved(name, diagnostics.Enum_name_cannot_be_0)
 	}
 }
@@ -10311,6 +10336,96 @@ func (c *Checker) needCollisionCheckForIdentifier(node *ast.Node, identifier *as
 		return false
 	}
 	return true
+}
+
+func (c *Checker) setNodeLinksForPrivateIdentifierScope(node *ast.Node) {
+	if name := node.Name(); ast.IsPrivateIdentifier(name) {
+		// Check if we need to mark containers with the ContainsClassWithPrivateIdentifiers flag
+		// This happens for older language versions or when useDefineForClassFields is false
+		// PrivateNamesAndClassStaticBlocks is ES2022, ClassAndClassElementDecorators is ESNext
+		if c.languageVersion < core.ScriptTargetES2022 || c.languageVersion < core.ScriptTargetESNext || !c.emitStandardClassFields {
+			for lexicalScope := ast.GetEnclosingBlockScopeContainer(node); lexicalScope != nil; lexicalScope = ast.GetEnclosingBlockScopeContainer(lexicalScope) {
+				c.nodeLinks.Get(lexicalScope).flags |= NodeCheckFlagsContainsClassWithPrivateIdentifiers
+			}
+		}
+	}
+}
+
+func (c *Checker) recordPotentialCollisionWithWeakMapSetInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if c.languageVersion <= core.ScriptTargetES2021 &&
+		(c.needCollisionCheckForIdentifier(node, name, "WeakMap") || c.needCollisionCheckForIdentifier(node, name, "WeakSet")) {
+		c.potentialWeakMapSetCollisions = append(c.potentialWeakMapSetCollisions, node)
+	}
+}
+
+func (c *Checker) checkWeakMapSetCollision(node *ast.Node) {
+	enclosingBlockScope := ast.GetEnclosingBlockScopeContainer(node)
+	if c.nodeLinks.Get(enclosingBlockScope).flags&NodeCheckFlagsContainsClassWithPrivateIdentifiers != 0 {
+		name := node.Name()
+		if name != nil && ast.IsIdentifier(name) {
+			c.errorSkippedOnNoEmit(node, diagnostics.Compiler_reserves_name_0_when_emitting_private_identifier_downlevel, name.Text())
+		}
+	}
+}
+
+func (c *Checker) checkCollisionWithGlobalPromiseInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if name == nil || c.languageVersion >= core.ScriptTargetES2017 || !c.needCollisionCheckForIdentifier(node, name, "Promise") {
+		return
+	}
+	// Uninstantiated modules shouldn't do this check
+	if ast.IsModuleDeclaration(node) && ast.GetModuleInstanceState(node) != ast.ModuleInstanceStateInstantiated {
+		return
+	}
+	// In case of variable declaration, node.parent is variable statement so look at the variable statement's parent
+	parent := ast.GetDeclarationContainer(node)
+	// Note: TypeScript checks for HasAsyncFunctions flag, but since that flag is not yet ported to Go,
+	// we conservatively check all external/CommonJS modules. This may produce false positives
+	// but is safer than missing real issues.
+	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
+		// If the declaration happens to be in external module, report error that Promise is a reserved identifier.
+		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module_containing_async_functions, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
+	}
+}
+
+func (c *Checker) recordPotentialCollisionWithReflectInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if name != nil && c.languageVersion <= core.ScriptTargetES2021 && c.needCollisionCheckForIdentifier(node, name, "Reflect") {
+		c.potentialReflectCollisions = append(c.potentialReflectCollisions, node)
+	}
+}
+
+func (c *Checker) checkReflectCollision(node *ast.Node) {
+	hasCollision := false
+	if ast.IsClassExpression(node) {
+		// ClassExpression names don't contribute to their containers, but do matter for any of their block-scoped members.
+		for _, member := range node.Members() {
+			if c.nodeLinks.Get(member).flags&NodeCheckFlagsContainsSuperPropertyInStaticInitializer != 0 {
+				hasCollision = true
+				break
+			}
+		}
+	} else if ast.IsFunctionExpression(node) {
+		// FunctionExpression names don't contribute to their containers, but do matter for their contents
+		if c.nodeLinks.Get(node).flags&NodeCheckFlagsContainsSuperPropertyInStaticInitializer != 0 {
+			hasCollision = true
+		}
+	} else {
+		container := ast.GetEnclosingBlockScopeContainer(node)
+		if container != nil && c.nodeLinks.Get(container).flags&NodeCheckFlagsContainsSuperPropertyInStaticInitializer != 0 {
+			hasCollision = true
+		}
+	}
+	if hasCollision {
+		name := node.Name()
+		if name != nil && ast.IsIdentifier(name) {
+			c.errorSkippedOnNoEmit(node, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_when_emitting_super_references_in_static_initializers, scanner.DeclarationNameToString(name), "Reflect")
+		}
+	}
+}
+
+func (c *Checker) checkClassNameCollisionWithObject(name *ast.Node) {
+	if name.Text() == "Object" && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(name)) < core.ModuleKindES2015 {
+		c.error(name, diagnostics.Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0, c.moduleKind.String())
+	}
 }
 
 func (c *Checker) checkTypeOfExpression(node *ast.Node) *Type {
