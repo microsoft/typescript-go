@@ -8,13 +8,13 @@ import (
 )
 
 func TestTsxCompletionInFunctionExpressionOfChildrenCallback(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@module: commonjs
 //@jsx: preserve
 // @Filename: 1.tsx
-declare module JSX {
+declare namespace JSX {
     interface Element { }
     interface IntrinsicElements {
     }

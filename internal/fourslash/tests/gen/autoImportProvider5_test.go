@@ -8,10 +8,11 @@ import (
 )
 
 func TestAutoImportProvider5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /home/src/workspaces/project/package.json
+	const content = `// @lib: es5
+// @Filename: /home/src/workspaces/project/package.json
 { "dependencies": { "react-hook-form": "*" } }
 // @Filename: /home/src/workspaces/project/node_modules/react-hook-form/package.json
 { "types": "dist/index.d.ts" }

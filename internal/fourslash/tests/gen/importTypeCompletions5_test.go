@@ -10,11 +10,12 @@ import (
 )
 
 func TestImportTypeCompletions5(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowSyntheticDefaultImports: false
 // @esModuleInterop: false
+// @module: commonjs
 // @Filename: /foo.ts
 interface Foo { };
 export = Foo;
@@ -35,7 +36,7 @@ export = Foo;
 					Label:      "Foo",
 					InsertText: PtrTo("import type Foo = require(\"./foo\");"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo",
 						},
 					},

@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompletionsImport_details_withMisspelledName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export const abc = 0;
@@ -34,9 +34,7 @@ acb;`),
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("2"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "abc",
 		Source: "./a",
-		AutoImportData: &lsproto.AutoImportData{
-			ExportName:      "abc",
-			FileName:        "/a.ts",
+		AutoImportFix: &lsproto.AutoImportFix{
 			ModuleSpecifier: "./a",
 		},
 		Description: "Add import from \"./a\"",

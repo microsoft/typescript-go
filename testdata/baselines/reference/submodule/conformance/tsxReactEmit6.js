@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/tsxReactEmit6.tsx] ////
 
 //// [file.tsx]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface IntrinsicElements {
 		[s: string]: any;
@@ -26,7 +26,9 @@ namespace M {
 
 
 //// [file.js]
+"use strict";
 //// [react-consumer.js]
+"use strict";
 var M;
 (function (M) {
 })(M || (M = {}));
@@ -34,7 +36,7 @@ var M;
     // Should emit M.React.createElement
     //  and M.React.__spread
     var foo;
-    var spread1 = React.createElement("div", Object.assign({ x: "" }, foo, { y: "" }));
+    var spread1 = React.createElement("div", Object.assign({ x: '' }, foo, { y: '' }));
     // Quotes
     var x = React.createElement("div", null, "This \"quote\" thing");
 })(M || (M = {}));

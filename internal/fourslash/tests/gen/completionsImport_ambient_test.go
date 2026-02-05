@@ -11,10 +11,11 @@ import (
 )
 
 func TestCompletionsImport_ambient(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: commonjs
+	const content = `// @lib: es5
+// @module: commonjs
 // @Filename: a.d.ts
 declare namespace foo { class Bar {} }
 declare module 'path1' {
@@ -46,7 +47,7 @@ Ba/**/`
 					&lsproto.CompletionItem{
 						Label: "Bar",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path1",
 							},
 						},
@@ -56,7 +57,7 @@ Ba/**/`
 					&lsproto.CompletionItem{
 						Label: "Bar",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "path2longer",
 							},
 						},

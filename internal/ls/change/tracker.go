@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -75,7 +76,7 @@ type trackerEdit struct {
 
 type Tracker struct {
 	// initialized with
-	formatSettings *format.FormatCodeSettings
+	formatSettings *lsutil.FormatCodeSettings
 	newLine        string
 	converters     *lsconv.Converters
 	ctx            context.Context
@@ -95,7 +96,7 @@ type deletedNode struct {
 	node       *ast.Node
 }
 
-func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *format.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
+func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
 	emitContext := printer.NewEmitContext()
 	newLine := compilerOptions.NewLine.GetNewLineCharacter()
 	ctx = format.WithFormatCodeSettings(ctx, formatOptions, newLine) // !!! formatSettings in context?
@@ -178,7 +179,9 @@ func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node,
 // InsertModifierBefore inserts a modifier token (like 'type') before a node with a trailing space.
 func (t *Tracker) InsertModifierBefore(sourceFile *ast.SourceFile, modifier ast.Kind, before *ast.Node) {
 	pos := astnav.GetStartOfNode(before, sourceFile, false)
-	token := sourceFile.GetOrCreateToken(modifier, pos, pos, before.Parent, ast.TokenFlagsNone)
+	token := t.NewToken(modifier)
+	token.Loc = core.NewTextRange(pos, pos)
+	token.Parent = before.Parent
 	t.InsertNodeAt(sourceFile, core.TextPos(pos), token, NodeOptions{Suffix: " "})
 }
 
@@ -260,9 +263,12 @@ func (t *Tracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, after *as
 		// check if previous statement ends with semicolon
 		// if not - insert semicolon to preserve the code from changing the meaning due to ASI
 		endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(after.End()))
+		semicolon := t.NewToken(ast.KindSemicolonToken)
+		semicolon.Loc = core.NewTextRange(after.End(), after.End())
+		semicolon.Parent = after.Parent
 		t.ReplaceRange(sourceFile,
 			lsproto.Range{Start: endPos, End: endPos},
-			sourceFile.GetOrCreateToken(ast.KindSemicolonToken, after.End(), after.End(), after.Parent, ast.TokenFlagsNone),
+			semicolon,
 			NodeOptions{},
 		)
 	}
@@ -347,7 +353,10 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 
 	// insert separator immediately following the 'after' node to preserve comments in trailing trivia
 	// !!! formatcontext
-	t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, sourceFile.GetOrCreateToken(separator, after.End(), after.End()+len(separatorString), after.Parent, ast.TokenFlagsNone), NodeOptions{})
+	separatorToken := t.NewToken(separator)
+	separatorToken.Loc = core.NewTextRange(after.End(), after.End()+len(separatorString))
+	separatorToken.Parent = after.Parent
+	t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, separatorToken, NodeOptions{})
 	// use the same indentation as 'after' item
 	indentation := format.FindFirstNonWhitespaceColumn(afterStartLinePosition, afterStart, sourceFile, t.formatSettings)
 	// insert element before the line break on the line that contains 'after' element

@@ -263,6 +263,12 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
+func (n *Node) Decorators() []*Node {
+	if n.Modifiers() == nil {
+		return nil
+	}
+	return core.Filter(n.Modifiers().Nodes, IsDecorator)
+}
 
 type MutableNode Node
 
@@ -2127,6 +2133,9 @@ type (
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	VariableOrPropertyDeclaration  = Node // VariableDeclaration | PropertyDeclaration
 	CallOrNewExpression            = Node // CallExpression | NewExpression
+	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
+	AnyImportSyntax                = Node // ImportDeclaration | ImportEqualsDeclaration
+	AnyImportOrRequireStatement    = Node // AnyImportSyntax | RequireVariableStatement
 )
 
 // Aliases for node singletons
@@ -2245,7 +2254,7 @@ func GetDeclarationFromName(name *Node) *Declaration {
 			return nil
 		}
 		binExp := parent.Parent
-		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp) != JSDeclarationKindNone {
 			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
 			leftHasSymbol := false
 			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
@@ -6141,15 +6150,16 @@ type StringLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewStringLiteral(text string) *Node {
+func (f *NodeFactory) NewStringLiteral(text string, flags TokenFlags) *Node {
 	data := f.stringLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsStringLiteralFlags
 	f.textCount++
 	return f.newNode(KindStringLiteral, data)
 }
 
 func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -6163,15 +6173,16 @@ type NumericLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewNumericLiteral(text string) *Node {
+func (f *NodeFactory) NewNumericLiteral(text string, flags TokenFlags) *Node {
 	data := f.numericLiteralPool.New()
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
 }
 
 func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -6185,15 +6196,16 @@ type BigIntLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
+func (f *NodeFactory) NewBigIntLiteral(text string, flags TokenFlags) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsNumericLiteralFlags
 	f.textCount++
 	return f.newNode(KindBigIntLiteral, data)
 }
 
 func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
@@ -6211,15 +6223,16 @@ type RegularExpressionLiteral struct {
 	LiteralLikeBase
 }
 
-func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
+func (f *NodeFactory) NewRegularExpressionLiteral(text string, flags TokenFlags) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
+	data.TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
 	f.textCount++
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
 func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text, node.TokenFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsRegularExpressionLiteral(node *Node) bool {
@@ -6233,15 +6246,16 @@ type NoSubstitutionTemplateLiteral struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
+func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string, templateFlags TokenFlags) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
 func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // BinaryExpression
@@ -6295,7 +6309,7 @@ func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.OperatorToken) |
 		propagateSubtreeFacts(node.Right) |
-		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
+		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields|SubtreeContainsPrivateIdentifierInExpression, SubtreeFactsNone)
 }
 
 func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
@@ -6748,9 +6762,13 @@ func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
 
 func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
+	privateName := SubtreeFactsNone
+	if !IsIdentifier(node.name) {
+		privateName = SubtreeContainsPrivateIdentifierInExpression
+	}
 	return propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.name)
+		propagateSubtreeFacts(node.name) | privateName
 }
 
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -6819,6 +6837,7 @@ func IsElementAccessExpression(node *Node) bool {
 
 type CallExpression struct {
 	ExpressionBase
+	DeclarationBase
 	compositeNodeBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
@@ -8722,7 +8741,7 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data := &TemplateHead{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateHead, data)
 }
@@ -8746,7 +8765,7 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data := &TemplateMiddle{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateMiddle, data)
 }
@@ -8770,7 +8789,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data := &TemplateTail{}
 	data.Text = text
 	data.RawText = rawText
-	data.TemplateFlags = templateFlags
+	data.TemplateFlags = templateFlags & TokenFlagsTemplateLiteralLikeFlags
 	f.textCount++
 	return f.newNode(KindTemplateTail, data)
 }
@@ -10750,6 +10769,7 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
@@ -10786,6 +10806,8 @@ type SourceFile struct {
 	tokenFactory     *NodeFactory
 	declarationMapMu sync.Mutex
 	declarationMap   map[string][]*Node
+	nameTableOnce    sync.Once
+	nameTable        map[string]int
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10929,6 +10951,39 @@ func (node *SourceFile) ECMALineMap() []core.TextPos {
 	return lineMap
 }
 
+// GetNameTable returns a map of all names in the file to their positions.
+// If the name appears more than once, the value is -1.
+func (file *SourceFile) GetNameTable() map[string]int {
+	file.nameTableOnce.Do(func() {
+		nameTable := make(map[string]int, file.IdentifierCount)
+
+		var walk func(node *Node) bool
+		walk = func(node *Node) bool {
+			if IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+				IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+				IsPrivateIdentifier(node) {
+				text := node.Text()
+				if _, ok := nameTable[text]; ok {
+					nameTable[text] = -1
+				} else {
+					nameTable[text] = node.Pos()
+				}
+			}
+
+			node.ForEachChild(walk)
+			jsdocNodes := node.JSDoc(file)
+			for _, jsdoc := range jsdocNodes {
+				jsdoc.ForEachChild(walk)
+			}
+			return false
+		}
+		file.ForEachChild(walk)
+
+		file.nameTable = nameTable
+	})
+	return file.nameTable
+}
+
 func (node *SourceFile) IsBound() bool {
 	return node.isBound.Load()
 }
@@ -10940,6 +10995,8 @@ func (node *SourceFile) BindOnce(bind func()) {
 	})
 }
 
+// Gets a token from the file's token cache, or creates it if it does not already exist.
+// This function should NOT be used for creating synthetic tokens that are not in the file in the first place.
 func (node *SourceFile) GetOrCreateToken(
 	kind Kind,
 	pos int,
@@ -10949,11 +11006,8 @@ func (node *SourceFile) GetOrCreateToken(
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
-
 	loc := core.NewTextRange(pos, end)
-	if node.tokenCache == nil {
-		node.tokenCache = make(map[core.TextRange]*Node)
-	} else if token, ok := node.tokenCache[loc]; ok {
+	if token, ok := node.tokenCache[loc]; ok {
 		if token.Kind != kind {
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
@@ -10962,7 +11016,12 @@ func (node *SourceFile) GetOrCreateToken(
 		}
 		return token
 	}
-
+	if parent.Flags&NodeFlagsReparsed != 0 {
+		panic(fmt.Sprintf("Cannot create token from reparsed node of kind %v", parent.Kind))
+	}
+	if node.tokenCache == nil {
+		node.tokenCache = make(map[core.TextRange]*Node)
+	}
 	token := createToken(kind, node, pos, end, flags)
 	token.Loc = loc
 	token.Parent = parent
@@ -10978,33 +11037,23 @@ func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *N
 	text := file.text[pos:end]
 	switch kind {
 	case KindNumericLiteral:
-		literal := file.tokenFactory.NewNumericLiteral(text)
-		literal.AsNumericLiteral().TokenFlags = flags & TokenFlagsNumericLiteralFlags
-		return literal
+		return file.tokenFactory.NewNumericLiteral(text, flags)
 	case KindBigIntLiteral:
-		literal := file.tokenFactory.NewBigIntLiteral(text)
-		literal.AsBigIntLiteral().TokenFlags = flags & TokenFlagsNumericLiteralFlags
-		return literal
+		return file.tokenFactory.NewBigIntLiteral(text, flags)
 	case KindStringLiteral:
-		literal := file.tokenFactory.NewStringLiteral(text)
-		literal.AsStringLiteral().TokenFlags = flags & TokenFlagsStringLiteralFlags
-		return literal
+		return file.tokenFactory.NewStringLiteral(text, flags)
 	case KindJsxText, KindJsxTextAllWhiteSpaces:
 		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
 	case KindRegularExpressionLiteral:
-		literal := file.tokenFactory.NewRegularExpressionLiteral(text)
-		literal.AsRegularExpressionLiteral().TokenFlags = flags & TokenFlagsRegularExpressionLiteralFlags
-		return literal
+		return file.tokenFactory.NewRegularExpressionLiteral(text, flags)
 	case KindNoSubstitutionTemplateLiteral:
-		literal := file.tokenFactory.NewNoSubstitutionTemplateLiteral(text)
-		literal.AsNoSubstitutionTemplateLiteral().TokenFlags = flags & TokenFlagsTemplateLiteralLikeFlags
-		return literal
+		return file.tokenFactory.NewNoSubstitutionTemplateLiteral(text, flags)
 	case KindTemplateHead:
-		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
+		return file.tokenFactory.NewTemplateHead(text, "" /*rawText*/, flags)
 	case KindTemplateMiddle:
-		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
+		return file.tokenFactory.NewTemplateMiddle(text, "" /*rawText*/, flags)
 	case KindTemplateTail:
-		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags&TokenFlagsTemplateLiteralLikeFlags)
+		return file.tokenFactory.NewTemplateTail(text, "" /*rawText*/, flags)
 	case KindIdentifier:
 		return file.tokenFactory.NewIdentifier(text)
 	case KindPrivateIdentifier:
@@ -11123,7 +11172,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				}
 			}
 		case KindBinaryExpression:
-			switch GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+			switch GetAssignmentDeclarationKind(node) {
 			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
 				addDeclaration(node)
 			}

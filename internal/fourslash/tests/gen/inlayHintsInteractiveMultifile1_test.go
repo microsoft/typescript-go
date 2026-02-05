@@ -9,10 +9,11 @@ import (
 )
 
 func TestInlayHintsInteractiveMultifile1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /a.ts
+	const content = `// @lib: es5
+// @Filename: /a.ts
 export interface Foo { a: string }
 // @Filename: /b.ts
 async function foo () {

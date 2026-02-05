@@ -8,10 +8,11 @@ import (
 )
 
 func TestGoToDefinitionInstanceof1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `class /*end*/ C {
+	const content = `// @lib: es5
+class /*end*/ C {
 }
 declare var obj: any;
 obj [|/*start*/instanceof|] C;`

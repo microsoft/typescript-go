@@ -8,10 +8,10 @@ import (
 )
 
 func TestRenameAlias3(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module SomeModule { [|export class [|{| "contextRangeIndex": 0 |}SomeClass|] { }|] }
+	const content = `namespace SomeModule { [|export class [|{| "contextRangeIndex": 0 |}SomeClass|] { }|] }
 import M = SomeModule;
 import C = M.[|SomeClass|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

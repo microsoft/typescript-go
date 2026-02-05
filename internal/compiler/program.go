@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -72,6 +73,11 @@ type Program struct {
 	knownSymlinks         *symlinks.KnownSymlinks
 	knownSymlinksOnce     sync.Once
 
+	// Used by auto-imports
+	packageNamesOnce       sync.Once
+	resolvedPackageNames   *collections.Set[string]
+	unresolvedPackageNames *collections.Set[string]
+
 	// Used by workspace/symbol
 	hasTSFileOnce sync.Once
 	hasTSFile     bool
@@ -89,7 +95,7 @@ func (p *Program) GetCurrentDirectory() string {
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
 func (p *Program) GetGlobalTypingsCacheLocation() string {
-	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+	return p.opts.TypingsLocation
 }
 
 // GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
@@ -110,9 +116,10 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
-// GetRedirectTargets implements checker.Program.
+// GetRedirectTargets returns the list of file paths that redirect to the given path.
+// These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
-	return nil // !!! TODO: project references support
+	return p.redirectTargetsMap[path]
 }
 
 // gets the original file that was included in program
@@ -173,8 +180,8 @@ func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()
 }
 
-func (p *Program) UsesUriStyleNodeCoreModules() bool {
-	return p.usesUriStyleNodeCoreModules.IsTrue()
+func (p *Program) UsesUriStyleNodeCoreModules() core.Tristate {
+	return p.usesUriStyleNodeCoreModules
 }
 
 var _ checker.Program = (*Program)(nil)
@@ -234,9 +241,17 @@ func NewProgram(opts ProgramOptions) *Program {
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
-	oldFile := p.filesByPath[changedFilePath]
 	newOpts := p.opts
 	newOpts.Host = newHost
+
+	// If this file is part of a package redirect group (same package installed in multiple
+	// node_modules locations), we need to rebuild the program because the redirect targets
+	// might need recalculation.
+	if _, exists := p.redirectFilesByPath[changedFilePath]; exists {
+		return NewProgram(newOpts), false
+	}
+
+	oldFile := p.filesByPath[changedFilePath]
 	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), false
@@ -250,6 +265,8 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
 		unresolvedImports:           p.unresolvedImports,
+		resolvedPackageNames:        p.resolvedPackageNames,
+		unresolvedPackageNames:      p.unresolvedPackageNames,
 		knownSymlinks:               p.knownSymlinks,
 	}
 	result.initCheckerPool()
@@ -425,17 +442,22 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 	if sourceFile != nil {
 		result = collect(ctx, sourceFile)
 	} else {
-		diagnostics := make([][]*ast.Diagnostic, len(p.files))
-		wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
-		for i, file := range p.files {
-			wg.Queue(func() {
-				diagnostics[i] = collect(ctx, file)
-			})
-		}
-		wg.RunAndWait()
+		diagnostics := p.collectDiagnosticsFromFiles(ctx, p.files, concurrent, collect)
 		result = slices.Concat(diagnostics...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
+}
+
+func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
+	diagnostics := make([][]*ast.Diagnostic, len(sourceFiles))
+	wg := core.NewWorkGroup(!concurrent || p.SingleThreaded())
+	for i, file := range sourceFiles {
+		wg.Queue(func() {
+			diagnostics[i] = collect(ctx, file)
+		})
+	}
+	wg.RunAndWait()
+	return diagnostics
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -460,9 +482,10 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 }
 
 func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
+	diagnostics := p.collectDiagnosticsFromFiles(ctx, sourceFiles, true /*concurrent*/, p.getBindAndCheckDiagnosticsForFile)
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
-	for _, file := range sourceFiles {
-		result[file] = SortAndDeduplicateDiagnostics(p.getBindAndCheckDiagnosticsForFile(ctx, file))
+	for i, diags := range diagnostics {
+		result[sourceFiles[i]] = SortAndDeduplicateDiagnostics(diags)
 	}
 	return result
 }
@@ -830,7 +853,9 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	// !!! emitDecoratorMetadata
+	if options.EmitDecoratorMetadata.IsTrue() && options.ExperimentalDecorators.IsFalseOrUnknown() {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "emitDecoratorMetadata", "experimentalDecorators")
+	}
 
 	if options.JsxFactory != "" {
 		if options.ReactNamespace != "" {
@@ -873,7 +898,7 @@ func (p *Program) verifyCompilerOptions() {
 	moduleKind := options.GetEmitModuleKind()
 
 	if options.AllowImportingTsExtensions.IsTrue() && !(options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()) {
-		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set)
+		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_one_of_noEmit_emitDeclarationOnly_or_rewriteRelativeImportExtensions_is_set)
 	}
 
 	moduleResolution := options.GetModuleResolutionKind()
@@ -1299,6 +1324,13 @@ func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	return ok
 }
 
+func (p *Program) IsGlobalTypingsFile(fileName string) bool {
+	if !tspath.IsDeclarationFileName(fileName) {
+		return false
+	}
+	return tspath.ContainsPath(p.GetGlobalTypingsCacheLocation(), fileName, p.comparePathsOptions)
+}
+
 func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
 	if libFile, ok := p.libFiles[path]; ok {
 		return libFile
@@ -1366,9 +1398,10 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		}
 	}
 
+	newLine := p.Options().NewLine.GetNewLineCharacter()
 	writerPool := &sync.Pool{
 		New: func() any {
-			return printer.NewTextWriter(p.Options().NewLine.GetNewLineCharacter())
+			return printer.NewTextWriter(newLine)
 		},
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
@@ -1533,6 +1566,8 @@ func (p *Program) HasSameFileNames(other *Program) bool {
 	return maps.EqualFunc(p.filesByPath, other.filesByPath, func(a, b *ast.SourceFile) bool {
 		// checks for casing differences on case-insensitive file systems
 		return a.FileName() == b.FileName()
+	}) && maps.EqualFunc(p.redirectFilesByPath, other.redirectFilesByPath, func(a, b *redirectsFile) bool {
+		return a.FileName() == b.FileName()
 	})
 }
 
@@ -1556,15 +1591,40 @@ func (p *Program) ExplainFiles(w io.Writer, locale locale.Locale) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
-	for _, file := range p.GetSourceFiles() {
+	filesExplained := 0
+	explainFile := func(file ast.HasFileName) {
 		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
 			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Localize(locale))
 		}
-		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
+		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file.Path(), toRelativeFileName) {
 			fmt.Fprintln(w, "  ", diag.Localize(locale))
 		}
+		filesExplained++
 	}
+
+	redirectFiles := slices.Collect(maps.Values(p.redirectFilesByPath))
+	slices.SortFunc(redirectFiles, func(a, b *redirectsFile) int {
+		return a.index - b.index
+	})
+
+	files := p.GetSourceFiles()
+	sourceFileIndex := 0
+	explainSourceFiles := func(endIndex int) {
+		for filesExplained < endIndex {
+			explainFile(files[sourceFileIndex])
+			sourceFileIndex++
+		}
+	}
+
+	for _, redirectFile := range redirectFiles {
+		// Explain all sourceFiles till we reach this redirectFile index
+		explainSourceFiles(redirectFile.index)
+		explainFile(redirectFile)
+	}
+
+	// Explain any remaining sourceFiles
+	explainSourceFiles(len(files) + len(redirectFiles))
 }
 
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
@@ -1615,6 +1675,66 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
+}
+
+func (p *Program) ResolvedPackageNames() *collections.Set[string] {
+	p.collectPackageNames()
+	return p.resolvedPackageNames
+}
+
+func (p *Program) UnresolvedPackageNames() *collections.Set[string] {
+	p.collectPackageNames()
+	return p.unresolvedPackageNames
+}
+
+func (p *Program) collectPackageNames() {
+	p.packageNamesOnce.Do(func() {
+		if p.resolvedPackageNames == nil {
+			p.resolvedPackageNames = &collections.Set[string]{}
+			p.unresolvedPackageNames = &collections.Set[string]{}
+			for _, file := range p.files {
+				if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
+					// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
+					// as root files, which would not pass IsSourceFileFromExternalLibrary.
+					continue
+				}
+				for _, imp := range file.Imports() {
+					if tspath.IsExternalModuleNameRelative(imp.Text()) {
+						continue
+					}
+					if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
+						key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
+						if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
+							if !resolvedModule.IsExternalLibraryImport {
+								continue
+							}
+							// Priority order for getting package name:
+							// 1. PackageId.Name (requires both name and version in package.json)
+							name := resolvedModule.PackageId.Name
+							if name == "" {
+								// 2. GetPackageScopeForPath - get name from package.json in the package directory
+								if packageScope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); packageScope != nil && packageScope.Exists() {
+									if scopeName, ok := packageScope.Contents.Name.GetValue(); ok {
+										name = scopeName
+									}
+								}
+							}
+							if name == "" {
+								// 3. GetPackageNameFromDirectory - extract from node_modules path
+								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
+							}
+							// 4. If all fail, don't add empty string
+							if name != "" {
+								p.resolvedPackageNames.Add(name)
+							}
+							continue
+						}
+					}
+					p.unresolvedPackageNames.Add(imp.Text())
+				}
+			}
+		}
+	})
 }
 
 func (p *Program) IsLibFile(sourceFile *ast.SourceFile) bool {

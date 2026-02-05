@@ -78,7 +78,7 @@ func newDiskFile(fileName string, content string) *diskFile {
 		fileBase: fileBase{
 			fileName: fileName,
 			content:  content,
-			hash:     xxh3.Hash128([]byte(content)),
+			hash:     xxh3.HashString128(content),
 		},
 	}
 }
@@ -125,7 +125,7 @@ func newOverlay(fileName string, content string, version int32, kind core.Script
 		fileBase: fileBase{
 			fileName: fileName,
 			content:  content,
-			hash:     xxh3.Hash128([]byte(content)),
+			hash:     xxh3.HashString128(content),
 		},
 		version: version,
 		kind:    kind,
@@ -146,15 +146,15 @@ func (o *Overlay) MatchesDiskText() bool {
 }
 
 // !!! optimization: incorporate mtime
-func (o *Overlay) computeMatchesDiskText(fs vfs.FS) bool {
-	if isDynamicFileName(o.fileName) {
-		return false
+func (o *Overlay) computeMatchesDiskText(fs vfs.FS) (matchesDiskText bool, exists bool) {
+	if tspath.IsDynamicFileName(o.fileName) {
+		return false, false
 	}
 	diskContent, ok := fs.ReadFile(o.fileName)
 	if !ok {
-		return false
+		return false, false
 	}
-	return xxh3.Hash128([]byte(diskContent)) == o.hash
+	return xxh3.HashString128(diskContent) == o.hash, true
 }
 
 func (o *Overlay) IsOverlay() bool {
@@ -244,8 +244,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 
 		switch change.Kind {
 		case FileChangeKindOpen:
+			if events.closeChange != nil {
+				events.closeChange = nil
+			}
 			events.openChange = &change
-			events.closeChange = nil
 			events.watchChanged = false
 			events.changes = nil
 			events.saved = false
@@ -296,10 +298,16 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		o := newOverlays[path]
 
 		if events.openChange != nil {
-			if result.Opened != "" {
+			if result.Opened != "" || result.Reopened != "" {
 				panic("can only process one file open event at a time")
 			}
-			result.Opened = uri
+			if o != nil && o.Content() != events.openChange.Content {
+				result.Changed.Add(uri)
+			} else if o == nil {
+				result.Opened = uri
+			} else {
+				result.Reopened = uri
+			}
 			newOverlays[path] = newOverlay(
 				uri.FileName(),
 				events.openChange.Content,
@@ -310,18 +318,19 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		}
 
 		if events.closeChange != nil {
-			if result.Closed == nil {
-				result.Closed = make(map[lsproto.DocumentUri]xxh3.Uint128)
+			if o == nil {
+				panic("overlay not found for closed file: " + uri)
 			}
-			result.Closed[uri] = events.closeChange.Hash
+			result.Closed.Add(uri)
 			delete(newOverlays, path)
+			o = nil
 		}
 
 		if events.watchChanged {
 			if o == nil {
 				result.Changed.Add(uri)
 			} else if o != nil && !events.saved {
-				if matchesDiskText := o.computeMatchesDiskText(fs.fs); matchesDiskText != o.MatchesDiskText() {
+				if matchesDiskText, _ := o.computeMatchesDiskText(fs.fs); matchesDiskText != o.MatchesDiskText() {
 					o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
 					o.matchesDiskText = matchesDiskText
 					newOverlays[path] = o
@@ -348,7 +357,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				}
 				if len(change.Changes) > 0 {
 					o.version = change.Version
-					o.hash = xxh3.Hash128([]byte(o.content))
+					o.hash = xxh3.HashString128(o.content)
 					o.matchesDiskText = false
 					newOverlays[path] = o
 				}

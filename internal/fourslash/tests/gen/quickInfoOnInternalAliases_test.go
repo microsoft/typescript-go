@@ -8,13 +8,13 @@ import (
 )
 
 func TestQuickInfoOnInternalAliases(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** Module comment*/
-export module m1 {
+export namespace m1 {
     /** m2 comments*/
-    export module m2 {
+    export namespace m2 {
         /** class comment;*/
         export class /*1*/c {
         };

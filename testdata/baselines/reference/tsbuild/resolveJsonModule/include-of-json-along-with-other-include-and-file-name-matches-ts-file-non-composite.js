@@ -34,17 +34,17 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'project/tsconfig.json'...
 
-TSFILE:  /home/src/workspaces/solution/project/dist/index.json
-TSFILE:  /home/src/workspaces/solution/project/dist/index.js
+TSFILE:  /home/src/workspaces/solution/project/dist/src/index.json
+TSFILE:  /home/src/workspaces/solution/project/dist/src/index.js
 TSFILE:  /home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo
-../../tslibs/TS/Lib/lib.d.ts
-   Default library for target 'ES5'
+../../tslibs/TS/Lib/lib.es2024.full.d.ts
+   Default library for target 'ES2024'
 project/src/index.json
    Imported via "./index.json" from file 'project/src/index.ts'
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
 project/src/index.ts
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+//// [/home/src/tslibs/TS/Lib/lib.es2024.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -67,7 +67,7 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/solution/project/dist/index.js] *new* 
+//// [/home/src/workspaces/solution/project/dist/src/index.js] *new* 
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -76,7 +76,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_json_1 = __importDefault(require("./index.json"));
 exports.default = index_json_1.default.hello;
 
-//// [/home/src/workspaces/solution/project/dist/index.json] *new* 
+//// [/home/src/workspaces/solution/project/dist/src/index.json] *new* 
 {
     "hello": "world"
 }
@@ -105,7 +105,7 @@ exports.default = index_json_1.default.hello;
 
 project/tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2024.full.d.ts
 *refresh*    /home/src/workspaces/solution/project/src/index.json
 *refresh*    /home/src/workspaces/solution/project/src/index.ts
 Signatures::

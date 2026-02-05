@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsUniqueSymbol_import(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /globals.d.ts
@@ -45,7 +45,7 @@ i[|./**/|];`
 					Label:      "publicSym",
 					InsertText: PtrTo("[publicSym]"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},

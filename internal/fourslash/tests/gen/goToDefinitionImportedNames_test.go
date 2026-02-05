@@ -8,13 +8,13 @@ import (
 )
 
 func TestGoToDefinitionImportedNames(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: b.ts
 export {[|/*classAliasDefinition*/Class|]} from "./a";
 // @Filename: a.ts
-export module Module {
+export namespace Module {
 }
 export class /*classDefinition*/Class {
     private f;

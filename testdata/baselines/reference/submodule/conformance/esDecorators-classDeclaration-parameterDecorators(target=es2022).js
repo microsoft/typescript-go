@@ -20,17 +20,38 @@ class C {
 });
 
 //// [esDecorators-classDeclaration-parameterDecorators.js]
+"use strict";
 class C {
-    constructor(x) { }
-    method(x) { }
-    set x(x) { }
-    static method(x) { }
-    static set x(x) { }
+    constructor(
+    @dec
+    x) { }
+    method(
+    @dec
+    x) { }
+    set x(
+    @dec
+    x) { }
+    static method(
+    @dec
+    x) { }
+    static set x(
+    @dec
+    x) { }
 }
 (class C {
-    constructor(x) { }
-    method(x) { }
-    set x(x) { }
-    static method(x) { }
-    static set x(x) { }
+    constructor(
+    @dec
+    x) { }
+    method(
+    @dec
+    x) { }
+    set x(
+    @dec
+    x) { }
+    static method(
+    @dec
+    x) { }
+    static set x(
+    @dec
+    x) { }
 });

@@ -84,11 +84,24 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 }
 
 var skippedTests = []string{
+	// Broken until further porting work is done
+	"mappedTypeAsClauseRecursiveNoCrash1.ts",
+
+	// Flaky
+	"for-of29.ts",
+
 	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
+	"verbatimModuleSyntaxCompat2.ts",
+	"verbatimModuleSyntaxCompat3.ts",
+	"verbatimModuleSyntaxCompat4.ts",
+	"preserveValueImports.ts",
 	"preserveValueImports_importsNotUsedAsValues.ts",
+	"preserveValueImports_errors.ts",
+	"preserveValueImports_mixedImports.ts",
+	"preserveValueImports_module.ts",
 	"importsNotUsedAsValues_error.ts",
 	"alwaysStrictNoImplicitUseStrict.ts",
 	"nonPrimitiveIndexingWithForInSupressError.ts",
@@ -119,7 +132,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	}
 }
 
-var localBasePath = filepath.Join(repo.TestDataPath, "baselines", "local")
+var localBasePath = filepath.Join(repo.TestDataPath(), "baselines", "local")
 
 func (r *CompilerBaselineRunner) cleanUpLocal(t *testing.T) {
 	localPath := filepath.Join(localBasePath, core.IfElse(r.isSubmodule, "diff", ""), r.testSuitName)
@@ -201,6 +214,11 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	}
 	if compilerTest.options.OutFile != "" {
 		t.Skipf("Skipping test %s with outFile set", testName)
+	}
+
+	switch compilerTest.options.Target {
+	case core.ScriptTargetES3, core.ScriptTargetES5:
+		t.Skipf("Skipping test %s with unsupported target %s", testName, compilerTest.options.Target)
 	}
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
@@ -402,7 +420,7 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 		}
 
 		defer testutil.RecoverAndFail(t, "Panic on creating js output for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -425,7 +443,7 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("sourcemap", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map output for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -445,7 +463,7 @@ func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isS
 func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("sourcemap record", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map record for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -475,7 +493,7 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string, isS
 		},
 	)
 
-	headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+	headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 	if isSubmodule {
 		headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 	}

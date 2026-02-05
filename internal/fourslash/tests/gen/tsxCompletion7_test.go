@@ -11,11 +11,11 @@ import (
 )
 
 func TestTsxCompletion7(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
-declare module JSX {
+declare namespace JSX {
     interface Element { }
     interface IntrinsicElements {
         div: { ONE: string; TWO: number; }

@@ -10,10 +10,11 @@ import (
 )
 
 func TestCompletionCloneQuestionToken(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /file2.ts
+	const content = `// @strict: false
+// @Filename: /file2.ts
 type TCallback<T = any> = (options: T) => any;
 type InKeyOf<E> = { [K in keyof E]?: TCallback<E[K]>; };
 export class Bar<A> {

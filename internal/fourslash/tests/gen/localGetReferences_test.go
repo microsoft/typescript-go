@@ -8,8 +8,8 @@ import (
 )
 
 func TestLocalGetReferences(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: localGetReferences_1.ts
 // Comment Refence Test: g/*43*/lobalVar
@@ -48,7 +48,7 @@ class fooCls {
     return /*20*/x++;
 }
 
-module modTest {
+namespace modTest {
     //Declare
     export var modVar:number;
 
@@ -70,7 +70,7 @@ module modTest {
         modVar++;
     }
 
-    module testMod {
+    namespace testMod {
         var boo = /*27*/foo;
     }
 }
@@ -168,7 +168,7 @@ function remotefoo(remotex: number) {
 	return remotex++;
 }
 
-module remotemodTest {
+namespace remotemodTest {
 	//Declare
 	export var remotemodVar: number;
 
@@ -190,7 +190,7 @@ module remotemodTest {
 		remotemodVar++;
     }
 
-	module remotetestMod {
+	namespace remotetestMod {
 		var remoteboo = remotefoo;
 	}
 }`

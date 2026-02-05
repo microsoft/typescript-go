@@ -9,10 +9,11 @@ import (
 )
 
 func TestCompletionListBuilderLocations_VariableDeclarations(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `var x = a/*var1*/
+	const content = `// @lib: es5
+var x = a/*var1*/
 var x = (b/*var2*/
 var x = (c, d/*var3*/
  var y : any = "", x = a/*var4*/

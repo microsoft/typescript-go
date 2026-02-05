@@ -10,10 +10,11 @@ import (
 )
 
 func TestCompletionOfInterfaceAndVar(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface AnalyserNode {
+	const content = `// @lib: es5
+interface AnalyserNode {
 }
 declare var AnalyserNode: {
     prototype: AnalyserNode;

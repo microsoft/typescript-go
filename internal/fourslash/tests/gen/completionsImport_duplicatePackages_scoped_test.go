@@ -11,10 +11,11 @@ import (
 )
 
 func TestCompletionsImport_duplicatePackages_scoped(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @module: commonjs
+	const content = `// @lib: es5
+// @module: commonjs
 // @esModuleInterop: true
 // @Filename: /node_modules/@scope/react-dom/package.json
 { "name": "react-dom", "version": "1.0.0", "types": "./index.d.ts" }
@@ -52,7 +53,7 @@ import "@scope/react";
 					&lsproto.CompletionItem{
 						Label: "render",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "@scope/react-dom",
 							},
 						},
@@ -62,7 +63,7 @@ import "@scope/react";
 					&lsproto.CompletionItem{
 						Label: "useState",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "@scope/react",
 							},
 						},

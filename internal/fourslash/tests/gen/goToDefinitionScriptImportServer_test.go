@@ -8,10 +8,11 @@ import (
 )
 
 func TestGoToDefinitionScriptImportServer(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /home/src/workspaces/project/scriptThing.ts
+	const content = `// @lib: es5
+// @Filename: /home/src/workspaces/project/scriptThing.ts
 /*1d*/console.log("woooo side effects")
 // @Filename: /home/src/workspaces/project/stylez.css
 /*2d*/div {

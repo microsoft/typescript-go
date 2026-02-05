@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/tsxReactEmitEntities.tsx] ////
 
 //// [file.tsx]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface IntrinsicElements {
 		[s: string]: any;
@@ -25,6 +25,7 @@ declare var React: any;
 <div>&#x1F408;&#x1F415;&#128007;&#128017;</div>;
 
 //// [file.js]
+"use strict";
 React.createElement("div", null, "Dot goes here: \u00B7 &notAnEntity; ");
 React.createElement("div", null, "Be careful of \"-ed strings!");
 React.createElement("div", null, "{{braces}}");
@@ -35,6 +36,6 @@ React.createElement("div", { attr: "{\u2026}\\" });
 // Does not happen for a string literal that happens to be inside an attribute (and escapes then work)
 React.createElement("div", { attr: "&#0123;&hellip;&#x7D;\"" });
 // Preserves single quotes
-React.createElement("div", { attr: "\"" });
+React.createElement("div", { attr: '"' });
 // https://github.com/microsoft/TypeScript/issues/35732
 React.createElement("div", null, "\uD83D\uDC08\uD83D\uDC15\uD83D\uDC07\uD83D\uDC11");

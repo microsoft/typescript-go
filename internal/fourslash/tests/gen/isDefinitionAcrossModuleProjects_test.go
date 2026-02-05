@@ -8,8 +8,8 @@ import (
 )
 
 func TestIsDefinitionAcrossModuleProjects(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/a/index.ts
 import { NS } from "../b";
@@ -114,6 +114,7 @@ const ic: I = { FC() {} };
 {
     "compilerOptions": {
         "composite": true,
+        "lib": ["es5"],
     },
     "references": [
         { "path": "a" },
@@ -129,6 +130,7 @@ const ic: I = { FC() {} };
         "declarationMap": true,
         "module": "CommonJS",
         "emitDeclarationOnly": true,
+        "lib": ["es5"],
     }
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

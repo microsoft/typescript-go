@@ -8,18 +8,18 @@ import (
 )
 
 func TestQuickInfoModuleVariables(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = 1;
-module M {
+namespace M {
     export var x = 2;
     console.log(/*1*/x); // 2
 }
-module M {
+namespace M {
     console.log(/*2*/x); // 2
 }
-module M {
+namespace M {
     var x = 3;
     console.log(/*3*/x); // 3
 }`

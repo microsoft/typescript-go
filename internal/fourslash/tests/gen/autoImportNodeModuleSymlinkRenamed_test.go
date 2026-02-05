@@ -8,8 +8,8 @@ import (
 )
 
 func TestAutoImportNodeModuleSymlinkRenamed(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/solution/package.json
 {
@@ -25,6 +25,7 @@ func TestAutoImportNodeModuleSymlinkRenamed(t *testing.T) {
 // @Filename: /home/src/workspaces/solution/packages/utils/tsconfig.json
 {
     "compilerOptions": {
+        "lib": ["es5"],
         "composite": true,
         "module": "nodenext",
         "rootDir": "src",
@@ -45,6 +46,7 @@ export function gainUtility() { return 0; }
 // @Filename: /home/src/workspaces/solution/packages/web/tsconfig.json
 {
     "compilerOptions": {
+        "lib": ["es5"],
         "composite": true,
         "module": "esnext",
         "moduleResolution": "bundler",

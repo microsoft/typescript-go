@@ -11,10 +11,11 @@ import (
 )
 
 func TestTsxCompletionNonTagLessThan(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /a.tsx
+	const content = `// @lib: es5
+// @Filename: /a.tsx
 var x: Array<numb/*a*/;
 [].map<numb/*b*/;
 1 < Infini/*c*/;`

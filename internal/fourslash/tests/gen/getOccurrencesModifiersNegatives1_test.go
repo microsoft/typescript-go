@@ -9,8 +9,8 @@ import (
 )
 
 func TestGetOccurrencesModifiersNegatives1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C {
     [|{| "count": 3 |}export|] foo;
@@ -29,7 +29,7 @@ func TestGetOccurrencesModifiersNegatives1(t *testing.T) {
     }
 }
 
-module m {
+namespace m {
     [|{| "count": 0 |}static|] a;
     [|{| "count": 0 |}public|] b;
     [|{| "count": 0 |}private|] c;

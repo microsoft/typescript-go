@@ -10,10 +10,10 @@ import (
 )
 
 func TestArgumentsAreAvailableAfterEditsAtEndOfFunction(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module Test1 {
+	const content = `namespace Test1 {
 	class Person {
 		children: string[];
 		constructor(public name: string, children: string[]) {

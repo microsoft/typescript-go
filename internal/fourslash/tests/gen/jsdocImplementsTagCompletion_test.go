@@ -9,10 +9,11 @@ import (
 )
 
 func TestJsdocImplementsTagCompletion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/** @implements {/**/} */
+	const content = `// @lib: es5
+/** @implements {/**/} */
 class A {}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

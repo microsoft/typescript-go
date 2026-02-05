@@ -8,8 +8,8 @@ import (
 )
 
 func TestNavigationItemsExportEqualsExpression(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export = function () {}
 export = function () {
@@ -38,7 +38,10 @@ export = {
     c: {
         d: 1
     }
-}`
+}
+
+function foo(props: { x: number; y: number }) {}
+export = foo({ x: 1, y: 1 });`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineDocumentSymbol(t)

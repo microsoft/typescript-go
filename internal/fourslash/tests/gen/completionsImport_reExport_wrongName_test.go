@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_reExport_wrongName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: bundler
 // @Filename: /a.ts
@@ -35,7 +35,7 @@ export { x as y } from "./a";
 				&lsproto.CompletionItem{
 					Label: "x",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./a",
 						},
 					},
@@ -46,7 +46,7 @@ export { x as y } from "./a";
 				&lsproto.CompletionItem{
 					Label: "y",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: ".",
 						},
 					},

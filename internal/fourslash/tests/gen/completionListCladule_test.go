@@ -11,14 +11,14 @@ import (
 )
 
 func TestCompletionListCladule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     doStuff(): number { return 0; }
     static staticMethod() {}
 }
-module Foo {
+namespace Foo {
     export var x: number;
 }
 Foo/*c1*/; // should get "x", "prototype"

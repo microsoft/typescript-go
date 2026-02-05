@@ -8,10 +8,11 @@ import (
 )
 
 func TestGoToImplementation_inDifferentFiles(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /home/src/workspaces/project/bar.ts
+	const content = `// @lib: es5
+// @Filename: /home/src/workspaces/project/bar.ts
 import {Foo} from './foo'
 
 class [|A|] implements Foo {

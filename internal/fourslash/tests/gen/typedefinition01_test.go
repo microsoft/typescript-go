@@ -8,10 +8,11 @@ import (
 )
 
 func TestTypedefinition01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: b.ts
+	const content = `// @lib: es5
+// @Filename: b.ts
 import n = require('./a');
 var x/*1*/ = new n.Foo();
 // @Filename: a.ts

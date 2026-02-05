@@ -8,14 +8,15 @@ import (
 )
 
 func TestAutoImportCrossProject_paths_toDist(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/packages/app/package.json
 { "name": "app", "dependencies": { "dep": "*" } }
 // @Filename: /home/src/workspaces/project/packages/app/tsconfig.json
 {
   "compilerOptions": {
+    "lib": ["es5"],
     "module": "commonjs",
     "outDir": "dist",
     "rootDir": "src",
@@ -37,7 +38,7 @@ import "dep";
 { "name": "dep", "main": "dist/main.js", "types": "dist/main.d.ts" }
 // @Filename: /home/src/workspaces/project/packages/dep/tsconfig.json
 {
-  "compilerOptions": { "outDir": "dist", "rootDir": "src", "module": "commonjs" }
+  "compilerOptions": { "lib": ["es5"], "outDir": "dist", "rootDir": "src", "module": "commonjs" }
 }
 // @Filename: /home/src/workspaces/project/packages/dep/src/main.ts
 import "./sub/folder";

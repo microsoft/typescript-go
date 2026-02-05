@@ -104,6 +104,11 @@ Disable full type checking (only critical parse and emit errors will be reported
 type: boolean
 default: false
 
+[94m--deduplicatePackages[39m
+Deduplicate packages with the same name and version.
+type: boolean
+default: true
+
 [94m--noEmit[39m
 Disable emitting files from a compilation.
 type: boolean
@@ -140,6 +145,9 @@ Build all projects, including those that appear to be up to date.
 
 [94m--clean[39m
 Delete the outputs of all projects.
+
+[94m--builders[39m
+Set the number of projects to build concurrently.
 
 [94m--stopBuildOnErrors[39m
 Skip building downstream projects on error in upstream project.

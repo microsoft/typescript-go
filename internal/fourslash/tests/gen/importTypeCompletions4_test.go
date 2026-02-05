@@ -10,8 +10,8 @@ import (
 )
 
 func TestImportTypeCompletions4(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @esModuleInterop: true
 // @Filename: /foo.ts
@@ -34,7 +34,7 @@ export = Foo;
 					Label:      "Foo",
 					InsertText: PtrTo("import type Foo from \"./foo\";"),
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "./foo",
 						},
 					},

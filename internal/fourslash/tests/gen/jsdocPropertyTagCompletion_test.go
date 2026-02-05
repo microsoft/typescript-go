@@ -9,10 +9,11 @@ import (
 )
 
 func TestJsdocPropertyTagCompletion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/**
+	const content = `// @lib: es5
+/**
  * @typedef {Object} Foo
  * @property {/**/}
  */`

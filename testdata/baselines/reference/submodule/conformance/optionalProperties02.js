@@ -9,7 +9,8 @@ interface Foo {
 <Foo>{ a: undefined };
 
 //// [optionalProperties02.js]
-(({ a: undefined }));
+"use strict";
+({ a: undefined });
 
 
 //// [optionalProperties02.d.ts]

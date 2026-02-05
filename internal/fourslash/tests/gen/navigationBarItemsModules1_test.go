@@ -8,8 +8,8 @@ import (
 )
 
 func TestNavigationBarItemsModules1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare module "X.Y.Z" {}
 
@@ -17,21 +17,21 @@ declare module 'X2.Y2.Z2' {}
 
 declare module "foo";
 
-module A.B.C {
+namespace A.B.C {
     export var x;
 }
 
-module A.B {
+namespace A.B {
     export var y;
 }
 
-module A {
+namespace A {
     export var z;
 }
 
-module A {
-    module B {
-        module C {
+namespace A {
+    namespace B {
+        namespace C {
             declare var x;
         }
     }

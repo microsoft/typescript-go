@@ -11,11 +11,11 @@ import (
 )
 
 func TestCompletionsImport_mergedReExport(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
-{ "compilerOptions": { "module": "commonjs" } }
+{ "compilerOptions": { "module": "commonjs", "lib": ["es5"] } }
 // @Filename: /home/src/workspaces/project/package.json
 { "dependencies": { "@jest/types": "*", "ts-jest": "*" } }
 // @Filename: /home/src/workspaces/project/node_modules/@jest/types/package.json
@@ -52,7 +52,7 @@ C/**/`
 				&lsproto.CompletionItem{
 					Label: "Config",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "@jest/types",
 						},
 					},
@@ -74,7 +74,7 @@ C/**/`
 				&lsproto.CompletionItem{
 					Label: "Config",
 					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportData{
+						AutoImport: &lsproto.AutoImportFix{
 							ModuleSpecifier: "@jest/types",
 						},
 					},

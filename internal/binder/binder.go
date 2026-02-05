@@ -46,32 +46,33 @@ type Binder struct {
 	bindFunc        func(*ast.Node) bool
 	unreachableFlow *ast.FlowNode
 
-	container              *ast.Node
-	thisContainer          *ast.Node
-	blockScopeContainer    *ast.Node
-	lastContainer          *ast.Node
-	currentFlow            *ast.FlowNode
-	currentBreakTarget     *ast.FlowLabel
-	currentContinueTarget  *ast.FlowLabel
-	currentReturnTarget    *ast.FlowLabel
-	currentTrueTarget      *ast.FlowLabel
-	currentFalseTarget     *ast.FlowLabel
-	currentExceptionTarget *ast.FlowLabel
-	preSwitchCaseFlow      *ast.FlowNode
-	activeLabelList        *ActiveLabel
-	emitFlags              ast.NodeFlags
-	seenThisKeyword        bool
-	hasExplicitReturn      bool
-	hasFlowEffects         bool
-	inStrictMode           bool
-	inAssignmentPattern    bool
-	seenParseError         bool
-	symbolCount            int
-	classifiableNames      collections.Set[string]
-	symbolPool             core.Pool[ast.Symbol]
-	flowNodePool           core.Pool[ast.FlowNode]
-	flowListPool           core.Pool[ast.FlowList]
-	singleDeclarationsPool core.Pool[*ast.Node]
+	container               *ast.Node
+	thisContainer           *ast.Node
+	blockScopeContainer     *ast.Node
+	lastContainer           *ast.Node
+	currentFlow             *ast.FlowNode
+	currentBreakTarget      *ast.FlowLabel
+	currentContinueTarget   *ast.FlowLabel
+	currentReturnTarget     *ast.FlowLabel
+	currentTrueTarget       *ast.FlowLabel
+	currentFalseTarget      *ast.FlowLabel
+	currentExceptionTarget  *ast.FlowLabel
+	preSwitchCaseFlow       *ast.FlowNode
+	activeLabelList         *ActiveLabel
+	emitFlags               ast.NodeFlags
+	seenThisKeyword         bool
+	hasExplicitReturn       bool
+	hasFlowEffects          bool
+	inStrictMode            bool
+	inAssignmentPattern     bool
+	seenParseError          bool
+	symbolCount             int
+	classifiableNames       collections.Set[string]
+	notConstEnumOnlyModules collections.Set[*ast.Symbol]
+	symbolPool              core.Pool[ast.Symbol]
+	flowNodePool            core.Pool[ast.FlowNode]
+	flowListPool            core.Pool[ast.FlowList]
+	singleDeclarationsPool  core.Pool[*ast.Node]
 }
 
 func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
@@ -375,7 +376,8 @@ func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, descri
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	container := b.container
-	if ast.IsCommonJSExport(node) {
+	isCommonJSExport := ast.IsCommonJSExport(node) || ast.IsCallExpression(node)
+	if isCommonJSExport {
 		container = b.file.AsNode()
 	}
 	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0 || ast.IsImplicitlyExportedJSTypeAlias(node)
@@ -400,8 +402,8 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	//       during global merging in the checker. Why? The only case when ambient module is permitted inside another module is module augmentation
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
-	if !ast.IsAmbientModule(node) && (hasExportModifier || ast.IsCommonJSExport(node) || container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !ast.IsLocalsContainer(container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) || ast.IsCommonJSExport(node) {
+	if !ast.IsAmbientModule(node) && (hasExportModifier || isCommonJSExport || container.Flags&ast.NodeFlagsExportContext != 0) {
+		if !ast.IsLocalsContainer(container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) || isCommonJSExport {
 			return b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
@@ -619,7 +621,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 			setFlowNode(node, b.currentFlow)
 		}
 	case ast.KindBinaryExpression:
-		switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+		switch ast.GetAssignmentDeclarationKind(node) {
 		case ast.JSDeclarationKindProperty:
 			b.bindExpandoPropertyAssignment(node)
 		case ast.JSDeclarationKindThisProperty:
@@ -683,6 +685,12 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
 	case ast.KindCallExpression:
+		switch ast.GetAssignmentDeclarationKind(node) {
+		case ast.JSDeclarationKindObjectDefinePropertyValue:
+			b.bindExpandoPropertyAssignment(node)
+		case ast.JSDeclarationKindObjectDefinePropertyExports:
+			b.bindObjectDefinePropertyExport(node)
+		}
 		if ast.IsInJSFile(node) {
 			b.bindCallExpression(node)
 		}
@@ -794,9 +802,17 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		state := b.declareModuleSymbol(node)
 		if state != ast.ModuleInstanceStateNonInstantiated {
 			symbol := node.Symbol()
-			if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 || state != ast.ModuleInstanceStateConstEnumOnly {
-				// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
+			// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
+			constEnumOnlyModule := (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) &&
+				// Current must be `const enum` only
+				state == ast.ModuleInstanceStateConstEnumOnly &&
+				// Can't have been set to 'false' in a previous merged symbol. ('undefined' OK)
+				!b.notConstEnumOnlyModules.Has(symbol)
+			if constEnumOnlyModule {
+				symbol.Flags |= ast.SymbolFlagsConstEnumOnlyModule
+			} else {
 				symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
+				b.notConstEnumOnlyModules.Add(symbol)
 			}
 		}
 	}
@@ -995,8 +1011,7 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 }
 
 func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
-	expr := node.AsBinaryExpression()
-	parent := expr.Left.Expression()
+	parent := getParentOfPropertyAssignment(node)
 	symbol := b.lookupEntity(parent, b.blockScopeContainer)
 	if symbol == nil {
 		symbol = b.lookupEntity(parent, b.container)
@@ -1008,6 +1023,22 @@ func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 		} else {
 			b.declareSymbol(ast.GetExports(symbol), symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
 		}
+	}
+}
+
+func getParentOfPropertyAssignment(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindBinaryExpression:
+		return node.AsBinaryExpression().Left.Expression()
+	case ast.KindCallExpression:
+		return node.Arguments()[0]
+	}
+	panic("Unhandled case in getParentOfPropertyAssignment")
+}
+
+func (b *Binder) bindObjectDefinePropertyExport(node *ast.Node) {
+	if b.setCommonJSModuleIndicator(node) {
+		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	}
 }
 
@@ -1196,7 +1227,7 @@ func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
 	if ast.IsIdentifier(node) {
 		return b.lookupName(node.Text(), container)
 	}
-	if (ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) && node.Expression().Kind == ast.KindThisKeyword {
+	if node.Expression().Kind == ast.KindThisKeyword {
 		if _, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
 			if name := ast.GetElementOrPropertyAccessName(node); name != nil {
 				return symbolTable[name.Text()]
@@ -1218,7 +1249,6 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
-
 	if declaration := container.DeclarationData(); declaration != nil && declaration.Symbol != nil {
 		return declaration.Symbol.Exports[name]
 	}
@@ -2424,6 +2454,7 @@ func (b *Binder) addDeclarationToSymbol(symbol *ast.Symbol, node *ast.Node, symb
 	// On merge of const enum module with class or function, reset const enum only flag (namespaces will already recalculate)
 	if symbol.Flags&ast.SymbolFlagsConstEnumOnlyModule != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
 		symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
+		b.notConstEnumOnlyModules.Add(symbol)
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {
 		SetValueDeclaration(symbol, node)
@@ -2646,15 +2677,6 @@ func isSignedNumericLiteral(node *ast.Node) bool {
 func getOptionalSymbolFlagForNode(node *ast.Node) ast.SymbolFlags {
 	postfixToken := node.PostfixToken()
 	return core.IfElse(postfixToken != nil && postfixToken.Kind == ast.KindQuestionToken, ast.SymbolFlagsOptional, ast.SymbolFlagsNone)
-}
-
-func isAsyncFunction(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
-		data := node.BodyData()
-		return data.Body != nil && data.AsteriskToken == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
-	}
-	return false
 }
 
 func isFunctionSymbol(symbol *ast.Symbol) bool {

@@ -8,10 +8,10 @@ import (
 )
 
 func TestQuickInfoAssignToExistingClass(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module Test {
+	const content = `namespace Test {
     class Mocked {
         myProp: string;
     }

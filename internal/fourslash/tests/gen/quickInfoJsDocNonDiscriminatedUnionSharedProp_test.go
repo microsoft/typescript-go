@@ -8,10 +8,11 @@ import (
 )
 
 func TestQuickInfoJsDocNonDiscriminatedUnionSharedProp(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface Entries {
+	const content = `// @strict: false
+interface Entries {
   /**
    * Plugins info...
    */

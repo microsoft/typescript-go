@@ -14,6 +14,7 @@ function foo() {
 
 
 //// [index.js]
+"use strict";
 // @ts-nocheck
 function foo() {
     module.exports = exports = function (o) {
@@ -22,7 +23,6 @@ function foo() {
     const m = function () {
         // I have no idea what to put here
     };
-    export var methods = m;
     exports.methods = m;
 }
 

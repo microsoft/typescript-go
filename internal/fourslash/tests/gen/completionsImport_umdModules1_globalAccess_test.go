@@ -11,13 +11,13 @@ import (
 )
 
 func TestCompletionsImport_umdModules1_globalAccess(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /package.json
 { "dependencies": { "@types/classnames": "*" } }
 // @filename: /tsconfig.json
-{ "compilerOptions": { "allowUmdGlobalAccess": true } }
+{ "compilerOptions": { "allowUmdGlobalAccess": true, "types": ["*"] } }
 // @filename: /node_modules/@types/classnames/package.json
 { "name": "@types/classnames", "types": "index.d.ts" }
 // @filename: /node_modules/@types/classnames/index.d.ts

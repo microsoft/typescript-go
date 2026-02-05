@@ -8,10 +8,10 @@ import (
 )
 
 func TestCompletionInTypeOf1(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module m1c {
+	const content = `namespace m1c {
     export interface I { foo(): void; }
 }
 var x: typeof m1c./*1*/;`

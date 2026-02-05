@@ -9,12 +9,13 @@ import (
 )
 
 func TestAutoImportCrossProject_baseUrl_toDist(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/common/tsconfig.json
 {
   "compilerOptions": {
+    "lib": ["es5"],
     "module": "commonjs",
     "outDir": "dist",
     "composite": true
@@ -28,6 +29,7 @@ export function square(n: number) {
 // @Filename: /home/src/workspaces/project/web/tsconfig.json
 {
   "compilerOptions": {
+    "lib": ["es5"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,

@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_ofAlias_preferShortPath(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonJs
 // @noLib: true
@@ -36,7 +36,7 @@ fo/**/`
 					&lsproto.CompletionItem{
 						Label: "foo",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./foo",
 							},
 						},

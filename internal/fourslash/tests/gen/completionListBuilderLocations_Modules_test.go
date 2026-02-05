@@ -9,10 +9,11 @@ import (
 )
 
 func TestCompletionListBuilderLocations_Modules(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module A/*moduleName1*/
+	const content = `// @lib: es5
+module A/*moduleName1*/
 module A./*moduleName2*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

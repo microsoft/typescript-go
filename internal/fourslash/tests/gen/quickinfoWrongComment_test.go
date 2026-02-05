@@ -8,10 +8,11 @@ import (
 )
 
 func TestQuickinfoWrongComment(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface I {
+	const content = `// @lib: es5
+interface I {
     /** The colour */
     readonly colour: string
 }

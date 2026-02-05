@@ -8,10 +8,11 @@ import (
 )
 
 func TestSignatureHelp01(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function foo(data: number) {
+	const content = `// @lib: es5
+function foo(data: number) {
 }
 
 function bar {

@@ -8,16 +8,16 @@ import (
 )
 
 func TestModuleEnumModule(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `module A {
+	const content = `namespace A {
     var o;
 }
 enum A {
     /**/c
 }
-module A {
+namespace A {
     var p;
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

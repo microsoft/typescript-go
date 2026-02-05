@@ -11,8 +11,8 @@ import (
 )
 
 func TestCompletionsImport_named_didNotExistBefore(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /a.ts
@@ -40,7 +40,7 @@ t/**/`
 					&lsproto.CompletionItem{
 						Label: "Test1",
 						Data: &lsproto.CompletionItemData{
-							AutoImport: &lsproto.AutoImportData{
+							AutoImport: &lsproto.AutoImportFix{
 								ModuleSpecifier: "./a",
 							},
 						},

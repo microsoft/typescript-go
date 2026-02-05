@@ -8,8 +8,8 @@ import (
 )
 
 func TestCallHierarchyContainerName(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function /**/f() {}
 
@@ -43,7 +43,7 @@ namespace Foo {
   }
 }
 
-module Foo.Bar {
+namespace Foo.Bar {
   const sameName = () => new Foo.C();
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)

@@ -9,10 +9,11 @@ import (
 )
 
 func TestCompletionTypeAssertion(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `var x = 'something'
+	const content = `// @lib: es5
+var x = 'something'
 var y = this as/*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()

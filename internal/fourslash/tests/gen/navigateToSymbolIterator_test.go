@@ -10,10 +10,11 @@ import (
 )
 
 func TestNavigateToSymbolIterator(t *testing.T) {
+	fourslash.SkipIfFailing(t)
 	t.Parallel()
-
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `class C {
+	const content = `// @lib: es5
+class C {
     [|[Symbol.iterator]() {}|]
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
