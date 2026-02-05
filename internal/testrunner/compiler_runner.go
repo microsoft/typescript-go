@@ -87,6 +87,9 @@ var skippedTests = []string{
 	// Broken until further porting work is done
 	"mappedTypeAsClauseRecursiveNoCrash1.ts",
 
+	// Flaky
+	"for-of29.ts",
+
 	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",

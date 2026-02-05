@@ -184,7 +184,7 @@ tsc: The TypeScript Compiler - Version FakeTSVersion                            
 
                   type:  boolean
 
-               default:  false
+               default:  true
 
 
 [94m                --types  [39mSpecify type package names to be included without being referenced in a source file.
