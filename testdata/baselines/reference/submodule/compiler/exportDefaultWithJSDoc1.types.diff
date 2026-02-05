@@ -5,8 +5,8 @@
 
  /** @type {NumberLike[]} */export default ([ ]);
 ->([ ]) : NumberLike[]
-+>([ ]) : undefined[]
- >[ ] : undefined[]
++>([ ]) : never[]
+ >[ ] : never[]
 
  === b.ts ===
  import A from './a'

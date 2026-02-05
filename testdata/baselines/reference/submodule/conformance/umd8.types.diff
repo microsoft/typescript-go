@@ -3,7 +3,7 @@
 @@= skipped -5, +5 lines =@@
  >ff : typeof ff
 
- let y: Foo; // OK in type position
+ declare let y: Foo; // OK in type position
 ->y : import("foo")
 +>y : import("./foo")
 
@@ -14,7 +14,7 @@
 +>y : import("./foo")
  >foo : () => number
 
- let z: Foo.SubThing; // OK in ns position
+ declare let z: Foo.SubThing; // OK in ns position
 @@= skipped -14, +14 lines =@@
 
  let x: any = Foo; // Not OK in value position

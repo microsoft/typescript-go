@@ -8,7 +8,7 @@
 +>ng : import("angular").IAngularStatic
  >ng : any
 
- declare module ng {
+ declare namespace ng {
 @@= skipped -17, +17 lines =@@
  }
 

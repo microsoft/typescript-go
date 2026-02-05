@@ -9,17 +9,26 @@
 ->configuration : commands.IConfiguration
 ->workspace : import("visibilityOfCrossModuleTypeUsage_server").IWorkspace
 ->toAbsolutePath : (server: import("visibilityOfCrossModuleTypeUsage_server").IServer, workspaceRelativePath?: string) => string
-->configuration.server : import("visibilityOfCrossModuleTypeUsage_server").IServer
+->configuration.server : import("visibilityOfCrossModuleTypeUsage_server").IServer | undefined
 ->configuration : commands.IConfiguration
-->server : import("visibilityOfCrossModuleTypeUsage_server").IServer
-+>configuration.workspace.toAbsolutePath : (server: import("./visibilityOfCrossModuleTypeUsage_server").IServer, workspaceRelativePath?: string) => string
+->server : import("visibilityOfCrossModuleTypeUsage_server").IServer | undefined
++>configuration.workspace.toAbsolutePath : (server: import("./visibilityOfCrossModuleTypeUsage_server").IServer, workspaceRelativePath?: string | undefined) => string
 +>configuration.workspace : import("./visibilityOfCrossModuleTypeUsage_server").IWorkspace
 +>configuration : commands.IConfiguration
 +>workspace : import("./visibilityOfCrossModuleTypeUsage_server").IWorkspace
-+>toAbsolutePath : (server: import("./visibilityOfCrossModuleTypeUsage_server").IServer, workspaceRelativePath?: string) => string
-+>configuration.server : import("./visibilityOfCrossModuleTypeUsage_server").IServer
++>toAbsolutePath : (server: import("./visibilityOfCrossModuleTypeUsage_server").IServer, workspaceRelativePath?: string | undefined) => string
++>configuration.server : import("./visibilityOfCrossModuleTypeUsage_server").IServer | undefined
 +>configuration : commands.IConfiguration
-+>server : import("./visibilityOfCrossModuleTypeUsage_server").IServer
++>server : import("./visibilityOfCrossModuleTypeUsage_server").IServer | undefined
  }
  === visibilityOfCrossModuleTypeUsage_commands.ts ===
  import fs = require('./visibilityOfCrossModuleTypeUsage_fs');
+@@= skipped -32, +32 lines =@@
+
+ export interface IWorkspace {
+     toAbsolutePath(server: IServer, workspaceRelativePath?: string): string;
+->toAbsolutePath : (server: IServer, workspaceRelativePath?: string) => string
++>toAbsolutePath : (server: IServer, workspaceRelativePath?: string | undefined) => string
+ >server : IServer
+ >workspaceRelativePath : string | undefined
+ }

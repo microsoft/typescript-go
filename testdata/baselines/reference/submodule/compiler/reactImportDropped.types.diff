@@ -12,7 +12,7 @@
 +>React.createClass : (spec: any) => import("../../react").ClassicComponentClass
 +>React : typeof import("../../react")
 +>createClass : (spec: any) => import("../../react").ClassicComponentClass
- >{  render() {    return (      null    );  }} : { render(): any; }
+ >{  render() {    return (      null    );  }} : { render(): null; }
 
    render() {
 @@= skipped -19, +19 lines =@@

@@ -3,7 +3,7 @@
 @@= skipped -1150, +1150 lines =@@
  }
 
- export module m3 {
+ export namespace m3 {
 ->m3 : typeof import("privacyImportParseErrors").m3
 +>m3 : typeof import("./privacyImportParseErrors").m3
 

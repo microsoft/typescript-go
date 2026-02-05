@@ -1,10 +1,19 @@
 --- old.tsxResolveExternalModuleExportsTypes.types
 +++ new.tsxResolveExternalModuleExportsTypes.types
-@@= skipped -1, +1 lines =@@
+@@= skipped -2, +2 lines =@@
+ === foo.tsx ===
+ /// <reference path="react.d.ts" />
+ import { Test } from 'a';
+->Test : any
++>Test : null
+
+ const Foo = (<h1></h1>);
+ >Foo : JSX.Element
+@@= skipped -11, +11 lines =@@
 
  === /node_modules/@types/a/index.d.ts ===
  declare var a: a.Foo;
-->a : import("/node_modules/@types/a/index.d.ts").Foo
+->a : a.Foo
 +>a : import("a").Foo
  >a : any
 
@@ -12,8 +21,19 @@
      interface Foo {}
  }
  export = a;
-->a : import("/node_modules/@types/a/index.d.ts").Foo
 +>a : import("a").Foo
-
- === /node_modules/@types/b/index.d.ts ===
- import * as a from 'a';
++
++=== /node_modules/@types/b/index.d.ts ===
++import * as a from 'a';
+ >a : a.Foo
++
++declare module 'a' {
++>'a' : Foo
++
++    namespace Test {}
++
++    interface Foo {
++        Test: null;
++>Test : null
++    }
++}

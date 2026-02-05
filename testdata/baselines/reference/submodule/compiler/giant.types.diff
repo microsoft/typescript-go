@@ -3,7 +3,7 @@
 @@= skipped -842, +842 lines =@@
  >pa2 : any
  }
- export module eM {
+ export namespace eM {
 ->eM : typeof import("giant").eM
 +>eM : typeof import("./giant").eM
 
