@@ -1,4 +1,4 @@
-//go:build noasert
+//go:build noassert
 
 package debug
 
