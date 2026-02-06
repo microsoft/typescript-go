@@ -49,8 +49,7 @@ func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 type lazyValue[T any] struct {
 	value       *T
 	once        sync.Once
-	initialized bool
-	valueMu     sync.RWMutex
+	initialized atomic.Bool
 }
 
 func (l *lazyValue[T]) getValue(compute func() *T) *T {
@@ -58,17 +57,13 @@ func (l *lazyValue[T]) getValue(compute func() *T) *T {
 		if l.value == nil {
 			l.value = compute()
 		}
-		l.valueMu.Lock()
-		l.initialized = true
-		l.valueMu.Unlock()
+		l.initialized.Store(true)
 	})
 	return l.value
 }
 
 func (l *lazyValue[T]) tryGetValue() (*T, bool) {
-	l.valueMu.RLock()
-	defer l.valueMu.RUnlock()
-	if l.initialized {
+	if l.initialized.Load() {
 		return l.value, true
 	}
 	return nil, false
