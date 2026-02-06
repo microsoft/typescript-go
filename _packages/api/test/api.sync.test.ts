@@ -1,9 +1,9 @@
+import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
     API,
     SymbolFlags,
     TypeFlags,
-} from "@typescript/api";
-import { createVirtualFileSystem } from "@typescript/api/fs";
+} from "@typescript/api/sync";
 import {
     cast,
     isImportDeclaration,

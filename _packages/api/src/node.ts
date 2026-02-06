@@ -1,6 +1,7 @@
 import {
     type Node,
     type NodeArray,
+    type Path,
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
@@ -345,7 +346,8 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             throw new Error("SourceFile not found");
         }
         this.sourceFile = sourceFile as unknown as SourceFile;
-        this.id = `${sourceFile.id}.${this.pos}.${this.kind}`;
+        // Node handle format: pos.end.kind.path
+        this.id = `${this.pos}.${this.end}.${this.kind}.${this.sourceFile.path}`;
     }
 
     forEachChild<T>(visitNode: (node: Node) => T, visitList?: (list: NodeArray<Node>) => T): T | undefined {
@@ -910,6 +912,15 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
+    get path(): string | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile:
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const stringIndex = this.view.getUint32(extendedDataOffset + 8, true);
+                return this.getString(stringIndex);
+        }
+    }
+
     // Other properties
     get flags(): number {
         switch (this.kind) {
@@ -957,6 +968,62 @@ export class RemoteSourceFile extends RemoteNode {
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, decoder, 1, undefined!);
-        this.id = this.getString(this.view.getUint32(this.offsetExtendedData + 8, true));
+        const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+        const idStringIndex = this.view.getUint32(extendedDataOffset + 12, true);
+        this.id = this.getString(idStringIndex);
     }
+}
+
+/**
+ * Find a descendant node at a specific position with matching kind and end position.
+ */
+export function findDescendant(root: Node, pos: number, end: number, kind: SyntaxKind): Node | undefined {
+    if (root.pos === pos && root.end === end && root.kind === kind) {
+        return root;
+    }
+
+    // Search children
+    let result: Node | undefined;
+    root.forEachChild(child => {
+        if (result) return result; // Already found
+        // Only search in children that could contain our target
+        if (child.pos <= pos && child.end >= end) {
+            result = findDescendant(child, pos, end, kind);
+        }
+        return undefined;
+    });
+
+    return result;
+}
+
+/**
+ * Parsed components of a node handle.
+ */
+export interface ParsedNodeHandle {
+    pos: number;
+    end: number;
+    kind: SyntaxKind;
+    path: Path;
+}
+
+/**
+ * Parse a node handle string into its components.
+ * Handle format: "pos.end.kind.path" where path may contain dots.
+ */
+export function parseNodeHandle(handle: string): ParsedNodeHandle {
+    // Find the positions of the first 3 dots
+    const dot1 = handle.indexOf(".");
+    const dot2 = handle.indexOf(".", dot1 + 1);
+    const dot3 = handle.indexOf(".", dot2 + 1);
+
+    if (dot1 === -1 || dot2 === -1 || dot3 === -1) {
+        throw new Error(`Invalid node handle: ${handle}`);
+    }
+
+    return {
+        pos: parseInt(handle.slice(0, dot1), 10),
+        end: parseInt(handle.slice(dot1 + 1, dot2), 10),
+        kind: parseInt(handle.slice(dot2 + 1, dot3), 10) as SyntaxKind,
+        path: handle.slice(dot3 + 1) as Path,
+    };
 }

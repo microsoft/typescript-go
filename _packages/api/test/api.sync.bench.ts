@@ -1,11 +1,11 @@
 import {
-    API,
-    type Project,
-} from "@typescript/api";
-import {
     type FileSystem,
     type FileSystemEntries,
 } from "@typescript/api/fs";
+import {
+    API,
+    type Project,
+} from "@typescript/api/sync";
 import {
     type Node,
     type SourceFile,

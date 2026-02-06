@@ -11,7 +11,9 @@ import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
     Node,
+    Path,
     SourceFile,
+    SyntaxKind,
 } from "@typescript/ast";
 import {
     documentURIToFileName,
@@ -19,6 +21,7 @@ import {
 } from "../path.ts";
 import type {
     ConfigResponse,
+    ProjectChanges,
     ProjectResponse,
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
@@ -26,7 +29,7 @@ import type { MaybeAsync } from "./types.ts";
 export { SymbolFlags, TypeFlags };
 
 /**
- * A file identifier that can be either a file name (path) or a document URI.
+ * A document identifier that can be either a file name (path) or a document URI.
  *
  * @example
  * // Using a file name
@@ -35,13 +38,23 @@ export { SymbolFlags, TypeFlags };
  * // Using a URI
  * project.getSourceFile({ uri: "file:///path/to/file.ts" });
  */
-export type FileIdentifier = { fileName: string; } | { uri: string; };
+export type DocumentIdentifier = { fileName: string; } | { uri: string; };
 
 /**
- * Resolves a FileIdentifier to a file name.
+ * A position within a document, combining a document identifier with an offset.
+ */
+export interface DocumentPosition {
+    /** The document containing the position */
+    document: DocumentIdentifier | string;
+    /** The character offset within the document */
+    position: number;
+}
+
+/**
+ * Resolves a DocumentIdentifier to a file name.
  * If the identifier contains a URI, it is converted to a file name.
  */
-export function resolveFileName(identifier: FileIdentifier | string): string {
+export function resolveFileName(identifier: DocumentIdentifier | string): string {
     if (typeof identifier === "string") {
         return identifier;
     }
@@ -52,10 +65,10 @@ export function resolveFileName(identifier: FileIdentifier | string): string {
 }
 
 /**
- * Resolves a FileIdentifier to a document URI.
+ * Resolves a DocumentIdentifier to a document URI.
  * If the identifier contains a file name, it is converted to a URI.
  */
-export function resolveDocumentURI(identifier: FileIdentifier | string): string {
+export function resolveDocumentURI(identifier: DocumentIdentifier | string): string {
     if (typeof identifier === "string") {
         return fileNameToDocumentURI(identifier);
     }
@@ -84,12 +97,12 @@ export interface API<Async extends boolean> {
     /**
      * Parse a tsconfig.json file.
      */
-    parseConfigFile(file: FileIdentifier | string): MaybeAsync<Async, ConfigResponse>;
+    parseConfigFile(file: DocumentIdentifier | string): MaybeAsync<Async, ConfigResponse>;
 
     /**
      * Load a TypeScript project from a tsconfig.json file.
      */
-    loadProject(configFile: FileIdentifier | string): MaybeAsync<Async, Project<Async>>;
+    loadProject(configFile: DocumentIdentifier | string): MaybeAsync<Async, Project<Async>>;
 
     /**
      * Close the API connection and release all resources.
@@ -117,13 +130,14 @@ export interface Project<Async extends boolean> {
 
     /**
      * Reload the project, picking up any file changes.
+     * @returns File changes if the project was previously loaded, or undefined.
      */
-    reload(): MaybeAsync<Async, void>;
+    reload(): MaybeAsync<Async, ProjectChanges | undefined>;
 
     /**
      * Get a source file from the project by file name or URI.
      */
-    getSourceFile(file: FileIdentifier | string): MaybeAsync<Async, SourceFile | undefined>;
+    getSourceFile(file: DocumentIdentifier | string): MaybeAsync<Async, SourceFile | undefined>;
 
     /**
      * Get the symbol at a specific location in a source file.
@@ -134,14 +148,42 @@ export interface Project<Async extends boolean> {
     /**
      * Get the symbol at a specific position in a file.
      */
-    getSymbolAtPosition(file: FileIdentifier | string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
-    getSymbolAtPosition(file: FileIdentifier | string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
+    getSymbolAtPosition(file: DocumentIdentifier | string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
+    getSymbolAtPosition(file: DocumentIdentifier | string, positions: readonly number[]): MaybeAsync<Async, (Symbol<Async> | undefined)[]>;
 
     /**
      * Get the type of a symbol.
      */
     getTypeOfSymbol(symbol: Symbol<Async>): MaybeAsync<Async, Type<Async> | undefined>;
     getTypeOfSymbol(symbols: readonly Symbol<Async>[]): MaybeAsync<Async, (Type<Async> | undefined)[]>;
+
+    /**
+     * Resolve a name to a symbol at a given location.
+     * @param name The name to resolve
+     * @param meaning Symbol flags indicating what kind of symbol to look for
+     * @param location Optional node or document position for location context
+     * @param excludeGlobals Whether to exclude global symbols
+     */
+    resolveName(
+        name: string,
+        meaning: SymbolFlags,
+        location?: Node | DocumentPosition,
+        excludeGlobals?: boolean,
+    ): MaybeAsync<Async, Symbol<Async> | undefined>;
+}
+
+export interface NodeHandle<Async extends boolean> {
+    readonly kind: SyntaxKind;
+    readonly pos: number;
+    readonly end: number;
+    readonly path: Path;
+
+    /**
+     * Resolve this handle to the actual AST node.
+     * @param project The project context to use for fetching the source file
+     * @returns The resolved node, or undefined if not found
+     */
+    resolve(project: Project<Async>): MaybeAsync<Async, Node | undefined>;
 }
 
 /**
@@ -156,6 +198,10 @@ export interface Symbol<Async extends boolean> {
     readonly flags: SymbolFlags;
     /** Check flags */
     readonly checkFlags: number;
+    /** Node handles for declarations of this symbol */
+    readonly declarations: readonly NodeHandle<Async>[];
+    /** Node handle for the value declaration of this symbol */
+    readonly valueDeclaration: NodeHandle<Async> | undefined;
 }
 
 /**
