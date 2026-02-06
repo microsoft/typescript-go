@@ -1,6 +1,7 @@
 package encoder
 
 import (
+	"encoding/base64"
 	"encoding/binary"
 	"fmt"
 	"slices"
@@ -116,7 +117,8 @@ const (
 // | ----------- | ------ | ------------------------------------------------- |
 // | 0-4         | uint32 | Index of `text` in the string offsets section     |
 // | 4-8         | uint32 | Index of `fileName` in the string offsets section |
-// | 8-12        | uint32 | Index of `id` in the string offsets section       |
+// | 8-12        | uint32 | Index of `path` in the string offsets section     |
+// | 12-16       | uint32 | Index of `id` in the string offsets section       |
 //
 // Nodes (24 bytes per node)
 // -------------------------
@@ -219,7 +221,7 @@ const (
 // meaning of the data at that offset is defined by the node type. See the **Extended node data** section for details on
 // the format of the extended data for specific node types.
 
-func EncodeSourceFile(sourceFile *ast.SourceFile, id string) ([]byte, error) {
+func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	var parentIndex, nodeCount, prevIndex uint32
 	var extendedData []byte
 	strs := newStringTable(sourceFile.Text(), sourceFile.TextCount)
@@ -291,7 +293,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile, id string) ([]byte, error) {
 
 	nodeCount++
 	parentIndex++
-	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, getSourceFileData(sourceFile, id, strs, &extendedData))
+	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, getSourceFileData(sourceFile, strs, &extendedData))
 
 	visitor.VisitEachChild(sourceFile.AsNode())
 
@@ -333,13 +335,16 @@ func appendUint32s(buf []byte, values ...uint32) []byte {
 	return buf
 }
 
-func getSourceFileData(sourceFile *ast.SourceFile, id string, strs *stringTable, extendedData *[]byte) uint32 {
+func getSourceFileData(sourceFile *ast.SourceFile, strs *stringTable, extendedData *[]byte) uint32 {
 	t := NodeDataTypeExtendedData
 	extendedDataOffset := len(*extendedData)
 	textIndex := strs.add(sourceFile.Text(), sourceFile.Kind, sourceFile.Pos(), sourceFile.End())
 	fileNameIndex := strs.add(sourceFile.FileName(), 0, 0, 0)
-	idIndex := strs.add(id, 0, 0, 0)
-	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, idIndex)
+	pathIndex := strs.add(string(sourceFile.Path()), 0, 0, 0)
+	var idBuf [8]byte
+	binary.LittleEndian.PutUint64(idBuf[:], uint64(ast.GetNodeId(sourceFile.AsNode())))
+	idIndex := strs.add(base64.StdEncoding.EncodeToString(idBuf[:]), 0, 0, 0)
+	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, idIndex)
 	return t | uint32(extendedDataOffset)
 }
 

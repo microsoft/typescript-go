@@ -27,8 +27,6 @@ const (
 	handlePrefixProject = 'p'
 	handlePrefixSymbol  = 's'
 	handlePrefixType    = 't'
-	handlePrefixFile    = 'f'
-	handlePrefixNode    = 'n'
 )
 
 func ProjectHandle(p *project.Project) Handle[project.Project] {
@@ -43,31 +41,34 @@ func TypeHandle(t *checker.Type) Handle[checker.Type] {
 	return createHandle[checker.Type](handlePrefixType, t.Id())
 }
 
-func FileHandle(file *ast.SourceFile) Handle[ast.SourceFile] {
-	return createHandle[ast.SourceFile](handlePrefixFile, ast.GetNodeId(file.AsNode()))
+// NodeHandleFrom creates a node handle from a node.
+// Format: pos.end.kind.path
+func NodeHandleFrom(node *ast.Node) Handle[ast.Node] {
+	sourceFile := ast.GetSourceFileOfNode(node)
+	return Handle[ast.Node](fmt.Sprintf("%d.%d.%d.%s", node.Pos(), node.End(), node.Kind, sourceFile.Path()))
 }
 
-func NodeHandle(node *ast.Node) Handle[ast.Node] {
-	fileHandle := FileHandle(ast.GetSourceFileOfNode(node))
-	return Handle[ast.Node](fmt.Sprintf("%s.%d.%d", fileHandle, node.Pos(), node.Kind))
-}
-
-func parseNodeHandle(handle Handle[ast.Node]) (Handle[ast.SourceFile], int, ast.Kind, error) {
-	parts := strings.SplitN(string(handle), ".", 3)
-	if len(parts) != 3 {
-		return "", 0, 0, fmt.Errorf("invalid node handle %q", handle)
+// parseNodeHandle parses a node handle into its components.
+// Format: pos.end.kind.fileName
+func parseNodeHandle(handle Handle[ast.Node]) (pos int, end int, kind ast.Kind, fileName string, err error) {
+	parts := strings.SplitN(string(handle), ".", 4)
+	if len(parts) != 4 {
+		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q", handle)
 	}
 
-	fileHandle := Handle[ast.SourceFile](parts[0])
-	pos, err := strconv.ParseInt(parts[1], 10, 32)
+	posInt, err := strconv.ParseInt(parts[0], 10, 32)
 	if err != nil {
-		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
+		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
 	}
-	kind, err := strconv.ParseInt(parts[2], 10, 16)
+	endInt, err := strconv.ParseInt(parts[1], 10, 32)
 	if err != nil {
-		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
+		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
 	}
-	return fileHandle, int(pos), ast.Kind(kind), nil
+	kindInt, err := strconv.ParseInt(parts[2], 10, 16)
+	if err != nil {
+		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
+	}
+	return int(posInt), int(endInt), ast.Kind(kindInt), parts[3], nil
 }
 
 func parseProjectHandle(handle Handle[project.Project]) tspath.Path {
@@ -81,6 +82,7 @@ func createHandle[T any](prefix rune, id any) Handle[T] {
 const (
 	MethodRelease Method = "release"
 
+	MethodInitialize               Method = "initialize"
 	MethodAdoptLSPState            Method = "adoptLSPState"
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodLoadProject              Method = "loadProject"
@@ -92,10 +94,37 @@ const (
 	MethodGetTypeOfSymbol          Method = "getTypeOfSymbol"
 	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
 	MethodGetSourceFile            Method = "getSourceFile"
+	MethodResolveName              Method = "resolveName"
 )
+
+// InitializeResponse is returned by the initialize method.
+type InitializeResponse struct {
+	// UseCaseSensitiveFileNames indicates whether the host file system is case-sensitive.
+	UseCaseSensitiveFileNames bool `json:"useCaseSensitiveFileNames"`
+	// CurrentDirectory is the server's current working directory.
+	CurrentDirectory string `json:"currentDirectory"`
+}
+
+// AdoptLSPStateResponse contains information about changes between snapshots
+// so clients can invalidate cached source files appropriately.
+type AdoptLSPStateResponse struct {
+	// RemovedProjects is a list of project handles that no longer exist.
+	RemovedProjects []Handle[project.Project] `json:"removedProjects,omitempty"`
+	// ProjectChanges maps project handles to their file changes.
+	ProjectChanges map[Handle[project.Project]]*ProjectChanges `json:"projectChanges,omitempty"`
+}
+
+// ProjectChanges describes file changes within a project.
+type ProjectChanges struct {
+	// ChangedFiles is a list of file paths whose content has changed.
+	ChangedFiles []tspath.Path `json:"changedFiles,omitempty"`
+	// RemovedFiles is a list of file paths that no longer exist in the project.
+	RemovedFiles []tspath.Path `json:"removedFiles,omitempty"`
+}
 
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodRelease:                  unmarshallerFor[string],
+	MethodInitialize:               noParams,
 	MethodAdoptLSPState:            noParams,
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
@@ -107,6 +136,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
 	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodResolveName:              unmarshallerFor[ResolveNameParams],
 }
 
 type ParseConfigFileParams struct {
@@ -122,6 +152,14 @@ type LoadProjectParams struct {
 	ConfigFileName string `json:"configFileName"`
 }
 
+// LoadProjectResponse is returned by loadProject and includes project info plus optional changes.
+type LoadProjectResponse struct {
+	*ProjectResponse
+	// Changes contains file changes if the project was previously loaded.
+	// This allows clients to invalidate cached source files.
+	Changes *ProjectChanges `json:"changes,omitempty"`
+}
+
 type GetDefaultProjectForFileParams struct {
 	FileName string `json:"fileName"`
 }
@@ -131,15 +169,34 @@ type ProjectResponse struct {
 	ConfigFileName  string                  `json:"configFileName"`
 	RootFiles       []string                `json:"rootFiles"`
 	CompilerOptions *core.CompilerOptions   `json:"compilerOptions"`
+	// ParseOptionsKey encodes the source-file-independent parse options for this project.
+	ParseOptionsKey string `json:"parseOptionsKey"`
 }
 
-func NewProjectResponse(project *project.Project) *ProjectResponse {
+func NewProjectResponse(p *project.Project) *ProjectResponse {
 	return &ProjectResponse{
-		Id:              ProjectHandle(project),
-		ConfigFileName:  project.Name(),
-		RootFiles:       project.CommandLine.FileNames(),
-		CompilerOptions: project.CommandLine.CompilerOptions(),
+		Id:              ProjectHandle(p),
+		ConfigFileName:  p.Name(),
+		RootFiles:       p.CommandLine.FileNames(),
+		CompilerOptions: p.CommandLine.CompilerOptions(),
+		ParseOptionsKey: computeProjectParseOptionsKey(p),
 	}
+}
+
+// computeProjectParseOptionsKey computes the source-file-independent part of the parse cache key.
+// Clients combine this with file-specific information (like the normalized path) for cache lookups.
+func computeProjectParseOptionsKey(p *project.Project) string {
+	opts := p.CommandLine.CompilerOptions()
+	sourceFileAffecting := opts.SourceFileAffecting()
+	// JSX indicator depends on Jsx option and ModuleDetection
+	jsxIndicator := opts.Jsx == core.JsxEmitReactJSX || opts.Jsx == core.JsxEmitReactJSXDev
+	// JSDocParsingMode is always ParseAll for in the API/LSP
+	jsdocMode := ast.JSDocParsingModeParseAll
+	return fmt.Sprintf("%d-%d-%d",
+		core.IfElse(sourceFileAffecting.BindInStrictMode, 1, 0),
+		core.IfElse(jsxIndicator, 1, 0),
+		jsdocMode,
+	)
 }
 
 type GetSymbolAtPositionParams struct {
@@ -165,19 +222,36 @@ type GetSymbolsAtLocationsParams struct {
 }
 
 type SymbolResponse struct {
-	Id         Handle[ast.Symbol] `json:"id"`
-	Name       string             `json:"name"`
-	Flags      uint32             `json:"flags"`
-	CheckFlags uint32             `json:"checkFlags"`
+	Id               Handle[ast.Symbol] `json:"id"`
+	Name             string             `json:"name"`
+	Flags            uint32             `json:"flags"`
+	CheckFlags       uint32             `json:"checkFlags"`
+	Declarations     []Handle[ast.Node] `json:"declarations,omitempty"`
+	ValueDeclaration Handle[ast.Node]   `json:"valueDeclaration,omitempty"`
 }
 
 func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
-	return &SymbolResponse{
+	resp := &SymbolResponse{
 		Id:         SymbolHandle(symbol),
 		Name:       symbol.Name,
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
 	}
+
+	// Add declarations
+	if len(symbol.Declarations) > 0 {
+		resp.Declarations = make([]Handle[ast.Node], len(symbol.Declarations))
+		for i, decl := range symbol.Declarations {
+			resp.Declarations[i] = NodeHandleFrom(decl)
+		}
+	}
+
+	// Add value declaration
+	if symbol.ValueDeclaration != nil {
+		resp.ValueDeclaration = NodeHandleFrom(symbol.ValueDeclaration)
+	}
+
+	return resp
 }
 
 type GetTypeOfSymbolParams struct {
@@ -205,6 +279,16 @@ func NewTypeData(t *checker.Type) *TypeResponse {
 type GetSourceFileParams struct {
 	Project  Handle[project.Project] `json:"project"`
 	FileName string                  `json:"fileName"`
+}
+
+type ResolveNameParams struct {
+	Project        Handle[project.Project] `json:"project"`
+	Name           string                  `json:"name"`
+	Location       Handle[ast.Node]        `json:"location,omitempty"`       // Optional: node handle for location context
+	FileName       string                  `json:"fileName,omitempty"`       // Optional: file for location context (alternative to Location)
+	Position       *uint32                 `json:"position,omitempty"`       // Optional: position in file for location context (with FileName)
+	Meaning        uint32                  `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
+	ExcludeGlobals bool                    `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.

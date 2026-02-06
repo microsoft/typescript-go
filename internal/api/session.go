@@ -11,7 +11,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -117,6 +119,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 	switch method {
 	case string(MethodRelease):
 		return s.handleRelease(ctx, parsed.(*string))
+	case string(MethodInitialize):
+		return s.handleInitialize(ctx)
 	case string(MethodAdoptLSPState):
 		return s.handleAdoptLSPState(ctx)
 	case string(MethodParseConfigFile):
@@ -139,6 +143,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodGetTypesOfSymbols):
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
+	case string(MethodResolveName):
+		return s.handleResolveName(ctx, parsed.(*ResolveNameParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -150,14 +156,94 @@ func (s *Session) HandleNotification(ctx context.Context, method string, params 
 	return nil
 }
 
+func (s *Session) handleInitialize(ctx context.Context) (*InitializeResponse, error) {
+	return &InitializeResponse{
+		UseCaseSensitiveFileNames: s.projectSession.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          s.projectSession.GetCurrentDirectory(),
+	}, nil
+}
+
 func (s *Session) handleAdoptLSPState(ctx context.Context) (any, error) {
+	oldSnapshot := s.snapshot
+	newSnapshot, newRelease := s.projectSession.Snapshot()
+
+	// Compute diff between old and new snapshots
+	diff := s.computeSnapshotDiff(oldSnapshot, newSnapshot)
+
+	// Update session state
 	releaseOldSnapshot := s.snapshotRelease
-	s.snapshot, s.snapshotRelease = s.projectSession.Snapshot()
+	s.snapshot, s.snapshotRelease = newSnapshot, newRelease
 	if releaseOldSnapshot != nil {
 		releaseOldSnapshot()
 	}
 
-	return nil, nil
+	return diff, nil
+}
+
+// computeSnapshotDiff computes the difference between two snapshots for client cache invalidation.
+func (s *Session) computeSnapshotDiff(oldSnapshot, newSnapshot *project.Snapshot) *AdoptLSPStateResponse {
+	if oldSnapshot == nil {
+		return nil
+	}
+
+	response := &AdoptLSPStateResponse{
+		RemovedProjects: []Handle[project.Project]{},
+		ProjectChanges:  make(map[Handle[project.Project]]*ProjectChanges),
+	}
+
+	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
+	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
+
+	collections.DiffOrderedMaps(
+		oldProjects,
+		newProjects,
+		func(key tspath.Path, newProj *project.Project) {
+			// Project was added
+		},
+		func(key tspath.Path, oldProj *project.Project) {
+			// Project was removed
+			response.RemovedProjects = append(response.RemovedProjects, ProjectHandle(oldProj))
+		},
+		func(key tspath.Path, oldProj, newProj *project.Project) {
+			// Project was changed
+			changes := computeProjectChanges(oldProj, newProj)
+			if changes != nil {
+				response.ProjectChanges[ProjectHandle(newProj)] = changes
+			}
+		},
+	)
+
+	return response
+}
+
+// computeProjectChanges computes file changes between two versions of a project.
+// Returns nil if there are no changes.
+func computeProjectChanges(oldProject, newProject *project.Project) *ProjectChanges {
+	oldFiles := oldProject.Program.FilesByPath()
+	newFiles := newProject.Program.FilesByPath()
+
+	changes := &ProjectChanges{}
+
+	core.DiffMaps(
+		oldFiles,
+		newFiles,
+		func(path tspath.Path, _ *ast.SourceFile) {
+			// File was added - no cache invalidation needed
+		},
+		func(path tspath.Path, _ *ast.SourceFile) {
+			// File was removed
+			changes.RemovedFiles = append(changes.RemovedFiles, path)
+		},
+		func(path tspath.Path, _, _ *ast.SourceFile) {
+			// File was modified
+			changes.ChangedFiles = append(changes.ChangedFiles, path)
+		},
+	)
+
+	if len(changes.ChangedFiles) == 0 && len(changes.RemovedFiles) == 0 {
+		return nil
+	}
+	return changes
 }
 
 // handleRelease releases a handle from the session's registries.
@@ -235,8 +321,16 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 }
 
 // handleLoadProject explicitly loads a TypeScript project from a config file.
-func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectParams) (*ProjectResponse, error) {
+func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectParams) (*LoadProjectResponse, error) {
 	configFileName := s.toAbsoluteFileName(params.ConfigFileName)
+
+	// Check if project was previously loaded to compute changes
+	var oldProject *project.Project
+	if s.snapshot != nil {
+		configFilePath := s.toPath(configFileName)
+		oldProject = s.snapshot.ProjectCollection.GetProjectByPath(configFilePath)
+	}
+
 	proj, snapshot, release, err := s.projectSession.OpenProject(ctx, configFileName)
 	if err != nil {
 		return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
@@ -248,7 +342,16 @@ func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectPara
 	}
 	s.snapshot, s.snapshotRelease = snapshot, release
 
-	return NewProjectResponse(proj), nil
+	response := &LoadProjectResponse{
+		ProjectResponse: NewProjectResponse(proj),
+	}
+
+	// Compute changes if project was previously loaded
+	if oldProject != nil {
+		response.Changes = computeProjectChanges(oldProject, proj)
+	}
+
+	return response, nil
 }
 
 // handleGetSourceFile returns a source file from a project.
@@ -270,8 +373,7 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 	}
 
 	// Encode the source file to binary format
-	handle := FileHandle(sourceFile)
-	data, err := encoder.EncodeSourceFile(sourceFile, string(handle))
+	data, err := encoder.EncodeSourceFile(sourceFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
@@ -451,6 +553,39 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 	return results, nil
 }
 
+// handleResolveName resolves a name to a symbol at a given location.
+func (s *Session) handleResolveName(ctx context.Context, params *ResolveNameParams) (*SymbolResponse, error) {
+	program, err := s.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	// Resolve location node - either from node handle or from fileName+position
+	var location *ast.Node
+	if params.Location != "" {
+		location, err = s.resolveNodeHandle(program, params.Location)
+		if err != nil {
+			return nil, err
+		}
+	} else if params.FileName != "" && params.Position != nil {
+		sourceFile := program.GetSourceFile(params.FileName)
+		if sourceFile == nil {
+			return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, params.FileName)
+		}
+		location = astnav.GetTouchingPropertyName(sourceFile, int(*params.Position))
+	}
+
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	symbol := checker.ResolveName(params.Name, location, ast.SymbolFlags(params.Meaning), params.ExcludeGlobals)
+	if symbol == nil {
+		return nil, nil
+	}
+
+	return s.registerSymbol(symbol), nil
+}
+
 // getProgram is a helper to get a program from a project handle.
 func (s *Session) getProgram(projectHandle Handle[project.Project]) (*compiler.Program, error) {
 	projectName := parseProjectHandle(projectHandle)
@@ -468,37 +603,34 @@ func (s *Session) getProgram(projectHandle Handle[project.Project]) (*compiler.P
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.
-// Node handles encode: fileHandle.pos.kind
+// Node handles encode: pos.end.kind.fileName
 func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast.Node]) (*ast.Node, error) {
-	fileHandle, pos, kind, err := parseNodeHandle(handle)
+	pos, end, kind, fileName, err := parseNodeHandle(handle)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}
 
-	// Find the source file - for now we iterate; could optimize with a map
-	var sourceFile *ast.SourceFile
-	for _, sf := range program.GetSourceFiles() {
-		if FileHandle(sf) == fileHandle {
-			sourceFile = sf
-			break
-		}
-	}
+	// Resolve relative path to absolute
+	absFileName := s.toAbsoluteFileName(fileName)
+
+	// Find the source file by name
+	sourceFile := program.GetSourceFile(absFileName)
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found for handle %s", ErrClientError, fileHandle)
+		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, fileName)
 	}
 
-	// Find the node at the position with the expected kind
+	// Find the node at the position with the expected kind and end
 	node := ast.GetNodeAtPosition(sourceFile, pos, true /*includeJSDoc*/)
 	if node == nil {
 		return nil, nil
 	}
 
-	// Verify the kind matches
-	if node.Kind != kind {
+	// Verify the kind and end match
+	if node.Kind != kind || node.End() != end {
 		// Try to find the exact node by walking children
 		var found *ast.Node
 		node.ForEachChild(func(child *ast.Node) bool {
-			if child.Pos() == pos && child.Kind == kind {
+			if child.Pos() == pos && child.End() == end && child.Kind == kind {
 				found = child
 				return true
 			}
@@ -507,7 +639,7 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 		if found != nil {
 			return found, nil
 		}
-		// Return the node we found even if kind doesn't match exactly
+		// Return the node we found even if it doesn't match exactly
 	}
 
 	return node, nil
