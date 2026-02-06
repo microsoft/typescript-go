@@ -47,7 +47,7 @@ func BenchmarkPackageJSON(b *testing.B) {
 			})
 		})
 
-		b.Run("ParseJSONText", func(b *testing.B) {
+		b.Run("Parsejson", func(b *testing.B) {
 			b.Run(f.Name(), func(b *testing.B) {
 				fileName := "/" + f.Name()
 				for b.Loop() {

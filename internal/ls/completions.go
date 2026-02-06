@@ -21,7 +21,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
-	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
