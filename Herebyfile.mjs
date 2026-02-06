@@ -1518,7 +1518,7 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease) {
+        if (!options.forRelease || !options.setPrerelease) {
             throw new Error("native-preview:release requires --forRelease and --setPrerelease flags. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();
