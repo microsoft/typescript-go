@@ -2606,6 +2606,11 @@ func formatCallHierarchyItemSpan(
 	prefix string,
 	closingPrefix string,
 ) {
+	if file == nil {
+		result.WriteString(fmt.Sprintf("%s╭ <external>:%d:%d-%d:%d\n", prefix, span.Start.Line+1, span.Start.Character+1, span.End.Line+1, span.End.Character+1))
+		result.WriteString(closingPrefix + "╰\n")
+		return
+	}
 	startLc := span.Start
 	endLc := span.End
 	startPos := f.converters.LineAndCharacterToPosition(file, span.Start)
@@ -2721,6 +2726,172 @@ func formatCallHierarchyItemSpans(
 			closingPrefix = trailingPrefix
 		}
 		formatCallHierarchyItemSpan(f, file, result, span, prefix, closingPrefix)
+	}
+}
+
+// VerifyBaselineTypeHierarchy generates a baseline for the type hierarchy at the current position.
+func (f *FourslashTest) VerifyBaselineTypeHierarchy(t *testing.T) {
+	fileName := f.activeFilename
+	position := f.currentCaretPosition
+
+	params := &lsproto.TypeHierarchyPrepareParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(fileName),
+		},
+		Position: position,
+	}
+
+	prepareResult := sendRequest(t, f, lsproto.TextDocumentPrepareTypeHierarchyInfo, params)
+	if prepareResult.TypeHierarchyItems == nil || len(*prepareResult.TypeHierarchyItems) == 0 {
+		f.addResultToBaseline(t, typeHierarchyCmd, "No type hierarchy items available")
+		return
+	}
+
+	var result strings.Builder
+
+	for _, typeHierarchyItem := range *prepareResult.TypeHierarchyItems {
+		seen := make(map[typeHierarchyItemKey]bool)
+		itemFileName := typeHierarchyItem.Uri.FileName()
+		script := f.getScriptInfo(itemFileName)
+		formatTypeHierarchyItem(t, f, script, &result, *typeHierarchyItem, typeHierarchyItemDirectionRoot, seen, "")
+	}
+
+	f.addResultToBaseline(t, typeHierarchyCmd, strings.TrimSuffix(result.String(), "\n"))
+}
+
+type typeHierarchyItemDirection int
+
+const (
+	typeHierarchyItemDirectionRoot typeHierarchyItemDirection = iota
+	typeHierarchyItemDirectionSupertypes
+	typeHierarchyItemDirectionSubtypes
+)
+
+type typeHierarchyItemKey struct {
+	uri       lsproto.DocumentUri
+	range_    lsproto.Range
+	direction typeHierarchyItemDirection
+}
+
+func formatTypeHierarchyItem(
+	t *testing.T,
+	f *FourslashTest,
+	file *scriptInfo,
+	result *strings.Builder,
+	typeHierarchyItem lsproto.TypeHierarchyItem,
+	direction typeHierarchyItemDirection,
+	seen map[typeHierarchyItemKey]bool,
+	prefix string,
+) {
+	key := typeHierarchyItemKey{
+		uri:       typeHierarchyItem.Uri,
+		range_:    typeHierarchyItem.Range,
+		direction: direction,
+	}
+	alreadySeen := seen[key]
+	seen[key] = true
+
+	type supertypesResult struct {
+		skip   bool
+		seen   bool
+		values []*lsproto.TypeHierarchyItem
+	}
+	type subtypesResult struct {
+		skip   bool
+		seen   bool
+		values []*lsproto.TypeHierarchyItem
+	}
+
+	var supertypes supertypesResult
+	var subtypes subtypesResult
+
+	if direction == typeHierarchyItemDirectionSubtypes {
+		supertypes.skip = true
+	} else if alreadySeen {
+		supertypes.seen = true
+	} else {
+		supertypesParams := &lsproto.TypeHierarchySupertypesParams{
+			Item: &typeHierarchyItem,
+		}
+		supertypesResponse := sendRequest(t, f, lsproto.TypeHierarchySupertypesInfo, supertypesParams)
+		if supertypesResponse.TypeHierarchyItems != nil {
+			supertypes.values = *supertypesResponse.TypeHierarchyItems
+		}
+	}
+
+	if direction == typeHierarchyItemDirectionSupertypes {
+		subtypes.skip = true
+	} else if alreadySeen {
+		subtypes.seen = true
+	} else {
+		subtypesParams := &lsproto.TypeHierarchySubtypesParams{
+			Item: &typeHierarchyItem,
+		}
+		subtypesResponse := sendRequest(t, f, lsproto.TypeHierarchySubtypesInfo, subtypesParams)
+		if subtypesResponse.TypeHierarchyItems != nil {
+			subtypes.values = *subtypesResponse.TypeHierarchyItems
+		}
+	}
+
+	trailingPrefix := prefix
+	result.WriteString(fmt.Sprintf("%s╭ name: %s\n", prefix, typeHierarchyItem.Name))
+	result.WriteString(fmt.Sprintf("%s├ kind: %s\n", prefix, symbolKindToLowercase(typeHierarchyItem.Kind)))
+	if typeHierarchyItem.Detail != nil && *typeHierarchyItem.Detail != "" {
+		result.WriteString(fmt.Sprintf("%s├ detail: %s\n", prefix, *typeHierarchyItem.Detail))
+	}
+	result.WriteString(fmt.Sprintf("%s├ file: %s\n", prefix, typeHierarchyItem.Uri.FileName()))
+	result.WriteString(prefix + "├ span:\n")
+	formatCallHierarchyItemSpan(f, file, result, typeHierarchyItem.Range, prefix+"│ ", prefix+"│ ")
+	result.WriteString(prefix + "├ selectionSpan:\n")
+	formatCallHierarchyItemSpan(f, file, result, typeHierarchyItem.SelectionRange, prefix+"│ ", prefix+"│ ")
+
+	// Handle supertypes
+	if supertypes.seen {
+		if subtypes.skip {
+			result.WriteString(trailingPrefix + "╰ supertypes: ...\n")
+		} else {
+			result.WriteString(prefix + "├ supertypes: ...\n")
+		}
+	} else if !supertypes.skip {
+		if len(supertypes.values) == 0 {
+			if subtypes.skip {
+				result.WriteString(trailingPrefix + "╰ supertypes: none\n")
+			} else {
+				result.WriteString(prefix + "├ supertypes: none\n")
+			}
+		} else {
+			result.WriteString(prefix + "├ supertypes:\n")
+			for i, supertype := range supertypes.values {
+				supertypeFileName := supertype.Uri.FileName()
+				supertypeFile := f.getScriptInfo(supertypeFileName)
+				itemTrailingPrefix := prefix + "│ ╰ "
+				if i < len(supertypes.values)-1 {
+					itemTrailingPrefix = prefix + "│ │ "
+				} else if !subtypes.skip && (!subtypes.seen || len(subtypes.values) > 0) {
+					itemTrailingPrefix = prefix + "│ │ "
+				}
+				result.WriteString(prefix + "│ ╭ supertype:\n")
+				formatTypeHierarchyItem(t, f, supertypeFile, result, *supertype, typeHierarchyItemDirectionSupertypes, seen, prefix+"│ │ ")
+				_ = itemTrailingPrefix // Used for formatting context
+			}
+		}
+	}
+
+	// Handle subtypes
+	if subtypes.seen {
+		result.WriteString(trailingPrefix + "╰ subtypes: ...\n")
+	} else if !subtypes.skip {
+		if len(subtypes.values) == 0 {
+			result.WriteString(trailingPrefix + "╰ subtypes: none\n")
+		} else {
+			result.WriteString(prefix + "├ subtypes:\n")
+			for _, subtype := range subtypes.values {
+				subtypeFileName := subtype.Uri.FileName()
+				subtypeFile := f.getScriptInfo(subtypeFileName)
+				result.WriteString(prefix + "│ ╭ subtype:\n")
+				formatTypeHierarchyItem(t, f, subtypeFile, result, *subtype, typeHierarchyItemDirectionSubtypes, seen, prefix+"│ │ ")
+			}
+		}
 	}
 }
 

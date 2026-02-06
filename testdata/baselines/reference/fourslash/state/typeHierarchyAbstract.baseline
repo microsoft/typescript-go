@@ -1,0 +1,421 @@
+UseCaseSensitiveFileNames: true
+//// [/a.ts] *new* 
+abstract class Shape {
+    abstract area(): number;
+    abstract perimeter(): number;
+}
+
+abstract class NamedShape extends Shape {
+    constructor(public name: string) {
+        super();
+    }
+    describe(): string {
+        return "shape";
+    }
+}
+
+class Rectangle extends NamedShape {
+    constructor(name: string, public width: number, public height: number) {
+        super(name);
+    }
+    area(): number {
+        return this.width * this.height;
+    }
+    perimeter(): number {
+        return 2 * (this.width + this.height);
+    }
+}
+
+class Circle extends NamedShape {
+    constructor(name: string, public radius: number) {
+        super(name);
+    }
+    area(): number {
+        return Math.PI * this.radius ** 2;
+    }
+    perimeter(): number {
+        return 2 * Math.PI * this.radius;
+    }
+}
+
+class Square extends Rectangle {
+    constructor(name: string, side: number) {
+        super(name, side, side);
+    }
+}
+
+
+{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts",
+      "languageId": "typescript",
+      "version": 0,
+      "text": "abstract class Shape {\n    abstract area(): number;\n    abstract perimeter(): number;\n}\n\nabstract class NamedShape extends Shape {\n    constructor(public name: string) {\n        super();\n    }\n    describe(): string {\n        return \"shape\";\n    }\n}\n\nclass Rectangle extends NamedShape {\n    constructor(name: string, public width: number, public height: number) {\n        super(name);\n    }\n    area(): number {\n        return this.width * this.height;\n    }\n    perimeter(): number {\n        return 2 * (this.width + this.height);\n    }\n}\n\nclass Circle extends NamedShape {\n    constructor(name: string, public radius: number) {\n        super(name);\n    }\n    area(): number {\n        return Math.PI * this.radius ** 2;\n    }\n    perimeter(): number {\n        return 2 * Math.PI * this.radius;\n    }\n}\n\nclass Square extends Rectangle {\n    constructor(name: string, side: number) {\n        super(name, side, side);\n    }\n}"
+    }
+  }
+}
+
+Projects::
+  [/dev/null/inferred] *new*
+    /a.ts  
+Open Files::
+  [/a.ts] *new*
+    /dev/null/inferred  (default) 
+Config File Names::
+  [/a.ts] *new*
+    NearestConfigFileName: 
+
+{
+  "method": "textDocument/prepareTypeHierarchy",
+  "params": {
+    "textDocument": {
+      "uri": "file:///a.ts"
+    },
+    "position": {
+      "line": 0,
+      "character": 15
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/supertypes",
+  "params": {
+    "item": {
+      "name": "Shape",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 15
+        },
+        "end": {
+          "line": 0,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Shape",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 3,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 0,
+          "character": 15
+        },
+        "end": {
+          "line": 0,
+          "character": 20
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "NamedShape",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 0
+        },
+        "end": {
+          "line": 12,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 5,
+          "character": 15
+        },
+        "end": {
+          "line": 5,
+          "character": 25
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Circle",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 26,
+          "character": 0
+        },
+        "end": {
+          "line": 36,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 26,
+          "character": 6
+        },
+        "end": {
+          "line": 26,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Rectangle",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 0
+        },
+        "end": {
+          "line": 24,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 14,
+          "character": 6
+        },
+        "end": {
+          "line": 14,
+          "character": 15
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+{
+  "method": "typeHierarchy/subtypes",
+  "params": {
+    "item": {
+      "name": "Square",
+      "kind": 5,
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 38,
+          "character": 0
+        },
+        "end": {
+          "line": 42,
+          "character": 1
+        }
+      },
+      "selectionRange": {
+        "start": {
+          "line": 38,
+          "character": 6
+        },
+        "end": {
+          "line": 38,
+          "character": 12
+        }
+      },
+      "data": {}
+    }
+  }
+}
+
+
+
+
+// === Type Hierarchy ===
+╭ name: Shape
+├ kind: class
+├ file: /a.ts
+├ span:
+│ ╭ /a.ts:1:1-4:2
+│ │ 1: abstract class Shape {
+│ │    ^^^^^^^^^^^^^^^^^^^^^^
+│ │ 2:     abstract area(): number;
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 3:     abstract perimeter(): number;
+│ │    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ 4: }
+│ │    ^
+│ ╰
+├ selectionSpan:
+│ ╭ /a.ts:1:16-1:21
+│ │ 1: abstract class Shape {
+│ │                   ^^^^^
+│ ╰
+├ supertypes: none
+├ subtypes:
+│ ╭ subtype:
+│ │ ╭ name: NamedShape
+│ │ ├ kind: class
+│ │ ├ file: /a.ts
+│ │ ├ span:
+│ │ │ ╭ /a.ts:6:1-13:2
+│ │ │ │  6: abstract class NamedShape extends Shape {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │  7:     constructor(public name: string) {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │  8:         super();
+│ │ │ │     ^^^^^^^^^^^^^^^^
+│ │ │ │  9:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 10:     describe(): string {
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 11:         return "shape";
+│ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ 12:     }
+│ │ │ │     ^^^^^
+│ │ │ │ 13: }
+│ │ │ │     ^
+│ │ │ ╰
+│ │ ├ selectionSpan:
+│ │ │ ╭ /a.ts:6:16-6:26
+│ │ │ │ 6: abstract class NamedShape extends Shape {
+│ │ │ │                   ^^^^^^^^^^
+│ │ │ ╰
+│ │ ├ subtypes:
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: Circle
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:27:1-37:2
+│ │ │ │ │ │ 27: class Circle extends NamedShape {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 28:     constructor(name: string, public radius: number) {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 29:         super(name);
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 30:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 31:     area(): number {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 32:         return Math.PI * this.radius ** 2;
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 33:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 34:     perimeter(): number {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 35:         return 2 * Math.PI * this.radius;
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 36:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 37: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:27:7-27:13
+│ │ │ │ │ │ 27: class Circle extends NamedShape {
+│ │ │ │ │ │           ^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ╰ subtypes: none
+│ │ │ ╭ subtype:
+│ │ │ │ ╭ name: Rectangle
+│ │ │ │ ├ kind: class
+│ │ │ │ ├ file: /a.ts
+│ │ │ │ ├ span:
+│ │ │ │ │ ╭ /a.ts:15:1-25:2
+│ │ │ │ │ │ 15: class Rectangle extends NamedShape {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 16:     constructor(name: string, public width: number, public height: number) {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 17:         super(name);
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 18:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 19:     area(): number {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 20:         return this.width * this.height;
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 21:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 22:     perimeter(): number {
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 23:         return 2 * (this.width + this.height);
+│ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ 24:     }
+│ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ 25: }
+│ │ │ │ │ │     ^
+│ │ │ │ │ ╰
+│ │ │ │ ├ selectionSpan:
+│ │ │ │ │ ╭ /a.ts:15:7-15:16
+│ │ │ │ │ │ 15: class Rectangle extends NamedShape {
+│ │ │ │ │ │           ^^^^^^^^^
+│ │ │ │ │ ╰
+│ │ │ │ ├ subtypes:
+│ │ │ │ │ ╭ subtype:
+│ │ │ │ │ │ ╭ name: Square
+│ │ │ │ │ │ ├ kind: class
+│ │ │ │ │ │ ├ file: /a.ts
+│ │ │ │ │ │ ├ span:
+│ │ │ │ │ │ │ ╭ /a.ts:39:1-43:2
+│ │ │ │ │ │ │ │ 39: class Square extends Rectangle {
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 40:     constructor(name: string, side: number) {
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 41:         super(name, side, side);
+│ │ │ │ │ │ │ │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+│ │ │ │ │ │ │ │ 42:     }
+│ │ │ │ │ │ │ │     ^^^^^
+│ │ │ │ │ │ │ │ 43: }
+│ │ │ │ │ │ │ │     ^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ├ selectionSpan:
+│ │ │ │ │ │ │ ╭ /a.ts:39:7-39:13
+│ │ │ │ │ │ │ │ 39: class Square extends Rectangle {
+│ │ │ │ │ │ │ │           ^^^^^^
+│ │ │ │ │ │ │ ╰
+│ │ │ │ │ │ ╰ subtypes: none

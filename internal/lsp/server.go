@@ -579,6 +579,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeLensInfo, (*Server).handleCodeLens)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareTypeHierarchyInfo, (*Server).handlePrepareTypeHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
@@ -592,6 +593,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CallHierarchyIncomingCallsInfo, (*Server).handleCallHierarchyIncomingCalls)
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
+	registerRequestHandler(handlers, lsproto.TypeHierarchySupertypesInfo, (*Server).handleTypeHierarchySupertypes)
+	registerRequestHandler(handlers, lsproto.TypeHierarchySubtypesInfo, (*Server).handleTypeHierarchySubtypes)
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
@@ -924,6 +927,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: ptrTo(true),
 			},
+			TypeHierarchyProvider: &lsproto.BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
 		},
 	}
 
@@ -1253,6 +1259,38 @@ func (s *Server) handleCallHierarchyOutgoingCalls(
 		return lsproto.CallHierarchyOutgoingCallsOrNull{}, err
 	}
 	return languageService.ProvideCallHierarchyOutgoingCalls(ctx, params.Item)
+}
+
+func (s *Server) handlePrepareTypeHierarchy(
+	ctx context.Context,
+	languageService *ls.LanguageService,
+	params *lsproto.TypeHierarchyPrepareParams,
+) (lsproto.TypeHierarchyPrepareResponse, error) {
+	return languageService.ProvidePrepareTypeHierarchy(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handleTypeHierarchySupertypes(
+	ctx context.Context,
+	params *lsproto.TypeHierarchySupertypesParams,
+	_ *lsproto.RequestMessage,
+) (lsproto.TypeHierarchySupertypesResponse, error) {
+	languageService, err := s.session.GetLanguageService(ctx, params.Item.Uri)
+	if err != nil {
+		return lsproto.TypeHierarchyItemsOrNull{}, err
+	}
+	return languageService.ProvideTypeHierarchySupertypes(ctx, params.Item)
+}
+
+func (s *Server) handleTypeHierarchySubtypes(
+	ctx context.Context,
+	params *lsproto.TypeHierarchySubtypesParams,
+	reqMsg *lsproto.RequestMessage,
+) (lsproto.TypeHierarchySubtypesResponse, error) {
+	defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.Item.Uri, reqMsg)
+	if err != nil {
+		return lsproto.TypeHierarchyItemsOrNull{}, err
+	}
+	return defaultLs.ProvideTypeHierarchySubtypes(ctx, params.Item, orchestrator)
 }
 
 // !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support

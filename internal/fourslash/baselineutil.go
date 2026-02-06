@@ -37,6 +37,7 @@ const (
 	smartSelectionCmd           baselineCommand = "Smart Selection"
 	codeLensesCmd               baselineCommand = "Code Lenses"
 	documentSymbolsCmd          baselineCommand = "Document Symbols"
+	typeHierarchyCmd            baselineCommand = "Type Hierarchy"
 )
 
 type baselineCommand string
@@ -77,6 +78,8 @@ func getBaselineExtension(command baselineCommand) string {
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
+	case typeHierarchyCmd:
+		return "typeHierarchy.txt"
 	case autoImportsCmd:
 		return "baseline.md"
 	default:
@@ -107,6 +110,20 @@ func (f *FourslashTest) getBaselineOptions(command baselineCommand, testPath str
 				s = strings.ReplaceAll(s, "/tests/cases/fourslash/server/", "/")
 				s = strings.ReplaceAll(s, "/tests/cases/fourslash/", "/")
 				// SymbolKind enum differences between Strada and tsgo
+				s = strings.ReplaceAll(s, "kind: getter", "kind: property")
+				s = strings.ReplaceAll(s, "kind: script", "kind: file")
+				return s
+			},
+		}
+	case typeHierarchyCmd:
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				// TypeScript baselines have "/tests/cases/fourslash/" prefix in file paths
+				s = strings.ReplaceAll(s, "/tests/cases/fourslash/server/", "/")
+				s = strings.ReplaceAll(s, "/tests/cases/fourslash/", "/")
+				// SymbolKind enum differences
 				s = strings.ReplaceAll(s, "kind: getter", "kind: property")
 				s = strings.ReplaceAll(s, "kind: script", "kind: file")
 				return s
