@@ -361,6 +361,7 @@ jobs:
     if: ${{ always() }}
     needs:
       - build
+      - release-build
       - extension
       - format
       - generate
