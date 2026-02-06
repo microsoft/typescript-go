@@ -124,9 +124,6 @@ func getOrganizeImportsActionTitle(kind lsproto.CodeActionKind) string {
 
 // getOrganizeImportsActionsForKind returns the organize imports code action kinds that should be
 // returned for the given requested kind.
-// When there's an exact match, only that action is returned to avoid conflicts when the editor
-// applies multiple matching actions (e.g., on save with editor.codeActionsOnSave).
-// When the requested kind is a parent prefix (e.g., "source"), all matching sub-actions are returned.
 func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []lsproto.CodeActionKind {
 	organizeImportsKinds := []lsproto.CodeActionKind{
 		lsproto.CodeActionKindSourceOrganizeImports,
@@ -141,12 +138,8 @@ func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []ls
 		}
 	}
 
-	// If there's an exact match, return only that to avoid conflicts when
-	// the editor applies multiple matching actions (e.g., on save)
-	for _, kind := range result {
-		if kind == requestedKind {
-			return []lsproto.CodeActionKind{requestedKind}
-		}
+	if slices.Contains(result, requestedKind) {
+		return []lsproto.CodeActionKind{requestedKind}
 	}
 
 	return result
