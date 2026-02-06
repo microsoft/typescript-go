@@ -7,10 +7,12 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -185,9 +187,13 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 		// with different casing on a case-insensitive FS.
 		fsFromMap := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
 		fs := bundled.WrapFS(fsFromMap)
+		pnpApi := pnp.InitPnpApi(fs, "/")
+		if pnpApi != nil {
+			fs = pnpvfs.From(fs)
+		}
 
 		// Minimal ParseConfigHost implementation.
-		h := &testParseConfigHost{fs: fs, cwd: "/"}
+		h := &testParseConfigHost{fs: fs, cwd: "/", pnpApi: pnpApi}
 		cmd, diags := tsoptions.GetParsedCommandLineOfConfigFile("/project/tsconfig.json", nil, nil, h, nil /*extendedConfigCache*/)
 		assert.Equal(t, len(diags), 0)
 		assert.Assert(t, cmd != nil)
@@ -299,10 +305,13 @@ func TestExtendedConfigCacheRefCounting(t *testing.T) {
 }
 
 type testParseConfigHost struct {
-	fs  vfs.FS
-	cwd string
+	fs     vfs.FS
+	cwd    string
+	pnpApi *pnp.PnpApi
 }
 
 func (h *testParseConfigHost) FS() vfs.FS { return h.fs }
 
 func (h *testParseConfigHost) GetCurrentDirectory() string { return h.cwd }
+
+func (h *testParseConfigHost) PnpApi() *pnp.PnpApi { return h.pnpApi }

@@ -47,6 +47,7 @@ export class Client {
         this.documentSelector = [
             ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
             ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
+            ...jsTsLanguageModes.map(language => ({ scheme: "zip", language })),
         ];
         this.clientOptions = {
             documentSelector: this.documentSelector,

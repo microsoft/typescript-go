@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -209,6 +210,11 @@ func (s *Session) FS() vfs.FS {
 // GetCurrentDirectory implements module.ResolutionHost
 func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
+}
+
+// PnpApi implements module.ResolutionHost
+func (s *Session) PnpApi() *pnp.PnpApi {
+	return s.snapshot.PnpApi()
 }
 
 // Gets copy of current configuration
