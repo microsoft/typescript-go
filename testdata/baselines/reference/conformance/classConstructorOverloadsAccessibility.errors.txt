@@ -42,3 +42,4 @@ classConstructorOverloadsAccessibility.ts(11,2): error TS2385: Overload signatur
     		
     	}
     }
+    
