@@ -14822,13 +14822,16 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
 					if tsExtension == "" {
-						panic("should be able to extract TS extension from string that passes IsDeclarationFileName")
+						// Skip error reporting if we can't extract a TS extension from the module reference.
+						// This can happen when a wildcard pattern matches a TS extension that's not at the
+						// end of the module specifier, e.g., import "#/foo.ts.omg" through "#/*.omg": "./src/*"
+					} else {
+						c.error(
+							errorNode,
+							diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
+							tsExtension,
+						)
 					}
-					c.error(
-						errorNode,
-						diagnostics.An_import_path_can_only_end_with_a_0_extension_when_allowImportingTsExtensions_is_enabled,
-						tsExtension,
-					)
 				}
 			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
 				location.Flags&ast.NodeFlagsAmbient == 0 &&

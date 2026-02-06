@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/packageJsonImportsWildcardMatchesTsExtension.ts] ////
+
+=== src/foo.ts ===
+export function hello() {
+>hello : () => string
+
+    return "world";
+>"world" : "world"
+}
+
+=== src/index.ts ===
+import { hello } from "#/foo.ts.omg";
+>hello : () => string
+
+hello();
+>hello() : string
+>hello : () => string
+
