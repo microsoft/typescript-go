@@ -62,11 +62,16 @@ func (l *lazyValue[T]) getValue(compute func() *T) *T {
 	return l.value
 }
 
-func (l *lazyValue[T]) tryGetValue() (*T, bool) {
-	if l.initialized.Load() {
-		return l.value, true
+func (l *lazyValue[T]) tryReuse(from *lazyValue[T]) {
+	if from.initialized.Load() {
+		l.value = from.value
+		l.initialized.Store(true)
 	}
-	return nil, false
+}
+
+type packageNamesInfo struct {
+	resolved   *collections.Set[string]
+	unresolved *collections.Set[string]
 }
 
 type Program struct {
@@ -95,9 +100,7 @@ type Program struct {
 	knownSymlinks     lazyValue[symlinks.KnownSymlinks]
 
 	// Used by auto-imports
-	packageNamesOnce       sync.Once
-	resolvedPackageNames   *collections.Set[string]
-	unresolvedPackageNames *collections.Set[string]
+	packageNames lazyValue[packageNamesInfo]
 
 	// Used by workspace/symbol
 	hasTSFileOnce sync.Once
@@ -278,9 +281,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		return NewProgram(newOpts), false
 	}
 	// TODO: reverify compiler options when config has changed?
-	unresolvedImports, unresolvedImportsInitialized := p.unresolvedImports.tryGetValue()
-	knownSymlinks, knownSymlinksInitialized := p.knownSymlinks.tryGetValue()
-
 	result := &Program{
 		opts:                        newOpts,
 		comparePathsOptions:         p.comparePathsOptions,
@@ -288,17 +288,10 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
-		unresolvedImports: lazyValue[collections.Set[string]]{
-			value:       unresolvedImports,
-			initialized: unresolvedImportsInitialized,
-		},
-		resolvedPackageNames:   p.resolvedPackageNames,
-		unresolvedPackageNames: p.unresolvedPackageNames,
-		knownSymlinks: lazyValue[symlinks.KnownSymlinks]{
-			value:       knownSymlinks,
-			initialized: knownSymlinksInitialized,
-		},
 	}
+	result.unresolvedImports.tryReuse(&p.unresolvedImports)
+	result.knownSymlinks.tryReuse(&p.knownSymlinks)
+	result.packageNames.tryReuse(&p.packageNames)
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
 	result.files = slices.Clone(result.files)
@@ -1709,62 +1702,58 @@ func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmi
 }
 
 func (p *Program) ResolvedPackageNames() *collections.Set[string] {
-	p.collectPackageNames()
-	return p.resolvedPackageNames
+	return p.collectPackageNames().resolved
 }
 
 func (p *Program) UnresolvedPackageNames() *collections.Set[string] {
-	p.collectPackageNames()
-	return p.unresolvedPackageNames
+	return p.collectPackageNames().unresolved
 }
 
-func (p *Program) collectPackageNames() {
-	p.packageNamesOnce.Do(func() {
-		if p.resolvedPackageNames == nil {
-			p.resolvedPackageNames = &collections.Set[string]{}
-			p.unresolvedPackageNames = &collections.Set[string]{}
-			for _, file := range p.files {
-				if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
-					// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
-					// as root files, which would not pass IsSourceFileFromExternalLibrary.
+func (p *Program) collectPackageNames() *packageNamesInfo {
+	return p.packageNames.getValue(func() *packageNamesInfo {
+		packageNames := &packageNamesInfo{&collections.Set[string]{}, &collections.Set[string]{}}
+		for _, file := range p.files {
+			if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
+				// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
+				// as root files, which would not pass IsSourceFileFromExternalLibrary.
+				continue
+			}
+			for _, imp := range file.Imports() {
+				if tspath.IsExternalModuleNameRelative(imp.Text()) {
 					continue
 				}
-				for _, imp := range file.Imports() {
-					if tspath.IsExternalModuleNameRelative(imp.Text()) {
-						continue
-					}
-					if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
-						key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
-						if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
-							if !resolvedModule.IsExternalLibraryImport {
-								continue
-							}
-							// Priority order for getting package name:
-							// 1. PackageId.Name (requires both name and version in package.json)
-							name := resolvedModule.PackageId.Name
-							if name == "" {
-								// 2. GetPackageScopeForPath - get name from package.json in the package directory
-								if packageScope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); packageScope != nil && packageScope.Exists() {
-									if scopeName, ok := packageScope.Contents.Name.GetValue(); ok {
-										name = scopeName
-									}
-								}
-							}
-							if name == "" {
-								// 3. GetPackageNameFromDirectory - extract from node_modules path
-								name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
-							}
-							// 4. If all fail, don't add empty string
-							if name != "" {
-								p.resolvedPackageNames.Add(name)
-							}
+				if resolvedModules, ok := p.resolvedModules[file.Path()]; ok {
+					key := module.ModeAwareCacheKey{Name: imp.Text(), Mode: p.GetModeForUsageLocation(file, imp)}
+					if resolvedModule, ok := resolvedModules[key]; ok && resolvedModule.IsResolved() {
+						if !resolvedModule.IsExternalLibraryImport {
 							continue
 						}
+						// Priority order for getting package name:
+						// 1. PackageId.Name (requires both name and version in package.json)
+						name := resolvedModule.PackageId.Name
+						if name == "" {
+							// 2. GetPackageScopeForPath - get name from package.json in the package directory
+							if packageScope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); packageScope != nil && packageScope.Exists() {
+								if scopeName, ok := packageScope.Contents.Name.GetValue(); ok {
+									name = scopeName
+								}
+							}
+						}
+						if name == "" {
+							// 3. GetPackageNameFromDirectory - extract from node_modules path
+							name = modulespecifiers.GetPackageNameFromDirectory(resolvedModule.ResolvedFileName)
+						}
+						// 4. If all fail, don't add empty string
+						if name != "" {
+							packageNames.resolved.Add(name)
+						}
+						continue
 					}
-					p.unresolvedPackageNames.Add(imp.Text())
 				}
+				packageNames.unresolved.Add(imp.Text())
 			}
 		}
+		return packageNames
 	})
 }
 
