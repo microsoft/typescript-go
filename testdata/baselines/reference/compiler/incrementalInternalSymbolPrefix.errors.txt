@@ -1,0 +1,29 @@
+incrementalInternalSymbolPrefix.ts(10,5): error TS2783: 'length' is specified more than once, so this usage will be overwritten.
+incrementalInternalSymbolPrefix.ts(11,5): error TS2783: 'þ@iterator@13' is specified more than once, so this usage will be overwritten.
+
+
+==== incrementalInternalSymbolPrefix.ts (2 errors) ====
+    // This test triggers the "X is specified more than once, so this usage will be overwritten" diagnostic
+    // which contains internal symbol names like __@iterator@. When marshalling build info, the internal
+    // symbol name prefix (\xFE) caused invalid UTF-8 errors.
+    // See: https://github.com/microsoft/typescript-go/issues/1531
+    
+    const items = [1, 2, 3];
+    
+    // The spread ...items overwrites the [Symbol.iterator] property specified above it
+    const obj = {
+        length: items.length,
+        ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2783: 'length' is specified more than once, so this usage will be overwritten.
+!!! related TS2785 incrementalInternalSymbolPrefix.ts:14:5: This spread always overwrites this property.
+        [Symbol.iterator]: function* () {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            for (const item of items) yield item;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        },
+    ~~~~~
+!!! error TS2783: 'þ@iterator@13' is specified more than once, so this usage will be overwritten.
+!!! related TS2785 incrementalInternalSymbolPrefix.ts:14:5: This spread always overwrites this property.
+        ...items,  // This spread overwrites 'length' and '[Symbol.iterator]'
+    };
+    

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -431,10 +432,16 @@ var (
 	fakeCzechVersion   = diagnostics.Version_0.Localize(czech, harnessutil.FakeTSVersion)
 )
 
+var internalSymbolRegex = regexp.MustCompile(`\x{FFFD}@[a-zA-Z]+@[0-9]+`)
+
 func (o *outputSanitizer) addOutputLine(s string) {
 	s = strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion))
 	s = strings.ReplaceAll(s, englishVersion, fakeEnglishVersion)
 	s = strings.ReplaceAll(s, czechVersion, fakeCzechVersion)
+	s = internalSymbolRegex.ReplaceAllStringFunc(s, func(match string) string {
+		idStart := strings.LastIndex(match, "@")
+		return match[:idStart] + "@<symbolId>"
+	})
 	o.outputLines = append(o.outputLines, s)
 }
 

@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/incrementalInternalSymbolPrefix.ts] ////
+
+=== incrementalInternalSymbolPrefix.ts ===
+// This test triggers the "X is specified more than once, so this usage will be overwritten" diagnostic
+// which contains internal symbol names like __@iterator@. When marshalling build info, the internal
+// symbol name prefix (\xFE) caused invalid UTF-8 errors.
+// See: https://github.com/microsoft/typescript-go/issues/1531
+
+const items = [1, 2, 3];
+>items : Symbol(items, Decl(incrementalInternalSymbolPrefix.ts, 5, 5))
+
+// The spread ...items overwrites the [Symbol.iterator] property specified above it
+const obj = {
+>obj : Symbol(obj, Decl(incrementalInternalSymbolPrefix.ts, 8, 5))
+
+    length: items.length,
+>length : Symbol(length, Decl(incrementalInternalSymbolPrefix.ts, 8, 13))
+>items.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>items : Symbol(items, Decl(incrementalInternalSymbolPrefix.ts, 5, 5))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+
+    [Symbol.iterator]: function* () {
+>[Symbol.iterator] : Symbol([Symbol.iterator], Decl(incrementalInternalSymbolPrefix.ts, 9, 25))
+>Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+        for (const item of items) yield item;
+>item : Symbol(item, Decl(incrementalInternalSymbolPrefix.ts, 11, 18))
+>items : Symbol(items, Decl(incrementalInternalSymbolPrefix.ts, 5, 5))
+>item : Symbol(item, Decl(incrementalInternalSymbolPrefix.ts, 11, 18))
+
+    },
+    ...items,  // This spread overwrites 'length' and '[Symbol.iterator]'
+>items : Symbol(items, Decl(incrementalInternalSymbolPrefix.ts, 5, 5))
+
+};
+
