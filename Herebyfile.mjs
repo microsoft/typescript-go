@@ -866,15 +866,15 @@ const getSignTempDir = memoize(async () => {
     return dir;
 });
 
-function runCleanSignTempDirectory() {
-    return rimraf(builtSignTmp);
-}
-
 const cleanSignTempDirectory = task({
     name: "clean:sign-tmp",
     hiddenFromTaskList: true,
     run: runCleanSignTempDirectory,
 });
+
+function runCleanSignTempDirectory() {
+    return rimraf(builtSignTmp);
+}
 
 let signCount = 0;
 
@@ -1194,6 +1194,12 @@ const nativePreviewPlatforms = memoize(() => {
     }
 });
 
+export const buildNativePreviewPackages = task({
+    name: "native-preview:build-packages",
+    hiddenFromTaskList: true,
+    run: runBuildNativePreviewPackages,
+});
+
 async function runBuildNativePreviewPackages() {
     await rimraf(builtNpm);
 
@@ -1276,10 +1282,10 @@ async function runBuildNativePreviewPackages() {
     }
 }
 
-export const buildNativePreviewPackages = task({
-    name: "native-preview:build-packages",
+export const signNativePreviewPackages = task({
+    name: "native-preview:sign-packages",
     hiddenFromTaskList: true,
-    run: runBuildNativePreviewPackages,
+    run: runSignNativePreviewPackages,
 });
 
 async function runSignNativePreviewPackages() {
@@ -1397,10 +1403,11 @@ async function runSignNativePreviewPackages() {
     }
 }
 
-export const signNativePreviewPackages = task({
-    name: "native-preview:sign-packages",
+export const packNativePreviewPackages = task({
+    name: "native-preview:pack-packages",
     hiddenFromTaskList: true,
-    run: runSignNativePreviewPackages,
+    dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
+    run: runPackNativePreviewPackages,
 });
 
 async function runPackNativePreviewPackages() {
@@ -1422,11 +1429,11 @@ async function runPackNativePreviewPackages() {
     await fs.promises.writeFile(publishOrderPath, publishOrder.join("\n") + "\n");
 }
 
-export const packNativePreviewPackages = task({
-    name: "native-preview:pack-packages",
+export const packNativePreviewExtensions = task({
+    name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
-    run: runPackNativePreviewPackages,
+    run: runPackNativePreviewExtensions,
 });
 
 async function runPackNativePreviewExtensions() {
@@ -1482,11 +1489,10 @@ async function runPackNativePreviewExtensions() {
     }));
 }
 
-export const packNativePreviewExtensions = task({
-    name: "native-preview:pack-extensions",
+export const signNativePreviewExtensions = task({
+    name: "native-preview:sign-extensions",
     hiddenFromTaskList: true,
-    dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
-    run: runPackNativePreviewExtensions,
+    run: runSignNativePreviewExtensions,
 });
 
 async function runSignNativePreviewExtensions() {
@@ -1507,12 +1513,6 @@ async function runSignNativePreviewExtensions() {
         ],
     });
 }
-
-export const signNativePreviewExtensions = task({
-    name: "native-preview:sign-extensions",
-    hiddenFromTaskList: true,
-    run: runSignNativePreviewExtensions,
-});
 
 export const nativePreviewRelease = task({
     name: "native-preview:release",
