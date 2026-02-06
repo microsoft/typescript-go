@@ -28,7 +28,7 @@ export { a, b, c };`
 } from "module";
 
 export { a, b, c };`,
-		lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused,
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		nil,
 	)
 }
@@ -52,7 +52,7 @@ export { a, c };`
 } from "module";
 
 export { a, c };`,
-		lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused,
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		nil,
 	)
 }

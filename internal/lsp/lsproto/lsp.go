@@ -233,6 +233,6 @@ func PreferredMarkupKind(formats []MarkupKind) MarkupKind {
 }
 
 const (
-	CodeActionKindSourceOrganizeImportsModeRemoveUnused   CodeActionKind = "source.organizeImports.removeUnused"
-	CodeActionKindSourceOrganizeImportsModeSortAndCombine CodeActionKind = "source.organizeImports.sortAndCombine"
+	CodeActionKindSourceRemoveUnusedImports CodeActionKind = "source.removeUnusedImports"
+	CodeActionKindSourceSortImports         CodeActionKind = "source.sortImports"
 )

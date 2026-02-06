@@ -26,7 +26,7 @@ import { e } from "bar";
 import { g } from "foo";
 
 export { g, e, b, c };`,
-		lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused,
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		nil,
 	)
 }

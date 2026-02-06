@@ -22,7 +22,7 @@ import { aa, CaseInsensitively, sorted } from "aardvark";`
 		`import { aa, CaseInsensitively, sorted } from "aardvark";
 import { Both } from "module-specifiers-unsorted";
 `,
-		lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine,
+		lsproto.CodeActionKindSourceSortImports,
 		&lsutil.UserPreferences{
 			OrganizeImportsIgnoreCase: core.TSUnknown,
 		},

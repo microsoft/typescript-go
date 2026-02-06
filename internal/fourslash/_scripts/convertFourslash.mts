@@ -2104,10 +2104,10 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
             const modeName = modeExpr.name.text;
             switch (modeName) {
                 case "RemoveUnused":
-                    mode = "lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused";
+                    mode = "lsproto.CodeActionKindSourceRemoveUnusedImports";
                     break;
                 case "SortAndCombine":
-                    mode = "lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine";
+                    mode = "lsproto.CodeActionKindSourceSortImports";
                     break;
                 case "All":
                     mode = "lsproto.CodeActionKindSourceOrganizeImports";

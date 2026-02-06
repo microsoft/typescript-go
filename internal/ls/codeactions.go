@@ -57,13 +57,9 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 	// Handle source actions (like organize imports)
 	if params.Context != nil && params.Context.Only != nil {
-		triggerKind := lsproto.CodeActionTriggerKindInvoked
-		if params.Context.TriggerKind != nil {
-			triggerKind = *params.Context.TriggerKind
-		}
 		for _, kind := range *params.Context.Only {
 			// Get all matching organize imports actions for the requested kind
-			matchingKinds := getOrganizeImportsActionsForKind(kind, triggerKind)
+			matchingKinds := getOrganizeImportsActionsForKind(kind)
 			for _, matchingKind := range matchingKinds {
 				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind)
 				actions = append(actions, *organizeAction)
@@ -117,38 +113,42 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 // getOrganizeImportsActionTitle returns the appropriate title for the given organize imports kind
 func getOrganizeImportsActionTitle(kind lsproto.CodeActionKind) string {
 	switch kind {
-	case lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused:
+	case lsproto.CodeActionKindSourceRemoveUnusedImports:
 		return "Remove Unused Imports"
-	case lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine:
-		return "Sort and Combine Imports"
+	case lsproto.CodeActionKindSourceSortImports:
+		return "Sort Imports"
 	default:
 		return "Organize Imports"
 	}
 }
 
 // getOrganizeImportsActionsForKind returns the organize imports code action kinds that should be
-// returned for the given requested kind and trigger.
-// When triggered automatically (e.g., on save), only the base organizeImports action is returned.
-// When invoked manually, all three sub-actions are returned for broader user choice.
-func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind, triggerKind lsproto.CodeActionTriggerKind) []lsproto.CodeActionKind {
+// returned for the given requested kind.
+// When there's an exact match, only that action is returned to avoid conflicts when the editor
+// applies multiple matching actions (e.g., on save with editor.codeActionsOnSave).
+// When the requested kind is a parent prefix (e.g., "source"), all matching sub-actions are returned.
+func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []lsproto.CodeActionKind {
 	organizeImportsKinds := []lsproto.CodeActionKind{
 		lsproto.CodeActionKindSourceOrganizeImports,
-		lsproto.CodeActionKindSourceOrganizeImportsModeRemoveUnused,
-		lsproto.CodeActionKindSourceOrganizeImportsModeSortAndCombine,
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
+		lsproto.CodeActionKindSourceSortImports,
 	}
 
 	var result []lsproto.CodeActionKind
 	for _, organizeKind := range organizeImportsKinds {
 		if strings.HasPrefix(string(organizeKind), string(requestedKind)) {
-			if triggerKind == lsproto.CodeActionTriggerKindAutomatic {
-				if organizeKind == lsproto.CodeActionKindSourceOrganizeImports {
-					result = append(result, organizeKind)
-				}
-			} else {
-				result = append(result, organizeKind)
-			}
+			result = append(result, organizeKind)
 		}
 	}
+
+	// If there's an exact match, return only that to avoid conflicts when
+	// the editor applies multiple matching actions (e.g., on save)
+	for _, kind := range result {
+		if kind == requestedKind {
+			return []lsproto.CodeActionKind{requestedKind}
+		}
+	}
+
 	return result
 }
 
