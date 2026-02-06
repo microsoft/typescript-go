@@ -37,6 +37,7 @@ export class Client implements vscode.Disposable {
 
     private isDisposed = false;
     private disposables: vscode.Disposable[] = [];
+    isInitialized = false;
 
     private exe: ExeInfo | undefined;
 
@@ -159,12 +160,10 @@ export class Client implements vscode.Disposable {
         );
         this.disposables.push(this.client);
 
-        this.client.onNotification("initialized", () => {
-            this.initializedEventEmitter.fire();
-        });
-
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
+        this.isInitialized = true;
+        this.initializedEventEmitter.fire();
 
         if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
             this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
@@ -237,6 +236,7 @@ export class Client implements vscode.Disposable {
             return false;
         }
 
+        this.isInitialized = false;
         this.outputChannel.appendLine(`Restarting language server...`);
         await this.client.restart();
         return true;

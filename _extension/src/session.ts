@@ -11,8 +11,8 @@ import { setupVersionStatusItem } from "./versionStatusItem";
  * for starting, restarting, replacing, and disposing the Session.
  */
 export class SessionManager implements vscode.Disposable {
+    currentSession?: Session;
     private disposables: vscode.Disposable[] = [];
-    private currentSession?: Session;
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
     private initializedEventEmitter: vscode.EventEmitter<void>;

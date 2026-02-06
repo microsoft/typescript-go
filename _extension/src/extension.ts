@@ -88,8 +88,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     await sessionManager.start(context);
 
+    function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
+        if (sessionManager.currentSession?.client.isInitialized) {
+            listener();
+        }
+        return languageServerInitializedEventEmitter.event(listener);
+    }
+
     return {
-        onLanguageServerInitialized: languageServerInitializedEventEmitter.event,
+        onLanguageServerInitialized: onLanguageServerInitialized,
         async initializeAPIConnection(pipe?: string): Promise<string> {
             return sessionManager.initializeAPIConnection(pipe);
         },
