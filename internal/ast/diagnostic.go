@@ -117,13 +117,20 @@ func NewDiagnosticFromSerialized(
 
 func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	return &Diagnostic{
-		file:               file,
-		loc:                loc,
-		code:               message.Code(),
-		category:           message.Category(),
-		message:            message,
-		messageKey:         message.Key(),
-		messageArgs:        diagnostics.StringifyArgs(args),
+		file:       file,
+		loc:        loc,
+		code:       message.Code(),
+		category:   message.Category(),
+		message:    message,
+		messageKey: message.Key(),
+		messageArgs: diagnostics.StringifyArgs(core.Map(args, func(arg any) any {
+			if s, ok := arg.(string); ok {
+				if withoutPrefix, replaced := strings.CutPrefix(s, InternalSymbolNamePrefix); replaced {
+					return "__" + withoutPrefix
+				}
+			}
+			return arg
+		})),
 		reportsUnnecessary: message.ReportsUnnecessary(),
 		reportsDeprecated:  message.ReportsDeprecated(),
 	}
