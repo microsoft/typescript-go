@@ -1,0 +1,24 @@
+package fourslash_test
+
+import (
+	"testing"
+
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/testutil"
+)
+
+func TestSyntacticClassificationForJSDocTemplateTag(t *testing.T) {
+	fourslash.SkipIfFailing(t)
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `/** @template T baring strait */
+function ident<T>: T {
+}`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "function.declaration", Text: "ident"},
+		{Type: "typeParameter.declaration", Text: "T"},
+		{Type: "typeParameter", Text: "T"},
+	})
+}
