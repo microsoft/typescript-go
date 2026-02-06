@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/packageJsonImportsMalformedPattern.ts] ////
+
+=== src/a.ts ===
+import * as b from "#/b.";
+>b : typeof b
+
+b.foo();
+>b.foo() : void
+>b.foo : () => void
+>b : typeof b
+>foo : () => void
+
+=== src/b.ts ===
+export function foo() {}
+>foo : () => void
+
