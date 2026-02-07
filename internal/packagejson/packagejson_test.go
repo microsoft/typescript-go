@@ -4,10 +4,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -47,7 +47,7 @@ func BenchmarkPackageJSON(b *testing.B) {
 			})
 		})
 
-		b.Run("ParseJSONText", func(b *testing.B) {
+		b.Run("Parsejson", func(b *testing.B) {
 			b.Run(f.Name(), func(b *testing.B) {
 				fileName := "/" + f.Name()
 				for b.Loop() {

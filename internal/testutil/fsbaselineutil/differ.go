@@ -5,7 +5,9 @@ import (
 	"io"
 	"io/fs"
 	"maps"
+	"regexp"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -58,7 +60,8 @@ func (d *FSDiffer) BaselineFSwithDiff(baseline io.Writer) {
 			d.addFsEntryDiff(diffs, newEntry, path)
 			continue
 		} else if file.Mode.IsRegular() {
-			newEntry := &DiffEntry{Content: string(file.Data), MTime: file.ModTime, IsWritten: d.WrittenFiles.Has(path)}
+			content := SanitizeInternalSymbolName(string(file.Data))
+			newEntry := &DiffEntry{Content: content, MTime: file.ModTime, IsWritten: d.WrittenFiles.Has(path)}
 			snap[path] = newEntry
 			d.addFsEntryDiff(diffs, newEntry, path)
 		}
@@ -89,6 +92,15 @@ func (d *FSDiffer) BaselineFSwithDiff(baseline io.Writer) {
 	}
 	fmt.Fprintln(baseline)
 	*d.WrittenFiles = collections.SyncSet[string]{} // Reset written files after baseline
+}
+
+var internalSymbolRegex = regexp.MustCompile(`\x{FFFD}@[^@]+@[0-9]+`)
+
+func SanitizeInternalSymbolName(s string) string {
+	return internalSymbolRegex.ReplaceAllStringFunc(s, func(match string) string {
+		idStart := strings.LastIndex(match, "@")
+		return match[:idStart] + "@<symbolId>"
+	})
 }
 
 func (d *FSDiffer) addFsEntryDiff(diffs map[string]string, newDirContent *DiffEntry, path string) {
