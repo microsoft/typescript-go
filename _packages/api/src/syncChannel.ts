@@ -156,7 +156,7 @@ export class SyncRpcChannel {
      * Handles Call (callback) messages from the child inline.
      */
     requestSync(method: string, payload: string): string {
-        const result = this.requestBytesSync(method, Buffer.from(payload, "utf-8"));
+        const result = this.requestBytesSync(method, payload);
         return result.toString("utf-8");
     }
 
@@ -165,7 +165,7 @@ export class SyncRpcChannel {
      * Handles Call (callback) messages from the child inline.
      */
     requestBinarySync(method: string, payload: Uint8Array): Uint8Array {
-        return this.requestBytesSync(method, payload instanceof Buffer ? payload : Buffer.from(payload));
+        return this.requestBytesSync(method, payload);
     }
 
     /** Register a string→string callback that the child may invoke. */
@@ -201,7 +201,7 @@ export class SyncRpcChannel {
         return buf;
     }
 
-    private requestBytesSync(method: string, payload: Buffer): Buffer {
+    private requestBytesSync(method: string, payload: Buffer | Uint8Array | string): Buffer {
         const methodBuf = this.getMethodBuf(method);
         this.writeTuple(MSG_REQUEST, methodBuf, payload);
 
@@ -278,9 +278,10 @@ export class SyncRpcChannel {
      * syscall.  Larger messages use two syscalls: one for the header
      * portion and one for the payload data.
      */
-    private writeTuple(type: number, name: Buffer, payload: Buffer | Uint8Array): void {
+    private writeTuple(type: number, name: Buffer, payload: Buffer | Uint8Array | string): void {
         const nameLen = name.length;
-        const payloadLen = payload.length;
+        const payloadIsString = typeof payload === "string";
+        const payloadLen = payloadIsString ? Buffer.byteLength(payload, "utf-8") : payload.length;
         const nameHdrSize = binHeaderSize(nameLen);
         const payloadHdrSize = binHeaderSize(payloadLen);
         const headerSize = 2 + nameHdrSize + nameLen + payloadHdrSize;
@@ -296,11 +297,16 @@ export class SyncRpcChannel {
             off += nameLen;
             off = writeBinHeader(this.writeBuf, off, payloadLen);
             if (payloadLen > 0) {
-                if (payload instanceof Buffer) {
-                    payload.copy(this.writeBuf, off);
+                if (payloadIsString) {
+                    // Encode string directly into write buffer — avoids
+                    // Buffer.from(string, 'utf-8') allocation entirely.
+                    this.writeBuf.write(payload as string, off, payloadLen, "utf-8");
+                }
+                else if (payload instanceof Buffer) {
+                    (payload as Buffer).copy(this.writeBuf, off);
                 }
                 else {
-                    this.writeBuf.set(payload, off);
+                    this.writeBuf.set(payload as Uint8Array, off);
                 }
             }
             this.writeAllBuf(this.writeBuf, totalSize);
@@ -316,7 +322,14 @@ export class SyncRpcChannel {
             off = writeBinHeader(this.writeBuf, off, payloadLen);
             this.writeAllBuf(this.writeBuf, off);
             if (payloadLen > 0) {
-                this.writeAllBuf(payload);
+                if (payloadIsString) {
+                    // Large string: must allocate (can't stream-encode
+                    // across multiple writeSync calls).
+                    this.writeAllBuf(Buffer.from(payload as string, "utf-8"));
+                }
+                else {
+                    this.writeAllBuf(payload as Buffer | Uint8Array);
+                }
             }
         }
     }
@@ -355,6 +368,9 @@ export class SyncRpcChannel {
         this._msgPayload = this.readBin();
     }
 
+    /**
+     * Read a MessagePack bin field.
+     */
     private readBin(): Buffer {
         const marker = this.readByte();
         let size: number;
