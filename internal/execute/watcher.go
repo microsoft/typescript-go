@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
@@ -26,6 +27,7 @@ type Watcher struct {
 	program        *incremental.Program
 	prevModified   map[string]time.Time
 	configModified bool
+	deletedFiles   []string // source files deleted since last cycle
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -87,6 +89,7 @@ func (w *Watcher) DoCycle() {
 		fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
 		timeStart := w.sys.Now()
 		w.compileAndEmit()
+		w.cleanupDeletedOutputs()
 		fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
 	} else {
 		// print something???
@@ -161,9 +164,65 @@ func (w *Watcher) hasBeenModified(program *compiler.Program) bool {
 		// fmt.Fprintln(w.sys.Writer(), "build triggered due to deleted file")
 		filesModified = true
 	}
+
+	// Capture names of deleted source files before overwriting prevModified.
+	// When filesModified was set early (e.g. due to a modified file), the loop
+	// above may not have removed all current files from prevModified. We must
+	// compare against currState to find files that are truly gone from disk.
+	w.deletedFiles = w.deletedFiles[:0]
+	for fileName := range w.prevModified {
+		if _, exists := currState[fileName]; !exists {
+			w.deletedFiles = append(w.deletedFiles, fileName)
+		}
+	}
+
 	w.prevModified = currState
 
 	// reset state for next cycle
 	w.configModified = false
 	return filesModified
+}
+
+// cleanupDeletedOutputs removes output files (.js, .js.map, .d.ts, .d.ts.map)
+// corresponding to source files that were deleted since the last watch cycle.
+// This prevents stale outputs from remaining in the output directory.
+// Fixes: https://github.com/microsoft/TypeScript/issues/16057
+func (w *Watcher) cleanupDeletedOutputs() {
+	if len(w.deletedFiles) == 0 {
+		return
+	}
+
+	options := w.config.CompilerOptions()
+	program := w.program.GetProgram()
+
+	// Skip cleanup when no emit is expected.
+	if options.NoEmit.IsTrue() {
+		return
+	}
+
+	for _, deletedFile := range w.deletedFiles {
+		// Compute and remove JS output file.
+		jsPath := outputpaths.GetOutputJSFileName(deletedFile, options, program)
+		if jsPath != "" {
+			w.sys.FS().Remove(jsPath)
+
+			// Remove source map if enabled.
+			if mapPath := outputpaths.GetSourceMapFilePath(jsPath, options); mapPath != "" {
+				w.sys.FS().Remove(mapPath)
+			}
+		}
+
+		// Compute and remove declaration output files.
+		if options.GetEmitDeclarations() {
+			dtsPath := outputpaths.GetOutputDeclarationFileNameWorker(deletedFile, options, program)
+			if dtsPath != "" {
+				w.sys.FS().Remove(dtsPath)
+
+				// Remove declaration map if enabled.
+				if options.GetAreDeclarationMapsEnabled() {
+					w.sys.FS().Remove(dtsPath + ".map")
+				}
+			}
+		}
+	}
 }
