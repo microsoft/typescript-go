@@ -387,7 +387,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-github.com/microsoft/go-winio v0.6.2 - MIT
+github.com/Microsoft/go-winio v0.6.2 - MIT
 
 
 Copyright (c) 2015 Microsoft
