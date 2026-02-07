@@ -43,6 +43,14 @@ export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
     const bench = new Bench({
         name: `Sync API (${channelLabel})`,
         teardown,
+        // Reduce iterations from the default 64 to 10.  Slow tasks
+        // (e.g. getSymbolAtLocation over 10k ids at ~450ms each) are
+        // dominated by the iteration minimum, not the time limit.
+        // 10 iterations still gives stable medians while cutting total
+        // bench time by ~5x.  Fast tasks are unaffected because the
+        // time-based limit (1000ms) gives them 50k+ samples anyway.
+        iterations: 10,
+        warmupIterations: 4,
         ...singleIteration ? {
             iterations: 1,
             warmup: false,
