@@ -22006,6 +22006,37 @@ func (c *Checker) getConditionalTypeInstantiation(t *Type, mapper *TypeMapper, f
 			// distributive conditional type T extends U ? X : Y is instantiated with A | B for T, the
 			// result is (A extends U ? X : Y) | (B extends U ? X : Y).
 			if distributionType != nil && checkType != distributionType && distributionType.flags&(TypeFlagsUnion|TypeFlagsNever) != 0 {
+				// Fast path for distributive conditionals where the extends type makes the branch
+				// trivially determinable for ALL union members. When the extends type is 'never',
+				// T extends never is false for all non-never T. When the extends type is 'any' or
+				// 'unknown', T extends any/unknown is true for all T. In these cases we skip the
+				// expensive per-member getConditionalType call (which involves type instantiation,
+				// permissive instantiation, and structural comparison) and directly apply the
+				// predetermined branch. This primarily benefits patterns like Exclude<BigUnion, never>
+				// (used by Omit<T, never>) where hundreds of union members would each trigger
+				// redundant type checks that all yield the same branch outcome.
+				// See: https://github.com/microsoft/TypeScript/issues/34933
+				if !forConstraint && len(root.inferTypeParameters) == 0 && distributionType.flags&TypeFlagsUnion != 0 {
+					resolvedExtendsType := c.instantiateType(root.extendsType, newMapper)
+					if resolvedExtendsType.flags&TypeFlagsNever != 0 {
+						// T extends never is false for all non-never T. Apply false branch directly.
+						falseType := c.getTypeFromTypeNode(root.node.FalseType)
+						result = c.mapTypeWithAlias(distributionType, func(t *Type) *Type {
+							return c.instantiateType(falseType, prependTypeMapping(checkType, t, newMapper))
+						}, alias)
+						root.instantiations[key] = result
+						return result
+					}
+					if resolvedExtendsType.flags&TypeFlagsAnyOrUnknown != 0 {
+						// T extends any/unknown is true for all T. Apply true branch directly.
+						trueType := c.getTypeFromTypeNode(root.node.TrueType)
+						result = c.mapTypeWithAlias(distributionType, func(t *Type) *Type {
+							return c.instantiateType(trueType, prependTypeMapping(checkType, t, newMapper))
+						}, alias)
+						root.instantiations[key] = result
+						return result
+					}
+				}
 				result = c.mapTypeWithAlias(distributionType, func(t *Type) *Type {
 					return c.getConditionalType(root, prependTypeMapping(checkType, t, newMapper), forConstraint, nil)
 				}, alias)
