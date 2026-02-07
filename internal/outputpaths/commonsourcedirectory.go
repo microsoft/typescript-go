@@ -48,6 +48,14 @@ func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirector
 	return tspath.GetPathFromPathComponents(commonPathComponents)
 }
 
+func GetComputedCommonSourceDirectory(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+	commonSourceDirectory := computeCommonSourceDirectoryOfFilenames(fileNames, currentDirectory, useCaseSensitiveFileNames)
+	if len(commonSourceDirectory) > 0 {
+		commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
+	}
+	return commonSourceDirectory
+}
+
 func GetCommonSourceDirectory(options *core.CompilerOptions, files func() []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
 	var commonSourceDirectory string
 	if options.RootDir != "" {

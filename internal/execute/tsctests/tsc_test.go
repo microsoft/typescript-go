@@ -993,6 +993,52 @@ func TestTscExtends(t *testing.T) {
 	}
 }
 
+func TestTscOutDirWithParentDirInclude(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "outDir when include references parent directories",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "ES2024",
+						"module": "NodeNext",
+						"moduleResolution": "NodeNext",
+						"outDir": "${configDir}/dist/",
+						"strict": true,
+						"skipLibCheck": true
+					},
+					"include": ["common/src/**/*"]
+				}`),
+				"/home/src/workspaces/project/common/src/greeter.ts": stringtestutil.Dedent(`
+					export function greet(name: string): string {
+						return "Hello, " + name + "!";
+					}
+				`),
+				"/home/src/workspaces/project/sub/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig.json",
+					"include": [
+						"src/**/*",
+						"../common/src/**/*"
+					]
+				}`),
+				"/home/src/workspaces/project/sub/src/index.ts": stringtestutil.Dedent(`
+					import { greet } from "../../common/src/greeter.js";
+					console.log(greet("world"));
+				`),
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"-p", "sub/tsconfig.json", "--explainFiles"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "outDir")
+	}
+}
+
 func TestForceConsistentCasingInFileNames(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
