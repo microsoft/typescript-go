@@ -85,22 +85,6 @@ func TryExtractTSExtension(fileName string) string {
 	return ""
 }
 
-// TryExtractTSExtensionLoose does a best-effort extraction of a TS extension from a string
-// by checking if it contains any supported TS extension. This is useful for error reporting
-// in cases where a TS extension appears in the middle of a module specifier rather than at
-// the end (e.g., "#/foo.ts.omg" where the wildcard matched ".ts").
-// Note: This may misidentify in pathological cases like "foo.ts.mts.cts.oops", but such
-// cases are unlikely in practice.
-func TryExtractTSExtensionLoose(fileName string) string {
-	for _, ext := range SupportedTSExtensionsFlat {
-		if strings.Contains(fileName, ext) {
-			return ext
-		}
-	}
-	return ""
-}
-
-
 func HasTSFileExtension(path string) bool {
 	return FileExtensionIsOneOf(path, SupportedTSExtensionsFlat)
 }
