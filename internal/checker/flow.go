@@ -151,6 +151,8 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 				flow = flow.Antecedent
 				continue
 			}
+		case flags&ast.FlowFlagsDistribute != 0:
+			t = c.getTypeAtFlowDistribute(f, flow)
 		case flags&ast.FlowFlagsCondition != 0:
 			t = c.getTypeAtFlowCondition(f, flow)
 		case flags&ast.FlowFlagsSwitchClause != 0:
@@ -272,6 +274,13 @@ func (c *Checker) getInitialOrAssignedType(f *FlowState, flow *ast.FlowNode) *Ty
 func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
 	return ast.IsVariableDeclaration(node) && node.Initializer() != nil && isEmptyArrayLiteral(node.Initializer()) ||
 		!ast.IsBindingElement(node) && ast.IsBinaryExpression(node.Parent) && isEmptyArrayLiteral(node.Parent.AsBinaryExpression().Right)
+}
+
+func (c *Checker) getTypeAtFlowDistribute(f *FlowState, flow *ast.FlowNode) FlowType {
+	if c.isMatchingReference(f.reference, flow.Node) && c.flowDistributeTypes[flow.Node] != nil {
+		return c.newFlowType(c.flowDistributeTypes[flow.Node], true)
+	}
+	return c.getTypeAtFlowNode(f, flow.Antecedent)
 }
 
 func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
@@ -2712,7 +2721,7 @@ func (c *Checker) extendAssignmentPosition(node *ast.Node, declaration *ast.Node
 		switch node.Kind {
 		case ast.KindVariableStatement, ast.KindExpressionStatement, ast.KindIfStatement, ast.KindDoStatement, ast.KindWhileStatement,
 			ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindWithStatement, ast.KindSwitchStatement,
-			ast.KindTryStatement, ast.KindClassDeclaration:
+			ast.KindTryStatement, ast.KindClassDeclaration, ast.KindDistributeKeyword:
 			pos = node.End()
 		}
 		node = node.Parent

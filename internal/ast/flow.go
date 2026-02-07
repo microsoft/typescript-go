@@ -18,6 +18,7 @@ const (
 	FlowFlagsReduceLabel    FlowFlags = 1 << 10 // Temporarily reduce antecedents of label
 	FlowFlagsReferenced     FlowFlags = 1 << 11 // Referenced as antecedent once
 	FlowFlagsShared         FlowFlags = 1 << 12 // Referenced as antecedent more than once
+	FlowFlagsDistribute     FlowFlags = 1 << 13
 	FlowFlagsLabel                    = FlowFlagsBranchLabel | FlowFlagsLoopLabel
 	FlowFlagsCondition                = FlowFlagsTrueCondition | FlowFlagsFalseCondition
 )

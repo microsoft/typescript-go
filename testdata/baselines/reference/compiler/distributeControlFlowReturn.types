@@ -1,0 +1,98 @@
+//// [tests/cases/compiler/distributeControlFlowReturn.ts] ////
+
+=== distributeControlFlowReturn.ts ===
+type Layer = 
+>Layer : Layer
+
+  | { labels: { selectedFieldName: "A" | "B" } }
+>labels : { selectedFieldName: "A" | "B"; }
+>selectedFieldName : "A" | "B"
+
+  | { labels: { selectedFieldName: "C" } }
+>labels : { selectedFieldName: "C"; }
+>selectedFieldName : "C"
+
+declare let layers: Layer[]
+>layers : Layer[]
+
+let newLayers: Layer[] = layers.map(layer => {
+>newLayers : Layer[]
+>layers.map(layer => {  return { labels: layer.labels }}) : { labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }[]
+>layers.map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layers : Layer[]
+>map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layer => {  return { labels: layer.labels }} : (layer: Layer) => { labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }
+>layer : Layer
+
+  return { labels: layer.labels }
+>{ labels: layer.labels } : { labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }
+>labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>layer.labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>layer : Layer
+>labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+
+})
+
+let newLayersManualFix: Layer[] = layers.map(layer => {
+>newLayersManualFix : Layer[]
+>layers.map(layer => {  switch (layer.labels.selectedFieldName) {    case "A": return { labels: layer.labels }    case "B": return { labels: layer.labels }    case "C": return { labels: layer.labels }  }}) : ({ labels: { selectedFieldName: "A" | "B"; }; } | { labels: { selectedFieldName: "C"; }; })[]
+>layers.map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layers : Layer[]
+>map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layer => {  switch (layer.labels.selectedFieldName) {    case "A": return { labels: layer.labels }    case "B": return { labels: layer.labels }    case "C": return { labels: layer.labels }  }} : (layer: Layer) => { labels: { selectedFieldName: "A" | "B"; }; } | { labels: { selectedFieldName: "C"; }; }
+>layer : Layer
+
+  switch (layer.labels.selectedFieldName) {
+>layer.labels.selectedFieldName : "A" | "B" | "C"
+>layer.labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>layer : Layer
+>labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>selectedFieldName : "A" | "B" | "C"
+
+    case "A": return { labels: layer.labels }
+>"A" : "A"
+>{ labels: layer.labels } : { labels: { selectedFieldName: "A" | "B"; }; }
+>labels : { selectedFieldName: "A" | "B"; }
+>layer.labels : { selectedFieldName: "A" | "B"; }
+>layer : Layer
+>labels : { selectedFieldName: "A" | "B"; }
+
+    case "B": return { labels: layer.labels }
+>"B" : "B"
+>{ labels: layer.labels } : { labels: { selectedFieldName: "A" | "B"; }; }
+>labels : { selectedFieldName: "A" | "B"; }
+>layer.labels : { selectedFieldName: "A" | "B"; }
+>layer : Layer
+>labels : { selectedFieldName: "A" | "B"; }
+
+    case "C": return { labels: layer.labels }
+>"C" : "C"
+>{ labels: layer.labels } : { labels: { selectedFieldName: "C"; }; }
+>labels : { selectedFieldName: "C"; }
+>layer.labels : { selectedFieldName: "C"; }
+>layer : Layer
+>labels : { selectedFieldName: "C"; }
+  }
+})
+
+let newLayersDistributeFix: Layer[] = layers.map(layer => {
+>newLayersDistributeFix : Layer[]
+>layers.map(layer => {  distribute (layer) {    return { labels: layer.labels }  }}) : ({ labels: { selectedFieldName: "A" | "B"; }; } | { labels: { selectedFieldName: "C"; }; })[]
+>layers.map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layers : Layer[]
+>map : <U>(callbackfn: (value: Layer, index: number, array: Layer[]) => U, thisArg?: any) => U[]
+>layer => {  distribute (layer) {    return { labels: layer.labels }  }} : (layer: Layer) => { labels: { selectedFieldName: "A" | "B"; }; } | { labels: { selectedFieldName: "C"; }; }
+>layer : Layer
+
+  distribute (layer) {
+>layer : Layer
+
+    return { labels: layer.labels }
+>{ labels: layer.labels } : { labels: { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }; }
+>labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>layer.labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+>layer : Layer
+>labels : { selectedFieldName: "A" | "B"; } | { selectedFieldName: "C"; }
+  }
+})
+

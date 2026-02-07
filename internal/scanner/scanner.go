@@ -65,6 +65,7 @@ var textToKeyword = map[string]ast.Kind{
 	"function":    ast.KindFunctionKeyword,
 	"get":         ast.KindGetKeyword,
 	"if":          ast.KindIfKeyword,
+	"distribute":  ast.KindDistributeKeyword,
 	"immediate":   ast.KindImmediateKeyword,
 	"implements":  ast.KindImplementsKeyword,
 	"import":      ast.KindImportKeyword,

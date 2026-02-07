@@ -38,6 +38,7 @@ const (
 	SubtreeContainsDecorators
 	SubtreeContainsIdentifier
 	SubtreeContainsPrivateIdentifierInExpression
+	SubtreeContainsDistributeStatement
 
 	SubtreeFactsComputed              // NOTE: This should always be last
 	SubtreeFactsNone     SubtreeFacts = 0
