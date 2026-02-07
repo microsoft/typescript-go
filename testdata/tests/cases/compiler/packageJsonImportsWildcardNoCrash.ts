@@ -1,3 +1,5 @@
+// @noEmit: true
+// @noTypesAndSymbols: true
 // @module: nodenext
 // @moduleResolution: nodenext
 // @filename: src/a.ts

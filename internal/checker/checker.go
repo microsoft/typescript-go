@@ -14729,21 +14729,6 @@ func (c *Checker) resolveExternalModuleNameWorker(location *ast.Node, moduleRefe
 	return nil
 }
 
-// tryExtractTSExtensionLoose does a best-effort extraction of a TS extension from a string
-// by checking if it contains any supported TS extension. This is useful for error reporting
-// in cases where a TS extension appears in the middle of a module specifier rather than at
-// the end (e.g., "#/foo.ts.omg" where the wildcard matched ".ts").
-// Note: This may misidentify in pathological cases like "foo.ts.mts.cts.oops", but such
-// cases are unlikely in practice.
-func tryExtractTSExtensionLoose(fileName string) string {
-	for _, ext := range tspath.SupportedTSExtensionsFlat {
-		if strings.Contains(fileName, ext) {
-			return ext
-		}
-	}
-	return ""
-}
-
 func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference string, moduleNotFoundError *diagnostics.Message, errorNode *ast.Node, isForAugmentation bool) *ast.Symbol {
 	if errorNode != nil && strings.HasPrefix(moduleReference, "@types/") {
 		withoutAtTypePrefix := moduleReference[len("@types/"):]
@@ -14837,10 +14822,15 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
 					if tsExtension == "" {
-						// Fallback: Try to extract a TS extension using a loose search.
+						// Fallback: do a best-effort extraction using strings.Contains.
 						// This handles cases where a wildcard pattern matches a TS extension that's
 						// not at the end of the module specifier, e.g., "#/foo.ts.omg" through "#/*.omg": "./src/*"
-						tsExtension = tryExtractTSExtensionLoose(moduleReference)
+						for _, ext := range tspath.SupportedTSExtensionsFlat {
+							if strings.Contains(moduleReference, ext) {
+								tsExtension = ext
+								break
+							}
+						}
 					}
 					if tsExtension == "" {
 						panic("should be able to extract TS extension from string when resolvedUsingTsExtension is true")

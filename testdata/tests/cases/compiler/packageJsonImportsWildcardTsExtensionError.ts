@@ -1,3 +1,5 @@
+// @noEmit: true
+// @noTypesAndSymbols: true
 // @module: nodenext
 // @moduleResolution: nodenext
 // Test verifies that when a module specifier contains ".ts" that gets matched by a
