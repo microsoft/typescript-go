@@ -1,15 +1,19 @@
-import { SyncRpcChannel } from "@typescript/libsyncrpc";
+import { SyncRpcChannel as NativeSyncRpcChannel } from "@typescript/libsyncrpc";
 import type { FileSystem } from "./fs.ts";
+import { SyncRpcChannel } from "./syncChannel.ts";
+
+export type ChannelType = "js" | "native";
 
 export interface ClientOptions {
     tsserverPath: string;
     cwd?: string;
     logFile?: string;
     fs?: FileSystem;
+    channel?: ChannelType;
 }
 
 export class Client {
-    private channel: SyncRpcChannel;
+    private channel: SyncRpcChannel | NativeSyncRpcChannel;
     private encoder = new TextEncoder();
 
     constructor(options: ClientOptions) {
@@ -24,7 +28,8 @@ export class Client {
             args.push(`--callbacks=${Object.keys(options.fs).join(",")}`);
         }
 
-        this.channel = new SyncRpcChannel(options.tsserverPath, args);
+        const ChannelImpl = options.channel === "native" ? NativeSyncRpcChannel : SyncRpcChannel;
+        this.channel = new ChannelImpl(options.tsserverPath, args);
 
         if (options.fs) {
             for (const [key, callback] of Object.entries(options.fs)) {

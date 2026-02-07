@@ -1,5 +1,6 @@
 import {
     API,
+    type ChannelType,
     type Project,
 } from "@typescript/api";
 import {
@@ -22,7 +23,17 @@ if (isMain) {
     await runBenchmarks();
 }
 
-export async function runBenchmarks(singleIteration?: boolean) {
+export interface SyncBenchmarkOptions {
+    singleIteration?: boolean;
+    channel?: ChannelType;
+}
+
+export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
+    // Support legacy boolean argument for singleIteration
+    const opts: SyncBenchmarkOptions = typeof options === "boolean" ? { singleIteration: options } : (options ?? {});
+    const { singleIteration, channel } = opts;
+    const channelLabel = channel === "native" ? "native" : "js";
+
     const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
@@ -30,7 +41,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     const bench = new Bench({
-        name: "Sync API",
+        name: `Sync API (${channelLabel})`,
         teardown,
         ...singleIteration ? {
             iterations: 1,
@@ -171,6 +182,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
         api = new API({
             cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
+            channel,
         });
     }
 
@@ -179,6 +191,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
             cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
             fs: createNodeFileSystem(),
+            channel,
         });
     }
 
