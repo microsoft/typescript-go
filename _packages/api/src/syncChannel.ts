@@ -73,12 +73,21 @@ export class SyncRpcChannel {
     private readFd: number;
     private writeFd: number;
     private callbacks = new Map<string, (name: string, payload: string) => string>();
-    private encoder = new TextEncoder();
 
-    // Reusable 1-byte buffer for readByte()
-    private oneByte = Buffer.allocUnsafe(1);
-    // Reusable header buffer for reading size fields (up to 4 bytes)
+    // Reusable header buffer for reading multi-byte size fields
     private headerBuf = Buffer.allocUnsafe(4);
+
+    // ── Read-ahead buffer ───────────────────────────────────────────
+    // Reduces readSync syscalls by buffering data from the pipe.
+    // Without this, every readByte() (6-9 per message for headers)
+    // would be a separate kernel syscall.
+    private readBuf = Buffer.allocUnsafe(65536);
+    private readBufPos = 0;
+    private readBufLen = 0;
+
+    // ── Write buffer ────────────────────────────────────────────────
+    // Assembles entire tuples into one buffer for a single writeSync.
+    private writeBuf = Buffer.allocUnsafe(65536);
 
     constructor(exe: string, args: Array<string>) {
         this.child = spawn(exe, args, {
@@ -239,34 +248,53 @@ export class SyncRpcChannel {
 
     // ── MessagePack tuple write ─────────────────────────────────────
 
+    /**
+     * Write a complete [type, name, payload] tuple in as few writeSync
+     * calls as possible.  For messages that fit in the pre-allocated
+     * write buffer (64 KB), everything is assembled and sent in a single
+     * syscall.  Larger messages use two syscalls: one for the header
+     * portion and one for the payload data.
+     */
     private writeTuple(type: number, name: Buffer, payload: Buffer | Uint8Array): void {
-        // [0x93] [type as fixint] [bin name] [bin payload]
-        this.writeAllBuf(Buffer.from([MSGPACK_FIXARRAY3, type]));
-        this.writeBin(name);
-        this.writeBin(payload);
-    }
+        const nameLen = name.length;
+        const payloadLen = payload.length;
+        const nameHdrSize = binHeaderSize(nameLen);
+        const payloadHdrSize = binHeaderSize(payloadLen);
+        const headerSize = 2 + nameHdrSize + nameLen + payloadHdrSize;
+        const totalSize = headerSize + payloadLen;
 
-    private writeBin(data: Buffer | Uint8Array): void {
-        const len = data.length;
-        if (len < 0x100) {
-            this.headerBuf[0] = MSGPACK_BIN8;
-            this.headerBuf[1] = len;
-            this.writeAllBuf(this.headerBuf, 2);
-        }
-        else if (len < 0x10000) {
-            this.headerBuf[0] = MSGPACK_BIN16;
-            this.headerBuf[1] = (len >>> 8) & 0xff;
-            this.headerBuf[2] = len & 0xff;
-            this.writeAllBuf(this.headerBuf, 3);
+        if (totalSize <= this.writeBuf.length) {
+            // Small message: assemble into write buffer, one syscall
+            let off = 0;
+            this.writeBuf[off++] = MSGPACK_FIXARRAY3;
+            this.writeBuf[off++] = type;
+            off = writeBinHeader(this.writeBuf, off, nameLen);
+            name.copy(this.writeBuf, off);
+            off += nameLen;
+            off = writeBinHeader(this.writeBuf, off, payloadLen);
+            if (payloadLen > 0) {
+                if (payload instanceof Buffer) {
+                    payload.copy(this.writeBuf, off);
+                }
+                else {
+                    this.writeBuf.set(payload, off);
+                }
+            }
+            this.writeAllBuf(this.writeBuf, totalSize);
         }
         else {
-            const hdr = Buffer.allocUnsafe(5);
-            hdr[0] = MSGPACK_BIN32;
-            hdr.writeUInt32BE(len, 1);
-            this.writeAllBuf(hdr, 5);
-        }
-        if (len > 0) {
-            this.writeAllBuf(data);
+            // Large message: header + name in one call, payload in another
+            let off = 0;
+            this.writeBuf[off++] = MSGPACK_FIXARRAY3;
+            this.writeBuf[off++] = type;
+            off = writeBinHeader(this.writeBuf, off, nameLen);
+            name.copy(this.writeBuf, off);
+            off += nameLen;
+            off = writeBinHeader(this.writeBuf, off, payloadLen);
+            this.writeAllBuf(this.writeBuf, off);
+            if (payloadLen > 0) {
+                this.writeAllBuf(payload);
+            }
         }
     }
 
@@ -327,9 +355,12 @@ export class SyncRpcChannel {
 
     // ── Low-level synchronous I/O ───────────────────────────────────
 
+    /** Read a single byte from the buffered read-ahead. */
     private readByte(): number {
-        this.readExactInto(this.oneByte, 1);
-        return this.oneByte[0];
+        if (this.readBufPos >= this.readBufLen) {
+            this.fillReadBuffer();
+        }
+        return this.readBuf[this.readBufPos++];
     }
 
     private readExact(length: number): Buffer {
@@ -344,26 +375,69 @@ export class SyncRpcChannel {
     }
 
     /**
-     * Synchronously read exactly `length` bytes into `buffer`.
-     * Retries on EAGAIN (non-blocking pipe) with a tiny sleep.
+     * Fill the internal read-ahead buffer from the pipe fd.
+     * Retries on EAGAIN for non-blocking mode compatibility.
      */
-    private readExactInto(buffer: Buffer, length: number): void {
-        let pos = 0;
-        while (pos < length) {
+    private fillReadBuffer(): void {
+        this.readBufPos = 0;
+        this.readBufLen = 0;
+        for (;;) {
             try {
-                const n = readSync(this.readFd, buffer, pos, length - pos, null);
+                const n = readSync(this.readFd, this.readBuf, 0, this.readBuf.length, null);
                 if (n === 0) {
                     throw new Error("Unexpected EOF while reading from child process");
                 }
-                pos += n;
+                this.readBufLen = n;
+                return;
             }
             catch (e: any) {
                 if (e.code === "EAGAIN" || e.code === "EWOULDBLOCK") {
-                    // Pipe is non-blocking; yield briefly and retry.
                     Atomics.wait(sleepBuf, 0, 0, 1);
                     continue;
                 }
                 throw e;
+            }
+        }
+    }
+
+    /**
+     * Synchronously read exactly `length` bytes into `buffer`.
+     * Serves from the internal read-ahead buffer first; for large reads
+     * that exceed the buffer size, reads directly from the fd to avoid
+     * an extra copy.
+     */
+    private readExactInto(buffer: Buffer, length: number): void {
+        let pos = 0;
+        while (pos < length) {
+            const avail = this.readBufLen - this.readBufPos;
+            if (avail > 0) {
+                // Serve from read-ahead buffer
+                const toCopy = Math.min(avail, length - pos);
+                this.readBuf.copy(buffer, pos, this.readBufPos, this.readBufPos + toCopy);
+                this.readBufPos += toCopy;
+                pos += toCopy;
+            }
+            else if (length - pos >= this.readBuf.length) {
+                // Remaining data is larger than read buffer; read directly
+                // into the target to avoid unnecessary copying.
+                try {
+                    const n = readSync(this.readFd, buffer, pos, length - pos, null);
+                    if (n === 0) {
+                        throw new Error("Unexpected EOF while reading from child process");
+                    }
+                    pos += n;
+                }
+                catch (e: any) {
+                    if (e.code === "EAGAIN" || e.code === "EWOULDBLOCK") {
+                        Atomics.wait(sleepBuf, 0, 0, 1);
+                        continue;
+                    }
+                    throw e;
+                }
+            }
+            else {
+                // Refill the read-ahead buffer
+                this.fillReadBuffer();
             }
         }
     }
@@ -389,4 +463,32 @@ export class SyncRpcChannel {
             }
         }
     }
+}
+
+// ── Module-level helpers for MessagePack bin headers ────────────────
+
+/** Compute the MessagePack bin header size for a given data length. */
+function binHeaderSize(len: number): number {
+    if (len < 0x100) return 2; // BIN8: marker + 1-byte size
+    if (len < 0x10000) return 3; // BIN16: marker + 2-byte size
+    return 5; // BIN32: marker + 4-byte size
+}
+
+/** Write a MessagePack bin header into `buf` at `off`, return new offset. */
+function writeBinHeader(buf: Buffer, off: number, len: number): number {
+    if (len < 0x100) {
+        buf[off++] = MSGPACK_BIN8;
+        buf[off++] = len;
+    }
+    else if (len < 0x10000) {
+        buf[off++] = MSGPACK_BIN16;
+        buf[off++] = (len >>> 8) & 0xff;
+        buf[off++] = len & 0xff;
+    }
+    else {
+        buf[off++] = MSGPACK_BIN32;
+        buf.writeUInt32BE(len, off);
+        off += 4;
+    }
+    return off;
 }
