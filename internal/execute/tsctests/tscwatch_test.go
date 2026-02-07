@@ -23,6 +23,20 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch", "--incremental"},
 		},
+		{
+			subScenario: "watch cleans up deleted file outputs",
+			files: FileMap{
+				"/home/src/workspaces/project/a.ts":          `export const a = 1;`,
+				"/home/src/workspaces/project/b.ts":          `export const b = 2;`,
+				"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions": {"outDir": "dist"}}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("delete b.ts", func(sys *TestSys) {
+					sys.removeNoError("/home/src/workspaces/project/b.ts")
+				}),
+			},
+		},
 	}
 
 	for _, test := range testCases {
