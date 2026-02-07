@@ -40,6 +40,10 @@ const MSG_CALL = 6;
 // non-blocking fd returns EAGAIN.
 const sleepBuf = new Int32Array(new SharedArrayBuffer(4));
 
+// Shared empty buffer – avoids allocating Buffer.alloc(0) on every
+// zero-length bin field.
+const EMPTY_BUF = Buffer.alloc(0);
+
 // ── Global cleanup tracking ─────────────────────────────────────────
 // Track all live child processes so they can be killed on process exit.
 // This mimics the auto-cleanup behavior of the native libsyncrpc module,
@@ -73,6 +77,17 @@ export class SyncRpcChannel {
     private readFd: number;
     private writeFd: number;
     private callbacks = new Map<string, (name: string, payload: string) => string>();
+
+    // Cache for method name → Buffer encoding.  Method names are a small
+    // fixed set ("echo", "loadProject", etc.), so caching avoids a
+    // Buffer.from() allocation on every request.
+    private methodBufCache = new Map<string, Buffer>();
+
+    // Instance fields for the last-read tuple, avoiding a 3-element
+    // array allocation on every readTuple() call.
+    private _msgType = 0;
+    private _msgName: Buffer = EMPTY_BUF;
+    private _msgPayload: Buffer = EMPTY_BUF;
 
     // Reusable header buffer for reading multi-byte size fields
     private headerBuf = Buffer.allocUnsafe(4);
@@ -177,38 +192,46 @@ export class SyncRpcChannel {
 
     // ── Core request loop ───────────────────────────────────────────
 
+    private getMethodBuf(method: string): Buffer {
+        let buf = this.methodBufCache.get(method);
+        if (buf === undefined) {
+            buf = Buffer.from(method, "utf-8");
+            this.methodBufCache.set(method, buf);
+        }
+        return buf;
+    }
+
     private requestBytesSync(method: string, payload: Buffer): Buffer {
-        const methodBuf = Buffer.from(method, "utf-8");
+        const methodBuf = this.getMethodBuf(method);
         this.writeTuple(MSG_REQUEST, methodBuf, payload);
 
         for (;;) {
-            const [type, name, data] = this.readTuple();
+            this.readTuple();
 
-            switch (type) {
+            switch (this._msgType) {
                 case MSG_RESPONSE: {
-                    const rName = name.toString("utf-8");
-                    if (rName !== method) {
+                    // Compare raw bytes instead of decoding to string.
+                    if (!methodBuf.equals(this._msgName)) {
                         throw new Error(
-                            `name mismatch for response: expected \`${method}\`, got \`${rName}\``,
+                            `name mismatch for response: expected \`${method}\`, got \`${this._msgName.toString("utf-8")}\``,
                         );
                     }
-                    return data;
+                    return this._msgPayload;
                 }
                 case MSG_ERROR: {
-                    const eName = name.toString("utf-8");
-                    if (eName === method) {
-                        throw new Error(data.toString("utf-8"));
+                    if (methodBuf.equals(this._msgName)) {
+                        throw new Error(this._msgPayload.toString("utf-8"));
                     }
                     throw new Error(
-                        `name mismatch for response: expected \`${method}\`, got \`${eName}\``,
+                        `name mismatch for response: expected \`${method}\`, got \`${this._msgName.toString("utf-8")}\``,
                     );
                 }
                 case MSG_CALL: {
-                    this.handleCall(name.toString("utf-8"), data);
+                    this.handleCall(this._msgName.toString("utf-8"), this._msgPayload);
                     break;
                 }
                 default:
-                    throw new Error(`Invalid message type from child: ${type}`);
+                    throw new Error(`Invalid message type from child: ${this._msgType}`);
             }
         }
     }
@@ -300,7 +323,12 @@ export class SyncRpcChannel {
 
     // ── MessagePack tuple read ──────────────────────────────────────
 
-    private readTuple(): [type: number, name: Buffer, payload: Buffer] {
+    /**
+     * Read a [type, name, payload] tuple into instance fields
+     * (_msgType, _msgName, _msgPayload) to avoid allocating a
+     * short-lived 3-element array on every call.
+     */
+    private readTuple(): void {
         // Fixed 3-element array marker
         const marker = this.readByte();
         if (marker !== MSGPACK_FIXARRAY3) {
@@ -311,12 +339,11 @@ export class SyncRpcChannel {
 
         // Message type – positive fixint or uint8
         const tb = this.readByte();
-        let msgType: number;
         if (tb <= 0x7f) {
-            msgType = tb;
+            this._msgType = tb;
         }
         else if (tb === MSGPACK_U8) {
-            msgType = this.readByte();
+            this._msgType = this.readByte();
         }
         else {
             throw new Error(
@@ -324,9 +351,8 @@ export class SyncRpcChannel {
             );
         }
 
-        const name = this.readBin();
-        const payload = this.readBin();
-        return [msgType, name, payload];
+        this._msgName = this.readBin();
+        this._msgPayload = this.readBin();
     }
 
     private readBin(): Buffer {
@@ -349,7 +375,7 @@ export class SyncRpcChannel {
                     `Expected binary data (0xc4-0xc6), received: 0x${marker.toString(16)}`,
                 );
         }
-        if (size === 0) return Buffer.alloc(0);
+        if (size === 0) return EMPTY_BUF;
         return this.readExact(size);
     }
 
@@ -364,12 +390,18 @@ export class SyncRpcChannel {
     }
 
     private readExact(length: number): Buffer {
-        // Use Buffer.alloc (not allocUnsafe) so the buffer has its own backing
-        // ArrayBuffer at byteOffset 0.  This is critical because callers such as
-        // RemoteSourceFile create DataView/Uint8Array over buffer.buffer with
-        // absolute offsets.  Buffer.allocUnsafe returns slices of a shared pool
-        // whose byteOffset is non-zero, corrupting those downstream views.
-        const buf = Buffer.alloc(length);
+        // Use allocUnsafeSlow (not allocUnsafe) so the buffer has its own
+        // backing ArrayBuffer at byteOffset 0.  This is critical because
+        // callers such as RemoteSourceFile create DataView/Uint8Array over
+        // buffer.buffer with absolute offsets.  Buffer.allocUnsafe returns
+        // slices of a shared pool whose byteOffset is non-zero, corrupting
+        // those downstream views.
+        //
+        // allocUnsafeSlow (vs alloc) skips zero-fill, which matters for
+        // large transfers — e.g. checker.ts at ~57 MB saves ~5 ms of
+        // unnecessary memset.  The buffer is immediately filled by
+        // readExactInto so uninitialized memory is never exposed.
+        const buf = Buffer.allocUnsafeSlow(length);
         this.readExactInto(buf, length);
         return buf;
     }
