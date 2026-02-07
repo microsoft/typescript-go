@@ -2024,7 +2024,6 @@ func TestTscIncremental(t *testing.T) {
 				{
 					caption:         "no change with incremental that reads buildInfo",
 					commandLineArgs: []string{"--incremental"},
-					expectedDiff:    "Invalit UTF-8 \xFE becomes Unicode replacement character after being written to buildInfo",
 				},
 			},
 		},
