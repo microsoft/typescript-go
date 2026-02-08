@@ -154,6 +154,11 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	}
 
 	start := lineMap.LineStarts[line]
+	// Guard against stale position data that may reference locations beyond current text length
+	textLen := core.TextPos(len(script.Text()))
+	if start >= textLen {
+		return textLen
+	}
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		return start + char
 	}
