@@ -26,7 +26,7 @@ const MSGPACK_BIN16 = 0xc5;
 const MSGPACK_BIN32 = 0xc6;
 const MSGPACK_U8 = 0xcc; // uint8 marker
 
-// ── MessageType constants (matches Go / Rust / TS definitions) ──────
+// ── MessageType constants ────────────────────────────────────────────
 // Sent by channel (parent → child)
 const MSG_REQUEST = 1;
 const MSG_CALL_RESPONSE = 2;
@@ -71,6 +71,12 @@ process.on("exit", () => {
  *   - requestBinarySync(method, payload): Uint8Array
  *   - registerCallback(name, cb)
  *   - close()
+ *
+ * The protocol is unversioned; both sides (this JS channel and the Go
+ * child process) must be built from the same tree.
+ *
+ * This class is **not** thread-safe. All calls must originate from a
+ * single thread — do not share an instance across worker threads.
  */
 export class SyncRpcChannel {
     private child: ChildProcess;
@@ -78,33 +84,23 @@ export class SyncRpcChannel {
     private writeFd: number;
     private callbacks = new Map<string, (name: string, payload: string) => string>();
 
-    // Cache for method name → Buffer encoding.  Method names are a small
-    // fixed set ("echo", "loadProject", etc.), so caching avoids a
-    // Buffer.from() allocation on every request.
     private methodBufCache = new Map<string, Buffer>();
 
-    // Instance fields for the last-read tuple, avoiding a 3-element
-    // array allocation on every readTuple() call.
     private _msgType = 0;
     private _msgName: Buffer = EMPTY_BUF;
     private _msgPayload: Buffer = EMPTY_BUF;
 
-    // Reusable header buffer for reading multi-byte size fields
     private headerBuf = Buffer.allocUnsafe(4);
 
-    // ── Read-ahead buffer ───────────────────────────────────────────
-    // Reduces readSync syscalls by buffering data from the pipe.
-    // Without this, every readByte() (6-9 per message for headers)
-    // would be a separate kernel syscall.
+    // Read-ahead buffer – reduces readSync syscalls by buffering data from the pipe.
     private readBuf = Buffer.allocUnsafe(65536);
     private readBufPos = 0;
     private readBufLen = 0;
 
-    // ── Write buffer ────────────────────────────────────────────────
-    // Assembles entire tuples into one buffer for a single writeSync.
+    // Write buffer – assembles entire tuples for a single writeSync.
     private writeBuf = Buffer.allocUnsafe(65536);
 
-    constructor(exe: string, args: Array<string>) {
+    constructor(exe: string, args: string[]) {
         this.child = spawn(exe, args, {
             stdio: ["pipe", "pipe", "inherit"],
         });
@@ -156,6 +152,7 @@ export class SyncRpcChannel {
      * Handles Call (callback) messages from the child inline.
      */
     requestSync(method: string, payload: string): string {
+        this.ensureOpen();
         const result = this.requestBytesSync(method, payload);
         return result.toString("utf-8");
     }
@@ -165,6 +162,7 @@ export class SyncRpcChannel {
      * Handles Call (callback) messages from the child inline.
      */
     requestBinarySync(method: string, payload: Uint8Array): Uint8Array {
+        this.ensureOpen();
         return this.requestBytesSync(method, payload);
     }
 
@@ -191,6 +189,12 @@ export class SyncRpcChannel {
     }
 
     // ── Core request loop ───────────────────────────────────────────
+
+    private ensureOpen(): void {
+        if (this.readFd < 0) {
+            throw new Error("SyncRpcChannel is closed");
+        }
+    }
 
     private getMethodBuf(method: string): Buffer {
         let buf = this.methodBufCache.get(method);
@@ -238,6 +242,14 @@ export class SyncRpcChannel {
 
     // ── Callback handling ───────────────────────────────────────────
 
+    /**
+     * Handle an incoming MSG_CALL from the child process.
+     *
+     * After sending the error response back to the child, this method
+     * intentionally re-throws to abort the caller's request loop.
+     * A failed callback is treated as unrecoverable to match the
+     * behavior of the native libsyncrpc addon.
+     */
     private handleCall(name: string, payload: Buffer): void {
         const cb = this.callbacks.get(name);
         if (!cb) {
@@ -258,8 +270,8 @@ export class SyncRpcChannel {
                 Buffer.from(result, "utf-8"),
             );
         }
-        catch (e: any) {
-            const errMsg = String(e?.message ?? e).trim();
+        catch (e: unknown) {
+            const errMsg = String(e instanceof Error ? e.message : e).trim();
             this.writeTuple(
                 MSG_CALL_ERROR,
                 Buffer.from(name, "utf-8"),
@@ -397,6 +409,14 @@ export class SyncRpcChannel {
 
     // ── Low-level synchronous I/O ───────────────────────────────────
 
+    /** Build an EOF error with the child's exit code/signal if available. */
+    private eofError(): Error {
+        const code = this.child.exitCode;
+        const signal = this.child.signalCode;
+        const detail = signal ? `killed by signal ${signal}` : code !== null ? `exited with code ${code}` : "unknown reason";
+        return new Error(`Unexpected EOF while reading from child process (${detail})`);
+    }
+
     /** Read a single byte from the buffered read-ahead. */
     private readByte(): number {
         if (this.readBufPos >= this.readBufLen) {
@@ -433,13 +453,13 @@ export class SyncRpcChannel {
             try {
                 const n = readSync(this.readFd, this.readBuf, 0, this.readBuf.length, null);
                 if (n === 0) {
-                    throw new Error("Unexpected EOF while reading from child process");
+                    throw this.eofError();
                 }
                 this.readBufLen = n;
                 return;
             }
-            catch (e: any) {
-                if (e.code === "EAGAIN" || e.code === "EWOULDBLOCK") {
+            catch (e: unknown) {
+                if (e instanceof Error && ("code" in e) && ((e as NodeJS.ErrnoException).code === "EAGAIN" || (e as NodeJS.ErrnoException).code === "EWOULDBLOCK")) {
                     Atomics.wait(sleepBuf, 0, 0, 1);
                     continue;
                 }
@@ -471,12 +491,12 @@ export class SyncRpcChannel {
                 try {
                     const n = readSync(this.readFd, buffer, pos, length - pos, null);
                     if (n === 0) {
-                        throw new Error("Unexpected EOF while reading from child process");
+                        throw this.eofError();
                     }
                     pos += n;
                 }
-                catch (e: any) {
-                    if (e.code === "EAGAIN" || e.code === "EWOULDBLOCK") {
+                catch (e: unknown) {
+                    if (e instanceof Error && ("code" in e) && ((e as NodeJS.ErrnoException).code === "EAGAIN" || (e as NodeJS.ErrnoException).code === "EWOULDBLOCK")) {
                         Atomics.wait(sleepBuf, 0, 0, 1);
                         continue;
                     }
@@ -502,8 +522,8 @@ export class SyncRpcChannel {
                 const n = writeSync(this.writeFd, data, pos, total - pos);
                 pos += n;
             }
-            catch (e: any) {
-                if (e.code === "EAGAIN" || e.code === "EWOULDBLOCK") {
+            catch (e: unknown) {
+                if (e instanceof Error && ("code" in e) && ((e as NodeJS.ErrnoException).code === "EAGAIN" || (e as NodeJS.ErrnoException).code === "EWOULDBLOCK")) {
                     Atomics.wait(sleepBuf, 0, 0, 1);
                     continue;
                 }
