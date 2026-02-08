@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/esModuleInteropJsCommonJsImport.ts] ////
+
+=== shared.vars.js ===
+const foo = ['bar', 'baz'];
+>foo : Symbol(foo, Decl(shared.vars.js, 0, 5))
+
+module.exports = {
+>module.exports : Symbol(export=, Decl(shared.vars.js, 0, 27))
+>module : Symbol("shared.vars", Decl(shared.vars.js, 0, 0))
+>exports : Symbol(export=, Decl(shared.vars.js, 0, 27))
+
+    foo,
+>foo : Symbol(foo, Decl(shared.vars.js, 2, 18))
+
+};
+=== index.ts ===
+import { foo } from "./shared.vars";
+>foo : Symbol(foo, Decl(index.ts, 0, 8))
+
+console.log(foo);
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>foo : Symbol(foo, Decl(index.ts, 0, 8))
+

@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/esModuleInteropJsCommonJsImport.ts] ////
+
+=== shared.vars.js ===
+const foo = ['bar', 'baz'];
+>foo : string[]
+>['bar', 'baz'] : string[]
+>'bar' : "bar"
+>'baz' : "baz"
+
+module.exports = {
+>module.exports = {    foo,} : { foo: string[]; }
+>module.exports : { foo: string[]; }
+>module : { "export=": { foo: string[]; }; }
+>exports : { foo: string[]; }
+>{    foo,} : { foo: string[]; }
+
+    foo,
+>foo : string[]
+
+};
+=== index.ts ===
+import { foo } from "./shared.vars";
+>foo : string[]
+
+console.log(foo);
+>console.log(foo) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>foo : string[]
+
