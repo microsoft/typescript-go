@@ -271,9 +271,18 @@ export const cleanBuilt = task({
     run: () => rimraf("built"),
 });
 
+export const depaware = task({
+    name: "depaware",
+    hiddenFromTaskList: true,
+    run: async () => {
+        await $`go tool depaware -update ./cmd/tsgo`;
+    },
+});
+
 export const generate = task({
     name: "generate",
-    description: "Runs go generate on the project.",
+    description: "Generates all generated code.",
+    dependencies: [depaware],
     run: async () => {
         assertTypeScriptCloned();
         await $`go generate -v ./...`;
