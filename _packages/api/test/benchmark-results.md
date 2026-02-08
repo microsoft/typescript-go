@@ -33,3 +33,35 @@ Three implementations tested:
 - **tsgo vs TS baseline:** Project loading is ~14,000× faster. Per-identifier symbol lookup is 6–16× slower due to IPC overhead, but batched queries bring it to within 3–11× of TS's in-process speed.
 
 - **Batching matters:** Batching 10k symbol lookups into a single call gives a ~3–5× speedup over per-identifier round-trips in both sync channels.
+
+## IPC Optimization Experiments (Sync JS)
+
+Two approaches were benchmarked to see if the sync pipe protocol could be made faster:
+
+### Experiment 1: Larger Go-side IO Buffers (4 KB → 256 KB)
+
+Increased `bufio.Reader`/`bufio.Writer` from their 4 KB defaults to 256 KB to reduce syscall frequency.
+
+| Benchmark | Baseline (median) | Larger buffers (median) | Change |
+|---|---|---|---|
+| transfer debug.ts | 1.33 ms | 1.35 ms | ~same |
+| transfer program.ts | 4.53 ms | 4.46 ms | ~same |
+| transfer checker.ts | 58.83 ms | 57.28 ms | ~same |
+
+**Result: No measurable effect.** `bufio.Writer` already coalesces small writes before `Flush()`, so the default buffer size doesn't add meaningful syscall overhead. The bottleneck is kernel pipe throughput, not write granularity.
+
+### Experiment 2: DEFLATE Compression (`compress/flate` BestSpeed)
+
+Compressed `RawBinary` payloads >4 KB with DEFLATE on the Go side, decompressed with `zlib.inflateRawSync` on the JS side. Used a new `MessageTypeResponseCompressed` wire type.
+
+| Benchmark | Baseline (median) | Compressed (median) | Change |
+|---|---|---|---|
+| transfer debug.ts | 1.33 ms | 7.25 ms | 5.5× slower |
+| transfer program.ts | 4.53 ms | 24.20 ms | 5.3× slower |
+| transfer checker.ts | 58.83 ms | 286.10 ms | 4.9× slower |
+
+**Result: Much worse.** `compress/flate` at BestSpeed runs at ~300 MB/s, but local pipes transfer at ~2 GB/s. The CPU cost of compression far exceeds the I/O savings.
+
+### Conclusion
+
+The current protocol is already near-optimal for local pipe IPC. The wire format is minimal and the pipe provides ~2 GB/s throughput that outpaces any stdlib compression codec. Remaining options for large payload optimization would require either: faster codecs like LZ4 (new dependency), lazy/streaming AST transfer (architectural change), or shared memory via `memfd_create` (native code + Linux-only).
