@@ -1056,7 +1056,10 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 		return nil
 	}
 
-	pool := p.checkerPool.(*checkerPool)
+	pool, ok := p.checkerPool.(*checkerPool)
+	if !ok {
+		return nil // !!! Global diagnostics in the editor?
+	}
 
 	globalDiagnostics := make([][]*ast.Diagnostic, len(pool.checkers))
 	pool.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
@@ -1068,17 +1071,6 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getDeclarationDiagnosticsForFile)
-}
-
-func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(core.Concatenate(p.GetGlobalDiagnostics(ctx), p.getOptionsDiagnosticsOfConfigFile()))
-}
-
-func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
-	if p.Options() == nil || p.Options().ConfigFilePath == "" {
-		return nil
-	}
-	return p.GetConfigFileParsingDiagnostics()
 }
 
 func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *core.CompilerOptions) []*ast.Diagnostic {
@@ -1478,7 +1470,6 @@ type ProgramLike interface {
 	GetConfigFileParsingDiagnostics() []*ast.Diagnostic
 	GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
 	GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
-	GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic
 	GetProgramDiagnostics() []*ast.Diagnostic
 	GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic
 	GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
@@ -1527,18 +1518,16 @@ func GetDiagnosticsOfAnyProgram(
 	allDiagnostics = append(allDiagnostics, program.GetProgramDiagnostics()...)
 
 	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
-		// Options diagnostics include global diagnostics (even though we collect them separately),
-		// and global diagnostics create checkers, which then bind all of the files. Do this binding
-		// early so we can track the time.
+		// Do binding early so we can track the time.
 		getBindDiagnostics(ctx, file)
-
-		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
 
 		if program.Options().ListFilesOnly.IsFalseOrUnknown() {
 			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
+				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 
 			if (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
