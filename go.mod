@@ -19,6 +19,8 @@ require (
 require (
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/matryer/moq v0.6.0 // indirect
+	github.com/pkg/diff v0.0.0-20200914180035-5b29258ca4f7 // indirect
+	github.com/tailscale/depaware v0.0.0-20251001183927-9c2ad255ef3f // indirect
 	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/tools v0.42.0 // indirect
 	mvdan.cc/gofumpt v0.9.2 // indirect
@@ -26,6 +28,7 @@ require (
 
 tool (
 	github.com/matryer/moq
+	github.com/tailscale/depaware
 	golang.org/x/tools/cmd/stringer
 	mvdan.cc/gofumpt
 )
