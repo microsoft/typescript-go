@@ -117,7 +117,7 @@ func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptK
 	p.initializeState(opts, sourceText, scriptKind)
 	p.nextToken()
 	if p.scriptKind == core.ScriptKindJSON {
-		return p.parsejson()
+		return p.parseJSONText()
 	}
 	return p.parseSourceFileWorker()
 }
@@ -129,7 +129,7 @@ func (p *Parser) initializeClosures() {
 	}
 }
 
-func (p *Parser) parsejson() *ast.SourceFile {
+func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
 	var eof *ast.TokenNode

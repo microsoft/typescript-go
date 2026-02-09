@@ -304,7 +304,7 @@ Found 2 errors in the same file, starting at: a.ts[90m:3[0m
       ]
     ]
   ],
-  "size": 3848
+  "size": 3854
 }
 
 tsconfig.json::
