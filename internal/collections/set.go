@@ -1,6 +1,9 @@
 package collections
 
-import "maps"
+import (
+	"maps"
+	"slices"
+)
 
 type Set[T comparable] struct {
 	M map[T]struct{}
@@ -44,6 +47,10 @@ func (s *Set[T]) Keys() map[T]struct{} {
 		return nil
 	}
 	return s.M
+}
+
+func (s *Set[T]) KeysSlice() []T {
+	return slices.AppendSeq(make([]T, 0, len(s.M)), maps.Keys(s.M))
 }
 
 func (s *Set[T]) Clear() {
@@ -136,7 +143,7 @@ func (s *Set[T]) Intersects(other *Set[T]) bool {
 }
 
 func NewSetFromItems[T comparable](items ...T) *Set[T] {
-	s := &Set[T]{}
+	s := NewSetWithSizeHint[T](len(items))
 	for _, item := range items {
 		s.Add(item)
 	}
