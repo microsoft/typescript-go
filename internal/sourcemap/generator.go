@@ -1,11 +1,13 @@
 package sourcemap
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"slices"
 	"strings"
+	"unsafe"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -333,13 +335,26 @@ func (gen *Generator) RawSourceMap() *RawSourceMap {
 	}
 }
 
-// Gets the string representation of the source map
-func (gen *Generator) String() string {
+func (gen *Generator) bytes() []byte {
 	buf, err := json.Marshal(gen.RawSourceMap())
 	if err != nil {
 		panic(err.Error())
 	}
-	return string(buf)
+	return buf
+}
+
+// Gets the string representation of the source map
+func (gen *Generator) String() string {
+	return string(gen.bytes())
+}
+
+func (gen *Generator) Base64DataURL() string {
+	const prefix = "data:application/json;base64,"
+	data := gen.bytes()
+	buf := make([]byte, len(prefix)+base64.StdEncoding.EncodedLen(len(data)))
+	copy(buf, prefix)
+	base64.StdEncoding.Encode(buf[len(prefix):], data)
+	return unsafe.String(unsafe.SliceData(buf), len(buf))
 }
 
 func base64FormatEncode(value int) rune {
