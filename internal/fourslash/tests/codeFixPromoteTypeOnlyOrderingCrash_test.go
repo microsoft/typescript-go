@@ -9,7 +9,7 @@ import (
 
 // Test case for crash when promoting type-only import to value import
 // when existing type imports precede the new value import
-// https://github.com/microsoft/typescript-go/issues/XXX
+// https://github.com/microsoft/typescript-go/issues/2559
 func TestCodeFixPromoteTypeOnlyOrderingCrash(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
@@ -29,10 +29,11 @@ let x: AAA = new BBB()`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToFile(t, "/foo.ts")
+
+	// TODO: fix formatting
 	f.VerifyImportFixAtPosition(t, []string{
 		`import {
-    BBB,
-    type AAA,
+BBB,     type AAA,
 } from "./bar";
 
 let x: AAA = new BBB()`,
