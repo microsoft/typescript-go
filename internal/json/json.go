@@ -3,21 +3,39 @@ package json
 
 import (
 	"io"
+	"slices"
 
 	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 )
 
+var allowInvalid []jsonv2.Options = slices.Clip([]jsonv2.Options{jsontext.AllowInvalidUTF8(true)})
+
 func Marshal(in any, opts ...jsonv2.Options) (out []byte, err error) {
-	return jsonv2.Marshal(in, append([]jsonv2.Options{jsontext.AllowInvalidUTF8(true)}, opts...)...)
+	if len(opts) == 0 {
+		opts = allowInvalid
+	} else {
+		opts = append(allowInvalid, opts...)
+	}
+	return jsonv2.Marshal(in, opts...)
 }
 
 func MarshalEncode(out *jsontext.Encoder, in any, opts ...jsonv2.Options) (err error) {
-	return jsonv2.MarshalEncode(out, in, append([]jsonv2.Options{jsontext.AllowInvalidUTF8(true)}, opts...)...)
+	if len(opts) == 0 {
+		opts = allowInvalid
+	} else {
+		opts = append(allowInvalid, opts...)
+	}
+	return jsonv2.MarshalEncode(out, in, opts...)
 }
 
 func MarshalWrite(out io.Writer, in any, opts ...jsonv2.Options) (err error) {
-	return jsonv2.MarshalWrite(out, in, append([]jsonv2.Options{jsontext.AllowInvalidUTF8(true)}, opts...)...)
+	if len(opts) == 0 {
+		opts = allowInvalid
+	} else {
+		opts = append(allowInvalid, opts...)
+	}
+	return jsonv2.MarshalWrite(out, in, opts...)
 }
 
 func MarshalIndent(in any, prefix, indent string) (out []byte, err error) {

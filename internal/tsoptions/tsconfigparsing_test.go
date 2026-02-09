@@ -130,10 +130,10 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
 			var baselineContent strings.Builder
-			for i, json := range rec.input {
+			for i, jsonText := range rec.input {
 				baselineContent.WriteString("Input::\n")
-				baselineContent.WriteString(json + "\n")
-				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", json)
+				baselineContent.WriteString(jsonText + "\n")
+				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
 				baselineContent.WriteString("Config::\n")
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
 				baselineContent.WriteString("\n")
@@ -1017,13 +1017,13 @@ func TestParseSrcCompiler(t *testing.T) {
 		CurrentDirectory: compilerDir,
 	}
 
-	json, ok := fs.ReadFile(tsconfigFileName)
+	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(t, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
 	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: tsconfigFileName,
 		Path:     tsconfigPath,
-	}, json, core.ScriptKindJSON)
+	}, jsonText, core.ScriptKindJSON)
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
@@ -1188,13 +1188,13 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 		CurrentDirectory: compilerDir,
 	}
 
-	json, ok := fs.ReadFile(tsconfigFileName)
+	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(b, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
 	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: tsconfigFileName,
 		Path:     tsconfigPath,
-	}, json, core.ScriptKindJSON)
+	}, jsonText, core.ScriptKindJSON)
 
 	b.ReportAllocs()
 
@@ -1257,10 +1257,10 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 
 		parseConfig := func(configFileName string, cache tsoptions.ExtendedConfigCache) *tsoptions.ParsedCommandLine {
 			cfgPath := tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
-			json, ok := host.FS().ReadFile(configFileName)
+			jsonText, ok := host.FS().ReadFile(configFileName)
 			assert.Assert(t, ok, "missing %s in test fs", configFileName)
 			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
-				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, json, core.ScriptKindJSON),
+				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, jsonText, core.ScriptKindJSON),
 			}
 			return tsoptions.ParseJsonSourceFileConfigFileContent(
 				tsConfigSourceFile,
@@ -1302,10 +1302,10 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 
 		parseConfig := func(configFileName string, cache tsoptions.ExtendedConfigCache) *tsoptions.ParsedCommandLine {
 			cfgPath := tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
-			json, ok := host.FS().ReadFile(configFileName)
+			jsonText, ok := host.FS().ReadFile(configFileName)
 			assert.Assert(t, ok, "missing %s in test fs", configFileName)
 			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
-				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, json, core.ScriptKindJSON),
+				SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, jsonText, core.ScriptKindJSON),
 			}
 			return tsoptions.ParseJsonSourceFileConfigFileContent(
 				tsConfigSourceFile,

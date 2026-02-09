@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"golang.org/x/text/language"
 )
@@ -120,16 +119,17 @@ func Format(text string, args []string) string {
 	}
 
 	// Replace invalid UTF-8 with Unicode replacement character
-	args = core.Map(args, func(arg string) string {
-		return strings.ToValidUTF8(arg, "\uFFFD")
-	})
+	validArgs := make([]string, 0, len(args))
+	for _, arg := range args {
+		validArgs = append(validArgs, strings.ToValidUTF8(arg, "\uFFFD"))
+	}
 
 	return placeholderRegexp.ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
-		if err != nil || int(index) >= len(args) {
+		if err != nil || int(index) >= len(validArgs) {
 			panic("Invalid formatting placeholder")
 		}
-		return args[int(index)]
+		return validArgs[int(index)]
 	})
 }
 

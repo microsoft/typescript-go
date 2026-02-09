@@ -5,7 +5,6 @@ import (
 	"io"
 	"io/fs"
 	"maps"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -94,13 +93,57 @@ func (d *FSDiffer) BaselineFSwithDiff(baseline io.Writer) {
 	*d.WrittenFiles = collections.SyncSet[string]{} // Reset written files after baseline
 }
 
-var internalSymbolRegex = regexp.MustCompile(`\x{FFFD}@[^@]+@[0-9]+`)
-
 func SanitizeInternalSymbolName(s string) string {
-	return internalSymbolRegex.ReplaceAllStringFunc(s, func(match string) string {
-		idStart := strings.LastIndex(match, "@")
-		return match[:idStart] + "@<symbolId>"
-	})
+	const marker = "\uFFFD"
+	if !strings.Contains(s, marker) {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	i := 0
+	for i < len(s) {
+		idx := strings.Index(s[i:], marker)
+		if idx == -1 {
+			b.WriteString(s[i:])
+			break
+		}
+		b.WriteString(s[i : i+idx])
+		matchStart := i + idx
+		pos := matchStart + len(marker)
+		// Expect @
+		if pos >= len(s) || s[pos] != '@' {
+			b.WriteString(s[matchStart:pos])
+			i = pos
+			continue
+		}
+		pos++
+		// Expect one or more non-@ characters
+		nameStart := pos
+		for pos < len(s) && s[pos] != '@' {
+			pos++
+		}
+		if pos == nameStart || pos >= len(s) || s[pos] != '@' {
+			b.WriteString(s[matchStart:pos])
+			i = pos
+			continue
+		}
+		pos++ // skip second @
+		// Expect one or more digits
+		digitStart := pos
+		for pos < len(s) && s[pos] >= '0' && s[pos] <= '9' {
+			pos++
+		}
+		if pos == digitStart {
+			b.WriteString(s[matchStart:pos])
+			i = pos
+			continue
+		}
+		// Full match: keep everything up to the last @ and replace @digits with @<symbolId>
+		b.WriteString(s[matchStart : digitStart-1])
+		b.WriteString("@<symbolId>")
+		i = pos
+	}
+	return b.String()
 }
 
 func (d *FSDiffer) addFsEntryDiff(diffs map[string]string, newDirContent *DiffEntry, path string) {
