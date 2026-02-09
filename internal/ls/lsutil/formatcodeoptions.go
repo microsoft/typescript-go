@@ -87,6 +87,39 @@ type FormatCodeSettings struct {
 	IndentSwitchCase                                            core.Tristate
 }
 
+func FromInitFormatOptions(opt *lsproto.FormatOptions) *FormatCodeSettings {
+	return &FormatCodeSettings{
+		EditorSettings: EditorSettings{
+			IndentSize:             int(opt.IndentSize),
+			TabSize:                int(opt.TabSize),
+			NewLineCharacter:       core.GetNewLineKind(tsoptions.ParseString(opt.NewLineCharacter)).GetNewLineCharacter(),
+			ConvertTabsToSpaces:    opt.ConvertTabsToSpaces,
+			IndentStyle:            parseIndentStyle(opt.IndentStyle),
+			TrimTrailingWhitespace: opt.TrimTrailingWhitespace,
+		},
+		InsertSpaceAfterCommaDelimiter:                              core.BoolToTristate(opt.InsertSpaceAfterCommaDelimiter),
+		InsertSpaceAfterSemicolonInForStatements:                    core.BoolToTristate(opt.InsertSpaceAfterSemicolonInForStatements),
+		InsertSpaceBeforeAndAfterBinaryOperators:                    core.BoolToTristate(opt.InsertSpaceBeforeAndAfterBinaryOperators),
+		InsertSpaceAfterConstructor:                                 core.BoolToTristate(opt.InsertSpaceAfterConstructor),
+		InsertSpaceAfterKeywordsInControlFlowStatements:             core.BoolToTristate(opt.InsertSpaceAfterKeywordsInControlFlowStatements),
+		InsertSpaceAfterFunctionKeywordForAnonymousFunctions:        core.BoolToTristate(opt.InsertSpaceAfterFunctionKeywordForAnonymousFunctions),
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis:  core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis),
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets:     core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets),
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces:       core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces),
+		InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces:          core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces),
+		InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces),
+		InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces:  core.BoolToTristate(opt.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces),
+		InsertSpaceAfterTypeAssertion:                               core.BoolToTristate(opt.InsertSpaceAfterTypeAssertion),
+		InsertSpaceBeforeFunctionParenthesis:                        core.BoolToTristate(opt.InsertSpaceBeforeFunctionParenthesis),
+		PlaceOpenBraceOnNewLineForFunctions:                         core.BoolToTristate(opt.PlaceOpenBraceOnNewLineForFunctions),
+		PlaceOpenBraceOnNewLineForControlBlocks:                     core.BoolToTristate(opt.PlaceOpenBraceOnNewLineForControlBlocks),
+		InsertSpaceBeforeTypeAnnotation:                             core.BoolToTristate(opt.InsertSpaceBeforeTypeAnnotation),
+		IndentMultiLineObjectLiteralBeginningOnBlankLine:            core.BoolToTristate(opt.IndentMultiLineObjectLiteralBeginningOnBlankLine),
+		Semicolons:       parseSemicolonPreference(opt.Semicolons),
+		IndentSwitchCase: core.BoolToTristate(opt.IndentSwitchCase),
+	}
+}
+
 func FromLSFormatOptions(f *FormatCodeSettings, opt *lsproto.FormattingOptions) *FormatCodeSettings {
 	updatedSettings := f.Copy()
 	updatedSettings.TabSize = int(opt.TabSize)

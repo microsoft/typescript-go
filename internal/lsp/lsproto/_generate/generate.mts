@@ -48,8 +48,154 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.",
             },
+            {
+                name: "typescript",
+                type: { kind: "reference", name: "FormatOptions" },
+                optional: true,
+                documentation: "Formatting options provided at initialization.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
+    },
+    {
+        name: "FormatOptions",
+        properties: [
+            {
+                name: "InsertSpaceAfterCommaDelimiter",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterSemicolonInForStatements",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceBeforeAndAfterBinaryOperators",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterConstructor",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterKeywordsInControlFlowStatements",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterFunctionKeywordForAnonymousFunctions",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceAfterTypeAssertion",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceBeforeFunctionParenthesis",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "PlaceOpenBraceOnNewLineForFunctions",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "PlaceOpenBraceOnNewLineForControlBlocks",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "InsertSpaceBeforeTypeAnnotation",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "IndentMultiLineObjectLiteralBeginningOnBlankLine",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "IndentSwitchCase",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "Semicolons",
+                type: { kind: "base", name: "string" },
+                omitzeroValue: true,
+            },
+            {
+                name: "BaseIndentSize",
+                type: { kind: "base", name: "integer" },
+                omitzeroValue: true,
+            },
+            {
+                name: "IndentSize",
+                type: { kind: "base", name: "integer" },
+                omitzeroValue: true,
+            },
+            {
+                name: "TabSize",
+                type: { kind: "base", name: "integer" },
+                omitzeroValue: true,
+            },
+            {
+                name: "NewLineCharacter",
+                type: { kind: "base", name: "string" },
+                omitzeroValue: true,
+            },
+            {
+                name: "ConvertTabsToSpaces",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+            {
+                name: "IndentStyle",
+                type: { kind: "base", name: "string" },
+                omitzeroValue: true,
+            },
+            {
+                name: "TrimTrailingWhitespace",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
+        ],
     },
     {
         name: "AutoImportFix",
@@ -748,7 +894,7 @@ function handleOrType(orType: OrType): GoType {
 
     let memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
-            return type.name;
+            return type.name.slice(type.name.lastIndexOf(".") + 1);
         }
         else if (type.kind === "base") {
             return titleCase(type.name);
@@ -1124,6 +1270,7 @@ function generateCode() {
     writeLine("");
     writeLine(`\t"github.com/go-json-experiment/json"`);
     writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
+    // writeLine(`\t"github.com/microsoft/typescript-go/internal/core"`);
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);

@@ -21626,6 +21626,65 @@ type InitializationOptions struct {
 
 	// The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.
 	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
+
+	// Formatting options provided at initialization.
+	Typescript *FormatOptions `json:"typescript,omitzero"`
+}
+
+type FormatOptions struct {
+	InsertSpaceAfterCommaDelimiter bool `json:"InsertSpaceAfterCommaDelimiter,omitzero"`
+
+	InsertSpaceAfterSemicolonInForStatements bool `json:"InsertSpaceAfterSemicolonInForStatements,omitzero"`
+
+	InsertSpaceBeforeAndAfterBinaryOperators bool `json:"InsertSpaceBeforeAndAfterBinaryOperators,omitzero"`
+
+	InsertSpaceAfterConstructor bool `json:"InsertSpaceAfterConstructor,omitzero"`
+
+	InsertSpaceAfterKeywordsInControlFlowStatements bool `json:"InsertSpaceAfterKeywordsInControlFlowStatements,omitzero"`
+
+	InsertSpaceAfterFunctionKeywordForAnonymousFunctions bool `json:"InsertSpaceAfterFunctionKeywordForAnonymousFunctions,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis bool `json:"InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets bool `json:"InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces bool `json:"InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces bool `json:"InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces bool `json:"InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces,omitzero"`
+
+	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces bool `json:"InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces,omitzero"`
+
+	InsertSpaceAfterTypeAssertion bool `json:"InsertSpaceAfterTypeAssertion,omitzero"`
+
+	InsertSpaceBeforeFunctionParenthesis bool `json:"InsertSpaceBeforeFunctionParenthesis,omitzero"`
+
+	PlaceOpenBraceOnNewLineForFunctions bool `json:"PlaceOpenBraceOnNewLineForFunctions,omitzero"`
+
+	PlaceOpenBraceOnNewLineForControlBlocks bool `json:"PlaceOpenBraceOnNewLineForControlBlocks,omitzero"`
+
+	InsertSpaceBeforeTypeAnnotation bool `json:"InsertSpaceBeforeTypeAnnotation,omitzero"`
+
+	IndentMultiLineObjectLiteralBeginningOnBlankLine bool `json:"IndentMultiLineObjectLiteralBeginningOnBlankLine,omitzero"`
+
+	IndentSwitchCase bool `json:"IndentSwitchCase,omitzero"`
+
+	Semicolons string `json:"Semicolons,omitzero"`
+
+	BaseIndentSize int32 `json:"BaseIndentSize,omitzero"`
+
+	IndentSize int32 `json:"IndentSize,omitzero"`
+
+	TabSize int32 `json:"TabSize,omitzero"`
+
+	NewLineCharacter string `json:"NewLineCharacter,omitzero"`
+
+	ConvertTabsToSpaces bool `json:"ConvertTabsToSpaces,omitzero"`
+
+	IndentStyle string `json:"IndentStyle,omitzero"`
+
+	TrimTrailingWhitespace bool `json:"TrimTrailingWhitespace,omitzero"`
 }
 
 // AutoImportFix contains information about an auto-import suggestion.

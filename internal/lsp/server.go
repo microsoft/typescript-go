@@ -275,6 +275,15 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
+		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.Typescript != nil {
+			// return user preferences passed in `initializationOptions`
+			newUserPrefs := lsutil.NewDefaultUserPreferences()
+			newUserPrefs.FormatCodeSettings = lsutil.FromInitFormatOptions(s.initializeParams.InitializationOptions.Typescript)
+			s.logger.Logf(
+				"received formatting options from initialization: %v", s.initializeParams.InitializationOptions.Typescript,
+			)
+			return lsutil.NewUserConfig(newUserPrefs), nil
+		}
 		// if no configuration request capapbility, return default config
 		return lsutil.NewUserConfig(nil), nil
 	}
