@@ -112,11 +112,11 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 	return core.ApplyBulkEdits(text, changes)
 }
 
-func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceFile *ast.SourceFile) *format.FormatCodeSettings {
-	shouldAutoDetectSemicolonPreference := options.Semicolons == format.SemicolonPreferenceIgnore
-	shouldRemoveSemicolons := options.Semicolons == format.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
+func getFormatCodeSettingsForWriting(options *lsutil.FormatCodeSettings, sourceFile *ast.SourceFile) *lsutil.FormatCodeSettings {
+	shouldAutoDetectSemicolonPreference := options.Semicolons == lsutil.SemicolonPreferenceIgnore
+	shouldRemoveSemicolons := options.Semicolons == lsutil.SemicolonPreferenceRemove || shouldAutoDetectSemicolonPreference && !lsutil.ProbablyUsesSemicolons(sourceFile)
 	if shouldRemoveSemicolons {
-		options.Semicolons = format.SemicolonPreferenceRemove
+		options.Semicolons = lsutil.SemicolonPreferenceRemove
 	}
 
 	return options
@@ -126,14 +126,21 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 	nodeIn := node
 	eofToken := t.Factory.NewToken(ast.KindEndOfFile)
 	if ast.IsStatement(node) {
+		text := ""
+		// OrganizeImports uses nodes from the old tree for preserving comments when emitting,
+		// which causes text to be indexed with the positions of the old nodes.
+		// For more details, check PR #2331
+		if !ast.NodeIsSynthesized(node) {
+			text = sourceFile.Text()
+		}
 		nodeIn = t.Factory.NewSourceFile(
 			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
-			"",
+			text,
 			t.Factory.NewNodeList([]*ast.Node{node}),
 			t.Factory.NewToken(ast.KindEndOfFile),
 		)
 	}
-	writer := printer.NewChangeTrackerWriter(t.newLine)
+	writer := printer.NewChangeTrackerWriter(t.newLine, t.formatSettings.IndentSize)
 	printer.NewPrinter(
 		printer.PrinterOptions{
 			NewLine:                       core.GetNewLineKind(t.newLine),

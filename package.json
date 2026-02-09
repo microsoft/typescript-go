@@ -3,20 +3,25 @@
     "name": "typescript-go",
     "version": "0.0.0",
     "license": "Apache-2.0",
+    "engines": {
+        "node": ">=20.19"
+    },
     "devDependencies": {
         "@types/adm-zip": "^0.5.7",
         "@types/node": "latest",
+        "@types/tmp": "^0.2.6",
         "@types/which": "^3.0.4",
         "adm-zip": "^0.5.16",
-        "chokidar": "^4.0.3",
-        "dprint": "^0.50.2",
+        "chokidar": "^5.0.0",
+        "dprint": "^0.51.1",
         "execa": "^9.6.1",
-        "glob": "^10.5.0",
+        "glob": "^13.0.0",
         "hereby": "^1.11.1",
-        "p-limit": "^6.2.0",
+        "p-limit": "^7.2.0",
         "picocolors": "^1.1.1",
+        "tmp": "^0.2.5",
         "typescript": "^5.9.3",
-        "which": "^5.0.0"
+        "which": "^6.0.0"
     },
     "scripts": {
         "build": "hereby build",
@@ -26,7 +31,6 @@
         "api:build": "npm run -w @typescript/api build",
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
-        "node": "node --no-warnings --conditions @typescript/source",
         "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts",
         "updatefailing": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/updateFailing.mts",
         "makemanual": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/makeManual.mts"
@@ -35,9 +39,9 @@
         "./_extension",
         "./_packages/*"
     ],
-    "packageManager": "npm@8.19.4",
+    "packageManager": "npm@11.8.0+sha512.9f5f6c25e5be44629d907a3c482739c614b090a8505057d9685cd273e12c6172e34aa215d2d97bd9a0d8415bb356f7eb6f2b06c1d690b0d2cdcb9f09d7410149",
     "volta": {
-        "node": "22.16.0",
-        "npm": "8.19.4"
+        "node": "22.22.0",
+        "npm": "11.8.0"
     }
 }

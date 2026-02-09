@@ -204,6 +204,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 1
+    },
+    "ch": "c",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -225,6 +244,25 @@ Config::
         "text": "o"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 2
+    },
+    "ch": "o",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -254,6 +292,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 3
+    },
+    "ch": "n",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -275,6 +332,25 @@ Config::
         "text": "s"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 4
+    },
+    "ch": "s",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -304,6 +380,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 5
+    },
+    "ch": "t",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -325,6 +420,25 @@ Config::
         "text": " "
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 6
+    },
+    "ch": " ",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -354,6 +468,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 7
+    },
+    "ch": "x",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -375,6 +508,25 @@ Config::
         "text": " "
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 8
+    },
+    "ch": " ",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -404,6 +556,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 9
+    },
+    "ch": "=",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -425,6 +596,25 @@ Config::
         "text": " "
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 10
+    },
+    "ch": " ",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -454,6 +644,25 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 11
+    },
+    "ch": "1",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+{
   "method": "textDocument/didChange",
   "params": {
     "textDocument": {
@@ -475,6 +684,25 @@ Config::
         "text": "0"
       }
     ]
+  }
+}
+
+{
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 12
+    },
+    "ch": "0",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
   }
 }
 
@@ -504,6 +732,33 @@ Config::
 }
 
 {
+  "method": "textDocument/onTypeFormatting",
+  "params": {
+    "textDocument": {
+      "uri": "file:///myproject/dependency/FnS.ts"
+    },
+    "position": {
+      "line": 5,
+      "character": 13
+    },
+    "ch": ";",
+    "options": {
+      "tabSize": 4,
+      "insertSpaces": true,
+      "trimTrailingWhitespace": true
+    }
+  }
+}
+
+Projects::
+  [/myproject/dependency/tsconfig.json] *modified*
+    /myproject/dependency/FnS.ts  *modified*
+  [/myproject/main/tsconfig.json] 
+    /myproject/dependency/FnS.ts  
+    /myproject/main/main.ts       
+  [/myproject/tsconfig.json] 
+
+{
   "method": "textDocument/rename",
   "params": {
     "textDocument": {
@@ -518,8 +773,8 @@ Config::
 }
 
 Projects::
-  [/myproject/dependency/tsconfig.json] *modified*
-    /myproject/dependency/FnS.ts  *modified*
+  [/myproject/dependency/tsconfig.json] 
+    /myproject/dependency/FnS.ts  
   [/myproject/main/tsconfig.json] *modified*
     /myproject/dependency/FnS.ts  *modified*
     /myproject/main/main.ts       

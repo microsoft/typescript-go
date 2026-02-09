@@ -10,7 +10,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -21,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type Snapshot struct {
@@ -41,7 +41,7 @@ type Snapshot struct {
 	AutoImports                        *autoimport.Registry
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	config                             Config
+	allUserPreferences                 *lsutil.UserConfig
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -54,11 +54,14 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	config Config,
+	allUserPreferences *lsutil.UserConfig,
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
+	if allUserPreferences == nil {
+		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
+	}
 	s := &Snapshot{
 		id: id,
 
@@ -69,7 +72,7 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		config:                             config,
+		allUserPreferences:                 allUserPreferences,
 		AutoImports:                        autoImports,
 		autoImportsWatch:                   autoImportsWatch,
 	}
@@ -107,15 +110,16 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	if s.config.tsUserPreferences != nil {
-		return s.config.tsUserPreferences
-	}
-	return lsutil.NewDefaultUserPreferences()
+func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
+	return s.allUserPreferences.GetPreferences(activeFile)
 }
 
-func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
-	return s.config.formatOptions
+func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
+	// returns `ts`
+	if s.allUserPreferences.TS() != nil {
+		return s.allUserPreferences.TS()
+	}
+	return lsutil.NewDefaultUserPreferences()
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {
@@ -140,6 +144,18 @@ func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 		return "", false
 	}
 	return handle.Content(), true
+}
+
+func (s *Snapshot) DirectoryExists(path string) bool {
+	return s.fs.fs.DirectoryExists(path)
+}
+
+func (s *Snapshot) GetDirectories(path string) []string {
+	return s.fs.fs.GetAccessibleEntries(path).Directories
+}
+
+func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return vfs.ReadDirectory(s.fs.fs, currentDir, path, extensions, excludes, includes, depth)
 }
 
 type APISnapshotRequest struct {
@@ -193,17 +209,10 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	newConfig                          *Config
+	newConfig                          *lsutil.UserConfig
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
-}
-
-type Config struct {
-	tsUserPreferences *lsutil.UserPreferences
-	// jsUserPreferences *lsutil.UserPreferences
-	formatOptions *format.FormatCodeSettings
-	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -360,14 +369,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	config := s.config
+	config := s.allUserPreferences
 	if change.newConfig != nil {
-		if change.newConfig.tsUserPreferences != nil {
-			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
-		}
-		if change.newConfig.formatOptions != nil {
-			config.formatOptions = change.newConfig.formatOptions
-		}
+		config = config.Merge(change.newConfig)
 	}
 
 	autoImportHost := newAutoImportRegistryCloneHost(
@@ -381,13 +385,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	for path, overlay := range overlays {
 		openFiles[path] = overlay.FileName()
 	}
-	oldAutoImports := s.AutoImports
-	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath)
-	}
 	prepareAutoImports := tspath.Path("")
 	if change.ResourceRequest.AutoImports != "" {
 		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
+	}
+	oldAutoImports := s.AutoImports
+	if oldAutoImports == nil {
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.GetPreferences(string(prepareAutoImports)))
 	}
 	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
@@ -397,7 +401,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config.tsUserPreferences,
+		UserPreferences: config.GetPreferences(string(prepareAutoImports)),
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())
