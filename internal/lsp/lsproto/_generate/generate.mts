@@ -50,9 +50,9 @@ const customStructures: Structure[] = [
             },
             {
                 name: "typescript",
-                type: { kind: "reference", name: "FormatOptions" },
+                type: { kind: "reference", name: "any" },
                 optional: true,
-                documentation: "Formatting options provided at initialization.",
+                documentation: "userPreferences and/or formatting options or provided at initialization.",
             },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",

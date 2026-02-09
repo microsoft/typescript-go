@@ -277,12 +277,16 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 	if !caps.Workspace.Configuration {
 		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.Typescript != nil {
 			// return user preferences passed in `initializationOptions`
-			newUserPrefs := lsutil.NewDefaultUserPreferences()
-			newUserPrefs.FormatCodeSettings = lsutil.FromInitFormatOptions(s.initializeParams.InitializationOptions.Typescript)
+			// newUserPrefs := lsutil.NewDefaultUserPreferences()
+			// newUserPrefs.FormatCodeSettings = lsutil.FromInitFormatOptions(s.initializeParams.InitializationOptions.Typescript)
+			
 			s.logger.Logf(
-				"received formatting options from initialization: %v", s.initializeParams.InitializationOptions.Typescript,
+				"received formatting options from initialization: %T\n%+v", 
+				s.initializeParams.InitializationOptions.Typescript,
+				s.initializeParams.InitializationOptions.Typescript,
 			)
-			return lsutil.NewUserConfig(newUserPrefs), nil
+			// Any options recieved via initialization options will be used for both `js` and `ts`options
+			return lsutil.ParseNewUserConfig([]any{s.initializeParams.InitializationOptions.Typescript}), nil
 		}
 		// if no configuration request capapbility, return default config
 		return lsutil.NewUserConfig(nil), nil
