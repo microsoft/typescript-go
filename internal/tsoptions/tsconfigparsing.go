@@ -674,12 +674,12 @@ func directoryOfCombinedPath(fileName string, basePath string) string {
 
 // ParseConfigFileTextToJson parses the text of the tsconfig.json file
 // fileName is the path to the config file
-// json is the text of the config file
-func ParseConfigFileTextToJson(fileName string, path tspath.Path, json string) (any, []*ast.Diagnostic) {
+// jsonText is the text of the config file
+func ParseConfigFileTextToJson(fileName string, path tspath.Path, jsonText string) (any, []*ast.Diagnostic) {
 	jsonSourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: fileName,
 		Path:     path,
-	}, json, core.ScriptKindJSON)
+	}, jsonText, core.ScriptKindJSON)
 	config, errors := convertConfigFileToObject(jsonSourceFile /*jsonConversionNotifier*/, nil)
 	if len(jsonSourceFile.Diagnostics()) > 0 {
 		errors = []*ast.Diagnostic{jsonSourceFile.Diagnostics()[0]}
