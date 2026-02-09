@@ -121,7 +121,7 @@ func Format(text string, args []string) string {
 
 	// Replace invalid UTF-8 with Unicode replacement character
 	args = core.Map(args, func(arg string) string {
-		return strings.ReplaceAll(arg, "\xFE", "\uFFFD")
+		return strings.ToValidUTF8(arg, "\uFFFD")
 	})
 
 	return placeholderRegexp.ReplaceAllStringFunc(text, func(match string) string {
