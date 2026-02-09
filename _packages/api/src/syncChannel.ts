@@ -117,6 +117,11 @@ export class SyncRpcChannel {
         this.writeFd = (stdin as any)._handle.fd as number;
 
         if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
+            // Clean up the spawned child before throwing so its pipes don't
+            // keep the Node.js event loop alive indefinitely.
+            stdout.destroy();
+            stdin.destroy();
+            this.child.kill();
             throw new Error(
                 "SyncRpcChannel: could not obtain pipe file descriptors. " +
                     "This implementation requires POSIX (Linux / macOS).",
