@@ -28,10 +28,7 @@ var (
 
 func comparePathsByRedirect(a ModulePath, b ModulePath, useCaseSensitiveFileNames bool) int {
 	if a.IsRedirect == b.IsRedirect {
-		if c := tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames}); c != 0 {
-			return c
-		}
-		return strings.Compare(a.FileName, b.FileName)
+		return tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
 	}
 	if a.IsRedirect {
 		return 1
