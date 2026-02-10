@@ -1206,15 +1206,14 @@ func (l *LanguageService) getCompletionData(
 			return globalsSearchContinue, nil
 		}
 
-		var importAttributes *ast.ImportAttributesNode
+		var importAttributes *ast.Node
 		switch contextToken.Kind {
 		case ast.KindOpenBraceToken, ast.KindCommaToken:
-			importAttributes = core.IfElse(ast.IsImportAttributes(contextToken.Parent), contextToken.Parent, nil)
+			importAttributes = contextToken.Parent
 		case ast.KindColonToken:
-			importAttributes = core.IfElse(ast.IsImportAttributes(contextToken.Parent.Parent), contextToken.Parent.Parent, nil)
+			importAttributes = contextToken.Parent.Parent
 		}
-
-		if importAttributes == nil {
+		if importAttributes == nil || !ast.IsImportAttributes(importAttributes) {
 			return globalsSearchContinue, nil
 		}
 
@@ -6120,7 +6119,7 @@ func (p *snippetPrinter) createSyntheticFile(node *ast.Node, text string, target
 }
 
 func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
-	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter())
+	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter(), -1)
 	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), nil /*emitContext*/)
 	writer := &snippetEmitTextWriter{
 		ChangeTrackerWriter: baseWriter,

@@ -14,7 +14,6 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -22,6 +21,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
+	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -69,7 +70,7 @@ type FourslashTest struct {
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
 
 	// Async message handling
-	pendingRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
+	pendingRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
 	pendingRequestsMu sync.Mutex
 }
 
@@ -271,7 +272,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:              converters,
 		baselines:               make(map[baselineCommand]*strings.Builder),
 		openFiles:               make(map[string]struct{}),
-		pendingRequests:         make(map[lsproto.ID]chan *lsproto.ResponseMessage),
+		pendingRequests:         make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 	}
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -341,13 +342,13 @@ func (f *FourslashTest) messageRouter(ctx context.Context) error {
 		}
 
 		switch msg.Kind {
-		case lsproto.MessageKindResponse:
+		case jsonrpc.MessageKindResponse:
 			f.handleResponse(ctx, msg.AsResponse())
-		case lsproto.MessageKindRequest:
+		case jsonrpc.MessageKindRequest:
 			if err := f.handleServerRequest(ctx, msg.AsRequest()); err != nil {
 				return err
 			}
-		case lsproto.MessageKindNotification:
+		case jsonrpc.MessageKindNotification:
 			// Server-initiated notifications (e.g., publishDiagnostics) are currently ignored
 			// in fourslash tests
 		}
@@ -411,7 +412,7 @@ func (f *FourslashTest) handleServerRequest(ctx context.Context, req *lsproto.Re
 		response = &lsproto.ResponseMessage{
 			ID:      req.ID,
 			JSONRPC: req.JSONRPC,
-			Error: &lsproto.ResponseError{
+			Error: &jsonrpc.ResponseError{
 				Code:    int32(lsproto.ErrorCodeMethodNotFound),
 				Message: fmt.Sprintf("Unknown method: %s", req.Method),
 			},
@@ -1531,6 +1532,61 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
+	}
+}
+
+func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
+	t.Helper()
+
+	if preferences != nil {
+		reset := f.ConfigureWithReset(t, preferences)
+		defer reset()
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: lsproto.Position{Line: 0, Character: 0},
+			End:   f.converters.PositionToLineAndCharacter(f.getScriptInfo(f.activeFilename), core.TextPos(len(f.getScriptInfo(f.activeFilename).content))),
+		},
+		Context: &lsproto.CodeActionContext{
+			Only: &[]lsproto.CodeActionKind{codeActionKind},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	if result.CommandOrCodeActionArray == nil || len(*result.CommandOrCodeActionArray) == 0 {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	var organizeAction *lsproto.CodeAction
+	for _, item := range *result.CommandOrCodeActionArray {
+		if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == codeActionKind {
+			organizeAction = item.CodeAction
+			break
+		}
+	}
+
+	if organizeAction == nil {
+		t.Fatalf("No organize imports code action found")
+	}
+
+	expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+	if organizeAction.Edit != nil && organizeAction.Edit.Changes != nil {
+		for uri, edits := range *organizeAction.Edit.Changes {
+			if uri != expectedURI {
+				t.Fatalf("Organize imports changed unexpected file: %s (expected %s)", uri, expectedURI)
+			}
+			f.applyTextEdits(t, edits)
+		}
+	}
+
+	actualContent := f.getScriptInfo(f.activeFilename).content
+	if actualContent != expectedContent {
+		t.Fatalf("Organize imports result doesn't match.\nExpected:\n%s\n\nActual:\n%s", expectedContent, actualContent)
 	}
 }
 
