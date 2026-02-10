@@ -120,16 +120,16 @@ func Format(text string, args []string) string {
 	}
 
 	// Replace invalid UTF-8 with Unicode replacement character
-	validArgs := core.SameMap(args, func(arg string) string {
+	args = core.SameMap(args, func(arg string) string {
 		return strings.ToValidUTF8(arg, "\uFFFD")
 	})
 
 	return placeholderRegexp.ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
-		if err != nil || int(index) >= len(validArgs) {
+		if err != nil || int(index) >= len(args) {
 			panic("Invalid formatting placeholder")
 		}
-		return validArgs[int(index)]
+		return args[int(index)]
 	})
 }
 
