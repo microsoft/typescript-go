@@ -15,6 +15,8 @@ import {
     spawn,
 } from "node:child_process";
 import {
+    closeSync,
+    openSync,
     readSync,
     writeSync,
 } from "node:fs";
@@ -82,6 +84,7 @@ export class SyncRpcChannel {
     private child: ChildProcess;
     private readFd: number;
     private writeFd: number;
+    private pipeFd: number | undefined;
     private callbacks = new Map<string, (name: string, payload: string) => string>();
 
     private methodBufCache = new Map<string, Buffer>();
@@ -101,52 +104,86 @@ export class SyncRpcChannel {
     private writeBuf = Buffer.allocUnsafe(65536);
 
     constructor(exe: string, args: string[]) {
-        this.child = spawn(exe, args, {
-            stdio: ["pipe", "pipe", "inherit"],
-        });
+        const isWindows = process.platform === "win32";
 
-        const stdout = this.child.stdout!;
-        const stdin = this.child.stdin!;
+        if (isWindows) {
+            // On Windows, libuv pipe handles don't expose POSIX fds, so
+            // readSync/writeSync can't be used on stdio pipes. Instead,
+            // we create a Windows named pipe path, pass it to the child
+            // via --pipe, and open it with fs.openSync which returns a
+            // real C-runtime fd backed by a proper HANDLE.
+            const pipePath = `\\\\.\\pipe\\tsgo-sync-${process.pid}-${Date.now()}`;
+            this.child = spawn(exe, [...args, "--pipe", pipePath], {
+                stdio: ["ignore", "ignore", "inherit"],
+            });
 
-        // Obtain the underlying OS file descriptors from the libuv pipe
-        // handles. On POSIX this is the real fd; on Windows _handle.fd is -1
-        // (not supported without native code).
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.readFd = (stdout as any)._handle.fd as number;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.writeFd = (stdin as any)._handle.fd as number;
+            // Retry openSync until the child creates the named pipe.
+            let fd: number | undefined;
+            for (let i = 0; i < 500; i++) {
+                try {
+                    fd = openSync(pipePath, "r+");
+                    break;
+                }
+                catch {
+                    if (this.child.exitCode !== null) {
+                        throw new Error(
+                            `Child process exited with code ${this.child.exitCode} before pipe was ready`,
+                        );
+                    }
+                    Atomics.wait(sleepBuf, 0, 0, 10);
+                }
+            }
+            if (fd === undefined) {
+                this.child.kill();
+                throw new Error("SyncRpcChannel: timed out connecting to named pipe");
+            }
+            this.readFd = fd;
+            this.writeFd = fd;
+            this.pipeFd = fd;
+        }
+        else {
+            // POSIX: use stdio pipe file descriptors directly.
+            this.child = spawn(exe, args, {
+                stdio: ["pipe", "pipe", "inherit"],
+            });
 
-        if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
-            // Clean up the spawned child before throwing so its pipes don't
-            // keep the Node.js event loop alive indefinitely.
-            stdout.destroy();
-            stdin.destroy();
-            this.child.kill();
-            throw new Error(
-                "SyncRpcChannel: could not obtain pipe file descriptors. " +
-                    "This implementation requires POSIX (Linux / macOS).",
-            );
+            const stdout = this.child.stdout!;
+            const stdin = this.child.stdin!;
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            this.readFd = (stdout as any)._handle.fd as number;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            this.writeFd = (stdin as any)._handle.fd as number;
+
+            if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
+                stdout.destroy();
+                stdin.destroy();
+                this.child.kill();
+                throw new Error(
+                    "SyncRpcChannel: could not obtain pipe file descriptors.",
+                );
+            }
+
+            // Set the pipe handles to blocking mode. Under node --test's
+            // process isolation, pipes are created in non-blocking mode
+            // (for the IPC channel). This causes readSync/writeSync to get
+            // EAGAIN, requiring costly 1ms sleeps per retry. Setting
+            // blocking mode ensures readSync blocks properly until data
+            // arrives, matching the behavior of the native libsyncrpc.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+            (stdout as any)._handle.setBlocking(true);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+            (stdin as any)._handle.setBlocking(true);
+
+            // Prevent Node's event-loop from reading stdout or keeping the
+            // process alive – we will use fs.readSync exclusively.
+            stdout.pause();
+            (stdout as any).unref();
+            (stdin as any).unref();
         }
 
         // Track for auto-cleanup on process exit.
         liveChildren.add(this.child);
-
-        // Set the pipe handles to blocking mode. Under node --test's
-        // process isolation, pipes are created in non-blocking mode
-        // (for the IPC channel). This causes readSync/writeSync to get
-        // EAGAIN, requiring costly 1ms sleeps per retry. Setting
-        // blocking mode ensures readSync blocks properly until data
-        // arrives, matching the behavior of the native libsyncrpc.
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        (stdout as any)._handle.setBlocking(true);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        (stdin as any)._handle.setBlocking(true);
-
-        // Prevent Node's event-loop from reading stdout or keeping the
-        // process alive – we will use fs.readSync exclusively.
-        stdout.pause();
-        (stdout as any).unref();
-        (stdin as any).unref();
         this.child.unref();
     }
 
@@ -180,6 +217,10 @@ export class SyncRpcChannel {
     close(): void {
         try {
             liveChildren.delete(this.child);
+            if (this.pipeFd !== undefined) {
+                closeSync(this.pipeFd);
+                this.pipeFd = undefined;
+            }
             // Destroy the stdio streams so that their pipe handles are closed
             // and no longer prevent the event loop from draining.
             this.child.stdout?.destroy();
