@@ -3428,7 +3428,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 						// to a non-ambient function in an implementation file.
 						c.error(ast.GetNameOfDeclaration(overload), diagnostics.Overload_signatures_must_all_be_ambient_or_non_ambient)
 					case deviation&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0:
-						c.error(ast.GetNameOfDeclaration(overload), diagnostics.Overload_signatures_must_all_be_public_private_or_protected)
+						c.error(core.OrElse(ast.GetNameOfDeclaration(overload), overload), diagnostics.Overload_signatures_must_all_be_public_private_or_protected)
 					case deviation&ast.ModifierFlagsAbstract != 0:
 						c.error(ast.GetNameOfDeclaration(overload), diagnostics.Overload_signatures_must_all_be_abstract_or_non_abstract)
 					}
@@ -14822,7 +14822,18 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
 					tsExtension := tspath.TryExtractTSExtension(moduleReference)
 					if tsExtension == "" {
-						panic("should be able to extract TS extension from string that passes IsDeclarationFileName")
+						// Fallback: do a best-effort extraction using strings.Contains.
+						// This handles cases where a wildcard pattern matches a TS extension that's
+						// not at the end of the module specifier, e.g., "#/foo.ts.omg" through "#/*.omg": "./src/*"
+						for _, ext := range tspath.SupportedTSExtensionsFlat {
+							if strings.Contains(moduleReference, ext) {
+								tsExtension = ext
+								break
+							}
+						}
+					}
+					if tsExtension == "" {
+						panic("should be able to extract TS extension from string when resolvedUsingTsExtension is true")
 					}
 					c.error(
 						errorNode,

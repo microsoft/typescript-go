@@ -1,15 +1,6 @@
 --- old.moduleExportDuplicateAlias2.types
 +++ new.moduleExportDuplicateAlias2.types
-@@= skipped -2, +2 lines =@@
- === test.js ===
- const { apply } = require('./moduleExportAliasDuplicateAlias')
- >apply : () => void
-->require('./moduleExportAliasDuplicateAlias') : typeof import("moduleExportAliasDuplicateAlias")
-+>require('./moduleExportAliasDuplicateAlias') : typeof import("./moduleExportAliasDuplicateAlias")
- >require : any
- >'./moduleExportAliasDuplicateAlias' : "./moduleExportAliasDuplicateAlias"
-
-@@= skipped -11, +11 lines =@@
+@@= skipped -13, +13 lines =@@
  === moduleExportAliasDuplicateAlias.js ===
  module.exports.apply = undefined;
  >module.exports.apply = undefined : undefined
