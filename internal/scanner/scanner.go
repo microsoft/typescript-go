@@ -2456,7 +2456,7 @@ func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (
 // For ASCII-only strings (the common case for source code), this is len(s).
 func utf16Length(s string) int {
 	n := len(s)
-	for i := 0; i < len(s); i++ {
+	for i := 0; i < n; i++ {
 		if s[i] >= utf8.RuneSelf {
 			// Non-ASCII byte found; fall back to full UTF-16 counting.
 			return utf16LengthSlow(s)
