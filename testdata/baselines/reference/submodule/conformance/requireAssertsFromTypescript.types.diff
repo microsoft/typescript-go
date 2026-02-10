@@ -6,7 +6,7 @@
  const { art } = require('./ex')
 ->art : (value: any, message?: string | Error) => asserts value
 +>art : (value: any, message?: string | Error | undefined) => asserts value
- >require('./ex') : typeof import("ex")
+ >require('./ex') : typeof import("./ex")
  >require : any
  >'./ex' : "./ex"
 
