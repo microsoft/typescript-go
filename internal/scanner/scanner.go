@@ -2448,9 +2448,34 @@ func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	// !!! TODO: this is suspect; these are rune counts, not UTF-8 _or_ UTF-16 offsets.
-	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
+	character = utf16Length(sourceFile.Text()[lineMap[line]:pos])
 	return line, character
+}
+
+// utf16Length returns the number of UTF-16 code units needed to represent s.
+// For ASCII-only strings (the common case for source code), this is len(s).
+func utf16Length(s string) int {
+	n := len(s)
+	for i := 0; i < len(s); i++ {
+		if s[i] >= utf8.RuneSelf {
+			// Non-ASCII byte found; fall back to full UTF-16 counting.
+			return utf16LengthSlow(s)
+		}
+	}
+	return n
+}
+
+// utf16LengthSlow counts UTF-16 code units for strings containing non-ASCII characters.
+func utf16LengthSlow(s string) int {
+	n := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			n += 2 // Supplementary character requires a surrogate pair.
+		} else {
+			n++
+		}
+	}
+	return n
 }
 
 func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
