@@ -36,14 +36,6 @@ completionsPathsJsonModule
 completionsPathsRelativeJsonModule
 completionsSelfDeclaring1
 completionsWithDeprecatedTag4
-<<<<<<< HEAD
-getOutliningSpans
-incrementalParsingWithJsDocmoduleReexportedIntoGlobalQuickInfo
-jsDocFunctionSignatures12
-jsDocFunctionSignatures2
-moduleReexportedIntoGlobalQuickInfo
-||||||| 93841b563
-=======
 completionsWithStringReplacementMode1
 duplicatePackageServices_fileChanges
 exhaustiveCaseCompletions1
@@ -64,7 +56,6 @@ incrementalParsingWithJsDoc
 jsDocFunctionSignatures12
 jsDocFunctionSignatures2
 jsdocParameterNameCompletion
->>>>>>> main
 navigationBarFunctionPrototype
 navigationBarFunctionPrototype2
 navigationBarFunctionPrototype3
@@ -79,11 +70,7 @@ navto_excludeLib1
 navto_excludeLib2
 navto_excludeLib4
 navto_serverExcludeLib
-<<<<<<< HEAD
-||||||| 93841b563
-=======
 nodeModulesImportCompletions1
->>>>>>> main
 outliningForNonCompleteInterfaceDeclaration
 outliningHintSpansForFunction
 parserCorruptionAfterMapInClass
@@ -129,7 +116,6 @@ pathCompletionsTypesVersionsWildcard4
 pathCompletionsTypesVersionsWildcard5
 pathCompletionsTypesVersionsWildcard6
 quickInfoForOverloadOnConst1
-quickInfoImportNonunicodePath
 renameDefaultKeyword
 renameForDefaultExport01
 semicolonFormattingInsideAComment
