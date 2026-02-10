@@ -20,6 +20,25 @@ import {
     readSync,
     writeSync,
 } from "node:fs";
+import type {
+    Readable,
+    Writable,
+} from "node:stream";
+
+interface StdioHandle {
+    fd: number;
+    setBlocking?: (value: boolean) => void;
+}
+
+interface StdoutWithHandle extends Readable {
+    _handle: StdioHandle;
+    unref: () => void;
+}
+
+interface StdinWithHandle extends Writable {
+    _handle: StdioHandle;
+    unref: () => void;
+}
 
 // ── MessagePack format constants ────────────────────────────────────
 const MSGPACK_FIXARRAY3 = 0x93; // 3-element fixarray
@@ -147,13 +166,11 @@ export class SyncRpcChannel {
                 stdio: ["pipe", "pipe", "inherit"],
             });
 
-            const stdout = this.child.stdout!;
-            const stdin = this.child.stdin!;
+            const stdout = this.child.stdout! as StdoutWithHandle;
+            const stdin = this.child.stdin! as StdinWithHandle;
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            this.readFd = (stdout as any)._handle.fd as number;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            this.writeFd = (stdin as any)._handle.fd as number;
+            this.readFd = stdout._handle.fd;
+            this.writeFd = stdin._handle.fd;
 
             if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
                 stdout.destroy();
@@ -170,16 +187,14 @@ export class SyncRpcChannel {
             // EAGAIN, requiring costly 1ms sleeps per retry. Setting
             // blocking mode ensures readSync blocks properly until data
             // arrives, matching the behavior of the native libsyncrpc.
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-            (stdout as any)._handle.setBlocking(true);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-            (stdin as any)._handle.setBlocking(true);
+            stdout._handle.setBlocking?.(true);
+            stdin._handle.setBlocking?.(true);
 
             // Prevent Node's event-loop from reading stdout or keeping the
             // process alive – we will use fs.readSync exclusively.
             stdout.pause();
-            (stdout as any).unref();
-            (stdin as any).unref();
+            stdout.unref();
+            stdin.unref();
         }
 
         // Track for auto-cleanup on process exit.
