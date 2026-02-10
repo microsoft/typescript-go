@@ -402,10 +402,10 @@ type accessibleSymbolChainContext struct {
 type symbolTableID uint64
 
 const (
-	stKindLocals  symbolTableID = 0
-	stKindExports symbolTableID = 1 << 62
-	stKindMembers symbolTableID = 2 << 62
-	stKindGlobals symbolTableID = 3 << 62
+	stKindLocals symbolTableID = iota << 62
+	stKindExports
+	stKindMembers
+	stKindGlobals
 )
 
 func symbolTableIDFromLocals(node *ast.Node) symbolTableID {
