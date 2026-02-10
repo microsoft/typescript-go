@@ -19,13 +19,13 @@
 ->c : () => number
 ->d : () => number
 ->e : () => number
-+>jstypes : (a: any, b: any, c: any, d: any, e: any, f: import("mod").buz, g: any) => any
++>jstypes : (a: any, b: any, c: any, d: any, e: any, f: import("./mod").buz, g: any) => any
 +>a : any
 +>b : any
 +>c : any
 +>d : any
 +>e : any
- >f : import("mod").buz
+ >f : import("./mod").buz
 ->g : string
 +>g : any
 
@@ -67,7 +67,7 @@
 +>e() : any
 +>e : any
  >f() : number
- >f : import("mod").buz
+ >f : import("./mod").buz
 ->g.length : number
 ->g : string
 ->length : number
@@ -91,7 +91,7 @@
  === index.ts ===
  function types(
 ->types : (a: import("./mod").Thing, b: import("./mod").AnotherThing, c: import("./mod").foo, d: import("./mod").qux, e: import("./mod").baz, f: import("./mod").buz, g: import("./mod").literal) => any
-+>types : (a: any, b: any, c: any, d: any, e: any, f: import("mod").buz, g: any) => any
++>types : (a: any, b: any, c: any, d: any, e: any, f: import("./mod").buz, g: any) => any
 
      a: import('./mod').Thing,
  >a : any
