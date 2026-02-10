@@ -438,7 +438,13 @@ func fromUnionableLiteralType(
 	typeChecker *checker.Checker,
 ) *stringLiteralCompletions {
 	switch grandparent.Kind {
-	case ast.KindExpressionWithTypeArguments, ast.KindTypeReference:
+	case ast.KindCallExpression,
+		ast.KindExpressionWithTypeArguments,
+		ast.KindJsxOpeningElement,
+		ast.KindJsxSelfClosingElement,
+		ast.KindNewExpression,
+		ast.KindTaggedTemplateExpression,
+		ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })
 		if typeArgument != nil {
 			t := typeChecker.GetTypeArgumentConstraint(typeArgument)
@@ -500,6 +506,13 @@ func fromUnionableLiteralType(
 			}
 		default:
 			return nil
+		}
+	case ast.KindPropertySignature:
+		return &stringLiteralCompletions{
+			fromTypes: &completionsFromTypes{
+				types:           getStringLiteralTypes(getConstraintOfTypeArgumentProperty(grandparent, typeChecker), nil, typeChecker),
+				isNewIdentifier: false,
+			},
 		}
 	default:
 		return nil
