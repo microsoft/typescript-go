@@ -1595,7 +1595,7 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 			// Rewrite enum values to their constants, if available
 			enumValue := tx.resolver.GetEnumMemberValue(m)
 
-			if tx.state.isolatedDeclarations && input.Initializer() != nil && enumValue.HasExternalReferences &&
+			if tx.state.isolatedDeclarations && m.Initializer() != nil && enumValue.HasExternalReferences &&
 				// This will be its own compiler error instead, so don't report.
 				!ast.IsComputedPropertyName(m.Name()) {
 				tx.state.addDiagnostic(createDiagnosticForNode(m, diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations))
