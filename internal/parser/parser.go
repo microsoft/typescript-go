@@ -2034,19 +2034,19 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 }
 
 func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Statement {
-	keyword := ast.KindModuleKeyword
 	if p.token == ast.KindGlobalKeyword {
 		// global augmentation
 		return p.parseAmbientExternalModuleDeclaration(pos, hasJSDoc, modifiers)
 	} else if p.parseOptional(ast.KindNamespaceKeyword) {
-		keyword = ast.KindNamespaceKeyword
+		// namespace keyword always produces a namespace declaration
 	} else {
 		p.parseExpected(ast.KindModuleKeyword)
 		if p.token == ast.KindStringLiteral {
 			return p.parseAmbientExternalModuleDeclaration(pos, hasJSDoc, modifiers)
 		}
+		// `module X` is treated as `namespace X`
 	}
-	return p.parseModuleOrNamespaceDeclaration(pos, hasJSDoc, modifiers, false /*nested*/, keyword)
+	return p.parseModuleOrNamespaceDeclaration(pos, hasJSDoc, modifiers, false /*nested*/, ast.KindNamespaceKeyword)
 }
 
 func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
