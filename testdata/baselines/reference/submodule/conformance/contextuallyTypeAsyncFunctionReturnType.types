@@ -183,7 +183,7 @@ type Metadata = {
 
 };
 declare function scanMetadata(
->scanMetadata : (local: ILocalExtension) => Promise<Metadata>
+>scanMetadata : (local: ILocalExtension) => Promise<Metadata | undefined>
 
   local: ILocalExtension
 >local : ILocalExtension
@@ -231,7 +231,7 @@ async function copyExtensions(
 >e : ILocalExtension
 >await scanMetadata(e) : Metadata
 >scanMetadata(e) : Promise<Metadata>
->scanMetadata : (local: ILocalExtension) => Promise<Metadata>
+>scanMetadata : (local: ILocalExtension) => Promise<Metadata | undefined>
 >e : ILocalExtension
 
     );

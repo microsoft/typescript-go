@@ -41,7 +41,7 @@ function f4(b: boolean): string | undefined {  // Error
 }
 
 function f5(b: boolean): string | void {
->f5 : (b: boolean) => void | string
+>f5 : (b: boolean) => string | void
 >b : boolean
 
     if (b) return undefined;

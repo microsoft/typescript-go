@@ -80,7 +80,7 @@
 
  declare const val2: {
 ->val2 : { method({}?: { x: string; }): void; method2: ({}?: { x: string; }) => void; }
-+>val2 : { method({}?: { x: string; } | undefined): void; method2: ({}?: { x: string; } | undefined) => void; }
++>val2 : { method({}?: { x: string; } | undefined): void; method2: ({}?: { x: string; }) => void; }
 
      method({}?: { x: string }): void
 ->method : ({}?: { x: string; }) => void

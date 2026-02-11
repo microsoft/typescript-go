@@ -29,20 +29,7 @@ const div = getCtor("div");
       "value": ": "
     },
     {
-      "value": "DivElement",
-      "location": {
-        "uri": "file:///inlayHintsVariableTypes3.ts",
-        "range": {
-          "start": {
-            "line": 0,
-            "character": 10
-          },
-          "end": {
-            "line": 0,
-            "character": 20
-          }
-        }
-      }
+      "value": "DivElement"
     },
     {
       "value": "; "
@@ -67,20 +54,7 @@ const div = getCtor("div");
       "value": ": "
     },
     {
-      "value": "DivElement",
-      "location": {
-        "uri": "file:///inlayHintsVariableTypes3.ts",
-        "range": {
-          "start": {
-            "line": 0,
-            "character": 10
-          },
-          "end": {
-            "line": 0,
-            "character": 20
-          }
-        }
-      }
+      "value": "DivElement"
     },
     {
       "value": " "

@@ -89,7 +89,7 @@ function foo1<a>(value: void|a): void {
 
     if (isVoid(value)) {
 >isVoid(value) : boolean
->isVoid : <a_1>(value: void | a_1) => value is void
+>isVoid : <a_1>(value: void | a) => value is void
 >value : void | a
 
         value; // value is void
@@ -107,7 +107,7 @@ function baz1<a>(value: void|a): void {
 
       if (isNonVoid(value)) {
 >isNonVoid(value) : boolean
->isNonVoid : <a_1>(value: void | a_1) => value is a_1
+>isNonVoid : <a_1>(value: void | a) => value is a_1
 >value : void | a
 
           value; // value is a
@@ -125,7 +125,7 @@ type Maybe<T> = T | void;
 >Maybe : Maybe<T>
 
 function get<U>(x: U | void): U {
->get : <U>(x: void | U) => U
+>get : <U>(x: U | void) => U
 >x : void | U
 
    return null; // just an example
@@ -138,7 +138,7 @@ get(foo).toUpperCase(); // Ok
 >get(foo).toUpperCase() : string
 >get(foo).toUpperCase : () => string
 >get(foo) : string
->get : <U>(x: void | U) => U
+>get : <U>(x: U | void) => U
 >foo : Maybe<string>
 >toUpperCase : () => string
 
@@ -247,9 +247,9 @@ const assign = <T, U>(a: T, b: U) => Object.assign(a, b);
 >a : T
 >b : U
 >Object.assign(a, b) : T & U
->Object.assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_1 extends {}, U_1, V>(target: T_1, source1: U_1, source2: V): T_1 & U_1 & V; <T_1 extends {}, U_1, V, W>(target: T_1, source1: U_1, source2: V, source3: W): T_1 & U_1 & V & W; (target: object, ...sources: any[]): any; }
+>Object.assign : { <T_1 extends {}, U_1>(target: T, source: U): T & U; <T_1 extends {}, U_1, V>(target: T, source1: U, source2: V): T & U & V; <T_1 extends {}, U_1, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
 >Object : ObjectConstructor
->assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_1 extends {}, U_1, V>(target: T_1, source1: U_1, source2: V): T_1 & U_1 & V; <T_1 extends {}, U_1, V, W>(target: T_1, source1: U_1, source2: V, source3: W): T_1 & U_1 & V & W; (target: object, ...sources: any[]): any; }
+>assign : { <T_1 extends {}, U_1>(target: T, source: U): T & U; <T_1 extends {}, U_1, V>(target: T, source1: U, source2: V): T & U & V; <T_1 extends {}, U_1, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
 >a : T
 >b : U
 

@@ -5,7 +5,7 @@
    Type 'Base' is not assignable to type 'T'.
      'T' could be instantiated with an arbitrary type which could be unrelated to 'Base'.
 -assignmentCompatWithCallSignatures4.ts(66,9): error TS2322: Type '(x: Base[], y: Derived2[]) => Derived[]' is not assignable to type '<T extends Array<Derived2>>(x: Base[], y: Base[]) => T'.
-+assignmentCompatWithCallSignatures4.ts(66,9): error TS2322: Type '(x: Base[], y: Derived2[]) => Derived[]' is not assignable to type '<T extends Derived2[]>(x: Base[], y: Base[]) => T'.
++assignmentCompatWithCallSignatures4.ts(66,9): error TS2322: Type '(x: Array<Base>, y: Array<Derived2>) => Array<Derived>' is not assignable to type '<T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T'.
    Type 'Derived[]' is not assignable to type 'T'.
      'T' could be instantiated with an arbitrary type which could be unrelated to 'Derived[]'.
  assignmentCompatWithCallSignatures4.ts(69,9): error TS2322: Type '<T>(x: { a: T; b: T; }) => T' is not assignable to type '(x: { a: string; b: number; }) => number'.
@@ -14,7 +14,7 @@
              b12 = a12;
              ~~~
 -!!! error TS2322: Type '(x: Base[], y: Derived2[]) => Derived[]' is not assignable to type '<T extends Array<Derived2>>(x: Base[], y: Base[]) => T'.
-+!!! error TS2322: Type '(x: Base[], y: Derived2[]) => Derived[]' is not assignable to type '<T extends Derived2[]>(x: Base[], y: Base[]) => T'.
++!!! error TS2322: Type '(x: Array<Base>, y: Array<Derived2>) => Array<Derived>' is not assignable to type '<T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T'.
  !!! error TS2322:   Type 'Derived[]' is not assignable to type 'T'.
  !!! error TS2322:     'T' could be instantiated with an arbitrary type which could be unrelated to 'Derived[]'.
      

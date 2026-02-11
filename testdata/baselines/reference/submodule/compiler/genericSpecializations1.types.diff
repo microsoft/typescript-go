@@ -5,6 +5,6 @@
  interface IFoo<T> {
      foo<T>(x: T): T; // no error on implementors because IFoo's T is different from foo's T
 ->foo : <T>(x: T) => T
-+>foo : <T_1>(x: T_1) => T_1
++>foo : <T_1>(x: T) => T
  >x : T
  }

@@ -1,19 +1,31 @@
 --- old.unionAndIntersectionInference1.types
 +++ new.unionAndIntersectionInference1.types
-@@= skipped -124, +124 lines =@@
- >Maybe : Maybe<T>
+@@= skipped -88, +88 lines =@@
 
- function get<U>(x: U | void): U {
-->get : <U>(x: U | void) => U
-+>get : <U>(x: void | U) => U
- >x : void | U
+     if (isVoid(value)) {
+ >isVoid(value) : boolean
+->isVoid : <a_1>(value: void | a_1) => value is void
++>isVoid : <a_1>(value: void | a) => value is void
+ >value : void | a
 
-    return null; // just an example
-@@= skipped -13, +13 lines =@@
- >get(foo).toUpperCase() : string
- >get(foo).toUpperCase : () => string
- >get(foo) : string
-->get : <U>(x: U | void) => U
-+>get : <U>(x: void | U) => U
- >foo : Maybe<string>
- >toUpperCase : () => string
+         value; // value is void
+@@= skipped -18, +18 lines =@@
+
+       if (isNonVoid(value)) {
+ >isNonVoid(value) : boolean
+->isNonVoid : <a_1>(value: void | a_1) => value is a_1
++>isNonVoid : <a_1>(value: void | a) => value is a_1
+ >value : void | a
+
+           value; // value is a
+@@= skipped -140, +140 lines =@@
+ >a : T
+ >b : U
+ >Object.assign(a, b) : T & U
+->Object.assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_1 extends {}, U_1, V>(target: T_1, source1: U_1, source2: V): T_1 & U_1 & V; <T_1 extends {}, U_1, V, W>(target: T_1, source1: U_1, source2: V, source3: W): T_1 & U_1 & V & W; (target: object, ...sources: any[]): any; }
++>Object.assign : { <T_1 extends {}, U_1>(target: T, source: U): T & U; <T_1 extends {}, U_1, V>(target: T, source1: U, source2: V): T & U & V; <T_1 extends {}, U_1, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
+ >Object : ObjectConstructor
+->assign : { <T_1 extends {}, U_1>(target: T_1, source: U_1): T_1 & U_1; <T_1 extends {}, U_1, V>(target: T_1, source1: U_1, source2: V): T_1 & U_1 & V; <T_1 extends {}, U_1, V, W>(target: T_1, source1: U_1, source2: V, source3: W): T_1 & U_1 & V & W; (target: object, ...sources: any[]): any; }
++>assign : { <T_1 extends {}, U_1>(target: T, source: U): T & U; <T_1 extends {}, U_1, V>(target: T, source1: U, source2: V): T & U & V; <T_1 extends {}, U_1, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
+ >a : T
+ >b : U

@@ -9,16 +9,7 @@
  >name : string
  >overloads : T
  >binder : OverloadBinders<T>
-@@= skipped -25, +25 lines =@@
-
- interface FinishableOverloadBuilder<T extends OverloadDefinitions> {
-     finish(): OverloadFunction<T>;
-->finish : () => OverloadFunction<T>
-+>finish : () => UnionToIntersection<T[keyof T]>
- }
-
- interface BoundOverloadBuilder<T extends OverloadDefinitions> extends FinishableOverloadBuilder<T> {
-@@= skipped -106, +106 lines =@@
+@@= skipped -131, +131 lines =@@
  }
 
  declare function every<T, U extends T>(array: readonly T[], callback: (element: T, index: number) => element is U): array is readonly U[];

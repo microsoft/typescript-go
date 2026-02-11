@@ -5,7 +5,7 @@
 
      foo3<T>(t: T, u: U) {
 ->foo3 : <T>(t: T, u: U) => T
-+>foo3 : <T_1>(t: T_1, u: U) => T_1
++>foo3 : <T_1>(t: T, u: U) => T_1
  >t : T
  >u : U
 
@@ -14,7 +14,7 @@
 
      foo4<U>(t: T, u: U) {
 ->foo4 : <U>(t: T, u: U) => T
-+>foo4 : <U_1>(t: T, u: U_1) => T
++>foo4 : <U_1>(t: T, u: U) => T
  >t : T
  >u : U
 
@@ -23,7 +23,7 @@
 
      foo5<T,U>(t: T, u: U) {
 ->foo5 : <T, U>(t: T, u: U) => T
-+>foo5 : <T_1, U_1>(t: T_1, u: U_1) => T_1
++>foo5 : <T_1, U_1>(t: T, u: U) => T_1
  >t : T
  >u : U
 
@@ -32,7 +32,7 @@
 
      foo7<T, U>(u: U) {
 ->foo7 : <T, U>(u: U) => T
-+>foo7 : <T_1, U_1>(u: U_1) => T_1
++>foo7 : <T_1, U_1>(u: U) => T_1
  >u : U
 
          var x: T;
@@ -41,19 +41,19 @@
 
      foo3<T>(t: T, u: U): T;
 ->foo3 : <T>(t: T, u: U) => T
-+>foo3 : <T_1>(t: T_1, u: U) => T_1
++>foo3 : <T_1>(t: T, u: U) => T
  >t : T
  >u : U
 
      foo4<U>(t: T, u: U): T;
 ->foo4 : <U>(t: T, u: U) => T
-+>foo4 : <U_1>(t: T, u: U_1) => T
++>foo4 : <U_1>(t: T, u: U) => T
  >t : T
  >u : U
 
      foo5<T, U>(t: T, u: U): T;
 ->foo5 : <T, U>(t: T, u: U) => T
-+>foo5 : <T_1, U_1>(t: T_1, u: U_1) => T_1
++>foo5 : <T_1, U_1>(t: T, u: U) => T
  >t : T
  >u : U
 
@@ -62,7 +62,7 @@
 
      foo7<T, U>(u: U): T;
 ->foo7 : <T, U>(u: U) => T
-+>foo7 : <T_1, U_1>(u: U_1) => T_1
++>foo7 : <T_1, U_1>(u: U) => T
  >u : U
 
      foo8<T, U>(): T;    

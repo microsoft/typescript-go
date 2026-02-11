@@ -5,9 +5,9 @@
 
  //// [v1.d.ts]
 -export declare const v1: (...a: [n: "n", a: "a"]) => {
-+export declare const v1: (n: "n", a: "a") => {
-     /** r rest param */
+-    /** r rest param */
 -    a: typeof a;
++export declare const v1: (n: "n", a: "a") => {
 +    a: [n: "n", a: "a"];
  };
  //// [v2.d.ts]

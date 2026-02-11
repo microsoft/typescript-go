@@ -321,8 +321,8 @@ o4.x.y;
 >y : boolean
 
 declare const o5: { x?: { y: { z?: { w: boolean } } } };
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; } | undefined
 >w : boolean
@@ -331,31 +331,31 @@ if (o5.x?.y.z?.w) {
 >o5.x?.y.z?.w : boolean | undefined
 >o5.x?.y.z : { w: boolean; } | undefined
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 >z : { w: boolean; } | undefined
 >w : boolean | undefined
 
     o5.x;
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 
     o5.x.y;
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 
     o5.x.y.z;
 >o5.x.y.z : { w: boolean; }
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; }
 
@@ -363,9 +363,9 @@ if (o5.x?.y.z?.w) {
 >o5.x.y.z.w : true
 >o5.x.y.z : { w: boolean; }
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; }
 >w : true
@@ -374,9 +374,9 @@ if (o5.x?.y.z?.w) {
 >o5.x.y.z?.w : true
 >o5.x.y.z : { w: boolean; }
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; }
 >w : true
@@ -385,9 +385,9 @@ if (o5.x?.y.z?.w) {
 >o5.x?.y.z.w : true
 >o5.x?.y.z : { w: boolean; }
 >o5.x?.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; }
 >w : true
@@ -396,32 +396,32 @@ if (o5.x?.y.z?.w) {
 >o5.x?.y.z?.w : true
 >o5.x?.y.z : { w: boolean; }
 >o5.x?.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; }
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; }
+>o5.x : { y: { z?: { w: boolean; }; }; }
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; }
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; }
 >w : true
 }
 else {
     o5.x;
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 
     o5.x?.y;
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 
     o5.x?.y.z;
 >o5.x?.y.z : { w: boolean; } | undefined
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 >z : { w: boolean; } | undefined
 
@@ -429,49 +429,49 @@ else {
 >o5.x?.y.z?.w : boolean | undefined
 >o5.x?.y.z : { w: boolean; } | undefined
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 >z : { w: boolean; } | undefined
 >w : boolean | undefined
 
     o5.x.y;
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; }
 
     o5.x.y.z.w;
 >o5.x.y.z.w : boolean
 >o5.x.y.z : { w: boolean; } | undefined
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; } | undefined
 >w : boolean
 }
 o5.x;
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 
 o5.x?.y;
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 
 o5.x?.y.z;
 >o5.x?.y.z : { w: boolean; } | undefined
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 >z : { w: boolean; } | undefined
 
@@ -479,27 +479,27 @@ o5.x?.y.z?.w;
 >o5.x?.y.z?.w : boolean | undefined
 >o5.x?.y.z : { w: boolean; } | undefined
 >o5.x?.y : { z?: { w: boolean; } | undefined; } | undefined
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; } | undefined
 >z : { w: boolean; } | undefined
 >w : boolean | undefined
 
 o5.x.y;
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; }
 
 o5.x.y.z.w;
 >o5.x.y.z.w : boolean
 >o5.x.y.z : { w: boolean; } | undefined
 >o5.x.y : { z?: { w: boolean; } | undefined; }
->o5.x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
->o5 : { x?: { y: { z?: { w: boolean; } | undefined; }; } | undefined; }
->x : { y: { z?: { w: boolean; } | undefined; }; } | undefined
+>o5.x : { y: { z?: { w: boolean; }; }; } | undefined
+>o5 : { x?: { y: { z?: { w: boolean; }; }; } | undefined; }
+>x : { y: { z?: { w: boolean; }; }; } | undefined
 >y : { z?: { w: boolean; } | undefined; }
 >z : { w: boolean; } | undefined
 >w : boolean
@@ -1892,7 +1892,7 @@ function getArea(shape?: Shape) {
 >PI : number
 >shape.radius ** 2 : number
 >shape.radius : number
->shape : { type: "circle"; radius: number; }
+>shape : { type: 'circle'; radius: number; }
 >radius : number
 >2 : 2
 
@@ -1902,10 +1902,10 @@ function getArea(shape?: Shape) {
             return shape.width * shape.height
 >shape.width * shape.height : number
 >shape.width : number
->shape : { type: "rectangle"; width: number; height: number; }
+>shape : { type: 'rectangle'; width: number; height: number; }
 >width : number
 >shape.height : number
->shape : { type: "rectangle"; width: number; height: number; }
+>shape : { type: 'rectangle'; width: number; height: number; }
 >height : number
 
         default:
@@ -2030,14 +2030,14 @@ let i = 0;
 >0 : 0
 
 declare const arr: { tag: ("left" | "right") }[];
->arr : { tag: "left" | "right"; }[]
+>arr : { tag: ("left" | "right"); }[]
 >tag : "left" | "right"
 
 while (arr[i]?.tag === "left") {
 >arr[i]?.tag === "left" : boolean
 >arr[i]?.tag : "left" | "right"
->arr[i] : { tag: "left" | "right"; }
->arr : { tag: "left" | "right"; }[]
+>arr[i] : { tag: ("left" | "right"); }
+>arr : { tag: ("left" | "right"); }[]
 >i : number
 >tag : "left" | "right"
 >"left" : "left"
@@ -2050,8 +2050,8 @@ while (arr[i]?.tag === "left") {
     if (arr[i]?.tag === "right") {
 >arr[i]?.tag === "right" : boolean
 >arr[i]?.tag : "left" | "right"
->arr[i] : { tag: "left" | "right"; }
->arr : { tag: "left" | "right"; }[]
+>arr[i] : { tag: ("left" | "right"); }
+>arr : { tag: ("left" | "right"); }[]
 >i : number
 >tag : "left" | "right"
 >"right" : "right"

@@ -1,15 +1,6 @@
 --- old.noImplicitReturnsExclusions.types
 +++ new.noImplicitReturnsExclusions.types
-@@= skipped -40, +40 lines =@@
- }
-
- function f5(b: boolean): string | void {
-->f5 : (b: boolean) => string | void
-+>f5 : (b: boolean) => void | string
- >b : boolean
-
-     if (b) return undefined;
-@@= skipped -106, +106 lines =@@
+@@= skipped -146, +146 lines =@@
 
  interface Thenable<T> {
    then<TResult>(

@@ -1,20 +1,11 @@
 --- old.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).types
 +++ new.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).types
-@@= skipped -47, +47 lines =@@
- }): CoercedVariableValues;
-
- export function buildExecutionContext(
-->buildExecutionContext : (args: ExecutionArgs) => ReadonlyArray<GraphQLError> | ExecutionContext
-+>buildExecutionContext : (args: ExecutionArgs) => ExecutionContext | readonly GraphQLError[]
-
-   args: ExecutionArgs,
- >args : ExecutionArgs
-@@= skipped -26, +26 lines =@@
+@@= skipped -73, +73 lines =@@
 
      return coercedVariableValues.errors;
  >coercedVariableValues.errors : readonly GraphQLError[]
 ->coercedVariableValues : { errors: ReadonlyArray<GraphQLError>; coerced?: never; }
-+>coercedVariableValues : { errors: readonly GraphQLError[]; coerced?: undefined; }
++>coercedVariableValues : { errors: ReadonlyArray<GraphQLError>; coerced?: undefined; }
  >errors : readonly GraphQLError[]
    }
 

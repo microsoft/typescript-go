@@ -6,7 +6,7 @@ export class Foo {}
 
 === file2.ts ===
 export function foo(): import("./file1").Foo {
->foo : () => import("file1").Foo
+>foo : () => import("./file1").Foo
 
     return null as any;
 >null as any : any

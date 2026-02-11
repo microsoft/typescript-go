@@ -445,7 +445,7 @@ interface String {
       * @param regexp A variable name or string literal containing the regular expression pattern and flags.
       */
     match(regexp: string): string[];
->match : { (regexp: string | RegExp): RegExpMatchArray; (regexp: string): string[]; (regexp: RegExp): string[]; }
+>match : { (regexp: string | RegExp): RegExpMatchArray | null; (regexp: string): string[]; (regexp: RegExp): string[]; }
 >regexp : string
 
     /** 
@@ -453,7 +453,7 @@ interface String {
       * @param regexp A regular expression object that contains the regular expression pattern and applicable flags. 
       */
     match(regexp: RegExp): string[];
->match : { (regexp: string | RegExp): RegExpMatchArray; (regexp: string): string[]; (regexp: RegExp): string[]; }
+>match : { (regexp: string | RegExp): RegExpMatchArray | null; (regexp: string): string[]; (regexp: RegExp): string[]; }
 >regexp : RegExp
 
     /**
@@ -1359,7 +1359,7 @@ interface RegExp {
       * @param string The String object or string literal on which to perform the search.
       */
     exec(string: string): RegExpExecArray;
->exec : { (string: string): RegExpExecArray; (string: string): RegExpExecArray; }
+>exec : { (string: string): RegExpExecArray | null; (string: string): RegExpExecArray; }
 >string : string
 
     /** 
@@ -1565,7 +1565,7 @@ interface JSON {
       * @param value A JavaScript value, usually an object or array, to be converted.
       */
     stringify(value: any): string;
->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
 >value : any
 
     /**
@@ -1574,7 +1574,7 @@ interface JSON {
       * @param replacer A function that transforms the results.
       */
     stringify(value: any, replacer: (key: string, value: any) => any): string;
->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
 >value : any
 >replacer : (key: string, value: any) => any
 >key : string
@@ -1586,7 +1586,7 @@ interface JSON {
       * @param replacer Array that transforms the results.
       */
     stringify(value: any, replacer: any[]): string;
->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
 >value : any
 >replacer : any[]
 
@@ -1597,7 +1597,7 @@ interface JSON {
       * @param space Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
       */
     stringify(value: any, replacer: (key: string, value: any) => any, space: any): string;
->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
 >value : any
 >replacer : (key: string, value: any) => any
 >key : string
@@ -1611,7 +1611,7 @@ interface JSON {
       * @param space Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
       */
     stringify(value: any, replacer: any[], space: any): string;
->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
+>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; (value: any): string; (value: any, replacer: (key: string, value: any) => any): string; (value: any, replacer: any[]): string; (value: any, replacer: (key: string, value: any) => any, space: any): string; (value: any, replacer: any[], space: any): string; }
 >value : any
 >replacer : any[]
 >space : any
@@ -1665,7 +1665,7 @@ interface Array<T> {
       * Removes the last element from an array and returns it.
       */
     pop(): T;
->pop : { (): T; (): T; }
+>pop : { (): T | undefined; (): T; }
 
     /**
       * Appends new elements to an array, and returns the new length of the array.
@@ -1685,7 +1685,7 @@ interface Array<T> {
       * Removes the first element from an array and returns it.
       */
     shift(): T;
->shift : { (): T; (): T; }
+>shift : { (): T | undefined; (): T; }
 
     /** 
       * Returns a section of an array.

@@ -19,7 +19,7 @@ import { create } from "package-a";
 >create : () => import("workspace/packageA/foo").Foo
 
 export declare function invoke(): ReturnType<typeof create>;
->invoke : () => import("workspace/packageA/foo").Foo
+>invoke : () => ReturnType<typeof create>
 >create : () => import("workspace/packageA/foo").Foo
 
 === workspace/packageC/index.ts ===
@@ -29,7 +29,7 @@ import * as pkg from "package-b";
 export const a = pkg.invoke();
 >a : import("workspace/packageA/foo").Foo
 >pkg.invoke() : import("workspace/packageA/foo").Foo
->pkg.invoke : () => import("workspace/packageA/foo").Foo
+>pkg.invoke : () => ReturnType<() => import("workspace/packageA/foo").Foo>
 >pkg : typeof pkg
->invoke : () => import("workspace/packageA/foo").Foo
+>invoke : () => ReturnType<() => import("workspace/packageA/foo").Foo>
 

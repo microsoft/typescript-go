@@ -1,0 +1,110 @@
+--- old.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=true).errors.txt
++++ new.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=true).errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(33,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(34,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(35,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(36,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(37,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(38,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(39,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(41,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(42,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(43,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(44,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(45,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(46,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++isolatedDeclarationsStrictBuiltinIteratorReturn.ts(47,7): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++
++
++==== isolatedDeclarationsStrictBuiltinIteratorReturn.ts (14 errors) ====
++    declare let x1: Iterable<number>;
++    declare let x2: Iterable<number, any>;
++    declare let x3: Iterable<number, any, any>;
++    declare let x4: Iterable<number, undefined>;
++    declare let x5: Iterable<number, undefined, any>;
++    declare let x6: Iterable<number, BuiltinIteratorReturn>;
++    declare let x7: Iterable<number, BuiltinIteratorReturn, any>;
++    
++    declare let x8: IterableIterator<number>;
++    declare let x9: IterableIterator<number, any>;
++    declare let x10: IterableIterator<number, any, any>;
++    declare let x11: IterableIterator<number, undefined>;
++    declare let x12: IterableIterator<number, undefined, any>;
++    declare let x13: IterableIterator<number, BuiltinIteratorReturn>;
++    declare let x14: IterableIterator<number, BuiltinIteratorReturn, any>;
++    
++    declare function f1(): Iterable<number>;
++    declare function f2(): Iterable<number, any>;
++    declare function f3(): Iterable<number, any, any>;
++    declare function f4(): Iterable<number, undefined>;
++    declare function f5(): Iterable<number, undefined, any>;
++    declare function f6(): Iterable<number, BuiltinIteratorReturn>;
++    declare function f7(): Iterable<number, BuiltinIteratorReturn, any>;
++    
++    declare function f8(): IterableIterator<number>;
++    declare function f9(): IterableIterator<number, any>;
++    declare function f10(): IterableIterator<number, any, any>;
++    declare function f11(): IterableIterator<number, undefined>;
++    declare function f12(): IterableIterator<number, undefined, any>;
++    declare function f13(): IterableIterator<number, BuiltinIteratorReturn>;
++    declare function f14(): IterableIterator<number, BuiltinIteratorReturn, any>;
++    
++    const a1 = (): Iterable<number> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:33:7: Add a type annotation to the variable a1.
++    const a2 = (): Iterable<number, any> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:34:7: Add a type annotation to the variable a2.
++    const a3 = (): Iterable<number, any, any> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:35:7: Add a type annotation to the variable a3.
++    const a4 = (): Iterable<number, undefined> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:36:7: Add a type annotation to the variable a4.
++    const a5 = (): Iterable<number, undefined, any> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:37:7: Add a type annotation to the variable a5.
++    const a6 = (): Iterable<number, BuiltinIteratorReturn> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:38:7: Add a type annotation to the variable a6.
++    const a7 = (): Iterable<number, BuiltinIteratorReturn, any> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:39:7: Add a type annotation to the variable a7.
++    
++    const a8 = (): IterableIterator<number> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:41:7: Add a type annotation to the variable a8.
++    const a9 = (): IterableIterator<number, any> => null!;
++          ~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:42:7: Add a type annotation to the variable a9.
++    const a10 = (): IterableIterator<number, any, any> => null!;
++          ~~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:43:7: Add a type annotation to the variable a10.
++    const a11 = (): IterableIterator<number, undefined> => null!;
++          ~~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:44:7: Add a type annotation to the variable a11.
++    const a12 = (): IterableIterator<number, undefined, any> => null!;
++          ~~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:45:7: Add a type annotation to the variable a12.
++    const a13 = (): IterableIterator<number, BuiltinIteratorReturn> => null!;
++          ~~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:46:7: Add a type annotation to the variable a13.
++    const a14 = (): IterableIterator<number, BuiltinIteratorReturn, any> => null!;
++          ~~~
++!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
++!!! related TS9027 isolatedDeclarationsStrictBuiltinIteratorReturn.ts:47:7: Add a type annotation to the variable a14.

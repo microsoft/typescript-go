@@ -1,14 +1,10 @@
 --- old.declarationEmitOptionalMethod.types
 +++ new.declarationEmitOptionalMethod.types
-@@= skipped -1, +1 lines =@@
-
- === declarationEmitOptionalMethod.ts ===
+@@= skipped -3, +3 lines =@@
  export const Foo = (opts: {
-->Foo : (opts: { a?(): void; b?: () => void; }) => { c?(): void; d?: () => void; }
-->(opts: {    a?(): void,    b?: () => void,}): {    c?(): void,    d?: () => void,} => ({  }) : (opts: { a?(): void; b?: () => void; }) => { c?(): void; d?: () => void; }
+ >Foo : (opts: { a?(): void; b?: () => void; }) => { c?(): void; d?: () => void; }
+ >(opts: {    a?(): void,    b?: () => void,}): {    c?(): void,    d?: () => void,} => ({  }) : (opts: { a?(): void; b?: () => void; }) => { c?(): void; d?: () => void; }
 ->opts : { a?(): void; b?: () => void; }
-+>Foo : (opts: { a?(): void; b?: (() => void) | undefined; }) => { c?(): void; d?: (() => void) | undefined; }
-+>(opts: {    a?(): void,    b?: () => void,}): {    c?(): void,    d?: () => void,} => ({  }) : (opts: { a?(): void; b?: (() => void) | undefined; }) => { c?(): void; d?: (() => void) | undefined; }
 +>opts : { a?(): void; b?: (() => void) | undefined; }
 
      a?(): void,

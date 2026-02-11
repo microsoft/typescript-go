@@ -1,0 +1,14 @@
+--- old.awaitedTypeStrictNull.types
++++ new.awaitedTypeStrictNull.types
+@@= skipped -150, +150 lines =@@
+ 	async post<T = D>() { return this.request<T>(); }
+ >post : <T = D>() => Promise<T>
+ >this.request<T>() : Promise<T>
+->this.request : <D_1>() => Promise<D_1>
++>this.request : <D_1>() => Promise<D>
+ >this : this
+->request : <D_1>() => Promise<D_1>
++>request : <D_1>() => Promise<D>
+
+ 	async request<D>(): Promise<D> { throw new Error(); }
+ >request : <D>() => Promise<D>

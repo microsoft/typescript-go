@@ -1,12 +1,10 @@
 --- old.avoidNarrowingUsingConstVariableFromBindingElementWithLiteralInitializer.types
 +++ new.avoidNarrowingUsingConstVariableFromBindingElementWithLiteralInitializer.types
-@@= skipped -4, +4 lines =@@
- >foo : ["a", string, number] | ["b", string, boolean]
+@@= skipped -5, +5 lines =@@
 
  export function test(arg: { index?: number }) {
-->test : (arg: { index?: number; }) => void
+ >test : (arg: { index?: number; }) => void
 ->arg : { index?: number; }
-+>test : (arg: { index?: number | undefined; }) => void
 +>arg : { index?: number | undefined; }
  >index : number | undefined
 

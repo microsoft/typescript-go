@@ -1,0 +1,30 @@
+isolatedDeclarationErrorsClassesExpressions.ts(1,14): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
+isolatedDeclarationErrorsClassesExpressions.ts(19,14): error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
+
+
+==== isolatedDeclarationErrorsClassesExpressions.ts (2 errors) ====
+    export const cls = class {
+                 ~~~
+!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
+!!! related TS9027 isolatedDeclarationErrorsClassesExpressions.ts:1:14: Add a type annotation to the variable cls.
+        foo: string = "";
+    }
+    
+    
+    function id<T extends new (...a: any[]) => any>(cls: T) {
+        return cls;
+    }
+    
+    
+    export class Base {
+    
+    }
+    
+    export class Mix extends id(Base) {
+    
+    }
+    
+    export const classes = [class {}, class{}] as const
+                 ~~~~~~~
+!!! error TS9010: Variable must have an explicit type annotation with --isolatedDeclarations.
+!!! related TS9027 isolatedDeclarationErrorsClassesExpressions.ts:19:14: Add a type annotation to the variable classes.

@@ -84,36 +84,7 @@
      }
  }
 
- declare function getArrayResult(): [true, number] | [false, undefined];
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
- >true : true
- >false : false
- {
-@@= skipped -27, +27 lines =@@
- >foo1 : boolean
- >bar1 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     const [foo2, bar2] = getArrayResult();
- >foo2 : boolean
- >bar2 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     const [foo3, bar3] = getArrayResult();
- >foo3 : boolean
- >bar3 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     const arrayAllSuccess = foo1 && foo2 && foo3;
- >arrayAllSuccess : boolean
-@@= skipped -27, +27 lines =@@
+@@= skipped -54, +54 lines =@@
 
          bar1.toExponential();  // should ok
  >bar1.toExponential() : string
@@ -141,30 +112,7 @@
      }
  }
 
-@@= skipped -23, +23 lines =@@
- >foo1 : boolean
- >bar1 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     let [foo2, bar2] = getArrayResult();
- >foo2 : boolean
- >bar2 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     let [foo3, bar3] = getArrayResult();
- >foo3 : boolean
- >bar3 : number | undefined
- >getArrayResult() : [false, undefined] | [true, number]
-->getArrayResult : () => [true, number] | [false, undefined]
-+>getArrayResult : () => [false, undefined] | [true, number]
-
-     const arrayAllSuccess = foo1 && foo2 && foo3;
- >arrayAllSuccess : boolean
-@@= skipped -27, +27 lines =@@
+@@= skipped -50, +50 lines =@@
 
          bar1.toExponential();   // should ok
  >bar1.toExponential() : string
@@ -192,7 +140,25 @@
      }
  }
 
-@@= skipped -142, +142 lines =@@
+@@= skipped -72, +72 lines =@@
+ >resp.resp.data satisfies string : string
+ >resp.resp.data : string
+ >resp.resp : { data: string; }
+->resp : { type: "string"; resp: { data: string; }; }
++>resp : { type: 'string'; resp: { data: string; }; }
+ >resp : { data: string; }
+ >data : string
+     }    
+@@= skipped -38, +38 lines =@@
+ >resp.resp.data satisfies string : string
+ >resp.resp.data : string
+ >resp.resp : { data: string; }
+->resp : { type: "string"; resp: { data: string; }; }
++>resp : { type: 'string'; resp: { data: string; }; }
+ >resp : { data: string; }
+ >data : string
+     }    
+@@= skipped -32, +32 lines =@@
 
      data1.toExponential();
  >data1.toExponential() : string

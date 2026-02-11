@@ -1,12 +1,10 @@
 --- old.destructuringControlFlow.types
 +++ new.destructuringControlFlow.types
-@@= skipped -1, +1 lines =@@
-
+@@= skipped -2, +2 lines =@@
  === destructuringControlFlow.ts ===
  function f1(obj: { a?: string }) {
-->f1 : (obj: { a?: string; }) => void
+ >f1 : (obj: { a?: string; }) => void
 ->obj : { a?: string; }
-+>f1 : (obj: { a?: string | undefined; }) => void
 +>obj : { a?: string | undefined; }
  >a : string | undefined
 
@@ -37,20 +35,11 @@
  >a : string | undefined
      }
  }
-
- function f2(obj: [number, string] | null[]) {
-->f2 : (obj: [number, string] | null[]) => void
-+>f2 : (obj: null[] | [number, string]) => void
- >obj : null[] | [number, string]
-
-     let a0 = obj[0];  // number | null
 @@= skipped -94, +94 lines =@@
- }
 
  function f3(obj: { a?: number, b?: string }) {
-->f3 : (obj: { a?: number; b?: string; }) => void
+ >f3 : (obj: { a?: number; b?: string; }) => void
 ->obj : { a?: number; b?: string; }
-+>f3 : (obj: { a?: number | undefined; b?: string | undefined; }) => void
 +>obj : { a?: number | undefined; b?: string | undefined; }
  >a : number | undefined
  >b : string | undefined

@@ -175,7 +175,7 @@ if (areSuccess) {
 }
 
 declare function getArrayResult(): [true, number] | [false, undefined];
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 >true : true
 >false : false
 {
@@ -183,19 +183,19 @@ declare function getArrayResult(): [true, number] | [false, undefined];
 >foo1 : boolean
 >bar1 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     const [foo2, bar2] = getArrayResult();
 >foo2 : boolean
 >bar2 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     const [foo3, bar3] = getArrayResult();
 >foo3 : boolean
 >bar3 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     const arrayAllSuccess = foo1 && foo2 && foo3;
 >arrayAllSuccess : boolean
@@ -233,19 +233,19 @@ declare function getArrayResult(): [true, number] | [false, undefined];
 >foo1 : boolean
 >bar1 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     let [foo2, bar2] = getArrayResult();
 >foo2 : boolean
 >bar2 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     let [foo3, bar3] = getArrayResult();
 >foo3 : boolean
 >bar3 : number | undefined
 >getArrayResult() : [false, undefined] | [true, number]
->getArrayResult : () => [false, undefined] | [true, number]
+>getArrayResult : () => [true, number] | [false, undefined]
 
     const arrayAllSuccess = foo1 && foo2 && foo3;
 >arrayAllSuccess : boolean
@@ -332,7 +332,7 @@ type Nested = {
 >resp.resp.data satisfies string : string
 >resp.resp.data : string
 >resp.resp : { data: string; }
->resp : { type: "string"; resp: { data: string; }; }
+>resp : { type: 'string'; resp: { data: string; }; }
 >resp : { data: string; }
 >data : string
     }    
@@ -370,7 +370,7 @@ type Nested = {
 >resp.resp.data satisfies string : string
 >resp.resp.data : string
 >resp.resp : { data: string; }
->resp : { type: "string"; resp: { data: string; }; }
+>resp : { type: 'string'; resp: { data: string; }; }
 >resp : { data: string; }
 >data : string
     }    

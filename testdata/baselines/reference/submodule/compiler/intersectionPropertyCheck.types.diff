@@ -13,9 +13,8 @@
  >wrong : { a: { y: string; }; }
 
  function foo<T extends object>(x: { a?: string }, y: T & { a: boolean }) {
-->foo : <T extends object>(x: { a?: string; }, y: T & { a: boolean; }) => void
+ >foo : <T extends object>(x: { a?: string; }, y: T & { a: boolean; }) => void
 ->x : { a?: string; }
-+>foo : <T extends object>(x: { a?: string | undefined; }, y: T & { a: boolean; }) => void
 +>x : { a?: string | undefined; }
  >a : string | undefined
  >y : T & { a: boolean; }

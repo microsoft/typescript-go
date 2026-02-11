@@ -1,0 +1,70 @@
+--- old.nodeModulesDeclarationEmitDynamicImportWithPackageExports(module=node20).types
++++ new.nodeModulesDeclarationEmitDynamicImportWithPackageExports(module=node20).types
+@@= skipped -32, +32 lines =@@
+ >"package" : "package"
+
+ export const f = await import("inner");
+->f : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
+->await import("inner") : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
+->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
++>f : { cjsMain: boolean; default: typeof import("node_modules/inner/index"); }
++>await import("inner") : { cjsMain: boolean; default: typeof import("node_modules/inner/index"); }
++>import("inner") : Promise<{ cjsMain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner" : "inner"
+
+ === other2.ts ===
+ // esm format file
+ export const d = await import("inner/cjs");
+->d : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
+->await import("inner/cjs") : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
+->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
++>d : { cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }
++>await import("inner/cjs") : { cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }
++>import("inner/cjs") : Promise<{ cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner/cjs" : "inner/cjs"
+
+ export const e = await import("inner/mjs");
+@@= skipped -40, +40 lines =@@
+ >"package" : "package"
+
+ export const f = await import("inner");
+->f : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
+->await import("inner") : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
+->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
++>f : { cjsMain: boolean; default: typeof import("node_modules/inner/index"); }
++>await import("inner") : { cjsMain: boolean; default: typeof import("node_modules/inner/index"); }
++>import("inner") : Promise<{ cjsMain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner" : "inner"
+
+ === other2.mts ===
+ // esm format file
+ export const d = await import("inner/cjs");
+->d : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
+->await import("inner/cjs") : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
+->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
++>d : { cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }
++>await import("inner/cjs") : { cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }
++>import("inner/cjs") : Promise<{ cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner/cjs" : "inner/cjs"
+
+ export const e = await import("inner/mjs");
+@@= skipped -37, +37 lines =@@
+ >"package" : "package"
+
+ export const f = import("inner");
+->f : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
+->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
++>f : Promise<{ cjsMain: boolean; default: typeof import("node_modules/inner/index"); }>
++>import("inner") : Promise<{ cjsMain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner" : "inner"
+
+ === other2.cts ===
+ // cjs format file, no TLA
+ export const d = import("inner/cjs");
+->d : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
+->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
++>d : Promise<{ cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }>
++>import("inner/cjs") : Promise<{ cjsNonmain: boolean; default: typeof import("node_modules/inner/index"); }>
+ >"inner/cjs" : "inner/cjs"
+
+ export const e = import("inner/mjs");

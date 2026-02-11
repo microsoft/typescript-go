@@ -3,8 +3,8 @@
 === optionalChainingInference.ts ===
 // https://github.com/microsoft/TypeScript/issues/34579
 declare function unbox<T>(box: { value: T | undefined }): T;
->unbox : <T>(box: { value: T; }) => T
->box : { value: T; }
+>unbox : <T>(box: { value: T | undefined; }) => T
+>box : { value: T | undefined; }
 >value : T
 
 declare const su: string | undefined;
@@ -32,12 +32,12 @@ const b1 = { value: su?.length };
 const v1: number = unbox(b1);
 >v1 : number
 >unbox(b1) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b1 : { value: number; }
 
 const b2 = { value: su?.length as number | undefined };
->b2 : { value: number; }
->{ value: su?.length as number | undefined } : { value: number; }
+>b2 : { value: number | undefined; }
+>{ value: su?.length as number | undefined } : { value: number | undefined; }
 >value : number
 >su?.length as number | undefined : number
 >su?.length : number
@@ -47,11 +47,11 @@ const b2 = { value: su?.length as number | undefined };
 const v2: number = unbox(b2);
 >v2 : number
 >unbox(b2) : number
->unbox : <T>(box: { value: T; }) => T
->b2 : { value: number; }
+>unbox : <T>(box: { value: T | undefined; }) => T
+>b2 : { value: number | undefined; }
 
 const b3: { value: number | undefined } = { value: su?.length };
->b3 : { value: number; }
+>b3 : { value: number | undefined; }
 >value : number
 >{ value: su?.length } : { value: number; }
 >value : number
@@ -62,8 +62,8 @@ const b3: { value: number | undefined } = { value: su?.length };
 const v3: number = unbox(b3);
 >v3 : number
 >unbox(b3) : number
->unbox : <T>(box: { value: T; }) => T
->b3 : { value: number; }
+>unbox : <T>(box: { value: T | undefined; }) => T
+>b3 : { value: number | undefined; }
 
 const b4 = { value: fnu?.() };
 >b4 : { value: number; }
@@ -75,7 +75,7 @@ const b4 = { value: fnu?.() };
 const v4: number = unbox(b4);
 >v4 : number
 >unbox(b4) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b4 : { value: number; }
 
 const b5 = { value: su?.["length"] };
@@ -89,7 +89,7 @@ const b5 = { value: su?.["length"] };
 const v5: number = unbox(b5);
 >v5 : number
 >unbox(b5) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b5 : { value: number; }
 
 const b6 = { value: osu?.prop.length };
@@ -105,7 +105,7 @@ const b6 = { value: osu?.prop.length };
 const v6: number = unbox(b6);
 >v6 : number
 >unbox(b6) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b6 : { value: number; }
 
 const b7 = { value: osu?.prop["length"] };
@@ -121,7 +121,7 @@ const b7 = { value: osu?.prop["length"] };
 const v7: number = unbox(b7);
 >v7 : number
 >unbox(b7) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b7 : { value: number; }
 
 const b8 = { value: ofnu?.prop() };
@@ -136,7 +136,7 @@ const b8 = { value: ofnu?.prop() };
 const v8: number = unbox(b8);
 >v8 : number
 >unbox(b8) : number
->unbox : <T>(box: { value: T; }) => T
+>unbox : <T>(box: { value: T | undefined; }) => T
 >b8 : { value: number; }
 
 

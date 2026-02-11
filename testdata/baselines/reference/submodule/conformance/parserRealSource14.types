@@ -3814,7 +3814,7 @@ module TypeScript {
     /// Return the stack of AST nodes containing "position"
     ///
     export function getAstPathToPosition(script: TypeScript.AST, pos: number, options = GetAstPathOptions.Default): TypeScript.AstPath {
->getAstPathToPosition : (script: TypeScript.AST, pos: number, options?: GetAstPathOptions) => AstPath
+>getAstPathToPosition : (script: TypeScript.AST, pos: number, options?: GetAstPathOptions) => TypeScript.AstPath
 >script : TypeScript.AST
 >TypeScript : any
 >pos : number

@@ -15,9 +15,12 @@
  }
  exports.A = A;
  function needsRenameForShadowing() {
-@@= skipped -17, +15 lines =@@
+@@= skipped -15, +13 lines =@@
+
+ //// [declarationEmitShadowing.d.ts]
  export declare class A<T = any> {
-     readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
+-    readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
++    readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T;
  }
 -export declare function needsRenameForShadowing<T>(): <T_1>(t: T, t2: T_1) => void;
 +export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
@@ -31,7 +34,7 @@
 +
 +==== declarationEmitShadowing.d.ts (1 errors) ====
 +    export declare class A<T = any> {
-+        readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
++        readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T;
 +    }
 +    export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
 +                                                                 ~~~

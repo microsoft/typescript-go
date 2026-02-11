@@ -12,13 +12,3 @@
 +>register : (target: WeakKey, heldValue: { readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }, unregisterToken?: WeakKey | undefined) => void
  >key : K
  >{                set: this.#refSet,                ref,            } : { set: Set<WeakRef<K>>; ref: WeakRef<K>; }
-
-@@= skipped -111, +111 lines =@@
- >iterator : unique symbol
-
-     *entries(): Generator<[key: K, value: V], void> {
-->entries : () => Generator<[key: K, value: V], void>
-+>entries : () => Generator<[key: K, value: V], void, any>
-
-         for (const ref of this.#refSet) {
- >ref : WeakRef<K>

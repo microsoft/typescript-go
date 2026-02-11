@@ -28,9 +28,9 @@ export class C {
 
 
 //// [declarationEmitCastReusesTypeNode5.d.ts]
-export declare const vNumberLiteral: 1;
-export declare const vStringLiteral: "1";
-export declare const vLiteral: "1";
+export declare const vNumberLiteral: 1 | 1;
+export declare const vStringLiteral: "1" | "1";
+export declare const vLiteral: "1" | "1";
 type R = {
     foo: string;
 };
@@ -39,7 +39,7 @@ export declare class C {
     tsResolve2?: string | R | undefined;
     reuseType?: string | ((p: R) => void) | undefined;
     reuseType2?: string | (new (p: R) => R) | undefined;
-    reuseType3?: any;
+    reuseType3?: string | number | bigint | symbol | unknown | any | never | symbol;
     reuseType4?: [R, R, R] | undefined;
     reuseType5?: R[] | undefined;
     reuseType6?: "2" | 1 | 1n | undefined;

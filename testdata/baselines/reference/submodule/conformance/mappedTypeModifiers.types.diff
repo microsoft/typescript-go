@@ -47,11 +47,6 @@
  }
 
  function f4(x: { [P in keyof Foo]: Foo[P] }) {
-->f4 : (x: { [P in keyof Foo]: Foo[P]; }) => void
-+>f4 : (x: { [x: string]: number; prop: number; }) => void
- >x : { [x: string]: number; prop: number; }
-
-     x.prop; // ok
 @@= skipped -20, +20 lines =@@
 
      x["other"].toFixed();

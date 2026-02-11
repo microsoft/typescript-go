@@ -1,0 +1,20 @@
+--- old.inlineMappedTypeModifierDeclarationEmit.types
++++ new.inlineMappedTypeModifierDeclarationEmit.types
+@@= skipped -11, +11 lines =@@
+
+   return test1(obj, k);
+ >test1(obj, k) : Exclude<keyof T, K> extends infer T_1 extends keyof T ? { [P in T_1]: T[P]; } : never
+->test1 : <T_1, K_1 extends string>(obj: T_1, k: K_1) => Exclude<keyof T_1, K_1> extends infer T_2 extends keyof T_1 ? { [P in T_2]: T_1[P]; } : never
++>test1 : <T_1, K_1 extends string>(obj: T, k: K) => Exclude<keyof T_1, K_1> extends infer T_2 extends keyof T_1 ? { [P in T_2]: T_1[P]; } : never
+ >obj : T
+ >k : K
+ }
+@@= skipped -12, +12 lines =@@
+
+   return test2(obj, k);
+ >test2(obj, k) : { [P in Exclude<keyof T, K>]: T[P]; }
+->test2 : <T_1, K_1 extends string>(obj: T_1, k: K_1) => { [P in Exclude<keyof T_1, K_1>]: T_1[P]; }
++>test2 : <T_1, K_1 extends string>(obj: T, k: K) => { [P in Exclude<keyof T_1, K_1>]: T_1[P]; }
+ >obj : T
+ >k : K
+ }

@@ -5,7 +5,7 @@
        */ 
      async cancel({reason, code}) {}
 ->cancel : ({ reason, code }: {    reason: string | null;    code: string | null;}) => Promise<any>
-+>cancel : ({ reason, code }: { reason: string; code: string; }) => Promise<any>
++>cancel : ({ reason, code }: { reason: string | null; code: string | null; }) => Promise<any>
  >reason : string
  >code : string
  }
@@ -14,8 +14,7 @@
        */ 
      async cancel({reason, suberr}) {}
 ->cancel : ({ reason, suberr }: {    reason: string | null;    suberr: {        reason: string | null;        code: string | null;    };}) => Promise<any>
-+>cancel : ({ reason, suberr }: { reason: string; suberr: { reason: string; code: string; }; }) => Promise<any>
++>cancel : ({ reason, suberr }: { reason: string | null; suberr: { reason: string | null; code: string | null; }; }) => Promise<any>
  >reason : string
-->suberr : { reason: string | null; code: string | null; }
-+>suberr : { reason: string; code: string; }
+ >suberr : { reason: string | null; code: string | null; }
  }

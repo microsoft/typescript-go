@@ -240,7 +240,7 @@ export class IterableWeakMap<K extends object, V> implements WeakMap<K, V> {
 >iterator : unique symbol
 
     *entries(): Generator<[key: K, value: V], void> {
->entries : () => Generator<[key: K, value: V], void, any>
+>entries : () => Generator<[key: K, value: V], void>
 
         for (const ref of this.#refSet) {
 >ref : WeakRef<K>

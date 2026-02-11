@@ -67,7 +67,7 @@ interface BindableOverloadBuilder<T extends OverloadDefinitions> {
 
 interface FinishableOverloadBuilder<T extends OverloadDefinitions> {
     finish(): OverloadFunction<T>;
->finish : () => UnionToIntersection<T[keyof T]>
+>finish : () => OverloadFunction<T>
 }
 
 interface BoundOverloadBuilder<T extends OverloadDefinitions> extends FinishableOverloadBuilder<T> {

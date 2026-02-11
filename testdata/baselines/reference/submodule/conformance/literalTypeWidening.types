@@ -302,7 +302,7 @@ function isSuccess<T>(result: Result<T>): result is T {
   return !isFailure(result);
 >!isFailure(result) : boolean
 >isFailure(result) : boolean
->isFailure : <T_1>(result: Result<T_1>) => result is "FAILURE"
+>isFailure : <T_1>(result: Result<T>) => result is "FAILURE"
 >result : Result<T>
 }
 
@@ -359,7 +359,7 @@ let x = onMouseOver();
 // Repro from #23649
 
 export function Set<K extends string>(...keys: K[]): Record<K, true | undefined> {
->Set : <K extends string>(...keys: K[]) => Record<K, true>
+>Set : <K extends string>(...keys: K[]) => Record<K, true | undefined>
 >keys : K[]
 >true : true
 
@@ -406,7 +406,7 @@ type Obj = { code: LangCode }
 const langCodeSet = Set('fr', 'en', 'es', 'it', 'nl')
 >langCodeSet : Record<"en" | "es" | "fr" | "it" | "nl", true>
 >Set('fr', 'en', 'es', 'it', 'nl') : Record<"en" | "es" | "fr" | "it" | "nl", true>
->Set : <K extends string>(...keys: K[]) => Record<K, true>
+>Set : <K extends string>(...keys: K[]) => Record<K, true | undefined>
 >'fr' : "fr"
 >'en' : "en"
 >'es' : "es"

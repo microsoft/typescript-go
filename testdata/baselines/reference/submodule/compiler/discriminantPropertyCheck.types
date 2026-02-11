@@ -415,7 +415,7 @@ export function foo(obj: Obj) {
 
             onlyPlus(obj.key);
 >onlyPlus(obj.key) : "+"
->onlyPlus : (arg: "+") => "+"
+>onlyPlus : (arg: '+') => "+"
 >obj.key : "+"
 >obj : AdditiveObj
 >key : "+"
@@ -426,7 +426,7 @@ export function foo(obj: Obj) {
 }
 
 function onlyPlus(arg: '+') {
->onlyPlus : (arg: "+") => "+"
+>onlyPlus : (arg: '+') => "+"
 >arg : "+"
 
   return arg;

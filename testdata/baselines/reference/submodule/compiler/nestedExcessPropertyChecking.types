@@ -65,7 +65,7 @@ type OverridesInput = {
 }
 
 const foo1: Partial<{ something: any }> & { variables: {
->foo1 : Partial<{ something: any; }> & { variables: { overrides?: OverridesInput | undefined; } & Partial<{ overrides?: OverridesInput | undefined; }>; }
+>foo1 : Partial<{ something: any; }> & { variables: { overrides?: OverridesInput; } & Partial<{ overrides?: OverridesInput; }>; }
 >something : any
 >variables : { overrides?: OverridesInput | undefined; } & Partial<{ overrides?: OverridesInput | undefined; }>
 

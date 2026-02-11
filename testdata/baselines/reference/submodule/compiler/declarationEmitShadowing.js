@@ -33,7 +33,7 @@ function needsRenameForShadowing() {
 
 //// [declarationEmitShadowing.d.ts]
 export declare class A<T = any> {
-    readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
+    readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T;
 }
 export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
 
@@ -46,7 +46,7 @@ declarationEmitShadowing.d.ts(4,62): error TS2304: Cannot find name 'T_1'.
 
 ==== declarationEmitShadowing.d.ts (1 errors) ====
     export declare class A<T = any> {
-        readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
+        readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T;
     }
     export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
                                                                  ~~~
