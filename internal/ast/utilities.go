@@ -4228,3 +4228,10 @@ func isArgumentOfElementAccessExpression(node *Node) bool {
 		node.Parent.Kind == KindElementAccessExpression &&
 		node.Parent.AsElementAccessExpression().ArgumentExpression == node
 }
+
+func IsExpandoPropertyDeclaration(node *Node) bool {
+	if node == nil {
+		return false
+	}
+	return IsPropertyAccessExpression(node) || IsElementAccessExpression(node) || IsBinaryExpression(node)
+}

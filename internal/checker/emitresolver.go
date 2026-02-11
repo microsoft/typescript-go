@@ -647,7 +647,16 @@ func (r *EmitResolver) IsLiteralConstDeclaration(node *ast.Node) bool {
 
 func (r *EmitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
 	// node = r.emitContext.ParseNode(node)
-	// !!! TODO: expando function support
+	if !ast.IsParseTreeNode(node) {
+		return false
+	}
+	// this is substantially different from strada, but so is expando property checking
+	props := r.GetPropertiesOfContainerFunction(node)
+	for _, p := range props {
+		if ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+			return true
+		}
+	}
 	return false
 }
 
@@ -1191,4 +1200,19 @@ func (r *EmitResolver) GetTypeReferenceSerializationKind(typeName *ast.Node, loc
 	} else {
 		return printer.TypeReferenceSerializationKindObjectType
 	}
+}
+
+func (r *EmitResolver) GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol {
+	// This is explicitly _not locked_ because it is only called via error reporters invoked via node builder calls
+	// to the symbol tracker already within locked contexts.
+	// r.checkerMu.Lock()
+	// defer r.checkerMu.Unlock()
+	if node == nil {
+		return []*ast.Symbol{}
+	}
+	s := r.checker.getSymbolOfDeclaration(node)
+	if s == nil {
+		return []*ast.Symbol{}
+	}
+	return r.checker.getPropertiesOfType(r.checker.getTypeOfSymbol(s))
 }

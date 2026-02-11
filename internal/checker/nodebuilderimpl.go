@@ -1935,15 +1935,35 @@ func (b *NodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature) 
 	}
 	var returnTypeNode *ast.Node
 
-	returnType := b.ch.getReturnTypeOfSignature(signature)
+	var returnType *Type
+	if signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+		symbol := b.ch.getSymbolOfDeclaration(signature.declaration)
+		var ok bool
+		returnType, ok = b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
+		if !ok || returnType == nil {
+			returnType = b.ch.instantiateType(b.ch.getReturnTypeOfSignature(signature), b.ctx.mapper)
+		}
+	} else {
+		returnType = b.ch.getReturnTypeOfSignature(signature)
+	}
 	if !(suppressAny && IsTypeAny(returnType)) {
-		// !!! IsolatedDeclaration support
-		// if signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
-		// 	declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
-		// 	restore := addSymbolTypeToContext(declarationSymbol, returnType)
-		// 	returnTypeNode = syntacticNodeBuilder.serializeReturnTypeForSignature(signature.declaration, declarationSymbol)
-		// 	restore()
-		// }
+		if signature.declaration != nil && !ast.NodeIsSynthesized(signature.declaration) {
+			declarationSymbol := b.ch.getSymbolOfDeclaration(signature.declaration)
+			restore := b.addSymbolTypeToContext(declarationSymbol, returnType)
+			pt := b.pc.GetReturnTypeOfSignature(signature.declaration)
+			annotated := b.pseudoTypeToType(pt)
+			if annotated == returnType || annotated != nil && b.ch.isErrorType(annotated) {
+				// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
+				// see: canReuseTypeNodeAnnotation in strada for context
+				returnTypeNode = b.pseudoTypeToNode(pt)
+			}
+			if returnTypeNode == nil && !b.ctx.suppressReportInferenceFallback {
+				// !!! TODO: see psuedochecker.canGetTypeFromObjectLiteral - this isn't quite the same as strada, which reports errors within
+				// object types with more specific inference failures rather than at the top level
+				b.ctx.tracker.ReportInferenceFallback(signature.declaration)
+			}
+			restore()
+		}
 		if returnTypeNode == nil {
 			returnTypeNode = b.serializeInferredReturnTypeForSignature(signature, returnType)
 		}
@@ -2040,6 +2060,11 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context
 			result = b.pseudoTypeToNode(pt)
+		}
+		if result == nil && !b.ctx.suppressReportInferenceFallback {
+			// !!! TODO: see psuedochecker.canGetTypeFromObjectLiteral - this isn't quite the same as strada, which reports errors within
+			// object types with more specific inference failures rather than at the top level
+			b.ctx.tracker.ReportInferenceFallback(declaration)
 		}
 		remove()
 	}
