@@ -46,8 +46,6 @@ func (tx *usingDeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitForStatement(node.AsForStatement())
 	case ast.KindForOfStatement:
 		node = tx.visitForOfStatement(node.AsForInOrOfStatement())
-	case ast.KindSwitchStatement:
-		node = tx.visitSwitchStatement(node.AsSwitchStatement())
 	default:
 		node = tx.Visitor().VisitEachChild(node)
 	}
@@ -298,67 +296,6 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
 
-func (tx *usingDeclarationTransformer) visitCaseOrDefaultClause(node *ast.CaseOrDefaultClause, envBinding *ast.IdentifierNode) *ast.Node {
-	if getUsingKindOfStatements(node.Statements.Nodes) != usingKindNone {
-		return tx.Factory().UpdateCaseOrDefaultClause(
-			node,
-			tx.Visitor().VisitNode(node.Expression),
-			tx.Factory().NewNodeList(tx.transformUsingDeclarations(node.Statements.Nodes, envBinding, nil /*topLevelStatements*/)),
-		)
-	}
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *usingDeclarationTransformer) visitSwitchStatement(node *ast.SwitchStatement) *ast.Node {
-	// given:
-	//
-	//  switch (expr) {
-	//    case expr:
-	//      using res = expr;
-	//  }
-	//
-	// produces:
-	//
-	//  const env_1 = { stack: [], error: void 0, hasError: false };
-	//  try {
-	//    switch(expr) {
-	//      case expr:
-	//        const res = __addDisposableResource(env_1, expr, false);
-	//    }
-	//  }
-	//  catch (e_1) {
-	//    env_1.error = e_1;
-	//    env_1.hasError = true;
-	//  }
-	//  finally {
-	//     __disposeResources(env_1);
-	//  }
-	//
-	usingKind := getUsingKindOfCaseOrDefaultClauses(node.CaseBlock.AsCaseBlock().Clauses.Nodes)
-	if usingKind != usingKindNone {
-		envBinding := tx.createEnvBinding()
-		return transformers.SingleOrMany(tx.createDownlevelUsingStatements(
-			[]*ast.Statement{
-				tx.Factory().UpdateSwitchStatement(
-					node,
-					tx.Visitor().VisitNode(node.Expression),
-					tx.Factory().UpdateCaseBlock(
-						node.CaseBlock.AsCaseBlock(),
-						tx.Factory().NewNodeList(
-							core.Map(node.CaseBlock.AsCaseBlock().Clauses.Nodes, func(clause *ast.CaseOrDefaultClauseNode) *ast.CaseOrDefaultClauseNode {
-								return tx.visitCaseOrDefaultClause(clause.AsCaseOrDefaultClause(), envBinding)
-							}),
-						),
-					),
-				),
-			},
-			envBinding,
-			usingKind == usingKindAsync,
-		), tx.Factory())
-	}
-
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
 
 func (tx *usingDeclarationTransformer) transformUsingDeclarations(statementsIn []*ast.Statement, envBinding *ast.IdentifierNode, topLevelStatements *[]*ast.Statement) []*ast.Node {
 	var statements []*ast.Statement
@@ -852,16 +789,3 @@ func getUsingKindOfStatements(statements []*ast.Node) usingKind {
 	return result
 }
 
-func getUsingKindOfCaseOrDefaultClauses(clauses []*ast.CaseOrDefaultClauseNode) usingKind {
-	result := usingKindNone
-	for _, clause := range clauses {
-		usingKind := getUsingKindOfStatements(clause.Statements())
-		if usingKind == usingKindAsync {
-			return usingKindAsync
-		}
-		if usingKind > result {
-			result = usingKind
-		}
-	}
-	return result
-}
