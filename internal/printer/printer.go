@@ -2975,10 +2975,8 @@ func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
 	if hasNewLineComment {
 		return true
 	}
-	for _, synth := range p.emitContext.GetSyntheticLeadingComments(node) {
-		if p.syntheticCommentWillEmitNewLine(synth) {
-			return true
-		}
+	if slices.ContainsFunc(p.emitContext.GetSyntheticLeadingComments(node), p.syntheticCommentWillEmitNewLine) {
+		return true
 	}
 	if ast.IsPartiallyEmittedExpression(node) {
 		pee := node.AsPartiallyEmittedExpression()
