@@ -1,13 +1,11 @@
 index.js(7,14): error TS2339: Property 'justProp' does not exist on type 'YaddaBase'.
 index.js(9,9): error TS7053: Element implicitly has an 'any' type because expression of type '"literalElementAccess"' can't be used to index type 'YaddaBase'.
   Property 'literalElementAccess' does not exist on type 'YaddaBase'.
-index.js(14,14): error TS2339: Property 'foo' does not exist on type 'YaddaBase'.
-index.js(23,22): error TS2339: Property 'foo' does not exist on type 'YaddaBase'.
 index.js(26,22): error TS2339: Property 'justProp' does not exist on type 'YaddaBase'.
 index.js(29,22): error TS2339: Property 'literalElementAccess' does not exist on type 'YaddaBase'.
 
 
-==== index.js (6 errors) ====
+==== index.js (4 errors) ====
     // https://github.com/microsoft/TypeScript/issues/55884
     
     class YaddaBase {
@@ -27,8 +25,6 @@ index.js(29,22): error TS2339: Property 'literalElementAccess' does not exist on
         }
         accessor b = () => {
             this.foo = 10
-                 ~~~
-!!! error TS2339: Property 'foo' does not exist on type 'YaddaBase'.
         }
     }
     
@@ -38,8 +34,6 @@ index.js(29,22): error TS2339: Property 'literalElementAccess' does not exist on
         }
         get fooTests() {
             return super.foo;
-                         ~~~
-!!! error TS2339: Property 'foo' does not exist on type 'YaddaBase'.
         }
         get justPropTests() {
             return super.justProp;

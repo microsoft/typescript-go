@@ -2550,6 +2550,12 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
+	case ast.KindPropertyDeclaration:
+		if node.Initializer() != nil {
+			return ContainerFlagsIsControlFlowContainer | ContainerFlagsIsThisContainer
+		} else {
+			return ContainerFlagsNone
+		}
 	case ast.KindCatchClause, ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindCaseBlock:
 		return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
 	case ast.KindBlock:

@@ -38,9 +38,9 @@ class YaddaBase {
 
         this.foo = 10
 >this.foo = 10 : 10
->this.foo : any
+>this.foo : number | undefined
 >this : this
->foo : any
+>foo : number | undefined
 >10 : 10
     }
 }
@@ -58,12 +58,12 @@ class DerivedYadda extends YaddaBase {
 >roots : string
     }
     get fooTests() {
->fooTests : any
+>fooTests : number | undefined
 
         return super.foo;
->super.foo : any
+>super.foo : number | undefined
 >super : YaddaBase
->foo : any
+>foo : number | undefined
     }
     get justPropTests() {
 >justPropTests : any
