@@ -29,7 +29,7 @@ func TestServerInvalidRequestParams(t *testing.T) {
 	// Construct a JSON-RPC message with a position containing a number
 	// too large to fit in a uint32 (Position.Line and Position.Character are uint32).
 	// The value 99999999999999999999 exceeds both uint32 and int64 range,
-	// so json.UnmarshalDecode into uint32 should fail.
+	// so json.Unmarshal into uint32 should fail.
 	body := `{"jsonrpc":"2.0","id":1,"method":"textDocument/hover","params":{"textDocument":{"uri":"file:///test.ts"},"position":{"line":99999999999999999999,"character":0}}}`
 
 	rawMessage := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(body), body)
