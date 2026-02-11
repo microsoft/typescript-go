@@ -812,8 +812,13 @@ func (c *Checker) GetContextualDeclarationsForObjectLiteralElementWithNode(objec
 func (c *Checker) getContextualDeclarationsForObjectLiteralElementWorker(objectLiteral *ast.Node, name string, propertyNameNode *ast.Node) []*ast.Node {
 	result := c.getDeclarationsFromContextualType(objectLiteral, name, ContextFlagsNone)
 	if propertyNameNode != nil && hasSelfReferenceDeclaration(result, propertyNameNode) {
-		if withoutNodeInferences := c.getDeclarationsFromContextualType(objectLiteral, name, ContextFlagsIgnoreNodeInferences); len(withoutNodeInferences) > 0 {
-			result = withoutNodeInferences
+		// Use the public GetContextualType with IgnoreNodeInferences to run through
+		// runWithInferenceBlockedFromSourceNode, which blocks inference from the current node
+		withoutNodeInferencesType := c.GetContextualType(objectLiteral, ContextFlagsIgnoreNodeInferences)
+		if withoutNodeInferencesType != nil {
+			if withoutNodeInferences := c.getDeclarationsFromType(withoutNodeInferencesType, name); len(withoutNodeInferences) > 0 {
+				result = withoutNodeInferences
+			}
 		}
 	}
 	return result
@@ -822,17 +827,23 @@ func (c *Checker) getContextualDeclarationsForObjectLiteralElementWorker(objectL
 func (c *Checker) getDeclarationsFromContextualType(objectLiteral *ast.Node, name string, contextFlags ContextFlags) []*ast.Node {
 	var result []*ast.Node
 	if t := c.getApparentTypeOfContextualType(objectLiteral, contextFlags); t != nil {
-		for _, t := range t.Distributed() {
-			prop := c.getPropertyOfType(t, name)
-			if prop != nil {
-				for _, declaration := range prop.Declarations {
-					result = core.AppendIfUnique(result, declaration)
-				}
-			} else {
-				for _, info := range c.getApplicableIndexInfos(t, c.getStringLiteralType(name)) {
-					if info.declaration != nil {
-						result = core.AppendIfUnique(result, info.declaration)
-					}
+		result = c.getDeclarationsFromType(t, name)
+	}
+	return result
+}
+
+func (c *Checker) getDeclarationsFromType(t *Type, name string) []*ast.Node {
+	var result []*ast.Node
+	for _, t := range t.Distributed() {
+		prop := c.getPropertyOfType(t, name)
+		if prop != nil {
+			for _, declaration := range prop.Declarations {
+				result = core.AppendIfUnique(result, declaration)
+			}
+		} else {
+			for _, info := range c.getApplicableIndexInfos(t, c.getStringLiteralType(name)) {
+				if info.declaration != nil {
+					result = core.AppendIfUnique(result, info.declaration)
 				}
 			}
 		}
