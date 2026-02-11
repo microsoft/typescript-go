@@ -105,6 +105,9 @@ func (r *lspReader) Read() (*lsproto.Message, error) {
 
 	req := &lsproto.Message{}
 	if err := json.Unmarshal(data, req); err != nil {
+		if errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+			return req, fmt.Errorf("%w: %w", lsproto.ErrorCodeInvalidParams, err)
+		}
 		return nil, fmt.Errorf("%w: %w", lsproto.ErrorCodeInvalidRequest, err)
 	}
 
@@ -334,8 +337,14 @@ func (s *Server) readLoop(ctx context.Context) error {
 		}
 		msg, err := s.read()
 		if err != nil {
-			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
-				if err := s.sendError(nil, err); err != nil {
+			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) || errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+				var id *jsonrpc.ID
+				if errors.Is(err, lsproto.ErrorCodeInvalidParams) {
+					if msg.Kind == jsonrpc.MessageKindRequest {
+						id = msg.AsRequest().ID
+					}
+				}
+				if err := s.sendError(id, err); err != nil {
 					return err
 				}
 				continue
