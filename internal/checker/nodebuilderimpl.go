@@ -313,6 +313,27 @@ func (b *NodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.Nod
 	return b.f.NewNodeList(result)
 }
 
+func (b *NodeBuilderImpl) serializeTypeName(node *ast.Node, isTypeOf bool, typeArguments *ast.NodeList) *ast.Node {
+	meaning := ast.SymbolFlagsType
+	if isTypeOf {
+		meaning = ast.SymbolFlagsValue
+	}
+	symbol := b.ch.resolveEntityName(node, meaning, true, true, node)
+	if symbol == nil {
+		return nil
+	}
+
+	resolvedSymbol := symbol
+	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+		resolvedSymbol = b.ch.resolveAlias(symbol)
+	}
+
+	if b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
+		return nil
+	}
+	return b.symbolToTypeNode(resolvedSymbol, meaning, typeArguments)
+}
+
 func isIdentifierTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName)
 }

@@ -319,7 +319,11 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			)
 		}
 
-		// !!! serializeTypeName
+		serializedName := b.serializeTypeName(node.AsTypeQueryNode().ExprName, true, visitor.VisitNodes(node.AsTypeQueryNode().TypeArguments))
+		if serializedName != nil {
+			serializedName.Loc = node.AsTypeQueryNode().ExprName.Loc
+			return serializedName
+		}
 		return nil
 	}
 	tryVisitTypeReference := func(node *ast.Node) *ast.Node {
@@ -346,7 +350,11 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				typeArguments,
 			)
 		} else {
-			// !!! serializeTypeName
+			serializedName := b.serializeTypeName(node.AsTypeReferenceNode().TypeName, false, visitor.VisitNodes(node.AsTypeReferenceNode().TypeArguments))
+			if serializedName != nil {
+				serializedName.Loc = node.AsTypeReferenceNode().TypeName.Loc
+				return serializedName
+			}
 			return nil
 		}
 	}
