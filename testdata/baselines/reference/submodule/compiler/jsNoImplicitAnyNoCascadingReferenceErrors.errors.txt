@@ -1,11 +1,12 @@
 index.js(3,21): error TS8026: Expected Foo<T> type arguments; provide these with an '@extends' tag.
+index.js(5,9): error TS2346: Call target does not contain any signatures.
 
 
 ==== somelib.d.ts (0 errors) ====
     export declare class Foo<T> {
         prop: T;
     }
-==== index.js (1 errors) ====
+==== index.js (2 errors) ====
     import {Foo} from "./somelib";
     
     class MyFoo extends Foo {
@@ -13,6 +14,8 @@ index.js(3,21): error TS8026: Expected Foo<T> type arguments; provide these with
 !!! error TS8026: Expected Foo<T> type arguments; provide these with an '@extends' tag.
         constructor() {
             super();
+            ~~~~~
+!!! error TS2346: Call target does not contain any signatures.
             this.prop.alpha = 12;
         }
     }

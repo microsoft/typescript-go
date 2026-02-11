@@ -1,0 +1,28 @@
+--- old.fillInMissingTypeArgsOnJSConstructCalls.errors.txt
++++ new.fillInMissingTypeArgsOnJSConstructCalls.errors.txt
+@@= skipped -4, +4 lines =@@
+ BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
+ BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
+ SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files.
++SubB.js(5,9): error TS2346: Call target does not contain any signatures.
+
+
+ ==== BaseA.js (0 errors) ====
+@@= skipped -29, +30 lines =@@
+             this._AClass = AClass;
+         }
+     }
+-==== SubB.js (1 errors) ====
++==== SubB.js (2 errors) ====
+     import SubA from './SubA';
+     import BaseB from './BaseB';
+     export default class SubB extends BaseB<SubA> {
+@@= skipped -8, +8 lines =@@
+ !!! error TS8011: Type arguments can only be used in TypeScript files.
+         constructor() {
+             super(SubA);
++            ~~~~~
++!!! error TS2346: Call target does not contain any signatures.
+         }
+     }
+     

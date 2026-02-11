@@ -5,6 +5,7 @@ BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript fi
 BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
 BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
 SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files.
+SubB.js(5,9): error TS2346: Call target does not contain any signatures.
 
 
 ==== BaseA.js (0 errors) ====
@@ -34,7 +35,7 @@ SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files
             this._AClass = AClass;
         }
     }
-==== SubB.js (1 errors) ====
+==== SubB.js (2 errors) ====
     import SubA from './SubA';
     import BaseB from './BaseB';
     export default class SubB extends BaseB<SubA> {
@@ -42,6 +43,8 @@ SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files
 !!! error TS8011: Type arguments can only be used in TypeScript files.
         constructor() {
             super(SubA);
+            ~~~~~
+!!! error TS2346: Call target does not contain any signatures.
         }
     }
     
