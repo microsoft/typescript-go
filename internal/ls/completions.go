@@ -1047,6 +1047,7 @@ func (l *LanguageService) getCompletionData(
 			symbols = append(symbols, filteredMembers...)
 
 			// Set sort texts.
+			//nolint:staticcheck
 			transformObjectLiteralMembers := preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() &&
 				objectLikeContainer.Kind == ast.KindObjectLiteralExpression
 			for _, member := range filteredMembers {
@@ -1916,7 +1917,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			nil, /*detail*/
 		)
 
-		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
+		if isShadowed := uniques[autoImport.Fix.Name]; !isShadowed {
 			uniques[autoImport.Fix.Name] = false
 			sortedEntries = append(sortedEntries, entry)
 		}

@@ -188,7 +188,7 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 		// !!! Without the above, nested type args are silently elided
 		// then move qualifiers
 		ids := getAccessStack(ref)
-		var typeName *ast.Node = root.AsTypeReferenceNode().TypeName
+		typeName := root.AsTypeReferenceNode().TypeName
 		for _, id := range ids {
 			typeName = b.f.NewQualifiedName(typeName, id)
 		}
@@ -197,7 +197,7 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 }
 
 func getAccessStack(ref *ast.Node) []*ast.Node {
-	var state *ast.Node = ref.AsTypeReferenceNode().TypeName
+	state := ref.AsTypeReferenceNode().TypeName
 	ids := []*ast.Node{}
 	for !ast.IsIdentifier(state) {
 		entity := state.AsQualifiedName()
@@ -1326,7 +1326,7 @@ func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifi
 		}
 		text := rawText
 
-		for true {
+		for {
 			_, present := b.ctx.typeParameterNamesByText[text]
 			if !present && !b.typeParameterShadowsOtherTypeParameterInScope(text, typeParameter) {
 				break
@@ -1764,47 +1764,47 @@ func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	}
 
 	var node *ast.Node
-	switch {
-	case kind == ast.KindCallSignature:
+	switch kind {
+	case ast.KindCallSignature:
 		node = b.f.NewCallSignatureDeclaration(typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindConstructSignature:
+	case ast.KindConstructSignature:
 		node = b.f.NewConstructSignatureDeclaration(typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindMethodSignature:
+	case ast.KindMethodSignature:
 		var questionToken *ast.Node
 		if options != nil {
 			questionToken = options.questionToken
 		}
 		node = b.f.NewMethodSignatureDeclaration(modifierList, name, questionToken, typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindMethodDeclaration:
+	case ast.KindMethodDeclaration:
 		node = b.f.NewMethodDeclaration(modifierList, nil /*asteriskToken*/, name, nil /*questionToken*/, typeParamList, paramList, returnTypeNode, nil /*fullSignature*/, nil /*body*/)
-	case kind == ast.KindConstructor:
+	case ast.KindConstructor:
 		node = b.f.NewConstructorDeclaration(modifierList, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*fullSignature*/, nil /*body*/)
-	case kind == ast.KindGetAccessor:
+	case ast.KindGetAccessor:
 		node = b.f.NewGetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, returnTypeNode, nil /*fullSignature*/, nil /*body*/)
-	case kind == ast.KindSetAccessor:
+	case ast.KindSetAccessor:
 		node = b.f.NewSetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*fullSignature*/, nil /*body*/)
-	case kind == ast.KindIndexSignature:
+	case ast.KindIndexSignature:
 		node = b.f.NewIndexSignatureDeclaration(modifierList, paramList, returnTypeNode)
 	// !!! JSDoc Support
-	// case kind == ast.KindJSDocFunctionType:
+	// case ast.KindJSDocFunctionType:
 	// 	node = b.f.NewJSDocFunctionType(parameters, returnTypeNode)
-	case kind == ast.KindFunctionType:
+	case ast.KindFunctionType:
 		if returnTypeNode == nil {
 			returnTypeNode = b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), nil)
 		}
 		node = b.f.NewFunctionTypeNode(typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindConstructorType:
+	case ast.KindConstructorType:
 		if returnTypeNode == nil {
 			returnTypeNode = b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), nil)
 		}
 		node = b.f.NewConstructorTypeNode(modifierList, typeParamList, paramList, returnTypeNode)
-	case kind == ast.KindFunctionDeclaration:
+	case ast.KindFunctionDeclaration:
 		// TODO: assert name is Identifier
 		node = b.f.NewFunctionDeclaration(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, nil /*fullSignature*/, nil /*body*/)
-	case kind == ast.KindFunctionExpression:
+	case ast.KindFunctionExpression:
 		// TODO: assert name is Identifier
 		node = b.f.NewFunctionExpression(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, nil /*fullSignature*/, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
-	case kind == ast.KindArrowFunction:
+	case ast.KindArrowFunction:
 		node = b.f.NewArrowFunction(modifierList, typeParamList, paramList, returnTypeNode, nil /*fullSignature*/, nil /*equalsGreaterThanToken*/, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
 	default:
 		panic("Unhandled kind in signatureToSignatureDeclarationHelper")
@@ -1846,7 +1846,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 						counter = 1
 					}
 					var name string
-					for true {
+					for {
 						name = fmt.Sprintf("%s_%d", names[i], counter)
 						_, ok := uniqueNames[name]
 						if ok {
@@ -2600,7 +2600,7 @@ func (b *NodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 
 func (b *NodeBuilderImpl) getParentSymbolOfTypeParameter(typeParameter *TypeParameter) *ast.Symbol {
 	tp := ast.GetDeclarationOfKind(typeParameter.symbol, ast.KindTypeParameter)
-	var host *ast.Node
+	var host *ast.Node //nolint:staticcheck
 	// !!! JSDoc support
 	// if ast.IsJSDocTemplateTag(tp.Parent) {
 	// 	host = getEffectiveContainerForJSDocTemplateTag(tp.Parent)
@@ -2614,7 +2614,7 @@ func (b *NodeBuilderImpl) getParentSymbolOfTypeParameter(typeParameter *TypePara
 }
 
 func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
-	var typeArguments []*Type = b.ch.getTypeArguments(t)
+	typeArguments := b.ch.getTypeArguments(t)
 	if t.Target() == b.ch.globalArrayType || t.Target() == b.ch.globalReadonlyArrayType {
 		if b.ctx.flags&nodebuilder.FlagsWriteArrayAsGenericType != 0 {
 			typeArgumentNode := b.typeToTypeNode(typeArguments[0])

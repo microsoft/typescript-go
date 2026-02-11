@@ -1142,18 +1142,12 @@ func deduplicateModuleCompletions(completions []moduleCompletionNameAndKind) []m
 	if len(completions) <= 1 {
 		return completions
 	}
-	type key struct {
-		name      string
-		kind      moduleCompletionKind
-		extension string
-	}
-	seen := make(map[key]bool)
+	seen := make(map[moduleCompletionNameAndKind]bool)
 	var result []moduleCompletionNameAndKind
-	for _, c := range completions {
-		k := key{name: c.name, kind: c.kind, extension: c.extension}
+	for _, k := range completions {
 		if !seen[k] {
 			seen[k] = true
-			result = append(result, c)
+			result = append(result, k)
 		}
 	}
 	return result
