@@ -27,3 +27,9 @@
 
    gen(function* () {
  >gen(function* () {    yield* traverse({ a: 1, b: 2 }, (n) =>      gen(function* () {        return n + 1;      }),    );  }) : Micro<void, any, never>
+ >gen : <Eff extends Micro<any, any, any>, AEff>(body: () => Generator<Eff, AEff, never>) => Micro<AEff, any, never>
+->function* () {    yield* traverse({ a: 1, b: 2 }, (n) =>      gen(function* () {        return n + 1;      }),    );  } : () => Generator<Micro<ReadonlyRecord<string, number>, any, never>, void, any>
++>function* () {    yield* traverse({ a: 1, b: 2 }, (n) =>      gen(function* () {        return n + 1;      }),    );  } : () => Generator<any, void, never>
+
+     yield* traverse({ a: 1, b: 2 }, (n) =>
+ >yield* traverse({ a: 1, b: 2 }, (n) =>      gen(function* () {        return n + 1;      }),    ) : ReadonlyRecord<string, number>

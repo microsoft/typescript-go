@@ -29,9 +29,7 @@ class YaddaBase {
 >b : Symbol(YaddaBase.b, Decl(index.js, 11, 5))
 
         this.foo = 10
->this.foo : Symbol(YaddaBase.foo, Decl(index.js, 12, 24))
 >this : Symbol(YaddaBase, Decl(index.js, 0, 0))
->foo : Symbol(YaddaBase.foo, Decl(index.js, 12, 24))
     }
 }
 
@@ -51,9 +49,7 @@ class DerivedYadda extends YaddaBase {
 >fooTests : Symbol(DerivedYadda.fooTests, Decl(index.js, 20, 5))
 
         return super.foo;
->super.foo : Symbol(YaddaBase.foo, Decl(index.js, 12, 24))
 >super : Symbol(YaddaBase, Decl(index.js, 0, 0))
->foo : Symbol(YaddaBase.foo, Decl(index.js, 12, 24))
     }
     get justPropTests() {
 >justPropTests : Symbol(DerivedYadda.justPropTests, Decl(index.js, 23, 5))
