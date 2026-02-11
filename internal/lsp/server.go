@@ -501,7 +501,7 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 	code := lsproto.ErrorCodeInternalError
-	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
+	if errCode, ok := errors.AsType[lsproto.ErrorCode](err); ok {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
