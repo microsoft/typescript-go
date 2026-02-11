@@ -28,8 +28,9 @@ import (
 )
 
 type completionsFromTypes struct {
-	types           []*checker.StringLiteralType
-	isNewIdentifier bool
+	types              []*checker.StringLiteralType
+	isNewIdentifier    bool
+	numberOfInferences int // number of types at the beginning of 'types' from source node inference
 }
 
 type completionsFromProperties struct {
@@ -146,14 +147,19 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		} else {
 			quoteChar = printer.QuoteCharDoubleQuote
 		}
-		items := core.Map(completion.types, func(t *checker.StringLiteralType) *lsproto.CompletionItem {
+		items := make([]*lsproto.CompletionItem, len(completion.types))
+		for i, t := range completion.types {
 			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
-			return l.createLSPCompletionItem(
+			sortText := SortTextLocationPriority
+			if i < completion.numberOfInferences {
+				sortText = SortTextLocalDeclarationPriority
+			}
+			items[i] = l.createLSPCompletionItem(
 				ctx,
 				name,
 				"", /*insertText*/
 				"", /*filterText*/
-				SortTextLocationPriority,
+				sortText,
 				lsutil.ScriptElementKindString,
 				collections.Set[lsutil.ScriptElementKindModifier]{},
 				l.getReplacementRangeForContextToken(file, contextToken, position),
@@ -169,7 +175,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				nil,   /*autoImportEntryData*/
 				nil,   /*detail*/
 			)
-		})
+		}
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
 		itemDefaults := l.setItemDefaults(
 			ctx,
@@ -283,11 +289,17 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		}
 		if ast.FindAncestor(parent.Parent, ast.IsCallLikeExpression) != nil {
 			uniques := &collections.Set[string]{}
-			stringLiteralTypes := append(
-				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsNone), uniques, typeChecker),
-				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsCompletions), uniques, typeChecker)...,
-			)
-			return toStringLiteralCompletionsFromTypes(stringLiteralTypes)
+			noneTypes := getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsNone), uniques, typeChecker)
+			completionsTypes := getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsCompletions), uniques, typeChecker)
+			stringLiteralTypes := append(noneTypes, completionsTypes...)
+			result := toCompletionsFromTypes(stringLiteralTypes)
+			if result != nil {
+				result.numberOfInferences = len(noneTypes)
+				return &stringLiteralCompletions{
+					fromTypes: result,
+				}
+			}
+			return nil
 		}
 		return &stringLiteralCompletions{
 			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
@@ -433,16 +445,6 @@ func toCompletionsFromTypes(types []*checker.StringLiteralType) *completionsFrom
 	return &completionsFromTypes{
 		types:           types,
 		isNewIdentifier: false,
-	}
-}
-
-func toStringLiteralCompletionsFromTypes(types []*checker.StringLiteralType) *stringLiteralCompletions {
-	result := toCompletionsFromTypes(types)
-	if result == nil {
-		return nil
-	}
-	return &stringLiteralCompletions{
-		fromTypes: result,
 	}
 }
 
