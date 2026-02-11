@@ -547,6 +547,14 @@ func (r *EmitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, sy
 	return r.requiresAddingImplicitUndefined(declaration, symbol, enclosingDeclaration)
 }
 
+func (r *EmitResolver) RequiresAddingImplicitUndefinedUnsafe(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+	if !ast.IsParseTreeNode(declaration) {
+		return false
+	}
+	// NO LOCKING - only should be called in contexts that already have a checker lock
+	return r.requiresAddingImplicitUndefined(declaration, symbol, enclosingDeclaration)
+}
+
 func (r *EmitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
 	// node = r.emitContext.ParseNode(node)
 	if !ast.IsParseTreeNode(declaration) {

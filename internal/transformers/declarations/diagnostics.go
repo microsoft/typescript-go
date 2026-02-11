@@ -666,7 +666,7 @@ func createGetIsolatedDeclarationErrors(resolver printer.EmitResolver) func(node
 		if ast.IsSetAccessorDeclaration(node.Parent) {
 			return createAccessorTypeError(node.Parent)
 		}
-		addUndefined := resolver.RequiresAddingImplicitUndefined(node, nil, nil)
+		addUndefined := resolver.RequiresAddingImplicitUndefinedUnsafe(node, nil, nil) // skip checker lock - node builder will already have one
 		if !addUndefined && node.Initializer() != nil {
 			return createExpressionError(node)
 		}
