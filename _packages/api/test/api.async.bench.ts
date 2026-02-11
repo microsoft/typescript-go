@@ -88,7 +88,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
             });
         }, { beforeAll: all(spawnAPI, loadProject, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
-            await project.getSymbolAtPosition("program.ts", 8895);
+            await project.checker.getSymbolAtPosition("program.ts", 8895);
         }, { beforeAll: all(spawnAPI, loadProject, createChecker) })
         .add("TS - getSymbolAtPosition - one location", () => {
             tsProgram.getTypeChecker().getSymbolAtLocation(
@@ -98,21 +98,21 @@ export async function runBenchmarks(singleIteration?: boolean) {
         }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers`, async () => {
             for (const node of collectIdentifiers(file)) {
-                await project.getSymbolAtPosition("program.ts", node.pos);
+                await project.checker.getSymbolAtPosition("program.ts", node.pos);
             }
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, async () => {
             const positions = collectIdentifiers(file).map(node => node.pos);
-            await project.getSymbolAtPosition("program.ts", positions);
+            await project.checker.getSymbolAtPosition("program.ts", positions);
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, async () => {
             for (const node of collectIdentifiers(file)) {
-                await project.getSymbolAtLocation(node);
+                await project.checker.getSymbolAtLocation(node);
             }
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, async () => {
             const nodes = collectIdentifiers(file);
-            await project.getSymbolAtLocation(nodes);
+            await project.checker.getSymbolAtLocation(nodes);
         }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             const checker = tsProgram.getTypeChecker();
@@ -164,7 +164,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     async function createChecker() {
         // checker is created lazily, for measuring symbol time in a loop
         // we need to create it first.
-        await project.getSymbolAtPosition("core.ts", 0);
+        await project.checker.getSymbolAtPosition("core.ts", 0);
     }
 
     function tsCreateChecker() {
@@ -172,11 +172,11 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     async function getDebugTS() {
-        file = (await project.getSourceFile("debug.ts"))!;
+        file = (await project.program.getSourceFile("debug.ts"))!;
     }
 
     async function getProgramTS() {
-        file = (await project.getSourceFile("program.ts"))!;
+        file = (await project.program.getSourceFile("program.ts"))!;
     }
 
     function tsGetProgramTS() {
@@ -184,7 +184,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     }
 
     async function getCheckerTS() {
-        file = (await project.getSourceFile("checker.ts"))!;
+        file = (await project.program.getSourceFile("checker.ts"))!;
     }
 
     async function teardown() {

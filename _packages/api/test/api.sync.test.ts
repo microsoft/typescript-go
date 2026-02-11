@@ -40,7 +40,7 @@ describe("Project", () => {
     test("getSymbolAtPosition", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
-        const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+        const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
         assert.ok(symbol);
         assert.equal(symbol.name, "foo");
         assert.ok(symbol.flags & SymbolFlags.Alias);
@@ -49,14 +49,14 @@ describe("Project", () => {
     test("getSymbolAtLocation", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
-        const sourceFile = project.getSourceFile("/src/index.ts");
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
         assert.ok(sourceFile);
         const node = cast(
             cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings,
             isNamedImports,
         ).elements[0].name;
         assert.ok(node);
-        const symbol = project.getSymbolAtLocation(node);
+        const symbol = project.checker.getSymbolAtLocation(node);
         assert.ok(symbol);
         assert.equal(symbol.name, "foo");
         assert.ok(symbol.flags & SymbolFlags.Alias);
@@ -65,9 +65,9 @@ describe("Project", () => {
     test("getTypeOfSymbol", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
-        const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+        const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
         assert.ok(symbol);
-        const type = project.getTypeOfSymbol(symbol);
+        const type = project.checker.getTypeOfSymbol(symbol);
         assert.ok(type);
         assert.ok(type.flags & TypeFlags.NumberLiteral);
     });
@@ -77,7 +77,7 @@ describe("SourceFile", () => {
     test("file properties", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
-        const sourceFile = project.getSourceFile("/src/index.ts");
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
         assert.equal(sourceFile.text, defaultFiles["/src/index.ts"]);
@@ -87,7 +87,7 @@ describe("SourceFile", () => {
     test("extended data", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
-        const sourceFile = project.getSourceFile("/src/index.ts");
+        const sourceFile = project.program.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
         let nodeCount = 1;
@@ -127,7 +127,7 @@ test("unicode escapes", () => {
     const project = api.loadProject("/tsconfig.json");
 
     Object.keys(srcFiles).forEach(file => {
-        const sourceFile = project.getSourceFile(file);
+        const sourceFile = project.program.getSourceFile(file);
         assert.ok(sourceFile);
 
         sourceFile.forEachChild(function visit(node) {
@@ -144,33 +144,33 @@ test("Object equality", () => {
     const project = api.loadProject("/tsconfig.json");
     assert.strictEqual(project, api.loadProject("/tsconfig.json"));
     assert.strictEqual(
-        project.getSymbolAtPosition("/src/index.ts", 9),
-        project.getSymbolAtPosition("/src/index.ts", 10),
+        project.checker.getSymbolAtPosition("/src/index.ts", 9),
+        project.checker.getSymbolAtPosition("/src/index.ts", 10),
     );
 });
 
 test("Dispose", () => {
     const api = spawnAPI();
     const project = api.loadProject("/tsconfig.json");
-    const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+    const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
     assert.ok(symbol);
     assert.ok(symbol.isDisposed() === false);
     symbol.dispose();
     assert.ok(symbol.isDisposed() === true);
     assert.throws(() => {
-        project.getTypeOfSymbol(symbol);
+        project.checker.getTypeOfSymbol(symbol);
     }, {
         name: "Error",
         message: "Symbol is disposed",
     });
 
-    const symbol2 = project.getSymbolAtPosition("/src/index.ts", 9);
+    const symbol2 = project.checker.getSymbolAtPosition("/src/index.ts", 9);
     assert.ok(symbol2);
     assert.notStrictEqual(symbol, symbol2);
     // @ts-ignore private API
     api.client.request("release", symbol2.id);
     assert.throws(() => {
-        project.getTypeOfSymbol(symbol2);
+        project.checker.getTypeOfSymbol(symbol2);
     }, {
         name: "Error",
         message: `api: client error: symbol handle "${symbol2.id}" not found in session registry`,

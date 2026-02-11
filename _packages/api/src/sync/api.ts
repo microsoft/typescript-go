@@ -10,9 +10,11 @@ import type {
 import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
+    type Checker as BaseChecker,
     type DocumentIdentifier,
     type DocumentPosition,
     type NodeHandle as BaseNodeHandle,
+    type Program as BaseProgram,
     type Project as BaseProject,
     resolveFileName,
     type Symbol as BaseSymbol,
@@ -113,7 +115,7 @@ export class API implements BaseAPI<false> {
     }
 
     loadProject(configFile: DocumentIdentifier | string): Project {
-        const data = this.client.request("loadProject", { configFileName: resolveFileName(configFile) });
+        const data: ProjectResponse = this.client.request("loadProject", { configFileName: resolveFileName(configFile) });
         return this.objectRegistry.getProject(data);
     }
 
@@ -127,21 +129,24 @@ export class API implements BaseAPI<false> {
 
     close(): void {
         this.client.close();
+        this.objectRegistry.clear();
         this.sourceFileCache.clear();
     }
 }
 
 export class Project extends DisposableObject implements BaseProject<false> {
-    private decoder = new TextDecoder();
     private client: Client;
     private sourceFileCache: SourceFileCache;
     private toPath: (fileName: string) => Path;
-    private parseOptionsKey!: string;
 
     readonly id: string;
     configFileName!: string;
     compilerOptions!: Record<string, unknown>;
     rootFiles!: readonly string[];
+    parseOptionsKey!: string;
+
+    readonly program: Program;
+    readonly checker: Checker;
 
     constructor(client: Client, objectRegistry: SyncObjectRegistry, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, data: ProjectResponse) {
         super(objectRegistry);
@@ -149,6 +154,20 @@ export class Project extends DisposableObject implements BaseProject<false> {
         this.client = client;
         this.sourceFileCache = sourceFileCache;
         this.toPath = toPath;
+        this.program = new Program(
+            this.id,
+            client,
+            sourceFileCache,
+            toPath,
+            () => this.ensureNotDisposed(),
+            () => this.parseOptionsKey,
+        );
+        this.checker = new Checker(
+            this.id,
+            client,
+            objectRegistry,
+            () => this.ensureNotDisposed(),
+        );
         this.loadData(data);
     }
 
@@ -157,6 +176,12 @@ export class Project extends DisposableObject implements BaseProject<false> {
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
         this.parseOptionsKey = data.parseOptionsKey;
+    }
+
+    override dispose(): void {
+        this.program.markDisposed();
+        this.checker.markDisposed();
+        super.dispose();
     }
 
     reload(): ProjectChanges | undefined {
@@ -177,23 +202,61 @@ export class Project extends DisposableObject implements BaseProject<false> {
 
         return data.changes;
     }
+}
+
+export class Program implements BaseProgram<false> {
+    private projectId: string;
+    private client: Client;
+    private sourceFileCache: SourceFileCache;
+    private toPath: (fileName: string) => Path;
+    private ensureProjectNotDisposed: () => void;
+    private getParseOptionsKey: () => string;
+    private decoder = new TextDecoder();
+    private disposed = false;
+
+    constructor(
+        projectId: string,
+        client: Client,
+        sourceFileCache: SourceFileCache,
+        toPath: (fileName: string) => Path,
+        ensureProjectNotDisposed: () => void,
+        getParseOptionsKey: () => string,
+    ) {
+        this.projectId = projectId;
+        this.client = client;
+        this.sourceFileCache = sourceFileCache;
+        this.toPath = toPath;
+        this.ensureProjectNotDisposed = ensureProjectNotDisposed;
+        this.getParseOptionsKey = getParseOptionsKey;
+    }
+
+    /** @internal */
+    markDisposed(): void {
+        this.disposed = true;
+    }
+
+    private ensureNotDisposed(): void {
+        if (this.disposed) {
+            throw new Error("Program is disposed");
+        }
+        this.ensureProjectNotDisposed();
+    }
 
     getSourceFile(file: DocumentIdentifier | string): SourceFile | undefined {
         this.ensureNotDisposed();
         const fileName = resolveFileName(file);
         const path = this.toPath(fileName);
-        const parseCacheKey = this.parseOptionsKey;
 
         // Check cache first
-        const cached = this.sourceFileCache.get(path, parseCacheKey);
+        const cached = this.sourceFileCache.get(path, this.getParseOptionsKey());
         if (cached) {
-            this.sourceFileCache.retain(path, this.id);
+            this.sourceFileCache.retain(path, this.projectId);
             return cached;
         }
 
         // Fetch from server
         const response: Uint8Array | undefined = this.client.requestBinary("getSourceFile", {
-            project: this.id,
+            project: this.projectId,
             fileName,
         });
         if (!response) {
@@ -201,9 +264,41 @@ export class Project extends DisposableObject implements BaseProject<false> {
         }
 
         const sourceFile = new RemoteSourceFile(response, this.decoder) as unknown as SourceFile;
-        this.sourceFileCache.set(path, sourceFile, parseCacheKey, this.id);
+        this.sourceFileCache.set(path, sourceFile, this.getParseOptionsKey(), this.projectId);
 
         return sourceFile;
+    }
+}
+
+export class Checker implements BaseChecker<false> {
+    private projectId: string;
+    private client: Client;
+    private objectRegistry: SyncObjectRegistry;
+    private ensureProjectNotDisposed: () => void;
+    private disposed = false;
+
+    constructor(
+        projectId: string,
+        client: Client,
+        objectRegistry: SyncObjectRegistry,
+        ensureProjectNotDisposed: () => void,
+    ) {
+        this.projectId = projectId;
+        this.client = client;
+        this.objectRegistry = objectRegistry;
+        this.ensureProjectNotDisposed = ensureProjectNotDisposed;
+    }
+
+    /** @internal */
+    markDisposed(): void {
+        this.disposed = true;
+    }
+
+    private ensureNotDisposed(): void {
+        if (this.disposed) {
+            throw new Error("Checker is disposed");
+        }
+        this.ensureProjectNotDisposed();
     }
 
     getSymbolAtLocation(node: Node): Symbol | undefined;
@@ -211,10 +306,10 @@ export class Project extends DisposableObject implements BaseProject<false> {
     getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | (Symbol | undefined)[] | undefined {
         this.ensureNotDisposed();
         if (Array.isArray(nodeOrNodes)) {
-            const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodeOrNodes.map(node => node.id) });
+            const data = this.client.request("getSymbolsAtLocations", { project: this.projectId, locations: nodeOrNodes.map(node => node.id) });
             return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
         }
-        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: (nodeOrNodes as Node).id });
+        const data = this.client.request("getSymbolAtLocation", { project: this.projectId, location: (nodeOrNodes as Node).id });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
@@ -224,10 +319,10 @@ export class Project extends DisposableObject implements BaseProject<false> {
         this.ensureNotDisposed();
         const fileName = resolveFileName(file);
         if (typeof positionOrPositions === "number") {
-            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position: positionOrPositions });
+            const data = this.client.request("getSymbolAtPosition", { project: this.projectId, fileName, position: positionOrPositions });
             return data ? this.objectRegistry.getSymbol(data) : undefined;
         }
-        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions: positionOrPositions });
+        const data = this.client.request("getSymbolsAtPositions", { project: this.projectId, fileName, positions: positionOrPositions });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
@@ -236,10 +331,10 @@ export class Project extends DisposableObject implements BaseProject<false> {
     getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Type | (Type | undefined)[] | undefined {
         this.ensureNotDisposed();
         if (Array.isArray(symbolOrSymbols)) {
-            const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
+            const data = this.client.request("getTypesOfSymbols", { project: this.projectId, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
             return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
         }
-        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
+        const data = this.client.request("getTypeOfSymbol", { project: this.projectId, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 
@@ -260,7 +355,7 @@ export class Project extends DisposableObject implements BaseProject<false> {
         // Distinguish Node (has `id`) from DocumentPosition (has `document` and `position`)
         const isNode = location && "id" in location;
         const data = this.client.request("resolveName", {
-            project: this.id,
+            project: this.projectId,
             name,
             meaning,
             location: isNode ? (location as Node).id : undefined,
@@ -291,7 +386,7 @@ export class NodeHandle implements BaseNodeHandle<false> {
      * from the given project and finding the node at the stored position.
      */
     resolve(project: Project): Node | undefined {
-        const sourceFile = project.getSourceFile(this.path);
+        const sourceFile = project.program.getSourceFile(this.path);
         if (!sourceFile) {
             return undefined;
         }

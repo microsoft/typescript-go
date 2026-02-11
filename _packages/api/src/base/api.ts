@@ -33,10 +33,10 @@ export { SymbolFlags, TypeFlags };
  *
  * @example
  * // Using a file name
- * project.getSourceFile({ fileName: "/path/to/file.ts" });
+ * project.program.getSourceFile({ fileName: "/path/to/file.ts" });
  *
  * // Using a URI
- * project.getSourceFile({ uri: "file:///path/to/file.ts" });
+ * project.program.getSourceFile({ uri: "file:///path/to/file.ts" });
  */
 export type DocumentIdentifier = { fileName: string; } | { uri: string; };
 
@@ -124,6 +124,16 @@ export interface Project<Async extends boolean> {
     rootFiles: readonly string[];
 
     /**
+     * Access to program-related APIs.
+     */
+    readonly program: Program<Async>;
+
+    /**
+     * Access to type checker APIs.
+     */
+    readonly checker: Checker<Async>;
+
+    /**
      * Load project data from a response.
      */
     loadData(data: ProjectResponse): void;
@@ -133,12 +143,22 @@ export interface Project<Async extends boolean> {
      * @returns File changes if the project was previously loaded, or undefined.
      */
     reload(): MaybeAsync<Async, ProjectChanges | undefined>;
+}
 
+/**
+ * Base interface for program-related APIs.
+ */
+export interface Program<Async extends boolean> {
     /**
      * Get a source file from the project by file name or URI.
      */
     getSourceFile(file: DocumentIdentifier | string): MaybeAsync<Async, SourceFile | undefined>;
+}
 
+/**
+ * Base interface for type checker APIs.
+ */
+export interface Checker<Async extends boolean> {
     /**
      * Get the symbol at a specific location in a source file.
      */
