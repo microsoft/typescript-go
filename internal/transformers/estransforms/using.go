@@ -296,7 +296,6 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
 
-
 func (tx *usingDeclarationTransformer) transformUsingDeclarations(statementsIn []*ast.Statement, envBinding *ast.IdentifierNode, topLevelStatements *[]*ast.Statement) []*ast.Node {
 	var statements []*ast.Statement
 
@@ -788,4 +787,3 @@ func getUsingKindOfStatements(statements []*ast.Node) usingKind {
 	}
 	return result
 }
-
