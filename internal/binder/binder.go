@@ -39,6 +39,7 @@ const (
 	ContainerFlagsIsInterface                                      ContainerFlags = 1 << 6
 	ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor ContainerFlags = 1 << 7
 	ContainerFlagsIsThisContainer                                  ContainerFlags = 1 << 8
+	ContainerFlagsPropagatesThisKeyword                            ContainerFlags = 1 << 9
 )
 
 type ExpandoAssignmentInfo struct {
@@ -1520,6 +1521,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveExceptionTarget := b.currentExceptionTarget
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
+		saveSeenThisKeyword := b.seenThisKeyword
 		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
 			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			!isGeneratorFunctionExpression(node) &&
@@ -1545,9 +1547,10 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentContinueTarget = nil
 		b.activeLabelList = nil
 		b.hasExplicitReturn = false
+		b.seenThisKeyword = false
 		b.bindChildren(node)
 		// Reset all reachability check related flags on node (for incremental scenarios)
-		node.Flags &= ^ast.NodeFlagsReachabilityCheckFlags
+		node.Flags &= ^(ast.NodeFlagsReachabilityCheckFlags | ast.NodeFlagsContainsThis)
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
 			if bodyData != nil && ast.NodeIsPresent(bodyData.Body) {
@@ -1557,6 +1560,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 				}
 				bodyData.EndFlowNode = b.currentFlow
 			}
+		}
+		if b.seenThisKeyword {
+			node.Flags |= ast.NodeFlagsContainsThis
 		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
@@ -1579,6 +1585,11 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.currentExceptionTarget = saveExceptionTarget
 		b.activeLabelList = saveActiveLabelList
 		b.hasExplicitReturn = saveHasExplicitReturn
+		if containerFlags&ContainerFlagsPropagatesThisKeyword != 0 {
+			b.seenThisKeyword = saveSeenThisKeyword || b.seenThisKeyword
+		} else {
+			b.seenThisKeyword = saveSeenThisKeyword
+		}
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
 		b.seenThisKeyword = false
 		b.bindChildren(node)
@@ -2528,13 +2539,13 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
 	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
 	case ast.KindArrowFunction:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsPropagatesThisKeyword
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
 	case ast.KindPropertyDeclaration:
