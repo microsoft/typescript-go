@@ -229,7 +229,7 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		}
 		if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod|ast.SymbolFlagsAccessor) != 0 && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsObjectLiteral != 0 {
 			if objectLiteral := core.FirstOrNil(symbol.Parent.Declarations); objectLiteral != nil {
-				if declarations := c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, symbol.Name); len(declarations) != 0 {
+				if declarations := c.GetContextualDeclarationsForObjectLiteralElementWithNode(objectLiteral, symbol.Name, node); len(declarations) != 0 {
 					return declarations
 				}
 			}
@@ -262,7 +262,7 @@ func getDeclarationsFromObjectLiteralElement(c *checker.Checker, node *ast.Node)
 		return nil
 	}
 
-	return c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, name)
+	return c.GetContextualDeclarationsForObjectLiteralElementWithNode(objectLiteral, name, node)
 }
 
 // Returns a CallLikeExpression where `node` is the target being invoked.

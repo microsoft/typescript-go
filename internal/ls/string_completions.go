@@ -281,7 +281,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 				fromProperties: stringLiteralCompletionsForObjectLiteral(typeChecker, parent.Parent),
 			}
 		}
-		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		result := fromContextualType(checker.ContextFlagsIgnoreNodeInferences, node, typeChecker)
 		if result != nil {
 			return &stringLiteralCompletions{
 				fromTypes: result,
@@ -343,7 +343,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		return l.getStringLiteralCompletionsFromModuleNames(file, node, l.GetProgram(), typeChecker)
 	case ast.KindCaseClause:
 		tracker := newCaseClauseTracker(typeChecker, parent.Parent.AsCaseBlock().Clauses.Nodes)
-		contextualTypes := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		contextualTypes := fromContextualType(checker.ContextFlagsIgnoreNodeInferences, node, typeChecker)
 		if contextualTypes == nil {
 			return nil
 		}
@@ -406,7 +406,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
 		}
 	default:
-		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		result := fromContextualType(checker.ContextFlagsIgnoreNodeInferences, node, typeChecker)
 		if result != nil {
 			return &stringLiteralCompletions{
 				fromTypes: result,
@@ -515,7 +515,7 @@ func stringLiteralCompletionsForObjectLiteral(
 		return nil
 	}
 
-	completionsType := typeChecker.GetContextualType(objectLiteralExpression, checker.ContextFlagsCompletions)
+	completionsType := typeChecker.GetContextualType(objectLiteralExpression, checker.ContextFlagsIgnoreNodeInferences)
 	symbols := getPropertiesForObjectExpression(
 		contextualType,
 		completionsType,

@@ -310,7 +310,7 @@ func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExterna
 }
 
 func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFlags) *Type {
-	if contextFlags&ContextFlagsCompletions != 0 {
+	if contextFlags&ContextFlagsIgnoreNodeInferences != 0 {
 		return runWithInferenceBlockedFromSourceNode(c, node, func() *Type { return c.getContextualType(node, contextFlags) })
 	}
 	return c.getContextualType(node, contextFlags)
@@ -802,8 +802,26 @@ func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 }
 
 func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral *ast.Node, name string) []*ast.Node {
+	return c.getContextualDeclarationsForObjectLiteralElementWorker(objectLiteral, name, nil)
+}
+
+func (c *Checker) GetContextualDeclarationsForObjectLiteralElementWithNode(objectLiteral *ast.Node, name string, propertyNameNode *ast.Node) []*ast.Node {
+	return c.getContextualDeclarationsForObjectLiteralElementWorker(objectLiteral, name, propertyNameNode)
+}
+
+func (c *Checker) getContextualDeclarationsForObjectLiteralElementWorker(objectLiteral *ast.Node, name string, propertyNameNode *ast.Node) []*ast.Node {
+	result := c.getDeclarationsFromContextualType(objectLiteral, name, ContextFlagsNone)
+	if propertyNameNode != nil && hasSelfReferenceDeclaration(result, propertyNameNode) {
+		if withoutNodeInferences := c.getDeclarationsFromContextualType(objectLiteral, name, ContextFlagsIgnoreNodeInferences); len(withoutNodeInferences) > 0 {
+			result = withoutNodeInferences
+		}
+	}
+	return result
+}
+
+func (c *Checker) getDeclarationsFromContextualType(objectLiteral *ast.Node, name string, contextFlags ContextFlags) []*ast.Node {
 	var result []*ast.Node
-	if t := c.getApparentTypeOfContextualType(objectLiteral, ContextFlagsNone); t != nil {
+	if t := c.getApparentTypeOfContextualType(objectLiteral, contextFlags); t != nil {
 		for _, t := range t.Distributed() {
 			prop := c.getPropertyOfType(t, name)
 			if prop != nil {
@@ -820,6 +838,17 @@ func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral
 		}
 	}
 	return result
+}
+
+// hasSelfReferenceDeclaration checks if any declaration points back to the same property
+// in the object literal, indicating the contextual type was inferred from the node itself.
+func hasSelfReferenceDeclaration(declarations []*ast.Node, propertyNameNode *ast.Node) bool {
+	for _, decl := range declarations {
+		if decl.Parent != nil && ast.IsObjectLiteralExpression(decl.Parent) && ast.IsObjectLiteralElement(decl) && decl.Name() == propertyNameNode {
+			return true
+		}
+	}
+	return false
 }
 
 // GetContextualTypeForArrayLiteralAtPosition returns the contextual type for an element at the given position
