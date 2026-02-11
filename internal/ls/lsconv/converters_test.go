@@ -3,6 +3,7 @@ package lsconv_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
@@ -80,4 +81,42 @@ func TestFileNameToDocumentURI(t *testing.T) {
 			assert.Equal(t, lsconv.FileNameToDocumentURI(test.fileName), test.uri)
 		})
 	}
+}
+
+type testScript struct {
+	fileName string
+	text     string
+}
+
+func (t *testScript) FileName() string {
+	return t.fileName
+}
+
+func (t *testScript) Text() string {
+	return t.text
+}
+
+func TestLineAndCharacterToPosition_StalePositionData(t *testing.T) {
+	// Test for issue #2077 - panic when line map has positions beyond text length
+	const textLen = 100
+	script := &testScript{
+		fileName: "/test.ts",
+		text:     string(make([]byte, textLen)),
+	}
+
+	staleLineMap := &lsconv.LSPLineMap{
+		LineStarts: []core.TextPos{0, 50, 150},
+		AsciiOnly:  true,
+	}
+
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
+		return staleLineMap
+	})
+
+	result := converters.LineAndCharacterToPosition(script, lsproto.Position{
+		Line:      2,
+		Character: 0,
+	})
+
+	assert.Equal(t, core.TextPos(textLen), result)
 }
