@@ -653,7 +653,7 @@ func (r *EmitResolver) IsLiteralConstDeclaration(node *ast.Node) bool {
 	return false
 }
 
-func (r *EmitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
+func (r *EmitResolver) IsExpandoFunctionDeclarationUnsafe(node *ast.Node) bool {
 	// node = r.emitContext.ParseNode(node)
 	if !ast.IsParseTreeNode(node) {
 		return false
@@ -666,6 +666,12 @@ func (r *EmitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
 		}
 	}
 	return false
+}
+
+func (r *EmitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.IsExpandoFunctionDeclarationUnsafe(node)
 }
 
 func (r *EmitResolver) isSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) printer.SymbolAccessibilityResult {

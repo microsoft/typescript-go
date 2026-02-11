@@ -100,6 +100,7 @@ type EmitResolver interface {
 	IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) SymbolAccessibilityResult
 	IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) SymbolAccessibilityResult // previously SymbolVisibilityResult in strada - ErrorModuleName never set
 	IsExpandoFunctionDeclaration(node *ast.Node) bool
+	IsExpandoFunctionDeclarationUnsafe(node *ast.Node) bool
 	IsLiteralConstDeclaration(node *ast.Node) bool
 	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
 	IsDeclarationVisible(node *ast.Node) bool

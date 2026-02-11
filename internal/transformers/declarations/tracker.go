@@ -66,7 +66,7 @@ func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
 	if ast.GetSourceFileOfNode(node) != s.state.currentSourceFile {
 		return // Nested error on a declaration in another file - ignore, will be reemitted if file is in the output file set
 	}
-	if ast.IsVariableDeclaration(node) && s.state.resolver.IsExpandoFunctionDeclaration(node) {
+	if ast.IsVariableDeclaration(node) && s.state.resolver.IsExpandoFunctionDeclarationUnsafe(node) { // within a node builder call that should already lock the checker, use the unsafe call
 		s.state.reportExpandoFunctionErrors(node)
 	} else {
 		s.state.addDiagnostic(s.getIsolatedDeclarationError(node))
