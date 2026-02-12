@@ -1059,9 +1059,12 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 		indentNextTokenOrTrivia := true
 		if len(currentTokenInfo.leadingTrivia) > 0 {
 			commentIndentation := dynamicIndenation.getIndentationForComment(currentTokenInfo.token.Kind, tokenIndentation, container)
-			indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
-				w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
-			})
+			// Only indent comments if we have a valid indentation value
+			if commentIndentation != -1 {
+				indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
+					w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
+				})
+			}
 		}
 
 		// indent token only if is it is in target range and does not overlap with any error ranges
@@ -1095,6 +1098,10 @@ func (i *dynamicIndenter) getIndentationForComment(kind ast.Kind, tokenIndentati
 	//     // comment
 	// }
 	case ast.KindCloseBraceToken, ast.KindCloseBracketToken, ast.KindCloseParenToken:
+		// If indentation is -1 (Unknown), we should not add delta to it
+		if i.indentation == -1 {
+			return -1
+		}
 		return i.indentation + i.getDelta(container)
 	}
 	if tokenIndentation != -1 {
@@ -1117,6 +1124,10 @@ func (i *dynamicIndenter) getIndentationForComment(kind ast.Kind, tokenIndentati
 //
 //	> yValue;
 func (i *dynamicIndenter) getIndentationForToken(line int, kind ast.Kind, container *ast.Node, suppressDelta bool) int {
+	// If indentation is -1 (Unknown), we should not add delta to it
+	if i.indentation == -1 {
+		return -1
+	}
 	if !suppressDelta && i.shouldAddDelta(line, kind, container) {
 		return i.indentation + i.getDelta(container)
 	}
