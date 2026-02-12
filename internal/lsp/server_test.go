@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 	"testing"
 
@@ -180,11 +181,12 @@ func TestServerInvalidNotificationParams(t *testing.T) {
 
 	reader := ToReader(io.NopCloser(bytes.NewReader([]byte(rawMessage))))
 	writer := &collectingWriter{}
+	stderr := &strings.Builder{}
 
 	server := NewServer(&ServerOptions{
 		In:  reader,
 		Out: writer,
-		Err: io.Discard,
+		Err: stderr,
 		Cwd: "/test",
 	})
 
@@ -208,4 +210,7 @@ func TestServerInvalidNotificationParams(t *testing.T) {
 		}
 	}
 	assert.Assert(t, !foundError, "expected no error response for invalid notification")
+	errstr := stderr.String()
+	assert.Assert(t, strings.Contains(errstr, "error handling notification"),
+		"expected error log to contain 'error handling notification', got %q", errstr)
 }
