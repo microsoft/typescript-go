@@ -1374,26 +1374,6 @@ func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	return s.npmInstall(cwd, args)
 }
 
-func isBlockingMethod(method lsproto.Method) bool {
-	switch method {
-	case lsproto.MethodInitialize,
-		lsproto.MethodInitialized,
-		lsproto.MethodTextDocumentDidOpen,
-		lsproto.MethodTextDocumentDidChange,
-		lsproto.MethodTextDocumentDidSave,
-		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles,
-		lsproto.MethodWorkspaceDidChangeConfiguration,
-		lsproto.MethodWorkspaceConfiguration:
-		return true
-	}
-	return false
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
 // Developer/debugging command handlers
 
 func (s *Server) handleRunGC(_ context.Context, _ any, _ *lsproto.RequestMessage) (lsproto.RunGCResponse, error) {
