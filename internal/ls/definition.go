@@ -236,10 +236,8 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 					return declarations
 				}
 			}
-		}
-		objectLiteralElementDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
-		if len(objectLiteralElementDeclarations) > 0 {
-			return objectLiteralElementDeclarations
+		} else if declarations := getDeclarationsFromObjectLiteralElement(c, node); len(declarations) > 0 {
+			return declarations
 		}
 		return symbol.Declarations
 	}
