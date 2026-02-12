@@ -147,7 +147,7 @@ function setNestedValue(obj: Record<string, any>, dottedKey: string, value: any)
             return;
         }
         if (!(part in current) || typeof current[part] !== "object" || current[part] === null) {
-            current[part] = {};
+            current[part] = Object.create(null);
         }
         current = current[part];
     }
