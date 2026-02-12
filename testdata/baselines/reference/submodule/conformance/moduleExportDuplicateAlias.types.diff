@@ -6,7 +6,7 @@
  >exports.apply = undefined : undefined
 ->exports.apply : any
 +>exports.apply : () => void
- >exports : typeof import("moduleExportAliasDuplicateAlias")
+ >exports : typeof import("./moduleExportAliasDuplicateAlias")
 ->apply : any
 +>apply : () => void
  >undefined : undefined
@@ -19,7 +19,7 @@
 ->exports.apply : undefined
 +>exports.apply() : void
 +>exports.apply : () => void
- >exports : typeof import("moduleExportAliasDuplicateAlias")
+ >exports : typeof import("./moduleExportAliasDuplicateAlias")
 ->apply : undefined
 +>apply : () => void
 
@@ -27,7 +27,7 @@
  >exports.apply = a : () => void
 ->exports.apply : any
 +>exports.apply : () => void
- >exports : typeof import("moduleExportAliasDuplicateAlias")
+ >exports : typeof import("./moduleExportAliasDuplicateAlias")
 ->apply : any
 +>apply : () => void
  >a : () => void

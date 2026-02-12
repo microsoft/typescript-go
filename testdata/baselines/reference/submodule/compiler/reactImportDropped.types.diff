@@ -8,7 +8,7 @@
 -><TabBar height={layout.footerHeight} /> : error
 +>x : any
 +><TabBar height={layout.footerHeight} /> : any
- >TabBar : import("react").ClassicComponentClass
+ >TabBar : import("../../../react").ClassicComponentClass
 ->height : error
 ->layout.footerHeight : error
 +>height : any
