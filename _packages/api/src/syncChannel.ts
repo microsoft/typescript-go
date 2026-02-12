@@ -1,13 +1,13 @@
 /**
  * Pure JS replacement for @typescript/libsyncrpc.
  *
- * Spawns a child process and communicates with it synchronously over
- * stdin/stdout pipes using the same MessagePack-based tuple protocol:
+ * Spawns a child process and communicates with it synchronously using
+ * a MessagePack-based tuple protocol:
  *   [MessageType (u8), method (bin), payload (bin)]
  *
- * Synchronous I/O is achieved by calling fs.readSync / fs.writeSync
- * directly on the pipe file descriptors obtained from the spawned
- * ChildProcess.
+ * On POSIX, two FIFOs are used for communication. On Windows, a named
+ * pipe is used. Synchronous I/O is achieved by calling fs.readSync /
+ * fs.writeSync directly on the pipe file descriptors.
  */
 
 import {
@@ -16,29 +16,13 @@ import {
 } from "node:child_process";
 import {
     closeSync,
+    constants,
     openSync,
     readSync,
+    unlinkSync,
     writeSync,
 } from "node:fs";
-import type {
-    Readable,
-    Writable,
-} from "node:stream";
-
-interface StdioHandle {
-    fd: number;
-    setBlocking?: (value: boolean) => void;
-}
-
-interface StdoutWithHandle extends Readable {
-    _handle: StdioHandle;
-    unref: () => void;
-}
-
-interface StdinWithHandle extends Writable {
-    _handle: StdioHandle;
-    unref: () => void;
-}
+import { tmpdir } from "node:os";
 
 // ── MessagePack format constants ────────────────────────────────────
 const MSGPACK_FIXARRAY3 = 0x93; // 3-element fixarray
@@ -104,6 +88,8 @@ export class SyncRpcChannel {
     private readFd: number;
     private writeFd: number;
     private pipeFd: number | undefined;
+    private fifoInPath: string | undefined;
+    private fifoOutPath: string | undefined;
     private callbacks = new Map<string, (name: string, payload: string) => string>();
 
     private methodBufCache = new Map<string, Buffer>();
@@ -161,40 +147,46 @@ export class SyncRpcChannel {
             this.pipeFd = fd;
         }
         else {
-            // POSIX: use stdio pipe file descriptors directly.
-            this.child = spawn(exe, args, {
-                stdio: ["pipe", "pipe", "inherit"],
+            // POSIX: use two FIFOs for communication instead of stdio.
+            // The child process creates the FIFOs; we retry opening them
+            // until they exist, mirroring the Windows named pipe approach.
+            const prefix = `${tmpdir()}/tsgo-sync-${process.pid}-${Date.now()}`;
+            const inPath = prefix + ".in"; // parent writes → child reads
+            const outPath = prefix + ".out"; // child writes → parent reads
+
+            this.fifoInPath = inPath;
+            this.fifoOutPath = outPath;
+
+            this.child = spawn(exe, [...args, "--pipe", prefix], {
+                stdio: ["ignore", "ignore", "inherit"],
             });
 
-            const stdout = this.child.stdout! as StdoutWithHandle;
-            const stdin = this.child.stdin! as StdinWithHandle;
-
-            this.readFd = stdout._handle.fd;
-            this.writeFd = stdin._handle.fd;
-
-            if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
-                stdout.destroy();
-                stdin.destroy();
+            // Open order matters to avoid deadlock: the child opens .out
+            // for writing first, then .in for reading. We mirror that by
+            // opening .out for reading first, then .in for writing.
+            // Retry on ENOENT until the child creates the FIFOs.
+            let readFd: number | undefined;
+            for (let i = 0; i < 500; i++) {
+                try {
+                    readFd = openSync(outPath, constants.O_RDONLY);
+                    break;
+                }
+                catch {
+                    if (this.child.exitCode !== null) {
+                        throw new Error(
+                            `Child process exited with code ${this.child.exitCode} before FIFOs were ready`,
+                        );
+                    }
+                    Atomics.wait(sleepBuf, 0, 0, 10);
+                }
+            }
+            if (readFd === undefined) {
                 this.child.kill();
-                throw new Error(
-                    "SyncRpcChannel: could not obtain pipe file descriptors.",
-                );
+                throw new Error("SyncRpcChannel: timed out connecting to FIFOs");
             }
 
-            // Set the pipe handles to blocking mode. Under node --test's
-            // process isolation, pipes are created in non-blocking mode
-            // (for the IPC channel). This causes readSync/writeSync to get
-            // EAGAIN, requiring costly 1ms sleeps per retry. Setting
-            // blocking mode ensures readSync blocks properly until data
-            // arrives, matching the behavior of the native libsyncrpc.
-            stdout._handle.setBlocking?.(true);
-            stdin._handle.setBlocking?.(true);
-
-            // Prevent Node's event-loop from reading stdout or keeping the
-            // process alive – we will use fs.readSync exclusively.
-            stdout.pause();
-            stdout.unref();
-            stdin.unref();
+            this.readFd = readFd;
+            this.writeFd = openSync(inPath, constants.O_WRONLY);
         }
 
         // Track for auto-cleanup on process exit.
@@ -233,13 +225,30 @@ export class SyncRpcChannel {
         try {
             liveChildren.delete(this.child);
             if (this.pipeFd !== undefined) {
+                // Windows: single bidirectional fd
                 closeSync(this.pipeFd);
                 this.pipeFd = undefined;
             }
-            // Destroy the stdio streams so that their pipe handles are closed
-            // and no longer prevent the event loop from draining.
-            this.child.stdout?.destroy();
-            this.child.stdin?.destroy();
+            else {
+                // Unix: separate FIFO fds
+                if (this.readFd >= 0) closeSync(this.readFd);
+                if (this.writeFd >= 0) closeSync(this.writeFd);
+            }
+            // Clean up FIFO files
+            if (this.fifoInPath) {
+                try {
+                    unlinkSync(this.fifoInPath);
+                }
+                catch { /* swallow */ }
+                this.fifoInPath = undefined;
+            }
+            if (this.fifoOutPath) {
+                try {
+                    unlinkSync(this.fifoOutPath);
+                }
+                catch { /* swallow */ }
+                this.fifoOutPath = undefined;
+            }
             this.child.kill();
             this.readFd = -1;
             this.writeFd = -1;

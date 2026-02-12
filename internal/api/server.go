@@ -18,8 +18,10 @@ type StdioServerOptions struct {
 	Err                io.Writer
 	Cwd                string
 	DefaultLibraryPath string
-	// PipePath, if set, listens on a named pipe (Windows) or Unix domain
-	// socket instead of using In/Out for communication.
+	// PipePath, if set, uses a named pipe (Windows) or FIFOs (Unix)
+	// for communication instead of using In/Out.
+	// On Unix, this is a path prefix; the child expects FIFOs at
+	// <PipePath>.in and <PipePath>.out.
 	PipePath string
 	// Callbacks specifies which filesystem operations should be delegated
 	// to the client (e.g., "readFile", "fileExists"). Empty means no callbacks.
@@ -51,7 +53,7 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 func (s *StdioServer) Run(ctx context.Context) error {
 	var transport Transport
 	if s.options.PipePath != "" {
-		t, err := NewPipeTransport(s.options.PipePath)
+		t, err := newServerTransport(s.options.PipePath)
 		if err != nil {
 			return fmt.Errorf("failed to create pipe transport: %w", err)
 		}
