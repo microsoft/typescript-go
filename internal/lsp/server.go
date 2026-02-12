@@ -429,25 +429,27 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 				}
 			}
 
-			func() {
-				defer func() {
-					if req.ID != nil {
-						s.pendingClientRequestsMu.Lock()
-						defer s.pendingClientRequestsMu.Unlock()
-						delete(s.pendingClientRequests, *req.ID)
-					}
-				}()
-
-				if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
-					handleError(err)
-				} else if doAsyncWork != nil {
-					go func() {
-						if lsError := doAsyncWork(); lsError != nil {
-							handleError(lsError)
-						}
-					}()
+			removeRequest := func() {
+				if req.ID != nil {
+					s.pendingClientRequestsMu.Lock()
+					defer s.pendingClientRequestsMu.Unlock()
+					delete(s.pendingClientRequests, *req.ID)
 				}
-			}()
+			}
+
+			if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
+				handleError(err)
+				removeRequest()
+			} else if doAsyncWork != nil {
+				go func() {
+					if lsError := doAsyncWork(); lsError != nil {
+						handleError(lsError)
+					}
+					removeRequest()
+				}()
+			} else {
+				removeRequest()
+			}
 		}
 	}
 }
