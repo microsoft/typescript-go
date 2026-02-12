@@ -616,6 +616,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsIdentifier().FlowNode = b.currentFlow
 		b.checkContextualIdentifier(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword:
+		if node.Kind == ast.KindThisKeyword {
+			b.seenThisKeyword = true
+		}
 		node.AsKeywordExpression().FlowNode = b.currentFlow
 	case ast.KindQualifiedName:
 		if b.currentFlow != nil && ast.IsPartOfTypeQuery(node) {
@@ -1549,7 +1552,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.hasExplicitReturn = false
 		b.seenThisKeyword = false
 		b.bindChildren(node)
-		// Reset all reachability check related flags on node (for incremental scenarios)
+		// Reset flags (for incremental scenarios)
 		node.Flags &= ^(ast.NodeFlagsReachabilityCheckFlags | ast.NodeFlagsContainsThis)
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
@@ -1568,7 +1571,6 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 			node.Flags |= b.emitFlags
 			node.AsSourceFile().EndFlowNode = b.currentFlow
 		}
-
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
 			b.currentFlow = b.finishFlowLabel(b.currentReturnTarget)
@@ -1591,6 +1593,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 			b.seenThisKeyword = saveSeenThisKeyword
 		}
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
+		saveSeenThisKeyword := b.seenThisKeyword
 		b.seenThisKeyword = false
 		b.bindChildren(node)
 		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
@@ -1599,6 +1602,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		} else {
 			node.Flags &= ^ast.NodeFlagsContainsThis
 		}
+		b.seenThisKeyword = saveSeenThisKeyword
 	} else {
 		b.bindChildren(node)
 	}
@@ -2536,12 +2540,10 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor | ContainerFlagsIsThisContainer
 		}
 		fallthrough
-	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
+	case ast.KindConstructor, ast.KindFunctionDeclaration, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsPropagatesThisKeyword
-	case ast.KindFunctionDeclaration:
-		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
 	case ast.KindFunctionExpression:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
 	case ast.KindArrowFunction:
