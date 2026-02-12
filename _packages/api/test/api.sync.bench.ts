@@ -22,15 +22,7 @@ if (isMain) {
     await runBenchmarks();
 }
 
-export interface SyncBenchmarkOptions {
-    singleIteration?: boolean;
-}
-
-export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
-    // Support legacy boolean argument for singleIteration
-    const opts: SyncBenchmarkOptions = typeof options === "boolean" ? { singleIteration: options } : (options ?? {});
-    const { singleIteration } = opts;
-
+export async function runBenchmarks(singleIteration?: boolean) {
     const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
         console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
@@ -38,7 +30,7 @@ export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
     }
 
     const bench = new Bench({
-        name: `Sync API`,
+        name: "Sync API",
         teardown,
         // Reduce iterations from the default 64 to 10.  Slow tasks
         // (e.g. getSymbolAtLocation over 10k ids at ~450ms each) are
