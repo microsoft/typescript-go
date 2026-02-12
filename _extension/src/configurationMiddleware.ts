@@ -164,6 +164,9 @@ function setNestedValue(obj: Record<string, any>, dottedKey: string, value: any)
 function deepMerge(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
     const result: Record<string, any> = { ...a };
     for (const key of Object.keys(b)) {
+        if (prototypeKeys.has(key)) {
+            continue;
+        }
         if (
             key in result
             && result[key] !== null && typeof result[key] === "object" && !Array.isArray(result[key])
