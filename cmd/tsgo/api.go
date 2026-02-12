@@ -17,7 +17,7 @@ import (
 func runAPI(args []string) int {
 	flag := flag.NewFlagSet("api", flag.ContinueOnError)
 	cwd := flag.String("cwd", core.Must(os.Getwd()), "current working directory")
-	pipePath := flag.String("pipe", "", "use named pipe (Windows) or FIFOs (Unix) for communication instead of stdio")
+	transportSpec := flag.String("transport", "", "transport mechanism: stdio, pipe=<path>, fifo=<prefix>")
 	callbacks := flag.String("callbacks", "", "comma-separated list of FS callbacks to enable (readFile,fileExists,directoryExists,getAccessibleEntries,realpath)")
 	async := flag.Bool("async", false, "use JSON-RPC protocol instead of MessagePack (for async API)")
 	if err := flag.Parse(args); err != nil {
@@ -32,21 +32,15 @@ func runAPI(args []string) int {
 		callbacksList = strings.Split(*callbacks, ",")
 	}
 
-	options := &api.StdioServerOptions{
-		Err:                os.Stderr,
+	options := &api.ServerOptions{
 		Cwd:                *cwd,
 		DefaultLibraryPath: defaultLibraryPath,
 		Callbacks:          callbacksList,
 		Async:              *async,
-	}
-	if *pipePath != "" {
-		options.PipePath = *pipePath
-	} else {
-		options.In = os.Stdin
-		options.Out = os.Stdout
+		Transport:          *transportSpec,
 	}
 
-	s := api.NewStdioServer(options)
+	s := api.NewServer(options)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

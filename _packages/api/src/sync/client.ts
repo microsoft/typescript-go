@@ -38,7 +38,7 @@ export class Client {
             args.push(`--callbacks=${enabledCallbacks.join(",")}`);
         }
 
-        const channel = new SyncRpcChannel(options.tsserverPath, args);
+        const channel = new SyncRpcChannel(options.tsserverPath, args, options.transport);
         this.channel = channel;
 
         if (options.fs) {

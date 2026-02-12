@@ -3,6 +3,7 @@
 package api
 
 import (
+	"fmt"
 	"net"
 
 	"github.com/Microsoft/go-winio"
@@ -18,7 +19,7 @@ func GeneratePipePath(name string) string {
 	return `\\.\pipe\` + name
 }
 
-// newServerTransport creates a named pipe transport for the API server on Windows.
-func newServerTransport(path string) (Transport, error) {
-	return NewPipeTransport(path)
+// newFIFOTransport returns an error on Windows; FIFOs are not supported.
+func newFIFOTransport(_ string) (Transport, error) {
+	return nil, fmt.Errorf("FIFO transport is not supported on Windows")
 }

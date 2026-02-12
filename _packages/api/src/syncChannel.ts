@@ -5,9 +5,13 @@
  * a MessagePack-based tuple protocol:
  *   [MessageType (u8), method (bin), payload (bin)]
  *
- * On POSIX, two FIFOs are used for communication. On Windows, a named
- * pipe is used. Synchronous I/O is achieved by calling fs.readSync /
- * fs.writeSync directly on the pipe file descriptors.
+ * Supports multiple transport mechanisms:
+ *   - stdio:  stdin/stdout pipes (Unix only)
+ *   - pipe:   Windows named pipe
+ *   - fifo:   two POSIX FIFOs (Unix only)
+ *
+ * Synchronous I/O is achieved by calling fs.readSync / fs.writeSync
+ * directly on the pipe file descriptors.
  */
 
 import {
@@ -23,6 +27,27 @@ import {
     writeSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
+import type {
+    Readable,
+    Writable,
+} from "node:stream";
+
+export type SyncTransport = "stdio" | "pipe" | "fifo";
+
+interface StdioHandle {
+    fd: number;
+    setBlocking?: (value: boolean) => void;
+}
+
+interface StdoutWithHandle extends Readable {
+    _handle: StdioHandle;
+    unref: () => void;
+}
+
+interface StdinWithHandle extends Writable {
+    _handle: StdioHandle;
+    unref: () => void;
+}
 
 import {
     binHeaderSize,
@@ -111,85 +136,123 @@ export class SyncRpcChannel {
     // Write buffer – assembles entire tuples for a single writeSync.
     private writeBuf = Buffer.allocUnsafe(65536);
 
-    constructor(exe: string, args: string[]) {
+    constructor(exe: string, args: string[], transport?: SyncTransport) {
         const isWindows = process.platform === "win32";
+        const mode = transport ?? (isWindows ? "pipe" : "stdio");
 
-        if (isWindows) {
-            // On Windows, libuv pipe handles don't expose POSIX fds, so
-            // readSync/writeSync can't be used on stdio pipes. Instead,
-            // we create a Windows named pipe path, pass it to the child
-            // via --pipe, and open it with fs.openSync which returns a
-            // real C-runtime fd backed by a proper HANDLE.
-            const pipePath = `\\\\.\\pipe\\tsgo-sync-${process.pid}-${Date.now()}`;
-            this.child = spawn(exe, [...args, "--pipe", pipePath], {
-                stdio: ["ignore", "ignore", "inherit"],
-            });
+        switch (mode) {
+            case "pipe": {
+                // Windows named pipe: create a unique pipe path, pass it to the
+                // child via --transport, and open it with fs.openSync which
+                // returns a real C-runtime fd backed by a proper HANDLE.
+                const pipePath = `\\\\.\\pipe\\tsgo-sync-${process.pid}-${Date.now()}`;
+                this.child = spawn(exe, [...args, "--transport", `pipe=${pipePath}`], {
+                    stdio: ["ignore", "ignore", "inherit"],
+                });
 
-            // Retry openSync until the child creates the named pipe.
-            let fd: number | undefined;
-            for (let i = 0; i < 500; i++) {
-                try {
-                    fd = openSync(pipePath, "r+");
-                    break;
-                }
-                catch {
-                    if (this.child.exitCode !== null) {
-                        throw new Error(
-                            `Child process exited with code ${this.child.exitCode} before pipe was ready`,
-                        );
+                // Retry openSync until the child creates the named pipe.
+                let fd: number | undefined;
+                for (let i = 0; i < 500; i++) {
+                    try {
+                        fd = openSync(pipePath, "r+");
+                        break;
                     }
-                    Atomics.wait(sleepBuf, 0, 0, 10);
-                }
-            }
-            if (fd === undefined) {
-                this.child.kill();
-                throw new Error("SyncRpcChannel: timed out connecting to named pipe");
-            }
-            this.readFd = fd;
-            this.writeFd = fd;
-            this.pipeFd = fd;
-        }
-        else {
-            // POSIX: use two FIFOs for communication instead of stdio.
-            // The child process creates the FIFOs; we retry opening them
-            // until they exist, mirroring the Windows named pipe approach.
-            const prefix = `${tmpdir()}/tsgo-sync-${process.pid}-${Date.now()}`;
-            const inPath = prefix + ".in"; // parent writes → child reads
-            const outPath = prefix + ".out"; // child writes → parent reads
-
-            this.fifoInPath = inPath;
-            this.fifoOutPath = outPath;
-
-            this.child = spawn(exe, [...args, "--pipe", prefix], {
-                stdio: ["ignore", "ignore", "inherit"],
-            });
-
-            // Open order matters to avoid deadlock: the child opens .out
-            // for writing first, then .in for reading. We mirror that by
-            // opening .out for reading first, then .in for writing.
-            // Retry on ENOENT until the child creates the FIFOs.
-            let readFd: number | undefined;
-            for (let i = 0; i < 500; i++) {
-                try {
-                    readFd = openSync(outPath, constants.O_RDONLY);
-                    break;
-                }
-                catch {
-                    if (this.child.exitCode !== null) {
-                        throw new Error(
-                            `Child process exited with code ${this.child.exitCode} before FIFOs were ready`,
-                        );
+                    catch {
+                        if (this.child.exitCode !== null) {
+                            throw new Error(
+                                `Child process exited with code ${this.child.exitCode} before pipe was ready`,
+                            );
+                        }
+                        Atomics.wait(sleepBuf, 0, 0, 10);
                     }
-                    Atomics.wait(sleepBuf, 0, 0, 10);
                 }
+                if (fd === undefined) {
+                    this.child.kill();
+                    throw new Error("SyncRpcChannel: timed out connecting to named pipe");
+                }
+                this.readFd = fd;
+                this.writeFd = fd;
+                this.pipeFd = fd;
+                break;
             }
-            if (readFd === undefined) {
-                this.child.kill();
-                throw new Error("SyncRpcChannel: timed out connecting to FIFOs");
-            }
+            case "fifo": {
+                // POSIX FIFOs: the child creates two FIFOs; we retry opening
+                // them until they exist.
+                const prefix = `${tmpdir()}/tsgo-sync-${process.pid}-${Date.now()}`;
+                const inPath = prefix + ".in"; // parent writes → child reads
+                const outPath = prefix + ".out"; // child writes → parent reads
 
-            this.readFd = readFd;
-            this.writeFd = openSync(inPath, constants.O_WRONLY);
+                this.fifoInPath = inPath;
+                this.fifoOutPath = outPath;
+
+                this.child = spawn(exe, [...args, "--transport", `fifo=${prefix}`], {
+                    stdio: ["ignore", "ignore", "inherit"],
+                });
+
+                // Open order matters to avoid deadlock: the child opens .out
+                // for writing first, then .in for reading. We mirror that by
+                // opening .out for reading first, then .in for writing.
+                let readFd: number | undefined;
+                for (let i = 0; i < 500; i++) {
+                    try {
+                        readFd = openSync(outPath, constants.O_RDONLY);
+                        break;
+                    }
+                    catch {
+                        if (this.child.exitCode !== null) {
+                            throw new Error(
+                                `Child process exited with code ${this.child.exitCode} before FIFOs were ready`,
+                            );
+                        }
+                        Atomics.wait(sleepBuf, 0, 0, 10);
+                    }
+                }
+                if (readFd === undefined) {
+                    this.child.kill();
+                    throw new Error("SyncRpcChannel: timed out connecting to FIFOs");
+                }
+
+                this.readFd = readFd;
+                this.writeFd = openSync(inPath, constants.O_WRONLY);
+                break;
+            }
+            case "stdio": {
+                // POSIX stdio: use stdin/stdout pipe file descriptors directly.
+                this.child = spawn(exe, [...args, "--transport", "stdio"], {
+                    stdio: ["pipe", "pipe", "inherit"],
+                });
+
+                const stdout = this.child.stdout! as StdoutWithHandle;
+                const stdin = this.child.stdin! as StdinWithHandle;
+
+                this.readFd = stdout._handle.fd;
+                this.writeFd = stdin._handle.fd;
+
+                if (typeof this.readFd !== "number" || this.readFd < 0 || typeof this.writeFd !== "number" || this.writeFd < 0) {
+                    stdout.destroy();
+                    stdin.destroy();
+                    this.child.kill();
+                    throw new Error(
+                        "SyncRpcChannel: could not obtain pipe file descriptors.",
+                    );
+                }
+
+                // Set the pipe handles to blocking mode. Under node --test's
+                // process isolation, pipes are created in non-blocking mode
+                // (for the IPC channel). This causes readSync/writeSync to get
+                // EAGAIN, requiring costly 1ms sleeps per retry. Setting
+                // blocking mode ensures readSync blocks properly until data
+                // arrives, matching the behavior of the native libsyncrpc.
+                stdout._handle.setBlocking?.(true);
+                stdin._handle.setBlocking?.(true);
+
+                // Prevent Node's event-loop from reading stdout or keeping the
+                // process alive – we will use fs.readSync exclusively.
+                stdout.pause();
+                stdout.unref();
+                stdin.unref();
+                break;
+            }
         }
 
         // Track for auto-cleanup on process exit.
@@ -228,29 +291,30 @@ export class SyncRpcChannel {
         try {
             liveChildren.delete(this.child);
             if (this.pipeFd !== undefined) {
-                // Windows: single bidirectional fd
+                // Windows named pipe: single bidirectional fd
                 closeSync(this.pipeFd);
                 this.pipeFd = undefined;
             }
-            else {
-                // Unix: separate FIFO fds
+            else if (this.fifoInPath) {
+                // Unix FIFOs: separate read/write fds + cleanup files
                 if (this.readFd >= 0) closeSync(this.readFd);
                 if (this.writeFd >= 0) closeSync(this.writeFd);
-            }
-            // Clean up FIFO files
-            if (this.fifoInPath) {
                 try {
                     unlinkSync(this.fifoInPath);
                 }
                 catch { /* swallow */ }
-                this.fifoInPath = undefined;
-            }
-            if (this.fifoOutPath) {
                 try {
-                    unlinkSync(this.fifoOutPath);
+                    unlinkSync(this.fifoOutPath!);
                 }
                 catch { /* swallow */ }
+                this.fifoInPath = undefined;
                 this.fifoOutPath = undefined;
+            }
+            else {
+                // Stdio: destroy the stdio streams so that their pipe handles
+                // are closed and no longer prevent the event loop from draining.
+                this.child.stdout?.destroy();
+                this.child.stdin?.destroy();
             }
             this.child.kill();
             this.readFd = -1;

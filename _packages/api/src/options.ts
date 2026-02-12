@@ -3,6 +3,9 @@
  */
 
 import type { FileSystem } from "./fs.ts";
+import type { SyncTransport } from "./syncChannel.ts";
+
+export type { SyncTransport };
 
 export interface ClientSocketOptions {
     /** Path to the Unix domain socket or Windows named pipe for API communication */
@@ -16,6 +19,8 @@ export interface ClientSpawnOptions {
     cwd?: string;
     /** Virtual filesystem callbacks */
     fs?: FileSystem;
+    /** Transport mechanism: "stdio" (default on Unix), "pipe" (default on Windows), "fifo" */
+    transport?: SyncTransport;
 }
 
 export type ClientOptions = ClientSocketOptions | ClientSpawnOptions;

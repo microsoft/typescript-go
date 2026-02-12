@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
-	"io"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -11,18 +11,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
-// StdioServerOptions configures the STDIO-based API server.
-type StdioServerOptions struct {
-	In                 io.ReadCloser
-	Out                io.WriteCloser
-	Err                io.Writer
+// ServerOptions configures the API server.
+type ServerOptions struct {
 	Cwd                string
 	DefaultLibraryPath string
-	// PipePath, if set, uses a named pipe (Windows) or FIFOs (Unix)
-	// for communication instead of using In/Out.
-	// On Unix, this is a path prefix; the child expects FIFOs at
-	// <PipePath>.in and <PipePath>.out.
-	PipePath string
+	// Transport specifies the transport mechanism.
+	// Supported values:
+	//   ""        or "stdio" — use In/Out (stdin/stdout)
+	//   "pipe=<path>"       — Unix domain socket or Windows named pipe
+	//   "fifo=<prefix>"     — two POSIX FIFOs at <prefix>.in / .out (Unix only)
+	Transport string
 	// Callbacks specifies which filesystem operations should be delegated
 	// to the client (e.g., "readFile", "fileExists"). Empty means no callbacks.
 	Callbacks []string
@@ -31,39 +29,31 @@ type StdioServerOptions struct {
 	Async bool
 }
 
-// StdioServer runs an API session over STDIO using MessagePack protocol.
-// This is the entry point for the synchronous STDIO-based API used by
+// Server runs an API session over STDIO using MessagePack protocol.
+// This is the entry point for the synchronous API used by
 // native TypeScript tooling integration.
-type StdioServer struct {
-	options *StdioServerOptions
+type Server struct {
+	options *ServerOptions
 }
 
-// NewStdioServer creates a new STDIO-based API server.
-func NewStdioServer(options *StdioServerOptions) *StdioServer {
+// NewServer creates a new API server.
+func NewServer(options *ServerOptions) *Server {
 	if options.Cwd == "" {
-		panic("StdioServerOptions.Cwd is required")
+		panic("ServerOptions.Cwd is required")
 	}
 
-	return &StdioServer{
+	return &Server{
 		options: options,
 	}
 }
 
 // Run starts the server and blocks until the connection closes.
-func (s *StdioServer) Run(ctx context.Context) error {
-	var transport Transport
-	if s.options.PipePath != "" {
-		t, err := newServerTransport(s.options.PipePath)
-		if err != nil {
-			return fmt.Errorf("failed to create pipe transport: %w", err)
-		}
-		defer t.Close()
-		transport = t
-	} else {
-		t := NewStdioTransport(s.options.In, s.options.Out)
-		defer t.Close()
-		transport = t
+func (s *Server) Run(ctx context.Context) error {
+	transport, err := s.createTransport()
+	if err != nil {
+		return fmt.Errorf("failed to create transport: %w", err)
 	}
+	defer transport.Close()
 
 	fs := bundled.WrapFS(osvfs.FS())
 
@@ -113,4 +103,20 @@ func (s *StdioServer) Run(ctx context.Context) error {
 	}
 
 	return conn.Run(ctx)
+}
+
+func (s *Server) createTransport() (Transport, error) {
+	spec := s.options.Transport
+	switch {
+	case spec == "" || spec == "stdio":
+		return newStdioTransport(), nil
+	case strings.HasPrefix(spec, "pipe="):
+		path := strings.TrimPrefix(spec, "pipe=")
+		return NewPipeTransport(path)
+	case strings.HasPrefix(spec, "fifo="):
+		prefix := strings.TrimPrefix(spec, "fifo=")
+		return newFIFOTransport(prefix)
+	default:
+		return nil, fmt.Errorf("unknown transport: %q", spec)
+	}
 }

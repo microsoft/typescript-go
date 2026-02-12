@@ -38,6 +38,7 @@ import { ObjectRegistry } from "../objectRegistry.ts";
 import type {
     APIOptions,
     LSPConnectionOptions,
+    SyncTransport,
 } from "../options.ts";
 import {
     createGetCanonicalFileName,
@@ -83,7 +84,7 @@ import type {
 } from "./types.ts";
 
 export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
-export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
+export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, SyncTransport };
 export type { ConditionalType, IndexedAccessType, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, TupleType, TypeParameter, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 

@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path"
+	"sync"
 	"syscall"
 )
 
@@ -24,9 +25,9 @@ func GeneratePipePath(name string) string {
 	return path.Join(os.TempDir(), name)
 }
 
-// newServerTransport creates a FIFO transport for the API server on Unix.
+// newFIFOTransport creates a FIFO transport for the API server on Unix.
 // It creates two FIFOs at prefix.in and prefix.out.
-func newServerTransport(prefix string) (Transport, error) {
+func newFIFOTransport(prefix string) (Transport, error) {
 	inPath := prefix + ".in"
 	outPath := prefix + ".out"
 
@@ -39,20 +40,20 @@ func newServerTransport(prefix string) (Transport, error) {
 		return nil, fmt.Errorf("failed to create FIFO %s: %w", outPath, err)
 	}
 
-	return &FIFOTransport{prefix: prefix}, nil
+	return &fifoTransport{prefix: prefix}, nil
 }
 
-// FIFOTransport uses two POSIX FIFOs for communication.
-// The server creates FIFOs at prefix.in and prefix.out; the client opens them.
-type FIFOTransport struct {
+// fifoTransport uses two POSIX FIFOs for communication.
+type fifoTransport struct {
 	prefix string
+	once   sync.Once
 	used   bool
 }
 
 // Accept opens the FIFOs and returns a combined ReadWriteCloser.
 // The open order (.out write first, .in read second) must match the
 // parent's open order on opposite ends to avoid deadlock.
-func (t *FIFOTransport) Accept() (io.ReadWriteCloser, error) {
+func (t *fifoTransport) Accept() (io.ReadWriteCloser, error) {
 	if t.used {
 		return nil, io.EOF
 	}
@@ -75,9 +76,11 @@ func (t *FIFOTransport) Accept() (io.ReadWriteCloser, error) {
 }
 
 // Close removes the FIFO files.
-func (t *FIFOTransport) Close() error {
-	_ = os.Remove(t.prefix + ".in")  //nolint:forbidigo
-	_ = os.Remove(t.prefix + ".out") //nolint:forbidigo
+func (t *fifoTransport) Close() error {
+	t.once.Do(func() {
+		_ = os.Remove(t.prefix + ".in")  //nolint:forbidigo
+		_ = os.Remove(t.prefix + ".out") //nolint:forbidigo
+	})
 	return nil
 }
 
