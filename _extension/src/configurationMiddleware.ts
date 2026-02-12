@@ -11,9 +11,11 @@ import type { MessageSignature } from "vscode-languageserver-protocol";
  * because the server has its own defaults, and receiving VS Code's prevents the
  * server from distinguishing user-set values from defaults.
  *
- * This module uses `inspect()` to retrieve only explicitly-set values (user/workspace/
- * workspace-folder settings) from all three configuration sections, then merges them
- * with the correct precedence: js/ts > typescript > javascript.
+ * This module instead uses `inspect()` to retrieve both explicitly-set values (user/
+ * workspace/workspace-folder settings) and VS Code default values from all three
+ * configuration sections, then merges them with the correct precedence:
+ *   sections: js/ts > typescript > javascript
+ *   values:   explicit > default
  *
  * Both the `workspace/configuration` (pull) and `workspace/didChangeConfiguration`
  * (push) middlewares return/send the same merged object for every requested section.
@@ -32,7 +34,7 @@ const configSections = ["js/ts", "typescript", "javascript"];
  * This ensures user-set values always win, and declared-but-unset settings
  * still get their default with the right section precedence.
  */
-function getMergedExplicitConfiguration(resource: vscode.Uri | undefined): Record<string, any> {
+function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string, any> {
     const configs = configSections.map(section => getInspectedConfiguration(section, resource));
 
     // Layer from lowest to highest precedence.
@@ -79,12 +81,14 @@ function getInspectedConfiguration(
         }
 
         // Pick the most specific explicitly-set value.
-        const explicitValue = inspection.workspaceFolderValue
-            ?? inspection.workspaceValue
-            ?? inspection.globalValue
-            ?? inspection.workspaceFolderLanguageValue
+        // Language-specific overrides (e.g. [typescript]) take precedence
+        // over non-language values at the same scope.
+        const explicitValue = inspection.workspaceFolderLanguageValue
+            ?? inspection.workspaceFolderValue
             ?? inspection.workspaceLanguageValue
-            ?? inspection.globalLanguageValue;
+            ?? inspection.workspaceValue
+            ?? inspection.globalLanguageValue
+            ?? inspection.globalValue;
 
         if (explicitValue !== undefined) {
             setNestedValue(explicit, key, toJSONObject(explicitValue));
@@ -132,17 +136,25 @@ function collectConfigurationKeys(config: vscode.WorkspaceConfiguration): string
     return keys;
 }
 
+const prototypeKeys = new Set(["__proto__", "constructor", "prototype"]);
+
 function setNestedValue(obj: Record<string, any>, dottedKey: string, value: any): void {
     const parts = dottedKey.split(".");
     let current = obj;
     for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i];
+        if (prototypeKeys.has(part)) {
+            return;
+        }
         if (!(part in current) || typeof current[part] !== "object" || current[part] === null) {
             current[part] = {};
         }
         current = current[part];
     }
-    current[parts[parts.length - 1]] = value;
+    const lastPart = parts[parts.length - 1];
+    if (!prototypeKeys.has(lastPart)) {
+        current[lastPart] = value;
+    }
 }
 
 /**
@@ -214,7 +226,7 @@ export const configurationMiddleware: ConfigurationMiddleware = {
             const key = resource?.toString() ?? "";
             let cached = mergedCache.get(key);
             if (cached === undefined) {
-                cached = getMergedExplicitConfiguration(resource);
+                cached = getMergedConfiguration(resource);
                 mergedCache.set(key, cached);
             }
             return cached;
@@ -235,7 +247,11 @@ export const configurationMiddleware: ConfigurationMiddleware = {
 /**
  * Intercepts outgoing workspace/didChangeConfiguration notifications.
  * Replaces the default settings (which include VS Code defaults) with
- * the merged explicit configuration, keyed by section name.
+ * the merged configuration, keyed by section name.
+ *
+ * This is typed as returning `Promise<void>` rather than `void` because the
+ * `didChangeConfiguration` notification is misannotated in vscode-languageclient
+ * as returning void, so we must go through `sendNotification` instead.
  */
 export function sendNotificationMiddleware(
     type: string | MessageSignature,
@@ -244,7 +260,7 @@ export function sendNotificationMiddleware(
 ): Promise<void> {
     const method = typeof type === "string" ? type : type.method;
     if (method === "workspace/didChangeConfiguration") {
-        const merged = getMergedExplicitConfiguration(undefined);
+        const merged = getMergedConfiguration(undefined);
         const settings: Record<string, any> = {};
         for (const section of configSections) {
             settings[section] = merged;
