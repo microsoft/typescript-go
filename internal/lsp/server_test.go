@@ -146,6 +146,8 @@ func TestServerInvalidRequestParams(t *testing.T) {
 	err := server.Run(t.Context())
 	assert.NilError(t, err)
 
+	server.ProcessPendingRequests()
+
 	// The server should have sent an error response for the invalid request.
 	writer.mu.Lock()
 	defer writer.mu.Unlock()
@@ -171,46 +173,64 @@ func TestServerInvalidRequestParams(t *testing.T) {
 func TestServerInvalidNotificationParams(t *testing.T) {
 	t.Parallel()
 
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	initBody := `{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"capabilities":{},"processId":null,"rootUri":null}}`
 	// Construct a JSON-RPC notification with a position containing a number
 	// too large to fit in a uint32 (Position.Line and Position.Character are uint32).
 	// The value 99999999999999999999 exceeds both uint32 and int64 range,
 	// so json.Unmarshal into uint32 should fail.
-	body := `{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///test.ts","languageId":"typescript","version":99999999999999999999,"text":"const x = 1;"}}}`
+	badNotification := `{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///test.ts","languageId":"typescript","version":99999999999999999999,"text":"const x = 1;"}}}`
 
-	rawMessage := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(body), body)
+	var rawMessages strings.Builder
+	for _, body := range []string{initBody, badNotification} {
+		fmt.Fprintf(&rawMessages, "Content-Length: %d\r\n\r\n%s", len(body), body)
+	}
 
-	reader := ToReader(io.NopCloser(bytes.NewReader([]byte(rawMessage))))
+	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{}, false))
+	reader := ToReader(io.NopCloser(bytes.NewReader([]byte(rawMessages.String()))))
 	writer := &collectingWriter{}
-	stderr := &strings.Builder{}
 
 	server := NewServer(&ServerOptions{
-		In:  reader,
-		Out: writer,
-		Err: stderr,
-		Cwd: "/test",
+		In:                 reader,
+		Out:                writer,
+		Err:                io.Discard,
+		Cwd:                "/test",
+		FS:                 fs,
+		DefaultLibraryPath: bundled.LibPath(),
 	})
 
 	err := server.Run(t.Context())
 	assert.NilError(t, err)
 
-	// The server should not have sent any error response for an invalid notification.
+	server.ProcessPendingRequests()
+
+	// The server should not have sent any error response for an invalid notification,
+	// but should have sent a window/logMessage notification with the error.
 	writer.mu.Lock()
 	defer writer.mu.Unlock()
 
-	// Find any error response.
-	var foundError bool
+	var foundErrorResponse bool
+	var foundLogMessage bool
 	for _, msg := range writer.messages {
-		if msg.Kind != jsonrpc.MessageKindResponse {
-			continue
+		if msg.Kind == jsonrpc.MessageKindResponse {
+			resp := msg.AsResponse()
+			if resp.Error != nil {
+				foundErrorResponse = true
+			}
 		}
-		resp := msg.AsResponse()
-		if resp.Error != nil {
-			foundError = true
-			break
+		if msg.Kind == jsonrpc.MessageKindNotification {
+			req := msg.AsRequest()
+			if req.Method == lsproto.MethodWindowLogMessage {
+				params := req.Params.(*lsproto.LogMessageParams)
+				if params.Type == lsproto.MessageTypeError && strings.Contains(params.Message, "error handling notification") {
+					foundLogMessage = true
+				}
+			}
 		}
 	}
-	assert.Assert(t, !foundError, "expected no error response for invalid notification")
-	errstr := stderr.String()
-	assert.Assert(t, strings.Contains(errstr, "error handling notification"),
-		"expected error log to contain 'error handling notification', got %q", errstr)
+	assert.Assert(t, !foundErrorResponse, "expected no error response for invalid notification")
+	assert.Assert(t, foundLogMessage, "expected a window/logMessage error for the invalid notification")
 }
