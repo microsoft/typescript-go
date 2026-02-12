@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/regExpIndicesArrayDestructuring.ts] ////
+
+=== regExpIndicesArrayDestructuring.ts ===
+declare let indices: RegExpIndicesArray;
+>indices : Symbol(indices, Decl(regExpIndicesArrayDestructuring.ts, 0, 11))
+>RegExpIndicesArray : Symbol(RegExpIndicesArray, Decl(lib.es2022.regexp.d.ts, --, --))
+
+let [[x, y]] = indices;
+>x : Symbol(x, Decl(regExpIndicesArrayDestructuring.ts, 1, 6))
+>y : Symbol(y, Decl(regExpIndicesArrayDestructuring.ts, 1, 8))
+>indices : Symbol(indices, Decl(regExpIndicesArrayDestructuring.ts, 0, 11))
+

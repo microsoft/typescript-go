@@ -1,0 +1,9 @@
+regExpIndicesArrayDestructuring.ts(2,6): error TS2488: Type '[number, number] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+
+
+==== regExpIndicesArrayDestructuring.ts (1 errors) ====
+    declare let indices: RegExpIndicesArray;
+    let [[x, y]] = indices;
+         ~~~~~~
+!!! error TS2488: Type '[number, number] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+    

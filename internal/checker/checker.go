@@ -6081,6 +6081,29 @@ func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNo
 	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
+	if t.flags&TypeFlagsUnion != 0 {
+		key := IterationTypesKey{typeId: t.id, use: use & IterationUseCacheFlags}
+		if cached, ok := c.iterationTypesCache[key]; ok {
+			if errorNode == nil || cached.hasTypes() {
+				return cached
+			}
+		}
+		var allIterationTypes []IterationTypes
+		for _, constituent := range t.Types() {
+			iterationTypes := c.getIterationTypesOfIterable(constituent, use, nil)
+			if !iterationTypes.hasTypes() {
+				if errorNode != nil {
+					c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+				}
+				c.iterationTypesCache[key] = IterationTypes{}
+				return IterationTypes{}
+			}
+			allIterationTypes = append(allIterationTypes, iterationTypes)
+		}
+		result := c.combineIterationTypes(allIterationTypes)
+		c.iterationTypesCache[key] = result
+		return result
+	}
 	key := IterationTypesKey{typeId: t.id, use: use & IterationUseCacheFlags}
 	// If we are reporting errors and encounter a cached `noIterationTypes`, we should ignore the cached value and continue as if nothing was cached.
 	// In addition, we should not cache any new results for this call.
@@ -6099,9 +6122,6 @@ func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNo
 }
 
 func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, errorNode *ast.Node, noCache bool) IterationTypes {
-	if t.flags&TypeFlagsUnion != 0 {
-		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode, noCache) }))
-	}
 	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 		iterationTypes := c.getIterationTypesOfIterableFast(t, c.asyncIterationTypesResolver)
 		if iterationTypes.hasTypes() {

@@ -1,0 +1,11 @@
+//// [tests/cases/compiler/regExpIndicesArrayDestructuring.ts] ////
+
+=== regExpIndicesArrayDestructuring.ts ===
+declare let indices: RegExpIndicesArray;
+>indices : RegExpIndicesArray
+
+let [[x, y]] = indices;
+>x : any
+>y : any
+>indices : RegExpIndicesArray
+
