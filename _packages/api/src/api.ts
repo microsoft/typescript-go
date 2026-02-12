@@ -15,10 +15,7 @@ import {
     type Type as BaseType,
 } from "./base/api.ts";
 import { ObjectRegistry } from "./base/objectRegistry.ts";
-import {
-    type ChannelType,
-    Client,
-} from "./client.ts";
+import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
 import { RemoteSourceFile } from "./node.ts";
 import type {
@@ -29,12 +26,11 @@ import type {
 } from "./proto.ts";
 
 export { SymbolFlags, TypeFlags };
-export type { ChannelType, FileIdentifier };
+export type { FileIdentifier };
 export { documentURIToFileName, fileNameToDocumentURI } from "./path.ts";
 
 export interface APIOptions extends BaseAPIOptions {
     fs?: FileSystem;
-    channel?: ChannelType;
 }
 
 /** Type alias for the sync object registry */

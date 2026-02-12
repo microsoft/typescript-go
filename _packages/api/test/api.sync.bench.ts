@@ -1,6 +1,5 @@
 import {
     API,
-    type ChannelType,
     type Project,
 } from "@typescript/api";
 import {
@@ -25,14 +24,12 @@ if (isMain) {
 
 export interface SyncBenchmarkOptions {
     singleIteration?: boolean;
-    channel?: ChannelType;
 }
 
 export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
     // Support legacy boolean argument for singleIteration
     const opts: SyncBenchmarkOptions = typeof options === "boolean" ? { singleIteration: options } : (options ?? {});
-    const { singleIteration, channel } = opts;
-    const channelLabel = channel === "native" ? "native" : "js";
+    const { singleIteration } = opts;
 
     const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
     if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
@@ -41,7 +38,7 @@ export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
     }
 
     const bench = new Bench({
-        name: `Sync API (${channelLabel})`,
+        name: `Sync API`,
         teardown,
         // Reduce iterations from the default 64 to 10.  Slow tasks
         // (e.g. getSymbolAtLocation over 10k ids at ~450ms each) are
@@ -190,7 +187,6 @@ export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
         api = new API({
             cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
-            channel,
         });
     }
 
@@ -199,7 +195,6 @@ export async function runBenchmarks(options?: boolean | SyncBenchmarkOptions) {
             cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
             fs: createNodeFileSystem(),
-            channel,
         });
     }
 

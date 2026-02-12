@@ -5,6 +5,5 @@ import { runBenchmarks as runSyncBenchmarks } from "./api.sync.bench.ts";
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
     await runAsyncBenchmarks();
-    await runSyncBenchmarks({ channel: "js" });
-    await runSyncBenchmarks({ channel: "native" });
+    await runSyncBenchmarks();
 }
