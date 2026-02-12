@@ -509,6 +509,11 @@ func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 }
 
 func (s *Server) sendError(id *jsonrpc.ID, err error) error {
+	// Do not send errors for notifications,
+	// except for parse errors which may occur before determining if the message is a request or notification.
+	if id == nil && !errors.Is(err, lsproto.ErrorCodeInvalidRequest) {
+		return nil
+	}
 	code := lsproto.ErrorCodeInternalError
 	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
 		code = errCode
