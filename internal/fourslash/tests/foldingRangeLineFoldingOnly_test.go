@@ -106,9 +106,9 @@ const z = 3;
 	// Line 11: // #endregion
 	// Line 12: // #endregion
 	f.VerifyFoldingRangeLines(t, []fourslash.FoldingRangeLineExpected{
-		{StartLine: 0, EndLine: 5},   // #region MyRegion: NOT adjusted (ends with "n", not a closing pair)
-		{StartLine: 2, EndLine: 3},   // function foo() block: end adjusted from line 4 to 3
-		{StartLine: 7, EndLine: 12},  // #region Outer: NOT adjusted
-		{StartLine: 9, EndLine: 11},  // #region Inner: NOT adjusted
+		{StartLine: 0, EndLine: 5},  // #region MyRegion: NOT adjusted (ends with "n", not a closing pair)
+		{StartLine: 2, EndLine: 3},  // function foo() block: end adjusted from line 4 to 3
+		{StartLine: 7, EndLine: 12}, // #region Outer: NOT adjusted
+		{StartLine: 9, EndLine: 11}, // #region Inner: NOT adjusted
 	})
 }
