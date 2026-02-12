@@ -1179,8 +1179,6 @@ func GetConfigNameFromFileName(filename string) string {
 	return ""
 }
 
-// SkipUnsupportedCompilerOptions skips the test if the compiler options contain
-// deprecated or unsupported settings that are not supported in the native port.
 func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions) {
 	t.Helper()
 	switch options.Module {

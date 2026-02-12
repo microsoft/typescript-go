@@ -206,7 +206,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}
 
-	// Skip tests with deprecated/removed compiler options
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
 	inputReader, inputWriter := newLSPPipe()
