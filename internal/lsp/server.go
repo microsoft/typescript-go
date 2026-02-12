@@ -340,7 +340,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 			if errors.Is(err, lsproto.ErrorCodeInvalidRequest) || errors.Is(err, lsproto.ErrorCodeInvalidParams) {
 				var id *jsonrpc.ID
 				if errors.Is(err, lsproto.ErrorCodeInvalidParams) {
-					if msg.Kind == jsonrpc.MessageKindRequest {
+					if msg != nil && msg.Kind == jsonrpc.MessageKindRequest {
 						id = msg.AsRequest().ID
 					}
 				}
