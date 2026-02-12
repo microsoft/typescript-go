@@ -110,6 +110,29 @@ func TestServerShutdownNoDeadlock(t *testing.T) {
 	server.session.Close()
 }
 
+// processPendingMessages drains the request and outgoing queues of the server,
+// ensuring all side effects are visible after Run() returns.
+func processPendingMessages(s *Server) {
+loop:
+	for {
+		select {
+		case req := <-s.requestQueue:
+			_ = s.handleRequestOrNotification(context.Background(), req)
+		default:
+			break loop
+		}
+	}
+
+	for {
+		select {
+		case msg := <-s.outgoingQueue:
+			_ = s.w.Write(msg)
+		default:
+			return
+		}
+	}
+}
+
 type collectingWriter struct {
 	mu       sync.Mutex
 	messages []*lsproto.Message
@@ -146,7 +169,7 @@ func TestServerInvalidRequestParams(t *testing.T) {
 	err := server.Run(t.Context())
 	assert.NilError(t, err)
 
-	server.ProcessPendingRequests()
+	processPendingMessages(server)
 
 	// The server should have sent an error response for the invalid request.
 	writer.mu.Lock()
@@ -205,7 +228,7 @@ func TestServerInvalidNotificationParams(t *testing.T) {
 	err := server.Run(t.Context())
 	assert.NilError(t, err)
 
-	server.ProcessPendingRequests()
+	processPendingMessages(server)
 
 	// The server should not have sent any error response for an invalid notification,
 	// but should have sent a window/logMessage notification with the error.

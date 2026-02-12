@@ -468,30 +468,6 @@ func (s *Server) writeLoop(ctx context.Context) error {
 	}
 }
 
-// ProcessPendingRequests processes any remaining messages in the request and outgoing
-// queues. It is intended for testing only, to ensure all side effects are
-// visible after Run() returns and the context has been cancelled.
-func (s *Server) ProcessPendingRequests() {
-loop:
-	for {
-		select {
-		case req := <-s.requestQueue:
-			_ = s.handleRequestOrNotification(context.Background(), req)
-		default:
-			break loop
-		}
-	}
-
-	for {
-		select {
-		case msg := <-s.outgoingQueue:
-			_ = s.w.Write(msg)
-		default:
-			return
-		}
-	}
-}
-
 func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
 	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
 	req := info.NewRequestMessage(id, params)
