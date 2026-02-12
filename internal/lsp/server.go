@@ -290,13 +290,13 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*lsutil.UserConfig, 
 	configs, err := sendClientRequest(ctx, s, lsproto.WorkspaceConfigurationInfo, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
-				Section: ptrTo("js/ts"),
+				Section: new("js/ts"),
 			},
 			{
-				Section: ptrTo("typescript"),
+				Section: new("typescript"),
 			},
 			{
-				Section: ptrTo("javascript"),
+				Section: new("javascript"),
 			},
 		},
 	})
@@ -516,7 +516,7 @@ func (s *Server) sendError(id *jsonrpc.ID, err error) error {
 		return nil
 	}
 	code := lsproto.ErrorCodeInternalError
-	if errCode := lsproto.ErrorCode(0); errors.As(err, &errCode) {
+	if errCode, ok := errors.AsType[lsproto.ErrorCode](err); ok {
 		code = errCode
 	}
 	// TODO(jakebailey): error data
@@ -858,33 +858,33 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	response := &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
-			Version: ptrTo(core.Version()),
+			Version: new(core.Version()),
 		},
 		Capabilities: &lsproto.ServerCapabilities{
-			PositionEncoding: ptrTo(s.positionEncoding),
+			PositionEncoding: new(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrKind{
 				Options: &lsproto.TextDocumentSyncOptions{
-					OpenClose: ptrTo(true),
-					Change:    ptrTo(lsproto.TextDocumentSyncKindIncremental),
+					OpenClose: new(true),
+					Change:    new(lsproto.TextDocumentSyncKindIncremental),
 					Save: &lsproto.BooleanOrSaveOptions{
-						Boolean: ptrTo(true),
+						Boolean: new(true),
 					},
 				},
 			},
 			HoverProvider: &lsproto.BooleanOrHoverOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			TypeDefinitionProvider: &lsproto.BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			ReferencesProvider: &lsproto.BooleanOrReferenceOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			ImplementationProvider: &lsproto.BooleanOrImplementationOptionsOrImplementationRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrRegistrationOptions{
 				Options: &lsproto.DiagnosticOptions{
@@ -893,45 +893,45 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
 				TriggerCharacters: &ls.TriggerCharacters,
-				ResolveProvider:   ptrTo(true),
+				ResolveProvider:   new(true),
 				// !!! other options
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
 				TriggerCharacters: &[]string{"(", ","},
 			},
 			DocumentFormattingProvider: &lsproto.BooleanOrDocumentFormattingOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DocumentRangeFormattingProvider: &lsproto.BooleanOrDocumentRangeFormattingOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DocumentOnTypeFormattingProvider: &lsproto.DocumentOnTypeFormattingOptions{
 				FirstTriggerCharacter: "{",
 				MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
 			},
 			WorkspaceSymbolProvider: &lsproto.BooleanOrWorkspaceSymbolOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DocumentSymbolProvider: &lsproto.BooleanOrDocumentSymbolOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			FoldingRangeProvider: &lsproto.BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 			CodeLensProvider: &lsproto.CodeLensOptions{
-				ResolveProvider: ptrTo(true),
+				ResolveProvider: new(true),
 			},
 			CodeActionProvider: &lsproto.BooleanOrCodeActionOptions{
 				CodeActionOptions: &lsproto.CodeActionOptions{
@@ -944,7 +944,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				},
 			},
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
-				Boolean: ptrTo(true),
+				Boolean: new(true),
 			},
 		},
 	}
@@ -1369,10 +1369,6 @@ func isBlockingMethod(method lsproto.Method) bool {
 		return true
 	}
 	return false
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 // Developer/debugging command handlers
