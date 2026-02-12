@@ -227,17 +227,9 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 				symbol = resolved
 			}
 		}
-		if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod|ast.SymbolFlagsAccessor) != 0 && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsObjectLiteral != 0 {
-			if declarations := getDeclarationsFromObjectLiteralElement(c, node); len(declarations) != 0 {
-				return declarations
-			}
-			if objectLiteral := core.FirstOrNil(symbol.Parent.Declarations); objectLiteral != nil {
-				if declarations := c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, symbol.Name); len(declarations) != 0 {
-					return declarations
-				}
-			}
-		} else if declarations := getDeclarationsFromObjectLiteralElement(c, node); len(declarations) > 0 {
-			return declarations
+		objectLiteralElementDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
+		if len(objectLiteralElementDeclarations) > 0 {
+			return objectLiteralElementDeclarations
 		}
 		return symbol.Declarations
 	}

@@ -801,27 +801,6 @@ func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 	return t
 }
 
-func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral *ast.Node, name string) []*ast.Node {
-	var result []*ast.Node
-	if t := c.getApparentTypeOfContextualType(objectLiteral, ContextFlagsNone); t != nil {
-		for _, t := range t.Distributed() {
-			prop := c.getPropertyOfType(t, name)
-			if prop != nil {
-				for _, declaration := range prop.Declarations {
-					result = core.AppendIfUnique(result, declaration)
-				}
-			} else {
-				for _, info := range c.getApplicableIndexInfos(t, c.getStringLiteralType(name)) {
-					if info.declaration != nil {
-						result = core.AppendIfUnique(result, info.declaration)
-					}
-				}
-			}
-		}
-	}
-	return result
-}
-
 // GetContextualTypeForArrayLiteralAtPosition returns the contextual type for an element at the given position
 // in an array with the given contextual type.
 func (c *Checker) GetContextualTypeForArrayLiteralAtPosition(contextualArrayType *Type, arrayLiteral *ast.Node, position int) *Type {
