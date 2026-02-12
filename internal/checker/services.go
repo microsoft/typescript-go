@@ -801,7 +801,7 @@ func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 	return t
 }
 
-func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral *ast.Node, name string, propertyNameNode *ast.Node) []*ast.Node {
+func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral *ast.Node, name string) []*ast.Node {
 	var result []*ast.Node
 	if t := c.getApparentTypeOfContextualType(objectLiteral, ContextFlagsNone); t != nil {
 		for _, t := range t.Distributed() {
@@ -816,26 +816,6 @@ func (c *Checker) GetContextualDeclarationsForObjectLiteralElement(objectLiteral
 						result = core.AppendIfUnique(result, info.declaration)
 					}
 				}
-			}
-		}
-	}
-	if propertyNameNode != nil && core.Some(result, func(decl *ast.Node) bool {
-		return decl.Parent != nil && ast.IsObjectLiteralExpression(decl.Parent) && ast.IsObjectLiteralElement(decl) && decl.Name() == propertyNameNode
-	}) {
-		// Use the public GetContextualType with IgnoreNodeInferences to run through
-		// runWithInferenceBlockedFromSourceNode, which blocks inference from the current node
-		if withoutNodeInferencesType := c.GetContextualType(objectLiteral, ContextFlagsIgnoreNodeInferences); withoutNodeInferencesType != nil {
-			var withoutNodeInferences []*ast.Node
-			for _, t := range withoutNodeInferencesType.Distributed() {
-				prop := c.getPropertyOfType(t, name)
-				if prop != nil {
-					for _, declaration := range prop.Declarations {
-						withoutNodeInferences = core.AppendIfUnique(withoutNodeInferences, declaration)
-					}
-				}
-			}
-			if len(withoutNodeInferences) > 0 {
-				result = withoutNodeInferences
 			}
 		}
 	}
