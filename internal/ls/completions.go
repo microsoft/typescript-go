@@ -3492,13 +3492,11 @@ func computeCommitCharactersAndIsNewIdentifier(
 	case ast.KindOpenBracketToken:
 		switch containingNodeKind {
 		// [ |
-		case ast.KindArrayLiteralExpression, ast.KindComputedPropertyName:
-			return true, allCommitCharacters
 		// [ | : string ]
 		// [ | : string ]
 		// [ |    /* this can become an index signature */
-		case ast.KindIndexSignature, ast.KindTupleType:
-			return true, emptyCommitCharacters
+		case ast.KindArrayLiteralExpression, ast.KindIndexSignature, ast.KindTupleType, ast.KindComputedPropertyName:
+			return true, allCommitCharacters
 		default:
 			return false, allCommitCharacters
 		}
