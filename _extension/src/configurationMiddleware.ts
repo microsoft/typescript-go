@@ -38,7 +38,8 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
     const configs = configSections.map(section => getInspectedConfiguration(section, resource));
 
     // Layer from lowest to highest precedence.
-    let merged: Record<string, any> = {};
+    // Use Object.create(null) so the object has no prototype to pollute.
+    let merged: Record<string, any> = Object.create(null);
 
     // Defaults: javascript < typescript < js/ts
     for (let i = configs.length - 1; i >= 0; i--) {
@@ -67,8 +68,9 @@ function getInspectedConfiguration(
     resource: vscode.Uri | undefined,
 ): { explicit: Record<string, any> | null; defaults: Record<string, any> | null; } {
     const config = vscode.workspace.getConfiguration(section, resource);
-    const explicit: Record<string, any> = {};
-    const defaults: Record<string, any> = {};
+    // Use Object.create(null) so these objects have no prototype to pollute.
+    const explicit: Record<string, any> = Object.create(null);
+    const defaults: Record<string, any> = Object.create(null);
     let hasExplicit = false;
     let hasDefaults = false;
 
@@ -162,7 +164,9 @@ function setNestedValue(obj: Record<string, any>, dottedKey: string, value: any)
  * Returns a new object; does not mutate inputs.
  */
 function deepMerge(a: Record<string, any>, b: Record<string, any>): Record<string, any> {
-    const result: Record<string, any> = { ...a };
+    // Use Object.create(null) so the result has no prototype to pollute.
+    const result: Record<string, any> = Object.create(null);
+    Object.assign(result, a);
     for (const key of Object.keys(b)) {
         if (prototypeKeys.has(key)) {
             continue;
