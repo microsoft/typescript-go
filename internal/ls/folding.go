@@ -33,7 +33,7 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 
 // adjustFoldingEnd adjusts the end line of folding ranges when the client signals lineFoldingOnly.
 // This mirrors the behavior of VS Code's built-in TypeScript extension (workaround for vscode#47240).
-// When lineFoldingOnly is true, VS Code hides lines from startLine+1 to endLine. To keep closing
+// When lineFoldingOnly is true, we hide lines from startLine+1 to endLine. And to keep closing
 // brackets/braces visible, we subtract 1 from endLine when the range ends with a closing pair character.
 func (l *LanguageService) adjustFoldingEnd(ranges []*lsproto.FoldingRange, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
 	sourceText := sourceFile.Text()

@@ -60,3 +60,55 @@ export function use<T>(ctx: any): T | undefined {
 		{StartLine: 10, EndLine: 11}, // function: end adjusted from line 12 to 11
 	})
 }
+
+func TestFoldingRangeLineFoldingOnlyWithRegions(t *testing.T) {
+	t.Parallel()
+
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// #region MyRegion
+const x = 1;
+function foo() {
+  return x;
+}
+// #endregion
+
+// #region Outer
+const y = 2;
+// #region Inner
+const z = 3;
+// #endregion
+// #endregion`
+	ptrTrue := true
+	capabilities := &lsproto.ClientCapabilities{
+		TextDocument: &lsproto.TextDocumentClientCapabilities{
+			FoldingRange: &lsproto.FoldingRangeClientCapabilities{
+				LineFoldingOnly: &ptrTrue,
+				FoldingRange: &lsproto.ClientFoldingRangeOptions{
+					CollapsedText: &ptrTrue,
+				},
+			},
+		},
+	}
+	f, done := fourslash.NewFourslash(t, capabilities, content)
+	defer done()
+
+	// Line 0: // #region MyRegion
+	// Line 1: const x = 1;
+	// Line 2: function foo() {
+	// Line 3:   return x;
+	// Line 4: }
+	// Line 5: // #endregion
+	// Line 6:
+	// Line 7: // #region Outer
+	// Line 8: const y = 2;
+	// Line 9: // #region Inner
+	// Line 10: const z = 3;
+	// Line 11: // #endregion
+	// Line 12: // #endregion
+	f.VerifyFoldingRangeLines(t, []fourslash.FoldingRangeLineExpected{
+		{StartLine: 0, EndLine: 5},   // #region MyRegion: NOT adjusted (ends with "n", not a closing pair)
+		{StartLine: 2, EndLine: 3},   // function foo() block: end adjusted from line 4 to 3
+		{StartLine: 7, EndLine: 12},  // #region Outer: NOT adjusted
+		{StartLine: 9, EndLine: 11},  // #region Inner: NOT adjusted
+	})
+}
