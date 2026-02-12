@@ -23,6 +23,8 @@ import type {
     ConfigResponse,
     ProjectChanges,
     ProjectResponse,
+    SnapshotChanges,
+    UpdateSnapshotParams,
 } from "../proto.ts";
 import type { MaybeAsync } from "./types.ts";
 
@@ -92,6 +94,7 @@ export interface APIOptions {
 
 /**
  * Base interface for the TypeScript API.
+ * The API's primary purpose is to create and manage Snapshots.
  */
 export interface API<Async extends boolean> {
     /**
@@ -100,9 +103,14 @@ export interface API<Async extends boolean> {
     parseConfigFile(file: DocumentIdentifier | string): MaybeAsync<Async, ConfigResponse>;
 
     /**
-     * Load a TypeScript project from a tsconfig.json file.
+     * Create a new snapshot, optionally opening a project.
+     * With no params, adopts the latest LSP/server state.
+     * With `openProject`, opens the specified project in the new snapshot.
+     *
+     * @param params - Optional: specify openProject and/or previousSnapshot for diffing
+     * @returns A new Snapshot representing the immutable state
      */
-    loadProject(configFile: DocumentIdentifier | string): MaybeAsync<Async, Project<Async>>;
+    updateSnapshot(params?: UpdateSnapshotParams): MaybeAsync<Async, Snapshot<Async>>;
 
     /**
      * Close the API connection and release all resources.
@@ -111,17 +119,53 @@ export interface API<Async extends boolean> {
 }
 
 /**
- * Base interface for a TypeScript project.
+ * Base interface for a Snapshot - an immutable view of the TypeScript project state.
+ * Snapshots are the primary unit of interaction with the API.
+ * All project, program, and checker operations are scoped to a snapshot.
+ * When disposed, the server releases all resources associated with this snapshot.
+ */
+export interface Snapshot<Async extends boolean> {
+    /** Unique handle for this snapshot */
+    readonly id: string;
+    /** Projects in this snapshot */
+    readonly projects: readonly Project<Async>[];
+    /** Changes relative to a previous snapshot, if available */
+    readonly changes: SnapshotChanges | undefined;
+
+    /**
+     * Get a project by its handle ID.
+     */
+    getProject(id: string): Project<Async> | undefined;
+
+    /**
+     * Get the default project for a file.
+     */
+    getDefaultProjectForFile(file: DocumentIdentifier | string): MaybeAsync<Async, Project<Async> | undefined>;
+
+    /**
+     * Dispose this snapshot, releasing server-side resources.
+     */
+    dispose(): void;
+
+    /**
+     * Check if this snapshot has been disposed.
+     */
+    isDisposed(): boolean;
+}
+
+/**
+ * Base interface for a TypeScript project within a snapshot.
+ * Projects are not individually disposable - their lifetime is tied to the snapshot.
  */
 export interface Project<Async extends boolean> {
     /** Unique identifier for this project */
     readonly id: string;
     /** Path to the tsconfig.json file */
-    configFileName: string;
+    readonly configFileName: string;
     /** Compiler options from the config file */
-    compilerOptions: Record<string, unknown>;
+    readonly compilerOptions: Record<string, unknown>;
     /** Root files included in the project */
-    rootFiles: readonly string[];
+    readonly rootFiles: readonly string[];
 
     /**
      * Access to program-related APIs.
@@ -132,17 +176,6 @@ export interface Project<Async extends boolean> {
      * Access to type checker APIs.
      */
     readonly checker: Checker<Async>;
-
-    /**
-     * Load project data from a response.
-     */
-    loadData(data: ProjectResponse): void;
-
-    /**
-     * Reload the project, picking up any file changes.
-     * @returns File changes if the project was previously loaded, or undefined.
-     */
-    reload(): MaybeAsync<Async, ProjectChanges | undefined>;
 }
 
 /**

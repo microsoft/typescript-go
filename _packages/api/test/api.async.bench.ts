@@ -1,6 +1,7 @@
 import {
     API,
     type Project,
+    type Snapshot,
 } from "@typescript/api/async";
 import {
     type Node,
@@ -38,6 +39,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     });
 
     let api: API;
+    let snapshot: Snapshot;
     let project: Project;
     let tsProgram: ts.Program;
     let file: SourceFile;
@@ -45,7 +47,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
 
     const programIdentifierCount = await (async () => {
         await spawnAPI();
-        await loadProject();
+        await loadSnapshot();
         await getProgramTS();
         let count = 0;
         file!.forEachChild(function visit(node) {
@@ -62,34 +64,34 @@ export async function runBenchmarks(singleIteration?: boolean) {
         .add("spawn Async API", async () => {
             await spawnAPI();
         })
-        .add("load project", async () => {
-            await loadProject();
+        .add("load snapshot", async () => {
+            await loadSnapshot();
         }, { beforeAll: spawnAPI })
         .add("TS - load project", () => {
             tsCreateProgram();
         })
         .add("transfer debug.ts", async () => {
             await getDebugTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("transfer program.ts", async () => {
             await getProgramTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("transfer checker.ts", async () => {
             await getCheckerTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", async () => {
             file.forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", async () => {
             file.forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, getCheckerTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", async () => {
             await project.checker.getSymbolAtPosition("program.ts", 8895);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker) })
         .add("TS - getSymbolAtPosition - one location", () => {
             tsProgram.getTypeChecker().getSymbolAtLocation(
                 // @ts-ignore internal API
@@ -100,20 +102,20 @@ export async function runBenchmarks(singleIteration?: boolean) {
             for (const node of collectIdentifiers(file)) {
                 await project.checker.getSymbolAtPosition("program.ts", node.pos);
             }
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, async () => {
             const positions = collectIdentifiers(file).map(node => node.pos);
             await project.checker.getSymbolAtPosition("program.ts", positions);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, async () => {
             for (const node of collectIdentifiers(file)) {
                 await project.checker.getSymbolAtLocation(node);
             }
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, async () => {
             const nodes = collectIdentifiers(file);
             await project.checker.getSymbolAtLocation(nodes);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             const checker = tsProgram.getTypeChecker();
             tsFile.forEachChild(function visit(node) {
@@ -145,8 +147,9 @@ export async function runBenchmarks(singleIteration?: boolean) {
         });
     }
 
-    async function loadProject() {
-        project = await api.loadProject("_submodules/TypeScript/src/compiler/tsconfig.json");
+    async function loadSnapshot() {
+        snapshot = await api.updateSnapshot({ openProject: "_submodules/TypeScript/src/compiler/tsconfig.json" });
+        project = snapshot.projects[0];
     }
 
     function tsCreateProgram() {
@@ -190,6 +193,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     async function teardown() {
         await api?.close();
         api = undefined!;
+        snapshot = undefined!;
         project = undefined!;
         file = undefined!;
         tsProgram = undefined!;

@@ -24,7 +24,7 @@ export interface CachedSourceFile {
  * Lifecycle:
  * - Files are added when fetched from the server
  * - Projects retain cache entries to keep them alive
- * - Files are removed when the server reports changes (e.g., via adoptLSPState)
+ * - Files are removed when the server reports changes (e.g., via updateSnapshot)
  * - Files are removed when no projects retain them
  */
 export class SourceFileCache {

@@ -13,6 +13,38 @@ export interface ConfigResponse {
     fileNames: string[];
 }
 
+/**
+ * Parameters for updateSnapshot.
+ */
+export interface UpdateSnapshotParams {
+    /** Path to a tsconfig.json file to open in the new snapshot */
+    openProject?: string;
+    /** Handle of a previous snapshot for computing changes */
+    previousSnapshot?: string;
+}
+
+/**
+ * Response from updateSnapshot.
+ */
+export interface UpdateSnapshotResponse {
+    /** Handle for the newly created snapshot */
+    snapshot: string;
+    /** List of projects in the snapshot */
+    projects: ProjectResponse[];
+    /** Changes relative to previousSnapshot, if provided */
+    changes?: SnapshotChanges;
+}
+
+/**
+ * Changes between two snapshots for cache invalidation.
+ */
+export interface SnapshotChanges {
+    /** List of project handles that no longer exist */
+    removedProjects?: string[];
+    /** Map of project handles to their file changes */
+    projectChanges?: Record<string, ProjectChanges>;
+}
+
 export interface ProjectResponse {
     id: string;
     configFileName: string;
@@ -20,14 +52,6 @@ export interface ProjectResponse {
     rootFiles: string[];
     /** Encodes the source-file-independent parse options for this project (for cache keying) */
     parseOptionsKey: string;
-}
-
-/**
- * Response from loadProject, includes project info plus optional changes.
- */
-export interface LoadProjectResponse extends ProjectResponse {
-    /** File changes if the project was previously loaded */
-    changes?: ProjectChanges;
 }
 
 export interface SourceFileResponse {
@@ -47,16 +71,6 @@ export interface SymbolResponse {
 export interface TypeResponse {
     id: string;
     flags: number;
-}
-
-/**
- * Response from adoptLSPState with cache invalidation information.
- */
-export interface AdoptLSPStateResponse {
-    /** List of project handles that no longer exist */
-    removedProjects?: string[];
-    /** Map of project handles to their file changes */
-    projectChanges?: Record<string, ProjectChanges>;
 }
 
 /**

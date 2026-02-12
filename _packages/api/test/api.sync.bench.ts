@@ -5,6 +5,7 @@ import {
 import {
     API,
     type Project,
+    type Snapshot,
 } from "@typescript/api/sync";
 import {
     type Node,
@@ -40,6 +41,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     });
 
     let api: API;
+    let snapshot: Snapshot;
     let project: Project;
     let tsProgram: ts.Program;
     let file: SourceFile;
@@ -47,7 +49,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
 
     const programIdentifierCount = (() => {
         spawnAPI();
-        loadProject();
+        loadSnapshot();
         getProgramTS();
         let count = 0;
         file!.forEachChild(function visit(node) {
@@ -81,37 +83,37 @@ export async function runBenchmarks(singleIteration?: boolean) {
         .add("echo (large Uint8Array)", () => {
             api.echoBinary(LARGE_UINT8_ARRAY);
         }, { beforeAll: spawnAPI })
-        .add("load project", () => {
-            loadProject();
+        .add("load snapshot", () => {
+            loadSnapshot();
         }, { beforeAll: spawnAPI })
-        .add("load project (client FS)", () => {
-            loadProject();
+        .add("load snapshot (client FS)", () => {
+            loadSnapshot();
         }, { beforeAll: spawnAPIHosted })
         .add("TS - load project", () => {
             tsCreateProgram();
         })
         .add("transfer debug.ts", () => {
             getDebugTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("transfer program.ts", () => {
             getProgramTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("transfer checker.ts", () => {
             getCheckerTS();
-        }, { beforeAll: all(spawnAPI, loadProject) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot) })
         .add("materialize program.ts", () => {
             file.forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, getProgramTS) })
         .add("materialize checker.ts", () => {
             file.forEachChild(function visit(node) {
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, getCheckerTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, getCheckerTS) })
         .add("getSymbolAtPosition - one location", () => {
             project.checker.getSymbolAtPosition("program.ts", 8895);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker) })
         .add("TS - getSymbolAtPosition - one location", () => {
             tsProgram.getTypeChecker().getSymbolAtLocation(
                 // @ts-ignore internal API
@@ -125,7 +127,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 }
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, () => {
             const positions: number[] = [];
             file.forEachChild(function visit(node) {
@@ -135,7 +137,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 node.forEachChild(visit);
             });
             project.checker.getSymbolAtPosition("program.ts", positions);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             file.forEachChild(function visit(node) {
                 if (node.kind === SyntaxKind.Identifier) {
@@ -143,7 +145,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 }
                 node.forEachChild(visit);
             });
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, () => {
             const nodes: Node[] = [];
             file.forEachChild(function visit(node) {
@@ -153,7 +155,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
                 node.forEachChild(visit);
             });
             project.checker.getSymbolAtLocation(nodes);
-        }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+        }, { beforeAll: all(spawnAPI, loadSnapshot, createChecker, getProgramTS) })
         .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
             const checker = tsProgram.getTypeChecker();
             tsFile.forEachChild(function visit(node) {
@@ -182,8 +184,9 @@ export async function runBenchmarks(singleIteration?: boolean) {
         });
     }
 
-    function loadProject() {
-        project = api.loadProject("_submodules/TypeScript/src/compiler/tsconfig.json");
+    function loadSnapshot() {
+        snapshot = api.updateSnapshot({ openProject: "_submodules/TypeScript/src/compiler/tsconfig.json" });
+        project = snapshot.projects[0];
     }
 
     function tsCreateProgram() {
@@ -227,6 +230,7 @@ export async function runBenchmarks(singleIteration?: boolean) {
     function teardown() {
         api?.close();
         api = undefined!;
+        snapshot = undefined!;
         project = undefined!;
         file = undefined!;
         tsProgram = undefined!;

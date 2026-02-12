@@ -1,6 +1,7 @@
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
     API,
+    type Snapshot,
     SymbolFlags,
     TypeFlags,
 } from "@typescript/api/sync";
@@ -36,10 +37,20 @@ describe("API", () => {
     });
 });
 
-describe("Project", () => {
+describe("Snapshot", () => {
+    test("updateSnapshot returns snapshot with projects", () => {
+        const api = spawnAPI();
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        assert.ok(snapshot);
+        assert.ok(snapshot.id);
+        assert.ok(snapshot.projects.length > 0);
+        assert.ok(snapshot.projects[0].configFileName);
+    });
+
     test("getSymbolAtPosition", () => {
         const api = spawnAPI();
-        const project = api.loadProject("/tsconfig.json");
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
         const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
         assert.ok(symbol);
         assert.equal(symbol.name, "foo");
@@ -48,7 +59,8 @@ describe("Project", () => {
 
     test("getSymbolAtLocation", () => {
         const api = spawnAPI();
-        const project = api.loadProject("/tsconfig.json");
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
         const sourceFile = project.program.getSourceFile("/src/index.ts");
         assert.ok(sourceFile);
         const node = cast(
@@ -64,7 +76,8 @@ describe("Project", () => {
 
     test("getTypeOfSymbol", () => {
         const api = spawnAPI();
-        const project = api.loadProject("/tsconfig.json");
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
         const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
         assert.ok(symbol);
         const type = project.checker.getTypeOfSymbol(symbol);
@@ -76,7 +89,8 @@ describe("Project", () => {
 describe("SourceFile", () => {
     test("file properties", () => {
         const api = spawnAPI();
-        const project = api.loadProject("/tsconfig.json");
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
         const sourceFile = project.program.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
@@ -86,7 +100,8 @@ describe("SourceFile", () => {
 
     test("extended data", () => {
         const api = spawnAPI();
-        const project = api.loadProject("/tsconfig.json");
+        const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.projects[0];
         const sourceFile = project.program.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
@@ -124,7 +139,8 @@ test("unicode escapes", () => {
         "/tsconfig.json": "{}",
         ...srcFiles,
     });
-    const project = api.loadProject("/tsconfig.json");
+    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+    const project = snapshot.projects[0];
 
     Object.keys(srcFiles).forEach(file => {
         const sourceFile = project.program.getSourceFile(file);
@@ -141,39 +157,53 @@ test("unicode escapes", () => {
 
 test("Object equality", () => {
     const api = spawnAPI();
-    const project = api.loadProject("/tsconfig.json");
-    assert.strictEqual(project, api.loadProject("/tsconfig.json"));
+    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+    const project = snapshot.projects[0];
+    // Same symbol returned from same snapshot's checker
     assert.strictEqual(
         project.checker.getSymbolAtPosition("/src/index.ts", 9),
         project.checker.getSymbolAtPosition("/src/index.ts", 10),
     );
 });
 
-test("Dispose", () => {
+test("Snapshot dispose", () => {
     const api = spawnAPI();
-    const project = api.loadProject("/tsconfig.json");
+    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+    const project = snapshot.projects[0];
     const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
     assert.ok(symbol);
-    assert.ok(symbol.isDisposed() === false);
-    symbol.dispose();
-    assert.ok(symbol.isDisposed() === true);
+
+    // Snapshot dispose should release server-side resources
+    assert.ok(snapshot.isDisposed() === false);
+    snapshot.dispose();
+    assert.ok(snapshot.isDisposed() === true);
+
+    // After dispose, snapshot methods should throw
+    assert.throws(() => {
+        snapshot.getProject(project.id);
+    }, {
+        name: "Error",
+        message: "Snapshot is disposed",
+    });
+});
+
+test("Server-side release", () => {
+    const api = spawnAPI();
+    const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+    const project = snapshot.projects[0];
+    const symbol = project.checker.getSymbolAtPosition("/src/index.ts", 9);
+    assert.ok(symbol);
+
+    // Manually release the snapshot on the server
+    // @ts-ignore private API
+    api.client.request("release", { handle: snapshot.id });
+
+    // Symbol handle should no longer be resolvable on the server
     assert.throws(() => {
         project.checker.getTypeOfSymbol(symbol);
     }, {
         name: "Error",
-        message: "Symbol is disposed",
-    });
-
-    const symbol2 = project.checker.getSymbolAtPosition("/src/index.ts", 9);
-    assert.ok(symbol2);
-    assert.notStrictEqual(symbol, symbol2);
-    // @ts-ignore private API
-    api.client.request("release", symbol2.id);
-    assert.throws(() => {
-        project.checker.getTypeOfSymbol(symbol2);
-    }, {
-        name: "Error",
-        message: `api: client error: symbol handle "${symbol2.id}" not found in session registry`,
+        message: `api: client error: snapshot ${snapshot.id} not found`,
     });
 });
 

@@ -52,11 +52,26 @@ describe("API", () => {
     });
 });
 
-describe("Project", () => {
+describe("Snapshot", () => {
+    test("updateSnapshot returns snapshot with projects", async () => {
+        const api = spawnAPI();
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            assert.ok(snapshot);
+            assert.ok(snapshot.id);
+            assert.ok(snapshot.projects.length > 0);
+            assert.ok(snapshot.projects[0].configFileName);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
     test("getSymbolAtPosition", async () => {
         const api = spawnAPI();
         try {
-            const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            const project = snapshot.projects[0];
             const symbol = await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
             assert.ok(symbol);
             assert.equal(symbol.name, "foo");
@@ -70,7 +85,8 @@ describe("Project", () => {
     test("getSymbolAtLocation", async () => {
         const api = spawnAPI();
         try {
-            const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            const project = snapshot.projects[0];
             const sourceFile = await project.program.getSourceFile(path.join(fixtureDir, "src/index.ts"));
             assert.ok(sourceFile);
             const node = cast(
@@ -91,7 +107,8 @@ describe("Project", () => {
     test("getTypeOfSymbol", async () => {
         const api = spawnAPI();
         try {
-            const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            const project = snapshot.projects[0];
             const symbol = await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
             assert.ok(symbol);
             const type = await project.checker.getTypeOfSymbol(symbol);
@@ -108,7 +125,8 @@ describe("SourceFile", () => {
     test("file properties", async () => {
         const api = spawnAPI();
         try {
-            const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            const project = snapshot.projects[0];
             const sourceFile = await project.program.getSourceFile(path.join(fixtureDir, "src/index.ts"));
 
             assert.ok(sourceFile);
@@ -123,7 +141,8 @@ describe("SourceFile", () => {
     test("extended data", async () => {
         const api = spawnAPI();
         try {
-            const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+            const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+            const project = snapshot.projects[0];
             const sourceFile = await project.program.getSourceFile(path.join(fixtureDir, "src/index.ts"));
 
             assert.ok(sourceFile);
@@ -149,7 +168,8 @@ test("async unicode escapes", async () => {
 
     const api = spawnAPI();
     try {
-        const project = await api.loadProject(path.join(unicodeDir, "tsconfig.json"));
+        const snapshot = await api.updateSnapshot({ openProject: path.join(unicodeDir, "tsconfig.json") });
+        const project = snapshot.projects[0];
 
         for (const file of ["1.ts", "2.ts"]) {
             const sourceFile = await project.program.getSourceFile(path.join(unicodeDir, file));
@@ -172,8 +192,9 @@ test("async unicode escapes", async () => {
 test("async Object equality", async () => {
     const api = spawnAPI();
     try {
-        const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
-        assert.strictEqual(project, await api.loadProject(path.join(fixtureDir, "tsconfig.json")));
+        const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+        const project = snapshot.projects[0];
+        // Same symbol returned from same snapshot's checker
         assert.strictEqual(
             await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9),
             await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 10),
@@ -184,25 +205,26 @@ test("async Object equality", async () => {
     }
 });
 
-test("async Dispose", async () => {
+test("async Snapshot dispose", async () => {
     const api = spawnAPI();
     try {
-        const project = await api.loadProject(path.join(fixtureDir, "tsconfig.json"));
+        const snapshot = await api.updateSnapshot({ openProject: path.join(fixtureDir, "tsconfig.json") });
+        const project = snapshot.projects[0];
         const symbol = await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
         assert.ok(symbol);
-        assert.ok(symbol.isDisposed() === false);
-        symbol.dispose();
-        assert.ok(symbol.isDisposed() === true);
-        await assert.rejects(async () => {
-            await project.checker.getTypeOfSymbol(symbol);
+
+        // Snapshot dispose should release server-side resources
+        assert.ok(snapshot.isDisposed() === false);
+        await snapshot.dispose();
+        assert.ok(snapshot.isDisposed() === true);
+
+        // After dispose, snapshot methods should throw
+        assert.throws(() => {
+            snapshot.getProject(project.id);
         }, {
             name: "Error",
-            message: "Symbol is disposed",
+            message: "Snapshot is disposed",
         });
-
-        const symbol2 = await project.checker.getSymbolAtPosition(path.join(fixtureDir, "src/index.ts"), 9);
-        assert.ok(symbol2);
-        assert.notStrictEqual(symbol, symbol2);
     }
     finally {
         await api.close();

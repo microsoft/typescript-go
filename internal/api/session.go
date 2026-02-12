@@ -23,11 +23,105 @@ import (
 
 var sessionIDCounter atomic.Uint64
 
+// snapshotData holds the per-snapshot state including the snapshot itself
+// and symbol/type registries scoped to this snapshot.
+// Multiple clients may hold references to the same snapshot via ref counting;
+// the underlying snapshot is only released when refCount reaches zero.
+type snapshotData struct {
+	snapshot *project.Snapshot
+	release  func()
+	refCount int
+
+	symbolRegistry   map[Handle[ast.Symbol]]*ast.Symbol
+	symbolRegistryMu sync.RWMutex
+
+	typeRegistry   map[Handle[checker.Type]]*checker.Type
+	typeRegistryMu sync.RWMutex
+}
+
+// getProgram looks up a program from a project handle within this snapshot.
+func (sd *snapshotData) getProgram(projectHandle Handle[project.Project]) (*compiler.Program, error) {
+	projectName := parseProjectHandle(projectHandle)
+	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
+	if proj == nil {
+		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
+	}
+
+	program := proj.GetProgram()
+	if program == nil {
+		return nil, fmt.Errorf("%w: project has no program", ErrClientError)
+	}
+
+	return program, nil
+}
+
+// registerSymbol registers a symbol in this snapshot's registry and returns the response.
+func (sd *snapshotData) registerSymbol(symbol *ast.Symbol) *SymbolResponse {
+	if symbol == nil {
+		return nil
+	}
+	resp := NewSymbolResponse(symbol)
+
+	sd.symbolRegistryMu.Lock()
+	sd.symbolRegistry[resp.Id] = symbol
+	sd.symbolRegistryMu.Unlock()
+
+	return resp
+}
+
+// registerType registers a type in this snapshot's registry and returns the response.
+func (sd *snapshotData) registerType(t *checker.Type) *TypeResponse {
+	if t == nil {
+		return nil
+	}
+	resp := NewTypeData(t)
+
+	sd.typeRegistryMu.Lock()
+	sd.typeRegistry[resp.Id] = t
+	sd.typeRegistryMu.Unlock()
+
+	return resp
+}
+
+// resolveSymbolHandle resolves a symbol handle to a symbol within this snapshot.
+func (sd *snapshotData) resolveSymbolHandle(handle Handle[ast.Symbol]) (*ast.Symbol, error) {
+	if len(handle) == 0 {
+		return nil, fmt.Errorf("%w: empty symbol handle", ErrClientError)
+	}
+
+	sd.symbolRegistryMu.RLock()
+	symbol, ok := sd.symbolRegistry[handle]
+	sd.symbolRegistryMu.RUnlock()
+
+	if !ok {
+		return nil, fmt.Errorf("%w: symbol handle %q not found in snapshot registry", ErrClientError, handle)
+	}
+
+	return symbol, nil
+}
+
+// resolveTypeHandle resolves a type handle to a type within this snapshot.
+func (sd *snapshotData) resolveTypeHandle(handle Handle[checker.Type]) (*checker.Type, error) {
+	if len(handle) == 0 {
+		return nil, fmt.Errorf("%w: empty type handle", ErrClientError)
+	}
+
+	sd.typeRegistryMu.RLock()
+	t, ok := sd.typeRegistry[handle]
+	sd.typeRegistryMu.RUnlock()
+
+	if !ok {
+		return nil, fmt.Errorf("%w: type handle %q not found in snapshot registry", ErrClientError, handle)
+	}
+
+	return t, nil
+}
+
 // Session represents an API session that provides programmatic access
 // to TypeScript language services through the LSP server.
 // It implements the Handler interface to process incoming API requests.
-// The session retains a snapshot until the client explicitly requests an update,
-// ensuring consistency across multiple requests.
+// The session supports multiple active snapshots, each with their own
+// symbol and type registries for maintaining object identity.
 type Session struct {
 	id             string
 	projectSession *project.Session
@@ -35,22 +129,10 @@ type Session struct {
 	// This is set to true when using MessagePackProtocol.
 	useBinaryResponses bool
 
-	// snapshot is the current snapshot for this session.
-	// It is retained until the client requests an update.
-	snapshot        *project.Snapshot
-	snapshotRelease func()
-
-	// symbolRegistry maps symbol handles to symbols for this session.
-	// Symbols are registered when returned to the client and can be
-	// released explicitly or when the session closes.
-	symbolRegistry   map[Handle[ast.Symbol]]*ast.Symbol
-	symbolRegistryMu sync.RWMutex
-
-	// typeRegistry maps type handles to types for this session.
-	// Types are registered when returned to the client and can be
-	// released explicitly or when the session closes.
-	typeRegistry   map[Handle[checker.Type]]*checker.Type
-	typeRegistryMu sync.RWMutex
+	// snapshots maps snapshot handles to their data.
+	// Each snapshot has its own symbol/type registries.
+	snapshots   map[Handle[project.Snapshot]]*snapshotData
+	snapshotsMu sync.RWMutex
 }
 
 // Ensure Session implements Handler
@@ -68,8 +150,7 @@ func NewSession(projectSession *project.Session, options *SessionOptions) *Sessi
 	s := &Session{
 		id:             formatSessionID(id),
 		projectSession: projectSession,
-		symbolRegistry: make(map[Handle[ast.Symbol]]*ast.Symbol),
-		typeRegistry:   make(map[Handle[checker.Type]]*checker.Type),
+		snapshots:      make(map[Handle[project.Snapshot]]*snapshotData),
 	}
 	if options != nil {
 		s.useBinaryResponses = options.UseBinaryResponses
@@ -87,11 +168,20 @@ func (s *Session) ProjectSession() *project.Session {
 	return s.projectSession
 }
 
-// ensureSnapshot lazily initializes the snapshot if it's nil.
-func (s *Session) ensureSnapshot() {
-	if s.snapshot == nil {
-		s.snapshot, s.snapshotRelease = s.projectSession.Snapshot()
+// snapshotHandle creates a snapshot handle from a snapshot's ID.
+func snapshotHandle(snapshot *project.Snapshot) Handle[project.Snapshot] {
+	return Handle[project.Snapshot](fmt.Sprintf("%c%016x", handlePrefixSnapshot, snapshot.ID()))
+}
+
+// getSnapshotData looks up snapshot data by handle.
+func (s *Session) getSnapshotData(handle Handle[project.Snapshot]) (*snapshotData, error) {
+	s.snapshotsMu.RLock()
+	sd, ok := s.snapshots[handle]
+	s.snapshotsMu.RUnlock()
+	if !ok {
+		return nil, fmt.Errorf("%w: snapshot %s not found", ErrClientError, handle)
 	}
+	return sd, nil
 }
 
 // HandleRequest implements Handler.
@@ -113,20 +203,15 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return nil, fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}
 
-	// Ensure we have a snapshot for request processing
-	s.ensureSnapshot()
-
 	switch method {
 	case string(MethodRelease):
-		return s.handleRelease(ctx, parsed.(*string))
+		return s.handleRelease(ctx, parsed.(*ReleaseParams))
 	case string(MethodInitialize):
 		return s.handleInitialize(ctx)
-	case string(MethodAdoptLSPState):
-		return s.handleAdoptLSPState(ctx)
+	case string(MethodUpdateSnapshot):
+		return s.handleUpdateSnapshot(ctx, parsed.(*UpdateSnapshotParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
-	case string(MethodLoadProject):
-		return s.handleLoadProject(ctx, parsed.(*LoadProjectParams))
 	case string(MethodGetDefaultProjectForFile):
 		return s.handleGetDefaultProjectForFile(ctx, parsed.(*GetDefaultProjectForFileParams))
 	case string(MethodGetSourceFile):
@@ -163,30 +248,79 @@ func (s *Session) handleInitialize(ctx context.Context) (*InitializeResponse, er
 	}, nil
 }
 
-func (s *Session) handleAdoptLSPState(ctx context.Context) (any, error) {
-	oldSnapshot := s.snapshot
-	newSnapshot, newRelease := s.projectSession.Snapshot()
+// handleUpdateSnapshot creates a new snapshot, optionally opening a project.
+// With no args, it adopts the latest LSP state.
+// With OpenProject set, it opens the specified project in the new snapshot.
+func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapshotParams) (*UpdateSnapshotResponse, error) {
+	var snapshot *project.Snapshot
+	var release func()
 
-	// Compute diff between old and new snapshots
-	diff := s.computeSnapshotDiff(oldSnapshot, newSnapshot)
-
-	// Update session state
-	releaseOldSnapshot := s.snapshotRelease
-	s.snapshot, s.snapshotRelease = newSnapshot, newRelease
-	if releaseOldSnapshot != nil {
-		releaseOldSnapshot()
+	if params.OpenProject != "" {
+		configFileName := s.toAbsoluteFileName(params.OpenProject)
+		_, newSnapshot, newRelease, err := s.projectSession.OpenProject(ctx, configFileName)
+		if err != nil {
+			return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
+		}
+		snapshot, release = newSnapshot, newRelease
+	} else {
+		snapshot, release = s.projectSession.Snapshot()
 	}
 
-	return diff, nil
+	// Create or ref-count snapshot data.
+	// If the same snapshot ID is returned (no changes), we increment the
+	// ref count so each client-side Snapshot can be disposed independently.
+	handle := snapshotHandle(snapshot)
+	s.snapshotsMu.Lock()
+	sd, exists := s.snapshots[handle]
+	if exists {
+		sd.refCount++
+		// Release the duplicate reference from the server; the existing
+		// snapshotData already holds the snapshot alive.
+		release()
+	} else {
+		sd = &snapshotData{
+			snapshot:       snapshot,
+			release:        release,
+			refCount:       1,
+			symbolRegistry: make(map[Handle[ast.Symbol]]*ast.Symbol),
+			typeRegistry:   make(map[Handle[checker.Type]]*checker.Type),
+		}
+		s.snapshots[handle] = sd
+	}
+	s.snapshotsMu.Unlock()
+
+	// Build projects list
+	projects := snapshot.ProjectCollection.Projects()
+	projectResponses := make([]*ProjectResponse, len(projects))
+	for i, proj := range projects {
+		projectResponses[i] = NewProjectResponse(proj)
+	}
+
+	// Compute changes if previous snapshot was provided
+	var changes *SnapshotChanges
+	if params.PreviousSnapshot != "" {
+		s.snapshotsMu.RLock()
+		oldSD, ok := s.snapshots[params.PreviousSnapshot]
+		s.snapshotsMu.RUnlock()
+		if ok {
+			changes = computeSnapshotChanges(oldSD.snapshot, snapshot)
+		}
+	}
+
+	return &UpdateSnapshotResponse{
+		Snapshot: handle,
+		Projects: projectResponses,
+		Changes:  changes,
+	}, nil
 }
 
-// computeSnapshotDiff computes the difference between two snapshots for client cache invalidation.
-func (s *Session) computeSnapshotDiff(oldSnapshot, newSnapshot *project.Snapshot) *AdoptLSPStateResponse {
+// computeSnapshotChanges computes the difference between two snapshots for client cache invalidation.
+func computeSnapshotChanges(oldSnapshot, newSnapshot *project.Snapshot) *SnapshotChanges {
 	if oldSnapshot == nil {
 		return nil
 	}
 
-	response := &AdoptLSPStateResponse{
+	response := &SnapshotChanges{
 		RemovedProjects: []Handle[project.Project]{},
 		ProjectChanges:  make(map[Handle[project.Project]]*ProjectChanges),
 	}
@@ -246,41 +380,50 @@ func computeProjectChanges(oldProject, newProject *project.Project) *ProjectChan
 	return changes
 }
 
-// handleRelease releases a handle from the session's registries.
-// The handle can be a symbol handle (prefix 's') or a type handle (prefix 't').
-func (s *Session) handleRelease(ctx context.Context, handle *string) (any, error) {
-	if handle == nil || len(*handle) == 0 {
+// handleRelease decrements the ref count for a snapshot.
+// The snapshot and its registries are only cleaned up when the ref count reaches zero.
+func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any, error) {
+	if params == nil || len(params.Handle) == 0 {
 		return nil, fmt.Errorf("%w: empty handle", ErrClientError)
 	}
 
-	h := *handle
-	if len(h) < 1 {
-		return nil, fmt.Errorf("%w: invalid handle %q", ErrClientError, h)
+	h := params.Handle
+	if h[0] != handlePrefixSnapshot {
+		return nil, fmt.Errorf("%w: can only release snapshot handles, got prefix %q", ErrClientError, h[0])
 	}
 
-	prefix := h[0]
-	switch prefix {
-	case handlePrefixSymbol:
-		s.symbolRegistryMu.Lock()
-		delete(s.symbolRegistry, Handle[ast.Symbol](h))
-		s.symbolRegistryMu.Unlock()
-		return true, nil
+	snapshotHandle := Handle[project.Snapshot](h)
+	var shouldRelease bool
+	var sd *snapshotData
 
-	case handlePrefixType:
-		s.typeRegistryMu.Lock()
-		delete(s.typeRegistry, Handle[checker.Type](h))
-		s.typeRegistryMu.Unlock()
-		return true, nil
-
-	default:
-		return nil, fmt.Errorf("%w: unknown handle type %q", ErrClientError, prefix)
+	s.snapshotsMu.Lock()
+	sd = s.snapshots[snapshotHandle]
+	if sd == nil {
+		s.snapshotsMu.Unlock()
+		return nil, fmt.Errorf("%w: snapshot %s not found", ErrClientError, snapshotHandle)
 	}
+	sd.refCount--
+	if sd.refCount <= 0 {
+		delete(s.snapshots, snapshotHandle)
+		shouldRelease = true
+	}
+	s.snapshotsMu.Unlock()
+
+	if shouldRelease {
+		sd.release()
+	}
+	return true, nil
 }
 
 // handleGetDefaultProjectForFile returns the default project for a given file.
 func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *GetDefaultProjectForFileParams) (*ProjectResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := lsconv.FileNameToDocumentURI(params.FileName)
-	proj := s.snapshot.GetDefaultProject(uri)
+	proj := sd.snapshot.GetDefaultProject(uri)
 	if proj == nil {
 		return nil, fmt.Errorf("%w: no project found for file %s", ErrClientError, params.FileName)
 	}
@@ -320,51 +463,16 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 	}, nil
 }
 
-// handleLoadProject explicitly loads a TypeScript project from a config file.
-func (s *Session) handleLoadProject(ctx context.Context, params *LoadProjectParams) (*LoadProjectResponse, error) {
-	configFileName := s.toAbsoluteFileName(params.ConfigFileName)
-
-	// Check if project was previously loaded to compute changes
-	var oldProject *project.Project
-	if s.snapshot != nil {
-		configFilePath := s.toPath(configFileName)
-		oldProject = s.snapshot.ProjectCollection.GetProjectByPath(configFilePath)
-	}
-
-	proj, snapshot, release, err := s.projectSession.OpenProject(ctx, configFileName)
-	if err != nil {
-		return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
-	}
-
-	// Refresh snapshot after loading a new project
-	if s.snapshotRelease != nil {
-		s.snapshotRelease()
-	}
-	s.snapshot, s.snapshotRelease = snapshot, release
-
-	response := &LoadProjectResponse{
-		ProjectResponse: NewProjectResponse(proj),
-	}
-
-	// Compute changes if project was previously loaded
-	if oldProject != nil {
-		response.Changes = computeProjectChanges(oldProject, proj)
-	}
-
-	return response, nil
-}
-
-// handleGetSourceFile returns a source file from a project.
+// handleGetSourceFile returns a source file from a project within a snapshot.
 func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
-	projectName := parseProjectHandle(params.Project)
-	proj := s.snapshot.ProjectCollection.GetProjectByPath(projectName)
-	if proj == nil {
-		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
 	}
 
-	program := proj.GetProgram()
-	if program == nil {
-		return nil, fmt.Errorf("%w: project has no program", ErrClientError)
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
 	}
 
 	sourceFile := program.GetSourceFile(params.FileName)
@@ -389,7 +497,12 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 
 // handleGetSymbolAtPosition returns the symbol at a position in a file.
 func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymbolAtPositionParams) (*SymbolResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -412,12 +525,17 @@ func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	return s.registerSymbol(symbol), nil
+	return sd.registerSymbol(symbol), nil
 }
 
 // handleGetSymbolsAtPositions returns symbols at multiple positions in a file.
 func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSymbolsAtPositionsParams) ([]*SymbolResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -438,7 +556,7 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 		}
 		symbol := checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = s.registerSymbol(symbol)
+			results[i] = sd.registerSymbol(symbol)
 		}
 	}
 
@@ -447,7 +565,12 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 
 // handleGetSymbolAtLocation returns the symbol at a node location.
 func (s *Session) handleGetSymbolAtLocation(ctx context.Context, params *GetSymbolAtLocationParams) (*SymbolResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -468,12 +591,17 @@ func (s *Session) handleGetSymbolAtLocation(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	return s.registerSymbol(symbol), nil
+	return sd.registerSymbol(symbol), nil
 }
 
 // handleGetSymbolsAtLocations returns symbols at multiple node locations.
 func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSymbolsAtLocationsParams) ([]*SymbolResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -492,7 +620,7 @@ func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSy
 		}
 		symbol := checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = s.registerSymbol(symbol)
+			results[i] = sd.registerSymbol(symbol)
 		}
 	}
 
@@ -501,12 +629,17 @@ func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSy
 
 // handleGetTypeOfSymbol returns the type of a symbol.
 func (s *Session) handleGetTypeOfSymbol(ctx context.Context, params *GetTypeOfSymbolParams) (*TypeResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
 	}
 
-	symbol, err := s.resolveSymbolHandle(program, params.Symbol)
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -522,12 +655,17 @@ func (s *Session) handleGetTypeOfSymbol(ctx context.Context, params *GetTypeOfSy
 		return nil, nil
 	}
 
-	return s.registerType(t), nil
+	return sd.registerType(t), nil
 }
 
 // handleGetTypesOfSymbols returns the types of multiple symbols.
 func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesOfSymbolsParams) ([]*TypeResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -537,7 +675,7 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 
 	results := make([]*TypeResponse, len(params.Symbols))
 	for i, symHandle := range params.Symbols {
-		symbol, err := s.resolveSymbolHandle(program, symHandle)
+		symbol, err := sd.resolveSymbolHandle(symHandle)
 		if err != nil {
 			return nil, err
 		}
@@ -546,7 +684,7 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 		}
 		t := checker.GetTypeOfSymbol(symbol)
 		if t != nil {
-			results[i] = s.registerType(t)
+			results[i] = sd.registerType(t)
 		}
 	}
 
@@ -555,7 +693,12 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 
 // handleResolveName resolves a name to a symbol at a given location.
 func (s *Session) handleResolveName(ctx context.Context, params *ResolveNameParams) (*SymbolResponse, error) {
-	program, err := s.getProgram(params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
 	if err != nil {
 		return nil, err
 	}
@@ -583,23 +726,7 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 		return nil, nil
 	}
 
-	return s.registerSymbol(symbol), nil
-}
-
-// getProgram is a helper to get a program from a project handle.
-func (s *Session) getProgram(projectHandle Handle[project.Project]) (*compiler.Program, error) {
-	projectName := parseProjectHandle(projectHandle)
-	proj := s.snapshot.ProjectCollection.GetProjectByPath(projectName)
-	if proj == nil {
-		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
-	}
-
-	program := proj.GetProgram()
-	if program == nil {
-		return nil, fmt.Errorf("%w: project has no program", ErrClientError)
-	}
-
-	return program, nil
+	return sd.registerSymbol(symbol), nil
 }
 
 // resolveNodeHandle resolves a node handle to an AST node.
@@ -645,76 +772,14 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 	return node, nil
 }
 
-// resolveSymbolHandle resolves a symbol handle to a symbol.
-// Symbol handles are registered when returned to clients.
-func (s *Session) resolveSymbolHandle(program *compiler.Program, handle Handle[ast.Symbol]) (*ast.Symbol, error) {
-	if len(handle) == 0 {
-		return nil, fmt.Errorf("%w: empty symbol handle", ErrClientError)
-	}
-
-	s.symbolRegistryMu.RLock()
-	symbol, ok := s.symbolRegistry[handle]
-	s.symbolRegistryMu.RUnlock()
-
-	if !ok {
-		return nil, fmt.Errorf("%w: symbol handle %q not found in session registry", ErrClientError, handle)
-	}
-
-	return symbol, nil
-}
-
-// registerSymbol registers a symbol in the session's registry and returns the response.
-func (s *Session) registerSymbol(symbol *ast.Symbol) *SymbolResponse {
-	if symbol == nil {
-		return nil
-	}
-	resp := NewSymbolResponse(symbol)
-
-	s.symbolRegistryMu.Lock()
-	s.symbolRegistry[resp.Id] = symbol
-	s.symbolRegistryMu.Unlock()
-
-	return resp
-}
-
-// registerType registers a type in the session's registry and returns the response.
-func (s *Session) registerType(t *checker.Type) *TypeResponse {
-	if t == nil {
-		return nil
-	}
-	resp := NewTypeData(t)
-
-	s.typeRegistryMu.Lock()
-	s.typeRegistry[resp.Id] = t
-	s.typeRegistryMu.Unlock()
-
-	return resp
-}
-
-// resolveTypeHandle resolves a type handle to a type.
-// Type handles are registered when returned to clients.
-func (s *Session) resolveTypeHandle(handle Handle[checker.Type]) (*checker.Type, error) {
-	if len(handle) == 0 {
-		return nil, fmt.Errorf("%w: empty type handle", ErrClientError)
-	}
-
-	s.typeRegistryMu.RLock()
-	t, ok := s.typeRegistry[handle]
-	s.typeRegistryMu.RUnlock()
-
-	if !ok {
-		return nil, fmt.Errorf("%w: type handle %q not found in session registry", ErrClientError, handle)
-	}
-
-	return t, nil
-}
-
-// Close closes the session and triggers the onClose callback.
+// Close closes the session and releases all active snapshots,
+// regardless of their ref counts.
 func (s *Session) Close() {
-	if s.snapshotRelease != nil {
-		s.snapshotRelease()
-		s.snapshotRelease = nil
-		s.snapshot = nil
+	s.snapshotsMu.Lock()
+	defer s.snapshotsMu.Unlock()
+	for handle, sd := range s.snapshots {
+		sd.release()
+		delete(s.snapshots, handle)
 	}
 }
 

@@ -24,9 +24,10 @@ type Method string
 type Handle[T any] string
 
 const (
-	handlePrefixProject = 'p'
-	handlePrefixSymbol  = 's'
-	handlePrefixType    = 't'
+	handlePrefixProject  = 'p'
+	handlePrefixSymbol   = 's'
+	handlePrefixType     = 't'
+	handlePrefixSnapshot = 'n'
 )
 
 func ProjectHandle(p *project.Project) Handle[project.Project] {
@@ -83,9 +84,8 @@ const (
 	MethodRelease Method = "release"
 
 	MethodInitialize               Method = "initialize"
-	MethodAdoptLSPState            Method = "adoptLSPState"
+	MethodUpdateSnapshot           Method = "updateSnapshot"
 	MethodParseConfigFile          Method = "parseConfigFile"
-	MethodLoadProject              Method = "loadProject"
 	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
 	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
 	MethodGetSymbolsAtPositions    Method = "getSymbolsAtPositions"
@@ -105,9 +105,29 @@ type InitializeResponse struct {
 	CurrentDirectory string `json:"currentDirectory"`
 }
 
-// AdoptLSPStateResponse contains information about changes between snapshots
-// so clients can invalidate cached source files appropriately.
-type AdoptLSPStateResponse struct {
+// UpdateSnapshotParams are the parameters for creating a new snapshot.
+// All fields are optional. With no fields set, the server adopts the latest LSP state.
+type UpdateSnapshotParams struct {
+	// OpenProject is the path to a tsconfig.json file to open/load in the new snapshot.
+	OpenProject string `json:"openProject,omitempty"`
+	// PreviousSnapshot is a handle to a previous snapshot for computing changes.
+	// If provided, the response will include a diff of project/file changes.
+	PreviousSnapshot Handle[project.Snapshot] `json:"previousSnapshot,omitempty"`
+}
+
+// UpdateSnapshotResponse is returned by updateSnapshot.
+type UpdateSnapshotResponse struct {
+	// Snapshot is the handle for the newly created snapshot.
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	// Projects is the list of projects in the snapshot.
+	Projects []*ProjectResponse `json:"projects"`
+	// Changes contains project/file changes relative to PreviousSnapshot.
+	// Only present if PreviousSnapshot was provided in the request.
+	Changes *SnapshotChanges `json:"changes,omitempty"`
+}
+
+// SnapshotChanges contains information about changes between two snapshots.
+type SnapshotChanges struct {
 	// RemovedProjects is a list of project handles that no longer exist.
 	RemovedProjects []Handle[project.Project] `json:"removedProjects,omitempty"`
 	// ProjectChanges maps project handles to their file changes.
@@ -123,11 +143,10 @@ type ProjectChanges struct {
 }
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodRelease:                  unmarshallerFor[string],
+	MethodRelease:                  unmarshallerFor[ReleaseParams],
 	MethodInitialize:               noParams,
-	MethodAdoptLSPState:            noParams,
+	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
-	MethodLoadProject:              unmarshallerFor[LoadProjectParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
 	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
 	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
@@ -143,25 +162,19 @@ type ParseConfigFileParams struct {
 	FileName string `json:"fileName"`
 }
 
+// ReleaseParams are the parameters for the release method.
+type ReleaseParams struct {
+	Handle string `json:"handle"`
+}
+
 type ConfigFileResponse struct {
 	FileNames []string              `json:"fileNames"`
 	Options   *core.CompilerOptions `json:"options"`
 }
 
-type LoadProjectParams struct {
-	ConfigFileName string `json:"configFileName"`
-}
-
-// LoadProjectResponse is returned by loadProject and includes project info plus optional changes.
-type LoadProjectResponse struct {
-	*ProjectResponse
-	// Changes contains file changes if the project was previously loaded.
-	// This allows clients to invalidate cached source files.
-	Changes *ProjectChanges `json:"changes,omitempty"`
-}
-
 type GetDefaultProjectForFileParams struct {
-	FileName string `json:"fileName"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	FileName string                   `json:"fileName"`
 }
 
 type ProjectResponse struct {
@@ -200,25 +213,29 @@ func computeProjectParseOptionsKey(p *project.Project) string {
 }
 
 type GetSymbolAtPositionParams struct {
-	Project  Handle[project.Project] `json:"project"`
-	FileName string                  `json:"fileName"`
-	Position uint32                  `json:"position"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	FileName string                   `json:"fileName"`
+	Position uint32                   `json:"position"`
 }
 
 type GetSymbolsAtPositionsParams struct {
-	Project   Handle[project.Project] `json:"project"`
-	FileName  string                  `json:"fileName"`
-	Positions []uint32                `json:"positions"`
+	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
+	Project   Handle[project.Project]  `json:"project"`
+	FileName  string                   `json:"fileName"`
+	Positions []uint32                 `json:"positions"`
 }
 
 type GetSymbolAtLocationParams struct {
-	Project  Handle[project.Project] `json:"project"`
-	Location Handle[ast.Node]        `json:"location"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Location Handle[ast.Node]         `json:"location"`
 }
 
 type GetSymbolsAtLocationsParams struct {
-	Project   Handle[project.Project] `json:"project"`
-	Locations []Handle[ast.Node]      `json:"locations"`
+	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
+	Project   Handle[project.Project]  `json:"project"`
+	Locations []Handle[ast.Node]       `json:"locations"`
 }
 
 type SymbolResponse struct {
@@ -255,13 +272,15 @@ func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 }
 
 type GetTypeOfSymbolParams struct {
-	Project Handle[project.Project] `json:"project"`
-	Symbol  Handle[ast.Symbol]      `json:"symbol"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
 }
 
 type GetTypesOfSymbolsParams struct {
-	Project Handle[project.Project] `json:"project"`
-	Symbols []Handle[ast.Symbol]    `json:"symbols"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Symbols  []Handle[ast.Symbol]     `json:"symbols"`
 }
 
 type TypeResponse struct {
@@ -277,18 +296,20 @@ func NewTypeData(t *checker.Type) *TypeResponse {
 }
 
 type GetSourceFileParams struct {
-	Project  Handle[project.Project] `json:"project"`
-	FileName string                  `json:"fileName"`
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	FileName string                   `json:"fileName"`
 }
 
 type ResolveNameParams struct {
-	Project        Handle[project.Project] `json:"project"`
-	Name           string                  `json:"name"`
-	Location       Handle[ast.Node]        `json:"location,omitempty"`       // Optional: node handle for location context
-	FileName       string                  `json:"fileName,omitempty"`       // Optional: file for location context (alternative to Location)
-	Position       *uint32                 `json:"position,omitempty"`       // Optional: position in file for location context (with FileName)
-	Meaning        uint32                  `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
-	ExcludeGlobals bool                    `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
+	Snapshot       Handle[project.Snapshot] `json:"snapshot"`
+	Project        Handle[project.Project]  `json:"project"`
+	Name           string                   `json:"name"`
+	Location       Handle[ast.Node]         `json:"location,omitempty"`       // Optional: node handle for location context
+	FileName       string                   `json:"fileName,omitempty"`       // Optional: file for location context (alternative to Location)
+	Position       *uint32                  `json:"position,omitempty"`       // Optional: position in file for location context (with FileName)
+	Meaning        uint32                   `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
+	ExcludeGlobals bool                     `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.

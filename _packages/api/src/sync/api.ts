@@ -17,6 +17,7 @@ import {
     type Program as BaseProgram,
     type Project as BaseProject,
     resolveFileName,
+    type Snapshot as BaseSnapshot,
     type Symbol as BaseSymbol,
     type Type as BaseType,
 } from "../base/api.ts";
@@ -35,12 +36,13 @@ import {
 import type {
     ConfigResponse,
     InitializeResponse,
-    LoadProjectResponse,
-    ProjectChanges,
     ProjectResponse,
+    SnapshotChanges,
     SymbolResponse,
     TypeResponse,
+    UpdateSnapshotResponse,
 } from "../proto.ts";
+import type { UpdateSnapshotParams } from "../proto.ts";
 import { Client } from "./client.ts";
 
 export { SymbolFlags, TypeFlags };
@@ -51,41 +53,16 @@ export interface APIOptions extends BaseAPIOptions {
     fs?: FileSystem;
 }
 
-/** Type alias for the sync object registry */
-type SyncObjectRegistry = ObjectRegistry<Project, Symbol, Type>;
-
-export abstract class DisposableObject {
-    private disposed: boolean = false;
-    protected objectRegistry: SyncObjectRegistry;
-    abstract readonly id: string;
-
-    constructor(objectRegistry: SyncObjectRegistry) {
-        this.objectRegistry = objectRegistry;
-    }
-    [globalThis.Symbol.dispose](): void {
-        this.objectRegistry.release(this);
-        this.disposed = true;
-    }
-    dispose(): void {
-        this[globalThis.Symbol.dispose]();
-    }
-    isDisposed(): boolean {
-        return this.disposed;
-    }
-    ensureNotDisposed(): this {
-        if (this.disposed) {
-            throw new Error(`${this.constructor.name} is disposed`);
-        }
-        return this;
-    }
-}
+/** Type alias for the snapshot-scoped object registry */
+type SnapshotObjectRegistry = ObjectRegistry<Symbol, Type>;
 
 export class API implements BaseAPI<false> {
-    private client: Client;
-    private objectRegistry: SyncObjectRegistry;
+    /** @internal */
+    readonly client: Client;
     private sourceFileCache: SourceFileCache;
     private useCaseSensitiveFileNames: boolean;
     private toPath: (fileName: string) => Path;
+    private activeSnapshots: Set<Snapshot> = new Set();
 
     constructor(options: APIOptions) {
         this.client = new Client(options);
@@ -99,24 +76,55 @@ export class API implements BaseAPI<false> {
         const getCanonicalFileName = createGetCanonicalFileName(this.useCaseSensitiveFileNames);
         const currentDirectory = initResponse.currentDirectory;
         this.toPath = (fileName: string) => toPath(fileName, currentDirectory, getCanonicalFileName) as Path;
-
-        this.objectRegistry = new ObjectRegistry<Project, Symbol, Type>(
-            {
-                createProject: data => new Project(this.client, this.objectRegistry, this.sourceFileCache, this.toPath, data),
-                createSymbol: data => new Symbol(this.objectRegistry, data),
-                createType: data => new Type(this.objectRegistry, data),
-            },
-            id => this.client.request("release", id),
-        );
     }
 
     parseConfigFile(file: DocumentIdentifier | string): ConfigResponse {
         return this.client.request("parseConfigFile", { fileName: resolveFileName(file) });
     }
 
-    loadProject(configFile: DocumentIdentifier | string): Project {
-        const data: ProjectResponse = this.client.request("loadProject", { configFileName: resolveFileName(configFile) });
-        return this.objectRegistry.getProject(data);
+    updateSnapshot(params?: UpdateSnapshotParams): Snapshot {
+        const requestParams: UpdateSnapshotParams = params ?? {};
+        if (requestParams.openProject) {
+            requestParams.openProject = resolveFileName(requestParams.openProject);
+        }
+
+        const data: UpdateSnapshotResponse = this.client.request("updateSnapshot", requestParams);
+        const snapshot = new Snapshot(
+            data,
+            this.client,
+            this.sourceFileCache,
+            this.toPath,
+            () => this.activeSnapshots.delete(snapshot),
+        );
+        this.activeSnapshots.add(snapshot);
+
+        // Apply cache invalidation if changes are available
+        if (data.changes) {
+            this.applySnapshotChanges(data.changes);
+        }
+
+        return snapshot;
+    }
+
+    private applySnapshotChanges(changes: SnapshotChanges): void {
+        // Handle removed projects - release their cached files
+        if (changes.removedProjects) {
+            for (const projectId of changes.removedProjects) {
+                this.sourceFileCache.releaseProject(projectId);
+            }
+        }
+
+        // Handle file changes within projects
+        if (changes.projectChanges) {
+            for (const [_projectId, projectChanges] of Object.entries(changes.projectChanges)) {
+                if (projectChanges.changedFiles) {
+                    this.sourceFileCache.remove(projectChanges.changedFiles as Path[]);
+                }
+                if (projectChanges.removedFiles) {
+                    this.sourceFileCache.remove(projectChanges.removedFiles as Path[]);
+                }
+            }
+        }
     }
 
     echo(message: string): string {
@@ -128,127 +136,160 @@ export class API implements BaseAPI<false> {
     }
 
     close(): void {
+        // Dispose all active snapshots
+        for (const snapshot of [...this.activeSnapshots]) {
+            snapshot.dispose();
+        }
         this.client.close();
-        this.objectRegistry.clear();
         this.sourceFileCache.clear();
     }
 }
 
-export class Project extends DisposableObject implements BaseProject<false> {
-    private client: Client;
-    private sourceFileCache: SourceFileCache;
-    private toPath: (fileName: string) => Path;
-
+export class Snapshot implements BaseSnapshot<false> {
     readonly id: string;
-    configFileName!: string;
-    compilerOptions!: Record<string, unknown>;
-    rootFiles!: readonly string[];
-    parseOptionsKey!: string;
-
-    readonly program: Program;
-    readonly checker: Checker;
-
-    constructor(client: Client, objectRegistry: SyncObjectRegistry, sourceFileCache: SourceFileCache, toPath: (fileName: string) => Path, data: ProjectResponse) {
-        super(objectRegistry);
-        this.id = data.id;
-        this.client = client;
-        this.sourceFileCache = sourceFileCache;
-        this.toPath = toPath;
-        this.program = new Program(
-            this.id,
-            client,
-            sourceFileCache,
-            toPath,
-            () => this.ensureNotDisposed(),
-            () => this.parseOptionsKey,
-        );
-        this.checker = new Checker(
-            this.id,
-            client,
-            objectRegistry,
-            () => this.ensureNotDisposed(),
-        );
-        this.loadData(data);
-    }
-
-    loadData(data: ProjectResponse): void {
-        this.configFileName = data.configFileName;
-        this.compilerOptions = data.compilerOptions;
-        this.rootFiles = data.rootFiles;
-        this.parseOptionsKey = data.parseOptionsKey;
-    }
-
-    override dispose(): void {
-        this.program.markDisposed();
-        this.checker.markDisposed();
-        super.dispose();
-    }
-
-    reload(): ProjectChanges | undefined {
-        this.ensureNotDisposed();
-        const data: LoadProjectResponse = this.client.request("loadProject", { configFileName: this.configFileName });
-        // !!! TODO: handle parseOptionsKey change effect on source file cache
-        this.loadData(data);
-
-        // Handle cache invalidation based on changes
-        if (data.changes) {
-            if (data.changes.changedFiles) {
-                this.sourceFileCache.remove(data.changes.changedFiles as Path[]);
-            }
-            if (data.changes.removedFiles) {
-                this.sourceFileCache.remove(data.changes.removedFiles as Path[]);
-            }
-        }
-
-        return data.changes;
-    }
-}
-
-export class Program implements BaseProgram<false> {
-    private projectId: string;
+    readonly projects: readonly Project[];
+    readonly changes: SnapshotChanges | undefined;
+    private projectMap: Map<string, Project>;
     private client: Client;
-    private sourceFileCache: SourceFileCache;
-    private toPath: (fileName: string) => Path;
-    private ensureProjectNotDisposed: () => void;
-    private getParseOptionsKey: () => string;
-    private decoder = new TextDecoder();
-    private disposed = false;
+    private objectRegistry: SnapshotObjectRegistry;
+    private disposed: boolean = false;
+    private onDispose: () => void;
 
     constructor(
-        projectId: string,
+        data: UpdateSnapshotResponse,
         client: Client,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
-        ensureProjectNotDisposed: () => void,
-        getParseOptionsKey: () => string,
+        onDispose: () => void,
     ) {
-        this.projectId = projectId;
+        this.id = data.snapshot;
+        this.changes = data.changes;
         this.client = client;
-        this.sourceFileCache = sourceFileCache;
-        this.toPath = toPath;
-        this.ensureProjectNotDisposed = ensureProjectNotDisposed;
-        this.getParseOptionsKey = getParseOptionsKey;
+        this.onDispose = onDispose;
+
+        this.objectRegistry = new ObjectRegistry<Symbol, Type>({
+            createSymbol: symbolData => new Symbol(symbolData),
+            createType: typeData => new Type(typeData),
+        });
+
+        // Create projects
+        this.projectMap = new Map();
+        const projects: Project[] = [];
+        for (const projData of data.projects) {
+            const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
+            this.projectMap.set(projData.id, project);
+            projects.push(project);
+        }
+        this.projects = projects;
     }
 
-    /** @internal */
-    markDisposed(): void {
+    getProject(id: string): Project | undefined {
+        this.ensureNotDisposed();
+        return this.projectMap.get(id);
+    }
+
+    getDefaultProjectForFile(file: DocumentIdentifier | string): Project | undefined {
+        this.ensureNotDisposed();
+        const data: ProjectResponse | null = this.client.request("getDefaultProjectForFile", {
+            snapshot: this.id,
+            fileName: resolveFileName(file),
+        });
+        if (!data) return undefined;
+        return this.projectMap.get(data.id);
+    }
+
+    [globalThis.Symbol.dispose](): void {
+        this.dispose();
+    }
+
+    dispose(): void {
+        if (this.disposed) return;
         this.disposed = true;
+        this.objectRegistry.clear();
+        this.onDispose();
+        this.client.request("release", { handle: this.id });
+    }
+
+    isDisposed(): boolean {
+        return this.disposed;
     }
 
     private ensureNotDisposed(): void {
         if (this.disposed) {
-            throw new Error("Program is disposed");
+            throw new Error("Snapshot is disposed");
         }
-        this.ensureProjectNotDisposed();
+    }
+}
+
+export class Project implements BaseProject<false> {
+    readonly id: string;
+    readonly configFileName: string;
+    readonly compilerOptions: Record<string, unknown>;
+    readonly rootFiles: readonly string[];
+
+    readonly program: Program;
+    readonly checker: Checker;
+
+    constructor(
+        data: ProjectResponse,
+        snapshotId: string,
+        client: Client,
+        objectRegistry: SnapshotObjectRegistry,
+        sourceFileCache: SourceFileCache,
+        toPath: (fileName: string) => Path,
+    ) {
+        this.id = data.id;
+        this.configFileName = data.configFileName;
+        this.compilerOptions = data.compilerOptions;
+        this.rootFiles = data.rootFiles;
+        this.program = new Program(
+            snapshotId,
+            this.id,
+            client,
+            sourceFileCache,
+            toPath,
+            data.parseOptionsKey,
+        );
+        this.checker = new Checker(
+            snapshotId,
+            this.id,
+            client,
+            objectRegistry,
+        );
+    }
+}
+
+export class Program implements BaseProgram<false> {
+    private snapshotId: string;
+    private projectId: string;
+    private client: Client;
+    private sourceFileCache: SourceFileCache;
+    private toPath: (fileName: string) => Path;
+    private parseOptionsKey: string;
+    private decoder = new TextDecoder();
+
+    constructor(
+        snapshotId: string,
+        projectId: string,
+        client: Client,
+        sourceFileCache: SourceFileCache,
+        toPath: (fileName: string) => Path,
+        parseOptionsKey: string,
+    ) {
+        this.snapshotId = snapshotId;
+        this.projectId = projectId;
+        this.client = client;
+        this.sourceFileCache = sourceFileCache;
+        this.toPath = toPath;
+        this.parseOptionsKey = parseOptionsKey;
     }
 
     getSourceFile(file: DocumentIdentifier | string): SourceFile | undefined {
-        this.ensureNotDisposed();
         const fileName = resolveFileName(file);
         const path = this.toPath(fileName);
 
         // Check cache first
-        const cached = this.sourceFileCache.get(path, this.getParseOptionsKey());
+        const cached = this.sourceFileCache.get(path, this.parseOptionsKey);
         if (cached) {
             this.sourceFileCache.retain(path, this.projectId);
             return cached;
@@ -256,6 +297,7 @@ export class Program implements BaseProgram<false> {
 
         // Fetch from server
         const response: Uint8Array | undefined = this.client.requestBinary("getSourceFile", {
+            snapshot: this.snapshotId,
             project: this.projectId,
             fileName,
         });
@@ -264,97 +306,74 @@ export class Program implements BaseProgram<false> {
         }
 
         const sourceFile = new RemoteSourceFile(response, this.decoder) as unknown as SourceFile;
-        this.sourceFileCache.set(path, sourceFile, this.getParseOptionsKey(), this.projectId);
+        this.sourceFileCache.set(path, sourceFile, this.parseOptionsKey, this.projectId);
 
         return sourceFile;
     }
 }
 
 export class Checker implements BaseChecker<false> {
+    private snapshotId: string;
     private projectId: string;
     private client: Client;
-    private objectRegistry: SyncObjectRegistry;
-    private ensureProjectNotDisposed: () => void;
-    private disposed = false;
+    private objectRegistry: SnapshotObjectRegistry;
 
     constructor(
+        snapshotId: string,
         projectId: string,
         client: Client,
-        objectRegistry: SyncObjectRegistry,
-        ensureProjectNotDisposed: () => void,
+        objectRegistry: SnapshotObjectRegistry,
     ) {
+        this.snapshotId = snapshotId;
         this.projectId = projectId;
         this.client = client;
         this.objectRegistry = objectRegistry;
-        this.ensureProjectNotDisposed = ensureProjectNotDisposed;
-    }
-
-    /** @internal */
-    markDisposed(): void {
-        this.disposed = true;
-    }
-
-    private ensureNotDisposed(): void {
-        if (this.disposed) {
-            throw new Error("Checker is disposed");
-        }
-        this.ensureProjectNotDisposed();
     }
 
     getSymbolAtLocation(node: Node): Symbol | undefined;
     getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
     getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | (Symbol | undefined)[] | undefined {
-        this.ensureNotDisposed();
         if (Array.isArray(nodeOrNodes)) {
-            const data = this.client.request("getSymbolsAtLocations", { project: this.projectId, locations: nodeOrNodes.map(node => node.id) });
+            const data = this.client.request("getSymbolsAtLocations", { snapshot: this.snapshotId, project: this.projectId, locations: nodeOrNodes.map(node => node.id) });
             return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
         }
-        const data = this.client.request("getSymbolAtLocation", { project: this.projectId, location: (nodeOrNodes as Node).id });
+        const data = this.client.request("getSymbolAtLocation", { snapshot: this.snapshotId, project: this.projectId, location: (nodeOrNodes as Node).id });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 
     getSymbolAtPosition(file: DocumentIdentifier | string, position: number): Symbol | undefined;
     getSymbolAtPosition(file: DocumentIdentifier | string, positions: readonly number[]): (Symbol | undefined)[];
     getSymbolAtPosition(file: DocumentIdentifier | string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
-        this.ensureNotDisposed();
         const fileName = resolveFileName(file);
         if (typeof positionOrPositions === "number") {
-            const data = this.client.request("getSymbolAtPosition", { project: this.projectId, fileName, position: positionOrPositions });
+            const data = this.client.request("getSymbolAtPosition", { snapshot: this.snapshotId, project: this.projectId, fileName, position: positionOrPositions });
             return data ? this.objectRegistry.getSymbol(data) : undefined;
         }
-        const data = this.client.request("getSymbolsAtPositions", { project: this.projectId, fileName, positions: positionOrPositions });
+        const data = this.client.request("getSymbolsAtPositions", { snapshot: this.snapshotId, project: this.projectId, fileName, positions: positionOrPositions });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
     getTypeOfSymbol(symbol: Symbol): Type | undefined;
     getTypeOfSymbol(symbols: readonly Symbol[]): (Type | undefined)[];
     getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Type | (Type | undefined)[] | undefined {
-        this.ensureNotDisposed();
         if (Array.isArray(symbolOrSymbols)) {
-            const data = this.client.request("getTypesOfSymbols", { project: this.projectId, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
+            const data = this.client.request("getTypesOfSymbols", { snapshot: this.snapshotId, project: this.projectId, symbols: symbolOrSymbols.map(s => s.id) });
             return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
         }
-        const data = this.client.request("getTypeOfSymbol", { project: this.projectId, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
+        const data = this.client.request("getTypeOfSymbol", { snapshot: this.snapshotId, project: this.projectId, symbol: (symbolOrSymbols as Symbol).id });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 
-    /**
-     * Resolve a name to a symbol at a given location.
-     * @param name The name to resolve
-     * @param meaning Symbol flags indicating what kind of symbol to look for
-     * @param location Optional node or document position for location context
-     * @param excludeGlobals Whether to exclude global symbols
-     */
     resolveName(
         name: string,
         meaning: SymbolFlags,
         location?: Node | DocumentPosition,
         excludeGlobals?: boolean,
     ): Symbol | undefined {
-        this.ensureNotDisposed();
         // Distinguish Node (has `id`) from DocumentPosition (has `document` and `position`)
         const isNode = location && "id" in location;
         const data = this.client.request("resolveName", {
+            snapshot: this.snapshotId,
             project: this.projectId,
             name,
             meaning,
@@ -395,7 +414,7 @@ export class NodeHandle implements BaseNodeHandle<false> {
     }
 }
 
-export class Symbol extends DisposableObject implements BaseSymbol<false> {
+export class Symbol implements BaseSymbol<false> {
     readonly id: string;
     readonly name: string;
     readonly flags: SymbolFlags;
@@ -403,8 +422,7 @@ export class Symbol extends DisposableObject implements BaseSymbol<false> {
     readonly declarations: readonly NodeHandle[];
     readonly valueDeclaration: NodeHandle | undefined;
 
-    constructor(objectRegistry: SyncObjectRegistry, data: SymbolResponse) {
-        super(objectRegistry);
+    constructor(data: SymbolResponse) {
         this.id = data.id;
         this.name = data.name;
         this.flags = data.flags;
@@ -414,12 +432,11 @@ export class Symbol extends DisposableObject implements BaseSymbol<false> {
     }
 }
 
-export class Type extends DisposableObject implements BaseType<false> {
+export class Type implements BaseType<false> {
     readonly id: string;
     readonly flags: TypeFlags;
 
-    constructor(objectRegistry: SyncObjectRegistry, data: TypeResponse) {
-        super(objectRegistry);
+    constructor(data: TypeResponse) {
         this.id = data.id;
         this.flags = data.flags;
     }
