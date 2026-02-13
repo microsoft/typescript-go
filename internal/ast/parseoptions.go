@@ -17,18 +17,10 @@ const (
 type SourceFileParseOptions struct {
 	FileName                       string
 	Path                           tspath.Path
-	CompilerOptions                core.SourceFileAffectingCompilerOptions
 	ExternalModuleIndicatorOptions ExternalModuleIndicatorOptions
 	JSDocParsingMode               JSDocParsingMode
 }
 
-func GetSourceFileAffectingCompilerOptions(fileName string, options *core.CompilerOptions) core.SourceFileAffectingCompilerOptions {
-	// Declaration files are not parsed/bound differently depending on compiler options.
-	if tspath.IsDeclarationFileName(fileName) {
-		return core.SourceFileAffectingCompilerOptions{}
-	}
-	return options.SourceFileAffecting()
-}
 
 type ExternalModuleIndicatorOptions struct {
 	JSX   bool

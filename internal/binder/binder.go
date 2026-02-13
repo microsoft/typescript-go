@@ -83,10 +83,6 @@ type Binder struct {
 	expandoAssignments      []ExpandoAssignmentInfo
 }
 
-func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
-	return b.file.ParseOptions().CompilerOptions
-}
-
 type ActiveLabel struct {
 	next           *ActiveLabel
 	breakTarget    *ast.FlowLabel
@@ -128,7 +124,7 @@ func bindSourceFile(file *ast.SourceFile) {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
-		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
+		b.inStrictMode = !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
 		b.bindDeferredExpandoAssignments()

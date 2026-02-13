@@ -1205,4 +1205,7 @@ func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions)
 	case core.ScriptTargetES3, core.ScriptTargetES5:
 		t.Skipf("unsupported target %s", options.Target)
 	}
+	if options.AlwaysStrict.IsFalse() {
+		t.Skipf("alwaysStrict=false is unsupported")
+	}
 }

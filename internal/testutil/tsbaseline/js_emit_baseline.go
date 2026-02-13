@@ -57,7 +57,6 @@ func DoJSEmitBaseline(
 			fileParseResult := parser.ParseSourceFile(ast.SourceFileParseOptions{
 				FileName:        file.UnitName,
 				Path:            tspath.Path(file.UnitName),
-				CompilerOptions: options.SourceFileAffecting(),
 			}, file.Content, core.ScriptKindJSON)
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(GetErrorBaseline(t, []*harnessutil.TestFile{file}, diagnosticwriter.WrapASTDiagnostics(fileParseResult.Diagnostics()), diagnosticwriter.CompareASTDiagnostics, false /*pretty*/))
