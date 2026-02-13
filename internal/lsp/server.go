@@ -1210,6 +1210,9 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
+	if params.VerbosityLevel != nil {
+		return ls.ProvideVerboseHover(ctx, params.TextDocument.Uri, params.Position, int(*params.VerbosityLevel))
+	}
 	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
 }
 

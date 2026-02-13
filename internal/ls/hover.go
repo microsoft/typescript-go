@@ -12,6 +12,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -23,6 +25,7 @@ const (
 func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, lspPosition lsproto.Position) (lsproto.HoverResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
+	supportsVerbosity := caps.TextDocument.Hover.VerbosityLevel
 
 	program, file := l.getProgramAndFile(documentURI)
 	position := int(l.converters.LineAndCharacterToPosition(file, lspPosition))
@@ -35,7 +38,61 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	defer done()
 	rangeNode := getNodeForQuickInfo(node)
 	symbol := getSymbolAtLocationForQuickInfo(c, node)
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat)
+
+	verbosityLevel := -1
+	var out *checker.WriterContextOut
+	if supportsVerbosity {
+		verbosityLevel = 0
+		out = &checker.WriterContextOut{}
+	}
+
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, verbosityLevel, out)
+	if quickInfo == "" {
+		return lsproto.HoverOrNull{}, nil
+	}
+	hoverRange := l.getLspRangeOfNode(rangeNode, nil, nil)
+
+	var content string
+	if contentFormat == lsproto.MarkupKindMarkdown {
+		content = formatQuickInfo(quickInfo) + documentation
+	} else {
+		content = quickInfo + documentation
+	}
+
+	hover := &lsproto.Hover{
+		Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
+			MarkupContent: &lsproto.MarkupContent{
+				Kind:  contentFormat,
+				Value: content,
+			},
+		},
+		Range: &hoverRange,
+	}
+
+	if supportsVerbosity && out != nil {
+		hover.CanIncreaseVerbosity = out.CanIncreaseExpansionDepth && !out.Truncated
+		hover.CanDecreaseVerbosity = verbosityLevel > 0
+	}
+
+	return lsproto.HoverOrNull{Hover: hover}, nil
+}
+
+func (l *LanguageService) ProvideVerboseHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position, verbosityLevel int) (lsproto.HoverResponse, error) {
+	caps := lsproto.GetClientCapabilities(ctx)
+	contentFormat := lsproto.PreferredMarkupKind(caps.TextDocument.Hover.ContentFormat)
+
+	program, file := l.getProgramAndFile(documentURI)
+	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
+	if node.Kind == ast.KindSourceFile {
+		return lsproto.HoverOrNull{}, nil
+	}
+	c, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	rangeNode := getNodeForQuickInfo(node)
+	symbol := getSymbolAtLocationForQuickInfo(c, node)
+
+	var out checker.WriterContextOut
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, verbosityLevel, &out)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -56,13 +113,15 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					Value: content,
 				},
 			},
-			Range: &hoverRange,
+			Range:                &hoverRange,
+			CanIncreaseVerbosity: out.CanIncreaseExpansionDepth && !out.Truncated,
+			CanDecreaseVerbosity: verbosityLevel > 0,
 		},
 	}, nil
 }
 
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) (string, string) {
-	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node)
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, verbosityLevel int, out *checker.WriterContextOut) (string, string) {
+	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node, verbosityLevel, out)
 	if quickInfo == "" {
 		return "", ""
 	}
@@ -222,10 +281,25 @@ func shouldGetType(node *ast.Node) bool {
 	}
 }
 
-func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
+func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, verbosityLevel int, out *checker.WriterContextOut) (string, *ast.Node) {
 	container := getContainerNode(node)
+	// Helper closures to conditionally use verbosity-aware APIs
+	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
+		if verbosityLevel >= 0 && out != nil {
+			s := c.TypeToStringWithVerbosity(t, enclosing, flags, verbosityLevel, out)
+			return s
+		}
+		return c.TypeToStringEx(t, enclosing, flags)
+	}
+	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
+		if verbosityLevel >= 0 && out != nil {
+			s := c.SignatureToStringWithVerbosity(sig, enclosing, flags, verbosityLevel, out)
+			return s
+		}
+		return c.SignatureToStringEx(sig, enclosing, flags)
+	}
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
-		return "this: " + c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+		return "this: " + typeToString(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
 	}
 	if symbol == nil {
 		if shouldGetType(node) {
@@ -259,7 +333,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			}
 			b.WriteString(prefix)
 			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-			b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
+			b.WriteString(signatureToString(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
 		}
 	}
 	writeTypeParams := func(params []*checker.Type) {
@@ -273,11 +347,51 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				cons := c.GetConstraintOfTypeParameter(tp)
 				if cons != nil {
 					b.WriteString(" extends ")
-					b.WriteString(c.TypeToStringEx(cons, nil, typeFormatFlags))
+					b.WriteString(typeToString(cons, nil, typeFormatFlags))
 				}
 			}
 			b.WriteString(">")
 		}
+	}
+	symbolWasExpanded := false
+	canExpandSymbol := func(symbol *ast.Symbol) bool {
+		if verbosityLevel < 0 {
+			return false
+		}
+		var t *checker.Type
+		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
+			t = c.GetDeclaredTypeOfSymbol(symbol)
+		} else {
+			t = c.GetTypeOfSymbolAtLocation(symbol, node)
+		}
+		if t == nil || c.IsLibType(t) {
+			return false
+		}
+		if verbosityLevel > 0 {
+			return true
+		}
+		// At verbosity 0, signal that expansion is possible
+		if out != nil {
+			out.CanIncreaseExpansionDepth = true
+		}
+		return false
+	}
+	// tryExpandSymbol checks if a symbol can be expanded at the current verbosity level.
+	// When expanded, uses SymbolToDeclarationsWithVerbosity to render the full declaration body.
+	tryExpandSymbol := func(symbol *ast.Symbol, meaning ast.SymbolFlags) bool {
+		if symbolWasExpanded {
+			return true
+		}
+		if canExpandSymbol(symbol) {
+			expandedFlags := checker.TypeFormatFlagsMultilineObjectLiterals | checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
+			expanded := c.SymbolToDeclarationsWithVerbosity(symbol, meaning, container, expandedFlags, verbosityLevel-1, out)
+			if expanded != "" {
+				b.WriteString(expanded)
+				symbolWasExpanded = true
+				return true
+			}
+		}
+		return false
 	}
 	var writeSymbol func(*ast.Symbol)
 	writeSymbol = func(symbol *ast.Symbol) {
@@ -347,9 +461,15 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				b.WriteString(": ")
 			}
 			if callNode := getCallOrNewExpression(node); callNode != nil {
-				b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
+				b.WriteString(signatureToString(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
 			} else {
-				b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbolAtLocation(symbol, node), container, typeFormatFlags))
+				t := c.GetTypeOfSymbolAtLocation(symbol, node)
+				// If the type is a type parameter, render with constraint (e.g., "T extends FooType")
+				if t.Symbol() != nil && t.Symbol().Flags&ast.SymbolFlagsTypeParameter != 0 {
+					b.WriteString(typeParameterToString(c, t, container, verbosityLevel, out))
+				} else {
+					b.WriteString(typeToString(t, container, typeFormatFlags))
+				}
 			}
 			setDeclaration(symbol.ValueDeclaration)
 		}
@@ -357,7 +477,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			writeNewLine()
 			b.WriteString("(enum member) ")
 			t := c.GetTypeOfSymbol(symbol)
-			b.WriteString(c.TypeToStringEx(t, container, typeFormatFlags))
+			b.WriteString(typeToString(t, container, typeFormatFlags))
 			if t.Flags()&checker.TypeFlagsLiteral != 0 {
 				b.WriteString(" = ")
 				b.WriteString(t.AsLiteralType().String())
@@ -401,10 +521,33 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					writeSignatures(signatures, "constructor ", symbol)
 				} else {
 					writeNewLine()
-					b.WriteString(core.IfElse(flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
-					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
-					params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
-					writeTypeParams(params)
+					if flags&ast.SymbolFlagsClass != 0 {
+						classExpression := ast.GetDeclarationOfKind(symbol, ast.KindClassExpression)
+						if classExpression != nil {
+							// Local class expression: show "(local class)" prefix
+							b.WriteString("(local class) ")
+						}
+						if !tryExpandSymbol(symbol, flags) {
+							if classExpression == nil {
+								if core.Some(symbol.Declarations, func(d *ast.Node) bool {
+									return ast.IsClassDeclaration(d) && ast.HasAbstractModifier(d)
+								}) {
+									b.WriteString("abstract ")
+								}
+								b.WriteString("class ")
+							}
+							b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+							params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
+							writeTypeParams(params)
+						}
+					} else {
+						if !tryExpandSymbol(symbol, flags) {
+							b.WriteString("interface ")
+							b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+							params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
+							writeTypeParams(params)
+						}
+					}
 				}
 			}
 			if flags&ast.SymbolFlagsClass != 0 {
@@ -415,15 +558,24 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if flags&ast.SymbolFlagsEnum != 0 {
 			writeNewLine()
-			b.WriteString("enum ")
-			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			if !tryExpandSymbol(symbol, flags) {
+				if core.Some(symbol.Declarations, func(d *ast.Node) bool {
+					return ast.IsEnumDeclaration(d) && ast.IsEnumConst(d)
+				}) {
+					b.WriteString("const ")
+				}
+				b.WriteString("enum ")
+				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			}
 			setDeclaration(core.Find(symbol.Declarations, ast.IsEnumDeclaration))
 		}
 		if flags&ast.SymbolFlagsModule != 0 {
 			writeNewLine()
-			isModule := symbol.ValueDeclaration != nil && (ast.IsSourceFile(symbol.ValueDeclaration) || ast.IsAmbientModule(symbol.ValueDeclaration))
-			b.WriteString(core.IfElse(isModule, "module ", "namespace "))
-			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			if !tryExpandSymbol(symbol, flags) {
+				isModule := symbol.ValueDeclaration != nil && (ast.IsSourceFile(symbol.ValueDeclaration) || ast.IsAmbientModule(symbol.ValueDeclaration))
+				b.WriteString(core.IfElse(isModule, "module ", "namespace "))
+				b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			}
 			setDeclaration(core.Find(symbol.Declarations, ast.IsModuleDeclaration))
 		}
 		if flags&ast.SymbolFlagsTypeParameter != 0 {
@@ -434,7 +586,42 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			cons := c.GetConstraintOfTypeParameter(tp)
 			if cons != nil {
 				b.WriteString(" extends ")
-				b.WriteString(c.TypeToStringEx(cons, container, typeFormatFlags))
+				b.WriteString(typeToString(cons, container, typeFormatFlags))
+			}
+			// Show context: "in ClassName<T>" or "in funcName<T>(...)"
+			if symbol.Parent != nil {
+				// Class/Interface type parameter
+				b.WriteString(" in ")
+				b.WriteString(c.SymbolToStringEx(symbol.Parent, container, ast.SymbolFlagsNone, symbolFormatFlags))
+				if parentType := c.GetDeclaredTypeOfSymbol(symbol.Parent); parentType.AsInterfaceType() != nil {
+					parentParams := parentType.AsInterfaceType().LocalTypeParameters()
+					writeTypeParams(parentParams)
+				}
+			} else {
+				// Method/function type parameter
+				decl := ast.GetDeclarationOfKind(symbol, ast.KindTypeParameter)
+				if decl != nil && decl.Parent != nil {
+					declaration := decl.Parent
+					if ast.IsFunctionLike(declaration) {
+						b.WriteString(" in ")
+						if declaration.Kind == ast.KindConstructSignature {
+							b.WriteString("new ")
+						} else if declaration.Kind != ast.KindCallSignature && declaration.Name() != nil {
+							b.WriteString(c.SymbolToStringEx(declaration.Symbol(), container, ast.SymbolFlagsNone, symbolFormatFlags))
+						}
+						sig := c.GetSignatureFromDeclaration(declaration)
+						if sig != nil {
+							b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
+						}
+					} else if ast.IsTypeAliasDeclaration(declaration) {
+						b.WriteString(" in type ")
+						b.WriteString(c.SymbolToStringEx(declaration.Symbol(), container, ast.SymbolFlagsNone, symbolFormatFlags))
+						if declSymbol := declaration.Symbol(); declSymbol != nil {
+							taParams := c.GetTypeAliasTypeParameters(declSymbol)
+							writeTypeParams(taParams)
+						}
+					}
+				}
 			}
 			setDeclaration(core.Find(symbol.Declarations, ast.IsTypeParameterDeclaration))
 		}
@@ -445,17 +632,42 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			writeTypeParams(c.GetTypeAliasTypeParameters(symbol))
 			if len(symbol.Declarations) != 0 {
 				b.WriteString(" = ")
-				b.WriteString(c.TypeToStringEx(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
+				b.WriteString(typeToString(c.GetDeclaredTypeOfSymbol(symbol), container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
 			}
 			setDeclaration(core.Find(symbol.Declarations, ast.IsTypeOrJSTypeAliasDeclaration))
 		}
 		if flags&ast.SymbolFlagsSignature != 0 {
 			writeNewLine()
-			b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbol(symbol), container, typeFormatFlags))
+			b.WriteString(typeToString(c.GetTypeOfSymbol(symbol), container, typeFormatFlags))
 		}
 	}
 	writeSymbol(symbol)
+
 	return b.String(), firstDeclaration
+}
+
+// typeParameterToString renders a type parameter with its constraint, e.g., "T extends FooType".
+// It uses the node builder to create a full AST representation including the constraint,
+// then prints it. Supports verbosity-controlled expansion of the constraint type.
+func typeParameterToString(c *checker.Checker, t *checker.Type, enclosingDeclaration *ast.Node, verbosityLevel int, out *checker.WriterContextOut) string {
+	emitCtx := printer.NewEmitContext()
+	nodeBuilder := checker.NewNodeBuilder(c, emitCtx)
+	flags := nodebuilder.FlagsIgnoreErrors
+	var typeParamNode *ast.Node
+	if verbosityLevel >= 0 && out != nil {
+		typeParamNode = nodeBuilder.TypeParameterToDeclarationWithVerbosity(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
+	} else {
+		typeParamNode = nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
+	}
+	if typeParamNode == nil {
+		return c.TypeToString(t)
+	}
+	p := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitCtx)
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	return p.Emit(typeParamNode, sourceFile)
 }
 
 func getNodeForQuickInfo(node *ast.Node) *ast.Node {

@@ -7734,6 +7734,9 @@ type HoverParams struct {
 
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// Controls how many levels of type definitions will be expanded. Default is 0.
+	VerbosityLevel *int32 `json:"verbosityLevel,omitzero"`
 }
 
 func (s *HoverParams) TextDocumentURI() DocumentUri {
@@ -7781,6 +7784,10 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
+		case `"verbosityLevel"`:
+			if err := json.UnmarshalDecode(dec, &s.VerbosityLevel); err != nil {
+				return err
+			}
 		default:
 			if err := dec.SkipValue(); err != nil {
 				return err
@@ -7814,6 +7821,12 @@ type Hover struct {
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range,omitzero"`
+
+	// Whether the verbosity level can be increased for this hover.
+	CanIncreaseVerbosity bool `json:"canIncreaseVerbosity,omitzero"`
+
+	// Whether the verbosity level can be decreased for this hover.
+	CanDecreaseVerbosity bool `json:"canDecreaseVerbosity,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*Hover)(nil)
@@ -7845,6 +7858,14 @@ func (s *Hover) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"range"`:
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case `"canIncreaseVerbosity"`:
+			if err := json.UnmarshalDecode(dec, &s.CanIncreaseVerbosity); err != nil {
+				return err
+			}
+		case `"canDecreaseVerbosity"`:
+			if err := json.UnmarshalDecode(dec, &s.CanDecreaseVerbosity); err != nil {
 				return err
 			}
 		default:
@@ -19399,6 +19420,9 @@ type HoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat *[]MarkupKind `json:"contentFormat,omitzero"`
+
+	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity`/`canDecreaseVerbosity` on `Hover`.
+	VerbosityLevel *bool `json:"verbosityLevel,omitzero"`
 }
 
 // Client Capabilities for a SignatureHelpRequest.
@@ -29044,6 +29068,8 @@ type ResolvedHoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat []MarkupKind `json:"contentFormat,omitzero"`
+	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity`/`canDecreaseVerbosity` on `Hover`.
+	VerbosityLevel bool `json:"verbosityLevel,omitzero"`
 }
 
 func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverClientCapabilities {
@@ -29053,6 +29079,7 @@ func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverCli
 	return ResolvedHoverClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
 		ContentFormat:       derefOr(v.ContentFormat),
+		VerbosityLevel:      derefOr(v.VerbosityLevel),
 	}
 }
 

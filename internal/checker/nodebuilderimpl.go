@@ -64,6 +64,9 @@ type NodeBuilderContext struct {
 	flags                           nodebuilder.Flags
 	internalFlags                   nodebuilder.InternalFlags
 	depth                           int
+	maxExpansionDepth               int // -1 means no expansion, 0+ = verbosity levels
+	typeStack                       []TypeId
+	out                             WriterContextOut
 	enclosingDeclaration            *ast.Node
 	enclosingFile                   *ast.SourceFile
 	inferTypeParameters             []*Type
@@ -106,6 +109,17 @@ type NodeBuilderImpl struct {
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol
 }
 
+// WriterContextOut is the output channel from the nodebuilder to tell callers about
+// expansion possibilities. It tracks whether types were truncated and whether
+// increasing the expansion depth would reveal more information.
+type WriterContextOut struct {
+	// CanIncreaseExpansionDepth indicates whether increasing the expansion depth
+	// will cause us to expand more types.
+	CanIncreaseExpansionDepth bool
+	// Truncated indicates whether the output was truncated due to length limits.
+	Truncated bool
+}
+
 const (
 	defaultMaximumTruncationLength      = 160
 	noTruncationMaximumTruncationLength = 1_000_000
@@ -140,6 +154,40 @@ func (b *NodeBuilderImpl) checkTruncationLength() bool {
 	}
 	b.ctx.truncating = b.ctx.approximateLength > (core.IfElse((b.ctx.flags&nodebuilder.FlagsNoTruncation != 0), noTruncationMaximumTruncationLength, defaultMaximumTruncationLength))
 	return b.ctx.truncating
+}
+
+// checkTruncationLengthIfExpanding returns true if maxExpansionDepth >= 0 and truncation length exceeded.
+// When expanding, we need to mark the output as truncated so we know not to offer further expansion.
+func (b *NodeBuilderImpl) checkTruncationLengthIfExpanding() bool {
+	if b.ctx.maxExpansionDepth >= 0 && b.checkTruncationLength() {
+		b.ctx.out.Truncated = true
+		return true
+	}
+	return false
+}
+
+// shouldExpandType returns true if the given type should be expanded inline at the current depth.
+// For non-alias types, lib types are never expanded.
+// Sets canIncreaseExpansionDepth on the context out when declining to expand at the boundary.
+func (b *NodeBuilderImpl) shouldExpandType(t *Type, isAlias bool) bool {
+	if b.ctx.maxExpansionDepth < 0 {
+		return false
+	}
+	if !isAlias && b.ch.IsLibType(t) {
+		return false
+	}
+	// cycle detection via typeStack
+	for i := range len(b.ctx.typeStack) - 1 {
+		if b.ctx.typeStack[i] == t.id {
+			return false
+		}
+	}
+	if b.ctx.depth < b.ctx.maxExpansionDepth {
+		return true
+	}
+	// At the boundary: signal that more expansion is possible
+	b.ctx.out.CanIncreaseExpansionDepth = true
+	return false
 }
 
 func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.TypeNode) *ast.TypeNode {
@@ -1664,10 +1712,6 @@ func (b *NodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
 	return visited
 }
 
-func (b *NodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable) []*ast.Node {
-	panic("unimplemented") // !!!
-}
-
 func (b *NodeBuilderImpl) serializeTypeForExpression(expr *ast.Node) *ast.Node {
 	// !!! TODO: shim, add node reuse
 	t := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
@@ -2947,6 +2991,14 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 }
 
 func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
+	// Push type onto typeStack for expansion depth tracking
+	if b.ctx.maxExpansionDepth >= 0 && t != nil {
+		b.ctx.typeStack = append(b.ctx.typeStack, t.id)
+		defer func() {
+			b.ctx.typeStack = b.ctx.typeStack[:len(b.ctx.typeStack)-1]
+		}()
+	}
+
 	inTypeAlias := b.ctx.flags & nodebuilder.FlagsInTypeAlias
 	b.ctx.flags &^= nodebuilder.FlagsInTypeAlias
 
@@ -3091,21 +3143,34 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 
 	if inTypeAlias == 0 && t.alias != nil && (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 || b.ch.IsTypeSymbolAccessible(t.alias.Symbol(), b.ctx.enclosingDeclaration)) {
-		sym := t.alias.Symbol()
-		typeArgumentNodes := b.mapToTypeNodes(t.alias.TypeArguments(), false /*isBareList*/)
-		if isReservedMemberName(sym.Name) && sym.Flags&ast.SymbolFlagsClass == 0 {
-			return b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), typeArgumentNodes)
+		// If we should expand this type alias, skip the alias and fall through to expand the underlying type
+		if !b.shouldExpandType(t, true /*isAlias*/) {
+			sym := t.alias.Symbol()
+			typeArgumentNodes := b.mapToTypeNodes(t.alias.TypeArguments(), false /*isBareList*/)
+			if isReservedMemberName(sym.Name) && sym.Flags&ast.SymbolFlagsClass == 0 {
+				return b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), typeArgumentNodes)
+			}
+			if typeArgumentNodes != nil && len(typeArgumentNodes.Nodes) == 1 && sym == b.ch.globalArrayType.symbol {
+				return b.f.NewArrayTypeNode(typeArgumentNodes.Nodes[0])
+			}
+			return b.symbolToTypeNode(sym, ast.SymbolFlagsType, typeArgumentNodes)
 		}
-		if typeArgumentNodes != nil && len(typeArgumentNodes.Nodes) == 1 && sym == b.ch.globalArrayType.symbol {
-			return b.f.NewArrayTypeNode(typeArgumentNodes.Nodes[0])
-		}
-		return b.symbolToTypeNode(sym, ast.SymbolFlagsType, typeArgumentNodes)
+		// Expanding: increment depth and process the underlying type
+		b.ctx.depth++
+		defer func() { b.ctx.depth-- }()
 	}
 
 	objectFlags := t.objectFlags
 
 	if objectFlags&ObjectFlagsReference != 0 {
 		debug.Assert(t.Flags()&TypeFlagsObject != 0)
+		// When expanding, expand type references to their structural form
+		if b.shouldExpandType(t, false /*isAlias*/) {
+			b.ctx.depth++
+			result := b.createAnonymousTypeNode(t)
+			b.ctx.depth--
+			return result
+		}
 		if t.AsTypeReference().node != nil {
 			return b.visitAndTransformType(t, (*NodeBuilderImpl).typeReferenceToTypeNode)
 		} else {
@@ -3113,6 +3178,13 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		}
 	}
 	if t.flags&TypeFlagsTypeParameter != 0 || objectFlags&ObjectFlagsClassOrInterface != 0 {
+		// When expanding class or interface types, show their structural form
+		if objectFlags&ObjectFlagsClassOrInterface != 0 && b.shouldExpandType(t, false /*isAlias*/) {
+			b.ctx.depth++
+			result := b.createAnonymousTypeNode(t)
+			b.ctx.depth--
+			return result
+		}
 		if t.flags&TypeFlagsTypeParameter != 0 && slices.Contains(b.ctx.inferTypeParameters, t) {
 			b.ctx.approximateLength += len(ast.SymbolName(t.symbol)) + 6
 			var constraintNode *ast.TypeNode

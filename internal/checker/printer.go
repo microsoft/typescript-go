@@ -381,6 +381,106 @@ func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags 
 	return nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }
 
+// TypeToStringWithVerbosity converts a type to string with verbosity level support for expandable hover.
+func (c *Checker) TypeToStringWithVerbosity(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
+	writer := printer.NewTextWriter("", 0)
+	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
+	if noTruncation {
+		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
+	}
+	nodeBuilder := c.getNodeBuilder()
+	typeNode := nodeBuilder.TypeToTypeNodeWithVerbosity(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
+	if typeNode == nil {
+		panic("should always get typenode")
+	}
+	var p *printer.Printer
+	if t == c.unresolvedType {
+		p = createPrinterWithDefaults(nodeBuilder.EmitContext())
+	} else {
+		p = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	}
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	p.Write(typeNode, sourceFile, writer, nil)
+	result := writer.String()
+
+	maxLength := defaultMaximumTruncationLength * 2
+	if noTruncation {
+		maxLength = noTruncationMaximumTruncationLength * 2
+	}
+	if maxLength > 0 && result != "" && len(result) >= maxLength {
+		if out != nil {
+			out.Truncated = true
+		}
+		return result[0:maxLength-len("...")] + "..."
+	}
+	return result
+}
+
+// SignatureToStringWithVerbosity converts a signature to string with verbosity level support for expandable hover.
+func (c *Checker) SignatureToStringWithVerbosity(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
+	isConstructor := signature.flags&SignatureFlagsConstruct != 0 && flags&TypeFormatFlagsWriteCallStyleSignature == 0
+	var sigOutput ast.Kind
+	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
+		if isConstructor {
+			sigOutput = ast.KindConstructorType
+		} else {
+			sigOutput = ast.KindFunctionType
+		}
+	} else {
+		if isConstructor {
+			sigOutput = ast.KindConstructSignature
+		} else {
+			sigOutput = ast.KindCallSignature
+		}
+	}
+	writer, putWriter := printer.GetSingleLineStringWriter()
+	defer putWriter()
+
+	nodeBuilder := c.getNodeBuilder()
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
+	sig := nodeBuilder.SignatureToSignatureDeclarationWithVerbosity(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
+	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	p.Write(sig, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil)
+	return writer.String()
+}
+
+// SymbolToDeclarationsWithVerbosity produces declaration strings for a symbol with verbosity level support for expandable hover.
+func (c *Checker) SymbolToDeclarationsWithVerbosity(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags TypeFormatFlags, verbosityLevel int, out *WriterContextOut) string {
+	writer := printer.NewTextWriter("", 0)
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
+	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
+	if noTruncation {
+		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
+	}
+	nodeBuilder := c.getNodeBuilder()
+	nodes := nodeBuilder.SymbolToDeclarationsWithVerbosity(symbol, meaning, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil, verbosityLevel, out)
+	if len(nodes) == 0 {
+		return ""
+	}
+	p := createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	} else if symbol.ValueDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(symbol.ValueDeclaration)
+	}
+	for i, node := range nodes {
+		if i > 0 {
+			writer.WriteLine()
+		}
+		p.Write(node, sourceFile, writer, nil)
+	}
+	return writer.String()
+}
+
 func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
 	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
 	return nodeBuilder.TypePredicateToTypePredicateNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)

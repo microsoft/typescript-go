@@ -11,7 +11,7 @@
 //              ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U
+// | (type parameter) U in foo<U>(a: U): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -25,7 +25,7 @@
 //                    ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U
+// | (type parameter) U in foo<U>(a: U): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -57,21 +57,21 @@
 //               ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U extends string
+// | (type parameter) U extends string in foo2<U extends string>(a: U): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U
+// | (parameter) a: U extends string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U extends string
+// | (type parameter) U extends string in foo2<U extends string>(a: U): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -79,7 +79,7 @@
 //            ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U
+// | (parameter) a: U extends string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -133,7 +133,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U\n```\n"
+        "value": "```tsx\n(type parameter) U in foo<U>(a: U): U\n```\n"
       },
       "range": {
         "start": {
@@ -187,7 +187,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U\n```\n"
+        "value": "```tsx\n(type parameter) U in foo<U>(a: U): U\n```\n"
       },
       "range": {
         "start": {
@@ -295,7 +295,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends string\n```\n"
+        "value": "```tsx\n(type parameter) U extends string in foo2<U extends string>(a: U): U\n```\n"
       },
       "range": {
         "start": {
@@ -322,7 +322,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U\n```\n"
+        "value": "```tsx\n(parameter) a: U extends string\n```\n"
       },
       "range": {
         "start": {
@@ -349,7 +349,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends string\n```\n"
+        "value": "```tsx\n(type parameter) U extends string in foo2<U extends string>(a: U): U\n```\n"
       },
       "range": {
         "start": {
@@ -376,7 +376,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U\n```\n"
+        "value": "```tsx\n(parameter) a: U extends string\n```\n"
       },
       "range": {
         "start": {

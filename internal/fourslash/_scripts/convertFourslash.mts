@@ -1983,12 +1983,51 @@ function parseFilterPredicate(arrow: ts.ArrowFunction): string | undefined {
 }
 
 function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaselineQuickInfoCmd[] {
-    if (args.length !== 0) {
-        // !!!
+    if (args.length === 0) {
+        return [{
+            kind: "verifyBaselineQuickInfo",
+        }];
+    }
+    // First arg is verbosityLevels: { markerName: number | number[] }
+    const verbosityArg = args[0];
+    if (!ts.isObjectLiteralExpression(verbosityArg)) {
         throw new Error(`verify.baselineQuickInfo arguments not supported`);
+    }
+    const verbosityLevels: Record<string, number[]> = {};
+    for (const prop of verbosityArg.properties) {
+        if (!ts.isPropertyAssignment(prop)) {
+            return undefined;
+        }
+        let name: string;
+        if (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) {
+            name = prop.name.text;
+        }
+        else if (ts.isNumericLiteral(prop.name)) {
+            name = prop.name.text;
+        }
+        else {
+            return undefined;
+        }
+        if (ts.isArrayLiteralExpression(prop.initializer)) {
+            const levels: number[] = [];
+            for (const elem of prop.initializer.elements) {
+                if (!ts.isNumericLiteral(elem)) {
+                    return undefined;
+                }
+                levels.push(Number(elem.text));
+            }
+            verbosityLevels[name] = levels;
+        }
+        else if (ts.isNumericLiteral(prop.initializer)) {
+            verbosityLevels[name] = [Number(prop.initializer.text)];
+        }
+        else {
+            return undefined;
+        }
     }
     return [{
         kind: "verifyBaselineQuickInfo",
+        verbosityLevels,
     }];
 }
 
@@ -2994,6 +3033,7 @@ interface VerifyBaselineGoToDefinitionCmd {
 
 interface VerifyBaselineQuickInfoCmd {
     kind: "verifyBaselineQuickInfo";
+    verbosityLevels?: Record<string, number[]>;
 }
 
 interface VerifyBaselineSignatureHelpCmd {
@@ -3505,6 +3545,12 @@ function generateCmd(cmd: Cmd): string {
             return generateBaselineGoToDefinition(cmd);
         case "verifyBaselineQuickInfo":
             // Quick Info -> Hover
+            if (cmd.verbosityLevels && Object.keys(cmd.verbosityLevels).length > 0) {
+                const entries = Object.entries(cmd.verbosityLevels).map(
+                    ([marker, levels]) => `${getGoStringLiteral(marker)}: {${levels.join(", ")}}`,
+                ).join(", ");
+                return `f.VerifyBaselineHoverWithVerbosity(t, map[string][]int{${entries}})`;
+            }
             return `f.VerifyBaselineHover(t)`;
         case "verifyBaselineSignatureHelp":
             return `f.VerifyBaselineSignatureHelp(t)`;

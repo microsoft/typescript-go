@@ -11,7 +11,7 @@
 //         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T
+// | (type parameter) T in c<T>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -33,7 +33,7 @@
 //                    ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T
+// | (type parameter) T in c<T>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -49,7 +49,7 @@
 //            ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U
+// | (type parameter) U in c.method<U>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -63,7 +63,7 @@
 //                  ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U
+// | (type parameter) U in c.method<U>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -77,7 +77,7 @@
 //                        ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T
+// | (type parameter) T in c<T>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -147,7 +147,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T extends c<string>
+// | (type parameter) T extends c<string> in c2<T extends c<string>>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -169,14 +169,14 @@
 //                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: T
+// | (parameter) a: T extends c<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T extends c<string>
+// | (type parameter) T extends c<string> in c2<T extends c<string>>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -192,7 +192,7 @@
 //            ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U extends c<string>
+// | (type parameter) U extends c<string> in c2.method<U extends c<string>>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -206,28 +206,28 @@
 //                                 ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U
+// | (parameter) a: U extends c<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                    ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) U extends c<string>
+// | (type parameter) U extends c<string> in c2.method<U extends c<string>>(a: U, b: T): U
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) b: T
+// | (parameter) b: T extends c<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (type parameter) T extends c<string>
+// | (type parameter) T extends c<string> in c2<T extends c<string>>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -235,7 +235,7 @@
 //                ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) a: U
+// | (parameter) a: U extends c<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -348,7 +348,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T\n```\n"
+        "value": "```tsx\n(type parameter) T in c<T>\n```\n"
       },
       "range": {
         "start": {
@@ -429,7 +429,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T\n```\n"
+        "value": "```tsx\n(type parameter) T in c<T>\n```\n"
       },
       "range": {
         "start": {
@@ -483,7 +483,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U\n```\n"
+        "value": "```tsx\n(type parameter) U in c.method<U>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -537,7 +537,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U\n```\n"
+        "value": "```tsx\n(type parameter) U in c.method<U>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -591,7 +591,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T\n```\n"
+        "value": "```tsx\n(type parameter) T in c<T>\n```\n"
       },
       "range": {
         "start": {
@@ -834,7 +834,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string> in c2<T extends c<string>>\n```\n"
       },
       "range": {
         "start": {
@@ -915,7 +915,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: T\n```\n"
+        "value": "```tsx\n(parameter) a: T extends c<string>\n```\n"
       },
       "range": {
         "start": {
@@ -942,7 +942,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string> in c2<T extends c<string>>\n```\n"
       },
       "range": {
         "start": {
@@ -996,7 +996,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends c<string>\n```\n"
+        "value": "```tsx\n(type parameter) U extends c<string> in c2.method<U extends c<string>>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -1050,7 +1050,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U\n```\n"
+        "value": "```tsx\n(parameter) a: U extends c<string>\n```\n"
       },
       "range": {
         "start": {
@@ -1077,7 +1077,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends c<string>\n```\n"
+        "value": "```tsx\n(type parameter) U extends c<string> in c2.method<U extends c<string>>(a: U, b: T): U\n```\n"
       },
       "range": {
         "start": {
@@ -1104,7 +1104,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) b: T\n```\n"
+        "value": "```tsx\n(parameter) b: T extends c<string>\n```\n"
       },
       "range": {
         "start": {
@@ -1131,7 +1131,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string> in c2<T extends c<string>>\n```\n"
       },
       "range": {
         "start": {
@@ -1158,7 +1158,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: U\n```\n"
+        "value": "```tsx\n(parameter) a: U extends c<string>\n```\n"
       },
       "range": {
         "start": {
